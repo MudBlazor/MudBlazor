@@ -9,7 +9,7 @@
 
 <CascadingValue Value="this" IsFixed="true">
     <ul @attributes="UserAttributes" class=@Classname style="@Style">
-        @if (MaxItems != null && Collapsed && Items.Count >= MaxItems)
+        @if (MaxItems != null && Collapsed && Items.Count > MaxItems)
         {
             <BreadcrumbLink Item="Items[0]"></BreadcrumbLink>
             <BreadcrumbSeparator></BreadcrumbSeparator>

@@ -3,7 +3,7 @@
 @typeparam T
 
 <li @attributes="UserAttributes" class="@Classname" style="@Style">
-    <div class="@ContentClassname" @onclick="OnItemClicked" @onclick:stopPropagation="true">
+    <div class="@ContentClassname" @onclick="OnItemClicked" @onclick:stopPropagation="true" @ondblclick="OnItemDoubleClicked" @ondblclick:stopPropagation="true">
         @if (Content != null)
         {
             @Content

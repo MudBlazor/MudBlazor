@@ -40,13 +40,15 @@ namespace MudBlazor
         /// <summary>
         /// Sets the position of the text to the start (Left in LTR and right in RTL).
         /// </summary>
-        [Parameter] public HorizontalAlignment ContentAlignment { get; set; } = HorizontalAlignment.Left;
+        [Parameter]
+        [Category(CategoryTypes.Alert.Appearance)]
+        public HorizontalAlignment ContentAlignment { get; set; } = HorizontalAlignment.Left;
 
         /// <summary>
         /// Sets the position of the text to the start (Left in LTR and right in RTL).
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("AlertTextPosition is obsolete. Use ContentAlignment instead!", false)]
+        [Obsolete("Use ContentAlignment instead.", true)]
         [Parameter]
         public AlertTextPosition AlertTextPosition
         {
@@ -62,56 +64,76 @@ namespace MudBlazor
         /// <summary>
         /// Define the icon used for the close button.
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
+        [Parameter]
+        [Category(CategoryTypes.Alert.Appearance)]
+        public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
         /// <summary>
         /// Sets if the alert shows a close icon.
         /// </summary>
-        [Parameter] public bool ShowCloseIcon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Alert.Behavior)]
+        public bool ShowCloseIcon { get; set; }
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
         /// </summary>
-        [Parameter] public int Elevation { set; get; } = 0;
+        [Parameter]
+        [Category(CategoryTypes.Alert.Appearance)]
+        public int Elevation { set; get; } = 0;
 
         /// <summary>
         /// If true, rounded corners are disabled.
         /// </summary>
-        [Parameter] public bool Square { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Alert.Appearance)]
+        public bool Square { get; set; }
 
         /// <summary>
         /// If true, compact padding will be used.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Alert.Appearance)]
+        public bool Dense { get; set; }
 
         /// <summary>
         /// If true, no alert icon will be used.
         /// </summary>
-        [Parameter] public bool NoIcon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Alert.Appearance)]
+        public bool NoIcon { get; set; }
 
         /// <summary>
         /// The severity of the alert. This defines the color and icon used.
         /// </summary>
-        [Parameter] public Severity Severity { get; set; } = Severity.Normal;
+        [Parameter]
+        [Category(CategoryTypes.Alert.Behavior)]
+        public Severity Severity { get; set; } = Severity.Normal;
 
         /// <summary>
         /// The variant to use.
         /// </summary>
-        [Parameter] public Variant Variant { get; set; } = Variant.Text;
+        [Parameter]
+        [Category(CategoryTypes.Alert.Appearance)]
+        public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         /// Child content of the component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Alert.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// Custom icon, leave unset to use the standard icon which depends on the Severity
         /// </summary>
-        [Parameter] public string Icon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Alert.Appearance)]
+        public string Icon { get; set; }
 
         protected string _icon;
 
-        private Task OnCloseIconClickAsync()
+        internal Task OnCloseIconClickAsync()
         {
             if (CloseIconClicked.HasDelegate)
             {
@@ -121,6 +143,8 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
+        //If we can check this exception can include the coverage again
+        [ExcludeFromCodeCoverage]
         protected override void OnParametersSet()
         {
             if (!string.IsNullOrEmpty(Icon))

@@ -2,6 +2,8 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    border-width: 0;
+    border-style: solid;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -17,6 +19,7 @@ body {
     font-weight: var(--mud-typography-default-weight);
     line-height: var(--mud-typography-default-lineheight);
     letter-spacing: var(--mud-typography-default-letterspacing);
+    text-transform: var(--mud-typography-default-text-transform);
     background-color: var(--mud-palette-background);
 }
 

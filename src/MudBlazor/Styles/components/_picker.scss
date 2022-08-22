@@ -133,9 +133,6 @@
 }
 
 .mud-picker-inline-paper {
-    position: absolute;
-    z-index: calc(var(--mud-zindex-popover) + 1);
-    
     .mud-paper {
         position: relative !important;
     }

@@ -13,5 +13,6 @@ namespace MudBlazor
     public class PopoverOptions
     {
         public string ContainerClass { get; set; } = "mudblazor-main-content";
+        public int FlipMargin { get; set; } = 0;
     }
 }

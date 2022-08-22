@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudPaper Outlined="true" Class="px-12 py-6">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@ToggleOpen">@(_isOpen? "Close" : "Open")</MudButton>
+	<MudPopover Open="_isOpen" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Paper="false">
+        <MudPaper Outlined="true" Class="px-4 py-8">
+            <MudText>Scroll your browser to see effect.</MudText>
+        </MudPaper>
+	</MudPopover>
+</MudPaper>
+
+
+@code {
+    public bool _isOpen = true;
+
+    public void ToggleOpen()
+    {
+        if (_isOpen)
+            _isOpen = false;
+        else
+            _isOpen = true;
+    }
+}

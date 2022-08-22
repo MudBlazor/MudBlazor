@@ -2,15 +2,20 @@
 @inherits MudBooleanInput<T>
 @typeparam T
 
-<label class="@Classname" style="@Style">
+<label class="@Classname" style="@Style" @onkeydown="@HandleKeyDown" id="@_elementId">
     <span class="mud-switch-span mud-flip-x-rtl">
-        <span class="@SwitchClassname">
+        <span tabindex="0" class="@SwitchClassname">
             <span class="mud-switch-button">
-                <input @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(Disabled.ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@Disabled" @onclick:preventDefault="@ReadOnly"/>
-                <span class="mud-switch-thumb"></span>
+                <input tabindex="-1" @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(Disabled.ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@Disabled" @onclick:preventDefault="@ReadOnly"/>
+                <span class="mud-switch-thumb d-flex align-center justify-center">
+                    @if (!string.IsNullOrEmpty(ThumbIcon))
+                    {
+                        <MudIcon Color="@ThumbIconColor" Icon="@ThumbIcon" Style=" height:16px; width:16px;" />
+                    }
+                </span>
             </span>
         </span>
-        <span class="mud-switch-track"></span>
+        <span class="@TrackClassname"></span>
     </span>
     @if (!String.IsNullOrEmpty(Label))
     {
@@ -26,6 +31,8 @@
 
 @code
 {
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.FormComponent.Behavior)]
+    public RenderFragment ChildContent { get; set; }
 }
 

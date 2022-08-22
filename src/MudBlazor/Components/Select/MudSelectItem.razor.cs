@@ -31,10 +31,10 @@ namespace MudBlazor
                 if (_parent == null)
                     return;
                 _parent.CheckGenericTypeMatch(this);
-                if(MudSelect == null)
+                if (MudSelect == null)
                     return;
                 bool isSelected = MudSelect.Add(this);
-                if ( _parent.MultiSelection)
+                if (_parent.MultiSelection)
                 {
                     MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
                     InvokeAsync(() => OnUpdateSelectionStateFromOutside(MudSelect.SelectedValues));
@@ -82,7 +82,9 @@ namespace MudBlazor
         /// <summary>
         /// A user-defined option that can be selected
         /// </summary>
-        [Parameter] public T Value { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public T Value { get; set; }
 
         /// <summary>
         /// Mirrors the MultiSelection status of the parent select

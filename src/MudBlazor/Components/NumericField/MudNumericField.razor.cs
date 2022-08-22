@@ -1,4 +1,9 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2022
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -12,15 +17,12 @@ namespace MudBlazor
 {
     public partial class MudNumericField<T> : MudDebouncedInput<T>
     {
+        private IKeyInterceptor _keyInterceptor;
+        private Comparer _comparer = new(CultureInfo.InvariantCulture);
+
         public MudNumericField() : base()
         {
             Validation = new Func<T, Task<bool>>(ValidateInput);
-            _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value)
-            {
-                FilterFunc = CleanText,
-                Culture = CultureInfo.CurrentUICulture,
-            };
-
             #region parameters default depending on T
 
             //sbyte
@@ -104,13 +106,6 @@ namespace MudBlazor
             #endregion parameters default depending on T
         }
 
-        protected override bool SetCulture(CultureInfo value)
-        {
-            var changed = base.SetCulture(value);
-            _inputConverter.Culture = value;
-            return changed;
-        }
-
         protected string Classname =>
             new CssBuilder("mud-input-input-control mud-input-number-control " +
                            (HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin"))
@@ -118,18 +113,22 @@ namespace MudBlazor
                 .Build();
 
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         private string _elementId = "numericField_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         private MudInput<string> _elementReference;
 
-        private Converter<string> _inputConverter;
-
         [ExcludeFromCodeCoverage]
         public override ValueTask FocusAsync()
         {
             return _elementReference.FocusAsync();
+        }
+
+        [ExcludeFromCodeCoverage]
+        public override ValueTask BlurAsync()
+        {
+            return _elementReference.BlurAsync();
         }
 
         [ExcludeFromCodeCoverage]
@@ -151,10 +150,11 @@ namespace MudBlazor
             return base.SetValueAsync(value, valueChanged || updateText);
         }
 
-        protected override async void OnBlurred(FocusEventArgs obj)
+        protected internal override async void OnBlurred(FocusEventArgs obj)
         {
             base.OnBlurred(obj);
-            await UpdateTextPropertyAsync(false);
+            await UpdateValuePropertyAsync(true); //Required to set the value after a blur before the debounce period has elapsed
+            await UpdateTextPropertyAsync(false); //Required to update the string formatting after a blur before the debouce period has elapsed
         }
 
         protected async Task<bool> ValidateInput(T value)
@@ -167,21 +167,56 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Clearable { get; set; } = false;
+
+        /// <summary>
         /// Decrements or increments depending on factor
         /// </summary>
         /// <param name="factor">Multiplication factor (1 or -1) will be applied to the step</param>
         private async Task Change(double factor = 1)
         {
-            var value = Num.To<T>(Num.From(Value) + Num.From(Step) * factor);
-            await SetValueAsync(ConstrainBoundaries(value).value);
-            _elementReference.SetText(Text).AndForget();
+            try
+            {
+                var nextValue = GetNextValue(factor);
+
+                // validate that the data type is a value type before we compare them
+                if (typeof(T).IsValueType)
+                {
+                    if (factor > 0 && _comparer.Compare(nextValue, Value) < 0)
+                        nextValue = Max;
+                    else if (factor < 0 && (_comparer.Compare(nextValue, Value) > 0 || nextValue is null))
+                        nextValue = Min;
+                }
+
+                await SetValueAsync(ConstrainBoundaries(nextValue).value);
+                _elementReference.SetText(Text).AndForget();
+            }
+            catch (OverflowException)
+            {
+                // if next value overflows the primitive type, lets set it to Min or Max depending if factor is positive or negative
+                await SetValueAsync(factor > 0 ? Max : Min, true);
+            }
+        }
+
+        private T GetNextValue(double factor)
+        {
+            if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
+                return (T)(object)Convert.ToDecimal(FromDecimal(Value) + FromDecimal(Step) * (decimal)factor);
+            if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
+                return (T)(object)Convert.ToInt64(FromInt64(Value) + FromInt64(Step) * factor);
+            if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
+                return (T)(object)Convert.ToUInt64(FromUInt64(Value) + FromUInt64(Step) * factor);
+            return Num.To<T>(Num.From(Value) + Num.From(Step) * factor);
         }
 
         /// <summary>
         /// Adds a Step to the Value
         /// </summary>
         public Task Increment() => Change(factor: 1);
-
 
         /// <summary>
         /// Substracts a Step from the Value
@@ -191,31 +226,33 @@ namespace MudBlazor
         /// <summary>
         /// Checks if the value respects the boundaries set for this instance.
         /// </summary>
-        /// <param name="v">Value to check.</param>
+        /// <param name="value">Value to check.</param>
         /// <returns>Returns a valid value and if it has been changed.</returns>
-        protected (T value, bool changed) ConstrainBoundaries(T v)
+        protected (T value, bool changed) ConstrainBoundaries(T value)
         {
-            var value = Num.From(v);
-            var max = Num.From(Max);
-            var min = Num.From(Min);
-            //check if Max/Min has value, if not use MaxValue/MinValue for that data type
-            if (value > max)
-                return (Max, true);
-            else if (value < min)
-                return (Min, true);
-            //return T default (null) when there is no value
-            else if (v == null)
-            {
-                return (default(T), true);
-            }
+            if (value == null)
+                return (default(T), false);
 
-            return (Num.To<T>(value), false);
+            // validate that the data type is a value type before we compare them
+            if (typeof(T).IsValueType)
+            {
+                // check if value is bigger than defined MAX, if so take the defined MAX value instead
+                if (_comparer.Compare(value, Max) > 0)
+                    return (Max, true);
+
+                // check if value is lower than defined MIN, if so take the defined MIN value instead
+                if (_comparer.Compare(value, Min) < 0)
+                    return (Min, true);
+            };
+
+            return (value, false);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
+                _keyInterceptor = _keyInterceptorFactory.Create();
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -257,7 +294,7 @@ namespace MudBlazor
 
         protected async Task OnMouseWheel(WheelEventArgs obj)
         {
-            if (!obj.ShiftKey)
+            if (!obj.ShiftKey || Disabled || ReadOnly)
                 return;
             if (obj.DeltaY < 0)
             {
@@ -281,6 +318,7 @@ namespace MudBlazor
         /// Reverts mouse wheel up and down events, if true.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public bool InvertMouseWheel { get; set; } = false;
 
         private T _minDefault;
@@ -291,6 +329,7 @@ namespace MudBlazor
         /// The minimum value for the input.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
         public T Min
         {
             get => _minHasValue ? _min : _minDefault;
@@ -309,6 +348,7 @@ namespace MudBlazor
         /// The maximum value for the input.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
         public T Max
         {
             get => _maxHasValue ? _max : _maxDefault;
@@ -327,6 +367,7 @@ namespace MudBlazor
         /// The increment added/subtracted by the spin buttons.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public T Step
         {
             get => _stepHasValue ? _step : _stepDefault;
@@ -341,6 +382,7 @@ namespace MudBlazor
         /// Hides the spin buttons, the user can still change value with keyboard arrows and manual update.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public bool HideSpinButtons { get; set; }
 
         /// <summary>
@@ -360,22 +402,6 @@ namespace MudBlazor
         [Parameter]
         public override string Pattern { get; set; } = @"[0-9,.\-]";
 
-        protected string CleanText(string text)
-        {
-            if (string.IsNullOrEmpty(text))
-                return text;
-            var pattern = Pattern + "*";
-            var cleanedText = "";
-            foreach (Match m in Regex.Matches(text, pattern))
-            {
-                cleanedText += m.Captures[0].Value;
-            }
-
-            cleanedText = cleanedText[0] + cleanedText.Substring(1).Replace("-", string.Empty);
-
-            return cleanedText;
-        }
-
         private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
 
         private Task OnInputValueChanged(string text)
@@ -393,6 +419,23 @@ namespace MudBlazor
                 return f.ToString(TagFormat, CultureInfo.InvariantCulture.NumberFormat);
             else
                 return null;
+        }
+
+        private decimal FromDecimal(T v)
+            => Convert.ToDecimal((decimal?)(object)v);
+        private long FromInt64(T v)
+            => Convert.ToInt64((long?)(object)v);
+        private ulong FromUInt64(T v)
+            => Convert.ToUInt64((ulong?)(object)v);
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                _keyInterceptor?.Dispose();
+            }
         }
     }
 }

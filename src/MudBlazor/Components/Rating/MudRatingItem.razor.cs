@@ -79,7 +79,7 @@ namespace MudBlazor
             ItemIcon = SelectIcon();
         }
 
-        private string SelectIcon()
+        internal string SelectIcon()
         {
             if (Rating == null)
                 return null;
@@ -109,16 +109,16 @@ namespace MudBlazor
         }
 
         // rating item lose hover
-        private Task HandleMouseOut(MouseEventArgs e)
+        internal Task HandleMouseOut(MouseEventArgs e)
         {
-            if (Disabled || Rating == null) 
+            if (Disabled || Rating == null)
                 return Task.CompletedTask;
 
             IsActive = false;
             return ItemHovered.InvokeAsync(null);
         }
 
-        private void HandleMouseOver(MouseEventArgs e)
+        internal void HandleMouseOver(MouseEventArgs e)
         {
             if (Disabled) return;
 

@@ -17,40 +17,60 @@ namespace MudBlazor
         [CascadingParameter] protected MudList ParentList { get; set; }
 
         /// <summary>
+        /// The color of the selected List Item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public Color Color { get; set; } = Color.Primary;
+
+        /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// Set true to make the list items clickable. This is also the precondition for list selection to work.
         /// </summary>
-        [Parameter] public bool Clickable { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Selecting)]
+        public bool Clickable { get; set; }
 
         /// <summary>
         /// If true, vertical padding will be removed from the list.
         /// </summary>
-        [Parameter] public bool DisablePadding { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool DisablePadding { get; set; }
 
         /// <summary>
         /// If true, compact vertical padding will be applied to all list items.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool Dense { get; set; }
 
         /// <summary>
         /// If true, the left and right padding is removed on all list items.
         /// </summary>
-        [Parameter] public bool DisableGutters { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool DisableGutters { get; set; }
 
         /// <summary>
         /// If true, will disable the list item if it has onclick.
         /// </summary>
-        [Parameter] public bool Disabled { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// The current selected list item.
         /// Note: make the list Clickable for item selection to work.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.List.Selecting)]
         public MudListItem SelectedItem
         {
             get => _selectedItem;
@@ -72,6 +92,7 @@ namespace MudBlazor
         /// Note: make the list Clickable for item selection to work.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.List.Selecting)]
         public object SelectedValue
         {
             get => _selectedValue;

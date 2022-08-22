@@ -36,7 +36,6 @@
     <MudSpacer />
     <div style="min-width:200px;">
         <MudText Inline="true" Class="align-self-center">Selected1: @selectedItem1?.Name</MudText>
-        <MudText Inline="true" Class="align-self-center">Selected2: @selectedItem2?.Name</MudText>
     </div>
 </div>
 
@@ -46,9 +45,7 @@
     private bool striped = false;
     private bool bordered = false;
     private string searchString1 = "";
-    private string searchString2 = "";
     private Element selectedItem1 = null;
-    private Element selectedItem2 = null;
     private HashSet<Element> selectedItems = new HashSet<Element>();
 
     private IEnumerable<Element> Elements = new List<Element>();
@@ -59,7 +56,6 @@
     }
 
     private bool FilterFunc1(Element element) => FilterFunc(element, searchString1);
-    private bool FilterFunc2(Element element) => FilterFunc(element, searchString2);
 
     private bool FilterFunc(Element element, string searchString)
     {

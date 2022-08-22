@@ -28,22 +28,30 @@
     /// <summary>
     /// The whole text in which a fragment will be highlighted
     /// </summary>
-    [Parameter] public string Text { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.Highlighter.Behavior)]
+    public string Text { get; set; }
 
     /// <summary>
     /// The fragment of text to be highlighted
     /// </summary>
-    [Parameter] public string HighlightedText { get; set; }
+    [Parameter] 
+    [Category(CategoryTypes.Highlighter.Behavior)]
+    public string HighlightedText { get; set; }
 
     /// <summary>
     /// Whether or not the highlighted text is case sensitive
     /// </summary>
-    [Parameter] public bool CaseSensitive { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.Highlighter.Behavior)]
+    public bool CaseSensitive { get; set; }
 
     /// <summary>
     /// If true, highlights the text until the next regex boundary
     /// </summary>
-    [Parameter] public bool UntilNextBoundary { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.Highlighter.Behavior)]
+    public bool UntilNextBoundary { get; set; }
 
     //TODO
     //Accept regex highlightings

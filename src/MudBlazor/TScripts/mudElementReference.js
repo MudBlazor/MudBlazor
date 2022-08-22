@@ -1,4 +1,8 @@
-﻿class MudElementReference {
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+class MudElementReference {
     constructor() {
         this.listenerId = 0;
         this.eventListeners = {};
@@ -8,6 +12,12 @@
         if (element)
         {
             element.focus();
+        }
+    }
+
+    blur(element) {
+        if (element) {
+            element.blur();
         }
     }
 

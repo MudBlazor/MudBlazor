@@ -1,10 +1,11 @@
 ﻿@page "/features/elevation"
 
-<DocsPage MaxWidth="MaxWidth.Large">
+<DocsPage>
     <DocsPageHeader Title="Elevation" SubTitle="Elevation is the relative distance between two surfaces along the z-axis.">
         <Description>What this means in practice is that you can use a shadow on a material surface to elevate it from another material surface visually.</Description>
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="Usage">
                 <Description>
@@ -12,21 +13,21 @@
                     The same elevation types can be used with our predefined CSS classes.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent DarkenBackground="true" Code="ElevationUsageExample">
                 <ElevationUsageExample />
             </SectionContent>
-            <SectionSource Code="ElevationUsageExample" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Elevation Levels">
                 <Description>
                     Every component that has the <CodeInline>Elevation</CodeInline> property takes values in the range of 0 - 25, or you can access them with the CSS classes displayed below.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent DarkenBackground="true" Code="ElevationAllExample" ShowCode="false">
                 <ElevationAllExample />
             </SectionContent>
-            <SectionSource Code="ElevationAllExample" ShowCode="false" />
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

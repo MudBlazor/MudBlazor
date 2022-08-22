@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack Spacing="@_spacing" Row="true">
+    <MudPaper Class="pa-3">Item 1</MudPaper>
+    <MudPaper Class="pa-3">Item 2</MudPaper>
+    <MudPaper Class="pa-3">Item 3</MudPaper>
+</MudStack>
+
+<MudSlider @bind-Value="_spacing" Min="0" Max="16">Spacing: @_spacing.ToString()</MudSlider>
+
+@code {
+    private int _spacing { get; set; } = 3;
+}

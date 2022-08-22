@@ -6,6 +6,8 @@ namespace MudBlazor
 {
     public partial class MudScrollToTop : IDisposable
     {
+        private IScrollListener _scrollListener;
+
         protected string Classname =>
         new CssBuilder("mud-scroll-to-top")
             .AddClass("visible", Visible && string.IsNullOrWhiteSpace(VisibleCssClass))
@@ -15,41 +17,56 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        [Inject] IScrollListener ScrollListener { get; set; }
+        [Inject] IScrollListenerFactory ScrollListenerFactory { get; set; }
+
         [Inject] IScrollManager ScrollManager { get; set; }
 
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ScrollToTop.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// The CSS selector to which the scroll event will be attached
         /// </summary>
-        [Parameter] public string Selector { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ScrollToTop.Behavior)]
+        public string Selector { get; set; }
 
         /// <summary>
         /// If set to true, it starts Visible. If sets to false, it will become visible when the TopOffset amount of scrolled pixels is reached
         /// </summary>
-        [Parameter] public bool Visible { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ScrollToTop.Behavior)]
+        public bool Visible { get; set; }
 
         /// <summary>
         /// CSS class for the Visible state. Here, apply some transitions and animations that will happen when the component becomes visible
         /// </summary>
-        [Parameter] public string VisibleCssClass { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ScrollToTop.Appearance)]
+        public string VisibleCssClass { get; set; }
 
         /// <summary>
         /// CSS class for the Hidden state. Here, apply some transitions and animations that will happen when the component becomes invisible
         /// </summary>
-        [Parameter] public string HiddenCssClass { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ScrollToTop.Appearance)]
+        public string HiddenCssClass { get; set; }
 
         /// <summary>
         /// The distance in pixels scrolled from the top of the selected element from which 
         /// the component becomes visible
         /// </summary>
-        [Parameter] public int TopOffset { get; set; } = 300;
+        [Parameter]
+        [Category(CategoryTypes.ScrollToTop.Behavior)]
+        public int TopOffset { get; set; } = 300;
 
         /// <summary>
         /// Smooth or Auto
         /// </summary>
-        [Parameter] public ScrollBehavior ScrollBehavior { get; set; } = ScrollBehavior.Smooth;
+        [Parameter]
+        [Category(CategoryTypes.ScrollToTop.Behavior)]
+        public ScrollBehavior ScrollBehavior { get; set; } = ScrollBehavior.Smooth;
 
         /// <summary>
         /// Called when scroll event is fired
@@ -60,13 +77,15 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+
                 var selector = !string.IsNullOrWhiteSpace(Selector)
                     ? Selector
                     : null;// null is defaulted to document element in JS function
-                ScrollListener.Selector = selector;
+
+                _scrollListener = ScrollListenerFactory.Create(selector);
 
                 //subscribe to event
-                ScrollListener.OnScroll += ScrollListener_OnScroll;
+                _scrollListener.OnScroll += ScrollListener_OnScroll;
             }
         }
 
@@ -101,7 +120,7 @@ namespace MudBlazor
         /// </summary>
         private void OnClick()
         {
-            ScrollManager.ScrollToTopAsync(ScrollListener.Selector, ScrollBehavior);
+            ScrollManager.ScrollToTopAsync(_scrollListener.Selector, ScrollBehavior);
         }
 
         /// <summary>
@@ -109,7 +128,10 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
-            ScrollListener.OnScroll -= ScrollListener_OnScroll;
+            if(_scrollListener == null) { return; }
+
+            _scrollListener.OnScroll -= ScrollListener_OnScroll;
+            _scrollListener.Dispose();
         }
     }
 }

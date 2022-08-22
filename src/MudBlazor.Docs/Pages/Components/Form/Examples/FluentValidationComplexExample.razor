@@ -1,76 +1,71 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using FluentValidation
 
-<div style="max-width: 400px;">
-    <MudCard>
-		<MudForm Model="@model" @ref="@form">
-			<MudCardContent>
+<MudCard>
+	<MudForm Model="@model" @ref="@form" Validation="@(orderValidator.ValidateValue)" ValidationDelay="0">
+		<MudCardContent>
+				<MudTextField @bind-Value="model.Name"                              
+							  For="@(() => model.Name)"
+							  Immediate="true"
+							  Label="Name" />
 
-					<MudTextField @bind-Value="model.Name"
-								  Validation="@(orderValidator.ValidateValue)"
-								  For="@(() => model.Name)"
-								  Immediate="true"
-								  Label="Name" />
+				<MudTextField @bind-Value="model.Email"
+							  For="@(() => model.Email)"
+							  Immediate="true"
+							  Label="Email" />
 
-					<MudTextField @bind-Value="model.Email"
-								  Validation="@(orderValidator.ValidateValue)"
-								  For="@(() => model.Email)"
-								  Immediate="true"
-								  Label="Email" />
+				<MudTextField @bind-Value="model.CCNumber"
+							  For="@(() => model.CCNumber)"
+							  Immediate="true"
+							  Label="Credit card nr" />
 
-					<MudTextField @bind-Value="model.CCNumber"
-								  Validation="@(orderValidator.ValidateValue)"
-								  For="@(() => model.CCNumber)"
-								  Immediate="true"
-								  Label="Credit card nr" />
+				<MudTextField @bind-Value="model.Address.Address"
+							  For="@(() => model.Address.Address)"
+							  Immediate="true"
+							  Label="Address" />
 
-					<MudTextField @bind-Value="model.Address.Address"
-								  Validation="@(orderValidator.ValidateValue)"
-								  For="@(() => model.Address.Address)"
-								  Immediate="true"
-								  Label="Address" />
+				<MudTextField @bind-Value="model.Address.City"
+							  For="@(() => model.Address.City)"
+							  Immediate="true"
+							  Label="City" />
 
-					<MudTextField @bind-Value="model.Address.City"
-								  Validation="@(orderValidator.ValidateValue)"
-								  For="@(() => model.Address.City)"
-								  Immediate="true"
-								  Label="City" />
+				<MudTextField @bind-Value="model.Address.Country"
+							  For="@(() => model.Address.Country)"
+							  Immediate="true"
+							  Label="Country" />
+        </MudCardContent>
+		<MudCardContent Class="pa-0">
 
-					<MudTextField @bind-Value="model.Address.Country"
-								  Validation="@(orderValidator.ValidateValue)"
-								  For="@(() => model.Address.Country)"
-								  Immediate="true"
-								  Label="Country" />
+			<MudTable Items="@model.OrderDetails" Hover="true" Breakpoint="Breakpoint.None" Dense="@true" Elevation="0">
+				<HeaderContent>
+					<MudTh>Description</MudTh>
+					<MudTh>Offer</MudTh>
+				</HeaderContent>
+				<RowTemplate>
+					<MudTd DataLabel="Description">
+						<MudForm Model="@context" Validation=@(orderDetailsValidator.ValidateValue)>
+  							<MudTextField Label="Enter Description" 
+                              @bind-Value="context.Description" 
+                              For="(() => context.Description)" />
+  						</MudForm>
+					</MudTd>
+					<MudTd DataLabel="Offer">
+						<MudForm Model="@context">
+  							<MudNumericField Label="Enter Offer" 
+                                               @bind-Value="context.Offer" 
+                                               Validation=@(orderDetailsValidator.ValidateValue)
+                                               For="(() => context.Offer)" />
+  						</MudForm>
+					</MudTd>
+				</RowTemplate>
+			</MudTable>
 
-			</MudCardContent>
-			<MudCardContent>
-
-				<MudTable Items="@model.OrderDetails" Hover="true" Breakpoint="Breakpoint.None" Dense="@true">
-					<HeaderContent>
-						<MudTh>Description</MudTh>
-						<MudTh>Offer</MudTh>
-					</HeaderContent>
-					<RowTemplate>
-						<MudTd DataLabel="Description">
-							<MudForm Model="@context">
-  								<MudTextField Label="Enter Description" @bind-Value="context.Description" For="(() => context.Description)" Validation=@(orderDetailsValidator.ValidateValue) />
-  							</MudForm>
-						</MudTd>
-						<MudTd DataLabel="Offer">
-							<MudForm Model="@context">
-  								<MudNumericField Label="Enter Offer" @bind-Value="context.Offer" For="(() => context.Offer)" Validation=@(orderDetailsValidator.ValidateValue) />
-  							</MudForm>
-						</MudTd>
-					</RowTemplate>
-				</MudTable>
-
-			</MudCardContent>
-		</MudForm>
-        <MudCardActions>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await Submit())">Order</MudButton>
-        </MudCardActions>
-    </MudCard>
-</div>
+		</MudCardContent>
+	</MudForm>
+    <MudCardActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await Submit())">Order</MudButton>
+    </MudCardActions>
+</MudCard>
 
 @code {
 	[Inject] ISnackbar Snackbar { get; set; }

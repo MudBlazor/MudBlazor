@@ -28,9 +28,9 @@ namespace MudBlazor.UnitTests.Utilities
                 base64compressedCode = Convert.ToBase64String(bytes);
                 //Console.WriteLine(base64compressedCode);
                 urlEncodedBase64compressedCode = Uri.EscapeDataString(base64compressedCode);
-                Console.WriteLine(urlEncodedBase64compressedCode);
-                Console.WriteLine("Length code: " + snippet.Length);
-                Console.WriteLine("Length compressed: " + urlEncodedBase64compressedCode.Length);
+                //Console.WriteLine(urlEncodedBase64compressedCode);
+                //Console.WriteLine("Length code: " + snippet.Length);
+                //Console.WriteLine("Length compressed: " + urlEncodedBase64compressedCode.Length);
             }
             // uncompress
             base64compressedCode = Uri.UnescapeDataString(urlEncodedBase64compressedCode);

@@ -19,9 +19,10 @@
 
 .mud-breadcrumb-item > a {
     display: flex;
+    align-items: center;
 }
 
-.mud-breadcrumb-item > a > svg.mud-svg-icon-root {
+.mud-breadcrumb-item > a > svg.mud-icon-root {
     margin-right: 4px;
     margin-inline-end: 4px;
     margin-inline-start: unset;

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
+using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.Services;
 using NUnit.Framework;
@@ -55,12 +56,12 @@ namespace MudBlazor.UnitTests.Services
         private void SetupJsMockForSubscription(ResizeOptions expectedOptions, Action<ListenForResizeCallbackInfo> callbackInfo = null)
         {
 
-            _jsruntimeMock.Setup(x => x.InvokeAsync<object>("mudResizeListenerFactory.listenForResize",
+            _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize",
                It.Is<object[]>(z =>
                    z[0] is DotNetObjectReference<ResizeService> == true &&
                    (ResizeOptions)z[1] == expectedOptions &&
                    (Guid)z[2] != default
-               ))).ReturnsAsync(new object()).Callback<string, object[]>((x, z) => callbackInfo?.Invoke(new ListenForResizeCallbackInfo(
+               ))).ReturnsAsync(Mock.Of<IJSVoidResult>).Callback<string, object[]>((x, z) => callbackInfo?.Invoke(new ListenForResizeCallbackInfo(
                     (DotNetObjectReference<ResizeService>)z[0],
                     (ResizeOptions)z[1], (Guid)z[2]
                    ))).Verifiable();
@@ -69,10 +70,10 @@ namespace MudBlazor.UnitTests.Services
 
         private void SetupJsMockForUnsubscription(Guid listenerId)
         {
-            _jsruntimeMock.Setup(x => x.InvokeAsync<object>("mudResizeListenerFactory.cancelListener",
+            _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener",
                It.Is<object[]>(z =>
                    (Guid)z[0] == listenerId
-               ))).ReturnsAsync(new object()).Verifiable();
+               ))).ReturnsAsync(Mock.Of<IJSVoidResult>).Verifiable();
         }
 
         private async Task CheckSubscriptionOptions(ResizeOptions expectedOptions)
@@ -377,11 +378,11 @@ namespace MudBlazor.UnitTests.Services
                  }
              };
 
-            _jsruntimeMock.Setup(x => x.InvokeAsync<object>("mudResizeListenerFactory.cancelListeners",
+            _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListeners",
              It.Is<object[]>(z =>
                  z[0] is IEnumerable<Guid> &&
                  idChecker((IEnumerable<Guid>)z[0]) == true
-             ))).ReturnsAsync(new object()).Verifiable();
+             ))).ReturnsAsync(Mock.Of<IJSVoidResult>).Verifiable();
 
             await _service.DisposeAsync();
 
@@ -510,7 +511,7 @@ namespace MudBlazor.UnitTests.Services
 
             Task.WaitAll(tasksToExecute);
 
-            _jsruntimeMock.Verify((x => x.InvokeAsync<object>("mudResizeListenerFactory.cancelListener",
+            _jsruntimeMock.Verify((x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener",
                It.Is<object[]>(z =>
                    (Guid)z[0] == listenerId
                ))), Times.Once());

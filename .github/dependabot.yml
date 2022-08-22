@@ -1,0 +1,7 @@
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/src/"
+    target-branch: "dev"
+    schedule:
+      interval: "weekly"

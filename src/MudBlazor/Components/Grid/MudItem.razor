@@ -22,16 +22,18 @@
     [CascadingParameter]
     private MudGrid Parent { get; set; }
 
-    [Parameter] public int xs { get; set; }
-    [Parameter] public int sm { get; set; }
-    [Parameter] public int md { get; set; }
-    [Parameter] public int lg { get; set; }
-    [Parameter] public int xl { get; set; }
-    [Parameter] public int xxl { get; set; }
+    [Parameter] [Category(CategoryTypes.Item.Behavior)] public int xs { get; set; }
+    [Parameter] [Category(CategoryTypes.Item.Behavior)] public int sm { get; set; }
+    [Parameter] [Category(CategoryTypes.Item.Behavior)] public int md { get; set; }
+    [Parameter] [Category(CategoryTypes.Item.Behavior)] public int lg { get; set; }
+    [Parameter] [Category(CategoryTypes.Item.Behavior)] public int xl { get; set; }
+    [Parameter] [Category(CategoryTypes.Item.Behavior)] public int xxl { get; set; }
 
     // ToDo false,auto,true on all sizes.
 
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public RenderFragment ChildContent { get; set; }
 
     protected override void OnInitialized()
     {

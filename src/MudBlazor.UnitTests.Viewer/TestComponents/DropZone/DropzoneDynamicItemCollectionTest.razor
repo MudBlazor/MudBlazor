@@ -1,0 +1,49 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDropContainer @ref="_container" T="SimpleDropItem"
+				  Items="_items" ItemsSelector="@((item,dropzone) => item.ZoneIdentifier == dropzone)"
+				  Class="d-flex"
+				  DraggingClass="my-special-dragging-class" ItemDraggingClass="my-special-item-dragging-class"
+				  ItemDropped="ItemUpdated">
+	<ChildContent>
+		<MudDropZone T="SimpleDropItem" Identifier="Column 1" Class="first-drop-zone" />
+		<MudDropZone T="SimpleDropItem" Identifier="Column 2" Class="second-drop-zone" />
+	</ChildContent>
+	<ItemRenderer>
+		<MudText>@context.Name</MudText>
+	</ItemRenderer>
+</MudDropContainer>
+
+@code {
+	public class SimpleDropItem
+	{
+		public string Name { get; set; }
+		public string ZoneIdentifier { get; set; }
+
+		public SimpleDropItem(string name, string zoneIdentifier)
+		{
+			Name = name;
+			ZoneIdentifier = zoneIdentifier;
+		}
+	}
+
+	private void ItemUpdated(MudItemDropInfo<SimpleDropItem> dropItem)
+	{
+		dropItem.Item.ZoneIdentifier = dropItem.DropzoneIdentifier;
+	}
+
+	private List<SimpleDropItem> _items = new List<SimpleDropItem>
+			{
+		new SimpleDropItem("1", "Column 1"),
+		new SimpleDropItem("2", "Column 2"),
+		new SimpleDropItem("3", "Column 1"),
+	};
+
+	private MudDropContainer<SimpleDropItem> _container;
+
+	public void AddItem() => _items.Add(new SimpleDropItem($"{_items.Count + 1}",$"Column 2"));
+	public void RemoveLastItem() => _items.RemoveAt(_items.Count - 1);
+
+	public async Task InvokeRefresh() => await InvokeAsync(_container.Refresh);
+
+}

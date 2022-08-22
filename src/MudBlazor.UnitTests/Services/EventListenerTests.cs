@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using NUnit.Framework;
 
@@ -50,11 +51,11 @@ namespace MudBlazor.UnitTests.Services
             Func<Object, Task> callback = (x) => Task.Delay(10);
 
             var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
+             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
              "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
             };
 
-            _runtimeMock.Setup(x => x.InvokeAsync<Object>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
+            _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                     (string)z[0] == eventName &&
                     (string)z[1] == elementId &&
                     (string)z[2] == projectionName &&
@@ -62,13 +63,13 @@ namespace MudBlazor.UnitTests.Services
                     (Guid)z[4] != Guid.Empty &&
                     ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
                     z[6] is DotNetObjectReference<EventListener>
-                ))).ReturnsAsync(true);
+                ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
             var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
 
             result.Should().NotBe(Guid.Empty);
 
-            _runtimeMock.Verify(x => x.InvokeAsync<Object>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
+            _runtimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                 (Guid)z[4] == result
             )));
         }
@@ -107,11 +108,11 @@ namespace MudBlazor.UnitTests.Services
             };
 
             var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
+             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
              "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
             };
 
-            _runtimeMock.Setup(x => x.InvokeAsync<Object>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
+            _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                     (string)z[0] == eventName &&
                     (string)z[1] == elementId &&
                     (string)z[2] == projectionName &&
@@ -119,7 +120,7 @@ namespace MudBlazor.UnitTests.Services
                     (Guid)z[4] != Guid.Empty &&
                     ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
                     z[6] is DotNetObjectReference<EventListener>
-                ))).ReturnsAsync(true);
+                ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
             var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
 
@@ -152,11 +153,11 @@ namespace MudBlazor.UnitTests.Services
             Func<Object, Task> callback = (x) => Task.Delay(10);
 
             var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
+             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
              "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
             };
 
-            _runtimeMock.Setup(x => x.InvokeAsync<Object>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
+            _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                     z.Length == 7 &&
                     (string)z[0] == eventName &&
                     (string)z[1] == elementId &&
@@ -165,15 +166,15 @@ namespace MudBlazor.UnitTests.Services
                     (Guid)z[4] != Guid.Empty &&
                     ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
                     z[6] is DotNetObjectReference<EventListener>
-                ))).ReturnsAsync(true);
+                ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
 
             var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
 
-            _runtimeMock.Setup(x => x.InvokeAsync<Object>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
+            _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
                 z.Length == 1 &&
                 (Guid)z[0] == result
-            ))).ReturnsAsync(true);
+            ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
             result.Should().NotBe(Guid.Empty);
 
@@ -192,11 +193,11 @@ namespace MudBlazor.UnitTests.Services
             Func<Object, Task> callback = (x) => Task.Delay(10);
 
             var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
+             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
              "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
             };
 
-            _runtimeMock.Setup(x => x.InvokeAsync<Object>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
+            _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                     z.Length == 7 &&
                     (string)z[0] == eventName &&
                     (string)z[1] == elementId &&
@@ -205,12 +206,12 @@ namespace MudBlazor.UnitTests.Services
                     (Guid)z[4] != Guid.Empty &&
                     ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
                     z[6] is DotNetObjectReference<EventListener>
-                ))).ReturnsAsync(true);
+                ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
 
             var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
 
-            _runtimeMock.Setup(x => x.InvokeAsync<Object>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
+            _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
                 z.Length == 1 &&
                 (Guid)z[0] == result
             ))).Throws(new InvalidOperationException("something went wrong! :("));
@@ -232,7 +233,7 @@ namespace MudBlazor.UnitTests.Services
             Func<Object, Task> callback = (x) => Task.Delay(10);
 
             var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
+             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
              "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
             };
 
@@ -240,7 +241,7 @@ namespace MudBlazor.UnitTests.Services
             {
                 var elementId = $"my-customer-dom-element-{i}";
 
-                _runtimeMock.Setup(x => x.InvokeAsync<Object>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
+                _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                         z.Length == 7 &&
                         (string)z[0] == eventName &&
                         (string)z[1] == elementId &&
@@ -249,12 +250,12 @@ namespace MudBlazor.UnitTests.Services
                         (Guid)z[4] != Guid.Empty &&
                         ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
                         z[6] is DotNetObjectReference<EventListener>
-                    ))).ReturnsAsync(true);
+                    ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
 
                 var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
 
-                var flow = _runtimeMock.Setup(x => x.InvokeAsync<Object>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
+                var flow = _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
                         z.Length == 1 &&
                         (Guid)z[0] == result
                     )));
@@ -265,7 +266,7 @@ namespace MudBlazor.UnitTests.Services
                 }
                 else
                 {
-                    flow.ReturnsAsync(true);
+                    flow.ReturnsAsync(Mock.Of<IJSVoidResult>);
                 }
             }
 
@@ -277,7 +278,7 @@ namespace MudBlazor.UnitTests.Services
             // a normal dispose shouldnt' change something
             _service.Dispose();
 
-            _runtimeMock.Verify(x => x.InvokeAsync<Object>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
+            _runtimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                 true
             )), Times.Exactly(10));
         }
@@ -292,7 +293,7 @@ namespace MudBlazor.UnitTests.Services
             Func<Object, Task> callback = (x) => Task.Delay(10);
 
             var expectedProperties = new[] {
-             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY",
+             "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
              "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
             };
 
@@ -300,7 +301,7 @@ namespace MudBlazor.UnitTests.Services
             {
                 var elementId = $"my-customer-dom-element-{i}";
 
-                _runtimeMock.Setup(x => x.InvokeAsync<Object>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
+                _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                         z.Length == 7 &&
                         (string)z[0] == eventName &&
                         (string)z[1] == elementId &&
@@ -309,12 +310,12 @@ namespace MudBlazor.UnitTests.Services
                         (Guid)z[4] != Guid.Empty &&
                         ContainsEqual((IEnumerable<string>)z[5], expectedProperties) == true &&
                         z[6] is DotNetObjectReference<EventListener>
-                    ))).ReturnsAsync(true);
+                    ))).ReturnsAsync(Mock.Of<IJSVoidResult>);
 
 
                 var result = await _service.Subscribe<MouseEventArgs>(eventName, elementId, projectionName, throttleInterval, callback);
 
-                var flow = _runtimeMock.Setup(x => x.InvokeAsync<Object>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
+                var flow = _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.unsubscribe", It.Is<object[]>(z =>
                         z.Length == 1 &&
                         (Guid)z[0] == result
                     )));
@@ -325,7 +326,7 @@ namespace MudBlazor.UnitTests.Services
                 }
                 else
                 {
-                    flow.ReturnsAsync(true);
+                    flow.ReturnsAsync(Mock.Of<IJSVoidResult>);
                 }
             }
 
@@ -334,7 +335,7 @@ namespace MudBlazor.UnitTests.Services
             // a second time shouldn't change something
             _service.Dispose();
 
-            _runtimeMock.Verify(x => x.InvokeAsync<Object>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
+            _runtimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                 true
             )), Times.Exactly(10));
         }

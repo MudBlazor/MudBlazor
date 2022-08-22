@@ -26,42 +26,69 @@ namespace MudBlazor
         /// <summary>
         /// Define the dialog title as a renderfragment (overrides Title)
         /// </summary>
-        [Parameter] public RenderFragment TitleContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public RenderFragment TitleContent { get; set; }
 
         /// <summary>
         /// Define the dialog body here
         /// </summary>
-        [Parameter] public RenderFragment DialogContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public RenderFragment DialogContent { get; set; }
 
         /// <summary>
         /// Define the action buttons here
         /// </summary>
-        [Parameter] public RenderFragment DialogActions { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public RenderFragment DialogActions { get; set; }
 
+        /// <summary>
+        /// Default options to pass to Show(), if none are explicitly provided.
+        /// Typically useful on inline dialogs.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Misc)]  // Behavior and Appearance
+        public DialogOptions Options { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public Action OnBackdropClick { get; set; }
+        
         /// <summary>
         /// No padding at the sides
         /// </summary>
-        [Parameter] public bool DisableSidePadding { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public bool DisableSidePadding { get; set; }
 
         /// <summary>
         /// CSS class that will be applied to the dialog content
         /// </summary>
-        [Parameter] public string ClassContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public string ClassContent { get; set; }
 
         /// <summary>
         /// CSS class that will be applied to the action buttons container
         /// </summary>
-        [Parameter] public string ClassActions { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public string ClassActions { get; set; }
 
         /// <summary>
         /// CSS styles to be applied to the dialog content
         /// </summary>
-        [Parameter] public string ContentStyle { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public string ContentStyle { get; set; }
 
         /// <summary>
         /// Bind this two-way to show and close an inlined dialog. Has no effect on opened dialogs
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
         public bool IsVisible
         {
             get => _isVisible;
@@ -70,13 +97,6 @@ namespace MudBlazor
                 if (_isVisible == value)
                     return;
                 _isVisible = value;
-                if (IsInline)
-                {
-                    if (_isVisible)
-                        Show();
-                    else
-                        Close();
-                }
                 IsVisibleChanged.InvokeAsync(value);
             }
         }
@@ -86,6 +106,14 @@ namespace MudBlazor
         /// Raised when the inline dialog's display status changes.
         /// </summary>
         [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
+
+
+        /// <summary>
+        /// Define the dialog title as a renderfragment (overrides Title)
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public DefaultFocus DefaultFocus { get; set; }
 
         private bool IsInline => DialogInstance == null;
 
@@ -105,14 +133,18 @@ namespace MudBlazor
                 Close();
             var parameters = new DialogParameters()
             {
+                [nameof(Class)] = Class,
+                [nameof(Style)] = Style,
+                [nameof(Tag)] = Tag,
                 [nameof(TitleContent)] = TitleContent,
                 [nameof(DialogContent)] = DialogContent,
                 [nameof(DialogActions)] = DialogActions,
                 [nameof(DisableSidePadding)] = DisableSidePadding,
                 [nameof(ClassContent)] = ClassContent,
                 [nameof(ClassActions)] = ClassActions,
+                [nameof(ContentStyle)] = ContentStyle,
             };
-            _reference = DialogService.Show<MudDialog>(title, parameters, options);
+            _reference = DialogService.Show<MudDialog>(title, parameters, options ?? Options);
             _reference.Result.ContinueWith(t =>
             {
                 _isVisible = false;
@@ -123,8 +155,20 @@ namespace MudBlazor
 
         protected override void OnAfterRender(bool firstRender)
         {
-            if (IsInline && _reference != null)
-                (_reference.Dialog as MudDialog)?.ForceUpdate(); // forward render update to instance
+            if (IsInline)
+            {
+                if (_isVisible && _reference == null)
+                {
+                    Show(); // if isVisible and we don't have any reference we need to call Show
+                }
+                else if (_reference != null)
+                {
+                    if (IsVisible)
+                        (_reference.Dialog as MudDialog)?.ForceUpdate(); // forward render update to instance
+                    else
+                        Close(); // if we still have reference but it's not visible call Close
+                }
+            }
             base.OnAfterRender(firstRender);
         }
 

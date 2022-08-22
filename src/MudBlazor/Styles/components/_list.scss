@@ -56,7 +56,7 @@
         background-color: var(--mud-palette-action-default-hover);
     }
 
-    &:focus {
+    &:focus:not(.mud-selected-item) {
         background-color: var(--mud-palette-action-default-hover);
     }
 }

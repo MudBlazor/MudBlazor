@@ -22,10 +22,9 @@ namespace MudBlazor.Docs.Services
         {
 
             Register(menuService.Api);//this also registers components
-            Register(menuService.GettingStarted);
             Register(menuService.Customization);
             Register(menuService.Features);
-            Register(menuService.About);
+            Register(menuService.Utilities);
 
         }
 
@@ -80,7 +79,7 @@ namespace MudBlazor.Docs.Services
                 RegisterPage(
                 title: item.Name,
                 subtitle: $"{item.ComponentName} usage examples",
-                componentType: item.Component,
+                componentType: item.Type,
                 link: $"components/{item.Link}"
                 );
 
@@ -88,8 +87,8 @@ namespace MudBlazor.Docs.Services
                 RegisterPage(
                     title: item.ComponentName,
                     subtitle: $"API documentation",
-                    componentType: item.Component,
-                    link: ApiLink.GetApiLinkFor(item.Component)
+                    componentType: item.Type,
+                    link: ApiLink.GetApiLinkFor(item.Type)
                     );
             }
 

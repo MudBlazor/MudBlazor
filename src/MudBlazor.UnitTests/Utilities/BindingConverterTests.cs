@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2022
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Globalization;
 using FluentAssertions;
 using NUnit.Framework;
@@ -181,13 +185,13 @@ namespace MudBlazor.UnitTests.Utilities
         public void DefaultConverterTestWithCustomFormat()
         {
             var float1 = new DefaultConverter<float>() { Format = "0.00" };
-            float1.Culture = new CultureInfo("en-US");
+            float1.Culture = new CultureInfo("en-US", false);
             float1.Set(1.7f).Should().Be("1.70");
             float1.Set(1.773f).Should().Be("1.77");
             float1.Get("1.773").Should().Be(1.773f);
             float1.Get("1.77").Should().Be(1.77f);
             float1.Get("1.7").Should().Be(1.7f);
-            float1.Culture = new CultureInfo("pt-BR");
+            float1.Culture = new CultureInfo("pt-BR", false);
             float1.Set(1.7f).Should().Be("1,70");
             float1.Set(1.773f).Should().Be("1,77");
             float1.Get("1,773").Should().Be(1.773f);
@@ -195,7 +199,7 @@ namespace MudBlazor.UnitTests.Utilities
             float1.Get("1,7").Should().Be(1.7f);
 
             var float2 = new DefaultConverter<float?>() { Format = "0.00" };
-            float2.Culture = new CultureInfo("en-US");
+            float2.Culture = new CultureInfo("en-US", false);
             float2.Set(1.7f).Should().Be("1.70");
             float2.Set(1.773f).Should().Be("1.77");
             float2.Set(null).Should().Be(null);
@@ -203,7 +207,7 @@ namespace MudBlazor.UnitTests.Utilities
             float2.Get("1.77").Should().Be(1.77f);
             float2.Get("1.7").Should().Be(1.7f);
             float2.Get(null).Should().Be(null);
-            float2.Culture = new CultureInfo("pt-BR");
+            float2.Culture = new CultureInfo("pt-BR", false);
             float2.Set(1.7f).Should().Be("1,70");
             float2.Set(1.773f).Should().Be("1,77");
             float2.Get("1,773").Should().Be(1.773f);
@@ -211,13 +215,13 @@ namespace MudBlazor.UnitTests.Utilities
             float2.Get("1,7").Should().Be(1.7f);
 
             var dbl1 = new DefaultConverter<double>() { Format = "0.00" };
-            dbl1.Culture = new CultureInfo("en-US");
+            dbl1.Culture = new CultureInfo("en-US", false);
             dbl1.Set(1.7d).Should().Be("1.70");
             dbl1.Set(1.773d).Should().Be("1.77");
             dbl1.Get("1.773").Should().Be(1.773d);
             dbl1.Get("1.77").Should().Be(1.77d);
             dbl1.Get("1.7").Should().Be(1.7d);
-            dbl1.Culture = new CultureInfo("pt-BR");
+            dbl1.Culture = new CultureInfo("pt-BR", false);
             dbl1.Set(1.7d).Should().Be("1,70");
             dbl1.Set(1.773d).Should().Be("1,77");
             dbl1.Get("1,773").Should().Be(1.773d);
@@ -225,7 +229,7 @@ namespace MudBlazor.UnitTests.Utilities
             dbl1.Get("1,7").Should().Be(1.7d);
 
             var dbl2 = new DefaultConverter<double?>() { Format = "0.00" };
-            dbl2.Culture = new CultureInfo("en-US");
+            dbl2.Culture = new CultureInfo("en-US", false);
             dbl2.Set(1.7d).Should().Be("1.70");
             dbl2.Set(1.773d).Should().Be("1.77");
             dbl2.Set(null).Should().Be(null);
@@ -233,7 +237,7 @@ namespace MudBlazor.UnitTests.Utilities
             dbl2.Get("1.77").Should().Be(1.77d);
             dbl2.Get("1.7").Should().Be(1.7d);
             dbl2.Get(null).Should().Be(null);
-            dbl2.Culture = new CultureInfo("pt-BR");
+            dbl2.Culture = new CultureInfo("pt-BR", false);
             dbl2.Set(1.7d).Should().Be("1,70");
             dbl2.Set(1.773d).Should().Be("1,77");
             dbl2.Get("1,773").Should().Be(1.773d);
@@ -241,13 +245,13 @@ namespace MudBlazor.UnitTests.Utilities
             dbl2.Get("1,7").Should().Be(1.7d);
 
             var dec1 = new DefaultConverter<decimal>() { Format = "0.00" };
-            dec1.Culture = new CultureInfo("en-US");
+            dec1.Culture = new CultureInfo("en-US", false);
             dec1.Set(1.7m).Should().Be("1.70");
             dec1.Set(1.773m).Should().Be("1.77");
             dec1.Get("1.773").Should().Be(1.773m);
             dec1.Get("1.77").Should().Be(1.77m);
             dec1.Get("1.7").Should().Be(1.7m);
-            dec1.Culture = new CultureInfo("pt-BR");
+            dec1.Culture = new CultureInfo("pt-BR", false);
             dec1.Set(1.7m).Should().Be("1,70");
             dec1.Set(1.773m).Should().Be("1,77");
             dec1.Get("1,773").Should().Be(1.773m);
@@ -255,7 +259,7 @@ namespace MudBlazor.UnitTests.Utilities
             dec1.Get("1,7").Should().Be(1.7m);
 
             var dec2 = new DefaultConverter<decimal?>() { Format = "0.00" };
-            dec2.Culture = new CultureInfo("en-US");
+            dec2.Culture = new CultureInfo("en-US", false);
             dec2.Set(1.7m).Should().Be("1.70");
             dec2.Set(1.773m).Should().Be("1.77");
             dec2.Set(null).Should().Be(null);
@@ -263,7 +267,7 @@ namespace MudBlazor.UnitTests.Utilities
             dec2.Get("1.77").Should().Be(1.77m);
             dec2.Get("1.7").Should().Be(1.7m);
             dec2.Get(null).Should().Be(null);
-            dec2.Culture = new CultureInfo("pt-BR");
+            dec2.Culture = new CultureInfo("pt-BR", false);
             dec2.Set(1.7m).Should().Be("1,70");
             dec2.Set(1.773m).Should().Be("1,77");
             dec2.Get("1,773").Should().Be(1.773m);
@@ -271,21 +275,21 @@ namespace MudBlazor.UnitTests.Utilities
             dec2.Get("1,7").Should().Be(1.7m);
 
             var dt1 = new DefaultConverter<DateTime>() { Format = "MM/dd/yyyy" };
-            dt1.Culture = new CultureInfo("en-US");
+            dt1.Culture = new CultureInfo("en-US", false);
             dt1.Set(new DateTime(2020, 11, 03)).Should().Be("11/03/2020");
             dt1.Get("11/03/2020").Should().Be(new DateTime(2020, 11, 03));
-            dt1.Culture = new CultureInfo("pt-BR");
+            dt1.Culture = new CultureInfo("pt-BR", false);
             dt1.Format = "dd/MM/yyyy";
             dt1.Set(new DateTime(2020, 11, 03)).Should().Be("03/11/2020");
             dt1.Get("03/11/2020").Should().Be(new DateTime(2020, 11, 03));
 
             var dt2 = new DefaultConverter<DateTime?>() { Format = "MM/dd/yyyy" };
-            dt2.Culture = new CultureInfo("en-US");
+            dt2.Culture = new CultureInfo("en-US", false);
             dt2.Set(new DateTime(2020, 11, 03)).Should().Be("11/03/2020");
             dt2.Set(null).Should().Be(null);
             dt2.Get("11/03/2020").Should().Be(new DateTime(2020, 11, 03));
             dt2.Get(null).Should().Be(null);
-            dt2.Culture = new CultureInfo("pt-BR");
+            dt2.Culture = new CultureInfo("pt-BR", false);
             dt2.Format = "dd/MM/yyyy";
             dt2.Set(new DateTime(2020, 11, 03)).Should().Be("03/11/2020");
             dt2.Get("03/11/2020").Should().Be(new DateTime(2020, 11, 03));
@@ -295,22 +299,22 @@ namespace MudBlazor.UnitTests.Utilities
         public void DateTimeConvertersTest()
         {
             var dt1 = new DateConverter("dd/MM/yyyy");
-            dt1.Culture = new CultureInfo("pt-BR");
+            dt1.Culture = new CultureInfo("pt-BR", false);
             dt1.Set(new DateTime(2020, 11, 2)).Should().Be("02/11/2020");
             dt1.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
             var dt2 = new NullableDateConverter("dd/MM/yyyy");
-            dt2.Culture = new CultureInfo("pt-BR");
+            dt2.Culture = new CultureInfo("pt-BR", false);
             dt2.Set(new DateTime(2020, 11, 2)).Should().Be("02/11/2020");
             dt2.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
             dt2.Set(null).Should().Be(null);
             dt2.Get(null).Should().Be(null);
 
             var dt3 = new DateConverter("dd/MM/yyyy");
-            dt3.Culture = new CultureInfo("de-AT");
+            dt3.Culture = new CultureInfo("de-AT", false);
             dt3.Set(new DateTime(2020, 11, 2)).Should().Be("02.11.2020");
             dt3.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
             var dt4 = new NullableDateConverter("dd/MM/yyyy");
-            dt4.Culture = new CultureInfo("de-AT");
+            dt4.Culture = new CultureInfo("de-AT", false);
             dt4.Set(new DateTime(2020, 11, 2)).Should().Be("02.11.2020");
             dt4.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
             dt4.Set(null).Should().Be(null);
@@ -446,196 +450,31 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void NumericBoundariesConverterTest()
+        public void DefaultConverterOverrideTest()
         {
-            Func<int, int> funcInt = (int i) => i;//Not testing test the function, return the parameter
-            Func<double?, double?> funcDbl = (double? d) => d;//Not testing test the function, return the parameter
-
-            //Note: Set doesn't do anything. The Get can change the value
-            var c1 = new NumericBoundariesConverter<int>(funcInt);
-            c1.Set("hello").Should().Be("hello");
-            c1.Get("hello").Should().Be(null);
-            c1.GetError.Should().Be(true);
-            c1.GetErrorMessage.Should().Be("Not a valid number");
-            c1.Set("").Should().Be("");
-            c1.Get("").Should().Be(null);
-            c1.GetError.Should().Be(false);
-            c1.GetErrorMessage.Should().BeNull();
-            c1.Get(null).Should().Be(null);
-            c1.Set(null).Should().Be(null);
-            c1.GetError.Should().Be(false);
-            c1.GetErrorMessage.Should().BeNull();
-            c1.Get("0").Should().Be("0");
-            c1.Set("0").Should().Be("0");
-            c1.GetError.Should().Be(false);
-            c1.GetErrorMessage.Should().BeNull();
-            c1.Get("-2").Should().Be("-2");
-            c1.Set("-2").Should().Be("-2");
-            c1.GetError.Should().Be(false);
-            c1.GetErrorMessage.Should().BeNull();
-            c1.Set("1.5").Should().Be("1.5");
-            c1.GetError.Should().Be(false);
-            c1.GetErrorMessage.Should().BeNull();
-            c1.Get("1.5").Should().Be(null);
-            c1.GetError.Should().Be(true);
-            c1.GetErrorMessage.Should().Be("Not a valid number");
-            var c3 = new NumericBoundariesConverter<double?>(funcDbl) { Culture = CultureInfo.InvariantCulture };
-            c3.Set("1.7").Should().Be("1.7");
-            c3.Get("1.7").Should().Be("1.7");
-            c3.GetError.Should().Be(false);
-            c3.GetErrorMessage.Should().BeNull();
-            c3.Get("1234567.15").Should().Be("1234567.15");
-            c3.Set("1234567.15").Should().Be("1234567.15");
-            c3.GetError.Should().Be(false);
-            c3.GetErrorMessage.Should().BeNull();
-            c3.Set(c3.Get("1,234,567.15")).Should().Be("1234567.15");
-            c3.GetError.Should().Be(false);
-            c3.GetErrorMessage.Should().BeNull();
-            c3.Get(c3.Set("1,234,567.15")).Should().Be("1234567.15");
-            c3.GetError.Should().Be(false);
-            c3.GetErrorMessage.Should().BeNull();
-            c3.Set(".5").Should().Be(".5");
-            c3.Get(".5").Should().Be("0.5");
-            c3.GetError.Should().Be(false);
-            c3.GetErrorMessage.Should().BeNull();
-            c3.Set("1.").Should().Be("1.");
-            c3.GetError.Should().Be(false);
-            c3.GetErrorMessage.Should().BeNull();
-            c3.Get("1.").Should().Be("1");
-            c3.GetError.Should().Be(false);
-            c3.GetErrorMessage.Should().BeNull();
-            c3.Culture = CultureInfo.GetCultureInfo("de-AT");
-            c3.Set("1,7").Should().Be("1,7");
-            c3.Get("1,7").Should().Be("1,7");
-            c3.GetError.Should().Be(false);
-            c3.GetErrorMessage.Should().BeNull();
-            c3.Set("1.7").Should().Be("1.7");
-            c3.Get("1.7").Should().Be("17");//Changes from 1.7 to 17 because the dot is a valid grouping symbol
-            c3.GetError.Should().Be(false);
-            c3.GetErrorMessage.Should().BeNull();
-            c3.Get("1,").Should().Be("1");
-            c3.GetError.Should().Be(false);
-            c3.GetErrorMessage.Should().BeNull();
-            c3.Get(c3.Set("1.234.567,15")).Should().Be("1234567,15");
-            c3.GetError.Should().Be(false);
-            c3.GetErrorMessage.Should().BeNull();
-            var c4 = new NumericBoundariesConverter<bool>((b) => b);
-            c4.Set("true").Should().Be("true");
-            c4.Get("true").Should().Be(null);
-            c4.GetError.Should().Be(true);
-            c4.GetErrorMessage.Should().Be($"Conversion to type {typeof(bool)} not implemented");
+            var conv = new MyTestConverter();
+            conv.Set(null).Should().Be("nada");
+            conv.Get("nada").Should().Be(null);
+            conv.Set(18).Should().Be("18");
+            conv.Get("18").Should().Be(18);
         }
 
-        [Test]
-        public void NumericBoundariesConverter_FunctionTest()
+        // a custom converter used only in test cases
+        private class MyTestConverter : DefaultConverter<int?>
         {
-            var c10 = new NumericBoundariesConverter<sbyte>((i) => (sbyte)-i) { Culture = CultureInfo.InvariantCulture };
-            c10.Set("123").Should().Be("123");
-            c10.Get("123").Should().Be("-123");
-            var c11 = new NumericBoundariesConverter<sbyte?>((i) => (sbyte?)-i) { Culture = CultureInfo.InvariantCulture };
-            c11.Set("123").Should().Be("123");
-            c11.Get("123").Should().Be("-123");
-            c11.Set(null).Should().Be(null);
-            c11.Get(null).Should().Be(null);
-            var c12 = new NumericBoundariesConverter<byte>((i) => (byte)(i - 1)) { Culture = CultureInfo.InvariantCulture };
-            c12.Set("234").Should().Be("234");
-            c12.Get("234").Should().Be("233");
-            var c13 = new NumericBoundariesConverter<byte?>((i) => (byte?)(i - 1)) { Culture = CultureInfo.InvariantCulture };
-            c13.Set("234").Should().Be("234");
-            c13.Get("234").Should().Be("233");
-            c13.Set(null).Should().Be(null);
-            c13.Get(null).Should().Be(null);
-            var c14 = new NumericBoundariesConverter<short>((i) => (short)-i) { Culture = CultureInfo.InvariantCulture };
-            c14.Set("1234").Should().Be("1234");
-            c14.Get("1234").Should().Be("-1234");
-            var c15 = new NumericBoundariesConverter<short?>((i) => (short?)-i) { Culture = CultureInfo.InvariantCulture };
-            c15.Set("1234").Should().Be("1234");
-            c15.Get("1234").Should().Be("-1234");
-            c15.Set(null).Should().Be(null);
-            c15.Get(null).Should().Be(null);
-            var c16 = new NumericBoundariesConverter<ushort>((i) => (ushort)(i - 1)) { Culture = CultureInfo.InvariantCulture };
-            c16.Set("12345").Should().Be("12345");
-            c16.Get("12345").Should().Be("12344");
-            var c17 = new NumericBoundariesConverter<ushort?>((i) => (ushort?)(i - 1)) { Culture = CultureInfo.InvariantCulture };
-            c17.Set("12345").Should().Be("12345");
-            c17.Get("12345").Should().Be("12344");
-            c17.Set(null).Should().Be(null);
-            c17.Get(null).Should().Be(null);
-            var c18 = new NumericBoundariesConverter<int>((i) => -i) { Culture = CultureInfo.InvariantCulture };
-            c18.Set("34567").Should().Be("34567");
-            c18.Get("34567").Should().Be("-34567");
-            var c19 = new NumericBoundariesConverter<int?>((i) => -i) { Culture = CultureInfo.InvariantCulture };
-            c19.Set("34567").Should().Be("34567");
-            c19.Get("34567").Should().Be("-34567");
-            c19.Set(null).Should().Be(null);
-            c19.Get(null).Should().Be(null);
-            var c20 = new NumericBoundariesConverter<uint>((i) => i - 1) { Culture = CultureInfo.InvariantCulture };
-            c20.Set("45678").Should().Be("45678");
-            c20.Get("45678").Should().Be("45677");
-            var c21 = new NumericBoundariesConverter<uint?>((i) => i - 1) { Culture = CultureInfo.InvariantCulture };
-            c21.Set("45678").Should().Be("45678");
-            c21.Get("45678").Should().Be("45677");
-            c21.Set(null).Should().Be(null);
-            c21.Get(null).Should().Be(null);
-            var c22 = new NumericBoundariesConverter<long>((i) => -i) { Culture = CultureInfo.InvariantCulture };
-            c22.Set("456789").Should().Be("456789");
-            c22.Get("456789").Should().Be("-456789");
-            var c23 = new NumericBoundariesConverter<long?>((i) => -i) { Culture = CultureInfo.InvariantCulture };
-            c23.Set("456789").Should().Be("456789");
-            c23.Get("456789").Should().Be("-456789");
-            c23.Set(null).Should().Be(null);
-            c23.Get(null).Should().Be(null);
-            var c24 = new NumericBoundariesConverter<ulong>((i) => i - 1) { Culture = CultureInfo.InvariantCulture };
-            c24.Set("4567890").Should().Be("4567890");
-            c24.Get("4567890").Should().Be("4567889");
-            var c25 = new NumericBoundariesConverter<ulong?>((i) => i - 1) { Culture = CultureInfo.InvariantCulture };
-            c25.Set("4567890").Should().Be("4567890");
-            c25.Get("4567890").Should().Be("4567889");
-            c25.Set(null).Should().Be(null);
-            c25.Get(null).Should().Be(null);
-            var c26 = new NumericBoundariesConverter<float>((i) => -i) { Culture = CultureInfo.InvariantCulture };
-            c26.Set("456789").Should().Be("456789");
-            c26.Get("456789").Should().Be("-456789");
-            var c27 = new NumericBoundariesConverter<float?>((i) => -i) { Culture = CultureInfo.InvariantCulture };
-            c27.Set("45,678.9").Should().Be("45,678.9");
-            c27.Get("45,678.9").Should().Be("-45678.9");
-            c27.Set(null).Should().Be(null);
-            c27.Get(null).Should().Be(null);
-            var c28 = new NumericBoundariesConverter<double>((i) => -i) { Culture = CultureInfo.InvariantCulture };
-            c28.Set("45,678.9").Should().Be("45,678.9");
-            c28.Get("45678.9").Should().Be("-45678.9");
-            var c29 = new NumericBoundariesConverter<double?>((i) => -i) { Culture = CultureInfo.InvariantCulture };
-            c29.Set("45,678.9").Should().Be("45,678.9");
-            c29.Get("45,678.9").Should().Be("-45678.9");
-            c29.Set(null).Should().Be(null);
-            c29.Get(null).Should().Be(null);
-            var c30 = new NumericBoundariesConverter<decimal>((i) => -i) { Culture = CultureInfo.InvariantCulture };
-            c30.Set("45,678.9").Should().Be("45,678.9");
-            c30.Get("45678.9").Should().Be("-45678.9");
-            var c31 = new NumericBoundariesConverter<decimal?>((i) => -i) { Culture = CultureInfo.InvariantCulture };
-            c31.Set("45,678.9").Should().Be("45,678.9");
-            c31.Get("45,678.9").Should().Be("-45678.9");
-            c31.Set(null).Should().Be(null);
-            c31.Get(null).Should().Be(null);
-        }
-
-        [Test]
-        public void NumericBoundariesConverter_FormatTest()
-        {
-            var c1 = new NumericBoundariesConverter<double>((i) => i)
+            protected override int? ConvertFromString(string value)
             {
-                Culture = CultureInfo.InvariantCulture,
-                Format = "F3"
-            };
-            c1.Set("1,234,567.15").Should().Be("1,234,567.15");
-            c1.GetError.Should().Be(false);
-            c1.GetErrorMessage.Should().BeNull();
-            c1.Get("1,234,567.15").Should().Be("1234567.150");
-            c1.GetError.Should().Be(false);
-            c1.GetErrorMessage.Should().BeNull();
-            c1.Get(Math.PI.ToString(c1.Culture)).Should().Be(Math.PI.ToString("F3", c1.Culture));
-            c1.GetError.Should().Be(false);
-            c1.GetErrorMessage.Should().BeNull();
+                if (value == "nada")
+                    return null;
+                return base.ConvertFromString(value);
+            }
+
+            protected override string ConvertToString(int? arg)
+            {
+                if (arg == null)
+                    return "nada";
+                return base.ConvertToString(arg);
+            }
         }
     }
 }

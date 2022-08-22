@@ -56,6 +56,10 @@ namespace MudBlazor
         /// The ErrorText that will be displayed if Error true
         /// </summary>
         [Parameter] public string ErrorText { get; set; }
+        /// <summary>
+        /// The ErrorId that will be used by aria-describedby if Error true
+        /// </summary>
+        [Parameter] public string ErrorId { get; set; }
 
         /// <summary>
         /// The HelperText will be displayed below the text field.
@@ -92,5 +96,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
 
+        /// <summary>
+        /// If string has value the label "for" attribute will be added.
+        /// </summary>
+        [Parameter] public string ForId { get; set; } = string.Empty;
     }
 }

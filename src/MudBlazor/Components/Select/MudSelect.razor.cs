@@ -18,17 +18,18 @@ namespace MudBlazor
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect, IMudShadowSelect
     {
         private HashSet<T> _selectedValues = new HashSet<T>();
+        private IEqualityComparer<T> _comparer;
         private bool _dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
+        private IKeyInterceptor _keyInterceptor;
 
         protected string Classname =>
             new CssBuilder("mud-select")
             .AddClass(Class)
             .Build();
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
-
+        [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
         [Inject] IScrollManager ScrollManager { get; set; }
 
         private string _elementId = "select_" + Guid.NewGuid().ToString().Substring(0, 8);
@@ -73,15 +74,16 @@ namespace MudBlazor
                 }
             }
             await _elementReference.SetText(Text);
-            if (item != null)
-                await ScrollManager.ScrollToListItemAsync(item.ItemId, direction, true);
+            await ScrollToItemAsync(item);
         }
-
-        private async Task SelectFirstItem(string startChar=null)
+        private ValueTask ScrollToItemAsync(MudSelectItem<T> item)
+            =>item != null? ScrollManager.ScrollToListItemAsync(item.ItemId): ValueTask.CompletedTask;
+        private async Task SelectFirstItem(string startChar = null)
         {
             if (_items == null || _items.Count == 0)
                 return;
             var items = _items.Where(x => !x.Disabled);
+            var firstItem = items.FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(startChar))
             {
                 // find first item that starts with the letter
@@ -109,7 +111,7 @@ namespace MudBlazor
                 HilightItem(item);
             }
             await _elementReference.SetText(Text);
-            await ScrollManager.ScrollToListItemAsync(item.ItemId, -1, true);
+            await ScrollToItemAsync(item);
         }
 
         private async Task SelectLastItem()
@@ -131,23 +133,40 @@ namespace MudBlazor
                 HilightItem(item);
             }
             await _elementReference.SetText(Text);
-            await ScrollManager.ScrollToListItemAsync(item.ItemId, 1, true);
+            await ScrollToItemAsync(item);
         }
+
+        /// <summary>
+        /// Fired when dropdown opens.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        [Parameter] public EventCallback OnOpen { get; set; }
+
+        /// <summary>
+        /// Fired when dropdown closes.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        [Parameter] public EventCallback OnClose { get; set; }
 
         /// <summary>
         /// Add the MudSelectItems here
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// User class names for the popover, separated by space
         /// </summary>
-        [Parameter] public string PopoverClass { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string PopoverClass { get; set; }
 
         /// <summary>
         /// If true, compact vertical padding will be applied to all Select items.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
         public bool Dense
         {
             get { return _dense; }
@@ -157,22 +176,30 @@ namespace MudBlazor
         /// <summary>
         /// The Open Select Icon
         /// </summary>
-        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
         /// The Close Select Icon
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
         /// If set to true and the MultiSelection option is set to true, a "select all" checkbox is added at the top of the list of items.
         /// </summary>
-        [Parameter] public bool SelectAll { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool SelectAll { get; set; }
 
         /// <summary>
         /// Define the text of the Select All option.
         /// </summary>
-        [Parameter] public string SelectAllText { get; set; } = "Select all";
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string SelectAllText { get; set; } = "Select all";
 
         /// <summary>
         /// Fires when SelectedValues changes.
@@ -182,31 +209,36 @@ namespace MudBlazor
         /// <summary>
         /// Function to define a customized multiselection text.
         /// </summary>
-        [Parameter] public Func<List<string>, string> MultiSelectionTextFunc { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public Func<List<string>, string> MultiSelectionTextFunc { get; set; }
 
         /// <summary>
         /// Parameter to define the delimited string separator.
         /// </summary>
-        [Parameter] public string Delimiter { get; set; } = ", ";
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string Delimiter { get; set; } = ", ";
 
         /// <summary>
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
         public IEnumerable<T> SelectedValues
         {
             get
             {
                 if (_selectedValues == null)
-                    _selectedValues = new HashSet<T>();
+                    _selectedValues = new HashSet<T>(_comparer);
                 return _selectedValues;
             }
             set
             {
-                var set = value ?? new HashSet<T>();
+                var set = value ?? new HashSet<T>(_comparer);
                 if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
                     return;
-                _selectedValues = new HashSet<T>(set);
+                _selectedValues = new HashSet<T>(set, _comparer);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
@@ -221,12 +253,29 @@ namespace MudBlazor
                     }
                     else
                     {
-                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue:false).AndForget();
+                        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false).AndForget();
                     }
                 }
-                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
+                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer));
                 if (MultiSelection && typeof(T) == typeof(string))
                     SetValueAsync((T)(object)Text, updateText: false).AndForget();
+            }
+        }
+
+        /// <summary>
+        /// The Comparer to use for comparing selected values internally.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public IEqualityComparer<T> Comparer
+        {
+            get => _comparer;
+            set
+            {
+                _comparer = value;
+                // Apply comparer and refresh selected values
+                _selectedValues = new HashSet<T>(_selectedValues, _comparer);
+                SelectedValues = _selectedValues;
             }
         }
 
@@ -238,6 +287,7 @@ namespace MudBlazor
         /// Defines how values are displayed in the drop-down list
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
         public Func<T, string> ToStringFunc
         {
             get => _toStringFunc;
@@ -364,7 +414,14 @@ namespace MudBlazor
         /// <summary>
         /// If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown
         /// </summary>
-        [Parameter] public bool MultiSelection { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool MultiSelection { get; set; }
+
+        /// <summary>
+        /// The collection of items within this select
+        /// </summary>
+        public IReadOnlyList<MudSelectItem<T>> Items => _items;
 
         protected internal List<MudSelectItem<T>> _items = new();
         protected Dictionary<T, MudSelectItem<T>> _valueLookup = new();
@@ -381,6 +438,7 @@ namespace MudBlazor
             if (!_items.Select(x => x.Value).Contains(item.Value))
             {
                 _items.Add(item);
+
                 if (item.Value != null)
                 {
                     _valueLookup[item.Value] = item;
@@ -406,37 +464,43 @@ namespace MudBlazor
         /// <summary>
         /// Sets the maxheight the Select can have when open.
         /// </summary>
-        [Parameter] public int MaxHeight { get; set; } = 300;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public int MaxHeight { get; set; } = 300;
 
         /// <summary>
         /// Set the anchor origin point to determen where the popover will open from.
         /// </summary>
-        [Parameter] public Origin AnchorOrigin { get; set; } = Origin.TopCenter;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public Origin AnchorOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
         /// Sets the transform origin point for the popover.
         /// </summary>
-        [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopCenter;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
         /// Sets the direction the Select menu should open.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("Direction is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the Select menu will open either before or after the input (left/right).
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetX is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the Select menu will open either before or after the input (top/bottom).
         /// </summary>
         /// [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetY is obsolete. Use AnchorOrigin or TransformOrigin instead!", false)]
+        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
@@ -444,17 +508,23 @@ namespace MudBlazor
         /// This can be useful if Value is bound to a variable which is initialized to a value which is not in the list
         /// and you want the Select to show the label / placeholder instead.
         /// </summary>
-        [Parameter] public bool Strict { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Strict { get; set; }
 
         /// <summary>
         /// Show clear button.
         /// </summary>
-        [Parameter] public bool Clearable { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Clearable { get; set; } = false;
 
         /// <summary>
         /// If true, prevent scrolling while dropdown is open.
         /// </summary>
-        [Parameter] public bool LockScroll { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool LockScroll { get; set; } = false;
 
         /// <summary>
         /// Button click event for clear button. Called after text and value has been cleared.
@@ -464,46 +534,6 @@ namespace MudBlazor
         internal bool _isOpen;
 
         public string _currentIcon { get; set; }
-
-        internal Origin _anchorOrigin;
-        internal Origin _transformOrigin;
-
-#pragma warning disable CS0618 // This is for backwards compability until Obsolete is removed
-        [ExcludeFromCodeCoverage]
-        private void GetPopoverOrigins()
-        {
-            if (Direction != Direction.Bottom || OffsetY || OffsetX)
-            {
-                switch (Direction)
-                {
-                    case Direction.Bottom when OffsetY:
-                    case Direction.Top when OffsetY:
-                        _anchorOrigin = Origin.BottomCenter;
-                        _transformOrigin = Origin.TopCenter;
-                        break;
-                    case Direction.Top when !OffsetY:
-                        _anchorOrigin = Origin.BottomCenter;
-                        _transformOrigin = Origin.BottomCenter;
-                        break;
-                    case Direction.Start when OffsetX:
-                    case Direction.Left when OffsetX:
-                        _anchorOrigin = Origin.TopLeft;
-                        _transformOrigin = Origin.TopRight;
-                        break;
-                    case Direction.End when OffsetX:
-                    case Direction.Right when OffsetX:
-                        _anchorOrigin = Origin.TopRight;
-                        _transformOrigin = Origin.TopLeft;
-                        break;
-                }
-            }
-            else
-            {
-                _anchorOrigin = AnchorOrigin;
-                _transformOrigin = TransformOrigin;
-            }
-        }
-#pragma warning restore CS0618 // Type or member is obsolete
 
         public async Task SelectOption(int index)
         {
@@ -544,8 +574,8 @@ namespace MudBlazor
             else
             {
                 // single selection
-                _isOpen = false;
-                UpdateIcon();
+                // CloseMenu(true) doesn't close popover in BSS
+                await CloseMenu(false);
 
                 if (EqualityComparer<T>.Default.Equals(Value, value))
                 {
@@ -557,13 +587,13 @@ namespace MudBlazor
                 _elementReference.SetText(Text).AndForget();
                 _selectedValues.Clear();
                 _selectedValues.Add(value);
-                HilightItemForValue(value);
             }
 
+            HilightItemForValue(value);
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T)(object)Text, updateText: false);
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
 
         private async void HilightItemForValue(T value)
@@ -637,6 +667,20 @@ namespace MudBlazor
             UpdateIcon();
             StateHasChanged();
             await HilightSelectedValue();
+            //Scroll the active item on each opening
+            if (_activeItemId != null)
+            {
+                var index = _items.FindIndex(x => x.ItemId == (string)_activeItemId);
+                if (index > 0)
+                {
+                    var item = _items[index];
+                    await ScrollToItemAsync(item);
+                }
+            }
+            //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
+
+            await OnOpen.InvokeAsync();
         }
 
         public async Task CloseMenu(bool focusAgain = true)
@@ -647,9 +691,14 @@ namespace MudBlazor
             {
                 StateHasChanged();
                 await OnBlur.InvokeAsync(new FocusEventArgs());
-                _elementReference.FocusAsync().AndForget();
+                _elementReference.FocusAsync().AndForget(TaskOption.Safe);
                 StateHasChanged();
             }
+
+            //enable escape propagation: the select popover was closed, now underlying components are allowed to handle escape key
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+
+            await OnClose.InvokeAsync();
         }
 
         private void UpdateIcon()
@@ -666,7 +715,6 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            GetPopoverOrigins(); // Just to keep Obsolete functional until removed.
             UpdateIcon();
         }
 
@@ -674,9 +722,11 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _keyInterceptor = KeyInterceptorFactory.Create();
+
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
-                    EnableLogging = true,
+                    //EnableLogging = true,
                     TargetClass = "mud-input-control",
                     Keys = {
                         new KeyOptions { Key=" ", PreventDown = "key+none" }, //prevent scrolling page, toggle open/close
@@ -684,6 +734,7 @@ namespace MudBlazor
                         new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead hilight next item
                         new KeyOptions { Key="Home", PreventDown = "key+none" },
                         new KeyOptions { Key="End", PreventDown = "key+none" },
+                        new KeyOptions { Key="Escape" },
                         new KeyOptions { Key="Enter", PreventDown = "key+none" },
                         new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
                         new KeyOptions { Key="a", PreventDown = "key+ctrl" }, // select all items instead of all page text
@@ -692,8 +743,9 @@ namespace MudBlazor
                     },
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
-                _keyInterceptor.KeyUp += HandleKeyUp;
+                _keyInterceptor.KeyUp += HandleKeyUp;    
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -707,6 +759,11 @@ namespace MudBlazor
         public override ValueTask FocusAsync()
         {
             return _elementReference.FocusAsync();
+        }
+
+        public override ValueTask BlurAsync()
+        {
+            return _elementReference.BlurAsync();
         }
 
         public override ValueTask SelectAsync()
@@ -755,17 +812,23 @@ namespace MudBlazor
         /// <summary>
         /// Custom checked icon.
         /// </summary>
-        [Parameter] public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
 
         /// <summary>
         /// Custom unchecked icon.
         /// </summary>
-        [Parameter] public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
 
         /// <summary>
         /// Custom indeterminate icon.
         /// </summary>
-        [Parameter] public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
         /// <summary>
         /// The checkbox icon reflects the select all option's state
@@ -892,7 +955,7 @@ namespace MudBlazor
         }
 
         [ExcludeFromCodeCoverage]
-        [Obsolete("Use Clear() instead")]
+        [Obsolete("Use Clear instead.", true)]
         public Task ClearAsync() => Clear();
 
         /// <summary>
@@ -928,8 +991,8 @@ namespace MudBlazor
         {
             if (!MultiSelection)
                 return;
-            var selectedValues = new HashSet<T>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value));
-            _selectedValues=  new HashSet<T>(selectedValues);
+            var selectedValues = new HashSet<T>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), _comparer);
+            _selectedValues = new HashSet<T>(selectedValues, _comparer);
             if (MultiSelectionTextFunc != null)
             {
                 await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
@@ -962,14 +1025,45 @@ namespace MudBlazor
             _shadowLookup.Remove(item.Value);
         }
 
-        private void OnLostFocus(FocusEventArgs obj)
+        internal void OnLostFocus(FocusEventArgs obj)
         {
             if (_isOpen)
             {
                 // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
                 // otherwise we can't receive key strokes any longer
-                _elementReference.FocusAsync().AndForget();
+                _elementReference.FocusAsync().AndForget(TaskOption.Safe);
             }
+            base.OnBlur.InvokeAsync(obj);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                if (_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDown;
+                    _keyInterceptor.KeyUp -= HandleKeyUp;
+
+                    _keyInterceptor.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Fixes issue #4328
+        /// Returns true when MultiSelection is true and it has selected values(Since Value property is not used when MultiSelection=true
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns>True when component has a value</returns>
+        protected override bool HasValue(T value)
+        {
+            if (MultiSelection)
+                return SelectedValues?.Count() > 0;
+            else
+                return base.HasValue(value);
         }
     }
 }

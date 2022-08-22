@@ -10,110 +10,109 @@
             <SectionHeader Title="Basic">
                 <Description>Basic TreeView, icon button with hover and click to expand sub items.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="TreeViewBasicExample">
                 <TreeViewBasicExample />
             </SectionContent>
-            <SectionSource Code="TreeViewBasicExample" GitHubFolderName="Tree" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Hoverable">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="TreeViewHoverExample" ShowCode="false">
                 <TreeViewHoverExample />
             </SectionContent>
-            <SectionSource Code="TreeViewHoverExample" GitHubFolderName="Tree" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Dense">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="TreeViewDenseExample" ShowCode="false">
                 <TreeViewDenseExample />
             </SectionContent>
-            <SectionSource Code="TreeViewDenseExample" GitHubFolderName="Tree" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Expand">
                 <Description>With <CodeInline>ExpandOnClick</CodeInline> bool the whole item row can be clicked to expand/collapse the sub trees.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="TreeViewExpandOnClickExample" ShowCode="false">
                 <TreeViewExpandOnClickExample />
             </SectionContent>
-            <SectionSource Code="TreeViewExpandOnClickExample" GitHubFolderName="Tree" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Expand on double click">
+                <Description>With <CodeInline>ExpandOnDoubleClick</CodeInline>, similar to ExpandOnClick, double clicking on the whole item row will expand/collapse the sub trees.
+                Additionally, <CodeInline>OnDoubleClick</CodeInline> callback can be assigned to set a custom double click behaviour. </Description>
+            </SectionHeader>
+            <SectionContent Code="TreeViewExpandOnDoubleClickExample" ShowCode="false">
+                <TreeViewExpandOnDoubleClickExample />
+            </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Icons">
                 <Description>The icons and the color of the icon can be changed individualy per item.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="TreeViewIconExample" ShowCode="false">
                 <TreeViewIconExample />
             </SectionContent>
-            <SectionSource Code="TreeViewIconExample" GitHubFolderName="Tree" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Selection">
                 <Description>Use <CodeInline>@@bind-SelectedValue</CodeInline> on the TreeView to select a single item.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="TreeViewSelectedExample" ShowCode="false">
                 <TreeViewSelectedExample />
             </SectionContent>
-            <SectionSource Code="TreeViewSelectedExample" GitHubFolderName="Tree" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Selected Color">
                 <Description>The color of the selected item can be changed with <CodeInline>Color</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="TreeViewSelectedColorExample" ShowCode="false">
                 <TreeViewSelectedColorExample />
             </SectionContent>
-            <SectionSource Code="TreeViewSelectedColorExample" GitHubFolderName="Tree" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Multiselect">
                 <Description>If you set <CodeInline>MultiSelection</CodeInline> to true, you can select multiple values and they are returned as <CodeInline>HashSet&lt;T></CodeInline> via SelectedValues.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="TreeViewMultiSelectionExample" ShowCode="false">
                 <TreeViewMultiSelectionExample />
             </SectionContent>
-            <SectionSource Code="TreeViewMultiSelectionExample" GitHubFolderName="Tree" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Multiselect Color">
                 <Description>The color of the checkboxes when <CodeInline>MultiSelection</CodeInline> is set to true can be changed with <CodeInline>CheckBoxColor</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="TreeViewMultiSelecttionColorExample" ShowCode="false">
                 <TreeViewMultiSelecttionColorExample />
             </SectionContent>
-            <SectionSource Code="TreeViewMultiSelecttionColorExample" GitHubFolderName="Tree" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="ItemTemplate">
                 <Description>This example shows how to use ItemTemplate to automatically build the tree items according to a hierarchical data structure.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="TreeViewItemTemplateExample" ShowCode="false">
                 <TreeViewItemTemplateExample />
             </SectionContent>
-            <SectionSource Code="TreeViewItemTemplateExample" GitHubFolderName="Tree" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Server Side Data">
                 <Description>Data can be loaded on demand with the use of <CodeInline>ServerData</CodeInline> prop, the loading icon and its color can be changed with <CodeInline>LoadingIcon</CodeInline> and <CodeInline>LoadingIconColor</CodeInline> prop.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="TreeViewServerExample" ShowCode="false">
                 <TreeViewServerExample />
             </SectionContent>
-            <SectionSource Code="TreeViewServerExample" GitHubFolderName="Tree" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -123,10 +122,21 @@
                     Use the <CodeInline>Height</CodeInline> or <CodeInline>MaxHeight</CodeInline> parameters to scroll the treeview.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="TreeViewCustomExample" ShowCode="false">
                 <TreeViewCustomExample />
             </SectionContent>
-            <SectionSource Code="TreeViewCustomExample" GitHubFolderName="Tree" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Checkbox Behavior">
+                <Description>
+                    You can use the <CodeInline>Content</CodeInline> property to support custom checkbox behavior such as automatically checking a parent item when all 
+                    children are selected.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Code="TreeViewCustomCheckboxExample">
+                <TreeViewCustomCheckboxExample />
+            </SectionContent>
         </DocsPageSection>
 
     </DocsPageContent>

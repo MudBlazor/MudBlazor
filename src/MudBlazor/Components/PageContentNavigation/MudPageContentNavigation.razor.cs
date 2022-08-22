@@ -14,8 +14,9 @@ namespace MudBlazor
     public partial class MudPageContentNavigation : IAsyncDisposable
     {
         private List<MudPageContentSection> _sections = new();
+        private IScrollSpy _scrollSpy;
 
-        [Inject] IScrollSpy ScrollSpy { get; set; }
+        [Inject] IScrollSpyFactory ScrollSpyFactory { get; set; }
 
         /// <summary>
         /// The displayed section within the MudPageContentNavigation
@@ -38,6 +39,16 @@ namespace MudBlazor
         [Parameter] public string SectionClassSelector { get; set; } = string.Empty;
 
         /// <summary>
+        /// If there are mutliple levels, this can specified to make a mapping between a level class likw "second-level" and the level in the hierarchy
+        /// </summary>
+        [Parameter] public IDictionary<string, int> HierarchyMapper { get; set; } = new Dictionary<string, int>();
+
+        /// <summary>
+        /// If there are multiple levels, this property controls they visibility of them.
+        /// </summary>
+        [Parameter] public ContentNavigationExpandBehaviour ExpandBehaviour { get; set; } = ContentNavigationExpandBehaviour.Always;
+
+        /// <summary>
         /// If this option is true the first added section will become active when there is no other indication of an active session. Default value is false  
         /// </summary>
         [Parameter] public bool ActivateFirstSectionAsDefault { get; set; } = false;
@@ -45,7 +56,7 @@ namespace MudBlazor
         private Task OnNavLinkClick(string id)
         {
             SelectActiveSection(id);
-            return ScrollSpy.ScrollToSection(id);
+            return _scrollSpy.ScrollToSection(id);
         }
 
         private void ScrollSpy_ScrollSectionSectionCentered(object sender, ScrollSectionCenteredEventArgs e) =>
@@ -70,7 +81,11 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private string GetNavLinkClass(bool active) => new CssBuilder("page-content-navigation-navlink").AddClass("active", active).Build();
+        private string GetNavLinkClass(MudPageContentSection section) => new CssBuilder("page-content-navigation-navlink")
+            .AddClass("active", section.IsActive)
+            .AddClass($"navigation-level-{section.Level}")
+            .Build();
+        
         private string GetPanelClass() => new CssBuilder("page-content-navigation").AddClass(Class).Build();
 
         /// <summary>
@@ -78,7 +93,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="uri">The uri containing the fragment to scroll</param>
         /// <returns>A task that completes when the viewport has scrolled</returns>
-        public Task ScrollToSection(Uri uri) => ScrollSpy.ScrollToSection(uri);
+        public Task ScrollToSection(Uri uri) => _scrollSpy.ScrollToSection(uri);
 
         /// <summary>
         /// Add a section to the content navigation
@@ -87,6 +102,8 @@ namespace MudBlazor
         /// <param name="sectionId">id of the section. It will be appending to the current url, if the section becomes active</param>
         /// <param name="forceUpdate">If true, StateHasChanged is called, forcing a rerender of the component</param>
         public void AddSection(string sectionName, string sectionId, bool forceUpdate) => AddSection(new(sectionName, sectionId), forceUpdate);
+
+        private Dictionary<MudPageContentSection, MudPageContentSection> _parentMapper = new();
 
         /// <summary>
         /// Add a section to the content navigation
@@ -97,14 +114,22 @@ namespace MudBlazor
         {
             _sections.Add(section);
 
-            if (section.Id == ScrollSpy.CenteredSection)
+            int diffRootLevel = 1_000_000;
+            int counter = 0;
+            foreach (var item in _sections.Where(x => x.Parent == null))
+            {
+                item.SetLevelStructure(counter, diffRootLevel);
+                counter += diffRootLevel;
+            }
+
+            if (section.Id == _scrollSpy.CenteredSection)
             {
                 section.Activate();
             }
             else if (_sections.Count == 1 && ActivateFirstSectionAsDefault == true)
             {
                 section.Activate();
-                ScrollSpy.SetSectionAsActive(section.Id).AndForget();
+                _scrollSpy.SetSectionAsActive(section.Id).AndForget();
             }
 
             if (forceUpdate == true)
@@ -113,30 +138,40 @@ namespace MudBlazor
             }
         }
 
+
         /// <summary>
         /// Rerender the component
         /// </summary>
         public void Update() => StateHasChanged();
+        
+        protected override void OnInitialized()
+        {
+            _scrollSpy = ScrollSpyFactory.Create();
+        }
+        
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                ScrollSpy.ScrollSectionSectionCentered += ScrollSpy_ScrollSectionSectionCentered;
+                
+                _scrollSpy.ScrollSectionSectionCentered += ScrollSpy_ScrollSectionSectionCentered;
 
                 if (string.IsNullOrEmpty(SectionClassSelector) == false)
                 {
-                    await ScrollSpy.StartSpying(SectionClassSelector);
+                    await _scrollSpy.StartSpying(SectionClassSelector);
                 }
 
-                SelectActiveSection(ScrollSpy.CenteredSection);
+                SelectActiveSection(_scrollSpy.CenteredSection);
             }
         }
 
         public ValueTask DisposeAsync()
         {
-            ScrollSpy.ScrollSectionSectionCentered -= ScrollSpy_ScrollSectionSectionCentered;
-            return ScrollSpy.DisposeAsync();
+            if (_scrollSpy == null) { return ValueTask.CompletedTask; }
+
+            _scrollSpy.ScrollSectionSectionCentered -= ScrollSpy_ScrollSectionSectionCentered;
+            return _scrollSpy.DisposeAsync();
         }
     }
 }

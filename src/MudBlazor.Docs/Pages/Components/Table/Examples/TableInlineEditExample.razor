@@ -1,23 +1,32 @@
-﻿﻿@using System.Net.Http.Json
+﻿@using System.Net.Http.Json
 @using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 @inject ISnackbar Snackbar
 
-<MudTable Items="@Elements" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selectedItem1" SortLabel="Sort By" 
- CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" RowEditCommit="ItemHasBeenCommitted">
+<MudTable Items="@Elements" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<Element,bool>(FilterFunc)"
+          @bind-SelectedItem="selectedItem1" SortLabel="Sort By" CommitEditTooltip="Commit Edit"
+          OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues"
+          RowEditCommit="ItemHasBeenCommitted" IsEditRowSwitchingBlocked="@blockSwitch" ApplyButtonPosition="@applyButtonPosition">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudSpacer />
         <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <ColGroup>
-        <col style="width:50px;" />
+		@if(applyButtonPosition.DisplayApplyButtonAtStart())
+		{
+			<col style="width:50px;" />
+		}
+		<col style="width:50px;" />
         <col style="width:80px;" />
         <col style="width:50%;" />
         <col />
         <col />
-        <col style="width:50px;" />
+		@if (applyButtonPosition.DisplayApplyButtonAtEnd())
+		{
+			<col style="width:50px;" />
+		}
     </ColGroup>
     <HeaderContent>
         <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Number)">Nr</MudTableSortLabel></MudTh>
@@ -57,38 +66,41 @@
 <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
 <MudSwitch @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
 <MudSwitch @bind-Checked="@canCancelEdit" Color="Color.Info">Can Cancel Edit</MudSwitch>
+<MudSwitch @bind-Checked="@blockSwitch" Color="Color.Success">Block Edit Row Switching</MudSwitch>
+<MudSelect Label="Apply Button Postion" T="TableApplyButtonPosition" @bind-Value="applyButtonPosition">
+	<MudSelectItem Value="TableApplyButtonPosition.Start">Start</MudSelectItem>
+	<MudSelectItem Value="TableApplyButtonPosition.End">End</MudSelectItem>
+	<MudSelectItem Value="TableApplyButtonPosition.StartAndEnd">Start and End</MudSelectItem>
+</MudSelect>
 <MudText Inline="true">Selected1: @selectedItem1?.Name</MudText>
-<MudText Inline="true">Selected2: @selectedItem2?.Name</MudText>
 
 <MudExpansionPanels Style="flex: 1;">
     <MudExpansionPanel Text="Show inline-edit event log">
         @foreach (var message in editEvents)
         {
-            <MudText>@message</MudText>
-        }
-        @if(editEvents.Count > 0) {
-            <div class="d-flex">
-                <MudSpacer/>
-                <MudButton Class="mt-3" ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="ClearEventLog">Clear event log</MudButton>
-            </div>
-        }
+<MudText>@message</MudText>}
+        @if (editEvents.Count > 0)
+        {
+<div class="d-flex">
+    <MudSpacer />
+    <MudButton Class="mt-3" ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="ClearEventLog">Clear event log</MudButton>
+</div>}
     </MudExpansionPanel>
 </MudExpansionPanels>
 
 @code {
-    private List<string> editEvents = new();
-    private bool dense = false;
-    private bool hover = true;
-    private bool ronly = false;
-    private bool canCancelEdit = false;
-    private string searchString = "";
-    private Element selectedItem1 = null;
-    private Element selectedItem2 = null;
-    private Element elementBeforeEdit;
-    private HashSet<Element> selectedItems1 = new HashSet<Element>();
-    private HashSet<Element> selectedItems2 = new HashSet<Element>();
-
-    private IEnumerable<Element> Elements = new List<Element>();
+	private List<string> editEvents = new();
+	private bool dense = false;
+	private bool hover = true;
+	private bool ronly = false;
+	private bool canCancelEdit = false;
+	private bool blockSwitch = false;
+	private string searchString = "";
+	private Element selectedItem1 = null;
+	private Element elementBeforeEdit;
+	private HashSet<Element> selectedItems1 = new HashSet<Element>();
+	private TableApplyButtonPosition applyButtonPosition = TableApplyButtonPosition.End;
+	private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -109,7 +121,7 @@
     private void BackupItem(object element)
     {
         elementBeforeEdit = new()
-        {            
+        {
             Sign = ((Element)element).Sign,
             Name = ((Element)element).Name,
             Molar = ((Element)element).Molar,
@@ -143,5 +155,5 @@
         if ($"{element.Number} {element.Position} {element.Molar}".Contains(searchString))
             return true;
         return false;
-    }
+    } 
 }

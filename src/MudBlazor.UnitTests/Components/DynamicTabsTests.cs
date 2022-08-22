@@ -19,11 +19,15 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class DynamicTabsTests : BunitTest
     {
+        public override void Setup()
+        {
+            base.Setup();
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), new MockResizeObserverFactory()));
+        }
+
         [Test]
         public async Task DefaultValues()
         {
-            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
-
             var comp = Context.RenderComponent<MudDynamicTabs>();
             var tabs = comp.Instance;
 
@@ -53,10 +57,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task BasicParameters()
         {
-            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
-
             var comp = Context.RenderComponent<SimpleDynamicTabsTest>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             // three panels three close icons;
             var closeButtons = comp.FindAll(".my-close-icon-class");
@@ -92,10 +94,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task BasicParameters_WithToolTips()
         {
-            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
-
             var comp = Context.RenderComponent<SimpleDynamicTabsTestWithToolTips>();
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             // three panels three close icons;
             var closeButtons = comp.FindAll(".my-close-icon-class");
@@ -119,10 +119,8 @@ namespace MudBlazor.UnitTests.Components
 
                 var toolTip = comp.Find($"#popovercontent-{popoverId}");
 
-                toolTip.ChildNodes.Should().ContainSingle();
-
-                toolTip.Children[0].ClassList.Should().StartWith(new string[] { "mud-tooltip" });
-                toolTip.Children[0].TextContent.Should().Be("close here");
+                toolTip.ClassList.Should().Contain(new string[] { "mud-tooltip" });
+                toolTip.TextContent.Should().Be("close here");
 
                 await item.ParentElement.TriggerEventAsync("onmouseleave", new MouseEventArgs());
 
@@ -149,10 +147,8 @@ namespace MudBlazor.UnitTests.Components
 
                 var toolTip = comp.Find($"#popovercontent-{popoverId}");
 
-                toolTip.ChildNodes.Should().ContainSingle();
-
-                toolTip.Children[0].ClassList.Should().StartWith(new string[] { "mud-tooltip" });
-                toolTip.Children[0].TextContent.Should().Be("add here");
+                toolTip.ClassList.Should().Contain(new string[] { "mud-tooltip" });
+                toolTip.TextContent.Should().Be("add here");
 
                 await item.ParentElement.TriggerEventAsync("onmouseleave", new MouseEventArgs());
             }
@@ -161,10 +157,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TestInteractions_AddTab()
         {
-            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
             var comp = Context.RenderComponent<SimpleDynamicTabsInteractionTest>();
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var addButton = comp.Find(".my-add-icon-class");
             addButton.Click();
@@ -176,10 +171,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TestInteractions_RemoveTab()
         {
-            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
             var comp = Context.RenderComponent<SimpleDynamicTabsInteractionTest>();
 
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             for (var i = 0; i < 3; i++)
             {

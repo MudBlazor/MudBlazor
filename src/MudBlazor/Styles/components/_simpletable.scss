@@ -52,14 +52,7 @@
 .mud-simple-table.mud-table-dense {
     & * tr {
         & td, th {
-            padding: 6px 24px 6px 16px;
-            padding-inline-start: 16px;
-            padding-inline-end: 24px;
-        }
-
-        & td, th:last-child {
-            padding-right: 16px;
-            padding-inline-end: 16px;
+            padding: 6px 16px;
         }
     }
 }
@@ -114,6 +107,10 @@
         thead {
             & * th:first-child {
                 border-radius: var(--mud-default-borderradius) 0 0 0;
+            }
+
+            & * th:last-child {
+                border-radius: 0 var(--mud-default-borderradius) 0 0;
             }
 
             & * th {

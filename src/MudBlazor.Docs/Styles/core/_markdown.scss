@@ -1,14 +1,14 @@
-﻿.mud-codeblock {
+﻿
+
+.mud-codeblock {
     height: 100%;
-    background-color: var(--mud-palette-black);
-    border-radius: var(--mud-default-borderradius);
-    padding: 16px;
+    padding: 24px;
     overflow: auto;
 
     & pre {
         height: 100%;
-        color: #ededed;
-        padding: 0px;
+        color: var(--mud-palette-text-primary);
+        padding: 0;
         font-size: 1em;
         font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
         -webkit-font-smoothing: subpixel-antialiased;
@@ -18,52 +18,63 @@
     & .html + .csharp {
         margin-top: 23px;
     }
+}
 
-    & .html {
-
+.mud-codeblock {
+    & .html, .codearea {
+        mark {
+          font-weight: 600;
+          color: var(--mud-palette-primary);
+          background-color: var(--mud-palette-action-default-hover);
+          border-radius: 2px;
+          padding: 1px 3px;
+          margin: 0 0 0 2px;
+          user-select: all;
+        }
         & .htmlTagDelimiter {
             color: #979797;
         }
 
         & .htmlElementName {
-            color: #988ef1;
+            color: var(--mud-palette-primary);
+            font-weight: 600;
         }
 
         & .htmlAttributeName {
-            color: #27b5b5;
+            color: #8323d8;
         }
 
         & .htmlOperator, .quot {
-            color: #c8c8c8;
+            color: #737373;
         }
 
         & .htmlAttributeValue {
-            color: #ededed;
+            color: #ff4081;
         }
 
         & .htmlLink {
-            color: #61afef;
+            color: #ff4081;
             text-decoration: underline;
         }
 
         & .enum {
-            color: #b4eb8f;
-            background-color: rgba(255,255,255,0.15);
+            color: #00c853;
+            background-color: var(--mud-palette-grey-light);
         }
 
         & .enumValue, .sharpVariable {
-            color: #ededed;
-            background-color: rgba(255,255,255,0.15);
+            color: var(--mud-palette-text-primary);
+            background-color: var(--mud-palette-grey-light);
         }
 
         & .keyword {
-            color: #61afef;
-            background-color: rgba(255,255,255,0.15);
+            color: #2196f3;
+            background-color: var(--mud-palette-grey-light);
         }
 
         & .atSign {
-            color: #000;
-            background-color: #d2d295;
+            color: var(--mud-palette-text-primary);
+            background-color: var(--mud-palette-grey-light);
         }
 
         & .comment {
@@ -73,32 +84,32 @@
 
     & .csharp {
         & .atSign {
-            color: #000;
-            background-color: #d2d295;
+            color: var(--mud-palette-text-primary);
+            background-color: var(--mud-palette-grey-light);
         }
 
         & .keyword {
-            color: #569cd6;
+            color: var(--mud-palette-primary);
         }
 
         & .string {
-            color: #d69d85;
+            color: #e68c32;
         }
 
         & .function {
-            color: #dcdcaa;
+            color: #ff9800;
         }
 
         & .class {
-            color: #4ec9b0
+            color: #1ec8a5;
         }
 
         & .localVar {
-            color: #9cdcfe;
+            color: #2196f3;
         }
 
         & .interface {
-            color: #b0d7a3;
+            color: #ff4081;
         }
 
         & .number {
@@ -114,3 +125,101 @@
         }
     }
 }
+
+.mud-landingpage-editor {
+  & .html, .codearea {
+
+    & .htmlTagDelimiter {
+      color: #979797;
+    }
+
+    & .htmlElementName {
+      color: #988ef1;
+    }
+
+    & .htmlAttributeName {
+      color: #27b5b5;
+    }
+
+    & .htmlOperator, .quot {
+      color: #c8c8c8;
+    }
+
+    & .htmlAttributeValue {
+      color: #ededed;
+    }
+
+    & .htmlLink {
+      color: #61afef;
+      text-decoration: underline;
+    }
+
+    & .enum {
+      color: #b4eb8f;
+      background-color: rgba(255,255,255,0.15);
+    }
+
+    & .enumValue, .sharpVariable {
+      color: #ededed;
+      background-color: rgba(255,255,255,0.15);
+    }
+
+    & .keyword {
+      color: #61afef;
+      background-color: rgba(255,255,255,0.15);
+    }
+
+    & .atSign {
+      color: #000;
+      background-color: #d2d295;
+    }
+
+    & .comment {
+      color: #57a64a;
+    }
+  }
+
+  & .csharp {
+    & .atSign {
+      color: #000;
+      background-color: #d2d295;
+    }
+
+    & .keyword {
+      color: #569cd6;
+    }
+
+    & .string {
+      color: #d69d85;
+    }
+
+    & .function {
+      color: #dcdcaa;
+    }
+
+    & .class {
+      color: #4ec9b0
+    }
+
+    & .localVar {
+      color: #9cdcfe;
+    }
+
+    & .interface {
+      color: #b0d7a3;
+    }
+
+    & .number {
+      color: #b0d7a3;
+    }
+
+    & .enum {
+      color: #b4eb8f;
+    }
+
+    & .comment {
+      color: #57a64a;
+    }
+  }
+}
+

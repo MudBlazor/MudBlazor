@@ -1,10 +1,8 @@
-﻿
-<div @attributes="UserAttributes" class="docs-page-section">
-    @ChildContent
-</div>
 
-@code {
-    [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
-}
+<CascadingValue Value="this" IsFixed="true">
+    <QueuedContent RenderImmediately="_renderImmediately">
+        <div @attributes="UserAttributes" class="docs-page-section">
+            @ChildContent
+        </div>
+    </QueuedContent>
+</CascadingValue>

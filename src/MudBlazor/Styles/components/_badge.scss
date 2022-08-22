@@ -81,9 +81,14 @@
     top: auto;
     transition: .3s cubic-bezier(.25,.8,.5,1);
     white-space: nowrap;
+  
+    &.mud-badge-default {
+      color: var(--mud-palette-text-primary);
+      background-color: var(--mud-palette-grey-light);
+    }
 
     &.mud-badge-bordered {
-        border-color: inherit;
+        border-color: var(--mud-palette-surface);
         border-style: solid;
         border-width: 2px;
         padding: 3px 4px;
@@ -125,38 +130,36 @@
 
         &-top {
             &.left {
-                transform: translate(-75%, -75%);
+                inset: auto calc(100% - 4px) calc(100% - 4px) auto;
 
                 &.mud-badge-overlap {
-                    transform: translate(-35%, -35%);
+                    inset: auto calc(100% - 12px) calc(100% - 12px) auto;
                 }
             }
 
             &.center {
-                transform: translateY(-75%);
+                bottom: calc(100% - 4px);
 
                 &.mud-badge-overlap {
-                    transform: translateY(-35%);
+                    bottom: calc(100% - 12px);
                 }
             }
 
             &.right {
-                transform: translate(75%, -75%);
+                inset: auto auto calc(100% - 4px) calc(100% - 4px);
 
                 &.mud-badge-overlap {
-                    transform: translate(35%, -35%);
+                    inset: auto auto calc(100% - 12px) calc(100% - 12px);
                 }
             }
         }
 
         &-center {
-
-
             &.left {
-                transform: translateX(-75%);
+                right: calc(100% - 4px);
 
                 &.mud-badge-overlap {
-                    transform: translateX(-35%);
+                    right: calc(100% - 12px);
                 }
             }
 
@@ -164,36 +167,36 @@
             }
 
             &.right {
-                transform: translateX(75%);
+                left: calc(100% - 4px);
 
                 &.mud-badge-overlap {
-                    transform: translateX(35%);
+                    left: calc(100% - 12px);
                 }
             }
         }
 
         &-bottom {
             &.left {
-                transform: translate(-75%, 75%);
+                inset: calc(100% - 4px) calc(100% - 4px) auto auto;
 
                 &.mud-badge-overlap {
-                    transform: translate(-35%, 35%);
+                    inset: calc(100% - 12px) calc(100% - 12px) auto auto;
                 }
             }
 
             &.center {
-                transform: translateY(75%);
+                top: calc(100% - 4px);
 
                 &.mud-badge-overlap {
-                    transform: translateY(35%);
+                    top: calc(100% - 12px);
                 }
             }
 
             &.right {
-                transform: translate(75%, 75%);
+                inset: calc(100% - 4px) auto auto calc(100% - 4px);
 
                 &.mud-badge-overlap {
-                    transform: translate(35%, 35%);
+                    inset: calc(100% - 12px) auto auto calc(100% - 12px);
                 }
             }
         }

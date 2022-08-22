@@ -13,5 +13,7 @@
         .AddClass(Class)
      .Build();
 
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.MainContent.Behavior)]
+    public RenderFragment ChildContent { get; set; }
 }

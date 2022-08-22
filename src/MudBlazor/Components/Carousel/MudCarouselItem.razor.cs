@@ -37,6 +37,7 @@ namespace MudBlazor
                          .Build();
 
         [Parameter]
+        [Category(CategoryTypes.Carousel.Behavior)]
         public RenderFragment ChildContent { get; set; }
 
         [CascadingParameter] protected internal MudBaseItemsControl<MudCarouselItem> Parent { get; set; }
@@ -46,22 +47,30 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The transition effect of the component.
         /// </summary>
-        [Parameter] public Transition Transition { get; set; } = Transition.Slide;
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public Transition Transition { get; set; } = Transition.Slide;
 
         /// <summary>
         /// The name of custom transition on entrance time
         /// </summary>
-        [Parameter] public string CustomTransitionEnter { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public string CustomTransitionEnter { get; set; }
 
         /// <summary>
         /// The name of custom transition on exiting time
         /// </summary>
-        [Parameter] public string CustomTransitionExit { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public string CustomTransitionExit { get; set; }
 
 
         public bool IsVisible => Parent != null && (Parent.LastContainer == this || Parent.SelectedIndex == Parent.Items.IndexOf(this));
@@ -69,7 +78,7 @@ namespace MudBlazor
 
         protected override Task OnInitializedAsync()
         {
-            Parent?.Items.Add(this);
+            Parent?.AddItem(this);
             return Task.CompletedTask;
         }
 

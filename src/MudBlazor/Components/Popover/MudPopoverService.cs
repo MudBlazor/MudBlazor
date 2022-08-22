@@ -4,12 +4,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -24,18 +27,21 @@ namespace MudBlazor
 
     public class MudPopoverHandler
     {
-        private IJSRuntime _runtime;
+        private readonly SemaphoreSlim _semaphore = new(1, 1);
+        private readonly IJSRuntime _runtime;
         private readonly Action _updater;
-        private bool _locked;
+        private bool _detached;
 
-        public Guid Id { get; init; }
+        public Guid Id { get; }
         public RenderFragment Fragment { get; private set; }
         public bool IsConnected { get; private set; }
         public string Class { get; private set; }
         public string Style { get; private set; }
         public object Tag { get; private set; }
         public bool ShowContent { get; private set; }
+        public DateTime? ActivationDate { get; private set; }
         public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
+        public MudRender ElementReference { get; set; }
 
         public MudPopoverHandler(RenderFragment fragment, IJSRuntime jsInterop, Action updater)
         {
@@ -52,6 +58,14 @@ namespace MudBlazor
             Tag = componentBase.Tag;
             UserAttributes = componentBase.UserAttributes;
             ShowContent = showContent;
+            if (showContent == true)
+            {
+                ActivationDate = DateTime.Now;
+            }
+            else
+            {
+                ActivationDate = null;
+            }
         }
 
         public void UpdateFragment(RenderFragment fragment,
@@ -59,38 +73,64 @@ namespace MudBlazor
         {
             Fragment = fragment;
             SetComponentBaseParameters(componentBase, @class, @style, showContent);
-            if (_locked == false)
-            {
-                _locked = true;
-                _updater.Invoke();
-            }
+            // this basically calls StateHasChanged on the Popover
+            ElementReference?.ForceRender();
+            _updater?.Invoke(); // <-- this doesn't do anything anymore except making unit tests happy 
         }
 
         public async Task Initialize()
         {
-            await _runtime.InvokeVoidAsync("mudPopover.connect", Id);
-            IsConnected = true;
+            await _semaphore.WaitAsync();
+            try
+            {
+                if (_detached)
+                {
+                    // If _detached is True, it means Detach() was invoked before Initialize() has had
+                    // a chance to run. In this case, we just want to return and not do anything else
+                    // otherwise we will end up with a memory leak.
+                    return;
+                }
+
+                IsConnected = await _runtime.InvokeVoidAsyncWithErrorHandling("mudPopover.connect", Id); ;
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         public async Task Detach()
         {
-            await _runtime.InvokeVoidAsync("mudPopover.disconnect", Id);
-            IsConnected = false;
+            await _semaphore.WaitAsync();
+            try
+            {
+                _detached = true;
+
+                if (IsConnected)
+                {
+                    await _runtime.InvokeVoidAsyncWithErrorHandling("mudPopover.disconnect", Id);
+                }
+            }
+            finally
+            {
+                IsConnected = false;
+                _semaphore.Release();
+            }
         }
 
-        public void Release() => _locked = false;
     }
 
     public class MudPopoverService : IMudPopoverService, IAsyncDisposable
     {
-        private List<MudPopoverHandler> _handlers = new();
-        private bool _isInitilized = false;
+        private Dictionary<Guid, MudPopoverHandler> _handlers = new();
+        private bool _isInitialized = false;
         private readonly IJSRuntime _jsRuntime;
         private readonly PopoverOptions _options;
+        private SemaphoreSlim _semaphoreSlim = new(1, 1);
 
         public event EventHandler FragmentsChanged;
 
-        public IEnumerable<MudPopoverHandler> Handlers => _handlers.AsEnumerable();
+        public IEnumerable<MudPopoverHandler> Handlers => _handlers.Values.AsEnumerable();
 
         public MudPopoverService(IJSRuntime jsInterop, IOptions<PopoverOptions> options = null)
         {
@@ -100,16 +140,26 @@ namespace MudBlazor
 
         public async Task InitializeIfNeeded()
         {
-            if (_isInitilized == true) { return; }
+            if (_isInitialized == true) { return; }
 
-            await _jsRuntime.InvokeVoidAsync("mudPopover.initilize", _options.ContainerClass);
-            _isInitilized = true;
+            try
+            {
+                await _semaphoreSlim.WaitAsync();
+                if (_isInitialized == true) { return; }
+
+                await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.initialize", _options.ContainerClass, _options.FlipMargin);
+                _isInitialized = true;
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
 
         public MudPopoverHandler Register(RenderFragment fragment)
         {
-            var handler = new MudPopoverHandler(fragment, _jsRuntime, () => FragmentsChanged?.Invoke(this, EventArgs.Empty));
-            _handlers.Add(handler);
+            var handler = new MudPopoverHandler(fragment, _jsRuntime, () => { /*not doing anything on purpose for now*/ });
+            _handlers.Add(handler.Id, handler);
 
             FragmentsChanged?.Invoke(this, EventArgs.Empty);
 
@@ -119,23 +169,22 @@ namespace MudBlazor
         public async Task<bool> Unregister(MudPopoverHandler handler)
         {
             if (handler == null) { return false; }
-            if (_handlers.Contains(handler) == false) { return false; }
-
-            if (handler.IsConnected == false) { return false; }
+            if (_handlers.Remove(handler.Id) == false) { return false; }
 
             await handler.Detach();
-            _handlers.Remove(handler);
 
             FragmentsChanged?.Invoke(this, EventArgs.Empty);
 
             return true;
         }
 
+        //TO DO add js test
+        [ExcludeFromCodeCoverage]
         public async ValueTask DisposeAsync()
         {
-            if (_isInitilized == false) { return; }
+            if (_isInitialized == false) { return; }
 
-            await _jsRuntime.InvokeVoidAsync("mudPopover.dispose");
+            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.dispose");
         }
     }
 }

@@ -43,67 +43,100 @@ namespace MudBlazor
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Field.Data)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         ///  Will adjust vertical spacing. 
         /// </summary>
-        [Parameter] public Margin Margin { get; set; } = Margin.None;
+        [Parameter]
+        [Category(CategoryTypes.Field.Appearance)]
+        public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
         /// If true, the label will be displayed in an error state.
         /// </summary>
-        [Parameter] public bool Error { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Field.Validation)]
+        public bool Error { get; set; }
 
         /// <summary>
         /// The ErrorText that will be displayed if Error true
         /// </summary>
-        [Parameter] public string ErrorText { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Field.Validation)]
+        public string ErrorText { get; set; }
 
         /// <summary>
         /// The HelperText will be displayed below the text field.
         /// </summary>
-        [Parameter] public string HelperText { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Field.Behavior)]
+        public string HelperText { get; set; }
 
         /// <summary>
         /// If true, the field will take up the full width of its container.
         /// </summary>
-        [Parameter] public bool FullWidth { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Field.Appearance)]
+        public bool FullWidth { get; set; }
 
         /// <summary>
         /// If string has value the label text will be displayed in the input, and scaled down at the top if the field has value.
         /// </summary>
-        [Parameter] public string Label { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Field.Behavior)]
+        public string Label { get; set; }
 
         /// <summary>
         /// Variant can be Text, Filled or Outlined.
         /// </summary>
-        [Parameter] public Variant Variant { get; set; } = Variant.Text;
+        [Parameter]
+        [Category(CategoryTypes.Field.Appearance)]
+        public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         /// If true, the input element will be disabled.
         /// </summary>
-        [Parameter] public bool Disabled { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Field.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// Icon that will be used if Adornment is set to Start or End.
         /// </summary>
-        [Parameter] public string AdornmentIcon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Field.Behavior)]
+        public string AdornmentIcon { get; set; }
 
         /// <summary>
         /// Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
         /// </summary>
-        [Parameter] public string AdornmentText { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Field.Behavior)]
+        public string AdornmentText { get; set; }
 
         /// <summary>
         /// The Adornment if used. By default, it is set to None.
         /// </summary>
-        [Parameter] public Adornment Adornment { get; set; } = Adornment.None;
+        [Parameter]
+        [Category(CategoryTypes.Field.Behavior)]
+        public Adornment Adornment { get; set; } = Adornment.None;
+
+        /// <summary>
+        /// The color of the adornment if used. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
         /// Sets the Icon Size.
         /// </summary>
-        [Parameter] public Size IconSize { get; set; } = Size.Medium;
+        [Parameter]
+        [Category(CategoryTypes.Field.Appearance)]
+        public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
         /// Button click event if set and Adornment used.
@@ -113,11 +146,15 @@ namespace MudBlazor
         /// <summary>
         /// If true, the inner contents padding is removed.
         /// </summary>
-        [Parameter] public bool InnerPadding { get; set; } = true;
+        [Parameter]
+        [Category(CategoryTypes.Field.Appearance)]
+        public bool InnerPadding { get; set; } = true;
 
         /// <summary>
         /// If true, the field will not have an underline.
         /// </summary>
-        [Parameter] public bool DisableUnderLine { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Field.Appearance)]
+        public bool DisableUnderLine { get; set; }
     }
 }

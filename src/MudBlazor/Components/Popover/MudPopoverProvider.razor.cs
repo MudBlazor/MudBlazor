@@ -7,11 +7,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
     public partial class MudPopoverProvider : IDisposable
     {
+        private bool _isConnectedToService = false;
+
+        [Inject] public IMudPopoverService Service { get; set; }
+
+        /// <summary>
+        /// In some scenarios we need more than one ThemeProvider but we must not have more than one
+        /// PopoverProvider. Set a cascading value with UsePopoverProvider=false to prevent it.
+        /// </summary>
+        [CascadingParameter(Name = "UsePopoverProvider")]
+        public bool IsEnabled { get; set; } = true;
+
+
         public void Dispose()
         {
             Service.FragmentsChanged -= Service_FragmentsChanged;
@@ -19,12 +32,36 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            if (IsEnabled == false)
+            {
+                return;
+            }
+
             Service.FragmentsChanged += Service_FragmentsChanged;
+            _isConnectedToService = true;
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            if (IsEnabled == false && _isConnectedToService == true)
+            {
+                Service.FragmentsChanged -= Service_FragmentsChanged;
+                _isConnectedToService = false;
+            }
+            else if (IsEnabled == true && _isConnectedToService == false)
+            {
+                Service.FragmentsChanged -= Service_FragmentsChanged; // make sure to avoid multiple registration
+                Service.FragmentsChanged += Service_FragmentsChanged;
+                _isConnectedToService = true;
+            }
         }
 
         private void Service_FragmentsChanged(object sender, EventArgs e)
         {
             InvokeAsync(StateHasChanged);
         }
+
     }
 }

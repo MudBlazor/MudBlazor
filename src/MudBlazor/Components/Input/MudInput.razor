@@ -13,13 +13,14 @@
                 Text="@AdornmentText" 
                 Edge="@Edge.Start" 
                 AdornmentClick="@OnAdornmentClick" 
+                AriaLabel="@AdornmentAriaLabel"
         />
 	}
 
 	@if (Lines > 1)
 	{
 	    <textarea class="@InputClassname"
-                @ref="_elementReference" 
+                @ref="ElementReference" 
                 rows="@Lines" 
                 @attributes="UserAttributes"
                 type="@InputTypeString"                  
@@ -41,6 +42,8 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel" 
                 @onwheel="@OnMouseWheel"
+                aria-invalid="@Error.ToString().ToLower()"
+                aria-describedby="@ErrorId"
         > 
             @Text
         </textarea>
@@ -49,22 +52,8 @@
 	}
 	else
 	{
-		@if (InputType == InputType.Hidden && ChildContent != null)
-		{
-            @if(Disabled) {
-		    	<div class="@InputClassname" @onblur="@OnBlurred">
-		        	@ChildContent
-		    	</div>
-            }
-            else {
-		    	<div class="@InputClassname"  tabindex="0" @onblur="@OnBlurred" @ref="@_elementReference1">
-		       		@ChildContent
-		    	</div>
-            }
-		}
-
 	    <input class="@InputClassname"
-                @ref="_elementReference" 
+                @ref="ElementReference" 
                 @attributes="UserAttributes" 
                 type="@InputTypeString"                  
                 value="@_internalText" 
@@ -85,18 +74,43 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel" 
                 @onwheel="@OnMouseWheel"
+                aria-invalid="@Error.ToString().ToLower()"
+                aria-describedby="@ErrorId"
          />
 	     @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
-	}
+      
+         @if (Disabled) {
+             @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.
+                           In Disabled state the tabindex attribute must NOT be set at all or else it will get focus on click
+             *@
+	        <div class="@InputClassname"
+                style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"                  
+                @onblur="@OnBlurred" @ref="@_elementReference1" 
+            >
+                @ChildContent
+            </div>
+        } 
+        else
+        {
+             @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.*@
+            <div class="@InputClassname"
+                 style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"  
+                 tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)" 
+                 @onblur="@OnBlurred" @ref="@_elementReference1" 
+            >
+                @ChildContent
+            </div>            
+        }
+    }
 
 	@if (_showClearable && !Disabled)
-	{
-	    <MudIconButton Class="mud-icon-button-edge-end" 
-                Color="@Color.Default" 
-                Icon="@ClearIcon" 
-                Size="@Size.Small" 
-                OnClick="@ClearButtonClickHandlerAsync"
-        />
+    {
+        <MudIconButton Class="@ClearButtonClassname"
+                    Color="@Color.Default" 
+                    Icon="@ClearIcon" 
+                    Size="@Size.Small" 
+                    OnClick="@ClearButtonClickHandlerAsync"
+                />
 	}
 
 	@if (Adornment == Adornment.End)
@@ -108,6 +122,7 @@
                 Text="@AdornmentText" 
                 Edge="@Edge.End" 
                 AdornmentClick="@OnAdornmentClick" 
+                AriaLabel="@AdornmentAriaLabel"
         />
 	}
 

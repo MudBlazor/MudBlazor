@@ -13,21 +13,29 @@ namespace MudBlazor
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
         /// </summary>
-        [Parameter] public int Elevation { set; get; } = 1;
+        [Parameter]
+        [Category(CategoryTypes.Card.Appearance)]
+        public int Elevation { set; get; } = 1;
 
         /// <summary>
         /// If true, border-radius is set to 0.
         /// </summary>
-        [Parameter] public bool Square { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Card.Appearance)]
+        public bool Square { get; set; }
 
         /// <summary>
         /// If true, card will be outlined.
         /// </summary>
-        [Parameter] public bool Outlined { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Card.Appearance)]
+        public bool Outlined { get; set; }
 
         /// <summary>
         /// Child content of the component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Card.Behavior)]
+        public RenderFragment ChildContent { get; set; }
     }
 }
