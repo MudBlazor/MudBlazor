@@ -47,7 +47,6 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Value.Should().Be("1");
             select.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "1" });
             select.Instance.Text.Should().Be("1");
-            //select.Instance.SelectedItem.Value.Should().Be("1");
         }
 
         // Note: MudSelect doesn't guaranteed the consequences of changing SelectedValues if MultiSelection is false for now.
@@ -67,7 +66,6 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Value.Should().Be("1");
             select.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "1" });
             select.Instance.Text.Should().Be("1");
-            //select.Instance.SelectedItem.Value.Should().Be("1");
         }
 
         [Test]
@@ -83,15 +81,11 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Value.Should().Be("1");
             select.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "1" });
             select.Instance.Text.Should().Be("1");
-            //select.Instance.SelectedItem.Value.Should().Be("1");
-            //select.Instance.SelectedItems.Select(x => x.Value).Should().BeEquivalentTo(new HashSet<string>() { "1" });
 
             comp.SetParam("SelectedValue", "2");
             select.Instance.Value.Should().Be("2");
             select.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "2" });
             select.Instance.Text.Should().Be("2");
-            //select.Instance.SelectedItem.Value.Should().Be("2");
-            //select.Instance.SelectedItems.Select(x => x.Value).Should().BeEquivalentTo(new HashSet<string>() { "2" });
         }
 
         [Test]
@@ -110,15 +104,11 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Value.Should().Be("1");
             select.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "1" });
             select.Instance.Text.Should().Be("1");
-            //select.Instance.SelectedItem.Value.Should().Be("1");
-            //select.Instance.SelectedItems.Select(x => x.Value).Should().BeEquivalentTo(new HashSet<string>() { "1" });
 
             comp.SetParam("SelectedValues", new HashSet<string>() { "2", "1" });
             select.Instance.Value.Should().Be("1");
             select.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "2", "1" });
             select.Instance.Text.Should().Be("2, 1");
-            //select.Instance.SelectedItem.Value.Should().Be("1");
-            //select.Instance.SelectedItems.Select(x => x.Value).Should().BeEquivalentTo(new HashSet<string>() { "2", "1" });
         }
 
         [Test]
@@ -133,33 +123,15 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.ValueChangeCount.Should().Be(0);
             comp.Instance.ValuesChangeCount.Should().Be(0);
-            //comp.Instance.ItemChangeCount.Should().Be(0);
-            //comp.Instance.ItemsChangeCount.Should().Be(0);
 
             await comp.InvokeAsync(() => select.SetParam("Value", "1"));
             comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
             comp.Instance.ValuesChangeCount.Should().Be(1);
-            //comp.Instance.ItemChangeCount.Should().Be(1);
-            //comp.Instance.ItemsChangeCount.Should().Be(1);
+
             // Setting same value should not fire events
             await comp.InvokeAsync(() => select.SetParam("Value", "1"));
             comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
             comp.Instance.ValuesChangeCount.Should().Be(1);
-            //comp.Instance.ItemChangeCount.Should().Be(1);
-            //comp.Instance.ItemsChangeCount.Should().Be(1);
-            //// Set selected item to second item
-            //await comp.InvokeAsync(() => comp.Instance.SetSelectedItem());
-            //comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(2));
-            //comp.Instance.ValuesChangeCount.Should().Be(2);
-            //comp.Instance.ItemChangeCount.Should().Be(2);
-            //comp.Instance.ItemsChangeCount.Should().Be(2);
-            ////select.Instance.SelectedItem.Value.Should().Be("2");
-            //// Setting same item should not fire events
-            //await comp.InvokeAsync(() => comp.Instance.SetSelectedItem());
-            //comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(2));
-            //comp.Instance.ValuesChangeCount.Should().Be(2);
-            //comp.Instance.ItemChangeCount.Should().Be(2);
-            //comp.Instance.ItemsChangeCount.Should().Be(2);
         }
 
         [Test]
@@ -179,29 +151,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.SetParam("SelectedValues", new HashSet<string>() { "1" }));
             comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
             comp.Instance.ValuesChangeCount.Should().Be(1);
-            //comp.Instance.ItemChangeCount.Should().Be(1);
-            //comp.Instance.ItemsChangeCount.Should().Be(1);
+
             // Setting same value should not fire events
             await comp.InvokeAsync(() => select.SetParam("SelectedValues", new HashSet<string>() { "1" }));
             comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
             comp.Instance.ValuesChangeCount.Should().Be(1);
-            //comp.Instance.ItemChangeCount.Should().Be(1);
-            //comp.Instance.ItemsChangeCount.Should().Be(1);
-
-            //// Set selected item to second item
-            //await comp.InvokeAsync(() => comp.Instance.SetSelectedItems());
-            //comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(2));
-            //comp.Instance.ValuesChangeCount.Should().Be(2);
-            ////comp.Instance.ItemChangeCount.Should().Be(2);
-            ////comp.Instance.ItemsChangeCount.Should().Be(2);
-            ////select.Instance.SelectedItems.Select(x => x.Value).Should().BeEquivalentTo(new HashSet<string>() { "2", "3" });
-            //// Set third item first and check again
-            //await comp.InvokeAsync(() => comp.Instance.SetReverseSelectedItems());
-            //comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(3));
-            //comp.Instance.ValuesChangeCount.Should().Be(3);
-            ////comp.Instance.ItemChangeCount.Should().Be(3);
-            ////comp.Instance.ItemsChangeCount.Should().Be(3);
-            ////select.Instance.SelectedItems.Select(x => x.Value).Should().BeEquivalentTo(new HashSet<string>() { "3", "1" });
         }
 
         /// <summary>

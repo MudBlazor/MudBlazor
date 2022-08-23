@@ -1,33 +1,42 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using System.Linq
 
-<MudSelect MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))" MultiSelection="true" ValuePresenter="_valuePresenter" @bind-Value="value" @bind-SelectedValues="options" T="string" Label="US States" AdornmentIcon="@Icons.Filled.Search" AnchorOrigin="Origin.BottomCenter">
-    @foreach (var state in states)
-    {
-        <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
-    }
-    </MudSelect>
+<MudGrid>
+    <MudItem xs="12" sm="8">
+        <MudSelect MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))" MultiSelection="true" ValuePresenter="_valuePresenter" @bind-Value="value" @bind-SelectedValues="options" T="string" Label="US States" AdornmentIcon="@Icons.Filled.Search" AnchorOrigin="Origin.BottomCenter">
+            @foreach (var state in states)
+            {
+                <MudSelectItem T="string" Value="@state" Text="@state" />
+            }
+        </MudSelect>
+    </MudItem>
 
-    <MudSwitch @bind-Checked="multiselectionTextChoice" Class="mud-width-full" Color="Color.Primary">MultiSelection Text Choice</MudSwitch>
-    <MudSwitch @ref="_switch" T="bool" CheckedChanged="PresenterChanged" Class="mud-width-full" Color="Color.Primary">Chip</MudSwitch>
-
-    <MudGrid Class="mt-3 px-4">
-        <MudItem xs="6">
-            <MudText Typo="Typo.subtitle2">Value:</MudText>
-            <MudText Typo="Typo.subtitle2">"</MudText>
-            <MudText Typo="Typo.body2" Class="pl-4">@value</MudText>
-            <MudText Typo="Typo.subtitle2">"</MudText>
-        </MudItem>
-        <MudItem xs="6">
-            <MudText Typo="Typo.subtitle2">SelectedValues: HashSet&lt;string&gt;</MudText>
-            <MudText Typo="Typo.subtitle2">{</MudText>
-            <MudText Typo="Typo.body2" Class="pl-4">@(string.Join(", ", options.Select(x=>$"\"{x}\"")))</MudText>
-            <MudText Typo="Typo.subtitle2">}</MudText>
-        </MudItem>
-    </MudGrid>
+    <MudItem xs="12" sm="4">
+        <MudRadioGroup @ref="_radioGroup" T="int" SelectedOptionChanged="GroupOptionChanged">
+            <MudRadio Option="0" Color="Color.Primary">Standard Text</MudRadio>
+            <MudRadio Option="1" Color="Color.Primary">Customized Text</MudRadio>
+            <MudRadio Option="2" Color="Color.Primary">Chip</MudRadio>
+        </MudRadioGroup>
+        <MudGrid Class="mt-3 px-4">
+            <MudItem xs="6">
+                <MudText Typo="Typo.subtitle2">Value:</MudText>
+                <MudText Typo="Typo.subtitle2">"</MudText>
+                <MudText Typo="Typo.body2" Class="pl-4">@value</MudText>
+                <MudText Typo="Typo.subtitle2">"</MudText>
+            </MudItem>
+            <MudItem xs="6">
+                <MudText Typo="Typo.subtitle2">SelectedValues: HashSet&lt;string&gt;</MudText>
+                <MudText Typo="Typo.subtitle2">{</MudText>
+                <MudText Typo="Typo.body2" Class="pl-4">@(string.Join(", ", options.Select(x => $"\"{x}\"")))</MudText>
+                    <MudText Typo="Typo.subtitle2">}</MudText>
+                </MudItem>
+            </MudGrid>
+    </MudItem>
+</MudGrid>
 
 @code {
-    MudSwitch<bool> _switch;
+    MudRadioGroup<int> _radioGroup;
+    //MudSwitch<bool> _switch;
     bool multiselectionTextChoice;
     ValuePresenter _valuePresenter = ValuePresenter.Text; 
     string value { get; set; } = "Nothing selected";
@@ -63,15 +72,21 @@
         }
     }
 
-    private void PresenterChanged()
+    private void GroupOptionChanged()
     {
-        if (_switch.Checked == true)
+        if (_radioGroup.SelectedOption == 0)
+        {
+            multiselectionTextChoice = false;
+            _valuePresenter = ValuePresenter.Text;
+        }
+        else if (_radioGroup.SelectedOption == 1)
+        {
+            multiselectionTextChoice = true;
+            _valuePresenter = ValuePresenter.Text;
+        }
+        else if (_radioGroup.SelectedOption == 2)
         {
             _valuePresenter = ValuePresenter.Chip;
-        }
-        else
-        {
-            _valuePresenter = ValuePresenter.Text;
         }
     }
 }

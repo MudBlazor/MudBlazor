@@ -27,8 +27,6 @@
                     <MudAlert Severity="Severity.Info">
                         <b>Note:</b> If you use custom types as values, make sure they override <CodeInline>Equals</CodeInline> and <CodeInline>GetHashCode</CodeInline> as well as <CodeInline>ToString</CodeInline>. See the example below.
                     </MudAlert>
-                    <br />
-                    <br />
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="SelectVariantsExample">
@@ -96,10 +94,11 @@
             </SectionContent>
             <SectionSubGroups>
                 <DocsPageSection>
-                    <SectionHeader Title="Customized Selection Text">
+                    <SectionHeader Title="Customized Text and Chip">
                         <Description>
                             If you set <CodeInline>MultiSelection="true"</CodeInline>, you can select multiple values.
                             By defining the <CodeInline>MultiSelectionTextFunc</CodeInline> method, the returned selection can be fully customized.
+                            Or you can define the <CodeInline>ValuePresenter</CodeInline> to chip.
                         </Description>
                     </SectionHeader>
                     <SectionContent ShowCode="false" Code="MultiSelectCustomizedExample">
