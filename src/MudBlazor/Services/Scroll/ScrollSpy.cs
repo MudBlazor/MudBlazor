@@ -84,14 +84,14 @@ namespace MudBlazor
         public async Task ScrollToSection(string id)
         {
             CenteredSection = id;
-            await _js.InvokeVoidAsync
+            await _js.InvokeVoidAsyncWithErrorHandling
             ("mudScrollSpy.scrollToSection", id.Trim('#'));
         }
 
         public async Task SetSectionAsActive(string id)
         {
             CenteredSection = id;
-            await _js.InvokeVoidAsync
+            await _js.InvokeVoidAsyncWithErrorHandling
             ("mudScrollSpy.activateSection", id.Trim('#'));
         }
 
@@ -102,7 +102,7 @@ namespace MudBlazor
             try
             {
                 _dotNetRef?.Dispose();
-                await _js.InvokeVoidAsync("mudScrollSpy.unspy");
+                await _js.InvokeVoidAsyncWithErrorHandling("mudScrollSpy.unspy");
             }
             catch (Exception)
             {

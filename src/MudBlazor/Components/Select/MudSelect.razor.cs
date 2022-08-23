@@ -638,7 +638,6 @@ namespace MudBlazor
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
                 _keyInterceptor.KeyUp += HandleKeyUp;
-
                 await UpdateTextPropertyAsync(false);
                 StateHasChanged();
             }

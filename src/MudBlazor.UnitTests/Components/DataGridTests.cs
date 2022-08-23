@@ -2612,5 +2612,14 @@ namespace MudBlazor.UnitTests.Components
             cell.cellContext.Actions.SetSelectedItem(true);
             cell.cellContext.IsSelected.Should().Be(true);
         }
+
+        [Test]
+        public async Task DataGridSequenceContainsNoElementsTest()
+        {
+            var comp = Context.RenderComponent<DataGridSequenceContainsNoElementsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSequenceContainsNoElementsTest.Model>>();
+
+            // This test will result in an error if the 'sequence contains no elements' issue is present.
+        }
     }
 }

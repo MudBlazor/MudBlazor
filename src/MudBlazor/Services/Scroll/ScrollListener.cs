@@ -83,10 +83,10 @@ namespace MudBlazor
         /// <summary>
         /// Subscribe to scroll event in JS
         /// </summary>        
-        private ValueTask Start()
+        private ValueTask<bool> Start()
         {
             _dotNetRef = DotNetObjectReference.Create(this);
-            return _js.InvokeVoidAsync
+            return _js.InvokeVoidAsyncWithErrorHandling
                 ("mudScrollListener.listenForScroll",
                            _dotNetRef,
                            Selector);
