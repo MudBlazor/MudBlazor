@@ -369,26 +369,21 @@ namespace MudBlazor
 
         #region Values, Text & Coerce
 
-        private async Task ListValueChanged()
-        {
-            await SetValueAsync(_list.SelectedValue, false);
-        }
+        //private T _selectedValue;
+        //protected T SelectedValue
+        //{
+        //    get => _selectedValue;
 
-        private T _selectedValue;
-        protected T SelectedValue
-        {
-            get => _selectedValue;
-
-            set
-            {
-                if (Converter.Set(_selectedValue) == Converter.Set(value))
-                {
-                    return;
-                }
-                _selectedValue = value;
-                SetValueAsync(value, false).AndForget();
-            }
-        }
+        //    set
+        //    {
+        //        if (Converter.Set(_selectedValue) == Converter.Set(value))
+        //        {
+        //            return;
+        //        }
+        //        _selectedValue = value;
+        //        SetValueAsync(value, false).AndForget();
+        //    }
+        //}
 
         private HashSet<T> _selectedValues = new HashSet<T>();
         [Parameter]
@@ -510,12 +505,6 @@ namespace MudBlazor
             var value = Converter.Get(Text);
             Value = Converter.Get(Text);
             return SetValueAsync(value, updateText: false);
-        }
-
-        protected override async Task SetValueAsync(T value, bool updateText = true)
-        {
-            SelectedValue = value;
-            await base.SetValueAsync(value, updateText);
         }
 
         #endregion
@@ -722,8 +711,8 @@ namespace MudBlazor
                 case "Tab":
                     if (!IsOpen)
                         return;
-                    //if (SelectValueOnTab)
-                    //    await OnEnterKey();
+                    if (SelectValueOnTab)
+                        await OnEnterKey();
                     else
                         IsOpen = false;
                     break;

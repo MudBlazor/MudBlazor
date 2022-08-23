@@ -5,7 +5,9 @@
 @*To Be Discussed as Second ShadowItems: Needed to render directly into select to has initial values*@
 <div style="display: none">
     <CascadingValue Value="@this" IsFixed="true">
-        @ChildContent
+        <MudList @ref="_list" T="T">
+            @ChildContent
+        </MudList>
     </CascadingValue>
 </div>
 
