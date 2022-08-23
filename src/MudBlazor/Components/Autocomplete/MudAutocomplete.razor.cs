@@ -419,7 +419,13 @@ namespace MudBlazor
 
         private void CancelToken()
         {
-            _cancellationTokenSrc?.Cancel();
+            try
+            {
+                _cancellationTokenSrc?.Cancel();
+            }
+            catch
+            { }
+
             _cancellationTokenSrc = new CancellationTokenSource();
         }
 
