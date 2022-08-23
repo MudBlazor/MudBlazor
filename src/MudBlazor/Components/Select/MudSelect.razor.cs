@@ -88,6 +88,13 @@ namespace MudBlazor
         public RenderFragment<MudListItem<T>> ItemSelectedTemplate { get; set; }
 
         /// <summary>
+        /// Optional presentation template for disabled items
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment<MudListItem<T>> ItemDisabledTemplate { get; set; }
+
+        /// <summary>
         /// Classname for item template or chips.
         /// </summary>
         [Parameter]

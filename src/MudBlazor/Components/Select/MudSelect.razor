@@ -40,7 +40,7 @@
                             }
                             else if (ValuePresenter == ValuePresenter.Template && ItemTemplate != null)
                             {
-                                if (SelectedListItem != null)
+                                if (SelectedListItem != null && SelectedListItem.Value != null)
                                 {
                                     @ItemTemplate(SelectedListItem)
                                 }
@@ -71,7 +71,7 @@
                                  Clickable="true" Color="@Color" Dense="@Dense" ItemCollection="@ItemCollection" Virtualize="@Virtualize" DisablePadding="@DisablePopoverPadding" DisableSelectedItemStyle="@DisableSelectedItemStyle"
                                  MultiSelection="@MultiSelection" MultiSelectionComponent="@MultiSelectionComponent" MultiSelectionAlign="@MultiSelectionAlign" SelectAll="@SelectAll" SelectAllText="@SelectAllText"
                                  CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@IndeterminateIcon" SelectValueOnTab="@SelectValueOnTab"
-                                 ItemTemplate="@ItemTemplate" ItemSelectedTemplate="@ItemSelectedTemplate">
+                                 ItemTemplate="@ItemTemplate" ItemSelectedTemplate="@ItemSelectedTemplate" ItemDisabledTemplate="@ItemDisabledTemplate">
                             @ChildContent
 						</MudList>
 					</CascadingValue>

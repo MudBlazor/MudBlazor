@@ -22,7 +22,7 @@
     </ItemTemplate>
 </MudSelect>
 
-<MudSelect ItemCollection="_players" DisableSelectedBackground="true" ValuePresenter="ValuePresenter.Template" TemplateClass="d-flex align-center" Placeholder="With Both Templates" Label="Select Player" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+<MudSelect ItemCollection="_players" DisableSelectedBackground="true" ValuePresenter="ValuePresenter.Template" MultiSelection="true" TemplateClass="d-flex align-center" Placeholder="Both Templates & MultiSelection" Label="Select Player" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
     <ItemTemplate>
         <MudStack Class="mud-width-full" Justify="Justify.SpaceBetween" >
             <MudText><b>@context.Value.Item1</b></MudText>
@@ -48,6 +48,22 @@
             </MudStack>
         </MudStack>
     </ItemSelectedTemplate>
+</MudSelect>
+
+<MudSelect Label="Select Player" ToStringFunc="@(new Func<Tuple<string, string, bool>, string>(StringFunc))" Placeholder="Disabled Template" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+    <ChildContent>
+        @foreach (var item in _players)
+        {
+            <MudSelectItem Value="item" Disabled="@(item.Item1.Contains("LeBron") ? false : true)">@(item.Item1 + " - Total Score: " + item.Item2)</MudSelectItem>
+        }
+    </ChildContent>
+
+    <ItemDisabledTemplate>
+        <MudStack Row="true">
+            <MudText>@context.Value.Item1</MudText>
+            <MudText>Player is unavailable</MudText>
+        </MudStack>
+    </ItemDisabledTemplate>
 </MudSelect>
 
 @code {

@@ -71,6 +71,13 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment<MudListItem<T>> ItemSelectedTemplate { get; set; }
 
+        /// <summary>
+        /// Optional presentation template for disabled items
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment<MudListItem<T>> ItemDisabledTemplate { get; set; }
+
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public DefaultConverter<T> Converter { get; set; } = new DefaultConverter<T>();
@@ -341,29 +348,21 @@ namespace MudBlazor
                 {
                     return;
                 }
-                //Console.WriteLine("SelectedValue setter Started");
                 if (_centralCommanderResultRendered == false && _firstRendered == true)
                 {
                     return;
                 }
                 if (ParentList != null)
                 {
-                    //Console.WriteLine("SelectedValue setter returned");
                     return;
                 }
                 if ((_selectedValue != null && value != null && Converter.Set(_selectedValue) == Converter.Set(value)) || (_selectedValue == null && value == null))
                 {
-                    //Console.WriteLine("SelectedValue setter returned");
                     return;
                 }
 
                 _selectedValue = value;
                 HandleCentralValueCommander(nameof(SelectedValue));
-
-                //if (_firstRendered == true)
-                //{
-                //    SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
-                //}
                 SelectedValueChanged.InvokeAsync(_selectedValue).AndForget();
                 //UpdateSelectedStyles();
                 //Console.WriteLine("SelectedValue setter ended");
@@ -385,19 +384,16 @@ namespace MudBlazor
 
             set
             {
-                //Console.WriteLine("SelectedValues setter Started");
                 if (value == null && _firstRendered == false)
                 {
                     return;
                 }
                 if (_centralCommanderResultRendered == false && _firstRendered == true)
                 {
-                    //Console.WriteLine("SelectedValues setter returned");
                     return;
                 }
                 if (ParentList != null)
                 {
-                    //Console.WriteLine("SelectedValues setter returned(1)");
                     return;
                 }
                 //var set = value ?? new List<T>();
@@ -408,13 +404,11 @@ namespace MudBlazor
 
                 if (value != null && _selectedValues != null && _selectedValues.SetEquals(value))
                 {
-                    //Console.WriteLine("SelectedValues setter returned(2)");
                     return;
                 }
 
                 //if (SelectedValues.Count() == set.Count() && _selectedValues != null && _selectedValues.All(x => set.Contains(x)))
                 //{
-                //    //Console.WriteLine("SelectedValues setter returned(3)");
                 //    return;
                 //}
 
@@ -424,12 +418,7 @@ namespace MudBlazor
                     return;
                 }
                 HandleCentralValueCommander(nameof(SelectedValues));
-                //if (_firstRendered == true)
-                //{
-                //    SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
-                //}
                 SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
-
                 //UpdateSelectedStyles();
                 //Console.WriteLine("SelectedValues setter ended");
             }
@@ -664,7 +653,7 @@ namespace MudBlazor
                 _firstRendered = true;
             }
             _centralCommanderResultRendered = true;
-            Console.WriteLine("List Rendered");
+            //Console.WriteLine("List Rendered");
             //if (MudAutocomplete != null)
             //{
             //    UpdateSelectedStyles();
@@ -755,7 +744,7 @@ namespace MudBlazor
                         if (MultiSelection)
                         {
                             SelectAllItems(_allSelected);
-                            Console.WriteLine("List Select All started");
+                            //Console.WriteLine("List Select All started");
                         }
                     }
                     break;
