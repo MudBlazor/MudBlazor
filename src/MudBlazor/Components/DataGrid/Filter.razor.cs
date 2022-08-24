@@ -121,11 +121,12 @@ namespace MudBlazor
             await OperatorChanged.InvokeAsync(Operator);
             await ValueChanged.InvokeAsync(Value);
             await FieldChanged.InvokeAsync(Field);
+            Field = field;
         }
 
-        internal void TitleChangedAsync(string field)
+        internal void TitleChangedAsync(string title)
         {
-            Field = field;
+            Title = title;
         }
 
         internal void StringValueChanged(string value)
