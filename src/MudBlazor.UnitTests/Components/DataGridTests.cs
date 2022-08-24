@@ -2624,5 +2624,14 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td.footer-cell")[1].TrimmedText().Should().Be("Average age is 56");
             dataGrid.FindAll("tfoot td.footer-cell")[1].TrimmedText().Should().Be("Average age is 43");
         }
+        
+        [Test]
+        public async Task DataGridSequenceContainsNoElementsTest()
+        {
+            var comp = Context.RenderComponent<DataGridSequenceContainsNoElementsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSequenceContainsNoElementsTest.Model>>();
+
+            // This test will result in an error if the 'sequence contains no elements' issue is present.
+        }
     }
 }
