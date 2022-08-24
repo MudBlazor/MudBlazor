@@ -301,7 +301,7 @@
                 {
                     if (column.AggregateDefinition != null || column.FooterTemplate != null || hasFooter)
                     {
-                        <FooterCell T="T" Column="@column"></FooterCell>
+                        <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
                     }
                 }
             }
