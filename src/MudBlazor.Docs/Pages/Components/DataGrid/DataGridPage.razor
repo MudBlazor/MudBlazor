@@ -87,7 +87,7 @@
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to group data by column. Setting the <CodeInline>Grouping</CodeInline> property
                     to <CodeInline>true</CodeInline> will turn on grouping which will add a menu item in the column options to toggle grouping of that column. 
-                    To disable editing on a column, set its <CodeInline>IsEditable</CodeInline> property to <CodeInline>false</CodeInline>.
+                    To disable grouping on a column, set its <CodeInline>Groupable</CodeInline> property to <CodeInline>false</CodeInline>.
 
                 </Description>
             </SectionHeader>
@@ -217,6 +217,32 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="DataGridStickyColumnsExample" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridStickyColumnsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Virtualization">
+                <Description>
+                    The items in the <CodeInline>&lt;MudDataGrid></CodeInline> can be virtualized to provider better rendering performance. Setting the <CodeInline>Virtualize</CodeInline> property
+                    to <CodeInline>true</CodeInline> will cause the items to be rendered virtually. You must restrict the height for virtualization to work.
+
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridVirtualizationExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridVirtualizationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Observability">
+                <Description>
+                    When loading the <CodeInline>&lt;MudDataGrid></CodeInline> with a collection that implements <CodeInline>INotifyCollectionChanged</CodeInline>, changes to the 
+                    underlying collection will automatically be reflected in the <CodeInline>&lt;MudDataGrid></CodeInline>.
+
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridObservabilityExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridObservabilityExample />
             </SectionContent>
         </DocsPageSection>
 
