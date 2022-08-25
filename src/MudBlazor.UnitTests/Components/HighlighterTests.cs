@@ -17,7 +17,7 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldSplitUsingHighlightedTextParameterTest()
         {
             var highlightedText = "item";
-            var result = GetFragments(TEXT, highlightedText, null, out var regex);
+            var result = GetFragments(TEXT, highlightedText, null, out var regex).ToArray();
             result.Should().HaveCount(2);
             result.Should().BeEquivalentTo(new List<string> { "This is the first ", "item" });
             regex.Should().Be("((?:item))");
@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldSplitUsingHighlightedTextsParameterWithOneElementTest()
         {
             var highlightedTexts = new string[] { "item" };
-            var result = GetFragments(TEXT, null, highlightedTexts, out var regex);
+            var result = GetFragments(TEXT, null, highlightedTexts, out var regex).ToArray();
             result.Should().HaveCount(2);
             result.Should().BeEquivalentTo(new List<string> { "This is the first ", "item" });
             regex.Should().Be("((?:item))");
@@ -37,7 +37,7 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldSplitUsingHighlightedTextsParameterWithMultipleElementsTest()
         {
             var highlightedTexts = new string[] { "item", "the" };
-            var result = GetFragments(TEXT, null, highlightedTexts, out var regex);
+            var result = GetFragments(TEXT, null, highlightedTexts, out var regex).ToArray();
             result.Should().HaveCount(4);
             result.Should().BeEquivalentTo(new List<string> { "This is ", "the", " first ", "item" });
             regex.Should().Be("((?:item)|(?:the))");
@@ -47,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldSplitUsingHighlightedTextParameterAndHighlightedTextsParameterWithOneElementTest()
         {
             var highlightedTexts = new string[] { "the" };
-            var result = GetFragments(TEXT, "item", highlightedTexts, out var regex);
+            var result = GetFragments(TEXT, "item", highlightedTexts, out var regex).ToArray();
             result.Should().HaveCount(4);
             result.Should().BeEquivalentTo(new List<string> { "This is ", "the", " first ", "item" });
             regex.Should().Be("((?:item)|(?:the))");
@@ -57,7 +57,7 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldSplitUsingHighlightedTextParameterAndHighlightedTextsParameterWithMultipleElementsTest()
         {
             var highlightedTexts = new string[] { "first", "the" };
-            var result = GetFragments(TEXT, "item", highlightedTexts, out var regex);
+            var result = GetFragments(TEXT, "item", highlightedTexts, out var regex).ToArray();
             result.Should().HaveCount(6);
             result.Should().BeEquivalentTo(new List<string> { "This is ", "the", " ", "first", " ", "item" });
             regex.Should().Be("((?:item)|(?:first)|(?:the))");
@@ -67,7 +67,7 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldUseUntilNextBoundaryTest()
         {
             var highlightedText = "it";
-            var result = GetFragments(TEXT, highlightedText, null, out var regex, false, true);
+            var result = GetFragments(TEXT, highlightedText, null, out var regex, false, true).ToArray();
             result.Should().HaveCount(2);
             result.Should().BeEquivalentTo(new List<string> { "This is the first ", "item" });
             regex.Should().Be("((?:it.*?\\b))");
@@ -77,7 +77,7 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldBeCaseSensitiveTest()
         {
             var highlightedText = "It";
-            var result = GetFragments(TEXT, highlightedText, null, out var regex, true, false);
+            var result = GetFragments(TEXT, highlightedText, null, out var regex, true, false).ToArray();
             result.Should().HaveCount(1);
             result.Should().BeEquivalentTo(new List<string> { TEXT });
             regex.Should().Be("((?:It))");
@@ -88,7 +88,7 @@ namespace MudBlazor.UnitTests.Components
         {
             //regex characters are properly escaped in GetFragments
             var highlightedText = ".";
-            var result = GetFragments(TEXT, highlightedText, null, out var regex, true, false);
+            var result = GetFragments(TEXT, highlightedText, null, out var regex, true, false).ToArray();
             result.Should().HaveCount(1);
             result.Should().BeEquivalentTo(new List<string> { TEXT });
             regex.Should().Be("((?:\\.))");
@@ -98,7 +98,7 @@ namespace MudBlazor.UnitTests.Components
         public void DontMessWithDuplicatedHighlightPatternsInHighlightedTextsParameterTest()
         {
             var highlightedTexts = new string[] { "item", "item" };
-            var result = GetFragments(TEXT, null, highlightedTexts, out var regex);
+            var result = GetFragments(TEXT, null, highlightedTexts, out var regex).ToArray();
             result.Should().HaveCount(2);
             result.Should().BeEquivalentTo(new List<string> { "This is the first ", "item" });
             regex.Should().Be("((?:item)|(?:item))");
@@ -108,7 +108,7 @@ namespace MudBlazor.UnitTests.Components
         public void DontMessWithDuplicatedHighlightPatternsInHighlightedTextParameterAndHighlightedTextsParameterTest()
         {
             var highlightedTexts = new string[] { "item" };
-            var result = GetFragments(TEXT, "item", highlightedTexts, out var regex);
+            var result = GetFragments(TEXT, "item", highlightedTexts, out var regex).ToArray();
             result.Should().HaveCount(2);
             result.Should().BeEquivalentTo(new List<string> { "This is the first ", "item" });
             regex.Should().Be("((?:item)|(?:item))");
