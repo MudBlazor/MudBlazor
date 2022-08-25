@@ -55,6 +55,7 @@ namespace MudBlazor
                 if (_listenerIds != null)
                 {
                     await _componentRef.RemoveDefaultPreventingHandlers(preventDefaultEventNames, _listenerIds);
+                    _listenerIds = null;
                 }
             }
         }
