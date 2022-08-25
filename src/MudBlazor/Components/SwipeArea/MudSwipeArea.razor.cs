@@ -9,9 +9,9 @@ namespace MudBlazor
     public partial class MudSwipeArea : MudComponentBase
     {
         internal double? _xDown, _yDown;
-        private ElementReference _componentRef;
+        internal ElementReference _componentRef;
         private static readonly string[] preventDefaultEventNames = { "touchstart", "touchend", "touchcancel" };
-        private int[] _listenerIds;
+        internal int[] _listenerIds;
 
         [Inject] public IJSRuntime JsRuntime { get; set; }
 
