@@ -120,5 +120,11 @@ namespace MudBlazor
             }
             return propsSpec;
         }
+
+        public static ValueTask AddDefaultPreventingHandler(this ElementReference elementReference, string eventName) =>
+            elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.addDefaultPreventingHandler", elementReference, eventName) ?? ValueTask.CompletedTask;
+
+        public static ValueTask AddDefaultPreventingHandlers(this ElementReference elementReference, IEnumerable<string> eventNames) =>
+            elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.addDefaultPreventingHandlers", elementReference, eventNames) ?? ValueTask.CompletedTask;
     }
 }

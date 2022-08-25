@@ -85,8 +85,3 @@ window.serializeParameter = (data, spec) => {
 
     return res;
 };
-
-// https://github.com/dotnet/aspnetcore/issues/24932
-window.addDefaultPreventingHandler = (element, eventName) => {
-    element.addEventListener(eventName, (event) => event.preventDefault(), { passive: false });
-};

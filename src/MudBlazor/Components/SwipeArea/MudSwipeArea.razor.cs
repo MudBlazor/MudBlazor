@@ -33,9 +33,7 @@ namespace MudBlazor
         {
             if (firstRender && PreventDefault)
             {
-                await JsRuntime.InvokeVoidAsync("addDefaultPreventingHandler", _componentRef, "touchstart");
-                await JsRuntime.InvokeVoidAsync("addDefaultPreventingHandler", _componentRef, "touchend");
-                await JsRuntime.InvokeVoidAsync("addDefaultPreventingHandler", _componentRef, "touchcancel");
+                await _componentRef.AddDefaultPreventingHandlers(new[] { "touchstart", "touchend", "touchcancel" });
             }
         }
 

@@ -131,8 +131,8 @@ class MudElementReference {
             if (window.getComputedStyle(element).getPropertyValue("position") === "fixed")
                 return true;
         }
-        return false
-    };
+        return false;
+    }
 
     changeCss (element, css) {
         if (element)
@@ -164,6 +164,16 @@ class MudElementReference {
     removeEventListener (element, event, eventId) {
         element.removeEventListener(event, this.eventListeners[eventId]);
         delete this.eventListeners[eventId];
+    }
+
+    addDefaultPreventingHandler(element, eventName) {
+        element.addEventListener(eventName, (event) => event.preventDefault(), { passive: false });
+    }
+
+    addDefaultPreventingHandlers(element, eventNames) {
+        for (const eventName of eventNames) {
+            this.addDefaultPreventingHandler (element, eventName);
+        }
     }
 };
 window.mudElementRef = new MudElementReference();
