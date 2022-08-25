@@ -167,12 +167,34 @@ class MudElementReference {
     }
 
     addDefaultPreventingHandler(element, eventName) {
-        element.addEventListener(eventName, (event) => event.preventDefault(), { passive: false });
+        let listener = function(e) {
+            e.preventDefault();
+        }
+        element.addEventListener(eventName, listener, { passive: false });
+        this.eventListeners[++this.listenerId] = listener;
+        return this.listenerId;
+    }
+
+    removeDefaultPreventingHandler(element, eventName, listenerId) {
+        this.removeEventListener(element, eventName, listenerId);
     }
 
     addDefaultPreventingHandlers(element, eventNames) {
+        let listeners = [];
+
         for (const eventName of eventNames) {
-            this.addDefaultPreventingHandler (element, eventName);
+            let listenerId = this.addDefaultPreventingHandler(element, eventName);
+            listeners.push(listenerId);
+        }
+
+        return listeners;
+    }
+
+    removeDefaultPreventingHandlers(element, eventNames, listenerIds) {
+        for (let index = 0; index < eventNames.length; ++index) {
+            const eventName = eventNames[index];
+            const listenerId = listenerIds[index];
+            this.removeDefaultPreventingHandler(element, eventName, listenerId);
         }
     }
 };

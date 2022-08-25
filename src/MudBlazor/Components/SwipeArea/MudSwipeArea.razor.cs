@@ -10,6 +10,8 @@ namespace MudBlazor
     {
         internal double? _xDown, _yDown;
         private ElementReference _componentRef;
+        private static readonly string[] preventDefaultEventNames = { "touchstart", "touchend", "touchcancel" };
+        private int[] _listenerIds;
 
         [Inject] public IJSRuntime JsRuntime { get; set; }
 
@@ -29,11 +31,40 @@ namespace MudBlazor
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public bool PreventDefault { get; set; }
 
+        private bool _preventDefaultChanged;
+
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            var preventDefault = parameters.GetValueOrDefault<bool>(nameof(PreventDefault));
+            if (preventDefault != PreventDefault)
+            {
+                _preventDefaultChanged = true;
+            }
+
+            await base.SetParametersAsync(parameters);
+        }
+
+        private async Task SetPreventDefaultInternal(bool value)
+        {
+            if (value)
+            {
+                _listenerIds = await _componentRef.AddDefaultPreventingHandlers(preventDefaultEventNames);
+            }
+            else
+            {
+                if (_listenerIds != null)
+                {
+                    await _componentRef.RemoveDefaultPreventingHandlers(preventDefaultEventNames, _listenerIds);
+                }
+            }
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender && PreventDefault)
+            if (_preventDefaultChanged)
             {
-                await _componentRef.AddDefaultPreventingHandlers(new[] { "touchstart", "touchend", "touchcancel" });
+                _preventDefaultChanged = false;
+                await SetPreventDefaultInternal(PreventDefault);
             }
         }
 
