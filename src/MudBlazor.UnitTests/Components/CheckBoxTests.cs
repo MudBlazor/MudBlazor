@@ -327,8 +327,8 @@ namespace MudBlazor.UnitTests.Components
         public void CheckBoxDisabledTest()
         {
             var comp = Context.RenderComponent<CheckboxLabelExample>();
-            var switches = comp.FindAll("label.mud-checkbox");
-            switches[3].ClassList.Should().Contain("mud-disabled"); // 4rd checkbox
+            var checkboxes = comp.FindAll("label.mud-checkbox");
+            checkboxes[3].ClassList.Should().Contain("mud-disabled"); // 4rd checkbox
         }
 
         [Test]
@@ -336,10 +336,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<CheckboxLabelExample>();
             //Console.WriteLine(comp.Markup);
-            var switches = comp.FindAll("label.mud-checkbox");
+            var checkboxes = comp.FindAll("label.mud-checkbox");
 
-            switches[0].ClassList.Should().Contain("mud-ltr"); // 1st checkbox: (default) LabelPosition.End
-            switches[2].ClassList.Should().Contain("mud-rtl"); // 3rd checkbox: LabelPosition.Start
+            checkboxes[0].ClassList.Should().Contain("mud-ltr"); // 1st checkbox: (default) LabelPosition.End
+            checkboxes[2].ClassList.Should().Contain("mud-rtl"); // 3rd checkbox: LabelPosition.Start
         }
     }
 }
