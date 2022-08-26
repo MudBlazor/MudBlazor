@@ -1,10 +1,9 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Docs.Examples;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
@@ -322,6 +321,25 @@ namespace MudBlazor.UnitTests.Components
             input.Change(true);
             box.Checked.Should().Be(true);
             checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
+        }
+
+        [Test]
+        public void CheckBoxDisabledTest()
+        {
+            var comp = Context.RenderComponent<CheckboxLabelExample>();
+            var checkboxes = comp.FindAll("label.mud-checkbox");
+            checkboxes[3].ClassList.Should().Contain("mud-disabled"); // 4rd checkbox
+        }
+
+        [Test]
+        public void CheckBoxLabelPositionTest()
+        {
+            var comp = Context.RenderComponent<CheckboxLabelExample>();
+            //Console.WriteLine(comp.Markup);
+            var checkboxes = comp.FindAll("label.mud-checkbox");
+
+            checkboxes[0].ClassList.Should().Contain("mud-ltr"); // 1st checkbox: (default) LabelPosition.End
+            checkboxes[2].ClassList.Should().Contain("mud-rtl"); // 3rd checkbox: LabelPosition.Start
         }
     }
 }
