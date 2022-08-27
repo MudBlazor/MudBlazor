@@ -184,15 +184,11 @@ namespace MudBlazor
         public async ValueTask<int> CountProviders()
         {
             if (!_isInitialized) { return -1; }
-            var value = 0;
 
-            try
-            {
-                value = await _jsRuntime.InvokeAsync<int>("mudpopoverHelper.countProviders");
-            }
-            catch (JSDisconnectedException) { }
-            catch (TaskCanceledException) { }
-            return value;
+            var (success, value) = await _jsRuntime.InvokeAsyncWithErrorHandling<int>("mudpopoverHelper.countProviders");
+            if (success)
+                return value;
+            return 0;
         }
 
         //TO DO add js test
