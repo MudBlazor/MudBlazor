@@ -1016,6 +1016,56 @@ namespace MudBlazor.UnitTests.Components
             validator.ControlCount.Should().Be(1);
         }
 
+        [Theory]
+        [TestCase(TableApplyButtonPosition.StartAndEnd)]
+        [TestCase(TableApplyButtonPosition.Start)]
+        [TestCase(TableApplyButtonPosition.End)]
+        public async Task TableInlineEdit_ApplyButtonPosition(TableApplyButtonPosition position)
+        {
+            var comp = Context.RenderComponent<TableInlineEditTestApplyButtons>(
+                p => p.Add(x => x.ApplyButtonPosition, position));
+            
+            var trs = comp.FindAll("tr");
+
+            //header + 3 items + footer
+            trs.Should().HaveCount(5);
+
+            var header = trs[0];
+            var footer = trs[trs.Count - 1];
+            var expectedAmount = position switch
+            {
+                TableApplyButtonPosition.Start or TableApplyButtonPosition.End => 2,
+                TableApplyButtonPosition.StartAndEnd => 3,
+                _ => throw new NotImplementedException()
+            };
+
+            header.ChildElementCount.Should().Be(expectedAmount);
+            footer.ChildElementCount.Should().Be(expectedAmount);
+
+            trs[2].Click();
+
+            var trs2 = comp.FindAll("tr");
+            var relevantRow = trs2[2];
+            relevantRow.ChildElementCount.Should().Be(expectedAmount);
+
+            if (position == TableApplyButtonPosition.Start)
+            {
+                relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+                relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlInputElement>().Should().NotBeNull();
+            }
+            else if (position == TableApplyButtonPosition.End)
+            {
+                relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlInputElement>().Should().NotBeNull();
+                relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+            }
+            else if (position == TableApplyButtonPosition.StartAndEnd)
+            {
+                relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+                relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlInputElement>().Should().NotBeNull();
+                relevantRow.Children[2].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+            }
+        }
+
         [Test]
         public async Task TableInlineEdit_RowSwitching()
         {
@@ -1465,6 +1515,37 @@ namespace MudBlazor.UnitTests.Components
             tableInstance.FilteredItems.Count().Should().Be(0);
             tableComponent.FindAll("tr").Count.Should().Be(0);
             tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be("0-0 of 0", "'ZZZ' filter applied.");
+        }
+
+        /// <summary>
+        /// Tests the aria-labels for the pager control buttons
+        /// </summary>
+        /// <param name="controlButton">The type of the control button. Page.First for the navigate-to-first-page button.</param>
+        /// <param name="expectedButtonAriaLabel">The expected value in the aria-label.</param>
+        [TestCase(Page.First, "First page")]
+        [TestCase(Page.Previous, "Previous page")]
+        [TestCase(Page.Next, "Next page")]
+        [TestCase(Page.Last, "Last page")]
+        [Test]
+        public void TablePagerControlButtonAriaLabelTest(Page controlButton, string expectedButtonAriaLabel)
+        {
+            var tableComponent = Context.RenderComponent<TablePagerInfoTextTest>();
+            //Console.WriteLine(comp.Markup);
+
+            //get control button
+            var buttons = tableComponent.FindAll("div.mud-table-pagination-actions button");
+            var button = controlButton switch
+            {
+                Page.First => buttons[0],
+                Page.Previous => buttons[1],
+                Page.Next => buttons[^2],
+                Page.Last => buttons[^1],
+                _ => throw new ArgumentOutOfRangeException(nameof(controlButton), controlButton,
+                    "This control button type is not supported!")
+            };
+
+            //Expected values
+            button.GetAttribute("aria-label")?.Should().Be(expectedButtonAriaLabel);
         }
 
         /// <summary>

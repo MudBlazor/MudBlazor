@@ -2612,5 +2612,47 @@ namespace MudBlazor.UnitTests.Components
             cell.cellContext.Actions.SetSelectedItem(true);
             cell.cellContext.IsSelected.Should().Be(true);
         }
+
+        [Test]
+        public async Task DataGridAggregationTest()
+        {
+            var comp = Context.RenderComponent<DataGridAggregationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridAggregationTest.Model>>();
+
+            //Console.WriteLine(dataGrid.Markup);
+
+            dataGrid.FindAll("td.footer-cell")[1].TrimmedText().Should().Be("Average age is 56");
+            dataGrid.FindAll("tfoot td.footer-cell")[1].TrimmedText().Should().Be("Average age is 43");
+        }
+        
+        [Test]
+        public async Task DataGridSequenceContainsNoElementsTest()
+        {
+            var comp = Context.RenderComponent<DataGridSequenceContainsNoElementsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSequenceContainsNoElementsTest.Model>>();
+
+            // This test will result in an error if the 'sequence contains no elements' issue is present.
+        }
+
+        [Test]
+        public async Task DataGridObservabilityTest()
+        {
+            var comp = Context.RenderComponent<DataGridObservabilityTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridObservabilityTest.Model>>();
+
+            var addButton = comp.Find(".add-item-btn");
+            var removeButton = comp.Find(".remove-item-btn");
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(8);
+
+            addButton.Click();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(9);
+
+            removeButton.Click();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(8);
+        }
+
     }
 }

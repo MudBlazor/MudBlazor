@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
@@ -323,9 +323,9 @@ namespace MudBlazor
                 }
 
                 // Setup ObservableCollection functionality.
-                if (_items is ObservableCollection<T>)
+                if (_items is INotifyCollectionChanged)
                 {
-                    (_items as ObservableCollection<T>).CollectionChanged += (s, e) =>
+                    (_items as INotifyCollectionChanged).CollectionChanged += (s, e) =>
                     {
                         if (Groupable)
                             GroupItems();

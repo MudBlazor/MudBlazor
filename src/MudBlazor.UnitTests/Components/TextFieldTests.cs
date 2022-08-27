@@ -415,6 +415,18 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button").Should().BeEmpty();
         }
 
+        [Test]
+        public async Task TextField_ClearButton_TabIndex_Test()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                Parameter(nameof(MudTextField<string>.Clearable), true),
+                Parameter(nameof(MudTextField<string>.Text), "Test")
+            );
+
+            // Button should have tabindex -1
+            comp.Find("button").GetAttribute("tabindex").Should().Be("-1");
+        }
+
         #region ValidationAttribute support
         [Test]
         public async Task TextField_Should_Validate_Data_Attribute_Fail()
@@ -724,6 +736,83 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.SelectAsync());
             await comp.InvokeAsync(() => comp.Instance.SelectRangeAsync(0, 1));
             comp.WaitForAssertion(() => comp.Instance.ValidationErrors.Should().HaveCount(0));
+        }
+        
+        [Test]
+        public async Task TextField_OnlyValidateIfDirty_Is_True_Should_OnlyHaveInputErrorWhenValueChanged()
+        {
+            var comp = Context.RenderComponent<MudTextField<int?>>(
+                ComponentParameter.CreateParameter("Required", true),
+                ComponentParameter.CreateParameter("OnlyValidateIfDirty", true));
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+            
+            // user does not change input value but changes focus
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+
+            // user puts in a invalid integer value
+            comp.Find("input").Change("invalid");
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
+            
+            // user does not change invalid input value but changes focus
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
+            
+            // reset (must reset dirty state)
+            await comp.InvokeAsync(() => comp.Instance.Reset());
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+            
+            // user does not change input value but changes focus
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+            
+            // user puts in a invalid integer value
+            comp.Find("input").Change("invalid");
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
+            
+            // user corrects input
+            comp.Find("input").Change(55);
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+        }
+        
+        [Test]
+        public async Task TextField_OnlyValidateIfDirty_Is_False_Should_HaveInputErrorWhenFocusChanged()
+        {
+            var comp = Context.RenderComponent<MudTextField<int?>>(
+                ComponentParameter.CreateParameter("Required", true),
+                ComponentParameter.CreateParameter("OnlyValidateIfDirty", false));
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+            
+            // user does not change input value but changes focus
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
+            
+            // user puts in a invalid integer value
+            comp.Find("input").Change("invalid");
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
+            
+            // reset
+            await comp.InvokeAsync(() => comp.Instance.Reset());
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+            
+            // user does not change input value but changes focus
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
+            
+            // user corrects input
+            comp.Find("input").Change(55);
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
         }
     }
 }

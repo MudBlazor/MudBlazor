@@ -13,6 +13,36 @@ namespace MudBlazor
 {
     public class DialogService : IDialogService
     {
+        /// <summary>
+        /// This internal wrapper components prevents overwriting parameters of once
+        /// instanciated dialog instances
+        /// </summary>
+        private class DialogHelperComponent : IComponent
+        {
+            const string ChildContent = nameof(ChildContent);
+            RenderFragment _renderFragment;
+            RenderHandle _renderHandle;
+            void IComponent.Attach(RenderHandle renderHandle) => _renderHandle = renderHandle;
+            Task IComponent.SetParametersAsync(ParameterView parameters)
+            {
+                if (_renderFragment == null)
+                {
+                    if (parameters.TryGetValue(ChildContent, out _renderFragment))
+                    {
+                        _renderHandle.Render(_renderFragment);
+                    }
+                }
+                return Task.CompletedTask;
+            }
+            public static RenderFragment Wrap(RenderFragment renderFragment)
+                => new RenderFragment(builder =>
+                {
+                    builder.OpenComponent<DialogHelperComponent>(1);
+                    builder.AddAttribute(2, ChildContent, renderFragment);
+                    builder.CloseComponent();
+                });
+        }
+
         public event Action<IDialogReference> OnDialogInstanceAdded;
         public event Action<IDialogReference, DialogResult> OnDialogCloseRequested;
 
@@ -69,28 +99,17 @@ namespace MudBlazor
             }
             var dialogReference = CreateReference();
 
-            var dialogContent = new RenderFragment(builder =>
+            var dialogContent = DialogHelperComponent.Wrap(new RenderFragment(builder =>
             {
                 var i = 0;
                 builder.OpenComponent(i++, contentComponent);
-
-                if (!dialogReference.AreParametersRendered)
+                foreach (var parameter in parameters)
                 {
-                    foreach (var parameter in parameters)
-                    {
-                        builder.AddAttribute(i++, parameter.Key, parameter.Value);
-                    }
-
-                    dialogReference.AreParametersRendered = true;
+                    builder.AddAttribute(i++, parameter.Key, parameter.Value);
                 }
-                else
-                {
-                    i += parameters.Count;
-                }
-
                 builder.AddComponentReferenceCapture(i++, inst => { dialogReference.InjectDialog(inst); });
                 builder.CloseComponent();
-            });
+            }));
             var dialogInstance = new RenderFragment(builder =>
             {
                 builder.OpenComponent<MudDialogInstance>(0);

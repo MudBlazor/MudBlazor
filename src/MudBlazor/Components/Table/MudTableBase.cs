@@ -43,7 +43,7 @@ namespace MudBlazor
             .AddClass(HeaderClass).Build();
         protected string FootClassname => new CssBuilder("mud-table-foot")
             .AddClass(FooterClass).Build();
-        
+
         /// <summary>
         /// When editing a row and this is true, the editing row must be saved/cancelled before a new row will be selected.
         /// </summary>
@@ -159,11 +159,11 @@ namespace MudBlazor
                     SetRowsPerPage(value);
             }
         }
-        
+
         /// <summary>
         /// Rows Per Page two-way bindable parameter
         /// </summary>
-        [Parameter] public EventCallback<int> RowsPerPageChanged {get;set;}
+        [Parameter] public EventCallback<int> RowsPerPageChanged { get; set; }
 
         /// <summary>
         /// The page index of the currently displayed page (Zero based). Usually called by MudTablePager.
@@ -351,6 +351,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
         public bool CanCancelEdit { get; set; }
+
+        /// <summary>
+        /// Set the positon of the CommitEdit and CancelEdit button, if <see cref="IsEditable"/> IsEditable is true. Defaults to the end of the row
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Editing)]
+        public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
+
 
         /// <summary>
         /// The method is called before the item is modified in inline editing.
