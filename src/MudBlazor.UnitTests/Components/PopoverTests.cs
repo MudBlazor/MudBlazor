@@ -28,6 +28,7 @@ namespace MudBlazor.UnitTests.Components
 
             options.ContainerClass.Should().Be("mudblazor-main-content");
             options.FlipMargin.Should().Be(0);
+            options.ThrowOnDuplicateProvider.Should().Be(true);
         }
 
         [Test]
