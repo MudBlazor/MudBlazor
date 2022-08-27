@@ -1518,6 +1518,37 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Tests the aria-labels for the pager control buttons
+        /// </summary>
+        /// <param name="controlButton">The type of the control button. Page.First for the navigate-to-first-page button.</param>
+        /// <param name="expectedButtonAriaLabel">The expected value in the aria-label.</param>
+        [TestCase(Page.First, "First page")]
+        [TestCase(Page.Previous, "Previous page")]
+        [TestCase(Page.Next, "Next page")]
+        [TestCase(Page.Last, "Last page")]
+        [Test]
+        public void TablePagerControlButtonAriaLabelTest(Page controlButton, string expectedButtonAriaLabel)
+        {
+            var tableComponent = Context.RenderComponent<TablePagerInfoTextTest>();
+            //Console.WriteLine(comp.Markup);
+
+            //get control button
+            var buttons = tableComponent.FindAll("div.mud-table-pagination-actions button");
+            var button = controlButton switch
+            {
+                Page.First => buttons[0],
+                Page.Previous => buttons[1],
+                Page.Next => buttons[^2],
+                Page.Last => buttons[^1],
+                _ => throw new ArgumentOutOfRangeException(nameof(controlButton), controlButton,
+                    "This control button type is not supported!")
+            };
+
+            //Expected values
+            button.GetAttribute("aria-label")?.Should().Be(expectedButtonAriaLabel);
+        }
+
+        /// <summary>
         /// Tests checks that RowsPerPage Parameter is two-way bindable
         /// </summary>
         [Test]
