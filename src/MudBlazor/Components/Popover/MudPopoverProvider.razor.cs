@@ -58,6 +58,19 @@ namespace MudBlazor
             }
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender && IsEnabled && Service.ThrowOnDuplicateProvider)
+            {
+                await Service.InitializeIfNeeded();
+                if (await Service.CountProviders() > 1)
+                {
+                    throw new InvalidOperationException("Duplicate MudPopoverProvider detected. Please ensure there is only one provider, or disable this warning with PopoverOptions.ThrowOnDuplicateProvider.");
+                }
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
         private void Service_FragmentsChanged(object sender, EventArgs e)
         {
             InvokeAsync(StateHasChanged);

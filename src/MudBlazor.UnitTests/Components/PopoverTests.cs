@@ -8,10 +8,12 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
+using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Popover;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -28,6 +30,7 @@ namespace MudBlazor.UnitTests.Components
 
             options.ContainerClass.Should().Be("mudblazor-main-content");
             options.FlipMargin.Should().Be(0);
+            options.ThrowOnDuplicateProvider.Should().Be(true);
         }
 
         [Test]
@@ -878,6 +881,31 @@ namespace MudBlazor.UnitTests.Components
 
             //Console.WriteLine(comp.Markup);
             Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task MudPopoverProvider_ThrowOnDuplicate(bool ThrowOnDuplicateProvider)
+        {
+            var options = new PopoverOptions
+            {
+                ThrowOnDuplicateProvider = ThrowOnDuplicateProvider
+            };
+
+            Context.Services.Configure<PopoverOptions>(x => x.ThrowOnDuplicateProvider = ThrowOnDuplicateProvider);
+            Context.JSInterop.Setup<int>("mudpopoverHelper.countProviders").SetResult(ThrowOnDuplicateProvider == true ? 2 : 1);
+
+            if (ThrowOnDuplicateProvider == true)
+            {
+                var ex = Assert.Throws<InvalidOperationException>(() => Context.RenderComponent<PopoverDuplicationTest>());
+                ex.Message.Should().StartWith("Duplicate MudPopoverProvider detected");
+            }
+            else
+            {
+                var comp = Context.RenderComponent<PopoverDuplicationTest>();
+                await comp.Instance.Open();
+                await comp.Instance.Close();
+            }
         }
     }
 }
