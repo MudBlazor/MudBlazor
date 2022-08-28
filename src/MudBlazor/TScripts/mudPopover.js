@@ -299,6 +299,10 @@ window.mudpopoverHelper = {
         const id = target.id.substr(15);
         const popoverNode = document.getElementById('popover-' + id);
         window.mudpopoverHelper.placePopover(popoverNode);
+    },
+
+    countProviders: function () {
+        return document.querySelectorAll(".mud-popover-provider").length;
     }
 }
 

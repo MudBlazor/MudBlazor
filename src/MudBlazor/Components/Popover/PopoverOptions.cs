@@ -14,5 +14,6 @@ namespace MudBlazor
     {
         public string ContainerClass { get; set; } = "mudblazor-main-content";
         public int FlipMargin { get; set; } = 0;
+        public bool ThrowOnDuplicateProvider { get; set; } = true;
     }
 }
