@@ -3523,5 +3523,126 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(8);
         }
 
+        public async Task TableFilterGuid()
+        {
+            var comp = Context.RenderComponent<DataGridFilterGuid<Guid>>();
+            var grid = comp.Instance.MudGridRef;
+            
+            grid.Items.Count().Should().Be(2);
+            grid.FilteredItems.Count().Should().Be(2);
+            
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
+            {
+                Field = "Id",
+                Operator = "equals",
+                Value = "invalid guid",
+                FieldType = typeof(Guid),
+            });
+            grid.FilteredItems.Count().Should().Be(0);
+            
+            grid.FilterDefinitions.Clear();
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
+            {
+                Field = "Id",
+                Operator = "equals",
+                Value = comp.Instance.Guid1,
+                FieldType = typeof(Guid),
+            });
+            grid.FilteredItems.Count().Should().Be(1);
+            grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
+            
+            grid.FilterDefinitions.Clear();
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
+            {
+                Field = "Id",
+                Operator = "not equals",
+                Value = comp.Instance.Guid1,
+                FieldType = typeof(Guid),
+            });
+            grid.FilteredItems.Count().Should().Be(1);
+            grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid2);
+        }
+
+        [Test]
+        public async Task TableFilterNullableGuid()
+        {
+            var comp = Context.RenderComponent<DataGridFilterGuid<Nullable<Guid>>>();
+            var grid = comp.Instance.MudGridRef;
+            
+            grid.Items.Count().Should().Be(2);
+            grid.FilteredItems.Count().Should().Be(2);
+            
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
+            {
+                Field = "Id",
+                Operator = "equals",
+                Value = "invalid guid",
+                FieldType = typeof(Nullable<Guid>),
+            });
+            grid.FilteredItems.Count().Should().Be(0);
+            
+            grid.FilterDefinitions.Clear();
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
+            {
+                Field = "Id",
+                Operator = "equals",
+                Value = comp.Instance.Guid1,
+                FieldType = typeof(Nullable<Guid>),
+            });
+            grid.FilteredItems.Count().Should().Be(1);
+            grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
+            
+            grid.FilterDefinitions.Clear();
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
+            {
+                Field = "Id",
+                Operator = "not equals",
+                Value = comp.Instance.Guid1,
+                FieldType = typeof(Nullable<Guid>),
+            });
+            grid.FilteredItems.Count().Should().Be(1);
+            grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid2);
+        }
+
+        [Test]
+        public async Task TableFilterGuidInDictionary()
+        {
+            var comp = Context.RenderComponent<DataGridFilterDictionaryGuid>();
+            var grid = comp.Instance.MudGridRef;
+            
+            grid.Items.Count().Should().Be(2);
+            grid.FilteredItems.Count().Should().Be(2);
+            
+            grid.FilterDefinitions.Add(new FilterDefinition<IDictionary<string, object>>()
+            {
+                Field = "Id",
+                Operator = "equals",
+                Value = "invalid guid",
+                FieldType = typeof(Nullable<Guid>),
+            });
+            grid.FilteredItems.Count().Should().Be(0);
+            
+            grid.FilterDefinitions.Clear();
+            grid.FilterDefinitions.Add(new FilterDefinition<IDictionary<string, object>>()
+            {
+                Field = "Id",
+                Operator = "equals",
+                Value = comp.Instance.Guid1,
+                FieldType = typeof(Nullable<Guid>),
+            });
+            grid.FilteredItems.Count().Should().Be(1);
+            grid.FilteredItems.FirstOrDefault()["Id"].Should().Be(Guid.Parse(comp.Instance.Guid1));
+            
+            grid.FilterDefinitions.Clear();
+            grid.FilterDefinitions.Add(new FilterDefinition<IDictionary<string, object>>()
+            {
+                Field = "Id",
+                Operator = "not equals",
+                Value = comp.Instance.Guid1,
+                FieldType = typeof(Nullable<Guid>),
+            });
+            grid.FilteredItems.Count().Should().Be(1);
+            grid.FilteredItems.FirstOrDefault()["Id"].Should().Be(Guid.Parse(comp.Instance.Guid2));
+        }
     }
 }

@@ -66,6 +66,11 @@
                 </MudItem>
             </MudGrid>
         }
+        else if (dataType == typeof(Guid))
+        {
+            <MudTextField T="string" Value="@_valueString" ValueChanged="@StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense" 
+                Immediate="true" Class="filter-input" />
+        }
     </MudItem>
 }
 else 
@@ -120,6 +125,11 @@ else
                     <MudTimePicker Time="@_valueTime" TimeChanged="@TimeValueChanged" Margin="@Margin.Dense" Class="filter-input-time" />
                 </MudItem>
             </MudGrid>
+        }
+        else if (dataType == typeof(Guid))
+        {
+            <MudTextField T="string" Value="@_valueString" ValueChanged="@StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense" 
+                Immediate="true" Class="filter-input" />
         }
     </MudItem>
 
