@@ -65,7 +65,7 @@ namespace MudBlazor
                 await Service.InitializeIfNeeded();
                 if (await Service.CountProviders() > 1)
                 {
-                    throw new Exception("Duplicate MudPopoverProvider detected. Please ensure there is only one provider, or disable this warning with PopoverOptions.ThrowOnDuplicateProvider.");
+                    throw new InvalidOperationException("Duplicate MudPopoverProvider detected. Please ensure there is only one provider, or disable this warning with PopoverOptions.ThrowOnDuplicateProvider.");
                 }
             }
             await base.OnAfterRenderAsync(firstRender);
