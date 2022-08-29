@@ -87,6 +87,10 @@ namespace MudBlazor
             }
         }
 
+        private Column<T> FilterColumn =>
+            Column != null
+                ? Column
+                : DataGrid?.RenderedColumns?.FirstOrDefault(c => c.Field == Field);
         #endregion
 
         protected override void OnInitialized()

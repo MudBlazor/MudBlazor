@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.Json;
@@ -112,6 +113,12 @@ namespace MudBlazor
 
         [Parameter] public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
 
+        /// <summary>
+        /// The culture used to represent this column and by the filtering input field.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public CultureInfo Culture { get; set; }
         #endregion
 
         #region Cell Properties
