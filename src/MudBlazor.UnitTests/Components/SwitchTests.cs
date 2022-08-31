@@ -1,11 +1,10 @@
-﻿
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Docs.Examples;
 using MudBlazor.Extensions;
-using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -71,6 +70,25 @@ namespace MudBlazor.UnitTests.Components
             input.Change(true);
             box.Checked.Should().Be(true);
             checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
+        }
+
+        [Test]
+        public void SwitchDisabledTest()
+        {
+            var comp = Context.RenderComponent<SwitchWithLabelExample>();
+            var switches = comp.FindAll("label.mud-switch");
+            switches[3].ClassList.Should().Contain("mud-disabled"); // 4rd switch
+        }
+
+        [Test]
+        public void SwitchLabelPositionTest()
+        {
+            var comp = Context.RenderComponent<SwitchWithLabelExample>();
+            //Console.WriteLine(comp.Markup);
+            var switches = comp.FindAll("label.mud-switch");
+
+            switches[0].ClassList.Should().Contain("mud-ltr"); // 1st switch: (default) LabelPosition.End
+            switches[2].ClassList.Should().Contain("mud-rtl"); // 3rd switch: LabelPosition.Start
         }
     }
 }

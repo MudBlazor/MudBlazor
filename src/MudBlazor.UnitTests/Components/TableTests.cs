@@ -1016,6 +1016,56 @@ namespace MudBlazor.UnitTests.Components
             validator.ControlCount.Should().Be(1);
         }
 
+        [Theory]
+        [TestCase(TableApplyButtonPosition.StartAndEnd)]
+        [TestCase(TableApplyButtonPosition.Start)]
+        [TestCase(TableApplyButtonPosition.End)]
+        public async Task TableInlineEdit_ApplyButtonPosition(TableApplyButtonPosition position)
+        {
+            var comp = Context.RenderComponent<TableInlineEditTestApplyButtons>(
+                p => p.Add(x => x.ApplyButtonPosition, position));
+            
+            var trs = comp.FindAll("tr");
+
+            //header + 3 items + footer
+            trs.Should().HaveCount(5);
+
+            var header = trs[0];
+            var footer = trs[trs.Count - 1];
+            var expectedAmount = position switch
+            {
+                TableApplyButtonPosition.Start or TableApplyButtonPosition.End => 2,
+                TableApplyButtonPosition.StartAndEnd => 3,
+                _ => throw new NotImplementedException()
+            };
+
+            header.ChildElementCount.Should().Be(expectedAmount);
+            footer.ChildElementCount.Should().Be(expectedAmount);
+
+            trs[2].Click();
+
+            var trs2 = comp.FindAll("tr");
+            var relevantRow = trs2[2];
+            relevantRow.ChildElementCount.Should().Be(expectedAmount);
+
+            if (position == TableApplyButtonPosition.Start)
+            {
+                relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+                relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlInputElement>().Should().NotBeNull();
+            }
+            else if (position == TableApplyButtonPosition.End)
+            {
+                relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlInputElement>().Should().NotBeNull();
+                relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+            }
+            else if (position == TableApplyButtonPosition.StartAndEnd)
+            {
+                relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+                relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlInputElement>().Should().NotBeNull();
+                relevantRow.Children[2].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+            }
+        }
+
         [Test]
         public async Task TableInlineEdit_RowSwitching()
         {
@@ -1468,6 +1518,37 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Tests the aria-labels for the pager control buttons
+        /// </summary>
+        /// <param name="controlButton">The type of the control button. Page.First for the navigate-to-first-page button.</param>
+        /// <param name="expectedButtonAriaLabel">The expected value in the aria-label.</param>
+        [TestCase(Page.First, "First page")]
+        [TestCase(Page.Previous, "Previous page")]
+        [TestCase(Page.Next, "Next page")]
+        [TestCase(Page.Last, "Last page")]
+        [Test]
+        public void TablePagerControlButtonAriaLabelTest(Page controlButton, string expectedButtonAriaLabel)
+        {
+            var tableComponent = Context.RenderComponent<TablePagerInfoTextTest>();
+            //Console.WriteLine(comp.Markup);
+
+            //get control button
+            var buttons = tableComponent.FindAll("div.mud-table-pagination-actions button");
+            var button = controlButton switch
+            {
+                Page.First => buttons[0],
+                Page.Previous => buttons[1],
+                Page.Next => buttons[^2],
+                Page.Last => buttons[^1],
+                _ => throw new ArgumentOutOfRangeException(nameof(controlButton), controlButton,
+                    "This control button type is not supported!")
+            };
+
+            //Expected values
+            button.GetAttribute("aria-label")?.Should().Be(expectedButtonAriaLabel);
+        }
+
+        /// <summary>
         /// Tests checks that RowsPerPage Parameter is two-way bindable
         /// </summary>
         [Test]
@@ -1521,7 +1602,7 @@ namespace MudBlazor.UnitTests.Components
             // Make sure number of items has updated
             tableInstance.GetFilteredItemsCount().Should().Be(1);
         }
-        
+
         /// Issue #3033
         /// Tests changing RowsPerPage Parameter from code - Table should re-render new RowsPerPage parameter and parameter value should be set
         /// </summary>
@@ -1541,19 +1622,70 @@ namespace MudBlazor.UnitTests.Components
             testComponent.WaitForAssertion(() => table.RowsPerPage.Should().Be(35));
         }
 
+        /// <summary>
+        /// Tests whether record type table items are kept track of when edited
+        /// </summary>
+        /// <returns></returns>
         [Test]
-        public async Task TableContextRecordTest()
+        public async Task TableRecordEditingMultiSelectTest()
         {
-            var comp = Context.RenderComponent<TableContextRecordTest>();
-            var table = comp.Instance.MudTableRef;
-            table.Context.Rows.Count.Should().Be(4);
+            var comp = Context.RenderComponent<TableRecordComparerTest>();
+            var table = comp.FindComponent<MudTable<TableRecordComparerTest.Element>>().Instance;
 
-            var rows = table.Context.Rows.OrderBy(x => x.Value.Value).ToList(); //get a sorted list with the first two items
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
-            rows.Count.Should().Be(4);
+            var inputs = comp.FindAll("input").ToArray();
+            inputs.Length.Should().Be(4); // one checkbox per row + one for the header
+            table.SelectedItems.Count.Should().Be(0); // selected items should be empty
+            // click header checkbox
+            inputs[0].Change(true);
+            table.SelectedItems.Count.Should().Be(3);
 
-            rows[0].Value.Should().Be(rows[1].Value); //row values should match
-            rows[0].Should().NotBe(rows[1]); //but the presence of the row means the containing record is unique
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4); //there should be 4 items
+            comp.Find("p").TextContent.Should().Be("Elements { A, B, C }");
+
+            // Click on the second row
+            var trs = comp.FindAll("tr");
+            trs[2].Click();
+
+            // Change row two data
+            var input = comp.Find(("#Id2"));
+            input.Change("Change");
+
+            table.SelectedItems.Count.Should().Be(3);
+
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4); //there should be 4 items
+            comp.Find("p").TextContent.Should().Be("Elements { A, Change, C }");
+
+            // Uncheck and verify that all items are removed
+            inputs[0].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0); //there should be 4 items
+            comp.Find("p").TextContent.Should().Be("Elements {  }");
+        }
+
+        /// <summary>
+        /// Setting a comparer should be reflected in all layers of the table
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TableComparerContextTest()
+        {
+            var comp = Context.RenderComponent<TableComparerContextTest>();
+            var table = comp.FindComponent<MudTable<TableComparerContextTest.Element>>().Instance;
+
+            // Comparer is null by default
+            var context = table.Context;
+            table.Comparer.Should().Be(null);
+            context.Comparer.Should().Be(null);
+
+            await comp.InvokeAsync(() => comp.Instance.SetComparer());
+
+            // All comparer values should match
+            table.Comparer.Should().Be(comp.Instance.Comparer);
+            context.Comparer.Should().Be(comp.Instance.Comparer);
+            context.Selection.Comparer.Should().Be(comp.Instance.Comparer); //check comparer is set in HashSet and Dictionary
+            context.Rows.Comparer.Should().Be(comp.Instance.Comparer);
         }
     }
 }

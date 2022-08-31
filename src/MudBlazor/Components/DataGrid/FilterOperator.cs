@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
 
@@ -68,6 +69,14 @@ namespace MudBlazor
             internal static string[] Values = GetFields(typeof(DateTime));
         }
 
+        public static class Guid
+        {
+            public const string Equal = "equals";
+            public const string NotEqual = "not equals";
+
+            internal static string[] Values = GetFields(typeof(Guid));
+        }
+
         internal static string[] GetOperatorByDataType(Type type)
         {
             if (type == typeof(string))
@@ -90,12 +99,16 @@ namespace MudBlazor
             {
                 return DateTime.Values;
             }
+            if (type == typeof(System.Guid))
+            {
+                return Guid.Values;
+            }
 
             // default
             return new string[] { };
         }
 
-        internal static string[] GetFields(Type type)
+        internal static string[] GetFields([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type type)
         {
             List<string> fields = new List<string>();
 
@@ -135,12 +148,12 @@ namespace MudBlazor
             typeof(BigInteger?),
         };
 
-        internal static bool IsNumber(Type type)
+        internal static bool IsNumber([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type type)
         {
             return NumericTypes.Contains(type);
         }
 
-        internal static bool IsEnum(Type type)
+        internal static bool IsEnum([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type type)
         {
             if (null == type)
                 return false;
@@ -152,7 +165,7 @@ namespace MudBlazor
             return (u != null) && u.IsEnum;
         }
 
-        internal static bool IsDateTime(Type type)
+        internal static bool IsDateTime([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type type)
         {
             if (type == typeof(System.DateTime))
                 return true;
@@ -161,13 +174,22 @@ namespace MudBlazor
             return (u != null) && u == typeof(System.DateTime);
         }
 
-        internal static bool IsBoolean(Type type)
+        internal static bool IsBoolean([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type type)
         {
-            if (type == typeof(System.Boolean))
+            if (type == typeof(bool))
                 return true;
 
             Type u = Nullable.GetUnderlyingType(type);
-            return (u != null) && u == typeof(System.Boolean);
+            return (u != null) && u == typeof(bool);
+        }
+
+        internal static bool IsGuid(Type type)
+        {
+            if (type == typeof(System.Guid))
+                return true;
+
+            Type u = Nullable.GetUnderlyingType(type);
+            return (u != null) && u == typeof(System.Guid);
         }
     }
 }

@@ -7,19 +7,26 @@
 <MudTable Items="@Elements" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<Element,bool>(FilterFunc)"
           @bind-SelectedItem="selectedItem1" SortLabel="Sort By" CommitEditTooltip="Commit Edit"
           OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues"
-          RowEditCommit="ItemHasBeenCommitted" IsEditRowSwitchingBlocked="@blockSwitch">
+          RowEditCommit="ItemHasBeenCommitted" IsEditRowSwitchingBlocked="@blockSwitch" ApplyButtonPosition="@applyButtonPosition">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudSpacer />
         <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <ColGroup>
-        <col style="width:50px;" />
+		@if(applyButtonPosition.DisplayApplyButtonAtStart())
+		{
+			<col style="width:50px;" />
+		}
+		<col style="width:50px;" />
         <col style="width:80px;" />
         <col style="width:50%;" />
         <col />
         <col />
-        <col style="width:50px;" />
+		@if (applyButtonPosition.DisplayApplyButtonAtEnd())
+		{
+			<col style="width:50px;" />
+		}
     </ColGroup>
     <HeaderContent>
         <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Number)">Nr</MudTableSortLabel></MudTh>
@@ -60,6 +67,11 @@
 <MudSwitch @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
 <MudSwitch @bind-Checked="@canCancelEdit" Color="Color.Info">Can Cancel Edit</MudSwitch>
 <MudSwitch @bind-Checked="@blockSwitch" Color="Color.Success">Block Edit Row Switching</MudSwitch>
+<MudSelect Label="Apply Button Postion" T="TableApplyButtonPosition" @bind-Value="applyButtonPosition">
+	<MudSelectItem Value="TableApplyButtonPosition.Start">Start</MudSelectItem>
+	<MudSelectItem Value="TableApplyButtonPosition.End">End</MudSelectItem>
+	<MudSelectItem Value="TableApplyButtonPosition.StartAndEnd">Start and End</MudSelectItem>
+</MudSelect>
 <MudText Inline="true">Selected1: @selectedItem1?.Name</MudText>
 
 <MudExpansionPanels Style="flex: 1;">
@@ -76,18 +88,19 @@
     </MudExpansionPanel>
 </MudExpansionPanels>
 
-@code { private List<string> editEvents = new();
-    private bool dense = false;
-    private bool hover = true;
-    private bool ronly = false;
-    private bool canCancelEdit = false;
-    private bool blockSwitch = false;
-    private string searchString = "";
-    private Element selectedItem1 = null;
-    private Element elementBeforeEdit;
-    private HashSet<Element> selectedItems1 = new HashSet<Element>();
-
-    private IEnumerable<Element> Elements = new List<Element>();
+@code {
+	private List<string> editEvents = new();
+	private bool dense = false;
+	private bool hover = true;
+	private bool ronly = false;
+	private bool canCancelEdit = false;
+	private bool blockSwitch = false;
+	private string searchString = "";
+	private Element selectedItem1 = null;
+	private Element elementBeforeEdit;
+	private HashSet<Element> selectedItems1 = new HashSet<Element>();
+	private TableApplyButtonPosition applyButtonPosition = TableApplyButtonPosition.End;
+	private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()
     {

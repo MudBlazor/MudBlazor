@@ -47,16 +47,31 @@
             </SectionContent>
         </DocsPageSection>
 
-		<DocsPageSection>
-			<SectionHeader Title="Using Fluent Validation">
-				<Description>
-					This example shows how to make use of the powerful <MudLink Href="https://docs.fluentvalidation.net/en/latest/index.html">FluentValidation</MudLink> validators with MudForm. This approach utilizes a standard AbstractValidator which can be shared with the <MudLink Href="https://docs.fluentvalidation.net/en/latest/aspnet.html">ASP.NET API Controllers</MudLink>.
-				</Description>
-			</SectionHeader>
-			<SectionContent DarkenBackground="true" ShowCode="false" Code="FluentValidationComplexExample">
+        <DocsPageSection>
+            <SectionHeader Title="Using Fluent Validation">
+                <Description>
+                    This example shows how to make use of the powerful <MudLink Href="https://docs.fluentvalidation.net/en/latest/index.html">FluentValidation</MudLink> validators with MudForm. This approach utilizes a standard AbstractValidator which can be shared with the <MudLink Href="https://docs.fluentvalidation.net/en/latest/aspnet.html">ASP.NET API Controllers</MudLink>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="FluentValidationComplexExample">
                 <FluentValidationComplexExample />
             </SectionContent>
-		</DocsPageSection>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Validate only on user interaction">
+                <Description>
+                    Normally input fields are validated when leaving the input field. This behavior can be changed with the flag <CodeInline>OnlyValidateIfDirty</CodeInline> If this flag is set to <CodeInline>true</CodeInline>, the input field will only be validated if the user has changed the initial value. 
+                    <br/><br/>
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        Note: The <CodeInline>OnlyValidateIfDirty</CodeInline> setting should not be changed dynamically
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="ValidateIfDirtyExample">
+                <ValidateIfDirtyExample/>
+            </SectionContent>
+        </DocsPageSection>
 
     </DocsPageContent>
 </DocsPage>

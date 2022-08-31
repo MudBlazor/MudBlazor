@@ -102,7 +102,7 @@ namespace MudBlazor
             var (type, properties) = GetTypeInformation<T>();
             var key = RegisterCallBack(type, callback);
 
-            await _jsRuntime.InvokeVoidAsync("mudThrottledEventManager.subscribe", eventName, elementId, projectionName, throotleInterval, key, properties, _dotNetRef);
+            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudThrottledEventManager.subscribe", eventName, elementId, projectionName, throotleInterval, key, properties, _dotNetRef);
 
             return key;
         }
@@ -112,7 +112,7 @@ namespace MudBlazor
             var (type, properties) = GetTypeInformation<T>();
             var key = RegisterCallBack(type, callback);
 
-            await _jsRuntime.InvokeVoidAsync("mudThrottledEventManager.subscribeGlobal", eventName, throotleInterval, key, properties, _dotNetRef);
+            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudThrottledEventManager.subscribeGlobal", eventName, throotleInterval, key, properties, _dotNetRef);
 
             return key;
         }
@@ -123,7 +123,7 @@ namespace MudBlazor
 
             try
             {
-                await _jsRuntime.InvokeVoidAsync("mudThrottledEventManager.unsubscribe", key);
+                await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudThrottledEventManager.unsubscribe", key);
                 return true;
             }
             catch (Exception)
@@ -158,7 +158,7 @@ namespace MudBlazor
             {
                 try
                 {
-                    await _jsRuntime.InvokeVoidAsync("mudThrottledEventManager.unsubscribe", item.Key);
+                    await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudThrottledEventManager.unsubscribe", item.Key);
                 }
                 catch (Exception)
                 {

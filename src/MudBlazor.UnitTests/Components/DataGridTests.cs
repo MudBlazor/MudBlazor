@@ -15,6 +15,8 @@ using NUnit.Framework;
 using Microsoft.JSInterop.Infrastructure;
 using MudBlazor.Interop;
 using System.Text.Json;
+using System.Linq.Expressions;
+using PrimitiveCalculator;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -2109,6 +2111,873 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task FilterDefinitionStringExpressionTest()
+        {
+            var filterDefinition = new FilterDefinition<TestModel1>();
+            Expression<Func<TestModel1, bool>> expression = null;
+
+            #region FilterOperator.String.Contains
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Contains,
+                Value = "Joe"
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func =expression.Compile();
+            Assert.IsFalse(func.Invoke(new("Does not contain", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func.Invoke(new(null, 45)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Contains,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func2 = expression.Compile();
+            Assert.IsTrue(func2.Invoke(new("Does not contain", 45)));
+            Assert.IsTrue(func2.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func2.Invoke(new(null, 45)));
+
+            #endregion
+
+            #region FilterOperator.String.NotContains
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotContains,
+                Value = "Joe"
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func3 = expression.Compile();
+            Assert.IsTrue(func3.Invoke(new("Does not contain", 45)));
+            Assert.IsFalse(func3.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func3.Invoke(new(null, 45)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotContains,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func4 = expression.Compile();
+            Assert.IsTrue(func4.Invoke(new("Does not contain", 45)));
+            Assert.IsTrue(func4.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func4.Invoke(new(null, 45)));
+
+            #endregion
+
+            #region FilterOperator.String.Equal
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Equal,
+                Value = "Joe"
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func5 = expression.Compile();
+            Assert.IsFalse(func5.Invoke(new("Not Joe", 45)));
+            Assert.IsFalse(func5.Invoke(new(null, 45)));
+            Assert.IsTrue(func5.Invoke(new("Joe", 45)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Equal,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func6 = expression.Compile();
+            Assert.IsTrue(func6.Invoke(new("Joe Not", 45)));
+            Assert.IsTrue(func6.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func6.Invoke(new(null, 45)));
+
+            #endregion
+
+            #region FilterOperator.String.NotEqual
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEqual,
+                Value = "Joe"
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func7 = expression.Compile();
+            Assert.IsTrue(func7.Invoke(new("Not Joe", 45)));
+            Assert.IsFalse(func7.Invoke(new(null, 45)));
+            Assert.IsFalse(func7.Invoke(new("Joe", 45)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEqual,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func8 = expression.Compile();
+            Assert.IsTrue(func8.Invoke(new("Joe Not", 45)));
+            Assert.IsTrue(func8.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func8.Invoke(new(null, 45)));
+
+            #endregion
+
+            #region FilterOperator.String.StartsWith
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.StartsWith,
+                Value = "Joe"
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func9 = expression.Compile();
+            Assert.IsFalse(func9.Invoke(new("Not Joe", 45)));
+            Assert.IsFalse(func9.Invoke(new(null, 45)));
+            Assert.IsTrue(func9.Invoke(new("Joe", 45)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.StartsWith,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func10 = expression.Compile();
+            Assert.IsTrue(func10.Invoke(new("Not Joe", 45)));
+            Assert.IsTrue(func10.Invoke(new(null, 45)));
+            Assert.IsTrue(func10.Invoke(new("Joe", 45)));
+
+            #endregion
+
+            #region FilterOperator.String.EndsWith
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.EndsWith,
+                Value = "Joe"
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func11 = expression.Compile();
+            Assert.IsFalse(func11.Invoke(new("Joe Not", 45)));
+            Assert.IsFalse(func11.Invoke(new(null, 45)));
+            Assert.IsTrue(func11.Invoke(new("Joe", 45)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.EndsWith,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func12 = expression.Compile();
+            Assert.IsTrue(func12.Invoke(new("Joe Not", 45)));
+            Assert.IsTrue(func12.Invoke(new(null, 45)));
+            Assert.IsTrue(func12.Invoke(new("Joe", 45)));
+
+            #endregion
+
+            #region FilterOperator.String.Empty
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Empty,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func13 = expression.Compile();
+            Assert.IsFalse(func13.Invoke(new("Joe Not", 45)));
+            Assert.IsTrue(func13.Invoke(new("", 45)));
+            Assert.IsTrue(func13.Invoke(new(null, 45)));
+            Assert.IsTrue(func13.Invoke(new(String.Empty, 45)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEmpty,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func14 = expression.Compile();
+            Assert.IsTrue(func14.Invoke(new("Joe Not", 45)));
+            Assert.IsFalse(func14.Invoke(new("", 45)));
+            Assert.IsFalse(func14.Invoke(new(null, 45)));
+            Assert.IsFalse(func14.Invoke(new(String.Empty, 45)));
+
+            #endregion
+
+            #region FilterOperator.String.NotEmpty
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEmpty,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func15 = expression.Compile();
+            Assert.IsTrue(func15.Invoke(new("Joe Not", 45)));
+            Assert.IsFalse(func15.Invoke(new("", 45)));
+            Assert.IsFalse(func15.Invoke(new(null, 45)));
+            Assert.IsFalse(func15.Invoke(new(String.Empty, 45)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEmpty,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func16 = expression.Compile();
+            Assert.IsTrue(func16.Invoke(new("Joe Not", 45)));
+            Assert.IsFalse(func16.Invoke(new("", 45)));
+            Assert.IsFalse(func16.Invoke(new(null, 45)));
+            Assert.IsFalse(func16.Invoke(new(String.Empty, 45)));
+
+            #endregion
+
+            // handle null operator
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = null,
+                Value = "Joe"
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func17 = expression.Compile();
+            Assert.IsTrue(func17.Invoke(new("Joe Not", 45)));
+            Assert.IsTrue(func17.Invoke(new(null, 45)));
+            Assert.IsTrue(func17.Invoke(new("Joe", 45)));
+        }
+
+
+        [Test]
+        public async Task FilterDefinitionNumberExpressionTest()
+        {
+            var filterDefinition = new FilterDefinition<TestModel1>();
+            Expression<Func<TestModel1, bool>> expression = null;
+
+            #region FilterOperator.Number.Equal
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.Equal,
+                Value = 45
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func = expression.Compile();
+            Assert.IsFalse(func.Invoke(new("Sam", 456)));
+            Assert.IsFalse(func.Invoke(new("Sam", null)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.Equal,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func2 = expression.Compile();
+            // data type is an int
+            Assert.IsTrue(func2.Invoke(new("Sam", 456)));
+            Assert.IsTrue(func2.Invoke(new("Sam", null)));
+            Assert.IsTrue(func2.Invoke(new("Joe", 45)));
+
+            #endregion
+
+            #region FilterOperator.Number.NotEqual
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.NotEqual,
+                Value = 45
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func3 = expression.Compile();
+            Assert.IsTrue(func3.Invoke(new("Sam", 456)));
+            Assert.IsTrue(func3.Invoke(new("Sam", null)));
+            Assert.IsFalse(func3.Invoke(new("Joe", 45)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.NotEqual,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func4 = expression.Compile();
+            Assert.IsTrue(func4.Invoke(new("Sam", 456)));
+            Assert.IsTrue(func4.Invoke(new("Sam", null)));
+            Assert.IsTrue(func4.Invoke(new("Joe", 45)));
+
+            #endregion
+
+            #region FilterOperator.Number.GreaterThan
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.GreaterThan,
+                Value = 45
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func5 = expression.Compile();
+            Assert.IsTrue(func5.Invoke(new("Sam", 456)));
+            Assert.IsFalse(func5.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func5.Invoke(new("Joe", null)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.GreaterThan,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func6 = expression.Compile();
+            Assert.IsTrue(func6.Invoke(new("Sam", 456)));
+            Assert.IsTrue(func6.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func6.Invoke(new("Joe", null)));
+
+            #endregion
+
+            #region FilterOperator.Number.LessThan
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.LessThan,
+                Value = 45
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func7 = expression.Compile();
+            Assert.IsTrue(func7.Invoke(new("Sam", 4)));
+            Assert.IsFalse(func7.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func7.Invoke(new("Joe", null)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.LessThan,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func8 = expression.Compile();
+            Assert.IsTrue(func8.Invoke(new("Sam", 4)));
+            Assert.IsTrue(func8.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func8.Invoke(new("Joe", null)));
+
+            #endregion
+
+            #region FilterOperator.Number.GreaterThanOrEqual
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.GreaterThanOrEqual,
+                Value = 45
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func9 = expression.Compile();
+            Assert.IsFalse(func9.Invoke(new("Sam", 4)));
+            Assert.IsFalse(func9.Invoke(new("Sam", null)));
+            Assert.IsTrue(func9.Invoke(new("Joe", 45)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.GreaterThanOrEqual,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func10 = expression.Compile();
+            Assert.IsTrue(func10.Invoke(new("Sam", 4)));
+            Assert.IsTrue(func10.Invoke(new("Sam", null)));
+            Assert.IsTrue(func10.Invoke(new("Joe", 45)));
+
+            #endregion
+
+            #region FilterOperator.Number.LessThanOrEqual
+
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.LessThanOrEqual,
+                Value = 45
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func11 = expression.Compile();
+            Console.WriteLine(func11.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func11.Invoke(new("Sam", 46)));
+            Assert.IsFalse(func11.Invoke(new("Sam", null)));
+            Assert.IsTrue(func11.Invoke(new("Joe", 45)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = FilterOperator.Number.LessThanOrEqual,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func12 = expression.Compile();
+            Console.WriteLine(func12.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func12.Invoke(new("Sam", 46)));
+            Assert.IsTrue(func12.Invoke(new("Sam", null)));
+            Assert.IsTrue(func12.Invoke(new("Joe", 45)));
+
+            #endregion
+
+            // null operator
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Age",
+                Operator = null,
+                Value = 45
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func13 = expression.Compile();
+            Assert.IsTrue(func13.Invoke(new("Sam", 456)));
+            Assert.IsTrue(func13.Invoke(new("Sam", null)));
+            Assert.IsTrue(func13.Invoke(new("Joe", 45)));
+        }
+
+
+        [Test]
+        public async Task FilterDefinitionBoolExpressionTest()
+        {
+            #region FilterOperator.Boolean.Is
+
+            Expression<Func<TestModel4, bool>> expression = null;
+            var filterDefinition = new FilterDefinition<TestModel4>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Hired",
+                Operator = FilterOperator.Boolean.Is,
+                Value = true
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func = expression.Compile();
+            Assert.IsFalse(func.Invoke(new("Sam", 45, false)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45, true)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel4>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Hired",
+                Operator = FilterOperator.Boolean.Is,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func2 = expression.Compile();
+            Assert.IsTrue(func2.Invoke(new("Sam", 45, false)));
+            Assert.IsTrue(func2.Invoke(new("Joe", 45, true)));
+            Assert.IsTrue(func2.Invoke(new("Joe", 45, null)));
+
+            #endregion
+
+            // null operator
+            filterDefinition = new FilterDefinition<TestModel4>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Hired",
+                Operator = null,
+                Value = true
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func3 = expression.Compile();
+            Assert.IsTrue(func3.Invoke(new("Sam", 45, false)));
+            Assert.IsTrue(func3.Invoke(new("Joe", 45, true)));
+            Assert.IsTrue(func3.Invoke(new("Joe", 45, null)));
+        }
+
+        [Test]
+        public async Task FilterDefinitionEnumExpressionTest()
+        {
+            #region FilterOperator.Enum.Is
+
+            Expression<Func<TestModel3, bool>> expression = null;
+            var filterDefinition = new FilterDefinition<TestModel3>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Status",
+                Operator = FilterOperator.Enum.Is,
+                Value = Severity.Normal
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func = expression.Compile();
+            Assert.IsFalse(func.Invoke(new("Sam", 456, Severity.Info)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45, Severity.Normal)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel3>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Status",
+                Operator = FilterOperator.Enum.Is,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func2 = expression.Compile();
+            Assert.IsTrue(func2.Invoke(new("Sam", 456, Severity.Info)));
+            Assert.IsTrue(func2.Invoke(new("Joe", 45, Severity.Normal)));
+            Assert.IsTrue(func2.Invoke(new("Joe", 45, null)));
+
+            #endregion
+
+            #region FilterOperator.Enum.IsNot
+
+            filterDefinition = new FilterDefinition<TestModel3>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Status",
+                Operator = FilterOperator.Enum.IsNot,
+                Value = Severity.Normal
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func3 = expression.Compile();
+            Assert.IsFalse(func3.Invoke(new("Sam", 456, Severity.Normal)));
+            Assert.IsTrue(func3.Invoke(new("Joe", 45, Severity.Info)));
+            Assert.IsTrue(func3.Invoke(new("Joe", 45, null)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel3>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Status",
+                Operator = FilterOperator.Enum.IsNot,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func4 = expression.Compile();
+            Assert.IsTrue(func4.Invoke(new("Sam", 456, Severity.Normal)));
+            Assert.IsTrue(func4.Invoke(new("Joe", 45, Severity.Info)));
+            Assert.IsTrue(func4.Invoke(new("Joe", 45, null)));
+
+            #endregion
+
+            // null operator
+            filterDefinition = new FilterDefinition<TestModel3>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Status",
+                Operator = null,
+                Value = Severity.Normal
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func5 = expression.Compile();
+            Assert.IsTrue(func5.Invoke(new("Sam", 456, Severity.Normal)));
+            Assert.IsTrue(func5.Invoke(new("Joe", 45, Severity.Info)));
+            Assert.IsTrue(func5.Invoke(new("Joe", 45, null)));
+        }
+
+        [Test]
+        public async Task FilterDefinitionDateTimeExpressionTest()
+        {
+            var utcnow = DateTime.UtcNow;
+            Expression<Func<TestModel2, bool>> expression = null;
+            #region FilterOperator.DateTime.Is
+
+            var filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Is,
+                Value = utcnow
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func = expression.Compile();
+            Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Is,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func2 = expression.Compile();
+            Assert.IsTrue(func2.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func2.Invoke(new("Joe", 45, null)));
+
+            #endregion
+
+            #region FilterOperator.DateTime.IsNot
+
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.IsNot,
+                Value = utcnow
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func3 = expression.Compile();
+            Assert.IsFalse(func3.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func3.Invoke(new("Joe", 45, null)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.IsNot,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func4 = expression.Compile();
+            Assert.IsTrue(func4.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func4.Invoke(new("Joe", 45, null)));
+
+            #endregion
+
+            #region FilterOperator.DateTime.After
+
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.After,
+                Value = utcnow
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func5 = expression.Compile();
+            Assert.IsFalse(func5.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsFalse(func5.Invoke(new("Joe", 45, null)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.After,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func6 = expression.Compile();
+            Assert.IsTrue(func6.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func6.Invoke(new("Joe", 45, null)));
+
+            #endregion
+
+            #region FilterOperator.DateTime.OnOrAfter
+
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.OnOrAfter,
+                Value = utcnow
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func7 = expression.Compile();
+            Assert.IsTrue(func7.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsFalse(func7.Invoke(new("Joe", 45, null)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.OnOrAfter,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func8 = expression.Compile();
+            Assert.IsTrue(func8.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func8.Invoke(new("Joe", 45, null)));
+
+            #endregion
+
+            #region FilterOperator.DateTime.Before
+
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Before,
+                Value = utcnow
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func9 = expression.Compile();
+            Assert.IsFalse(func9.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsFalse(func9.Invoke(new("Joe", 45, null)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Before,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func10 = expression.Compile();
+            Assert.IsTrue(func10.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func10.Invoke(new("Joe", 45, null)));
+
+            #endregion
+
+            #region FilterOperator.DateTime.OnOrBefore
+
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.OnOrBefore,
+                Value = utcnow
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func11 = expression.Compile();
+            Assert.IsTrue(func11.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsFalse(func11.Invoke(new("Joe", 45, null)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.OnOrBefore,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func12 = expression.Compile();
+            Assert.IsTrue(func12.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func12.Invoke(new("Joe", 45, null)));
+
+            #endregion
+
+            #region FilterOperator.DateTime.Empty
+
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Empty,
+                Value = utcnow
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func13 = expression.Compile();
+            Assert.IsFalse(func13.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func13.Invoke(new("Joe", 45, null)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.Empty,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func14 = expression.Compile();
+            Assert.IsFalse(func14.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func14.Invoke(new("Joe", 45, null)));
+
+            #endregion
+
+            #region FilterOperator.DateTime.NotEmpty
+
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.NotEmpty,
+                Value = utcnow
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func15 = expression.Compile();
+            Assert.IsTrue(func15.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsFalse(func15.Invoke(new("Joe", 45, null)));
+
+            // null value
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = FilterOperator.DateTime.NotEmpty,
+                Value = null
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func16 = expression.Compile();
+            Assert.IsTrue(func16.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsFalse(func16.Invoke(new("Joe", 45, null)));
+
+            #endregion
+
+            // null operator
+            filterDefinition = new FilterDefinition<TestModel2>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Date",
+                Operator = null,
+                Value = utcnow
+            };
+            expression = filterDefinition.GenerateFilterExpression();
+            var func17 = expression.Compile();
+            Assert.IsTrue(func17.Invoke(new("Sam", 45, utcnow)));
+            Assert.IsTrue(func17.Invoke(new("Joe", 45, null)));
+        }
+
+        [Test]
         public async Task DataGridFiltersTest()
         {
             var comp = Context.RenderComponent<DataGridFiltersTest>();
@@ -2611,6 +3480,169 @@ namespace MudBlazor.UnitTests.Components
             cell.cellContext.IsSelected.Should().Be(false);
             cell.cellContext.Actions.SetSelectedItem(true);
             cell.cellContext.IsSelected.Should().Be(true);
+        }
+
+        [Test]
+        public async Task DataGridAggregationTest()
+        {
+            var comp = Context.RenderComponent<DataGridAggregationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridAggregationTest.Model>>();
+
+            //Console.WriteLine(dataGrid.Markup);
+
+            dataGrid.FindAll("td.footer-cell")[1].TrimmedText().Should().Be("Average age is 56");
+            dataGrid.FindAll("tfoot td.footer-cell")[1].TrimmedText().Should().Be("Average age is 43");
+        }
+        
+        [Test]
+        public async Task DataGridSequenceContainsNoElementsTest()
+        {
+            var comp = Context.RenderComponent<DataGridSequenceContainsNoElementsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSequenceContainsNoElementsTest.Model>>();
+
+            // This test will result in an error if the 'sequence contains no elements' issue is present.
+        }
+
+        [Test]
+        public async Task DataGridObservabilityTest()
+        {
+            var comp = Context.RenderComponent<DataGridObservabilityTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridObservabilityTest.Model>>();
+
+            var addButton = comp.Find(".add-item-btn");
+            var removeButton = comp.Find(".remove-item-btn");
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(8);
+
+            addButton.Click();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(9);
+
+            removeButton.Click();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(8);
+        }
+
+        public async Task TableFilterGuid()
+        {
+            var comp = Context.RenderComponent<DataGridFilterGuid<Guid>>();
+            var grid = comp.Instance.MudGridRef;
+            
+            grid.Items.Count().Should().Be(2);
+            grid.FilteredItems.Count().Should().Be(2);
+            
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
+            {
+                Field = "Id",
+                Operator = "equals",
+                Value = "invalid guid",
+                FieldType = typeof(Guid),
+            });
+            grid.FilteredItems.Count().Should().Be(0);
+            
+            grid.FilterDefinitions.Clear();
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
+            {
+                Field = "Id",
+                Operator = "equals",
+                Value = comp.Instance.Guid1,
+                FieldType = typeof(Guid),
+            });
+            grid.FilteredItems.Count().Should().Be(1);
+            grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
+            
+            grid.FilterDefinitions.Clear();
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
+            {
+                Field = "Id",
+                Operator = "not equals",
+                Value = comp.Instance.Guid1,
+                FieldType = typeof(Guid),
+            });
+            grid.FilteredItems.Count().Should().Be(1);
+            grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid2);
+        }
+
+        [Test]
+        public async Task TableFilterNullableGuid()
+        {
+            var comp = Context.RenderComponent<DataGridFilterGuid<Nullable<Guid>>>();
+            var grid = comp.Instance.MudGridRef;
+            
+            grid.Items.Count().Should().Be(2);
+            grid.FilteredItems.Count().Should().Be(2);
+            
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
+            {
+                Field = "Id",
+                Operator = "equals",
+                Value = "invalid guid",
+                FieldType = typeof(Nullable<Guid>),
+            });
+            grid.FilteredItems.Count().Should().Be(0);
+            
+            grid.FilterDefinitions.Clear();
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
+            {
+                Field = "Id",
+                Operator = "equals",
+                Value = comp.Instance.Guid1,
+                FieldType = typeof(Nullable<Guid>),
+            });
+            grid.FilteredItems.Count().Should().Be(1);
+            grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
+            
+            grid.FilterDefinitions.Clear();
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
+            {
+                Field = "Id",
+                Operator = "not equals",
+                Value = comp.Instance.Guid1,
+                FieldType = typeof(Nullable<Guid>),
+            });
+            grid.FilteredItems.Count().Should().Be(1);
+            grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid2);
+        }
+
+        [Test]
+        public async Task TableFilterGuidInDictionary()
+        {
+            var comp = Context.RenderComponent<DataGridFilterDictionaryGuid>();
+            var grid = comp.Instance.MudGridRef;
+            
+            grid.Items.Count().Should().Be(2);
+            grid.FilteredItems.Count().Should().Be(2);
+            
+            grid.FilterDefinitions.Add(new FilterDefinition<IDictionary<string, object>>()
+            {
+                Field = "Id",
+                Operator = "equals",
+                Value = "invalid guid",
+                FieldType = typeof(Nullable<Guid>),
+            });
+            grid.FilteredItems.Count().Should().Be(0);
+            
+            grid.FilterDefinitions.Clear();
+            grid.FilterDefinitions.Add(new FilterDefinition<IDictionary<string, object>>()
+            {
+                Field = "Id",
+                Operator = "equals",
+                Value = comp.Instance.Guid1,
+                FieldType = typeof(Nullable<Guid>),
+            });
+            grid.FilteredItems.Count().Should().Be(1);
+            grid.FilteredItems.FirstOrDefault()["Id"].Should().Be(Guid.Parse(comp.Instance.Guid1));
+            
+            grid.FilterDefinitions.Clear();
+            grid.FilterDefinitions.Add(new FilterDefinition<IDictionary<string, object>>()
+            {
+                Field = "Id",
+                Operator = "not equals",
+                Value = comp.Instance.Guid1,
+                FieldType = typeof(Nullable<Guid>),
+            });
+            grid.FilteredItems.Count().Should().Be(1);
+            grid.FilteredItems.FirstOrDefault()["Id"].Should().Be(Guid.Parse(comp.Instance.Guid2));
         }
     }
 }

@@ -7,6 +7,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor
 {
@@ -15,7 +16,8 @@ namespace MudBlazor
         Guid Id { get; }
         RenderFragment RenderFragment { get; set; }
 
-        bool AreParametersRendered { get; set; }
+        [Obsolete("This will always return true"), ExcludeFromCodeCoverage]
+        bool AreParametersRendered { get => true; set { } }
 
         Task<DialogResult> Result { get; }
 
@@ -30,6 +32,6 @@ namespace MudBlazor
 
         void InjectDialog(object inst);
 
-        Task<T> GetReturnValueAsync<T>();
+        Task<T> GetReturnValueAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>();
     }
 }

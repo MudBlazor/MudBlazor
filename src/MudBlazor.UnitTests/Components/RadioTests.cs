@@ -14,6 +14,24 @@ namespace MudBlazor.UnitTests.Components
     public class RadioTests : BunitTest
     {
         [Test]
+        public void RadiGroup_CheckClassTest()
+        {
+            var comp = Context.RenderComponent<RadioGroupTest1>();
+
+            var inputControl = comp.FindComponent<MudInputControl>();
+            inputControl.Instance.InputContent.Should().NotBeNull();
+
+            comp.FindAll("div.mud-radio-group").Should().ContainSingle();
+            comp.FindAll("div.some-main-class").Should().ContainSingle();
+            comp.FindAll("div.some-input-class").Should().ContainSingle();
+            comp.FindAll(".some-main-class .some-input-class").Should().ContainSingle();
+            comp.FindAll(".mud-radio").Count.Should().Be(3);
+            // Input content should not have main class (Classname), but should have input class (InputClass)
+            comp.FindAll(".mud-radio-group.some-main-class").Should().BeEmpty();
+            comp.FindAll(".mud-radio-group.some-input-class").Should().ContainSingle();
+        }
+
+        [Test]
         public void RadioGroupTest1()
         {
             var comp = Context.RenderComponent<RadioGroupTest1>();

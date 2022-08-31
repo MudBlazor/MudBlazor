@@ -36,9 +36,6 @@ namespace MudBlazor
 
         [Parameter] public bool IsExpandable { get; set; }
 
-        [Parameter] public bool IsHeader { get; set; }
-
-        [Parameter] public bool IsFooter { get; set; }
 
         [Parameter]
         public EventCallback<bool> IsCheckedChanged { get; set; }
@@ -65,7 +62,7 @@ namespace MudBlazor
             // Manage any previous edited row
             Context.ManagePreviousEditedRow(this);
 
-            if (IsHeader || !(Context?.Table.Validator.IsValid ?? true))
+            if (!(Context?.Table.Validator.IsValid ?? true))
                 return;
 
             Context?.Table.SetSelectedItem(Item);
@@ -90,7 +87,7 @@ namespace MudBlazor
                 Context?.Table.SetEditingItem(Item);
             }
 
-            if (Context?.Table.MultiSelection == true && !IsHeader && !(Context?.Table.IsEditable == true))
+            if (Context?.Table.MultiSelection == true && !(Context?.Table.IsEditable == true))
             {
                 IsChecked = !IsChecked;
             }

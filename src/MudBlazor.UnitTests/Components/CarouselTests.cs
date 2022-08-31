@@ -208,6 +208,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Testing when DisableSwipeGesture
+        /// </summary>
+        [Test]
+        public async Task CarouselTest_DisableSwipeGesture()
+        {
+            var comp = Context.RenderComponent<MudCarousel<object>>();
+
+            //Add some pages
+            comp.Instance.Items.Add(new());
+            comp.Instance.Items.Add(new());
+            comp.Instance.Items.Add(new());
+
+            //Move the SelectedIndex from -1 to 0
+            await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
+
+            var mudSwipeArea = comp.FindComponent<MudSwipeArea>().Instance;
+
+            comp.Instance.EnableSwipeGesture = false;
+            await comp.InvokeAsync(() => mudSwipeArea.OnSwipe(SwipeDirection.RightToLeft));
+            comp.Instance.SelectedIndex.Should().Be(0);
+
+            comp.Instance.EnableSwipeGesture = true;
+            await comp.InvokeAsync(() => mudSwipeArea.OnSwipe(SwipeDirection.RightToLeft));
+            comp.Instance.SelectedIndex.Should().Be(1);
+        }
+
+        /// <summary>
         /// Testing DataBinding with Add and Remove from data source (MVVM, MVC and another patterns)
         /// </summary>
         /// <returns></returns>

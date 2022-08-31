@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTable @ref="Table" T="string" Items="items" @bind-SelectedItem="selectedItem" ApplyButtonPosition="@ApplyButtonPosition">
+	<HeaderContent>
+		<MudTh>#</MudTh>
+	</HeaderContent>
+	<RowTemplate>
+		<MudTd>@context</MudTd>
+	</RowTemplate>
+	<RowEditingTemplate>
+		<MudTd>
+			<MudTextField T="string" @bind-Value="@context"></MudTextField>
+		</MudTd>
+	</RowEditingTemplate>
+	<FooterContent>
+		<MudTd>#Footer</MudTd>
+	</FooterContent>
+</MudTable>
+
+@code {
+	public static string __description__ = "Inline Edit Table: Basic";
+	private string selectedItem = null;
+	string[] items = new string[] { "A", "B", "C" };
+
+	public MudTable<string> Table { get; private set; }
+
+	[Parameter] public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
+
+}

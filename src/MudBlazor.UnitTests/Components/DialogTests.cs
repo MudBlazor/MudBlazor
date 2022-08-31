@@ -257,6 +257,7 @@ namespace MudBlazor.UnitTests.Components
             //Console.WriteLine(comp.Markup);
 
             ((DialogWithParameters)dialogReference.Dialog).TestValue.Should().Be("new_test");
+            ((DialogWithParameters)dialogReference.Dialog).ParamtersSetCounter.Should().Be(1);
             textField.Text.Should().Be("new_test");
         }
 
@@ -414,6 +415,36 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-overlay").Click();
             
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title: Backdrop clicked");
+        }
+
+        /// <summary>
+        /// Open Inline Dialog and the from the inline dialog another normal dialog
+        /// while closing the inline dialog.
+        /// https://github.com/MudBlazor/MudBlazor/issues/4871
+        /// </summary>
+        [Test]
+        public async Task InlineDialogBug4871Test()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            // displaying the component with the inline dialog only renders the open button
+            var comp1 = Context.RenderComponent<TestInlineDialog>();
+            comp1.FindComponents<MudButton>().Count.Should().Be(1);
+            // open the dialog
+            comp1.Find("button").Click();
+            comp1.WaitForAssertion(() =>
+                comp.Find("div.mud-dialog-container").Should().NotBe(null)
+            );
+            comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
+            comp.Find("div.mud-dialog").GetAttribute("class").Should().Contain("mud-dialog-width-full");
+            // close by click on ok button
+            comp.FindAll("button").Last().Click();
+            comp.WaitForAssertion(() => comp.FindComponent<MudMessageBox>());
+            var messageBox = comp.FindComponent<MudMessageBox>();
+            messageBox.Should().NotBeNull();
+            messageBox.Instance.YesText.Should().Be("BUG4871");
         }
 
         [Test]

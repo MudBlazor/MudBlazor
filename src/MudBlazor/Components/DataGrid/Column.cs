@@ -279,7 +279,7 @@ namespace MudBlazor
                     Field = Field,
                     FieldType = FieldType,
                     Title = Title,
-                    Operator = operators.First()
+                    Operator = operators.FirstOrDefault()
                 };
             }
 

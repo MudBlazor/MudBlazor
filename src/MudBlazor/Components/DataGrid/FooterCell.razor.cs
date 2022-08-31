@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -13,9 +14,11 @@ namespace MudBlazor
 
         [Parameter] public Column<T> Column { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter] public IEnumerable<T> CurrentItems { get; set; }
 
         private string _classname =>
-            new CssBuilder(Column?.FooterClass)
+            new CssBuilder("footer-cell")
+                .AddClass(Column?.FooterClass)
                 .AddClass(Column?.footerClassname)
                 .AddClass(Class)
             .Build();
@@ -25,5 +28,13 @@ namespace MudBlazor
                 .AddStyle(Style)
                 .AddStyle("font-weight", "600")
             .Build();
+
+        internal IEnumerable<T> items
+        {
+            get
+            {
+                return CurrentItems ?? DataGrid?.CurrentPageItems;
+            }
+        }
     }
 }

@@ -1,10 +1,9 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Docs.Examples;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
@@ -244,6 +243,57 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
         }
+        /// <summary>
+        /// Test if the keyboard-disabling switch works
+        /// </summary>
+        [Test]
+        public void CheckBoxTest_KeyboardDisabled()
+        {
+            var comp = Context.RenderComponent<MudCheckBox<bool?>>();
+            comp.SetParam(x => x.TriState, true);
+            comp.SetParam(x => x.KeyboardEnabled, false);
+            // print the generated html
+            //Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var checkbox = comp.Instance;
+            checkbox.Checked.Should().Be(null);
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Delete", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            //Backspace should not change state on non-tristate checkbox
+            comp.SetParam(x => x.TriState, null);
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+            //Check tristate space key
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+
+            comp.SetParam("Disabled", true);
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
+            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+        }
 
         [Test]
         [TestCase(Color.Default, Color.Primary)]
@@ -271,6 +321,25 @@ namespace MudBlazor.UnitTests.Components
             input.Change(true);
             box.Checked.Should().Be(true);
             checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
+        }
+
+        [Test]
+        public void CheckBoxDisabledTest()
+        {
+            var comp = Context.RenderComponent<CheckboxLabelExample>();
+            var checkboxes = comp.FindAll("label.mud-checkbox");
+            checkboxes[3].ClassList.Should().Contain("mud-disabled"); // 4rd checkbox
+        }
+
+        [Test]
+        public void CheckBoxLabelPositionTest()
+        {
+            var comp = Context.RenderComponent<CheckboxLabelExample>();
+            //Console.WriteLine(comp.Markup);
+            var checkboxes = comp.FindAll("label.mud-checkbox");
+
+            checkboxes[0].ClassList.Should().Contain("mud-ltr"); // 1st checkbox: (default) LabelPosition.End
+            checkboxes[2].ClassList.Should().Contain("mud-rtl"); // 3rd checkbox: LabelPosition.Start
         }
     }
 }
