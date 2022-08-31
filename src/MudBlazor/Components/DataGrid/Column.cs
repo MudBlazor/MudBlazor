@@ -113,12 +113,20 @@ namespace MudBlazor
 
         [Parameter] public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
 
+        private CultureInfo _culture;
         /// <summary>
         /// The culture used to represent this column and by the filtering input field.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
-        public CultureInfo Culture { get; set; }
+        public CultureInfo Culture
+        {
+            get => _culture ?? DataGrid?.Culture;
+            set
+            {
+                _culture = value;
+            }
+        }
         #endregion
 
         #region Cell Properties

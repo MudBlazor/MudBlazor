@@ -3729,5 +3729,19 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
             dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(2.2);
         }
+
+        [Test]
+        public async Task DataGridCultureColumnOverridesTest()
+        {
+            var comp = Context.RenderComponent<DataGridCulturesTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCulturesTest.Model>>();
+
+            // amount with invariant culture (decimals separated by point)
+            dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("3.5");
+            // total with 'es' culture (decimals separated by commas)
+            dataGrid.FindAll("td input")[3].GetAttribute("value").Trim().Should().Be("5,2");
+            // distance with custom culture (decimals separated by '#')
+            dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("2#1");
+        }
     }
 }
