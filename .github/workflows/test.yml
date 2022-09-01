@@ -5,7 +5,7 @@ on:
     branches: [ "default" ]
 
 env:
-  PROJECT_PATH: 'MudBlazor/MudBlazor.csproj'
+  PROJECT_PATH: 'src/MudBlazor/MudBlazor.csproj'
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}\output
   NUGET_SOURCE_URL: 'https://nuget.pkg.github.com/itsLollo1000/index.json'
 
