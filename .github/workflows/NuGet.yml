@@ -1,0 +1,24 @@
+name: Deploy to NuGet
+
+on:
+  push:
+    branches: [ "default" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+	setps:
+	- uses: actions/checkout@v3
+	- name: Setup .NET
+	  uses: actions/setup-dotnet@v2
+		with:
+		  dotnet-version: 6.0.x
+		  - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+	- name: Publish
+	  uses: brandedoutcast/publish-nuget@v2.5.5
+	  with:
+	    PROJECT_FILE_PATH: MudBlazor/MudBlazor.csproj
+		NUGET_KEY: ${{secrets.NUGET_API_KEY}}
