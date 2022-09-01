@@ -2,7 +2,7 @@ name: "Deploy to NuGet"
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "de" ]
 
 env:
   PROJECT_PATH: 'src/MudBlazor/MudBlazor.csproj'
