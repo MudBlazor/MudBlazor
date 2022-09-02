@@ -17,7 +17,7 @@
         />
 	}
 
-	@if (Lines > 1)
+	@if (Lines > 1 || ForceMultiline)
 	{
 	    <textarea class="@InputClassname"
                 @ref="ElementReference" 

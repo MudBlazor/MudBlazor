@@ -36,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
             label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("textFieldLabelTest");
             label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
         }
-        
+
         /// <summary>
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>
@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Components
             label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
             label[2].Attributes.GetNamedItem("for")?.Value.Should().Be("fieldLabelTest");
         }
-        
+
         /// <summary>
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>
@@ -385,6 +385,26 @@ namespace MudBlazor.UnitTests.Components
             tf2.Text.Should().Be("Beratna");
             comp.Find("textarea").TrimmedText().Should().Be("Beratna");
             //Console.WriteLine(comp.Markup);
+        }
+
+        [Test]
+        public void ForcedMultilineTextField_Should_RenderAsTextArea()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                Parameter(nameof(MudTextField<string>.Text), "Doors and Corners, kid"),
+                Parameter(nameof(MudTextField<string>.Lines), 1),
+                Parameter(nameof(MudTextField<string>.ForceMultiline), true));
+            comp.FindAll("textarea").Should().NotBeEmpty();
+        }
+
+        [Test]
+        public void MultilineTextField_WithResizableFlag_ShouldUseResizableClass()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                Parameter(nameof(MudTextField<string>.Text), "That's where they get you"),
+                Parameter(nameof(MudTextField<string>.Lines), 2),
+                Parameter(nameof(MudTextField<string>.Resizable), true));
+            comp.FindAll("textarea.mud-input-resizable").Should().NotBeEmpty();
         }
 
         [Test]

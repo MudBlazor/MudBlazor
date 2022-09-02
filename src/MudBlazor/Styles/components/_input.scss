@@ -219,8 +219,11 @@
 
         &.mud-input-root-multiline {
             height: auto;
-            resize: none;
             padding: 0;
+
+            &:not(.mud-input-resizable) {
+                resize: none;
+            }
         }
 
         &.mud-input-root-type-search {
