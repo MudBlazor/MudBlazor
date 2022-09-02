@@ -13,8 +13,6 @@ namespace MudBlazor
         private static readonly string[] preventDefaultEventNames = { "touchstart", "touchend", "touchcancel" };
         internal int[] _listenerIds;
 
-        [Inject] public IJSRuntime JsRuntime { get; set; }
-
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public RenderFragment ChildContent { get; set; }
