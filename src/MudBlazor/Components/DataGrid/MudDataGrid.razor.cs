@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
@@ -395,6 +396,13 @@ namespace MudBlazor
         /// The Columns that make up the data grid. Add Column components to this RenderFragment.
         /// </summary>
         [Parameter] public RenderFragment Columns { get; set; }
+
+        /// <summary>
+        /// The culture used to represent numeric columns and his filtering input fields.
+        /// Each column can override this DataGrid Culture.
+        /// </summary>
+        [Parameter]
+        public CultureInfo Culture { get; set; }
 
         /// <summary>
         /// Row Child content of the component.
