@@ -32,7 +32,7 @@
         }
         else if (isNumber && !(_operator ?? "").EndsWith("empty"))
         {
-            <MudNumericField T="double?" Value="@_valueNumber" ValueChanged="@NumberValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense" 
+            <MudNumericField T="double?" Culture="@FilterColumn?.Culture" Value="@_valueNumber" ValueChanged="@NumberValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense" 
             Immediate="true" Class="filter-input" />
         }
         else if (isEnum)
@@ -92,7 +92,7 @@ else
         }
         else if (isNumber && !(_operator ?? "").EndsWith("empty"))
         {
-            <MudNumericField T="double?" Value="@_valueNumber" ValueChanged="@NumberValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense" 
+            <MudNumericField T="double?" Culture="@FilterColumn?.Culture" Value="@_valueNumber" ValueChanged="@NumberValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense" 
             Immediate="true" Class="filter-input" />
         }
         else if (isEnum)

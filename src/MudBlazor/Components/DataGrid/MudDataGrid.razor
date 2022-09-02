@@ -333,7 +333,7 @@
                     else if (column.isNumber)
                     {
                         <MudNumericField T="double?" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense" Style="margin-top:0"
-                            Required="true" Variant="@Variant.Text" />
+                            Required="true" Variant="@Variant.Text" Culture="@column.Culture" />
                     }
                 }
             }
@@ -342,6 +342,10 @@
                 if (column.CellTemplate != null)
                 {
                     @column.CellTemplate(cell.cellContext)
+                }
+                else if (column.Culture != null && column.isNumber)
+                {
+                    @cell.valueNumber?.ToString(column.Culture)
                 }
                 else
                 {

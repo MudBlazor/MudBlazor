@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Moq;
 using MudBlazor.UnitTests.TestComponents;
@@ -3643,6 +3644,104 @@ namespace MudBlazor.UnitTests.Components
             });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()["Id"].Should().Be(Guid.Parse(comp.Instance.Guid2));
+        }
+
+        [Test]
+        public void DataGridCultureColumnSimpleTest()
+        {
+            var comp = Context.RenderComponent<DataGridCultureSimpleTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCultureSimpleTest.Model>>();
+
+            dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("3.5");
+            dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("5,2");
+        }
+
+        [Test]
+        public void DataGridCultureColumnEditableTest()
+        {
+            var comp = Context.RenderComponent<DataGridCultureEditableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCultureEditableTest.Model>>();
+
+            dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("3.5");
+            dataGrid.FindAll("td input")[3].GetAttribute("value").Trim().Should().Be("5,2");
+        }
+
+        [Test]
+        public async Task DataGridCultureColumnFilterTest()
+        {
+            var comp = Context.RenderComponent<DataGridCultureSimpleTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCultureSimpleTest.Model>>();
+
+            // amount with invariant culture (decimals separated by point)
+            var amountHeader = dataGrid.FindAll("th .mud-menu button")[2];
+            amountHeader.Click();
+            var filterAmount = comp.FindAll(".mud-list-item-clickable")[1];
+            filterAmount.Click();
+
+            var filterField = comp.Find(".filters-panel .filter-field .mud-select-input");
+            filterField.TextContent.Trim().Should().Be("Amount");
+
+            var filterInput = comp.FindAll(".filters-panel input")[2];
+            filterInput.Input(new ChangeEventArgs() { Value = "2,2" });
+
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(22.0);
+
+            dataGrid.Instance.FilterDefinitions.Clear();
+            dataGrid.Render();
+
+            // total with es-ES culture (decimals separated by comma)
+            var totalHeader = dataGrid.FindAll("th .mud-menu button")[3];
+            totalHeader.Click();
+            var filterTotal = comp.FindAll(".mud-list-item-clickable")[1];
+            filterTotal.Click();
+
+            var filterTotalField = comp.Find(".filters-panel .filter-field .mud-select-input");
+            filterTotalField.TextContent.Trim().Should().Be("Total");
+
+            var filterTotalInput = comp.FindAll(".filters-panel input")[2];
+            filterTotalInput.Input(new ChangeEventArgs() { Value = "2,2" });
+
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(2.2);
+        }
+
+        [Test]
+        public async Task DataGridCultureColumnFilterHeaderTest()
+        {
+            var comp = Context.RenderComponent<DataGridCultureEditableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCultureEditableTest.Model>>();
+
+            // amount with invariant culture (decimals separated by point)
+            var filterAmount = dataGrid.FindAll("th.filter-header-cell input")[2];
+            filterAmount.Input(new ChangeEventArgs() { Value = "2,2" });
+
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(22.0);
+
+            dataGrid.Instance.FilterDefinitions.Clear();
+            dataGrid.Render();
+            
+            // total with es-ES culture (decimals separated by comma)
+            var filterTotal = dataGrid.FindAll("th.filter-header-cell input")[3];
+            filterTotal.Input(new ChangeEventArgs() { Value = "2,2" });
+
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(2.2);
+        }
+
+        [Test]
+        public async Task DataGridCultureColumnOverridesTest()
+        {
+            var comp = Context.RenderComponent<DataGridCulturesTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCulturesTest.Model>>();
+
+            // amount with invariant culture (decimals separated by point)
+            dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("3.5");
+            // total with 'es' culture (decimals separated by commas)
+            dataGrid.FindAll("td input")[3].GetAttribute("value").Trim().Should().Be("5,2");
+            // distance with custom culture (decimals separated by '#')
+            dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("2#1");
         }
     }
 }
