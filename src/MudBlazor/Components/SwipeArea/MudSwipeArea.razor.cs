@@ -10,7 +10,7 @@ namespace MudBlazor
     {
         internal double? _xDown, _yDown;
         internal ElementReference _componentRef;
-        private static readonly string[] preventDefaultEventNames = { "touchstart", "touchend", "touchcancel" };
+        private static readonly string[] _preventDefaultEventNames = { "touchstart", "touchend", "touchcancel" };
         internal int[] _listenerIds;
 
         [Parameter]
