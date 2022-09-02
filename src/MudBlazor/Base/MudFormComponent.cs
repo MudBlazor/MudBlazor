@@ -531,7 +531,6 @@ namespace MudBlazor
 
         /// <summary>
         /// Specify an expression which returns the model's field for which validation messages should be displayed.
-        /// Currently only string fields are supported.
         /// </summary>
 #nullable enable
         [Parameter]
