@@ -46,13 +46,13 @@ namespace MudBlazor
         {
             if (value)
             {
-                _listenerIds = await _componentRef.AddDefaultPreventingHandlers(preventDefaultEventNames);
+                _listenerIds = await _componentRef.AddDefaultPreventingHandlers(_preventDefaultEventNames);
             }
             else
             {
                 if (_listenerIds != null)
                 {
-                    await _componentRef.RemoveDefaultPreventingHandlers(preventDefaultEventNames, _listenerIds);
+                    await _componentRef.RemoveDefaultPreventingHandlers(_preventDefaultEventNames, _listenerIds);
                     _listenerIds = null;
                 }
             }
