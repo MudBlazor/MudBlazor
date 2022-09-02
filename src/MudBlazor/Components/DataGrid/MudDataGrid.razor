@@ -57,8 +57,6 @@
                                     <MudGrid Spacing="0">
                                         @foreach (var f in FilterDefinitions)
                                         {
-                                            @*<Filter T="T" @bind-Field="f.Field" FieldType="@f.FieldType" @bind-Title="f.Title" @bind-Operator="f.Operator" @bind-Value="f.Value"
-                                                Id="@f.Id"></Filter>*@
                                             @Filter(f, null)
                                         }
                                     </MudGrid>
