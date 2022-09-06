@@ -395,7 +395,7 @@
                 else if (filter.isNumber && !(f.Operator ?? "").EndsWith("empty"))
                 {
                     <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense" 
-                    Immediate="true" Class="filter-input" />
+                    Immediate="true" Class="filter-input" Culture="@filter.filterColumn?.Culture" />
                 }
                 else if (filter.isEnum)
                 {
@@ -455,7 +455,7 @@
                 else if (filter.isNumber && !(f.Operator ?? "").EndsWith("empty"))
                 {
                     <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense" 
-                        Immediate="true" Class="filter-input" />
+                        Immediate="true" Class="filter-input" Culture="@filter.filterColumn?.Culture" />
                 }
                 else if (filter.isEnum)
                 {

@@ -58,6 +58,10 @@ namespace MudBlazor
             }
         }
 
+        internal Column<T> filterColumn =>
+            _column != null
+                ? _column
+                : _dataGrid.RenderedColumns?.FirstOrDefault(c => c.Field == _filterDefinition.Field);
 
         public Filter(MudDataGrid<T> dataGrid, FilterDefinition<T> filterDefinition, Column<T> column)
         {
