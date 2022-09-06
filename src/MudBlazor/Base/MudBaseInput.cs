@@ -421,6 +421,9 @@ namespace MudBlazor
             // equal to the initial value. This is why we force an update to the Text property here.
             if (typeof(T) != typeof(string))
                 await UpdateTextPropertyAsync(false);
+
+            if (Label == null && For != null)
+                Label = For.GetDisplayNameString();
         }
 
         public virtual void ForceRender(bool forceTextUpdate)
