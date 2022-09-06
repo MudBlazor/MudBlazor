@@ -26,7 +26,7 @@ namespace MudBlazor
           .AddClass($"mud-nav-link-icon-default", IconColor == Color.Default)
           .Build();
 
-        private Dictionary<string, object> Attributes
+        protected Dictionary<string, object> Attributes
         {
             get => Disabled ? null : new Dictionary<string, object>()
             {
@@ -60,7 +60,7 @@ namespace MudBlazor
 
         [CascadingParameter] INavigationEventReceiver NavigationEventReceiver { get; set; }
 
-        private Task HandleNavigation()
+        protected Task HandleNavigation()
         {
             if (!Disabled && NavigationEventReceiver != null)
             {
