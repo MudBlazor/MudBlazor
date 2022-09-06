@@ -174,13 +174,6 @@ namespace MudBlazor
         public int Lines { get; set; } = 1;
 
         /// <summary>
-        /// Will force multiline input (textarea) to be shown, regardless of number of lines set by <see cref="Lines"/>.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool ForceMultiline { get; set; }
-
-        /// <summary>
         /// Will display input as resizable multiline textarea, regardless of number of lines set by <see cref="Lines"/>.
         /// </summary>
         [Parameter]
