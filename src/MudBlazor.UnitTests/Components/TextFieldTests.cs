@@ -17,6 +17,7 @@ using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Field;
 using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.UnitTests.TestComponents.TextField;
+using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -813,6 +814,18 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Change(55);
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void TextFieldLabelTest()
+        {
+            var value = new DisplayNameLabelClass();
+
+            var comp = Context.RenderComponent<MudTextField<string>>(x => x.Add(f => f.For, () => value.String));
+            comp.Instance.Label.Should().Be("String DisplayName"); //label should be set by the attribute
+
+            var comp2 = Context.RenderComponent<MudTextField<string>>(x => x.Add(f => f.For, () => value.String).Add(l => l.Label, "Label Parameter"));
+            comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
     }
 }
