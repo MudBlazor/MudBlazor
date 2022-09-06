@@ -181,7 +181,7 @@ namespace MudBlazor
         public bool ForceMultiline { get; set; }
 
         /// <summary>
-        /// Will display control for resizing the field if it is multiline.
+        /// Will display input as resizable multiline textarea, regardless of number of lines set by <see cref="Lines"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]

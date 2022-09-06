@@ -388,12 +388,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ForcedMultilineTextField_Should_RenderAsTextArea()
+        public void ResizableTextField_Should_RenderAsTextArea()
         {
             var comp = Context.RenderComponent<MudTextField<string>>(
                 Parameter(nameof(MudTextField<string>.Text), "Doors and Corners, kid"),
                 Parameter(nameof(MudTextField<string>.Lines), 1),
-                Parameter(nameof(MudTextField<string>.ForceMultiline), true));
+                Parameter(nameof(MudTextField<string>.Resizable), true));
             comp.FindAll("textarea").Should().NotBeEmpty();
         }
 
