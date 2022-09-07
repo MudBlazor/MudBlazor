@@ -14,35 +14,32 @@ using System.Threading.Tasks;
 
 namespace MudBlazor
 {
-    [ExcludeFromCodeCoverage]
     public static class ExpressionExtensions
     {
+        public static string GetFullPathOfMember<T>(this Expression<Func<T>> property)
+        {
+            var resultingString = string.Empty;
+            var p = property.Body as MemberExpression;
+
+            while (p != null)
+            {
+                if (p.Expression is MemberExpression)
+                {
+                    resultingString = p.Member.Name + (resultingString != string.Empty ? "." : string.Empty) + resultingString;
+                }
+                p = p.Expression as MemberExpression;
+            }
+            return resultingString;
+        }
+
         /// <summary>
         /// Returns the display name attribute of the provided field property as a string. If this attribute is missing, the member name will be returned.
         /// </summary>
         public static string GetDisplayNameString<T>(this Expression<Func<T>> expression)
         {
-            var memberInfo = GetMemberInfo(expression.Body);
-            return memberInfo.GetCustomAttribute<DisplayAttribute>()?.Name ?? "";
-        }
-
-        private static MemberInfo GetMemberInfo(Expression expression) //see https://stackoverflow.com/a/5015911
-        {
-            var memberExpr = expression as MemberExpression; //get MemberExpression
-            if (memberExpr == null) //if null, check unary expression. Some types return unary expressions rather than member expressions
-            {
-                if (expression is UnaryExpression unaryExpr && unaryExpr.NodeType == ExpressionType.Convert)
-                {
-                    memberExpr = unaryExpr.Operand as MemberExpression;
-                }
-            }
-
-            if (memberExpr != null && memberExpr.Member.MemberType == MemberTypes.Property)
-            {
-                return memberExpr.Member;
-            }
-
-            return null;
+            var memberExpression = (MemberExpression)expression.Body;
+            var propertyInfo = memberExpression.Expression?.Type.GetProperty(memberExpression.Member.Name);
+            return propertyInfo?.GetCustomAttributes(typeof(DisplayAttribute), true).Cast<DisplayAttribute>().FirstOrDefault()?.Name ?? "";
         }
     }
 }
