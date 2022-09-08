@@ -76,6 +76,28 @@ namespace MudBlazor
         protected string _footClassname => new CssBuilder("mud-table-foot")
             .AddClass(FooterClass).Build();
 
+        internal SortDirection GetColumnSortDirection(string columnName)
+        {
+            if (columnName == null)
+            {
+                return SortDirection.None;
+            }
+            else
+            {
+                SortDefinition<T> sortDefinition = null;
+                var ok = SortDefinitions.TryGetValue(columnName, out sortDefinition);
+
+                if (ok)
+                {
+                    return sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending;
+                }
+                else
+                {
+                    return SortDirection.None;
+                }
+            }
+        }
+
         protected int numPages
         {
             get

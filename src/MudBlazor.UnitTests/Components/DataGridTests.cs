@@ -3744,5 +3744,31 @@ namespace MudBlazor.UnitTests.Components
             // distance with custom culture (decimals separated by '#')
             dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("2#1");
         }
+
+        [Test]
+        public async Task DataGridSortIndicatorTest()
+        {
+            var comp = Context.RenderComponent<DataGridSortableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value));
+            dataGrid.FindAll("th .sortable-column-header")[1].TextContent.Trim().Should().Be("Value");
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(true);
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Descending, x => x.Value));
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Descending);
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-desc").Should().Be(true);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Value));
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Ascending);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(true);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
+        }
     }
 }
