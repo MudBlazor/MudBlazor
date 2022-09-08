@@ -45,7 +45,7 @@
                         <tr class="mud-table-row">
                             @foreach (var column in RenderedColumns)
                             {
-                                <HeaderCell T="T" Column="@column"></HeaderCell>
+                                <HeaderCell SortDirection="@(GetColumnSortDirection(column.Field))" T="T" Column="@column"></HeaderCell>
                             }
                         </tr>
                         @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
