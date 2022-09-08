@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSwipeArea OnSwipe="@((d) => _swipeDirection = d)" Style="width: 100%; height: 300px" PreventDefault="@_preventDefault">
+    <MudText Typo="@Typo.body1">@_swipeDirection</MudText>
+</MudSwipeArea>
+<MudSwitch @bind-Checked="@_preventDefault" Color="Color.Primary">Prevent Default</MudSwitch>
+
+@code
+{
+    SwipeDirection _swipeDirection;
+    bool _preventDefault = true;
+}
