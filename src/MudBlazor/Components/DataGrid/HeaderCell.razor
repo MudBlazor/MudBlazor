@@ -61,7 +61,7 @@ else if (Column != null && !Column.Hidden)
                     }
                     else if (showFilterIcon)
                     {
-                        <MudIconButton Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" OnClick="@OpenFilters"></MudIconButton>
+                        <MudIconButton Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" OnClick="@AddFilter"></MudIconButton>
                     }
                 }
 
@@ -110,7 +110,7 @@ else if (Column != null && !Column.Hidden)
                 {
                     <MudGrid>
                         <MudItem xs="12">
-                            <Filter T="T" Column="@Column" @bind-Operator="@Column.filterContext.FilterDefinition.Operator" @bind-Value="@Column.filterContext.FilterDefinition.Value" />
+                            @DataGrid.Filter(Column.filterContext.FilterDefinition, Column)
                         </MudItem>
                         <MudItem xs="12" Class="d-flex justify-end">
                             <MudButton Class="clear-filter-button" OnClick="@ClearFilter">Clear</MudButton>
