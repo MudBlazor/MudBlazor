@@ -82,6 +82,26 @@ namespace MudBlazor
         public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
+        /// The underlying Input element Style
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string InputStyle { get; set; } =
+            new StyleBuilder()
+            .AddStyle("mud-select-input")
+            .Build();
+
+        /// <summary>
+        /// The underlying Input element Class
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string InputClass { get; set; } =
+            new CssBuilder("mud-input")
+            .Build();
+
+
+        /// <summary>
         /// The Close Autocomplete Icon
         /// </summary>
         [Parameter]
@@ -235,7 +255,7 @@ namespace MudBlazor
                 if (value == _isOpen)
                     return;
                 _isOpen = value;
-                
+
                 IsOpenChanged.InvokeAsync(_isOpen).AndForget();
             }
         }
