@@ -23,7 +23,7 @@
                           InputMode="@InputMode" Pattern="@Pattern"
                           T="string" />
 
-                @if (ShowProgressIndicator && _isLoading)
+                @if (ShowProgressIndicator && IsLoading)
                 {
                     @if (ProgressIndicatorTemplate != null)
                     {
@@ -38,7 +38,7 @@
                 }
 
                 <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
-                    @if(ProgressIndicatorInPopoverTemplate != null && _isLoading)
+                    @if(ProgressIndicatorInPopoverTemplate != null && IsLoading)
                     {
                         @ProgressIndicatorInPopoverTemplate
                     } 

@@ -24,7 +24,7 @@ namespace MudBlazor
         protected string AutocompleteClassname =>
             new CssBuilder("mud-select")
             .AddClass("autocomplete")
-            .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && _isLoading)
+            .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
             .Build();
 
         protected string CircularProgressClassname =>
@@ -144,7 +144,9 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color ProgressIndicatorColor { get; set; } = Color.Default;
 
-        private bool _isLoading = false;
+        private Task _currentSearchTask;
+
+        private bool IsLoading => _currentSearchTask != null && !_currentSearchTask.IsCompleted;
 
         /// <summary>
         /// Func that returns a list of items matching the typed text. Provides a cancellation token that
@@ -428,7 +430,7 @@ namespace MudBlazor
 
             _cancellationTokenSrc = new CancellationTokenSource();
         }
-
+        
         private int _itemsReturned; //the number of items returned by the search function
 
         /// <remarks>
@@ -449,34 +451,33 @@ namespace MudBlazor
 
             try
             {
-                _isLoading = true;
-
                 if (ProgressIndicatorInPopoverTemplate != null)
                 {
                     IsOpen = true;
                 }
-
-                if (ShowProgressIndicator || ProgressIndicatorInPopoverTemplate != null)
-                {
-                    StateHasChanged();
-                }
                 
                 if (SearchFuncWithCancel != null)
                 {
-                    searched_items = (await SearchFuncWithCancel(Text, _cancellationTokenSrc.Token)) ?? Array.Empty<T>();
+                    var searchTask = SearchFuncWithCancel(Text, _cancellationTokenSrc.Token);
+                    _currentSearchTask = searchTask;
+
+                    StateHasChanged();
+
+                    searched_items = await searchTask ?? Array.Empty<T>();
                 }
                 else
                 {
-                    searched_items = (await SearchFunc(Text)) ?? Array.Empty<T>();
+                    var searchTask = SearchFunc(Text);
+                    _currentSearchTask = searchTask;
+
+                    StateHasChanged();
+
+                    searched_items = await searchTask ?? Array.Empty<T>();
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine("The search function failed to return results: " + e.Message);
-            }
-            finally
-            {
-                _isLoading = false;
             }
 
             _itemsReturned = searched_items.Count();
