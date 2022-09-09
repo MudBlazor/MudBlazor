@@ -39,7 +39,7 @@ namespace MudBlazor
         {
             var memberExpression = (MemberExpression)expression.Body;
             var propertyInfo = memberExpression.Expression?.Type.GetProperty(memberExpression.Member.Name);
-            return propertyInfo?.GetCustomAttributes(typeof(DisplayAttribute), true).Cast<DisplayAttribute>().FirstOrDefault()?.Name ?? "";
+            return propertyInfo?.GetCustomAttributes(typeof(DisplayAttribute), true).Cast<DisplayAttribute>().FirstOrDefault()?.Name ?? string.Empty;
         }
     }
 }
