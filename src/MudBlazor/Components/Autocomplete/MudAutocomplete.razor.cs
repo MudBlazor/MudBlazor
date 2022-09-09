@@ -455,25 +455,16 @@ namespace MudBlazor
                 {
                     IsOpen = true;
                 }
-                
-                if (SearchFuncWithCancel != null)
-                {
-                    var searchTask = SearchFuncWithCancel(Text, _cancellationTokenSrc.Token);
-                    _currentSearchTask = searchTask;
 
-                    StateHasChanged();
+                var searchTask = SearchFuncWithCancel != null ?
+                    SearchFuncWithCancel(Text, _cancellationTokenSrc.Token) :
+                    SearchFunc(Text);
 
-                    searched_items = await searchTask ?? Array.Empty<T>();
-                }
-                else
-                {
-                    var searchTask = SearchFunc(Text);
-                    _currentSearchTask = searchTask;
+                _currentSearchTask = searchTask;
 
-                    StateHasChanged();
+                StateHasChanged();
 
-                    searched_items = await searchTask ?? Array.Empty<T>();
-                }
+                searched_items = await searchTask ?? Array.Empty<T>();
             }
             catch (Exception e)
             {
