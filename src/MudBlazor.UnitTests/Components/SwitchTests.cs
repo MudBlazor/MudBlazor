@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
 using MudBlazor.Extensions;
+using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -89,6 +90,18 @@ namespace MudBlazor.UnitTests.Components
 
             switches[0].ClassList.Should().Contain("mud-ltr"); // 1st switch: (default) LabelPosition.End
             switches[2].ClassList.Should().Contain("mud-rtl"); // 3rd switch: LabelPosition.Start
+        }
+
+        [Test]
+        public void SwitchLabelTest()
+        {
+            var value = new DisplayNameLabelClass();
+
+            var comp = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(f => f.For, () => value.Boolean));
+            comp.Instance.Label.Should().Be("Boolean DisplayName"); //label should be set by the attribute
+
+            var comp2 = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(f => f.For, () => value.Boolean).Add(l => l.Label, "Label Parameter"));
+            comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
     }
 }
