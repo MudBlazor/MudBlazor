@@ -466,6 +466,12 @@ namespace MudBlazor
 
                 searched_items = await searchTask ?? Array.Empty<T>();
             }
+            catch (TaskCanceledException)
+            {
+            }
+            catch (OperationCanceledException)
+            {
+            }
             catch (Exception e)
             {
                 Console.WriteLine("The search function failed to return results: " + e.Message);
