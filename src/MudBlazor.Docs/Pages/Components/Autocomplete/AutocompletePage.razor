@@ -91,6 +91,33 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Progress">
+                <Description>
+                    <MudText>When fetching data from a remote datasource MudAutocomplete can visually indicate that it is awaiting results. Following settings are available:</MudText>
+                    <br />
+                    <MudText><CodeInline>ShowProgressIndicator</CodeInline>: show circular progress indicator.</MudText>
+                    <MudText><CodeInline>ProgressIndicatorTemplate</CodeInline>: replace the default circular progress indicator with a custom one.</MudText>
+                    <MudText><CodeInline>ProgressIndicatorInPopoverTemplate</CodeInline>: show a progress indicator inside the popover.</MudText>
+                    <MudText><CodeInline>ProgressIndicatorColor</CodeInline>: customize the color of the circular progress indicator.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="AutocompleteProgressExample">
+                <AutocompleteProgressExample />
+            </SectionContent>
+        </DocsPageSection>
+
+		<DocsPageSection>
+			<SectionHeader Title="Cancellation Token">
+				<Description>
+					<MudText>Autocomplete can cancel request if the user types new input</MudText>
+				</Description>
+			</SectionHeader>
+			<SectionContent ShowCode="false" Code="AutocompleteCancellationTokenExample">
+				<AutocompleteCancellationTokenExample />
+			</SectionContent>
+		</DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
 
