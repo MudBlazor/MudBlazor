@@ -52,7 +52,7 @@
 	}
 	else
 	{
-
+       
         @if (DataVisualiser != null)
         {
             @DataVisualiser
@@ -81,31 +81,29 @@
            @onmousewheel="@OnMouseWheel"
            @onwheel="@OnMouseWheel"
            aria-invalid="@Error.ToString().ToLower()"
-           aria-describedby="@ErrorId"
-         />
-	     @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
-      
-         @if (Disabled) {
-             @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.
-                           In Disabled state the tabindex attribute must NOT be set at all or else it will get focus on click
-             *@
-	        <div class="@InputClassname"
-                style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"                  
-                @onblur="@OnBlurred" @ref="@_elementReference1" 
-            >
+           aria-describedby="@ErrorId" />
+        @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
+
+        @if (Disabled)
+        {
+            @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.
+    In Disabled state the tabindex attribute must NOT be set at all or else it will get focus on click
+    *@
+            <div class="@InputClassname"
+         style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
+         @onblur="@OnBlurred" @ref="@_elementReference1">
                 @ChildContent
             </div>
-        } 
+        }
         else
         {
-             @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.*@
+            @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.*@
             <div class="@InputClassname"
-                 style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"  
-                 tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)" 
-                 @onblur="@OnBlurred" @ref="@_elementReference1" 
-            >
+         style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
+         tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)"
+         @onblur="@OnBlurred" @ref="@_elementReference1">
                 @ChildContent
-            </div>            
+            </div>
         }
     }
     

@@ -69,7 +69,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Select_ValueBubblingTest()
+        public async Task Select_ValueBubblingTest()
         {
             var comp = Context.RenderComponent<SelectInitialValueTest>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -78,12 +78,14 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Text.Should().BeNull();
 
             comp.SetParam("SelectedValue", "1");
-            select.Instance.Value.Should().Be("1");
+            await comp.InvokeAsync(() => select.Instance.ForceUpdate());
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("1"));
             select.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "1" });
             select.Instance.Text.Should().Be("1");
 
             comp.SetParam("SelectedValue", "2");
-            select.Instance.Value.Should().Be("2");
+            await comp.InvokeAsync(() => select.Instance.ForceUpdate());
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("2"));
             select.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "2" });
             select.Instance.Text.Should().Be("2");
         }
@@ -125,13 +127,17 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ValuesChangeCount.Should().Be(0);
 
             await comp.InvokeAsync(() => select.SetParam("Value", "1"));
+            await comp.InvokeAsync(() => select.Instance.ForceUpdate());
             comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
             comp.Instance.ValuesChangeCount.Should().Be(1);
+            select.Instance.Value.Should().Be("1");
 
-            // Setting same value should not fire events
-            await comp.InvokeAsync(() => select.SetParam("Value", "1"));
+            // Changing value programmatically without ForceUpdate should change value, but should not fire change events
+            // Its by design, so this part can be change if design changes
+            await comp.InvokeAsync(() => select.SetParam("Value", "2"));
             comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
             comp.Instance.ValuesChangeCount.Should().Be(1);
+            select.Instance.Value.Should().Be("2");
         }
 
         [Test]

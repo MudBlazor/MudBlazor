@@ -709,12 +709,16 @@ namespace MudBlazor
             switch (args.Key)
             {
                 case "Tab":
-                    if (!IsOpen)
-                        return;
-                    if (SelectValueOnTab)
-                        await OnEnterKey();
-                    else
-                        IsOpen = false;
+                    if (IsOpen == true)
+                    {
+                        await CloseMenu();
+                    }
+                    //if (!IsOpen)
+                    //    return;
+                    //if (SelectValueOnTab)
+                    //    await OnEnterKey();
+                    //else
+                    //    IsOpen = false;
                     break;
                 case "Enter":
                 case "NumpadEnter":

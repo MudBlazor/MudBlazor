@@ -127,16 +127,16 @@ namespace MudBlazor
             }
         }
 
-        protected override Task SetValueAsync(T value, bool updateText = true)
+        protected override Task SetValueAsync(T value, bool updateText = true, bool force = false)
         {
             if (_mask != null)
             {
                 var textValue = Converter.Set(value);
                 _mask.SetText(textValue);
-                textValue=Mask.GetCleanText();
+                textValue = Mask.GetCleanText();
                 value = Converter.Get(textValue);
             }
-            return base.SetValueAsync(value, updateText);
+            return base.SetValueAsync(value, updateText, force);
         }
 
         protected override Task SetTextAsync(string text, bool updateValue = true)

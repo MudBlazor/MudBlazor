@@ -350,9 +350,9 @@ namespace MudBlazor
             }
         }
 
-        protected virtual async Task SetValueAsync(T value, bool updateText = true)
+        protected virtual async Task SetValueAsync(T value, bool updateText = true, bool force = false)
         {
-            if (!EqualityComparer<T>.Default.Equals(Value, value))
+            if (!EqualityComparer<T>.Default.Equals(Value, value) || force == true)
             {
                 _isDirty = true;
                 Value = value;
@@ -362,6 +362,11 @@ namespace MudBlazor
                 BeginValidate();
                 FieldChanged(Value);
             }
+        }
+
+        public virtual async Task ForceUpdate()
+        {
+            await SetValueAsync(Value, force: true);
         }
 
         /// <summary>

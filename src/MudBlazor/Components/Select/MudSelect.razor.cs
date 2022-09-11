@@ -927,6 +927,19 @@ namespace MudBlazor
                 await InvokeAsync(StateHasChanged);
         }
 
+        public override async Task ForceUpdate()
+        {
+            await base.ForceUpdate();
+            if (MultiSelection == false)
+            {
+                SelectedValues = new HashSet<T>() { Value };
+            }
+            else
+            {
+                await SelectedValuesChanged.InvokeAsync();
+            }
+        }
+
         protected internal bool Add(MudSelectItem<T> item)
         {
             if (item == null)
