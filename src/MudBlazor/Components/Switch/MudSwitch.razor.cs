@@ -15,8 +15,10 @@ namespace MudBlazor
         new CssBuilder("mud-switch")
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-readonly", ReadOnly)
-          .AddClass(Class)
+            .AddClass(LabelPosition == LabelPosition.End ? "mud-ltr" : "mud-rtl", true)
+            .AddClass(Class)
         .Build();
+
         protected string SwitchClassname =>
         new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
             .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple && !ReadOnly && !Disabled)
@@ -68,6 +70,13 @@ namespace MudBlazor
         public bool OnClickStopPropagation { get; set; }
 
         /// <summary>
+        /// The position of the text/label.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public LabelPosition LabelPosition { get; set; } = LabelPosition.End;
+
+        /// <summary>
         /// Shows an icon on Switch's thumb.
         /// </summary>
         [Parameter]
@@ -117,6 +126,14 @@ namespace MudBlazor
         }
 
         private string _elementId = "switch_" + Guid.NewGuid().ToString().Substring(0, 8);
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            if (Label == null && For != null)
+                Label = For.GetDisplayNameString();
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {

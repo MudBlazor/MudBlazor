@@ -32,10 +32,10 @@
     @if (!HidePagination)
     {
         <div class="mud-table-pagination-actions">
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@FirstIcon" Disabled="@BackButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.First))" />
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@BeforeIcon" Disabled="@BackButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.Previous))" />
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@NextIcon" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.Next))" />
-            <MudIconButton Class="mud-flip-x-rtl" Icon="@LastIcon" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.Last))" />
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@FirstIcon" Disabled="@BackButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.First))" aria-label="First page" />
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@BeforeIcon" Disabled="@BackButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.Previous))" aria-label="Previous page" />
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@NextIcon" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.Next))" aria-label="Next page" />
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@LastIcon" Disabled="@ForwardButtonsDisabled" @onclick="@(() => Table.NavigateTo(Page.Last))" aria-label="Last page" />
         </div>
     }
     @if (HorizontalAlignment == HorizontalAlignment.Start ||

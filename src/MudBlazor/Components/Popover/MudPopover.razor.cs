@@ -97,7 +97,7 @@ namespace MudBlazor
         public double Duration { get; set; } = 251;
 
         /// <summary>
-        /// Sets the amount of time to wait from opening the popover before beginning to perform the transition. 
+        /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]

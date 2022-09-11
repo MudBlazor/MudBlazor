@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor.Interfaces;
-using MudBlazor.Utilities;
 using static System.String;
 
 namespace MudBlazor
@@ -531,7 +530,6 @@ namespace MudBlazor
 
         /// <summary>
         /// Specify an expression which returns the model's field for which validation messages should be displayed.
-        /// Currently only string fields are supported.
         /// </summary>
 #nullable enable
         [Parameter]

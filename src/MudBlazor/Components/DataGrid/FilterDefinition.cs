@@ -73,6 +73,14 @@ namespace MudBlazor
             }
         }
 
+        private bool isGuid
+        {
+            get
+            {
+                return FilterOperator.IsGuid(dataType);
+            }
+        }
+
         public Func<T, bool> GenerateFilterFunction()
         {
             if (FilterFunction != null)
@@ -100,6 +108,10 @@ namespace MudBlazor
                 else if (isDateTime)
                 {
                     return GenerateFilterForDateTimeTypeInIDictionary();
+                }
+                else if (isGuid)
+                {
+                    return GenerateFilterForGuidTypeInIDictionary();
                 }
 
                 return x => true;
@@ -137,6 +149,10 @@ namespace MudBlazor
             {
                 expression = GenerateFilterExpressionForDateTimeTypes(parameter);
             }
+            else if (isGuid)
+            {
+                expression = GenerateFilterExpressionForGuidTypes(parameter);
+            }
             else
             {
                 expression = Expression.Constant(true, typeof(bool));
@@ -149,8 +165,8 @@ namespace MudBlazor
         {
             var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(DateTime?));
             DateTime? valueDateTime = Value == null ? null : (DateTime)Value;
-            var isnotnull = Expression.IsTrue(Expression.Property(field, typeof(DateTime?), "HasValue"));
-            var isnull = Expression.IsFalse(Expression.Property(field, typeof(DateTime?), "HasValue"));
+            var isnotnull = Expression.NotEqual(field, Expression.Constant(null));
+            var isnull = Expression.Equal(field, Expression.Constant(null));
             var notNullDateTime = Expression.Convert(field, typeof(DateTime));
             var valueDateTimeConstant = Expression.Constant(valueDateTime);
 
@@ -191,7 +207,7 @@ namespace MudBlazor
         {
             var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(bool?));
             bool? valueBool = Value == null ? null : Convert.ToBoolean(Value);
-            var isnotnull = Expression.IsTrue(Expression.Property(field, typeof(bool?), "HasValue"));
+            var isnotnull = Expression.NotEqual(field, Expression.Constant(null));
             var notNullBool = Expression.Convert(field, typeof(bool));
 
             return Operator switch
@@ -199,6 +215,33 @@ namespace MudBlazor
                 FilterOperator.Enum.Is when Value != null => Expression.AndAlso(isnotnull,
                     Expression.Equal(notNullBool, Expression.Constant(valueBool))),
 
+                _ => Expression.Constant(true, typeof(bool))
+            };
+        }
+
+        private Expression GenerateFilterExpressionForGuidTypes(ParameterExpression parameter)
+        {
+            var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(Guid?));
+            Guid? valueGuid = Value == null ? null : ParseGuid((String)Value);
+            var isnotnull = Expression.IsTrue(Expression.Property(field, typeof(Guid?), "HasValue"));
+            var isnull = Expression.IsFalse(Expression.Property(field, typeof(Guid?), "HasValue"));
+            var notNullGuid = Expression.Convert(field, typeof(Guid));
+
+            return Operator switch
+            {
+                FilterOperator.Guid.Equal when valueGuid != null =>
+                    Expression.AndAlso(isnotnull,
+                        Expression.Equal(notNullGuid, Expression.Constant(valueGuid))),
+
+                FilterOperator.Guid.NotEqual when valueGuid != null =>
+                    Expression.OrElse(
+                        isnull,
+                        Expression.NotEqual(notNullGuid, Expression.Constant(valueGuid))),
+
+                // filtered value is not a valid GUID
+                _ when valueGuid == null && Value != null =>
+                    Expression.Constant(false),
+                
                 _ => Expression.Constant(true, typeof(bool))
             };
         }
@@ -232,8 +275,8 @@ namespace MudBlazor
         {
             var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(double?));
             double? valueNumber = Value == null ? null : Convert.ToDouble(Value);
-            var isnotnull = Expression.IsTrue(Expression.Property(field, typeof(double?), "HasValue"));
-            var isnull = Expression.IsFalse(Expression.Property(field, typeof(double?), "HasValue"));
+            var isnotnull = Expression.NotEqual(field, Expression.Constant(null));
+            var isnull = Expression.Equal(field, Expression.Constant(null));
             var notNullNumber = Expression.Convert(field, typeof(double));
             var valueNumberConstant = Expression.Constant(valueNumber);
 
@@ -505,6 +548,29 @@ namespace MudBlazor
             };
         }
 
+        private Func<T, bool> GenerateFilterForGuidTypeInIDictionary()
+        {
+            Guid? valueGuid = Value == null ? null : ParseGuid((string) Value);
+            return Operator switch
+            {
+                FilterOperator.Guid.Equal when Value != null => x =>
+                {
+                    var v = GetGuidFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v == valueGuid;
+                }
+                ,
+                FilterOperator.Guid.NotEqual when Value != null => x =>
+                {
+                    var v = GetGuidFromObject(((IDictionary<string, object>)x)[Field]);
+
+                    return v != valueGuid;
+                },
+
+                _ => x => true
+            };
+        }
+
         private Func<T, bool> GenerateFilterForDateTimeTypeInIDictionary()
         {
             DateTime? valueDateTime = Value == null ? null : (DateTime)Value;
@@ -658,6 +724,33 @@ namespace MudBlazor
             else
             {
                 return Convert.ToDateTime(o);
+            }
+        }
+
+        private Guid? GetGuidFromObject(object o)
+        {
+            if (o == null)
+                return null;
+
+            if (o.GetType() == typeof(JsonElement))
+            {
+                return ParseGuid(((JsonElement)o).GetString());
+            }
+            else
+            {
+                return ParseGuid(Convert.ToString(o));
+            }
+        }
+
+        private Guid? ParseGuid(string value)
+        {
+            if (value != null && Guid.TryParse(value, out Guid guid))
+            {
+                return guid;
+            }
+            else
+            {
+                return null;
             }
         }
     }

@@ -53,6 +53,17 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        protected string AutocompleteClassname =>
+            new CssBuilder("mud-select")
+            .AddClass("autocomplete")
+            .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
+            .Build();
+
+        protected string CircularProgressClassname =>
+            new CssBuilder("progress-indicator-circular")
+            .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
+            .Build();
+
         /// <summary>
         /// User class names for the popover, separated by space
         /// </summary>
@@ -171,6 +182,35 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Whether to show the progress indicator. 
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool ShowProgressIndicator { get; set; } = false;
+
+        /// <summary>
+        /// The color of the progress indicator. 
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color ProgressIndicatorColor { get; set; } = Color.Default;
+
+        private Task _currentSearchTask;
+
+        private bool IsLoading => _currentSearchTask != null && !_currentSearchTask.IsCompleted;
+
+        /// <summary>
+        /// Func that returns a list of items matching the typed text. Provides a cancellation token that
+        /// is marked as cancelled when the user changes the search text or selects a value from the list. 
+        /// This can be used to cancel expensive asynchronous work occuring within the SearchFunc itself.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public Func<string, CancellationToken, Task<IEnumerable<T>>> SearchFuncWithCancel { get; set; }
+
+        private CancellationTokenSource _cancellationTokenSrc;
+
+        /// <summary>
         /// The SearchFunc returns a list of items matching the typed text
         /// </summary>
         [Parameter]
@@ -247,6 +287,20 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment NoItemsTemplate { get; set; }
+
+        /// <summary>
+        /// Optional template for progress indicator
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment ProgressIndicatorTemplate { get; set; }
+
+        /// <summary>
+        /// Optional template for showing progress indicator inside the popover
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment ProgressIndicatorInPopoverTemplate { get; set; }
 
         /// <summary>
         /// On drop-down close override Text with selected Value. This makes it clear to the user
@@ -361,6 +415,16 @@ namespace MudBlazor
         protected override void Dispose(bool disposing)
         {
             _timer?.Dispose();
+            
+            if (_cancellationTokenSrc != null)
+            {
+                try
+                {
+                    _cancellationTokenSrc.Dispose();
+                }
+                catch { }
+            }
+
             base.Dispose(disposing);
         }
 
@@ -475,7 +539,6 @@ namespace MudBlazor
         private async Task OnTextChanged(string text)
         {
             await base.TextChanged.InvokeAsync();
-
             if (text == null)
                 return;
             await SetTextAsync(text, true);
@@ -532,6 +595,21 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        private void CancelToken()
+        {
+            try
+            {
+                _cancellationTokenSrc?.Cancel();
+            }
+            catch
+            { }
+
+            _cancellationTokenSrc = new CancellationTokenSource();
+        }
+        
+        private int _itemsReturned; //the number of items returned by the search function
+
+
         /// <remarks>
         /// This async method needs to return a task and be awaited in order for
         /// unit tests that trigger this method to work correctly.
@@ -545,16 +623,39 @@ namespace MudBlazor
                 return;
             }
 
-            IEnumerable<T> searchedItems = Array.Empty<T>();
+            IEnumerable<T> searched_items = Array.Empty<T>();
+            CancelToken();
+
             try
             {
-                searchedItems = (await SearchFunc(Text)) ?? Array.Empty<T>();
+                if (ProgressIndicatorInPopoverTemplate != null)
+                {
+                    IsOpen = true;
+                }
+
+                var searchTask = SearchFuncWithCancel != null ?
+                    SearchFuncWithCancel(Text, _cancellationTokenSrc.Token) :
+                    SearchFunc(Text);
+
+                _currentSearchTask = searchTask;
+
+                StateHasChanged();
+
+                searched_items = await searchTask ?? Array.Empty<T>();
+            }
+            catch (TaskCanceledException)
+            {
+            }
+            catch (OperationCanceledException)
+            {
             }
             catch (Exception e)
             {
                 Console.WriteLine("The search function failed to return results: " + e.ToString());
             }
-            _itemsReturned = searchedItems.Count();
+
+            _itemsReturned = searched_items.Count();
+
             if (MaxItems.HasValue)
             {
                 searchedItems = searchedItems.Take(MaxItems.Value);
