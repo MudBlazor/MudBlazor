@@ -606,9 +606,6 @@ namespace MudBlazor
 
             _cancellationTokenSrc = new CancellationTokenSource();
         }
-        
-        private int _itemsReturned; //the number of items returned by the search function
-
 
         /// <remarks>
         /// This async method needs to return a task and be awaited in order for
@@ -623,7 +620,7 @@ namespace MudBlazor
                 return;
             }
 
-            IEnumerable<T> searched_items = Array.Empty<T>();
+            IEnumerable<T> searchedItems = Array.Empty<T>();
             CancelToken();
 
             try
@@ -641,7 +638,7 @@ namespace MudBlazor
 
                 StateHasChanged();
 
-                searched_items = await searchTask ?? Array.Empty<T>();
+                searchedItems = await searchTask ?? Array.Empty<T>();
             }
             catch (TaskCanceledException)
             {
@@ -654,7 +651,7 @@ namespace MudBlazor
                 Console.WriteLine("The search function failed to return results: " + e.ToString());
             }
 
-            _itemsReturned = searched_items.Count();
+            _itemsReturned = searchedItems.Count();
 
             if (MaxItems.HasValue)
             {
