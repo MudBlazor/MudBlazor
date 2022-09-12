@@ -1030,12 +1030,15 @@ namespace MudBlazor
             {
                 if (Value == null)
                     return false;
-                //return _shadowLookup.TryGetValue(Value, out var _);
-                if (SelectedValues.Contains(Value))
-                {
-                    return true;
-                }
-                return false;
+                return _shadowLookup.TryGetValue(Value, out var _);
+                //foreach (var item in Items)
+                //{
+                //    if (Converter.Set(item.Value) == Converter.Set(Value))
+                //    {
+                //        return true;
+                //    }
+                //}
+                //return false;
             }
         }
 

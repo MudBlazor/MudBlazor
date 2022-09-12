@@ -2,6 +2,10 @@
 <MudPopoverProvider></MudPopoverProvider>
 
 <MudGrid>
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.body2">MudSelect.Value: "@value"</MudText>
+        <MudText Typo="Typo.body2">Selected Values: "@string.Join(", ", options ?? new List<string>())"</MudText>
+    </MudItem>
     <MudItem xs="12" md="12">
         <MudSelect T="string" @bind-Value="value" @bind-SelectedValues="options" Label="Felines" HelperText="Pick your favorite feline"
                    MultiSelection="true" SelectAll="true" SelectAllText="Select all felines"
@@ -12,9 +16,6 @@
                 <MudSelectItem T="string" Value="@feline">@feline</MudSelectItem>
             }
         </MudSelect>
-    </MudItem>
-    <MudItem xs="12" md="6">
-        <MudText Typo="Typo.body2">MudSelect.Value: "@value"</MudText>
     </MudItem>
 </MudGrid>
 
