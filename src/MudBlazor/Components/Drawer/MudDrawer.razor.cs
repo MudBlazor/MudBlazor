@@ -15,18 +15,17 @@ namespace MudBlazor
         private double _height;
         private ElementReference _contentRef, _drawerRef;
         private DrawerClipMode _clipMode;
-        private bool? _isOpenWhenLarge = null;
         private int _mouseEnterListenerId, _mouseLeaveListenerId;
-        private bool _open, _rtl, _isRendered, _initial = true, _keepInitialState, _fixed = true;
-        private Breakpoint _breakpoint = Breakpoint.Md, _screenBreakpoint = Breakpoint.None;
+        private bool _open = true, _isOpenWhenLarge = true, _rtl, _isRendered, _fixed = true;
+        private Breakpoint _breakpoint = Breakpoint.Md, _lastUpdatedBreakpoint = Breakpoint.None;
         private DotNetObjectReference<MudDrawer> _dotNetRef;
 
         private Guid _breakpointListenerSubscriptionId;
+        private bool IsSmall => _lastUpdatedBreakpoint < Breakpoint;
 
-        private bool OverlayVisible => _open && !DisableOverlay &&
-            (Variant == DrawerVariant.Temporary ||
-             (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Mini) ||
-             (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Responsive));
+        private bool OverlayVisible => Open && !DisableOverlay &&
+                                       (Variant == DrawerVariant.Temporary ||
+                                        (IsSmall && Variant is DrawerVariant.Mini or DrawerVariant.Responsive));
 
         protected string Classname =>
         new CssBuilder("mud-drawer")
@@ -34,7 +33,6 @@ namespace MudBlazor
           .AddClass($"mud-drawer-pos-{GetPosition()}")
           .AddClass($"mud-drawer--open", Open)
           .AddClass($"mud-drawer--closed", !Open)
-          .AddClass($"mud-drawer--initial", _initial)
           .AddClass($"mud-drawer-{Breakpoint.ToDescriptionString()}")
           .AddClass($"mud-drawer-clipped-{_clipMode.ToDescriptionString()}")
           .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
@@ -49,7 +47,6 @@ namespace MudBlazor
           .AddClass($"mud-drawer-overlay--open", Open)
           .AddClass($"mud-drawer-overlay-{Variant.ToDescriptionString()}")
           .AddClass($"mud-drawer-overlay-{Breakpoint.ToDescriptionString()}")
-          .AddClass($"mud-drawer-overlay--initial", _initial)
         .Build();
 
         protected string Stylename =>
@@ -170,7 +167,7 @@ namespace MudBlazor
                 _breakpoint = value;
                 if (_isRendered)
                 {
-                    UpdateBreakpointState(_screenBreakpoint);
+                    UpdateBreakpointState(_lastUpdatedBreakpoint);
                 }
 
                 DrawerContainer?.FireDrawersChanged();
@@ -192,21 +189,13 @@ namespace MudBlazor
                     return;
                 }
                 _open = value;
-                if (_isRendered && _initial && !_keepInitialState)
-                {
-                    _initial = false;
-                }
-                if (_keepInitialState)
-                {
-                    _keepInitialState = false;
-                }
-                if (_isRendered && value && (Anchor == Anchor.Top || Anchor == Anchor.Bottom))
+                if (_isRendered && value && Anchor is Anchor.Top or Anchor.Bottom)
                 {
                     _ = UpdateHeight();
                 }
 
-                DrawerContainer?.FireDrawersChanged();
                 OpenChanged.InvokeAsync(_open);
+                DrawerContainer?.FireDrawersChanged();
             }
         }
 
@@ -272,16 +261,10 @@ namespace MudBlazor
             {
                 await UpdateHeight();
                 var result = await Breakpointistener.Subscribe(UpdateBreakpointState);
-                var currentBreakpoint = result.Breakpoint;
 
                 _breakpointListenerSubscriptionId = result.SubscriptionId;
 
-                _screenBreakpoint = result.Breakpoint;
-                if (_screenBreakpoint < Breakpoint && _open)
-                {
-                    _keepInitialState = true;
-                    await OpenChanged.InvokeAsync(false);
-                }
+                UpdateBreakpointState(result.Breakpoint);
 
                 _isRendered = true;
                 if (string.IsNullOrWhiteSpace(Height) && (Anchor == Anchor.Bottom || Anchor == Anchor.Top))
@@ -332,7 +315,7 @@ namespace MudBlazor
         {
             if (Open)
             {
-                OpenChanged.InvokeAsync(false);
+                Open = false;
             }
         }
 
@@ -341,7 +324,7 @@ namespace MudBlazor
             if (Variant == DrawerVariant.Temporary ||
                 (Variant == DrawerVariant.Responsive && await Breakpointistener.GetBreakpoint() < Breakpoint))
             {
-                await OpenChanged.InvokeAsync(false);
+                Open = false;
             }
         }
 
@@ -366,32 +349,31 @@ namespace MudBlazor
                 breakpoint = await Breakpointistener.GetBreakpoint();
             }
 
-            if (breakpoint < Breakpoint && _screenBreakpoint >= Breakpoint && (Variant == DrawerVariant.Responsive || Variant == DrawerVariant.Mini))
+            if (breakpoint < Breakpoint && !IsSmall && (Variant is DrawerVariant.Responsive or DrawerVariant.Mini))
             {
                 _isOpenWhenLarge = Open;
 
-                await OpenChanged.InvokeAsync(false);
+                Open = false;
                 isStateChanged = true;
             }
-            else if (breakpoint >= Breakpoint && _screenBreakpoint < Breakpoint && (Variant == DrawerVariant.Responsive || Variant == DrawerVariant.Mini))
+            else if (breakpoint >= Breakpoint && IsSmall && (Variant is DrawerVariant.Responsive or DrawerVariant.Mini))
             {
                 if (Open && PreserveOpenState)
                 {
                     DrawerContainer?.FireDrawersChanged();
                     isStateChanged = true;
                 }
-                else if (_isOpenWhenLarge != null)
+                else
                 {
-                    await OpenChanged.InvokeAsync(_isOpenWhenLarge.Value);
-                    _isOpenWhenLarge = null;
+                    Open = _isOpenWhenLarge;
                     isStateChanged = true;
                 }
             }
 
-            _screenBreakpoint = breakpoint;
+            _lastUpdatedBreakpoint = breakpoint;
             if (isStateChanged)
             {
-                StateHasChanged();
+                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -412,22 +394,22 @@ namespace MudBlazor
 
         private bool closeOnMouseLeave = false;
         [JSInvokable]
-        public async void OnMouseEnter()
+        public void OnMouseEnter()
         {
             if (Variant == DrawerVariant.Mini && !Open && OpenMiniOnHover)
             {
                 closeOnMouseLeave = true;
-                await OpenChanged.InvokeAsync(true);
+                Open = true;
             }
         }
 
         [JSInvokable]
-        public async void OnMouseLeave()
+        public void OnMouseLeave()
         {
             if (Variant == DrawerVariant.Mini && Open && closeOnMouseLeave)
             {
                 closeOnMouseLeave = false;
-                await OpenChanged.InvokeAsync(false);
+                Open = false;
             }
         }
     }
