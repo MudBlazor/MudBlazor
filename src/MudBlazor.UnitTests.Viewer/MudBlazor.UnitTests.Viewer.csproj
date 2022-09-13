@@ -5,6 +5,7 @@
     <RootNamespace>MudBlazor.UnitTests</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'MudBlazor.UnitTests.Viewer' " />
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.8.*" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.8.*" PrivateAssets="all" />
