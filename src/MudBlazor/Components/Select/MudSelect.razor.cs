@@ -187,7 +187,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public Func<List<string>, string> MultiSelectionTextFunc { get; set; }
+        public Func<List<T>, string> MultiSelectionTextFunc { get; set; }
 
         /// <summary>
         /// If not null, select items will automatically created regard to the collection.
@@ -498,8 +498,8 @@ namespace MudBlazor
         [Parameter] public EventCallback<IEnumerable<T>> SelectedValuesChanged { get; set; }
 
         protected async Task SetCustomizedTextAsync(string text, bool updateValue = true,
-            List<string> selectedConvertedValues = null,
-            Func<List<string>, string> multiSelectionTextFunc = null)
+            List<T> selectedConvertedValues = null,
+            Func<List<T>, string> multiSelectionTextFunc = null)
         {
             // The Text property of the control is updated
             Text = multiSelectionTextFunc?.Invoke(selectedConvertedValues);
@@ -561,7 +561,7 @@ namespace MudBlazor
                 if (MultiSelectionTextFunc != null)
                 {
                     return SetCustomizedTextAsync(string.Join(Delimiter, textList),
-                        selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                        selectedConvertedValues: SelectedValues.ToList(),
                         multiSelectionTextFunc: MultiSelectionTextFunc, updateValue: updateValue);
                 }
                 else
@@ -893,7 +893,7 @@ namespace MudBlazor
                 if (MultiSelectionTextFunc != null)
                 {
                     await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
-                        selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                        selectedConvertedValues: SelectedValues.ToList(),
                         multiSelectionTextFunc: MultiSelectionTextFunc);
                 }
                 else
