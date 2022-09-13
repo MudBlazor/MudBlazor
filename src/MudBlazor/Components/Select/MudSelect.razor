@@ -31,7 +31,14 @@
                         <div class="@TemplateClass">
                             @if (ValuePresenter == ValuePresenter.Text)
                             {
-                                @GetSelectTextPresenter()
+                                @if (string.IsNullOrEmpty(Text))
+                                {
+                                    <MudText Typo="Typo.body1" Class="mud-text-secondary">@Placeholder</MudText>
+                                }
+
+                                <MudRender>@GetSelectTextPresenter()</MudRender>
+                                
+                                
                             }
                             else if (ValuePresenter == ValuePresenter.Chip)
                             {
@@ -60,7 +67,12 @@
                                 }
                                 else
                                 {
-                                    @GetSelectTextPresenter()   
+                                    @if (string.IsNullOrEmpty(Text))
+                                    {
+                                        <MudText Typo="Typo.body1" Class="mud-text-secondary">@Placeholder</MudText>
+                                    }
+
+                                    <MudRender>@GetSelectTextPresenter()</MudRender>
                                 }
                             }
                         </div>
