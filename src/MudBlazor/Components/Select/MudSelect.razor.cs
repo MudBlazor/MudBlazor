@@ -761,13 +761,15 @@ namespace MudBlazor
 
         internal void OnLostFocus(FocusEventArgs obj)
         {
-            if (_isOpen)
-            {
-                // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
-                // otherwise we can't receive key strokes any longer
-                _elementReference.FocusAsync().AndForget(TaskOption.Safe);
-            }
-            base.OnBlur.InvokeAsync(obj).AndForget();
+            //if (_isOpen)
+            //{
+            //    // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
+            //    // otherwise we can't receive key strokes any longer
+            //    _elementReference.FocusAsync().AndForget(TaskOption.Safe);
+            //}
+            //base.OnBlur.InvokeAsync(obj).AndForget();
+
+            OnBlurred(obj);
         }
 
         public override ValueTask FocusAsync()
