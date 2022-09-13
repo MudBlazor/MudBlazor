@@ -45,7 +45,11 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        internal void Remove(MudDrawer drawer) => _drawers.Remove(drawer);
+        internal void Remove(MudDrawer drawer)
+        {
+            _drawers.Remove(drawer);
+            StateHasChanged();
+        }
 
         private string GetDrawerClass(MudDrawer drawer)
         {
