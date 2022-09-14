@@ -814,6 +814,7 @@ namespace MudBlazor
             _isOpen = true;
             UpdateIcon();
             StateHasChanged();
+
             // TODO remove this delay but removed this makes _list null because code reach _list before popover render.
             //await Task.Delay(1);
             //if (MultiSelection)

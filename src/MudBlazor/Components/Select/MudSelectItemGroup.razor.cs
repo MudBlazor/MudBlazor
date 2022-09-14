@@ -14,7 +14,7 @@ namespace MudBlazor
     {
 
         //private IMudSelect _parent;
-        internal string ItemId { get; } = "_"+Guid.NewGuid().ToString().Substring(0,8);
+        internal string ItemId { get; } = "_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         /// <summary>
         /// A user-defined option that can be selected
@@ -66,6 +66,16 @@ namespace MudBlazor
             if (isExpanded)
             {
                 MudList?.UpdateSelectedStyles();
+            }
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
+            {
+                //This line is for nested and initially expanded items. Still doesn't work for multiselection
+                MudList?.UpdateSelectedStyles(false);
             }
         }
 

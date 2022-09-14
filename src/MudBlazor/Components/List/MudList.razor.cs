@@ -841,10 +841,13 @@ namespace MudBlazor
             _lastActivatedItem = item;
         }
 
-        protected internal void UpdateSelectedStyles()
+        protected internal void UpdateSelectedStyles(bool deselectFirst = true)
         {
             var items = CollectAllMudListItems(true);
-            DeselectAllItems(items);
+            if (deselectFirst)
+            {
+                DeselectAllItems(items);
+            }
 
             if (IsSelectable() == false)
             {
