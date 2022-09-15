@@ -157,10 +157,14 @@
                                                 }                                     
                                                 </CascadingValue>
                                             </tr>                                   
-                                            @if (ChildRowContent != null)
+                                            @if (_openHierarchies.Contains(item) && ChildRowContent != null)
                                             {
-                                                @ChildRowContent(new CellContext<T>(this, item))
-                                            }                                    
+                                                <tr class="mud-table-row">
+                                                    <td class="mud-table-cell" colspan="1000">
+                                                        @ChildRowContent(new CellContext<T>(this, item))
+                                                    </td>
+                                                </tr>
+                                            }                                       
                                             @{ rowIndex++; }
                                         </MudVirtualize>
                                         @*Group Footer*@
@@ -188,10 +192,14 @@
                                         }                                       
                                         </CascadingValue>
                                     </tr>                                   
-                                    @if (ChildRowContent != null)
+                                    @if (_openHierarchies.Contains(item) && ChildRowContent != null)
                                     {
-                                        @ChildRowContent(new CellContext<T>(this, item))
-                                    }                                    
+                                        <tr class="mud-table-row">
+                                            <td class="mud-table-cell" colspan="1000">
+                                                @ChildRowContent(new CellContext<T>(this, item))
+                                            </td>
+                                        </tr>
+                                    }                                        
                                     @{ rowIndex++; }
                                 </MudVirtualize>
                             }

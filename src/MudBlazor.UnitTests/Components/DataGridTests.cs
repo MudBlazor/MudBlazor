@@ -4,20 +4,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Moq;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using Microsoft.JSInterop.Infrastructure;
-using MudBlazor.Interop;
-using System.Text.Json;
-using System.Linq.Expressions;
-using PrimitiveCalculator;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -715,7 +710,7 @@ namespace MudBlazor.UnitTests.Components
                 FieldType = typeof(string)
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45} }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
 
@@ -2127,7 +2122,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = "Joe"
             };
             expression = filterDefinition.GenerateFilterExpression();
-            var func =expression.Compile();
+            var func = expression.Compile();
             Assert.IsFalse(func.Invoke(new("Does not contain", 45)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
             Assert.IsFalse(func.Invoke(new(null, 45)));
@@ -3031,7 +3026,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition4));
             await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition5));
             await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
-            
+
             // check the number of filters displayed in the filters panel
             dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(5);
 
@@ -3181,12 +3176,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridChildRowContentTest()
+        public async Task DataGridChildRowContentOpenTest()
         {
             var comp = Context.RenderComponent<DataGridChildRowContentTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridChildRowContentTest.Model>>();
 
-            dataGrid.FindAll("td")[3].TextContent.Trim().Should().StartWith("uid = Sam|56|Normal|");
+            await comp.InvokeAsync(() => dataGrid.Instance
+            .ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+
+            dataGrid.FindAll("td")[5].TextContent.Trim().Should().StartWith("uid = Sam|56|Normal|");
+        }
+
+        [Test]
+        public async Task DataGridChildRowContentClosedTest()
+        {
+            var comp = Context.RenderComponent<DataGridChildRowContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridChildRowContentTest.Model>>();
+
+            dataGrid.FindAll("td").SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Sam|56|Normal|")).Should().BeNull();
         }
 
         [Test]
@@ -3333,7 +3340,7 @@ namespace MudBlazor.UnitTests.Components
             var popover = dataGrid.FindComponent<MudPopover>();
             popover.Instance.Open.Should().BeFalse("Should start as closed");
 
-           
+
 
             var columnsButton = dataGrid.Find("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
             columnsButton.Click();
@@ -3495,7 +3502,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td.footer-cell")[1].TrimmedText().Should().Be("Average age is 56");
             dataGrid.FindAll("tfoot td.footer-cell")[1].TrimmedText().Should().Be("Average age is 43");
         }
-        
+
         [Test]
         public async Task DataGridSequenceContainsNoElementsTest()
         {
@@ -3529,10 +3536,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridFilterGuid<Guid>>();
             var grid = comp.Instance.MudGridRef;
-            
+
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
-            
+
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
             {
                 Field = "Id",
@@ -3541,7 +3548,7 @@ namespace MudBlazor.UnitTests.Components
                 FieldType = typeof(Guid),
             });
             grid.FilteredItems.Count().Should().Be(0);
-            
+
             grid.FilterDefinitions.Clear();
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
             {
@@ -3552,7 +3559,7 @@ namespace MudBlazor.UnitTests.Components
             });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
-            
+
             grid.FilterDefinitions.Clear();
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
             {
@@ -3570,10 +3577,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridFilterGuid<Nullable<Guid>>>();
             var grid = comp.Instance.MudGridRef;
-            
+
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
-            
+
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
             {
                 Field = "Id",
@@ -3582,7 +3589,7 @@ namespace MudBlazor.UnitTests.Components
                 FieldType = typeof(Nullable<Guid>),
             });
             grid.FilteredItems.Count().Should().Be(0);
-            
+
             grid.FilterDefinitions.Clear();
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
             {
@@ -3593,7 +3600,7 @@ namespace MudBlazor.UnitTests.Components
             });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
-            
+
             grid.FilterDefinitions.Clear();
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
             {
@@ -3611,10 +3618,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridFilterDictionaryGuid>();
             var grid = comp.Instance.MudGridRef;
-            
+
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
-            
+
             grid.FilterDefinitions.Add(new FilterDefinition<IDictionary<string, object>>()
             {
                 Field = "Id",
@@ -3623,7 +3630,7 @@ namespace MudBlazor.UnitTests.Components
                 FieldType = typeof(Nullable<Guid>),
             });
             grid.FilteredItems.Count().Should().Be(0);
-            
+
             grid.FilterDefinitions.Clear();
             grid.FilterDefinitions.Add(new FilterDefinition<IDictionary<string, object>>()
             {
@@ -3634,7 +3641,7 @@ namespace MudBlazor.UnitTests.Components
             });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()["Id"].Should().Be(Guid.Parse(comp.Instance.Guid1));
-            
+
             grid.FilterDefinitions.Clear();
             grid.FilterDefinitions.Add(new FilterDefinition<IDictionary<string, object>>()
             {
@@ -3722,7 +3729,7 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Instance.FilterDefinitions.Clear();
             dataGrid.Render();
-            
+
             // total with es-ES culture (decimals separated by comma)
             var filterTotal = dataGrid.FindAll("th.filter-header-cell input")[3];
             filterTotal.Input(new ChangeEventArgs() { Value = "2,2" });
