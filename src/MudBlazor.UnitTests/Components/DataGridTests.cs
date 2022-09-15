@@ -3489,6 +3489,11 @@ namespace MudBlazor.UnitTests.Components
             cell.cellContext.IsSelected.Should().Be(false);
             cell.cellContext.Actions.SetSelectedItem(true);
             cell.cellContext.IsSelected.Should().Be(true);
+
+            cell.cellContext.Actions.ToggleHierarchyVisibilityForItem();
+            cell.cellContext.openHierarchies.Should().Contain(item);
+            cell.cellContext.Actions.ToggleHierarchyVisibilityForItem();
+            cell.cellContext.openHierarchies.Should().NotContain(item);
         }
 
         [Test]
