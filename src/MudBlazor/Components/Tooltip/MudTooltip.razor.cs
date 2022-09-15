@@ -31,8 +31,7 @@ namespace MudBlazor
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
 
-        [CascadingParameter]
-        public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -145,8 +144,8 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public EventCallback<bool> IsVisibleChanged { get; set; }
 
-        private void HandleMouseOver() { IsVisible = true;}
-        private void HandleMouseOut() { IsVisible = false;}
+        private void HandleMouseOver() { IsVisible = true; }
+        private void HandleMouseOut() { IsVisible = false; }
 
         private Origin ConvertPlacement()
         {

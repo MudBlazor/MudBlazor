@@ -27,8 +27,7 @@ namespace MudBlazor
             .AddStyle(Style)
         .Build();
 
-        [CascadingParameter]
-        public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]

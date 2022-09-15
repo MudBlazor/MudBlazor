@@ -20,7 +20,7 @@ namespace MudBlazor
         .Build();
 
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// If true, the button group will override the styles of the individual buttons.
