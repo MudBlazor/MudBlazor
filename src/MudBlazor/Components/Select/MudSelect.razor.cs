@@ -488,14 +488,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Fires when SelectedValue changes.
-        /// </summary>
-        [Parameter] public EventCallback<T> SelectedValueChanged { get; set; }
-
-        /// <summary>
         /// Fires when SelectedValues changes.
         /// </summary>
         [Parameter] public EventCallback<IEnumerable<T>> SelectedValuesChanged { get; set; }
+
+        [Parameter] public EventCallback<IEnumerable<MudListItem<T>>> SelectedListItemsChanged { get; set; }
 
         protected async Task SetCustomizedTextAsync(string text, bool updateValue = true,
             List<T> selectedConvertedValues = null,
