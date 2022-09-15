@@ -1167,7 +1167,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p =>
             {
-                p.AddCascadingValue(true);
+                p.AddCascadingValue("RightToLeft", true);
             });
 
             //Console.WriteLine(comp.Markup);

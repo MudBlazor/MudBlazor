@@ -45,7 +45,7 @@ namespace MudBlazor
             };
         }
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// Sets the maxheight the popover can have when open.
