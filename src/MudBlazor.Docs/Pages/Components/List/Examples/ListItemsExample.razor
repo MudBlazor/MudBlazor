@@ -10,8 +10,7 @@
 
         <MudPaper Width="300px">
             <MudText Class="ma-4">Enum List</MudText>
-            @*(ICollection<string>Enum.GetNames(typeof(Continent)) can also be used*@
-            <MudList ItemCollection="Enum.GetNames(typeof(Continent)).ToList()" Clickable="true" MaxItems="_maxItems" />
+            <MudList T="Continent" ItemCollection="(ICollection<Continent>)Enum.GetValues(typeof(Continent))" Clickable="true" MaxItems="_maxItems" />
         </MudPaper>
     </MudItem>
 
@@ -49,6 +48,6 @@
         America,
         Africa,
         Australia,
-        Arctic
+        Antarctica
     }
 }

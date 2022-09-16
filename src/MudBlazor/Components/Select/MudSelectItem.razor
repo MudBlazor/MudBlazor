@@ -5,7 +5,7 @@
 @if (HideContent == false)
 {
     <MudListItem @attributes="UserAttributes" T="T" Value="@Value" Text="@Text" id="@ItemId" OnClick="@HandleOnClick" IsFunctional="@IsFunctional" Href="@Href" Disabled="@Disabled" Class="@GetCssClasses()" Style="@Style">
-        @if (ChildContent != null)
+        @if (ChildContent != null && MudSelect.ItemCollection == null)
         {
             @ChildContent
         }
