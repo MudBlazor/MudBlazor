@@ -36,6 +36,21 @@
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             }
+        },
+        {
+            "name": "docs (BSS)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/MudBlazor.Docs.Server/bin/Debug/net6.0/MudBlazor.Docs.Server.dll",
+            "cwd": "${workspaceFolder}/src/MudBlazor.Docs.Server",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
         }
     ]
 }
