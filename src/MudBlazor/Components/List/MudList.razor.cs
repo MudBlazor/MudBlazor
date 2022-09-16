@@ -641,6 +641,11 @@ namespace MudBlazor
                         }
                         HandleCentralValueCommander("SelectedValues");
                     }
+                    else
+                    {
+                        UpdateSelectedStyles();
+                        UpdateLastActivatedItem(SelectedValue);
+                    }
                 }
                 if (SelectedValues != null)
                 {
@@ -990,6 +995,10 @@ namespace MudBlazor
             }
 
             SelectedValues = items.Where(x => x.IsSelected == true).Select(y => y.Value);
+            if (MudSelect != null)
+            {
+                MudSelect.BeginValidate();
+            }
             //StateHasChanged();
         }
 
@@ -1028,11 +1037,11 @@ namespace MudBlazor
 
         protected internal void UpdateLastActivatedItem(T value)
         {
-            if (value == null)
-            {
-                _lastActivatedItem = null;
-                return;
-            }
+            //if (value == null)
+            //{
+            //    _lastActivatedItem = null;
+            //    return;
+            //}
             var items = CollectAllMudListItems(true);
             _lastActivatedItem = items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(value));
         }
