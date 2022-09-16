@@ -24,6 +24,7 @@ namespace MudBlazor
         protected string AutocompleteClassname =>
             new CssBuilder("mud-select")
             .AddClass("autocomplete")
+            .AddClass("mud-width-full", FullWidth)
             .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
             .Build();
 

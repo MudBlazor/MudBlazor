@@ -1020,5 +1020,20 @@ namespace MudBlazor.UnitTests.Components
             second.SetResult(new List<string> { "Bar" });
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ToMarkup().Should().Contain("Bar"));
         }
+
+        [Test]
+        public async Task Autocomplete_FullWidth()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompleteComp = comp.FindComponent<MudAutocomplete<string>>();
+
+            autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("autocomplete");
+            autocompleteComp.Find("div.mud-select").ClassList.Should().NotContain("mud-width-full");
+
+            autocompleteComp.SetParam(p => p.FullWidth, true);
+
+            autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("autocomplete");
+            autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-width-full");
+        }
     }
 }
