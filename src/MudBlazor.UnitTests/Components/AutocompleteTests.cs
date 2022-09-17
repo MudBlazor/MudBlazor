@@ -417,10 +417,11 @@ namespace MudBlazor.UnitTests.Components
 
             // Lets type something to cause it to open
             autocompletecomp.Find("input").Input("Calif");
+            await Task.Delay(100);
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
             // Lets call blur on the input and confirm that it closed
-            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Tab" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
             // Tab closes the drop-down and does not select the selected value (California)
@@ -444,11 +445,12 @@ namespace MudBlazor.UnitTests.Components
             // Lets type something to cause it to open
             await comp.InvokeAsync(() => autocompletecomp.Find("input").Click());
             await comp.InvokeAsync(() => autocompletecomp.Find("input").Input("Calif"));
+            await Task.Delay(100);
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
             // Lets call blur on the input and confirm that it closed
             await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown" }));
-            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Tab", Type = "keydown" }));
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
             // Tab closes the drop-down and selects the selected value (California)
@@ -655,7 +657,7 @@ namespace MudBlazor.UnitTests.Components
             component.WaitForAssertion(() => autocompleteInstance.Value.Should().Be(alaskaString));
 
             // reset search-string
-            autocompleteComponent.Find(TagNames.Input).Input(string.Empty);
+            await component.InvokeAsync(() => autocompleteComponent.Find(TagNames.Input).Input(string.Empty));
 
             // wait till popup is visible
             component.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue());

@@ -813,14 +813,12 @@ namespace MudBlazor
                 case "Tab":
                     if (IsOpen == true)
                     {
+                        if (SelectValueOnTab)
+                        {
+                            await OnEnterKey();
+                        }
                         await CloseMenu();
                     }
-                    //if (!IsOpen)
-                    //    return;
-                    //if (SelectValueOnTab)
-                    //    await OnEnterKey();
-                    //else
-                    //    IsOpen = false;
                     break;
                 case "Enter":
                 case "NumpadEnter":
