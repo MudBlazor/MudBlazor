@@ -82,6 +82,27 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public DefaultConverter<T> Converter { get; set; } = new DefaultConverter<T>();
 
+        private IEqualityComparer<T> _comparer;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public IEqualityComparer<T> Comparer
+        {
+            get => _comparer;
+            set
+            {
+                if (_comparer == value)
+                    return;
+                _comparer = value;
+                // Apply comparer and refresh selected values
+                if (_selectedValues == null)
+                {
+                    return;
+                }
+                _selectedValues = new HashSet<T>(_selectedValues, _comparer);
+                SelectedValues = _selectedValues;
+            }
+        }
+
         /// <summary>
         /// Predefined enumerable items. If its not null, creates list items automatically.
         /// </summary>
@@ -262,7 +283,7 @@ namespace MudBlazor
             {
                 if (MultiSelection == false)
                 {
-                    SelectedValues = new List<T>() { SelectedValue };
+                    SelectedValues = new HashSet<T>(_comparer) { SelectedValue };
                     UpdateSelectedItem();
                 }
             }
@@ -294,7 +315,7 @@ namespace MudBlazor
             {
                 SelectedValue = SelectedValues.FirstOrDefault();
                 var items = CollectAllMudListItems(true);
-                SelectedValues = SelectedValue == null ? null : new HashSet<T>() { SelectedValue };
+                SelectedValues = SelectedValue == null ? null : new HashSet<T>(_comparer) { SelectedValue };
                 UpdateSelectedItem();
             }
 
@@ -315,8 +336,8 @@ namespace MudBlazor
                 return;
             }
 
-            SelectedItem = items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(SelectedValue));
-            SelectedItems = SelectedValues == null ? null : items.Where(x => SelectedValues.Contains(x.Value));
+            SelectedItem = items.FirstOrDefault(x => SelectedValue == null ? x.Value == null : x.Value.Equals(SelectedValue));
+            SelectedItems = SelectedValues == null ? null : items.Where(x => SelectedValues.Contains(x.Value, _comparer));
         }
 
         protected internal void UpdateSelectedValue()
@@ -356,7 +377,7 @@ namespace MudBlazor
                 {
                     return;
                 }
-                if ((_selectedValue != null && value != null && Converter.Set(_selectedValue) == Converter.Set(value)) || (_selectedValue == null && value == null))
+                if ((_selectedValue != null && value != null && _selectedValue.Equals(value)) || (_selectedValue == null && value == null))
                 {
                     return;
                 }
@@ -412,7 +433,7 @@ namespace MudBlazor
                 //    return;
                 //}
 
-                _selectedValues = value == null ? null : value.ToHashSet();
+                _selectedValues = value == null ? null : value.ToHashSet(_comparer);
                 if (_setParametersDone == false)
                 {
                     return;
@@ -790,7 +811,7 @@ namespace MudBlazor
             }
             else
             {
-                if (SelectedValues.Contains(value))
+                if (SelectedValues.Contains(value, _comparer))
                 {
                     SelectedValues = SelectedValues?.Where(x => x == null ? false : !x.Equals(value));
                 }
@@ -819,7 +840,7 @@ namespace MudBlazor
                 return;
             }
 
-            if (!MultiSelection)
+            if (MultiSelection == false)
             {
                 SelectedValue = item.Value;
             }
@@ -833,7 +854,7 @@ namespace MudBlazor
                 {
                     if (SelectedValues == null)
                     {
-                        SelectedValues = new HashSet<T>() { item.Value };
+                        SelectedValues = new HashSet<T>(_comparer) { item.Value };
                     }
                     else
                     {
@@ -861,11 +882,11 @@ namespace MudBlazor
 
             if (MultiSelection == false)
             {
-                items.FirstOrDefault(x => Converter.Set(SelectedValue) == Converter.Set(x.Value))?.SetSelected(true);
+                items.FirstOrDefault(x => SelectedValue == null ? x.Value == null : SelectedValue.Equals(x == null ? null : x.Value))?.SetSelected(true);
             }
             else if (SelectedValues != null)
             {
-                items.Where(x => SelectedValues.Contains(x.Value)).ToList().ForEach(x => x.SetSelected(true));
+                items.Where(x => SelectedValues.Contains(x.Value, Comparer == null ? null : Comparer)).ToList().ForEach(x => x.SetSelected(true));
             }
 
             StateHasChanged();
@@ -1017,7 +1038,7 @@ namespace MudBlazor
             }
             else
             {
-                var a = items.FindIndex(x => Converter.Set(x.Value) == Converter.Set(_lastActivatedItem.Value));
+                var a = items.FindIndex(x => _lastActivatedItem.Value == null ? x.Value == null : _lastActivatedItem.Value.Equals(x.Value));
                 return a;
             }
         }
@@ -1043,12 +1064,16 @@ namespace MudBlazor
             //    return;
             //}
             var items = CollectAllMudListItems(true);
-            _lastActivatedItem = items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(value));
+            _lastActivatedItem = items.FirstOrDefault(x => value == null ? x.Value == null : value.Equals(x.Value));
         }
 
-        protected void DeactiveAllItems()
+        protected void DeactiveAllItems(List<MudListItem<T>> items = null)
         {
-            var items = CollectAllMudListItems(true);
+            if (items == null)
+            {
+                items = CollectAllMudListItems(true);
+            }
+            
             foreach (var item in items)
             {
                 item.SetActive(false);
@@ -1063,7 +1088,7 @@ namespace MudBlazor
             {
                 return;
             }
-            DeactiveAllItems();
+            DeactiveAllItems(items);
 
             if (string.IsNullOrWhiteSpace(startChar))
             {
@@ -1148,7 +1173,7 @@ namespace MudBlazor
                 await ActiveAdjacentItem(changeCount > 0 ? changeCount + 1 : changeCount - 1);
                 return;
             }
-            DeactiveAllItems();
+            DeactiveAllItems(items);
             items[index + changeCount].SetActive(true);
             _lastActivatedItem = items[index + changeCount];
 
@@ -1172,7 +1197,7 @@ namespace MudBlazor
             {
                 return;
             }
-            DeactiveAllItems();
+            DeactiveAllItems(items);
             items[index - 1].SetActive(true);
             _lastActivatedItem = items[index - 1];
 
@@ -1192,7 +1217,7 @@ namespace MudBlazor
                 return;
             }
             var properLastIndex = items.Count - 1;
-            DeactiveAllItems();
+            DeactiveAllItems(items);
             for (int i = 0; i < items.Count; i++)
             {
                 if (items[properLastIndex - i].Disabled != true)

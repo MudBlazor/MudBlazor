@@ -1,0 +1,44 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.ComponentModel
+
+<MudGrid>
+    <MudItem sm="6">
+        <MudSelect @bind-Value="_user" Label="RenderFragment Based" ToStringFunc="@(new Func<ApplicationUser, string>(e => e == null ? null : $"{e?.Id}. {e?.UserName} - {e?.Age}"))">
+            @foreach (ApplicationUser user in _userCollection)
+            {
+                <MudSelectItem Value="user" />
+            }
+        </MudSelect>
+        <MudText>Selected User: @_user?.UserName</MudText>
+    </MudItem>
+
+    <MudItem sm="6">
+        <MudSelect Label="Data Based" MultiSelection="true" @bind-SelectedValues="_users" ItemCollection="_userCollection" ToStringFunc="@(new Func<ApplicationUser, string>(e => e == null ? null : $"{e?.Id}. {e?.UserName} - {e?.Age}"))" />
+        <MudText>Selected User: @string.Join(", ", _users == null ? new List<string>() : _users.Select(x => x.UserName).ToList())</MudText>
+    </MudItem>
+</MudGrid>
+
+    
+
+    @code {
+    ICollection<ApplicationUser> _userCollection = new List<ApplicationUser>();
+    ApplicationUser _user;
+    IEnumerable<ApplicationUser> _users = new HashSet<ApplicationUser>();
+
+    protected override void OnInitialized()
+    {
+        _userCollection = new List<ApplicationUser>()
+        {
+            new ApplicationUser() { Id = 1, UserName = "Henry Coderman", Age = 20},
+            new ApplicationUser() { Id = 2, UserName = "Mary Codesmith", Age = 19 },
+            new ApplicationUser() { Id = 3, UserName = "Michael Coderunner", Age = 27 },
+        };
+    }
+
+    public class ApplicationUser
+    {
+        public int Id { get; set; }
+        public string UserName { get; set; }
+        public int Age { get; set; }
+    }
+}

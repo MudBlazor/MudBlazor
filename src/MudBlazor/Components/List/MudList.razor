@@ -14,13 +14,12 @@
             <MudVirtualize IsEnabled="@Virtualize" Items="ItemCollection" Context="item">
                 @if (MudSelect != null)
                 {
-                    <MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
+                    <MudSelectItem Value="@item" Text="@(MudSelect.ToStringFunc == null ? item.ToString() : MudSelect.ToStringFunc(item))" />
                 }
                 else
                 {
                     <MudListItem Value="@item" Text="@item.ToString()" />
                 }
-                
             </MudVirtualize>
         }
         else

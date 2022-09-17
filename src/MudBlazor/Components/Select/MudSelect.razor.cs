@@ -30,7 +30,6 @@ namespace MudBlazor
         [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
 
         private MudList<T> _list;
-        private IEqualityComparer<T> _comparer;
         private bool _dense;
         private string multiSelectionText;
         private IKeyInterceptor _keyInterceptor;
@@ -341,6 +340,7 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public MultiSelectionComponent MultiSelectionComponent { get; set; } = MultiSelectionComponent.CheckBox;
 
+        private IEqualityComparer<T> _comparer;
         /// <summary>
         /// The Comparer to use for comparing selected values internally.
         /// </summary>
@@ -530,7 +530,7 @@ namespace MudBlazor
                 {
                     foreach (var val in SelectedValues)
                     {
-                        var collectionValue = ItemCollection.FirstOrDefault(x => x != null && Converter.Set(x) == Converter.Set(val));
+                        var collectionValue = ItemCollection.FirstOrDefault(x => x != null && x.Equals(val));
                         if (collectionValue != null)
                         {
                             textList.Add(Converter.Set(collectionValue));
@@ -541,7 +541,7 @@ namespace MudBlazor
                 {
                     foreach (var val in SelectedValues)
                     {
-                        var item = Items.FirstOrDefault(x => x != null && Converter.Set(x.Value) == Converter.Set(val));
+                        var item = Items.FirstOrDefault(x => x != null && (x.Value == null ? val == null : x.Value.Equals(val)));
                         if (item != null)
                         {
                             textList.Add(!string.IsNullOrEmpty(item.Text) ? item.Text : Converter.Set(item.Value));
@@ -568,7 +568,7 @@ namespace MudBlazor
             }
             else
             {
-                var item = Items.FirstOrDefault(x => Converter.Set(x.Value) == Converter.Set(Value));
+                var item = Items.FirstOrDefault(x => Value == null ? x.Value == null : Value.Equals(x.Value));
                 if (item == null)
                 {
                     return SetTextAsync(Converter.Set(Value), false);
@@ -594,7 +594,7 @@ namespace MudBlazor
             UpdateIcon();
             if (MultiSelection == false && Value != null)
             {
-                _selectedValues = new HashSet<T>() { Value };
+                _selectedValues = new HashSet<T>(_comparer) { Value };
             }
             else if (MultiSelection == true && SelectedValues != null)
             {
@@ -932,7 +932,7 @@ namespace MudBlazor
             await base.ForceUpdate();
             if (MultiSelection == false)
             {
-                SelectedValues = new HashSet<T>() { Value };
+                SelectedValues = new HashSet<T>(_comparer) { Value };
             }
             else
             {
