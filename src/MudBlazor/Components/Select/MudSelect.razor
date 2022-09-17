@@ -37,31 +37,39 @@
                                 }
 
                                 <MudRender>@GetSelectTextPresenter()</MudRender>
-                                
-                                
                             }
                             else if (ValuePresenter == ValuePresenter.Chip)
                             {
-                                @foreach (var val in SelectedValues)
-                                {
-                                    <MudChip Class="mt-n1" Text="@Converter.Set(val)" Color="@Color" Size="Size.Small" />
-                                }
-                            }
-                            else if (ValuePresenter == ValuePresenter.Template && ItemTemplate != null)
-                            {
-                                if (SelectedListItem != null && SelectedListItem.Value != null)
-                                {
-                                    @ItemTemplate(SelectedListItem)
-                                }
-                                else if (!string.IsNullOrEmpty(Placeholder))
+                                if (SelectedValues == null || !SelectedValues.Any())
                                 {
                                     <MudText Typo="Typo.body1" Class="mud-text-secondary">@Placeholder</MudText>
                                 }
-
+                                else
+                                {
+                                    @foreach (var val in SelectedValues)
+                                    {
+                                        <MudChip Class="mt-n1" Text="@Converter.Set(val)" Color="@Color" Size="Size.Small" />
+                                    }
+                                }
                             }
-                            else if (ValuePresenter == ValuePresenter.ItemContent && SelectedListItem != null)
+                            else if (ValuePresenter == ValuePresenter.ItemContent)
                             {
-                                if (SelectedListItem.ChildContent != null)
+                                if (SelectedListItem == null)
+                                {
+                                    <MudText Typo="Typo.body1" Class="mud-text-secondary">@Placeholder</MudText>
+                                }
+                                else if (ItemTemplate != null)
+                                {
+                                    if (SelectedListItem != null && SelectedListItem.Value != null)
+                                    {
+                                        @ItemTemplate(SelectedListItem)
+                                    }
+                                    else if (!string.IsNullOrEmpty(Placeholder))
+                                    {
+                                        <MudText Typo="Typo.body1" Class="mud-text-secondary">@Placeholder</MudText>
+                                    }
+                                }
+                                else if (SelectedListItem.ChildContent != null)
                                 {
                                     <MudRender>@SelectedListItem.ChildContent</MudRender>
                                 }

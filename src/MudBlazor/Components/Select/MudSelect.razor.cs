@@ -492,6 +492,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<IEnumerable<T>> SelectedValuesChanged { get; set; }
 
+        /// <summary>
+        /// Should only be used for debugging and development purposes.
+        /// </summary>
         [Parameter] public EventCallback<IEnumerable<MudListItem<T>>> SelectedListItemsChanged { get; set; }
 
         protected async Task SetCustomizedTextAsync(string text, bool updateValue = true,

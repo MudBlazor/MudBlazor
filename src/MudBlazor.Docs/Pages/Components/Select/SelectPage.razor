@@ -131,10 +131,14 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Value presentation">
+            <SectionHeader Title="Value Presentation">
                 <Description>
-                    Select uses the render fragments you specify for the items to display the selected value (if any). If you don't specify render fragments, the value will be displayed as text. Also, if you have render fragments
-                    but the value that has been set is not in the list, it will also be displayed as text.
+                    There are two presentation in MudSelect: Input Presentation and Item Presentation.
+                    <br />
+                    Input Presentation can be determined by <CodeInline>ValuePresenter</CodeInline>
+                    <br />
+                    Item Presentation can be determined by <CodeInline>ItemTemplate</CodeInline>, <CodeInline>ItemSelectedTemplate</CodeInline> and <CodeInline>ItemDisabledTemplate</CodeInline>
+                    It means, templates doesn't affect input's visual.
                     <MudAlert Class="mt-2" Severity="Severity.Info">
                         <b>Note:</b> SelectedItemTemplate doesn't disable selected item style (background, text color etc.) by default. If you also want to remove default selected styles use <CodeInline>DisableSelectedItemStyle</CodeInline>.
                     </MudAlert>

@@ -364,6 +364,10 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Sync the value, values and text, calls validation manually. Useful to call after user changes value or text programmatically.
+        /// </summary>
+        /// <returns></returns>
         public virtual async Task ForceUpdate()
         {
             await SetValueAsync(Value, force: true);

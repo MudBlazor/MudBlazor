@@ -23,7 +23,7 @@ namespace MudBlazor
         }
 
         [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
-        [Inject] IScrollManager ScrollManager { get; set; }
+        //[Inject] IScrollManager ScrollManager { get; set; }
 
         /// <summary>
         /// This boolean will keep track if the clear function is called too keep the set text function to be called.
@@ -708,7 +708,7 @@ namespace MudBlazor
             if (SelectOnClick)
                 await _elementReference.SelectAsync();
             await OnSearchAsync();
-            await Task.Delay(1);
+            //await Task.Delay(1);
 
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
@@ -740,15 +740,6 @@ namespace MudBlazor
                 if (SelectOnClick)
                     await _elementReference.SelectAsync();
                 await OnSearchAsync();
-                //await Task.Delay(1);
-                //if (Value != null)
-                //{
-                //    _list.UpdateLastActivatedItem(Value);
-                //}
-                //if (_list != null && _list._lastActivatedItem != null && !(MultiSelection && _list._allSelected == true))
-                //{
-                //    await _list.ScrollToMiddleAsync(_list._lastActivatedItem);
-                //}
             }
             else
             {
@@ -991,8 +982,8 @@ namespace MudBlazor
         //    return $"{_componentId}_item{index}";
         //}
 
-        protected internal ValueTask ScrollToMiddleAsync(MudListItem<T> item)
-            => ScrollManager.ScrollToMiddleAsync(_elementId, item.ItemId);
+        //protected internal ValueTask ScrollToMiddleAsync(MudListItem<T> item)
+        //    => ScrollManager.ScrollToMiddleAsync(_elementId, item.ItemId);
 
         protected void ChipClose(MudChip chip)
         {

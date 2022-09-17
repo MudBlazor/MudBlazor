@@ -10,8 +10,6 @@ namespace MudBlazor
         Text,
         [Description("chip")]
         Chip,
-        [Description("template")]
-        Template,
         [Description("itemcontent")]
         ItemContent,
     }

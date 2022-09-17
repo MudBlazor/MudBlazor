@@ -1,70 +1,80 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSelect Label="Select Player" ToStringFunc="@(new Func<Tuple<string, string, bool>, string>(StringFunc))" Placeholder="Standard" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
-    @foreach (var item in _players)
-    {
-        <MudSelectItem Value="item">@(item.Item1 + " - Total Score: " + item.Item2)</MudSelectItem>
-    }
-</MudSelect>
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudSelect Label="Select Player" ToStringFunc="@(new Func<Tuple<string, string, bool>, string>(StringFunc))" Placeholder="Standard" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+            @foreach (var item in _players)
+            {
+                <MudSelectItem Value="item">@(item.Item1 + " - Total Score: " + item.Item2)</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
 
-<MudSelect ItemCollection="_players" ValuePresenter="ValuePresenter.Template" TemplateClass="d-flex align-center" Placeholder="With Template" Label="Select Player" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
-    <ItemTemplate>
-        <MudStack Class="mud-width-full" Justify="Justify.SpaceBetween" >
-            <MudText><b>@context.Value.Item1</b></MudText>
-            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                    <MudStack Row="true">
-                        <MudIcon Icon="@Icons.Outlined.Person" />
-                        <MudText>@(context.Value.Item3 == true ? "Retired" : "Active")</MudText>
+    <MudItem xs="12" sm="6">
+        <MudSelect ItemCollection="_players" ValuePresenter="ValuePresenter.ItemContent" TemplateClass="d-flex align-center" Placeholder="Template & ItemContent" Label="Select Player" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+            <ItemTemplate>
+                <MudStack Class="mud-width-full" Justify="Justify.SpaceBetween">
+                    <MudText><b>@context.Value.Item1</b></MudText>
+                    <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                        <MudStack Row="true">
+                            <MudIcon Icon="@Icons.Outlined.Person" />
+                            <MudText>@(context.Value.Item3 == true ? "Retired" : "Active")</MudText>
+                            </MudStack>
+                            <MudChip Color="Color.Info" Variant="Variant.Outlined">Total Score: @context.Value.Item2</MudChip>
+                        </MudStack>
                     </MudStack>
-                <MudChip Color="Color.Info" Variant="Variant.Outlined">Total Score: @context.Value.Item2</MudChip>
-            </MudStack>
-        </MudStack>
-    </ItemTemplate>
-</MudSelect>
+                </ItemTemplate>
+            </MudSelect>
+        </MudItem>
 
-<MudSelect ItemCollection="_players" DisableSelectedBackground="true" ValuePresenter="ValuePresenter.Template" MultiSelection="true" TemplateClass="d-flex align-center" Placeholder="Both Templates & MultiSelection" Label="Select Player" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
-    <ItemTemplate>
-        <MudStack Class="mud-width-full" Justify="Justify.SpaceBetween" >
-            <MudText><b>@context.Value.Item1</b></MudText>
-            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                    <MudStack Row="true">
-                        <MudIcon Icon="@Icons.Outlined.Person" />
-                        <MudText>@(context.Value.Item3 == true ? "Retired" : "Active")</MudText>
+        <MudItem xs="12" sm="6">
+            <MudSelect ItemCollection="_players" DisableSelectedBackground="true" ValuePresenter="ValuePresenter.Chip" MultiSelection="true" TemplateClass="d-flex align-center" Placeholder="Both Templates & MultiSelection" Label="Select Player" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                <ItemTemplate>
+                    <MudStack Class="mud-width-full" Justify="Justify.SpaceBetween">
+                        <MudText><b>@context.Value.Item1</b></MudText>
+                        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                            <MudStack Row="true">
+                                <MudIcon Icon="@Icons.Outlined.Person" />
+                                <MudText>@(context.Value.Item3 == true ? "Retired" : "Active")</MudText>
+                            </MudStack>
+                            <MudChip Color="Color.Info" Variant="Variant.Outlined">Total Score: @context.Value.Item2</MudChip>
+                        </MudStack>
                     </MudStack>
-                <MudChip Color="Color.Info" Variant="Variant.Outlined">Total Score: @context.Value.Item2</MudChip>
-            </MudStack>
-        </MudStack>
-    </ItemTemplate>
+                </ItemTemplate>
 
-    <ItemSelectedTemplate>
-            <MudStack Class="mud-width-full" Justify="Justify.SpaceBetween"AlignItems="AlignItems.Center">
-            <MudText><b>@context.Value.Item1</b></MudText>
-            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                    <MudStack Row="true">
-                        <MudIcon Icon="@Icons.Outlined.Person" />
-                        @*<MudText>@(context.Value.Item3 == true ? "Retired" : "Active")</MudText>*@
+                <ItemSelectedTemplate>
+                    <MudStack Class="mud-width-full" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                        <MudText><b>@context.Value.Item1</b></MudText>
+                        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                            <MudStack Row="true">
+                                <MudIcon Icon="@Icons.Outlined.Person" />
+                                @*<MudText>@(context.Value.Item3 == true ? "Retired" : "Active")</MudText>*@
+                            </MudStack>
+                            <MudChip Color="Color.Info" Variant="Variant.Outlined">Total Score: @context.Value.Item2</MudChip>
+                        </MudStack>
                     </MudStack>
-                <MudChip Color="Color.Info" Variant="Variant.Outlined">Total Score: @context.Value.Item2</MudChip>
-            </MudStack>
-        </MudStack>
-    </ItemSelectedTemplate>
-</MudSelect>
+                </ItemSelectedTemplate>
+            </MudSelect>
+        </MudItem>
 
-<MudSelect Label="Select Player" ToStringFunc="@(new Func<Tuple<string, string, bool>, string>(StringFunc))" Placeholder="Disabled Template" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
-    <ChildContent>
-        @foreach (var item in _players)
-        {
-            <MudSelectItem Value="item" Disabled="@(item.Item1.Contains("LeBron") ? false : true)">@(item.Item1 + " - Total Score: " + item.Item2)</MudSelectItem>
-        }
-    </ChildContent>
+        <MudItem xs="12" sm="6">
+            <MudSelect Label="Select Player" ToStringFunc="@(new Func<Tuple<string, string, bool>, string>(StringFunc))" Placeholder="Disabled Template" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                <ChildContent>
+                @foreach (var item in _players)
+                {
+                    <MudSelectItem Value="item" Disabled="@(item.Item1.Contains("LeBron") ? false : true)">@(item.Item1 + " - Total Score: " + item.Item2)</MudSelectItem>
+                }
+            </ChildContent>
 
-    <ItemDisabledTemplate>
-        <MudStack Row="true">
-            <MudText>@context.Value.Item1</MudText>
-            <MudText>Player is unavailable</MudText>
-        </MudStack>
-    </ItemDisabledTemplate>
-</MudSelect>
+            <ItemDisabledTemplate>
+                <MudStack Row="true">
+                    <MudText>@context.Value.Item1</MudText>
+                    <MudText>Player is unavailable</MudText>
+                </MudStack>
+            </ItemDisabledTemplate>
+        </MudSelect>
+    </MudItem>
+</MudGrid>
 
 @code {
     Tuple<string, string, bool>[] _players = new Tuple<string, string, bool>[]
