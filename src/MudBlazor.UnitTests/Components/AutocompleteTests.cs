@@ -273,9 +273,8 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.Find("input").Input("Calif");
             await Task.Delay(100);
 
-            //press Enter key
-            await comp.InvokeAsync(() => autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "ArrowDown" }));
-            await comp.InvokeAsync(() => autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter" }));
 
             //The value of the input should be California
             comp.WaitForAssertion(() => autocompletecomp.Instance.Value.Should().Be("California"));
@@ -450,7 +449,7 @@ namespace MudBlazor.UnitTests.Components
             // Lets call blur on the input and confirm that it closed
             await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown" }));
             autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
-            //comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
             // Tab closes the drop-down and selects the selected value (California)
             // because SelectValueOnTab is true
@@ -723,9 +722,9 @@ namespace MudBlazor.UnitTests.Components
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
                 await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown" }));
-                comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
-                await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape" }));
+            await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape" }));
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
                 await comp.InvokeAsync(() => autocomplete.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowUp" }));

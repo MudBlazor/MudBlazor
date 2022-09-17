@@ -671,11 +671,16 @@ namespace MudBlazor
                 return;
             }
 
-            //if (_list != null)
-            //{
-            //    _list.UpdateLastActivatedItem(Value);
-            //    _list.UpdateSelectedStyles();
-            //}
+            StateHasChanged();
+            if (_list != null)
+            {
+                _list.UpdateLastActivatedItem(Value);
+                _list.UpdateSelectedStyles();
+                if (_list._lastActivatedItem != null)
+                {
+                    await _list.ScrollToMiddleAsync(_list._lastActivatedItem);
+                }
+            }
 
             StateHasChanged();
         }
@@ -707,7 +712,6 @@ namespace MudBlazor
 
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
-
             //await OnOpen.InvokeAsync();
         }
 
