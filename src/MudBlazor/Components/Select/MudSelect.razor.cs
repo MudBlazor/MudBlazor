@@ -885,12 +885,6 @@ namespace MudBlazor
             var value = (T)obj;
             if (MultiSelection)
             {
-                // multi-selection: menu stays open
-                //if (!_selectedValues.Contains(value))
-                //    _selectedValues.Add(value);
-                //else
-                //    _selectedValues.Remove(value);
-
                 if (MultiSelectionTextFunc != null)
                 {
                     await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
@@ -1001,6 +995,8 @@ namespace MudBlazor
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
             _selectedValues.Clear();
+            SelectedListItem = null;
+            SelectedListItems = null;
             BeginValidate();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
