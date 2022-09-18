@@ -16,7 +16,10 @@
     }
 
     <div class="mud-snackbar-content-message">
-        @((MarkupString)Message)
+        @if (Message?.RenderFragment != null)
+        {
+            @Message.RenderFragment
+        }
     </div>
 
     @if (ShowCloseIcon || ShowActionButton)

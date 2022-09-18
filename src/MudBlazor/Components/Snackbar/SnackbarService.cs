@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Routing;
+using MudBlazor.Components.Snackbar;
 
 namespace MudBlazor
 {
@@ -55,12 +57,8 @@ namespace MudBlazor
             return Add(message, severity, configure);
         }
 
-        public Snackbar Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null)
+        private Snackbar Add(SnackbarMessage message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null)
         {
-            if (message.IsEmpty()) return null;
-
-            message = message.Trimmed();
-
             var options = new SnackbarOptions(severity, Configuration);
             configure?.Invoke(options);
 
@@ -81,6 +79,27 @@ namespace MudBlazor
             OnSnackbarsUpdated?.Invoke();
 
             return snackbar;
+        }
+
+        public Snackbar Add(RenderFragment message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null)
+        {
+            if (message == null) return null;
+
+            return Add(new SnackbarMessage(message), severity, configure);
+        }
+
+        public Snackbar Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null)
+        {
+            if (message.IsEmpty()) return null;
+
+            message = message.Trimmed();
+            RenderFragment renderFragmentMessage = (RenderTreeBuilder builder) =>
+            {
+                builder.AddMarkupContent(0, message);
+            };
+
+
+            return Add(renderFragmentMessage, severity, configure);
         }
 
         public void Clear()
@@ -120,10 +139,7 @@ namespace MudBlazor
 
         private bool SnackbarAlreadyPresent(Snackbar newSnackbar)
         {
-            return SnackBarList.Any(snackbar =>
-                newSnackbar.Message.Equals(snackbar.Message) &&
-                newSnackbar.Severity.Equals(snackbar.Severity)
-            );
+            return SnackBarList.Any(snackbar => newSnackbar.Message.SnackbarMessageId == snackbar.Message.SnackbarMessageId);
         }
 
         private void ConfigurationUpdated()

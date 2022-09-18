@@ -4,6 +4,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -30,6 +32,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task SimpleTestWithRenderFragment()
+        {
+            var comp = Context.RenderComponent<MudSnackbarProvider>();
+            comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<ISnackbar>() as SnackbarService;
+            service.Should().NotBe(null);
+
+            var testText = "Boom, big reveal. Im a pickle!";
+            var renderFragment = new RenderFragment(builder =>
+            {
+                builder.AddContent(0, testText);
+            });
+
+            // shoot out a snackbar
+            await comp.InvokeAsync(() => service?.Add(renderFragment));
+            comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().NotBeEmpty();
+            comp.Find("div.mud-snackbar-content-message").TrimmedText().Should().Be(testText);
+            // close by click on the snackbar
+            comp.Find("button").Click();
+            comp.WaitForAssertion(() => comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty(), TimeSpan.FromMilliseconds(100));
+        }
+
+        [Test]
         public async Task HtmlInMessages()
         {
             var comp = Context.RenderComponent<MudSnackbarProvider>();
@@ -41,6 +66,48 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => service?.Add("Hello <span>World</span>"));
             comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().NotBeEmpty();
             comp.Find("div.mud-snackbar-content-message>span").Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task TestWithHierarchicalRenderFragment()
+        {
+            var comp = Context.RenderComponent<MudSnackbarProvider>();
+            comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<ISnackbar>() as SnackbarService;
+            service.Should().NotBe(null);
+
+            var testText = "Boom, big reveal. Im a pickle!";
+            var renderFragment = new RenderFragment(builder =>
+            {
+                builder.OpenElement(0, "ul");
+                builder.OpenElement(1, "li");
+                builder.AddContent(2, testText);
+                builder.CloseElement();
+                builder.CloseElement();
+            });
+            // shoot out a snackbar
+            await comp.InvokeAsync(() => service?.Add(renderFragment));
+            comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().NotBeEmpty();
+            comp.Find("div.mud-snackbar-content-message").InnerHtml.Should().Be($"<ul><li>{testText}</li></ul>");
+            // close by click on the snackbar
+            comp.Find("button").Click();
+            comp.WaitForAssertion(() => comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty(), TimeSpan.FromMilliseconds(100));
+        }
+
+        [Test]
+        public void RenderFragmentContentTest()
+        {
+            var provider = Context.RenderComponent<MudSnackbarProvider>();
+            provider.Markup.Trim().Should().NotBeNullOrEmpty();
+
+            var service = Context.Services.GetService<ISnackbar>();
+            service.Should().NotBe(null);
+
+            var testComponent = Context.RenderComponent<SnackbarRenderFragmentMessageTest>();
+            testComponent.Find("button").Click();
+
+            provider.WaitForAssertion(() => provider.Find("div.mud-snackbar").Should().NotBe(null));
+            provider.Find("div.mud-snackbar-content-message").TrimmedText().Should().NotBe(string.Empty);
         }
 
         [Test]
