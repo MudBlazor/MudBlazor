@@ -134,9 +134,6 @@ namespace MudBlazor
         private bool SnackbarAlreadyPresent(Snackbar newSnackbar)
         {
             return SnackBarList.Any(snackbar => newSnackbar.Message.SnackbarMessageId == snackbar.Message.SnackbarMessageId);
-            //    newSnackbar.Message.Equals(snackbar.Message) &&
-            //    newSnackbar.Severity.Equals(snackbar.Severity)
-            //);
         }
 
         private void ConfigurationUpdated()
