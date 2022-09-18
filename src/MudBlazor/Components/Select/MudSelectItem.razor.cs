@@ -133,7 +133,7 @@ namespace MudBlazor
             }
         }
 
-        private void HandleOnClick()
+        protected void HandleOnClick()
         {
             // Selection works on list. We arrange only popover state and some minor arrangements on click.
             MudSelect?.SelectOption(Value).AndForget();
@@ -143,6 +143,15 @@ namespace MudBlazor
                 MudSelect.CloseMenu().AndForget();
             }
             OnClick.InvokeAsync().AndForget();
+        }
+
+        protected bool GetDisabledStatus()
+        {
+            if (MudSelect?.ItemDisabledFunc != null)
+            {
+                return MudSelect.ItemDisabledFunc(Value);
+            }
+            return Disabled;
         }
 
         public void Dispose()

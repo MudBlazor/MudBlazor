@@ -76,22 +76,29 @@ namespace MudBlazor
         /// Optional presentation template for items
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public RenderFragment<MudListItem<T>> ItemTemplate { get; set; }
 
         /// <summary>
         /// Optional presentation template for selected items
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
         public RenderFragment<MudListItem<T>> ItemSelectedTemplate { get; set; }
 
         /// <summary>
         /// Optional presentation template for disabled items
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
         public RenderFragment<MudListItem<T>> ItemDisabledTemplate { get; set; }
+
+        /// <summary>
+        /// Function to be invoked when checking whether an item should be disabled or not. Works both with renderfragment and ItemCollection approach.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public Func<T, bool> ItemDisabledFunc { get; set; }
 
         /// <summary>
         /// Classname for item template or chips.
