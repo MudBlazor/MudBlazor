@@ -4,6 +4,7 @@
 
 using System;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Components.Snackbar;
 using static System.String;
 
 namespace MudBlazor
@@ -23,7 +24,7 @@ namespace MudBlazor
         protected string AnimationStyle => Snackbar?.State.AnimationStyle + Style;
         protected string SnackbarClass => Snackbar?.State.SnackbarClass;
 
-        protected string Message => Snackbar?.Message;
+        protected SnackbarMessage Message => Snackbar?.Message;
 
         protected string Action => Snackbar?.State.Options.Action;
         protected Color ActionColor => Snackbar?.State.Options.ActionColor ?? Color.Default;
