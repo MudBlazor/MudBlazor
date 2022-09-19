@@ -67,6 +67,14 @@ namespace MudBlazor.Charts
 
             var numHorizontalLines = ((int)(maxY / gridYUnits)) + 1;
 
+            // if max y axis tick is specified, then we set the num horinzontal lines = number of ticks
+            // and Y units as maxY / num lines
+            if (MudChartParent?.ChartOptions?.YAxisMaxValue.HasValue ?? false)
+            {
+                numHorizontalLines = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 20;
+                gridYUnits = (MudChartParent?.ChartOptions?.YAxisMaxValue ?? maxY) / numHorizontalLines;
+            }
+
             // this is a safeguard against millions of gridlines which might arise with very high values
             while (numHorizontalLines > maxYTicks)
             {

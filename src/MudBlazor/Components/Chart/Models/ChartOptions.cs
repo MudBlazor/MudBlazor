@@ -15,6 +15,10 @@
         public string YAxisFormat { get; set; }
         public bool YAxisLines { get; set; } = true;
         public bool XAxisLines { get; set; }
+        /// <summary>
+        /// Maximum value of the Y Axis scale.
+        /// </summary>
+        public int? YAxisMaxValue { get; set; }
 
         /// <summary>
         /// If true, legend will not be displayed.

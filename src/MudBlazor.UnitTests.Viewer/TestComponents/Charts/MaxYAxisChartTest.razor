@@ -1,0 +1,23 @@
+@page "/"
+
+<MudChart ChartType="@ChartType" ChartSeries="@Series" @bind-SelectedIndex="Index" ChartOptions="@Options" XAxisLabels="@XAxisLabels" ></MudChart>
+
+@code {
+    [Parameter]
+    public ChartType ChartType { get; set; }
+
+    [Parameter]
+    public ChartOptions Options { get; set; } = new ChartOptions
+    {
+        YAxisTicks = 20,
+        YAxisFormat = "0.##"
+    };
+
+    private int Index = -1;
+    public List<ChartSeries> Series = new List<ChartSeries>()
+    {
+        new ChartSeries() { Name ="Series 1", Data = new double[] { 0.90, 0.79, 0.72, 0.69, 0.62, 0.62, 0.55, 0.65, 0.70  } }
+    };
+    public string[] XAxisLabels = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+
+}
