@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor.Components.Snackbar;
 
@@ -92,8 +93,13 @@ namespace MudBlazor
             if (message.IsEmpty()) return null;
 
             message = message.Trimmed();
+            RenderFragment renderFragmentMessage = (RenderTreeBuilder builder) =>
+            {
+                builder.AddMarkupContent(0, message);
+            };
 
-            return Add(new SnackbarMessage(message), severity, configure);
+
+            return Add(renderFragmentMessage, severity, configure);
         }
 
         public void Clear()

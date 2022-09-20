@@ -16,11 +16,7 @@
     }
 
     <div class="mud-snackbar-content-message">
-        @if (Message?.MarkupString != null)
-        {
-            @((MarkupString)Message.MarkupString)
-        }
-        else if (Message?.RenderFragment != null)
+        @if (Message?.RenderFragment != null)
         {
             @Message.RenderFragment
         }

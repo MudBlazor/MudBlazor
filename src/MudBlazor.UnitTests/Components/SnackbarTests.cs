@@ -41,7 +41,7 @@ namespace MudBlazor.UnitTests.Components
             var testText = "Boom, big reveal. Im a pickle!";
             var renderFragment = new RenderFragment(builder =>
             {
-                builder.AddContent(1, testText);
+                builder.AddContent(0, testText);
             });
 
             // shoot out a snackbar

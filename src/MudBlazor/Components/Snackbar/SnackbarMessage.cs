@@ -10,13 +10,7 @@ namespace MudBlazor.Components.Snackbar
     public class SnackbarMessage
     {
         internal Guid SnackbarMessageId { get; private set; } = Guid.NewGuid();
-        public string MarkupString { get; }
         public RenderFragment RenderFragment { get; }
-
-        internal SnackbarMessage(string markupString)
-        {
-            MarkupString = markupString;
-        }
 
         internal SnackbarMessage(RenderFragment renderFragment)
         {
