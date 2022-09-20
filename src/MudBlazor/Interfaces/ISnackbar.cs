@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
@@ -14,7 +15,9 @@ namespace MudBlazor
 
         event Action OnSnackbarsUpdated;
 
-        Snackbar Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null);
+        Snackbar Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "");
+        Snackbar Add(RenderFragment message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "");
+        Snackbar Add<T>(Dictionary<string, object> componentParameters = null, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "") where T : IComponent;
 
         [Obsolete("Use Add instead.", true)]
         Snackbar AddNew(Severity severity, string message, Action<SnackbarOptions> configure);
