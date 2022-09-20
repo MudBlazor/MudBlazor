@@ -90,8 +90,8 @@
   <ItemGroup>
     <PackageReference Include="Blazor-Analytics" Version="3.11.0" />
     <PackageReference Include="FluentValidation" Version="11.2.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.8.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.8.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.9.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9.*" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
   </ItemGroup>
