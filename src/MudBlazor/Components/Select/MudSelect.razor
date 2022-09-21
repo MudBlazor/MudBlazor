@@ -29,13 +29,17 @@
                     
                     <ChildContent>
                         <div class="@TemplateClass">
-                            @if (ValuePresenter == ValuePresenter.Text)
+                            @if (Strict && !IsValueInList)
+                            {
+                                //Show nothing
+                            }
+                            else if (ValuePresenter == ValuePresenter.Text)
                             {
                                 @if (string.IsNullOrEmpty(Text))
                                 {
                                     <MudText Typo="Typo.body1" Class="mud-text-secondary">@Placeholder</MudText>
                                 }
-
+                                
                                 <MudRender>@GetSelectTextPresenter()</MudRender>
                             }
                             else if (ValuePresenter == ValuePresenter.Chip)

@@ -336,7 +336,7 @@ namespace MudBlazor
                 return;
             }
 
-            SelectedItem = items.FirstOrDefault(x => SelectedValue == null ? x.Value == null : x.Value.Equals(SelectedValue));
+            SelectedItem = items.FirstOrDefault(x => SelectedValue == null ? x.Value == null : Comparer != null ? Comparer.Equals(x.Value, SelectedValue) : x.Value.Equals(SelectedValue));
             SelectedItems = SelectedValues == null ? null : items.Where(x => SelectedValues.Contains(x.Value, _comparer));
         }
 
@@ -433,13 +433,13 @@ namespace MudBlazor
                 //    return;
                 //}
 
-                _selectedValues = value == null ? null : value.ToHashSet(_comparer);
+                _selectedValues = value == null ? null : new HashSet<T>(value, _comparer);
                 if (_setParametersDone == false)
                 {
                     return;
                 }
                 HandleCentralValueCommander(nameof(SelectedValues));
-                SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
+                SelectedValuesChanged.InvokeAsync(SelectedValues == null ? null : new HashSet<T>(SelectedValues, _comparer)).AndForget();
                 //UpdateSelectedStyles();
                 //Console.WriteLine("SelectedValues setter ended");
             }
@@ -813,7 +813,7 @@ namespace MudBlazor
             {
                 if (SelectedValues.Contains(value, _comparer))
                 {
-                    SelectedValues = SelectedValues?.Where(x => x == null ? false : !x.Equals(value)).ToHashSet(_comparer);
+                    SelectedValues = SelectedValues?.Where(x => x == null ? false : Comparer != null ? !Comparer.Equals(x, value) : !x.Equals(value)).ToHashSet(_comparer);
                 }
                 else
                 {
@@ -848,7 +848,7 @@ namespace MudBlazor
             {
                 if (item.IsSelected)
                 {
-                    SelectedValues = SelectedValues?.Where(x => x == null ? false : !x.Equals(item.Value)).ToHashSet(_comparer);
+                    SelectedValues = SelectedValues?.Where(x => x == null ? false : Comparer != null ? !Comparer.Equals(x, item.Value) : !x.Equals(item.Value)).ToHashSet(_comparer);
                 }
                 else
                 {
@@ -1038,7 +1038,7 @@ namespace MudBlazor
             }
             else
             {
-                var a = items.FindIndex(x => _lastActivatedItem.Value == null ? x.Value == null : _lastActivatedItem.Value.Equals(x.Value));
+                var a = items.FindIndex(x => _lastActivatedItem.Value == null ? x.Value == null : Comparer != null ? Comparer.Equals(_lastActivatedItem.Value, x.Value) : _lastActivatedItem.Value.Equals(x.Value));
                 return a;
             }
         }
@@ -1064,7 +1064,7 @@ namespace MudBlazor
             //    return;
             //}
             var items = CollectAllMudListItems(true);
-            _lastActivatedItem = items.FirstOrDefault(x => value == null ? x.Value == null : value.Equals(x.Value));
+            _lastActivatedItem = items.FirstOrDefault(x => value == null ? x.Value == null : Comparer != null ? Comparer.Equals(value, x.Value) : value.Equals(x.Value));
         }
 
         protected void DeactiveAllItems(List<MudListItem<T>> items = null)

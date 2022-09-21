@@ -439,7 +439,7 @@ namespace MudBlazor
                 if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x, _comparer)))
                     return;
                 _selectedValues = new HashSet<T>(set, _comparer);
-                SelectionChangedFromOutside?.Invoke(_selectedValues);
+                SelectionChangedFromOutside?.Invoke(new HashSet<T>(_selectedValues, _comparer));
                 if (MultiSelection == false)
                 {
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
@@ -540,7 +540,7 @@ namespace MudBlazor
                 {
                     foreach (var val in SelectedValues)
                     {
-                        var collectionValue = ItemCollection.FirstOrDefault(x => x != null && x.Equals(val));
+                        var collectionValue = ItemCollection.FirstOrDefault(x => x != null && (Comparer != null ? Comparer.Equals(x, val) : x.Equals(val)));
                         if (collectionValue != null)
                         {
                             textList.Add(Converter.Set(collectionValue));
@@ -551,7 +551,7 @@ namespace MudBlazor
                 {
                     foreach (var val in SelectedValues)
                     {
-                        var item = Items.FirstOrDefault(x => x != null && (x.Value == null ? val == null : x.Value.Equals(val)));
+                        var item = Items.FirstOrDefault(x => x != null && (x.Value == null ? val == null : Comparer != null ? Comparer.Equals(x.Value, val) : x.Value.Equals(val)));
                         if (item != null)
                         {
                             textList.Add(!string.IsNullOrEmpty(item.Text) ? item.Text : Converter.Set(item.Value));
@@ -578,7 +578,7 @@ namespace MudBlazor
             }
             else
             {
-                var item = Items.FirstOrDefault(x => Value == null ? x.Value == null : Value.Equals(x.Value));
+                var item = Items.FirstOrDefault(x => Value == null ? x.Value == null : Comparer != null ? Comparer.Equals(Value, x.Value) : Value.Equals(x.Value));
                 if (item == null)
                 {
                     return SetTextAsync(Converter.Set(Value), false);
@@ -1036,15 +1036,15 @@ namespace MudBlazor
             {
                 if (Value == null)
                     return false;
-                return _shadowLookup.TryGetValue(Value, out var _);
-                //foreach (var item in Items)
-                //{
-                //    if (Converter.Set(item.Value) == Converter.Set(Value))
-                //    {
-                //        return true;
-                //    }
-                //}
-                //return false;
+                //return _shadowLookup.TryGetValue(Value, out var _);
+                foreach (var item in Items)
+                {
+                    if (Comparer != null ? Comparer.Equals(item.Value, Value) : item.Value.Equals(Value)) //(Converter.Set(item.Value) == Converter.Set(Value))
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
         }
 
