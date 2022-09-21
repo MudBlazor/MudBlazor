@@ -22,6 +22,9 @@
     <Content Update="TestComponents\RadioGroup\RadioGroupExceptionTest.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+    <Content Update="TestComponents\Select\MultiSelectTextTest.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
   </ItemGroup>
 
 </Project>

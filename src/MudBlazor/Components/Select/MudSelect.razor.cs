@@ -384,7 +384,6 @@ namespace MudBlazor
                 Converter = new Converter<T>
                 {
                     SetFunc = _toStringFunc ?? (x => x?.ToString()),
-                    //GetFunc = LookupValue,
                 };
             }
         }
@@ -393,23 +392,6 @@ namespace MudBlazor
 
 
         #region Values, Texts & Items
-
-        // This approach doesn't work
-        //[Parameter]
-        //[Category(CategoryTypes.FormComponent.Data)]
-        //public override T Value
-        //{
-        //    get => _value;
-        //    set
-        //    {
-        //        if (Converter.Set(_value) == Converter.Set(value))
-        //        {
-        //            return;
-        //        }
-        //        _value = value;
-        //        _selectedValues = new HashSet<T> { _value };
-        //    }
-        //}
 
         private HashSet<T> _selectedValues;
         /// <summary>
@@ -526,7 +508,7 @@ namespace MudBlazor
         protected override Task UpdateValuePropertyAsync(bool updateText)
         {
             // For MultiSelection of non-string T's we don't update the Value!!!
-            if (typeof(T) == typeof(string) || !MultiSelection)
+            //if (typeof(T) == typeof(string) || !MultiSelection)
                 base.UpdateValuePropertyAsync(updateText).AndForget();
             return Task.CompletedTask;
         }
@@ -564,9 +546,9 @@ namespace MudBlazor
                     }
                 }
             }
+
             // when multiselection is true, we return
             // a comma separated list of selected values
-
             if (MultiSelection == true)
             {
                 if (MultiSelectionTextFunc != null)
@@ -593,7 +575,6 @@ namespace MudBlazor
 
         private string GetSelectTextPresenter()
         {
-            //UpdateTextPropertyAsync(false);
             return Text;
         }
 
@@ -744,22 +725,6 @@ namespace MudBlazor
                             break;
                         }
                     }
-                    //case "a":
-                    //case "A":
-                    //    if (obj.CtrlKey == true)
-                    //    {
-                    //        if (MultiSelection)
-                    //        {
-                    //            await SelectAllClickAsync();
-                    //            ////If we didn't add delay, it won't work.
-                    //            //await WaitForRender();
-                    //            //await Task.Delay(1);
-                    //            //StateHasChanged();
-                    //            //It only works when selecting all, not render unselect all.
-                    //            //UpdateSelectAllChecked();
-                    //        }
-                    //    }
-                    //    break;
             }
             await OnKeyDown.InvokeAsync(obj);
 
@@ -896,17 +861,7 @@ namespace MudBlazor
             var value = (T)obj;
             if (MultiSelection)
             {
-                if (MultiSelectionTextFunc != null)
-                {
-                    await SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
-                        selectedConvertedValues: SelectedValues.ToList(),
-                        multiSelectionTextFunc: MultiSelectionTextFunc);
-                }
-                else
-                {
-                    await SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false);
-                }
-
+                await UpdateTextPropertyAsync(false);
                 //UpdateSelectAllChecked();
                 BeginValidate();
             }
@@ -1033,7 +988,6 @@ namespace MudBlazor
 
         #endregion
 
-        // TODO: Move checking strict value from input value to valuepresenter
         protected bool IsValueInList
         {
             get

@@ -748,6 +748,24 @@ namespace MudBlazor.UnitTests.Components
             value.Should().Be("FirstA, SecondA");
         }
 
+        [Test]
+        public async Task MultiSelectTextTest()
+        {
+            var comp = Context.RenderComponent<MultiSelectTextTest>();
+            var select = comp.FindComponent<MudSelect<int?>>();
+
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter" }));
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            var selectItems = comp.FindAll("div.mud-list-item");
+            foreach (var item in selectItems)
+            {
+                item.Click();
+            }
+
+            comp.WaitForAssertion(() => select.Instance.Text.Should().Be("Empty, One, 2, 3"));
+        }
+
         /// <summary>
         /// We filled the multiselect with initial selected values.
         /// Then the returned text in the selection is customized.
