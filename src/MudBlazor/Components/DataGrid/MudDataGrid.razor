@@ -45,7 +45,7 @@
                         <tr class="mud-table-row">
                             @foreach (var column in RenderedColumns)
                             {
-                                <HeaderCell T="T" Column="@column"></HeaderCell>
+                                <HeaderCell SortDirection="@(GetColumnSortDirection(column.Field))" T="T" Column="@column"></HeaderCell>
                             }
                         </tr>
                         @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
@@ -57,8 +57,7 @@
                                     <MudGrid Spacing="0">
                                         @foreach (var f in FilterDefinitions)
                                         {
-                                            <Filter T="T" @bind-Field="f.Field" FieldType="@f.FieldType" @bind-Title="f.Title" @bind-Operator="f.Operator" @bind-Value="f.Value"
-                                                Id="@f.Id"></Filter>
+                                            @Filter(f, null)
                                         }
                                     </MudGrid>
                                     <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">Add Filter</MudButton>
@@ -333,7 +332,7 @@
                     else if (column.isNumber)
                     {
                         <MudNumericField T="double?" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense" Style="margin-top:0"
-                            Required="true" Variant="@Variant.Text" />
+                            Required="true" Variant="@Variant.Text" Culture="@column.Culture" />
                     }
                 }
             }
@@ -343,12 +342,160 @@
                 {
                     @column.CellTemplate(cell.cellContext)
                 }
+                else if (column.Culture != null && column.isNumber)
+                {
+                    @cell.valueNumber?.ToString(column.Culture)
+                }
                 else
                 {
                     @cell.ComputedValue
                 }
             }
         </td>
-        </text>;
+        </text>
+    ;
+    }
+
+    internal RenderFragment Filter(FilterDefinition<T> f, Column<T> column)
+    {
+        return
+        @<text>
+        @{
+            var filter = new Filter<T>(this, f, column);
+        }
+        @if (column == null)
+        {
+            <MudItem xs="1" Class="d-flex">
+                <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilter" Size="@Size.Small" Style="align-self:flex-end"></MudIconButton>
+            </MudItem>
+            <MudItem xs="4">
+                <MudSelect T="string" Value="@f.Field" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense"
+                    Class="filter-field">
+                    @foreach (var column in RenderedColumns ?? Enumerable.Empty<Column<T>>())
+                    {
+                        <MudSelectItem Value="@column.Field">@column.computedTitle</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="3">
+                <MudSelect @bind-Value="f.Operator" FullWidth="true" Label="Operator" Dense="true" Margin="@Margin.Dense"
+                    Class="filter-operator">
+                    @foreach (var o in FilterOperator.GetOperatorByDataType(filter.dataType))
+                    {
+                        <MudSelectItem Value="@o">@o</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="4">
+                @if (filter.dataType == typeof(string) && !(f.Operator ?? "").EndsWith("empty"))
+                {
+                    <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense" 
+                        Immediate="true" Class="filter-input" />
+                }
+                else if (filter.isNumber && !(f.Operator ?? "").EndsWith("empty"))
+                {
+                    <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense" 
+                    Immediate="true" Class="filter-input" Culture="@filter.filterColumn?.Culture" />
+                }
+                else if (filter.isEnum)
+                {
+                    <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                        Class="filter-input">
+                        <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
+                        @foreach (var item in Enum.GetValues(filter.dataType))
+                        {
+                            <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+                else if (filter.dataType == typeof(bool))
+                {
+                    <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                        Class="filter-input">
+                        <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
+                        <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
+                        <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
+                    </MudSelect>
+                }
+                else if (filter.dataType == typeof(DateTime) && !(f.Operator ?? "").EndsWith("empty"))
+                {
+                    <MudGrid Spacing="0">
+                        <MudItem xs="7">
+                            <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Margin="@Margin.Dense" Class="filter-input-date" />
+                        </MudItem>
+                        <MudItem xs="5">
+                            <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Margin="@Margin.Dense" Class="filter-input-time" />
+                        </MudItem>
+                    </MudGrid>
+                }
+                else if (filter.dataType == typeof(Guid))
+                {
+                    <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense" 
+                        Immediate="true" Class="filter-input" />
+                }
+            </MudItem>
+        }
+        else 
+        {
+            <MudItem xs="12">
+                <MudSelect @bind-Value="f.Operator" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                    Class="filter-operator">
+                    @foreach (var o in FilterOperator.GetOperatorByDataType(filter.dataType))
+                    {
+                        <MudSelectItem Value="@o">@o</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12">
+                @if (filter.dataType == typeof(string) && !(f.Operator ?? "").EndsWith("empty"))
+                {
+                    <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense" 
+                    Immediate="true" Class="filter-input" />
+                }
+                else if (filter.isNumber && !(f.Operator ?? "").EndsWith("empty"))
+                {
+                    <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense" 
+                        Immediate="true" Class="filter-input" Culture="@filter.filterColumn?.Culture" />
+                }
+                else if (filter.isEnum)
+                {
+                    <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                        Class="filter-input">
+                        <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
+                        @foreach (var item in Enum.GetValues(filter.dataType))
+                        {
+                            <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+                else if (filter.dataType == typeof(bool))
+                {
+                    <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                        Class="filter-input">
+                        <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
+                        <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
+                        <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
+                    </MudSelect>
+                }
+                else if (filter.dataType == typeof(DateTime) && !(f.Operator ?? "").EndsWith("empty"))
+                {
+                    <MudGrid Spacing="0">
+                        <MudItem xs="7">
+                            <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Margin="@Margin.Dense" Class="filter-input-date" />
+                        </MudItem>
+                        <MudItem xs="5">
+                            <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Margin="@Margin.Dense" Class="filter-input-time" />
+                        </MudItem>
+                    </MudGrid>
+                }
+                else if (filter.dataType == typeof(Guid))
+                {
+                    <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense" 
+                        Immediate="true" Class="filter-input" />
+                }
+            </MudItem>
+        }
+        </text>
+    ;
     }
 }

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
@@ -74,6 +75,28 @@ namespace MudBlazor
 
         protected string _footClassname => new CssBuilder("mud-table-foot")
             .AddClass(FooterClass).Build();
+
+        internal SortDirection GetColumnSortDirection(string columnName)
+        {
+            if (columnName == null)
+            {
+                return SortDirection.None;
+            }
+            else
+            {
+                SortDefinition<T> sortDefinition = null;
+                var ok = SortDefinitions.TryGetValue(columnName, out sortDefinition);
+
+                if (ok)
+                {
+                    return sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending;
+                }
+                else
+                {
+                    return SortDirection.None;
+                }
+            }
+        }
 
         protected int numPages
         {
@@ -395,6 +418,13 @@ namespace MudBlazor
         /// The Columns that make up the data grid. Add Column components to this RenderFragment.
         /// </summary>
         [Parameter] public RenderFragment Columns { get; set; }
+
+        /// <summary>
+        /// The culture used to represent numeric columns and his filtering input fields.
+        /// Each column can override this DataGrid Culture.
+        /// </summary>
+        [Parameter]
+        public CultureInfo Culture { get; set; }
 
         /// <summary>
         /// Row Child content of the component.
@@ -732,7 +762,7 @@ namespace MudBlazor
         /// </summary>
         internal void AddFilter()
         {
-            var column = RenderedColumns.FirstOrDefault();
+            var column = RenderedColumns.FirstOrDefault(x => x.filterable);
             FilterDefinitions.Add(new FilterDefinition<T>
             {
                 Id = Guid.NewGuid(),
@@ -757,7 +787,7 @@ namespace MudBlazor
 
         internal void AddFilter(Guid id, string field)
         {
-            var column = RenderedColumns.FirstOrDefault(x => x.Field == field);
+            var column = RenderedColumns.FirstOrDefault(x => x.Field == field && x.filterable);
             FilterDefinitions.Add(new FilterDefinition<T>
             {
                 Id = id,

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Moq;
 using MudBlazor.UnitTests.TestComponents;
@@ -3007,89 +3008,90 @@ namespace MudBlazor.UnitTests.Components
                 Operator = "is",
                 Value = Severity.Normal
             };
+            // test filter definition on the Hired property (Bool is)
+            var filterDefinition4 = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Hired",
+                Operator = "is",
+                Value = true
+            };
+            // test filter definition on the HiredOn property (DateTime is)
+            var filterDefinition5 = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Id = Guid.NewGuid(),
+                Field = "HiredOn",
+                Operator = "is",
+                Value = DateTime.UtcNow
+            };
 
             await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition));
             await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition2));
             await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition3));
+            await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition4));
+            await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition5));
             await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
-
-            var filters = comp.FindComponents<Filter<DataGridFiltersTest.Model>>();
-
-            // assertions for string
-            Assert.AreEqual(filterDefinition.Id, filters[0].Instance.Id);
-            Assert.AreEqual(filterDefinition.Field, filters[0].Instance.Field);
-            Assert.AreEqual(filterDefinition.Operator, filters[0].Instance.Operator);
-            Assert.AreEqual(filterDefinition.Value, filters[0].Instance.Value);
-            filters[0].Instance.Value = "Not Joe";
-            await comp.InvokeAsync(async () => await filters[0].Instance.ValueChanged.InvokeAsync(filters[0].Instance.Value));
-            Assert.AreEqual(filterDefinition.Value, "Not Joe");
-
-            // assertions for int
-            Assert.AreEqual(filterDefinition2.Id, filters[1].Instance.Id);
-            Assert.AreEqual(filterDefinition2.Field, filters[1].Instance.Field);
-            Assert.AreEqual(filterDefinition2.Operator, filters[1].Instance.Operator);
-            Assert.AreEqual(filterDefinition2.Value, filters[1].Instance.Value);
-            filters[1].Instance.Value = 45;
-            await comp.InvokeAsync(async () => await filters[1].Instance.ValueChanged.InvokeAsync(filters[1].Instance.Value));
-            Assert.AreEqual(filterDefinition2.Value, 45);
-
-            // assertions for Enum
-            Assert.AreEqual(filterDefinition3.Id, filters[2].Instance.Id);
-            Assert.AreEqual(filterDefinition3.Field, filters[2].Instance.Field);
-            Assert.AreEqual(filterDefinition3.Operator, filters[2].Instance.Operator);
-            Assert.AreEqual(filterDefinition3.Value, filters[2].Instance.Value);
-            filters[2].Instance.Value = Severity.Error;
-            await comp.InvokeAsync(async () => await filters[2].Instance.ValueChanged.InvokeAsync(filters[2].Instance.Value));
-            Assert.AreEqual(filterDefinition3.Value, Severity.Error);
-
+            
             // check the number of filters displayed in the filters panel
-            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(3);
+            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(5);
 
             // click the Add Filter button in the filters panel to add a filter
             dataGrid.FindAll(".filters-panel > button")[0].Click();
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
-            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(4);
+            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(6);
 
             // add a filter via the AddFilter method
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
-            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(5);
+            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(7);
 
             // add a filter via the AddFilter method
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(Guid.NewGuid(), "Status"));
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
-            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(6);
-
-            // Changes from the UI
-            var selects = filters[1].FindComponents<MudSelect<string>>();
-            var input = selects[1].Find("div.mud-input-control");
-            // change the operator to "="
-            input.Click();
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0), TimeSpan.FromSeconds(10));
-            var items = comp.FindAll("div.mud-list-item").ToArray();
-            items[0].Click();
-            // change the operator to "!="
-            input.Click();
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0), TimeSpan.FromSeconds(10));
-            items = comp.FindAll("div.mud-list-item").ToArray();
-            items[1].Click();
-
-            await comp.InvokeAsync(() => filters[0].Instance.StringValueChanged("test"));
-            await comp.InvokeAsync(() => filters[1].Instance.NumberValueChanged(55));
-
-            filterDefinition.Value.Should().Be("test");
-            filterDefinition2.Value.Should().Be(55);
-
-            await comp.InvokeAsync(() => filters[0].Instance.RemoveFilter());
-            filters = comp.FindComponents<Filter<DataGridFiltersTest.Model>>();
-            filters.Count.Should().Be(5);
+            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(8);
 
             // toggle the filters menu (should be closed after this)
             await comp.InvokeAsync(() => dataGrid.Instance.ToggleFiltersMenu());
             dataGrid.FindAll(".filters-panel").Count.Should().Be(0);
+
+            // test internal filter class for string data type.
+            var internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition, null);
+            internalFilter.dataType.Should().Be(typeof(string));
+            await comp.InvokeAsync(() => internalFilter.StringValueChanged("J"));
+            filterDefinition.Value.Should().Be("J");
+            await comp.InvokeAsync(() => internalFilter.FieldChanged("Age"));
+            filterDefinition.Value.Should().Be(null);
+            internalFilter.isNumber.Should().Be(true);
+            internalFilter.isEnum.Should().Be(false);
+            await comp.InvokeAsync(() => internalFilter.RemoveFilter());
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(7);
+            // test internal filter class for number data type.
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition2, null);
+            internalFilter.dataType.Should().Be(typeof(int));
+            await comp.InvokeAsync(() => internalFilter.NumberValueChanged(35));
+            filterDefinition2.Value.Should().Be(35);
+            // test internal filter class for enum data type.
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition3, null);
+            internalFilter.dataType.Should().Be(typeof(Severity));
+            await comp.InvokeAsync(() => internalFilter.NumberValueChanged(35));
+            filterDefinition3.Value.Should().Be(35);
+            internalFilter.isEnum.Should().Be(true);
+            // test internal filter class for bool data type.
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition4, null);
+            internalFilter.dataType.Should().Be(typeof(bool));
+            await comp.InvokeAsync(() => internalFilter.BoolValueChanged(false));
+            filterDefinition4.Value.Should().Be(false);
+            // test internal filter class for datetime data type.
+            var date = DateTime.UtcNow;
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition5, null);
+            internalFilter.dataType.Should().Be(typeof(DateTime));
+            await comp.InvokeAsync(() => internalFilter.DateValueChanged(date));
+            filterDefinition5.Value.Should().Be(date.Date);
+            await comp.InvokeAsync(() => internalFilter.TimeValueChanged(date.TimeOfDay));
+            filterDefinition5.Value.Should().Be(date);
         }
 
         [Test]
@@ -3643,6 +3645,130 @@ namespace MudBlazor.UnitTests.Components
             });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()["Id"].Should().Be(Guid.Parse(comp.Instance.Guid2));
+        }
+
+        [Test]
+        public void DataGridCultureColumnSimpleTest()
+        {
+            var comp = Context.RenderComponent<DataGridCultureSimpleTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCultureSimpleTest.Model>>();
+
+            dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("3.5");
+            dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("5,2");
+        }
+
+        [Test]
+        public void DataGridCultureColumnEditableTest()
+        {
+            var comp = Context.RenderComponent<DataGridCultureEditableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCultureEditableTest.Model>>();
+
+            dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("3.5");
+            dataGrid.FindAll("td input")[3].GetAttribute("value").Trim().Should().Be("5,2");
+        }
+
+        [Test]
+        public async Task DataGridCultureColumnFilterTest()
+        {
+            var comp = Context.RenderComponent<DataGridCultureSimpleTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCultureSimpleTest.Model>>();
+
+            // amount with invariant culture (decimals separated by point)
+            var amountHeader = dataGrid.FindAll("th .mud-menu button")[2];
+            amountHeader.Click();
+            var filterAmount = comp.FindAll(".mud-list-item-clickable")[1];
+            filterAmount.Click();
+
+            var filterField = comp.Find(".filters-panel .filter-field .mud-select-input");
+            filterField.TextContent.Trim().Should().Be("Amount");
+
+            var filterInput = comp.FindAll(".filters-panel input")[2];
+            filterInput.Input(new ChangeEventArgs() { Value = "2,2" });
+
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(22.0);
+
+            dataGrid.Instance.FilterDefinitions.Clear();
+            dataGrid.Render();
+
+            // total with es-ES culture (decimals separated by comma)
+            var totalHeader = dataGrid.FindAll("th .mud-menu button")[3];
+            totalHeader.Click();
+            var filterTotal = comp.FindAll(".mud-list-item-clickable")[1];
+            filterTotal.Click();
+
+            var filterTotalField = comp.Find(".filters-panel .filter-field .mud-select-input");
+            filterTotalField.TextContent.Trim().Should().Be("Total");
+
+            var filterTotalInput = comp.FindAll(".filters-panel input")[2];
+            filterTotalInput.Input(new ChangeEventArgs() { Value = "2,2" });
+
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(2.2);
+        }
+
+        [Test]
+        public async Task DataGridCultureColumnFilterHeaderTest()
+        {
+            var comp = Context.RenderComponent<DataGridCultureEditableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCultureEditableTest.Model>>();
+
+            // amount with invariant culture (decimals separated by point)
+            var filterAmount = dataGrid.FindAll("th.filter-header-cell input")[2];
+            filterAmount.Input(new ChangeEventArgs() { Value = "2,2" });
+
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(22.0);
+
+            dataGrid.Instance.FilterDefinitions.Clear();
+            dataGrid.Render();
+            
+            // total with es-ES culture (decimals separated by comma)
+            var filterTotal = dataGrid.FindAll("th.filter-header-cell input")[3];
+            filterTotal.Input(new ChangeEventArgs() { Value = "2,2" });
+
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(2.2);
+        }
+
+        [Test]
+        public async Task DataGridCultureColumnOverridesTest()
+        {
+            var comp = Context.RenderComponent<DataGridCulturesTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCulturesTest.Model>>();
+
+            // amount with invariant culture (decimals separated by point)
+            dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("3.5");
+            // total with 'es' culture (decimals separated by commas)
+            dataGrid.FindAll("td input")[3].GetAttribute("value").Trim().Should().Be("5,2");
+            // distance with custom culture (decimals separated by '#')
+            dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("2#1");
+        }
+
+        [Test]
+        public async Task DataGridSortIndicatorTest()
+        {
+            var comp = Context.RenderComponent<DataGridSortableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value));
+            dataGrid.FindAll("th .sortable-column-header")[1].TextContent.Trim().Should().Be("Value");
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(true);
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Descending, x => x.Value));
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Descending);
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-desc").Should().Be(true);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Value));
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Ascending);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(true);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
         }
     }
 }

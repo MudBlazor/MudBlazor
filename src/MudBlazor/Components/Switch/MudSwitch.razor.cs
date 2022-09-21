@@ -123,6 +123,14 @@ namespace MudBlazor
 
         private string _elementId = "switch_" + Guid.NewGuid().ToString().Substring(0, 8);
 
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            if (Label == null && For != null)
+                Label = For.GetDisplayNameString();
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)

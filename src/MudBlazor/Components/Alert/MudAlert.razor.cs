@@ -35,7 +35,7 @@ namespace MudBlazor
             };
         }
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// Sets the position of the text to the start (Left in LTR and right in RTL).

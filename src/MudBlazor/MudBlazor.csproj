@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>6.0.15</Version>
+    <Version>6.0.16</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>Nuget.png</PackageIcon>
     <Company>MudBlazor</Company>
@@ -59,8 +59,8 @@
   </Target>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.8.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.8.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.9.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9.*" />
   </ItemGroup>
 
   <Target Name="ToolRestore">

@@ -10,7 +10,7 @@ namespace MudBlazor
 {
     public partial class MudRadio<T> : MudComponentBase, IDisposable
     {
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         protected string Classname =>
         new CssBuilder("mud-radio")
