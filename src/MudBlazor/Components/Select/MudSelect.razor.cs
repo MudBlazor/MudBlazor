@@ -551,6 +551,11 @@ namespace MudBlazor
                 {
                     foreach (var val in SelectedValues)
                     {
+                        if (Strict == false && !Items.Select(x => x.Value).Contains(val))
+                        {
+                            textList.Add(ToStringFunc != null ? ToStringFunc(val) : Converter.Set(val));
+                            continue;
+                        }
                         var item = Items.FirstOrDefault(x => x != null && (x.Value == null ? val == null : Comparer != null ? Comparer.Equals(x.Value, val) : x.Value.Equals(val)));
                         if (item != null)
                         {
@@ -558,7 +563,6 @@ namespace MudBlazor
                         }
                     }
                 }
-                
             }
             // when multiselection is true, we return
             // a comma separated list of selected values
