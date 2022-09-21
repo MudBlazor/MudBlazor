@@ -350,7 +350,7 @@ namespace MudBlazor
             }
 
             SelectedValue = SelectedItem == null ? default(T) : SelectedItem.Value;
-            SelectedValues = SelectedItems.Select(x => x.Value);
+            SelectedValues = SelectedItems.Select(x => x.Value).ToHashSet(_comparer);
         }
 
         private T _selectedValue;
@@ -654,11 +654,11 @@ namespace MudBlazor
                         UpdateSelectedStyles();
                         if (MudSelect != null)
                         {
-                            SelectedValues = MudSelect.SelectedValues;
+                            SelectedValues = MudSelect.SelectedValues.ToHashSet(_comparer);
                         }
                         else if (MudAutocomplete != null)
                         {
-                            SelectedValues = MudAutocomplete.SelectedValues;
+                            SelectedValues = MudAutocomplete.SelectedValues.ToHashSet(_comparer);
                         }
                         HandleCentralValueCommander("SelectedValues");
                     }
@@ -813,11 +813,11 @@ namespace MudBlazor
             {
                 if (SelectedValues.Contains(value, _comparer))
                 {
-                    SelectedValues = SelectedValues?.Where(x => x == null ? false : !x.Equals(value));
+                    SelectedValues = SelectedValues?.Where(x => x == null ? false : !x.Equals(value)).ToHashSet(_comparer);
                 }
                 else
                 {
-                    SelectedValues = SelectedValues.Append(value);
+                    SelectedValues = SelectedValues.Append(value).ToHashSet(_comparer);
                 }
             }
             UpdateLastActivatedItem(value);
@@ -848,7 +848,7 @@ namespace MudBlazor
             {
                 if (item.IsSelected)
                 {
-                    SelectedValues = SelectedValues?.Where(x => x == null ? false : !x.Equals(item.Value));
+                    SelectedValues = SelectedValues?.Where(x => x == null ? false : !x.Equals(item.Value)).ToHashSet(_comparer);
                 }
                 else
                 {
@@ -858,7 +858,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        SelectedValues = SelectedValues.Append(item.Value);
+                        SelectedValues = SelectedValues.Append(item.Value).ToHashSet(_comparer);
                     }
                 }
             }
@@ -1015,7 +1015,7 @@ namespace MudBlazor
                 _allSelected = true;
             }
 
-            SelectedValues = items.Where(x => x.IsSelected == true).Select(y => y.Value);
+            SelectedValues = items.Where(x => x.IsSelected == true).Select(y => y.Value).ToHashSet(_comparer);
             if (MudSelect != null)
             {
                 MudSelect.BeginValidate();

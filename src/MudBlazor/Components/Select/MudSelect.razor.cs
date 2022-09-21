@@ -436,7 +436,7 @@ namespace MudBlazor
                 {
                     return;
                 }
-                if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
+                if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x, _comparer)))
                     return;
                 _selectedValues = new HashSet<T>(set, _comparer);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
@@ -450,7 +450,7 @@ namespace MudBlazor
                     UpdateTextPropertyAsync(false).AndForget();
                 }
 
-                SelectedValuesChanged.InvokeAsync(_selectedValues).AndForget();
+                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer)).AndForget();
                 // Commenting it result the validate select tests to fail
                 //if (MultiSelection && typeof(T) == typeof(string))
                 //    SetValueAsync((T)(object)Text, updateText: false).AndForget();
@@ -940,7 +940,7 @@ namespace MudBlazor
             }
             else
             {
-                await SelectedValuesChanged.InvokeAsync();
+                await SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer));
             }
         }
 
@@ -1006,7 +1006,7 @@ namespace MudBlazor
             SelectedListItems = null;
             BeginValidate();
             StateHasChanged();
-            await SelectedValuesChanged.InvokeAsync(_selectedValues);
+            await SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer));
             await OnClearButtonClick.InvokeAsync(e);
         }
 
@@ -1024,7 +1024,7 @@ namespace MudBlazor
             _selectedValues.Clear();
             BeginValidate();
             StateHasChanged();
-            await SelectedValuesChanged.InvokeAsync(_selectedValues);
+            await SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer));
         }
 
         #endregion
