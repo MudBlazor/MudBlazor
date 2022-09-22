@@ -90,7 +90,7 @@
 {
     <CascadingValue Value="this" IsFixed="true">
         <MudCollapse Expanded="@Expanded" ExpandedChanged="@ExpandedChanged">
-            <MudList T="T" Clickable="@MudList.Clickable" Color="@MudList.Color" MultiSelection="@MudList.MultiSelection" MultiSelectionComponent="@MudList.MultiSelectionComponent" MultiSelectionAlign="@MudList.MultiSelectionAlign" DisablePadding="true" Class="mud-nested-list" Disabled="@Disabled" Dense="@((Dense ?? MudList?.Dense) ?? false)">
+            <MudList T="T" Clickable="MudList?.Clickable ?? false" Color="MudList?.Color ?? Color.Primary" MultiSelection="MudList?.MultiSelection ?? false" MultiSelectionComponent="MudList?.MultiSelectionComponent ?? MultiSelectionComponent.CheckBox" MultiSelectionAlign="MudList?.MultiSelectionAlign ?? Align.Start" DisablePadding="true" Class="mud-nested-list" Disabled="@Disabled" Dense="@((Dense ?? MudList?.Dense) ?? false)">
                 <ChildContent>
                     @NestedList
                 </ChildContent>
