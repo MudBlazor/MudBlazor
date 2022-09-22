@@ -556,7 +556,7 @@ namespace MudBlazor
         #endregion
 
 
-        #region Lifecycle Methods & Register
+        #region Lifecycle Methods, Dispose & Register
 
         bool _setParametersDone = false;
         public override Task SetParametersAsync(ParameterView parameters)
@@ -687,6 +687,12 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        public void Dispose()
+        {
+            ParametersChanged = null;
+            ParentList?.Unregister(this);
+        }
+
         protected internal void Register(MudListItem<T> item)
         {
             _items.Add(item);
@@ -813,7 +819,7 @@ namespace MudBlazor
             {
                 if (SelectedValues.Contains(value, _comparer))
                 {
-                    SelectedValues = SelectedValues?.Where(x => x == null ? false : Comparer != null ? !Comparer.Equals(x, value) : !x.Equals(value)).ToHashSet(_comparer);
+                    SelectedValues = SelectedValues?.Where(x => Comparer != null ? !Comparer.Equals(x, value) : !x.Equals(value)).ToHashSet(_comparer);
                 }
                 else
                 {
@@ -848,7 +854,7 @@ namespace MudBlazor
             {
                 if (item.IsSelected)
                 {
-                    SelectedValues = SelectedValues?.Where(x => x == null ? false : Comparer != null ? !Comparer.Equals(x, item.Value) : !x.Equals(item.Value)).ToHashSet(_comparer);
+                    SelectedValues = SelectedValues?.Where(x => Comparer != null ? !Comparer.Equals(x, item.Value) : !x.Equals(item.Value));
                 }
                 else
                 {
@@ -1241,7 +1247,7 @@ namespace MudBlazor
         #endregion
 
 
-        #region Others (Clear, Scroll, Dispose)
+        #region Others (Clear, Scroll)
 
         /// <summary>
         /// Clears value(s) and item(s) and deactive all items.
@@ -1265,33 +1271,8 @@ namespace MudBlazor
             UpdateSelectAllState();
         }
 
-        //private ValueTask ScrollToItemAsync(MudListItem<T> item)
-        //    => item != null ? ScrollManager.ScrollToListItemAsync(item.ItemId) : ValueTask.CompletedTask;
-
         protected internal ValueTask ScrollToMiddleAsync(MudListItem<T> item)
             => ScrollManager.ScrollToMiddleAsync(_elementId, item.ItemId);
-
-
-
-
-        //private void GetSelectedItem()
-        //{
-        //    var items = CollectAllMudListItems(true);
-        //    if (!MultiSelection)
-        //    {
-        //        SelectedItem = items.FirstOrDefault(x => x.Value != null && x.Value.Equals(_selectedValue));
-        //    }
-        //    else
-        //    {
-        //        SelectedItems = items.Where(x => SelectedValues != null && SelectedValues.Contains(x.Value));
-        //    }
-        //}
-
-        public void Dispose()
-        {
-            ParametersChanged = null;
-            ParentList?.Unregister(this);
-        }
 
         #endregion
     }

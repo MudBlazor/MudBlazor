@@ -885,9 +885,9 @@ namespace MudBlazor
             }
 
             //await SelectedValuesChanged.InvokeAsync(SelectedValues);
-            if (MultiSelection && typeof(T) == typeof(string))
+            //if (MultiSelection && typeof(T) == typeof(string))
                 //await SetValueAsync((T)(object)Text, updateText: false);
-                await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         }
 
         public override async Task ForceUpdate()
