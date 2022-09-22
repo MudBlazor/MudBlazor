@@ -905,76 +905,73 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Selected option should be hilighted when drop-down opens
         /// </summary>
-        
-        //We dont need this test because moved this code into MudList and should test it there.
-        
-        //[Test]
-        //public async Task Select_Should_HilightSelectedValue()
-        //{
-        //    var comp = Context.RenderComponent<SelectTest1>();
-        //    // print the generated html
-        //    //Console.WriteLine(comp.Markup);
-        //    var select = comp.FindComponent<MudSelect<string>>();
-        //    var input = comp.Find("div.mud-input-control");
+        [Test]
+        public async Task Select_Should_HilightSelectedValue()
+        {
+            var comp = Context.RenderComponent<SelectTest1>();
+            // print the generated html
+            //Console.WriteLine(comp.Markup);
+            var select = comp.FindComponent<MudSelect<string>>();
+            var input = comp.Find("div.mud-input-control");
 
-        //    comp.Find("div.mud-popover").ClassList.Should().Contain("select-popover-class");
-        //    select.Instance.Value.Should().BeNullOrEmpty();
-        //    comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
-        //    // open the select
-        //    comp.Find("div.mud-input-control").Click();
-        //    comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
-        //    // no option should be hilited
-        //    comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(0));
-        //    // now click an item and see the value change
-        //    comp.FindAll("div.mud-list-item")[1].Click();
-        //    comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-        //    comp.WaitForAssertion(() => select.Instance.Value.Should().Be("2"));
-        //    // open again and check hilited option
-        //    comp.Find("div.mud-input-control").Click();
-        //    comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
-        //    // Nr 2 should be hilited
-        //    comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
-        //    comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-selected-item");
-        //    await comp.InvokeAsync(() => select.Instance.CloseMenu());
-        //    select.SetParam(nameof(MudSelect<string>.Value), null);
-        //    await comp.InvokeAsync(() => select.Instance.OpenMenu());
-        //    // no option should be hilited
-        //    comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(0));
-        //}
+            comp.Find("div.mud-popover").ClassList.Should().Contain("select-popover-class");
+            select.Instance.Value.Should().BeNullOrEmpty();
+            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
+            // open the select
+            comp.Find("div.mud-input-control").Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            // no option should be hilited
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(0));
+            // now click an item and see the value change
+            comp.FindAll("div.mud-list-item")[1].Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("2"));
+            // open again and check hilited option
+            comp.Find("div.mud-input-control").Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            // Nr 2 should be hilited
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
+            comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-selected-item");
+            await comp.InvokeAsync(() => select.Instance.CloseMenu());
+            select.SetParam(nameof(MudSelect<string>.Value), null);
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+            // no option should be hilited
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(0));
+        }
 
         /// <summary>
         /// Initially selected option should be hilighted when drop-down opens
         /// </summary>
-        //[Test]
-        //public void Select_Should_HilightInitiallySelectedValue()
-        //{
-        //    var comp = Context.RenderComponent<SelectTest2>();
-        //    // print the generated html
-        //    //Console.WriteLine(comp.Markup);
-        //    var select = comp.FindComponent<MudSelect<string>>();
-        //    comp.Find("div.mud-popover").ClassList.Should().Contain("select-popover-class");
-        //    select.Instance.Value.Should().Be("2");
-        //    comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
-        //    // open the select
-        //    comp.Find("div.mud-input-control").Click();
-        //    //Console.WriteLine(comp.Markup);
-        //    comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
-        //    // Nr 2 should be hilited
-        //    comp.WaitForAssertion(()=>comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
-        //    comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-selected-item");
-        //    // now click an item and see the value change
-        //    comp.FindAll("div.mud-list-item")[0].Click();
-        //    comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-        //    comp.WaitForAssertion(() => select.Instance.Value.Should().Be("1"));
-        //    // open again and check hilited option
-        //    comp.Find("div.mud-input-control").Click();
-        //    comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
-        //    // Nr 1 should be hilited
-        //    comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
-        //    comp.FindAll("div.mud-list-item")[0].ToMarkup().Should().Contain("mud-selected-item");
-        //    comp.Find("div.mud-input-control").Click();
-        //    comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-        //}
+        [Test]
+        public void Select_Should_HilightInitiallySelectedValue()
+        {
+            var comp = Context.RenderComponent<SelectTest2>();
+            // print the generated html
+            //Console.WriteLine(comp.Markup);
+            var select = comp.FindComponent<MudSelect<string>>();
+            comp.Find("div.mud-popover").ClassList.Should().Contain("select-popover-class");
+            select.Instance.Value.Should().Be("2");
+            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
+            // open the select
+            comp.Find("div.mud-input-control").Click();
+            //Console.WriteLine(comp.Markup);
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            // Nr 2 should be hilited
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
+            comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-selected-item");
+            // now click an item and see the value change
+            comp.FindAll("div.mud-list-item")[0].Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("1"));
+            // open again and check hilited option
+            comp.Find("div.mud-input-control").Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            // Nr 1 should be hilited
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
+            comp.FindAll("div.mud-list-item")[0].ToMarkup().Should().Contain("mud-selected-item");
+            comp.Find("div.mud-input-control").Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+        }
 
         [Test]
         public async Task Select_Should_AllowReloadingItems()
@@ -1137,7 +1134,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => select.SelectedValues.Should().HaveCount(1));
 
             await comp.InvokeAsync(() => select.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            comp.Render(); // <-- this is necessary for reliable passing of the test
+            //comp.Render(); // <-- this is necessary for reliable passing of the test
             // TODO: Look at this line why working manually and not working on test run.
             //comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
         }

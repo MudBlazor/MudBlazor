@@ -393,6 +393,8 @@ namespace MudBlazor
 
         #region Values, Texts & Items
 
+        //This 'started' field is only for fixing multiselect keyboard navigation test. Has a very minor effect, so can be removable for a better gain.
+        private bool _selectedValuesSetterStarted = false;
         private HashSet<T> _selectedValues;
         /// <summary>
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
@@ -420,6 +422,12 @@ namespace MudBlazor
                 }
                 if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x, _comparer)))
                     return;
+
+                if (_selectedValuesSetterStarted == true)
+                {
+                    return;
+                }
+                _selectedValuesSetterStarted = true;
                 _selectedValues = new HashSet<T>(set, _comparer);
                 SelectionChangedFromOutside?.Invoke(new HashSet<T>(_selectedValues, _comparer));
                 if (MultiSelection == false)
@@ -428,14 +436,12 @@ namespace MudBlazor
                 }
                 else
                 {
-                    SetValueAsync(_selectedValues.LastOrDefault()).AndForget();
+                    SetValueAsync(_selectedValues.LastOrDefault(), false).AndForget();
                     UpdateTextPropertyAsync(false).AndForget();
                 }
-
+                
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer)).AndForget();
-                // Commenting it result the validate select tests to fail
-                //if (MultiSelection && typeof(T) == typeof(string))
-                //    SetValueAsync((T)(object)Text, updateText: false).AndForget();
+                _selectedValuesSetterStarted = false;
                 //Console.WriteLine("SelectedValues setter ended");
             }
         }
