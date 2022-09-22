@@ -986,6 +986,12 @@ namespace MudBlazor
             await SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer));
         }
 
+        protected override void ResetValue()
+        {
+            base.ResetValue();
+            SelectedValues = null;
+        }
+
         #endregion
 
         protected bool IsValueInList
