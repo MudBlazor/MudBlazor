@@ -51,7 +51,24 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        protected string InputClassname =>
+            new CssBuilder("mud-select-input")
+            .AddClass(InputClass)
+            .Build();
+
         private string _elementId = "select_" + Guid.NewGuid().ToString().Substring(0, 8);
+
+        /// <summary>
+        /// User class names for the input, separated by space
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter] public string InputClass { get; set; }
+
+        /// <summary>
+        /// User style names for the input, separated by space
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter] public string InputStyle { get; set; }
 
         /// <summary>
         /// Fired when dropdown opens.

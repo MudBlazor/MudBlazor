@@ -53,6 +53,11 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        protected string InputClassname =>
+            new CssBuilder("mud-select-input")
+            .AddClass(InputClass)
+            .Build();
+
         protected string AutocompleteClassname =>
             new CssBuilder("mud-select")
             .AddClass("autocomplete")
@@ -63,6 +68,18 @@ namespace MudBlazor
             new CssBuilder("progress-indicator-circular")
             .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
             .Build();
+
+        /// <summary>
+        /// User class names for the input, separated by space
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter] public string InputClass { get; set; }
+
+        /// <summary>
+        /// User style names for the input, separated by space
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter] public string InputStyle { get; set; }
 
         /// <summary>
         /// User class names for the popover, separated by space

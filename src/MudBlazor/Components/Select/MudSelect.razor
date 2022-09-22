@@ -17,7 +17,7 @@
 						 Error="@Error" ErrorText="@ErrorText" ErrorId="@ErrorId" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
 			<InputContent>
                 <MudInput @ref="_elementReference" InputType="InputType.Hidden"
-                          Class="mud-select-input" Margin="@Margin" Placeholder="@Placeholder"
+                          Class="@InputClassname" Style="@InputStyle" Margin="@Margin" Placeholder="@Placeholder"
                           Variant="@Variant"
                           TextUpdateSuppression="false"
                           Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine"
@@ -32,6 +32,7 @@
                             @if (Strict && !IsValueInList)
                             {
                                 //Show nothing
+                                <MudText Typo="Typo.body1" Class="mud-text-secondary">@Placeholder</MudText>
                             }
                             else if (ValuePresenter == ValuePresenter.Text)
                             {
