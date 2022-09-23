@@ -822,7 +822,7 @@ namespace MudBlazor.UnitTests.Components
             var value = new DisplayNameLabelClass();
 
             var comp = Context.RenderComponent<MudTextField<string>>(x => x.Add(f => f.For, () => value.String));
-            comp.Instance.Label.Should().Be("String DisplayName"); //label should be set by the attribute
+            comp.Instance.Label.Should().Be("String LabelAttribute"); //label should be set by the attribute
 
             var comp2 = Context.RenderComponent<MudTextField<string>>(x => x.Add(f => f.For, () => value.String).Add(l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain

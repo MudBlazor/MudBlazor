@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -60,7 +60,8 @@ namespace MudBlazor
 
         protected string AutocompleteClassname =>
             new CssBuilder("mud-select")
-            .AddClass("autocomplete")
+            .AddClass("mud-autocomplete")
+            .AddClass("mud-width-full", FullWidth)
             .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
             .Build();
 

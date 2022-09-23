@@ -1687,5 +1687,36 @@ namespace MudBlazor.UnitTests.Components
             context.Selection.Comparer.Should().Be(comp.Instance.Comparer); //check comparer is set in HashSet and Dictionary
             context.Rows.Comparer.Should().Be(comp.Instance.Comparer);
         }
+
+        /// <summary>
+        /// Using a virtualized table with multiselection must preserve checked items
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TestVirtualizedTableWithMultiSelection()
+        {
+            var comp = Context.RenderComponent<TableMultiSelectionVirtualizedTest>();
+            var table = comp.FindComponent<MudTable<TableMultiSelectionVirtualizedTest.TestItem>>();
+            var virtualized = comp.FindComponent<Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize<TableMultiSelectionVirtualizedTest.TestItem>>();
+            // find first checkbox item and check it
+            comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(false);
+            comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell")[1].TextContent.Should().Be("Value_0");
+            comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].Change(true);
+            comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(true);
+
+            // scroll down
+            virtualized.SetParam(
+                v => v.Items,
+                table.Instance.Items.ToList().GetRange(1000, 100));
+            comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell")[1].TextContent.Should().Be("Value_1000");
+            comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(false);
+
+            // scroll up
+            virtualized.SetParam(
+                v => v.Items,
+                table.Instance.Items.ToList().GetRange(0, 100));
+            comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell")[1].TextContent.Should().Be("Value_0");
+            comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(true);
+        }
     }
 }

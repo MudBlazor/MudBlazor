@@ -13,11 +13,11 @@ namespace MudBlazor.UnitTests.Utilities
 {
     public class DisplayNameLabelClass
     {
-        [Display(Name ="Date DisplayName")]
+        [Label("Date LabelAttribute")]
         public DateTime? Date { get; set; }
-        [Display(Name = "Boolean DisplayName")]
+        [Label("Boolean LabelAttribute")]
         public bool Boolean { get; set; }
-        [Display(Name = "String DisplayName")]
+        [Label("String LabelAttribute")]
         public string String { get; set; }
     }
 }

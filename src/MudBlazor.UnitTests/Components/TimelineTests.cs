@@ -104,7 +104,7 @@ namespace MudBlazor.UnitTests.Components
 
         public void TimelineTest_Position(TimelineOrientation orientation, TimelinePosition position, bool rtl, string[] expectedClass)
         {
-            var comp = Context.RenderComponent<TimelineTest>(p => p.AddCascadingValue(rtl));
+            var comp = Context.RenderComponent<TimelineTest>(p => p.AddCascadingValue("RightToLeft", rtl));
             //Console.WriteLine(comp.Markup);
 
             var timeline = comp.FindComponent<MudTimeline>();

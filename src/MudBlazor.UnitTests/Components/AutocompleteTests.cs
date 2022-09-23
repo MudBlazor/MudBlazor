@@ -867,8 +867,8 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.Find("input").Input("Calif");
 
             // Test
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").Children.ToMarkup().Should().NotContain("progress-indicator-circular"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().NotContain("progress-indicator-circular"));
         }
 
         [Test]
@@ -885,13 +885,13 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.Find("input").Input("Calif");
 
             // Test show
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").Children.ToMarkup().Should().Contain("progress-indicator-circular"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().Contain("progress-indicator-circular"));
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             // Test hide
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").Children.ToMarkup().Should().NotContain("progress-indicator-circular"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().NotContain("progress-indicator-circular"));
         }
 
         [Test]
@@ -908,15 +908,15 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.Find("input").Input("Calif");
 
             // Test show
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").Children.ToMarkup().Should().Contain("progress-indicator-circular"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().Contain("progress-indicator-circular"));
             comp.WaitForAssertion(() => comp.Find("div.progress-indicator-circular").ClassList.Should().Contain("progress-indicator-circular--with-adornment"));
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             // Test hide
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").Children.ToMarkup().Should().NotContain("progress-indicator-circular"));
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").Children.ToMarkup().Should().NotContain("progress-indicator-circular--with-adornment"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().NotContain("progress-indicator-circular"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().NotContain("progress-indicator-circular--with-adornment"));
         }
 
         [Test]
@@ -938,12 +938,12 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.Find("input").Input("Calif");
 
             // Test show
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").Children.ToMarkup().Should().Contain("Loading..."));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().Contain("Loading..."));
             
             // Test hide
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").Children.ToMarkup().Should().NotContain("Loading..."));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().NotContain("Loading..."));
         }
 
         [Test]
@@ -965,11 +965,11 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.Find("input").Input("Calif");
 
             // Test show
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ToMarkup().Should().Contain("Loading..."));
 
             // Test hide
-            comp.WaitForAssertion(() => comp.Find("div.autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ToMarkup().Should().NotContain("Loading..."));
         }
 
@@ -1021,6 +1021,21 @@ namespace MudBlazor.UnitTests.Components
 
             second.SetResult(new List<string> { "Bar" });
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ToMarkup().Should().Contain("Bar"));
+        }
+
+        [Test]
+        public async Task Autocomplete_FullWidth()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompleteComp = comp.FindComponent<MudAutocomplete<string>>();
+
+            autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-autocomplete");
+            autocompleteComp.Find("div.mud-select").ClassList.Should().NotContain("mud-width-full");
+
+            autocompleteComp.SetParam(p => p.FullWidth, true);
+
+            autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-autocomplete");
+            autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-width-full");
         }
     }
 }
