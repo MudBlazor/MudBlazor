@@ -47,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
             var openButton = comp.Find(".mud-input-adornment button");
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Date Range Picker");
         }
-        
+
         [Test]
         public void DateRangePickerLabelFor()
         {
@@ -55,7 +55,7 @@ namespace MudBlazor.UnitTests.Components
             var label = comp.Find(".mud-input-label");
             label.Attributes.GetNamedItem("for")?.Value.Should().Be("dateRangeLabelTest");
         }
-        
+
         [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public void RenderDateRangePicker_10000_Times_CheckPerformance()
@@ -462,7 +462,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudDateRangePicker>(parameters =>
                 parameters.Add(p => p.DateRange,
-                    new DateRange(new DateTime(2020, 12, 26),null))); 
+                    new DateRange(new DateTime(2020, 12, 26),null)));
             comp.Find("input").Change("");
             comp.Instance.DateRange.End.Should().BeNull();
             comp.Instance.DateRange.Start.Should().BeNull();
@@ -553,7 +553,7 @@ namespace MudBlazor.UnitTests.Components
 
             // set a value
             await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Text = RangeConverter<DateTime>.Join(startDate.ToShortDateString(), endDate.ToShortDateString()));
-            
+
             // asert new values have been applied
             dateRangePickerInstance.DateRange.Start.Should().Be(startDate);
             dateRangePickerInstance.DateRange.End.Should().Be(endDate);
@@ -623,6 +623,58 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.DateRange.Should().Be(new DateRange(
                 new DateTime(DateTime.Now.Year, DateTime.Now.Month, 10),
                   new DateTime(DateTime.Now.Year, DateTime.Now.Month, 11)));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(0));
+        }
+
+        [Test]
+        public void CheckCloseOnClearDateRangePicker_DoNotCloseWhenValueIsFalse()
+        {
+            // Define a date range for comparison
+            var initialDateRange = new DateRange(
+               new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01),
+                new DateTime(DateTime.Now.Year, DateTime.Now.Month, 02));
+
+            // Get access to the date range picker of the instance
+            var comp = Context.RenderComponent<DateRangePickerCloseOnClearTest>(
+                Parameter(nameof(DateRangePickerCloseOnClearTest.DateRange), initialDateRange),
+                Parameter(nameof(DateRangePickerCloseOnClearTest.CloseOnClear), false));
+
+            // Open the date range picker
+            comp.Find("input").Click();
+
+            // Clicking day buttons to select a date range
+            comp.FindAll("button.mud-button")
+                .Where(x => x.TrimmedText().Equals("Clear")).First().Click();
+
+            // Check that the date range was cleared
+            comp.Instance.DateRange.Should().NotBe(initialDateRange);
+            // Check that the component is open
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
+        }
+
+        [Test]
+        public void CheckCloseOnClearDateRangePicker_CloseWhenValueIsTrue()
+        {
+            // Define a date range for comparison
+            var initialDateRange = new DateRange(
+               new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01),
+                new DateTime(DateTime.Now.Year, DateTime.Now.Month, 02));
+
+            // Get access to the date range picker of the instance
+            var comp = Context.RenderComponent<DateRangePickerCloseOnClearTest>(
+                Parameter(nameof(DateRangePickerCloseOnClearTest.DateRange), initialDateRange),
+                Parameter(nameof(DateRangePickerCloseOnClearTest.CloseOnClear), true));
+
+            // Open the date range picker
+            comp.Find("input").Click();
+
+            // Clicking day buttons to select a date range
+            comp.FindAll("button.mud-button")
+                .Where(x => x.TrimmedText().Equals("Clear")).First().Click();
+
+            // Check that the date range was cleared
+            comp.Instance.DateRange.Should().NotBe(initialDateRange);
+            // Check that the component is closed
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(0));
         }
     }

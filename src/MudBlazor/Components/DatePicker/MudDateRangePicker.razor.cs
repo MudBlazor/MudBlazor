@@ -277,7 +277,7 @@ namespace MudBlazor
         {
             DateRange = null;
             _firstDate = _secondDate = null;
-            base.Clear();
+            base.Clear(close);
         }
 
         protected override string GetTitleDateString()
