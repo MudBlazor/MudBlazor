@@ -656,7 +656,7 @@ namespace MudBlazor
                 await UpdateTextPropertyAsync(false);
                 StateHasChanged();
             }
-
+            Console.WriteLine("Select rendered");
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -814,31 +814,7 @@ namespace MudBlazor
             UpdateIcon();
             StateHasChanged();
 
-            // TODO remove this delay but removed this makes _list null because code reach _list before popover render.
-            //await Task.Delay(1);
-            //if (MultiSelection)
-            //{
-            //    _list.UpdateSelectAllState();
-            //    _list.UpdateSelectedStyles();
-            //}
-            //_list.UpdateLastActivatedItem(Value);
-            //if (_list._lastActivatedItem != null && !(MultiSelection && _list._allSelected == true))
-            //{
-            //    await _list.ScrollToMiddleAsync(_list._lastActivatedItem);
-            //}
-
-            //await HilightSelectedValue();
-            ////Scroll the active item on each opening
-            //if (_activeItemId != null)
-            //{
-            //    var index = _items.FindIndex(x => x.ItemId == Converter.Set(_activeItemId));
-            //    if (index > 0)
-            //    {
-            //        var item = _items[index];
-            //        await ScrollToItemAsync(item);
-            //    }
-            //}
-            ////disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
+            //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
 
             await OnOpen.InvokeAsync();

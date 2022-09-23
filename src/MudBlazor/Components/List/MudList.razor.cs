@@ -266,7 +266,7 @@ namespace MudBlazor
         // CentralCommander has the simple aim: Prevent racing conditions. It has two mechanism to do this:
         // (1) When this method is running, it doesn't allow to run a second one. That guarantees to different value parameters can not call this method at the same time.
         // (2) When this method runs once, prevents all value setters until OnAfterRender runs. That guarantees to have proper values.
-        protected void HandleCentralValueCommander(string changedValueType)
+        protected void HandleCentralValueCommander(string changedValueType, bool updateStyles = true)
         {
             //Console.WriteLine("Central Value Started");
             if (_setParametersDone == false)
@@ -322,7 +322,10 @@ namespace MudBlazor
             _centralCommanderResultRendered = false;
             _centralCommanderIsProcessing = false;
             //Console.WriteLine("Central Value ended");
-            UpdateSelectedStyles();
+            if (updateStyles)
+            {
+                UpdateSelectedStyles();
+            }
         }
 
         protected internal void UpdateSelectedItem()
@@ -611,8 +614,10 @@ namespace MudBlazor
         private bool _firstRendered = false;
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            await base.OnAfterRenderAsync(firstRender);
             if (firstRender)
             {
+                _firstRendered = false;
                 _keyInterceptor = KeyInterceptorFactory.Create();
 
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
@@ -651,20 +656,20 @@ namespace MudBlazor
                     if (MultiSelection)
                     {
                         UpdateSelectAllState();
-                        UpdateSelectedStyles();
+                        //UpdateSelectedStyles();
                         if (MudSelect != null)
                         {
-                            SelectedValues = MudSelect.SelectedValues.ToHashSet(_comparer);
+                            SelectedValues = MudSelect.SelectedValues;
                         }
                         else if (MudAutocomplete != null)
                         {
-                            SelectedValues = MudAutocomplete.SelectedValues.ToHashSet(_comparer);
+                            SelectedValues = MudAutocomplete.SelectedValues;
                         }
-                        HandleCentralValueCommander("SelectedValues");
+                        HandleCentralValueCommander(nameof(SelectedValues));
                     }
                     else
                     {
-                        UpdateSelectedStyles();
+                        //UpdateSelectedStyles();
                         UpdateLastActivatedItem(SelectedValue);
                     }
                 }
@@ -679,12 +684,12 @@ namespace MudBlazor
                 _firstRendered = true;
             }
             _centralCommanderResultRendered = true;
-            //Console.WriteLine("List Rendered");
+            Console.WriteLine("List Rendered");
             //if (MudAutocomplete != null)
             //{
             //    UpdateSelectedStyles();
             //}
-            await base.OnAfterRenderAsync(firstRender);
+
         }
 
         public void Dispose()
