@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -467,6 +467,7 @@ namespace MudBlazor
         //    }
         //}
 
+        bool _selectedValuesSetterRunning = false;
         private HashSet<T> _selectedValues = new HashSet<T>();
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
@@ -491,26 +492,19 @@ namespace MudBlazor
                 }
                 //if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
                 //    return;
+
+                if (_selectedValuesSetterRunning)
+                {
+                    return;
+                }
+                _selectedValuesSetterRunning = true;
+
                 _selectedValues = value == null ? null : value.ToHashSet();
+                
+                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues)).AndForget();
                 if (MultiSelection == false && _selectedValues != null)
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
-                //else
-                //{
-                //    //Warning. Here the Converter was not set yet
-                //    if (MultiSelectionTextFunc != null)
-                //    {
-                //        SetCustomizedTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))),
-                //            selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
-                //            multiSelectionTextFunc: MultiSelectionTextFunc).AndForget();
-                //    }
-                //    else
-                //    {
-                //        SetTextAsync(string.Join(Delimiter, SelectedValues.Select(x => Converter.Set(x))), updateValue: false).AndForget();
-                //    }
-                //}
-                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues)).AndForget();
-                if (MultiSelection && typeof(T) == typeof(string))
-                    SetValueAsync((T)(object)Text, updateText: false).AndForget();
+                _selectedValuesSetterRunning = false;
             }
         }
 
@@ -831,7 +825,7 @@ namespace MudBlazor
                     break;
                 case "Enter":
                 case "NumpadEnter":
-                    if (!IsOpen)
+                    if (IsOpen == false)
                     {
                         await ToggleMenu();
                     }
@@ -865,7 +859,7 @@ namespace MudBlazor
                 case "ArrowUp":
                     if (args.AltKey == true)
                     {
-                        await OpenMenu();
+                        await CloseMenu();
                     }
                     else if (!IsOpen)
                     {

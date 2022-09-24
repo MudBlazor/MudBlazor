@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Elevation="0">
-    <MudList>
-        <MudListSubheader>
+    <MudList T="string">
+        <MudListSubheader T="string">
             <MudTextField @bind-Value="searchTerm" AdornmentIcon="@Icons.Filled.People"
                           Adornment="Adornment.End" Immediate="true" Variant="Variant.Outlined"
                           Label="Names to search"/>
@@ -15,7 +15,7 @@
         }
         @foreach (var name in names)
         {
-            <MudListItem @key="name" Icon="@Icons.Filled.Person">
+            <MudListItem T="string" @key="name" Icon="@Icons.Filled.Person">
                 <MudHighlighter Text="@name" HighlightedTexts="@searchTerms" />
             </MudListItem>
         }
