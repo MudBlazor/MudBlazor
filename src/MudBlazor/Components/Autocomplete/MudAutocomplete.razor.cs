@@ -397,6 +397,15 @@ namespace MudBlazor
             var text = GetItemString(Value);
             if (!string.IsNullOrWhiteSpace(text))
                 Text = text;
+            if (MultiSelection == false && Value != null)
+            {
+                _selectedValues = new HashSet<T>() { Value };
+            }
+            else if (MultiSelection == true && SelectedValues != null)
+            {
+                // TODO: Check this line again
+                SetValueAsync(SelectedValues.FirstOrDefault()).AndForget();
+            }
         }
 
         private string _elementId = "autocomplete_" + Guid.NewGuid().ToString().Substring(0, 8);
@@ -500,10 +509,18 @@ namespace MudBlazor
                 _selectedValuesSetterRunning = true;
 
                 _selectedValues = value == null ? null : value.ToHashSet();
-                
-                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues)).AndForget();
                 if (MultiSelection == false && _selectedValues != null)
+                {
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
+                }
+                else if (_selectedValues != null)
+                {
+                    SetValueAsync(_selectedValues.LastOrDefault()).AndForget();
+                }
+
+                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues)).AndForget();
+
+
                 _selectedValuesSetterRunning = false;
             }
         }

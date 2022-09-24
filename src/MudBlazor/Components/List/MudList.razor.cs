@@ -569,7 +569,7 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            if (MudSelect != null)
+            if (MudSelect != null || MudAutocomplete != null)
             {
                 return Task.CompletedTask;
             }

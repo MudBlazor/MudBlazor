@@ -27,6 +27,49 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class AutocompleteTests : BunitTest
     {
+        // Note: MudAutocomplete doesn't guaranteed the consequences of changing Value if MultiSelection is true for now.
+        // When this feature will add, just uncomment the testcase to test it. No need to write new test.
+        [Test]
+        [TestCase(false)]
+        //[TestCase(true)]
+        public void Autocomplete_InitialValueTest(bool multiSelection)
+        {
+            var comp = Context.RenderComponent<AutocompleteInitialValueTest>(x =>
+            {
+                x.Add(c => c.SelectedValue, "a");
+                x.Add(c => c.MultiSelection, multiSelection);
+            });
+            var autocomplete = comp.FindComponent<MudAutocomplete<string>>();
+
+            autocomplete.Instance.Value.Should().Be("a");
+            autocomplete.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "a" });
+            autocomplete.Instance.Text.Should().Be("a");
+        }
+
+        // Note: MudAutocomplete doesn't guaranteed the consequences of changing SelectedValues if MultiSelection is false for now.
+        // When this feature will add, just uncomment the testcase to test it. No need to write new test.
+        [Test]
+        //[TestCase(false)]
+        [TestCase(true)]
+        public void Autocomplete_InitialValuesTest(bool multiSelection)
+        {
+            var comp = Context.RenderComponent<AutocompleteInitialValueTest>(x =>
+            {
+                x.Add(c => c.SelectedValues, new HashSet<string>() { "a" });
+                x.Add(c => c.MultiSelection, multiSelection);
+            });
+            var autocomplete = comp.FindComponent<MudAutocomplete<string>>();
+
+            autocomplete.Instance.Value.Should().Be("a");
+            autocomplete.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "a" });
+            autocomplete.Instance.Text.Should().Be("a");
+
+            comp.SetParam("SelectedValues", new HashSet<string>() { "a", "b" });
+            autocomplete.Instance.Value.Should().Be("b");
+            autocomplete.Instance.SelectedValues.Should().BeEquivalentTo(new HashSet<string>() { "a", "b" });
+            autocomplete.Instance.Text.Should().Be("b");
+        }
+
         /// <summary>
         /// Initial value should be shown and popup should not open.
         /// </summary>
