@@ -1,0 +1,33 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="8" Class="d-flex align-center justify-center">
+        <MudPaper Width="300px">
+            <MudExperimental.MudList T="string" Clickable="true" SecondaryBackgroundForNestedItemHeader="_secondaryBackground" Dense="_listDense">
+                <MudExperimental.MudListSubheader T="string">Nested List Items</MudExperimental.MudListSubheader>
+
+                <MudExperimental.MudListItem T="string" Icon="@Icons.Filled.Send">Sent mail</MudExperimental.MudListItem>
+                <MudExperimental.MudListItem T="string" Icon="@Icons.Filled.Drafts">Drafts</MudExperimental.MudListItem>
+
+                <MudExperimental.MudListItem T="string" Icon="@Icons.Filled.Inbox" Text="Inbox" InitiallyExpanded="true">
+                    <NestedList>
+                        <MudExperimental.MudListItem Dense="_nestedDense" T="string" Icon="@Icons.Filled.StarRate">Starred</MudExperimental.MudListItem>
+                        <MudExperimental.MudListItem Dense="_nestedDense" T="string" Icon="@Icons.Filled.WatchLater">Snoozed</MudExperimental.MudListItem>
+                    </NestedList>
+                </MudExperimental.MudListItem>
+            </MudExperimental.MudList>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" sm="4">
+        <MudCheckBox @bind-Checked="_secondaryBackground" Color="Color.Primary" Label="Secondary Background For Nested Item Header" />
+        <MudCheckBox @bind-Checked="_listDense" Color="Color.Primary" TriState="true" Label="List Dense" />
+        <MudCheckBox @bind-Checked="_nestedDense" Color="Color.Primary" TriState="true" Label="Nested List Dense" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    bool _secondaryBackground;
+    bool _listDense;
+    bool? _nestedDense;
+}

@@ -79,6 +79,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Timeline", typeof(MudTimeline), typeof(MudTimelineItem))
             .AddItem("Pagination", typeof(MudPagination))
             .AddItem("Stack", typeof(MudStack))
+            .AddItem("List", typeof(MudExperimental.MudList<T>), typeof(MudExperimental.MudListItem<T>), typeof(MudExperimental.MudListSubheader<T>))
 
             //GROUPS
 

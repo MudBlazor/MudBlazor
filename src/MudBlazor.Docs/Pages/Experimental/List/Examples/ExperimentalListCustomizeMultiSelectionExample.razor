@@ -1,0 +1,47 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="8" Class="d-flex align-center justify-center">
+        <MudPaper Width="320px">
+            <MudExperimental.MudList T="string" Clickable="true" MultiSelection="true" MultiSelectionAlign="_listAlign"
+                     MultiSelectionComponent="_listSelectionComponent" DisableSelectedItemStyle="_disableSelectedItemStyle">
+                <ChildContent>
+                    <MudExperimental.MudListItem Value="@("Wifi")" Text="Wifi" Icon="@Icons.Filled.Wifi" />
+                    <MudExperimental.MudListItem Value="@("Bluetooth")" Text="Bluetooth" Icon="@Icons.Filled.Bluetooth" />
+                    <MudDivider />
+                    <MudExperimental.MudListItem Value="@("Location")" Text="Location" Icon="@Icons.Filled.LocationOn" />
+                    <MudExperimental.MudListItem Value="@("High Security")" Text="High Security" Icon="@Icons.Filled.Security" />
+                </ChildContent>
+            </MudExperimental.MudList>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" sm="4">
+        <MudCheckBox @ref="_checkboxAlign" T="bool" CheckedChanged="AlignChanged" Color="Color.Primary" Label="Align End" />
+        <MudCheckBox @bind-Checked="_disableSelectedItemStyle" Color="Color.Primary" Label="Disable Selected Item Style" />
+        <MudSelect T="MultiSelectionComponent" @bind-Value="_listSelectionComponent" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Variant="Variant.Outlined">
+            @foreach (MultiSelectionComponent comp in Enum.GetValues(typeof(MultiSelectionComponent)))
+            {
+                <MudSelectItem T="MultiSelectionComponent" Value="@comp">@comp</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+@code {
+    Align _listAlign = Align.Start;
+    MultiSelectionComponent _listSelectionComponent = MultiSelectionComponent.CheckBox;
+    MudCheckBox<bool> _checkboxAlign;
+    bool _disableSelectedItemStyle = false;
+    private void AlignChanged()
+    {
+        if (_checkboxAlign.Checked == false)
+        {
+            _listAlign = Align.Start;
+        }
+        else
+        {
+            _listAlign = Align.End;
+        }
+    }
+}

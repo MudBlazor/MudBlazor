@@ -1,0 +1,52 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="8" Class="d-flex flex-wrap justify-space-around gap-4">
+        <div>
+            <MudText Typo="Typo.h6" GutterBottom="true">Text only</MudText>
+            <MudPaper Width="220px">
+                <MudExperimental.MudList T="string" Dense="@Dense" DisableGutters="@Gutters" DisablePadding="@Padding">
+                    <MudExperimental.MudListItem T="string" Text="Single List Item" SecondaryText="Secondary Text" />
+                    <MudExperimental.MudListItem T="string" Text="Single List Item" SecondaryText="Secondary Text" />
+                    <MudExperimental.MudListItem T="string" Text="Single List Item" SecondaryText="Secondary Text" />
+                </MudExperimental.MudList>
+            </MudPaper>
+        </div>
+
+        <div>
+            <MudText Typo="Typo.h6" GutterBottom="true">Icons with text</MudText>
+            <MudPaper Width="220px">
+                <MudExperimental.MudList T="string" Dense="@Dense" DisableGutters="@Gutters" DisablePadding="@Padding">
+                    <MudExperimental.MudListItem T="string" Text="Single List Item" Icon="@Icons.Filled.Bookmark" SecondaryText="Secondary Text" />
+                    <MudExperimental.MudListItem T="string" Text="Single List Item" Icon="@Icons.Filled.Bookmark" IconColor="Color.Primary" SecondaryText="Secondary Text" />
+                    <MudExperimental.MudListItem T="string" Text="Single List Item" Icon="@Icons.Filled.Bookmark" IconColor="Color.Secondary" SecondaryText="Secondary Text" />
+                </MudExperimental.MudList>
+            </MudPaper>
+        </div>
+
+        <div>
+            <MudText Typo="Typo.h6" GutterBottom="true">Avatar with text</MudText>
+            <MudPaper Width="220px">
+                <MudExperimental.MudList T="string" Dense="@Dense" DisableGutters="@Gutters" DisablePadding="@Padding">
+                    <MudExperimental.MudListItem T="string" Text="Photo 1" Avatar="@Icons.Filled.Image" SecondaryText="@DateTime.Today.AddYears(-1).ToShortDateString()" />
+                    <MudExperimental.MudListItem T="string" Text="Photo 2" Avatar="@Icons.Filled.Image" IconColor="Color.Dark" SecondaryText="@DateTime.Today.AddMonths(-1).ToShortDateString()" />
+                    <MudExperimental.MudListItem T="string" Text="Photo 3" Avatar="@Icons.Filled.Image" IconColor="Color.Error" SecondaryText="Today" />
+                </MudExperimental.MudList>
+            </MudPaper>
+        </div>
+    </MudItem>
+
+    <MudItem xs="12" sm="4">
+        <MudCheckBox @bind-Checked="@Dense" Label="Dense" Color="Color.Default" />
+        <MudCheckBox @bind-Checked="@Padding" Label="Disable Padding" Color="Color.Primary" />
+        <MudCheckBox @bind-Checked="@Gutters" Label="Disable Gutters" Color="Color.Secondary" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    public bool Dense { get; set; }
+    public bool Padding { get; set; }
+    public bool Gutters { get; set; }
+
+    MudExperimental.MudListItem<string> selectedItem = new();
+}
