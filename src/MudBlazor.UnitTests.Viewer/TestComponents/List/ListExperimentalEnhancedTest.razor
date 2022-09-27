@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPaper Width="300px">
+    <MudExperimental.MudList T="int" Clickable="true" MultiSelection="true" @bind-SelectedValue="selectedValue" @bind-SelectedItem="selectedItem">
+        <MudExperimental.MudListSubheader T="string">
+            Your drink:
+            <MudChip Color="Color.Secondary">
+                @(selectedItem?.Text ?? "You are dry") (@(selectedValue.ToString()))
+            </MudChip>
+        </MudExperimental.MudListSubheader>
+        <MudExperimental.MudListItem Text="Water 1" Value="1" />
+        <MudExperimental.MudListItem IsFunctional="true" Text="Exceptional Water" Value="2" />
+        <MudExperimental.MudListItem Text="Water 2" Value="3" />
+        <MudExperimental.MudListItem T="int" Text="Teas">
+            <NestedList>
+                <MudExperimental.MudListItem Text="Earl Grey" Value="4" />
+                <MudExperimental.MudListItem Text="Matcha" Value="5" />
+                <MudExperimental.MudListItem Text="Pu'er" Value="6" />
+            </NestedList>
+        </MudExperimental.MudListItem>
+        <MudExperimental.MudListItem T="int" Text="Coffees">
+            <NestedList>
+                <MudExperimental.MudListItem Text="Irish Coffee" Value="7" />
+                <MudExperimental.MudListItem Text="Double Espresso" Value="8" />
+                <MudExperimental.MudListItem Disabled="true" Text="Cafe Latte" Value="9" />
+            </NestedList>
+        </MudExperimental.MudListItem>
+    </MudExperimental.MudList>
+</MudPaper>
+
+@code
+{
+    MudExperimental.MudListItem<int> selectedItem;
+    int selectedValue;
+}
