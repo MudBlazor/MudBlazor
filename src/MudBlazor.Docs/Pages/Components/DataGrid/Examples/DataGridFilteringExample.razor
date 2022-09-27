@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid T="Element" Items="@Elements" Filterable="true" FilterMode="@_filterMode">
+<MudDataGrid T="Element" Items="@Elements" Filterable="true" FilterMode="@_filterMode" FilterCaseSensitivity="@_caseSensitivity">
     <Columns>
         <Column T="Element" Field="Number" Title="Nr" Filterable="false" />
         <Column T="Element" Field="Sign" />
@@ -25,10 +25,18 @@
     </MudRadioGroup>
 </div>
 
+<div class="d-flex flex-wrap mt-4">
+    <MudRadioGroup T="DataGridFilterCaseSensitivity" @bind-SelectedOption="@_caseSensitivity">
+        <MudRadio Dense="true" Option="@DataGridFilterCaseSensitivity.Default" Color="Color.Primary">Default Case Sensitivity</MudRadio>
+        <MudRadio Dense="true" Option="@DataGridFilterCaseSensitivity.CaseInsensitive" Color="Color.Tertiary">Case Insensitive</MudRadio>
+    </MudRadioGroup>
+</div>
+
 
 @code {
     IEnumerable<Element> Elements = new List<Element>();
     DataGridFilterMode _filterMode = DataGridFilterMode.Simple;
+    DataGridFilterCaseSensitivity _caseSensitivity = DataGridFilterCaseSensitivity.Default;
 
     protected override async Task OnInitializedAsync()
     {

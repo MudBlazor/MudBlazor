@@ -260,6 +260,8 @@ namespace MudBlazor
 
         [Parameter] public DataGridFilterMode FilterMode { get; set; }
 
+        [Parameter] public DataGridFilterCaseSensitivity FilterCaseSensitivity { get; set; }
+
         [Parameter] public RenderFragment<List<FilterDefinition<T>>> FilterTemplate { get; set; }
 
         /// <summary>
