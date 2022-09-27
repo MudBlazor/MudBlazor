@@ -3593,12 +3593,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridChildRowContentTest()
+        public async Task DataGridChildRowContentOpenTest()
         {
             var comp = Context.RenderComponent<DataGridChildRowContentTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridChildRowContentTest.Model>>();
 
-            dataGrid.FindAll("td")[3].TextContent.Trim().Should().StartWith("uid = Sam|56|Normal|");
+            await comp.InvokeAsync(() => dataGrid.Instance
+            .ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+
+            dataGrid.FindAll("td")[5].TextContent.Trim().Should().StartWith("uid = Sam|56|Normal|");
+        }
+
+        [Test]
+        public async Task DataGridChildRowContentClosedTest()
+        {
+            var comp = Context.RenderComponent<DataGridChildRowContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridChildRowContentTest.Model>>();
+
+            dataGrid.FindAll("td").SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Sam|56|Normal|")).Should().BeNull();
         }
 
         [Test]
@@ -3894,6 +3906,11 @@ namespace MudBlazor.UnitTests.Components
             cell.cellContext.IsSelected.Should().Be(false);
             cell.cellContext.Actions.SetSelectedItem(true);
             cell.cellContext.IsSelected.Should().Be(true);
+
+            cell.cellContext.Actions.ToggleHierarchyVisibilityForItem();
+            cell.cellContext.openHierarchies.Should().Contain(item);
+            cell.cellContext.Actions.ToggleHierarchyVisibilityForItem();
+            cell.cellContext.openHierarchies.Should().NotContain(item);
         }
 
         [Test]

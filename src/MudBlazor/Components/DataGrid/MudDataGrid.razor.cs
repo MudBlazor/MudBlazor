@@ -29,6 +29,7 @@ namespace MudBlazor
         private T _selectedItem;
         internal HashSet<object> _groupExpansions = new HashSet<object>();
         private List<GroupDefinition<T>> _groups = new List<GroupDefinition<T>>();
+        internal HashSet<T> _openHierarchies = new HashSet<T>();
         private PropertyInfo[] _properties = typeof(T).GetProperties();
 
         protected string _classname =>
@@ -753,10 +754,26 @@ namespace MudBlazor
 
         internal void AddColumn(Column<T> column)
         {
-            if (column.Tag?.ToString() == "select-column")
+            if (column.Tag?.ToString() == "hierarchy-column")
+            {
                 RenderedColumns.Insert(0, column);
+            }
+            else if (column.Tag?.ToString() == "select-column")
+            {
+                // Position SelectColumn after HierarchyColumn if present
+                if (RenderedColumns.Select(x => x.Tag).Contains("hierarchy-column"))
+                {
+                    RenderedColumns.Insert(1, column);
+                }
+                else
+                {
+                    RenderedColumns.Insert(0, column);
+                }
+            }
             else
+            {
                 RenderedColumns.Add(column);
+            }
         }
 
         /// <summary>
@@ -1229,6 +1246,20 @@ namespace MudBlazor
         }
 
         #endregion
+
+        internal async Task ToggleHierarchyVisibilityAsync(T item)
+        {
+            if (_openHierarchies.Contains(item))
+            {
+                _openHierarchies.Remove(item);
+            }
+            else
+            {
+                _openHierarchies.Add(item);
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
 
         #region Resize feature
 
