@@ -78,7 +78,7 @@
 }
 
 .mud-radio-content-placement- {
-    &left {
+    &start {
         margin-left: 16px;
         margin-right: -11px;
         margin-inline-start: 16px;
@@ -86,7 +86,7 @@
         flex-direction: row-reverse;
     }
 
-    &right {
+    &end {
         margin-left: -11px;
         margin-right: 16px;
         margin-inline-start: -11px;
