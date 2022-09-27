@@ -39,7 +39,7 @@
         <MudButton OnClick="@(() => _selectedValue = 2)">Select 2</MudButton>
         <MudButton OnClick="@(() => _selectedValues = new HashSet<int?>() { 2, 4 })">Select 2 and 4</MudButton>
         <MudButton OnClick="@(() => _selectedItem = _thirdItem)">Select 3rd Item</MudButton>
-        <MudButton OnClick="@(() => _selectedItems = new HashSet<MudBlazor.Experimental.MudListItem<int?>>() { _thirdItem, _fifthItem })">Select 3rd and 5th Items</MudButton>
+        <MudButton OnClick="@(() => _selectedItems = new HashSet<MudExperimental.MudListItem<int?>>() { _thirdItem, _fifthItem })">Select 3rd and 5th Items</MudButton>
         <MudButton OnClick="@(() => _list.Clear())">Clear</MudButton>
         <MudText Class="mt-2">Results:</MudText>
         <MudText Class="ma-4">Selected Value: @_selectedValue</MudText>

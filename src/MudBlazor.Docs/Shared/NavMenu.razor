@@ -31,7 +31,7 @@
     }
 </MudNavGroup>
 <MudNavGroup Title="Experimental" Expanded="@(_section == "experimental")" ExpandIcon="@Icons.Filled.ExpandMore">
-    @foreach (var item in MenuService.Components)
+    @foreach (var item in MenuService.ExperimentalComponents)
     {
         if (item.IsNavGroup)
         {
