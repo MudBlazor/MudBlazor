@@ -50,10 +50,10 @@ namespace MudBlazor.Docs.Compiler
                     if (IsObsolete(type))
                         continue;
                     cb.AddLine("[Test]");
-                    cb.AddLine($"public void {SafeTypeName(type, removeT: true)}_API_Test()");
+                    cb.AddLine($"public void {(type.Namespace.Contains("Experimental") ? "Experimental_" : null)}{SafeTypeName(type, removeT: true)}_API_Test()");
                     cb.AddLine("{");
                     cb.IndentLevel++;
-                    cb.AddLine(@$"ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter(""Type"", typeof({SafeTypeName(type)})));");
+                    cb.AddLine(@$"ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter(""Type"", typeof({(type.Namespace.Contains("Experimental") ? "MudExperimental." : null)}{SafeTypeName(type)})));");
                     cb.IndentLevel--;
                     cb.AddLine("}");
                 }
