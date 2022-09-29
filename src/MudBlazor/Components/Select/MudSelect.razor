@@ -2,13 +2,22 @@
 @typeparam T
 @inherits MudBaseInput<T>
 
+@*To Be Discussed as Second ShadowItems: Needed to render directly into select to has initial values*@
+<div style="display: none">
+    <CascadingValue Value="@this" IsFixed="true">
+        <MudList @ref="_list" T="T">
+            @ChildContent
+        </MudList>
+    </CascadingValue>
+</div>
+
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
-	<div class="mud-select" id="@_elementId">
+    <div class="mud-select" id="@_elementId">
 		<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
 						 Error="@Error" ErrorText="@ErrorText" ErrorId="@ErrorId" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
 			<InputContent>
-                <MudInput @ref="_elementReference" InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
-                          Class="mud-select-input" Margin="@Margin" Placeholder="@Placeholder"
+                <MudInput @ref="_elementReference" InputType="InputType.Hidden"
+                          Class="@InputClassname" Style="@InputStyle" Margin="@Margin" Placeholder="@Placeholder"
                           Variant="@Variant"
                           TextUpdateSuppression="false"
                           Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine"
@@ -17,26 +26,88 @@
                           AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
                           Clearable="@Clearable" OnClearButtonClick="(async (e) => await SelectClearButtonClickHandlerAsync(e))"
                           @attributes="UserAttributes" OnBlur="@OnLostFocus">
-                    @if (CanRenderValue)
-                    {
-                        @GetSelectedValuePresenter()
-                    }
+                    
+                    <ChildContent>
+                        <div class="@TemplateClass">
+                            @if (Strict && !IsValueInList)
+                            {
+                                //Show nothing
+                                <MudText Typo="Typo.body1" Class="mud-text-secondary">@Placeholder</MudText>
+                            }
+                            else if (ValuePresenter == ValuePresenter.Text)
+                            {
+                                @if (string.IsNullOrEmpty(Text))
+                                {
+                                    <MudText Typo="Typo.body1" Class="mud-text-secondary">@Placeholder</MudText>
+                                }
+                                
+                                <MudRender>@GetSelectTextPresenter()</MudRender>
+                            }
+                            else if (ValuePresenter == ValuePresenter.Chip)
+                            {
+                                if (SelectedValues == null || !SelectedValues.Any())
+                                {
+                                    <MudText Typo="Typo.body1" Class="mud-text-secondary">@Placeholder</MudText>
+                                }
+                                else
+                                {
+                                    @foreach (var val in SelectedValues)
+                                    {
+                                        <MudChip Class="mt-n1" Text="@Converter.Set(val)" Color="@Color" Size="Size.Small" />
+                                    }
+                                }
+                            }
+                            else if (ValuePresenter == ValuePresenter.ItemContent)
+                            {
+                                if (SelectedListItem == null)
+                                {
+                                    <MudText Typo="Typo.body1" Class="mud-text-secondary">@Placeholder</MudText>
+                                    
+                                }
+                                else if (ItemTemplate != null)
+                                {
+                                    if (SelectedListItem != null && SelectedListItem.Value != null)
+                                    {
+                                        @ItemTemplate(SelectedListItem)
+                                    }
+                                    else if (!string.IsNullOrEmpty(Placeholder))
+                                    {
+                                        <MudText Typo="Typo.body1" Class="mud-text-secondary">@Placeholder</MudText>
+                                    }
+                                }
+                                else if (SelectedListItem.ChildContent != null)
+                                {
+                                    <MudRender>@SelectedListItem.ChildContent</MudRender>
+                                }
+                                else
+                                {
+                                    @if (string.IsNullOrEmpty(Text))
+                                    {
+                                        <MudText Typo="Typo.body1" Class="mud-text-secondary">@Placeholder</MudText>
+                                    }
+
+                                    <MudRender>@GetSelectTextPresenter()</MudRender>
+                                }
+                            }
+                        </div>
+                    </ChildContent>
                 </MudInput>
-				<MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
-					<CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
-						<MudList Clickable="true" Dense="@Dense" @bind-SelectedValue="_activeItemId">
-                            @if (MultiSelection && SelectAll)
-							{
-								<MudListItem Icon="@SelectAllCheckBoxIcon" Text="@SelectAllText" OnClick="SelectAllClickAsync" OnClickHandlerPreventDefault="true" Dense="@Dense" Class="mb-2" />
-                                <MudDivider />
-							}
-							@ChildContent
+
+				<MudPopover Open="@_isOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="@RelativeWidth">
+					<CascadingValue Value="@this" IsFixed="true">
+                        <MudList @ref="@_list" T="T" @bind-SelectedValue="@Value" @bind-SelectedValues="@SelectedValues" @bind-SelectedItem="@SelectedListItem" @bind-SelectedItems="@SelectedListItems"
+                                 Clickable="true" Color="@Color" Dense="@Dense" ItemCollection="@ItemCollection" Virtualize="@Virtualize" DisablePadding="@DisablePopoverPadding" DisableSelectedItemStyle="@DisableSelectedItemStyle"
+                                 MultiSelection="@MultiSelection" MultiSelectionComponent="@MultiSelectionComponent" MultiSelectionAlign="@MultiSelectionAlign" SelectAll="@SelectAll" SelectAllText="@SelectAllText"
+                                 CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@IndeterminateIcon" SelectValueOnTab="@SelectValueOnTab" Comparer="@Comparer"
+                                 ItemTemplate="@ItemTemplate" ItemSelectedTemplate="@ItemSelectedTemplate" ItemDisabledTemplate="@ItemDisabledTemplate">
+                            @ChildContent
 						</MudList>
 					</CascadingValue>
 				</MudPopover>
-			</InputContent>
+			</InputContent>        
 		</MudInputControl>
 	</div>
+
     @*Shadow select items for IsValueInList and CanRenderValue*@
     <CascadingValue Value="@((IMudShadowSelect)this)" IsFixed="true">
         <CascadingValue Name="HideContent" Value="true">
@@ -46,4 +117,4 @@
 
 </CascadingValue>
 <!-- mousedown instead of click needed to close the menu before OnLostFocus runs -->
-<MudOverlay Visible="_isOpen" @onmousedown="@(() => CloseMenu(false))" LockScroll="@LockScroll" />
+<MudOverlay Visible="_isOpen" @onmousedown="@(() => CloseMenu())" LockScroll="@LockScroll" />

@@ -3,22 +3,22 @@
 <MudDropContainer T="FileItem" ItemIsDisabled="@( (item) => item.IsLocked == true)"  Items="_items" ItemsSelector="@((item,dropzone) => item.TransferSlot == dropzone)"  ItemDropped="ItemUpdated" Class="d-flex flex-wrap">
     <ChildContent>
         <MudPaper Class="ma-4" Height="400px" Width="300px">
-            <MudList Clickable="true" Class="mud-height-full">
+            <MudList T="string" Clickable="true" Class="mud-height-full">
                 <MudDropZone T="FileItem" Identifier="Company" Class="mud-height-full">
-                    <MudListSubheader>Company Files</MudListSubheader>
+                    <MudListSubheader T="string">Company Files</MudListSubheader>
                 </MudDropZone>
             </MudList>
         </MudPaper>
         <MudPaper Class="ma-4" Height="400px" Width="300px">
-            <MudList Clickable="true" Class="mud-height-full">
+            <MudList T="string" Clickable="true" Class="mud-height-full">
                 <MudDropZone T="FileItem" Identifier="External" Class="mud-height-full">
-                    <MudListSubheader>External USB</MudListSubheader>
+                    <MudListSubheader T="string">External USB</MudListSubheader>
                 </MudDropZone>
             </MudList>
         </MudPaper>
     </ChildContent>
     <ItemRenderer>
-        <MudListItem Disabled="@(context.IsLocked ? true : false)" Icon="@Icons.Custom.FileFormats.FileDocument">
+        <MudListItem T="string" Disabled="@(context.IsLocked ? true : false)" Icon="@Icons.Custom.FileFormats.FileDocument">
             @context.Name
         </MudListItem>
     </ItemRenderer>

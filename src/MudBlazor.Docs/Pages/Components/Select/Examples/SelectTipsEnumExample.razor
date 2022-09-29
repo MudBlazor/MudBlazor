@@ -1,0 +1,31 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.ComponentModel
+
+<MudSelect T="TestEnum" Label="RenderFragment Based" ToStringFunc="@(new Func<TestEnum, string>(e => e.ToDescriptionString()))">
+    @foreach (TestEnum item in Enum.GetValues(typeof(TestEnum)))
+    {
+        <MudSelectItem Value="item" Text="@item.ToDescriptionString()" />
+    }
+</MudSelect>
+
+<MudSelect Label="Data Based" ItemCollection="_enumCollection" ToStringFunc="@(new Func<TestEnum, string>(e => e.ToDescriptionString()))" />
+
+@code {
+    ICollection<TestEnum> _enumCollection = (ICollection<TestEnum>)Enum.GetValues(typeof(TestEnum));
+
+    public enum TestEnum
+    {
+        [Description("Enum Item 1")]
+        EnumItem1,
+        [Description("Enum Item 2")]
+        EnumItem2,
+        [Description("Enum Item 3")]
+        EnumItem3,
+        [Description("Enum Item 4")]
+        EnumItem4,
+        [Description("Enum Item 5")]
+        EnumItem5,
+        [Description("Enum Item 6")]
+        EnumItem6,
+    }
+}

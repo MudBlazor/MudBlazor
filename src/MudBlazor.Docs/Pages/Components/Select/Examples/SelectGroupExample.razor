@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="8" Class="d-flex align-start justify-center">
+        <MudSelect T="string" Label="Groups & Items" AnchorOrigin="Origin.BottomCenter" @bind-Value="_selectedValue" @bind-SelectedValues="_selectedValues" MultiSelection="_multiSelection">
+            <MudSelectItemGroup T="string" Text="Group 1" Sticky="_sticky" Nested="_nested" InitiallyExpanded="_initiallyExpanded">
+                <MudSelectItem Value="@("Item 1")" />
+                <MudSelectItem Value="@("Item 2")" />
+                <MudSelectItem Value="@("Item 3")" />
+            </MudSelectItemGroup>
+
+            <MudSelectItemGroup T="string" Text="Group 2" Sticky="_sticky" Nested="_nested" InitiallyExpanded="_initiallyExpanded">
+                <MudSelectItem Value="@("Item 4")" />
+                <MudSelectItem Value="@("Item 5")" />
+                <MudSelectItem Value="@("Item 6")" />
+            </MudSelectItemGroup>
+
+            <MudSelectItemGroup T="string" Text="Group 3" Sticky="_sticky" Nested="_nested" InitiallyExpanded="_initiallyExpanded">
+                <MudSelectItem Value="@("Item 7")" />
+                <MudSelectItem Value="@("Item 8")" />
+                <MudSelectItem Value="@("Item 9")" />
+            </MudSelectItemGroup>
+        </MudSelect>
+        
+    </MudItem>
+
+    <MudItem xs="12" sm="4">
+        <MudCheckBox @bind-Checked="_multiSelection" Label="MultiSelection" Color="Color.Primary" />
+        <MudCheckBox @bind-Checked="_sticky" Label="Sticky" Color="Color.Primary" />
+        <MudCheckBox @bind-Checked="_nested" Label="Nested" Color="Color.Primary" />
+        <MudCheckBox @bind-Checked="_initiallyExpanded" Label="Initially Expanded" Color="Color.Primary" />
+        <MudDivider />
+        <MudText Class="ma-4">Selected Value: @_selectedValue</MudText>
+        <MudText Class="ma-4">Selected Values: @(_selectedValues == null ? null : string.Join(", ", _selectedValues))</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    bool _multiSelection = false;
+    bool _sticky = true;
+    bool _nested = false;
+    bool _initiallyExpanded = false;
+    string _selectedValue;
+    IEnumerable<string> _selectedValues;
+}

@@ -1,13 +1,19 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSelect T="string" Label="US States" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options">
-    @foreach (var state in states)
-    {
-        <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
-    }
-</MudSelect>
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudSelect T="string" Label="Populated With ChildContent" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options">
+            @foreach (var state in states)
+            {
+                <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
 
-<MudGrid Class="mt-6 px-4">
+    <MudItem xs="12" sm="6">
+        <MudSelect T="string" ItemCollection="states" Label="Populated With Item Collection" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options" />
+    </MudItem>
+
     <MudItem xs="6">
         <MudText Typo="Typo.subtitle2">Value:</MudText>
         <MudText Typo="Typo.subtitle2">"</MudText>
@@ -23,7 +29,6 @@
 </MudGrid>
 
 @code {
-
     private string value { get; set; } = "Nothing selected";
     private IEnumerable<string> options { get; set; } = new HashSet<string>() { "Alaska" };
 
@@ -44,5 +49,4 @@
         "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
         "Washington", "West Virginia", "Wisconsin", "Wyoming",
     };
-
 }

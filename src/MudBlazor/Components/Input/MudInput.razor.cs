@@ -10,7 +10,7 @@ namespace MudBlazor
     public partial class MudInput<T> : MudBaseInput<T>
     {
         protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder));
+            () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || !string.IsNullOrEmpty(Converter.Set(Value)));
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
@@ -118,10 +118,23 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool HideSpinButtons { get; set; } = true;
 
+        [Parameter] public RenderFragment DataVisualiser { get; set; }
+
         /// <summary>
         /// Show clear button.
         /// </summary>
-        [Parameter] public bool Clearable { get; set; } = false;
+        [Parameter] public bool Clearable
+        {
+            get => _showClearable;
+            set
+            {
+                if (_showClearable == value)
+                {
+                    return;
+                }
+                _showClearable = value;
+            }
+        }
 
         /// <summary>
         /// Button click event for clear button. Called after text and value has been cleared.

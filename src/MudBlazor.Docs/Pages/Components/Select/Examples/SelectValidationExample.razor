@@ -1,0 +1,59 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Linq
+
+<MudForm @ref="_form" Class="mud-width-full">
+    <MudGrid>
+        <MudItem xs="12" sm="8">
+            <MudSelect @ref="_select" T="string" Label="Type string" Required="true" RequiredError="Please select" Clearable="true" Validation="new Func<string, string>(Validation)">
+                <MudSelectItem Value="@("Foo")" Text="Foo" />
+                <MudSelectItem Value="@("Bar")" Text="Bar" />
+                <MudSelectItem Value="@("Fizz")" Text="Fizz" />
+                <MudSelectItem Value="@("Buzz")" Text="Buzz" />
+            </MudSelect>
+
+            <MudSelect @ref="_select2" T="int?" Label="Type int?" Required="true" RequiredError="Please select" Clearable="true" Validation="new Func<int?, string>(Validation2)">
+                <MudSelectItem T="int?" Value="null" Text="Empty" />
+                <MudSelectItem T="int?" Value="1" Text="1" />
+                <MudSelectItem T="int?" Value="2" Text="2" />
+                <MudSelectItem T="int?" Value="3" Text="3" />
+            </MudSelect>
+        </MudItem>
+
+        <MudItem xs="12" sm="4" Class="d-flex align-center justify-center">
+            <MudButton OnClick="ValidateForm">Validate</MudButton>
+        </MudItem>
+    </MudGrid>
+</MudForm>
+
+
+@code
+{
+    MudForm _form;
+    MudSelect<string> _select;
+    MudSelect<int?> _select2;
+
+    private async Task ValidateForm()
+    {
+        await _form.Validate();
+    }
+
+    private string Validation(string value)
+    {
+        if (_select.Value == "Foo")
+        {
+            return "Select another option";
+        }
+
+        return null;
+    }
+
+    private string Validation2(int? value)
+    {
+        if (value == null)
+        {
+            return "Can not be empty";
+        }
+
+        return null;
+    }
+}

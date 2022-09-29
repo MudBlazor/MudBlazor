@@ -3,12 +3,13 @@
 @typeparam T
 
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
-    <div class="@AutocompleteClassname">
+    <div class="@AutocompleteClassname" id="@_elementId">
         <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
                          Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
             <InputContent>
-                <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
-                          Class="mud-select-input" Margin="@Margin"
+                    
+                <MudInput @ref="_elementReference" InputType="InputType.Text"
+                          Class="@InputClassname" Style="@InputStyle" Margin="@Margin"
                           Variant="@Variant"
                           TextUpdateSuppression="@TextUpdateSuppression"
                           Value="@Text" DisableUnderLine="@DisableUnderLine"
@@ -17,12 +18,22 @@
                           Clearable="@Clearable" OnClearButtonClick="@OnClearButtonClick"
                           @attributes="UserAttributes"
                           TextChanged="OnTextChanged" OnBlur="OnInputBlurred"
-                          OnKeyDown="@this.OnInputKeyDown"
-                          OnKeyUp="@this.OnInputKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
+                          autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
                           InputMode="@InputMode" Pattern="@Pattern"
-                          T="string" />
-
+                          T="string">
+                    <DataVisualiser>
+                        @if (MultiSelection && SelectedValues.Any())
+                        {
+                            <MudChipSet>
+                                @foreach (var val in SelectedValues)
+                                {
+                                    <MudChip Value="@val" OnClose="ChipClose">@val.ToString()</MudChip>
+                                }
+                            </MudChipSet>
+                        }
+                    </DataVisualiser>
+                </MudInput>
                 @if (ShowProgressIndicator && IsLoading)
                 {
                     @if (ProgressIndicatorTemplate != null)
@@ -44,42 +55,48 @@
                     } 
                     else if (_items != null && _items.Length != 0)
                     {
-                        <MudList Clickable="true" Dense="@Dense">
-                            @for (var index = 0; index < _items.Length; index++)
-                            {
-                                var item = _items[index];
-                                bool is_selected = index == _selectedListItemIndex;
-                                bool is_disabled = !_enabledItemIndices.Contains(index);
-                                <MudListItem @key="@item" id="@GetListItemId(index)" Disabled="@(is_disabled)" OnClick="@(async() => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@(is_selected ? "mud-selected-item mud-primary-text mud-primary-hover" : "")">
-                                    @if (ItemTemplate == null)
-                                    {
-                                        @GetItemString(item)
-                                    }
-                                    else if (is_disabled && ItemDisabledTemplate != null)
-                                    {
-                                        @ItemDisabledTemplate(item)
-                                    }
-                                    else if (is_selected)
-                                    {
-                                        @if (ItemSelectedTemplate == null)
-                                            @ItemTemplate(item)
-                                        else
-                                            @ItemSelectedTemplate(item)
+                        <CascadingValue Value="@this" IsFixed="true">
+                            <MudList @ref="_list" T="T" Clickable="true" MultiSelection="@MultiSelection" Dense="@Dense" SelectValueOnTab="@SelectValueOnTab"
+                                 @bind-SelectedValue="Value" @bind-SelectedValues="SelectedValues" @bind-SelectedItem="SelectedListItem">
 
-                                    }
-                                    else
-                                    {
-                                        @ItemTemplate(item)
-                                    }
-                                </MudListItem>
-                            }
-                            @if (MoreItemsTemplate != null && _itemsReturned > MaxItems)
-                            {
-                                <div class="pa-1">
-                                    @MoreItemsTemplate
-                                </div>
-                            }
-                        </MudList>
+                                @for (var index = 0; index < _items.Length; index++)
+                                {
+                                    var item = _items[index];
+                                    bool is_selected = index == _selectedListItemIndex;
+                                    bool is_disabled = !_enabledItemIndices.Contains(index);
+                                    <MudListItem T="T" Value="item" Disabled="@(is_disabled)" OnClick="@(() => SelectOption(item))">
+
+                                        @if (ItemTemplate == null)
+                                        {
+                                            @GetItemString(item)
+                                        }
+                                        else if (is_disabled && ItemDisabledTemplate != null)
+                                        {
+                                            @ItemDisabledTemplate(item)
+                                        }
+                                        else if (is_selected)
+                                        {
+                                            @if (ItemSelectedTemplate == null)
+                                                @ItemTemplate(item)
+                                            else
+                                                @ItemSelectedTemplate(item)
+
+
+                                        }
+                                        else
+                                        {
+                                            @ItemTemplate(item)
+                                        }
+                                    </MudListItem>
+                                }
+                                @if (MoreItemsTemplate != null && _itemsReturned > MaxItems)
+                                {
+                                    <div class="pa-1">
+                                        @MoreItemsTemplate
+                                    </div>
+                                }
+                            </MudList>
+                        </CascadingValue>
                     }
                     else if (NoItemsTemplate != null)
                     {

@@ -1,0 +1,44 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Linq
+
+<MudGrid>
+    <MudItem xs="12" sm="8" Class="d-flex align-center justify-center">
+        <MudSelect T="int?" ItemCollection="numbers" Virtualize="true" AnchorOrigin="Origin.BottomCenter" Label="Virtualized Select" />
+    </MudItem>
+
+    <MudItem xs="12" sm="4">
+        <MudRadioGroup @ref="_radioGroup" T="int?" SelectedOption="_selectedOption" SelectedOptionChanged="OptionChanged">
+            <MudRadio T="int?" Option="100" Color="Color.Primary">100 Items</MudRadio>
+            <MudRadio T="int?" Option="1000" Color="Color.Primary">1000 Items</MudRadio>
+            <MudRadio T="int?" Option="10000" Color="Color.Primary">10.000 Items</MudRadio>
+            <MudRadio T="int?" Option="100000" Color="Color.Primary">100.000 Items</MudRadio>
+        </MudRadioGroup>
+    </MudItem>
+</MudGrid>
+
+@code
+{
+    MudRadioGroup<int?> _radioGroup;
+    int?[] numbers = new int?[1000];
+    int? _selectedOption = 1000;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        for (int i = 0; i < 1000; i++)
+        {
+            numbers[i] = i;
+        }
+    }
+
+    private void OptionChanged()
+    {
+        _selectedOption = _radioGroup.SelectedOption;
+        numbers = new int?[(int)_selectedOption];
+        for (int i = 0; i < _selectedOption; i++)
+        {
+            numbers[i] = i;
+        }
+    }
+
+}

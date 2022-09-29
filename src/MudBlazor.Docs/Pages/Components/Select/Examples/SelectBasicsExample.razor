@@ -1,0 +1,14 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSelect T="string" Label="RenderFragment Based">
+    <MudSelectItem Value="@("Foo")" Text="Foo" />
+    <MudSelectItem Value="@("Bar")" Text="Bar" />
+    <MudSelectItem Value="@("Fizz")" Text="Fizz" />
+    <MudSelectItem Value="@("Buzz")" Text="Buzz" />
+</MudSelect>
+
+<MudSelect T="string" Label="Data Based" ItemCollection="_collection" />
+
+@code {
+    string[] _collection = new string[] { "Foo", "Bar", "Fizz", "Buzz" };
+}

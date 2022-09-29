@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -6,19 +6,56 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudAutocomplete<T> : MudBaseInput<T>, IDisposable
     {
-        [Inject] IScrollManager ScrollManager { get; set; }
 
+        #region Injected Services, Constructor, Fields & Parameters
+
+        public MudAutocomplete()
+        {
+            Adornment = Adornment.End;
+            IconSize = Size.Medium;
+        }
+
+        [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
+        //[Inject] IScrollManager ScrollManager { get; set; }
+
+        /// <summary>
+        /// This boolean will keep track if the clear function is called too keep the set text function to be called.
+        /// </summary>
+        private bool _isCleared;
+
+        private MudInput<string> _elementReference;
+        MudList<T> _list;
+        private IKeyInterceptor _keyInterceptor;
         private bool _dense;
+        private Timer _timer;
+        private T[] _items;
+        private int _selectedListItemIndex = 0;
+        private IList<int> _enabledItemIndices = new List<int>();
+        private int _itemsReturned; //the number of items returned by the search function
+        //int _elementKey = 0;
+
+        private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
+
+        /// <summary>
+        /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
+        /// </summary>
+        private readonly string _componentId = Guid.NewGuid().ToString();
 
         protected string Classname =>
             new CssBuilder("mud-select")
             .AddClass(Class)
+            .Build();
+
+        protected string InputClassname =>
+            new CssBuilder("mud-select-input")
+            .AddClass(InputClass)
             .Build();
 
         protected string AutocompleteClassname =>
@@ -32,6 +69,18 @@ namespace MudBlazor
             new CssBuilder("progress-indicator-circular")
             .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
             .Build();
+
+        /// <summary>
+        /// User class names for the input, separated by space
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter] public string InputClass { get; set; }
+
+        /// <summary>
+        /// User style names for the input, separated by space
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter] public string InputStyle { get; set; }
 
         /// <summary>
         /// User class names for the popover, separated by space
@@ -91,14 +140,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+        public string OpenIcon { get; set; } = Icons.Filled.ArrowDropDown;
 
         /// <summary>
         /// The Close Autocomplete Icon
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
+        public string CloseIcon { get; set; } = Icons.Filled.ArrowDropUp;
 
         //internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
@@ -108,6 +157,25 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public int MaxHeight { get; set; } = 300;
+
+        private bool _multiSelection = false;
+        /// <summary>
+        /// If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool MultiSelection
+        {
+            get => _multiSelection;
+            set
+            {
+                if (value != _multiSelection)
+                {
+                    _multiSelection = value;
+                    UpdateTextPropertyAsync(false).AndForget();
+                }
+            }
+        }
 
         private Func<T, string> _toStringFunc;
 
@@ -173,7 +241,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public int? MaxItems { get; set; } = 10;
+        public int? MaxItems { get; set; } = null;
 
         /// <summary>
         /// Minimum characters to initiate a search
@@ -319,84 +387,163 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
-        private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
+        #endregion
 
-        /// <summary>
-        /// This boolean will keep track if the clear function is called too keep the set text function to be called.
-        /// </summary>
-        private bool _isCleared;
 
-        private MudInput<string> _elementReference;
-
-        public MudAutocomplete()
-        {
-            Adornment = Adornment.End;
-            IconSize = Size.Medium;
-        }
-
-        public async Task SelectOption(T value)
-        {
-            await SetValueAsync(value);
-            if (_items != null)
-                _selectedListItemIndex = Array.IndexOf(_items, value);
-            var optionText = GetItemString(value);
-            if (!_isCleared)
-                await SetTextAsync(optionText, false);
-            _timer?.Dispose();
-            IsOpen = false;
-            BeginValidate();
-            if (!_isCleared)
-                _elementReference?.SetText(optionText);
-            _elementReference?.FocusAsync().AndForget();
-            StateHasChanged();
-        }
-
-        /// <summary>
-        /// Toggle the menu (if not disabled or not readonly, and is opened).
-        /// </summary>
-        public async Task ToggleMenu()
-        {
-            if ((Disabled || ReadOnly) && !IsOpen)
-                return;
-            await ChangeMenu(!IsOpen);
-        }
-
-        private async Task ChangeMenu(bool open)
-        {
-            if (open)
-            {
-                if (SelectOnClick)
-                    await _elementReference.SelectAsync();
-                await OnSearchAsync();
-            }
-            else
-            {
-                _timer?.Dispose();
-                RestoreScrollPosition();
-                await CoerceTextToValue();
-                IsOpen = false;
-                StateHasChanged();
-            }
-        }
-
+        #region Lifecycle Methods (& Dispose)
 
         protected override void OnInitialized()
         {
             var text = GetItemString(Value);
             if (!string.IsNullOrWhiteSpace(text))
                 Text = text;
+            if (MultiSelection == false && Value != null)
+            {
+                _selectedValues = new HashSet<T>() { Value };
+            }
+            else if (MultiSelection == true && SelectedValues != null)
+            {
+                // TODO: Check this line again
+                SetValueAsync(SelectedValues.FirstOrDefault()).AndForget();
+            }
         }
 
-        protected override void OnAfterRender(bool firstRender)
+        private string _elementId = "autocomplete_" + Guid.NewGuid().ToString().Substring(0, 8);
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if (firstRender)
+            {
+                _keyInterceptor = KeyInterceptorFactory.Create();
+
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                {
+                    //EnableLogging = true,
+                    TargetClass = "mud-input-control",
+                    Keys = {
+                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead hilight previous item
+                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead hilight next item
+                        new KeyOptions { Key="Home", PreventDown = "key+none" },
+                        new KeyOptions { Key="End", PreventDown = "key+none" },
+                        new KeyOptions { Key="Escape" },
+                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
+                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
+                        new KeyOptions { Key="a", PreventDown = "key+ctrl" }, // select all items instead of all page text
+                        new KeyOptions { Key="A", PreventDown = "key+ctrl" }, // select all items instead of all page text
+                        new KeyOptions { Key="/./", SubscribeDown = true, SubscribeUp = true }, // for our users
+                    },
+                });
+                _keyInterceptor.KeyDown += HandleKeyDown;
+                _keyInterceptor.KeyUp += HandleKeyUp;
+            }
             _isCleared = false;
-            base.OnAfterRender(firstRender);
+            await base.OnAfterRenderAsync(firstRender);
         }
 
-        private Timer _timer;
-        private T[] _items;
-        private int _selectedListItemIndex = 0;
-        private IList<int> _enabledItemIndices = new List<int>();
+        protected override void Dispose(bool disposing)
+        {
+            _timer?.Dispose();
+            
+            if (_cancellationTokenSrc != null)
+            {
+                try
+                {
+                    _cancellationTokenSrc.Dispose();
+                }
+                catch { }
+            }
+
+            base.Dispose(disposing);
+        }
+
+        #endregion
+
+
+        #region Values, Text & Coerce
+
+        //private T _selectedValue;
+        //protected T SelectedValue
+        //{
+        //    get => _selectedValue;
+
+        //    set
+        //    {
+        //        if (Converter.Set(_selectedValue) == Converter.Set(value))
+        //        {
+        //            return;
+        //        }
+        //        _selectedValue = value;
+        //        SetValueAsync(value, false).AndForget();
+        //    }
+        //}
+
+        bool _selectedValuesSetterRunning = false;
+        private HashSet<T> _selectedValues = new HashSet<T>();
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
+        public IEnumerable<T> SelectedValues
+        {
+            get
+            {
+                if (_selectedValues == null)
+                    _selectedValues = new HashSet<T>();
+                return _selectedValues;
+            }
+            set
+            {
+                var set = value ?? new HashSet<T>();
+                if (_selectedValues == value)
+                {
+                    return;
+                }
+                if (_selectedValues != null && value != null && _selectedValues.SetEquals(value))
+                {
+                    return;
+                }
+                //if (SelectedValues.Count() == set.Count() && _selectedValues.All(x => set.Contains(x)))
+                //    return;
+
+                if (_selectedValuesSetterRunning)
+                {
+                    return;
+                }
+                _selectedValuesSetterRunning = true;
+
+                _selectedValues = value == null ? null : value.ToHashSet();
+                if (MultiSelection == false && _selectedValues != null)
+                {
+                    SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
+                }
+                else if (_selectedValues != null)
+                {
+                    SetValueAsync(_selectedValues.LastOrDefault()).AndForget();
+                }
+
+                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues)).AndForget();
+
+
+                _selectedValuesSetterRunning = false;
+            }
+        }
+
+        private MudListItem<T> _selectedListItem;
+        internal MudListItem<T> SelectedListItem
+        {
+            get => _selectedListItem;
+
+            set
+            {
+                if (_selectedListItem == value)
+                {
+                    return;
+                }
+                _selectedListItem = value;
+            }
+        }
+
+        /// <summary>
+        /// Fires when SelectedValues changes.
+        /// </summary>
+        [Parameter] public EventCallback<IEnumerable<T>> SelectedValuesChanged { get; set; }
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
@@ -418,270 +565,12 @@ namespace MudBlazor
                 _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
-        private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearchAsync);
-
-        private void CancelToken()
+        private async Task OnTextChanged(string text)
         {
-            try
-            {
-                _cancellationTokenSrc?.Cancel();
-            }
-            catch
-            { }
-
-            _cancellationTokenSrc = new CancellationTokenSource();
-        }
-        
-        private int _itemsReturned; //the number of items returned by the search function
-
-        /// <remarks>
-        /// This async method needs to return a task and be awaited in order for
-        /// unit tests that trigger this method to work correctly.
-        /// </remarks>
-        private async Task OnSearchAsync()
-        {
-            if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
-            {
-                IsOpen = false;
-                StateHasChanged();
+            await base.TextChanged.InvokeAsync();
+            if (text == null)
                 return;
-            }
-
-            IEnumerable<T> searched_items = Array.Empty<T>();
-            CancelToken();
-
-            try
-            {
-                if (ProgressIndicatorInPopoverTemplate != null)
-                {
-                    IsOpen = true;
-                }
-
-                var searchTask = SearchFuncWithCancel != null ?
-                    SearchFuncWithCancel(Text, _cancellationTokenSrc.Token) :
-                    SearchFunc(Text);
-
-                _currentSearchTask = searchTask;
-
-                StateHasChanged();
-
-                searched_items = await searchTask ?? Array.Empty<T>();
-            }
-            catch (TaskCanceledException)
-            {
-            }
-            catch (OperationCanceledException)
-            {
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("The search function failed to return results: " + e.Message);
-            }
-
-            _itemsReturned = searched_items.Count();
-            if (MaxItems.HasValue)
-            {
-                searched_items = searched_items.Take(MaxItems.Value);
-            }
-            _items = searched_items.ToArray();
-
-            _enabledItemIndices = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).Select(tuple => tuple.idx).ToList();
-            _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices.First() : -1;
-
-            IsOpen = true;
-
-            if (_items?.Length == 0)
-            {
-                await CoerceValueToText();
-                StateHasChanged();
-                return;
-            }
-
-            StateHasChanged();
-        }
-
-        int _elementKey = 0;
-
-        /// <summary>
-        /// Clears the autocomplete's text
-        /// </summary>
-        public async Task Clear()
-        {
-            _isCleared = true;
-            IsOpen = false;
-            await SetTextAsync(string.Empty, updateValue: false);
-            await CoerceValueToText();
-            if (_elementReference != null)
-                await _elementReference.SetText("");
-            _timer?.Dispose();
-            StateHasChanged();
-        }
-
-        protected override async void ResetValue()
-        {
-            await Clear();
-            base.ResetValue();
-        }
-
-
-        private string GetItemString(T item)
-        {
-            if (item == null)
-                return string.Empty;
-            try
-            {
-                return Converter.Set(item);
-            }
-            catch (NullReferenceException) { }
-            return "null";
-        }
-
-        internal virtual async Task OnInputKeyDown(KeyboardEventArgs args)
-        {
-            switch (args.Key)
-            {
-                case "Tab":
-                    // NOTE: We need to catch Tab in Keydown because a tab will move focus to the next element and thus
-                    // in OnInputKeyUp we'd never get the tab key
-                    if (!IsOpen)
-                        return;
-                    if (SelectValueOnTab)
-                        await OnEnterKey();
-                    else
-                        IsOpen = false;
-                    break;
-            }
-        }
-
-        internal virtual async Task OnInputKeyUp(KeyboardEventArgs args)
-        {
-            switch (args.Key)
-            {
-                case "Enter":
-                case "NumpadEnter":
-                    if (!IsOpen)
-                    {
-                        await ToggleMenu();
-                    }
-                    else
-                    {
-                        await OnEnterKey();
-                    }
-                    break;
-                case "ArrowDown":
-                    if (!IsOpen)
-                    {
-                        await ToggleMenu();
-                    }
-                    else
-                    {
-                        var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
-                        await SelectNextItem(increment < 0 ? 1 : increment);
-                    }
-                    break;
-                case "ArrowUp":
-                    if (args.AltKey == true)
-                    {
-                        await ChangeMenu(open: false);
-                    }
-                    else if (!IsOpen)
-                    {
-                        await ToggleMenu();
-                    }
-                    else
-                    {
-                        var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
-                        await SelectNextItem(-(decrement < 0 ? 1 : decrement));
-                    }
-                    break;
-                case "Escape":
-                    await ChangeMenu(open: false);
-                    break;
-                case "Tab":
-                    await Task.Delay(1);
-                    if (!IsOpen)
-                        return;
-                    if (SelectValueOnTab)
-                        await OnEnterKey();
-                    else
-                        await ToggleMenu();
-                    break;
-                case "Backspace":
-                    if (args.CtrlKey == true && args.ShiftKey == true)
-                    {
-                        Reset();
-                    }
-                    break;
-            }
-            base.InvokeKeyUp(args);
-        }
-
-        private ValueTask SelectNextItem(int increment)
-        {
-            if (increment == 0 || _items == null || _items.Length == 0 || !_enabledItemIndices.Any())
-                return ValueTask.CompletedTask;
-            // if we are at the end, or the beginning we just do an rollover
-            _selectedListItemIndex = Math.Clamp(value: (10 * _items.Length + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length - 1);
-            return ScrollToListItem(_selectedListItemIndex);
-        }
-
-        /// <summary>
-        /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
-        /// </summary>
-        private readonly string _componentId = Guid.NewGuid().ToString();
-
-
-        /// <summary>
-        /// Scroll to a specific item index in the Autocomplete list of items.
-        /// </summary>
-        /// <param name="index">the index to scroll to</param>
-        /// <param name="increment">not used</param>
-        /// <returns>ValueTask</returns>
-        [Obsolete("Use ScrollToListItem without increment parameter instead")]
-        public Task ScrollToListItem(int index, int increment)
-            => ScrollToListItem(index).AsTask();
-
-        /// <summary>
-        /// Scroll to a specific item index in the Autocomplete list of items.
-        /// </summary>
-        /// <param name="index">the index to scroll to</param>
-        public ValueTask ScrollToListItem(int index)
-        {
-            var id = GetListItemId(index);
-            //id of the scrolled element
-            return ScrollManager.ScrollToListItemAsync(id);
-        }
-
-        //This restores the scroll position after closing the menu and element being 0
-        private void RestoreScrollPosition()
-        {
-            if (_selectedListItemIndex != 0) return;
-            ScrollManager.ScrollToListItemAsync(GetListItemId(0));
-        }
-
-        private string GetListItemId(in int index)
-        {
-            return $"{_componentId}_item{index}";
-        }
-
-        internal Task OnEnterKey()
-        {
-            if (IsOpen == false)
-                return Task.CompletedTask;
-            if (_items == null || _items.Length == 0)
-                return Task.CompletedTask;
-            if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
-                return SelectOption(_items[_selectedListItemIndex]);
-            return Task.CompletedTask;
-        }
-
-        private Task OnInputBlurred(FocusEventArgs args)
-        {
-            OnBlur.InvokeAsync(args);
-            return Task.CompletedTask;
-            // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
-            // resulting in a premature validation. thus, don't call base
-            //base.OnBlurred(args);
+            await SetTextAsync(text, true);
         }
 
         private Task CoerceTextToValue()
@@ -706,23 +595,327 @@ namespace MudBlazor
                 return Task.CompletedTask;
             _timer?.Dispose();
             var value = Converter.Get(Text);
+            Value = Converter.Get(Text);
             return SetValueAsync(value, updateText: false);
         }
 
-        protected override void Dispose(bool disposing)
+        #endregion
+
+
+        #region Selection & Search
+
+        public async Task SelectOption(T value)
         {
+            await SetValueAsync(value);
+            //if (_items != null)
+            //    _selectedListItemIndex = Array.IndexOf(_items, value);
+            var optionText = GetItemString(value);
+            if (!_isCleared)
+                await SetTextAsync(optionText, false);
             _timer?.Dispose();
-            
-            if (_cancellationTokenSrc != null)
+            if (MultiSelection == false)
             {
-                try
-                {
-                    _cancellationTokenSrc.Dispose();
-                }
-                catch { }
+                IsOpen = false;
+            }
+            BeginValidate();
+            if (!_isCleared)
+                await _elementReference?.SetText(optionText);
+            _elementReference?.FocusAsync().AndForget();
+            StateHasChanged();
+        }
+
+        private void CancelToken()
+        {
+            try
+            {
+                _cancellationTokenSrc?.Cancel();
+            }
+            catch
+            { }
+
+            _cancellationTokenSrc = new CancellationTokenSource();
+        }
+
+        /// <remarks>
+        /// This async method needs to return a task and be awaited in order for
+        /// unit tests that trigger this method to work correctly.
+        /// </remarks>
+        internal async Task OnSearchAsync()
+        {
+            if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
+            {
+                IsOpen = false;
+                StateHasChanged();
+                return;
             }
 
-            base.Dispose(disposing);
+            IEnumerable<T> searchedItems = Array.Empty<T>();
+            CancelToken();
+
+            try
+            {
+                if (ProgressIndicatorInPopoverTemplate != null)
+                {
+                    IsOpen = true;
+                }
+
+                var searchTask = SearchFuncWithCancel != null ?
+                    SearchFuncWithCancel(Text, _cancellationTokenSrc.Token) :
+                    SearchFunc(Text);
+
+                _currentSearchTask = searchTask;
+
+                StateHasChanged();
+
+                searchedItems = await searchTask ?? Array.Empty<T>();
+            }
+            catch (TaskCanceledException)
+            {
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("The search function failed to return results: " + e.ToString());
+            }
+
+            _itemsReturned = searchedItems.Count();
+
+            if (MaxItems.HasValue)
+            {
+                searchedItems = searchedItems.Take(MaxItems.Value);
+            }
+            _items = searchedItems.ToArray();
+
+            _enabledItemIndices = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).Select(tuple => tuple.idx).ToList();
+            _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices.First() : -1;
+
+            IsOpen = true;
+
+            if (_items?.Length == 0)
+            {
+                await CoerceValueToText();
+                StateHasChanged();
+                return;
+            }
+
+            StateHasChanged();
+            if (_list != null)
+            {
+                _list.UpdateLastActivatedItem(Value);
+                _list.UpdateSelectedStyles();
+                if (_list._lastActivatedItem != null)
+                {
+                    await _list.ScrollToMiddleAsync(_list._lastActivatedItem);
+                }
+            }
+
+            StateHasChanged();
+        }
+
+        #endregion
+
+
+        #region Popover State
+
+        /// <summary>
+        /// Toggle the menu (if not disabled or not readonly, and is opened).
+        /// </summary>
+        public async Task ToggleMenu()
+        {
+            if ((Disabled || ReadOnly) && !IsOpen)
+                return;
+            if (IsOpen)
+                await CloseMenu();
+            else
+                await OpenMenu();
+        }
+
+        public async Task OpenMenu()
+        {
+            if (SelectOnClick)
+                await _elementReference.SelectAsync();
+            await OnSearchAsync();
+            //await Task.Delay(1);
+
+            //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "Key+none" });
+            //await OnOpen.InvokeAsync();
+        }
+
+        public async Task CloseMenu()
+        {
+            if (ResetValueOnEmptyText && string.IsNullOrEmpty(Text))
+            {
+                await SetValueAsync(default(T));
+            }
+            _timer?.Dispose();
+            await CoerceTextToValue();
+            IsOpen = false;
+            StateHasChanged();
+
+            //enable escape propagation: the select popover was closed, now underlying components are allowed to handle escape key
+            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+
+            //await OnClose.InvokeAsync();
+        }
+
+        [Obsolete]
+        private async Task ChangeMenu(bool open)
+        {
+            if (open)
+            {
+                if (SelectOnClick)
+                    await _elementReference.SelectAsync();
+                await OnSearchAsync();
+            }
+            else
+            {
+                if (ResetValueOnEmptyText && string.IsNullOrEmpty(Text))
+                {
+                    await SetValueAsync(default(T));
+                }
+                _timer?.Dispose();
+                //RestoreScrollPosition();
+                await CoerceTextToValue();
+                IsOpen = false;
+                StateHasChanged();
+            }
+        }
+
+        #endregion
+
+
+        #region Reset & Clear
+
+        /// <summary>
+        /// Clears the autocomplete's text
+        /// </summary>
+        public async Task Clear()
+        {
+            _isCleared = true;
+            IsOpen = false;
+            await SetTextAsync(string.Empty, updateValue: false);
+            await CoerceValueToText();
+            if (_elementReference != null)
+                await _elementReference.SetText("");
+            _timer?.Dispose();
+            StateHasChanged();
+        }
+
+        protected override async void ResetValue()
+        {
+            await Clear();
+            base.ResetValue();
+        }
+
+        #endregion
+
+
+        #region Events (Key, Focus, Blur, Select, Select Range)
+
+        internal async void HandleKeyDown(KeyboardEventArgs args)
+        {
+            if (Disabled || ReadOnly)
+            {
+                return;
+            }
+
+            if (_list != null && _isOpen == true && args.Key.Length != 1)
+            {
+                await _list.HandleKeyDown(args);
+                //_list.UpdateSelectedStyles();
+            }
+
+            switch (args.Key)
+            {
+                case "Tab":
+                    if (IsOpen == true)
+                    {
+                        if (SelectValueOnTab)
+                        {
+                            await OnEnterKey();
+                        }
+                        await CloseMenu();
+                    }
+                    break;
+                case "Enter":
+                case "NumpadEnter":
+                    if (IsOpen == false)
+                    {
+                        await ToggleMenu();
+                    }
+                    else
+                    {
+                        await ToggleMenu();
+                        await _elementReference.SetText(Value?.ToString());
+                    }
+                    break;
+
+                case "Escape":
+                    await CloseMenu();
+                    break;
+                case "Backspace":
+                    if (args.CtrlKey == true && args.ShiftKey == true)
+                    {
+                        Reset();
+                    }
+                    break;
+                case "ArrowDown":
+                    if (!IsOpen)
+                    {
+                        await ToggleMenu();
+                    }
+                    else
+                    {
+                        //var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
+                        //await SelectNextItem(increment < 0 ? 1 : increment);
+                    }
+                    break;
+                case "ArrowUp":
+                    if (args.AltKey == true)
+                    {
+                        await CloseMenu();
+                    }
+                    else if (!IsOpen)
+                    {
+                        await ToggleMenu();
+                    }
+                    else
+                    {
+                        //var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
+                        //await SelectNextItem(-(decrement < 0 ? 1 : decrement));
+                    }
+                    break;
+            }
+            await OnKeyDown.InvokeAsync();
+        }
+
+        internal async void HandleKeyUp(KeyboardEventArgs args)
+        {
+
+            await OnKeyUp.InvokeAsync();
+        }
+
+        internal Task OnEnterKey()
+        {
+            if (IsOpen == false)
+                return Task.CompletedTask;
+            if (_items == null || _items.Length == 0)
+                return Task.CompletedTask;
+            if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
+                return SelectOption(Value);
+            return Task.CompletedTask;
+        }
+
+        private async Task OnInputBlurred(FocusEventArgs args)
+        {
+            await OnBlur.InvokeAsync(args);
+            //return Task.CompletedTask;
+            // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
+            // resulting in a premature validation. thus, don't call base
+            //base.OnBlurred(args);
         }
 
         /// <summary>
@@ -757,19 +950,79 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        private async Task OnTextChanged(string text)
-        {
-            await base.TextChanged.InvokeAsync();
+        #endregion
 
-            if (text == null)
-                return;
-            await SetTextAsync(text, true);
+        private string GetItemString(T item)
+        {
+            if (item == null)
+                return string.Empty;
+            try
+            {
+                return Converter.Set(item);
+            }
+            catch (NullReferenceException) { }
+            return "null";
         }
 
-        private async Task ListItemOnClick(T item)
+        private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearchAsync).AndForget();
+
+        //private ValueTask SelectNextItem(int increment)
+        //{
+        //    if (increment == 0 || _items == null || _items.Count == 0 || !_enabledItemIndices.Any())
+        //        return ValueTask.CompletedTask;
+        //    // if we are at the end, or the beginning we just do an rollover
+        //    _selectedListItemIndex = Math.Clamp(value: (10 * _items.Count + _selectedListItemIndex + increment) % _items.Count, min: 0, max: _items.Count - 1);
+        //    return ScrollToListItem(_selectedListItemIndex);
+        //}
+
+
+
+
+        ///// <summary>
+        ///// Scroll to a specific item index in the Autocomplete list of items.
+        ///// </summary>
+        ///// <param name="index">the index to scroll to</param>
+        ///// <param name="increment">not used</param>
+        ///// <returns>ValueTask</returns>
+        //[Obsolete("Use ScrollToListItem without increment parameter instead")]
+        //public Task ScrollToListItem(int index, int increment)
+        //    => ScrollToListItem(index).AsTask();
+
+        ///// <summary>
+        ///// Scroll to a specific item index in the Autocomplete list of items.
+        ///// </summary>
+        ///// <param name="index">the index to scroll to</param>
+        //public ValueTask ScrollToListItem(int index)
+        //{
+        //    var id = GetListItemId(index);
+        //    //id of the scrolled element
+        //    return ScrollManager.ScrollToListItemAsync(id);
+        //}
+
+        ////This restores the scroll position after closing the menu and element being 0
+        //private void RestoreScrollPosition()
+        //{
+        //    if (_selectedListItemIndex != 0) return;
+        //    ScrollManager.ScrollToListItemAsync(GetListItemId(0));
+        //}
+
+        //private string GetListItemId(in int index)
+        //{
+        //    return $"{_componentId}_item{index}";
+        //}
+
+        //protected internal ValueTask ScrollToMiddleAsync(MudListItem<T> item)
+        //    => ScrollManager.ScrollToMiddleAsync(_elementId, item.ItemId);
+
+        protected void ChipClose(MudChip chip)
         {
-            await SelectOption(item);
+            SelectedValues = SelectedValues.Where(x => !x.Equals(chip.Value));
         }
+
+        //private async Task ListItemOnClick(T item)
+        //{
+        //    await SelectOption(item);
+        //}
 
     }
 }

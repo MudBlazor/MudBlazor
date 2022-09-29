@@ -1,8 +1,30 @@
 ﻿@namespace MudBlazor
+@typeparam T
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@Classname" style="@Style">
+<div @attributes="UserAttributes" id="@_elementId" class="@Classname" style="@Stylename" tabindex="-1" @onkeydown="HandleKeyDown" @onfocusout="HandleOnFocusOut">
     <CascadingValue Value="@this" IsFixed="true">
-        @ChildContent
+        @if (MultiSelection && SelectAll && ParentList == null)
+        {
+            <MudListItem T="T" IsFunctional="true" Icon="@SelectAllCheckBoxIcon" IconColor="@Color" Text="@SelectAllText" OverrideMultiSelectionComponent="MultiSelectionComponent.None" OnClick="@(() => SelectAllItems(_allSelected))" OnClickHandlerPreventDefault="true" Dense="@Dense" Class="mb-2" />
+            <MudDivider />
+        }
+        @if (ItemCollection != null)
+        {
+            <MudVirtualize IsEnabled="@Virtualize" Items="ItemCollection" Context="item">
+                @if (MudSelect != null)
+                {
+                    <MudSelectItem Value="@item" Text="@(MudSelect.ToStringFunc == null ? item.ToString() : MudSelect.ToStringFunc(item))" />
+                }
+                else
+                {
+                    <MudListItem Value="@item" Text="@item.ToString()" />
+                }
+            </MudVirtualize>
+        }
+        else
+        {
+            @ChildContent
+        }
     </CascadingValue>
 </div>

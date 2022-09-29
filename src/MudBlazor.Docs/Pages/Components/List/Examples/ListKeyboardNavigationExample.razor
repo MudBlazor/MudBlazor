@@ -1,0 +1,53 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="8" Class="d-flex align-center justify-center">
+        <MudPaper Width="300px">
+            <MudList @ref="_list" T="int" Clickable="_clickable" MultiSelection="_multiSelection" @bind-SelectedValue="_value" SelectedValuesChanged="GetSelectedValues" OnKeyDown="OnKeyDown">
+                <MudListItem T="int" Text="Sparkling Water (1)" Value="1" />
+                <MudListItem T="int" Text="Still Water (2)" Value="2" />
+                <MudListItem T="int" Text="Teas">
+                    <NestedList>
+                        <MudListItem Text="Earl Grey (3)" Value="3" />
+                        <MudListItem Text="Matcha (4)" Value="4" />
+                        <MudListItem Text="Pu'er (5)" Value="5" />
+                    </NestedList>
+                </MudListItem>
+                <MudListItem T="int" Text="Coffees">
+                    <NestedList>
+                        <MudListItem Text="Irish Coffee (6)" Value="6" />
+                        <MudListItem Text="Double Espresso (7)" Value="7" />
+                        <MudListItem Text="Cafe Latte (8)" Value="8" />
+                    </NestedList>
+                </MudListItem>
+            </MudList>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" sm="4">
+        <MudCheckBox @bind-Checked="_clickable" Color="Color.Primary" Label="Clickable" />
+        <MudCheckBox @bind-Checked="_multiSelection" Color="Color.Primary" Label="MultiSelection" />
+        <MudDivider />
+        <MudText Class="ma-4">Last pressed key: @_key</MudText>
+    </MudItem>
+</MudGrid>
+
+@code{
+    bool _clickable = false;
+    bool _multiSelection = false;
+    int _value;
+    MudList<int> _list;
+    string _values = "";
+    string _key = "";
+
+    private void GetSelectedValues()
+    {
+        _values = string.Join(", ", _list.SelectedValues);
+        StateHasChanged();
+    }
+
+    private void OnKeyDown(KeyboardEventArgs args)
+    {
+        _key = args.Key;
+    }
+}

@@ -2,10 +2,14 @@
 <MudPopoverProvider></MudPopoverProvider>
 
 <MudGrid>
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.body2">MudSelect.Value: "@value"</MudText>
+        <MudText Typo="Typo.body2">Selected Values: "@string.Join(", ", options ?? new List<string>())"</MudText>
+    </MudItem>
     <MudItem xs="12" md="12">
-        <MudSelect T="string" Label="Felines" HelperText="Pick your favorite feline"
+        <MudSelect T="string" @bind-Value="value" @bind-SelectedValues="options" Label="Felines" HelperText="Pick your favorite feline"
                    MultiSelection="true" SelectAll="true" SelectAllText="Select all felines"
-                   @bind-Value="value" @bind-SelectedValues="options" AdornmentIcon="@Icons.Material.Filled.Search"
+                    AdornmentIcon="@Icons.Material.Filled.Search"
                    MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))">
             @foreach (var feline in felines)
             {
@@ -13,14 +17,11 @@
             }
         </MudSelect>
     </MudItem>
-    <MudItem xs="12" md="6">
-        <MudText Typo="Typo.body2">MudSelect.Value: "@value"</MudText>
-    </MudItem>
 </MudGrid>
 
 @code {
     private string value { get; set; } = "Nothing selected";
-    private IEnumerable<string> options { get; set; } = new List<string>() { "Jaguar", "Leopard", "Lion", "Lynx", "Panther", "Puma", "Tiger"};
+    private IEnumerable<string> options { get; set; } = new HashSet<string>() { "Lion" };
 
     private string[] felines =
     {

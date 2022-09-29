@@ -11,11 +11,12 @@ namespace MudBlazor
     /// </summary>
     public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
     {
-        private String GetCssClasses() =>  new CssBuilder()
+        private String GetCssClasses() => new CssBuilder()
             .AddClass(Class)
             .Build();
 
         private IMudSelect _parent;
+        internal MudSelect<T> MudSelect => (MudSelect<T>)IMudSelect;
         internal string ItemId { get; } = "_"+Guid.NewGuid().ToString().Substring(0,8);
 
         /// <summary>
@@ -46,9 +47,21 @@ namespace MudBlazor
             }
         }
 
-        private IMudShadowSelect  _shadowParent;
-        private bool _isSelected;
+        /// <summary>
+        /// Functional items does not hold values. If a value set on Functional item, it ignores by the MudSelect. They cannot be subject of keyboard navigation and selection.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool IsFunctional { get; set; }
 
+        /// <summary>
+        /// The text to display
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public string Text { get; set; }
+
+        private IMudShadowSelect _shadowParent;
         [CascadingParameter]
         internal IMudShadowSelect IMudShadowSelect
         {
@@ -66,8 +79,6 @@ namespace MudBlazor
         /// </summary>
         [CascadingParameter(Name = "HideContent")]
         internal bool HideContent { get; set; }
-
-        internal MudSelect<T> MudSelect => (MudSelect<T>)IMudSelect;
 
         private void OnUpdateSelectionStateFromOutside(IEnumerable<T> selection)
         {
@@ -99,28 +110,15 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Selected state of the option. Only works if the parent is a mulit-select
-        /// </summary>
+        private bool _isSelected;
         internal bool IsSelected
         {
             get => _isSelected;
             set
             {
+                if (_isSelected == value)
+                    return;
                 _isSelected = value;
-            }
-        }
-
-        /// <summary>
-        /// The checkbox icon reflects the multi-select option's state
-        /// </summary>
-        protected string CheckBoxIcon
-        {
-            get
-            {
-                if (!MultiSelection)
-                    return null;
-                return IsSelected ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank;
             }
         }
 
@@ -130,18 +128,30 @@ namespace MudBlazor
             {
                 var converter = MudSelect?.Converter;
                 if (converter == null)
-                    return $"{Value}";
-                return converter.Set(Value);
+                    return $"{(string.IsNullOrEmpty(Text) ? Value : Text)}";
+                return string.IsNullOrEmpty(Text) == false ? Text : converter.Set(Value);
             }
         }
 
-        private void OnClicked()
+        protected void HandleOnClick()
         {
-            if (MultiSelection)
-                IsSelected = !IsSelected;
-
-            MudSelect?.SelectOption(Value);
+            // Selection works on list. We arrange only popover state and some minor arrangements on click.
+            MudSelect?.SelectOption(Value).AndForget();
             InvokeAsync(StateHasChanged);
+            if (MultiSelection == false)
+            {
+                MudSelect.CloseMenu().AndForget();
+            }
+            OnClick.InvokeAsync().AndForget();
+        }
+
+        protected bool GetDisabledStatus()
+        {
+            if (MudSelect?.ItemDisabledFunc != null)
+            {
+                return MudSelect.ItemDisabledFunc(Value);
+            }
+            return Disabled;
         }
 
         public void Dispose()

@@ -1,0 +1,52 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="8" Class="d-flex align-center justify-center">
+        <MudPaper Width="300px">
+            <MudList T="string" Clickable="true" MultiSelection="true" Style="max-height:400px; overflow-y: auto;" DisablePadding="_disablePadding">
+                <MudListSubheader T="string" Sticky="_sticky" SecondaryBackground="_secondaryBackground">England</MudListSubheader>
+                @foreach (string club in _englishClubs)
+                {
+                    <MudListItem Value="@club" Text="@club" />
+                }
+
+                <MudListSubheader T="string" Sticky="_sticky" SecondaryBackground="_secondaryBackground">Spain</MudListSubheader>
+                @foreach (string club in _spanishClubs)
+                {
+                    <MudListItem Value="@club" Text="@club" />
+                }
+
+                <MudListSubheader T="string" Sticky="_sticky" SecondaryBackground="_secondaryBackground">Germany</MudListSubheader>
+                @foreach (string club in _germanClubs)
+                {
+                    <MudListItem Value="@club" Text="@club" />
+                }
+
+                <MudListSubheader T="string" Sticky="_sticky" SecondaryBackground="_secondaryBackground">Turkey</MudListSubheader>
+                @foreach (string club in _turkishClubs)
+                {
+                    <MudListItem Value="@club" Text="@club" />
+                }
+            </MudList>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" sm="4">
+        <MudCheckBox @bind-Checked="_sticky" Color="Color.Primary" Label="Sticky SubHeader" />
+        <MudCheckBox @bind-Checked="_secondaryBackground" Color="Color.Primary" Label="Secondary Background" />
+        <MudCheckBox @bind-Checked="_disablePadding" Color="Color.Primary" Label="Disable Padding" />
+    </MudItem>
+</MudGrid>
+
+
+
+@code{
+    bool _sticky = true;
+    bool _secondaryBackground = true;
+    bool _disablePadding = true;
+
+    string[] _englishClubs = { "Arsenal", "Manchester City", "Liverpool", "Manchester United", "Chelsea" };
+    string[] _germanClubs = { "Bayern Munich", "Borussia Dortmund", "Schalke 04", "Bayern Leverkusen", "Stuttgart" };
+    string[] _spanishClubs = { "Barcelona", "Read Madrid", "Atletico Madrid", "Getafe", "Levante", "Sevilla", "Valencia", "Villareal" };
+    string[] _turkishClubs = { "Fenerbahçe", "Galatasaray", "Beşiktaş", "Trabzonspor", "Alanyaspor", "Antalyaspor", "Ankaragücü" };
+}

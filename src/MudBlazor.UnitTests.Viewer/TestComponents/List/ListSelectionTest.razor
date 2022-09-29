@@ -1,31 +1,32 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudList Clickable="true" @bind-SelectedItem="selectedItem">
-    <MudListSubheader>
-        Your drink:
-        <MudChip Color="Color.Secondary">
-            @(selectedItem?.Text ?? "You are dry")
-        </MudChip>
-    </MudListSubheader>
-    <MudListItem Text="Sparkling Water" Value="1"/>
-    <MudListItem Text="Teas">
-        <NestedList>
-            <MudListItem Text="Earl Grey"  Value="2"/>
-            <MudListItem Text="Matcha"  Value="3"/>
-            <MudListItem Text="Pu'er"  Value="4"/>
-        </NestedList>
-    </MudListItem>
-    <MudListItem Text="Coffees">
-        <NestedList>
-            <MudListItem Text="Irish Coffee"  Value="5"/>
-            <MudListItem Text="Double Espresso"  Value="6"/>
-            <MudListItem Text="Cafe Latte"  Value="7"/>
-        </NestedList>
-    </MudListItem>
-</MudList>
-
+<MudPaper Width="300px">
+    <MudList T="int" Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue">
+        <MudListSubheader T="string">
+            Your drink:
+            <MudChip Color="Color.Secondary">
+                @(selectedItem?.Text ?? "You are dry") (@(selectedValue.ToString()))
+            </MudChip>
+        </MudListSubheader>
+        <MudListItem Text="Sparkling Water" Value="1" />
+        <MudListItem T="int" Text="Teas">
+            <NestedList>
+                <MudListItem Text="Earl Grey" Value="2" />
+                <MudListItem Text="Matcha" Value="3" />
+                <MudListItem Text="Pu'er" Value="4" />
+            </NestedList>
+        </MudListItem>
+        <MudListItem T="int" Text="Coffees">
+            <NestedList>
+                <MudListItem Text="Irish Coffee" Value="5" />
+                <MudListItem Text="Double Espresso" Value="6" />
+                <MudListItem Text="Cafe Latte" Value="7" />
+            </NestedList>
+        </MudListItem>
+    </MudList>
+</MudPaper>
 @code
 {
-    public static string __description__ = "Clicking the drinks selects them. The child lists are updated accordingly.";
-    MudListItem selectedItem;
+    MudListItem<int> selectedItem;
+    int selectedValue;
 }

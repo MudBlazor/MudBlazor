@@ -65,6 +65,10 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string Label { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool OnClickStopPropagation { get; set; }
+
         /// <summary>
         /// The position of the text/label.
         /// </summary>

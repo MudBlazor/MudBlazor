@@ -1,8 +1,11 @@
-﻿.mud-list {
+﻿@import '../abstracts/variables';
+
+.mud-list {
     margin: 0;
     padding: 0;
     position: relative;
     list-style: none;
+    outline: none;
 
     &.mud-list-padding {
         padding-top: 8px;
@@ -21,6 +24,7 @@
     padding-bottom: 8px;
     justify-content: flex-start;
     text-decoration: none;
+    outline: none;
 
     &.mud-list-item-dense {
         padding-top: 4px;
@@ -55,10 +59,6 @@
     &:hover {
         background-color: var(--mud-palette-action-default-hover);
     }
-
-    &:focus:not(.mud-selected-item) {
-        background-color: var(--mud-palette-action-default-hover);
-    }
 }
 
 .mud-list-item-gutters {
@@ -72,6 +72,8 @@
     min-width: 0;
     margin-top: 4px;
     margin-bottom: 4px;
+    padding-inline-start: 8px;
+    padding-inline-end: 8px;
 }
 
 
@@ -84,8 +86,20 @@
 .mud-list-item-icon {
     color: var(--mud-palette-action-default);
     display: inline-flex;
-    min-width: 56px;
+    /*min-width: 56px;*/
     flex-shrink: 0;
+    padding-inline-start: 8px;
+    padding-inline-end: 8px;
+    margin-inline-start: -4px;
+    margin-inline-end: 4px;
+}
+
+.mud-list-item-multiselect {
+    max-height: 32px;
+
+    &.mud-list-item-multiselect-checkbox {
+        padding-inline-end: 16px;
+    }
 }
 
 
@@ -95,8 +109,13 @@
     box-sizing: border-box;
     list-style: none;
     font-weight: 500;
-    padding-top: 8px;
-    padding-bottom: 20px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    background-color: var(--mud-palette-background);
+}
+
+.mud-list-subheader-secondary-background {
+    background-color: var(--mud-palette-background-grey);
 }
 
 .mud-list-subheader-gutters {
@@ -111,16 +130,26 @@
 }
 
 .mud-list-subheader-sticky {
-    top: 0;
+    top: -8px;
     z-index: 1;
     position: sticky;
-    background-color: inherit;
+
+    &.mud-list-subheader-sticky-dense {
+        top: 0;
+    }
 }
 
+.mud-list-item-hilight {
+    background-color: var(--mud-palette-background-grey);
+}
 
 .mud-list-item-avatar {
     min-width: 56px;
     flex-shrink: 0;
+}
+
+.mud-list-item-nested-background {
+    background-color: var(--mud-palette-background-grey);
 }
 
 .mud-nested-list {

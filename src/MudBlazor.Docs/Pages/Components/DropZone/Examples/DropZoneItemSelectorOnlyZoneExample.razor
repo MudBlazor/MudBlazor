@@ -2,7 +2,7 @@
 
 <MudDropContainer T="DropItem" Items="_items" Item ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-column flex-grow-1">
     <ChildContent>
-        <MudListSubheader Class="mt-4 pb-2">Folders</MudListSubheader>
+        <MudListSubheader T="string" Class="mt-4 pb-2">Folders</MudListSubheader>
         <div class="d-flex gap-4 mx-4">
             <MudDropZone T="DropItem" OnlyZone="true" Identifier="Propaganda">
                 <MudPaper Outlined="true" Class="d-flex align-center pa-3 gap-2">
@@ -15,7 +15,7 @@
                 </MudPaper>
             </MudDropZone>
         </div>
-        <MudListSubheader Class="mt-4 pb-2">Files</MudListSubheader>
+        <MudListSubheader T="string" Class="mt-4 pb-2">Files</MudListSubheader>
         <MudDropZone T="DropItem" Identifier="Files" Class="d-flex flex-wrap flex-grow-1 pa-2 rounded" />
     </ChildContent>
     <ItemRenderer>

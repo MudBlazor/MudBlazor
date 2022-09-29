@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudSelect @bind-Value="value" MultiSelection="true" IsPreRendered="true">
+<MudSelect @bind-SelectedValues="values" MultiSelection="true">
     <MudSelectItem Value="@("1")">1</MudSelectItem>
     <MudSelectItem Value="@("2")">2</MudSelectItem>
     <MudSelectItem Value="@("3")">3</MudSelectItem>
@@ -11,5 +11,5 @@
 @code {
     public static string __description__ = "Click should not close the menu and selecting multiple values should update the bindable value with a comma separated list.";
 
-    string value=null;
+    IEnumerable<string> values = new HashSet<string>();
 }

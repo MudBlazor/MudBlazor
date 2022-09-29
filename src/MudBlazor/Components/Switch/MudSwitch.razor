@@ -2,7 +2,7 @@
 @inherits MudBooleanInput<T>
 @typeparam T
 
-<label class="@Classname" style="@Style" @onkeydown="@HandleKeyDown" id="@_elementId">
+<label class="@Classname" style="@Style" @onkeydown="@HandleKeyDown" id="@_elementId" @onclick:stopPropagation="@OnClickStopPropagation">
     <span class="mud-switch-span mud-flip-x-rtl">
         <span tabindex="0" class="@SwitchClassname">
             <span class="mud-switch-button">

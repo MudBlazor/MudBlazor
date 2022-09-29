@@ -15,15 +15,15 @@
 			{
 				var dropzone = i.ToString();
 				<MudPaper Class="ma-4 flex-grow-1">
-					<MudList Clickable="true" Class="d-flex flex-column mud-height-full">
-						<MudListSubheader>Drop Zone @dropzone</MudListSubheader>
+					<MudList T="string" Clickable="true" Class="d-flex flex-column mud-height-full">
+						<MudListSubheader T="string">Drop Zone @dropzone</MudListSubheader>
 						<MudDropZone T="DropItem" Identifier="@dropzone" Class="flex-grow-1" AllowReorder="true" />
 					</MudList>
 				</MudPaper>
 			}
 		</ChildContent>
 		<ItemRenderer>
-			<MudListItem Text="@($"{context.Name} ({context.Order})")" />
+			<MudListItem T="string" Text="@($"{context.Name} ({context.Order})")" />
 		</ItemRenderer>
 	</MudDropContainer>
 </div>

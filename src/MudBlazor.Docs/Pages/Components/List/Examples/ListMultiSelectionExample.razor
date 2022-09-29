@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor.Docs.Examples
+@inject ISnackbar Snackbar
+
+<MudPaper Width="300px">
+    <MudList @ref="_list" T="int" Clickable="true" SelectedValuesChanged="GetSelectedValues" MultiSelection="true">
+        <MudListSubheader T="string">
+            Your drink:
+            <MudChip Color="Color.Secondary">
+                
+            </MudChip>
+        </MudListSubheader>
+        <MudListItem Text="Sparkling Water" Value="1" />
+        <MudListItem Text="Still Water" Value="11" />
+        <MudListItem T="int" Text="Teas">
+            <NestedList>
+                <MudListItem Text="Earl Grey" Value="2" />
+                <MudListItem Text="Matcha" Value="3" />
+                <MudListItem Text="Pu'er" Value="4" />
+            </NestedList>
+        </MudListItem>
+        <MudListItem T="int" Text="Coffees">
+            <NestedList>
+                <MudListItem Text="Irish Coffee" Value="5" />
+                <MudListItem Text="Double Espresso" Value="6" />
+                <MudListItem Text="Cafe Latte" Value="7" />
+            </NestedList>
+        </MudListItem>
+    </MudList>
+</MudPaper>
+
+<MudText>Selected Values: @_values</MudText>
+@code
+{
+    //MudListItem<int> selectedItem;
+    MudList<int> _list;
+    string _values = "";
+    IEnumerable<int> selectedValue = new HashSet<int>();
+
+    private void GetSelectedValues()
+    {
+        Snackbar.Add("Method invoke");
+        _values = string.Join(", ", _list.SelectedValues);
+        StateHasChanged();
+    }
+}

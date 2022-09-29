@@ -17,10 +17,10 @@
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">TestComponents</MudText>
         </MudDrawerHeader>
-        <MudList>
+        <MudList T="string">
             @foreach (var type in availableComponentTypes)
             {
-                <MudListItem OnClick="@(() => selectedType = type)" @key="type.Name">@type.Name</MudListItem>
+                <MudListItem T="string" OnClick="@(() => selectedType = type)" @key="type.Name">@type.Name</MudListItem>
             }
         </MudList>
     </MudDrawer>

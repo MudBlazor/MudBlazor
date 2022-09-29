@@ -33,9 +33,9 @@
     private string ToString(TestItem x)
         => x is null ? string.Empty : $"{x.A}";
 
-    private string GetMultiSelectionText(List<string> selectedValues)
+    private string GetMultiSelectionText(List<TestItem> selectedValues)
     {
-        return $"Selected values: {string.Join(", ", selectedValues.Select(x => x))}";
+        return $"Selected values: {string.Join(", ", selectedValues.Select(x => x.A))}";
     }
 
     private class TestItem

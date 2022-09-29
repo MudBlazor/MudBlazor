@@ -1,25 +1,25 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudList Clickable="true" Color="Color" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue">
-    <MudListSubheader>
+<MudList @ref="_list" T="int?" Color="Color" Clickable="true" @bind-SelectedValue="selectedValue" @bind-SelectedItem="selectedItem">
+    <MudListSubheader T="int?">
         Your drink:
         <MudChip Color="Color.Secondary">
             @(selectedItem?.Text ?? "You are dry")
         </MudChip>
     </MudListSubheader>
-    <MudListItem Text="Sparkling Water" Value="1"/>
-    <MudListItem Text="Teas">
+    <MudListItem T="int?" Text="Sparkling Water" Value="1"/>
+    <MudListItem T="int?" Text="Teas">
         <NestedList>
-            <MudListItem Text="Earl Grey"  Value="2"/>
-            <MudListItem Text="Matcha"  Value="3"/>
-            <MudListItem Text="Pu'er"  Value="4"/>
+            <MudListItem T="int?" Text="Earl Grey"  Value="2"/>
+            <MudListItem T="int?" Text="Matcha"  Value="3"/>
+            <MudListItem T="int?" Text="Pu'er"  Value="4"/>
         </NestedList>
     </MudListItem>
-    <MudListItem Text="Coffees">
+    <MudListItem T="int?" Text="Coffees">
         <NestedList>
-            <MudListItem Text="Irish Coffee"  Value="5"/>
-            <MudListItem Text="Double Espresso"  Value="6"/>
-            <MudListItem Text="Cafe Latte"  Value="7"/>
+            <MudListItem T="int?" Text="Irish Coffee"  Value="5"/>
+            <MudListItem T="int?" Text="Double Espresso"  Value="6"/>
+            <MudListItem T="int?" Text="Cafe Latte"  Value="7"/>
         </NestedList>
     </MudListItem>
 </MudList>
@@ -27,13 +27,16 @@
 @code
 {
     [Parameter] public Color Color { get; set; } = Color.Primary;
+    MudList<int?> _list;
     public static string __description__ = "Sparkling Water should be selected initially.";
-    MudListItem selectedItem;
-    object selectedValue=1;
+    MudListItem<int?> selectedItem;
+    int? selectedValue = 1;
 
-    public void SetSelecedValue(object value)
+    public void SetSelectedValue(int? value)
     {
-        selectedValue=value;
+        selectedValue = value;
+        //StateHasChanged();
+        //_list.UpdateSelectedItem();
         StateHasChanged();
     }
 }

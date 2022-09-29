@@ -212,7 +212,7 @@ namespace MudBlazor
             execute().AndForget();
         }
 
-        protected void BeginValidate()
+        protected internal void BeginValidate()
         {
             Func<Task> execute = async () =>
             {

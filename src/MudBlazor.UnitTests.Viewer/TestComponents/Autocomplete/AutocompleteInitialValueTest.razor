@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudAutocomplete @bind-Value="SelectedValue" @bind-SelectedValues="SelectedValues" MultiSelection="MultiSelection" SearchFunc="Search" />
+
+@code {
+    public static string __description__ = "Click should open the Menu and selecting a value should update the bindable value.";
+
+    List<string> _letters = new() { "a", "b", "c" };
+
+    [Parameter]
+    public string SelectedValue { get; set; }
+    [Parameter]
+    public IEnumerable<string> SelectedValues { get; set; }
+    [Parameter]
+    public bool MultiSelection { get; set; }
+
+    private Task<IEnumerable<string>> Search(string value)
+    {
+        var result = string.IsNullOrEmpty(value) ? _letters : _letters.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        return Task.FromResult(result);
+    }
+}
