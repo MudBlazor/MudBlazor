@@ -78,7 +78,7 @@ namespace MudBlazor
         public static ValueTask MudChangeCssVariableAsync(this ElementReference elementReference, string variableName, int value) =>
             elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.changeCssVariable", elementReference, variableName, value) ?? ValueTask.CompletedTask;
 
-        public static ValueTask<int> MudAddEventListenerAsync<T>(this ElementReference elementReference, DotNetObjectReference<T> dotnet, string @event, string callback, bool stopPropagation = false) where T : class
+        public static ValueTask<int> MudAddEventListenerAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] T>(this ElementReference elementReference, DotNetObjectReference<T> dotnet, string @event, string callback, bool stopPropagation = false) where T : class
         {
             var parameters = dotnet?.Value.GetType().GetMethods().First(m => m.Name == callback).GetParameters().Select(p => p.ParameterType);
             if (parameters != null)

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
 
-namespace MudBlazor
+namespace MudBlazor.LegacyMouseEvents
 {
     /// <summary>
     /// see https://github.com/dotnet/aspnetcore/issues/13104
