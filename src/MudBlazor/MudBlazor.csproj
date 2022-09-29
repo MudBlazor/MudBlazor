@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -59,8 +59,8 @@
   </Target>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.9.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.0-rc.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0-rc.*" />
   </ItemGroup>
 
   <Target Name="ToolRestore">
