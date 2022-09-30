@@ -285,6 +285,15 @@ namespace MudBlazor
         [Parameter] public bool Virtualize { get; set; }
 
         /// <summary>
+        /// Gets or sets a value that determines how many additional items will be rendered
+        /// before and after the visible region. This help to reduce the frequency of rendering
+        /// during scrolling. However, higher values mean that more elements will be present
+        /// in the page.
+        /// Only used for virtualization.
+        /// </summary>
+        [Parameter] public int OverscanCount { get; set; } = 3;
+
+        /// <summary>
         /// CSS class for the table rows. Note, many CSS settings are overridden by MudTd though
         /// </summary>
         [Parameter] public string RowClass { get; set; }
