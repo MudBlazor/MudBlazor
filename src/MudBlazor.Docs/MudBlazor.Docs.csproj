@@ -128,6 +128,12 @@
     <Content Remove="excubowebcompiler.json" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Pages\Components\Scrollbar\Code\SkeletonAnimationsExampleCode.html" />
+    <None Remove="Pages\Components\Scrollbar\Code\SkeletonPulsateExampleCode.html" />
+    <None Remove="Pages\Components\Scrollbar\Code\SkeletonVariantsExampleCode.html" />
+    <None Remove="Pages\Components\Scrollbar\Code\SkeletonWaveExampleCode.html" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="wwwroot\images\landingpage" />
   </ItemGroup>
 

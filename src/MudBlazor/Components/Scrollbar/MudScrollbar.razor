@@ -1,0 +1,148 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@using MudBlazor.Extensions
+
+@code{
+    
+    /// <summary>
+    /// Supports id and class selection. Use "#idName" for id selectors (ex. <Component id="idName" />) or ".idName" for class selectors (ex. <Component Class="idName" />). Leave it null or empty to effect all scrollbars.
+    /// </summary>
+    [Parameter]
+    public string Selector { get; set; }
+
+    /// <summary>
+    /// Firefox ignores the other parameters. It can be only done with this parameter.
+    /// </summary>
+    [Parameter]
+    public string FirefoxStyle { get; set; }
+
+    /// <summary>
+    /// Custom thumb styles for scrollbar. Must end with ";" character for each style. Doesn't support by firefox (see FirefoxStyle).
+    /// </summary>
+    [Parameter]
+    public string ThumbStyle { get; set; }
+
+    /// <summary>
+    /// Custom track styles for scrollbar. Must end with ";" character for each style. Doesn't support by firefox (see FirefoxStyle).
+    /// </summary>
+    [Parameter]
+    public string TrackStyle { get; set; }
+
+    /// <summary>
+    /// Width of both scrollbar thumb and track. Doesn't support by firefox (see FirefoxStyle).
+    /// </summary>
+    [Parameter]
+    public int Width { get; set; }
+
+    /// <summary>
+    /// Width of both scrollbar thumb and track on hover. Doesn't support by firefox (see FirefoxStyle).
+    /// </summary>
+    [Parameter]
+    public int? HoverWidth { get; set; }
+
+    /// <summary>
+    /// Border radius for scrollbar thumb. Doesn't support by firefox (see FirefoxStyle).
+    /// </summary>
+    [Parameter]
+    public int BorderRadius { get; set; }
+
+    /// <summary>
+    /// Border radius for scrollbar thumb. Supports hex values, color names and MudTheme color keywords (ex. "primary", "secondary"). Doesn't support by firefox (see FirefoxStyle).
+    /// </summary>
+    [Parameter]
+    public string Color { get; set; }
+
+    /// <summary>
+    /// Border radius for scrollbar thumb on hover. Supports hex values, color names and MudTheme color keywords (ex. "primary", "secondary"). Doesn't support by firefox (see FirefoxStyle).
+    /// </summary>
+    [Parameter]
+    public string HoverColor { get; set; }
+
+    /// <summary>
+    /// Border radius for scrollbar track. Supports hex values, color names and MudTheme color keywords (ex. "primary", "secondary"). Doesn't support by firefox (see FirefoxStyle).
+    /// </summary>
+    [Parameter]
+    public string TrackColor { get; set; }
+
+    /// <summary>
+    /// Hide the scrollbar with securing scroll functionality. Also supported by firefox.
+    /// </summary>
+    [Parameter]
+    public bool Hide { get; set; }
+
+    protected bool IsThemeColor(string color)
+    {
+        foreach (Color val in Enum.GetValues(typeof(Color)))
+        {
+            if (val.ToDescriptionString() == color)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+<style>
+    @(Selector) {
+        @if (Hide)
+        {
+            <MudRender>scrollbar-width: none;</MudRender>
+        }
+        @(FirefoxStyle)
+    }
+
+    @(Selector)::-webkit-scrollbar {
+        width: @(Width)px;
+        @if (Hide)
+        {
+            <MudRender>display: none;</MudRender>
+        }
+        @(Style)
+    }
+
+    @(Selector):hover::-webkit-scrollbar {
+        @if (HoverWidth != null)
+        {
+            <MudRender>width: @(HoverWidth)px;</MudRender>
+        }
+        
+    }
+
+    @(Selector)::-webkit-scrollbar-thumb {
+        @if (IsThemeColor(Color))
+        {
+            <MudRender>background-color: var(--mud-palette-@(Color));</MudRender>
+        }
+        else
+        {
+            <MudRender>background-color: @(Color);</MudRender>
+        }
+        border-radius: @(BorderRadius)px;
+        @(ThumbStyle)
+    }
+
+    @(Selector)::-webkit-scrollbar-thumb:hover {
+        @if (IsThemeColor(HoverColor))
+        {
+            <MudRender>background-color: var(--mud-palette-@(HoverColor));</MudRender>
+        }
+        else
+        {
+            <MudRender>background-color: @(HoverColor);</MudRender>
+        }
+        width: @(HoverWidth)px;
+    }
+
+    @(Selector)::-webkit-scrollbar-track {
+        @if (IsThemeColor(TrackColor))
+        {
+            <MudRender>background-color: var(--mud-palette-@(TrackColor));</MudRender>
+        }
+        else
+        {
+            <MudRender>background-color: @(TrackColor);</MudRender>
+        }
+        @(TrackStyle)
+    }
+</style>

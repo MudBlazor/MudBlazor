@@ -1,0 +1,54 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Utilities
+
+<MudScrollbar Selector=".id3" FirefoxStyle="@GetStyleName()" />
+
+<MudGrid>
+    <MudItem xs="12" sm="8">
+        <div class="ma-0 border-solid border-2 mud-border-primary id3" style="height:400px; overflow: auto;">
+            <MudPaper Elevation="0" Height="2000px">
+                <MudStack Class="pa-4" Spacing="8">
+                    <MudText Typo="Typo.h5" Align="Align.Left">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus tristique turpis sed porttitor efficitur. Phasellus tortor est, posuere in rhoncus quis, euismod nec sem. Suspendisse commodo faucibus enim, id maximus lacus interdum vel. In eget odio nunc. Aliquam erat volutpat. Donec efficitur mollis fermentum. Sed et volutpat magna. Curabitur eget purus pellentesque, laoreet mi sed, dapibus risus.
+                    </MudText>
+                    <MudText Typo="Typo.h5" Align="Align.Left">
+                        Nulla condimentum placerat arcu ut facilisis. Phasellus placerat ipsum neque, a congue quam ornare vel. Donec hendrerit venenatis diam, nec mollis urna sodales ac. Nulla et massa elementum, tristique ante a, placerat metus. Vestibulum sagittis congue fringilla. Curabitur mattis nibh sollicitudin nibh dignissim, in dictum orci viverra. Nunc arcu odio, aliquet et aliquet ac, venenatis vel sapien. Fusce lectus erat, porttitor vel nunc ut, consectetur commodo felis. Donec porttitor convallis augue et molestie. Suspendisse sollicitudin magna a aliquam commodo. Quisque tempus, neque id elementum eleifend, felis est sollicitudin augue, vel venenatis dui enim eu erat. Nullam tempor ultricies ante ac dapibus.
+                    </MudText>
+                    <MudText Typo="Typo.h5" Align="Align.Left">
+                        Etiam posuere lacus neque, sed dignissim tellus molestie at. Sed eleifend sem sit amet euismod blandit. Etiam sodales rhoncus velit vitae iaculis. Aliquam erat volutpat. Nunc consequat dolor quam. Morbi euismod nisi eu maximus ornare. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam convallis purus vel eros volutpat, at sagittis augue rhoncus. Integer varius vestibulum ante vitae luctus. Nam pellentesque leo in nunc placerat mattis. Nunc leo augue, mollis vitae nunc id, malesuada tempus sem.
+                    </MudText>
+                    <MudText Typo="Typo.h5" Align="Align.Left">
+                        Quisque scelerisque massa id purus rhoncus aliquet. Sed rhoncus ante eget massa pharetra cursus at a risus. Sed quis laoreet nulla. Nam sed ligula feugiat ante laoreet malesuada et a mi. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam sit amet odio dui. Donec nisl tortor, maximus ut eleifend eget, egestas imperdiet velit. Sed est leo, facilisis non egestas id, aliquam id libero. Cras placerat ex luctus dui bibendum, in rhoncus mi imperdiet. Sed quis sagittis ipsum. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut ultrices ex ac magna iaculis scelerisque. Sed vel tristique erat. Duis maximus lacinia eleifend.
+                    </MudText>
+                    <MudText Typo="Typo.h5" Align="Align.Left">
+                        Morbi imperdiet dui sed risus dapibus vehicula. Proin sed odio purus. In gravida, nisl at vestibulum rhoncus, magna nisl placerat purus, nec egestas urna risus id quam. Ut pharetra ut ex eu porttitor. Fusce sit amet elit in sapien venenatis aliquam vel et odio. Morbi arcu enim, luctus nec bibendum nec, luctus vel velit. Cras eget ex ut velit consectetur rutrum ultricies sed tellus. In cursus suscipit accumsan. Quisque velit purus, ornare vel sem at, tincidunt commodo nisl.
+                    </MudText>
+                </MudStack>
+            </MudPaper>
+        </div>
+    </MudItem>
+
+    <MudItem xs="12" sm="4">
+        <MudRadioGroup T="string" @bind-SelectedOption="@_scrollbarWidth">
+            <MudRadio Option="@("auto")" Color="Color.Primary">Auto</MudRadio>
+            <MudRadio Option="@("thin")" Color="Color.Primary">Thin</MudRadio>
+        </MudRadioGroup>
+    </MudItem>
+</MudGrid>
+
+@code {
+    string _scrollbarWidth = "thin";
+
+    private string Stylename = new StyleBuilder()
+        .AddStyle("scrollbar-color: blue lightblue;")
+        .AddStyle($"scrollbar-width: auto")
+        .Build();
+
+    private string GetStyleName()
+    {
+        return new StyleBuilder()
+        .AddStyle("scrollbar-color: blue lightblue;")
+        .AddStyle($"scrollbar-width: {_scrollbarWidth};")
+        .Build();
+    }
+}

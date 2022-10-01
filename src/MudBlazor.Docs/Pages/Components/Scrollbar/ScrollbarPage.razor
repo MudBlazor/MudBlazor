@@ -1,0 +1,44 @@
+﻿@page "/components/scrollbar"
+
+<DocsPage>
+    <DocsPageHeader Title="Scrollbar" SubTitle="Create single or multiple custom scrollbars easily." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Usage">
+                <Description>
+                    MudScrollbar styles the native browser scrollbar.
+                    <MudAlert Severity="Severity.Info"><b>Note:</b> Firefox doesn't support these stylings. For firefox, please look the next example.</MudAlert>    
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="ScrollbarUsageExample" Block="true">
+                <ScrollbarUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Firefox">
+                <Description>
+                    Firefox is using <CodeInline>scrollbar-width</CodeInline> and <CodeInline>scrollbar-color</CodeInline> properties for a limited scrollbar styling.<br />
+                    You can use <CodeInline>FirefoxStyle</CodeInline> property for styles in Firefox browser.
+                    <MudAlert Severity="Severity.Info"><b>Note:</b> To see scrollbar properly, be sure you are on Firefox.</MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="ScrollbarFirefoxExample" Block="true">
+                <ScrollbarFirefoxExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Scrollbar for Mud components">
+                <Description>
+                    It is also possible to set scrollbar style inside of Mud components, like select and autocomplete.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="ScrollbarElementExample" Block="true">
+                <ScrollbarElementExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

@@ -163,6 +163,13 @@ namespace MudBlazor
         public string PopoverClass { get; set; }
 
         /// <summary>
+        /// User class names for the inline list, separated by space
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string ListClass { get; set; }
+
+        /// <summary>
         /// If true, compact vertical padding will be applied to all Select items.
         /// </summary>
         [Parameter]
