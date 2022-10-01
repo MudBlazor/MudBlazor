@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Threading.Tasks;
+using AngleSharp.Css.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -100,6 +101,17 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll("button").Should().BeEmpty();
             yesNoCancel.Result.Should().Be(null);
+        }
+
+        [Test]
+        public async Task MessageBox_CustomClass()
+        {
+            var dialogs = Context.RenderComponent<MudDialogProvider>();
+            var comp = Context.RenderComponent<SimpleMessageBox>();
+            await comp.InvokeAsync(() => comp.Find("button").Click());
+
+            dialogs.Find(".mud-dialog").ClassList.Should().Contain("messagebox");
+            dialogs.Find(".mud-dialog").GetStyle().GetZIndex().Should().Be("3000");
         }
 
     }

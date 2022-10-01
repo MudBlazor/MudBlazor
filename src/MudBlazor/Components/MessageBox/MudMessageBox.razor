@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<MudDialog @attributes="UserAttributes">
+<MudDialog Class="@Class" Style="@Style" @attributes="UserAttributes">
     <TitleContent>
         @if (TitleContent == null)
         {
@@ -12,7 +12,7 @@
         }
     </TitleContent>
     <DialogContent>
-        @if(MessageContent!=null)
+        @if (MessageContent != null)
         {
             @MessageContent
         }
