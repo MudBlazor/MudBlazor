@@ -439,6 +439,12 @@ namespace MudBlazor
             public const string Behavior = "Behavior";
         }
 
+        public static class Scrollbar
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
         public static class ScrollToTop
         {
             public const string Behavior = "Behavior";
