@@ -1,12 +1,51 @@
 ﻿@namespace MudBlazor
+@using System.Globalization
 @inherits MudComponentBase
 @typeparam T
 
+@{
+	var width = CalculatePosition().ToString(CultureInfo.InvariantCulture);
+}
+
 <div class="@Classname" style="@Style">
-    @if(ChildContent != null)
-    {
-        <MudText Typo="Typo.body1">@ChildContent</MudText>
-    }
-    <input class="@InputClassName" aria-valuenow="@Value" aria-valuemin="@_min" aria-valuemax="@_max" role="slider" @attributes="UserAttributes" type="range" min="@_min" max="@_max" step="@_step" disabled="@Disabled"
-                    @bind-value="@Text" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"/>
+	@if (ChildContent != null)
+	{
+		<MudText Typo="Typo.body1">@ChildContent</MudText>
+	}
+	<div class="mud-slider-container">
+		@if (Variant == Variant.Filled)
+		{
+			<div class="mud-slider-inner-container">
+				<div class="mud-slider-filled" style="@($"width:{width}%;")"></div>
+			</div>
+		}
+		@if (TickMarks == true)
+		{
+			<div class="mud-slider-inner-container">
+				<div class="mud-slider-tickmarks">
+					@for (int i = 0; i < _tickMarkCount; i++)
+					{
+						int current = i;
+
+						<div class="d-flex flex-column relative">
+							<span class="mud-slider-track-tick" />
+							@if (TickMarkLabels != null && current < TickMarkLabels.Length)
+							{
+								<MudText Class="mud-slider-track-tick-label" Typo="Typo.body2">@TickMarkLabels[current]</MudText>
+							}
+						</div>
+					}
+				</div>
+			</div>
+		}
+		<input class="mud-slider-input" aria-valuenow="@Value" aria-valuemin="@_min" aria-valuemax="@_max" role="slider" @attributes="UserAttributes" type="range" min="@_min" max="@_max" step="@_step" disabled="@Disabled"
+			   @bind-value="@Text" @bind-value:event="@((Immediate == true ? "oninput" : "onchange"))" />
+        @if (ValueLabel)
+        {
+            <div class="mud-slider-value-label" style="@($"left:{width}%;")">
+                @Value.ToString()
+            </div>
+        }
+	</div>
+
 </div>

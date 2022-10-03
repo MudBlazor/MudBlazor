@@ -58,8 +58,8 @@ namespace MudBlazor
         public MudColor TableLines { get; set; } = new MudColor(Colors.Grey.Lighten2).SetAlpha(1.0).ToString(MudColorOutputFormats.RGBA);
         public MudColor TableStriped { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.02).ToString(MudColorOutputFormats.RGBA);
         public MudColor TableHover { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.04).ToString(MudColorOutputFormats.RGBA);
-        public MudColor Divider { get; set; } = Colors.Grey.Lighten2;
-        public MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
+        public MudColor Divider { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
+        public MudColor DividerLight { get; set; } = Colors.Grey.Lighten2;
 
         public string PrimaryDarken
         {
@@ -173,6 +173,7 @@ namespace MudBlazor
             palette.Divider = "rgba(255,255,255, 0.12)";
             palette.DividerLight = "rgba(255,255,255, 0.06)";
             palette.TableLines = "rgba(255,255,255, 0.12)";
+            palette.TableStriped = "rgba(255,255,255, 0.2)";
             palette.LinesDefault = "rgba(255,255,255, 0.12)";
             palette.LinesInputs = "rgba(255,255,255, 0.3)";
             palette.TextDisabled = "rgba(255,255,255, 0.2)";

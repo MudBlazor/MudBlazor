@@ -23,6 +23,15 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Menu Item Customization">
+                <Description>Use the <CodeInline>Icon</CodeInline> property to show an Icon, the <CodeInline>IconSize</CodeInline> and <CodeInline>IconColor</CodeInline> can also be set.</Description>
+            </SectionHeader>
+             <SectionContent Code="MenuItemCustomizationExample" ShowCode="false">
+                <MenuItemCustomizationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Menu Width">
                 <Description>The default width of the menu popover is determined by the width of the content. You can override this with the <CodeInline>FullWidth</CodeInline> property to make it as wide as the parent.</Description>
             </SectionHeader>
@@ -67,7 +76,7 @@
                 </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="Cursor Position">
-                        <Description>With the property <CodeInline>PositionAtCurser</CodeInline>, the menu will open at the location of the click.</Description>
+                        <Description>With the property <CodeInline>PositionAtCursor</CodeInline>, the menu will open at the location of the click.</Description>
                     </SectionHeader>
                     <SectionContent Code="MenuActivatorOnMouseExample" ShowCode="false">
                         <MenuActivatorOnMouseExample/>
@@ -85,6 +94,18 @@
             </SectionHeader>
              <SectionContent Code="MenuAdvancedPopoverExample" ShowCode="false">
                 <MenuAdvancedPopoverExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Click and Touch Events">
+                <Description>
+                    On mobile devices the default <CodeInline>OnClick</CodeInline> handler will not be invoked. You must add a <CodeInline>OnTouch</CodeInline> handler as well if mobile support is desired.
+                    <MudAlert Severity="Severity.Info" Class="mt-3">Tip: Use your browser's dev tools to emulate a mobile device.</MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="MenuClickAndTouchEventsExample" ShowCode="true">
+                <MenuClickAndTouchEventsExample />
             </SectionContent>
         </DocsPageSection>
 

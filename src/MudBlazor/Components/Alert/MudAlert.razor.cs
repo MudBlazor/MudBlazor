@@ -35,7 +35,7 @@ namespace MudBlazor
             };
         }
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// Sets the position of the text to the start (Left in LTR and right in RTL).
@@ -133,7 +133,7 @@ namespace MudBlazor
 
         protected string _icon;
 
-        private Task OnCloseIconClickAsync()
+        internal Task OnCloseIconClickAsync()
         {
             if (CloseIconClicked.HasDelegate)
             {
@@ -143,6 +143,8 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
+        //If we can check this exception can include the coverage again
+        [ExcludeFromCodeCoverage]
         protected override void OnParametersSet()
         {
             if (!string.IsNullOrEmpty(Icon))

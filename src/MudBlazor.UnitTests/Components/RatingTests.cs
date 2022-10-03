@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
@@ -168,36 +169,51 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public  void RatingTest_KeyboardNavigation()
+        public async Task RatingTest_KeyboardNavigation()
         {
             var comp = Context.RenderComponent<MudRating>(("MaxValue", 12));
+            var item = comp.FindComponent<MudRatingItem>();
             // print the generated html
             //Console.WriteLine(comp.Markup);
-            
-            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+
+            await comp.InvokeAsync(() => item.Instance.HandleMouseOut(new MouseEventArgs()));
+            await comp.InvokeAsync(() => item.Instance.HandleMouseOver(new MouseEventArgs()));
+
+            await comp.InvokeAsync(() => comp.Instance.HoveredValue = 15);
+            await comp.InvokeAsync(() => item.Instance.SelectIcon());
+#pragma warning disable BL0005
+            await comp.InvokeAsync(() => comp.Instance.SelectedValue = 12);
+            await comp.InvokeAsync(() => comp.Instance.HoveredValue = 0);
+            await comp.InvokeAsync(() => item.Instance.SelectIcon());
+            await comp.InvokeAsync(() => comp.Instance.SelectedValue = 0);
+
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(1));
 
-            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(0));
             //ArrowLeft should not decrease when the value is 0
-            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(0));
 
-            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(12));
             //Shift+ArrowKey should not go beyond the max value
-            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(12));
 
-            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(0));
 
-            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", ShiftKey = true, Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(0));
 
             comp.SetParam("Disabled", true);
-            comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
+            await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(0));
+
+            await comp.InvokeAsync(() => item.Instance.HandleMouseOut(new MouseEventArgs()));
+            await comp.InvokeAsync(() => item.Instance.HandleMouseOver(new MouseEventArgs()));
         }
     }
 }

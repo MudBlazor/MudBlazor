@@ -9,14 +9,15 @@
             @attributes="UserAttributes" 
             @onclick="OnClickHandler"
             type="@ButtonType.ToDescriptionString()" 
-            href="@Link" 
+            href="@Href" 
             target="@Target"
             rel="@(Target=="_blank"?"noopener":null)"
-            disabled="@Disabled">
+            disabled="@Disabled"
+			title="@Title">
     @if (!String.IsNullOrEmpty(Icon))
     {
         <span class="mud-icon-button-label">
-            <MudIcon Icon="@Icon" Size="@Size" Title="@Title" />
+            <MudIcon Icon="@Icon" Size="@Size" />
         </span>
     }
     else

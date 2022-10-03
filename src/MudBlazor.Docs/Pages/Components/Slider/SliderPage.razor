@@ -14,6 +14,15 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Filled">
+                <Description>The slider also supports <CodeInline>Variant.Filled</CodeInline> which fills the selected value's portion of the slider.</Description>
+            </SectionHeader>
+            <SectionContent Code="SliderFilledExample">
+                <SliderFilledExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Step Sliders">
                 <Description>You can choose the increment with the <CodeInline>Step</CodeInline> prop.</Description>
             </SectionHeader>
@@ -23,11 +32,61 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Minimum and Maximum Values">
+            <SectionHeader Title="Min and Max Values">
                 <Description>With the <CodeInline>Min</CodeInline> and <CodeInline>Max</CodeInline> properties, you can set the minimum and maximum allowed value.</Description>
             </SectionHeader>
             <SectionContent Code="SliderMinMaxExample">
                 <SliderMinMaxExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Ticks" />
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Display Ticks">
+                        <Description>Tick marks can be displayed with <CodeInline>TickMarks</CodeInline> property set to true, its common that its combined with the <CodeInline>Step</CodeInline> property as well.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="SliderTickMarkExample">
+                        <SliderTickMarkExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Labels">
+                        <Description>Labels can be added to each tick by providing a string array to the <CodeInline>TickMarkLabels</CodeInline> property.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="SliderTickLabelExample">
+                        <SliderTickLabelExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Value Label">
+                <Description>Use the slider below to see the value label, this can be used by setting <CodeInline>ValueLabel</CodeInline> property to true.</Description>
+            </SectionHeader>
+            <SectionContent Code="SliderValueLabelExample">
+                <SliderValueLabelExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Size">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="SliderSizeExample">
+                <SliderSizeExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Vertical">
+                <Description>MudSlider can be displayed vertically with the <CodeInline>Vertical</CodeInline> property set to true.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Code="SliderVerticalExample">
+                <SliderVerticalExample />
             </SectionContent>
         </DocsPageSection>
 

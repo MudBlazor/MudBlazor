@@ -3,8 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -34,6 +36,7 @@ namespace MudBlazor.UnitTests.Components
             var expectedEvent = comp.Find("#chip-click-test-expected-value");
             expectedEvent.InnerHtml.Should().Be("OnClick");
         }
+
         /// <summary>
         /// Clicks on the close button and tests if the OnClose event works
         /// </summary>
@@ -55,6 +58,22 @@ namespace MudBlazor.UnitTests.Components
             var expectedEvent = comp.Find("#chip-click-test-expected-value");
             expectedEvent.InnerHtml.Should().Be("OnClose");
         }
+
+        [Test]
+        public async Task Chip_Link_Test()
+        {
+            var comp = Context.RenderComponent<ChipLinkTest>();
+            var chip = comp.FindComponent<MudChip>();
+            
+            await comp.InvokeAsync(() => chip.Instance.ForceRerender());
+            await comp.InvokeAsync(() => chip.Instance.OnClickHandler(new MouseEventArgs()));
+
+            comp.WaitForAssertion(() => comp.Find("#chip-click-test-expected-value").InnerHtml.Should().Be(""));
+#pragma warning disable BL0005
+            await comp.InvokeAsync(() => chip.Instance.Target = "_blank");
+            await comp.InvokeAsync(() => chip.Instance.OnClickHandler(new MouseEventArgs()));
+
+            comp.WaitForAssertion(() => comp.Find("#chip-click-test-expected-value").InnerHtml.Should().Be(""));
+        }
     }
 }
-    

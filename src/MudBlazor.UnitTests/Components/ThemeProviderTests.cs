@@ -105,8 +105,8 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-palette-table-lines: #e0e0e0ff;",
                 "--mud-palette-table-striped: #00000005;",
                 "--mud-palette-table-hover: #0000000a;",
-                "--mud-palette-divider: #e0e0e0ff;",
-                "--mud-palette-divider-light: #000000cc;",
+                "--mud-palette-divider: #000000cc;",
+                "--mud-palette-divider-light: #e0e0e0ff;",
                 "--mud-palette-grey-default: #9E9E9E;",
                 "--mud-palette-grey-light: #BDBDBD;",
                 "--mud-palette-grey-lighter: #E0E0E0;",
@@ -242,9 +242,16 @@ namespace MudBlazor.UnitTests.Components
             var styleLines = rootStyleNode.InnerHtml.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
             styleLines.Should().BeEquivalentTo(expectedLines);
+        }
 
-
-
+        [Test]
+        public void DarkMode_Test()
+        {
+            var comp = Context.RenderComponent<MudThemeProvider>();
+            comp.Should().NotBeNull();
+#pragma warning disable BL0005
+            comp.Instance.IsDarkMode = true;
+            comp.Instance._isDarkMode.Should().BeTrue();
         }
     }
 }

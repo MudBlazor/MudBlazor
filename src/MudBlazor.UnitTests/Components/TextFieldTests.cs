@@ -14,7 +14,10 @@ using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Field;
+using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.UnitTests.TestComponents.TextField;
+using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -23,6 +26,31 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TextFieldTests : BunitTest
     {
+        /// <summary>
+        /// Text Field id should propagate to label for attribute
+        /// </summary>
+        [Test]
+        public void TestFieldLabelFor()
+        {
+            var comp = Context.RenderComponent<FormIsValidTest3>();
+            var label = comp.FindAll(".mud-input-label");
+            label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("textFieldLabelTest");
+            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
+        }
+        
+        /// <summary>
+        /// Initial Text for double should be 0, with F1 format it should be 0.0
+        /// </summary>
+        [Test]
+        public async Task TextFieldLabelFor()
+        {
+            var comp = Context.RenderComponent<FieldTest>();
+            var label = comp.FindAll(".mud-input-label");
+            label[0].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
+            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
+            label[2].Attributes.GetNamedItem("for")?.Value.Should().Be("fieldLabelTest");
+        }
+        
         /// <summary>
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>
@@ -91,7 +119,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Change("seventeen");
             comp.Find("input").Blur();
             //Console.WriteLine(comp.Markup);
-            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         }
 
@@ -386,6 +414,18 @@ namespace MudBlazor.UnitTests.Components
             // Button removed after clearing text by typing
             comp.Find("input").Change(string.Empty);
             comp.FindAll("button").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task TextField_ClearButton_TabIndex_Test()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                Parameter(nameof(MudTextField<string>.Clearable), true),
+                Parameter(nameof(MudTextField<string>.Text), "Test")
+            );
+
+            // Button should have tabindex -1
+            comp.Find("button").GetAttribute("tabindex").Should().Be("-1");
         }
 
         #region ValidationAttribute support
@@ -692,6 +732,100 @@ namespace MudBlazor.UnitTests.Components
             });
             comp.Instance.Error.Should().BeFalse();
             comp.Instance.ValidationErrors.Should().HaveCount(0);
+
+            comp.WaitForAssertion(() => comp.Instance.GetInputType().Should().Be(InputType.Text));
+            await comp.InvokeAsync(() => comp.Instance.SelectAsync());
+            await comp.InvokeAsync(() => comp.Instance.SelectRangeAsync(0, 1));
+            comp.WaitForAssertion(() => comp.Instance.ValidationErrors.Should().HaveCount(0));
+        }
+        
+        [Test]
+        public async Task TextField_OnlyValidateIfDirty_Is_True_Should_OnlyHaveInputErrorWhenValueChanged()
+        {
+            var comp = Context.RenderComponent<MudTextField<int?>>(
+                ComponentParameter.CreateParameter("Required", true),
+                ComponentParameter.CreateParameter("OnlyValidateIfDirty", true));
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+            
+            // user does not change input value but changes focus
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+
+            // user puts in a invalid integer value
+            comp.Find("input").Change("invalid");
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
+            
+            // user does not change invalid input value but changes focus
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
+            
+            // reset (must reset dirty state)
+            await comp.InvokeAsync(() => comp.Instance.Reset());
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+            
+            // user does not change input value but changes focus
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+            
+            // user puts in a invalid integer value
+            comp.Find("input").Change("invalid");
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
+            
+            // user corrects input
+            comp.Find("input").Change(55);
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+        }
+        
+        [Test]
+        public async Task TextField_OnlyValidateIfDirty_Is_False_Should_HaveInputErrorWhenFocusChanged()
+        {
+            var comp = Context.RenderComponent<MudTextField<int?>>(
+                ComponentParameter.CreateParameter("Required", true),
+                ComponentParameter.CreateParameter("OnlyValidateIfDirty", false));
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+            
+            // user does not change input value but changes focus
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
+            
+            // user puts in a invalid integer value
+            comp.Find("input").Change("invalid");
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
+            
+            // reset
+            await comp.InvokeAsync(() => comp.Instance.Reset());
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+            
+            // user does not change input value but changes focus
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
+            
+            // user corrects input
+            comp.Find("input").Change(55);
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void TextFieldLabelTest()
+        {
+            var value = new DisplayNameLabelClass();
+
+            var comp = Context.RenderComponent<MudTextField<string>>(x => x.Add(f => f.For, () => value.String));
+            comp.Instance.Label.Should().Be("String LabelAttribute"); //label should be set by the attribute
+
+            var comp2 = Context.RenderComponent<MudTextField<string>>(x => x.Add(f => f.For, () => value.String).Add(l => l.Label, "Label Parameter"));
+            comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
     }
 }

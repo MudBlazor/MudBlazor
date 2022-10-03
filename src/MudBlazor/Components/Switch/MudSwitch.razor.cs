@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -14,22 +15,34 @@ namespace MudBlazor
         new CssBuilder("mud-switch")
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-readonly", ReadOnly)
-          .AddClass(Class)
+            .AddClass(LabelPosition == LabelPosition.End ? "mud-ltr" : "mud-rtl", true)
+            .AddClass(Class)
         .Build();
+
         protected string SwitchClassname =>
         new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
-            .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple && !ReadOnly)
-            .AddClass($"mud-switch-{Color.ToDescriptionString()}")
+            .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple && !ReadOnly && !Disabled)
+            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", BoolValue == true)
+            .AddClass($"mud-{UnCheckedColor.ToDescriptionString()}-text hover:mud-{UnCheckedColor.ToDescriptionString()}-hover", BoolValue == false)
             .AddClass($"mud-switch-disabled", Disabled)
             .AddClass($"mud-readonly", ReadOnly)
             .AddClass($"mud-checked", BoolValue)
         .Build();
 
+        protected string TrackClassname =>
+        new CssBuilder("mud-switch-track")
+            .AddClass($"mud-{Color.ToDescriptionString()}", BoolValue == true)
+            .AddClass($"mud-{UnCheckedColor.ToDescriptionString()}", BoolValue == false)
+        .Build();
+
+        //Excluded because not used
+        [ExcludeFromCodeCoverage]
         protected string SpanClassname =>
         new CssBuilder("mud-switch-span mud-flip-x-rtl")
         .Build();
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+        private IKeyInterceptor _keyInterceptor;
+        [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -39,11 +52,25 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
+        /// The base color of the component in its none active/unchecked state. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public Color UnCheckedColor { get; set; } = Color.Default;
+
+        /// <summary>
         /// The text/label will be displayed next to the switch if set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string Label { get; set; }
+
+        /// <summary>
+        /// The position of the text/label.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public LabelPosition LabelPosition { get; set; } = LabelPosition.End;
 
         /// <summary>
         /// Shows an icon on Switch's thumb.
@@ -68,7 +95,6 @@ namespace MudBlazor
 
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {
-            //Space key works by default, so we didn't write it again.
             if (Disabled || ReadOnly)
                 return;
             switch (obj.Key)
@@ -97,10 +123,20 @@ namespace MudBlazor
 
         private string _elementId = "switch_" + Guid.NewGuid().ToString().Substring(0, 8);
 
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            if (Label == null && For != null)
+                Label = For.GetLabelString();
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
+                _keyInterceptor = KeyInterceptorFactory.Create();
+
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -111,9 +147,24 @@ namespace MudBlazor
                         new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" },
                     },
                 });
+
                 _keyInterceptor.KeyDown += HandleKeyDown;
             }
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                if(_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDown;
+                    _keyInterceptor.Dispose();
+                }
+            }
         }
     }
 }

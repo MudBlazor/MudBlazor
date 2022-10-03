@@ -15,7 +15,10 @@ namespace MudBlazor
     public partial class MudTabs : MudComponentBase, IAsyncDisposable
     {
         private bool _isDisposed;
+
         private int _activePanelIndex = 0;
+        private int _scrollIndex = 0;
+
         private bool _isRendered = false;
         private bool _prevButtonDisabled;
         private bool _nextButtonDisabled;
@@ -28,10 +31,11 @@ namespace MudBlazor
         private double _allTabsSize;
         private double _scrollPosition;
 
+        private IResizeObserver _resizeObserver;
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
-        [Inject] private IResizeObserver _resizeObserver { get; set; }
+        [Inject] private IResizeObserverFactory _resizeObserverFactory { get; set; }
 
         /// <summary>
         /// If true, render all tabs and hide (display:none) every non-active.
@@ -276,8 +280,19 @@ namespace MudBlazor
             Panels = _panels.AsReadOnly();
         }
 
+        protected override void OnInitialized()
+        {
+            _resizeObserver = _resizeObserverFactory.Create();
+            base.OnInitialized();
+        }
+
         protected override void OnParametersSet()
         {
+            if (_resizeObserver == null)
+            {
+                _resizeObserver = _resizeObserverFactory.Create();
+            }
+
             Rerender();
         }
 
@@ -301,7 +316,6 @@ namespace MudBlazor
                 _isRendered = true;
             }
         }
-
 
         public async ValueTask DisposeAsync()
         {
@@ -404,7 +418,6 @@ namespace MudBlazor
         #endregion
 
         #region Style and classes
-
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
             .AddClass($"mud-tabs-rounded", ApplyEffectsToContainer && Rounded)
@@ -537,7 +550,6 @@ namespace MudBlazor
             GetToolbarContentSize();
             GetAllTabsSize();
             SetScrollButtonVisibility();
-            CenterScrollPositionAroundSelectedItem();
             SetSliderState();
             SetScrollabilityStates();
         }
@@ -570,20 +582,24 @@ namespace MudBlazor
             _allTabsSize = totalTabsSize;
         }
 
-
         private double GetRelevantSize(ElementReference reference) => Position switch
         {
             Position.Top or Position.Bottom => _resizeObserver.GetWidth(reference),
             _ => _resizeObserver.GetHeight(reference)
         };
 
-        private double GetLengthOfPanelItems(MudTabPanel panel)
+        private double GetLengthOfPanelItems(MudTabPanel panel, bool inclusive = false)
         {
             var value = 0.0;
             foreach (var item in _panels)
             {
                 if (item == panel)
                 {
+                    if (inclusive)
+                    {
+                        value += GetRelevantSize(item.PanelRef);
+                    }
+
                     break;
                 }
 
@@ -606,29 +622,44 @@ namespace MudBlazor
 
         private void ScrollPrev()
         {
-            var scrollValue = RightToLeft ? _scrollPosition + _toolbarContentSize : _scrollPosition - _toolbarContentSize;
-
-            if (RightToLeft && scrollValue > 0) scrollValue = 0;
-
-            if (!RightToLeft && scrollValue < 0) scrollValue = 0;
-
-            _scrollPosition = scrollValue;
-
+            _scrollIndex = Math.Max(_scrollIndex - GetVisiblePanels(), 0);
+            ScrollToItem(_panels[_scrollIndex]);
             SetScrollabilityStates();
         }
 
         private void ScrollNext()
         {
-            var scrollValue = RightToLeft ? _scrollPosition - _toolbarContentSize : _scrollPosition + _toolbarContentSize;
+            _scrollIndex = Math.Min(_scrollIndex + GetVisiblePanels(), _panels.Count - 1);
+            ScrollToItem(_panels[_scrollIndex]);
+            SetScrollabilityStates();
+        }
 
-            if (scrollValue > _allTabsSize)
+        /// <summary>
+        /// Calculates the amount of panels that are completely visible inside the toolbar content area. Panels that are just partially visible are not considered here!
+        /// </summary>
+        /// <returns>The amount of panels visible inside the toolbar area. CAUTION: Might return 0!</returns>
+        private int GetVisiblePanels()
+        {
+            var x = 0D;
+            var count = 0;
+            
+            var toolbarContentSize = GetRelevantSize(_tabsContentSize);
+
+            foreach (var panel in _panels)
             {
-                scrollValue = _allTabsSize - _toolbarContentSize - 96;
+                x += GetRelevantSize(panel.PanelRef);
+
+                if (x < toolbarContentSize)
+                {
+                    count++;
+                }
+                else
+                {
+                    break;
+                }
             }
 
-            _scrollPosition = scrollValue;
-
-            SetScrollabilityStates();
+            return count;
         }
 
         private void ScrollToItem(MudTabPanel panel)
@@ -654,13 +685,14 @@ namespace MudBlazor
             while (true)
             {
                 var panelAfterIndex = _activePanelIndex + indexCorrection;
-                if (IsAfterLastPanelIndex(panelAfterIndex) == false)
+                if (!IsAfterLastPanelIndex(panelAfterIndex))
                 {
                     length += GetPanelLength(_panels[panelAfterIndex]);
                 }
 
                 if (length >= _toolbarContentSize)
                 {
+                    _scrollIndex = _panels.IndexOf(panelToStart);
                     ScrollToItem(panelToStart);
                     break;
                 }
@@ -668,7 +700,7 @@ namespace MudBlazor
                 length = _toolbarContentSize - length;
 
                 var panelBeforeindex = _activePanelIndex - indexCorrection;
-                if (IsBeforeFirstPanelIndex(panelBeforeindex) == false)
+                if (!IsBeforeFirstPanelIndex(panelBeforeindex))
                 {
                     length -= GetPanelLength(_panels[panelBeforeindex]);
                 }
@@ -679,6 +711,7 @@ namespace MudBlazor
 
                 if (length < 0)
                 {
+                    _scrollIndex = _panels.IndexOf(panelToStart);
                     ScrollToItem(panelToStart);
                     break;
                 }
@@ -689,6 +722,7 @@ namespace MudBlazor
                 indexCorrection++;
             }
 
+            _scrollIndex = _panels.IndexOf(panelToStart);
             ScrollToItem(panelToStart);
 
             SetScrollabilityStates();
@@ -698,15 +732,16 @@ namespace MudBlazor
         {
             var isEnoughSpace = _allTabsSize <= _toolbarContentSize;
 
-            if (isEnoughSpace == true)
+            if (isEnoughSpace)
             {
                 _nextButtonDisabled = true;
                 _prevButtonDisabled = true;
             }
             else
             {
-                _nextButtonDisabled = RightToLeft ? (_scrollPosition - _toolbarContentSize) <= -_allTabsSize : (_scrollPosition + _toolbarContentSize) >= _allTabsSize;
-                _prevButtonDisabled = RightToLeft ? _scrollPosition >= 0 : _scrollPosition <= 0;
+                // Disable next button if the last panel is completely visible
+                _nextButtonDisabled = Math.Abs(_scrollPosition) >= GetLengthOfPanelItems(_panels.Last(), true) - _toolbarContentSize;
+                _prevButtonDisabled = _scrollIndex == 0;
             }
         }
 

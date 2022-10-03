@@ -33,8 +33,8 @@ namespace MudBlazor.Charts
                 var circle = new SvgCircle()
                 {
                     Index = counter,
-                    CX = 20,
-                    CY = 20,
+                    CX = 21,
+                    CY = 21,
                     Radius = 15.91549430918954,
                     StrokeDashArray = $"{ToS(percent)} {ToS(reversePercent)}",
                     StrokeDashOffset = offset

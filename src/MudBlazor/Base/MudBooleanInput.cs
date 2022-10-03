@@ -67,6 +67,7 @@ namespace MudBlazor
                 Checked = value;
                 await CheckedChanged.InvokeAsync(value);
                 BeginValidate();
+                FieldChanged(Checked);
             }
         }
 

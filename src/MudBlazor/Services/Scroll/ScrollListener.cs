@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-    public interface IScrollListener
+
+
+    public interface IScrollListener : IDisposable
     {
         /// <summary>
         /// The CSS selector to which the scroll event will be attached
@@ -24,9 +28,16 @@ namespace MudBlazor
         /// </summary>
         public string Selector { get; set; } = null;
 
-        public ScrollListener(IJSRuntime js)
+        [DynamicDependency(nameof(RaiseOnScroll))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ScrollEventArgs))]
+        public ScrollListener(IJSRuntime js) : this(string.Empty, js)
+        {
+        }
+
+        public ScrollListener(string selector, IJSRuntime js)
         {
             _js = js;
+            Selector = selector;
         }
 
         private EventHandler<ScrollEventArgs> _onScroll;
@@ -72,10 +83,10 @@ namespace MudBlazor
         /// <summary>
         /// Subscribe to scroll event in JS
         /// </summary>        
-        private ValueTask Start()
+        private ValueTask<bool> Start()
         {
             _dotNetRef = DotNetObjectReference.Create(this);
-            return _js.InvokeVoidAsync
+            return _js.InvokeVoidAsyncWithErrorHandling
                 ("mudScrollListener.listenForScroll",
                            _dotNetRef,
                            Selector);

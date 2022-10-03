@@ -27,6 +27,8 @@ namespace MudBlazor
         public bool HideIcon { get; set; }
 
         public string Icon { get; set; }
+        public Color IconColor { get; set; } = Color.Inherit;
+        public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
         /// Custom normal icon.

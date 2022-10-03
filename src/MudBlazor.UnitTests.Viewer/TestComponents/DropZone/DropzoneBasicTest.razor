@@ -35,7 +35,10 @@
 	private void ItemUpdated(MudItemDropInfo<SimpleDropItem> dropItem)
 	{
 		dropItem.Item.ZoneIdentifier = dropItem.DropzoneIdentifier;
+		IndexHistory.Add(dropItem.IndexInZone);
 	}
+
+	public List<int> IndexHistory { get; set; } = new();
 
 	private IEnumerable<SimpleDropItem> _items = new[]
 		{

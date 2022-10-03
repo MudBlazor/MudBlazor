@@ -255,6 +255,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        /// <summary>
+        /// Tree item double click event.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnDoubleClick { get; set; }
+
         public bool Loading { get; set; }
 
         bool HasChild => ChildContent != null ||
@@ -267,7 +272,7 @@ namespace MudBlazor
             set { _ = SelectItem(value, this); }
         }
 
-        protected bool ArrowExpanded
+        protected internal bool ArrowExpanded
         {
             get => Expanded;
             set
@@ -323,7 +328,24 @@ namespace MudBlazor
             }
         }
 
-        protected Task OnItemExpanded(bool expanded)
+        protected async Task OnItemDoubleClicked(MouseEventArgs ev)
+        {
+            if (MudTreeRoot?.IsSelectable ?? false)
+            {
+                await MudTreeRoot.UpdateSelected(this, !_isSelected);
+            }
+
+            if (HasChild && (MudTreeRoot?.ExpandOnDoubleClick ?? false))
+            {
+                Expanded = !Expanded;
+                TryInvokeServerLoadFunc();
+                await ExpandedChanged.InvokeAsync(Expanded);
+            }
+
+            await OnDoubleClick.InvokeAsync(ev);
+        }
+
+        protected internal Task OnItemExpanded(bool expanded)
         {
             if (Expanded == expanded)
                 return Task.CompletedTask;

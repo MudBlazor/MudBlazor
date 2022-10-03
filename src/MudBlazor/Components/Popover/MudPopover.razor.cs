@@ -35,7 +35,7 @@ namespace MudBlazor
             .AddStyle(Style)
             .Build();
 
-        private Direction ConvertDirection(Direction direction)
+        internal Direction ConvertDirection(Direction direction)
         {
             return direction switch
             {
@@ -45,7 +45,7 @@ namespace MudBlazor
             };
         }
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// Sets the maxheight the popover can have when open.
@@ -97,7 +97,7 @@ namespace MudBlazor
         public double Duration { get; set; } = 251;
 
         /// <summary>
-        /// Sets the amount of time to wait from opening the popover before beginning to perform the transition. 
+        /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
@@ -174,11 +174,12 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            
-            // Only update the fragment if the popover is currently shown or will show
-            // This prevents unnecessary renders and popover handle locking
-            if (!_handler.ShowContent && !Open)
-                return;
+
+            // henon: this change by PR #3776 caused problems on BSS (#4303)
+            //// Only update the fragment if the popover is currently shown or will show
+            //// This prevents unnecessary renders and popover handle locking
+            //if (!_handler.ShowContent && !Open)
+            //    return;
 
             _handler.UpdateFragment(ChildContent, this, PopoverClass, PopoverStyles, Open);
         }
@@ -191,11 +192,10 @@ namespace MudBlazor
                 await Service.InitializeIfNeeded();
             }
 
-            _handler.Release();
-
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        [ExcludeFromCodeCoverage]
         public async ValueTask DisposeAsync()
         {
             try

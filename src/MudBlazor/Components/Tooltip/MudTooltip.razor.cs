@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
@@ -10,6 +11,7 @@ namespace MudBlazor
     {
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
             .AddClass("mud-tooltip-inline", Inline)
+            .AddClass(RootClass)
             .Build();
 
         protected string Classname => new CssBuilder("mud-tooltip")
@@ -29,8 +31,7 @@ namespace MudBlazor
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
 
-        [CascadingParameter]
-        public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -61,7 +62,7 @@ namespace MudBlazor
         public double Duration { get; set; } = 251;
 
         /// <summary>
-        /// Sets the amount of time to wait from opening the popover before beginning to perform the transition. 
+        /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
@@ -71,6 +72,7 @@ namespace MudBlazor
         /// Changes the default transition delay in seconds.
         /// </summary>
         [Obsolete("Use Delay instead.", true)]
+        [ExcludeFromCodeCoverage]
         [Parameter]
         public double Delayed
         {
@@ -107,6 +109,18 @@ namespace MudBlazor
         public bool Inline { get; set; } = true;
 
         /// <summary>
+        /// Styles applied directly to root component of the tooltip
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public string RootStyle { get; set; }
+
+        /// Classes applied directly to root component of the tooltip
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public string RootClass { get; set; }
+
+        /// <summary>
         /// The visible state of the Tooltip.
         /// </summary>
         [Parameter]
@@ -130,8 +144,8 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public EventCallback<bool> IsVisibleChanged { get; set; }
 
-        private void HandleMouseOver() { IsVisible = true;}
-        private void HandleMouseOut() { IsVisible = false;}
+        private void HandleMouseOver() { IsVisible = true; }
+        private void HandleMouseOut() { IsVisible = false; }
 
         private Origin ConvertPlacement()
         {

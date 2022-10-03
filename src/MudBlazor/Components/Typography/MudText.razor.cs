@@ -9,7 +9,7 @@ namespace MudBlazor
         protected string Classname =>
         new CssBuilder("mud-typography")
           .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
-          .AddClass($"mud-{Color.ToDescriptionString()}-text")
+          .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default && Color != Color.Inherit)
           .AddClass("mud-typography-gutterbottom", GutterBottom)
           .AddClass($"mud-typography-align-{ConvertAlign(Align).ToDescriptionString()}", Align != Align.Inherit)
           .AddClass("mud-typography-display-inline", Inline)
@@ -26,7 +26,7 @@ namespace MudBlazor
             };
         }
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// Applies the theme typography styles.

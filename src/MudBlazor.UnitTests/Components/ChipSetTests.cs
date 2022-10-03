@@ -271,6 +271,26 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudButton>().Find("button").Click();
             comp.WaitForAssertion(() => comp.Find("p.sel").TrimmedText().Should().Be("Selection: Cafe Latte, Espresso"));
         }
+
+        [Test]
+        public async Task ChipSet_OtherTest()
+        {
+            var comp = Context.RenderComponent<ChipSetTest>();
+            var chipSet = comp.FindComponent<MudChipSet>();
+            var chip = comp.FindComponents<MudChip>().FirstOrDefault();
+
+            comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
+            await comp.InvokeAsync(() => chipSet.Instance.SelectedChip = (MudChip)chip.Instance.Value);
+            comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(1));
+
+
+            await comp.InvokeAsync(() => chipSet.Instance.OnChipDeleted((MudChip)chip.Instance.Value));
+            comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
+
+            await comp.InvokeAsync(() => chipSet.Instance.SelectedChip = null);
+            await comp.InvokeAsync(() => chipSet.Instance.SetSelectedValues(null));
+            comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
+        }
     }
 
 }

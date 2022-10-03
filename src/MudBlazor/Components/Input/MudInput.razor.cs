@@ -86,6 +86,11 @@ namespace MudBlazor
             }
         }
 
+        public override ValueTask BlurAsync()
+        {
+            return ElementReference.MudBlurAsync();
+        }
+
         public override ValueTask SelectAsync()
         {
             return ElementReference.MudSelectAsync();
@@ -171,6 +176,7 @@ namespace MudBlazor
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
         {
             await SetTextAsync(string.Empty, updateValue: true);
+            await ElementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
 
