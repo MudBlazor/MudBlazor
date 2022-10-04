@@ -1146,9 +1146,9 @@ namespace MudBlazor.UnitTests.Components
         /// Only the top SubscribeToParentForm fields should be registered inside the form.
         /// </summary>
         [Test]
-        public async Task MudForm_Should_RegisterOnlyTopStandaloneFormControls()
+        public async Task MudForm_Should_RegisterOnlyTopSubscribeToParentFormFormControls()
         {
-            var comp = Context.RenderComponent<FormShouldRegisterOnlyTopStandaloneFormControlsTest>();
+            var comp = Context.RenderComponent<FormShouldRegisterOnlyTopSubscribeToParentFormFormControlsTest>();
             var form = comp.FindComponent<MudFormTestable>().Instance;
 
             Assert.AreEqual(14, form.FormControls.Count);
