@@ -914,7 +914,8 @@ namespace MudBlazor
             {
                 foreach (var property in _properties)
                 {
-                    property.SetValue(editingSourceItem, property.GetValue(_editingItem));
+                    if (property.CanWrite)
+                        property.SetValue(editingSourceItem, property.GetValue(_editingItem));
                 }
 
                 await CommittedItemChanges.InvokeAsync(editingSourceItem);
