@@ -6,6 +6,7 @@
 
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -16,15 +17,15 @@ namespace MudBlazor
         public event Action<IDialogReference> OnDialogInstanceAdded;
         public event Action<IDialogReference, DialogResult> OnDialogCloseRequested;
 
-        IDialogReference Show<TComponent>() where TComponent : ComponentBase;
+        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>() where TComponent : IComponent;
 
-        IDialogReference Show<TComponent>(string title) where TComponent : ComponentBase;
+        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title) where TComponent : IComponent;
 
-        IDialogReference Show<TComponent>(string title, DialogOptions options) where TComponent : ComponentBase;
+        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogOptions options) where TComponent : IComponent;
 
-        IDialogReference Show<TComponent>(string title, DialogParameters parameters) where TComponent : ComponentBase;
+        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogParameters parameters) where TComponent : IComponent;
 
-        IDialogReference Show<TComponent>(string title, DialogParameters parameters = null, DialogOptions options = null) where TComponent : ComponentBase;
+        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogParameters parameters, DialogOptions options) where TComponent : IComponent;
 
         IDialogReference Show(Type component);
 

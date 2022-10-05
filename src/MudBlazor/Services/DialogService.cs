@@ -16,27 +16,27 @@ namespace MudBlazor
         public event Action<IDialogReference> OnDialogInstanceAdded;
         public event Action<IDialogReference, DialogResult> OnDialogCloseRequested;
 
-        public IDialogReference Show<T>() where T : ComponentBase
+        public IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>() where T : IComponent
         {
             return Show<T>(string.Empty, new DialogParameters(), new DialogOptions());
         }
 
-        public IDialogReference Show<T>(string title) where T : ComponentBase
+        public IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string title) where T : IComponent
         {
             return Show<T>(title, new DialogParameters(), new DialogOptions());
         }
 
-        public IDialogReference Show<T>(string title, DialogOptions options) where T : ComponentBase
+        public IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string title, DialogOptions options) where T : IComponent
         {
             return Show<T>(title, new DialogParameters(), options);
         }
 
-        public IDialogReference Show<T>(string title, DialogParameters parameters) where T : ComponentBase
+        public IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string title, DialogParameters parameters) where T : IComponent
         {
             return Show<T>(title, parameters, new DialogOptions());
         }
 
-        public IDialogReference Show<T>(string title, DialogParameters parameters, DialogOptions options) where T : ComponentBase
+        public IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string title, DialogParameters parameters, DialogOptions options) where T : IComponent
         {
             return Show(typeof(T), title, parameters, options);
         }
@@ -63,7 +63,7 @@ namespace MudBlazor
 
         public IDialogReference Show(Type contentComponent, string title, DialogParameters parameters, DialogOptions options)
         {
-            if (!typeof(ComponentBase).IsAssignableFrom(contentComponent))
+            if (!typeof(IComponent).IsAssignableFrom(contentComponent))
             {
                 throw new ArgumentException($"{contentComponent.FullName} must be a Blazor Component");
             }
