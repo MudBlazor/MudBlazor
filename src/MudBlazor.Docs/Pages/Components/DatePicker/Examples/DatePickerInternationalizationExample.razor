@@ -1,17 +1,10 @@
 ﻿@using System.Globalization
 @using System.Reflection
 @namespace MudBlazor.Docs.Examples
-<MudGrid> 
-    <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Current UI Culture" @bind-Date="date" />
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Persian" @bind-Date="date" Culture="@GetPersianCulture()" UseShortNames="false" TitleDateFormat="dddd, dd MMMM"/>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Chinese" @bind-Date="date" Culture="@CultureInfo.GetCultureInfo("zh-Hans")" TitleDateFormat="dddd, dd MMMM"/>
-    </MudItem>
-</MudGrid>
+
+<MudDatePicker Label="Current UI Culture" @bind-Date="date" />
+<MudDatePicker Label="Persian" @bind-Date="date" Culture="@GetPersianCulture()" UseShortNames="false" TitleDateFormat="dddd, dd MMMM"/>
+<MudDatePicker Label="Chinese" @bind-Date="date" Culture="@CultureInfo.GetCultureInfo("zh-Hans")" TitleDateFormat="dddd, dd MMMM"/>
 
 @code {
     DateTime? date = new DateTime(2021, 02, 14); // 1399-11-26 in Persian calendar

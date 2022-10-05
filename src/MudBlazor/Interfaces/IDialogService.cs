@@ -27,22 +27,25 @@ namespace MudBlazor
 
         IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogParameters parameters, DialogOptions options) where TComponent : IComponent;
 
-        IDialogReference Show(Type component);
+        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component);
 
-        IDialogReference Show(Type component, string title);
+        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title);
 
-        IDialogReference Show(Type component, string title, DialogOptions options);
+        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title, DialogOptions options);
 
-        IDialogReference Show(Type component, string title, DialogParameters parameters);
+        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title, DialogParameters parameters);
 
-        IDialogReference Show(Type component, string title, DialogParameters parameters, DialogOptions options);
+        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title, DialogParameters parameters, DialogOptions options);
 
         IDialogReference CreateReference();
 
         Task<bool?> ShowMessageBox(string title, string message, string yesText = "OK",
             string noText = null, string cancelText = null, DialogOptions options = null);
 
-        Task<bool?> ShowMessageBox(MessageBoxOptions mboxOptions, DialogOptions options = null);
+        Task<bool?> ShowMessageBox(string title, MarkupString markupMessage, string yesText = "OK",
+            string noText = null, string cancelText = null, DialogOptions options = null);
+
+        Task<bool?> ShowMessageBox(MessageBoxOptions messageBoxOptions, DialogOptions options = null);
 
         void Close(DialogReference dialog);
 

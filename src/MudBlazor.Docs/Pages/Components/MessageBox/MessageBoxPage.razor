@@ -6,6 +6,13 @@
     <DocsPageContent>
 
         <DocsPageSection>
+            <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
+            <MudText>The MessageBox depends on <CodeInline Class="docs-code-tertiary">IDialogService</CodeInline> and <CodeInline>MudDialogProvider</CodeInline></MudText>
+            <MudText>Any global configuration done on the MudDialogProvider will affect all MessageBoxes in your application.</MudText>
+            <MudText>Check the Dialog <MudLink Href="/components/dialog#configuration">Configuration</MudLink> section for instructions on how to configure your dialogs globally.</MudText>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Message Box">
                 <Description>
                     The simplest way to show a message box is to use <CodeInline>IDialogService.ShowMessageBox</CodeInline>. It is a purely procedural way of showing a message box and awaiting the user's decision. 
@@ -13,10 +20,9 @@
                     to the buttons: Yes => <CodeInline>true</CodeInline>, No => <CodeInline>false</CodeInline>, Cancel => <CodeInline>null</CodeInline>.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="MessageBoxSimpleExample">
                 <MessageBoxSimpleExample />
             </SectionContent>
-            <SectionSource Code="MessageBoxSimpleExample" GitHubFolderName="MessageBox" ShowCode="false" />
         </DocsPageSection>
         
         <DocsPageSection>
@@ -27,10 +33,22 @@
                     there is <CodeInline>MessageContent</CodeInline>, etc.<br />
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="MessageBoxInlineExample">
                 <MessageBoxInlineExample />
             </SectionContent>
-            <SectionSource Code="MessageBoxInlineExample" GitHubFolderName="MessageBox" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Multiline Message">
+                <Description>
+                    Instead of a string message you can also use MarkupString for the message box content. This is especially useful if you want to display multiline messages or do some basic styling, like highlighting a part of the message, without having to create a full-fledged custom dialog.
+                    <br />
+                    This example shows how a multiline MessageBox can still be a one-liner in code, thanks to MarkupString.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="MessageBoxMarkupContentExample">
+                <MessageBoxMarkupContentExample />
+            </SectionContent>
         </DocsPageSection>
 
     </DocsPageContent>

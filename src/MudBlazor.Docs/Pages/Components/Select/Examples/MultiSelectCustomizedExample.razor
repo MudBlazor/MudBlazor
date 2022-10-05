@@ -1,26 +1,29 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using System.Linq
 
-<MudGrid>
-    <MudItem xs="12" md="12">
-        <MudSelect T="string" Label="US States" HelperText="Pick your favorite states"
-         MultiSelection="true" AnchorOrigin="Origin.BottomCenter"
-         @bind-Value="value" @bind-SelectedValues="options" AdornmentIcon="@Icons.Material.Filled.Search"
-         MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))">
-            @foreach (var state in states)
-            {
-                <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
-            }
-        </MudSelect>
+<MudSelect MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options" T="string" Label="US States" AdornmentIcon="@Icons.Material.Filled.Search" AnchorOrigin="Origin.BottomCenter">
+    @foreach (var state in states)
+    {
+        <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
+    }
+</MudSelect>
+
+<MudSwitch @bind-Checked="multiselectionTextChoice" Class="mud-width-full" Color="Color.Primary">MultiSelection Text choice</MudSwitch>  
+
+<MudGrid Class="mt-3 px-4">
+    <MudItem xs="6">
+        <MudText Typo="Typo.subtitle2">Value:</MudText>
+        <MudText Typo="Typo.subtitle2">"</MudText>
+        <MudText Typo="Typo.body2" Class="pl-4">@value</MudText>
+        <MudText Typo="Typo.subtitle2">"</MudText>
     </MudItem>
-    <MudItem xs="12" md="6">
-        <MudText Typo="Typo.body2">MudSelect.Value: "@value"</MudText>
-    </MudItem>
-    <MudItem xs="12" md="6">
-        <MudText Typo="Typo.body2">MudSelect.SelectedValues: HashSet&lt;string&gt; { @(string.Join(", ", options.Select(x=>$"\"{x}\""))) }</MudText>
+    <MudItem xs="6">
+        <MudText Typo="Typo.subtitle2">SelectedValues: HashSet&lt;string&gt;</MudText>
+        <MudText Typo="Typo.subtitle2">{</MudText>
+        <MudText Typo="Typo.body2" Class="pl-4">@(string.Join(", ", options.Select(x=>$"\"{x}\"")))</MudText>
+        <MudText Typo="Typo.subtitle2">}</MudText>
     </MudItem>
 </MudGrid>
-<MudSwitch @bind-Checked="multiselectionTextChoice" Color="Color.Primary">MultiSelection Text choice</MudSwitch>   
 
 @code {
     private bool multiselectionTextChoice;

@@ -1,0 +1,46 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudDataGrid T="IDictionary<string, object>"
+                     @ref="MudGridRef"
+                     Items="@forecasts"
+                     Filterable="true">
+            <Columns>
+                <Column T="IDictionary<string, object>" FieldType="@typeof(Guid)" Field="Id" Title="Id" Sortable="true" />
+                <Column T="IDictionary<string, object>" FieldType="@typeof(DateTime)" Field="Date" Title="Date" Sortable="true" />
+                <Column T="IDictionary<string, object>" FieldType="@typeof(int)" Field="TemperatureC" Title="Temp. (C)" Sortable="true" />
+                <Column T="IDictionary<string, object>" FieldType="@typeof(string)" Field="Summary" Title="Summary" Sortable="true" />
+            </Columns>
+        </MudDataGrid>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public MudDataGrid<IDictionary<string, object>> MudGridRef { get; private set; }
+    private IEnumerable<IDictionary<string, object>> forecasts = new List<IDictionary<string, object>>();
+
+    public string Guid1 => "98ee67d6-0302-40f4-935a-0014e712a9e1";
+    public string Guid2 => "C3D88136-44AF-4955-B422-5EE13463FDCE";
+
+    protected override void OnInitialized()
+    {
+        forecasts = new List<IDictionary<string, object>>()
+        {
+            new Dictionary<string, object>
+            {
+                { "Id",  Guid.Parse(Guid1) },
+                { "Date", DateTime.UtcNow },
+                { "TemperatureC", 14 },
+                { "Summary", "Bracing" },
+            },
+            new Dictionary<string, object>()
+            {
+                { "Id",  Guid.Parse(Guid2) },
+                { "Date", DateTime.UtcNow },
+                { "TemperatureC", 14 },
+                { "Summary", "Bracing" },
+            },
+        };
+    }
+}

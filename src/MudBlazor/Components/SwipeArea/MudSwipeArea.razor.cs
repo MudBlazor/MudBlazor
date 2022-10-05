@@ -1,18 +1,71 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
     public partial class MudSwipeArea : MudComponentBase
     {
-        private double? _xDown, _yDown;
+        internal double? _xDown, _yDown;
+        internal ElementReference _componentRef;
+        private static readonly string[] _preventDefaultEventNames = { "touchstart", "touchend", "touchcancel" };
+        internal int[] _listenerIds;
 
         [Parameter]
+        [Category(CategoryTypes.SwipeArea.Behavior)]
         public RenderFragment ChildContent { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.SwipeArea.Behavior)]
         public Action<SwipeDirection> OnSwipe { get; set; }
+
+        /// <summary>
+        /// Prevents default behavior of the browser when swiping.
+        /// Usable espacially when swiping up/down - this will prevent the whole page from scrolling up/down.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.SwipeArea.Behavior)]
+        public bool PreventDefault { get; set; }
+
+        private bool _preventDefaultChanged;
+
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            var preventDefault = parameters.GetValueOrDefault<bool>(nameof(PreventDefault));
+            if (preventDefault != PreventDefault)
+            {
+                _preventDefaultChanged = true;
+            }
+
+            await base.SetParametersAsync(parameters);
+        }
+
+        private async Task SetPreventDefaultInternal(bool value)
+        {
+            if (value)
+            {
+                _listenerIds = await _componentRef.AddDefaultPreventingHandlers(_preventDefaultEventNames);
+            }
+            else
+            {
+                if (_listenerIds != null)
+                {
+                    await _componentRef.RemoveDefaultPreventingHandlers(_preventDefaultEventNames, _listenerIds);
+                    _listenerIds = null;
+                }
+            }
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (_preventDefaultChanged)
+            {
+                _preventDefaultChanged = false;
+                await SetPreventDefaultInternal(PreventDefault);
+            }
+        }
 
         private void OnTouchStart(TouchEventArgs arg)
         {
@@ -20,7 +73,7 @@ namespace MudBlazor
             _yDown = arg.Touches[0].ClientY;
         }
 
-        private void OnTouchEnd(TouchEventArgs arg)
+        internal void OnTouchEnd(TouchEventArgs arg)
         {
             if (_xDown == null || _yDown == null)
                 return;
@@ -60,7 +113,7 @@ namespace MudBlazor
             _xDown = _yDown = null;
         }
 
-        private void OnTouchCancel(TouchEventArgs arg)
+        internal void OnTouchCancel(TouchEventArgs arg)
         {
             _xDown = _yDown = null;
         }

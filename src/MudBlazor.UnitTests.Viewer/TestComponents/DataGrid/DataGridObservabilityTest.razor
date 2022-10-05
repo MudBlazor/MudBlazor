@@ -1,0 +1,43 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Collections.ObjectModel
+
+<MudButton OnClick="@AddItem" Color="@Color.Success" Class="add-item-btn">Add Item</MudButton>
+<MudButton OnClick="@RemoveItem" Color="@Color.Error" Class="remove-item-btn">Remove Item</MudButton>
+
+<MudDataGrid Items="@_items">
+    <Columns>
+        <Column T="Model" Field="@nameof(Model.Name)" />
+        <Column T="Model" Field="@nameof(Model.Age)" />
+        <Column T="Model" Field="@nameof(Model.Status)" />
+        <Column T="Model" Field="@nameof(Model.Salary)" />
+        <Column T="Model" Field="HireDate" Title="Hired" />
+        <Column T="Model" Field="IsManager" Title="Manager" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+
+    public record Model (string Name, int Age, Severity Status, decimal Salary, DateTime HireDate, bool IsManager);
+
+    ObservableCollection<Model> _items = new ObservableCollection<Model>()
+    {
+        new Model("Sam", 56, Severity.Normal, 50_000.00M, new DateTime(2005, 3, 5), false), 
+        new Model("Alicia", 54, Severity.Info, 75_000.00M, new DateTime(2010, 1, 17), false), 
+        new Model("Ira", 27, Severity.Success, 102_000.00M, new DateTime(2017, 6, 15), true),
+        new Model("John", 32, Severity.Warning, 132_000.00M, new DateTime(2021, 12, 23), true),
+        new Model("Fred", 65, Severity.Warning, 87_000.00M, new DateTime(2003, 7, 3), false), 
+        new Model("Tabitha", 33, Severity.Info, 157_000.00M, new DateTime(2015, 2, 12), true), 
+        new Model("Hunter", 22, Severity.Success, 43_000.00M, new DateTime(2017, 9, 20), false),
+        new Model("Esme", 55, Severity.Warning, 149_000.00M, new DateTime(2017, 8, 1), true)
+    };
+
+    void AddItem()
+    {
+        _items.Add(new Model("New Person", 44, Severity.Warning, 85_000.00M, new DateTime(2022, 1, 1), true));
+    }
+
+    void RemoveItem()
+    {
+        _items.RemoveAt(0);
+    }
+}

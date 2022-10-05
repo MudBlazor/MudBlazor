@@ -19,15 +19,21 @@
     /// <summary>
     /// If true, compact padding will be used.
     /// </summary>
-    [Parameter] public bool Dense { get; set; }
+    [Parameter] 
+    [Category(CategoryTypes.ToolBar.Appearance)]
+    public bool Dense { get; set; }
 
     /// <summary>
     /// If true, disables gutter padding.
     /// </summary>
-    [Parameter] public bool DisableGutters { get; set; }
+    [Parameter] 
+    [Category(CategoryTypes.ToolBar.Appearance)]
+    public bool DisableGutters { get; set; }
 
     /// <summary>
     /// Child content of component.
     /// </summary>
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] 
+    [Category(CategoryTypes.ToolBar.Behavior)]
+    public RenderFragment ChildContent { get; set; }
 }

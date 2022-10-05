@@ -1,4 +1,8 @@
-﻿window.mudpopoverHelper = {
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+window.mudpopoverHelper = {
 
     calculatePopoverPosition: function (list, boundingRect, selfRect) {
         let top = 0;
@@ -257,7 +261,7 @@
 
                 if (classList.contains('mud-popover-overflow-flip-onopen')) {
                     if (!popoverContentNode.mudPopoverFliped) {
-                        popoverContentNode.mudPopoverFliped = selector ?? 'none';
+                        popoverContentNode.mudPopoverFliped = selector || 'none';
                     }
                 }
             }
@@ -277,6 +281,7 @@
 
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
                 popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
+                popoverContentNode.skipZIndex = true;
             }
         }
     },
@@ -294,6 +299,10 @@
         const id = target.id.substr(15);
         const popoverNode = document.getElementById('popover-' + id);
         window.mudpopoverHelper.placePopover(popoverNode);
+    },
+
+    countProviders: function () {
+        return document.querySelectorAll(".mud-popover-provider").length;
     }
 }
 
@@ -304,23 +313,69 @@ class MudPopover {
         this.contentObserver = null;
         this.mainContainerClass = null;
     }
-
+    
     callback(id, mutationsList, observer) {
         for (const mutation of mutationsList) {
             if (mutation.type === 'attributes') {
                 const target = mutation.target
-                if (target.classList.contains('mud-popover-overflow-flip-onopen') &&
-                    target.classList.contains('mud-popover-open') == false) {
-                    target.mudPopoverFliped = null;
-                    target.removeAttribute('data-mudpopover-flip');
-                }
+                if (mutation.attributeName == 'class') {
+                    if (target.classList.contains('mud-popover-overflow-flip-onopen') &&
+                        target.classList.contains('mud-popover-open') == false) {
+                        target.mudPopoverFliped = null;
+                        target.removeAttribute('data-mudpopover-flip');
+                    }
 
-                window.mudpopoverHelper.placePopoverByNode(target);
+                    window.mudpopoverHelper.placePopoverByNode(target);
+                }
+                else if (mutation.attributeName == 'data-ticks') {
+                    const tickAttribute = target.getAttribute('data-ticks');
+
+                    const parent = target.parentElement;
+                    const tickValues = [];
+                    let max = -1;
+                    for (let i = 0; i < parent.children.length; i++) {
+                        const childNode = parent.children[i];
+                        const tickValue = parseInt(childNode.getAttribute('data-ticks'));
+                        if (tickValue == 0) {
+                            continue;
+                        }
+
+                        if (tickValues.indexOf(tickValue) >= 0) {
+                            continue;
+                        }
+
+                        tickValues.push(tickValue);
+
+                        if (tickValue > max) {
+                            max = tickValue;
+                        }
+                    }
+
+                    if (tickValues.length == 0) {
+                        continue;
+                    }
+
+                    const sortedTickValues = tickValues.sort((x, y) => x - y);
+
+                    for (let i = 0; i < parent.children.length; i++) {
+                        const childNode = parent.children[i];
+                        const tickValue = parseInt(childNode.getAttribute('data-ticks'));
+                        if (tickValue == 0) {
+                            continue;
+                        }
+
+                        if (childNode.skipZIndex == true) {
+                            continue;
+                        }
+
+                        childNode.style['z-index'] = 'calc(var(--mud-zindex-popover) + ' + (sortedTickValues.indexOf(tickValue) + 3).toString() + ')';
+                    }
+                }
             }
         }
     }
 
-    initilize(containerClass, flipMargin) {
+    initialize(containerClass, flipMargin) {
         const mainContent = document.getElementsByClassName(containerClass);
         if (mainContent.length == 0) {
             return;
@@ -348,7 +403,7 @@ class MudPopover {
     }
 
     connect(id) {
-        this.initilize(this.mainContainerClass);
+        this.initialize(this.mainContainerClass);
 
         const popoverNode = document.getElementById('popover-' + id);
         const popoverContentNode = document.getElementById('popovercontent-' + id);
@@ -356,7 +411,7 @@ class MudPopover {
 
             window.mudpopoverHelper.placePopover(popoverNode);
 
-            const config = { attributeFilter: ['class'] };
+            const config = { attributeFilter: ['class', 'data-ticks'] };
 
             const observer = new MutationObserver(this.callback.bind(this, id));
 
@@ -381,6 +436,8 @@ class MudPopover {
                 for (let entry of entries) {
                     var target = entry.target;
                     window.mudpopoverHelper.placePopoverByNode(target);
+
+
                 }
             });
 
@@ -435,4 +492,3 @@ window.addEventListener('scroll', () => {
 window.addEventListener('resize', () => {
     window.mudpopoverHelper.placePopoverByClassSelector();
 });
-

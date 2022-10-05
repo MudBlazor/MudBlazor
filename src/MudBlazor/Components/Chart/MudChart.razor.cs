@@ -10,15 +10,32 @@ namespace MudBlazor
 {
     public abstract class MudChartBase : MudComponentBase
     {
-        [Parameter] public double[] InputData { get; set; } = Array.Empty<double>();
+        [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public double[] InputData { get; set; } = Array.Empty<double>();
 
-        [Parameter] public string[] InputLabels { get; set; } = Array.Empty<string>();
+        [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public string[] InputLabels { get; set; } = Array.Empty<string>();
 
-        [Parameter] public string[] XAxisLabels { get; set; } = Array.Empty<string>();
+        [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public string[] XAxisLabels { get; set; } = Array.Empty<string>();
 
-        [Parameter] public List<ChartSeries> ChartSeries { get; set; } = new();
+        [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public List<ChartSeries> ChartSeries { get; set; } = new();
 
-        [Parameter] public ChartOptions ChartOptions { get; set; } = new();
+        [Parameter]
+        [Category(CategoryTypes.Chart.Appearance)]
+        public ChartOptions ChartOptions { get; set; } = new();
+
+        /// <summary>
+        /// RenderFragment for costumization inside the chart's svg.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Chart.Appearance)]
+        public RenderFragment CustomGraphics { get; set; }
 
         protected string Classname =>
         new CssBuilder("mud-chart")
@@ -26,28 +43,35 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
-        [CascadingParameter]
-        public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// The Type of the chart.
         /// </summary>
-        [Parameter] public ChartType ChartType { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public ChartType ChartType { get; set; }
 
         /// <summary>
         /// The Width of the chart, end with % or px.
         /// </summary>
-        [Parameter] public string Width { get; set; } = "80%";
+        [Parameter]
+        [Category(CategoryTypes.Chart.Appearance)]
+        public string Width { get; set; } = "80%";
 
         /// <summary>
         /// The Height of the chart, end with % or px.
         /// </summary>
-        [Parameter] public string Height { get; set; } = "80%";
+        [Parameter]
+        [Category(CategoryTypes.Chart.Appearance)]
+        public string Height { get; set; } = "80%";
 
         /// <summary>
         /// The placement direction of the legend if used.
         /// </summary>
-        [Parameter] public Position LegendPosition { get; set; } = Position.Bottom;
+        [Parameter]
+        [Category(CategoryTypes.Chart.Appearance)]
+        public Position LegendPosition { get; set; } = Position.Bottom;
 
         private Position ConvertLegendPosition(Position position)
         {
@@ -65,6 +89,7 @@ namespace MudBlazor
         /// Selected index of a portion of the chart.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
         public int SelectedIndex
         {
             get => _selectedIndex;

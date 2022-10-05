@@ -1,31 +1,34 @@
-﻿@if (Section is NavigationSection.Components or NavigationSection.Api)
- {
-    <MudDivider />
-    <MudToolBar DisableGutters="true">
-        @if (Previous!=null)
-            {
-            <MudButton Color="Color.Primary"
-                        Style="text-transform:none;"
-                        StartIcon="@Icons.Filled.NavigateBefore"
-                        Link="@($"{Section.ToDescriptionString()}/{Previous.Link}")">
-                @Previous.Name
-            </MudButton>
-            }
-        <MudSpacer/>
-        @if (Next!=null)
-            {
-            <MudButton Color="Color.Primary"
-                        Style="float:right;text-transform:none;"
-                        EndIcon="@Icons.Filled.NavigateNext"                          
-                        Link="@($"{Section.ToDescriptionString()}/{Next.Link}")">
-                @Next.Name
-            </MudButton>
-            }    
-    </MudToolBar>
- }
+﻿<MudToolBar DisableGutters="true" Class="mb-16">
+    @if (Previous != null)
+    {
+        <MudButton Color="Color.Primary"
+                   Style="text-transform:none;"
+                   StartIcon="@Icons.Filled.NavigateBefore"
+                   Link="@($"{Section.ToDescriptionString()}/{Previous.Link}")">
+            @Previous.Name
+        </MudButton>
+    }
+    <MudSpacer/>
+    @if (Next != null)
+    {
+        <MudButton Color="Color.Primary"
+                   Style="float:right;text-transform:none;"
+                   EndIcon="@Icons.Filled.NavigateNext"
+                   Link="@($"{Section.ToDescriptionString()}/{Next.Link}")">
+            @Next.Name
+        </MudButton>
+    }
+</MudToolBar>
 
 @code{
-    [Parameter] public NavigationSection? Section { get; set; }
-    [Parameter] public NavigationFooterLink Previous { get; set; }
-    [Parameter] public NavigationFooterLink Next { get; set; }
+
+    [Parameter]
+    public NavigationSection? Section { get; set; }
+
+    [Parameter]
+    public NavigationFooterLink Previous { get; set; }
+
+    [Parameter]
+    public NavigationFooterLink Next { get; set; }
+
 }

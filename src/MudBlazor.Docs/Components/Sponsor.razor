@@ -1,20 +1,26 @@
-﻿<div class="mudblazor-sponsor">
-    @if (String.IsNullOrWhiteSpace(Website))
-    {
-        <div class="mudblazor-sponsor-item">
-            <img src="@($"_content/MudBlazor.Docs/images/sponsors/{NameAndImage}.png")" class="mudblazor-sponsor-image">
-        </div>
-    }
-    else
-    {
-        <a class="mudblazor-sponsor-item" href="@Website" target="_blank">
-            <img src="@($"_content/MudBlazor.Docs/images/sponsors/{NameAndImage}.png")" class="mudblazor-sponsor-image">
-        </a>
-    }
-</div>
+﻿<a href="@Website" target="@Target">
+    <MudPaper Elevation="@(LandingPage? 0 : 25)" Class="@GetClassnames()" Height="100%">
+        <MudImage Src="@($"_content/MudBlazor.Docs/images/sponsors/{Image}")" Alt="@Name" ObjectFit="ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" />
+    </MudPaper>
+</a>
 
 @code {
-    [Parameter] public RenderFragment Childcontent { get; set; }
     [Parameter] public string Website { get; set; }
-    [Parameter] public string NameAndImage { get; set; }
+    [Parameter] public string Name { get; set; }
+    [Parameter] public string Image { get; set; }
+    [Parameter] public bool LandingPage { get; set; }
+
+    [Parameter] public string Target { get; set; } = "_blank";
+    
+    private string GetClassnames()
+    {
+        if (LandingPage)
+        {
+            return "lp-sponsor d-flex justify-center align-center mud-transparent pa-4 relative";
+        }
+        else
+        {
+            return "d-flex justify-center align-center mud-transparent rounded-lg relative";
+        }
+    }
 }

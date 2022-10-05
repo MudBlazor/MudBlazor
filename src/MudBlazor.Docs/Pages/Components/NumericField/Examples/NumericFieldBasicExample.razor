@@ -1,17 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-
-<MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudNumericField @bind-Value="IntValue" Label="Standard" Variant="Variant.Text" Min="0" Max="10" />
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudNumericField @bind-Value="DoubleValue" Label="Filled" Variant="Variant.Filled" Min="0.0" />
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudNumericField @bind-Value="DecimalValue" Label="Outlined" Variant="Variant.Outlined" Step=".2M" />
-    </MudItem>
-</MudGrid>
+<MudNumericField @bind-Value="IntValue" Label="Standard" Variant="Variant.Text" Min="0" Max="10" />
+<MudNumericField @bind-Value="DoubleValue" Label="Filled" Variant="Variant.Filled" Min="0.0" />
+<MudNumericField @bind-Value="DecimalValue" Label="Outlined" Variant="Variant.Outlined" Step=".2M" />
 
 @code {
     public int IntValue { get; set; }

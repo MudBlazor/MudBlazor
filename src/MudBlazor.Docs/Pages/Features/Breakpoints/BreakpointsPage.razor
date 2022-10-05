@@ -1,88 +1,50 @@
 ﻿@page "/features/breakpoints"
 
-<DocsPage MaxWidth="MaxWidth.Large">
-    <DocsPageHeader Title="Breakpoints" SubTitle="Breakpoints help you control your layout based on windows size.">
-    </DocsPageHeader>
+<DocsPage>
+    <DocsPageHeader Title="Breakpoints" SubTitle="Breakpoints help you control your layout based on windows size." />
+    
     <DocsPageContent>
         <DocsPageSection>
-            <MudPaper Elevation="0" Outlined="true">
-                <MudText Typo="Typo.h5" GutterBottom="true" Class="ma-4">Material Design Breakpoints</MudText>
-                <MudSimpleTable Elevation="0" Hover="true" Class="mt-4">
-                    <thead>
-                        <tr>
-                            <th>Device</th>
-                            <th>Code</th>
-                            <th>Type</th>
-                            <th>Range</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <MudIcon Icon="@Icons.Material.Filled.PhoneIphone" Class="mb-n1" />
-                                <MudText Inline="true">Extra small</MudText>
-                            </td>
-                            <td>xs</td>
-                            <td>Small to large phone</td>
-                            <td>&lt; 600px</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <MudIcon Icon="@Icons.Material.Filled.StayCurrentLandscape" Class="mb-n1 mr-1" />
-                                <MudText Inline="true">Small</MudText>
-                            </td>
-                            <td>sm</td>
-                            <td>Small to medium tablet</td>
-                            <td>600px > &lt; 960px</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <MudIcon Icon="@Icons.Material.Filled.Laptop" Class="mb-n1 mr-1" />
-                                <MudText Inline="true">Medium</MudText>
-                            </td>
-                            <td>md</td>
-                            <td>Large tablet to laptop</td>
-                            <td>960px > &lt; 1280px</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <MudIcon Icon="@Icons.Material.Filled.DesktopWindows" Class="mb-n1 mr-1" />
-                                <MudText Inline="true">Large</MudText>
-                            </td>
-                            <td>lg</td>
-                            <td>Desktop</td>
-                            <td>1280px > &lt; 1920px</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <MudIcon Icon="@Icons.Material.Filled.Tv" Class="mb-n1 mr-1" />
-                                <MudText Inline="true">Extra Large</MudText>
-                            </td>
-                            <td>xl</td>
-                            <td>HD and 4k</td>
-                            <td>1920px > &lt; 2560px</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <MudIcon Icon="@Icons.Material.Filled.Tv" Class="mb-n1 mr-1" />
-                                <MudText Inline="true">Extra Extra Large</MudText>
-                            </td>
-                            <td>xx</td>
-                            <td>4k+ and ultra-wide</td>
-                            <td>>= 2560px*</td>
-                        </tr>
-                    </tbody>
-                </MudSimpleTable>
-            </MudPaper>
+            <SectionHeader Title="Breakpoints">
+                <Description>
+                    MudBlazor use our own implementation of the orginal specification from Material design.
+                </Description>
+            </SectionHeader>
+            <BreakpointTable />
         </DocsPageSection>
         <DocsPageSection>
-            <MudText Typo="Typo.h4" GutterBottom="true">MudGrid</MudText>
-            <MudText>Utilizes the screen resolution and a 12 point grid system for its layout. With the 5 breakpoints you can specify the layout order on different window sizes.</MudText>
-            <MudText>Read more about <MudLink Href="/components/grid">MudBlazor's Grid component here</MudLink>, you will also find different examples and use cases.</MudText>
-
-            <MudText Typo="Typo.h4" GutterBottom="true">MudHidden</MudText>
-            <MudText>Instead of layout order, you can determine what should be rendered or not, depending on the window size and applied breakpoint.</MudText>
-            <MudText>Read more about <MudLink Href="/components/hidden">MudBlazor's Hidden component here.</MudLink></MudText>
+            <SectionHeader Title="Components">
+                <Description>
+                    There is several components that utilizes the breakpoint system and can normaly be configured with a parameter.
+                </Description>
+            </SectionHeader>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="MudGrid">
+                        <Description>
+                            Utilizes the screen resolution and a 12 point grid system for its layout. With the 5 breakpoints you can specify the layout order on different window sizes.
+                            Read more about <MudLink Href="/components/grid">MudBlazor's Grid component here</MudLink>, you will also find different examples and use cases.
+                        </Description>
+                    </SectionHeader>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="MudHidden">
+                        <Description>
+                            Instead of layout order, you can determine what should be rendered or not, depending on the window size and applied breakpoint.
+                            Read more about <MudLink Href="/components/hidden">MudBlazor's Hidden component here.</MudLink>
+                        </Description>
+                    </SectionHeader>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Utilities">
+                <Description>
+                    MudBlazor comes loaded with CSS utilities and are well documented under the feature section. Most of this CSS classes is also available with our breakpoints.
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

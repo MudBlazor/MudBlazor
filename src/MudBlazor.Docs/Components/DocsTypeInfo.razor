@@ -1,13 +1,15 @@
-﻿@if (NonnullableType.IsEnum)
+﻿@using MudBlazor.Docs.Extensions
+
+@if (_nonnullableType.IsEnum)
 {
     <MudTooltip>
-        <ChildContent>@Type.ConvertToCSharpSource()</ChildContent>
+        <ChildContent>@Type.GetTypeDisplayName()</ChildContent>
         <TooltipContent>
             enumeration type
             <MudText Align="Align.Left" Typo="Typo.body2">
-                @foreach (var name in Enum.GetNames(NonnullableType))
+                @foreach (var name in Enum.GetNames(_nonnullableType))
                 {
-                    @(NonnullableType.Name + "." + name)<br />
+                    @(_nonnullableType.Name + "." + name)<br />
                 }
             </MudText>
         </TooltipContent>
@@ -15,11 +17,16 @@
 }
 else
 {
-    @Type.ConvertToCSharpSource()
+    @Type.GetTypeDisplayName()
 }
 
 @code {
     [Parameter] public Type Type { get; set; }
 
-    private Type NonnullableType => Nullable.GetUnderlyingType(Type) ?? Type;
+    private Type _nonnullableType;
+
+    protected override void OnInitialized()
+    {
+        _nonnullableType = Nullable.GetUnderlyingType(Type) ?? Type;
+    }
 }

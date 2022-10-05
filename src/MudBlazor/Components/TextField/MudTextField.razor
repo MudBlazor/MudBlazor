@@ -2,15 +2,94 @@
 @typeparam T
 @inherits MudDebouncedInput<T>
 
-<CascadingValue Name="Standalone" Value="@Standalone" IsFixed="true">
-    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" CounterText="@GetCounterText()" FullWidth="@FullWidth" Class="@Classname" Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
+<CascadingValue Name="SubscribeToParentForm" Value="@SubscribeToParentForm" IsFixed="true">
+    <MudInputControl Label="@Label"
+                     Variant="@Variant"
+                     HelperText="@HelperText"
+                     HelperTextOnFocus="@HelperTextOnFocus"
+                     CounterText="@GetCounterText()"
+                     FullWidth="@FullWidth"
+                     Class="@Classname"
+                     Error="@HasErrors"
+                     ErrorText="@GetErrorText()"
+                     ErrorId="@ErrorId"
+                     Disabled="@Disabled"
+                     Margin="@Margin"
+                     Required="@Required"
+                     ForId="@FieldId">
         <InputContent>
-            <MudInput T="string" @ref="_elementReference" @attributes="UserAttributes" InputType="@InputType" Lines="@Lines" Style="@Style" Variant="@Variant" TextUpdateSuppression="@TextUpdateSuppression" Value="@Text" 
-                      ValueChanged="(s) => SetTextAsync(s)" Placeholder="@Placeholder" Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly" MaxLength="@MaxLength"
-                      Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" 
-                      Immediate="@Immediate" Margin="@Margin" OnBlur="@OnBlurred" OnKeyDown="@InvokeKeyDown" OnInternalInputChanged="OnChange" OnKeyPress="@InvokeKeyPress" OnKeyUp="@InvokeKeyUp"
-                      KeyDownPreventDefault="KeyDownPreventDefault" KeyPressPreventDefault="KeyPressPreventDefault" KeyUpPreventDefault="KeyUpPreventDefault"
-                      HideSpinButtons="true" Clearable="@Clearable" OnClearButtonClick="@OnClearButtonClick" Pattern="@Pattern"/>
+            <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
+                @if (_mask == null)
+                {
+                    <MudInput T="string"
+                              @ref="InputReference"
+                              @attributes="UserAttributes"
+                              InputType="@InputType"
+                              Lines="@Lines"
+                              Style="@Style"
+                              Variant="@Variant"
+                              TextUpdateSuppression="@TextUpdateSuppression"
+                              Value="@Text"
+                              ValueChanged="(s) => SetTextAsync(s)"
+                              Placeholder="@Placeholder"
+                              Disabled=@Disabled
+                              DisableUnderLine="@DisableUnderLine"
+                              ReadOnly="@ReadOnly"
+                              MaxLength="@MaxLength"
+                              Adornment="@Adornment"
+                              AdornmentText="@AdornmentText"
+                              AdornmentIcon="@AdornmentIcon"
+                              AdornmentColor="@AdornmentColor"
+                              AdornmentAriaLabel="@AdornmentAriaLabel"
+                              IconSize="@IconSize"
+                              OnAdornmentClick="@OnAdornmentClick"
+                              Error="@Error"
+                              ErrorId="@ErrorId"
+                              Immediate="@Immediate"
+                              Margin="@Margin"
+                              OnBlur="@OnBlurred"
+                              OnKeyDown="@InvokeKeyDown"
+                              OnInternalInputChanged="OnChange"
+                              OnKeyPress="@InvokeKeyPress"
+                              OnKeyUp="@InvokeKeyUp"
+                              KeyDownPreventDefault="KeyDownPreventDefault"
+                              KeyPressPreventDefault="KeyPressPreventDefault"
+                              KeyUpPreventDefault="KeyUpPreventDefault"
+                              HideSpinButtons="true"
+                              Clearable="@Clearable"
+                              OnClearButtonClick="@OnClearButtonClick"
+                              Pattern="@Pattern"/>
+                }
+                else
+                {
+                    <MudMask @ref="_maskReference"
+                             @attributes="UserAttributes"
+                             Mask="@_mask"
+                             InputType="@InputType"
+                             Lines="@Lines"
+                             Style="@Style"
+                             Variant="@Variant"
+                             TextUpdateSuppression="@TextUpdateSuppression"
+                             Value="@Text"
+                             ValueChanged="OnMaskedValueChanged"
+                             Placeholder="@Placeholder"
+                             Disabled=@Disabled
+                             DisableUnderLine="@DisableUnderLine"
+                             ReadOnly="@ReadOnly"
+                             MaxLength="@MaxLength"
+                             Adornment="@Adornment"
+                             AdornmentText="@AdornmentText"
+                             AdornmentIcon="@AdornmentIcon"
+                             AdornmentColor="@AdornmentColor"
+                             IconSize="@IconSize"
+                             OnAdornmentClick="@OnAdornmentClick"
+                             Error="@Error"
+                             Immediate="@Immediate"
+                             Margin="@Margin" OnBlur="@OnBlurred"
+                             Clearable="@Clearable"
+                             OnClearButtonClick="@OnClearButtonClick"/>
+                }
+            </CascadingValue>
         </InputContent>
     </MudInputControl>
 </CascadingValue>

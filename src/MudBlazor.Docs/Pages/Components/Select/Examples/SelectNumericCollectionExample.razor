@@ -1,25 +1,18 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudGrid>
-    <MudItem xs="12" sm="6" md="6">
-        <MudSelect T="double" Label="Price (Datatype: double)" Clearable="true" Required="true">
-            @foreach (var price in prices)
-            {
-            <MudSelectItem Value="@price" />
-            }
-        </MudSelect>
-    </MudItem>
+<MudSelect T="double" Label="Price (Datatype: double)" Clearable="true" Required="true">
+    @foreach (var price in prices)
+    {
+    <MudSelectItem Value="@price" />
+    }
+</MudSelect>
 
-    <MudItem xs="12" sm="6" md="6">
-        <MudSelect T="double?" Label="Price (Datatype: double?)" Clearable="true" Required="true">
-            @foreach (double? price in prices)
-            {
-            <MudSelectItem Value="@price" />
-            }
-        </MudSelect>
-    </MudItem>
-</MudGrid>
-
+<MudSelect T="double?" Label="Price (Datatype: double?)" Clearable="true" Required="true">
+    @foreach (double? price in prices)
+    {
+    <MudSelectItem Value="@price" />
+    }
+</MudSelect>
 
 @code
 {

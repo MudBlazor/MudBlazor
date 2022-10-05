@@ -21,39 +21,40 @@
     }
 </HeadContent>
 
-@if (IsApiPage && !string.IsNullOrEmpty(ComponentLink))
+@if (SpecialHeaderContent != null)
 {
-    
+    <div class="docs-page-header my-16">
+        @SpecialHeaderContent
+        <DocsRenderBenchmark/>
+    </div>
+}
+else
+{
+    <div class="docs-page-header mt-6 mb-12">
+        <MudText Typo="@Typo.h3">@Title</MudText>
+        <MudText>@GetSubTitle() @Description</MudText>
+        <DocsRenderBenchmark/>
+    </div>
 }
 
-<div class="docs-page-header mb-12">
-    <MudText Typo="@Typo.h3">@Title</MudText>
-    <MudText>@GetSubTitle() @Description</MudText>
-</div>
-<div id="mudads">
-    @if (RenderAds)
-    { 
-        <MudElement HtmlTag="script" async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CESDLK3E&placement=mudblazorcom" id="_carbonads_js"></MudElement>
-    }
-</div>
-@if (!IsApiPage && GetComponentTypeName() != null && !DisableApiHeader)
+@if (!_isApiPage && _componentTypeName != null && !DisableApiHeader)
 {
     <DocsPageSection api-link-section>
         <SectionHeader Title="API" />
         <div class="docs-page-apilinks">
             <ul class="my-2">
                 <li>
-                    <MudLink Href="@GetApiLink()">
-                        <CodeInline>@($"<{GetComponentTypeName()}>")</CodeInline>
+                    <MudLink Href="@_apiLink">
+                        <CodeInline>@($"<{_componentTypeName}>")</CodeInline>
                     </MudLink>
                 </li>
-                @if(GetChildComponents() != null)
+                @if (_component.ChildTypes != null)
                 {
-                    @foreach(var child in GetChildComponents())
+                    @foreach (var childType in _component.ChildTypes)
                     {
                         <li>
-                            <MudLink Href="@($"api/{child.Name.Replace("`1", "").ToLower().Replace("mud","")}")" Class="ms-1">
-                                - <CodeInline>@($"<{child.Name.Replace("`1", "")}>")</CodeInline>
+                            <MudLink Href="@($"api/{childType.Name.Replace("`1", "").ToLowerInvariant().Replace("mud","")}")" Class="ms-1">
+                                - <CodeInline>@($"<{childType.Name.Replace("`1", "")}>")</CodeInline>
                             </MudLink>
                         </li>
                     }
@@ -62,7 +63,7 @@
         </div>
     </DocsPageSection>
 }
-@if (IsApiPage && !string.IsNullOrEmpty(ComponentLink))
+@if (_isApiPage && !string.IsNullOrEmpty(ComponentLink))
 {
     <link Rel="canonical" Href="@($"https://mudblazor.com/{ComponentLink}")" />
     <DocsPageSection api-link-section>
@@ -71,7 +72,7 @@
             <ul class="my-2">
                 <li>
                     <MudLink Href="@GetComponentLink()">
-                        <CodeInline>@($"{GetParentComponentPage()}")</CodeInline>
+                        <CodeInline>@($"{_componentPage}")</CodeInline>
                     </MudLink>
                 </li>
             </ul>
@@ -81,17 +82,6 @@
 
 @code {
 
-    public bool RenderAds { get; set; }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            RenderAds = true;
-            StateHasChanged();
-        }
-    }
-
     [Inject] public NavigationManager NavigationManager { get; set; }
     [Inject] IMenuService MenuService { get; set; }
 
@@ -100,55 +90,35 @@
     [Parameter] public string Keywords { get; set; }
     [Parameter] public bool DisableApiHeader { get; set; }
     [Parameter] public RenderFragment Description { get; set; }
+    [Parameter] public RenderFragment SpecialHeaderContent { get; set; }
     [Parameter] public string ComponentLink { get; set; }
+    public Type _componentType;
+    public MudComponent _parentComponent;
+    public MudComponent _component;
+    public string _componentName;
+    private string _componentPage;
+    private bool _isApiPage;
+    private string _apiLink;
+    private string _componentTypeName;
 
-    private string GetApiLink() => $"api/{GetComponentName()}";
-    private string ComponentPage;
-
-    private string GetComponentName()
+    protected override void OnParametersSet()
     {
-        return NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
-    }
-
-    private bool IsApiPage
-    {
-        get
-        {
-            return NavigationManager.Uri.ToString().Contains("/api/");
-        }
-    }
-
-    private string GetComponentTypeName() => ApiLink.GetTypeFromComponentLink(GetComponentName())?.Name.Replace("`1", "");
-
-    private List<Type> GetChildComponents()
-    {
-        return MenuService.Components.Where(c => c.Component == ApiLink.GetTypeFromComponentLink(GetComponentName()) && c.ChildComponents != null).SelectMany(l => l.ChildComponents).ToList();
-    }
+        base.OnParametersSet();
+        _isApiPage = NavigationManager.Uri.ToString().Contains("/api/");
+        _componentName = NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+        _componentType = ApiLink.GetTypeFromComponentLink(_componentName);
+        _component = MenuService.GetComponent(_componentType);
+        _parentComponent = MenuService.GetParent(_componentType);
+        _componentTypeName = _componentType?.Name.Replace("`1", "");
+        _apiLink = $"api/{_componentName}";
+        _componentPage = (_component?.Type == null) ? _parentComponent?.Name : _component?.Name;
+    }   
 
     private string GetComponentLink()
     {
-        var currentComp = ApiLink.GetTypeFromComponentLink(GetComponentName());
-        var parent = MenuService.GetParent(currentComp);
-
-        if (parent.Component is not null) return $"components/{parent.Link}";
-        
-        return $"components/{parent.GroupItems.Elements.FirstOrDefault(x => x.Component == currentComp).Link}";
-    }
-
-    private string GetParentComponentPage()
-    {
-        var currentComp = ApiLink.GetTypeFromComponentLink(GetComponentName());
-        var parent = MenuService.GetParent(currentComp);
-        if (parent.Component != null)
-        {
-            ComponentPage = parent.Name;
-        }
-        else
-        {
-            var groupComp = parent.GroupItems.Elements.FirstOrDefault(x => x.Component == currentComp);
-            ComponentPage = groupComp.Name;
-        }
-        return ComponentPage;
+        if (_component?.Type != null)
+            return $"components/{_component?.Link}";
+        return $"components/{_parentComponent?.Link}";
     }
 
     string GetTitle() => $"{Title} - MudBlazor";
@@ -162,10 +132,10 @@
 
     string GetKeywords()
     {
-        var keywords = new HashSet<string>(Regex.Split(Keywords??"", @",\s"));
+        var keywords = new HashSet<string>(Regex.Split(Keywords ?? "", @",\s"));
         keywords.Add(Title);
-        keywords.Add(GetComponentTypeName());
-        keywords.Add(GetComponentTypeName()?.Replace("Mud", ""));
+        keywords.Add(_componentTypeName);
+        keywords.Add(_componentTypeName?.Replace("Mud", ""));
         keywords.Add("mudblazor");
         keywords.Add("blazor");
         keywords.Add("component");

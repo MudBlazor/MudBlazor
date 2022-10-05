@@ -1,0 +1,15 @@
+﻿.announcement-card{
+  transition: background-color 150ms cubic-bezier(.4,0,.2,1) 0ms;
+  &:hover{
+    background-color: var(--mud-palette-action-default-hover);
+    cursor:pointer;
+  }
+  .mud-card-content{
+    min-height: 172px;
+  }
+}
+
+.announcment-container {
+  font-family: "Public Sans", "Roboto", "Arial", "sans-serif";
+  font-weight: 600;
+}

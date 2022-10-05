@@ -10,11 +10,19 @@ namespace MudBlazor
     public partial class MudInput<T> : MudBaseInput<T>
     {
         protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder));
+            () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder));
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
         protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
+
+        protected string ClearButtonClassname =>
+                    new CssBuilder()
+                    .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
+                    .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons == true)
+                    .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
+                    .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons == true)
+                    .Build();
 
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
@@ -60,7 +68,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        private ElementReference _elementReference;
+        public ElementReference ElementReference { get; private set; }
         private ElementReference _elementReference1;
 
         public override async ValueTask FocusAsync()
@@ -70,7 +78,7 @@ namespace MudBlazor
                 if (InputType == InputType.Hidden && ChildContent != null)
                     await _elementReference1.FocusAsync();
                 else
-                    await _elementReference.FocusAsync();
+                    await ElementReference.FocusAsync();
             }
             catch (Exception e)
             {
@@ -78,14 +86,19 @@ namespace MudBlazor
             }
         }
 
+        public override ValueTask BlurAsync()
+        {
+            return ElementReference.MudBlurAsync();
+        }
+
         public override ValueTask SelectAsync()
         {
-            return _elementReference.MudSelectAsync();
+            return ElementReference.MudSelectAsync();
         }
 
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
-            return _elementReference.MudSelectRangeAsync(pos1, pos2);
+            return ElementReference.MudSelectRangeAsync(pos1, pos2);
         }
 
         /// <summary>
@@ -163,6 +176,7 @@ namespace MudBlazor
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
         {
             await SetTextAsync(string.Empty, updateValue: true);
+            await ElementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
 
@@ -196,6 +210,14 @@ namespace MudBlazor
         {
             _internalText = text;
             return SetTextAsync(text);
+        }
+
+
+        // Certain HTML5 inputs (dates and color) have a native placeholder
+        private bool HasNativeHtmlPlaceholder()
+        {
+            return GetInputType() is InputType.Color or InputType.Date or InputType.DateTimeLocal or InputType.Month
+                or InputType.Time or InputType.Week;
         }
     }
 

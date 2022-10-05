@@ -24,7 +24,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<CarouselTest>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             //// select elements needed for the test
             var carousel = comp.FindComponent<MudCarousel<object>>().Instance;
             //// validating some renders
@@ -146,7 +146,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudCarousel<object>>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2); //left + right
             // adding some pages
             comp.Instance.Items.Add(new());
@@ -157,18 +157,18 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-icon-button").Count.Should().Be(5); //left + right + 3 items
             comp.SetParam(p => p.ShowArrows, false);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(3);
-            comp.SetParam(p => p.ShowDelimiters, false);
+            comp.SetParam(p => p.ShowBullets, false);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(0);
             comp.SetParam(p => p.ShowArrows, true);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2);
-            comp.SetParam(p => p.ShowDelimiters, true);
+            comp.SetParam(p => p.ShowBullets, true);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(5);
             // Custom classes for navigation elements
-            comp.SetParam(p => p.DelimitersClass, "fake-delimiter-class");
+            comp.SetParam(p => p.BulletsClass, "fake-delimiter-class");
             comp.SetParam(p => p.NavigationButtonsClass, "fake-navigation-class");
             comp.FindAll("button.fake-delimiter-class").Count.Should().Be(3);
             comp.FindAll("button.fake-navigation-class").Count.Should().Be(2);
-            comp.SetParam(p => p.DelimitersClass, null);
+            comp.SetParam(p => p.BulletsClass, null);
             comp.SetParam(p => p.NavigationButtonsClass, null);
             comp.FindAll("button.fake-delimiter-class").Count.Should().Be(0);
             comp.FindAll("button.fake-navigation-class").Count.Should().Be(0);
@@ -182,7 +182,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudCarousel<object>>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             // adding some pages
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
@@ -208,6 +208,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Testing when DisableSwipeGesture
+        /// </summary>
+        [Test]
+        public async Task CarouselTest_DisableSwipeGesture()
+        {
+            var comp = Context.RenderComponent<MudCarousel<object>>();
+
+            //Add some pages
+            comp.Instance.Items.Add(new());
+            comp.Instance.Items.Add(new());
+            comp.Instance.Items.Add(new());
+
+            //Move the SelectedIndex from -1 to 0
+            await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
+
+            var mudSwipeArea = comp.FindComponent<MudSwipeArea>().Instance;
+
+            comp.Instance.EnableSwipeGesture = false;
+            await comp.InvokeAsync(() => mudSwipeArea.OnSwipe(SwipeDirection.RightToLeft));
+            comp.Instance.SelectedIndex.Should().Be(0);
+
+            comp.Instance.EnableSwipeGesture = true;
+            await comp.InvokeAsync(() => mudSwipeArea.OnSwipe(SwipeDirection.RightToLeft));
+            comp.Instance.SelectedIndex.Should().Be(1);
+        }
+
+        /// <summary>
         /// Testing DataBinding with Add and Remove from data source (MVVM, MVC and another patterns)
         /// </summary>
         /// <returns></returns>
@@ -216,7 +243,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<CarouselBindingTest>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             //// select elements needed for the test
             var carousel = comp.FindComponent<MudCarousel<string>>().Instance;
             //// validating some renders

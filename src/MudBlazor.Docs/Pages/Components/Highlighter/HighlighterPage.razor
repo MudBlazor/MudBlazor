@@ -1,7 +1,7 @@
 ﻿@page "/components/highlighter"
 
-<DocsPage MaxWidth="MaxWidth.Large">
-    <DocsPageHeader Title="MudHighlighter">
+<DocsPage>
+    <DocsPageHeader Title="Highlighter">
         <Description>
             Use this utility component to highlight parts of the text.
         </Description>
@@ -9,45 +9,55 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="Use it in combination with other components">
-                <Description>Example with a MudList:</Description>
+            <SectionHeader Title="Usage">
+                <Description>The highlighter can be used in combination with any other component.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true">
-                <HighlighterWithListExample />
-            </SectionContent>
-            <SectionSource Code="HighlighterWithListExample" GitHubFolderName="Highlighter" ShowCode="false" />
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader>
-                <Description>Example with a MudTable:</Description>
-            </SectionHeader>
-            <SectionContent FullWidth="true" DarkenBackground="true">
-                <HighlighterWithTableExample />
-            </SectionContent>
-            <SectionSource Code="HighlighterWithTableExample" GitHubFolderName="Highlighter" ShowCode="false" />
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="MudList">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="HighlighterWithListExample" ShowCode="false">
+                        <HighlighterWithListExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="MudTable">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="HighlighterWithTableExample" ShowCode="false">
+                        <HighlighterWithTableExample/>
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Style">
                 <Description>Style it with the Class or Style properties:</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true">
+            <SectionContent DarkenBackground="true" Code="HighlighterWithCustomStyleExample" ShowCode="false">
                 <HighlighterWithCustomStyleExample />
             </SectionContent>
-            <SectionSource Code="HighlighterWithCustomStyleExample" GitHubFolderName="Highlighter" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Case sensitivity">
                 <Description>Set the <code class="docs-code docs-code-primary">UntilNextBoundary</code> property to true if you want to highlight the text until the next regex boundary occurs, or the <code class="docs-code docs-code-primary">CaseSensitive</code> property to decide if you want to perform a case-sensitive highlight.</Description>
             </SectionHeader>
-            <SectionContent FullWidth="true" DarkenBackground="true">
+            <SectionContent DarkenBackground="true" Code="HighlighterUntilNextBoundaryExample" ShowCode="false">
                 <HighlighterUntilNextBoundaryExample />
             </SectionContent>
-            <SectionSource Code="HighlighterUntilNextBoundaryExample" GitHubFolderName="Highlighter" ShowCode="false" />
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Multiple Highlights">
+                <Description>In addition to <code class="docs-code docs-code-primary">HighlightedText</code> property which accepts a single text fragment in the form of an string, the <code class="docs-code docs-code-primary">HighlightedTexts</code> property accepts an enumerable of strings which can be used to highlight several text fragments.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="HighlighterWithListMultipleExample" ShowCode="false">
+                <HighlighterWithListMultipleExample />
+            </SectionContent>
+        </DocsPageSection>
 
     </DocsPageContent>
 </DocsPage>

@@ -21,7 +21,7 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<MudAvatar>(imageUrl, alt);
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var imageElement = comp.Find("img");
             imageElement.ClassName.Should().Contain("mud-avatar-img");
@@ -41,7 +41,7 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<MudAvatar>(imageUrl);
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var imageElement = comp.Find("img");
             imageElement.ClassName.Should().Contain("mud-avatar-img");
@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<MudAvatar>(imageUrl, alt);
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             var imageElement = comp.Find("img");
             imageElement.ClassName.Should().Contain("mud-avatar-img");

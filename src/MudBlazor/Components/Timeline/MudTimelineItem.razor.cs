@@ -36,57 +36,86 @@ namespace MudBlazor
         /// <summary>
         /// Dot Icon
         /// </summary>
-        [Parameter] public string Icon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Dot)]
+        public string Icon { get; set; }
 
         /// <summary>
         /// Variant of the dot.
         /// </summary>
-        [Parameter] public Variant Variant { get; set; } = Variant.Outlined;
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Dot)]
+        public Variant Variant { get; set; } = Variant.Outlined;
+
+        /// <summary>
+        /// User styles, applied to the lineItem dot.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Dot)]
+        public string DotStyle { get; set; }
 
         /// <summary>
         /// Color of the dot.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Dot)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// Size of the dot.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Small;
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Dot)]
+        public Size Size { get; set; } = Size.Small;
 
         /// <summary>
         /// Elevation of the dot. The higher the number, the heavier the drop-shadow.
         /// </summary>
-        [Parameter] public int Elevation { set; get; } = 1;
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Dot)]
+        public int Elevation { set; get; } = 1;
 
         /// <summary>
         /// Overrides Timeline Parents default sorting method in Default and Reverse mode.
         /// </summary>
-        [Parameter] public TimelineAlign TimelineAlign { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Behavior)]
+        public TimelineAlign TimelineAlign { get; set; }
 
         /// <summary>
         /// If true, dot will not be displayed.
         /// </summary>
-        [Parameter] public bool HideDot { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Dot)]
+        public bool HideDot { get; set; }
 
         /// <summary>
         /// If used renders child content of the ItemOpposite.
         /// </summary>
-        [Parameter] public RenderFragment ItemOpposite { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Behavior)]
+        public RenderFragment ItemOpposite { get; set; }
 
         /// <summary>
         /// If used renders child content of the ItemContent.
         /// </summary>
-        [Parameter] public RenderFragment ItemContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Behavior)]
+        public RenderFragment ItemContent { get; set; }
 
         /// <summary>
         /// If used renders child content of the ItemDot.
         /// </summary>
-        [Parameter] public RenderFragment ItemDot { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Dot)]
+        public RenderFragment ItemDot { get; set; }
 
         /// <summary>
         /// Optional child content if no other RenderFragments is used.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         protected override Task OnInitializedAsync()
         {

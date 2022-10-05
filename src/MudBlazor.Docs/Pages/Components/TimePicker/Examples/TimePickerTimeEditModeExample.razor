@@ -1,15 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
-<MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudTimePicker Label="Normal" @bind-Time="time" TimeEditMode="TimeEditMode.Normal" />
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudTimePicker Label="OnlyHours" @bind-Time="time" TimeEditMode="TimeEditMode.OnlyHours" />
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudTimePicker Label="OnlyMinutes" @bind-Time="time" TimeEditMode="TimeEditMode.OnlyMinutes" />
-    </MudItem>
-</MudGrid>
+
+<MudTimePicker Label="Normal" @bind-Time="time" TimeEditMode="TimeEditMode.Normal" />
+<MudTimePicker Label="OnlyHours" @bind-Time="time" TimeEditMode="TimeEditMode.OnlyHours" />
+<MudTimePicker Label="OnlyMinutes" @bind-Time="time" TimeEditMode="TimeEditMode.OnlyMinutes" />
 
 @code{
 

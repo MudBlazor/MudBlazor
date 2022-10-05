@@ -1,0 +1,51 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid T="Item" Items="@_items" EditMode="@DataGridEditMode.Cell" RowClick="@OnRowClick" 
+    SelectedItemChanged="@OnSelectedItemChanged" CommittedItemChanges="@OnCommittedItemChanges" 
+    ReadOnly="false">
+    <Columns>
+        <Column T="Item" Field="@nameof(Item.Name)" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Item> _items = new List<Item>()
+    {
+        new Item("A"), 
+        new Item("B"), 
+        new Item("C")
+    };
+
+    public bool RowClicked { get; set; }
+    public bool SelectedItemChanged { get; set; }
+    public bool CommittedItemChanges { get; set; }
+
+    private void OnRowClick(DataGridRowClickEventArgs<Item> args)
+    {
+        RowClicked = true;
+        Console.WriteLine("RowClicked fired.");
+    }
+
+    private void OnSelectedItemChanged(Item item)
+    {
+        SelectedItemChanged = true;
+        Console.WriteLine("OnSelectedItemChanged fired.");
+    }
+
+    private void OnCommittedItemChanges(Item item)
+    {
+        CommittedItemChanges = true;
+        Console.WriteLine("CommittedItemChanges fired.");
+    }
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+
+}

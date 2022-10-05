@@ -3,6 +3,7 @@ using System.Net.Http;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Docs.Services;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
@@ -26,13 +27,16 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IResizeService>(new MockResizeService());
             ctx.Services.AddSingleton<IBreakpointService>(new MockBreakpointService());
             ctx.Services.AddTransient<IScrollManager, MockScrollManager>();
-            ctx.Services.AddTransient<IScrollListener, MockScrollListener>();
+            ctx.Services.AddTransient<IScrollListenerFactory, MockScrollListenerFactory>();
             ctx.Services.AddTransient<IJsApiService, MockJsApiServices>();
-            ctx.Services.AddTransient<IResizeObserver, MockResizeObserver>();
+            ctx.Services.AddTransient<IResizeObserverFactory, MockResizeObserverFactory>();
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
-            ctx.Services.AddTransient<IEventListener, EventListener>();
-            ctx.Services.AddTransient<IKeyInterceptor, MockKeyInterceptorService>();
+            ctx.Services.AddTransient<IEventListenerFactory, MockEventListenerFactory>();
+            ctx.Services.AddTransient<IEventListener, MockEventListener>();
+            ctx.Services.AddTransient<IKeyInterceptorFactory, MockKeyInterceptorServiceFactory>();
+            ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
             ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
+            ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>
                 new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });
@@ -45,8 +49,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 ctx.Dispose();
             }
-            catch(Exception) { /*ignore, may fail because of dispose in the middle of a (second) render pass*/ }
+            catch (Exception) { /*ignore, may fail because of dispose in the middle of a (second) render pass*/ }
         }
     }
 }
-

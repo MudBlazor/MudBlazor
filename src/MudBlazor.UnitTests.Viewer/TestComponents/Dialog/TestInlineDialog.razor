@@ -1,13 +1,16 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+@inject IDialogService DialogService
 
 <MudButton Variant="Variant.Filled" OnClick="()=>visible=true">Open</MudButton>
 
-<MudDialog @bind-IsVisible="visible" Options="inlineOptions">
+<MudDialog @bind-IsVisible="visible" Options="inlineOptions" Class="test-class" ClassContent="content-class" Style="color: red;" ContentStyle="color: blue;" Tag="@((string)"test-tag")">
     <DialogContent>
         <MudText>Wabalabadubdub!</MudText>
+        <MudRating @bind-SelectedValue="rating" Class="mt-3"/>
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" OnClick="()=>visible=false">Close</MudButton>
+        <MudButton Color="Color.Primary" OnClick="CloseAndOpen">Close and open</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -15,6 +18,12 @@
     public static string __description__ = "Click on open will open the inlined dialog";
 
     bool visible;
+    private int rating;
+
+    Task CloseAndOpen() {
+        visible=false;
+        return DialogService.ShowMessageBox(title: "hello from inline", message: "BUG4871", yesText: "BUG4871");
+    }
 
     private DialogOptions inlineOptions = new() { FullWidth = true };
 }

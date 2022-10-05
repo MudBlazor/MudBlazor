@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Generic;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
+using static MudBlazor.Colors;
 
 namespace MudBlazor
 {
@@ -21,6 +22,7 @@ namespace MudBlazor
             DisableToolbar = true;
             Value = "#594ae2"; //MudBlazor Blue
             Text = GetColorTextValue();
+            AdornmentAriaLabel = "Open Color Picker";
         }
 
         #region Fields
@@ -51,13 +53,14 @@ namespace MudBlazor
         private readonly Guid _id = Guid.NewGuid();
         private Guid _throttledMouseOverEventId;
 
-        [Inject] IEventListener ThrottledEventManager { get; set; }
+        private IEventListener _throttledEventManager;
+        [Inject] IEventListenerFactory ThrottledEventManagerFactory { get; set; }
 
         #endregion
 
         #region Parameters
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         private bool _disableAlpha = false;
 
@@ -65,6 +68,7 @@ namespace MudBlazor
         /// If true, Alpha options will not be displayed and color output will be RGB, HSL or HEX and not RGBA, HSLA or HEXA.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool DisableAlpha
         {
             get => _disableAlpha;
@@ -87,39 +91,53 @@ namespace MudBlazor
         /// <summary>
         /// If true, the color field will not be displayed.
         /// </summary>
-        [Parameter] public bool DisableColorField { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool DisableColorField { get; set; } = false;
 
         /// <summary>
         /// If true, the switch to change color mode will not be displayed.
         /// </summary>
-        [Parameter] public bool DisableModeSwitch { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool DisableModeSwitch { get; set; } = false;
 
         /// <summary>
         /// If true, textfield inputs and color mode switch will not be displayed.
         /// </summary>
-        [Parameter] public bool DisableInputs { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool DisableInputs { get; set; } = false;
 
         /// <summary>
         /// If true, hue and alpha sliders will not be displayed.
         /// </summary>
-        [Parameter] public bool DisableSliders { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool DisableSliders { get; set; } = false;
 
         /// <summary>
         /// If true, the preview color box will not be displayed, note that the preview color functions as a button as well for collection colors.
         /// </summary>
-        [Parameter] public bool DisablePreview { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool DisablePreview { get; set; } = false;
 
         /// <summary>
         /// The initial mode (RGB, HSL or HEX) the picker should open. Defaults to RGB 
         /// </summary>
-        [Parameter] public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
 
         private ColorPickerView _colorPickerView = ColorPickerView.Spectrum;
+        private ColorPickerView _activeColorPickerView = ColorPickerView.Spectrum;
 
         /// <summary>
         /// The initial view of the picker. Views can be changed if toolbar is enabled. 
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public ColorPickerView ColorPickerView
         {
             get => _colorPickerView;
@@ -127,20 +145,8 @@ namespace MudBlazor
             {
                 if (value != _colorPickerView)
                 {
-                    var oldValue = _colorPickerView;
-
                     _colorPickerView = value;
-                    Text = GetColorTextValue();
-
-                    if (oldValue == ColorPickerView.Spectrum)
-                    {
-                        RemoveMouseOverEvent().AndForget();
-                    }
-
-                    if (value == ColorPickerView.Spectrum)
-                    {
-                        _attachedMouseEvent = true;
-                    }
+                    ChangeView(value).AndForget();
                 }
             }
         }
@@ -148,12 +154,15 @@ namespace MudBlazor
         /// <summary>
         /// If true, binding changes occurred also when HSL values changed without a corresponding RGB change 
         /// </summary>
-        [Parameter] public bool UpdateBindingIfOnlyHSLChanged { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool UpdateBindingIfOnlyHSLChanged { get; set; } = false;
 
         /// <summary>
         /// A two-way bindable property representing the selected value. MudColor is a utility class that can be used to get the value as RGB, HSL, hex or other value
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
         public MudColor Value
         {
             get => _color;
@@ -191,6 +200,7 @@ namespace MudBlazor
         /// MudColor list of predefined colors. The first five colors will show up as the quick colors on preview dot click.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public IEnumerable<MudColor> Palette { get; set; } = new MudColor[]
         { "#424242", "#2196f3", "#00c853", "#ff9800", "#f44336",
           "#f6f9fb", "#9df1fa", "#bdffcf", "#fff0a3", "#ffd254",
@@ -220,32 +230,44 @@ namespace MudBlazor
         /// Under some conditions like long latency the visual representation might not reflect the user behaviour anymore. So, it can be disabled 
         /// Enabled by default
         /// </summary>
-        [Parameter] public bool DisableDragEffect { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool DisableDragEffect { get; set; } = false;
 
         /// <summary>
         /// Custom close icon.
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
         /// <summary>
         /// Custom spectrum icon.
         /// </summary>
-        [Parameter] public string SpectrumIcon { get; set; } = Icons.Material.Filled.Tune;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public string SpectrumIcon { get; set; } = Icons.Material.Filled.Tune;
 
         /// <summary>
         /// Custom grid icon.
         /// </summary>
-        [Parameter] public string GridIcon { get; set; } = Icons.Material.Filled.Apps;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public string GridIcon { get; set; } = Icons.Material.Filled.Apps;
 
         /// <summary>
         /// Custom palette icon.
         /// </summary>
-        [Parameter] public string PaletteIcon { get; set; } = Icons.Material.Filled.Palette;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public string PaletteIcon { get; set; } = Icons.Material.Filled.Palette;
 
         /// <summary>
         /// Custom import/export icont.
         /// </summary>
-        [Parameter] public string ImportExportIcon { get; set; } = Icons.Material.Filled.ImportExport;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerAppearance)]
+        public string ImportExportIcon { get; set; } = Icons.Material.Filled.ImportExport;
 
         #endregion
 
@@ -260,7 +282,7 @@ namespace MudBlazor
             _collectionOpen = false;
 
             if (
-                IsAnyControlVisible() == false || ColorPickerView is ColorPickerView.GridCompact or ColorPickerView.Palette)
+                IsAnyControlVisible() == false || _activeColorPickerView is ColorPickerView.GridCompact or ColorPickerView.Palette)
             {
                 Close();
             }
@@ -275,7 +297,23 @@ namespace MudBlazor
                 _ => ColorPickerMode.RGB,
             };
 
-        public void ChangeView(ColorPickerView view) => ColorPickerView = view;
+        public async Task ChangeView(ColorPickerView value) {
+
+            var oldValue = _activeColorPickerView;
+
+            _activeColorPickerView = value;
+            Text = GetColorTextValue();
+
+            if (oldValue == ColorPickerView.Spectrum)
+            {
+                await RemoveMouseOverEvent();
+            }
+
+            if (value == ColorPickerView.Spectrum)
+            {
+                _attachedMouseEvent = true;
+            }
+        } 
 
         private void UpdateBaseColorSlider(int value)
         {
@@ -483,13 +521,13 @@ namespace MudBlazor
         #region helper
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
-        private string GetColorTextValue() => (DisableAlpha == true || ColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _color.ToString(MudColorOutputFormats.Hex) : _color.ToString(MudColorOutputFormats.HexA);
+        private string GetColorTextValue() => (DisableAlpha == true || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _color.ToString(MudColorOutputFormats.Hex) : _color.ToString(MudColorOutputFormats.HexA);
 
         private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => Close());
         private bool IsAnyControlVisible() => !(DisablePreview && DisableSliders && DisableInputs);
         private EventCallback<MouseEventArgs> GetSelectPaletteColorCallback(MudColor color) => new EventCallbackFactory().Create(this, (MouseEventArgs e) => SelectPaletteColor(color));
 
-        private Color GetButtonColor(ColorPickerView view) => ColorPickerView == view ? Color.Primary : Color.Inherit;
+        private Color GetButtonColor(ColorPickerView view) => _activeColorPickerView == view ? Color.Primary : Color.Inherit;
         private string GetColorDotClass(MudColor color) => new CssBuilder("mud-picker-color-dot").AddClass("selected", color == Value).ToString();
         private string AlphaSliderStyle => new StyleBuilder().AddStyle($"background-image: linear-gradient(to {(RightToLeft ? "left" : "right")}, transparent, {_color.ToString(MudColorOutputFormats.RGB)})").Build();
 
@@ -520,8 +558,13 @@ namespace MudBlazor
         {
             if (DisableDragEffect == true) { return; }
 
+            if(_throttledEventManager == null)
+            {
+                _throttledEventManager = ThrottledEventManagerFactory.Create();
+            }
+
             _throttledMouseOverEventId = await
-                ThrottledEventManager.Subscribe<MouseEventArgs>("mousemove", _id.ToString(), "mudEventProjections.correctOffset", 10, async (x) =>
+                _throttledEventManager.Subscribe<MouseEventArgs>("mousemove", _id.ToString(), "mudEventProjections.correctOffset", 10, async (x) =>
                 {
                     var e = x as MouseEventArgs;
                     await InvokeAsync(() => OnMouseOver(e));
@@ -533,12 +576,14 @@ namespace MudBlazor
         {
             if (_throttledMouseOverEventId == default) { return Task.CompletedTask; }
 
-            return ThrottledEventManager.Unsubscribe(_throttledMouseOverEventId);
+            return _throttledEventManager.Unsubscribe(_throttledMouseOverEventId);
         }
 
         public async ValueTask DisposeAsync()
         {
-            await ThrottledEventManager.Unsubscribe(_throttledMouseOverEventId);
+           if(_throttledEventManager == null) { return; }
+
+            await _throttledEventManager.DisposeAsync();
         }
 
         #endregion

@@ -10,32 +10,42 @@ namespace MudBlazor
 {
     public partial class MudTimeline : MudBaseItemsControl<MudTimelineItem>
     {
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// Sets the orientation of the timeline and its timeline items.
         /// </summary>
-        [Parameter] public TimelineOrientation TimelineOrientation { get; set; } = TimelineOrientation.Vertical;
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Behavior)]
+        public TimelineOrientation TimelineOrientation { get; set; } = TimelineOrientation.Vertical;
 
         /// <summary>
         /// The position the timeline itself and how the timeline items should be displayed.
         /// </summary>
-        [Parameter] public TimelinePosition TimelinePosition { get; set; } = TimelinePosition.Alternate;
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Behavior)]
+        public TimelinePosition TimelinePosition { get; set; } = TimelinePosition.Alternate;
 
         /// <summary>
         /// Aligns the dot and any item modifiers is changed, in default mode they are centered to the item.
         /// </summary>
-        [Parameter] public TimelineAlign TimelineAlign { get; set; } = TimelineAlign.Default;
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Behavior)]
+        public TimelineAlign TimelineAlign { get; set; } = TimelineAlign.Default;
 
         /// <summary>
         /// Reverse the order of TimelineItems when TimelinePosition is set to Alternate.
         /// </summary>
-        [Parameter] public bool Reverse { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Behavior)]
+        public bool Reverse { get; set; } = false;
 
         /// <summary>
         /// If true, disables all TimelineItem modifiers, like adding a caret to a MudCard.
         /// </summary>
-        [Parameter] public bool DisableModifiers { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Behavior)]
+        public bool DisableModifiers { get; set; } = false;
 
         protected string Classnames =>
             new CssBuilder("mud-timeline")

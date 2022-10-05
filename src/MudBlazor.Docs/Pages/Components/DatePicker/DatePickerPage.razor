@@ -3,93 +3,140 @@
 <DocsPage>
     <DocsPageHeader Title="Date Picker">
         <Description>Provides the user with a simple way to select a date.</Description>
-        </DocsPageHeader>
+    </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Basic Usage">
                 <Description>
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: Always use the two-way binding <CodeInline>@@bind-Date</CodeInline> to bind to a field of type <CodeInline>DateTime?</CodeInline></MudAlert>
-                    <MudText Class="py-6">
-                        If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.
-                        If <CodeInline>ReadOnly</CodeInline> is set to true, the DatePicker can be used but the value will remain unchanged regardless of the actions performed or the values entered.
-                    </MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="DatePickerBasicUsageExample" ShowCode="false">
                 <DatePickerBasicUsageExample/>
             </SectionContent>
-            <SectionSource Code="DatePickerBasicUsageExample" GitHubFolderName="DatePicker" ShowCode="false" />
         </DocsPageSection>
-                
+
+        <DocsPageSection>
+            <SectionHeader Title="Input Masking">
+                <Description>
+                    By setting the <CodeInline>Mask</CodeInline> parameter, an editable DatePicker can be used with any suitable 
+                    <MudLink Href="/features/masking">input mask</MudLink>, preferrably a <CodeInline>DateMask</CodeInline> which
+                    has built-in date awareness. But other masks like <CodeInline>PatternMask</CodeInline> will work as well, even 
+                    if they allow to input invalid dates. Make sure the <CodeInline>DateFormat</CodeInline> fits the mask!
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="DatePickerMaskExample" ShowCode="false">
+                <DatePickerMaskExample/>
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Read Only">
+                <Description>If <CodeInline>ReadOnly</CodeInline> is set to true, the DatePicker can be used but the value will remain unchanged regardless of the actions performed or the values entered.</Description>
+            </SectionHeader>
+            <SectionContent Code="DatePickerReadOnlyExample" ShowCode="false" FullWidth="false">
+                <DatePickerReadOnlyExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Action Buttons">
+                <Description>You can add buttons by using the <CodeInline>PickerActions</CodeInline> render fragment. If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.</Description>
+            </SectionHeader>
+            <SectionContent Code="DatePickerActionButtonsExample" ShowCode="false">
+                <DatePickerActionButtonsExample/>
+            </SectionContent>
+        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Internationalization">
                 <Description>When you set the <CodeInline>Culture</CodeInline> parameter, the DatePicker will use culture-specific month names, weekday names and even different calendars.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
-                <DatePickerInternationalizationExample />
+            <SectionContent Code="DatePickerInternationalizationExample" ShowCode="false">
+                <DatePickerInternationalizationExample/>
             </SectionContent>
-            <SectionSource Code="DatePickerInternationalizationExample" GitHubFolderName="DatePicker" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Dialog Mode">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="DatePickerDialogExample">
                 <DatePickerDialogExample/>
             </SectionContent>
-            <SectionSource Code="DatePickerDialogExample" GitHubFolderName="DatePicker"/>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Static Mode">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent DarkenBackground="true" Code="DatePickerStaticExample">
                 <DatePickerStaticExample/>
             </SectionContent>
-            <SectionSource Code="DatePickerStaticExample" GitHubFolderName="DatePicker"/>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Different views">
                 <Description>By default, it opens to Date, but can be set to Year or Month.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="DatePickerViewsExample">
                 <DatePickerViewsExample/>
             </SectionContent>
-            <SectionSource Code="DatePickerViewsExample" GitHubFolderName="DatePicker"/>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Colors">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-datetime-margin">
+            <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="DatePickerColorExample">
                 <DatePickerColorExample/>
             </SectionContent>
-            <SectionSource Code="DatePickerColorExample" GitHubFolderName="DatePicker"/>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Elevation">
                 <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default value is 0 for static and 8 for inline.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent DarkenBackground="true" Code="DatePickerElevationExample">
                 <DatePickerElevationExample/>
             </SectionContent>
-            <SectionSource Code="DatePickerElevationExample" GitHubFolderName="DatePicker"/>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Go To Date">
+                <Description>
+                    <CodeInline>GoToDate</CodeInline> method helps to control the component programmatically. With <CodeInline>GoToDate</CodeInline>, users can navigate between dates with or without submitting. Works with all picker variants.
+                    <br />
+                    This example shows the possible usage of <CodeInline>GoToDate</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="DatePickerGoToDateExample" DarkenBackground="true" ShowCode="false">
+                <DatePickerGoToDateExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Fixed Values Usage">
+                <Description>
+                    You can set fix values for day, month or year via <CodeInline>FixDay</CodeInline>, <CodeInline>FixMonth</CodeInline> and <CodeInline>FixYear</CodeInline>, default value is null for all of them.
+                    This in combination with the <CodeInline>OpenTo</CodeInline> parameter allows for Year-Month Pickers, where the user only selects those two values or Month-Day Pickers where the year is already given.
+                    This changes the behaviour of the picker so only views that can be set are displayed.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="DatePickerFixedValuesExample" ShowCode="false">
+                <DatePickerFixedValuesExample/>
+            </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Range Picker Usage">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="DateRangePickerUsageExample" ShowCode="false">
                 <DateRangePickerUsageExample/>
             </SectionContent>
-            <SectionSource Code="DateRangePickerUsageExample" GitHubFolderName="DatePicker" ShowCode="false" />
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

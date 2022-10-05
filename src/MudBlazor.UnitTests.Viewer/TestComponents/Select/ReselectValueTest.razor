@@ -3,9 +3,8 @@
 
 <div>
     <MudSelect T="string" Variant="Variant.Text"
-               IsPreRendered="true"
                @bind-Value="fruit"
-               Direction="Direction.Bottom" Dense="true" OffsetY="true"
+               Direction="Direction.Bottom" Dense="true"
                SelectedValuesChanged="@(() => FruitChanged(null))">
 
         <MudSelectItem Value="@("Apple")">Apple</MudSelectItem>

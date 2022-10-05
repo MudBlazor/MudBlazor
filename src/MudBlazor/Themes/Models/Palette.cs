@@ -21,7 +21,7 @@ namespace MudBlazor
         private MudColor _darkDarken = null;
         private MudColor _darkLighten = null;
 
-        public MudColor Black { get; set; } = Colors.Shades.Black;
+        public MudColor Black { get; set; } = "#272c34";
         public MudColor White { get; set; } = Colors.Shades.White;
         public MudColor Primary { get; set; } = "#594AE2";
         public MudColor PrimaryContrastText { get; set; } = Colors.Shades.White;
@@ -58,8 +58,8 @@ namespace MudBlazor
         public MudColor TableLines { get; set; } = new MudColor(Colors.Grey.Lighten2).SetAlpha(1.0).ToString(MudColorOutputFormats.RGBA);
         public MudColor TableStriped { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.02).ToString(MudColorOutputFormats.RGBA);
         public MudColor TableHover { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.04).ToString(MudColorOutputFormats.RGBA);
-        public MudColor Divider { get; set; } = Colors.Grey.Lighten2;
-        public MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
+        public MudColor Divider { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
+        public MudColor DividerLight { get; set; } = Colors.Grey.Lighten2;
 
         public string PrimaryDarken
         {
@@ -152,5 +152,37 @@ namespace MudBlazor
 
         public string OverlayDark { get; set; } = new MudColor("#212121").SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);
         public string OverlayLight { get; set; } = new MudColor(Colors.Shades.White).SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);
+
+        internal static Palette ConvertToDarkTheme(Palette palette)
+        {
+            palette.Primary = "#776be7";
+            palette.Black = "#27272f";
+            palette.Background = "#32333d";
+            palette.BackgroundGrey = "#27272f";
+            palette.Surface = "#373740";
+            palette.DrawerBackground = "#27272f";
+            palette.DrawerText = "rgba(255,255,255, 0.50)";
+            palette.DrawerIcon = "rgba(255,255,255, 0.50)";
+            palette.AppbarBackground = "#27272f";
+            palette.AppbarText = "rgba(255,255,255, 0.70)";
+            palette.TextPrimary = "rgba(255,255,255, 0.70)";
+            palette.TextSecondary = "rgba(255,255,255, 0.50)";
+            palette.ActionDefault = "#adadb1";
+            palette.ActionDisabled = "rgba(255,255,255, 0.26)";
+            palette.ActionDisabledBackground = "rgba(255,255,255, 0.12)";
+            palette.Divider = "rgba(255,255,255, 0.12)";
+            palette.DividerLight = "rgba(255,255,255, 0.06)";
+            palette.TableLines = "rgba(255,255,255, 0.12)";
+            palette.TableStriped = "rgba(255,255,255, 0.2)";
+            palette.LinesDefault = "rgba(255,255,255, 0.12)";
+            palette.LinesInputs = "rgba(255,255,255, 0.3)";
+            palette.TextDisabled = "rgba(255,255,255, 0.2)";
+            palette.Info = "#3299ff";
+            palette.Success = "#0bba83";
+            palette.Warning = "#ffa800";
+            palette.Error = "#f64e62";
+            palette.Dark = "#27272f";
+            return palette;
+        }
     }
 }

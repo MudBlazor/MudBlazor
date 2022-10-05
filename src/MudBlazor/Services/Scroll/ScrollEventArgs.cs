@@ -14,12 +14,12 @@ namespace MudBlazor
         /// <summary>
         /// The ScrollTop property gets or sets the number of pixels that an element's content is scrolled vertically
         /// </summary>
-        public int ScrollTop { get; set; }
+        public double ScrollTop { get; set; }
 
         /// <summary>
         /// The ScrollLeft property gets or sets the number of pixels that an element's content is scrolled from its left edge.
         /// </summary>
-        public int ScrollLeft { get; set; }
+        public double ScrollLeft { get; set; }
 
         /// <summary>
         /// The ScrollHeight  property is a measurement of the height of an element's content, including content not visible on the screen due to overflow

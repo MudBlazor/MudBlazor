@@ -1,38 +1,34 @@
-﻿using System;
-using System.Net.Http;
-using Blazor.Analytics;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Services;
+using MudBlazor.Docs.Services.Notifications;
 using MudBlazor.Examples.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddScoped<IPeriodicTableService, PeriodicTableService>();
-builder.Services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(builder.Configuration["ApiBase"]) });
-builder.Services.AddScoped<GitHubApiClient>();
+builder.Services.AddHttpClient<GitHubApiClient>();
 builder.Services.TryAddDocsViewServices();
-builder.Services.AddApplicationInsightsTelemetry();
-builder.Services.AddGoogleAnalytics("G-PRYNCB61NV");
-if (builder.Configuration["Azure:SignalR:Enabled"] == "true")
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped(sp =>
 {
-    builder.Services.AddSignalR().AddAzureSignalR(builder.Configuration["Azure:SignalR:ConnectionString"]);
-}
+    var context = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    var client = new HttpClient { BaseAddress = new Uri($"{context!.Request.Scheme}://{context.Request.Host}{context.Request.PathBase}") };
+
+    return client;
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseWebAssemblyDebugging();
-}
-else
+if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
@@ -41,27 +37,21 @@ else
 
 app.UseHttpsRedirection();
 
-// serve the wasm site and finish the pipeline
-app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/wasm"), wasm =>
-{
-    wasm.UseBlazorFrameworkFiles("/wasm");
-    wasm.UseStaticFiles("/wasm");
-    wasm.UseRouting();
-    wasm.UseEndpoints(endpoints =>
-    {
-        endpoints.MapControllers();
-        endpoints.MapFallbackToFile("wasm/{*path:nonfile}", "wasm/index.html");
-    });
-});
-
-// only reach here if path does not start /wasm
 app.UseStaticFiles();
 
 app.UseRouting();
 
-
-app.MapBlazorHub();
 app.MapControllers();
+app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+
+using (var scope = app.Services.CreateScope())
+{
+    var notificationService = scope.ServiceProvider.GetService<INotificationService>();
+    if (notificationService is InMemoryNotificationService inmemoryService)
+    {
+        inmemoryService.Preload();
+    }
+}
 
 app.Run();

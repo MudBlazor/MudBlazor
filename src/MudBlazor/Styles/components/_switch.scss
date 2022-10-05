@@ -1,6 +1,4 @@
-﻿@import '../abstracts/variables';
-
-.mud-switch {
+﻿.mud-switch {
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -12,13 +10,13 @@
     -webkit-tap-highlight-color: transparent;
 
     &.mud-disabled {
-        color: var(--mud-palette-text-disabled);
+        color: var(--mud-palette-text-disabled) !important;
         cursor: default;
     }
 
     &.mud-readonly, .mud-readonly:hover {
         cursor: default;
-        background-color: transparent;
+        background-color: transparent !important;
     }
 }
 
@@ -45,8 +43,6 @@
     }
 }
 
-
-
 .mud-switch-base {
     padding: 9px;
     top: 0;
@@ -69,15 +65,15 @@
     }
 
     &.mud-switch-disabled {
-        color: var(--mud-palette-grey-default);
+        color: var(--mud-palette-grey-default) !important;
 
         & + .mud-switch-track {
-            opacity: 0.12;
+            opacity: 0.12 !important;
         }
 
         &:hover, &:focus-visible {
             cursor: default;
-            background-color: transparent;
+            background-color: transparent !important;
         }
     }
 }
@@ -106,22 +102,5 @@
         box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
         border-radius: 50%;
         background-color: currentColor;
-    }
-}
-
-
-@each $color in $mud-palette-colors {
-    .mud-switch-#{$color} {
-        &.mud-checked {
-            color: var(--mud-palette-#{$color});
-
-            &:hover, &:focus-visible {
-                background-color: var(--mud-palette-#{$color}-hover);
-            }
-
-            & + .mud-switch-track {
-                background-color: var(--mud-palette-#{$color});
-            }
-        }
     }
 }

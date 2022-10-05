@@ -1,30 +1,29 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="Pizza" @bind-Value="@pizza" Label="Select your pizza" Variant="Variant.Outlined" ToStringFunc="@converter" AnchorOrigin="Origin.BottomCenter">
-            <MudSelectItem Value="@(new Pizza() { Name="Cardinale"})" />
-            <MudSelectItem Value="@(new Pizza() { Name="Diavolo"})" />
-            <MudSelectItem Value="@(new Pizza() { Name="Margarita"})" />
-            <MudSelectItem Value="@(new Pizza() { Name="Spinaci"})" />
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        @if(pizza==null) {
-            <MudText Class="mt-5">Nothing selected yet.</MudText>
-        }        
-        else {
-            <MudText Class="mt-5">Pizza: @pizza.Name</MudText>
-        }
-    </MudItem>    
-</MudGrid>
+<MudText Typo="Typo.h6" Class="mud-width-full">@(pizza == null ? "Nothing selected." : $"Pizza: {pizza.Name}")</MudText>
+
+<MudSelect T="Pizza" @bind-Value="@pizza" ToStringFunc="@converter" Label="Select your pizza" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
+    <MudSelectItem Value="@(new Pizza() { Name="Cardinale"})" />
+    <MudSelectItem Value="@(new Pizza() { Name="Diavolo"})" />
+    <MudSelectItem Value="@(new Pizza() { Name="Margarita"})" />
+    <MudSelectItem Value="@(new Pizza() { Name="Spinaci"})" />
+</MudSelect>
 
 @code {
-    Pizza pizza;
+    Pizza pizza = new Pizza { Name = "Diavolo" };
 
     public class Pizza
     {
         public string Name { get; set; }
+
+        // Note: this is important so the select can compare pizzas
+        public override bool Equals(object o) {
+            var other = o as Pizza;
+            return other?.Name==Name;
+        }
+
+        // Note: this is important so the select can compare pizzas
+        public override int GetHashCode() => Name.GetHashCode();
     }
 
     Func<Pizza,string> converter = p => p?.Name;

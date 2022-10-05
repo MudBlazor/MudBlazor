@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 
 namespace MudBlazor.Services
@@ -15,5 +16,11 @@ namespace MudBlazor.Services
 
         public IResizeObserver Create(ResizeObserverOptions options) =>
             new ResizeObserver(_provider.GetRequiredService<IJSRuntime>(), options);
+         
+        public IResizeObserver Create()
+        {
+            var options = _provider.GetService<IOptions<ResizeObserverOptions>>();
+            return Create(options?.Value ?? new ResizeObserverOptions());
+        }
     }
 }
