@@ -3,7 +3,7 @@
 <MudPaper Width="300px" Elevation="0">
     <MudTreeView ServerData="LoadServerData" Items="TreeItems">
         <ItemTemplate>
-            <MudTreeViewItem Value="@context" Icon="@context.Icon" LoadingIconColor="Color.Info" IgnoreServerData="@context.IgnoreServerData" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
+            <MudTreeViewItem Value="@context" Icon="@context.Icon" LoadingIconColor="Color.Info" StopExpanding="@context.StopExpanding" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
         </ItemTemplate>
     </MudTreeView>
 </MudPaper>
@@ -20,16 +20,16 @@
 
         public int? Number { get; set; }
         
-        public bool IgnoreServerData { get; set; }
+        public bool StopExpanding { get; set; }
 
         public HashSet<TreeItemData> TreeItems { get; set; }
 
-        public TreeItemData(string title, string icon, int? number = null, bool ignoreServerData = false)
+        public TreeItemData(string title, string icon, int? number = null, bool stopExpanding = false)
         {
             Title = title;
             Icon = icon;
             Number = number;
-            IgnoreServerData = ignoreServerData;
+            StopExpanding = stopExpanding;
         }
     }
 
