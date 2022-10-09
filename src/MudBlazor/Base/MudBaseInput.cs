@@ -407,7 +407,7 @@ namespace MudBlazor
 
         protected override Task ValidateValue()
         {
-            if (Standalone)
+            if (SubscribeToParentForm)
                 return base.ValidateValue();
 
             return Task.CompletedTask;
@@ -476,7 +476,7 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            if (Standalone)
+            if (SubscribeToParentForm)
                 base.OnParametersSet();
         }
 

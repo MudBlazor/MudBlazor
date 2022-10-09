@@ -5,7 +5,7 @@
 
 @if (IsEnabled)
 {
-    <Virtualize Items="@Items" Context="item">
+    <Virtualize Items="@Items" Context="item" OverscanCount=@OverscanCount>
         @if (@ChildContent != null)
         {
             @ChildContent(item);
