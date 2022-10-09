@@ -43,8 +43,7 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
-        [CascadingParameter]
-        public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// The Type of the chart.

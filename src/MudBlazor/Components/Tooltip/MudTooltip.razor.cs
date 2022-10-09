@@ -31,8 +31,7 @@ namespace MudBlazor
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
 
-        [CascadingParameter]
-        public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -63,7 +62,7 @@ namespace MudBlazor
         public double Duration { get; set; } = 251;
 
         /// <summary>
-        /// Sets the amount of time to wait from opening the popover before beginning to perform the transition. 
+        /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
@@ -145,8 +144,8 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public EventCallback<bool> IsVisibleChanged { get; set; }
 
-        private void HandleMouseOver() { IsVisible = true;}
-        private void HandleMouseOut() { IsVisible = false;}
+        private void HandleMouseOver() { IsVisible = true; }
+        private void HandleMouseOut() { IsVisible = false; }
 
         private Origin ConvertPlacement()
         {

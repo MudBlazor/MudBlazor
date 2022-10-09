@@ -29,7 +29,7 @@
         <DocsPageSection>
             <SectionHeader Title="Advanced Data Grid">
                 <Description>
-                    In a more advanced scenario, the data grid offers sorting, filtering, pagination and selection. There are two ways to filter the data 
+                    In a more advanced scenario, the data grid offers sorting, filtering, pagination, selection and hierarchy detail. There are two ways to filter the data 
                     fed into the data grid. A <CodeInline>QuickFilter</CodeInline> function allows filtering the items in the grid globally. Data can also be filtered by specifying 
                     column filters, enabling a more robust filtration.
                     <br><br>
@@ -123,6 +123,8 @@
                     <CodeInline>DataGridFilterMode.Simple</CodeInline> is the default where all filters are managed in one popover in the data grid. It allows you to
                     set multiple filters at one time for multiple different columns. In <CodeInline>DataGridFilterMode.ColumnFilterMenu</CodeInline> mode, there is a dedicated popover for 
                     each column. Lastly, <CodeInline>DataGridFilterMode.ColumnFilterRow</CodeInline> allows you to inline the filtering behavior directly into the data grid.
+                    <br><br>
+                    Is it possibile to define the case sensitivity when filtering string values by setting the parameter <CodeInline>FilterCaseSensitivity</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="DataGridFilteringExample" ShowCode="false" Block="true" FullWidth="true">
@@ -223,7 +225,7 @@
         <DocsPageSection>
             <SectionHeader Title="Virtualization">
                 <Description>
-                    The items in the <CodeInline>&lt;MudDataGrid></CodeInline> can be virtualized to provider better rendering performance. Setting the <CodeInline>Virtualize</CodeInline> property
+                    The items in the <CodeInline>&lt;MudDataGrid></CodeInline> can be virtualized to provide better rendering performance. Setting the <CodeInline>Virtualize</CodeInline> property
                     to <CodeInline>true</CodeInline> will cause the items to be rendered virtually. You must restrict the height for virtualization to work.
 
                 </Description>

@@ -19,6 +19,8 @@ using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
 using static Bunit.ComponentParameterFactory;
+using Microsoft.AspNetCore.Components;
+using System.Threading;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -850,6 +852,188 @@ namespace MudBlazor.UnitTests.Components
             // check the initial icon
             var markupAfter = comp.Find("svg.mud-icon-root").Children.ToMarkup().Trim();
             markupAfter.Should().NotBe(markupBefore);
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_NotIndicateLoadingByDefault()
+        {
+            // Arrange
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+
+            comp.Markup.Should().NotContain("progress-indicator-circular");
+            autocompletecomp.Find("input").Input("Calif");
+
+            // Test
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().NotContain("progress-indicator-circular"));
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_IndicateLoadingWithCircularProgressIndicator()
+        {
+            // Arrange
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            autocompletecomp.SetParam(x => x.ShowProgressIndicator, true);
+            autocompletecomp.SetParam(x => x.Adornment, null);
+            autocompletecomp.SetParam(x => x.Adornment, null);
+
+            comp.Markup.Should().NotContain("progress-indicator-circular");
+            autocompletecomp.Find("input").Input("Calif");
+
+            // Test show
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().Contain("progress-indicator-circular"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            // Test hide
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().NotContain("progress-indicator-circular"));
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_IndicateLoadingWithCircularProgressIndicatorAndAdornmentAdjustment()
+        {
+            // Arrange
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            autocompletecomp.SetParam(x => x.ShowProgressIndicator, true);
+            autocompletecomp.SetParam(x => x.AdornmentIcon, Icons.Filled.Info);
+            autocompletecomp.SetParam(x => x.Adornment, Adornment.End);
+
+            comp.Markup.Should().NotContain("progress-indicator-circular");
+            autocompletecomp.Find("input").Input("Calif");
+
+            // Test show
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().Contain("progress-indicator-circular"));
+            comp.WaitForAssertion(() => comp.Find("div.progress-indicator-circular").ClassList.Should().Contain("progress-indicator-circular--with-adornment"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            // Test hide
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().NotContain("progress-indicator-circular"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().NotContain("progress-indicator-circular--with-adornment"));
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_IndicateLoadingWithCustomProgressIndicator()
+        {
+            // Arrange
+            RenderFragment fragment = builder =>
+            {
+                builder.AddContent(0, "Loading...");
+            };
+
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+
+            autocompletecomp.SetParam(x => x.ShowProgressIndicator, true);
+            autocompletecomp.SetParam(p => p.ProgressIndicatorTemplate, fragment);
+
+            comp.Markup.Should().NotContain("Loading...");
+            autocompletecomp.Find("input").Input("Calif");
+
+            // Test show
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().Contain("Loading..."));
+            
+            // Test hide
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().NotContain("Loading..."));
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_IndicateLoadingWithProgressIndicatorInsidePopover()
+        {
+            // Arrange
+            RenderFragment fragment = builder =>
+            {
+                builder.AddContent(0, "Loading...");
+            };
+
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+
+            autocompletecomp.SetParam(x => x.ShowProgressIndicator, true);
+            autocompletecomp.SetParam(p => p.ProgressIndicatorInPopoverTemplate, fragment);
+
+            comp.Markup.Should().NotContain("Loading...");
+            autocompletecomp.Find("input").Input("Calif");
+
+            // Test show
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ToMarkup().Should().Contain("Loading..."));
+
+            // Test hide
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ToMarkup().Should().NotContain("Loading..."));
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_Cancel_Search()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+
+            // Arrange first call
+
+            CancellationToken? cancelToken = null;
+
+            var first = new TaskCompletionSource<IEnumerable<string>>();
+
+            autocompletecomp.SetParam(p => p.SearchFuncWithCancel, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) => {
+                cancelToken = cancellationToken;
+                // Return task that never completes.
+                return first.Task;
+            }));
+
+            comp.Find("input").Input("Foo");
+
+            await Task.Delay(20);
+
+            // Test
+
+            comp.WaitForAssertion(() => Assert.IsFalse(cancelToken?.IsCancellationRequested));
+
+            // Arrange second call
+            
+            var second = new TaskCompletionSource<IEnumerable<string>>();
+
+            autocompletecomp.SetParam(p => p.SearchFuncWithCancel, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) => 
+            {
+                return second.Task;
+            }));
+
+            comp.Find("input").Input("Bar");
+
+            await Task.Delay(20);
+
+            // Test
+
+            comp.WaitForAssertion(() => Assert.IsTrue(cancelToken?.IsCancellationRequested));
+
+            first.SetCanceled();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ToMarkup().Should().NotContain("Foo"));
+
+            second.SetResult(new List<string> { "Bar" });
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ToMarkup().Should().Contain("Bar"));
+        }
+
+        [Test]
+        public async Task Autocomplete_FullWidth()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompleteComp = comp.FindComponent<MudAutocomplete<string>>();
+
+            autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-autocomplete");
+            autocompleteComp.Find("div.mud-select").ClassList.Should().NotContain("mud-width-full");
+
+            autocompleteComp.SetParam(p => p.FullWidth, true);
+
+            autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-autocomplete");
+            autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-width-full");
         }
     }
 }

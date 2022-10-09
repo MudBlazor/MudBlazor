@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor.Interfaces;
-using MudBlazor.Utilities;
 using static System.String;
 
 namespace MudBlazor
@@ -31,8 +30,8 @@ namespace MudBlazor
         /// If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
         /// If it is sub-component, it will NOT do form validation!!
         /// </summary>
-        [CascadingParameter(Name = "Standalone")]
-        internal bool Standalone { get; set; } = true;
+        [CascadingParameter(Name = "SubscribeToParentForm")]
+        internal bool SubscribeToParentForm { get; set; } = true;
 
         /// <summary>
         /// If true, this form input is required to be filled out.
@@ -471,11 +470,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Notify the Form that a field has changed if Standalone is true
+        /// Notify the Form that a field has changed if SubscribeToParentForm is true
         /// </summary>
         protected void FieldChanged(object newValue)
         {
-            if (Standalone)
+            if (SubscribeToParentForm)
                 Form?.FieldChanged(this, newValue);
         }
 
@@ -615,7 +614,7 @@ namespace MudBlazor
 
         protected virtual void RegisterAsFormComponent()
         {
-            if (Standalone)
+            if (SubscribeToParentForm)
             {
                 Form?.Add(this);
             }

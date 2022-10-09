@@ -2,6 +2,7 @@
 
 <MudDataGrid Items="@_items" Filterable="true">
     <Columns>
+        <HierarchyColumn T="Model" />
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />
         <Column T="Model" Field="@nameof(Model.Status)" />

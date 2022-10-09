@@ -312,5 +312,18 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeTrue();
         }
+
+        [Test]
+        public async Task DrawerContainer_RemoveDrawer_CheckStates()
+        {
+            var comp = Context.RenderComponent<DrawerContainerTest1>();
+
+            comp.FindAll("div.mud-drawer-open-responsive-md-right").Count.Should().Be(1);
+
+            // Remove drawer
+            comp.Find("button").Click();
+
+            comp.FindAll("div.mud-drawer-open-responsive-md-right").Count.Should().Be(0);
+        }
     }
 }

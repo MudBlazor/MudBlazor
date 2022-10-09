@@ -11,7 +11,7 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-list-item")
-          .AddClass("mud-list-item-dense", Dense || MudList?.Dense == true)
+          .AddClass("mud-list-item-dense", (Dense ?? MudList?.Dense) ?? false)
           .AddClass("mud-list-item-gutters", !DisableGutters && !(MudList?.DisableGutters == true))
           .AddClass("mud-list-item-clickable", MudList?.Clickable)
           .AddClass("mud-ripple", MudList?.Clickable == true && !DisableRipple && !Disabled)
@@ -139,7 +139,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool Dense { get; set; }
+        public bool? Dense { get; set; }
 
         /// <summary>
         /// If true, the left and right padding is removed.
@@ -266,11 +266,11 @@ namespace MudBlazor
         private Typo _textTypo;
         private void OnListParametersChanged()
         {
-            if (Dense || MudList?.Dense == true)
+            if ((Dense ?? MudList?.Dense) ?? false)
             {
                 _textTypo = Typo.body2;
             }
-            else if (!Dense || !MudList?.Dense == true)
+            else if (!((Dense ?? MudList?.Dense) ?? false))
             {
                 _textTypo = Typo.body1;
             }

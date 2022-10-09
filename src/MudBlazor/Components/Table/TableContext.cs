@@ -111,6 +111,11 @@ namespace MudBlazor
                 return;
             if (Rows[t] == row)
                 Rows.Remove(t);
+            if (!Table.ContainsItem(item))
+            {
+                Selection.Remove(t);
+                Table.UpdateSelection();
+            }
         }
 
         #region --> Sorting
