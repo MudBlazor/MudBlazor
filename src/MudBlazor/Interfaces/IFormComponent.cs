@@ -10,7 +10,7 @@ namespace MudBlazor.Interfaces
         public bool HasErrors { get; }
         public bool Touched { get; }
         public object Validation { get; set; }
-        public bool ForIsNull { get; }
+        public bool IsForNull { get; }
         public List<string> ValidationErrors { get; set; }
         public Task Validate();
         public void Reset();

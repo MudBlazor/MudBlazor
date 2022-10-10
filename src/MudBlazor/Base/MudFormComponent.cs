@@ -537,7 +537,7 @@ namespace MudBlazor
         public Expression<Func<T>>? For { get; set; }
 #nullable disable
 
-        public bool ForIsNull => For == null;
+        public bool IsForNull => For == null;
 
         /// <summary>
         /// Stores the list of validation attributes attached to the property targeted by <seealso cref="For"/>. If <seealso cref="For"/> is null, this property is null too.
