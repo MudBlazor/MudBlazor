@@ -220,10 +220,7 @@
         &.mud-input-root-multiline {
             height: auto;
             padding: 0;
-
-            &:not(.mud-input-resizable) {
-                resize: none;
-            }
+            resize: none;
         }
 
         &.mud-input-root-type-search {
@@ -332,8 +329,11 @@
     letter-spacing: inherit;
     -webkit-tap-highlight-color: transparent;
     height: auto;
-    resize: none;
     cursor: auto;
+
+    &:not(.mud-input-resizable) {
+      resize: none;
+    }
 
     @include inputplaceholder {
       color: currentColor;
