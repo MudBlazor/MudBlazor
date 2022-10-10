@@ -1230,5 +1230,27 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(1);
             comp.Instance.FormFieldChangedEventArgs.Field.Equals(numeric);
         }
+
+        /// <summary>
+        /// When Validation is set on a Form, it should only set validation on fields that have a For parameter
+        /// </summary>
+        [Test]
+        public async Task FormAutoValidationSetTest()
+        {
+            var comp = Context.RenderComponent<FormAutomaticValidationTest>();
+            var textComps = comp.FindComponents<MudTextField<string>>();
+            var dateComps = comp.FindComponents<MudDatePicker>();
+
+            textComps[0].Instance.For.Should().NotBeNull(); //For is set
+            textComps[1].Instance.For.Should().BeNull(); //For is not set
+            dateComps[0].Instance.For.Should().NotBeNull(); //For is set
+            dateComps[1].Instance.For.Should().BeNull(); //For is not set
+
+            //Ensure Validation is only set where For is set
+            textComps[0].Instance.Validation.Should().NotBeNull(); //Validation is set
+            textComps[1].Instance.Validation.Should().BeNull(); //Validation is not set
+            dateComps[0].Instance.Validation.Should().NotBeNull(); //Validation is set
+            dateComps[1].Instance.Validation.Should().BeNull(); //Validation is not set
+        }
     }
 }
