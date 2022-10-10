@@ -607,7 +607,22 @@ namespace MudBlazor.UnitTests.Components
                 .Should().OnlyContain(disabled => disabled == false);
         }
 
+        
         [Test]
+        public void AdditionalDateClassesFunc_ClassIsAdded()
+        {
+            Func<DateTime, string> additionalDateClassesFunc = date => "__addedtestclass__";
+            var comp = Context.RenderComponent<MudDatePicker>(
+                Parameter(nameof(MudDatePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
+
+            var daysCount = comp.FindAll("button.mud-picker-calendar-day").Select(button =>
+                ((IHtmlBaseElement)button)).Count();
+
+            comp.FindAll("button.mud-picker-calendar-day").Select(button =>
+                ((IHtmlBaseElement)button).ClassName.Contains("__addedtestclass__"))
+                .Should().HaveCount(daysCount);
+        }
+
         public async Task CheckAutoCloseDatePickerTest()
         {
             // Define a date for comparison
