@@ -4,7 +4,7 @@
 
 @using System.Globalization;
 
-<CascadingValue Name="Standalone" Value="@Standalone" IsFixed="true">
+<CascadingValue Name="SubscribeToParentForm" Value="@SubscribeToParentForm" IsFixed="true">
     <MudInputControl id="@_elementId"
                      Label="@Label"
                      Variant="@Variant"
@@ -20,7 +20,7 @@
                      CounterText="@GetCounterText()"
                      ForId="@FieldId">
         <InputContent>
-            <CascadingValue Name="Standalone" Value="false" IsFixed="true">
+            <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 <MudInput T="string"
                           @ref="@_elementReference"
                           @attributes="@UserAttributes"

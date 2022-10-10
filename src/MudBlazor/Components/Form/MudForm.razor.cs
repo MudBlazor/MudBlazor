@@ -313,7 +313,7 @@ namespace MudBlazor
             
             foreach (var formControl in _formControls)
             {
-                if (formControl.Validation == null || overrideFieldValidation)
+                if (!formControl.IsForNull && (formControl.Validation == null || overrideFieldValidation))
                 {
                     formControl.Validation = validation;
                 }

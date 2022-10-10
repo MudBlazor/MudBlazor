@@ -432,6 +432,16 @@ namespace MudBlazor
                 _editingItem = item;
         }
 
+        public override bool ContainsItem(object item)
+        {
+            var t = item.As<T>();
+            if (t is null)
+                return false;
+            return FilteredItems?.Contains(t) ?? false;
+        }
+
+        public override void UpdateSelection() => SelectedItemsChanged.InvokeAsync(SelectedItems);
+
         public override TableContext TableContext
         {
             get

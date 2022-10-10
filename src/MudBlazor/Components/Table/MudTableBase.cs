@@ -512,6 +512,9 @@ namespace MudBlazor
 
         internal abstract bool IsEditable { get; }
 
+        public abstract bool ContainsItem(object item);
+        public abstract void UpdateSelection();
+
         public Interfaces.IForm Validator { get; set; } = new TableRowValidator();
     }
 }

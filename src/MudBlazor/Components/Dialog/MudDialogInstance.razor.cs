@@ -19,7 +19,7 @@ namespace MudBlazor
 
         [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
 

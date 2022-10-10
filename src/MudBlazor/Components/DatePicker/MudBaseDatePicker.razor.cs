@@ -119,7 +119,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<DateTime?> PickerMonthChanged { get; set; }
 
         /// <summary>
-        /// Milliseconds to wait before closing the picker. This helps the user see that the date was selected before the popover disappears.
+        /// Sets the amount of time in milliseconds to wait before closing the picker. This helps the user see that the date was selected before the popover disappears.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -182,6 +182,13 @@ namespace MudBlazor
             }
         }
         private Func<DateTime, bool> _isDateDisabledFunc = _ => false;
+
+        /// <summary>
+        /// Function to conditionally apply new classes to specific days
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
 
         /// <summary>
         /// Custom previous icon.

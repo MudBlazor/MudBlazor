@@ -407,7 +407,7 @@ namespace MudBlazor
 
         protected override Task ValidateValue()
         {
-            if (Standalone)
+            if (SubscribeToParentForm)
                 return base.ValidateValue();
 
             return Task.CompletedTask;
@@ -419,8 +419,11 @@ namespace MudBlazor
 
             // Because the way the Value setter is built, it won't cause an update if the incoming Value is
             // equal to the initial value. This is why we force an update to the Text property here.
-            if (typeof(T) != typeof(string))
+            if (typeof(T) != typeof(string)) 
                 await UpdateTextPropertyAsync(false);
+
+            if (Label == null && For != null)
+                Label = For.GetLabelString();
         }
 
         public virtual void ForceRender(bool forceTextUpdate)
@@ -473,7 +476,7 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            if (Standalone)
+            if (SubscribeToParentForm)
                 base.OnParametersSet();
         }
 

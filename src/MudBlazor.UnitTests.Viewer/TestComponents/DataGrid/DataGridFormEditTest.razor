@@ -1,0 +1,27 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDialogProvider />
+
+<MudDataGrid T="Model" Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Form" EditTrigger="@DataGridEditTrigger.OnRowClick">
+    <Columns>
+        <Column T="Model" Field="@nameof(Model.Name)" />
+        <Column T="Model" Field="@nameof(Model.Age)" />
+        <Column T="Model" Field="@nameof(Model.GetOnly)" IsEditable="false" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Model> _items = new List<Model>()
+{
+        new Model{ Name= "John", Age= 45 },
+        new Model{ Name= "Johanna", Age= 23 },
+        new Model{ Name= "Steve", Age= 32 }
+    };
+
+    public class Model
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public string GetOnly => "snakex64";
+    }
+}

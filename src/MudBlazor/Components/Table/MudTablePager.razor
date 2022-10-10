@@ -2,10 +2,10 @@
 @inherits MudComponentBase
 
 <MudToolBar @attributes="UserAttributes" Class="@Classname" Style="@Style">
-    @if (HorizontalAlignment == HorizontalAlignment.End || 
-        (HorizontalAlignment == HorizontalAlignment.Right && !RightToLeft) || 
-        (HorizontalAlignment == HorizontalAlignment.Left && RightToLeft) || 
-         HorizontalAlignment == HorizontalAlignment.Center)
+    @if (HorizontalAlignment == HorizontalAlignment.End ||
+       (HorizontalAlignment == HorizontalAlignment.Right && !RightToLeft) ||
+       (HorizontalAlignment == HorizontalAlignment.Left && RightToLeft) ||
+        HorizontalAlignment == HorizontalAlignment.Center)
     {
         <div class="mud-table-pagination-spacer"></div>
     }
@@ -15,12 +15,14 @@
             <div class="mud-table-pagination-caption">
                 <div class="mud-table-pagination-information">@RowsPerPageString</div>
             </div>
-            <MudSelect T="string" ValueChanged="SetRowsPerPage" Value="@Table?.RowsPerPage.ToString()" Class="mud-table-pagination-select" DisableUnderLine="true" Dense="true">
-            @foreach (int pageSize in PageSizeOptions)
-            {
-                <MudSelectItem T="string" Value="@pageSize.ToString()">@pageSize.ToString().ToUpper()</MudSelectItem>
-            }
-            </MudSelect>
+            <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed>
+                <MudSelect T="string" ValueChanged="SetRowsPerPage" Value="@Table?.RowsPerPage.ToString()" Class="mud-table-pagination-select" DisableUnderLine="true" Dense="true">
+                    @foreach (int pageSize in PageSizeOptions)
+                    {
+                        <MudSelectItem T="string" Value="@pageSize.ToString()">@pageSize.ToString().ToUpper()</MudSelectItem>
+                    }
+                </MudSelect>
+            </CascadingValue>
         </div>
     }
     @if (!HidePageNumber)
@@ -39,9 +41,9 @@
         </div>
     }
     @if (HorizontalAlignment == HorizontalAlignment.Start ||
-      (HorizontalAlignment == HorizontalAlignment.Left && !RightToLeft) ||
-      (HorizontalAlignment == HorizontalAlignment.Right && RightToLeft) ||
-       HorizontalAlignment == HorizontalAlignment.Center)
+     (HorizontalAlignment == HorizontalAlignment.Left && !RightToLeft) ||
+     (HorizontalAlignment == HorizontalAlignment.Right && RightToLeft) ||
+      HorizontalAlignment == HorizontalAlignment.Center)
     {
         <div class="mud-table-pagination-spacer"></div>
     }
