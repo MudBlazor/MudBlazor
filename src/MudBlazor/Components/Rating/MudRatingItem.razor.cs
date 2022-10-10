@@ -77,6 +77,7 @@ namespace MudBlazor
         {
             base.OnParametersSet();
             ItemIcon = SelectIcon();
+            Color = SelectIconColor();
         }
 
         internal string SelectIcon()
@@ -105,6 +106,38 @@ namespace MudBlazor
             {
                 // empty icon when this or higher RatingItem is not clicked and not hovered
                 return Rating.EmptyIcon;
+            }
+        }
+        internal Color SelectIconColor()
+        {
+            if (Rating == null)
+                return Color.Default;
+            if (Rating.FullIconColor == null || Rating.EmptyIconColor == null)
+            {
+                return Rating.Color;
+            }
+            if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value >= ItemValue)
+            {
+                // full icon color when @RatingItem hovered
+                return Rating.FullIconColor.Value;
+            }
+            else if (Rating.SelectedValue >= ItemValue)
+            {
+                if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value < ItemValue)
+                {
+                    // empty icon color when equal or higher RatingItem value clicked, but less value hovered 
+                    return Rating.EmptyIconColor.Value;
+                }
+                else
+                {
+                    // full icon color when equal or higher RatingItem value clicked
+                    return Rating.FullIconColor.Value;
+                }
+            }
+            else
+            {
+                // empty icon color when this or higher RatingItem is not clicked and not hovered
+                return Rating.EmptyIconColor.Value;
             }
         }
 
