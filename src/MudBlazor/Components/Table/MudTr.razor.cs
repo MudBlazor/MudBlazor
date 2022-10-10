@@ -57,15 +57,29 @@ namespace MudBlazor
 
         public void OnRowClicked(MouseEventArgs args)
         {
+            StartEditingItem(buttonClicked: false);
+
+            Context?.Table.SetSelectedItem(Item);
+            if (Context?.Table.MultiSelection == true && !(Context?.Table.IsEditable == true))
+            {
+                IsChecked = !IsChecked;
+            }
+            Context?.Table.FireRowClickEvent(args, this, Item);
+        }
+
+        private void StartEditingItem() => StartEditingItem(buttonClicked: true);
+
+        private void StartEditingItem(bool buttonClicked)
+        {
             if (Context?.Table.IsEditable == true && Context?.Table.IsEditing == true && Context?.Table.IsEditRowSwitchingBlocked == true) return;
+
+            if ((Context?.Table.EditTrigger == TableEditTrigger.OnRowClick && buttonClicked) || (Context?.Table.EditTrigger == TableEditTrigger.Manual && !buttonClicked)) return;
 
             // Manage any previous edited row
             Context.ManagePreviousEditedRow(this);
 
             if (!(Context?.Table.Validator.IsValid ?? true))
                 return;
-
-            Context?.Table.SetSelectedItem(Item);
 
             // Manage edition the first time the row is clicked and if the table is editable
             if (!hasBeenClickedFirstTime && IsEditable)
@@ -85,13 +99,7 @@ namespace MudBlazor
                 Context.Table.RowEditPreview?.Invoke(Item);
 
                 Context?.Table.SetEditingItem(Item);
-            }
-
-            if (Context?.Table.MultiSelection == true && !(Context?.Table.IsEditable == true))
-            {
-                IsChecked = !IsChecked;
-            }
-            Context?.Table.FireRowClickEvent(args, this, Item);
+            }            
         }
 
         protected override Task OnInitializedAsync()
