@@ -59,7 +59,6 @@ namespace MudBlazor
         {
             StartEditingItem(buttonClicked: false);
 
-            Context?.Table.SetSelectedItem(Item);
             if (Context?.Table.MultiSelection == true && !(Context?.Table.IsEditable == true))
             {
                 IsChecked = !IsChecked;
@@ -81,6 +80,9 @@ namespace MudBlazor
             if (!(Context?.Table.Validator.IsValid ?? true))
                 return;
 
+            if (!buttonClicked)
+                Context?.Table.SetSelectedItem(Item);
+
             // Manage edition the first time the row is clicked and if the table is editable
             if (!hasBeenClickedFirstTime && IsEditable)
             {
@@ -99,7 +101,7 @@ namespace MudBlazor
                 Context.Table.RowEditPreview?.Invoke(Item);
 
                 Context?.Table.SetEditingItem(Item);
-            }            
+            }
         }
 
         protected override Task OnInitializedAsync()
