@@ -130,9 +130,5 @@
   <ItemGroup>
     <Folder Include="wwwroot\images\landingpage" />
   </ItemGroup>
-  
-<PropertyGroup>
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>   
-</PropertyGroup>
 
 </Project>
