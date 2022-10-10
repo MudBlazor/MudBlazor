@@ -1268,46 +1268,49 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TableInlineEditCancel3Test()
         {
-            var comp = Context.RenderComponent<TableInlineEditCancelTest>();
-            var taskCompletionSource = new TaskCompletionSource<bool>();
-
-            // Get the table and define the RowEditPreview method 
-            var instance = comp.Instance;
-            var table = instance.Table;
-            table.RowEditPreview = RowEditPreview;
-
-            // Click on the second row to trigger the RowEditPreview method
-            var trs = comp.FindAll("tr");
-            trs[2].Click();
-
-            void RowEditPreview(object item)
+            await ImproveChanceOfSuccess(async () =>
             {
-                // Get the value of the SelectedItem
-                var selectedItemValue = table.SelectedItem.Value;
+                var comp = Context.RenderComponent<TableInlineEditCancelTest>();
+                var taskCompletionSource = new TaskCompletionSource<bool>();
 
-                // Get the value of the object from the RowEditPreview method
-                var rowEditPreviewValue = item.GetType().GetProperty("Value").GetValue(item, null).ToString();
+                // Get the table and define the RowEditPreview method 
+                var instance = comp.Instance;
+                var table = instance.Table;
+                table.RowEditPreview = RowEditPreview;
 
-                // Compare these values are equal and are correct
-                if (selectedItemValue == "B" && rowEditPreviewValue == selectedItemValue)
+                // Click on the second row to trigger the RowEditPreview method
+                var trs = comp.FindAll("tr");
+                trs[2].Click();
+
+                void RowEditPreview(object item)
                 {
-                    // Return  a success
-                    taskCompletionSource.SetResult(true);
-                }
-                else
-                {
-                    // Return a failure
-                    taskCompletionSource.SetResult(false);
-                }
-            }
+                    // Get the value of the SelectedItem
+                    var selectedItemValue = table.SelectedItem.Value;
 
-            // Wait for the result during one second maximum
-            // It should be true meaning that SelectedItem had  the correct value before RowEditPreview has finished to complete
-            // Also the object in RowEditPreview and the SelectedItem should be equal
-            var result = taskCompletionSource.Task.Wait(1000);
+                    // Get the value of the object from the RowEditPreview method
+                    var rowEditPreviewValue = item.GetType().GetProperty("Value").GetValue(item, null).ToString();
 
-            // Check that the result should be true
-            result.Should().Be(true);
+                    // Compare these values are equal and are correct
+                    if (selectedItemValue == "B" && rowEditPreviewValue == selectedItemValue)
+                    {
+                        // Return  a success
+                        taskCompletionSource.SetResult(true);
+                    }
+                    else
+                    {
+                        // Return a failure
+                        taskCompletionSource.SetResult(false);
+                    }
+                }
+
+                // Wait for the result during one second maximum
+                // It should be true meaning that SelectedItem had  the correct value before RowEditPreview has finished to complete
+                // Also the object in RowEditPreview and the SelectedItem should be equal
+                var result = taskCompletionSource.Task.Wait(1000);
+
+                // Check that the result should be true
+                result.Should().Be(true);
+            });
         }
 
         /// <summary>
