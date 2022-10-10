@@ -15,12 +15,14 @@
         @if (Context.SortLabels.Any())
         {
             <div Class="mud-table-smalldevices-sortselect">
-                <MudSelect Value="@Context.CurrentSortLabel" Label="@SortLabel" ValueChanged="@(v => Context.SetSortFunc(v, override_direction_none: true))" T="MudTableSortLabel<T>">
-                    @foreach (var label in Context.SortLabels)
-                    {
-                        <MudSelectItem Value="@label">@label.ChildContent</MudSelectItem>
-                    }
-                </MudSelect>
+                <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed>
+                    <MudSelect Value="@Context.CurrentSortLabel" Label="@SortLabel" ValueChanged="@(v => Context.SetSortFunc(v, override_direction_none: true))" T="MudTableSortLabel<T>">
+                        @foreach (var label in Context.SortLabels)
+                        {
+                            <MudSelectItem Value="@label">@label.ChildContent</MudSelectItem>
+                        }
+                    </MudSelect>
+                </CascadingValue>
             </div>
 
         }

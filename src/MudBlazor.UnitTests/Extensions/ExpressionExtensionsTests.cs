@@ -11,7 +11,7 @@ namespace MudBlazor.UnitTests.Extensions
     {
         private class TestClass
         {
-            [Display(Name = "Display Attribute")]
+            [Label("Label Attribute")]
             public string Field1 { get; set; }
 
             public TestClass1 TestClass1 { get; set; }
@@ -60,23 +60,23 @@ namespace MudBlazor.UnitTests.Extensions
         }
 
         [Test]
-        public void GetDisplayNameStringTest1()
+        public void GetLabelStringTest1()
         {
             var model = new TestClass();
 
             Expression<Func<string>> expression = () => model.Field1;
 
-            expression.GetDisplayNameString().Should().Be("Display Attribute");
+            expression.GetLabelString().Should().Be("Label Attribute");
         }
 
         [Test]
-        public void GetDisplayNameStringTest2()
+        public void GetLabelStringTest2()
         {
             var model = new TestClass1();
 
             Expression<Func<string>> expression = () => model.Field1;
 
-            expression.GetDisplayNameString().Should().Be("");
+            expression.GetLabelString().Should().Be("");
         }
     }
 }

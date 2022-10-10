@@ -142,7 +142,7 @@
 
                                     @if (g.IsExpanded)
                                     {
-                                        <MudVirtualize IsEnabled="@Virtualize" Items="@g.Grouping.ToList()" Context="item">
+                                        <MudVirtualize IsEnabled="@Virtualize" Items="@g.Grouping.ToList()" OverscanCount=@OverscanCount Context="item">
                                             @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                             @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                             @{ var tmpRowIndex = rowIndex; }
@@ -157,10 +157,14 @@
                                                 }                                     
                                                 </CascadingValue>
                                             </tr>                                   
-                                            @if (ChildRowContent != null)
+                                            @if (_openHierarchies.Contains(item) && ChildRowContent != null)
                                             {
-                                                @ChildRowContent(new CellContext<T>(this, item))
-                                            }                                    
+                                                <tr class="mud-table-row">
+                                                    <td class="mud-table-cell" colspan="1000">
+                                                        @ChildRowContent(new CellContext<T>(this, item))
+                                                    </td>
+                                                </tr>
+                                            }                                       
                                             @{ rowIndex++; }
                                         </MudVirtualize>
                                         @*Group Footer*@
@@ -173,7 +177,7 @@
                             else
                             {
                                 var rowIndex = 0;
-                                <MudVirtualize IsEnabled="@Virtualize" Items="@resolvedPageItems" Context="item">
+                                <MudVirtualize IsEnabled="@Virtualize" Items="@resolvedPageItems" OverscanCount=@OverscanCount Context="item">
                                     @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var tmpRowIndex = rowIndex; }
@@ -188,10 +192,14 @@
                                         }                                       
                                         </CascadingValue>
                                     </tr>                                   
-                                    @if (ChildRowContent != null)
+                                    @if (_openHierarchies.Contains(item) && ChildRowContent != null)
                                     {
-                                        @ChildRowContent(new CellContext<T>(this, item))
-                                    }                                    
+                                        <tr class="mud-table-row">
+                                            <td class="mud-table-cell" colspan="1000">
+                                                @ChildRowContent(new CellContext<T>(this, item))
+                                            </td>
+                                        </tr>
+                                    }                                        
                                     @{ rowIndex++; }
                                 </MudVirtualize>
                             }

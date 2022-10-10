@@ -4,20 +4,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Moq;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using Microsoft.JSInterop.Infrastructure;
-using MudBlazor.Interop;
-using System.Text.Json;
-using System.Linq.Expressions;
-using PrimitiveCalculator;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -332,6 +327,46 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridDialogEditTest()
+        {
+            var comp = Context.RenderComponent<DataGridFormEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormEditTest.Model>>();
+
+            //verify values before opening dialog
+            dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
+            dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
+            dataGrid.FindAll("td")[2].Html().Trim().Should().Be("snakex64");
+            dataGrid.FindAll("td")[3].Html().Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td")[4].Html().Trim().Should().Be("23");
+            dataGrid.FindAll("td")[5].Html().Trim().Should().Be("snakex64");
+            dataGrid.FindAll("td")[6].Html().Trim().Should().Be("Steve");
+            dataGrid.FindAll("td")[7].Html().Trim().Should().Be("32");
+            dataGrid.FindAll("td")[8].Html().Trim().Should().Be("snakex64");
+
+            //open edit dialog
+            dataGrid.FindAll("tbody tr")[1].Click();
+
+            //edit data
+            comp.FindAll("div input")[0].Change("Galadriel");
+            comp.FindAll("div input")[1].Change(1);
+
+            comp.Find(".mud-dialog-actions .mud-button-filled-primary").Click();
+
+            //verify values after saving dialog
+            dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
+            dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
+            dataGrid.FindAll("td")[2].Html().Trim().Should().Be("snakex64");
+            dataGrid.FindAll("td")[3].Html().Trim().Should().Be("Galadriel");
+            dataGrid.FindAll("td")[4].Html().Trim().Should().Be("1");
+            dataGrid.FindAll("td")[5].Html().Trim().Should().Be("snakex64");
+            dataGrid.FindAll("td")[6].Html().Trim().Should().Be("Steve");
+            dataGrid.FindAll("td")[7].Html().Trim().Should().Be("32");
+            dataGrid.FindAll("td")[8].Html().Trim().Should().Be("snakex64");
+
+            //if no crash occurs, we know the datagrid is properly filtering out the GetOnly property when calling set
+        }
+
+        [Test]
         public async Task DataGridVisualStylingTest()
         {
             var comp = Context.RenderComponent<DataGridVisualStylingTest>();
@@ -450,26 +485,61 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.Contains
 
+            //default Case sensitivity
             filterDefinition = new FilterDefinition<TestModel1>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.Contains,
-                Value = "Joe"
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new("Does not contain", 45)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func.Invoke(new("joe", 45)));
             Assert.IsFalse(func.Invoke(new(null, 45)));
 
-            // null value
+            //case insensitive
             filterDefinition = new FilterDefinition<TestModel1>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.Contains,
-                Value = null
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
             };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Does not contain", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func.Invoke(new("joe", 45)));
+            Assert.IsFalse(func.Invoke(new(null, 45)));
+
+            // null value default case sensitivity
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Contains,
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
+            };
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Does not contain", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func.Invoke(new(null, 45)));
+
+            // null value default case insensitive
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Contains,
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Does not contain", 45)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
@@ -479,15 +549,34 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.NotContains
 
+            // default case sensitivity
             filterDefinition = new FilterDefinition<TestModel1>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.NotContains,
-                Value = "Joe"
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Does not contain", 45)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func.Invoke(new("joe", 45)));
+            Assert.IsFalse(func.Invoke(new(null, 45)));
+
+            // case insensitive
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotContains,
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Does not contain", 45)));
+            Assert.IsFalse(func.Invoke(new("joe", 45)));
             Assert.IsFalse(func.Invoke(new("Joe", 45)));
             Assert.IsFalse(func.Invoke(new(null, 45)));
 
@@ -497,7 +586,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.NotContains,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Does not contain", 45)));
@@ -508,46 +598,102 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.Equal
 
+            //default case sensitivity
             filterDefinition = new FilterDefinition<TestModel1>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.Equal,
-                Value = "Joe"
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new("Not Joe", 45)));
             Assert.IsFalse(func.Invoke(new(null, 45)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func.Invoke(new("joe", 45)));
 
-            // null value
+            //case insensitive
             filterDefinition = new FilterDefinition<TestModel1>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.Equal,
-                Value = null
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Not Joe", 45)));
+            Assert.IsFalse(func.Invoke(new(null, 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func.Invoke(new("joe", 45)));
+
+            // null value default case sensitivity
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Equal,
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
             Assert.IsTrue(func.Invoke(new(null, 45)));
 
+            // null value case insensitive
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Equal,
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func.Invoke(new("joe", 45)));
+            Assert.IsTrue(func.Invoke(new(null, 45)));
+
             #endregion
 
             #region FilterOperator.String.NotEqual
 
+            //default case sensitivity
             filterDefinition = new FilterDefinition<TestModel1>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.NotEqual,
-                Value = "Joe"
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Not Joe", 45)));
             Assert.IsFalse(func.Invoke(new(null, 45)));
             Assert.IsFalse(func.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func.Invoke(new("joe", 45)));
+
+            //case insensitive
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEqual,
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new("Not Joe", 45)));
+            Assert.IsFalse(func.Invoke(new(null, 45)));
+            Assert.IsFalse(func.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func.Invoke(new("joe", 45)));
 
             // null value
             filterDefinition = new FilterDefinition<TestModel1>
@@ -555,7 +701,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.NotEqual,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
@@ -566,17 +713,36 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.StartsWith
 
+            //default case sensitivity
             filterDefinition = new FilterDefinition<TestModel1>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.StartsWith,
-                Value = "Joe"
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new("Not Joe", 45)));
             Assert.IsFalse(func.Invoke(new(null, 45)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func.Invoke(new("joe", 45)));
+
+            //case insensitive
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.StartsWith,
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Not Joe", 45)));
+            Assert.IsFalse(func.Invoke(new(null, 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func.Invoke(new("joe", 45)));
 
             // null value
             filterDefinition = new FilterDefinition<TestModel1>
@@ -584,7 +750,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.StartsWith,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Not Joe", 45)));
@@ -595,17 +762,36 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.EndsWith
 
+            //default case sensitivity
             filterDefinition = new FilterDefinition<TestModel1>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.EndsWith,
-                Value = "Joe"
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new("Joe Not", 45)));
             Assert.IsFalse(func.Invoke(new(null, 45)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func.Invoke(new("joe", 45)));
+
+            //case insensitive
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.EndsWith,
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new("Joe Not", 45)));
+            Assert.IsFalse(func.Invoke(new(null, 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func.Invoke(new("joe", 45)));
 
             // null value
             filterDefinition = new FilterDefinition<TestModel1>
@@ -613,7 +799,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.EndsWith,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
@@ -629,7 +816,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.Empty,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new("Joe Not", 45)));
@@ -643,7 +831,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.NotEmpty,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
@@ -660,7 +849,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.NotEmpty,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
@@ -674,7 +864,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.NotEmpty,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
@@ -690,7 +881,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = null,
-                Value = "Joe"
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
@@ -706,17 +898,37 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.Contains
 
+            //default case sensitivity
             filterDefinition = new FilterDefinition<IDictionary<string, object>>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.Contains,
                 Value = "Joe",
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45} }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+
+            //case insensitive
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Contains,
+                Value = "Joe",
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
 
             // null value
@@ -726,7 +938,8 @@ namespace MudBlazor.UnitTests.Components
                 Field = "Name",
                 Operator = FilterOperator.String.Contains,
                 Value = null,
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
@@ -736,18 +949,37 @@ namespace MudBlazor.UnitTests.Components
             #endregion
 
             #region FilterOperator.String.NotContains
-
+            //default case sensitivity
             filterDefinition = new FilterDefinition<IDictionary<string, object>>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.NotContains,
                 Value = "Joe",
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+
+            //case insensitive
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotContains,
+                Value = "Joe",
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
 
             // null value
@@ -757,7 +989,8 @@ namespace MudBlazor.UnitTests.Components
                 Field = "Name",
                 Operator = FilterOperator.String.NotContains,
                 Value = null,
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
@@ -768,18 +1001,38 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.Equal
 
+            //default case sensitivity
             filterDefinition = new FilterDefinition<IDictionary<string, object>>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.Equal,
                 Value = "Joe",
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
+
+            //case insensitive
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Equal,
+                Value = "Joe",
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
 
             // null value
             filterDefinition = new FilterDefinition<IDictionary<string, object>>
@@ -788,7 +1041,8 @@ namespace MudBlazor.UnitTests.Components
                 Field = "Name",
                 Operator = FilterOperator.String.Equal,
                 Value = null,
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
@@ -799,18 +1053,39 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.NotEqual
 
+            //default case sensitivity
             filterDefinition = new FilterDefinition<IDictionary<string, object>>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.NotEqual,
                 Value = "Joe",
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
+
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
+
+            //case insensitive
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEqual,
+                Value = "Joe",
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
 
             // null value
             filterDefinition = new FilterDefinition<IDictionary<string, object>>
@@ -819,7 +1094,8 @@ namespace MudBlazor.UnitTests.Components
                 Field = "Name",
                 Operator = FilterOperator.String.NotEqual,
                 Value = null,
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
@@ -830,18 +1106,38 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.StartsWith
 
+            //default case sensitivity
             filterDefinition = new FilterDefinition<IDictionary<string, object>>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.StartsWith,
                 Value = "Joe",
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
+
+            //case insensitive
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.StartsWith,
+                Value = "Joe",
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
 
             // null value
             filterDefinition = new FilterDefinition<IDictionary<string, object>>
@@ -850,7 +1146,8 @@ namespace MudBlazor.UnitTests.Components
                 Field = "Name",
                 Operator = FilterOperator.String.StartsWith,
                 Value = null,
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Not Joe" }, { "Age", 45 } }));
@@ -860,19 +1157,38 @@ namespace MudBlazor.UnitTests.Components
             #endregion
 
             #region FilterOperator.String.EndsWith
-
+            //default case sensitivity
             filterDefinition = new FilterDefinition<IDictionary<string, object>>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.EndsWith,
                 Value = "Joe",
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
+
+            //case insensitive
+            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.EndsWith,
+                Value = "Joe",
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            func = filterDefinition.GenerateFilterFunction();
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
 
             // null value
             filterDefinition = new FilterDefinition<IDictionary<string, object>>
@@ -881,7 +1197,8 @@ namespace MudBlazor.UnitTests.Components
                 Field = "Name",
                 Operator = FilterOperator.String.EndsWith,
                 Value = null,
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
@@ -898,7 +1215,8 @@ namespace MudBlazor.UnitTests.Components
                 Field = "Name",
                 Operator = FilterOperator.String.Empty,
                 Value = null,
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
@@ -913,7 +1231,8 @@ namespace MudBlazor.UnitTests.Components
                 Field = "Name",
                 Operator = FilterOperator.String.NotEmpty,
                 Value = null,
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
@@ -931,7 +1250,8 @@ namespace MudBlazor.UnitTests.Components
                 Field = "Name",
                 Operator = FilterOperator.String.NotEmpty,
                 Value = null,
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
@@ -946,7 +1266,8 @@ namespace MudBlazor.UnitTests.Components
                 Field = "Name",
                 Operator = FilterOperator.String.NotEmpty,
                 Value = null,
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
@@ -963,7 +1284,8 @@ namespace MudBlazor.UnitTests.Components
                 Field = "Name",
                 Operator = null,
                 Value = "Joe",
-                FieldType = typeof(string)
+                FieldType = typeof(string),
+                DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
             func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
@@ -2119,17 +2441,37 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.Contains
 
+            //default case sensitivity
             filterDefinition = new FilterDefinition<TestModel1>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.Contains,
-                Value = "Joe"
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
-            var func =expression.Compile();
+            var func = expression.Compile();
             Assert.IsFalse(func.Invoke(new("Does not contain", 45)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func.Invoke(new("joe", 45)));
+            Assert.IsFalse(func.Invoke(new(null, 45)));
+
+            //case insensitive
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Contains,
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            expression = filterDefinition.GenerateFilterExpression();
+            func = expression.Compile();
+            Assert.IsFalse(func.Invoke(new("Does not contain", 45)));
+            Assert.IsTrue(func.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func.Invoke(new("joe", 45)));
             Assert.IsFalse(func.Invoke(new(null, 45)));
 
             // null value
@@ -2138,7 +2480,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.Contains,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func2 = expression.Compile();
@@ -2150,17 +2493,37 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.NotContains
 
+            //default case sensitivity
             filterDefinition = new FilterDefinition<TestModel1>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.NotContains,
-                Value = "Joe"
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func3 = expression.Compile();
             Assert.IsTrue(func3.Invoke(new("Does not contain", 45)));
             Assert.IsFalse(func3.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func3.Invoke(new("joe", 45)));
+            Assert.IsFalse(func3.Invoke(new(null, 45)));
+
+            //case insensitive
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotContains,
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            expression = filterDefinition.GenerateFilterExpression();
+            func3 = expression.Compile();
+            Assert.IsTrue(func3.Invoke(new("Does not contain", 45)));
+            Assert.IsFalse(func3.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func3.Invoke(new("joe", 45)));
             Assert.IsFalse(func3.Invoke(new(null, 45)));
 
             // null value
@@ -2169,7 +2532,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.NotContains,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func4 = expression.Compile();
@@ -2181,18 +2545,38 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.Equal
 
+            //default case sensitivity
             filterDefinition = new FilterDefinition<TestModel1>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.Equal,
-                Value = "Joe"
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func5 = expression.Compile();
             Assert.IsFalse(func5.Invoke(new("Not Joe", 45)));
             Assert.IsFalse(func5.Invoke(new(null, 45)));
             Assert.IsTrue(func5.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func5.Invoke(new("joe", 45)));
+
+            //case insensitive
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.Equal,
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            expression = filterDefinition.GenerateFilterExpression();
+            func5 = expression.Compile();
+            Assert.IsFalse(func5.Invoke(new("Not Joe", 45)));
+            Assert.IsFalse(func5.Invoke(new(null, 45)));
+            Assert.IsTrue(func5.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func5.Invoke(new("joe", 45)));
 
             // null value
             filterDefinition = new FilterDefinition<TestModel1>
@@ -2200,7 +2584,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.Equal,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func6 = expression.Compile();
@@ -2212,18 +2597,38 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.NotEqual
 
+            //default case sensitivity
             filterDefinition = new FilterDefinition<TestModel1>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.NotEqual,
-                Value = "Joe"
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func7 = expression.Compile();
             Assert.IsTrue(func7.Invoke(new("Not Joe", 45)));
             Assert.IsFalse(func7.Invoke(new(null, 45)));
             Assert.IsFalse(func7.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func7.Invoke(new("joe", 45)));
+
+            //case insensitive
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.NotEqual,
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            expression = filterDefinition.GenerateFilterExpression();
+            func7 = expression.Compile();
+            Assert.IsTrue(func7.Invoke(new("Not Joe", 45)));
+            Assert.IsFalse(func7.Invoke(new(null, 45)));
+            Assert.IsFalse(func7.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func7.Invoke(new("joe", 45)));
 
             // null value
             filterDefinition = new FilterDefinition<TestModel1>
@@ -2231,7 +2636,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.NotEqual,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func8 = expression.Compile();
@@ -2243,18 +2649,38 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.StartsWith
 
+            //default case sensitivity
             filterDefinition = new FilterDefinition<TestModel1>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.StartsWith,
-                Value = "Joe"
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func9 = expression.Compile();
             Assert.IsFalse(func9.Invoke(new("Not Joe", 45)));
             Assert.IsFalse(func9.Invoke(new(null, 45)));
             Assert.IsTrue(func9.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func9.Invoke(new("joe", 45)));
+
+            //default case sensitivity
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.StartsWith,
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            expression = filterDefinition.GenerateFilterExpression();
+            func9 = expression.Compile();
+            Assert.IsFalse(func9.Invoke(new("Not Joe", 45)));
+            Assert.IsFalse(func9.Invoke(new(null, 45)));
+            Assert.IsTrue(func9.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func9.Invoke(new("joe", 45)));
 
             // null value
             filterDefinition = new FilterDefinition<TestModel1>
@@ -2262,7 +2688,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.StartsWith,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func10 = expression.Compile();
@@ -2274,18 +2701,38 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.EndsWith
 
+            //default case sensitivity
             filterDefinition = new FilterDefinition<TestModel1>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.EndsWith,
-                Value = "Joe"
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func11 = expression.Compile();
             Assert.IsFalse(func11.Invoke(new("Joe Not", 45)));
             Assert.IsFalse(func11.Invoke(new(null, 45)));
             Assert.IsTrue(func11.Invoke(new("Joe", 45)));
+            Assert.IsFalse(func11.Invoke(new("joe", 45)));
+
+            //case insensitive
+            filterDefinition = new FilterDefinition<TestModel1>
+            {
+                Id = Guid.NewGuid(),
+                Field = "Name",
+                Operator = FilterOperator.String.EndsWith,
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
+            };
+            filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
+            expression = filterDefinition.GenerateFilterExpression();
+            func11 = expression.Compile();
+            Assert.IsFalse(func11.Invoke(new("Joe Not", 45)));
+            Assert.IsFalse(func11.Invoke(new(null, 45)));
+            Assert.IsTrue(func11.Invoke(new("Joe", 45)));
+            Assert.IsTrue(func11.Invoke(new("joe", 45)));
 
             // null value
             filterDefinition = new FilterDefinition<TestModel1>
@@ -2293,7 +2740,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.EndsWith,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func12 = expression.Compile();
@@ -2310,7 +2758,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.Empty,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func13 = expression.Compile();
@@ -2343,7 +2792,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.NotEmpty,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func15 = expression.Compile();
@@ -2358,7 +2808,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = FilterOperator.String.NotEmpty,
-                Value = null
+                Value = null,
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func16 = expression.Compile();
@@ -2375,7 +2826,8 @@ namespace MudBlazor.UnitTests.Components
                 Id = Guid.NewGuid(),
                 Field = "Name",
                 Operator = null,
-                Value = "Joe"
+                Value = "Joe",
+                DataGrid = new MudDataGrid<TestModel1>()
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func17 = expression.Compile();
@@ -3031,7 +3483,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition4));
             await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition5));
             await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
-            
+
             // check the number of filters displayed in the filters panel
             dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(5);
 
@@ -3181,12 +3633,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridChildRowContentTest()
+        public async Task DataGridChildRowContentOpenTest()
         {
             var comp = Context.RenderComponent<DataGridChildRowContentTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridChildRowContentTest.Model>>();
 
-            dataGrid.FindAll("td")[3].TextContent.Trim().Should().StartWith("uid = Sam|56|Normal|");
+            await comp.InvokeAsync(() => dataGrid.Instance
+            .ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+
+            dataGrid.FindAll("td")[5].TextContent.Trim().Should().StartWith("uid = Sam|56|Normal|");
+        }
+
+        [Test]
+        public async Task DataGridChildRowContentClosedTest()
+        {
+            var comp = Context.RenderComponent<DataGridChildRowContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridChildRowContentTest.Model>>();
+
+            dataGrid.FindAll("td").SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Sam|56|Normal|")).Should().BeNull();
         }
 
         [Test]
@@ -3333,7 +3797,7 @@ namespace MudBlazor.UnitTests.Components
             var popover = dataGrid.FindComponent<MudPopover>();
             popover.Instance.Open.Should().BeFalse("Should start as closed");
 
-           
+
 
             var columnsButton = dataGrid.Find("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
             columnsButton.Click();
@@ -3482,6 +3946,11 @@ namespace MudBlazor.UnitTests.Components
             cell.cellContext.IsSelected.Should().Be(false);
             cell.cellContext.Actions.SetSelectedItem(true);
             cell.cellContext.IsSelected.Should().Be(true);
+
+            cell.cellContext.Actions.ToggleHierarchyVisibilityForItem();
+            cell.cellContext.openHierarchies.Should().Contain(item);
+            cell.cellContext.Actions.ToggleHierarchyVisibilityForItem();
+            cell.cellContext.openHierarchies.Should().NotContain(item);
         }
 
         [Test]
@@ -3495,7 +3964,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td.footer-cell")[1].TrimmedText().Should().Be("Average age is 56");
             dataGrid.FindAll("tfoot td.footer-cell")[1].TrimmedText().Should().Be("Average age is 43");
         }
-        
+
         [Test]
         public async Task DataGridSequenceContainsNoElementsTest()
         {
@@ -3529,10 +3998,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridFilterGuid<Guid>>();
             var grid = comp.Instance.MudGridRef;
-            
+
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
-            
+
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
             {
                 Field = "Id",
@@ -3541,7 +4010,7 @@ namespace MudBlazor.UnitTests.Components
                 FieldType = typeof(Guid),
             });
             grid.FilteredItems.Count().Should().Be(0);
-            
+
             grid.FilterDefinitions.Clear();
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
             {
@@ -3552,7 +4021,7 @@ namespace MudBlazor.UnitTests.Components
             });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
-            
+
             grid.FilterDefinitions.Clear();
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
             {
@@ -3570,10 +4039,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridFilterGuid<Nullable<Guid>>>();
             var grid = comp.Instance.MudGridRef;
-            
+
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
-            
+
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
             {
                 Field = "Id",
@@ -3582,7 +4051,7 @@ namespace MudBlazor.UnitTests.Components
                 FieldType = typeof(Nullable<Guid>),
             });
             grid.FilteredItems.Count().Should().Be(0);
-            
+
             grid.FilterDefinitions.Clear();
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
             {
@@ -3593,7 +4062,7 @@ namespace MudBlazor.UnitTests.Components
             });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
-            
+
             grid.FilterDefinitions.Clear();
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
             {
@@ -3611,10 +4080,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridFilterDictionaryGuid>();
             var grid = comp.Instance.MudGridRef;
-            
+
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
-            
+
             grid.FilterDefinitions.Add(new FilterDefinition<IDictionary<string, object>>()
             {
                 Field = "Id",
@@ -3623,7 +4092,7 @@ namespace MudBlazor.UnitTests.Components
                 FieldType = typeof(Nullable<Guid>),
             });
             grid.FilteredItems.Count().Should().Be(0);
-            
+
             grid.FilterDefinitions.Clear();
             grid.FilterDefinitions.Add(new FilterDefinition<IDictionary<string, object>>()
             {
@@ -3634,7 +4103,7 @@ namespace MudBlazor.UnitTests.Components
             });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()["Id"].Should().Be(Guid.Parse(comp.Instance.Guid1));
-            
+
             grid.FilterDefinitions.Clear();
             grid.FilterDefinitions.Add(new FilterDefinition<IDictionary<string, object>>()
             {
@@ -3722,7 +4191,7 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Instance.FilterDefinitions.Clear();
             dataGrid.Render();
-            
+
             // total with es-ES culture (decimals separated by comma)
             var filterTotal = dataGrid.FindAll("th.filter-header-cell input")[3];
             filterTotal.Input(new ChangeEventArgs() { Value = "2,2" });

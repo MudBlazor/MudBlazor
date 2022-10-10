@@ -35,11 +35,11 @@ namespace MudBlazor
         /// <summary>
         /// Returns the display name attribute of the provided field property as a string. If this attribute is missing, the member name will be returned.
         /// </summary>
-        public static string GetDisplayNameString<T>(this Expression<Func<T>> expression)
+        public static string GetLabelString<T>(this Expression<Func<T>> expression)
         {
             var memberExpression = (MemberExpression)expression.Body;
             var propertyInfo = memberExpression.Expression?.Type.GetProperty(memberExpression.Member.Name);
-            return propertyInfo?.GetCustomAttributes(typeof(DisplayAttribute), true).Cast<DisplayAttribute>().FirstOrDefault()?.Name ?? string.Empty;
+            return propertyInfo?.GetCustomAttributes(typeof(LabelAttribute), true).Cast<LabelAttribute>().FirstOrDefault()?.Name ?? string.Empty;
         }
     }
 }

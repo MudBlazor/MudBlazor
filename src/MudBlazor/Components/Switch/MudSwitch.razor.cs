@@ -128,7 +128,7 @@ namespace MudBlazor
             base.OnInitialized();
 
             if (Label == null && For != null)
-                Label = For.GetDisplayNameString();
+                Label = For.GetLabelString();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
