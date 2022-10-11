@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -1340,6 +1341,68 @@ namespace MudBlazor.UnitTests.Components
 
             // How many buttons? It should always be equal to 2
             comp.FindAll("button").Count.Should().Be(2);
+        }
+
+        /// <summary>
+        /// Ensures the table buttons render correctly
+        /// </summary>
+        /// <returns></returns>
+        [Theory]
+        [TestCase(true, TableButtonPosition.Start)]
+        [TestCase(true, TableButtonPosition.StartAndEnd)]
+        [TestCase(true, TableButtonPosition.End)]
+        [TestCase(false, TableButtonPosition.Start)]
+        [TestCase(false, TableButtonPosition.StartAndEnd)]
+        [TestCase(false, TableButtonPosition.End)]
+        public async Task TableEditButtonRenderTest(bool customButton, TableButtonPosition buttonPosition)
+        {
+            IRenderedComponent<ComponentBase> comp;
+            if (customButton)
+            {
+                comp = Context.RenderComponent<TableCustomEditButtonRenderTest>(parameters => parameters
+                    .Add(p => p.ButtonPosition, buttonPosition));
+            }
+            else
+            {
+                comp = Context.RenderComponent<TableEditButtonRenderTest>(parameters => parameters
+                    .Add(p => p.ButtonPosition, buttonPosition));
+            }
+
+            var trs = comp.FindAll("tr");
+
+            //header + 3 items
+            trs.Should().HaveCount(4);
+
+            var header = trs[0];
+            var expectedAmount = buttonPosition switch
+            {
+                TableButtonPosition.Start or TableButtonPosition.End => 2,
+                TableButtonPosition.StartAndEnd => 3,
+                _ => throw new NotImplementedException()
+            };
+
+            header.ChildElementCount.Should().Be(expectedAmount);
+
+            var trs2 = comp.FindAll("tr");
+            var relevantRow = trs2[2];
+            relevantRow.ChildElementCount.Should().Be(expectedAmount);
+
+            if (buttonPosition == TableButtonPosition.Start)
+            {
+                relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+                relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlDivElement>().Should().NotBeNull();
+            }
+            else if (buttonPosition == TableButtonPosition.End)
+            {
+                relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlDivElement>().Should().NotBeNull();
+                relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+            }
+            else if (buttonPosition == TableButtonPosition.StartAndEnd)
+            {
+                relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+                relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlDivElement>().Should().NotBeNull();
+                relevantRow.Children[2].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+            }
         }
 
         /// <summary>
