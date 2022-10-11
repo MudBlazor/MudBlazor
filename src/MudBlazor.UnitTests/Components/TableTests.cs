@@ -1346,7 +1346,6 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Ensures the table buttons render correctly
         /// </summary>
-        /// <returns></returns>
         [Theory]
         [TestCase(true, TableButtonPosition.Start)]
         [TestCase(true, TableButtonPosition.StartAndEnd)]
@@ -1403,6 +1402,99 @@ namespace MudBlazor.UnitTests.Components
                 relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlDivElement>().Should().NotBeNull();
                 relevantRow.Children[2].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
             }
+        }
+
+        /// <summary>
+        /// Tests the trigger of the edit button
+        /// </summary>
+        [Test]
+        public async Task TableEditButtonTriggerTest()
+        {
+            var comp = Context.RenderComponent<TableEditButtonRenderTest>();
+            var trs = comp.FindAll("tr");
+            trs[1].InnerHtml.Contains("input").Should().BeFalse();
+
+            var buttons = comp.FindAll("button");
+
+            buttons[0].Click();
+            var trs2 = comp.FindAll("tr");
+            trs2[1].InnerHtml.Contains("input").Should().BeTrue();
+
+            buttons[1].Click();
+            var trs3 = comp.FindAll("tr");
+            trs3[1].InnerHtml.Contains("input").Should().BeFalse();
+            trs3[2].InnerHtml.Contains("input").Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Tests the trigger of the custom edit button
+        /// </summary>
+        [Test]
+        public async Task TableCustomEditButtonTriggerTest()
+        {
+            var comp = Context.RenderComponent<TableCustomEditButtonRenderTest>();
+            var trs = comp.FindAll("tr");
+            trs[1].InnerHtml.Contains("input").Should().BeFalse();
+
+            var buttons = comp.FindAll("button");
+
+            buttons[0].Click();
+            var trs2 = comp.FindAll("tr");
+            trs2[1].InnerHtml.Contains("input").Should().BeTrue();
+
+            buttons[1].Click();
+            var trs3 = comp.FindAll("tr");
+            trs3[1].InnerHtml.Contains("input").Should().BeFalse();
+            trs3[2].InnerHtml.Contains("input").Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Ensures clicking a different button does not switch the row
+        /// </summary>
+        [Test]
+        public async Task TableEditButtonRowSwitchBlockTest()
+        {
+            var comp = Context.RenderComponent<TableEditButtonRenderTest>(parameters => parameters
+                    .Add(p => p.BlockRowSwitching, true));
+            var trs = comp.FindAll("tr");
+            trs[1].InnerHtml.Contains("input").Should().BeFalse();
+
+            var buttons = comp.FindAll("button");
+
+            buttons[0].Click();
+            var trs2 = comp.FindAll("tr");
+            trs2[1].InnerHtml.Contains("input").Should().BeTrue();
+
+            buttons[1].Click();
+            var trs3 = comp.FindAll("tr");
+            trs3[1].InnerHtml.Contains("input").Should().BeTrue();
+            trs3[2].InnerHtml.Contains("input").Should().BeFalse(); //the row has not switched
+        }
+
+        /// <summary>
+        /// Clicking the edit button should not trigger the row click event
+        /// </summary>
+        [Test]
+        public async Task TableEditButtonNoRowTrigger()
+        {
+            var timesClicked = 0;
+            void OnRowClick()
+            {
+                timesClicked++;
+            }
+            var comp = Context.RenderComponent<TableEditButtonRenderTest>(parameters => parameters
+                    .Add(p => p.RowClicked, OnRowClick));
+
+            var trs = comp.FindAll("tr");
+            trs[1].Click();
+            timesClicked.Should().Be(1);
+
+            trs[2].Click();
+            timesClicked.Should().Be(2);
+
+            var buttons = comp.FindAll("button");
+            buttons[0].Click();
+            timesClicked.Should().Be(2); //clicking the button should not trigger the row click event
         }
 
         /// <summary>
