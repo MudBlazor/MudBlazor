@@ -16,7 +16,10 @@
     }
 
     <div class="mud-snackbar-content-message">
-        @((MarkupString)Message)
+        @if (Message?.ComponentType != null)
+        {
+            <DynamicComponent Type="Message.ComponentType" Parameters="Message.ComponentParameters" />
+        }
     </div>
 
     @if (ShowCloseIcon || ShowActionButton)
@@ -32,8 +35,6 @@
             {
                 <MudIconButton Icon="@CloseIcon" Size="Size.Small" Class="ms-2" OnClick="CloseIconClicked" />
             }
-
         </div>
     }
-
 </div>
