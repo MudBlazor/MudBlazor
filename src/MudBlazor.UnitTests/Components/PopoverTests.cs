@@ -808,7 +808,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(OverflowBehavior.FlipNever, "flip-never")]
-        [TestCase(OverflowBehavior.FilpOnOpen, "flip-onopen")]
+        [TestCase(OverflowBehavior.FlipOnOpen, "flip-onopen")]
         [TestCase(OverflowBehavior.FlipAlways, "flip-always")]
         public void MudPopover_Property_OverflowBehavior(OverflowBehavior overflowBehavior, string expectedClass)
         {
