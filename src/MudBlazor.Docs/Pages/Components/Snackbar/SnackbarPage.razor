@@ -1,6 +1,5 @@
 ﻿@page "/components/snackbar"
 
-
 @inject MudBlazor.ISnackbar Snackbar
 
 <DocsPage>
@@ -31,6 +30,31 @@
             </SectionHeader>
             <SectionContent Code="SnackbarHtmlInMessageExample" ShowCode="false">
                 <SnackbarHtmlInMessageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="RenderFragment messages">
+                <Description>
+                    In addition to setting the Snackbar message with a string, you can also use <CodeInline>RenderFragment</CodeInline>s to 
+                    create Snackbars with more complex content.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="SnackbarFromRenderFragmentExample" ShowCode="false">
+                <SnackbarFromRenderFragmentExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom component messages">
+                <Description>
+                    You can also create messages containing a custom component. This example renders a message based on MudBlazor's
+                    <CodeInline>MudChip</CodeInline>, but you can use any component to define the content. Pass parameters to the component 
+                    using the <CodeInline>componentParameters</CodeInline> argument.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="SnackbarFromCustomComponentExample" ShowCode="false">
+                <SnackbarFromCustomComponentExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -155,5 +179,17 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Preventing duplication">
+                <Description>
+                    <CodeInline>SnackbarService</CodeInline> can prevent more than one snackbar with identical message content from appearing. It does
+                    this by default when you call <CodeInline>.Add</CodeInline> with a <CodeInline>string</CodeInline>. If you want to prevent duplication of
+                    a Snackbar created with a <CodeInline>RenderFragment</CodeInline> or a custom component, pass a key to <CodeInline>.Add</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="SnackbarPreventDuplicatesExample" ShowCode="false">
+                <SnackbarPreventDuplicatesExample />
+            </SectionContent>
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

@@ -327,6 +327,46 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridDialogEditTest()
+        {
+            var comp = Context.RenderComponent<DataGridFormEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormEditTest.Model>>();
+
+            //verify values before opening dialog
+            dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
+            dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
+            dataGrid.FindAll("td")[2].Html().Trim().Should().Be("snakex64");
+            dataGrid.FindAll("td")[3].Html().Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td")[4].Html().Trim().Should().Be("23");
+            dataGrid.FindAll("td")[5].Html().Trim().Should().Be("snakex64");
+            dataGrid.FindAll("td")[6].Html().Trim().Should().Be("Steve");
+            dataGrid.FindAll("td")[7].Html().Trim().Should().Be("32");
+            dataGrid.FindAll("td")[8].Html().Trim().Should().Be("snakex64");
+
+            //open edit dialog
+            dataGrid.FindAll("tbody tr")[1].Click();
+
+            //edit data
+            comp.FindAll("div input")[0].Change("Galadriel");
+            comp.FindAll("div input")[1].Change(1);
+
+            comp.Find(".mud-dialog-actions .mud-button-filled-primary").Click();
+
+            //verify values after saving dialog
+            dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
+            dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
+            dataGrid.FindAll("td")[2].Html().Trim().Should().Be("snakex64");
+            dataGrid.FindAll("td")[3].Html().Trim().Should().Be("Galadriel");
+            dataGrid.FindAll("td")[4].Html().Trim().Should().Be("1");
+            dataGrid.FindAll("td")[5].Html().Trim().Should().Be("snakex64");
+            dataGrid.FindAll("td")[6].Html().Trim().Should().Be("Steve");
+            dataGrid.FindAll("td")[7].Html().Trim().Should().Be("32");
+            dataGrid.FindAll("td")[8].Html().Trim().Should().Be("snakex64");
+
+            //if no crash occurs, we know the datagrid is properly filtering out the GetOnly property when calling set
+        }
+
+        [Test]
         public async Task DataGridVisualStylingTest()
         {
             var comp = Context.RenderComponent<DataGridVisualStylingTest>();
