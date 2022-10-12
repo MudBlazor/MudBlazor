@@ -7,6 +7,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
+using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents;
@@ -35,7 +36,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.Breakpoint, Breakpoint.Lg);
                 p.Add(x => x.Invert, invert);
             });
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             if (isHidden == true)
             {
@@ -87,7 +88,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void InvertChangedAfterInitilizing()
+        public void InvertChangedAfterInitializing()
         {
             var listenerMock = new Mock<IBreakpointService>();
             listenerMock.Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>())).ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md)).Verifiable();
@@ -100,7 +101,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.Breakpoint, Breakpoint.Lg);
                 p.Add(x => x.Invert, false);
             });
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Find("p").TextContent.Should().Be("MudHidden content");
 
@@ -113,7 +114,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ReferenceBreakpointChangedAfterInitilizing()
+        public void ReferenceBreakpointChangedAfterInitializing()
         {
             var listenerMock = new Mock<IBreakpointService>();
             listenerMock.Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>())).ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md)).Verifiable();
@@ -127,7 +128,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.Breakpoint, Breakpoint.Lg);
                 p.Add(x => x.Invert, false);
             });
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
 
             comp.Find("p").TextContent.Should().Be("MudHidden content");
 
@@ -267,10 +268,10 @@ namespace MudBlazor.UnitTests.Components
 
             Mock<IJSRuntime> _jsruntimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
 
-            _jsruntimeMock.Setup(x => x.InvokeAsync<object>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()))
-                .ReturnsAsync(new object(), TimeSpan.FromMilliseconds(200)).Verifiable();
-            _jsruntimeMock.Setup(x => x.InvokeAsync<object>("mudResizeListenerFactory.cancelListeners", It.IsAny<object[]>()))
-    .ReturnsAsync(new object());
+            _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()))
+                .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200)).Verifiable();
+            _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListeners", It.IsAny<object[]>()))
+    .ReturnsAsync(Mock.Of<IJSVoidResult>);
 
             BreakpointService service = new BreakpointService(_jsruntimeMock.Object, sizeMock.Object);
 

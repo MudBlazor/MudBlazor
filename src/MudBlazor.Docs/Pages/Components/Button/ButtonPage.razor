@@ -6,99 +6,98 @@
         <Description>The <CodeInline>Mudbutton</CodeInline> component is a button with material design theme and comes with multiple functions.</Description>
     </DocsPageHeader>
     <DocsPageContent>
+        
         <DocsPageSection>
             <SectionHeader Title="Filled Buttons">
                 <Description>Filled Buttons have elevation (box shadow) and is raised on click by default.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <ButtonFilledExample />
+            <SectionContent Code="ButtonFilledExample">
+                <ButtonFilledExample/>
             </SectionContent>
-            <SectionSource Code="ButtonFilledExample" GitHubFolderName="Button" />
-            <MudText Class="mt-6" GutterBottom="true">Elevation can be removed with the <CodeInline>DisableElevation</CodeInline> bool.</MudText>
-            <SectionContent Outlined="true">
-                <ButtonElevationExample />
-            </SectionContent>
-            <SectionSource Code="ButtonElevationExample" GitHubFolderName="Button" />
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Elevation">
+                        <Description>Elevation can be removed with the <CodeInline>DisableElevation</CodeInline> bool.<CodeInline>Color</CodeInline> property only applies to the text.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="ButtonElevationExample">
+                        <ButtonElevationExample/>
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Text Buttons">
                 <Description>Text Buttons have no elevation, background or border and only hover effect is used. The <CodeInline>Color</CodeInline> property only applies to the text.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <ButtonTextExample />
+            <SectionContent Code="ButtonTextExample">
+                <ButtonTextExample/>
             </SectionContent>
-            <SectionSource Code="ButtonTextExample" GitHubFolderName="Button" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Outlined Buttons">
                 <Description>Outlined Buttons are similar to Text Buttons except for the border that inherits its color from the set <CodeInline>Color</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <ButtonOutlinedExample />
+            <SectionContent Code="ButtonOutlinedExample">
+                <ButtonOutlinedExample/>
             </SectionContent>
-            <SectionSource Code="ButtonOutlinedExample" GitHubFolderName="Button" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="FullWidth">
                 <Description>FullWidth buttons extend to 100% of available width.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
-                <ButtonFullWidthExample />
+            <SectionContent Code="ButtonFullWidthExample">
+                <ButtonFullWidthExample/>
             </SectionContent>
-            <SectionSource Code="ButtonFullWidthExample" GitHubFolderName="Button" />
         </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Sizes">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <ButtonSizeExample />
-            </SectionContent>
-            <SectionSource Code="ButtonSizeExample" ShowCode="false" GitHubFolderName="Button" />
-        </DocsPageSection>
-
+        
         <DocsPageSection>
             <SectionHeader Title="Icons and labels">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <ButtonIconLabelExample />
+            <SectionContent Code="ButtonIconLabelExample">
+                <ButtonIconLabelExample/>
             </SectionContent>
-            <SectionSource Code="ButtonIconLabelExample" ShowCode="false" GitHubFolderName="Button" />
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Sizes">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="ButtonSizeExample" ShowCode="false">
+                <ButtonSizeExample/>
+            </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Customized Buttons">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <ButtonCustomizedExample />
+            <SectionContent Code="ButtonCustomizedExample" ShowCode="false">
+                <ButtonCustomizedExample/>
             </SectionContent>
-            <SectionSource Code="ButtonCustomizedExample" ShowCode="false" GitHubFolderName="Button" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Link Button">
-                <Description>Set the <CodeInline>Link</CodeInline> parameter and the MudButton will render an anchor element. If you also set the <CodeInline>Target</CodeInline> parameter to <CodeInline>_blank</CodeInline>, the component will add <CodeInline>rel="noopener"</CodeInline> automatically.
-                If you set the <CodeInline>Disabled</CodeInline> parameter to <CodeInline>true</CodeInline>, the component will render a button with no <CodeInline>href</CodeInline> attribute.
-            </Description>
+                <Description>Set the <CodeInline>Href</CodeInline> parameter and the MudButton will render an anchor element. If you also set the <CodeInline>Target</CodeInline> parameter to <CodeInline>_blank</CodeInline>, the component will add <CodeInline>rel="noopener"</CodeInline> automatically.
+                    If you set the <CodeInline>Disabled</CodeInline> parameter to <CodeInline>true</CodeInline>, the component will render a button with no <CodeInline>href</CodeInline> attribute.
+                </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <ButtonLinkExample />
+            <SectionContent Code="ButtonLinkExample" ShowCode="false">
+                <ButtonLinkExample/>
             </SectionContent>
-            <SectionSource Code="ButtonLinkExample" ShowCode="false" GitHubFolderName="Button" />
         </DocsPageSection>
+        
         <DocsPageSection>
             <SectionHeader Title="Loading Button">
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="ButtonLoadingExample" ShowCode="false">
                 <ButtonLoadingExample/>
             </SectionContent>
-            <SectionSource Code="ButtonLoadingExample" ShowCode="false" GitHubFolderName="Button"/>
         </DocsPageSection>
+        
     </DocsPageContent>
 </DocsPage>

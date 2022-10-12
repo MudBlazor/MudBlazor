@@ -20,20 +20,18 @@
                     the <CodeInline>Value</CodeInline> will be overwritten with the user input which allows it to be passed to the validation function.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent ShowCode="false" Code="AutocompleteUsageExample">
                 <AutocompleteUsageExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="AutocompleteUsageExample" GitHubFolderName="Autocomplete" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Margin And Dense">
                 <Description>While the margin property affects the input element, the dense property affects the dropdown element.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent ShowCode="false" Code="AutocompleteMarginDenseExample">
                 <AutocompleteMarginDenseExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="AutocompleteMarginDenseExample" GitHubFolderName="Autocomplete" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -45,10 +43,20 @@
                     to create highly sophisticated list item presentations.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent ShowCode="false" Code="AutocompleteClrObjectsExample">
                 <AutocompleteClrObjectsExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="AutocompleteClrObjectsExample" GitHubFolderName="Autocomplete" />
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Presentation Extras">
+                <Description>
+                    You can also define a <CodeInline Tag="true">MoreItemsTemplate</CodeInline> or a <CodeInline Tag="true">NoItemsTemplate</CodeInline> for special scenarios.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="AutocompletePresentationExtrasExample">
+                <AutocompletePresentationExtrasExample />
+            </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
@@ -59,10 +67,9 @@
                     For more info on form validation, check out <MudLink Href="/components/form">Form</MudLink>.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent ShowCode="false" Code="AutocompleteValidationExample">
                 <AutocompleteValidationExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="AutocompleteValidationExample" GitHubFolderName="Autocomplete" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -79,11 +86,37 @@
                     <MudText>*If search func didn't return any value, keys can't open the dropdown.</MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent ShowCode="false" Code="AutocompleteUsageExample">
                 <AutocompleteUsageExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="AutocompleteUsageExample" GitHubFolderName="Autocomplete" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Progress">
+                <Description>
+                    <MudText>When fetching data from a remote datasource MudAutocomplete can visually indicate that it is awaiting results. Following settings are available:</MudText>
+                    <br />
+                    <MudText><CodeInline>ShowProgressIndicator</CodeInline>: show circular progress indicator.</MudText>
+                    <MudText><CodeInline>ProgressIndicatorTemplate</CodeInline>: replace the default circular progress indicator with a custom one.</MudText>
+                    <MudText><CodeInline>ProgressIndicatorInPopoverTemplate</CodeInline>: show a progress indicator inside the popover.</MudText>
+                    <MudText><CodeInline>ProgressIndicatorColor</CodeInline>: customize the color of the circular progress indicator.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="AutocompleteProgressExample">
+                <AutocompleteProgressExample />
+            </SectionContent>
+        </DocsPageSection>
+
+		<DocsPageSection>
+			<SectionHeader Title="Cancellation Token">
+				<Description>
+					<MudText>Autocomplete can cancel request if the user types new input</MudText>
+				</Description>
+			</SectionHeader>
+			<SectionContent ShowCode="false" Code="AutocompleteCancellationTokenExample">
+				<AutocompleteCancellationTokenExample />
+			</SectionContent>
+		</DocsPageSection>
 
     </DocsPageContent>
 </DocsPage>

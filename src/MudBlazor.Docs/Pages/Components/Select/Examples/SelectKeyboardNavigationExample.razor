@@ -1,23 +1,18 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="string" Label="Select Coffee With Keys" AnchorOrigin="Origin.BottomCenter">
-            <MudSelectItem Value="@("Cappuccino")" />
-            <MudSelectItem Value="@("Cafe Latte")" />
-            <MudSelectItem Value="@("Espresso")" />
-            <MudSelectItem Value="@("Irish Coffee")" />
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="12" md="12">
-        <MudSelect T="string" Label="US States" HelperText="Pick your favorite states with keys" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options">
-            @foreach (var state in states)
-            {
-                <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
-            }
-        </MudSelect>
-    </MudItem>
-</MudGrid>
+<MudSelect T="string" Label="Select Coffee With Keys" AnchorOrigin="Origin.BottomCenter">
+    <MudSelectItem Value="@("Cappuccino")" />
+    <MudSelectItem Value="@("Cafe Latte")" />
+    <MudSelectItem Value="@("Espresso")" />
+    <MudSelectItem Value="@("Irish Coffee")" />
+</MudSelect>
+
+<MudSelect T="string" Label="US States" HelperText="Pick your favorite states with keys" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options">
+    @foreach (var state in states)
+    {
+        <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
+    }
+</MudSelect>
 
 @code {
 
@@ -41,5 +36,4 @@
         "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
         "Washington", "West Virginia", "Wisconsin", "Wyoming",
     };
-
 }

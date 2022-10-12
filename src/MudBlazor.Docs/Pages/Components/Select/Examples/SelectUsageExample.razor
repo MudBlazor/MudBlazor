@@ -2,49 +2,37 @@
 @using System.Globalization;
 @namespace MudBlazor.Docs.Examples
 
-<MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect Label="Select fast-food" @bind-Value="stringValue" HelperText="String" Placeholder="Please Select"
-                   AdornmentIcon="@Icons.Material.Filled.Fastfood" AdornmentColor="Color.Primary">
-            <MudSelectItem Value="@("Pizza")" Disabled="true">Pizza (Disabled)</MudSelectItem>
-            <MudSelectItem Value="@("Burger")">Burger</MudSelectItem>
-            <MudSelectItem Value="@("Hotdog")">Hot Dog</MudSelectItem>
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect Label="Select drink" @bind-Value="enumValue" HelperText="Enum"
-                   OpenIcon="@Icons.Material.Filled.LocalDrink" AdornmentColor="Color.Secondary">
-            @foreach (Drink item in Enum.GetValues(typeof(Drink)))
-            {
-                <MudSelectItem Value="@item">@item</MudSelectItem>
-            }
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect Placeholder="Select culture" @bind-Value="cultureValue" HelperText="CultureInfo" ToStringFunc="@convertFunc"
-                   CloseIcon="@Icons.Material.Filled.Flag" AdornmentColor="Color.Tertiary">
-            <MudSelectItem Value="@(CultureInfo.GetCultureInfo("en-US"))"></MudSelectItem>
-            <MudSelectItem Value="@(CultureInfo.GetCultureInfo("de-AT"))"></MudSelectItem>
-            <MudSelectItem Value="@(CultureInfo.GetCultureInfo("pt-BR"))"></MudSelectItem>
-            <MudSelectItem Value="@(CultureInfo.GetCultureInfo("zh-CN"))"/>
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="12" md="12">
-        <MudText Class="mb-n3" Typo="Typo.body2">
-            Selected values: 
-            <MudChip>@(stringValue ?? "Select fast-food")</MudChip>
-            <MudChip Color="Color.Primary">@enumValue</MudChip>
-            <MudChip Color="Color.Secondary">@(cultureValue?.DisplayName ?? "Select culture")</MudChip>
-        </MudText>
-    </MudItem>
-</MudGrid>
+<MudSelect @bind-Value="stringValue" Label="Select fast-food" HelperText="String" Placeholder="Please Select" AdornmentIcon="@Icons.Material.Filled.Fastfood" AdornmentColor="Color.Primary">
+    <MudSelectItem Value="@("Pizza")" Disabled="true">Pizza (Disabled)</MudSelectItem>
+    <MudSelectItem Value="@("Burger")">Burger</MudSelectItem>
+    <MudSelectItem Value="@("Hotdog")">Hot Dog</MudSelectItem>
+</MudSelect>
 
+<MudSelect @bind-Value="enumValue" Label="Select drink" HelperText="Enum" OpenIcon="@Icons.Material.Filled.LocalDrink" AdornmentColor="Color.Secondary">
+    @foreach (Drink item in Enum.GetValues(typeof(Drink)))
+    {
+        <MudSelectItem Value="@item">@item</MudSelectItem>
+    }
+</MudSelect>
 
+<MudSelect Placeholder="Select culture" @bind-Value="cultureValue" HelperText="CultureInfo" ToStringFunc="@convertFunc" CloseIcon="@Icons.Material.Filled.Flag" AdornmentColor="Color.Tertiary">
+    <MudSelectItem Value="@(CultureInfo.GetCultureInfo("en-US"))" />
+    <MudSelectItem Value="@(CultureInfo.GetCultureInfo("de-AT"))" />
+    <MudSelectItem Value="@(CultureInfo.GetCultureInfo("pt-BR"))" />
+    <MudSelectItem Value="@(CultureInfo.GetCultureInfo("zh-CN"))"/>
+</MudSelect>
+
+<div class="d-flex mud-width-full align-center mt-8">
+    <MudText Typo="Typo.subtitle1" Class="mr-2">Selected values: </MudText>
+    <MudChip>@(stringValue ?? "Select fast-food")</MudChip>
+    <MudChip Color="Color.Primary">@enumValue</MudChip>
+    <MudChip Color="Color.Secondary">@(cultureValue?.DisplayName ?? "Select culture")</MudChip>
+</div>
 
 @code {
     private string stringValue { get; set; }
-    private Drink enumValue { get; set; }
-    public enum Drink { Tee, SparklingWater, SoftDrink, Cider, Beer, Wine, Moonshine }
+    private Drink enumValue { get; set; } = Drink.HotWater;
+    public enum Drink { Tea, SparklingWater, SoftDrink, Cider, Beer, Wine, Moonshine, Wodka, Cola, GreeTea, FruitJuice, Lemonade, HotWater, SpringWater, IceWater,  }
     private CultureInfo cultureValue { get; set; }
     private Func<CultureInfo, string> convertFunc = ci => ci?.DisplayName;
 }

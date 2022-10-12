@@ -15,7 +15,7 @@
                 </span>
             </span>
         </span>
-        <span class="mud-switch-track"></span>
+        <span class="@TrackClassname"></span>
     </span>
     @if (!String.IsNullOrEmpty(Label))
     {
@@ -31,6 +31,8 @@
 
 @code
 {
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.FormComponent.Behavior)]
+    public RenderFragment ChildContent { get; set; }
 }
 

@@ -5,9 +5,9 @@ VisualStudioVersion = 17.0.31423.177
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor", "MudBlazor\MudBlazor.csproj", "{FE5531F3-55F6-403D-BF48-3C904089B91D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs.Server", "MudBlazor.Docs.Server\MudBlazor.Docs.Server.csproj", "{C6E907FB-1958-44CE-A525-16E50EE8D199}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs.WasmHost", "MudBlazor.Docs.WasmHost\MudBlazor.Docs.WasmHost.csproj", "{C6E907FB-1958-44CE-A525-16E50EE8D199}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs.Client", "MudBlazor.Docs.Client\MudBlazor.Docs.Client.csproj", "{7EA59258-02F9-4DCF-AA93-37380DCB9904}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs.Wasm", "MudBlazor.Docs.Wasm\MudBlazor.Docs.Wasm.csproj", "{7EA59258-02F9-4DCF-AA93-37380DCB9904}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs", "MudBlazor.Docs\MudBlazor.Docs.csproj", "{D90D463F-544F-47AF-8D19-617BB89D9A5F}"
 EndProject
@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Examples.Data", "MudBlazor.Examples.Data\MudBlazor.Examples.Data.csproj", "{D9290286-6DD8-478C-A902-23660C554A1C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs.Server", "MudBlazor.Docs.Server\MudBlazor.Docs.Server.csproj", "{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{D9290286-6DD8-478C-A902-23660C554A1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9290286-6DD8-478C-A902-23660C554A1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9290286-6DD8-478C-A902-23660C554A1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

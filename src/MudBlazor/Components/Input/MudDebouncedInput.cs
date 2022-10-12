@@ -6,13 +6,14 @@ namespace MudBlazor
 {
     public abstract class MudDebouncedInput<T> : MudBaseInput<T>
     {
-        private Timer _timer;
+        private System.Timers.Timer _timer;
         private double _debounceInterval;
 
         /// <summary>
         /// Interval to be awaited in milliseconds before changing the Text value
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public double DebounceInterval
         {
             get => _debounceInterval;
@@ -81,7 +82,7 @@ namespace MudBlazor
         {
             if (_timer == null)
             {
-                _timer = new Timer();
+                _timer = new System.Timers.Timer();
                 _timer.Elapsed += OnTimerTick;
                 _timer.AutoReset = false;
             }

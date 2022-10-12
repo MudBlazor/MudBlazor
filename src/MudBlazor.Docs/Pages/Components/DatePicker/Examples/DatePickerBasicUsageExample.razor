@@ -1,43 +1,12 @@
 ﻿@namespace MudBlazor.Docs.Examples
-<MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Basic example" @bind-Date="date" ReadOnly="@readOnly"/>
-        <MudSwitch @bind-Checked="@readOnly" Color="Color.Tertiary">ReadOnly</MudSwitch>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Editable with Placeholder" Editable="true" @bind-Date="date" Placeholder="Select Date" />
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Only Calendar" @bind-Date="date" DisableToolbar="true" HelperText="No header" />
-    </MudItem>
-</MudGrid>
-<MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Date Format" @bind-Date="date" HelperText="For custom cultures" DateFormat="dd/MM/yyyy" />
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Show week number" ShowWeekNumbers="true" @bind-Date="date" />
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker Label="Display two months" DisplayMonths="2" TitleDateFormat="dddd, dd MMMM" @bind-Date="date" />
-    </MudItem>
-</MudGrid>
-<MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker @ref="_picker" Label="With action buttons" @bind-Date="date" AutoClose="@autoClose">
-            <PickerActions>
-                <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.Clear())">Clear</MudButton>
-                <MudButton OnClick="@(() => _picker.Close(false))">Cancel</MudButton>
-                <MudButton Color="Color.Primary" OnClick="@(() => _picker.Close())">Ok</MudButton>
-            </PickerActions>
-        </MudDatePicker>
-        <MudSwitch @bind-Checked="@autoClose" Color="Color.Secondary">AutoClose</MudSwitch>
-    </MudItem>
-</MudGrid>
+
+<MudDatePicker Label="Basic example" @bind-Date="date"/>
+<MudDatePicker Label="Editable with Placeholder" Editable="true" @bind-Date="date" Placeholder="Select Date" />
+<MudDatePicker Label="Only Calendar" @bind-Date="date" DisableToolbar="true" />
+<MudDatePicker Label="Date Format" @bind-Date="date" DateFormat="dd.MM.yyyy" />
+<MudDatePicker Label="Show week number" ShowWeekNumbers="true" @bind-Date="date" />
+<MudDatePicker Label="Display two months" DisplayMonths="2" TitleDateFormat="dddd, dd MMMM" @bind-Date="date" />
 
 @code {
-    MudDatePicker _picker;
     DateTime? date = DateTime.Today;
-    private bool autoClose;
-    private bool readOnly;
 }

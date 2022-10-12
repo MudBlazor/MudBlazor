@@ -38,6 +38,9 @@ namespace MudBlazor
         public static ValueTask MudRestoreFocusAsync(this ElementReference elementReference) =>
             elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.restoreFocus", elementReference) ?? ValueTask.CompletedTask;
 
+        public static ValueTask MudBlurAsync(this ElementReference elementReference) =>
+            elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.blur", elementReference) ?? ValueTask.CompletedTask;
+
         public static ValueTask MudSelectAsync(this ElementReference elementReference) =>
             elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.select", elementReference) ?? ValueTask.CompletedTask;
 
@@ -115,7 +118,27 @@ namespace MudBlazor
                     propsSpec.Add(prop.Name.ToJsString(), GetSerializationSpec(prop.PropertyType));
                 }
             }
+
             return propsSpec;
+        }
+
+        public static ValueTask<int> AddDefaultPreventingHandler(this ElementReference elementReference, string eventName) =>
+            elementReference.GetJSRuntime()?.InvokeAsync<int>("mudElementRef.addDefaultPreventingHandler", elementReference, eventName) ?? new ValueTask<int>(0);
+
+        public static ValueTask RemoveDefaultPreventingHandler(this ElementReference elementReference, string eventName, int listenerId) =>
+            elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.removeDefaultPreventingHandler", elementReference, eventName, listenerId) ?? ValueTask.CompletedTask;
+
+        public static ValueTask<int[]> AddDefaultPreventingHandlers(this ElementReference elementReference, string[] eventNames) =>
+            elementReference.GetJSRuntime()?.InvokeAsync<int[]>("mudElementRef.addDefaultPreventingHandlers", elementReference, eventNames) ?? new ValueTask<int[]>(Array.Empty<int>());
+
+        public static ValueTask RemoveDefaultPreventingHandlers(this ElementReference elementReference, string[] eventNames, int[] listenerIds)
+        {
+            if (eventNames.Length != listenerIds.Length)
+            {
+                throw new ArgumentException($"Number of elements in {nameof(eventNames)} and {nameof(listenerIds)} has to match.");
+            }
+
+            return elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.removeDefaultPreventingHandlers", elementReference, eventNames, listenerIds) ?? ValueTask.CompletedTask;
         }
     }
 }

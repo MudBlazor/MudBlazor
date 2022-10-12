@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@DivClassname" role="progressbar" style="transform: rotate(-90deg);@Style" aria-valuenow="@Value">
+<div @attributes="UserAttributes" class="@DivClassname" role="progressbar" style="@Style" aria-valuenow="@Value">
     <svg class="mud-progress-circular-svg" viewBox="22 22 44 44">
         @if (Indeterminate)
         {
@@ -9,7 +9,7 @@
         }
         else
         {
-            <circle class="@SvgClassname" cx="44" cy="44" r="20" fill="none" stroke-width="@StrokeWidth" style="stroke-dasharray: @MagicNumber; stroke-dashoffset: @_svg_value;"></circle>
+            <circle class="@SvgClassname" cx="44" cy="44" r="20" fill="none" stroke-width="@StrokeWidth" style="stroke-dasharray: @_magicNumber; stroke-dashoffset: @_svgValue;"></circle>
         }
     </svg>
 </div>

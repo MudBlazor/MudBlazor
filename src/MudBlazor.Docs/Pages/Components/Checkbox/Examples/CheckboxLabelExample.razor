@@ -2,8 +2,8 @@
 
 <MudCheckBox @bind-Checked="@Label_CheckBox1" Label="Default"></MudCheckBox>
 <MudCheckBox @bind-Checked="@Label_CheckBox2" Label="Primary" Color="Color.Primary"></MudCheckBox>
-<MudCheckBox @bind-Checked="@Label_CheckBox3" Label="Secondary" Color="Color.Secondary"></MudCheckBox>
-<MudCheckBox @bind-Checked="@Label_CheckBox1" Disabled="true" Label="Disabled"></MudCheckBox>
+<MudCheckBox @bind-Checked="@Label_CheckBox3" Label="Secondary" LabelPosition="LabelPosition.Start" Color="Color.Secondary"></MudCheckBox>
+<MudCheckBox @bind-Checked="@Label_CheckBox1" Disabled="true" Label="Disabled" LabelPosition="LabelPosition.Start"></MudCheckBox>
 
 @code {
     public bool Label_CheckBox1 { get; set; } = true;

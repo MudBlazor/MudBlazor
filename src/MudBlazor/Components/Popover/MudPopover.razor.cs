@@ -31,11 +31,11 @@ namespace MudBlazor
             new StyleBuilder()
             .AddStyle("transition-duration", $"{Duration}ms")
             .AddStyle("transition-delay", $"{Delay}ms")
-            .AddStyle("max-height", $"{MaxHeight}px", MaxHeight != null)
+            .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
             .AddStyle(Style)
             .Build();
 
-        private Direction ConvertDirection(Direction direction)
+        internal Direction ConvertDirection(Direction direction)
         {
             return direction switch
             {
@@ -45,96 +45,122 @@ namespace MudBlazor
             };
         }
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// Sets the maxheight the popover can have when open.
         /// </summary>
-        [Parameter] public int? MaxHeight { get; set; } = null;
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public int? MaxHeight { get; set; } = null;
 
         /// <summary>
         /// If true, will apply default MudPaper classes.
         /// </summary>
-        [Parameter] public bool Paper { get; set; } = true;
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public bool Paper { get; set; } = true;
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow.
         /// </summary>
-        [Parameter] public int Elevation { set; get; } = 8;
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public int Elevation { set; get; } = 8;
 
         /// <summary>
         /// If true, border-radius is set to 0.
         /// </summary>
-        [Parameter] public bool Square { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public bool Square { get; set; }
 
         /// <summary>
         /// If true, the popover is visible.
         /// </summary>
-        [Parameter] public bool Open { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Popover.Behavior)]
+        public bool Open { get; set; }
 
         /// <summary>
         /// If true the popover will be fixed position instead of absolute.
         /// </summary>
-        [Parameter] public bool Fixed { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Popover.Behavior)]
+        public bool Fixed { get; set; }
 
         /// <summary>
         /// Sets the length of time that the opening transition takes to complete.
         /// </summary>
-        [Parameter] public double Duration { get; set; } = 251;
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public double Duration { get; set; } = 251;
 
         /// <summary>
-        /// Sets the amount of time to wait from opening the popover before beginning to perform the transition. 
+        /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
-        [Parameter] public double Delay { get; set; } = 0;
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public double Delay { get; set; } = 0;
 
         /// <summary>
         /// Sets the direction the popover will start from relative to its parent.
         /// </summary>
         /// 
-        [Obsolete("Direction is obsolete. Use AnchorOrigin and TransformOrigin!", false)]
+        [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// Set the anchor point on the element of the popover.
         /// The anchor point will determinate where the popover will be placed.
         /// </summary>
-        [Parameter] public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
         /// Sets the intersection point if the anchor element. At this point the popover will lay above the popover. 
         /// This property in conjunction with AnchorPlacement determinate where the popover will be placed.
         /// </summary>
-        [Parameter] public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
         /// Set the overflow behavior of a popover and controls how the element should react if there is not enough space for the element to be visible
         /// Defaults to none, which doens't apply any overflow logic
         /// </summary>
-        [Parameter] public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FilpOnOpen;
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FilpOnOpen;
 
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetX is obsolete. Use AnchorOrigin and TransformOrigin", false)]
+        [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the select menu will open either before or after the input depending on the direction.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        [Obsolete("OffsetX is obsolete. Use AnchorOrigin and TransformOrigin", false)]
+        [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
         /// If true, the popover will have the same width at its parent element, default to false
         /// </summary>
-        [Parameter] public bool RelativeWidth { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public bool RelativeWidth { get; set; } = false;
 
         /// <summary>
         /// Child content of the component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Popover.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         private MudPopoverHandler _handler;
 
@@ -148,6 +174,13 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
+
+            // henon: this change by PR #3776 caused problems on BSS (#4303)
+            //// Only update the fragment if the popover is currently shown or will show
+            //// This prevents unnecessary renders and popover handle locking
+            //if (!_handler.ShowContent && !Open)
+            //    return;
+
             _handler.UpdateFragment(ChildContent, this, PopoverClass, PopoverStyles, Open);
         }
 
@@ -159,22 +192,18 @@ namespace MudBlazor
                 await Service.InitializeIfNeeded();
             }
 
-            _handler.Release();
-
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        [ExcludeFromCodeCoverage]
         public async ValueTask DisposeAsync()
         {
             try
             {
                 await Service.Unregister(_handler);
             }
-            catch (TaskCanceledException)
-            {
-                /*ignore*/
-            }
+            catch (JSDisconnectedException) { }
+            catch (TaskCanceledException) { }
         }
-
     }
 }

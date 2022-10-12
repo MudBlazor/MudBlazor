@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -47,6 +48,7 @@ namespace MudBlazor
         /// The number of pages.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Pagination.Behavior)]
         public int Count
         {
             get => _count;
@@ -63,6 +65,7 @@ namespace MudBlazor
         /// The number of items at the start and end of the pagination.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
         public int BoundaryCount
         {
             get => _boundaryCount;
@@ -78,6 +81,7 @@ namespace MudBlazor
         /// The number of items in the middle of the pagination.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
         public int MiddleCount
         {
             get => _middleCount;
@@ -94,6 +98,7 @@ namespace MudBlazor
         /// The selected page number.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Pagination.Behavior)]
         public int Selected
         {
             get => _selected;
@@ -119,60 +124,70 @@ namespace MudBlazor
         /// The variant to use.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
         public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
         /// If true, the pagination buttons are displayed rectangular.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
         public bool Rectangular { get; set; }
 
         /// <summary>
         /// The size of the component..
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// If true, no drop-shadow will be used.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
         public bool DisableElevation { get; set; }
 
         /// <summary>
         /// If true, the pagination will be disabled.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Pagination.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
         /// If true, the navigate-to-first-page button is shown.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Pagination.Behavior)]
         public bool ShowFirstButton { get; set; }
 
         /// <summary>
         /// If true, the navigate-to-last-page button is shown.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Pagination.Behavior)]
         public bool ShowLastButton { get; set; }
 
         /// <summary>
         /// If true, the navigate-to-previous-page button is shown.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Pagination.Behavior)]
         public bool ShowPreviousButton { get; set; } = true;
 
         /// <summary>
         /// If true, the navigate-to-next-page button is shown.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Pagination.Behavior)]
         public bool ShowNextButton { get; set; } = true;
 
         /// <summary>
@@ -190,24 +205,32 @@ namespace MudBlazor
         /// <summary>
         /// Custom first icon.
         /// </summary>
-        [Parameter] public string FirstIcon { get; set; } = Icons.Material.Filled.FirstPage;
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
+        public string FirstIcon { get; set; } = Icons.Material.Filled.FirstPage;
 
         /// <summary>
         /// Custom before icon.
         /// </summary>
-        [Parameter] public string BeforeIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
+        public string BeforeIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
 
         /// <summary>
         /// Custom next icon.
         /// </summary>
-        [Parameter] public string NextIcon { get; set; } = Icons.Material.Filled.NavigateNext;
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
+        public string NextIcon { get; set; } = Icons.Material.Filled.NavigateNext;
 
         /// <summary>
         /// Custom last icon.
         /// </summary>
-        [Parameter] public string LastIcon { get; set; } = Icons.Material.Filled.LastPage;
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Appearance)]
+        public string LastIcon { get; set; } = Icons.Material.Filled.LastPage;
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         #endregion
 
@@ -275,10 +298,12 @@ namespace MudBlazor
             NavigateTo(page);
         }
 
+        //Last line cannot be tested because Page enum has 4 items
         /// <summary>
         /// Navigates to the specified page.
         /// </summary>
         /// <param name="page">The target page. page=Page.Next navigates to the next page.</param>
+        [ExcludeFromCodeCoverage]
         public void NavigateTo(Page page)
         {
             Selected = page switch

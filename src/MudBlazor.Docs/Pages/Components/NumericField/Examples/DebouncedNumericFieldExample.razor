@@ -1,33 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudNumericField @bind-Value="@_normal"
-                         Label="Normal"
-                         Variant="Variant.Outlined" />
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudNumericField @bind-Value="@_immediate"
-                         Label="Immediate"
-                         Variant="Variant.Outlined"
-                         Adornment="Adornment.End"
-                         Immediate="true" />
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudNumericField @bind-Value="@_debounced"
-                      Label="Debounced"
-                      Variant="Variant.Outlined"
-                      Adornment="Adornment.End"
-                      DebounceInterval="500"
-                      OnDebounceIntervalElapsed="HandleIntervalElapsed" />
-    </MudItem>
-</MudGrid>
-<div class="mt-3">
-    <MudText>Normal: @_normal</MudText>
-    <MudText>Immediate: @_immediate</MudText>
-    <MudText>Debounced: @_debounced</MudText>
-</div>
-
+<MudNumericField @bind-Value="@_normal" Label="Normal" HelperText="@_normal.ToString()" Variant="Variant.Outlined" />
+<MudNumericField @bind-Value="@_immediate" Immediate="true" Label="Immediate" HelperText="@_immediate.ToString()" Variant="Variant.Outlined" />
+<MudNumericField @bind-Value="@_debounced" DebounceInterval="500" OnDebounceIntervalElapsed="HandleIntervalElapsed" Label="Debounced" HelperText="@_debounced.ToString()" Variant="Variant.Outlined"  />
 
 @code {
     double _normal;
@@ -36,7 +11,6 @@
 
     void HandleIntervalElapsed(string debouncedText)
     {
-        // at this stage, interval has elapsed
-        //Notice that debouncedText is string, not a number
+        // At this stage, interval has elapsed.
     }
 }

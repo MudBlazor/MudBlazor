@@ -30,11 +30,12 @@ namespace MudBlazor
 
         [Parameter] public bool IsEditable { get; set; }
 
+        [Parameter] public bool IsEditing { get; set; }
+
+        [Parameter] public bool IsEditSwitchBlocked { get; set; }
+
         [Parameter] public bool IsExpandable { get; set; }
 
-        [Parameter] public bool IsHeader { get; set; }
-
-        [Parameter] public bool IsFooter { get; set; }
 
         [Parameter]
         public EventCallback<bool> IsCheckedChanged { get; set; }
@@ -56,10 +57,12 @@ namespace MudBlazor
 
         public void OnRowClicked(MouseEventArgs args)
         {
+            if (Context?.Table.IsEditable == true && Context?.Table.IsEditing == true && Context?.Table.IsEditRowSwitchingBlocked == true) return;
+
             // Manage any previous edited row
             Context.ManagePreviousEditedRow(this);
 
-            if (IsHeader || !(Context?.Table.Validator.IsValid ?? true))
+            if (!(Context?.Table.Validator.IsValid ?? true))
                 return;
 
             Context?.Table.SetSelectedItem(Item);
@@ -80,11 +83,11 @@ namespace MudBlazor
 
                 // Trigger the row edit preview event
                 Context.Table.RowEditPreview?.Invoke(Item);
+
+                Context?.Table.SetEditingItem(Item);
             }
 
-            Context?.Table.SetEditingItem(Item);
-
-            if (Context?.Table.MultiSelection == true && !IsHeader)
+            if (Context?.Table.MultiSelection == true && !(Context?.Table.IsEditable == true))
             {
                 IsChecked = !IsChecked;
             }

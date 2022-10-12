@@ -23,8 +23,8 @@
             @if(!DisableColorField)
             {
                 <div class="mud-picker-color-picker">
-                    @if(ColorPickerView == ColorPickerView.Spectrum)
-                    {
+					@if (_activeColorPickerView == ColorPickerView.Spectrum)
+					{
                         <div class="mud-picker-color-overlay" style="@($"background-color: {_baseColor.ToString(MudColorOutputFormats.RGB)}")">
                             <div class="mud-picker-color-overlay mud-picker-color-overlay-white">
                                 <div class="mud-picker-color-overlay mud-picker-color-overlay-black">
@@ -46,7 +46,7 @@
                             </div>
                         </div>
                     }
-                    @if(ColorPickerView is ColorPickerView.Grid or ColorPickerView.GridCompact)
+                    @if(_activeColorPickerView is ColorPickerView.Grid or ColorPickerView.GridCompact)
                     {
                         <div class="mud-picker-color-grid">
                             @foreach (var item in _gridList)
@@ -57,7 +57,7 @@
                     }
                 </div>
             }
-            @if (ColorPickerView != ColorPickerView.GridCompact)
+            @if (_activeColorPickerView != ColorPickerView.GridCompact)
             {
                 @if (!DisableSliders || !DisableInputs || !DisablePreview)
                 {
@@ -74,8 +74,8 @@
                                 @if (!DisableSliders && !_collectionOpen)
                                 {
                                     <div class="mud-picker-color-sliders">
-                                        @if (ColorPickerView != ColorPickerView.Grid)
-                                        {
+										@if (_activeColorPickerView != ColorPickerView.Grid)
+										{
                                             <MudSlider Class="mud-picker-color-slider hue" dir="ltr" T="int" Value="(int)_color.H" ValueChanged="UpdateBaseColorSlider" Step="1" Min="0" Max="360" />
                                         }
                                         @if (!DisableAlpha)
@@ -133,8 +133,8 @@
                         }
                     </div>
                 }
-                @if (ColorPickerView == ColorPickerView.Palette)
-                {
+				@if (_activeColorPickerView == ColorPickerView.Palette)
+				{
                     <div class="mud-picker-color-view">
                         <div class="mud-picker-color-view-collection">
                             @foreach (var item in Palette)

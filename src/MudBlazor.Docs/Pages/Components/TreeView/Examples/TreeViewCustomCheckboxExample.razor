@@ -1,0 +1,98 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="350px" MaxHeight="500px" Class="overflow-y-auto" Elevation="0">
+  <MudTreeView Items="@TreeItems">
+	  <ItemTemplate>
+		  <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems">
+			  <Content>
+				  <MudTreeViewItemToggleButton @bind-Expanded="@context.IsExpanded" Visible="@context.HasChild" />
+				  <MudCheckBox T="bool?" Checked="@(context.HasPartialChildSelection() ? null : context.IsChecked)" CheckedChanged="@((e) => CheckedChanged(context))"></MudCheckBox>
+				  <MudText>@context.Text</MudText>
+			  </Content>
+		  </MudTreeViewItem>
+	  </ItemTemplate>
+  </MudTreeView>
+</MudPaper>
+
+@code {
+
+  private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+
+  public class TreeItemData
+  {
+    public TreeItemData Parent { get; set; } = null;
+
+    public string Text { get; set; }
+
+    public bool IsExpanded { get; set; } = false;
+
+    public bool IsChecked { get; set; } = false;
+
+    public bool HasChild => TreeItems != null && TreeItems.Count > 0;
+
+    public HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+
+    public TreeItemData(string text)
+    {
+      Text = text;
+    }
+
+    public void AddChild(string itemName)
+    {
+      TreeItemData item = new TreeItemData(itemName);
+      item.Parent = this;
+      this.TreeItems.Add(item);
+    }
+
+    public bool HasPartialChildSelection()
+    {
+      int iChildrenCheckedCount = (from c in TreeItems where c.IsChecked select c).Count();
+      return HasChild && iChildrenCheckedCount > 0 && iChildrenCheckedCount < TreeItems.Count();
+    }
+
+  }
+
+  protected void CheckedChanged(TreeItemData item)
+  {
+    item.IsChecked = !item.IsChecked;
+    // checked status on any child items should mirrror this parent item
+    if (item.HasChild)
+    {
+      foreach (TreeItemData child in item.TreeItems)
+      {
+        child.IsChecked = item.IsChecked;
+      }
+    }
+    // if there's a parent and all children are checked/unchecked, parent should match
+    if (item.Parent != null)
+    {
+      item.Parent.IsChecked = !item.Parent.TreeItems.Any(i => !i.IsChecked);
+    }
+	}
+
+	protected override void OnInitialized()
+	{
+		TreeItemData itemFruits = new TreeItemData("Fruits");
+		TreeItemData itemVeg = new TreeItemData("Vegetables");
+		TreeItemData itemGrains = new TreeItemData("Grains");
+
+		itemFruits.AddChild("Apple");
+		itemFruits.AddChild("Banana");
+		itemFruits.AddChild("Orange");
+		itemFruits.AddChild("Pear");
+		itemFruits.AddChild("Pineapple");
+
+		itemGrains.AddChild("Barley");
+		itemGrains.AddChild("Oats");
+		itemGrains.AddChild("Rice");
+
+		itemVeg.AddChild("Carrot");
+		itemVeg.AddChild("Leek");
+		itemVeg.AddChild("Onion");
+		itemVeg.AddChild("Potato");
+
+		TreeItems.Add(itemFruits);
+		TreeItems.Add(itemGrains);
+		TreeItems.Add(itemVeg);
+	}
+}

@@ -112,13 +112,31 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        /// Adds a IResizeObserverFactory as a Singelton instance.
+        /// Adds a IResizeObserverFactory as a scoped dependency.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
+        /// <param name="options">Defines ResizeObserverOptions for this instance</param>
         /// <returns>Continues the IServiceCollection chain.</returns>
-        public static IServiceCollection AddMudBlazorResizeObserverFactory(this IServiceCollection services)
+        public static IServiceCollection AddMudBlazorResizeObserverFactory(this IServiceCollection services, Action<ResizeObserverOptions> options)
         {
-            services.TryAddSingleton<IResizeObserverFactory, ResizeObserverFactory>();
+            services.TryAddScoped<IResizeObserverFactory, ResizeObserverFactory>();
+            services.Configure(options);
+            return services;
+        }
+
+        /// <summary>
+        /// Adds a IResizeObserverFactory as a scoped dependency.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <param name="options">Defines ResizeObserverOptions for this instance</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
+        public static IServiceCollection AddMudBlazorResizeObserverFactory(this IServiceCollection services, ResizeObserverOptions options = null)
+        {
+            options ??= new ResizeObserverOptions();
+            services.AddMudBlazorResizeObserverFactory(o =>
+            {
+                o = options;
+            });
             return services;
         }
 
@@ -130,6 +148,21 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudBlazorKeyInterceptor(this IServiceCollection services)
         {
             services.TryAddTransient<IKeyInterceptor, KeyInterceptor>();
+            services.TryAddScoped<IKeyInterceptorFactory, KeyInterceptorFactory>();
+
+            return services;
+        }
+
+        /// <summary>
+        /// Adds JsEvent as a Transient instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
+        public static IServiceCollection AddMudBlazorJsEvent(this IServiceCollection services)
+        {
+            services.TryAddTransient<IJsEvent, JsEvent>();
+            services.TryAddScoped<IJsEventFactory, JsEventFactory>();
+
             return services;
         }
 
@@ -177,6 +210,8 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudBlazorScrollListener(this IServiceCollection services)
         {
             services.TryAddTransient<IScrollListener, ScrollListener>();
+            services.TryAddScoped<IScrollListenerFactory, ScrollListenerFactory>();
+
             return services;
         }
 
@@ -188,6 +223,7 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudBlazorScrollSpy(this IServiceCollection services)
         {
             services.TryAddTransient<IScrollSpy, ScrollSpy>();
+            services.TryAddScoped<IScrollSpyFactory, ScrollSpyFactory>();
             return services;
         }
 
@@ -208,6 +244,8 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudEventManager(this IServiceCollection services)
         {
             services.TryAddTransient<IEventListener, EventListener>();
+            services.TryAddScoped<IEventListenerFactory, EventListenerFactory>();
+
             return services;
         }
 
@@ -227,6 +265,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeObserver(configuration.ResizeObserverOptions)
                 .AddMudBlazorResizeObserverFactory()
                 .AddMudBlazorKeyInterceptor()
+                .AddMudBlazorJsEvent()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
                 .AddMudBlazorJsApi()
@@ -252,8 +291,9 @@ namespace MudBlazor.Services
                 .AddMudBlazorSnackbar(options.SnackbarConfiguration)
                 .AddMudBlazorResizeListener(options.ResizeOptions)
                 .AddMudBlazorResizeObserver(options.ResizeObserverOptions)
-                .AddMudBlazorResizeObserverFactory()
+                .AddMudBlazorResizeObserverFactory(options.ResizeObserverOptions)
                 .AddMudBlazorKeyInterceptor()
+                .AddMudBlazorJsEvent()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
                 .AddMudBlazorJsApi()

@@ -2,7 +2,7 @@
 @inherits MudComponentBase
 
 
-<span @attributes="UserAttributes" class="@ClassName" style="@Style" >
+<span tabindex="@(Disabled?-1:0)" @onkeydown="HandleKeyDown" @attributes="UserAttributes" class="@ClassName" style="@Style" >
     <CascadingValue Value="this" >
         @for (int i = 1; i <= MaxValue; i++)
         {

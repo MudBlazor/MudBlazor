@@ -1,37 +1,17 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudGrid>
-
-    <MudItem xs="12" Class="d-flex">
-        <MudCheckBox @bind-Checked="_margin" Label="Margin" Color="Color.Primary" />
-        <MudCheckBox @bind-Checked="_dense" Label="Dense" Color="Color.Primary" />
-    </MudItem>
-
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="string" Label="Standard" Variant="Variant.Text" OffsetY="true" Margin="@(_margin==true?Margin.Dense:Margin.None)" Dense="@_dense">
-            <MudSelectItem Value="@("Tyrannosaur")" />
-            <MudSelectItem Value="@("Triceratops")" />
-            <MudSelectItem Value="@("Oviraptor")" />
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="string" Label="Standard" Variant="Variant.Outlined" OffsetY="true" Margin="@(_margin==true?Margin.Dense:Margin.None)" Dense="@_dense">
-            <MudSelectItem Value="@("Tyrannosaur")" />
-            <MudSelectItem Value="@("Triceratops")" />
-            <MudSelectItem Value="@("Oviraptor")" />
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="string" Label="Standard" Variant="Variant.Filled" OffsetY="true" Margin="@(_margin==true?Margin.Dense:Margin.None)" Dense="@_dense">
-            <MudSelectItem Value="@("Tyrannosaur")" />
-            <MudSelectItem Value="@("Triceratops")" />
-            <MudSelectItem Value="@("Oviraptor")" />
-        </MudSelect>
-    </MudItem>
-
-</MudGrid>
-
-@code{
-    bool _margin = true;
-    bool _dense = true;
-}
+<MudSelect Dense="true" T="string" Label="Coffee" Variant="Variant.Text">
+    <MudSelectItem Value="@("Tyrannosaur")" />
+    <MudSelectItem Value="@("Triceratops")" />
+    <MudSelectItem Value="@("Mike Rex")" />
+</MudSelect>
+<MudSelect Dense="true" T="string" Label="Coffee" Variant="Variant.Outlined">
+    <MudSelectItem Value="@("Tyrannosaur")" />
+    <MudSelectItem Value="@("Triceratops")" />
+    <MudSelectItem Value="@("Henon Rex")" />
+</MudSelect>
+<MudSelect Dense="true" T="string" Label="Coffee" Variant="Variant.Filled">
+    <MudSelectItem Value="@("Tyrannosaur")" />
+    <MudSelectItem Value="@("Triceratops")" />
+    <MudSelectItem Value="@("Benno Rex")" />
+</MudSelect>

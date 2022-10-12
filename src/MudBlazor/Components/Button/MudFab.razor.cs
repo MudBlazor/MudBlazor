@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -19,32 +20,62 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The Size of the component.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Large;
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Size Size { get; set; } = Size.Large;
 
         /// <summary>
-        /// If applied Icon will be added to the component.
+        /// If applied Icon will be added at the start of the component.
         /// </summary>
-        [Parameter] public string Icon { get; set; }
+        [Obsolete("This property is obsolete. Use StartIcon instead.")] [Parameter] public string Icon { get => StartIcon; set => StartIcon = value; }
+
+        /// <summary>
+        /// If applied Icon will be added at the start of the component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string StartIcon { get; set; }
+
+        /// <summary>
+        /// If applied Icon will be added at the end of the component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string EndIcon { get; set; }
 
         /// <summary>
         /// The color of the icon. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
         /// The size of the icon.
         /// </summary>
-        [Parameter] public Size IconSize { get; set; } = Size.Medium;
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
         /// If applied the text will be added to the component.
         /// </summary>
-        [Parameter] public string Label { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string Label { get; set; }
 
+        /// <summary>
+        /// Title of the icon used for accessibility.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string Title { get; set; }
     }
 }

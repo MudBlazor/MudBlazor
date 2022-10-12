@@ -299,12 +299,6 @@
 }
 
 .mud-button-group-root {
-    @each $color in $mud-palette-colors {
-        .mud-button-root.mud-icon-button.mud-icon-button-color-#{$color} {
-            color: var(--mud-palette-#{$color});
-        }
-    }
-
     .mud-button-root.mud-icon-button {
         padding-right: 12px;
         padding-left: 12px;

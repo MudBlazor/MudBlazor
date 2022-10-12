@@ -9,7 +9,7 @@ namespace MudBlazor
         protected string Classname =>
         new CssBuilder("mud-button-root mud-icon-button")
           .AddClass("mud-button", when: AsButton)
-          .AddClass($"mud-icon-button-color-{Color.ToDescriptionString()}", !AsButton && Color != Color.Default)
+          .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !AsButton && Color != Color.Default)
           .AddClass($"mud-button-{Variant.ToDescriptionString()}", AsButton)
           .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}", AsButton)
           .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}", AsButton)
@@ -26,37 +26,51 @@ namespace MudBlazor
         /// <summary>
         /// The Icon that will be used in the component.
         /// </summary>
-        [Parameter] public string Icon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string Icon { get; set; }
 
         /// <summary>
         /// Title of the icon used for accessibility.
         /// </summary>
-        [Parameter] public string Title { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string Title { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The Size of the component.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Medium;
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// If set uses a negative margin.
         /// </summary>
-        [Parameter] public Edge Edge { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Edge Edge { get; set; }
 
         /// <summary>
         /// Child content of component, only shows if Icon is null or Empty.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// The variant to use.
         /// </summary>
-        [Parameter] public Variant Variant { get; set; } = Variant.Text;
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Variant Variant { get; set; } = Variant.Text;
 
     }
 }

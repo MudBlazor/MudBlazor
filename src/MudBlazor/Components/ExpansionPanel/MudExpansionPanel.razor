@@ -2,7 +2,7 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-    <div class="mud-expand-panel-header" @onclick=@( () => ToggleExpansion())>
+    <div class="mud-expand-panel-header" @onclick="ToggleExpansion">
         <div class="mud-expand-panel-text">
             @if (TitleContent != null)
             {
@@ -18,7 +18,7 @@
             <MudIcon Icon="@Icon" class="@(IsExpanded? "mud-expand-panel-icon mud-transform" : "mud-expand-panel-icon")" />
         }
     </div>
-    <MudCollapse Expanded="@IsExpanded" MaxHeight="@MaxHeight">
+    <MudCollapse Expanded="@_collapseIsExpanded" MaxHeight="@MaxHeight">
         <div class="@PanelContentClassname">
             @ChildContent
         </div>

@@ -1,4 +1,8 @@
-﻿window.mudpopoverHelper = {
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+window.mudpopoverHelper = {
 
     calculatePopoverPosition: function (list, boundingRect, selfRect) {
         let top = 0;
@@ -175,66 +179,68 @@
                     appBarOffset = appBarElements[0].getBoundingClientRect().height;
                 }
 
-                const gracePeriod = window.mudpopoverHelper.flipMargin;
+                const graceMargin = window.mudpopoverHelper.flipMargin;
                 const deltaToLeft = left + offsetX;
                 const deltaToRight = window.innerWidth - left - selfRect.width;
                 const deltaTop = top - selfRect.height - appBarOffset;
+                const spaceToTop = top - appBarOffset;
                 const deltaBottom = window.innerHeight - top - selfRect.height;
-                /*console.log('left: ' + deltaToLeft + ' | rigth:' + deltaToRight + ' | top: ' + deltaTop + ' | bottom: ' + deltaBottom);*/
+                //console.log('self-width: ' + selfRect.width + ' | self-height: ' + selfRect.height);
+                //console.log('left: ' + deltaToLeft + ' | rigth:' + deltaToRight + ' | top: ' + deltaTop + ' | bottom: ' + deltaBottom + ' | spaceToTop: ' + spaceToTop);
 
                 let selector = popoverContentNode.mudPopoverFliped;
 
                 if (!selector) {
                     if (classList.contains('mud-popover-top-left')) {
-                        if (deltaBottom < gracePeriod && deltaToRight < gracePeriod) {
+                        if (deltaBottom < graceMargin && deltaToRight < graceMargin && spaceToTop >= selfRect.height && deltaToLeft >= selfRect.width) {
                             selector = 'top-and-left';
-                        } else if (deltaBottom < gracePeriod) {
+                        } else if (deltaBottom < graceMargin && spaceToTop >= selfRect.height) {
                             selector = 'top';
-                        } else if (deltaToRight < gracePeriod) {
+                        } else if (deltaToRight < graceMargin && deltaToLeft >= selfRect.width) {
                             selector = 'left';
                         }
                     } else if (classList.contains('mud-popover-top-center')) {
-                        if (deltaBottom < gracePeriod) {
+                        if (deltaBottom < graceMargin && spaceToTop >= selfRect.height) {
                             selector = 'top';
                         }
                     } else if (classList.contains('mud-popover-top-right')) {
-                        if (deltaBottom < gracePeriod && deltaToLeft < gracePeriod) {
+                        if (deltaBottom < graceMargin && deltaToLeft < graceMargin && spaceToTop >= selfRect.height && deltaToRight >= selfRect.width) {
                             selector = 'top-and-right';
-                        } else if (deltaBottom < gracePeriod) {
+                        } else if (deltaBottom < graceMargin && spaceToTop >= selfRect.height) {
                             selector = 'top';
-                        } else if (deltaToLeft < gracePeriod) {
+                        } else if (deltaToLeft < graceMargin && deltaToRight >= selfRect.width) {
                             selector = 'right';
                         }
                     }
 
                     else if (classList.contains('mud-popover-center-left')) {
-                        if (deltaToRight < gracePeriod) {
+                        if (deltaToRight < graceMargin && deltaToLeft >= selfRect.width) {
                             selector = 'left';
                         }
                     }
                     else if (classList.contains('mud-popover-center-right')) {
-                        if (deltaToLeft < gracePeriod) {
+                        if (deltaToLeft < graceMargin && deltaToRight >= selfRect.width) {
                             selector = 'right';
                         }
                     }
                     else if (classList.contains('mud-popover-bottom-left')) {
-                        if (deltaTop < gracePeriod && deltaToRight < gracePeriod) {
+                        if (deltaTop < graceMargin && deltaToRight < graceMargin && deltaBottom >= 0 && deltaToLeft >= selfRect.width) {
                             selector = 'bottom-and-left';
-                        } else if (deltaTop < gracePeriod) {
+                        } else if (deltaTop < graceMargin && deltaBottom >= 0) {
                             selector = 'bottom';
-                        } else if (deltaToRight < gracePeriod) {
+                        } else if (deltaToRight < graceMargin && deltaToLeft >= selfRect.width) {
                             selector = 'left';
                         }
                     } else if (classList.contains('mud-popover-bottom-center')) {
-                        if (deltaTop < gracePeriod) {
+                        if (deltaTop < graceMargin && deltaBottom >= 0) {
                             selector = 'bottom';
                         }
                     } else if (classList.contains('mud-popover-bottom-right')) {
-                        if (deltaTop < gracePeriod && deltaToLeft < gracePeriod) {
+                        if (deltaTop < graceMargin && deltaToLeft < graceMargin && deltaBottom >= 0 && deltaToRight >= selfRect.width) {
                             selector = 'bottom-and-right';
-                        } else if (deltaTop < gracePeriod) {
+                        } else if (deltaTop < graceMargin && deltaBottom >= 0) {
                             selector = 'bottom';
-                        } else if (deltaToLeft < gracePeriod) {
+                        } else if (deltaToLeft < graceMargin && deltaToRight >= selfRect.width) {
                             selector = 'right';
                         }
                     }
@@ -255,7 +261,7 @@
 
                 if (classList.contains('mud-popover-overflow-flip-onopen')) {
                     if (!popoverContentNode.mudPopoverFliped) {
-                        popoverContentNode.mudPopoverFliped = selector ?? 'none';
+                        popoverContentNode.mudPopoverFliped = selector || 'none';
                     }
                 }
             }
@@ -275,6 +281,7 @@
 
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
                 popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
+                popoverContentNode.skipZIndex = true;
             }
         }
     },
@@ -292,6 +299,10 @@
         const id = target.id.substr(15);
         const popoverNode = document.getElementById('popover-' + id);
         window.mudpopoverHelper.placePopover(popoverNode);
+    },
+
+    countProviders: function () {
+        return document.querySelectorAll(".mud-popover-provider").length;
     }
 }
 
@@ -302,23 +313,69 @@ class MudPopover {
         this.contentObserver = null;
         this.mainContainerClass = null;
     }
-
+    
     callback(id, mutationsList, observer) {
         for (const mutation of mutationsList) {
             if (mutation.type === 'attributes') {
                 const target = mutation.target
-                if (target.classList.contains('mud-popover-overflow-flip-onopen') &&
-                    target.classList.contains('mud-popover-open') == false) {
-                    target.mudPopoverFliped = null;
-                    target.removeAttribute('data-mudpopover-flip');
-                }
+                if (mutation.attributeName == 'class') {
+                    if (target.classList.contains('mud-popover-overflow-flip-onopen') &&
+                        target.classList.contains('mud-popover-open') == false) {
+                        target.mudPopoverFliped = null;
+                        target.removeAttribute('data-mudpopover-flip');
+                    }
 
-                window.mudpopoverHelper.placePopoverByNode(target);
+                    window.mudpopoverHelper.placePopoverByNode(target);
+                }
+                else if (mutation.attributeName == 'data-ticks') {
+                    const tickAttribute = target.getAttribute('data-ticks');
+
+                    const parent = target.parentElement;
+                    const tickValues = [];
+                    let max = -1;
+                    for (let i = 0; i < parent.children.length; i++) {
+                        const childNode = parent.children[i];
+                        const tickValue = parseInt(childNode.getAttribute('data-ticks'));
+                        if (tickValue == 0) {
+                            continue;
+                        }
+
+                        if (tickValues.indexOf(tickValue) >= 0) {
+                            continue;
+                        }
+
+                        tickValues.push(tickValue);
+
+                        if (tickValue > max) {
+                            max = tickValue;
+                        }
+                    }
+
+                    if (tickValues.length == 0) {
+                        continue;
+                    }
+
+                    const sortedTickValues = tickValues.sort((x, y) => x - y);
+
+                    for (let i = 0; i < parent.children.length; i++) {
+                        const childNode = parent.children[i];
+                        const tickValue = parseInt(childNode.getAttribute('data-ticks'));
+                        if (tickValue == 0) {
+                            continue;
+                        }
+
+                        if (childNode.skipZIndex == true) {
+                            continue;
+                        }
+
+                        childNode.style['z-index'] = 'calc(var(--mud-zindex-popover) + ' + (sortedTickValues.indexOf(tickValue) + 3).toString() + ')';
+                    }
+                }
             }
         }
     }
 
-    initilize(containerClass, flipMargin) {
+    initialize(containerClass, flipMargin) {
         const mainContent = document.getElementsByClassName(containerClass);
         if (mainContent.length == 0) {
             return;
@@ -346,7 +403,7 @@ class MudPopover {
     }
 
     connect(id) {
-        this.initilize(this.mainContainerClass);
+        this.initialize(this.mainContainerClass);
 
         const popoverNode = document.getElementById('popover-' + id);
         const popoverContentNode = document.getElementById('popovercontent-' + id);
@@ -354,7 +411,7 @@ class MudPopover {
 
             window.mudpopoverHelper.placePopover(popoverNode);
 
-            const config = { attributeFilter: ['class'] };
+            const config = { attributeFilter: ['class', 'data-ticks'] };
 
             const observer = new MutationObserver(this.callback.bind(this, id));
 
@@ -379,6 +436,8 @@ class MudPopover {
                 for (let entry of entries) {
                     var target = entry.target;
                     window.mudpopoverHelper.placePopoverByNode(target);
+
+
                 }
             });
 

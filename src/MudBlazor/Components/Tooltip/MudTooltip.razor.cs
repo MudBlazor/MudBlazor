@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
@@ -10,6 +11,7 @@ namespace MudBlazor
     {
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
             .AddClass("mud-tooltip-inline", Inline)
+            .AddClass(RootClass)
             .Build();
 
         protected string Classname => new CssBuilder("mud-tooltip")
@@ -29,38 +31,48 @@ namespace MudBlazor
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
 
-        [CascadingParameter]
-        public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// Sets the text to be displayed inside the tooltip.
         /// </summary>
-        [Parameter] public string Text { get; set; } = String.Empty;
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Behavior)]
+        public string Text { get; set; } = String.Empty;
 
         /// <summary>
         /// If true, a arrow will be displayed pointing towards the content from the tooltip.
         /// </summary>
-        [Parameter] public bool Arrow { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public bool Arrow { get; set; } = false;
 
         /// <summary>
         /// Sets the length of time that the opening transition takes to complete.
         /// </summary>
-        [Parameter] public double Duration { get; set; } = 251;
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public double Duration { get; set; } = 251;
 
         /// <summary>
-        /// Sets the amount of time to wait from opening the popover before beginning to perform the transition. 
+        /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
-        [Parameter] public double Delay { get; set; } = 0;
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public double Delay { get; set; } = 0;
 
         /// <summary>
         /// Changes the default transition delay in seconds.
         /// </summary>
-        [Obsolete]
+        [Obsolete("Use Delay instead.", true)]
+        [ExcludeFromCodeCoverage]
         [Parameter]
         public double Delayed
         {
@@ -71,25 +83,69 @@ namespace MudBlazor
         /// <summary>
         /// Tooltip placement.
         /// </summary>
-        [Parameter] public Placement Placement { get; set; } = Placement.Bottom;
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public Placement Placement { get; set; } = Placement.Bottom;
 
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// Tooltip content. May contain any valid html
         /// </summary>
-        [Parameter] public RenderFragment TooltipContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Behavior)]
+        public RenderFragment TooltipContent { get; set; }
 
         /// <summary>
         /// Determines if this component should be inline with it's surrounding (default) or if it should behave like a block element.
         /// </summary>
-        [Parameter] public bool Inline { get; set; } = true;
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public bool Inline { get; set; } = true;
 
-        private void HandleMouseOver() => _isVisible = true;
-        private void HandleMouseOut() => _isVisible = false;
+        /// <summary>
+        /// Styles applied directly to root component of the tooltip
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public string RootStyle { get; set; }
+
+        /// Classes applied directly to root component of the tooltip
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public string RootClass { get; set; }
+
+        /// <summary>
+        /// The visible state of the Tooltip.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set
+            {
+                if (value == _isVisible)
+                    return;
+                _isVisible = value;
+                IsVisibleChanged.InvokeAsync(_isVisible).AndForget();
+            }
+        }
+
+        /// <summary>
+        /// An event triggered when the state of IsVisible has changed
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public EventCallback<bool> IsVisibleChanged { get; set; }
+
+        private void HandleMouseOver() { IsVisible = true; }
+        private void HandleMouseOut() { IsVisible = false; }
 
         private Origin ConvertPlacement()
         {

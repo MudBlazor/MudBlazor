@@ -3,102 +3,112 @@
 <DocsPage>
     <DocsPageHeader Title="Tabs" />
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="Simple Tab">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true" Class="demo-tabs">
+            <SectionContent Code="TabsSimpleExample" ShowCode="false"  Block="true">
                 <TabsSimpleExample />
             </SectionContent>
-            <SectionSource Code="TabsSimpleExample" GitHubFolderName="Tabs" ShowCode="false" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Centered">
                 <Description>Use the <CodeInline>Centered</CodeInline> prop to keep your tabs in the middle.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="TabsCenteredExample" ShowCode="false"  Block="true">
                 <TabsCenteredExample />
             </SectionContent>
-            <SectionSource Code="TabsCenteredExample" GitHubFolderName="Tabs" ShowCode="false" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Scrolling Tabs">
                 <Description>If the total size of all tabs exceeds the total size of the tabs container, buttons will be added for scrolling.<br />With the <CodeInline>AlwaysShowScrollButtons</CodeInline> prop, you can display the scroll buttons at all time.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="TabsScrollExample" ShowCode="false" Block="true" FullWidth="true">
                 <TabsScrollExample />
             </SectionContent>
-            <SectionSource Code="TabsScrollExample" GitHubFolderName="Tabs" ShowCode="false" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Custom Scroll Icons">
                 <Description>The icons can be changed with the <CodeInline>PrevIcon</CodeInline> and <CodeInline>NextIcon</CodeInline> properties.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="TabsCustomScrollIconsExample" ShowCode="false" Block="true" FullWidth="true">
                 <TabsCustomScrollIconsExample />
             </SectionContent>
-            <SectionSource Code="TabsCustomScrollIconsExample" GitHubFolderName="Tabs" ShowCode="false" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Tabs Position">
                 <Description>The position of the tab toolbar can be changed with the <CodeInline>Position</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true" Class="demo-tabs">
+            <SectionContent Code="TabsPositionExample" ShowCode="false" Block="true" FullWidth="true">
                 <TabsPositionExample />
             </SectionContent>
-            <SectionSource Code="TabsPositionExample" GitHubFolderName="Tabs" ShowCode="false" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Icon Tabs">
                 <Description>Icons can be used in addition to regular text in the tabs.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="TabsIconAndTextExample" ShowCode="false">
                 <TabsIconAndTextExample />
             </SectionContent>
-            <SectionSource Code="TabsIconAndTextExample" ShowCode="false" GitHubFolderName="Tabs" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Badges">
                 <Description>Badges can be be applied to both icons and texts in the same way.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="TabsWithBagdesExample" ShowCode="false">
                 <TabsWithBagdesExample />
             </SectionContent>
-            <SectionSource Code="TabsWithBagdesExample" ShowCode="false" GitHubFolderName="Tabs" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Tooltip Tabs">
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="TabsToolTipExample">
                 <TabsToolTipExample />
             </SectionContent>
-            <SectionSource Code="TabsToolTipExample" GitHubFolderName="Tabs" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Tab Content">
+                <Description>Custom tab header content can be provided for special scenarios. Specify only <CodeInline>TabContent</CodeInline> to customize the tab content, or specify <CodeInline>TabWrapperContent</CodeInline> to provide a wrapper around the entire tab header.</Description>
+            </SectionHeader>
+            <SectionContent Code="TabsContentExample" ShowCode="false" HighLight="TabContent,TabWrapperContent">
+                <TabsContentExample />
+            </SectionContent>
+        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Set Active Panel">
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="TabsSetActiveExample" ShowCode="false"  Block="true">
                 <TabsSetActiveExample />
             </SectionContent>
-            <SectionSource Code="TabsSetActiveExample" ShowCode="false" GitHubFolderName="Tabs" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Binding Selected Panel">
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="TabsBindingExample" ShowCode="false"  Block="true">
                 <TabsBindingExample />
             </SectionContent>
-            <SectionSource Code="TabsBindingExample" ShowCode="false" GitHubFolderName="Tabs" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Simple Dynamic Tabs">
                 <Description>A browser like tab experience, where uses can add new tabs and close existing ones. Add and Close needs to be provided as callbacks.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true" Class="demo-tabs">
+            <SectionContent Code="DynamicTabsSimpleExample" ShowCode="false"  Block="true">
                 <DynamicTabsSimpleExample />
             </SectionContent>
-            <SectionSource Code="DynamicTabsSimpleExample" GitHubFolderName="Tabs" ShowCode="false" />
         </DocsPageSection>
+
 		 <DocsPageSection>
             <SectionHeader Title="Advanced Dynamic Tabs">
                 <Description>
@@ -111,10 +121,10 @@
 					</MudText>
 				</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true" Class="demo-tabs">
+            <SectionContent Code="CustomDynamicTabsExample" ShowCode="false"  Block="true">
                 <CustomDynamicTabsExample />
             </SectionContent>
-            <SectionSource Code="CustomDynamicTabsExample" GitHubFolderName="Tabs" ShowCode="false" />
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

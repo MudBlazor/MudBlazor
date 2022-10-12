@@ -1,0 +1,48 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudDataGrid Items="@_items" Filterable="true">
+    <Columns>
+        <Column T="Model" Field="@nameof(Model.Name)" />
+        <Column T="Model" Field="@nameof(Model.Age)" />
+        <Column T="Model" Field="@nameof(Model.Status)" />
+        <Column T="Model" Field="@nameof(Model.Hired)" />
+        <Column T="Model" Field="@nameof(Model.HiredOn)" />
+    </Columns>
+    <FilterTemplate>
+        <MudSwitch T="bool" Color="@Color.Primary" Checked="FilterHired" Label="Show Hired" CheckedChanged="@((value) => FilterHiredToggled(value, context))"></MudSwitch>
+    </FilterTemplate>
+</MudDataGrid>
+
+@code {
+    public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
+
+    private IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("Sam", 56, Severity.Normal, false, null), 
+        new Model("Alicia", 54, Severity.Info, null, null), 
+        new Model("Ira", 27, Severity.Success, true, new DateTime(2011, 1, 2)),
+        new Model("John", 32, Severity.Warning, false, null)
+    };
+
+    public bool FilterHired = false;
+
+    public void FilterHiredToggled(bool value, List<FilterDefinition<Model>> filters)
+    {
+        FilterHired = value;
+
+        if (FilterHired)
+        {
+            filters.Add(new FilterDefinition<Model>
+            {
+                Field = nameof(Model.Hired),
+                Operator = FilterOperator.Boolean.Is,
+                Value = true
+            });
+        }
+        else
+        {
+            filters.Clear();
+        }
+    }
+}

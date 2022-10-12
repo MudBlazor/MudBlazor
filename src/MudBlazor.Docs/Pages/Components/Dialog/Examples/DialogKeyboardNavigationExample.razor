@@ -1,0 +1,19 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IDialogService DialogService
+
+
+<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+    Open Dialog
+</MudButton>
+
+
+@code {
+
+    private void OpenDialog()
+    {    
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        DialogService.Show<DialogKeyboardNavigationExample_Dialog>("Simple Dialog", closeOnEscapeKey);
+    }
+}

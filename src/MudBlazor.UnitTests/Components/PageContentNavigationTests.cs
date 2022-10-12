@@ -12,11 +12,16 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class PageContentNavigationTests : BunitTest
     {
+        public override void Setup()
+        {
+            base.Setup();
+            Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), new MockScrollSpyFactory()));
+
+        }
+
         [Test]
         public void DefaultValues()
         {
-            Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), new MockScrollSpy()));
-
             var comp = Context.RenderComponent<MudPageContentNavigation>();
 
             comp.Instance.ActiveSection.Should().BeNull();
@@ -33,8 +38,6 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false)]
         public async Task AddSection(bool withUpdate)
         {
-            Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), new MockScrollSpy()));
-
             var comp = Context.RenderComponent<MudPageContentNavigation>();
 
             var section1 = new MudPageContentSection("my section", "my-id");
@@ -61,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
 
             var navLinks = comp.FindComponents<MudNavLink>();
             navLinks.Should().HaveCount(2);
-            navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink");
+            navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink navigation-level-0");
 
             var firstLinkText = navLinks[0].Find(".mud-nav-link-text");
             firstLinkText.TextContent.Should().Be("my section");
@@ -78,7 +81,8 @@ namespace MudBlazor.UnitTests.Components
                 CenteredSection = "my-id"
             };
 
-            Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), mockedScrollSpy));
+            var factory = new MockScrollSpyFactory(mockedScrollSpy);
+            Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), factory));
 
             var comp = Context.RenderComponent<MudPageContentNavigation>();
 
@@ -98,7 +102,7 @@ namespace MudBlazor.UnitTests.Components
 
             var navLinks = comp.FindComponents<MudNavLink>();
             navLinks.Should().HaveCount(2);
-            navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink active");
+            navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink active navigation-level-0");
             var linkText = navLinks[0].Find(".mud-nav-link-text");
             linkText.TextContent.Should().Be("my section");
 
@@ -110,7 +114,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var mockedScrollSpy = new MockScrollSpy();
 
-            Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), mockedScrollSpy));
+            var factory = new MockScrollSpyFactory(mockedScrollSpy);
+            Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), factory));
 
             var comp = Context.RenderComponent<MudPageContentNavigation>(p => p.Add(x => x.ActivateFirstSectionAsDefault, true));
 
@@ -128,7 +133,7 @@ namespace MudBlazor.UnitTests.Components
 
             var navLinks = comp.FindComponents<MudNavLink>();
             navLinks.Should().HaveCount(2);
-            navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink active");
+            navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink active navigation-level-0");
             var linkText = navLinks[0].Find(".mud-nav-link-text");
 
             linkText.TextContent.Should().Be("my section");
@@ -143,7 +148,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var spyMock = new MockScrollSpy();
 
-            Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), spyMock));
+            var factory = new MockScrollSpyFactory(spyMock);
+            Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), factory));
 
             var comp = Context.RenderComponent<MudPageContentNavigation>();
 
@@ -168,7 +174,7 @@ namespace MudBlazor.UnitTests.Components
 
                 for (var j = 0; j < 3; j++)
                 {
-                    navLinks[j].Instance.Class.Should().Be(i == j ? "page-content-navigation-navlink active" : "page-content-navigation-navlink");
+                    navLinks[j].Instance.Class.Should().Be(i == j ? "page-content-navigation-navlink active navigation-level-0" : "page-content-navigation-navlink navigation-level-0");
                 }
             }
 
@@ -180,7 +186,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var spyMock = new MockScrollSpy();
 
-            Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), spyMock));
+            var factory = new MockScrollSpyFactory(spyMock);
+            Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), factory));
 
             var comp = Context.RenderComponent<MudPageContentNavigation>(x => x.Add(y => y.SectionClassSelector, "my-section-class"));
 
@@ -223,10 +230,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task HideContentIfOnlyOneSectionIsAdded()
         {
-            var mockedScrollSpy = new MockScrollSpy();
-
-            Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpy), mockedScrollSpy));
-
             var comp = Context.RenderComponent<MudPageContentNavigation>();
 
             var section = new MudPageContentSection("my section", "my-id");

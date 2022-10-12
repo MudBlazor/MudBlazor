@@ -22,7 +22,9 @@ namespace MudBlazor
 
         [Inject] public IBreakpointService Service { get; set; }
 
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.BreakpointProvider.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {

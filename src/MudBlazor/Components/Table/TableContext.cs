@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using MudBlazor.Extensions;
 
 namespace MudBlazor
@@ -30,8 +31,19 @@ namespace MudBlazor
     {
         private MudTr editedRow;
 
-        public HashSet<T> Selection { get; set; } = new HashSet<T>();
+        public IEqualityComparer<T> Comparer //when the comparer value is setup, update the collections with the new comparer
+        {
+            get => _comparer; 
+            set
+            {
+                _comparer = value;
+                Selection = new HashSet<T>(Selection, _comparer);
+                Rows = new Dictionary<T, MudTr>(Rows, _comparer);
+            }
+        }
+        private IEqualityComparer<T> _comparer;
 
+        public HashSet<T> Selection { get; set; } = new HashSet<T>();
         public Dictionary<T, MudTr> Rows { get; set; } = new Dictionary<T, MudTr>();
         public List<MudTableGroupRow<T>> GroupRows { get; set; } = new List<MudTableGroupRow<T>>();
 
@@ -97,7 +109,13 @@ namespace MudBlazor
             var t = item.As<T>();
             if (t is null)
                 return;
-            Rows.Remove(t);
+            if (Rows[t] == row)
+                Rows.Remove(t);
+            if (!Table.ContainsItem(item))
+            {
+                Selection.Remove(t);
+                Table.UpdateSelection();
+            }
         }
 
         #region --> Sorting
@@ -111,7 +129,7 @@ namespace MudBlazor
         public Func<T, object> SortBy { get; protected set; }
         public MudTableSortLabel<T> CurrentSortLabel { get; protected set; }
 
-        public void SetSortFunc(MudTableSortLabel<T> label, bool override_direction_none = false)
+        public async Task SetSortFunc(MudTableSortLabel<T> label, bool override_direction_none = false)
         {
             CurrentSortLabel = label;
             if (label.SortDirection == SortDirection.None && override_direction_none)
@@ -119,8 +137,10 @@ namespace MudBlazor
             SortDirection = label.SortDirection;
             SortBy = label.SortBy;
             UpdateSortLabels(label);
+
             if (Table.HasServerData)
-                Table.InvokeServerLoadFunc();
+                await Table.InvokeServerLoadFunc();
+
             TableStateHasChanged();
         }
 

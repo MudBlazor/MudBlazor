@@ -13,21 +13,29 @@ namespace MudBlazor
         /// <summary>
         /// If used renders child content of the CardHeaderAvatar.
         /// </summary>
-        [Parameter] public RenderFragment CardHeaderAvatar { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Card.Behavior)]
+        public RenderFragment CardHeaderAvatar { get; set; }
 
         /// <summary>
         /// If used renders child content of the CardHeaderContent.
         /// </summary>
-        [Parameter] public RenderFragment CardHeaderContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Card.Behavior)]
+        public RenderFragment CardHeaderContent { get; set; }
 
         /// <summary>
         /// If used renders child content of the CardHeaderActions.
         /// </summary>
-        [Parameter] public RenderFragment CardHeaderActions { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Card.Behavior)]
+        public RenderFragment CardHeaderActions { get; set; }
 
         /// <summary>
         /// Optional child content
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Card.Behavior)]
+        public RenderFragment ChildContent { get; set; }
     }
 }

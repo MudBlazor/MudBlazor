@@ -20,41 +20,55 @@ namespace MudBlazor
         .Build();
 
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// If true, the button group will override the styles of the individual buttons.
         /// </summary>
-        [Parameter] public bool OverrideStyles { get; set; } = true;
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Appearance)]
+        public bool OverrideStyles { get; set; } = true;
 
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// If true, the button group will be displayed vertically.
         /// </summary>
-        [Parameter] public bool VerticalAlign { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Appearance)]
+        public bool VerticalAlign { get; set; } = false;
 
         /// <summary>
         /// If true, no drop-shadow will be used.
         /// </summary>
-        [Parameter] public bool DisableElevation { get; set; } = false;
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Appearance)]
+        public bool DisableElevation { get; set; } = false;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The size of the component.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Medium;
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// The variant to use.
         /// </summary>
-        [Parameter] public Variant Variant { get; set; } = Variant.Text;
+        [Parameter]
+        [Category(CategoryTypes.ButtonGroup.Appearance)]
+        public Variant Variant { get; set; } = Variant.Text;
     }
 }

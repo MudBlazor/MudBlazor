@@ -81,9 +81,14 @@
     top: auto;
     transition: .3s cubic-bezier(.25,.8,.5,1);
     white-space: nowrap;
+  
+    &.mud-badge-default {
+      color: var(--mud-palette-text-primary);
+      background-color: var(--mud-palette-grey-light);
+    }
 
     &.mud-badge-bordered {
-        border-color: inherit;
+        border-color: var(--mud-palette-surface);
         border-style: solid;
         border-width: 2px;
         padding: 3px 4px;

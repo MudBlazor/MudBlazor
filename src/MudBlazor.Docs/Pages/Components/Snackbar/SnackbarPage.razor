@@ -1,11 +1,11 @@
 ﻿@page "/components/snackbar"
 
-
 @inject MudBlazor.ISnackbar Snackbar
 
 <DocsPage>
     <DocsPageHeader Title="Snackbar" />
     <DocsPageContent>
+
         <DocsPageSection>
             <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
             <MudText>The Snackbar is dependant on <CodeInline Class="docs-code-tertiary">ISnackbar</CodeInline> service and <CodeInline>MudSnackbarProvider</CodeInline>.</MudText>
@@ -16,10 +16,9 @@
             <SectionHeader Title="Usage">
                 <Description>This is the simplest way of using the <CodeInline>Snackbar</CodeInline>. It provides the user with a temporary closable <CodeInline>Snackbar</CodeInline></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="SnackbarUsageExample">
                 <SnackbarUsageExample />
             </SectionContent>
-            <SectionSource Code="SnackbarUsageExample" GitHubFolderName="Snackbar" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -29,10 +28,34 @@
                     However, make sure not to use user-provided input, as that's not very secure.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="SnackbarHtmlInMessageExample" ShowCode="false">
                 <SnackbarHtmlInMessageExample />
             </SectionContent>
-            <SectionSource Code="SnackbarHtmlInMessageExample" GitHubFolderName="Snackbar" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="RenderFragment messages">
+                <Description>
+                    In addition to setting the Snackbar message with a string, you can also use <CodeInline>RenderFragment</CodeInline>s to 
+                    create Snackbars with more complex content.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="SnackbarFromRenderFragmentExample" ShowCode="false">
+                <SnackbarFromRenderFragmentExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom component messages">
+                <Description>
+                    You can also create messages containing a custom component. This example renders a message based on MudBlazor's
+                    <CodeInline>MudChip</CodeInline>, but you can use any component to define the content. Pass parameters to the component 
+                    using the <CodeInline>componentParameters</CodeInline> argument.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="SnackbarFromCustomComponentExample" ShowCode="false">
+                <SnackbarFromCustomComponentExample />
+            </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
@@ -42,10 +65,9 @@
                     To change the snackbar into an alert snackbar, simply pass down the <CodeInline>Severity</CodeInline> enum after the message.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="SnackbarSeverityExample" ShowCode="false">
                 <SnackbarSeverityExample />
             </SectionContent>
-            <SectionSource Code="SnackbarSeverityExample" GitHubFolderName="Snackbar" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -64,10 +86,9 @@
                     Below, we pass along a modified configuration that differs from our globally-set <CodeInline>ShowCloseIcon</CodeInline>. In this case, it's also the Snackbar's default value.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="SnackbarConfigurationExample">
                 <SnackbarConfigurationExample />
             </SectionContent>
-            <SectionSource Code="SnackbarConfigurationExample" GitHubFolderName="Snackbar" />
         </DocsPageSection>
 
         <MudDivider Class="my-16" Style="opacity:0;" />
@@ -75,19 +96,17 @@
         <DocsPageSection>
             <SectionHeader Title="Snackbar Position">
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="SnackbarPositionExample" ShowCode="false" Block="true">
                 <SnackbarPositionExample />
             </SectionContent>
-            <SectionSource Code="SnackbarPositionExample" GitHubFolderName="Snackbar" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Snackbar Variants">
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="SnackbarVariantsExample" ShowCode="false">
                 <SnackbarVariantsExample />
             </SectionContent>
-            <SectionSource Code="SnackbarVariantsExample" GitHubFolderName="Snackbar" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -98,10 +117,9 @@
                     The snackbar's default behavior is to remain visible until the user closes the snackbar. When <CodeInline>CloseAfterNavigation</CodeInline> is set to <CodeInline>true</CodeInline> a snackbar will close after a user navigates away from the current page. Click both snackbars in the example and then navigate to another component to see this example in action.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="SnackbarNavigationExample" ShowCode="false">
                 <SnackbarNavigationExample />
             </SectionContent>
-            <SectionSource Code="SnackbarNavigationExample" GitHubFolderName="Snackbar" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -112,48 +130,66 @@
                     A snackbar becomes clickable when a handler is defined in the <CodeInline>OnClick</CodeInline> property of the <CodeInline>SnackbarOptions</CodeInline> object.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="SnackbarOnClickExample" ShowCode="false">
                 <SnackbarOnClickExample />
             </SectionContent>
-            <SectionSource Code="SnackbarOnClickExample" GitHubFolderName="Snackbar" ShowCode="false" />
             <SectionHeader>
                 <Description>
                     Alternatively, the <CodeInline>OnClick</CodeInline> handler can be attached to an action button by setting a label in the <CodeInline>Action</CodeInline> property.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="SnackbarActionButtonExample" ShowCode="false">
                 <SnackbarActionButtonExample />
             </SectionContent>
-            <SectionSource Code="SnackbarActionButtonExample" GitHubFolderName="Snackbar" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Require Interaction">
                 <Description>With the <CodeInline>RequireInteraction</CodeInline> property set to true, the snackbar will not disappear until the user interacts with it.</Description>
             </SectionHeader>
-            <SectionContent FullWidth="true" Class="pa-0" Outlined="true">
+            <SectionContent Class="pa-0" Code="SnackbarRequireInteractionExample" ShowCode="false">
                 <SnackbarRequireInteractionExample />
             </SectionContent>
-            <SectionSource Code="SnackbarRequireInteractionExample" GitHubFolderName="Snackbar" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="No Icon">
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="SnackbarNoIconExample" ShowCode="false">
                 <SnackbarNoIconExample />
             </SectionContent>
-            <SectionSource Code="SnackbarNoIconExample" GitHubFolderName="Snackbar" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Custom Icon">
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="SnackbarCustomIconExample" ShowCode="false">
                 <SnackbarCustomIconExample />
             </SectionContent>
-            <SectionSource Code="SnackbarCustomIconExample" GitHubFolderName="Snackbar" ShowCode="false" />
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Programmatically remove">
+                <Description>
+                    Using the injected ISnackbar, you can use the <CodeInline>.Remove</CodeInline> method to remove a Snackbar programmatically.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="SnackbarRemoveExample" ShowCode="false">
+                <SnackbarRemoveExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Preventing duplication">
+                <Description>
+                    <CodeInline>SnackbarService</CodeInline> can prevent more than one snackbar with identical message content from appearing. It does
+                    this by default when you call <CodeInline>.Add</CodeInline> with a <CodeInline>string</CodeInline>. If you want to prevent duplication of
+                    a Snackbar created with a <CodeInline>RenderFragment</CodeInline> or a custom component, pass a key to <CodeInline>.Add</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="SnackbarPreventDuplicatesExample" ShowCode="false">
+                <SnackbarPreventDuplicatesExample />
+            </SectionContent>
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

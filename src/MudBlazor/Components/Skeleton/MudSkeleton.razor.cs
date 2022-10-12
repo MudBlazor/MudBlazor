@@ -16,22 +16,30 @@ namespace MudBlazor
         /// <summary>
         /// With defined in string, needs px or % or equal prefix.
         /// </summary>
-        [Parameter] public string Width { set; get; }
+        [Parameter]
+        [Category(CategoryTypes.Skeleton.Appearance)]
+        public string Width { set; get; }
 
         /// <summary>
         /// Height defined in string, needs px or % or equal prefix.
         /// </summary>
-        [Parameter] public string Height { set; get; }
+        [Parameter]
+        [Category(CategoryTypes.Skeleton.Appearance)]
+        public string Height { set; get; }
 
         /// <summary>
         /// Shape of the skeleton that will be rendered.
         /// </summary>
-        [Parameter] public SkeletonType SkeletonType { set; get; } = SkeletonType.Text;
+        [Parameter]
+        [Category(CategoryTypes.Skeleton.Appearance)]
+        public SkeletonType SkeletonType { set; get; } = SkeletonType.Text;
 
         /// <summary>
         /// Animation style, if false it will be disabled.
         /// </summary>
-        [Parameter] public Animation Animation { set; get; } = Animation.Pulse;
+        [Parameter]
+        [Category(CategoryTypes.Skeleton.Appearance)]
+        public Animation Animation { set; get; } = Animation.Pulse;
 
         private string _width;
         private string _height;

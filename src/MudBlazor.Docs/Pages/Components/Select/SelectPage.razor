@@ -7,89 +7,92 @@
 
         <DocsPageSection>
             <SectionHeader Title="Variants">
-                <Description>Select comes in the variants Text, Filled and Outline.<br />Select is generic, meaning you can use values of any type with it. See the example code how that works.</Description>
+                <Description>
+                    Select comes in the variants Text, Filled and Outline. Select is generic, meaning you can use values of any type with it. See the example code how that works.<br />
+                    <br />
+                    <MudAlert Severity="Severity.Info">
+                        <b>Note:</b> If you use custom types as values, make sure they override <CodeInline>Equals</CodeInline> and <CodeInline>GetHashCode</CodeInline> as well as <CodeInline>ToString</CodeInline>. See the example below.
+                    </MudAlert>
+                    <br />
+                    <br />
+                </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MudContainer>
-                    <SelectVariantsExample />
-                </MudContainer>
+            <SectionContent ShowCode="false" Code="SelectVariantsExample">
+                <SelectVariantsExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="SelectVariantsExample" GitHubFolderName="Select" />
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Margin and Dense">
-                <Description>With the <CodeInline>Margin</CodeInline> prop you can reduce the selects height and with <CodeInline>Dense</CodeInline> set to true the select list will be displayed with dense vertical padding.</Description>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <SelectDenseExample />
-            </SectionContent>
-            <SectionSource Code="SelectDenseExample" GitHubFolderName="Select" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Props">
-                <Description>Select behaves and looks allot like a regular textfield and takes all of the textfields different form props.</Description>
+                <Description>Select behaves and looks a lot like a regular textfield and takes all of the textfields different form props.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="SelectPropsExample" ShowCode="false">
                 <SelectPropsExample />
             </SectionContent>
-            <SectionSource Code="SelectPropsExample" GitHubFolderName="Select" ShowCode="false" />
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Margin">
+                        <Description>With the <CodeInline>Margin</CodeInline> prop you can reduce the height of the component.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="SelectMarginExample" ShowCode="false">
+                        <SelectMarginExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Dense">
+                        <Description>The <CodeInline>Dense</CodeInline> prop set to true the select list will be displayed with dense vertical padding.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="SelectDenseExample" ShowCode="false">
+                        <SelectDenseExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Using Select">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MudContainer>
-                    <SelectUsageExample />
-                </MudContainer>
+            <SectionContent ShowCode="false" Code="SelectUsageExample">
+                <SelectUsageExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="SelectUsageExample" GitHubFolderName="Select" />
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Multiselect">
-                <SubTitle>Default MultiSelection Text</SubTitle>
                 <Description>
                     If you set <CodeInline>MultiSelection="true"</CodeInline>, you can select multiple values. The selected options are returned as concatenated comma-delimited
                     string via <CodeInline>Value</CodeInline> and as a <CodeInline>HashSet&lt;string></CodeInline> via <CodeInline>SelectedValues</CodeInline>. The delimited string
                     can be modified with the <CodeInline>Delimiter</CodeInline> parameter.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MudContainer>
-                    <MultiSelectExample />
-                </MudContainer>
+            <SectionContent ShowCode="false" Code="MultiSelectExample">
+                <MultiSelectExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="MultiSelectExample" GitHubFolderName="Select" />
-            <SectionHeader>
-                <SubTitle>Customized MultiSelection Text</SubTitle>
-                <Description>
-                    If you set <CodeInline>MultiSelection="true"</CodeInline>, you can select multiple values.
-                    By defining the <CodeInline>MultiSelectionTextFunc</CodeInline> method, the returned selection can be fully customized.
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MudContainer>
-                    <MultiSelectCustomizedExample />
-                </MudContainer>
-            </SectionContent>
-            <SectionSource ShowCode="false" Code="MultiSelectCustomizedExample" GitHubFolderName="Select" />
-            <SectionHeader>
-                <SubTitle>Select All</SubTitle>
-                <Description>
-                    If you set <CodeInline>SelectAll="true"</CodeInline>, you can display a 'Select all' option to select or deselect all items.
-                    It is added at the top of the list of items. The text for this option can be customized by the <CodeInline>SelectAllText</CodeInline> parameter.
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MudContainer>
-                    <MultiSelectSelectAllExample />
-                </MudContainer>
-            </SectionContent>
-            <SectionSource ShowCode="false" Code="MultiSelectSelectAllExample" GitHubFolderName="Select" />
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Customized Selection Text">
+                        <Description>
+                            If you set <CodeInline>MultiSelection="true"</CodeInline>, you can select multiple values.
+                            By defining the <CodeInline>MultiSelectionTextFunc</CodeInline> method, the returned selection can be fully customized.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="MultiSelectCustomizedExample">
+                        <MultiSelectCustomizedExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Select All">
+                        <Description>
+                            If you set <CodeInline>SelectAll="true"</CodeInline>, you can display a 'Select all' option to select or deselect all items.
+                            It is added at the top of the list of items. The text for this option can be customized by the <CodeInline>SelectAllText</CodeInline> parameter.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="MultiSelectSelectAllExample">
+                        <MultiSelectSelectAllExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
@@ -99,12 +102,9 @@
                     but the value that has been set is not in the list, it will also be displayed as text.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MudContainer Class="py-6">
-                    <SelectPresentationExample />
-                </MudContainer>
+            <SectionContent ShowCode="false" Code="SelectPresentationExample">
+                <SelectPresentationExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="SelectPresentationExample" GitHubFolderName="Select" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -116,12 +116,9 @@
                     specify a render fragment.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MudContainer Class="py-6">
-                    <SelectCustomConverterExample />
-                </MudContainer>
+            <SectionContent ShowCode="false" Code="SelectCustomConverterExample">
+                <SelectCustomConverterExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="SelectCustomConverterExample" GitHubFolderName="Select" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -132,12 +129,9 @@
                     for the <CodeInline>Required</CodeInline> property to behave as expected.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MudContainer>
-                    <SelectNumericCollectionExample />
-                </MudContainer>
+            <SectionContent ShowCode="false" Code="SelectNumericCollectionExample">
+                <SelectNumericCollectionExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="SelectNumericCollectionExample" GitHubFolderName="Select" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -147,10 +141,9 @@
                     To change where the popover should start from you only need to change the <CodeInline>AnchorOrigin</CodeInline>. <MudLink Color="Color.Secondary" Href="/components/popover">Read more on popover's page.</MudLink>
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
+            <SectionContent Code="SelectAdvancedPopoverExample" ShowCode="false">
                 <SelectAdvancedPopoverExample />
             </SectionContent>
-            <SectionSource Code="SelectAdvancedPopoverExample" GitHubFolderName="Select" ShowCode="false" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -172,12 +165,9 @@
                     <MudText>*Disabled items cannot be selected by keys.</MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MudContainer>
-                    <SelectKeyboardNavigationExample />
-                </MudContainer>
+            <SectionContent ShowCode="false" Code="SelectKeyboardNavigationExample">
+                <SelectKeyboardNavigationExample />
             </SectionContent>
-            <SectionSource ShowCode="false" Code="SelectKeyboardNavigationExample" GitHubFolderName="Select" />
         </DocsPageSection>
 
     </DocsPageContent>

@@ -15,6 +15,13 @@
     [Parameter] public string TestValue { get; set; }
     [Parameter] public Color Color_Test { get; set; }
 
+    public int ParamtersSetCounter { get; private set; }
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        ParamtersSetCounter++;
+    }
+
     private void OnTest()
     {
         MudDialog.ForceRender();

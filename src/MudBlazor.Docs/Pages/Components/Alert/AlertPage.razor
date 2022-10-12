@@ -3,71 +3,67 @@
 <DocsPage>
     <DocsPageHeader Title="Alert" SubTitle="An alert is used to notify the user about an important message without interrupting the ongoing task." />
     <DocsPageContent>
+    
         <DocsPageSection>
             <SectionHeader Title="Simple alerts">
                 <Description>
                     There are five severity levels that each set a different icon and a color.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="AlertSimpleExample">
                 <AlertSimpleExample />
             </SectionContent>
-            <SectionSource Code="AlertSimpleExample" GitHubFolderName="Alert" />
         </DocsPageSection>
+        
         <DocsPageSection>
             <SectionHeader Title="Variants">
-                <Description>The default variant is normal. In addition to that, outlined and filled is available.</Description>
+                <Description>The default variant is text. In addition to that, outlined and filled is available.</Description>
             </SectionHeader>
             <SectionHeader>
                 <SubTitle>Outlined</SubTitle>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="AlertOutlinedExample">
                 <AlertOutlinedExample />
             </SectionContent>
-            <SectionSource Code="AlertOutlinedExample" GitHubFolderName="Alert" />
             <SectionHeader Class="mt-12">
                 <SubTitle>Filled</SubTitle>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="AlertFilledExample">
                 <AlertFilledExample />
             </SectionContent>
-            <SectionSource Code="AlertFilledExample" GitHubFolderName="Alert" />
         </DocsPageSection>
+        
         <DocsPageSection>
             <SectionHeader Title="Dense">
                 <Description>Taking up too much space? Set the <CodeInline>Dense</CodeInline> property to true. It removes the vertical padding and lowers the horizontal.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="AlertDenseExample" ShowCode="false">
                 <AlertDenseExample />
             </SectionContent>
-            <SectionSource Code="AlertDenseExample" ShowCode="false" GitHubFolderName="Alert" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader Title="No Icons">
                 <Description>You can disable the alert icons with the bool <CodeInline>NoIcon</CodeInline> set to true.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="AlertNoIconExample" ShowCode="false">
                 <AlertNoIconExample />
             </SectionContent>
-            <SectionSource Code="AlertNoIconExample" ShowCode="false" GitHubFolderName="Alert" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader Title="Rounded and Square">
                 <Description>By default, the alert is set to rounded corners by your theme's default value. If you need a square Alert but don't want to change the theme, you can set the <CodeInline>Square</CodeInline> property to true.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="AlertSquareExample" ShowCode="false">
                 <AlertSquareExample />
             </SectionContent>
-            <SectionSource Code="AlertSquareExample" ShowCode="false" GitHubFolderName="Alert" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader Title="Elevation">
                 <Description>The component also accepts the <CodeInline>Elevation</CodeInline> property with a scale from 0 to 24.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="AlertElevationExample" ShowCode="true">
                 <AlertElevationExample />
             </SectionContent>
-            <SectionSource Code="AlertElevationExample" ShowCode="true" GitHubFolderName="Alert" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader Title="Content Alignment">
@@ -75,10 +71,9 @@
                     Set the <CodeInline>ContentAlignment</CodeInline> property to define the content alignment.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="AlertAlignmentExample" Block="true" FullWidth="true">
                 <AlertAlignmentExample />
             </SectionContent>
-            <SectionSource Code="AlertAlignmentExample" GitHubFolderName="Alert" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader Title="Close Icon and Event">
@@ -87,10 +82,9 @@
                     <CodeInline>CloseIconClicked</CodeInline> provides the EventCallback when clicking on the Close icon of the alert
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="AlertCloseExample" ShowCode="false">
                 <AlertCloseExample />
             </SectionContent>
-            <SectionSource Code="AlertCloseExample" GitHubFolderName="Alert" ShowCode="false" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader Title="Snackbar Alerts">

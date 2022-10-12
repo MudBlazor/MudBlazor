@@ -1,8 +1,9 @@
 ﻿@page "/components/table"
 
-<DocsPage MaxWidth="MaxWidth.Large">
+<DocsPage>
     <DocsPageHeader Title="Table" SubTitle="A sortable, filterable table with multiselection and pagination" />
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="Default Table">
                 <Description>
@@ -11,10 +12,9 @@
                     The table can be prevented from breaking into mobile layout by setting the <CodeInline>Breakpoint</CodeInline> to <CodeInline>Breakpoint.None</CodeInline>.<br />
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableBasicExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableBasicExample />
             </SectionContent>
-            <SectionSource Code="TableBasicExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -23,10 +23,9 @@
                     The <CodeInline>RowClassFunc</CodeInline> function can be used to customize the display of the selected row. <CodeInline>RowClickEvent</CodeInline> is triggered each time the row is clicked. 
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableRowClassFuncExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableRowClassFuncExample />
             </SectionContent>
-            <SectionSource Code="TableRowClassFuncExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -39,16 +38,15 @@
                     pass the collection of items to be displayed to the table's <CodeInline>Items</CodeInline> parameter.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableExample />
             </SectionContent>
-            <SectionSource Code="TableExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="TabPager Customization">
+            <SectionHeader Title="TablePager Customization">
                 <Description>
-                    By setting <CodeInline>HideRowsPerPage</CodeInline> property or the <CodeInline>HidePageNumber</CodeInline> property or the <CodeInline>HidePagination</CodeInline> property to <CodeInline>true</CodeInline>, the corresponding information is hidden in the <CodeInline>MudTabPager</CodeInline>.
+                    By setting <CodeInline>HideRowsPerPage</CodeInline> property or the <CodeInline>HidePageNumber</CodeInline> property or the <CodeInline>HidePagination</CodeInline> property to <CodeInline>true</CodeInline>, the corresponding information is hidden in the <CodeInline>MudTablePager</CodeInline>.
                     The pager's position can be defined with the <CodeInline>HorizontalAlignment</CodeInline> property.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
                         <CodeInline>@("RowsPerPage")</CodeInline> parameter of MudTable is independent of <CodeInline>@("PageSizeOptions")</CodeInline> parameter of PagerContent. Therefore, the RowsPerPage value does not have
@@ -56,10 +54,9 @@
                     </MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TabPagerExample" ShowCode="false" Block="true" FullWidth="true">
                 <TabPagerExample />
             </SectionContent>
-            <SectionSource Code="TabPagerExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -70,10 +67,9 @@
                     Sorting can be allowed and disallowed on the column level with the property <CodeInline>Enabled</CodeInline>.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableSortingExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableSortingExample />
             </SectionContent>
-            <SectionSource Code="TableSortingExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -82,10 +78,9 @@
                     Setting <CodeInline>MultiSelection="true"</CodeInline> will enable selection check boxes for selecting multiple lines.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableMultiSelectExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableMultiSelectExample />
             </SectionContent>
-            <SectionSource Code="TableMultiSelectExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -96,10 +91,9 @@
                     The table will scroll if you constrain its height using <CodeInline>Height="400px"</CodeInline>, for instance.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableFixedHeaderExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableFixedHeaderExample />
             </SectionContent>
-            <SectionSource Code="TableFixedHeaderExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -108,10 +102,9 @@
                     Specifies a group of one or more columns in a table for formatting.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableColGroupExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableColGroupExample />
             </SectionContent>
-            <SectionSource Code="TableColGroupExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -123,10 +116,9 @@
                     <CodeInline>RowEditCommit</CodeInline> method can be used to handle the commit of the item.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableInlineEditExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableInlineEditExample />
             </SectionContent>
-            <SectionSource Code="TableInlineEditExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -139,10 +131,22 @@
                     </MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableServerSidePaginateExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableServerSidePaginateExample />
             </SectionContent>
-            <SectionSource Code="TableServerSidePaginateExample" ShowCode="false" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Record Type Support">
+                <Description>
+                    By default, mutable <CodeInline>record</CodeInline> types do not work with multi-selection or editing. This is due to the way record equality works. To support multi-selection or editing of records in a <CodeInline>MudTable</CodeInline>,
+                    you must define a custom <CodeInline>Comparer</CodeInline> that implements <CodeInline>IEqualityComparer&lt;T&gt;</CodeInline>.
+                    The example below demonstrates multi-selection and paging while modifying a <CodeInline>record</CodeInline> type on <CodeInline>SelectedItemsChanged</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="TableRecordComparerExample" ShowCode="false" Block="true" FullWidth="true">
+                <TableRecordComparerExample />
+            </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
@@ -157,10 +161,9 @@
                     </MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableHeaderAndFooterExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableHeaderAndFooterExample />
             </SectionContent>
-            <SectionSource Code="TableHeaderAndFooterExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -169,10 +172,9 @@
                     Making use of the <CodeInline>&lt;ChildRowContent&gt;</CodeInline> allows more control over the layout for scenarios such as showing the related address data for each person below.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableRelationalExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableRelationalExample />
             </SectionContent>
-            <SectionSource Code="TableRelationalExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -181,10 +183,9 @@
                     If too many columns are displayed, setting <CodeInline>HorizontalScrollbar="true"</CodeInline> will allow the user to scroll the content horizontally.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableHorizontalScrollExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableHorizontalScrollExample />
             </SectionContent>
-            <SectionSource Code="TableHorizontalScrollExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -193,10 +194,9 @@
                     You can virtualize the results of a table to increase rendering speed.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableVirtualizationExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableVirtualizationExample />
             </SectionContent>
-            <SectionSource Code="TableVirtualizationExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -206,10 +206,9 @@
                     NOTE: Grouping and Virtualization should not work together.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableBasicGroupingExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableBasicGroupingExample />
             </SectionContent>
-            <SectionSource Code="TableBasicGroupingExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -218,10 +217,9 @@
                     Displays items in a grouped way, but the groups are all collapsed as default.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableBasicGroupingInitiallyCollapsedExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableBasicGroupingInitiallyCollapsedExample />
             </SectionContent>
-            <SectionSource Code="TableBasicGroupingInitiallyCollapsedExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -230,10 +228,9 @@
                     Displays items recursively grouped.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="TableMultiGroupingExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableMultiGroupingExample />
             </SectionContent>
-            <SectionSource Code="TableMultiGroupingExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
     </DocsPageContent>

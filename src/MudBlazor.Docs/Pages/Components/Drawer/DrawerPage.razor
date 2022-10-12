@@ -1,54 +1,90 @@
 ﻿@page "/components/drawer"
 
-<DocsPage MaxWidth="MaxWidth.Large">
-    <DocsPageHeader Title="Drawer"
-                    SubTitle="Navigation Drawers provide access to destinations in your app.">
+<DocsPage>
+    <DocsPageHeader Title="Drawer" SubTitle="Navigation Drawers provide access to destinations in your app.">
     </DocsPageHeader>
-
     <DocsPageContent>
+
         <DocsPageSection>
-            <SectionHeader Title="Basic Usage">
+            <SectionHeader Title="Usage">
                 <Description>
                     If you use two-way binding <CodeInline>@("@bind-Open=\"...\"")</CodeInline>, you can toggle the Drawer and it will close itself on navigation. If you set its <CodeInline>Open</CodeInline> parameter without two-way binding,
                     you effectively force it to stay open or closed, depending on the provided value.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Always use <CodeInline>@("@bind-Open")</CodeInline> instead of <CodeInline>@("Open")</CodeInline> for auto-closing to work.</MudAlert>
                 </Description>
             </SectionHeader>
-
-            <SectionHeader Title="Temporary Drawer">
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Variants">
                 <Description>
-                    Temporary Drawers can be opened temporarily above all other content until a section is selected or clicked on an overlay.
-                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Currently only Temporary Drawer supports the <CodeInline>Anchor.Top</CodeInline> and <CodeInline>Anchor.Bottom</CodeInline> parameters.</MudAlert>
+                    The drawer can be displayed in many different ways, like other components you can set the different variants with <CodeInline>Variant</CodeInline> property but uses <CodeInline>DrawerVariant</CodeInline> enum.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <DrawerTemporaryExample />
-            </SectionContent>
-            <SectionSource Code="DrawerTemporaryExample" ShowCode="false" GitHubFolderName="Drawer" />
+            <SectionSubGroups>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Temporary">
+                        <Description>
+                            Temporary Drawers can be opened temporarily above all other content until a section is selected or clicked on an overlay.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="DrawerTemporaryExample" ShowCode="false">
+                        <DrawerTemporaryExample />
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Persistent">
+                        <Description>
+                            Persistent Drawer is outside of its container. When opened, it forces other contents to change their size.
+                            Persistent Drawer will stay open until the <CodeInline>Open</CodeInline> parameter is set to false again.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="DrawerPersistentExample" ShowCode="false" Block="true" FullWidth="true">
+                        <DrawerPersistentExample />
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Responsive">
+                        <Description>
+                            Responsive Drawers behaves persistently on wider screens and temporarily on smaller ones.
+                            Opened Drawers close automatically when the window size becomes small, and opens after the original state has been restored.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="DrawerResponsiveExample" ShowCode="false">
+                        <iframe src="/iframe/docs/examples/drawer/persistent" class="docs-iframe">
+                            <DrawerResponsiveExample />
+                        </iframe>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Mini">
+                        <Description>
+                            Using the Mini variant, the Drawer will shrink (default 56px). It currently only has built-in style support for <CodeInline>MudNavLink</CodeInline>s.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="DrawerMiniExample" ShowCode="false" Block="true" FullWidth="true">
+                        <DrawerMiniExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Hide overlay">
                 <Description>
                     With parameter <CodeInline>DisableOverlay</CodeInline>, overlay can be turned off for Responsive and Temporary Drawers.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="DrawerOverlayExample" ShowCode="false">
                 <DrawerOverlayExample />
             </SectionContent>
-            <SectionSource Code="DrawerOverlayExample" ShowCode="false" GitHubFolderName="Drawer" />
         </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Persistent Drawer">
-                <Description>
-                    Persistent Drawer is outside of its container. When opened, it forces other contents to change their size.
-                    Persistent Drawer will stay open until the <CodeInline>Open</CodeInline> parameter is set to false again.
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
-                <DrawerPersistentExample />
-            </SectionContent>
-            <SectionSource Code="DrawerPersistentExample" ShowCode="false" GitHubFolderName="Drawer" />
-        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Anchor Drawer">
                 <Description>
@@ -56,36 +92,22 @@
                     This example uses Persistent Drawers.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="DrawerAnchorExample" ShowCode="false" Block="true" FullWidth="true">
                 <DrawerAnchorExample />
             </SectionContent>
-            <SectionSource Code="DrawerAnchorExample" ShowCode="false" GitHubFolderName="Drawer" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Left/Right Drawer">
                 <Description>
                     <CodeInline>Anchor.Left</CodeInline> and <CodeInline>Anchor.Right</CodeInline> makes Drawer's position absolute, they will not follow RTL-LTR changes.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent Code="DrawerLeftRightExample" ShowCode="false" Block="true" FullWidth="true">
                 <DrawerLeftRightExample />
             </SectionContent>
-            <SectionSource Code="DrawerLeftRightExample" ShowCode="false" GitHubFolderName="Drawer" />
         </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Responsive Drawer">
-                <Description>
-                    Responsive Drawers behaves persistently on wider screens and temporarily on smaller ones.
-                    Opened Drawers close automatically when the window size becomes small, and opens after the original state has been restored.
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
-                <iframe src="/iframe/docs/examples/drawer/persistent" class="docs-iframe">
-                    <DrawerResponsiveExample />
-                </iframe>
-            </SectionContent>
-            <SectionSource Code="DrawerResponsiveExample" ShowCode="false" GitHubFolderName="Drawer" />
-        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Clipping">
                 <Description>
@@ -94,84 +116,76 @@
                     This example shows how different options work with a Responsive Drawer. Change the size of the window to test all possiblities.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="DrawerClippingExample" ShowCode="false">
                 <iframe src="/iframe/docs/examples/drawer/clipped" class="docs-iframe">
                     <DrawerClippingExample />
                 </iframe>
             </SectionContent>
-            <SectionSource Code="DrawerClippingExample" ShowCode="false" GitHubFolderName="Drawer" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Custom Breakpoint">
                 <Description>
                     The switching point for Responsive Drawers can be changed using the <CodeInline>Breakpoint</CodeInline> parameter. The default is <CodeInline>Breakpoint.Md</CodeInline>.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="DrawerBreakpointExample" ShowCode="false">
                 <iframe src="/iframe/docs/examples/drawer/breakpoint" class="docs-iframe">
                     <DrawerBreakpointExample />
                 </iframe>
             </SectionContent>
-            <SectionSource Code="DrawerBreakpointExample" ShowCode="false" GitHubFolderName="Drawer" />
         </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Mini Drawer">
-                <Description>
-                    Using the Mini variant, the Drawer will shrink (default 56px). It currently only has built-in style support for <CodeInline>MudNavLink</CodeInline>s.
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
-                <DrawerMiniExample />
-            </SectionContent>
-            <SectionSource Code="DrawerMiniExample" ShowCode="false" GitHubFolderName="Drawer" />
-        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Mini Drawer Customization">
                 <Description>
                     This example demonstrates how the combination of several parameters will affect the behaviour of a Mini Drawer.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="DrawerMiniCustomExample" ShowCode="false">
                 <iframe src="/iframe/docs/examples/drawer/mini" class="docs-iframe">
                     <DrawerMiniCustomExample />
                 </iframe>
             </SectionContent>
-            <SectionSource Code="DrawerMiniCustomExample" ShowCode="false" GitHubFolderName="Drawer" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Sizing Drawers">
                 <Description>
                     It is possible to set custom width/height values for Sizing Drawers. The following examples demonstrate how to do it for different types of Drawers.
                 </Description>
             </SectionHeader>
-
-            <SectionHeader>
-                <SubTitle>1. Change Drawers inside <CodeInline>MudLayout</CodeInline></SubTitle>
-                <Description>
-                    Changing the default width (240px) of a left and/or right Drawer is possible by setting the
-                    <CodeInline>DrawerWidthLeft</CodeInline> and/or <CodeInline>DrawerWidthRight</CodeInline> layout properties.
-                    For Mini Drawers, <CodeInline>DrawerMiniWidthLeft</CodeInline> and/or <CodeInline>DrawerMiniWidthRight</CodeInline> can be used.
-                    For more information, see <MudLink Href="/customization/default-theme">customization page</MudLink>.
-                </Description>
-            </SectionHeader>
-
-            <SectionHeader>
-                <SubTitle>2. Change size for Temporary Drawers</SubTitle>
-                <Description>Changing the default size is possible by setting the <CodeInline>Width</CodeInline> or <CodeInline>Height</CodeInline> parameters.</Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true">
-                <DrawerSizeTemporaryExample />
-            </SectionContent>
-            <SectionSource Code="DrawerSizeTemporaryExample" ShowCode="false" GitHubFolderName="Drawer" />
-
-            <SectionHeader>
-                <SubTitle>3. Change size for Persistent Drawers inside <CodeInline>MudDrawerContainer</CodeInline></SubTitle>
-                <Description>Changing the default size is possible by setting the <CodeInline>Width</CodeInline> parameter.</Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
-                <DrawerSizeContainerExample />
-            </SectionContent>
-            <SectionSource Code="DrawerSizeContainerExample" ShowCode="false" GitHubFolderName="Drawer" />
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Inside MudLayout">
+                        <Description>
+                            Changing the default width (240px) of a left and/or right Drawer is possible by setting the
+                            <CodeInline>DrawerWidthLeft</CodeInline> and/or <CodeInline>DrawerWidthRight</CodeInline> layout properties.
+                            For Mini Drawers, <CodeInline>DrawerMiniWidthLeft</CodeInline> and/or <CodeInline>DrawerMiniWidthRight</CodeInline> can be used.
+                            For more information, see <MudLink Href="/customization/default-theme">customization page</MudLink>.
+                        </Description>
+                    </SectionHeader>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Temporary Drawers">
+                        <Description>Changing the default size is possible by setting the <CodeInline>Width</CodeInline> or <CodeInline>Height</CodeInline> parameters.</Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="DrawerSizeTemporaryExample" ShowCode="false">
+                        <DrawerSizeTemporaryExample />
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Persistent Drawers Inside MudDrawerContainer">
+                         <Description>Changing the default size is possible by setting the <CodeInline>Width</CodeInline> parameter.</Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="DrawerSizeContainerExample" ShowCode="false" Block="true" FullWidth="true">
+                        <DrawerSizeContainerExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

@@ -12,7 +12,7 @@ namespace MudBlazor.Utilities
     /// Static methods for transforming argb spaces and argb values.
     /// </summary>
     [ExcludeFromCodeCoverage] 
-    [Obsolete("ColorTransformation is now obsolete. Use MudColor instead", true)]
+    [Obsolete("Use MudColor instead.", true)]
     public static class ColorTransformation
     {
         private static double EPSILON => 0.000000000000001;
