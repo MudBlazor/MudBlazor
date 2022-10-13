@@ -357,14 +357,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
-        public TableButtonPosition ApplyButtonPosition { get; set; } = TableButtonPosition.End;
+        public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
 
         /// <summary>
         /// Set the positon of the StartEdit button, if <see cref="IsEditable"/> IsEditable is true. Defaults to the end of the row
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
-        public TableButtonPosition EditButtonPosition { get; set; } = TableButtonPosition.End;
+        public TableEditButtonPosition EditButtonPosition { get; set; } = TableEditButtonPosition.End;
 
         /// <summary>
         /// Defines how a table row edit will be triggered
@@ -536,17 +536,5 @@ namespace MudBlazor
         public abstract void UpdateSelection();
 
         public Interfaces.IForm Validator { get; set; } = new TableRowValidator();
-
-        public class EditButtonContext
-        {
-            public Action ButtonAction { get; }
-            public bool ButtonDisabled { get; }
-
-            public EditButtonContext(Action buttonAction, bool buttonDisabled)
-            {
-                ButtonAction = buttonAction;
-                ButtonDisabled = buttonDisabled;
-            }
-        }
     }
 }

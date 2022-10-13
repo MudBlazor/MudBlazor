@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTable @ref="Table" T="string" Items="items" EditTrigger="TableEditTrigger.EditButton" EditButtonPosition="ButtonPosition" ApplyButtonPosition="ButtonPosition" IsEditRowSwitchingBlocked="BlockRowSwitching" OnRowClick="RowClicked">
+<MudTable @ref="Table" T="string" Items="items" EditTrigger="TableEditTrigger.EditButton" EditButtonPosition="EditButtonPosition" ApplyButtonPosition="ApplyButtonPosition" IsEditRowSwitchingBlocked="BlockRowSwitching" OnRowClick="RowClicked">
     <HeaderContent>
         <MudTh>#</MudTh>
     </HeaderContent>
@@ -22,7 +22,9 @@
     public static string __description__ = "Inline Edit Table: Edit button content";
     string[] items = new string[] { "A", "B", "C" };
     [Parameter]
-    public TableButtonPosition ButtonPosition { get; set; } = TableButtonPosition.End;
+    public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
+    [Parameter]
+    public TableEditButtonPosition EditButtonPosition { get; set; } = TableEditButtonPosition.End;
     [Parameter]
     public bool BlockRowSwitching { get; set; }
     [Parameter]

@@ -1056,10 +1056,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Theory]
-        [TestCase(TableButtonPosition.StartAndEnd)]
-        [TestCase(TableButtonPosition.Start)]
-        [TestCase(TableButtonPosition.End)]
-        public async Task TableInlineEdit_ApplyButtonPosition(TableButtonPosition position)
+        [TestCase(TableApplyButtonPosition.StartAndEnd)]
+        [TestCase(TableApplyButtonPosition.Start)]
+        [TestCase(TableApplyButtonPosition.End)]
+        public async Task TableInlineEdit_ApplyButtonPosition(TableApplyButtonPosition position)
         {
             var comp = Context.RenderComponent<TableInlineEditTestApplyButtons>(
                 p => p.Add(x => x.ApplyButtonPosition, position));
@@ -1073,8 +1073,8 @@ namespace MudBlazor.UnitTests.Components
             var footer = trs[trs.Count - 1];
             var expectedAmount = position switch
             {
-                TableButtonPosition.Start or TableButtonPosition.End => 2,
-                TableButtonPosition.StartAndEnd => 3,
+                TableApplyButtonPosition.Start or TableApplyButtonPosition.End => 2,
+                TableApplyButtonPosition.StartAndEnd => 3,
                 _ => throw new NotImplementedException()
             };
 
@@ -1087,17 +1087,17 @@ namespace MudBlazor.UnitTests.Components
             var relevantRow = trs2[2];
             relevantRow.ChildElementCount.Should().Be(expectedAmount);
 
-            if (position == TableButtonPosition.Start)
+            if (position == TableApplyButtonPosition.Start)
             {
                 relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
                 relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlInputElement>().Should().NotBeNull();
             }
-            else if (position == TableButtonPosition.End)
+            else if (position == TableApplyButtonPosition.End)
             {
                 relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlInputElement>().Should().NotBeNull();
                 relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
             }
-            else if (position == TableButtonPosition.StartAndEnd)
+            else if (position == TableApplyButtonPosition.StartAndEnd)
             {
                 relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
                 relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlInputElement>().Should().NotBeNull();
@@ -1346,25 +1346,27 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Ensures the table buttons render correctly
         /// </summary>
-        [Theory]
-        [TestCase(true, TableButtonPosition.Start)]
-        [TestCase(true, TableButtonPosition.StartAndEnd)]
-        [TestCase(true, TableButtonPosition.End)]
-        [TestCase(false, TableButtonPosition.Start)]
-        [TestCase(false, TableButtonPosition.StartAndEnd)]
-        [TestCase(false, TableButtonPosition.End)]
-        public async Task TableEditButtonRenderTest(bool customButton, TableButtonPosition buttonPosition)
+        [Test]
+        [TestCase(true, TableApplyButtonPosition.Start, TableEditButtonPosition.Start)]
+        [TestCase(true, TableApplyButtonPosition.StartAndEnd, TableEditButtonPosition.StartAndEnd)]
+        [TestCase(true, TableApplyButtonPosition.End, TableEditButtonPosition.End)]
+        [TestCase(false, TableApplyButtonPosition.Start, TableEditButtonPosition.Start)]
+        [TestCase(false, TableApplyButtonPosition.StartAndEnd, TableEditButtonPosition.StartAndEnd)]
+        [TestCase(false, TableApplyButtonPosition.End, TableEditButtonPosition.End)]
+        public async Task TableEditButtonRenderTest(bool customButton, TableApplyButtonPosition buttonApplyPosition, TableEditButtonPosition buttonEditPosition)
         {
             IRenderedComponent<ComponentBase> comp;
             if (customButton)
             {
                 comp = Context.RenderComponent<TableCustomEditButtonRenderTest>(parameters => parameters
-                    .Add(p => p.ButtonPosition, buttonPosition));
+                    .Add(p => p.ApplyButtonPosition, buttonApplyPosition)
+                    .Add(p => p.EditButtonPosition, buttonEditPosition));
             }
             else
             {
                 comp = Context.RenderComponent<TableEditButtonRenderTest>(parameters => parameters
-                    .Add(p => p.ButtonPosition, buttonPosition));
+                    .Add(p => p.ApplyButtonPosition, buttonApplyPosition)
+                    .Add(p => p.EditButtonPosition, buttonEditPosition));
             }
 
             var trs = comp.FindAll("tr");
@@ -1373,10 +1375,10 @@ namespace MudBlazor.UnitTests.Components
             trs.Should().HaveCount(4);
 
             var header = trs[0];
-            var expectedAmount = buttonPosition switch
+            var expectedAmount = buttonEditPosition switch
             {
-                TableButtonPosition.Start or TableButtonPosition.End => 2,
-                TableButtonPosition.StartAndEnd => 3,
+                TableEditButtonPosition.Start or TableEditButtonPosition.End => 2,
+                TableEditButtonPosition.StartAndEnd => 3,
                 _ => throw new NotImplementedException()
             };
 
@@ -1386,17 +1388,17 @@ namespace MudBlazor.UnitTests.Components
             var relevantRow = trs2[2];
             relevantRow.ChildElementCount.Should().Be(expectedAmount);
 
-            if (buttonPosition == TableButtonPosition.Start)
+            if (buttonEditPosition == TableEditButtonPosition.Start)
             {
                 relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
                 relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlDivElement>().Should().NotBeNull();
             }
-            else if (buttonPosition == TableButtonPosition.End)
+            else if (buttonEditPosition == TableEditButtonPosition.End)
             {
                 relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlDivElement>().Should().NotBeNull();
                 relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
             }
-            else if (buttonPosition == TableButtonPosition.StartAndEnd)
+            else if (buttonEditPosition == TableEditButtonPosition.StartAndEnd)
             {
                 relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
                 relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlDivElement>().Should().NotBeNull();
