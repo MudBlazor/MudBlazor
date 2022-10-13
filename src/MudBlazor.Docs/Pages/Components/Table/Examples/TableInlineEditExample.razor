@@ -78,13 +78,6 @@
             <MudSelectItem Value="TableEditTrigger.EditButton">Edit Button</MudSelectItem>
         </MudSelect>
     </MudItem>
-    <MudItem xs="12" md="4">
-        <MudSelect Label="Apply Button Postion" T="TableButtonPosition" @bind-Value="applyButtonPosition">
-            <MudSelectItem Value="TableButtonPosition.Start">Start</MudSelectItem>
-            <MudSelectItem Value="TableButtonPosition.End">End</MudSelectItem>
-            <MudSelectItem Value="TableButtonPosition.StartAndEnd">Start and End</MudSelectItem>
-        </MudSelect>
-    </MudItem>
     @if (editTrigger == TableEditTrigger.EditButton)
     {
         <MudItem xs="12" md="4">
@@ -95,6 +88,13 @@
             </MudSelect>
         </MudItem>
     }
+    <MudItem xs="12" md="4">
+        <MudSelect Label="Apply Button Postion" T="TableButtonPosition" @bind-Value="applyButtonPosition">
+            <MudSelectItem Value="TableButtonPosition.Start">Start</MudSelectItem>
+            <MudSelectItem Value="TableButtonPosition.End">End</MudSelectItem>
+            <MudSelectItem Value="TableButtonPosition.StartAndEnd">Start and End</MudSelectItem>
+        </MudSelect>
+    </MudItem>
 </MudGrid>
 
 <MudText Inline="true">Selected1: @selectedItem1?.Name</MudText>
