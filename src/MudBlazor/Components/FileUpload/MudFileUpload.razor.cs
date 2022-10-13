@@ -24,8 +24,22 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        [Parameter]
+        public T FileValue
+        {
+            get => _value; 
+            set
+            {
+                if (_value != null && _value.Equals(value))
+                    return;
+                _value = value;
+            }
+        }
+        [Parameter]
+        public EventCallback<T> FileValueChanged { get; set; }
+
         /// <summary>
-        /// Called when Files are changed
+        /// Called when the internal files are changed
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
@@ -42,6 +56,12 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
         public RenderFragment<T> SelectedTemplate { get; set; }
+        ///// <summary>
+        ///// If true, OnFilesChanged will not trigger if validation fails
+        ///// </summary>
+        //[Parameter]
+        //[Category(CategoryTypes.FileUpload.Behavior)]
+        //public bool SuppressOnChangeWhenInvalid { get; set; }
         /// <summary>
         /// If true, multiple files can be uploaded
         /// </summary>
@@ -72,15 +92,17 @@ namespace MudBlazor
                 _value = (T)args.File;
             }
 
-            await Validate();
+            await FileValueChanged.InvokeAsync(_value);
             FieldChanged(_value);
-            await OnFilesChanged.InvokeAsync(args);
+            await Validate();
+            //if (!Error || !SuppressOnChangeWhenInvalid) //only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
+            //    await OnFilesChanged.InvokeAsync(args);
         }
 
         protected override void OnInitialized()
         {
-            if (!(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) || typeof(T) == typeof(IBrowserFile)))
-                throw new InvalidOperationException($"T must be of type {typeof(IReadOnlyList<IBrowserFile>)} or {typeof(IBrowserFile)}");
+            //if (!(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) || typeof(T) == typeof(IBrowserFile)))
+            //    throw new InvalidOperationException($"T must be of type {typeof(IReadOnlyList<IBrowserFile>)} or {typeof(IBrowserFile)}");
             base.OnInitialized();
         }
     }
