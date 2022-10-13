@@ -371,7 +371,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
-        public TableEditTrigger EditTrigger { get; set; } = TableEditTrigger.OnRowClick;
+        public TableEditTrigger EditTrigger { get; set; } = TableEditTrigger.RowClick;
 
         /// <summary>
         /// Defines the edit button that will be rendered when EditTrigger.Manual

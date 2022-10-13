@@ -6,7 +6,7 @@ namespace MudBlazor
 {
     public enum TableEditTrigger
     {
-        OnRowClick,
-        Manual
+        RowClick,
+        EditButton
     }
 }

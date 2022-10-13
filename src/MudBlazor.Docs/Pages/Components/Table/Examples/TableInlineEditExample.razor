@@ -15,7 +15,7 @@
         <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <ColGroup>
-        @if (applyButtonPosition.DisplayButtonAtStart() || (editButtonPosition.DisplayButtonAtStart() && editTrigger == TableEditTrigger.Manual))
+        @if (applyButtonPosition.DisplayButtonAtStart() || (editButtonPosition.DisplayButtonAtStart() && editTrigger == TableEditTrigger.EditButton))
         {
             <col style="width:50px;" />
         }
@@ -24,7 +24,7 @@
         <col style="width:50%;" />
         <col />
         <col />
-        @if (applyButtonPosition.DisplayButtonAtEnd() || (editButtonPosition.DisplayButtonAtEnd() && editTrigger == TableEditTrigger.Manual))
+        @if (applyButtonPosition.DisplayButtonAtEnd() || (editButtonPosition.DisplayButtonAtEnd() && editTrigger == TableEditTrigger.EditButton))
         {
             <col style="width:50px;" />
         }
@@ -74,8 +74,8 @@
 <MudGrid>
     <MudItem xs="12" md="4">
         <MudSelect Label="Edit Trigger" T="TableEditTrigger" @bind-Value="editTrigger">
-            <MudSelectItem Value="TableEditTrigger.OnRowClick">On Row Click</MudSelectItem>
-            <MudSelectItem Value="TableEditTrigger.Manual">Manual</MudSelectItem>
+            <MudSelectItem Value="TableEditTrigger.RowClick">Row Click</MudSelectItem>
+            <MudSelectItem Value="TableEditTrigger.EditButton">Edit Button</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs="12" md="4">
@@ -85,7 +85,7 @@
             <MudSelectItem Value="TableButtonPosition.StartAndEnd">Start and End</MudSelectItem>
         </MudSelect>
     </MudItem>
-    @if (editTrigger == TableEditTrigger.Manual)
+    @if (editTrigger == TableEditTrigger.EditButton)
     {
         <MudItem xs="12" md="4">
             <MudSelect Label="Edit Button Postion" T="TableButtonPosition" @bind-Value="editButtonPosition">
@@ -128,7 +128,7 @@
     private HashSet<Element> selectedItems1 = new HashSet<Element>();
     private TableButtonPosition applyButtonPosition = TableButtonPosition.End;
     private TableButtonPosition editButtonPosition = TableButtonPosition.End;
-    private TableEditTrigger editTrigger = TableEditTrigger.OnRowClick;
+    private TableEditTrigger editTrigger = TableEditTrigger.RowClick;
     private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()

@@ -3,11 +3,11 @@
 @inherits MudComponentBase
 
 <tr class="@Classname" @onclick="@OnRowClicked" style="@Style" @attributes="@UserAttributes">
-    @if (IsEditable && ((Context?.Table.EditButtonPosition.DisplayButtonAtStart() == true && Context?.Table.EditTrigger == TableEditTrigger.Manual) || Context?.Table.ApplyButtonPosition.DisplayButtonAtStart() == true))
+    @if (IsEditable && ((Context?.Table.EditButtonPosition.DisplayButtonAtStart() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayButtonAtStart() == true))
     {
         @* Add datalabel as a placeholder to avoid jumps on small viewports *@
         <MudTd DataLabel="&nbsp;" Class="py-3">
-            @if (Context?.Table.EditTrigger == TableEditTrigger.Manual && !object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.EditButtonPosition.DisplayButtonAtStart() == true)
+            @if (Context?.Table.EditTrigger == TableEditTrigger.EditButton && !object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.EditButtonPosition.DisplayButtonAtStart() == true)
             {
                 @if (Context?.Table.EditButtonContent != null)
                 {
@@ -46,11 +46,11 @@
         </MudElement>
     }
     @ChildContent
-    @if (IsEditable && ((Context?.Table.EditButtonPosition.DisplayButtonAtEnd() == true && Context?.Table.EditTrigger == TableEditTrigger.Manual) || Context?.Table.ApplyButtonPosition.DisplayButtonAtEnd() == true))
+    @if (IsEditable && ((Context?.Table.EditButtonPosition.DisplayButtonAtEnd() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayButtonAtEnd() == true))
     {
         @* Add datalabel as a placeholder to avoid jumps on small viewports *@
         <MudTd DataLabel="&nbsp;" Class="py-3">
-            @if (Context?.Table.EditTrigger == TableEditTrigger.Manual && !object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.EditButtonPosition.DisplayButtonAtEnd() == true)
+            @if (Context?.Table.EditTrigger == TableEditTrigger.EditButton && !object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.EditButtonPosition.DisplayButtonAtEnd() == true)
             {
                 @if (Context?.Table.EditButtonContent != null)
                 {

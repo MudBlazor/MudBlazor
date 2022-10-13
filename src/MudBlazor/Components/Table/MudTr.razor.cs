@@ -72,7 +72,7 @@ namespace MudBlazor
         {
             if (Context?.Table.IsEditable == true && Context?.Table.IsEditing == true && Context?.Table.IsEditRowSwitchingBlocked == true) return;
 
-            if ((Context?.Table.EditTrigger == TableEditTrigger.OnRowClick && buttonClicked) || (Context?.Table.EditTrigger == TableEditTrigger.Manual && !buttonClicked)) return;
+            if ((Context?.Table.EditTrigger == TableEditTrigger.RowClick && buttonClicked) || (Context?.Table.EditTrigger == TableEditTrigger.EditButton && !buttonClicked)) return;
 
             // Manage any previous edited row
             Context.ManagePreviousEditedRow(this);

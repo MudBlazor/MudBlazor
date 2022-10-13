@@ -27,9 +27,9 @@ namespace MudBlazor
             context.IsEditable(ignoreEditable) && context.Table.ApplyButtonPosition.DisplayButtonAtEnd();
 
         public static bool DisplayEditbuttonAtStart(this TableContext context, bool ignoreEditable) =>
-            context.IsEditable(ignoreEditable) && context.Table.EditButtonPosition.DisplayButtonAtStart() && context.Table.EditTrigger == TableEditTrigger.Manual;
+            context.IsEditable(ignoreEditable) && context.Table.EditButtonPosition.DisplayButtonAtStart() && context.Table.EditTrigger == TableEditTrigger.EditButton;
 
         public static bool DisplayEditbuttonAtEnd(this TableContext context, bool ignoreEditable) =>
-            context.IsEditable(ignoreEditable) && context.Table.EditButtonPosition.DisplayButtonAtEnd() && context.Table.EditTrigger == TableEditTrigger.Manual;
+            context.IsEditable(ignoreEditable) && context.Table.EditButtonPosition.DisplayButtonAtEnd() && context.Table.EditTrigger == TableEditTrigger.EditButton;
     }
 }
