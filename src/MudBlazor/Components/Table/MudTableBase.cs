@@ -374,7 +374,7 @@ namespace MudBlazor
         public TableEditTrigger EditTrigger { get; set; } = TableEditTrigger.RowClick;
 
         /// <summary>
-        /// Defines the edit button that will be rendered when EditTrigger.Manual
+        /// Defines the edit button that will be rendered when EditTrigger.EditButton
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
@@ -536,5 +536,17 @@ namespace MudBlazor
         public abstract void UpdateSelection();
 
         public Interfaces.IForm Validator { get; set; } = new TableRowValidator();
+
+        public class EditButtonContext
+        {
+            public Action ButtonAction { get; }
+            public bool ButtonDisabled { get; }
+
+            public EditButtonContext(Action buttonAction, bool buttonDisabled)
+            {
+                ButtonAction = buttonAction;
+                ButtonDisabled = buttonDisabled;
+            }
+        }
     }
 }
