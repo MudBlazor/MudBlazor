@@ -4,7 +4,7 @@
     <MudText Typo="@Typo.body1">@($"{_swipeDirection} - Swiped: {_swipeArea.LastSwipedAmount()}px")</MudText>
 </MudSwipeArea>
 <MudSwitch @bind-Checked="@_preventDefault" Color="Color.Primary">Prevent Default</MudSwitch>
-<MudNumericField @bind-Value="_sensivity" />
+<MudNumericField @bind-Value="_sensivity" Label="Sensivity" Min="0" />
 
 @code
     {
