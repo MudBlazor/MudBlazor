@@ -27,7 +27,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
-        public int Sensivity { get; set; } = 100;
+        public int Sensitivity { get; set; } = 100;
 
         /// <summary>
         /// Prevents default behavior of the browser when swiping.
@@ -89,7 +89,7 @@ namespace MudBlazor
             var xDiff = _xDown.Value - arg.ChangedTouches[0].ClientX;
             var yDiff = _yDown.Value - arg.ChangedTouches[0].ClientY;
 
-            if (Math.Abs(xDiff) < Sensivity && Math.Abs(yDiff) < Sensivity)
+            if (Math.Abs(xDiff) < Sensitivity && Math.Abs(yDiff) < Sensitivity)
             {
                 _xDown = _yDown = null;
                 return;
