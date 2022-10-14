@@ -794,6 +794,7 @@ namespace MudBlazor
             FilterDefinitions.Add(new FilterDefinition<T>
             {
                 Id = Guid.NewGuid(),
+                DataGrid = this,
                 Field = column?.Field,
                 Title = column?.Title,
                 FieldType = column?.FieldType
@@ -819,6 +820,7 @@ namespace MudBlazor
             FilterDefinitions.Add(new FilterDefinition<T>
             {
                 Id = id,
+                DataGrid = this,
                 Field = field,
                 Title = column?.Title,
                 FieldType = column?.FieldType,
