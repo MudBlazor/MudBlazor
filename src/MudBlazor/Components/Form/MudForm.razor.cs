@@ -170,7 +170,7 @@ namespace MudBlazor
             if (formControl.Required)
                 SetIsValid(false);
             _formControls.Add(formControl);
-            SetValidation(formControl);
+            SetDefaultControlValidation(formControl);
         }
 
         void IForm.Remove(IFormComponent formControl)
@@ -304,7 +304,7 @@ namespace MudBlazor
             return base.OnAfterRenderAsync(firstRender);
         }
 
-        private void SetValidation(IFormComponent formComponent)
+        private void SetDefaultControlValidation(IFormComponent formComponent)
         {
             if (Validation == null) return;
 
