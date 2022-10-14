@@ -9,6 +9,7 @@ namespace MudBlazor
     public partial class MudSwipeArea : MudComponentBase
     {
         internal double? _xDown, _yDown;
+        private double? _lastSwipedAmount;
         internal ElementReference _componentRef;
         private static readonly string[] _preventDefaultEventNames = { "touchstart", "touchend", "touchcancel" };
         internal int[] _listenerIds;
@@ -20,6 +21,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public Action<SwipeDirection> OnSwipe { get; set; }
+
+        /// <summary>
+        /// Determines the minimum pixels that OnSwipe action has effect.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.SwipeArea.Behavior)]
+        public int Sensivity { get; set; } = 100;
 
         /// <summary>
         /// Prevents default behavior of the browser when swiping.
@@ -81,7 +89,7 @@ namespace MudBlazor
             var xDiff = _xDown.Value - arg.ChangedTouches[0].ClientX;
             var yDiff = _yDown.Value - arg.ChangedTouches[0].ClientY;
 
-            if (Math.Abs(xDiff) < 100 && Math.Abs(yDiff) < 100)
+            if (Math.Abs(xDiff) < Sensivity && Math.Abs(yDiff) < Sensivity)
             {
                 _xDown = _yDown = null;
                 return;
@@ -97,6 +105,7 @@ namespace MudBlazor
                 {
                     InvokeAsync(() => OnSwipe(SwipeDirection.LeftToRight));
                 }
+                _lastSwipedAmount = xDiff;
             }
             else
             {
@@ -108,10 +117,12 @@ namespace MudBlazor
                 {
                     InvokeAsync(() => OnSwipe(SwipeDirection.TopToBottom));
                 }
+                _lastSwipedAmount = yDiff;
             }
-
             _xDown = _yDown = null;
         }
+
+        public double? LastSwipedAmount() => _lastSwipedAmount;
 
         internal void OnTouchCancel(TouchEventArgs arg)
         {
