@@ -155,10 +155,73 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SelectedValue.Should().Be(0);
             Assert.AreEqual(ratingItemsSpans.Length, 12);
 
+
             comp.Instance.HandleItemHovered(6);
             comp.Instance.HoveredValue.Should().Be(6);
             comp.Instance.SelectedValue.Should().Be(0);
             comp.Instance.IsRatingHover.Should().Be(true);
+        }
+
+        /// <summary>
+        /// Initialized EmptyIconColor and FullIconColor by parameter should have the correct colors set.
+        /// </summary>
+        [Test]
+        public void RatingTestIconColors()
+        {
+            var comp = Context.RenderComponent<MudRating>(("SelectedValue", 2), ("EmptyIconColor", Color.Tertiary), ("FullIconColor", Color.Primary));
+            // print the generated html
+            //Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
+            // check initial state
+            Assert.True(ratingItemsSpans[0].ClassName.Contains("mud-primary-text"));
+            Assert.True(ratingItemsSpans[1].ClassName.Contains("mud-primary-text"));
+            Assert.True(ratingItemsSpans[2].ClassName.Contains("mud-tertiary-text"));
+            Assert.True(ratingItemsSpans[3].ClassName.Contains("mud-tertiary-text"));
+            Assert.True(ratingItemsSpans[4].ClassName.Contains("mud-tertiary-text"));
+
+            comp.Instance.SelectedValue.Should().Be(2);
+            ratingItemsSpans[0].Click();
+            comp.Instance.SelectedValue.Should().Be(1);
+
+            ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
+
+
+            Assert.True(ratingItemsSpans[0].ClassName.Contains("mud-primary-text"));
+            Assert.True(ratingItemsSpans[1].ClassName.Contains("mud-tertiary-text"));
+            Assert.True(ratingItemsSpans[2].ClassName.Contains("mud-tertiary-text"));
+            Assert.True(ratingItemsSpans[3].ClassName.Contains("mud-tertiary-text"));
+            Assert.True(ratingItemsSpans[4].ClassName.Contains("mud-tertiary-text"));
+
+            ratingItemsSpans[2].MouseOver();
+            comp.Instance.HoveredValue.Should().Be(3);
+            comp.Instance.SelectedValue.Should().Be(1);
+            comp.Instance.IsRatingHover.Should().Be(true);
+
+            ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
+            Assert.True(ratingItemsSpans[0].ClassName.Contains("mud-primary-text"));
+            Assert.True(ratingItemsSpans[1].ClassName.Contains("mud-primary-text"));
+            Assert.True(ratingItemsSpans[2].ClassName.Contains("mud-primary-text"));
+            Assert.True(ratingItemsSpans[3].ClassName.Contains("mud-tertiary-text"));
+            Assert.True(ratingItemsSpans[4].ClassName.Contains("mud-tertiary-text"));
+            Assert.True(ratingItemsSpans[2].ClassName.Contains("mud-rating-item-active"));
+            ratingItemsSpans[2].MouseOut();
+
+            ratingItemsSpans[4].Click();
+            ratingItemsSpans[1].MouseOver();
+            comp.Instance.HoveredValue.Should().Be(2);
+            comp.Instance.SelectedValue.Should().Be(5);
+            comp.Instance.IsRatingHover.Should().Be(true);
+
+            ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
+            Assert.True(ratingItemsSpans[0].ClassName.Contains("mud-primary-text"));
+            Assert.True(ratingItemsSpans[1].ClassName.Contains("mud-primary-text"));
+            Assert.True(ratingItemsSpans[2].ClassName.Contains("mud-tertiary-text"));
+            Assert.True(ratingItemsSpans[3].ClassName.Contains("mud-tertiary-text"));
+            Assert.True(ratingItemsSpans[4].ClassName.Contains("mud-tertiary-text"));
+            Assert.True(ratingItemsSpans[1].ClassName.Contains("mud-rating-item-active"));
+            ratingItemsSpans[1].MouseOut();
+
         }
 
         [Test]
