@@ -123,6 +123,27 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool TriState { get; set; }
 
+        /// <summary>
+        /// The class of the label.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string LabelClass { get; set; }
+
+        /// <summary>
+        /// The style of the label.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string LabelStyle { get; set; }
+
+        /// <summary>
+        /// The typography of the label.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Typo LabelTypo { get; set; } = Typo.body1;
+
         private string GetIcon()
         {
             if (BoolValue == true)
@@ -245,7 +266,7 @@ namespace MudBlazor
 
             if (disposing == true)
             {
-                if(_keyInterceptor != null)
+                if (_keyInterceptor != null)
                 {
                     _keyInterceptor.KeyDown -= HandleKeyDown;
                     _keyInterceptor.Dispose();
