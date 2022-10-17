@@ -3,7 +3,7 @@
 @inherits MudComponentBase
 
 <tr class="@Classname" @onclick="@OnRowClick" style="@Style" @attributes="@UserAttributes">
-	@if (Context.DisplayApplyButtonAtStart(IgnoreEditable))
+	@if (Context.DisplayApplyButtonAtStart(IgnoreEditable) || Context.DisplayEditbuttonAtStart(IgnoreEditable))
 	{
 		<MudTh />
 	}
@@ -21,8 +21,8 @@
         </MudTd>
     }
     @ChildContent
-	@if (Context.DisplayApplyButtonAtEnd(IgnoreEditable))
-	{
+    @if (Context.DisplayApplyButtonAtEnd(IgnoreEditable) || Context.DisplayEditbuttonAtEnd(IgnoreEditable))
+    {
 		<MudTh />
 	}
 </tr>

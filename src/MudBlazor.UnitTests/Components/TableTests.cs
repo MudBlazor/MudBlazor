@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -1340,6 +1341,162 @@ namespace MudBlazor.UnitTests.Components
 
             // How many buttons? It should always be equal to 2
             comp.FindAll("button").Count.Should().Be(2);
+        }
+
+        /// <summary>
+        /// Ensures the table buttons render correctly
+        /// </summary>
+        [Test]
+        [TestCase(true, TableApplyButtonPosition.Start, TableEditButtonPosition.Start)]
+        [TestCase(true, TableApplyButtonPosition.StartAndEnd, TableEditButtonPosition.StartAndEnd)]
+        [TestCase(true, TableApplyButtonPosition.End, TableEditButtonPosition.End)]
+        [TestCase(false, TableApplyButtonPosition.Start, TableEditButtonPosition.Start)]
+        [TestCase(false, TableApplyButtonPosition.StartAndEnd, TableEditButtonPosition.StartAndEnd)]
+        [TestCase(false, TableApplyButtonPosition.End, TableEditButtonPosition.End)]
+        public async Task TableEditButtonRenderTest(bool customButton, TableApplyButtonPosition buttonApplyPosition, TableEditButtonPosition buttonEditPosition)
+        {
+            IRenderedComponent<ComponentBase> comp;
+            if (customButton)
+            {
+                comp = Context.RenderComponent<TableCustomEditButtonRenderTest>(parameters => parameters
+                    .Add(p => p.ApplyButtonPosition, buttonApplyPosition)
+                    .Add(p => p.EditButtonPosition, buttonEditPosition));
+            }
+            else
+            {
+                comp = Context.RenderComponent<TableEditButtonRenderTest>(parameters => parameters
+                    .Add(p => p.ApplyButtonPosition, buttonApplyPosition)
+                    .Add(p => p.EditButtonPosition, buttonEditPosition));
+            }
+
+            var trs = comp.FindAll("tr");
+
+            //header + 3 items
+            trs.Should().HaveCount(4);
+
+            var header = trs[0];
+            var expectedAmount = buttonEditPosition switch
+            {
+                TableEditButtonPosition.Start or TableEditButtonPosition.End => 2,
+                TableEditButtonPosition.StartAndEnd => 3,
+                _ => throw new NotImplementedException()
+            };
+
+            header.ChildElementCount.Should().Be(expectedAmount);
+
+            var trs2 = comp.FindAll("tr");
+            var relevantRow = trs2[2];
+            relevantRow.ChildElementCount.Should().Be(expectedAmount);
+
+            if (buttonEditPosition == TableEditButtonPosition.Start)
+            {
+                relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+                relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlDivElement>().Should().NotBeNull();
+            }
+            else if (buttonEditPosition == TableEditButtonPosition.End)
+            {
+                relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlDivElement>().Should().NotBeNull();
+                relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+            }
+            else if (buttonEditPosition == TableEditButtonPosition.StartAndEnd)
+            {
+                relevantRow.Children[0].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+                relevantRow.Children[1].FindDescendant<AngleSharp.Html.Dom.IHtmlDivElement>().Should().NotBeNull();
+                relevantRow.Children[2].FindDescendant<AngleSharp.Html.Dom.IHtmlButtonElement>().Should().NotBeNull();
+            }
+        }
+
+        /// <summary>
+        /// Tests the trigger of the edit button
+        /// </summary>
+        [Test]
+        public async Task TableEditButtonTriggerTest()
+        {
+            var comp = Context.RenderComponent<TableEditButtonRenderTest>();
+            var trs = comp.FindAll("tr");
+            trs[1].InnerHtml.Contains("input").Should().BeFalse();
+
+            var buttons = comp.FindAll("button");
+
+            buttons[0].Click();
+            var trs2 = comp.FindAll("tr");
+            trs2[1].InnerHtml.Contains("input").Should().BeTrue();
+
+            buttons[1].Click();
+            var trs3 = comp.FindAll("tr");
+            trs3[1].InnerHtml.Contains("input").Should().BeFalse();
+            trs3[2].InnerHtml.Contains("input").Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Tests the trigger of the custom edit button
+        /// </summary>
+        [Test]
+        public async Task TableCustomEditButtonTriggerTest()
+        {
+            var comp = Context.RenderComponent<TableCustomEditButtonRenderTest>();
+            var trs = comp.FindAll("tr");
+            trs[1].InnerHtml.Contains("input").Should().BeFalse();
+
+            var buttons = comp.FindAll("button");
+
+            buttons[0].Click();
+            var trs2 = comp.FindAll("tr");
+            trs2[1].InnerHtml.Contains("input").Should().BeTrue();
+
+            buttons[1].Click();
+            var trs3 = comp.FindAll("tr");
+            trs3[1].InnerHtml.Contains("input").Should().BeFalse();
+            trs3[2].InnerHtml.Contains("input").Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Ensures clicking a different button does not switch the row
+        /// </summary>
+        [Test]
+        public async Task TableEditButtonRowSwitchBlockTest()
+        {
+            var comp = Context.RenderComponent<TableEditButtonRenderTest>(parameters => parameters
+                    .Add(p => p.BlockRowSwitching, true));
+            var trs = comp.FindAll("tr");
+            trs[1].InnerHtml.Contains("input").Should().BeFalse();
+
+            var buttons = comp.FindAll("button");
+
+            buttons[0].Click();
+            var trs2 = comp.FindAll("tr");
+            trs2[1].InnerHtml.Contains("input").Should().BeTrue();
+
+            buttons[1].Click();
+            var trs3 = comp.FindAll("tr");
+            trs3[1].InnerHtml.Contains("input").Should().BeTrue();
+            trs3[2].InnerHtml.Contains("input").Should().BeFalse(); //the row has not switched
+        }
+
+        /// <summary>
+        /// Clicking the edit button should not trigger the row click event
+        /// </summary>
+        [Test]
+        public async Task TableEditButtonNoRowTrigger()
+        {
+            var timesClicked = 0;
+            void OnRowClick()
+            {
+                timesClicked++;
+            }
+            var comp = Context.RenderComponent<TableEditButtonRenderTest>(parameters => parameters
+                    .Add(p => p.RowClicked, OnRowClick));
+
+            var trs = comp.FindAll("tr");
+            trs[1].Click();
+            timesClicked.Should().Be(1);
+
+            trs[2].Click();
+            timesClicked.Should().Be(2);
+
+            var buttons = comp.FindAll("button");
+            buttons[0].Click();
+            timesClicked.Should().Be(2); //clicking the button should not trigger the row click event
         }
 
         /// <summary>
