@@ -4,7 +4,7 @@
 
 <tr class="@Classname" @onclick="@OnRowClick" style="@Style" @attributes="@UserAttributes">
 
-	@if (Context.DisplayApplyButtonAtStart(IgnoreEditable) || Context.DisplayEditbuttonAtStart(IgnoreEditable))
+	@if (Context.DisplayApplyButtonAtStart(IgnoreEditable) || Context.DisplayEditButtonAtStart(IgnoreEditable))
 	{
 		<MudTh />
 	}
@@ -23,7 +23,7 @@
 		</MudTh>
 	}
 	@ChildContent
-    @if (Context.DisplayApplyButtonAtEnd(IgnoreEditable) || Context.DisplayEditbuttonAtEnd(IgnoreEditable))
+    @if (Context.DisplayApplyButtonAtEnd(IgnoreEditable) || Context.DisplayEditButtonAtEnd(IgnoreEditable))
     {
 		<MudTh />
 	}
