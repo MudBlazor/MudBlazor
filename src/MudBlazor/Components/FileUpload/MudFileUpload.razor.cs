@@ -25,6 +25,7 @@ namespace MudBlazor
             .Build();
 
         [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
         public T FileValue
         {
             get => _value;
@@ -36,6 +37,7 @@ namespace MudBlazor
             }
         }
         [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
         public EventCallback<T> FileValueChanged { get; set; }
 
         /// <summary>
