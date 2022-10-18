@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Form;
@@ -1210,11 +1211,11 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => textField1.SetText("new value"));
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("new value");
-            comp.Instance.FormFieldChangedEventArgs.Field.Equals(textField1);
+            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, textField1);
 
             await comp.InvokeAsync(() => textField2.SetText("new value2"));
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("new value2");
-            comp.Instance.FormFieldChangedEventArgs.Field.Equals(textField2);
+            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, textField2);
 
             var inputs = comp.FindAll("input").ToArray();
             // check initial state
@@ -1223,12 +1224,21 @@ namespace MudBlazor.UnitTests.Components
             inputs[3].Click();
             radioGroup.SelectedOption.Should().Be("1");
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("1");
-            comp.Instance.FormFieldChangedEventArgs.Field.Equals(radioGroup);
+            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, radioGroup);
 
             numeric.Value.Should().Be(0);
             await comp.InvokeAsync(() => numeric.Increment());
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(1);
-            comp.Instance.FormFieldChangedEventArgs.Field.Equals(numeric);
+            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, numeric);
+
+            var fileContent = InputFileContent.CreateFromText("", "upload.txt");
+
+            var mudFile = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
+            var input = comp.FindComponent<InputFile>();
+            input.UploadFiles(fileContent);
+
+            (comp.Instance.FormFieldChangedEventArgs.NewValue is IBrowserFile).Should().BeTrue();
+            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, mudFile);
         }
 
         /// <summary>
