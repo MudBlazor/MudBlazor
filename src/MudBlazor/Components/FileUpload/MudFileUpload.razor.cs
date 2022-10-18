@@ -27,7 +27,7 @@ namespace MudBlazor
         [Parameter]
         public T FileValue
         {
-            get => _value; 
+            get => _value;
             set
             {
                 if (_value != null && _value.Equals(value))
@@ -56,12 +56,12 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
         public RenderFragment<T> SelectedTemplate { get; set; }
-        ///// <summary>
-        ///// If true, OnFilesChanged will not trigger if validation fails
-        ///// </summary>
-        //[Parameter]
-        //[Category(CategoryTypes.FileUpload.Behavior)]
-        //public bool SuppressOnChangeWhenInvalid { get; set; }
+        /// <summary>
+        /// If true, OnFilesChanged will not trigger if validation fails
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public bool SuppressOnChangeWhenInvalid { get; set; }
         /// <summary>
         /// If true, multiple files can be uploaded
         /// </summary>
@@ -81,7 +81,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FileUpload.Appearance)]
         public string InputClass { get; set; }
 
-        private async Task HandleFilesChanged(InputFileChangeEventArgs args)
+        private async Task OnChange(InputFileChangeEventArgs args)
         {
             if (Multiple && typeof(T) == typeof(IReadOnlyList<IBrowserFile>))
             {
@@ -95,8 +95,8 @@ namespace MudBlazor
             await FileValueChanged.InvokeAsync(_value);
             FieldChanged(_value);
             await Validate();
-            //if (!Error || !SuppressOnChangeWhenInvalid) //only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
-            //    await OnFilesChanged.InvokeAsync(args);
+            if (!Error || !SuppressOnChangeWhenInvalid) //only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
+                await OnFilesChanged.InvokeAsync(args);
         }
 
         protected override void OnInitialized()

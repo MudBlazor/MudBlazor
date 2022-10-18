@@ -56,6 +56,19 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Event Options">
+                <Description>
+                    You can use either <CodeInline>FileValue</CodeInline> and <CodeInline>FileValueChanged</CodeInline> or the <CodeInline>OnFilesChanged</CodeInline> callback.
+                    The former is better when used within a <CodeInline>MudForm</CodeInline>, and the latter is better for custom scenarios.
+                    When using <CodeInline>OnFilesChanged</CodeInline>, it will fire regardless of validation by default, but can be configured to only fire when valid using <CodeInline>SuppressOnChangeWhenInvalid</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadEventOptionsExample">
+                <FileUploadEventOptionsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Drag and Drop Example">
                 <Description>Using the example below, you can compose a drag-and-drop uploader.</Description>
             </SectionHeader>
