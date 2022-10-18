@@ -110,6 +110,7 @@
                     Icon="@ClearIcon" 
                     Size="@Size.Small" 
                     OnClick="@ClearButtonClickHandlerAsync"
+                    Title="Clear" 
                     tabindex="-1"
                 />
 	}
@@ -136,10 +137,10 @@
 	{
 	    <div class="mud-input-numeric-spin">
             <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1">
-                <MudIcon Icon="@NumericUpIcon" Size="@GetButtonSize()" />
+                <MudIcon Title="Increment" Icon="@NumericUpIcon" Size="@GetButtonSize()" />
             </MudButton>
             <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1">
-                <MudIcon Icon="@NumericDownIcon" Size="@GetButtonSize()" />
+                <MudIcon Title="Decrement" Icon="@NumericDownIcon" Size="@GetButtonSize()" />
             </MudButton>
 	    </div>
 	}
