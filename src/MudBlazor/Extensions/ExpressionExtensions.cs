@@ -38,7 +38,7 @@ namespace MudBlazor
         public static string GetLabelString<T>(this Expression<Func<T>> expression)
         {
             var memberExpression = (MemberExpression)expression.Body;
-            var propertyInfo = memberExpression.Expression?.Type.GetProperty(memberExpression.Member.Name);
+            var propertyInfo = memberExpression.Member;
             return propertyInfo?.GetCustomAttributes(typeof(LabelAttribute), true).Cast<LabelAttribute>().FirstOrDefault()?.Name ?? string.Empty;
         }
     }
