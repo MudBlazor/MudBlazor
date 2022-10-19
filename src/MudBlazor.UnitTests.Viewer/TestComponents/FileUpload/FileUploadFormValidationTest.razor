@@ -2,12 +2,12 @@
 @using FluentValidation
 
 <MudForm Model="@Model" @ref="@Form" Validation="@(ValidationRules.ValidateValue)" ValidationDelay="0">
-    <MudFileUpload T="IBrowserFile" For="@(() => Model.File)" @bind-FileValue="Model.File">
+    <MudFileUpload T="IBrowserFile" For="@(() => Model.File)" @bind-Files="Model.File">
         <ButtonTemplate>
             <MudButton HtmlTag="label" for="@context"></MudButton>
         </ButtonTemplate>
     </MudFileUpload>
-    <MudFileUpload T="IReadOnlyList<IBrowserFile>" Multiple For="@(() => Model.Files)" @bind-FileValue="Model.Files">
+    <MudFileUpload T="IReadOnlyList<IBrowserFile>" Multiple For="@(() => Model.Files)" @bind-Files="Model.Files">
         <ButtonTemplate>
             <MudButton HtmlTag="label" for="@context"></MudButton>
         </ButtonTemplate>

@@ -10,7 +10,7 @@
                           For="@(() => model.Name)"
                           Immediate="true"
                           Label="Name" />
-            <MudFileUpload T="IBrowserFile" For="@(() => model.File)" @bind-FileValue="model.File" OnFilesChanged="UploadFiles" SuppressOnChangeWhenInvalid="SuppressOnChangeWhenInvalid">
+            <MudFileUpload T="IBrowserFile" For="@(() => model.File)" @bind-Files="model.File" OnFilesChanged="UploadFiles" SuppressOnChangeWhenInvalid="SuppressOnChangeWhenInvalid">
                 <ButtonTemplate>
                     <MudButton HtmlTag="label"
                                Variant="Variant.Filled"

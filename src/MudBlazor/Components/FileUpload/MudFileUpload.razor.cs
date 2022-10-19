@@ -24,9 +24,14 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        /// <summary>
+        /// The value of the MudFileUpload component.
+        /// If T is <see cref="IBrowserFile">IBrowserFile</see>, it represents a single file.
+        /// If T is <see cref="IReadOnlyCollection{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>, it represents multiple files
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
-        public T FileValue
+        public T Files
         {
             get => _value;
             set
@@ -36,9 +41,12 @@ namespace MudBlazor
                 _value = value;
             }
         }
+        /// <summary>
+        /// Triggered when the internal OnChange event fires
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
-        public EventCallback<T> FileValueChanged { get; set; }
+        public EventCallback<T> FilesChanged { get; set; }
 
         /// <summary>
         /// Called when the internal files are changed
@@ -94,7 +102,7 @@ namespace MudBlazor
                 _value = (T)args.File;
             }
 
-            await FileValueChanged.InvokeAsync(_value);
+            await FilesChanged.InvokeAsync(_value);
             BeginValidate();
             FieldChanged(_value);
             if (!Error || !SuppressOnChangeWhenInvalid) //only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
