@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Bunit;
 using Microsoft.AspNetCore.Components;
@@ -40,6 +41,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IKeyInterceptorFactory, MockKeyInterceptorServiceFactory>();
             ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
             ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
+            ctx.Services.AddScoped<IMudLoggingService, MockLoggingService>();
             ctx.Services.AddScoped(sp => new HttpClient());
         }
 
