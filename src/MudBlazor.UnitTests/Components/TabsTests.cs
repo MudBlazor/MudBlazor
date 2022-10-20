@@ -950,8 +950,8 @@ namespace MudBlazor.UnitTests.Components
             var panels = comp.FindAll(".mud-tab");
             panels.Should().HaveCount(2);
 
-            // index 0 : html text "Hello <span>World</span>!"
-            panels[0].InnerHtml.Contains("Hello <span>World</span>!").Should().BeTrue();
+            // The Text is set as 'Hello <span>World</span>!'
+            panels[0].InnerHtml.Contains("Hello &lt;span&gt;World&lt;/span&gt;!").Should().BeTrue();
             panels[0].TextContent.Contains("Hello World!").Should().BeTrue();
 
             // index 1 : simple text without html "Hello World!"
