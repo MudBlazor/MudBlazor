@@ -20,6 +20,7 @@ namespace MudBlazor
         Task ScrollToTop(ScrollBehavior scrollBehavior = ScrollBehavior.Auto);
 
         ValueTask ScrollToAsync(string id, int left, int top, ScrollBehavior scrollBehavior);
+        ValueTask ScrollIntoViewAsync(string selector, ScrollBehavior behavior);
         ValueTask ScrollToFragmentAsync(string id, ScrollBehavior behavior);
         ValueTask ScrollToTopAsync(string id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto);
         ValueTask ScrollToYearAsync(string elementId);
@@ -68,6 +69,15 @@ namespace MudBlazor
         [Obsolete]
         public async Task ScrollTo(int left, int top, ScrollBehavior behavior) =>
             await ScrollToAsync(Selector, left, top, behavior);
+
+        /// <summary>
+        /// Scrolls the first instance of the selector into view
+        /// </summary>
+        /// <param name="selector"></param>
+        /// <param name="behavior"></param>
+        /// <returns></returns>
+        public ValueTask ScrollIntoViewAsync(string selector, ScrollBehavior behavior) =>
+            _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollIntoView", selector, behavior.ToDescriptionString());
 
         /// <summary>
         /// Scrolls to the top of the element

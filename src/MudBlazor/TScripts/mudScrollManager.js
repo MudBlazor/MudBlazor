@@ -39,6 +39,13 @@ class MudScrollManager {
         element.scrollTo({ left, top, behavior });
     }
 
+    //scrolls the provided selector into view
+    scrollIntoView(selector, behavior) {
+        let element = document.querySelector(selector) || document.documentElement;
+        if (element)
+            element.scrollIntoView({ behavior, block: 'center', inline: 'start' });
+    }
+
     scrollToBottom(selector, behavior) {
         let element = document.querySelector(selector);
         if (element)
