@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -8,7 +7,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudCollapse : MudComponentBase, IDisposable
+    public partial class MudCollapse : MudComponentBase
     {
         internal enum CollapseState
         {
@@ -16,11 +15,9 @@ namespace MudBlazor
         }
 
         internal double _height;
-        private int _listenerId;
         private bool _expanded, _isRendered, _updateHeight;
-        private ElementReference _container, _wrapper;
+        private ElementReference _wrapper;
         internal CollapseState _state = CollapseState.Exited;
-        private DotNetObjectReference<MudCollapse> _dotNetRef;
 
         protected string Stylename =>
             new StyleBuilder()
@@ -103,13 +100,13 @@ namespace MudBlazor
 
         internal async Task UpdateHeight()
         {
-            if (_disposeCount > 0)
-            {
-                _height = 0;
-            }
-            else
+            try
             {
                 _height = (await _wrapper.MudGetBoundingClientRectAsync())?.Height ?? 0;
+            }
+            catch (Exception ex) when (ex is JSDisconnectedException || ex is TaskCanceledException)
+            {
+                _height = 0;
             }
 
             if (MaxHeight != null && _height > MaxHeight)
@@ -118,18 +115,12 @@ namespace MudBlazor
             }
         }
 
-        protected override void OnInitialized()
-        {
-            _dotNetRef = DotNetObjectReference.Create(this);
-        }
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
                 _isRendered = true;
                 await UpdateHeight();
-                _listenerId = await _container.MudAddEventListenerAsync(_dotNetRef, "animationend", nameof(AnimationEnd));
             }
             else if (_updateHeight && _state is CollapseState.Entering or CollapseState.Exiting)
             {
@@ -140,30 +131,6 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        internal int _disposeCount;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (Interlocked.Increment(ref _disposeCount) == 1)
-            {
-                if (disposing)
-                {
-                    if (_listenerId != 0)
-                        _ = _container.MudRemoveEventListenerAsync("animationend", _listenerId);
-                    var toDispose = _dotNetRef;
-                    _dotNetRef = null;
-                    toDispose?.Dispose();
-                }
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        [JSInvokable]
         public void AnimationEnd()
         {
             if (_state == CollapseState.Entering)
