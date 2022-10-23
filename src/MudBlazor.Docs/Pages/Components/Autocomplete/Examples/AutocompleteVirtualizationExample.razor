@@ -2,7 +2,7 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1"
+        <MudAutocomplete T="string" Label="Employee ID" @bind-Value="value1" SearchFunc="@Search1"
                          ResetValueOnEmptyText="@resetValueOnEmptyText" MaxItems="100000"
                          CoerceText="@coerceText" CoerceValue="@coerceValue"
                          Virtualize="true" />
@@ -24,31 +24,14 @@
     private bool coerceText;
     private bool coerceValue;
     private string value1;
-    private string[] states =
-    {
-        "Alabama", "Alaska", "American Samoa", "Arizona",
-        "Arkansas", "California", "Colorado", "Connecticut",
-        "Delaware", "District of Columbia", "Federated States of Micronesia",
-        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
-        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
-        "Louisiana", "Maine", "Marshall Islands", "Maryland",
-        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
-        "Missouri", "Montana", "Nebraska", "Nevada",
-        "New Hampshire", "New Jersey", "New Mexico", "New York",
-        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
-        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
-        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
-        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
-        "Washington", "West Virginia", "Wisconsin", "Wyoming",
-    };
 
-    private IEnumerable<string> GetALotOfStates()
+    private IEnumerable<string> GetALotOfIds()
     {
         List<string> s = new List<string>();
         for (int i = 0; i < 1000;i++)
         {
             var index = i;
-            s.AddRange(states.Select(x => $"{x}_{i}"));
+            s.Add(Guid.NewGuid().ToString());
         }
 
         return s;
@@ -61,7 +44,7 @@
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
-            return GetALotOfStates();
-        return GetALotOfStates().Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+            return GetALotOfIds();
+        return GetALotOfIds().Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 }
