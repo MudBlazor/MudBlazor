@@ -2,6 +2,7 @@
 @typeparam T
 @inherits MudBaseInput<T>
 @using MudBlazor.Internal
+@using MudBlazor.Extensions
 
 <div class="@Classname" style="@Style">
 	@if (Adornment == Adornment.Start)
@@ -23,11 +24,11 @@
                 @ref="ElementReference" 
                 rows="@Lines" 
                 @attributes="UserAttributes"
-                type="@InputTypeString"                  
+                type="@GetInputType().ToDescriptionString()"                  
                 placeholder="@Placeholder" 
                 disabled=@Disabled 
                 readonly="@ReadOnly" 
-                inputmode="@InputMode.ToString()"
+                inputmode="@GetInputMode().ToString()"
 			    @oninput="OnInput" 
                 @onchange="OnChange" 
                 @onblur="@OnBlurred" 
@@ -54,16 +55,16 @@
 	{
 	    <input class="@InputClassname"
                 @ref="ElementReference" 
-                @attributes="UserAttributes" 
-                type="@InputTypeString"                  
-                value="@_internalText" 
+                @attributes="UserAttributes"
+           type="@GetInputType().ToDescriptionString()"
+           value="@_internalText" 
                 @oninput="OnInput" 
                 @onchange="OnChange"
                 placeholder="@Placeholder" 
                 disabled=@Disabled 
                 readonly="@ReadOnly" 
                 @onblur="@OnBlurred" 
-                inputmode="@InputMode.ToString()" 
+                inputmode="@GetInputMode().ToString()" 
                 pattern="@Pattern"
                 @onkeydown="@InvokeKeyDown" 
                 @onkeypress="@InvokeKeyPress" 

@@ -20,7 +20,7 @@
                           OnKeyDown="@this.OnInputKeyDown"
                           OnKeyUp="@this.OnInputKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
-                          InputMode="@InputMode" Pattern="@Pattern"
+                          InputMode="@GetInputMode()" Pattern="@Pattern"
                           T="string" />
 
                 @if (ShowProgressIndicator && IsLoading)

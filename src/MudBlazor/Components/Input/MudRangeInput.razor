@@ -2,6 +2,7 @@
 @typeparam T
 @inherits MudBaseInput<Range<T>>
 @using MudBlazor.Internal
+@using MudBlazor.Extensions
 
 <div class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
@@ -16,10 +17,10 @@
         </div>
     }
 
-    <input @ref="_elementReferenceStart" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@TextStart" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
-           placeholder="@PlaceholderStart" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" inputmode="@InputMode.ToString()" pattern="@Pattern" />
+    <input @ref="_elementReferenceStart" @attributes="UserAttributes" type="@GetInputType().ToDescriptionString()" class="@InputClassname" @bind-value="@TextStart" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
+           placeholder="@PlaceholderStart" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" inputmode="@GetInputMode().ToString()" pattern="@Pattern" />
     <MudIcon Class="mud-range-input-separator mud-flip-x-rtl" Icon="@SeparatorIcon" Color="@Color.Default" />
-    <input @ref="_elementReferenceEnd" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@TextEnd" @bind-value:event="@((Immediate ? "oninput" : "onchange"))" inputmode="@InputMode.ToString()" pattern="@Pattern"
+    <input @ref="_elementReferenceEnd" @attributes="UserAttributes" type="@GetInputType().ToDescriptionString()" class="@InputClassname" @bind-value="@TextEnd" @bind-value:event="@((Immediate ? "oninput" : "onchange"))" inputmode="@GetInputMode().ToString()" pattern="@Pattern"
            placeholder="@PlaceholderEnd" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" />
 
     @if (Adornment == Adornment.End)

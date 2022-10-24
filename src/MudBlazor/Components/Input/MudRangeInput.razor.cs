@@ -38,8 +38,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string PlaceholderEnd { get; set; }
 
-        protected string InputTypeString => InputType.ToDescriptionString();
-
         /// <summary>
         /// ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.
         /// </summary>

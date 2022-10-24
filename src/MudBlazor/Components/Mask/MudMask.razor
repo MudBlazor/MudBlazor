@@ -18,7 +18,7 @@
     <input class="@InputClassname"
            @ref="_elementReference"
            @attributes="UserAttributes"
-           type="@InputType.ToDescriptionString()"
+           type="@GetInputType().ToDescriptionString()"
            value="@Text"
            placeholder="@Placeholder"
            disabled=@Disabled
@@ -27,7 +27,7 @@
            @onfocus="OnFocused"
            @oncut="OnCut"
            @oncopy="OnCopy"
-           inputmode="@InputMode.ToString()"
+           inputmode="@GetInputMode().ToString()"
            />
 
     @if (Disabled)

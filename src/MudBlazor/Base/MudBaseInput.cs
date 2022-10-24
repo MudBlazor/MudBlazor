@@ -191,13 +191,6 @@ namespace MudBlazor
         public bool TextUpdateSuppression { get; set; } = true;
 
         /// <summary>
-        ///  Hints at the type of data that might be entered by the user while editing the input
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public virtual InputMode InputMode { get; set; } = InputMode.text;
-
-        /// <summary>
         /// The pattern attribute, when specified, is a regular expression which the input's value must match in order for the value to pass constraint validation. It must be a valid JavaScript regular expression
         /// Not Supported in multline input
         /// </summary>
@@ -209,6 +202,11 @@ namespace MudBlazor
         /// Derived classes need to override this if they can be something other than text
         /// </summary>
         internal virtual InputType GetInputType() { return InputType.Text; }
+
+        /// <summary>
+        /// Derived classes need to override this if they can be something other than text
+        /// </summary>
+        internal virtual InputMode GetInputMode() { return InputMode.text; }
 
         protected virtual async Task SetTextAsync(string text, bool updateValue = true)
         {

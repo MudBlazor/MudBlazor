@@ -103,6 +103,13 @@ namespace MudBlazor
         public InputType InputType { get; set; } = InputType.Text;
 
         /// <summary>
+        ///  Hints at the type of data that might be entered by the user while editing the input
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public virtual InputMode InputMode { get; set; } = InputMode.text;
+
+        /// <summary>
         /// Show clear button.
         /// </summary>
         [Parameter]
@@ -295,7 +302,8 @@ namespace MudBlazor
             await Update();
         }
 
-        internal override InputType GetInputType() => InputType;
+        internal override InputType GetInputType() => InputType != InputType.Text ? InputType : this.For.GetInputTypeFromDataType();
+        internal override InputMode GetInputMode() => InputMode != InputMode.text ? InputMode : this.For.GetInputModeFromDataType();
 
         private string GetCounterText() => Counter == null
             ? string.Empty

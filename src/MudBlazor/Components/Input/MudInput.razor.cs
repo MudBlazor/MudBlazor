@@ -31,8 +31,6 @@ namespace MudBlazor
 
         internal override InputType GetInputType() => InputType;
 
-        protected string InputTypeString => InputType.ToDescriptionString();
-
         protected Task OnInput(ChangeEventArgs args)
         {
             if (!Immediate)
