@@ -38,6 +38,21 @@ namespace MudBlazor.UnitTests.Extensions
 
             [DataType(DataType.PhoneNumber)]
             public string Field3 { get; set; }
+
+            [DataType(DataType.DateTime)]
+            public DateTime Field4 { get; set; }
+
+            [DataType(DataType.Currency)]
+            public Decimal Field5 { get; set; }
+
+            [DataType(DataType.Url)]
+            public string Field6 { get; set; }
+
+            [DataType(DataType.CreditCard)]
+            public string Field7 { get; set; }
+
+            [DataType(DataType.Time)]
+            public DateTime Field8 { get; set; }
         }
 
         [Test]
@@ -121,6 +136,46 @@ namespace MudBlazor.UnitTests.Extensions
         }
 
         [Test]
+        public void GetInputTypeFromDataType_DateTime_Date()
+        {
+            var model = new TestClass3();
+
+            Expression<Func<DateTime>> expression = () => model.Field4;
+
+            expression.GetInputTypeFromDataType().Should().Be(InputType.Date);
+        }
+
+        [Test]
+        public void GetInputTypeFromDataType_Currency()
+        {
+            var model = new TestClass3();
+
+            Expression<Func<Decimal>> expression = () => model.Field5;
+
+            expression.GetInputTypeFromDataType().Should().Be(InputType.Number);
+        }
+
+        [Test]
+        public void GetInputTypeFromDataType_Url()
+        {
+            var model = new TestClass3();
+
+            Expression<Func<string>> expression = () => model.Field6;
+
+            expression.GetInputTypeFromDataType().Should().Be(InputType.Url);
+        }
+
+        [Test]
+        public void GetInputTypeFromDataType_DateTime_Time()
+        {
+            var model = new TestClass3();
+
+            Expression<Func<DateTime>> expression = () => model.Field8;
+
+            expression.GetInputTypeFromDataType().Should().Be(InputType.Time);
+        }
+
+        [Test]
         public void GetInputModeFromDataType_Default()
         {
             var model = new TestClass3();
@@ -148,6 +203,36 @@ namespace MudBlazor.UnitTests.Extensions
             Expression<Func<string>> expression = () => model.Field3;
 
             expression.GetInputModeFromDataType().Should().Be(InputMode.tel);
+        }
+
+        [Test]
+        public void GetInputModeFromDataType_Decimal()
+        {
+            var model = new TestClass3();
+
+            Expression<Func<decimal>> expression = () => model.Field5;
+
+            expression.GetInputModeFromDataType().Should().Be(InputMode.@decimal);
+        }
+
+        [Test]
+        public void GetInputModeFromDataType_Url()
+        {
+            var model = new TestClass3();
+
+            Expression<Func<string>> expression = () => model.Field6;
+
+            expression.GetInputModeFromDataType().Should().Be(InputMode.url);
+        }
+
+        [Test]
+        public void GetInputModeFromDataType_CreditCard()
+        {
+            var model = new TestClass3();
+
+            Expression<Func<string>> expression = () => model.Field7;
+
+            expression.GetInputModeFromDataType().Should().Be(InputMode.numeric);
         }
     }
 }
