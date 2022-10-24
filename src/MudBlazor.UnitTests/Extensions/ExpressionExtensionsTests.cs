@@ -29,6 +29,17 @@ namespace MudBlazor.UnitTests.Extensions
             public string Field1 { get; set; }
         }
 
+        private class TestClass3
+        {
+            public string Field1 { get; set; }
+
+            [DataType(DataType.Password)]
+            public string Field2 { get; set; }
+
+            [DataType(DataType.PhoneNumber)]
+            public string Field3 { get; set; }
+        }
+
         [Test]
         public void GetFullPathOfMemberTest()
         {
@@ -77,6 +88,66 @@ namespace MudBlazor.UnitTests.Extensions
             Expression<Func<string>> expression = () => model.Field1;
 
             expression.GetLabelString().Should().Be("");
+        }
+
+        [Test]
+        public void GetInputTypeFromDataType_Default()
+        {
+            var model = new TestClass3();
+
+            Expression<Func<string>> expression = () => model.Field1;
+
+            expression.GetInputTypeFromDataType().Should().Be(InputType.Text);
+        }
+
+        [Test]
+        public void GetInputTypeFromDataType_Password()
+        {
+            var model = new TestClass3();
+
+            Expression<Func<string>> expression = () => model.Field2;
+
+            expression.GetInputTypeFromDataType().Should().Be(InputType.Password);
+        }
+
+        [Test]
+        public void GetInputTypeFromDataType_Telephone()
+        {
+            var model = new TestClass3();
+
+            Expression<Func<string>> expression = () => model.Field3;
+
+            expression.GetInputTypeFromDataType().Should().Be(InputType.Telephone);
+        }
+
+        [Test]
+        public void GetInputModeFromDataType_Default()
+        {
+            var model = new TestClass3();
+
+            Expression<Func<string>> expression = () => model.Field1;
+
+            expression.GetInputModeFromDataType().Should().Be(InputMode.text);
+        }
+
+        [Test]
+        public void GetInputModeFromDataType_Password()
+        {
+            var model = new TestClass3();
+
+            Expression<Func<string>> expression = () => model.Field2;
+
+            expression.GetInputModeFromDataType().Should().Be(InputMode.text);
+        }
+
+        [Test]
+        public void GetInputModeFromDataType_Telephone()
+        {
+            var model = new TestClass3();
+
+            Expression<Func<string>> expression = () => model.Field3;
+
+            expression.GetInputModeFromDataType().Should().Be(InputMode.tel);
         }
     }
 }
