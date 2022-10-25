@@ -9,7 +9,7 @@ namespace MudBlazor
     public partial class MudSwipeArea : MudComponentBase
     {
         internal double? _xDown, _yDown;
-        private double? _lastSwipedAmount;
+        private double? _swipeDelta;
         internal ElementReference _componentRef;
         private static readonly string[] _preventDefaultEventNames = { "touchstart", "touchend", "touchcancel" };
         internal int[] _listenerIds;
@@ -105,7 +105,7 @@ namespace MudBlazor
                 {
                     InvokeAsync(() => OnSwipe(SwipeDirection.LeftToRight));
                 }
-                _lastSwipedAmount = xDiff;
+                _swipeDelta = xDiff;
             }
             else
             {
@@ -117,12 +117,12 @@ namespace MudBlazor
                 {
                     InvokeAsync(() => OnSwipe(SwipeDirection.TopToBottom));
                 }
-                _lastSwipedAmount = yDiff;
+                _swipeDelta = yDiff;
             }
             _xDown = _yDown = null;
         }
 
-        public double? LastSwipedAmount() => _lastSwipedAmount;
+        public double? SwipeDelta() => _swipeDelta;
 
         internal void OnTouchCancel(TouchEventArgs arg)
         {
