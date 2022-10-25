@@ -33,10 +33,10 @@ namespace MudBlazor.UnitTests.Components
             Console.SetOut(sw); //set up trace listener
 
             var comp = Context.RenderComponent<MudFileUpload<T>>();
+            Trace.Flush();
             var output = sw.ToString();
 
             Assert.AreEqual($"T must be of type {typeof(IReadOnlyList<IBrowserFile>)} or {typeof(IBrowserFile)}\r\n", output);
-            Trace.Flush();
         }
 
         /// <summary>
@@ -52,11 +52,10 @@ namespace MudBlazor.UnitTests.Components
 
             var comp1 = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
             .Add(x => x.Multiple, true));
+            Trace.Flush();
             var output = sw.ToString();
 
             Assert.AreEqual($"Multiple must be false when T is of type {typeof(IBrowserFile)}\r\n", output);
-
-            Trace.Flush();
         }
 
         /// <summary>
@@ -68,6 +67,7 @@ namespace MudBlazor.UnitTests.Components
             using var sw = new StringWriter();
             var writerTraceListener = new TextWriterTraceListener(sw);
             Trace.Listeners.Add(writerTraceListener);
+            Trace.Flush();
             Console.SetOut(sw); //set up trace listener
 
             var comp1 = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
@@ -75,8 +75,6 @@ namespace MudBlazor.UnitTests.Components
             var output = sw.ToString();
 
             Assert.AreEqual($"Multiple must be true when T is of type {typeof(IReadOnlyList<IBrowserFile>)}\r\n", output);
-
-            Trace.Flush();
         }
 
         /// <summary>
