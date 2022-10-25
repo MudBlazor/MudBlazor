@@ -23,7 +23,7 @@ namespace MudBlazor
         public Action<SwipeDirection> OnSwipe { get; set; }
 
         /// <summary>
-        /// Determines the minimum pixels that OnSwipe action has effect.
+        /// Swipe threshold in pixels. If SwipeDelta is below Sensitivity then OnSwipe is not called.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
@@ -122,6 +122,9 @@ namespace MudBlazor
             _xDown = _yDown = null;
         }
 
+        /// <summary>
+        /// The last successful swipe difference in pixels since the last OnSwipe invocation
+        /// </summary>
         public double? SwipeDelta() => _swipeDelta;
 
         internal void OnTouchCancel(TouchEventArgs arg)
