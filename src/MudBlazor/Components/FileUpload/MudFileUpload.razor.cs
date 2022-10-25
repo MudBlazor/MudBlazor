@@ -74,12 +74,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FileUpload.Behavior)]
         public bool SuppressOnChangeWhenInvalid { get; set; }
         /// <summary>
-        /// If true, multiple files can be uploaded
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FileUpload.Behavior)]
-        public bool Multiple { get; set; }
-        /// <summary>
         /// Sets the file types this input will accept
         /// </summary>
         [Parameter]
@@ -94,11 +88,11 @@ namespace MudBlazor
 
         private async Task OnChange(InputFileChangeEventArgs args)
         {
-            if (Multiple && typeof(T) == typeof(IReadOnlyList<IBrowserFile>))
+            if (typeof(T) == typeof(IReadOnlyList<IBrowserFile>))
             {
                 _value = (T)args.GetMultipleFiles();
             }
-            else if (!Multiple && typeof(T) == typeof(IBrowserFile))
+            else if (typeof(T) == typeof(IBrowserFile))
             {
                 _value = (T)args.File;
             }
@@ -115,10 +109,6 @@ namespace MudBlazor
         {
             if (!(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) || typeof(T) == typeof(IBrowserFile)))
                 Debug.WriteLine($"T must be of type {typeof(IReadOnlyList<IBrowserFile>)} or {typeof(IBrowserFile)}");
-            if (typeof(T) == typeof(IBrowserFile) && Multiple)
-                Debug.WriteLine($"{nameof(Multiple)} must be false when T is of type {typeof(IBrowserFile)}");
-            if (typeof(T) == typeof(IReadOnlyList<IBrowserFile>) && !Multiple)
-                Debug.WriteLine($"{nameof(Multiple)} must be true when T is of type {typeof(IReadOnlyList<IBrowserFile>)}");
 
             base.OnInitialized();
         }
