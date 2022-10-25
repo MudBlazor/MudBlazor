@@ -125,7 +125,7 @@ namespace MudBlazor
         /// <summary>
         /// The last successful swipe difference in pixels since the last OnSwipe invocation
         /// </summary>
-        public double? SwipeDelta() => _swipeDelta;
+        public double? GetSwipeDelta() => _swipeDelta;
 
         internal void OnTouchCancel(TouchEventArgs arg)
         {
