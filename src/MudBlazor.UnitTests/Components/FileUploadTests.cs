@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,67 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class FileUploadTests : BunitTest
     {
+        /// <summary>
+        /// Verifies that T is a valid type
+        /// </summary>
+        [Test]
+        public void FileUpload_VerifyGenericTest()
+        {
+            using var sw = new StringWriter();
+            var writerTraceListener = new TextWriterTraceListener(sw);
+            Trace.Listeners.Add(writerTraceListener);
+            Console.SetOut(sw); //set up trace listener
+
+            var comp = Context.RenderComponent<MudFileUpload<T>>();
+            var output = sw.ToString();
+
+            Assert.AreEqual($"T must be of type {typeof(IReadOnlyList<IBrowserFile>)} or {typeof(IBrowserFile)}\r\n", output);
+            Trace.Flush();
+        }
+
+        /// <summary>
+        /// Verfies that T matches the Multiple parameter (1/2)
+        /// </summary>
+        [Test]
+        public void FileUpload_VerifyGenericMultipleTest1()
+        {
+            using var sw = new StringWriter();
+            var writerTraceListener = new TextWriterTraceListener(sw);
+            Trace.Listeners.Add(writerTraceListener);
+            Console.SetOut(sw); //set up trace listener
+
+            var comp1 = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
+            .Add(x => x.Multiple, true));
+            var output = sw.ToString();
+
+            Assert.AreEqual($"Multiple must be false when T is of type {typeof(IBrowserFile)}\r\n", output);
+
+            Trace.Flush();
+        }
+
+        /// <summary>
+        /// Verfies that T matches the Multiple parameter (2/2)
+        /// </summary>
+        [Test]
+        public void FileUpload_VerifyGenericMultipleTest2()
+        {
+            using var sw = new StringWriter();
+            var writerTraceListener = new TextWriterTraceListener(sw);
+            Trace.Listeners.Add(writerTraceListener);
+            Console.SetOut(sw); //set up trace listener
+
+            var comp1 = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+            .Add(x => x.Multiple, false));
+            var output = sw.ToString();
+
+            Assert.AreEqual($"Multiple must be true when T is of type {typeof(IReadOnlyList<IBrowserFile>)}\r\n", output);
+
+            Trace.Flush();
+        }
+
+        /// <summary>
+        /// Checks the FileUpload CSS classes
+        /// </summary>
         [Test]
         public void FileUpload_CSSTest()
         {
@@ -33,6 +95,9 @@ namespace MudBlazor.UnitTests.Components
             innerClasses.Should().Be("inner-test");
         }
 
+        /// <summary>
+        /// Ensures the underlying input receives the multiple attribute
+        /// </summary>
         [Test]
         public void FileUpload_MultipleTest()
         {
@@ -43,6 +108,9 @@ namespace MudBlazor.UnitTests.Components
             input.HasAttribute("multiple");
         }
 
+        /// <summary>
+        /// Ensures the underyling input receives the accept attribute
+        /// </summary>
         [Test]
         public void FileUpload_AcceptTest()
         {
@@ -53,6 +121,9 @@ namespace MudBlazor.UnitTests.Components
             input.GetAttribute("accept").Should().Be(".png, .jpg");
         }
 
+        /// <summary>
+        /// Verifies the button template renders
+        /// </summary>
         [Test]
         public void FileUpload_ButtonTemplateTest()
         {

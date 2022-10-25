@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -101,6 +102,7 @@ namespace MudBlazor
             {
                 _value = (T)args.File;
             }
+            else return;
 
             await FilesChanged.InvokeAsync(_value);
             BeginValidate();
@@ -111,8 +113,13 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            //if (!(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) || typeof(T) == typeof(IBrowserFile)))
-            //    throw new InvalidOperationException($"T must be of type {typeof(IReadOnlyList<IBrowserFile>)} or {typeof(IBrowserFile)}");
+            if (!(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) || typeof(T) == typeof(IBrowserFile)))
+                Debug.WriteLine($"T must be of type {typeof(IReadOnlyList<IBrowserFile>)} or {typeof(IBrowserFile)}");
+            if (typeof(T) == typeof(IBrowserFile) && Multiple)
+                Debug.WriteLine($"{nameof(Multiple)} must be false when T is of type {typeof(IBrowserFile)}");
+            if (typeof(T) == typeof(IReadOnlyList<IBrowserFile>) && !Multiple)
+                Debug.WriteLine($"{nameof(Multiple)} must be true when T is of type {typeof(IReadOnlyList<IBrowserFile>)}");
+
             base.OnInitialized();
         }
     }
