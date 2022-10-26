@@ -34,14 +34,14 @@ namespace MudBlazor.UnitTests.Utilities
 
             var entries = logger.GetEntries();
             entries.Count.Should().Be(4);
-            entries[1].Level.Should().Be(LogLevel.Debug);
-            entries[1].Message.Should().Be("Log Debug");
-            entries[2].Level.Should().Be(LogLevel.Information);
-            entries[2].Message.Should().Be("Log Information");
-            entries[3].Level.Should().Be(LogLevel.Error);
-            entries[3].Message.Should().Be("Log Error");
-            entries[4].Level.Should().Be(LogLevel.Critical);
-            entries[4].Message.Should().Be("Log Critical");
+            entries[0].Level.Should().Be(LogLevel.Information);
+            entries[0].Message.Should().Be("Log Information");
+            entries[1].Level.Should().Be(LogLevel.Warning);
+            entries[1].Message.Should().Be("Log Warning");
+            entries[2].Level.Should().Be(LogLevel.Error);
+            entries[2].Message.Should().Be("Log Error");
+            entries[3].Level.Should().Be(LogLevel.Critical);
+            entries[3].Message.Should().Be("Log Critical");
         }
     }
 }
