@@ -31,7 +31,6 @@ namespace MudBlazor
 
         private readonly DotNetObjectReference<BaseMudThemeProvider> _dotNetRef;
         [Inject] private IJSRuntime JsRuntime { get; set; }
-        [Inject] private IMudLoggingService LoggingService { get; set; }
 
         /// <summary>
         /// Returns the dark mode preference of the user. True if dark mode is preferred.
@@ -78,13 +77,6 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             Theme ??= new MudTheme();
-        }
-
-        protected override void OnAfterRender(bool firstRender)
-        {
-            if (firstRender)
-                LoggingService.Enable(); //enable the logging service when the Provider render completes
-            base.OnAfterRender(firstRender);
         }
 
         protected string BuildTheme()

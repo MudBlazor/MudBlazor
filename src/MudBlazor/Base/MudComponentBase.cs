@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
@@ -41,8 +39,5 @@ namespace MudBlazor
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
         /// </summary>
         public string FieldId => (UserAttributes?.ContainsKey("id") == true ? UserAttributes["id"].ToString() : $"mudinput-{Guid.NewGuid()}");
-
-        [Inject]
-        protected IMudLoggingService LoggingService { get; set; }
     }
 }

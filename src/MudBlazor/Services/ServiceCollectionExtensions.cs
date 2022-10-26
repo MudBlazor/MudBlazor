@@ -250,17 +250,6 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        /// Adds IMudLoggingService as a scoped instance.
-        /// </summary>
-        /// <param name="services"></param>
-        public static IServiceCollection AddMudLoggingService(this IServiceCollection services)
-        {
-            services.TryAddScoped<IMudLoggingService, MudLoggingService>();
-
-            return services;
-        }
-
-        /// <summary>
         /// Adds common services required by MudBlazor components
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -282,8 +271,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorJsApi()
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService(configuration.PopoverOptions)
-                .AddMudEventManager()
-                .AddMudLoggingService();
+                .AddMudEventManager();
         }
 
         /// <summary>
@@ -311,8 +299,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorJsApi()
                 .AddMudPopoverService(options.PopoverOptions)
                 .AddMudBlazorScrollSpy()
-                .AddMudEventManager()
-                .AddMudLoggingService();
+                .AddMudEventManager();
         }
     }
 }
