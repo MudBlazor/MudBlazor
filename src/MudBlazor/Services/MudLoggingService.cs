@@ -88,7 +88,7 @@ namespace MudBlazor
                                 await _jSRuntime.InvokeVoidAsync("console.warn", log.Message);
                                 break;
                             case LogSeverity.Error:
-                                await _jSRuntime.InvokeVoidAsync("console.warn", "ERROR:\n" + log.Message);
+                                await _jSRuntime.InvokeVoidAsync("console.warn", "ERROR: \n" + log.Message);
                                 break;
                         }
                     }
