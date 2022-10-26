@@ -157,7 +157,7 @@ namespace MudBlazor.UnitTests.Components
             var openButton = comp.Find(".mud-input-adornment button");
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Color Picker");
         }
-        
+
         [Test]
         public async Task Default()
         {
@@ -321,7 +321,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase("#8qb829ff")]
-        public void SetColorInput_InvailidNoChange(string colorHexString)
+        public void SetColorInput_InvalidNoChange(string colorHexString)
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HEX));
             //Console.WriteLine(comp.Markup);
@@ -469,7 +469,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Click_ModeBtton()
+        public void Click_ModeButton()
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>();
             //Console.WriteLine(comp.Markup);
@@ -573,7 +573,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Toogle_Toolbar()
+        public void Toggle_Toolbar()
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.DisableToolbar, false));
             //Console.WriteLine(comp.Markup);
@@ -712,7 +712,6 @@ namespace MudBlazor.UnitTests.Components
             _ = comp.Find(_alphaInputCssSelector);
             comp.Instance.ColorValue.Should().Be(expectedColor);
             comp.Instance.TextValue.Should().Be(expectedColor.ToString(MudColorOutputFormats.HexA));
-
         }
 
         [Test]
@@ -739,6 +738,7 @@ namespace MudBlazor.UnitTests.Components
             inputs.Should().ContainSingle();
             inputs.Should().AllBeAssignableTo<IHtmlInputElement>();
             ((IHtmlInputElement)inputs[0]).Value.Should().Be("#0cdc7c");
+            ((IHtmlInputElement)inputs[0]).MaxLength.Should().Be(7);
 
             comp.Instance.TextValue.Should().Be("#0cdc7c");
 
@@ -748,6 +748,7 @@ namespace MudBlazor.UnitTests.Components
             inputs.Should().ContainSingle();
             inputs.Should().AllBeAssignableTo<IHtmlInputElement>();
             ((IHtmlInputElement)inputs[0]).Value.Should().Be("#0cdc7c78");
+            ((IHtmlInputElement)inputs[0]).MaxLength.Should().Be(9);
 
             comp.Instance.TextValue.Should().Be("#0cdc7c78");
         }
@@ -1289,12 +1290,12 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.Variant, PickerVariant.Inline);
             });
-            
+
             await comp.Instance.OpenPicker();
 
             //Console.WriteLine(comp.Markup);
 
-            var providerNode =  comp.Find(".mud-popover-provider");
+            var providerNode = comp.Find(".mud-popover-provider");
             providerNode.Children.Should().ContainSingle();
 
             var popoverNode = providerNode.Children[0];

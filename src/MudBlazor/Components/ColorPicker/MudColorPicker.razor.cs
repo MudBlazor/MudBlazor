@@ -3,19 +3,21 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Generic;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
-using static MudBlazor.Colors;
 
 namespace MudBlazor
 {
     public partial class MudColorPicker : MudPicker<MudColor>, IAsyncDisposable
     {
+        private const int _disabledAlphaHexColorInputMaxLength = 7;
+        private const int _enabledAlphaHexColorInputMaxLength = 9;
+
         public MudColorPicker() : base(new DefaultConverter<MudColor>())
         {
             AdornmentIcon = Icons.Material.Outlined.Palette;
@@ -63,6 +65,7 @@ namespace MudBlazor
         [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         private bool _disableAlpha = false;
+        private int _hexColorInputMaxLength = _enabledAlphaHexColorInputMaxLength;
 
         /// <summary>
         /// If true, Alpha options will not be displayed and color output will be RGB, HSL or HEX and not RGBA, HSLA or HEXA.
@@ -81,6 +84,11 @@ namespace MudBlazor
                     if (value == true)
                     {
                         Value = Value.SetAlpha(1.0);
+                        _hexColorInputMaxLength = _disabledAlphaHexColorInputMaxLength;
+                    }
+                    else
+                    {
+                        _hexColorInputMaxLength = _enabledAlphaHexColorInputMaxLength;
                     }
 
                     Text = GetColorTextValue();
@@ -297,7 +305,8 @@ namespace MudBlazor
                 _ => ColorPickerMode.RGB,
             };
 
-        public async Task ChangeView(ColorPickerView value) {
+        public async Task ChangeView(ColorPickerView value)
+        {
 
             var oldValue = _activeColorPickerView;
 
@@ -313,7 +322,7 @@ namespace MudBlazor
             {
                 _attachedMouseEvent = true;
             }
-        } 
+        }
 
         private void UpdateBaseColorSlider(int value)
         {
@@ -558,7 +567,7 @@ namespace MudBlazor
         {
             if (DisableDragEffect == true) { return; }
 
-            if(_throttledEventManager == null)
+            if (_throttledEventManager == null)
             {
                 _throttledEventManager = ThrottledEventManagerFactory.Create();
             }
@@ -581,7 +590,7 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
-           if(_throttledEventManager == null) { return; }
+            if (_throttledEventManager == null) { return; }
 
             await _throttledEventManager.DisposeAsync();
         }
