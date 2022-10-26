@@ -37,7 +37,6 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
             ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
             ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
-            ctx.Services.AddScoped<IMudLoggingService, MockLoggingService>();
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>
                 new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });

@@ -88,9 +88,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudIconButtonShouldRenderAnAnchorIfLinkIsSet()
         {
+            using var ctx = new Bunit.TestContext();
             var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
             var target = Parameter(nameof(MudIconButton.Target), "_blank");
-            var comp = Context.RenderComponent<MudIconButton>(link, target);
+            var comp = ctx.RenderComponent<MudIconButton>(link, target);
             //Link property is set, so it has to render an anchor element
             comp.Instance
                 .HtmlTag
