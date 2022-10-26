@@ -27,54 +27,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void FileUpload_VerifyGenericTest()
         {
-            using var sw = new StringWriter();
-            var writerTraceListener = new TextWriterTraceListener(sw);
-            Trace.Listeners.Add(writerTraceListener);
-            Console.SetOut(sw); //set up trace listener
-
-            var comp = Context.RenderComponent<MudFileUpload<T>>();
-            Trace.Flush();
-            var output = sw.ToString();
-
-            Assert.AreEqual($"T must be of type {typeof(IReadOnlyList<IBrowserFile>)} or {typeof(IBrowserFile)}\r\n", output);
-        }
-
-        /// <summary>
-        /// Verfies that T matches the Multiple parameter (1/2)
-        /// </summary>
-        [Test]
-        public void FileUpload_VerifyGenericMultipleTest1()
-        {
-            using var sw = new StringWriter();
-            var writerTraceListener = new TextWriterTraceListener(sw);
-            Trace.Listeners.Add(writerTraceListener);
-            Console.SetOut(sw); //set up trace listener
-
-            var comp1 = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
-            .Add(x => x.Multiple, true));
-            Trace.Flush();
-            var output = sw.ToString();
-
-            Assert.AreEqual($"Multiple must be false when T is of type {typeof(IBrowserFile)}\r\n", output);
-        }
-
-        /// <summary>
-        /// Verfies that T matches the Multiple parameter (2/2)
-        /// </summary>
-        [Test]
-        public void FileUpload_VerifyGenericMultipleTest2()
-        {
-            using var sw = new StringWriter();
-            var writerTraceListener = new TextWriterTraceListener(sw);
-            Trace.Listeners.Add(writerTraceListener);
-            Trace.Flush();
-            Console.SetOut(sw); //set up trace listener
-
-            var comp1 = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
-            .Add(x => x.Multiple, false));
-            var output = sw.ToString();
-
-            Assert.AreEqual($"Multiple must be true when T is of type {typeof(IReadOnlyList<IBrowserFile>)}\r\n", output);
+            //waiting for #5549
         }
 
         /// <summary>
@@ -99,11 +52,35 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void FileUpload_MultipleTest()
         {
-            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
-            .Add(x => x.Multiple, true));
+            var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
 
             var input = comp.Find("input");
-            input.HasAttribute("multiple");
+            input.HasAttribute("multiple").Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Ensures the underlying input receives the hidden attribute (default case)
+        /// </summary>
+        [Test]
+        public void FileUpload_HiddenTest1()
+        {
+            var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
+
+            var input = comp.Find("input");
+            input.HasAttribute("hidden").Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Ensures the underlying input does not receive the hidden attribute
+        /// </summary>
+        [Test]
+        public void FileUpload_HiddenTest2()
+        {
+            var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters =>
+            parameters.Add(x => x.Hidden, false));
+
+            var input = comp.Find("input");
+            input.HasAttribute("hidden").Should().BeFalse();
         }
 
         /// <summary>

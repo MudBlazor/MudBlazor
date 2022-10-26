@@ -80,11 +80,23 @@ namespace MudBlazor
         [Category(CategoryTypes.FileUpload.Behavior)]
         public string Accept { get; set; }
         /// <summary>
+        /// If false, the inner FileInput will be visible
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Appearance)]
+        public bool Hidden { get; set; } = true;
+        /// <summary>
         /// Css classes to apply to the internal InputFile
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
         public string InputClass { get; set; }
+        /// <summary>
+        /// Style to apply to the internal InputFile
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Appearance)]
+        public string InputStyle { get; set; }
 
         private async Task OnChange(InputFileChangeEventArgs args)
         {
