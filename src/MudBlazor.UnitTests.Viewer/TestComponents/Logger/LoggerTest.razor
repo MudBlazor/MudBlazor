@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@inherits MudComponentBase
+@using Microsoft.Extensions.Logging
+
+<p>Logger Test</p>
+
+@code{
+    protected override void OnInitialized()
+    {
+        Logger.LogInformation("Log Information");
+        Logger.LogWarning("Log Warning");
+        Logger.LogError("Log Error");
+        Logger.LogCritical("Log Critical");
+    }
+}
