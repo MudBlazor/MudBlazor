@@ -15,9 +15,6 @@ namespace MudBlazor
 {
     public partial class MudColorPicker : MudPicker<MudColor>, IAsyncDisposable
     {
-        private const int _disabledAlphaHexColorInputMaxLength = 7;
-        private const int _enabledAlphaHexColorInputMaxLength = 9;
-
         public MudColorPicker() : base(new DefaultConverter<MudColor>())
         {
             AdornmentIcon = Icons.Material.Outlined.Palette;
@@ -65,7 +62,6 @@ namespace MudBlazor
         [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         private bool _disableAlpha = false;
-        private int _hexColorInputMaxLength = _enabledAlphaHexColorInputMaxLength;
 
         /// <summary>
         /// If true, Alpha options will not be displayed and color output will be RGB, HSL or HEX and not RGBA, HSLA or HEXA.
@@ -85,8 +81,7 @@ namespace MudBlazor
                     {
                         Value = Value.SetAlpha(1.0);
                     }
-
-                    _hexColorInputMaxLength = GetHexColorInputMaxLength();
+                    }
                     Text = GetColorTextValue();
                 }
             }
@@ -527,7 +522,7 @@ namespace MudBlazor
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
         private string GetColorTextValue() => (DisableAlpha == true || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _color.ToString(MudColorOutputFormats.Hex) : _color.ToString(MudColorOutputFormats.HexA);
-        private int GetHexColorInputMaxLength() => DisableAlpha == true ? _disabledAlphaHexColorInputMaxLength : _enabledAlphaHexColorInputMaxLength;
+        private int GetHexColorInputMaxLength() => DisableAlpha ? 7 : 9;
 
         private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => Close());
         private bool IsAnyControlVisible() => !(DisablePreview && DisableSliders && DisableInputs);
