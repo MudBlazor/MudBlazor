@@ -81,7 +81,7 @@ namespace MudBlazor
                     {
                         Value = Value.SetAlpha(1.0);
                     }
-                    }
+
                     Text = GetColorTextValue();
                 }
             }
