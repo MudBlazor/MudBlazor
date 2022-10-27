@@ -84,13 +84,9 @@ namespace MudBlazor
                     if (value == true)
                     {
                         Value = Value.SetAlpha(1.0);
-                        _hexColorInputMaxLength = _disabledAlphaHexColorInputMaxLength;
-                    }
-                    else
-                    {
-                        _hexColorInputMaxLength = _enabledAlphaHexColorInputMaxLength;
                     }
 
+                    _hexColorInputMaxLength = GetHexColorInputMaxLength();
                     Text = GetColorTextValue();
                 }
             }
@@ -531,6 +527,7 @@ namespace MudBlazor
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
         private string GetColorTextValue() => (DisableAlpha == true || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _color.ToString(MudColorOutputFormats.Hex) : _color.ToString(MudColorOutputFormats.HexA);
+        private int GetHexColorInputMaxLength() => DisableAlpha == true ? _disabledAlphaHexColorInputMaxLength : _enabledAlphaHexColorInputMaxLength;
 
         private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => Close());
         private bool IsAnyControlVisible() => !(DisablePreview && DisableSliders && DisableInputs);
