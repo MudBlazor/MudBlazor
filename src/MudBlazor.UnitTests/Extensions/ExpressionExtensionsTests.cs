@@ -4,6 +4,12 @@ using NUnit.Framework;
 using System.Linq.Expressions;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using static MudBlazor.CategoryTypes;
+using System.Reflection;
+using Microsoft.AspNetCore.Components.Forms;
+using System.Collections.Generic;
+using AngleSharp.Dom;
 
 namespace MudBlazor.UnitTests.Extensions
 {

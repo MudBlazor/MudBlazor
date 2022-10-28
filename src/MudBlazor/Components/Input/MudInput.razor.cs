@@ -27,17 +27,20 @@ namespace MudBlazor
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
         /// </summary>
-        [Parameter] public InputType InputType { get; set; } = InputType.Text;
+        [Parameter] 
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public InputType? InputType { get; set; };
 
         /// <summary>
         ///  Hints at the type of data that might be entered by the user while editing the input
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public virtual InputMode InputMode { get; set; } = InputMode.text;
+        public virtual InputMode? InputMode { get; set; };
 
-        internal override InputType GetInputType() => InputType != InputType.Text ? InputType : For.GetInputTypeFromDataType();
-        internal override InputMode GetInputMode() => InputMode != InputMode.text ? InputMode : For.GetInputModeFromDataType();
+        internal override InputType GetInputType() => InputType ?? For.GetInputTypeFromDataType();
+
+        internal override InputMode GetInputMode() => InputMode ?? For.GetInputModeFromDataType();
 
         protected Task OnInput(ChangeEventArgs args)
         {
