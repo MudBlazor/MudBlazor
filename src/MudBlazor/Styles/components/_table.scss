@@ -206,12 +206,12 @@
         border-collapse: separate;
 
         .mud-table-foot {
-
+            position: sticky;
+            z-index: 2;
+            bottom: 0;
+            
             & * .mud-table-cell {
                 background-color: var(--mud-palette-surface);
-                position: sticky;
-                z-index: 2;
-                bottom: 0;
             }
         }
     }
