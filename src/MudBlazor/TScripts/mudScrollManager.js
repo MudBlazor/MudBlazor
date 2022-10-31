@@ -2,16 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-class MudScrollManager {
-    //scrolls to an Id. Useful for navigation to fragments
-    scrollToFragment(elementId, behavior) {
-        let element = document.getElementById(elementId);
-
-        if (element) {
-            element.scrollIntoView({ behavior, block: 'center', inline: 'start' });
-        }
-    }
-
+class MudScrollManager { 
     //scrolls to year in MudDatePicker
     scrollToYear(elementId, offset) {
         let element = document.getElementById(elementId);
