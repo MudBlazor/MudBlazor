@@ -700,8 +700,8 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                GroupItems();
                 await InvokeServerLoadFunc();
+                GroupItems();
                 if (ServerData == null)
                     StateHasChanged();
                 _isFirstRendered = true;
@@ -1236,7 +1236,7 @@ namespace MudBlazor
             _groups = groupings.Select(x => new GroupDefinition<T>(x,
                 _groupExpansions.Contains(x.Key))).ToList();
 
-            if (_isFirstRendered)
+            if (_isFirstRendered || ServerData != null)
                 StateHasChanged();
         }
 
