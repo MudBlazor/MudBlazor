@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -204,6 +207,23 @@ namespace MudBlazor.UnitTests.Components
             single.Markup.Should().NotContain("&#x27;Files&#x27; must not be empty.");
 
             form.IsValid.Should().BeTrue(); //form is now valid
+        }
+
+        /// <summary>
+        /// Verifies that invalid T values are logged using the provided ILogger
+        /// </summary>
+        [Test]
+        public void InvalidTLogWarning_Test()
+        {
+            var provider = new MockLoggerProvider();
+            var logger = provider.CreateLogger(GetType().FullName) as MockLogger;
+            Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider)); //set up the logging provider
+            var comp = Context.RenderComponent<MudFileUpload<MudTextField<string>>>();
+
+            var entries = logger.GetEntries();
+            entries.Count.Should().Be(1);
+            entries[0].Level.Should().Be(LogLevel.Warning);
+            entries[0].Message.Should().Be(string.Format("T must be of type {0} or {1}", typeof(IReadOnlyList<IBrowserFile>), typeof(IBrowserFile)));
         }
     }
 }
