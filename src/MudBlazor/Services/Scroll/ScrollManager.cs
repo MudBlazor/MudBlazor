@@ -47,7 +47,7 @@ namespace MudBlazor
         /// <param name="id">The id of the selector that is going to be scrolled to</param>
         /// <param name="behavior">smooth or auto</param>
         /// <returns></returns>
-        [Obsolete("Please use ScrollIntoView instead")]
+        [Obsolete("Please use ScrollIntoViewAsync instead")]
         public ValueTask ScrollToFragmentAsync(string id, ScrollBehavior behavior) => ScrollIntoViewAsync(id, behavior);
 
         [Obsolete]
