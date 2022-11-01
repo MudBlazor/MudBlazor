@@ -2,12 +2,15 @@
 
 <MudDataGrid Items="@_items" Filterable="true">
     <Columns>
+        <HierarchyColumn T="Model" ButtonDisabledFunc="@(x => x.Name == "Alicia")"/>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />
         <Column T="Model" Field="@nameof(Model.Status)" />
     </Columns>
     <ChildRowContent>
-        @($"uid = {context.Item.Name}|{context.Item.Age}|{context.Item.Status}|{Guid.NewGuid()}")
+        <tr>
+            <td colspan="3">@($"uid = {context.Item.Name}|{context.Item.Age}|{context.Item.Status}|{Guid.NewGuid()}")</td>
+        </tr>
     </ChildRowContent>
 </MudDataGrid>
 
