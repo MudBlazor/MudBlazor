@@ -15,6 +15,7 @@ namespace MudBlazor
         }
 
         internal double _height;
+        private bool _shouldRender = true;
         private bool _expanded, _isRendered, _updateHeight;
         private ElementReference _wrapper;
         internal CollapseState _state = CollapseState.Exited;
@@ -115,6 +116,19 @@ namespace MudBlazor
             }
         }
 
+        protected override bool ShouldRender()
+        {
+            if (_shouldRender)
+            {
+                return true;
+            }
+            else
+            {
+                _shouldRender = true;
+                return false;
+            }
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -133,6 +147,7 @@ namespace MudBlazor
 
         public void AnimationEnd()
         {
+            _shouldRender = false;
             if (_state == CollapseState.Entering)
             {
                 _state = CollapseState.Entered;
