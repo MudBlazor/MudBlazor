@@ -22,6 +22,17 @@
     & .mud-checkbox-dense {
         padding: 4px;
     }
+  
+    &.mud-checkbox-label-bottom{
+        display:flex;
+        flex-direction:column;
+    }
+  
+    &.mud-checkbox-label-top{
+        display:flex;
+        flex-direction:column;
+        flex-direction: column-reverse;
+    }
 }
 
 .mud-checkbox-input {

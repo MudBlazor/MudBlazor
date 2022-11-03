@@ -7,6 +7,10 @@ namespace MudBlazor
         [Description("start")]
         Start,
         [Description("end")]
-        End
+        End,
+        [Description("top")]
+        Top,
+        [Description("bottom")]
+        Bottom
     }
 }
