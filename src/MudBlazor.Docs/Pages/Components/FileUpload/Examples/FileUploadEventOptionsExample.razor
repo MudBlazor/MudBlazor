@@ -7,37 +7,20 @@
                    Color="Color.Primary"
                    StartIcon="@Icons.Filled.CloudUpload"
                    for="@context">
-            Upload Files
+            Upload using FileValueChanged
         </MudButton>
     </ButtonTemplate>
 </MudFileUpload>
 
-<MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+<MudFileUpload T="IBrowserFile" OnFilesChanged="UploadFiles">
     <ButtonTemplate>
-        <MudFab HtmlTag="label"
-                Color="Color.Secondary"
-                Icon="@Icons.Filled.Image"
-                Label="Load picture"
-                for="@context" />
-    </ButtonTemplate>
-</MudFileUpload>
-
-<MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
-    <ButtonTemplate>
-        <MudFab HtmlTag="label"
-                Color="Color.Success"
-                Icon="@Icons.Filled.AttachFile"
-                for="@context" />
-    </ButtonTemplate>
-</MudFileUpload>
-
-<MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
-    <ButtonTemplate>
-        <MudIconButton HtmlTag="label"
-                       Color="Color.Info"
-                       Icon="@Icons.Filled.PhotoCamera"
-                       for="@context">
-        </MudIconButton>
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Filled.CloudUpload"
+                   for="@context">
+            Upload using OnFilesChanged
+        </MudButton>
     </ButtonTemplate>
 </MudFileUpload>
 
@@ -51,7 +34,7 @@
                 @file.Name <code>@file.Size bytes</code>
             </MudListItem>
         }
-        </MudList>
+    </MudList>
 }
 
 @code
@@ -60,6 +43,12 @@
     private void UploadFiles(IBrowserFile file)
     {
         files.Add(file);
+        //TODO upload the files to the server
+    }
+
+    private void UploadFiles(InputFileChangeEventArgs args)
+    {
+        files.Add(args.File);
         //TODO upload the files to the server
     }
 }
