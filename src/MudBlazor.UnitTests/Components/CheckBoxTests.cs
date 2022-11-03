@@ -339,8 +339,10 @@ namespace MudBlazor.UnitTests.Components
             //Console.WriteLine(comp.Markup);
             var checkboxes = comp.FindAll("label.mud-checkbox");
 
-            checkboxes[0].ClassList.Should().Contain("mud-ltr"); // 1st checkbox: (default) LabelPosition.End
-            checkboxes[2].ClassList.Should().Contain("mud-rtl"); // 3rd checkbox: LabelPosition.Start
+            checkboxes[0].ClassList.Should().Contain("mud-rtl"); // 3rd checkbox: LabelPosition.Start
+            checkboxes[1].ClassList.Should().Contain("mud-checkbox-label-top"); // 3rd checkbox: LabelPosition.Top
+            checkboxes[2].ClassList.Should().Contain("mud-checkbox-label-bottom"); // 3rd checkbox: LabelPosition.Bottom
+            checkboxes[3].ClassList.Should().Contain("mud-ltr"); // 1st checkbox: (default) LabelPosition.End
         }
 
         [Test]
