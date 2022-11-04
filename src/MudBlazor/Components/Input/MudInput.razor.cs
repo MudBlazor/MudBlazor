@@ -29,14 +29,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter] 
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public InputType? InputType { get; set; };
+        public InputType? InputType { get; set; }
 
         /// <summary>
         ///  Hints at the type of data that might be entered by the user while editing the input
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public virtual InputMode? InputMode { get; set; };
+        public virtual InputMode? InputMode { get; set; }
 
         internal override InputType GetInputType() => InputType ?? For.GetInputTypeFromDataType();
 
