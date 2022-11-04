@@ -33,7 +33,7 @@ namespace MudBlazor
                                 !string.IsNullOrWhiteSpace(Placeholder))
                 .AddClass("mud-disabled", Disabled)
                 .AddClass("mud-input-error", HasErrors)
-                .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
+                .AddClass("mud-ltr", GetInputType() == MudBlazor.InputType.Email || GetInputType() == MudBlazor.InputType.Telephone)
                 .AddClass(Class)
                 .Build();
 

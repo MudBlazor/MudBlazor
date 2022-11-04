@@ -84,7 +84,7 @@ namespace MudBlazor
         {
             try
             {
-                if (InputType == InputType.Hidden && ChildContent != null)
+                if (InputType == MudBlazor.InputType.Hidden && ChildContent != null)
                     await _elementReference1.FocusAsync();
                 else
                     await ElementReference.FocusAsync();
@@ -225,8 +225,8 @@ namespace MudBlazor
         // Certain HTML5 inputs (dates and color) have a native placeholder
         private bool HasNativeHtmlPlaceholder()
         {
-            return GetInputType() is InputType.Color or InputType.Date or InputType.DateTimeLocal or InputType.Month
-                or InputType.Time or InputType.Week;
+            return GetInputType() is MudBlazor.InputType.Color or MudBlazor.InputType.Date or MudBlazor.InputType.DateTimeLocal or MudBlazor.InputType.Month
+                or MudBlazor.InputType.Time or MudBlazor.InputType.Week;
         }
     }
 

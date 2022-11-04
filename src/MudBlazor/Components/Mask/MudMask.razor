@@ -36,8 +36,8 @@
                        In Disabled state the tabindex attribute must NOT be set at all or else it will get focus on click
          *@
         <div class="@InputClassname"
-             style="@("display:" + (InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
-             @onblur="@OnBlurred" @ref="@_elementReference1">
+         style="@("display:" + (InputType == MudBlazor.InputType.Hidden && ChildContent != null ? "inline" : "none"))"
+         @onblur="@OnBlurred" @ref="@_elementReference1">
             @ChildContent
         </div>
     }
@@ -45,8 +45,8 @@
     {
          @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.*@
         <div class="@InputClassname"
-             style="@("display:" + (InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
-             tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)"
+         style="@("display:" + (InputType == MudBlazor.InputType.Hidden && ChildContent != null ? "inline" : "none"))"
+         tabindex="@(InputType == MudBlazor.InputType.Hidden && ChildContent != null ? 0 : -1)"
              @onblur="@OnBlurred" @ref="@_elementReference1">
             @ChildContent
         </div>
