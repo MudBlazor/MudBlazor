@@ -123,7 +123,7 @@
 }
 
 .mud-tab {
-    width:100%;
+    width: 100%;
     min-width: 160px;
     display: inline-flex;
     padding: 6px 12px;
@@ -163,6 +163,10 @@
         margin-right: 8px;
         margin-inline-end: 8px;
         margin-inline-start: unset;
+    }
+
+    &.mud-tab-no-minimum-width {
+        min-width: 16px;
     }
 }
 

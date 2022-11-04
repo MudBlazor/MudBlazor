@@ -164,6 +164,13 @@ namespace MudBlazor
         public bool DisableRipple { get; set; }
 
         /// <summary>
+        /// If true, allows tabs to shrink to the width of the text or icon
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public bool NoMinimumWidth { get; set; }
+
+        /// <summary>
         /// If true, disables slider animation
         /// </summary>
         [Parameter]
@@ -510,6 +517,7 @@ namespace MudBlazor
               .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
               .AddClass($"mud-disabled", panel.Disabled)
               .AddClass($"mud-ripple", !DisableRipple)
+              .AddClass($"mud-tab-no-minimum-width", NoMinimumWidth)
               .AddClass(TabPanelClass)
               .AddClass(panel.Class)
               .Build();

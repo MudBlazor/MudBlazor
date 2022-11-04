@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTabs Elevation="4" Color="@Color.Secondary" NoMinimumWidth="@NoMinWidth">
+    <MudTabPanel Text="One"/>
+    <MudTabPanel Text="Two"/>
+    <MudTabPanel Icon="@Icons.Custom.Brands.MudBlazor"/>
+</MudTabs>
+
+<MudSwitch Label="No Minimum Width" @bind-Checked="@NoMinWidth" Color="Color.Secondary"></MudSwitch>
+
+@code{
+
+    bool NoMinWidth { get; set; } = true;
+
+}

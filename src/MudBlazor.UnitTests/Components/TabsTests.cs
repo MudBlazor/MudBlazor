@@ -1021,6 +1021,16 @@ namespace MudBlazor.UnitTests.Components
             content.NextElementSibling.ClassList.Should().Contain("mud-tabs-panels");
         }
 
+        [Test]
+        public async Task TabsNoMinimumWidthTest()
+        {
+            var comp = Context.RenderComponent<TabsNoMinimumWidthTest>();
+            //Console.WriteLine(comp.Markup);
+            comp.Find("div.mud-tabs-panels").InnerHtml.Trim().Should().BeEmpty();
+            comp.FindAll("div.mud-tab-no-minimum-width").Should().HaveCount(3);
+            
+        }
+
         #region Helper
 
         private static double GetSliderValue(IRenderedComponent<ScrollableTabsTest> comp, string attribute = "left")
