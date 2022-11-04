@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid T="Item" Items="@_items" EditMode="@DataGridEditMode.Cell" RowClick="@OnRowClick" RowMouseDown="@OnRowMouseDown"
+<MudDataGrid T="Item" Items="@_items" EditMode="@DataGridEditMode.Cell" RowClick="@OnRowClick" 
     SelectedItemChanged="@OnSelectedItemChanged" CommittedItemChanges="@OnCommittedItemChanges" 
     ReadOnly="false">
     <Columns>
@@ -17,7 +17,6 @@
     };
 
     public bool RowClicked { get; set; }
-    public bool RowMouseDowned { get; set; }
     public bool SelectedItemChanged { get; set; }
     public bool CommittedItemChanges { get; set; }
 
@@ -25,11 +24,6 @@
     {
         RowClicked = true;
         Console.WriteLine("RowClicked fired.");
-    }
-
-    private void OnRowMouseDown(DataGridRowClickEventArgs<Item> args)
-    {
-        RowMouseDowned = true;
     }
 
     private void OnSelectedItemChanged(Item item)
