@@ -44,6 +44,16 @@ namespace MudBlazor
         [Parameter] public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
         [Parameter] public Func<T, object> GroupBy { get; set; }
 
+        /// <summary>
+        /// When set to true, editing column items will require an entry; default is true.
+        /// </summary>
+        [Parameter] public bool EntryRequired { get; set; } = true;
+
+        /// <summary>
+        /// Set custom number of edit dialog textfield lines; default is 1.
+        /// </summary>
+        [Parameter] public int EditDialogTextFieldLines { get; set; } = 1;
+
         #region HeaderCell Properties
 
         [Parameter] public string HeaderClass { get; set; }

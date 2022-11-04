@@ -336,7 +336,7 @@ namespace MudBlazor
         /// <summary>
         /// Fine tune the edit dialog.
         /// </summary>
-        [Parameter] public DialogOptions EditDialogOptions { get; set; }
+        [Parameter] public DataGridEditDialogOptions EditDialogOptions { get; set; }
 
         /// <summary>
         /// The data to display in the table. MudTable will render one row per item
