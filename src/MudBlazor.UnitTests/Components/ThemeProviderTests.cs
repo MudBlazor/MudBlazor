@@ -6,6 +6,7 @@ using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -252,6 +253,37 @@ namespace MudBlazor.UnitTests.Components
 #pragma warning disable BL0005
             comp.Instance.IsDarkMode = true;
             comp.Instance._isDarkMode.Should().BeTrue();
+        }
+
+        [Test]
+        public void CustomThemeDarkModeTest()
+        {
+            var myCustomTheme = new MudTheme()
+            {
+                PaletteDark = new PaletteDark()
+                {
+                    Primary = Colors.Blue.Lighten1
+                }
+            };
+            Assert.AreEqual(new MudColor(Colors.Blue.Lighten1),myCustomTheme.PaletteDark.Primary);// Set by user
+            Assert.AreEqual(new MudColor("#f64e62"),myCustomTheme.PaletteDark.Error);// Default dark overwritten from light
+            Assert.AreEqual(new MudColor(Colors.Shades.White),myCustomTheme.PaletteDark.White);// Equal in dark and light.
+        }
+
+        [Test]
+        public void CustomThemeDarkModeBackwardsCompatibleTest()
+        {
+            // ensure it is backwards compatible by setting Palette() instead of PaletteDark()
+            var myCustomTheme = new MudTheme()
+            {
+                PaletteDark = new Palette()
+                {
+                    Primary = Colors.Blue.Lighten1
+                }
+            };
+            Assert.AreEqual(new MudColor(Colors.Blue.Lighten1),myCustomTheme.PaletteDark.Primary);// Set by user
+            Assert.AreEqual(new MudColor(Colors.Red.Default),myCustomTheme.PaletteDark.Error);// Default from light not overwritten by dark theme 
+            Assert.AreEqual(new MudColor(Colors.Shades.White),myCustomTheme.PaletteDark.White);// Equal in dark and light.
         }
     }
 }
