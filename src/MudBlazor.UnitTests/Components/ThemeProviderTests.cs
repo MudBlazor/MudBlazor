@@ -289,5 +289,23 @@ namespace MudBlazor.UnitTests.Components
             Assert.AreEqual(new MudColor(Colors.Shades.White),myCustomTheme.PaletteDark.White);// Equal in dark and light.
             Assert.AreEqual(new MudColor("#F50057"),myCustomTheme.PaletteDark.Secondary);// Setting not in PaletteDark()
         }
+
+        [Test]
+        public void CustomThemeDefaultTest()
+        {
+            var DefaultTheme = new MudTheme();
+            
+            //Dark theme
+            Assert.IsInstanceOf(typeof(PaletteDark), DefaultTheme.PaletteDark);
+            Assert.AreEqual(new MudColor("#776be7"),DefaultTheme.PaletteDark.Primary);
+            Assert.AreEqual(new MudColor("#f64e62"),DefaultTheme.PaletteDark.Error);
+            Assert.AreEqual(new MudColor(Colors.Shades.White),DefaultTheme.PaletteDark.White);
+            
+            //Light theme
+            Assert.IsInstanceOf(typeof(Palette), DefaultTheme.Palette);
+            Assert.AreEqual(new MudColor("#594AE2"),DefaultTheme.Palette.Primary);
+            Assert.AreEqual(new MudColor(Colors.Red.Default),DefaultTheme.Palette.Error);
+            Assert.AreEqual(new MudColor(Colors.Shades.White),DefaultTheme.Palette.White);
+        }
     }
 }
