@@ -184,12 +184,14 @@ namespace MudBlazor
 
                     SetTextAsync(GetColorTextValue(), true).AndForget();
                     ValueChanged.InvokeAsync(value).AndForget();
+                    FieldChanged(value);
                 }
 
                 if (rgbChanged == false && UpdateBindingIfOnlyHSLChanged && hslChanged == true)
                 {
                     SetTextAsync(GetColorTextValue(), true).AndForget();
                     ValueChanged.InvokeAsync(value).AndForget();
+                    FieldChanged(value);
                 }
             }
         }
@@ -499,6 +501,12 @@ namespace MudBlazor
             }
 
             Value = color;
+        }
+
+        protected override Task StringValueChanged(string value)
+        {
+            Value = new MudColor(value);
+            return Task.CompletedTask;
         }
 
         private bool _attachedMouseEvent = false;
