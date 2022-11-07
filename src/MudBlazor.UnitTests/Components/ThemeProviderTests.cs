@@ -262,12 +262,14 @@ namespace MudBlazor.UnitTests.Components
             {
                 PaletteDark = new PaletteDark()
                 {
-                    Primary = Colors.Blue.Lighten1
+                    Primary = Colors.Blue.Lighten1,
+                    Secondary = "#F50057"
                 }
             };
             Assert.AreEqual(new MudColor(Colors.Blue.Lighten1),myCustomTheme.PaletteDark.Primary);// Set by user
             Assert.AreEqual(new MudColor("#f64e62"),myCustomTheme.PaletteDark.Error);// Default dark overwritten from light
             Assert.AreEqual(new MudColor(Colors.Shades.White),myCustomTheme.PaletteDark.White);// Equal in dark and light.
+            Assert.AreEqual(new MudColor("#F50057"),myCustomTheme.PaletteDark.Secondary);// Setting not in PaletteDark()
         }
 
         [Test]
@@ -278,12 +280,14 @@ namespace MudBlazor.UnitTests.Components
             {
                 PaletteDark = new Palette()
                 {
-                    Primary = Colors.Blue.Lighten1
+                    Primary = Colors.Blue.Lighten1,
+                    Secondary = "#F50057"
                 }
             };
             Assert.AreEqual(new MudColor(Colors.Blue.Lighten1),myCustomTheme.PaletteDark.Primary);// Set by user
             Assert.AreEqual(new MudColor(Colors.Red.Default),myCustomTheme.PaletteDark.Error);// Default from light not overwritten by dark theme 
             Assert.AreEqual(new MudColor(Colors.Shades.White),myCustomTheme.PaletteDark.White);// Equal in dark and light.
+            Assert.AreEqual(new MudColor("#F50057"),myCustomTheme.PaletteDark.Secondary);// Setting not in PaletteDark()
         }
     }
 }
