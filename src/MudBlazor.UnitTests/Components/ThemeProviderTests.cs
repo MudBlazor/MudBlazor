@@ -250,8 +250,24 @@ namespace MudBlazor.UnitTests.Components
         {
             var myCustomTheme = new MudTheme()
             {
-                Palette = new Palette() { AdditionalStyles = new Dictionary<string, MudColor> { { "--Additional--active", Colors.Grey.Lighten1 } } },
-                PaletteDark = new Palette() { AdditionalStyles = new Dictionary<string, MudColor> { { "--Additional--active", Colors.Grey.Darken4 } } }
+                Palette = new Palette()
+                {
+                    AdditionalStyles = new Dictionary<string, MudColor>
+                    {
+                        {
+                            "--Additional--active", Colors.Grey.Lighten1
+                        }
+                    }
+                },
+                PaletteDark = new Palette()
+                {
+                    AdditionalStyles = new Dictionary<string, MudColor>
+                    {
+                        {
+                            "--Additional--active", Colors.Grey.Darken4
+                        }
+                    }
+                }
             };
             var comp = Context.RenderComponent<MudThemeProvider>(ComponentParameter.CreateParameter("Theme", myCustomTheme));
             var styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
