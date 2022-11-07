@@ -226,6 +226,14 @@ namespace MudBlazor
             theme.AppendLine($"--{Palette}-overlay-dark: {palette.OverlayDark};");
             theme.AppendLine($"--{Palette}-overlay-light: {palette.OverlayLight};");
 
+            if (palette.AdditionalStyles is { Count: > 0 })
+            {
+                foreach (var additionalStyle in palette.AdditionalStyles)
+                {
+                    theme.AppendLine($"{additionalStyle.Key}: {additionalStyle.Value};");
+                }
+            }
+
             //Elevations
             theme.AppendLine($"--{Elevation}-0: {Theme.Shadows.Elevation.GetValue(0)};");
             theme.AppendLine($"--{Elevation}-1: {Theme.Shadows.Elevation.GetValue(1)};");

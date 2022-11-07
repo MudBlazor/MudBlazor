@@ -1,4 +1,5 @@
-﻿using MudBlazor.Utilities;
+﻿using System.Collections.Generic;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -152,6 +153,11 @@ namespace MudBlazor
 
         public string OverlayDark { get; set; } = new MudColor("#212121").SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);
         public string OverlayLight { get; set; } = new MudColor(Colors.Shades.White).SetAlpha(0.5).ToString(MudColorOutputFormats.RGBA);
+        
+        /// <summary>
+        /// Additional styles that are updated with dark/light theme.
+        /// </summary>
+        public Dictionary<string, MudColor> AdditionalStyles { get; set; }
 
         internal static Palette ConvertToDarkTheme(Palette palette)
         {

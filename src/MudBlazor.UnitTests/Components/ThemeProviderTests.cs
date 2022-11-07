@@ -1,11 +1,12 @@
-﻿
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -242,6 +243,29 @@ namespace MudBlazor.UnitTests.Components
             var styleLines = rootStyleNode.InnerHtml.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
             styleLines.Should().BeEquivalentTo(expectedLines);
+        }
+
+        [Test]
+        public void AdditionalStylesTest()
+        {
+            var myCustomTheme = new MudTheme()
+            {
+                Palette = new Palette() { AdditionalStyles = new Dictionary<string, MudColor> { { "--Additional--active", Colors.Grey.Lighten1 } } },
+                PaletteDark = new Palette() { AdditionalStyles = new Dictionary<string, MudColor> { { "--Additional--active", Colors.Grey.Darken4 } } }
+            };
+            var comp = Context.RenderComponent<MudThemeProvider>(ComponentParameter.CreateParameter("Theme", myCustomTheme));
+            var styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
+            styleNodes.Should().HaveCount(3);
+            var rootStyleNode = styleNodes[2];
+            var styleLines = rootStyleNode.InnerHtml.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            Assert.Contains($"--Additional--active: {new MudColor(Colors.Grey.Lighten1)};", styleLines);
+
+            comp = Context.RenderComponent<MudThemeProvider>(ComponentParameter.CreateParameter("Theme", myCustomTheme), ComponentParameter.CreateParameter("IsDarkMode", true));
+            styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
+            styleNodes.Should().HaveCount(3);
+            rootStyleNode = styleNodes[2];
+            styleLines = rootStyleNode.InnerHtml.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            Assert.Contains($"--Additional--active: {new MudColor(Colors.Grey.Darken4)};", styleLines);
         }
 
         [Test]
