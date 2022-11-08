@@ -244,7 +244,7 @@
             </MudText>
         </TitleContent>
         <DialogContent>
-            <MudForm>
+            <MudForm FieldChanged="FormFieldChanged">
                 @foreach (var column in RenderedColumns)
                 {
                     var cell = new Cell<T>(this, column, _editingItem);
