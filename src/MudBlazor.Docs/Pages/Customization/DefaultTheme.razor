@@ -35,7 +35,7 @@
                                         
                                     </td>
                                     <td>
-                                        @if (Row.Default != Row.Dark)
+                                        @if (!Row.Default.Equals(Row.Dark))
                                         {
                                             <div class="d-flex align-center">
                                                 <MudPaper Outlined="true" Height="16px" Width="16px" Class="mr-2" Style="@($"background-color:{Row.Dark}")"/>
