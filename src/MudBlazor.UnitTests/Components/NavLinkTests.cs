@@ -47,6 +47,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task NavLink_Active()
+        {
+            const string activeClass = "Custom__nav_active_css";
+            var comp = Context.RenderComponent<MudNavLink>(Parameter(nameof(MudNavLink.ActiveClass), activeClass));
+            comp.Find(".mud-nav-link").Click();
+            comp.Markup.Should().Contain(activeClass);
+        }
+
+        [Test]
         public async Task NavLink_Enabled_CheckNavigation()
         {
             var comp = Context.RenderComponent<NavLinkDisabledTest>(Parameter(nameof(NavLinkDisabledTest.Disabled), false));

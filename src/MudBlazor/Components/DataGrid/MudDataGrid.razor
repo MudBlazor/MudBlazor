@@ -157,7 +157,7 @@
                                                 }                                     
                                                 </CascadingValue>
                                             </tr>                                   
-                                            @if (_openHierarchies.Contains(item) && ChildRowContent != null)
+                                            @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
                                             {
                                                 <tr class="mud-table-row">
                                                     <td class="mud-table-cell" colspan="1000">
@@ -192,7 +192,7 @@
                                         }                                       
                                         </CascadingValue>
                                     </tr>                                   
-                                    @if (_openHierarchies.Contains(item) && ChildRowContent != null)
+                                    @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
                                     {
                                         <tr class="mud-table-row">
                                             <td class="mud-table-cell" colspan="1000">
@@ -244,7 +244,7 @@
             </MudText>
         </TitleContent>
         <DialogContent>
-            <MudForm>
+            <MudForm FieldChanged="FormFieldChanged">
                 @foreach (var column in RenderedColumns)
                 {
                     var cell = new Cell<T>(this, column, _editingItem);

@@ -294,6 +294,12 @@ namespace MudBlazor
             public const string Appearance = "Appearance";
         }
 
+        public static class FileUpload
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
         public static class FocusTrap
         {
             public const string Behavior = "Behavior";
