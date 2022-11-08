@@ -169,6 +169,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<T> CommittedItemChanges { get; set; }
 
+        /// <summary>
+        /// Callback is called when a field changes in the dialog MudForm. Only works in EditMode.Form
+        /// </summary>
+        [Parameter] public EventCallback<FormFieldChangedEventArgs> FormFieldChanged { get; set; }
+
         #endregion
 
         #region Parameters
