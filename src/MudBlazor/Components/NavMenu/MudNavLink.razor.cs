@@ -58,6 +58,13 @@ namespace MudBlazor
         [Category(CategoryTypes.NavMenu.ClickAction)]
         public string Target { get; set; }
 
+        /// <summary>
+        /// User class names when active, separated by space.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ComponentBase.Common)]
+        public string ActiveClass { get; set; } = "active";
+
         [CascadingParameter] INavigationEventReceiver NavigationEventReceiver { get; set; }
 
         protected Task HandleNavigation()
