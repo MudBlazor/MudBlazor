@@ -131,11 +131,11 @@ namespace MudBlazor
             if (message.IsEmpty()) return null;
             message = message.Trimmed();
 
-            var componentParams = new Dictionary<string, object>() { { "Message", new MarkupString(message) }, { "Text", message } };
+            var componentParams = new Dictionary<string, object>() { { "Message", new MarkupString(message) } };
 
             return Add
             (
-                new SnackbarMessage(typeof(SnackbarMessageText), componentParams, string.IsNullOrEmpty(key) ? message : key),
+                new SnackbarMessage(typeof(SnackbarMessageText), componentParams, string.IsNullOrEmpty(key) ? message : key) { Text = message },
                 severity,
                 configure
             );

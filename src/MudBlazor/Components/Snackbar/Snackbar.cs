@@ -12,7 +12,7 @@ namespace MudBlazor
     {
         private Timer Timer { get; set; }
         internal SnackBarMessageState State { get; }
-        public string Message => SnackbarMessage.Text as string;
+        public string Message => SnackbarMessage.Text;
         internal SnackbarMessage SnackbarMessage { get; }
         public event Action<Snackbar> OnClose;
         public event Action OnUpdate;
