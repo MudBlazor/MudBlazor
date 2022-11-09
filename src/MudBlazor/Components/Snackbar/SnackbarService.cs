@@ -131,7 +131,7 @@ namespace MudBlazor
             if (message.IsEmpty()) return null;
             message = message.Trimmed();
 
-            var componentParams = new Dictionary<string, object>() { { "Message", new MarkupString(message) } };
+            var componentParams = new Dictionary<string, object>() { { "Message", new MarkupString(message) }, { "Text", message } };
 
             return Add
             (
@@ -191,7 +191,7 @@ namespace MudBlazor
 
         private bool SnackbarAlreadyPresent(Snackbar newSnackbar)
         {
-            return !string.IsNullOrEmpty(newSnackbar.Message.Key) && SnackBarList.Any(snackbar => newSnackbar.Message.Key == snackbar.Message.Key);
+            return !string.IsNullOrEmpty(newSnackbar.SnackbarMessage.Key) && SnackBarList.Any(snackbar => newSnackbar.SnackbarMessage.Key == snackbar.SnackbarMessage.Key);
         }
 
         private void ConfigurationUpdated()

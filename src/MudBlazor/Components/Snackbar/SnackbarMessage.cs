@@ -19,5 +19,17 @@ namespace MudBlazor.Components.Snackbar
             ComponentParameters = componentParameters;
             Key = key;
         }
+
+        public string Text
+        {
+            get
+            {
+                if (ComponentParameters == null)
+                    return null;
+                if (!ComponentParameters.TryGetValue("Text", out var msg))
+                    return null;
+                return msg as string;
+            }
+        } 
     }
 }
