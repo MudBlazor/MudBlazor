@@ -3,6 +3,7 @@
 
 using System;
 using System.Threading;
+using MudBlazor.Components.Snackbar;
 
 namespace MudBlazor
 {
@@ -10,12 +11,12 @@ namespace MudBlazor
     {
         private Timer Timer { get; set; }
         internal SnackBarMessageState State { get; }
-        public string Message { get; }
+        internal SnackbarMessage Message { get; }
         public event Action<Snackbar> OnClose;
         public event Action OnUpdate;
         public Severity Severity => State.Options.Severity;
 
-        internal Snackbar(string message, SnackbarOptions options)
+        internal Snackbar(SnackbarMessage message, SnackbarOptions options)
         {
             Message = message;
             State = new SnackBarMessageState(options);

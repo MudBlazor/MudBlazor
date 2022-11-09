@@ -4,6 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Components.Snackbar;
 using MudBlazor.Extensions;
 
 namespace MudBlazor
@@ -29,6 +30,8 @@ namespace MudBlazor
         public string Icon { get; set; }
         public Color IconColor { get; set; } = Color.Inherit;
         public Size IconSize { get; set; } = Size.Medium;
+
+        public SnackbarDuplicatesBehavior DuplicatesBehavior { get; set; } = SnackbarDuplicatesBehavior.GlobalDefault;
 
         /// <summary>
         /// Custom normal icon.

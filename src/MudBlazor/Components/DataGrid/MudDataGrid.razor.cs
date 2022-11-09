@@ -169,6 +169,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<T> CommittedItemChanges { get; set; }
 
+        /// <summary>
+        /// Callback is called when a field changes in the dialog MudForm. Only works in EditMode.Form
+        /// </summary>
+        [Parameter] public EventCallback<FormFieldChangedEventArgs> FormFieldChanged { get; set; }
+
         #endregion
 
         #region Parameters
@@ -685,6 +690,14 @@ namespace MudBlazor
             get
             {
                 return RenderedColumns.Any(x => x.StickyLeft || x.StickyRight);
+            }
+        }
+
+        private bool hasHierarchyColumn
+        {
+            get
+            {
+                return RenderedColumns.Any(x => x.Tag?.ToString() == "hierarchy-column");
             }
         }
 
@@ -1244,6 +1257,7 @@ namespace MudBlazor
             foreach (var group in _groups)
             {
                 group.IsExpanded = true;
+                _groupExpansions.Add(group.Grouping.Key);
             }
         }
 

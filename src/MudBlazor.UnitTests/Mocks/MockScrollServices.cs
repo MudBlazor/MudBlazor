@@ -47,6 +47,8 @@ namespace MudBlazor.UnitTests.Mocks
 
         public ValueTask ScrollToAsync(string id, int left, int top, ScrollBehavior scrollBehavior) => ValueTask.CompletedTask;
 
+        public ValueTask ScrollIntoViewAsync(string selector, ScrollBehavior behavior) => ValueTask.CompletedTask;
+
         public Task ScrollToFragment(string id, ScrollBehavior behavior) => Task.CompletedTask;
 
         public ValueTask ScrollToFragmentAsync(string id, ScrollBehavior behavior) => ValueTask.CompletedTask;

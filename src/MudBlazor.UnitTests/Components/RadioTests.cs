@@ -263,7 +263,7 @@ namespace MudBlazor.UnitTests.Components
             }
             catch (Exception ex)
             {
-                ex.Message.Should().Be("Unable to set property 'IMudRadioGroup' on object of type 'MudBlazor.MudRadio`1[[System.String, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'. The error was: MudRadioGroup<Char> has a child MudRadio<System.String> with mismatching generic type.");
+                Assert.AreEqual(ex.InnerException.GetType(), typeof(MudBlazor.Utilities.Exceptions.GenericTypeMismatchException));
             }
         }
     }
