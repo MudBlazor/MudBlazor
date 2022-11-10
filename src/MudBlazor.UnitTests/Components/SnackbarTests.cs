@@ -114,7 +114,16 @@ namespace MudBlazor.UnitTests.Components
         public void TestStringMessageShouldAutofillKey()
         {
             var bar = _service.Add("Oh no!");
-            Assert.AreEqual("Oh no!", bar.Message.Key);
+            Assert.AreEqual("Oh no!", bar.Message);
+            Assert.AreEqual("Oh no!", bar.SnackbarMessage.Key);
+        }
+
+        [Test]
+        public void TestStringMessageWithDifferentKey()
+        {
+            var bar = _service.Add("Oh no!", key:"zzz");
+            Assert.AreEqual("Oh no!", bar.Message);
+            Assert.AreEqual("zzz", bar.SnackbarMessage.Key);
         }
 
         [Test]
