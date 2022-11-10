@@ -4,13 +4,13 @@
 
 @if (Parent?.KeepPanelsAlive == true)
 {
-    <div @attributes="UserAttributes" class="@Class" style="display:@(Parent?.ActivePanel == this ? "contents" : "none");@Style">
+    <div @attributes="UserAttributes" class="@Class" style="display:@(Parent?.ActivePanel == this && !Parent.Collapsed ? "contents" : "none");@Style">
         @ChildContent
     </div>
 }
 else
 {
-    @if (Parent?.ActivePanel == this)
+    @if (Parent?.ActivePanel == this && !Parent.Collapsed )
     {
         @ChildContent
     }

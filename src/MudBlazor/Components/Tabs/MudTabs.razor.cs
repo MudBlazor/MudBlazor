@@ -212,12 +212,17 @@ namespace MudBlazor
             get => _activePanelIndex;
             set
             {
-                if (_activePanelIndex != value)
+                if (_activePanelIndex != value || Collapsed)
                 {
+                    Collapsed = false;
                     _activePanelIndex = value;
                     if (_isRendered)
                         ActivePanel = _panels[_activePanelIndex];
                     ActivePanelIndexChanged.InvokeAsync(value);
+                }
+                else if (AllowCollapse)
+                {
+                    Collapsed = true;
                 }
             }
         }
@@ -227,6 +232,20 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<int> ActivePanelIndexChanged { get; set; }
+
+        /// <summary>
+        /// Collapse panel when clicking on active tab.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
+        public bool AllowCollapse { get; set; }
+
+        /// <summary>
+        /// No pannel active when initializing
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
+        public bool Collapsed { get; set; }
 
         /// <summary>
         /// A readonly list of the current panels. Panels should be added or removed through the RenderTree use this collection to get informations about the current panels
@@ -455,7 +474,7 @@ namespace MudBlazor
         protected string PanelsClassnames =>
             new CssBuilder("mud-tabs-panels")
             .AddClass($"mud-tabs-vertical", IsVerticalTabs())
-            .AddClass(PanelClass)
+            .AddClass(PanelClass, !Collapsed)
             .Build();
 
         protected string SliderClass =>
