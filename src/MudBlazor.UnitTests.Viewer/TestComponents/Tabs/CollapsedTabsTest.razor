@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTabs Collapsed="@Collapsed" AllowCollapse="@AllowCollapse">
+    <MudTabPanel Text="Tab One">
+        <MudText>Content One</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Tab Two">
+        <MudText>Content Two</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Tab Three">
+        <MudText>Content Three</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Tab Disabled" Disabled="true">
+        <MudText>Content Disabled</MudText>
+    </MudTabPanel>
+</MudTabs>
+
+@code {
+    [Parameter]
+    public bool Collapsed { get; set; }
+    [Parameter]
+    public bool AllowCollapse { get; set; }
+}

@@ -1021,6 +1021,48 @@ namespace MudBlazor.UnitTests.Components
             content.NextElementSibling.ClassList.Should().Contain("mud-tabs-panels");
         }
 
+        [Test]
+        public async Task CollapseTabsTest()
+        {
+            var comp = Context.RenderComponent<CollapsedTabsTest>(p=>p.Add(x =>x.Collapsed, true).Add(x =>x.AllowCollapse, true));
+            comp.Markup.Should().NotContain("Content One");
+            comp.Markup.Should().NotContain("Content Two");
+            comp.Markup.Should().NotContain("Content Three");
+            comp.FindAll("div.mud-tab")[0].Click();
+            comp.Markup.Should().Contain("Content One");
+            comp.Markup.Should().NotContain("Content Two");
+            comp.Markup.Should().NotContain("Content Three");
+            comp.FindAll("div.mud-tab")[2].Click();
+            comp.Markup.Should().NotContain("Content One");
+            comp.Markup.Should().NotContain("Content Two");
+            comp.Markup.Should().Contain("Content Three");
+            comp.FindAll("div.mud-tab")[2].Click();
+            comp.Markup.Should().NotContain("Content One");
+            comp.Markup.Should().NotContain("Content Two");
+            comp.Markup.Should().NotContain("Content Three");
+        }
+
+        [Test]
+        public async Task CollapseTabsNotAllowedTest()
+        {
+            var comp = Context.RenderComponent<CollapsedTabsTest>(p=>p.Add(x =>x.Collapsed, false).Add(x =>x.AllowCollapse, false));
+            comp.Markup.Should().Contain("Content One");
+            comp.Markup.Should().NotContain("Content Two");
+            comp.Markup.Should().NotContain("Content Three");
+            comp.FindAll("div.mud-tab")[0].Click();
+            comp.Markup.Should().Contain("Content One");
+            comp.Markup.Should().NotContain("Content Two");
+            comp.Markup.Should().NotContain("Content Three");
+            comp.FindAll("div.mud-tab")[2].Click();
+            comp.Markup.Should().NotContain("Content One");
+            comp.Markup.Should().NotContain("Content Two");
+            comp.Markup.Should().Contain("Content Three");
+            comp.FindAll("div.mud-tab")[2].Click();
+            comp.Markup.Should().NotContain("Content One");
+            comp.Markup.Should().NotContain("Content Two");
+            comp.Markup.Should().Contain("Content Three");
+        }
+
         #region Helper
 
         private static double GetSliderValue(IRenderedComponent<ScrollableTabsTest> comp, string attribute = "left")
