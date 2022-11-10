@@ -37,7 +37,7 @@ namespace MudBlazor.UnitTests.Components
             label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("textFieldLabelTest");
             label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
         }
-        
+
         /// <summary>
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>
@@ -50,7 +50,7 @@ namespace MudBlazor.UnitTests.Components
             label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
             label[2].Attributes.GetNamedItem("for")?.Value.Should().Be("fieldLabelTest");
         }
-        
+
         /// <summary>
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>
@@ -658,7 +658,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => input.Instance.Value.Should().Be(""));
             comp.WaitForAssertion(() => input.Instance.Text.Should().Be(""));
         }
-        
+
         [Test]
         public async Task TextField_ElementReferenceId_ShouldNot_BeEmpty()
         {
@@ -666,7 +666,7 @@ namespace MudBlazor.UnitTests.Components
             var inputId = comp.Instance.InputReference.ElementReference.Id;
 
             Assert.IsNotEmpty(inputId);
-        }    
+        }
 
         class TestDataAnnotationModel
         {
@@ -734,11 +734,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ValidationErrors.Should().HaveCount(0);
 
             comp.WaitForAssertion(() => comp.Instance.GetInputType().Should().Be(InputType.Text));
-            await comp.InvokeAsync(() => comp.Instance.SelectAsync());
-            await comp.InvokeAsync(() => comp.Instance.SelectRangeAsync(0, 1));
+            await comp.InvokeAsync(async () => await comp.Instance.SelectAsync());
+            await comp.InvokeAsync(async () => await comp.Instance.SelectRangeAsync(0, 1));
             comp.WaitForAssertion(() => comp.Instance.ValidationErrors.Should().HaveCount(0));
         }
-        
+
         [Test]
         public async Task TextField_OnlyValidateIfDirty_Is_True_Should_OnlyHaveInputErrorWhenValueChanged()
         {
@@ -746,7 +746,7 @@ namespace MudBlazor.UnitTests.Components
                 ComponentParameter.CreateParameter("Required", true),
                 ComponentParameter.CreateParameter("OnlyValidateIfDirty", true));
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-            
+
             // user does not change input value but changes focus
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
@@ -756,32 +756,32 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(1);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
-            
+
             // user does not change invalid input value but changes focus
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(1);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
-            
+
             // reset (must reset dirty state)
             await comp.InvokeAsync(() => comp.Instance.Reset());
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-            
+
             // user does not change input value but changes focus
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-            
+
             // user puts in a invalid integer value
             comp.Find("input").Change("invalid");
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(1);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
-            
+
             // user corrects input
             comp.Find("input").Change(55);
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
         }
-        
+
         [Test]
         public async Task TextField_OnlyValidateIfDirty_Is_False_Should_HaveInputErrorWhenFocusChanged()
         {
@@ -789,27 +789,27 @@ namespace MudBlazor.UnitTests.Components
                 ComponentParameter.CreateParameter("Required", true),
                 ComponentParameter.CreateParameter("OnlyValidateIfDirty", false));
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-            
+
             // user does not change input value but changes focus
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(2);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
-            
+
             // user puts in a invalid integer value
             comp.Find("input").Change("invalid");
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(2);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
-            
+
             // reset
             await comp.InvokeAsync(() => comp.Instance.Reset());
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-            
+
             // user does not change input value but changes focus
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(2);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
-            
+
             // user corrects input
             comp.Find("input").Change(55);
             comp.Find("input").Blur();

@@ -366,6 +366,25 @@ namespace MudBlazor.UnitTests.Components
             //if no crash occurs, we know the datagrid is properly filtering out the GetOnly property when calling set
         }
 
+        /// <summary>
+        /// DataGrid edit form should trigger the FormFieldChanged event
+        /// </summary>
+        [Test]
+        public async Task DataGridFormFieldChangedTest()
+        {
+            var comp = Context.RenderComponent<DataGridFormFieldChangedTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormFieldChangedTest.Item>>();
+            //open edit dialog
+            dataGrid.FindAll("tbody tr")[0].Click();
+
+            //edit data
+            comp.Find("div input").Change("J K Simmons");
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("J K Simmons");
+
+            var textfield = comp.FindComponent<MudTextField<string>>();
+            Assert.AreSame(comp.Instance.FormFieldChangedEventArgs.Field, textfield.Instance);
+        }
+
         [Test]
         public async Task DataGridVisualStylingTest()
         {
@@ -384,7 +403,6 @@ namespace MudBlazor.UnitTests.Components
 
             // Include callbacks in test coverage.
             dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
-            dataGrid.Instance.RowMouseDown.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.CommittedItemChanges.HasDelegate.Should().Be(true);
 
@@ -398,14 +416,11 @@ namespace MudBlazor.UnitTests.Components
 
             // Make sure that the callbacks have not been fired yet.
             comp.Instance.RowClicked.Should().Be(false);
-            comp.Instance.RowMouseDowned.Should().Be(false);
             comp.Instance.SelectedItemChanged.Should().Be(false);
             comp.Instance.CommittedItemChanges.Should().Be(false);
 
-            // Fire RowClick, RowMouseDown, SelectedItemChanged, SelectedItemsChanged, and StartedEditingItem callbacks.
+            // Fire RowClick, SelectedItemChanged, SelectedItemsChanged, and StartedEditingItem callbacks.
             dataGrid.FindAll(".mud-table-body tr")[0].Click();
-            // Fire RowMouseDown
-            dataGrid.FindAll(".mud-table-body tr")[0].MouseDown();
 
             //Console.WriteLine(dataGrid.Markup);
             // Edit an item.
@@ -413,7 +428,6 @@ namespace MudBlazor.UnitTests.Components
 
             // Make sure that the callbacks have been fired.
             comp.Instance.RowClicked.Should().Be(true);
-            comp.Instance.RowMouseDowned.Should().Be(true);
             comp.Instance.SelectedItemChanged.Should().Be(true);
             comp.Instance.CommittedItemChanges.Should().Be(true);
         }

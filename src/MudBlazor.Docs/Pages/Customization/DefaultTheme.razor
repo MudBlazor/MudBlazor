@@ -15,9 +15,9 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Type</th>
-                                <th>Default</th>
+                                <th>Default Light</th>
+                                <th>Default Dark</th>
                                 <th>CSS Variable</th>
-                                <th>CSS Class</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -33,8 +33,16 @@
                                         </div>
                                         
                                     </td>
+                                    <td>
+                                        @if (!Row.Default.Equals(Row.Dark))
+                                        {
+                                            <div class="d-flex align-center">
+                                                <MudPaper Outlined="true" Height="16px" Width="16px" Class="mr-2" Style="@($"background-color:{Row.Dark}")"/>
+                                                @Row.Dark
+                                            </div>
+                                        }
+                                    </td>
                                     <td>@Row.CSSVariable</td>
-                                    <td>@Row.CSSClass</td>
                                 </tr>
                             }
                         </tbody>
@@ -211,6 +219,7 @@
                 Name = value.Name,
                 Type = value.PropertyType.ConvertToCSharpSource(),
                 Default = value.GetValue(mudTheme.Palette, null),
+                Dark = value.GetValue(mudTheme.PaletteDark, null),
                 CSSVariable = $"--mud-palette-{GetCssVar(value.Name)}"
             };
             ApiPalette.Add(newprop);
@@ -327,6 +336,7 @@
         public string Name { get; set; }
         public string Type { get; set; }
         public object Default { get; set; }
+        public object Dark { get; set; }
         public string CSSClass { get; set; }
         public string CSSVariable { get; set; }
         public bool IsHeader { get; set; }

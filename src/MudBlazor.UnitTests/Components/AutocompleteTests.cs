@@ -38,7 +38,7 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompletecomp.Instance;
-            await comp.InvokeAsync(() => autocomplete.FocusAsync());
+            await comp.InvokeAsync(async () => await autocomplete.FocusAsync());
             //No popover-open, due it's closed
             comp.Markup.Should().NotContain("mud-popover-open");
 
@@ -792,8 +792,8 @@ namespace MudBlazor.UnitTests.Components
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
                 await comp.InvokeAsync(() => autocomplete.OnEnterKey());
                 autocompletecomp.Find("input").Input("abc");
-                await comp.InvokeAsync(() => autocomplete.SelectAsync());
-                await comp.InvokeAsync(() => autocomplete.SelectRangeAsync(0, 1));
+                await comp.InvokeAsync(async () => await autocomplete.SelectAsync());
+                await comp.InvokeAsync(async () => await autocomplete.SelectRangeAsync(0, 1));
                 autocompletecomp.Find("input").Input("");
                 await comp.InvokeAsync(() => autocomplete.ToggleMenu());
                 comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());

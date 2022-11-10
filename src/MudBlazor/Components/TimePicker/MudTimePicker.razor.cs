@@ -161,6 +161,7 @@ namespace MudBlazor
                 UpdateTimeSetFromTime();
                 await TimeChanged.InvokeAsync(_value);
                 BeginValidate();
+                FieldChanged(_value);
             }
         }
 

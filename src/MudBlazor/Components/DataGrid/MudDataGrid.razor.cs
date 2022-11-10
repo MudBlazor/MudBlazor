@@ -155,11 +155,6 @@ namespace MudBlazor
         [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowClick { get; set; }
 
         /// <summary>
-        /// Callback is called whenever mouse down on a row.
-        /// </summary>
-        [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowMouseDown { get; set; }
-
-        /// <summary>
         /// Callback is called when an item has begun to be edited. Returns the item being edited.
         /// </summary>
         [Parameter] public EventCallback<T> StartedEditingItem { get; set; }
@@ -173,6 +168,11 @@ namespace MudBlazor
         /// Callback is called when the changes to an item are committed. Returns the item whose changes were committed.
         /// </summary>
         [Parameter] public EventCallback<T> CommittedItemChanges { get; set; }
+
+        /// <summary>
+        /// Callback is called when a field changes in the dialog MudForm. Only works in EditMode.Form
+        /// </summary>
+        [Parameter] public EventCallback<FormFieldChangedEventArgs> FormFieldChanged { get; set; }
 
         #endregion
 
@@ -948,18 +948,6 @@ namespace MudBlazor
 
             if (EditMode != DataGridEditMode.Cell && EditTrigger == DataGridEditTrigger.OnRowClick)
                 await SetEditingItemAsync(item);
-
-            await SetSelectedItemAsync(item);
-        }
-
-        internal async Task OnRowMouseDownAsync(MouseEventArgs args, T item, int rowIndex)
-        {
-            await RowMouseDown.InvokeAsync(new DataGridRowClickEventArgs<T>
-            {
-                MouseEventArgs = args,
-                Item = item,
-                RowIndex = rowIndex,
-            });
 
             await SetSelectedItemAsync(item);
         }

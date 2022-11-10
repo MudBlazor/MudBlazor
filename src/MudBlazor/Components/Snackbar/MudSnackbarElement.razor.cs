@@ -38,7 +38,7 @@ namespace MudBlazor
         // behavior
         private void ActionClicked() => Snackbar?.Clicked(false);
         private void CloseIconClicked() => Snackbar?.Clicked(true);
-        private SnackbarMessage Message => Snackbar?.Message;
+        private SnackbarMessage Message => Snackbar?.SnackbarMessage;
 
         private void SnackbarClicked()
         {
