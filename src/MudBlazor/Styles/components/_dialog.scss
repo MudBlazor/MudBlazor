@@ -92,6 +92,12 @@
             right: 8px;
             position: absolute;
         }
+
+        & .mud-toolbar {
+            & .mud-button-root {
+                position: relative;
+            }
+        }
     }
 
     & .mud-dialog-content {
