@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudChipSet @bind-SelectedChips="selected" MultiSelection="true" NewSelections="@NewSelections"  Filter="true">
+    <MudChip Text="Milk"></MudChip>
+    <MudChip Text="Eggs" Default="true"></MudChip>
+    <MudChip Text="Soap"></MudChip>
+    <MudChip Text="Corn flakes"></MudChip>
+    <MudChip Text="Salad" Default="true"></MudChip>
+    <MudChip Text="Apples"></MudChip>
+    <MudChip Text="Red wine"></MudChip>
+</MudChipSet>
+
+
+@if (selected != null && selected.Length > 0)
+{
+        <MudText>@string.Join(", ", selected.Select(chip=>chip.Text).OrderBy(x => x))</MudText>
+}
+else
+{
+        <MudText>Nothing selected.</MudText>
+}
+
+<MudCheckBox @bind-Checked="newSelections">New Selections</MudCheckBox>
+@if (newSelections)
+{
+    <MudText>Chip selection is limited to @SelectionLimit</MudText>
+}
+@code
+{
+    [Parameter] public int SelectionLimit { get; set; } = 4;
+    bool NewSelections => newSelections && SelectionLimit > (selected?.Length ?? 0);
+
+    bool newSelections = true;
+    MudChip[] selected;
+}

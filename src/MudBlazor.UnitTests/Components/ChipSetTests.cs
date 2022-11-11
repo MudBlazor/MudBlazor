@@ -81,6 +81,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ChipSet_SingleSelection_NewSelections()
+        {
+            var comp = Context.RenderComponent<ChipSetTest>(ComponentParameter.CreateParameter("NewSelections", false));
+            // print the generated html
+            //Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var chipset = comp.FindComponent<MudChipSet>();
+            comp.FindAll("div.mud-chip").Count.Should().Be(7);
+            chipset.Instance.SelectedChip.Should().Be(null);
+            comp.FindAll("p")[0].TrimmedText().Should().Be("Nothing selected.");
+
+            comp.FindAll("div.mud-chip")[3].Click();
+            chipset.Instance.SelectedChip.Should().Be(null);
+            comp.FindAll("p")[0].TrimmedText().Should().Be("Nothing selected.");
+
+            comp.FindAll("div.mud-chip")[0].Click();
+            chipset.Instance.SelectedChip.Should().Be(null);
+            comp.FindAll("p")[0].TrimmedText().Should().Be("Nothing selected.");
+        }
+
+        [Test]
         public async Task ChipSet_MultiSelection()
         {
             var comp = Context.RenderComponent<ChipSetTest>();
@@ -167,6 +188,22 @@ namespace MudBlazor.UnitTests.Components
             string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Corn flakes, Salad");
         }
 
+        [Test]
+        public async Task ChipSet_MultiSelection_NewSelections()
+        {
+            var comp = Context.RenderComponent<ChipSetDefaultChipsTest>(ComponentParameter.CreateParameter("MultiSelection", true));
+            // select elements needed for the test
+            var chipset = comp.FindComponent<MudChipSet>();
+            comp.FindAll("div.mud-chip").Count.Should().Be(7);
+            chipset.Instance.SelectedChips.Length.Should().Be(2);
+            comp.FindAll("p")[0].TrimmedText().Should().Be("Eggs, Salad");
+
+            comp.SetParam("NewSelections", false);
+
+            comp.FindAll("div.mud-chip")[3].Click();
+            comp.FindAll("p")[0].TrimmedText().Should().Be("Eggs, Salad");
+            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Eggs, Salad");
+        }
 
         [Test]
         public async Task ChipSet_MultiSelection_LateDefaultChipsShouldBeInitiallySelected()

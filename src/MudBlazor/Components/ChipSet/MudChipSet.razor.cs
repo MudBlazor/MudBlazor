@@ -30,6 +30,13 @@ namespace MudBlazor
         public bool MultiSelection { get; set; } = false;
 
         /// <summary>
+        /// Allows to select new chips.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ChipSet.Behavior)]
+        public bool NewSelections { get; set; } = true;
+
+        /// <summary>
         /// Will not allow to deselect the selected chip in single selection mode.
         /// </summary>
         [Parameter]
@@ -266,6 +273,9 @@ namespace MudBlazor
         internal Task OnChipClicked(MudChip chip)
         {
             var wasSelected = chip.IsSelected;
+
+            if (!(NewSelections || chip.IsSelected))
+                return Task.CompletedTask;
             if (MultiSelection)
             {
                 chip.IsSelected = !chip.IsSelected;
