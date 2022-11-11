@@ -135,11 +135,11 @@
 	@if (!HideSpinButtons)
 	{
 	    <div class="mud-input-numeric-spin">
-            <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1">
-                <MudIcon Icon="@NumericUpIcon" Size="@GetButtonSize()" aria-label="Increment" />
+            <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1" aria-label="Increment">
+                <MudIcon Icon="@NumericUpIcon" Size="@GetButtonSize()" />
             </MudButton>
-            <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1">
-                <MudIcon Icon="@NumericDownIcon" Size="@GetButtonSize()" aria-label="Decrement" />
+            <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1" aria-label="Decrement">
+                <MudIcon Icon="@NumericDownIcon" Size="@GetButtonSize()" />
             </MudButton>
 	    </div>
 	}
