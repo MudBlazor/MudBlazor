@@ -4,8 +4,8 @@
 @Render
 
 @code {
-    private string enterKeyText = "Enter";
-    private string numpadEnterKeyText = "NumpadEnter";
+    private const string enterKeyText = "Enter";
+    private const string numpadEnterKeyText = "NumpadEnter";
 
     protected override RenderFragment InputContent =>
         @<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" Error="@Error"
