@@ -347,6 +347,13 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("tbody tr")[1].Click();
 
             //edit data
+            //Test for empty required field.
+            comp.FindAll("div input")[0].Change("");
+            comp.Find(".mud-dialog-actions .mud-button-filled-primary").Click();
+            //Name should not be updated due to validation.
+            dataGrid.FindAll("td")[3].Html().Trim().Should().Be("Johanna");
+
+            //Set to valid values.
             comp.FindAll("div input")[0].Change("Galadriel");
             comp.FindAll("div input")[1].Change(1);
 

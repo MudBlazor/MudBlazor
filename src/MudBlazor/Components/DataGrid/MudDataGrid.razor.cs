@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -925,16 +926,31 @@ namespace MudBlazor
 
             if (editingSourceItem != null)
             {
-                foreach (var property in _properties)
+                //Make sure edited object is valid before saving.
+                if (IsValidObject(_editingItem))
                 {
-                    if (property.CanWrite)
-                        property.SetValue(editingSourceItem, property.GetValue(_editingItem));
-                }
+                    foreach (var property in _properties)
+                    {
+                        if (property.CanWrite)
+                            property.SetValue(editingSourceItem, property.GetValue(_editingItem));
+                    }
 
-                await CommittedItemChanges.InvokeAsync(editingSourceItem);
-                ClearEditingItem();
-                isEditFormOpen = false;
+                    await CommittedItemChanges.InvokeAsync(editingSourceItem);
+                    ClearEditingItem();
+                    isEditFormOpen = false;
+                }
             }
+        }
+
+        internal static bool IsValidObject(object item)
+        {
+            //We are only checking for validation errors. Null has no errors.
+            if (item is null)
+                return true;
+
+            var results = new List<ValidationResult>();
+            var valid = System.ComponentModel.DataAnnotations.Validator.TryValidateObject(item, new ValidationContext(item), results, true);
+            return valid;
         }
 
         internal async Task OnRowClickedAsync(MouseEventArgs args, T item, int rowIndex)
