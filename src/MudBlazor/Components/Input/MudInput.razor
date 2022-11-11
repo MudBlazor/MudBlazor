@@ -136,10 +136,10 @@
 	{
 	    <div class="mud-input-numeric-spin">
             <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1">
-                <MudIcon Icon="@NumericUpIcon" Size="@GetButtonSize()" />
+                <MudIcon Icon="@NumericUpIcon" Size="@GetButtonSize()" aria-label="Increment" />
             </MudButton>
             <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1">
-                <MudIcon Icon="@NumericDownIcon" Size="@GetButtonSize()" />
+                <MudIcon Icon="@NumericDownIcon" Size="@GetButtonSize()" aria-label="Decrement" />
             </MudButton>
 	    </div>
 	}
