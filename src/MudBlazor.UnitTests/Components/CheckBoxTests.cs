@@ -354,5 +354,28 @@ namespace MudBlazor.UnitTests.Components
             var comp2 = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(f => f.For, () => value.Boolean).Add(l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
+
+        [Test]
+        public void CheckBoxLabelClassTest()
+        {
+            const string LabelClass = "unit-test label-class";
+            var comp = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(f => f.LabelClass, LabelClass).Add(l => l.Label, "Label Parameter"));
+            comp.Markup.Should().Contain(LabelClass);
+        }
+        
+        [Test]
+        public void CheckBoxLabelStyleTest()
+        {
+            const string LabelStyle = "display:flex; flex-direction:column; flex-direction: column-reverse;";
+            var comp = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(f => f.LabelStyle, LabelStyle).Add(l => l.Label, "Label Parameter"));
+            comp.Markup.Should().Contain(LabelStyle);
+        }
+
+        [Test]
+        public void CheckBoxLabelTextStyleTest()
+        {
+            var comp = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(f => f.LabelTypo, Typo.caption).Add(l => l.Label, "Label Parameter"));
+            comp.Markup.Should().Contain($"mud-typography-{Typo.caption.ToDescriptionString()}");
+        }
     }
 }
