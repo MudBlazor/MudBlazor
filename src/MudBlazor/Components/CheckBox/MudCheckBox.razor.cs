@@ -20,6 +20,7 @@ namespace MudBlazor
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-readonly", ReadOnly)
             .AddClass(LabelPosition == LabelPosition.End ? "mud-ltr" : "mud-rtl", true)
+            .AddClass(LabelClass)
         .Build();
 
         protected string CheckBoxClassname =>
@@ -59,6 +60,27 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public LabelPosition LabelPosition { get; set; } = LabelPosition.End;
+        
+        /// <summary>
+        /// User label class names, separated by space.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ComponentBase.Common)]
+        public string LabelClass { get; set; }
+
+        /// <summary>
+        /// User label styles, applied on top of the label's own classes and styles.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ComponentBase.Common)]
+        public string LabelStyle { get; set; }
+        
+        /// <summary>
+        /// Applies the theme typography styles to the label.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Text.Appearance)]
+        public Typo LabelTypo { get; set; } = Typo.body1;
 
         /// <summary>
         /// If true, the checkbox can be controlled with the keyboard.
