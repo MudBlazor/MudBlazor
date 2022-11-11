@@ -20,10 +20,10 @@
         @Info
     </MudText>
     <div class="mud-table-pagination-actions">
-        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.FirstPage" Disabled="@BackButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.First))"/>
-        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateBefore" Disabled="@BackButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Previous))"/>
-        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateNext" Disabled="@ForwardButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Next))"/>
-        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.LastPage" Disabled="@ForwardButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Last))"/>
+        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.FirstPage" Disabled="@BackButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.First))" aria-label="First page" />
+        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateBefore" Disabled="@BackButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Previous))" aria-label="Previous page" />
+        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateNext" Disabled="@ForwardButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Next))" aria-label="Next page" />
+        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.LastPage" Disabled="@ForwardButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Last))" aria-label="Last page" />
     </div>
 </MudToolBar>
 

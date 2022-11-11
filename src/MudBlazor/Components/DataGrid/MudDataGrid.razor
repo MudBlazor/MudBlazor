@@ -60,12 +60,12 @@
                                             @Filter(f, null)
                                         }
                                     </MudGrid>
-                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">Add Filter</MudButton>
+                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary" aria-label="Add filter">Add Filter</MudButton>
                                     @if (ServerData != null)
                                     {
-                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFilters" Color="@Color.Primary">Apply</MudButton>
+                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFilters" Color="@Color.Primary" aria-label="Apply filters">Apply</MudButton>
                                     }
-                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFilters" Color="@Color.Primary">Clear</MudButton>
+                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFilters" Color="@Color.Primary" aria-label="Clear filters">Clear</MudButton>
                                 }
                                 else
                                 {
@@ -85,10 +85,10 @@
                                         </MudItem>
                                     }
                                     <MudItem xs="6">
-                                        <MudButton OnClick="@HideAllColumnsAsync" Color="@Color.Primary">Hide All</MudButton>
+                                        <MudButton OnClick="@HideAllColumnsAsync" Color="@Color.Primary" aria-label="Hide all">Hide All</MudButton>
                                     </MudItem>
                                     <MudItem xs="6" Class="d-flex justify-end">
-                                        <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary">Show All</MudButton>
+                                        <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary" aria-label="Show all">Show All</MudButton>
                                     </MudItem>
                                 </MudGrid>
                                 
@@ -126,7 +126,7 @@
                                             <MudIconButton 
                                                 Class="mud-table-row-expander" 
                                                 Icon="@(g.IsExpanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)" 
-                                                OnClick="@(() => ToggleGroupExpansion(g))" />
+                                                OnClick="@(() => ToggleGroupExpansion(g))" aria-label="Toggle group expansion"/>
 
                                             @if (GroupedColumn.GroupTemplate == null)
                                             {
@@ -270,8 +270,8 @@
             </MudForm>
         </DialogContent>
         <DialogActions>
-            <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@CancelEditingItemAsync" Class="px-10">Cancel</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10">Save</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@CancelEditingItemAsync" Class="px-10" aria-label="Cancel">Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10" aria-label="Save">Save</MudButton>
         </DialogActions>
     </MudDialog>
 </CascadingValue>
@@ -374,7 +374,7 @@
         @if (column == null)
         {
             <MudItem xs="1" Class="d-flex">
-                <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilter" Size="@Size.Small" Style="align-self:flex-end"></MudIconButton>
+                <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilter" Size="@Size.Small" Style="align-self:flex-end" aria-label="Remove filter"></MudIconButton>
             </MudItem>
             <MudItem xs="4">
                 <MudSelect T="string" Value="@f.Field" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense"
