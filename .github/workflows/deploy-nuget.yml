@@ -1,6 +1,13 @@
 name: Pack and Publish Nuget Package
 
 on:
+  workflow_dispatch:
+    inputs:
+        nuget-version:
+          description: 'Nuget version v[0-9]+.[0-9]+.[0-9]+*'
+          required: true
+          default: '' 
+          type: string
   push:
     tags: 
       - "v[0-9]+.[0-9]+.[0-9]+*"
@@ -16,8 +23,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-    - uses: actions/checkout@v3
-    - name: Set version variable
+      uses: actions/checkout@v3
+    - name: Set version variable from input
+      if: ${{ github.event.inputs.nuget-version != '' }}
+      env:
+        TAG: ${{ github.ref_name }}
+      run: echo "VERSION=${TAG#v}" >> $GITHUB_ENV
+    - name: Set version variable from tag
       if: ${{ github.ref_type == 'tag' }}
       env:
         TAG: ${{ github.ref_name }}
