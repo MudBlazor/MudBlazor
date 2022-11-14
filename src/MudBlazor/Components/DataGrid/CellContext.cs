@@ -48,7 +48,7 @@ namespace MudBlazor
             public Action CancelEditingItem { get; internal set; }
             public Action ToggleHierarchyVisibilityForItem { get; internal set; }
             /// <summary>
-            /// Only usable within an EditTemplate
+            /// Alerts the datagrid that this cell has changed. Only triggers CommitedItemChanges if the validation passes
             /// </summary>
             public Action<object> ValueChanged { get; internal set; }
         }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using AngleSharp.Common;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
@@ -430,6 +431,21 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.RowClicked.Should().Be(true);
             comp.Instance.SelectedItemChanged.Should().Be(true);
             comp.Instance.CommittedItemChanges.Should().Be(true);
+        }
+
+        [Test]
+        public async Task DataGridValueChangedTest()
+        {
+            var comp = Context.RenderComponent<DataGridValueChangedTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridValueChangedTest.Item>>();
+
+            dataGrid.FindAll(".mud-table-body tr td input")[0].Change("A Test");
+            comp.Instance.ChangedName.Should().Be("A Test"); //change should propagate through the event
+            dataGrid.Instance.Items.First().Name.Should().Be("A Test");
+
+            dataGrid.FindAll(".mud-table-body tr td input")[0].Change("");
+            comp.Instance.ChangedName.Should().Be("A Test"); //change should not propagate, as the field is required
+            dataGrid.Instance.Items.First().Name.Should().Be(""); //the value should still be changed, as it is up to the cancel method to revert this
         }
 
         [Test]

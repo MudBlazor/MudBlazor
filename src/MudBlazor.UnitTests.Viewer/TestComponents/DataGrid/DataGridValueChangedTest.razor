@@ -1,0 +1,39 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid T="Item" Items="@_items" EditMode="@DataGridEditMode.Cell" CommittedItemChanges="@OnCommittedItemChanges" ReadOnly="false">
+    <Columns>
+        <Column T="Item" Field="@nameof(Item.Name)">
+            <EditTemplate>
+                <MudTextField T="string" Required Value="@context.Item.Name" ValueChanged="context.Actions.ValueChanged" />
+            </EditTemplate>
+        </Column>
+    </Columns>
+</MudDataGrid>
+
+@ChangedName
+
+@code {
+    private IEnumerable<Item>
+    _items = new List<Item>
+        ()
+        {
+        new Item("A"),
+        new Item("B"),
+        new Item("C")
+            };
+
+    public string ChangedName { get; set; }
+
+    private void OnCommittedItemChanges(Item item) => ChangedName = item.Name;
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+
+}
