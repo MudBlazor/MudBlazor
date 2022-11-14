@@ -1,6 +1,6 @@
 @namespace MudBlazor.Docs.Examples
 
-<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" AllowCollapse="true" Collapsed="true">
+<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" AllowCollapse="true" @bind-Collapsed="@_collapsed">
     <MudTabPanel Text="Tab One">
         <MudText>Content One</MudText>
     </MudTabPanel>
@@ -14,3 +14,7 @@
         <MudText>Content Disabled</MudText>
     </MudTabPanel>
 </MudTabs>
+
+@code{
+    bool _collapsed = true;
+}

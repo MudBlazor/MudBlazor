@@ -20,6 +20,7 @@ namespace MudBlazor
         private int _scrollIndex = 0;
 
         private bool _isRendered = false;
+        private bool _collapsed = false;
         private bool _prevButtonDisabled;
         private bool _nextButtonDisabled;
         private bool _showScrollButtons;
@@ -241,11 +242,26 @@ namespace MudBlazor
         public bool AllowCollapse { get; set; }
 
         /// <summary>
-        /// No pannel active when initializing
+        /// Are panels collapsed?
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
-        public bool Collapsed { get; set; }
+        public bool Collapsed {
+            get => this._collapsed;
+            set
+            {
+                if (this._collapsed == value)
+                    return;
+                this._collapsed = value;
+                this.CollapsedChanged.InvokeAsync(this._collapsed);
+            } 
+        }
+
+        /// <summary>
+        /// Fired when Collapsed changes.
+        /// </summary>
+        [Parameter]
+        public EventCallback<bool> CollapsedChanged { get; set; }
 
         /// <summary>
         /// A readonly list of the current panels. Panels should be added or removed through the RenderTree use this collection to get informations about the current panels
