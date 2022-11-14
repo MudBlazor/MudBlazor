@@ -27,7 +27,7 @@ jobs:
     - name: Set version variable from input
       if: ${{ github.event.inputs.nuget-version != '' }}
       env:
-        TAG: ${{ github.ref_name }}
+        TAG: ${{ github.event.inputs.nuget-version }}
       run: echo "VERSION=${TAG#v}" >> $GITHUB_ENV
     - name: Set version variable from tag
       if: ${{ github.ref_type == 'tag' }}
@@ -43,5 +43,5 @@ jobs:
     - name: Pack nuget package
       run: dotnet pack -c Release --output nupkgs /p:PackageVersion=$VERSION
     - name: Publish nuget package
-      if: github.ref_type == 'tag' && startsWith(github.ref, 'refs/tags/v')
+      if: startsWith($VERSION 'v')
       run: dotnet nuget push nupkgs/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json
