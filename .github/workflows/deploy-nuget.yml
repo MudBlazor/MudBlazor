@@ -43,5 +43,5 @@ jobs:
     - name: Pack nuget package
       run: dotnet pack -c Release --output nupkgs /p:PackageVersion=$VERSION
     - name: Publish nuget package
-      if: startsWith($VERSION 'v')
+      if: startsWith($VERSION, 'v')
       run: dotnet nuget push nupkgs/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json
