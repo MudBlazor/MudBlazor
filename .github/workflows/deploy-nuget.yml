@@ -8,9 +8,6 @@ on:
           required: true
           default: '' 
           type: string
-  push:
-    tags: 
-      - "v[0-9]+.[0-9]+.[0-9]+*"
 env:
   VERSION: 1.0.0
 
