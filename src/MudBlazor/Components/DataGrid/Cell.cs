@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -18,6 +19,7 @@ namespace MudBlazor
         private readonly MudDataGrid<T> _dataGrid;
         private readonly Column<T> _column;
         internal T _item;
+        internal IForm _validator;
         internal string valueString;
         internal double? valueNumber;
         internal bool isEditing;
@@ -90,16 +92,17 @@ namespace MudBlazor
 
         #endregion
 
-        public Cell(MudDataGrid<T> dataGrid, Column<T> column, T item)
+        public Cell(MudDataGrid<T> dataGrid, Column<T> column, T item, IForm validator)
         {
             _dataGrid = dataGrid;
             _column = column;
             _item = item;
+            _validator = validator;
 
             OnStartedEditingItem();
 
             // Create the CellContext
-            cellContext = new CellContext<T>(_dataGrid, _item);
+            cellContext = new CellContext<T>(_dataGrid, _item, (async (x) => await ValueChangedAsync(x)));
         }
 
         public async Task StringValueChangedAsync(string value)
@@ -108,7 +111,7 @@ namespace MudBlazor
             property.SetValue(_item, value);
 
             // If the edit mode is Cell, we update immediately.
-            if (_dataGrid.EditMode == DataGridEditMode.Cell)
+            if (_validator.IsValid && _dataGrid.EditMode == DataGridEditMode.Cell)
                 await _dataGrid.CommitItemChangesAsync(_item);
         }
 
@@ -118,7 +121,17 @@ namespace MudBlazor
             property.SetValue(_item, ChangeType(value, property.PropertyType));
 
             // If the edit mode is Cell, we update immediately.
-            if (_dataGrid.EditMode == DataGridEditMode.Cell)
+            if (_validator.IsValid && _dataGrid.EditMode == DataGridEditMode.Cell)
+                await _dataGrid.CommitItemChangesAsync(_item);
+        }
+
+        public async Task ValueChangedAsync(object value)
+        {
+            var property = _item.GetType().GetProperty(_column.Field);
+            property.SetValue(_item, ChangeType(value, property.PropertyType));
+
+            // If the edit mode is Cell, we update immediately.
+            if (_validator.IsValid && _dataGrid.EditMode == DataGridEditMode.Cell)
                 await _dataGrid.CommitItemChangesAsync(_item);
         }
 
@@ -152,7 +165,7 @@ namespace MudBlazor
             }
         }
 
-        private object ChangeType(object value, Type conversion)
+        private static object ChangeType(object value, Type conversion)
         {
             var t = conversion;
 

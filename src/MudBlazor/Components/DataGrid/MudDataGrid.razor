@@ -164,7 +164,7 @@
                                             {
                                                 <tr class="mud-table-row">
                                                     <td class="mud-table-cell" colspan="1000">
-                                                        @ChildRowContent(new CellContext<T>(this, item))
+                                                        @ChildRowContent(new CellContext<T>(this, item, null))
                                                     </td>
                                                 </tr>
                                             }                                       
@@ -184,7 +184,7 @@
                                     @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var tmpRowIndex = rowIndex; }
-                                    <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">  
+                                    <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">
                                         <CascadingValue Value="@Validator" IsFixed="true">
                                         @foreach (var column in RenderedColumns)
                                         {
@@ -199,7 +199,7 @@
                                     {
                                         <tr class="mud-table-row">
                                             <td class="mud-table-cell" colspan="1000">
-                                                @ChildRowContent(new CellContext<T>(this, item))
+                                                @ChildRowContent(new CellContext<T>(this, item, null))
                                             </td>
                                         </tr>
                                     }                                        
@@ -250,7 +250,7 @@
             <MudForm FieldChanged="FormFieldChanged">
                 @foreach (var column in RenderedColumns)
                 {
-                    var cell = new Cell<T>(this, column, _editingItem);
+                    var cell = new Cell<T>(this, column, _editingItem, Validator);
 
                     if (column.EditTemplate != null)
                     {
@@ -324,7 +324,7 @@
         return
         @<text>
         @{
-            var cell = new Cell<T>(this, column, item);
+            var cell = new Cell<T>(this, column, item, Validator);
         }
         <td data-label="@column.computedTitle" class="@cell.computedClass" style="@cell.computedStyle">
             @if (column.IsEditable && !ReadOnly && DataGridEditMode.Cell == EditMode)

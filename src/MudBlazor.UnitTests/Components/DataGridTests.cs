@@ -3995,7 +3995,7 @@ namespace MudBlazor.UnitTests.Components
             var item = dataGrid.Instance.Items.FirstOrDefault();
 
             var column = dataGrid.Instance.RenderedColumns.First();
-            var cell = new Cell<DataGridCellContextTest.Model>(dataGrid.Instance, column, item);
+            var cell = new Cell<DataGridCellContextTest.Model>(dataGrid.Instance, column, item, new DataGridRowValidator());
 
             cell.cellContext.IsSelected.Should().Be(false);
             cell.cellContext.Actions.SetSelectedItem(true);
