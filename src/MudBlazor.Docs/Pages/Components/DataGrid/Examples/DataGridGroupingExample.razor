@@ -4,7 +4,7 @@
 @inject HttpClient httpClient
 
 <MudDataGrid @ref="dataGrid" MultiSelection="true" Items="@Elements" Sortable="true" Filterable="true"
-    Hideable="true" Groupable="true" GroupExpanded="false">
+    Hideable="true" Groupable="true" GroupExpanded="false" GroupClassFunc="GroupClassFunc">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudSpacer />
@@ -15,7 +15,7 @@
         <Column T="Element" Field="Name" />
         <Column T="Element" Field="Position" />
         <Column T="Element" Field="Molar" Title="Molar mass" />
-        <Column T="Element" Field="Group" Title="Category" Grouping="true" GroupBy="@_groupBy">
+        <Column T="Element" Field="Group" Title="Category" Grouping="true" GroupBy="@_groupBy" >
             <GroupTemplate>
                 @if (_customizeGroupTemplate)
                 {
@@ -58,6 +58,13 @@
 
         return x.Group;
     };
+
+    private string GroupClassFunc(GroupDefinition<Element> item)
+    {
+        return (string)item.Grouping.Key == "Nonmetal" || (string)item.Grouping.Key == "Other"
+                ? "mud-theme-warning"
+                : string.Empty;
+    }
 
     protected override async Task OnInitializedAsync()
     {

@@ -1251,7 +1251,8 @@ namespace MudBlazor.UnitTests.Components
 
             //in all below cases, the event args should switch to an instance of the field changed and contain the new value that was set
 
-            await comp.InvokeAsync(() => datePicker.Find("input").Change("04/03/2022"));
+            var dateString = new DateTime(2022, 04, 03).ToShortDateString();
+            await comp.InvokeAsync(() => datePicker.Find("input").Change(dateString));
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(new DateTime(2022, 04, 03));
             Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, datePicker.Instance);
 
