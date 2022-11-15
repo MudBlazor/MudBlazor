@@ -1359,12 +1359,14 @@ namespace MudBlazor.UnitTests.Components
             if (customButton)
             {
                 comp = Context.RenderComponent<TableCustomEditButtonRenderTest>(parameters => parameters
-                    .Add(p => p.EditButtonPosition, editButtonPosition));
+                    .Add(p => p.EditButtonPosition, editButtonPosition)
+                    .Add(p => p.ApplyButtonPosition, editButtonPosition));
             }
             else
             {
                 comp = Context.RenderComponent<TableEditButtonRenderTest>(parameters => parameters
-                    .Add(p => p.EditButtonPosition, editButtonPosition));
+                    .Add(p => p.EditButtonPosition, editButtonPosition)
+                    .Add(p => p.ApplyButtonPosition, editButtonPosition));
             }
 
             var trs = comp.FindAll("tr");
