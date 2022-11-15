@@ -15,7 +15,7 @@
         <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <ColGroup>
-        @if (applyButtonPosition.DisplayApplyButtonAtStart() || (editButtonPosition.DisplayEditButtonAtStart() && editTrigger == TableEditTrigger.EditButton))
+        @if (applyButtonPosition.DisplayTableButtonAtStart() || (editButtonPosition.DisplayTableButtonAtStart() && editTrigger == TableEditTrigger.EditButton))
         {
             <col style="width:50px;" />
         }
@@ -24,7 +24,7 @@
         <col style="width:50%;" />
         <col />
         <col />
-        @if (applyButtonPosition.DisplayApplyButtonAtEnd() || (editButtonPosition.DisplayEditButtonAtEnd() && editTrigger == TableEditTrigger.EditButton))
+        @if (applyButtonPosition.DisplayTableButtonAtEnd() || (editButtonPosition.DisplayTableButtonAtEnd() && editTrigger == TableEditTrigger.EditButton))
         {
             <col style="width:50px;" />
         }
