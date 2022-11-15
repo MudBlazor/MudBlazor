@@ -55,4 +55,16 @@
     <ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="./TestResults/Report" HistoryDirectory="./TestResults/ReportHistory" />
   </Target>
 
+  <!--https://github.com/microsoft/vstest/issues/4014-->
+  <!--Remove section after dotnet SDK 7.0.101 released-->
+  <PropertyGroup>
+    <CollectCoverage>true</CollectCoverage>
+    <CoverletOutputFormat>cobertura</CoverletOutputFormat>
+    <ExcludeByAttribute>ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
+    <Include>[MudBlazor]*</Include>
+    <ExcludeByFile>**/*.g.cs</ExcludeByFile>
+    <SkipAutoProps>true</SkipAutoProps>
+    <CoverletOutput>./TestResults/</CoverletOutput>
+  </PropertyGroup>
+
 </Project>
