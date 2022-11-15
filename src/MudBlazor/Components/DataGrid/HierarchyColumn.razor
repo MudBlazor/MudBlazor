@@ -9,7 +9,8 @@
             <MudIconButton
             Icon="@(context.openHierarchies.Contains(context.Item) ?  OpenIcon : ClosedIcon)" 
             OnClick="context.Actions.ToggleHierarchyVisibilityForItem"
-            Size="@IconSize"/>
+            Size="@IconSize"
+            Disabled="ButtonDisabledFunc.Invoke(context.Item)"/>
         </label>
     </CellTemplate>
 </Column>
@@ -18,4 +19,5 @@
     [Parameter] public string ClosedIcon { get; set; } = Icons.Material.Filled.ChevronRight;
     [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ExpandMore;
     [Parameter] public Size IconSize { get; set; } = Size.Medium;
+    [Parameter] public Func<T, bool> ButtonDisabledFunc { get; set; } = x => false;
 }

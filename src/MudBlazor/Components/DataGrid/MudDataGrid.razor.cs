@@ -169,6 +169,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<T> CommittedItemChanges { get; set; }
 
+        /// <summary>
+        /// Callback is called when a field changes in the dialog MudForm. Only works in EditMode.Form
+        /// </summary>
+        [Parameter] public EventCallback<FormFieldChangedEventArgs> FormFieldChanged { get; set; }
+
         #endregion
 
         #region Parameters
@@ -598,6 +603,16 @@ namespace MudBlazor
         [Parameter] public string GroupStyle { get; set; }
 
         /// <summary>
+        /// Returns the class that will get joined with GroupClass.
+        /// </summary>
+        [Parameter] public Func<GroupDefinition<T>, string> GroupClassFunc { get; set; }
+
+        /// <summary>
+        /// Returns the class that will get joined with GroupStyle.
+        /// </summary>
+        [Parameter] public Func<GroupDefinition<T>, string> GroupStyleFunc { get; set; }
+
+        /// <summary>
         /// When true, displays the built-in menu icon in the header of the data grid.
         /// </summary>
         [Parameter] public bool ShowMenuIcon { get; set; } = false;
@@ -685,6 +700,14 @@ namespace MudBlazor
             get
             {
                 return RenderedColumns.Any(x => x.StickyLeft || x.StickyRight);
+            }
+        }
+
+        private bool hasHierarchyColumn
+        {
+            get
+            {
+                return RenderedColumns.Any(x => x.Tag?.ToString() == "hierarchy-column");
             }
         }
 
@@ -794,6 +817,7 @@ namespace MudBlazor
             FilterDefinitions.Add(new FilterDefinition<T>
             {
                 Id = Guid.NewGuid(),
+                DataGrid = this,
                 Field = column?.Field,
                 Title = column?.Title,
                 FieldType = column?.FieldType
@@ -819,6 +843,7 @@ namespace MudBlazor
             FilterDefinitions.Add(new FilterDefinition<T>
             {
                 Id = id,
+                DataGrid = this,
                 Field = field,
                 Title = column?.Title,
                 FieldType = column?.FieldType,
@@ -1244,6 +1269,7 @@ namespace MudBlazor
             foreach (var group in _groups)
             {
                 group.IsExpanded = true;
+                _groupExpansions.Add(group.Grouping.Key);
             }
         }
 

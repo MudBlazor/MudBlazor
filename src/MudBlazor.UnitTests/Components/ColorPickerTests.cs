@@ -1342,5 +1342,19 @@ namespace MudBlazor.UnitTests.Components
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-overlay"));
             _ = comp.Find(".mud-picker-color-grid");
         }
+
+        /// <summary>
+        /// Ensures both the text and value update when the text is changed
+        /// </summary>
+        [Test]
+        public void ColorPickerValueShouldUpdateOnTextTest()
+        {
+            var comp = Context.RenderComponent<MudColorPicker>(parameters => parameters
+            .Add(x => x.Editable, true));
+
+            comp.Find("input").Change("#180f6fff");
+            comp.Instance.Text.Should().Be("#180f6fff");
+            comp.Instance.Value.Should().Be(new MudColor("#180f6fff"));
+        }
     }
 }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Form;
@@ -147,7 +148,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => form.ResetValidation());
             form.IsTouched.Should().Be(true);
         }
-        
+
         /// <summary>
         /// Changing the nested form fields value should set IsTouched 
         /// </summary>
@@ -826,8 +827,8 @@ namespace MudBlazor.UnitTests.Components
             textfields[7].Instance.ErrorText.Should().NotBeNullOrEmpty();
             numericFields[1].Instance.HasErrors.Should().BeTrue();
             numericFields[1].Instance.ErrorText.Should().NotBeNullOrEmpty();
-        } 
-        
+        }
+
         /// <summary>
         /// Testing the functionality of the MudForm example from the docs.
         /// Root MudForm is invalid and nested MudForm is valid
@@ -975,7 +976,7 @@ namespace MudBlazor.UnitTests.Components
             tf.Instance.Error.Should().Be(true);
             tf.Instance.ErrorText.Should().Be("For is null, please set parameter For on the form input component of type MudTextField`1");
         }
-        
+
         /// <summary>
         /// Testing error handling of MudFormComponent.ValidateModelWithFullPathOfMember
         /// We have set no For expression, error should reflect that
@@ -1104,7 +1105,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => form.Reset());
             datePicker.Date.Should().BeNull();
             datePicker.Text.Should().BeNullOrEmpty();
-            
+
             // input a date
             datePickerComp.Find("input").Change(testDateString);
             datePicker.Date.Should().Be(testDate);
@@ -1137,7 +1138,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().Be(false);
             numericFieldComp.Find("input").Input("1");
             form.IsValid.Should().Be(true);
-            
+
             await comp.InvokeAsync(() => form.Reset());
             form.IsValid.Should().Be(false); // required fields
         }
@@ -1164,12 +1165,12 @@ namespace MudBlazor.UnitTests.Components
             var textFields = comp.FindComponents<MudTextField<string>>();
             var numericFields = comp.FindComponents<MudNumericField<int>>();
             var defaultValidation = "v";
-            
+
             textFields[0].Instance.Validation.Should().Be(defaultValidation);
             textFields[1].Instance.Validation.Should().Be(defaultValidation);
             textFields[2].Instance.Validation.Should().Be(defaultValidation);
             textFields[3].Instance.Validation.Should().Be("a");
-            
+
             numericFields[0].Instance.Validation.Should().Be(defaultValidation);
             numericFields[1].Instance.Validation.Should().NotBe(defaultValidation);
             numericFields[2].Instance.Validation.Should().Be(defaultValidation);
@@ -1192,43 +1193,76 @@ namespace MudBlazor.UnitTests.Components
         /// When changing field values, the FieldChanged event should fire with the correct IFormComponent and new value
         /// </summary>
         [Test]
-        public async Task FieldChangedEventShouldTrigger()
+        public async Task FieldChangedEventShouldTriggerTest()
         {
             var comp = Context.RenderComponent<FormFieldChangedTest>();
             var formsComp = comp.FindComponents<MudForm>();
-            var textCompFields = comp.FindComponents<MudTextField<string>>();
-            var textField1 = textCompFields[0].Instance;
-            var textField2 = textCompFields[0].Instance;
-            var radioGroup = comp.FindComponent<MudRadioGroup<string>>().Instance;
+
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
             var numeric = comp.FindComponent<MudNumericField<int>>().Instance;
+            var radioGroup = comp.FindComponent<MudRadioGroup<string>>().Instance;
 
-            var eventArgs = comp.Instance.FormFieldChangedEventArgs; //the args from the field changed event
-
-            eventArgs.Should().BeNull();
+            comp.Instance.FormFieldChangedEventArgs.Should().BeNull();
 
             //in all below cases, the event args should switch to an instance of the field changed and contain the new value that was set
 
-            await comp.InvokeAsync(() => textField1.SetText("new value"));
+            await comp.InvokeAsync(() => textField.SetText("new value"));
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("new value");
-            comp.Instance.FormFieldChangedEventArgs.Field.Equals(textField1);
+            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, textField);
 
-            await comp.InvokeAsync(() => textField2.SetText("new value2"));
-            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("new value2");
-            comp.Instance.FormFieldChangedEventArgs.Field.Equals(textField2);
+            numeric.Value.Should().Be(0);
+            await comp.InvokeAsync(() => numeric.Increment());
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(1);
+            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, numeric);
 
             var inputs = comp.FindAll("input").ToArray();
             // check initial state
             radioGroup.SelectedOption.Should().Be(null);
             // click radio 1
-            inputs[3].Click();
+            inputs[2].Click();
             radioGroup.SelectedOption.Should().Be("1");
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("1");
-            comp.Instance.FormFieldChangedEventArgs.Field.Equals(radioGroup);
+            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, radioGroup);
 
-            numeric.Value.Should().Be(0);
-            await comp.InvokeAsync(() => numeric.Increment());
-            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(1);
-            comp.Instance.FormFieldChangedEventArgs.Field.Equals(numeric);
+            var fileContent = InputFileContent.CreateFromText("", "upload.txt");
+
+            var mudFile = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
+            var input = comp.FindComponent<InputFile>();
+            input.UploadFiles(fileContent);
+
+            (comp.Instance.FormFieldChangedEventArgs.NewValue is IBrowserFile).Should().BeTrue();
+            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, mudFile);
+        }
+
+        /// <summary>
+        /// When changing field values, the FieldChanged event should fire with the correct IFormComponent and new value
+        /// </summary>
+        [Test]
+        public async Task FieldChangedEventShouldTriggerPickerTest()
+        {
+            var comp = Context.RenderComponent<FormFieldChangedPickerTest>();
+            var formsComp = comp.FindComponents<MudForm>();
+
+            var datePicker = comp.FindComponent<MudDatePicker>();
+            var timePicker = comp.FindComponent<MudTimePicker>();
+            var colorPicker = comp.FindComponent<MudColorPicker>();
+
+            comp.Instance.FormFieldChangedEventArgs.Should().BeNull();
+
+            //in all below cases, the event args should switch to an instance of the field changed and contain the new value that was set
+
+            var dateString = new DateTime(2022, 04, 03).ToShortDateString();
+            await comp.InvokeAsync(() => datePicker.Find("input").Change(dateString));
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(new DateTime(2022, 04, 03));
+            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, datePicker.Instance);
+
+            await comp.InvokeAsync(() => timePicker.Find("input").Change("00:45"));
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(new TimeSpan(00, 45, 00));
+            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, timePicker.Instance);
+
+            await comp.InvokeAsync(() => colorPicker.Find("input").Change("#180f6fff"));
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(new MudColor("#180f6fff"));
+            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, colorPicker.Instance);
         }
 
         /// <summary>

@@ -29,7 +29,7 @@
         <DocsPageSection>
             <SectionHeader Title="Advanced Data Grid">
                 <Description>
-                    In a more advanced scenario, the data grid offers sorting, filtering, pagination, selection and hierarchy detail. There are two ways to filter the data 
+                    In a more advanced scenario, the data grid offers sorting, filtering, pagination and selection. There are two ways to filter the data 
                     fed into the data grid. A <CodeInline>QuickFilter</CodeInline> function allows filtering the items in the grid globally. Data can also be filtered by specifying 
                     column filters, enabling a more robust filtration.
                     <br><br>
@@ -148,6 +148,19 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="DataGridAdvancedFilteringExample" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridAdvancedFilteringExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Row Detail View">
+                <Description>
+                    The The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to create hierarchical layouts. To do that the <CodeInline>HierarchyColumn</CodeInline> has to be added in the <CodeInline>Columns</CodeInline> definitions. 
+                    <br><br>
+                    You can customize the icon to toggle the RowDetail and also disable the toggle button.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridDetailRowExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridDetailRowExample />
             </SectionContent>
         </DocsPageSection>
 

@@ -17,7 +17,9 @@ jobs:
     uses: MudBlazor/Workflows/.github/workflows/template-pipeline.yml@main
     if: ${{ github.event.inputs.deploy-task == 'publish' }}
     with:
-      dotnet-version: 6.0.x
+      dotnet-version: |
+        6.0.x
+        7.0.x
       deploy-web-app: true
       deploy-condition: 'refs/heads/master'
       deploy-web-app-name: mudblazor

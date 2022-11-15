@@ -122,7 +122,10 @@
                                 foreach (var g in _groups)
                                 {
                                     <tr class="mud-table-row">
-                                        <td class="mud-table-cell @GroupClass" colspan="1000" style="background-color:var(--mud-palette-background-grey);@GroupStyle">
+                                        @{ var groupClass = new CssBuilder(GroupClass).AddClass(GroupClassFunc?.Invoke(g)).Build(); }
+                                        @{ var groupStyle = new StyleBuilder().AddStyle(GroupStyle).AddStyle(GroupStyleFunc?.Invoke(g)).Build(); }
+
+                                        <td class="mud-table-cell @groupClass" colspan="1000" style="background-color:var(--mud-palette-background-grey);@groupStyle">
                                             <MudIconButton 
                                                 Class="mud-table-row-expander" 
                                                 Icon="@(g.IsExpanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)" 
@@ -157,7 +160,7 @@
                                                 }                                     
                                                 </CascadingValue>
                                             </tr>                                   
-                                            @if (_openHierarchies.Contains(item) && ChildRowContent != null)
+                                            @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
                                             {
                                                 <tr class="mud-table-row">
                                                     <td class="mud-table-cell" colspan="1000">
@@ -192,7 +195,7 @@
                                         }                                       
                                         </CascadingValue>
                                     </tr>                                   
-                                    @if (_openHierarchies.Contains(item) && ChildRowContent != null)
+                                    @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
                                     {
                                         <tr class="mud-table-row">
                                             <td class="mud-table-cell" colspan="1000">
@@ -244,7 +247,7 @@
             </MudText>
         </TitleContent>
         <DialogContent>
-            <MudForm>
+            <MudForm FieldChanged="FormFieldChanged">
                 @foreach (var column in RenderedColumns)
                 {
                     var cell = new Cell<T>(this, column, _editingItem);

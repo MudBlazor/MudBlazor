@@ -366,6 +366,25 @@ namespace MudBlazor.UnitTests.Components
             //if no crash occurs, we know the datagrid is properly filtering out the GetOnly property when calling set
         }
 
+        /// <summary>
+        /// DataGrid edit form should trigger the FormFieldChanged event
+        /// </summary>
+        [Test]
+        public async Task DataGridFormFieldChangedTest()
+        {
+            var comp = Context.RenderComponent<DataGridFormFieldChangedTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormFieldChangedTest.Item>>();
+            //open edit dialog
+            dataGrid.FindAll("tbody tr")[0].Click();
+
+            //edit data
+            comp.Find("div input").Change("J K Simmons");
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("J K Simmons");
+
+            var textfield = comp.FindComponent<MudTextField<string>>();
+            Assert.AreSame(comp.Instance.FormFieldChangedEventArgs.Field, textfield.Instance);
+        }
+
         [Test]
         public async Task DataGridVisualStylingTest()
         {
@@ -3633,10 +3652,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridChildRowContentOpenTest()
+        public async Task DataGridRowDetailOpenTest()
         {
-            var comp = Context.RenderComponent<DataGridChildRowContentTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridChildRowContentTest.Model>>();
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
 
             await comp.InvokeAsync(() => dataGrid.Instance
             .ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
@@ -3645,12 +3664,47 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridChildRowContentClosedTest()
+        public async Task DataGridRowDetailClosedTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            dataGrid.FindAll("td").SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Sam|56|Normal|")).Should().BeNull();
+        }
+
+        [Test]
+        public async Task DataGridRowDetailButtonDisabledTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            dataGrid.FindAll("button")[10].OuterHtml.Contains("disabled")
+                .Should().BeTrue();
+        }
+
+        [Test]
+        public async Task DataGridRowDetailButtonDisabledClickTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            await comp.InvokeAsync(() =>
+            {
+                var buttons = dataGrid.FindAll("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon");
+                buttons[10].Click();
+
+                dataGrid.FindAll("td")
+                .SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Alicia|54|Info|")).Should().BeNull();
+            });
+        }
+
+        [Test]
+        public async Task DataGridChildRowContentTest()
         {
             var comp = Context.RenderComponent<DataGridChildRowContentTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridChildRowContentTest.Model>>();
 
-            dataGrid.FindAll("td").SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Sam|56|Normal|")).Should().BeNull();
+            dataGrid.FindAll("td").SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Sam|56|Normal|")).Should().NotBeNull();
         }
 
         [Test]
@@ -4238,6 +4292,23 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(true);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
+        }
+
+        [Test]
+        public async Task DataGridGroupExpandedTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupExpandedTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
+
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
+            comp.Instance.ExpandAllGroups();
+            dataGrid.Render();
+            // after all groups are expanded
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
+            await comp.InvokeAsync(() =>
+                comp.Instance.AddFruit());
+            // datagrid should be expanded with the new category
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(8);
         }
     }
 }

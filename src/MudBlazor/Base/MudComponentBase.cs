@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 
 namespace MudBlazor
 {
     public abstract class MudComponentBase : ComponentBase
     {
+        [Inject]
+        private ILoggerFactory LoggerFactory { get; set; }
+        private ILogger _logger;
+        protected ILogger Logger => _logger ??= LoggerFactory.CreateLogger(GetType());
+
         /// <summary>
         /// User class names, separated by space.
         /// </summary>
