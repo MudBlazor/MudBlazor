@@ -29,7 +29,7 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
  - Releasing often so developers can get their PRs and fixes in a timely fashion.
 
 ## Prerequisites
-- [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0) for v6.x.x or [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) for v5.x.x (legacy)
+- [.NET 7.0](https://dotnet.microsoft.com/en-us/download/dotnet), [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0) for v6.x.x or [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) for v5.x.x (legacy)
 
 ## Stats
 ![Alt](https://repobeats.axiom.co/api/embed/db53a44092e88fc34a4c0f37db12773b6787ec7e.svg "Repobeats analytics image")
