@@ -165,8 +165,8 @@ namespace MudBlazor
 
         public void Remove(Snackbar snackbar)
         {
-            snackbar.Dispose();
             snackbar.OnClose -= Remove;
+            snackbar.Dispose();
 
             SnackBarLock.EnterWriteLock();
             try

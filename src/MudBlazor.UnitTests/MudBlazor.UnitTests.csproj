@@ -40,7 +40,7 @@
     <PackageReference Include="nunit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.3.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
-    <PackageReference Include="ReportGenerator" Version="5.1.10" />
+    <PackageReference Include="ReportGenerator" Version="5.1.11" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
   </ItemGroup>
 
@@ -54,5 +54,17 @@
   <Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest" Condition="'@(CoverletReport-&gt;Count())' != 0">
     <ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="./TestResults/Report" HistoryDirectory="./TestResults/ReportHistory" />
   </Target>
+
+  <!--https://github.com/microsoft/vstest/issues/4014-->
+  <!--Remove section after dotnet SDK 7.0.101 released-->
+  <PropertyGroup>
+    <CollectCoverage>true</CollectCoverage>
+    <CoverletOutputFormat>cobertura</CoverletOutputFormat>
+    <ExcludeByAttribute>ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
+    <Include>[MudBlazor]*</Include>
+    <ExcludeByFile>**/*.g.cs</ExcludeByFile>
+    <SkipAutoProps>true</SkipAutoProps>
+    <CoverletOutput>./TestResults/</CoverletOutput>
+  </PropertyGroup>
 
 </Project>
