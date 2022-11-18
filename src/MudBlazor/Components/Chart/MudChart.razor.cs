@@ -12,15 +12,15 @@ namespace MudBlazor
     {
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public ICollection<decimal> InputData { get; set; } = Array.Empty<decimal>();
+        public List<decimal> InputData { get; set; } = new(0);
 
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public ICollection<string> InputLabels { get; set; } = Array.Empty<string>();
+        public List<string> InputLabels { get; set; } = new(0);
 
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public string[] XAxisLabels { get; set; } = Array.Empty<string>();
+        public List<string> XAxisLabels { get; set; } = new(0);
 
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
@@ -111,13 +111,13 @@ namespace MudBlazor
         /// <summary>
         /// Scales the input data to the range between 0 and 1
         /// </summary>
-        protected ICollection<decimal> GetNormalizedData()
+        protected List<decimal> GetNormalizedData()
         {
             if (InputData is null)
-                return Array.Empty<decimal>();
+                return new(0);
 
             var total = InputData.Sum();
-            return InputData.Select(x => Math.Abs(x) / total).ToArray();
+            return InputData.Select(x => Math.Abs(x) / total).ToList();
         }
 
         protected string ToS(decimal d, string format = null)
