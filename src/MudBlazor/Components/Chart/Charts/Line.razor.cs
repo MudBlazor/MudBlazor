@@ -33,10 +33,10 @@ namespace MudBlazor.Charts
             _legends.Clear();
             _chartLines.Clear();
 
-            if (MudChartParent != null)
+            if (MudChartParent is { })
                 _series = MudChartParent.ChartSeries;
 
-            var maxY = 0.0;
+            var maxY = 0.0m;
             var numValues = 0;
             var numXLabels = XAxisLabels.Count;
             foreach (var item in _series)
@@ -54,12 +54,12 @@ namespace MudBlazor.Charts
                 }
             }
 
-            var boundHeight = 350.0;
-            var boundWidth = 650.0;
+            var boundHeight = 350.0m;
+            var boundWidth = 650.0m;
 
-            decimal gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
-            if (gridYUnits <= 0)
-                gridYUnits = 20;
+            decimal gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20m;
+            if (gridYUnits <= decimal.Zero)
+                gridYUnits = 20m;
             int maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
             decimal gridXUnits = 30;
 
@@ -70,14 +70,14 @@ namespace MudBlazor.Charts
             // this is a safeguard against millions of gridlines which might arise with very high values
             while (numHorizontalLines > maxYTicks)
             {
-                gridYUnits *= 2;
+                gridYUnits *= 2m;
                 numHorizontalLines = ((int)(maxY / gridYUnits)) + 1;
             }
 
-            var verticalStartSpace = 25.0;
-            var horizontalStartSpace = 30.0;
-            var verticalEndSpace = 25.0;
-            var horizontalEndSpace = 30.0;
+            var verticalStartSpace = 25.0m;
+            var horizontalStartSpace = 30.0m;
+            var verticalEndSpace = 25.0m;
+            var horizontalEndSpace = 30.0m;
 
             var verticalSpace = (boundHeight - verticalStartSpace - verticalEndSpace) / (numHorizontalLines);
             var horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / (numVerticalLines);
@@ -85,7 +85,7 @@ namespace MudBlazor.Charts
 
             //Horizontal Grid Lines
             var y = verticalStartSpace;
-            decimal startGridY = 0;
+            decimal startGridY = decimal.Zero;
             for (var counter = 0; counter <= numHorizontalLines; counter++)
             {
                 var line = new SvgPath()
@@ -104,7 +104,7 @@ namespace MudBlazor.Charts
 
             //Vertical Grid Lines
             var x = horizontalStartSpace;
-            decimal startGridX = 0m;
+            decimal startGridX = decimal.Zero;
             for (var counter = 0; counter <= numVerticalLines; counter++)
             {
                 var line = new SvgPath()
@@ -205,7 +205,7 @@ namespace MudBlazor.Charts
                             gridValueY = verticalStartSpace;
                         }
 
-                        var gridValue = ((decimal)dataLine) * verticalSpace / gridYUnits;
+                        var gridValue = dataLine * verticalSpace / gridYUnits;
                         gridValueY = boundHeight - (gridValueY + gridValue);
                         chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
