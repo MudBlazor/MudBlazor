@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2022
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -41,9 +41,9 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Theory]
-        [TestCase(new double[]{77, 25, 20, 5})]
-        [TestCase(new double[]{77, 25, 20, 5, 8})]
-        public void PieChartExampleData(double[] data)
+        [TestCase(new decimal[]{77, 25, 20, 5})]
+        [TestCase(new decimal[]{77, 25, 20, 5, 8})]
+        public void PieChartExampleData(decimal[] data)
         {
             string[] labels = { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium",
                 "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Protactinium",
