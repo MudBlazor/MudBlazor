@@ -129,6 +129,8 @@ namespace MudBlazor
         }
 
         protected string ToS(double d) => ToS((decimal)d);
+
+        protected string ToS(double d, string format) => ToS((decimal)d, string format);
     }
 
     public enum ChartType
