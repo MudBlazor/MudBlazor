@@ -1,4 +1,4 @@
-﻿namespace MudBlazor
+namespace MudBlazor
 {
     public class ChartOptions
     {
@@ -26,7 +26,7 @@
         /// <summary>
         /// Line width of series in px
         /// </summary>
-        public double LineStrokeWidth { get; set; } = 3;
+        public decimal LineStrokeWidth { get; set; } = 3.0m;
     }
     public enum InterpolationOption
     {
