@@ -27,7 +27,7 @@ namespace MudBlazor.Charts
                 cumulativeRadians += 2 * Math.PI * (double)data;
                 endx = Math.Cos(cumulativeRadians);
                 endy = Math.Sin(cumulativeRadians);
-                var largeArcFlag = data > 0.5 ? 1 : 0;
+                var largeArcFlag = data > 0.5m ? 1 : 0;
                 var path = new SvgPath()
                 {
                     Index = i,
@@ -40,7 +40,7 @@ namespace MudBlazor.Charts
             foreach (var data in ndata)
             {
                 var percent = data * 100;
-                var labels = "";
+                var labels = string.Empty;
                 if (counter < InputLabels.Count)
                 {
                     labels = InputLabels[counter];
