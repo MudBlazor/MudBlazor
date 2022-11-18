@@ -1,4 +1,3 @@
-﻿
 namespace MudBlazor.Charts.SVG.Models
 {
     public class SvgCircle
