@@ -1,4 +1,4 @@
-﻿<MudGrid>
+<MudGrid>
 	<MudItem xs="12" md="6" lg="4">
 		<MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@data" InputLabels="@labels">
 			<CustomGraphics>
@@ -45,13 +45,12 @@
     public double[] data = { 10, 420, 20, 69 };
     public string[] labels = { "Data 1", "Data 2", "Data 3", "Data 4" };
 
-    public List<ChartSeries> Series = new List<ChartSeries>()
+    public List<ChartSeries> Series = new List<ChartSeries>
     {
-        new ChartSeries() { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
-        new ChartSeries() { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
-        new ChartSeries() { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
+        new ChartSeries { Name = "United States", Data = new decimal[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
+        new ChartSeries { Name = "Germany", Data = new decimal[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
+        new ChartSeries { Name = "Sweden", Data = new decimal[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
     };
 
     public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
-
 }
