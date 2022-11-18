@@ -12,11 +12,11 @@ namespace MudBlazor
     {
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public IEnumerable<decimal> InputData { get; set; } = Enumerable.Empty<decimal>();
+        public ICollection<decimal> InputData { get; set; } = Array.Empty<decimal>();
 
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public IEnumerable<string> InputLabels { get; set; } = Enumerable.Empty<string>();
+        public ICollection<string> InputLabels { get; set; } = Array.Empty<string>();
 
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
@@ -111,10 +111,10 @@ namespace MudBlazor
         /// <summary>
         /// Scales the input data to the range between 0 and 1
         /// </summary>
-        protected IEnumerable<decimal> GetNormalizedData()
+        protected ICollection<decimal> GetNormalizedData()
         {
             if (InputData is null)
-                return Enumerable.Empty<decimal>();
+                return Array.Empty<decimal>();
 
             var total = InputData.Sum();
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
