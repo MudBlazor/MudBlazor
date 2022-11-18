@@ -87,5 +87,6 @@ namespace MudBlazor
         {
             return (BoolValue == true);
         }
+
     }
 }

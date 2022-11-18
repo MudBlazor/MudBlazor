@@ -1,0 +1,46 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <div class="mud-border-info border-l-2 border-solid mud-width-full pl-4" style="height: 100vh; max-height: 100vh; overflow-y: auto">
+            @if (_showAppbar && !_appbarBottom)
+            {
+                <MudAppBar Color="Color.Primary" Fixed="false">
+                    <MudIconButton Icon="@Icons.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+                    <MudSpacer />
+                    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" />
+                </MudAppBar>
+            }
+            <MudPage Class="mud-theme-secondary" FullScreen="_fullScreen" Height="@_height">
+                <MudText Class="pa-4" Align="Align.Center">Page</MudText>
+            </MudPage>
+            @if (_showAppbar && _appbarBottom)
+            {
+                <MudAppBar Bottom="true" Color="Color.Primary" Fixed="false">
+                    <MudIconButton Icon="@Icons.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+                    <MudSpacer />
+                    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" />
+                </MudAppBar>
+            }
+        </div>
+    </MudItem>
+
+
+    <MudItem xs="12" sm="5">
+        <MudCheckBox @bind-Checked="_showAppbar" Color="Color.Primary" Label="Show Appbar" />
+        <MudCheckBox @bind-Checked="_appbarBottom" Color="Color.Primary" Label="Bottom Appbar" />
+        <MudTextField @bind-Value="_height" Label="Height" HelperText="Ex. 500px" Clearable="true" />
+        <MudSelect @bind-Value="_fullScreen" Variant="Variant.Filled" Label="FullScreen">
+            <MudSelectItem Value="FullScreen.None">None</MudSelectItem>
+            <MudSelectItem Value="FullScreen.Full">Full</MudSelectItem>
+            <MudSelectItem Value="FullScreen.FullWithoutAppbar">Full Without Appbar</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+@code {
+    FullScreen _fullScreen = FullScreen.None;
+    string _height;
+    bool _showAppbar = true;
+    bool _appbarBottom = false;
+}

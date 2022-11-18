@@ -1,0 +1,111 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPage Class="mud-border-info border-2 border-solid" Column="_pageColumn" Row="_pageRow" Height="300px">
+    <MudSection Column="_section1Column" ColSpan="_section1ColSpan" Row="_section1Row" RowSpan="_section1RowSpan"
+        OnClick="IncreaseCol1" OnContextMenu="IncreaseRow1" OnContextMenuPreventDefault>
+        <MudPaper Class="d-flex align-center justify-center mud-theme-primary">Section 1</MudPaper>
+    </MudSection>
+
+     <MudSection Column="_section2Column" ColSpan="_section2ColSpan" Row="_section2Row" RowSpan="_section2RowSpan"
+         OnClick="IncreaseCol2" OnContextMenu="IncreaseRow2" OnContextMenuPreventDefault>
+        <MudPaper Class="d-flex align-center justify-center mud-theme-secondary">Section 2</MudPaper>
+    </MudSection>
+</MudPage>
+
+<MudStack Row="true">
+    <MudStack>
+        <MudNumericField @bind-Value="_pageColumn" Label="Page Column" Min="2" Max="12" />
+        <MudNumericField @bind-Value="_pageRow" Label="Page Row" Min="2" Max="12" />
+        <MudCheckBox @bind-Checked="_allowMouseEvents" Label="Allow Mouse Events" Color="Color.Primary" />
+        <MudText Typo="Typo.subtitle2">If true, left click increases the column and right click increases the row.</MudText>
+    </MudStack>
+    <MudStack>
+        <MudNumericField @bind-Value="_section1Column" Label="Section 1 Column" Min="1" Max="_pageColumn" />
+        <MudNumericField @bind-Value="_section1ColSpan" Label="Section 1 ColSpan" Min="1" Max="_pageColumn" />
+        <MudNumericField @bind-Value="_section1Row" Label="Section 1 Row" Min="1" Max="_pageRow" />
+        <MudNumericField @bind-Value="_section1RowSpan" Label="Section 1 RowSpan" Min="1" Max="_pageRow" />
+    </MudStack>
+    <MudStack>
+        <MudNumericField @bind-Value="_section2Column" Label="Section 2 Column" Min="1" Max="_pageColumn" />
+        <MudNumericField @bind-Value="_section2ColSpan" Label="Section 2 ColSpan" Min="1" Max="_pageColumn" />
+        <MudNumericField @bind-Value="_section2Row" Label="Section 2 Row" Min="1" Max="_pageRow" />
+        <MudNumericField @bind-Value="_section2RowSpan" Label="Section 2 RowSpan" Min="1"Max="_pageRow" />
+    </MudStack>
+</MudStack>
+
+@code{
+    int _pageColumn = 5;
+    int _pageRow = 5;
+    int _section1Column = 2;
+    int _section1ColSpan = 1;
+    int _section1Row = 2;
+    int _section1RowSpan = 1;
+    int _section2Column = 4;
+    int _section2ColSpan = 1;
+    int _section2Row = 4;
+    int _section2RowSpan = 1;
+    bool _allowMouseEvents = false;
+
+    private void IncreaseCol1()
+    {
+        if (_allowMouseEvents == false)
+            return;    
+
+        if (_pageColumn > _section1Column)
+        {
+            _section1Column++;
+        }
+        else
+        {
+            _section1Column = 1;
+        }
+    }
+
+    private void IncreaseRow1()
+    {
+        if (_allowMouseEvents == false)
+            return;    
+
+
+        if (_pageRow > _section1Row)
+        {
+            _section1Row++;
+        }
+        else
+        {
+            _section1Row = 1;
+        }
+    }
+
+    private void IncreaseCol2()
+    {
+        if (_allowMouseEvents == false)
+            return;    
+
+
+        if (_pageColumn > _section2Column)
+        {
+            _section2Column++;
+        }
+        else
+        {
+            _section2Column = 1;
+        }
+    }
+
+    private void IncreaseRow2()
+    {
+        if (_allowMouseEvents == false)
+            return;    
+
+
+        if (_pageRow > _section2Row)
+        {
+            _section2Row++;
+        }
+        else
+        {
+            _section2Row = 1;
+        }
+    }
+}

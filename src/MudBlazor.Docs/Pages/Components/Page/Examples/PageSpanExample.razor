@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPage Column="_pageColumn" Row="_pageRow" Style="height: 300px">
+    <MudSection Column="1" ColSpan="_pageColumn">
+        <MudPaper Class="d-flex align-center justify-center mud-theme-primary">Header</MudPaper>
+    </MudSection>
+
+     <MudSection Row="2" RowSpan="4" ColSpan="2">
+        <MudPaper Class="d-flex align-center justify-center mud-theme-secondary">Navigation</MudPaper>
+    </MudSection>
+
+     <MudSection Row="2" RowSpan="4" Column="3" ColSpan="5">
+        <MudPaper Class="d-flex align-center justify-center mud-theme-tertiary">Content</MudPaper>
+    </MudSection>
+
+    <MudSection Column="1" ColSpan="_pageColumn" Row="@(_pageRow - 1)" RowSpan="2">
+        <MudPaper Class="d-flex align-center justify-center mud-theme-primary">Footer</MudPaper>
+    </MudSection>
+</MudPage>
+
+@code{
+    int _pageColumn = 7;
+    int _pageRow = 7;
+}

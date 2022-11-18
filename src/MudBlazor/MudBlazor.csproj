@@ -124,4 +124,17 @@
     <Watch Include="**/*.scss" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Watch Remove="Styles\components\_page.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Components\Page\MudPage.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+    <Content Update="Components\Page\MudSection.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>
