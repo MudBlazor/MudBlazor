@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts.SVG.Models;
 
@@ -18,9 +18,9 @@ namespace MudBlazor.Charts
         {
             _circles.Clear();
             _legends.Clear();
-            decimal counterClockwiseOffset = 25m;
-            decimal totalPercent = decimal.Zero;
-            decimal offset;
+            double counterClockwiseOffset = 25d;
+            decimal totalPercent = 0m;
+            double offset;
 
             var counter = 0;
             foreach (var data in GetNormalizedData())
@@ -33,9 +33,9 @@ namespace MudBlazor.Charts
                 var circle = new SvgCircle
                 {
                     Index = counter,
-                    CX = 21m,
-                    CY = 21m,
-                    Radius = 15.91549430918954m,
+                    CX = 21d,
+                    CY = 21d,
+                    Radius = 15.91549430918954d,
                     StrokeDashArray = $"{ToS(percent)} {ToS(reversePercent)}",
                     StrokeDashOffset = offset
                 };
