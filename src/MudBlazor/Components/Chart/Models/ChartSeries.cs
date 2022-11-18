@@ -6,6 +6,6 @@ namespace MudBlazor
     {
         public string Name { get; set; }
 
-        public ICollection<decimal> Data { get; set; }
+        public IList<decimal> Data { get; set; }
     }
 }
