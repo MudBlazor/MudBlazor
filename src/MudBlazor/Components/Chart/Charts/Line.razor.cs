@@ -205,7 +205,7 @@ namespace MudBlazor.Charts
                             gridValueY = verticalStartSpace;
                         }
 
-                        var gridValue = dataLine * verticalSpace / gridYUnits;
+                        var gridValue = (double)dataLine * verticalSpace / gridYUnits;
                         gridValueY = boundHeight - (gridValueY + gridValue);
                         chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
