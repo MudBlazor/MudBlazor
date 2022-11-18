@@ -35,7 +35,7 @@ namespace MudBlazor.Charts
                     Index = counter,
                     CX = 21m,
                     CY = 21m,
-                    Radius = 15.91549430918954,
+                    Radius = 15.91549430918954m,
                     StrokeDashArray = $"{ToS(percent)} {ToS(reversePercent)}",
                     StrokeDashOffset = offset
                 };
