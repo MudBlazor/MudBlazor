@@ -61,7 +61,7 @@ namespace MudBlazor.Charts
             if (gridYUnits <= decimal.Zero)
                 gridYUnits = 20m;
             int maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
-            decimal gridXUnits = 30;
+            decimal gridXUnits = 30m;
 
             var numVerticalLines = numValues - 1;
 
