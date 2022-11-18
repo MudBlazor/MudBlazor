@@ -1,4 +1,6 @@
-﻿namespace MudBlazor
+using System.Collections.Generic;
+
+namespace MudBlazor
 {
     public class ChartSeries
     {
