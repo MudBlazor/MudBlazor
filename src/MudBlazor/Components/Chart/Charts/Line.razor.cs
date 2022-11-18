@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts.SVG.Models;
 using MudBlazor.Components.Chart;
@@ -38,12 +38,12 @@ namespace MudBlazor.Charts
 
             var maxY = 0.0;
             var numValues = 0;
-            var numXLabels = XAxisLabels.Length;
+            var numXLabels = XAxisLabels.Count;
             foreach (var item in _series)
             {
-                if (numValues < item.Data.Length)
+                if (numValues < item.Data.Count)
                 {
-                    numValues = item.Data.Length;
+                    numValues = item.Data.Count;
                 }
                 foreach (int i in item.Data)
                 {
@@ -57,11 +57,11 @@ namespace MudBlazor.Charts
             var boundHeight = 350.0;
             var boundWidth = 650.0;
 
-            double gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
+            decimal gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
             if (gridYUnits <= 0)
                 gridYUnits = 20;
             int maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
-            double gridXUnits = 30;
+            decimal gridXUnits = 30;
 
             var numVerticalLines = numValues - 1;
 
@@ -85,7 +85,7 @@ namespace MudBlazor.Charts
 
             //Horizontal Grid Lines
             var y = verticalStartSpace;
-            double startGridY = 0;
+            decimal startGridY = 0;
             for (var counter = 0; counter <= numHorizontalLines; counter++)
             {
                 var line = new SvgPath()
@@ -104,7 +104,7 @@ namespace MudBlazor.Charts
 
             //Vertical Grid Lines
             var x = horizontalStartSpace;
-            double startGridX = 0;
+            decimal startGridX = 0;
             for (var counter = 0; counter <= numVerticalLines; counter++)
             {
 
@@ -134,13 +134,13 @@ namespace MudBlazor.Charts
             foreach (var item in _series)
             {
                 var chartLine = "";
-                double gridValueX = 0;
-                double gridValueY = 0;
+                decimal gridValueX = decimal.Zero;
+                decimal gridValueY = decimal.Zero;
                 var firstTime = true;
-                double[] XValues = new double[item.Data.Length];
-                double[] YValues = new double[item.Data.Length];
+                decimal[] XValues = new decimal[item.Data.Count];
+                decimal[] YValues = new decimal[item.Data.Count];
                 ILineInterpolator interpolator;
-                for (var i = 0; i <= item.Data.Length - 1; i++)
+                for (var i = 0; i <= item.Data.Count - 1; i++)
                 {
                     if (i == 0)
                         XValues[i] = 30;
@@ -210,7 +210,7 @@ namespace MudBlazor.Charts
                             gridValueY = verticalStartSpace;
                         }
 
-                        var gridValue = ((double)dataLine) * verticalSpace / gridYUnits;
+                        var gridValue = ((decimal)dataLine) * verticalSpace / gridYUnits;
                         gridValueY = boundHeight - (gridValueY + gridValue);
                         chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
