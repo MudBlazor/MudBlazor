@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts.SVG.Models;
@@ -16,9 +16,9 @@ namespace MudBlazor.Charts
         {
             _paths.Clear();
             _legends.Clear();
-            double startx, starty, endx, endy;
+            decimal startx, starty, endx, endy;
             var ndata = GetNormalizedData();
-            double cumulativeRadians = 0;
+            decimal cumulativeRadians = decimal.Zero;
             for (var i = 0; i < ndata.Length; i++)
             {
                 var data = ndata[i];
