@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2022
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -40,9 +40,9 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        [TestCase(new double[]{50, 25, 20, 5 })]
-        [TestCase(new double[]{50, 25, 20, 5 , 12})]
-        public void DonutChartExampleData(double[] data)
+        [TestCase(new decimal[]{50, 25, 20, 5 })]
+        [TestCase(new decimal[]{50, 25, 20, 5 , 12})]
+        public void DonutChartExampleData(decimal[] data)
         {
             string[] labels = { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
                 "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil",
@@ -91,9 +91,9 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        [TestCase(new double[]{50, 25, 20, 5 })]
-        [TestCase(new double[]{50, 25, 20, 5 , 12})]
-        public void DonutCirclePosition(double[] data)
+        [TestCase(new decimal[]{50, 25, 20, 5 })]
+        [TestCase(new decimal[]{50, 25, 20, 5 , 12})]
+        public void DonutCirclePosition(decimal[] data)
         {
             string[] labels = { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
                 "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil",
