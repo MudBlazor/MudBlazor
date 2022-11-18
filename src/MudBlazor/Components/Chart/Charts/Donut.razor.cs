@@ -18,9 +18,9 @@ namespace MudBlazor.Charts
         {
             _circles.Clear();
             _legends.Clear();
-            double counterClockwiseOffset = 25;
-            double totalPercent = 0;
-            double offset;
+            decimal counterClockwiseOffset = 25m;
+            decimal totalPercent = decimal.Zero;
+            decimal offset;
 
             var counter = 0;
             foreach (var data in GetNormalizedData())
@@ -30,20 +30,19 @@ namespace MudBlazor.Charts
                 offset = 100 - totalPercent + counterClockwiseOffset;
                 totalPercent += percent;
 
-                var circle = new SvgCircle()
+                var circle = new SvgCircle
                 {
                     Index = counter,
-                    CX = 21,
-                    CY = 21,
+                    CX = 21m,
+                    CY = 21m,
                     Radius = 15.91549430918954,
                     StrokeDashArray = $"{ToS(percent)} {ToS(reversePercent)}",
                     StrokeDashOffset = offset
                 };
                 _circles.Add(circle);
 
-
-                var labels = "";
-                if (counter < InputLabels.Length)
+                var labels = string.Empty;
+                if (counter < InputLabels.Count)
                 {
                     labels = InputLabels[counter];
                 }
@@ -55,9 +54,8 @@ namespace MudBlazor.Charts
                 };
                 _legends.Add(legend);
 
-                counter += 1;
+                counter++;
             }
         }
-
     }
 }
