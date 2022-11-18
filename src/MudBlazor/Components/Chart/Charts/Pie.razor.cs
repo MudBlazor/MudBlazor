@@ -19,7 +19,7 @@ namespace MudBlazor.Charts
             decimal startx, starty, endx, endy;
             var ndata = GetNormalizedData();
             decimal cumulativeRadians = decimal.Zero;
-            for (var i = 0; i < ndata.Length; i++)
+            for (var i = 0; i < ndata.Count; i++)
             {
                 var data = ndata[i];
                 startx = Math.Cos(cumulativeRadians);
@@ -41,7 +41,7 @@ namespace MudBlazor.Charts
             {
                 var percent = data * 100;
                 var labels = "";
-                if (counter < InputLabels.Length)
+                if (counter < InputLabels.Count)
                 {
                     labels = InputLabels[counter];
                 }
