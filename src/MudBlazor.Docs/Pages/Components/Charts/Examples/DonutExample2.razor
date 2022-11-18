@@ -4,7 +4,6 @@
           InputData="@data" InputLabels="@labels">
 </MudChart>
 
-
 <MudSelect Label="Legend Position" Variant="Variant.Outlined" Dense="true" T="@Position" ValueChanged="OnSelectedValue" Class="mt-4">
     <MudSelectItem T="Position" Value="Position.Top">Top</MudSelectItem>
     <MudSelectItem T="Position" Value="Position.Left">Left</MudSelectItem>
@@ -15,8 +14,8 @@
 </MudSelect>
 
 @code {
-    public decimal[] data = { 25, 77, 28, 5 };
-    public string[] labels = { "Oil", "Coal", "Gas", "Biomass" };
+    public List<decimal> data = new List<decimal>(4) { 25m, 77m, 28m, 5m };
+    public List<string> labels = new List<string>(4) { "Oil", "Coal", "Gas", "Biomass" };
 
     public Position LegendPosition { get; set; } = Position.Bottom;
 
