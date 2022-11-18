@@ -13,8 +13,8 @@
 @code {
     private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
     int dataSize = 4;
-    public decimal[] data = { 50, 25, 20, 5 };
-    public string[] labels = { "Fossile", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
+    public List<decimal> data = new List<decimal>(4) { 50m, 25m, 20m, 5m };
+    public List<string> labels = new List<string>(20) { "Fossile", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
                                 "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil",
                                 "Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
 
@@ -22,8 +22,8 @@
 
     void RandomizeData()
     {
-        var new_data = new decimal[dataSize];
-        for (int i = 0; i < new_data.Length; i++)
+        var new_data = new List<decimal>(dataSize);
+        for (int i = 0; i < new_data.Count; i++)
             new_data[i] = new decimal(random.NextDouble() * 100);
         data = new_data;
         StateHasChanged();
@@ -37,6 +37,7 @@
             RandomizeData();
         }
     }
+
     void RemoveDataSize()
     {
         if (dataSize > 0)
