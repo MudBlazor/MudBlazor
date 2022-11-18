@@ -128,6 +128,10 @@ namespace MudBlazor
             return d.ToString(format);
         }
 
+        protected string ToS(double d, string format = null)
+        {
+            return ToS((decimal)d, format);
+        }
     }
 
     public enum ChartType
