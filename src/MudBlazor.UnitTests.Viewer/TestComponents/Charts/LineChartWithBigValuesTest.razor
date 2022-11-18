@@ -9,7 +9,7 @@
 
     public List<ChartSeries> Series = new List<ChartSeries>
     {
-        new ChartSeries { Name = "Series 1", Data = new decimal[] { 112368124m, 114457907m, 108509186m, 69m, 62m, 62m, 55m, 65m, 70m } }
+        new ChartSeries { Name = "Series 1", Data = new List<decimal>(9) { 112368124m, 114457907m, 108509186m, 69m, 62m, 62m, 55m, 65m, 70m } }
     };
-    public string[] XAxisLabels = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+    public List<string> XAxisLabels = new List<string>(12) { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 }
