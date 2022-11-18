@@ -13,8 +13,8 @@
 @code {
     private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
     int dataSize = 4;
-    decimal[] data = { 77, 25, 20, 5 };
-    string[] labels = { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium",
+    List<decimal> data = new List<decimal>(4) { 77m, 25m, 20m, 5m };
+    List<string> labels = new List<string>(20) { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium",
                         "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Protactinium",
                         "Neptunium", "Americium", "Curium", "Berkelium", "Californium", "Einsteinium", "Mudblaznium" };
 
@@ -22,8 +22,8 @@
 
     void RandomizeData()
     {
-        var new_data = new decimal[dataSize];
-        for (int i = 0; i < new_data.Length; i++)
+        var new_data = new List<decimal>(dataSize);
+        for (int i = 0; i < new_data.Count; i++)
             new_data[i] = new decimal(random.NextDouble() * 100);
         data = new_data;
         StateHasChanged();
@@ -37,6 +37,7 @@
             RandomizeData();
         }
     }
+
     void RemoveDataSize()
     {
         if (dataSize > 0)
