@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor.Docs.Examples
+@namespace MudBlazor.Docs.Examples
 
 <div>
     <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" ChartOptions="chartOptions"></MudChart>
@@ -12,25 +12,26 @@
 
     public ChartOptions chartOptions = new ChartOptions();
 
-    public List<ChartSeries> Series = new List<ChartSeries>()
+    public List<ChartSeries> Series = new List<ChartSeries>(2)
     {
-        new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
-        new ChartSeries() { Name = "Series 2", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new ChartSeries { Name = "Series 1", Data = new List<decimal>(9) { 90m, 79m, 72m, 69m, 62m, 62m, 55m, 65m, 70m } },
+        new ChartSeries { Name = "Series 2", Data = new List<decimal>(9) { 10m, 41m, 35m, 51m, 49m, 62m, 69m, 91m, 148m } },
     };
-    public string[] XAxisLabels = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+
+    public List<string> XAxisLabels = new List<string>(12) { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
     Random random = new Random();
     public void RandomizeData()
     {
-        var new_series = new List<ChartSeries>()
+        var new_series = new List<ChartSeries>(2)
         {
-            new ChartSeries() { Name = "Series 1", Data = new double[9] },
-            new ChartSeries() { Name = "Series 2", Data = new double[9] },
+            new ChartSeries { Name = "Series 1", Data = new List<decimal>(9) },
+            new ChartSeries { Name = "Series 2", Data = new List<decimal>(9) },
         };
         for (int i = 0; i < 9; i++)
         {
-            new_series[0].Data[i] = random.NextDouble() * 100;
-            new_series[1].Data[i] = random.NextDouble() * 100;
+            new_series[0].Data[i] = new decimal(random.NextDouble() * 100);
+            new_series[1].Data[i] = new decimal(random.NextDouble() * 100);
         }
         Series = new_series;
         StateHasChanged();
