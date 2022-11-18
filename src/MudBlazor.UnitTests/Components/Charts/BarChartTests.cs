@@ -42,11 +42,11 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void BarChartExampleData()
         {
-            List<ChartSeries> chartSeries = new List<ChartSeries>()
+            List<ChartSeries> chartSeries = new List<ChartSeries>
             {
-                new () { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
-                new () { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
-                new () { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
+                new () { Name = "United States", Data = new decimal[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
+                new () { Name = "Germany", Data = new decimal[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
+                new () { Name = "Sweden", Data = new decimal[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
             
