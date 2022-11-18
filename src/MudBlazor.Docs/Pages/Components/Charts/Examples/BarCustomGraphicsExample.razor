@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor.Docs.Examples
+@namespace MudBlazor.Docs.Examples
 
 <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px">
 	<CustomGraphics>
@@ -11,13 +11,13 @@
 	</CustomGraphics>
 </MudChart>
 
-
 @code {
-    public List<ChartSeries> Series = new List<ChartSeries>()
+    public List<ChartSeries> Series = new List<ChartSeries>(3)
     {
-        new ChartSeries() { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
-        new ChartSeries() { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
-        new ChartSeries() { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
+        new ChartSeries { Name = "United States", Data = new List<decimal>(9) { 40m, 20m, 25m, 27m, 46m, 60m, 48m, 80m, 15m } },
+        new ChartSeries { Name = "Germany", Data = new List<decimal>(9) { 19m, 24m, 35m, 13m, 28m, 15m, 13m, 16m, 31m } },
+        new ChartSeries { Name = "Sweden", Data = new List<decimal>(9) { 8m, 6m, 11m, 13m, 4m, 16m, 10m, 16m, 18m } },
     };
-    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+
+    public List<string> XAxisLabels = new List<string>(9) { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 }
