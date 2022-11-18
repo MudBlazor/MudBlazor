@@ -104,10 +104,9 @@ namespace MudBlazor.Charts
 
             //Vertical Grid Lines
             var x = horizontalStartSpace;
-            decimal startGridX = 0;
+            decimal startGridX = 0m;
             for (var counter = 0; counter <= numVerticalLines; counter++)
             {
-
                 var line = new SvgPath()
                 {
                     Index = counter,
@@ -128,12 +127,11 @@ namespace MudBlazor.Charts
                 x += horizontalSpace;
             }
 
-
             //Chart Lines
             var colorcounter = 0;
             foreach (var item in _series)
             {
-                var chartLine = "";
+                var chartLine = string.Empty;
                 decimal gridValueX = decimal.Zero;
                 decimal gridValueY = decimal.Zero;
                 var firstTime = true;
@@ -143,13 +141,12 @@ namespace MudBlazor.Charts
                 for (var i = 0; i <= item.Data.Count - 1; i++)
                 {
                     if (i == 0)
-                        XValues[i] = 30;
+                        XValues[i] = 30m;
                     else
                         XValues[i] = XValues[i - 1] + horizontalSpace;
 
                     var gridValue = (item.Data[i]) * verticalSpace / gridYUnits;
                     YValues[i] = boundHeight - (verticalStartSpace + gridValue);
-
                 }
                 switch (interpolationOption)
                 {
@@ -170,13 +167,11 @@ namespace MudBlazor.Charts
 
                 if (interpolator?.InterpolationRequired == true)
                 {
-                    horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / interpolator.InterpolatedXs.Length;
+                    horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / interpolator.InterpolatedXs.Count;
                     foreach (var yValue in interpolator.InterpolatedYs)
                     {
-
                         if (firstTime)
                         {
-
                             chartLine += "M ";
                             firstTime = false;
                             gridValueX = horizontalStartSpace;
