@@ -19,13 +19,13 @@ namespace MudBlazor.Charts
             _circles.Clear();
             _legends.Clear();
             double counterClockwiseOffset = 25d;
-            decimal totalPercent = 0m;
+            double totalPercent = 0d;
             double offset;
 
             var counter = 0;
             foreach (var data in GetNormalizedData())
             {
-                var percent = data * 100;
+                var percent = (double)data * 100;
                 var reversePercent = 100 - percent;
                 offset = 100 - totalPercent + counterClockwiseOffset;
                 totalPercent += percent;
