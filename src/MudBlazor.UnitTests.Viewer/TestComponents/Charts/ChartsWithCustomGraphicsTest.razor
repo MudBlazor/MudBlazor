@@ -39,16 +39,16 @@
 	</MudItem>
 </MudGrid>
 @code {
-	public static string __description__ = "Charts with custom svg graphics using a RenderFragment.";
-    public double[] data = { 10d, 420d, 20d, 69d };
-    public string[] labels = { "Data 1", "Data 2", "Data 3", "Data 4" };
+    public static string __description__ = "Charts with custom svg graphics using a RenderFragment.";
+    public List<decimal> data = new List<decimal>(4) { 10m, 420m, 20m, 69m };
+    public List<string> labels = new List<string>(4) { "Data 1", "Data 2", "Data 3", "Data 4" };
 
-    public List<ChartSeries> Series = new List<ChartSeries>
+    public List<ChartSeries> Series = new List<ChartSeries>(3)
     {
-        new ChartSeries { Name = "United States", Data = new double[] { 40d, 20d, 25d, 27d, 46d, 60d, 48d, 80d, 15d } },
-        new ChartSeries { Name = "Germany", Data = new double[] { 19d, 24d, 35d, 13d, 28d, 15d, 13d, 16d, 31d } },
-        new ChartSeries { Name = "Sweden", Data = new double[] { 8d, 6d, 11d, 13d, 4d, 16d, 10d, 16d, 18d } },
+        new ChartSeries { Name = "United States", Data = new List<decimal>(9) { 40m, 20m, 25m, 27m, 46m, 60m, 48m, 80m, 15m } },
+        new ChartSeries { Name = "Germany", Data = new List<decimal>(9) { 19m, 24m, 35m, 13m, 28m, 15m, 13m, 16m, 31m } },
+        new ChartSeries { Name = "Sweden", Data = new List<decimal>(9) { 8m, 6m, 11m, 13m, 4m, 16m, 10m, 16m, 18m } },
     };
 
-    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+    public List<string> XAxisLabels = new List<string>(12) { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 }
