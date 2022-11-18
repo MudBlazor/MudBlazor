@@ -12,11 +12,11 @@ namespace MudBlazor
     {
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public double[] InputData { get; set; } = Array.Empty<double>();
+        public IEnumerable<decimal> InputData { get; set; } = Enumerable.Empty<decimal>();
 
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public string[] InputLabels { get; set; } = Array.Empty<string>();
+        public IEnumerable<string> InputLabels { get; set; } = Enumerable.Empty<string>();
 
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
@@ -111,15 +111,16 @@ namespace MudBlazor
         /// <summary>
         /// Scales the input data to the range between 0 and 1
         /// </summary>
-        protected double[] GetNormalizedData()
+        protected IEnumerable<decimal> GetNormalizedData()
         {
-            if (InputData == null)
-                return Array.Empty<double>();
+            if (InputData is null)
+                return Enumerable.Empty<decimal>();
+
             var total = InputData.Sum();
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
         }
 
-        protected string ToS(double d, string format = null)
+        protected string ToS(decimal d, string format = null)
         {
             if (string.IsNullOrEmpty(format))
                 return d.ToString(CultureInfo.InvariantCulture);
