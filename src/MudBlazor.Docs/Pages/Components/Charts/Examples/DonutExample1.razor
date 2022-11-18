@@ -13,7 +13,7 @@
 @code {
     private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
     int dataSize = 4;
-    public double[] data = { 50, 25, 20, 5 };
+    public decimal[] data = { 50, 25, 20, 5 };
     public string[] labels = { "Fossile", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
                                 "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil",
                                 "Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
@@ -22,9 +22,9 @@
 
     void RandomizeData()
     {
-        var new_data = new double[dataSize];
+        var new_data = new decimal[dataSize];
         for (int i = 0; i < new_data.Length; i++)
-            new_data[i] = random.NextDouble() * 100;
+            new_data[i] = new decimal(random.NextDouble() * 100);
         data = new_data;
         StateHasChanged();
     }
