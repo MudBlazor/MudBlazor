@@ -3,7 +3,7 @@
 @typeparam T
 
 <th scope="col" class="@_classname" style="@_style" colspan="@Column?.HeaderColSpan" @attributes="@UserAttributes">
-    @if (null != Column && Column.filterable)
+    @if (null != Column && Column.filterable && !Column.Hidden)
     {
         @if (Column.FilterTemplate != null)
         {
