@@ -26,8 +26,9 @@ namespace MudBlazor
         /// <summary>
         /// Line width of series in px
         /// </summary>
-        public decimal LineStrokeWidth { get; set; } = 3.0m;
+        public double LineStrokeWidth { get; set; } = 3.0d;
     }
+    
     public enum InterpolationOption
     {
         NaturalSpline,
