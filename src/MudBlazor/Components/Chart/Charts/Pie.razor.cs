@@ -16,9 +16,9 @@ namespace MudBlazor.Charts
         {
             _paths.Clear();
             _legends.Clear();
-            decimal startx, starty, endx, endy;
+            double startx, starty, endx, endy;
             var ndata = GetNormalizedData();
-            decimal cumulativeRadians = decimal.Zero;
+            double cumulativeRadians = 0d;
             for (var i = 0; i < ndata.Count; i++)
             {
                 var data = ndata[i];
