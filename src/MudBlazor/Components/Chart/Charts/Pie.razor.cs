@@ -24,7 +24,7 @@ namespace MudBlazor.Charts
                 var data = ndata[i];
                 startx = Math.Cos(cumulativeRadians);
                 starty = Math.Sin(cumulativeRadians);
-                cumulativeRadians += 2 * Math.PI * data;
+                cumulativeRadians += 2 * Math.PI * (double)data;
                 endx = Math.Cos(cumulativeRadians);
                 endy = Math.Sin(cumulativeRadians);
                 var largeArcFlag = data > 0.5 ? 1 : 0;
