@@ -113,7 +113,7 @@ namespace MudBlazor
             _jSRuntime.InvokeVoidAsync("mudScrollManager.lockScroll", selector, cssClass);
 
         public ValueTask UnlockScrollAsync(string selector = "body", string cssClass = "scroll-locked") =>
-            _jSRuntime.InvokeVoidAsync("mudScrollManager.unlockScroll", selector, cssClass);
+            _jSRuntime.InvokeVoidAsyncIgnoreErrors("mudScrollManager.unlockScroll", selector, cssClass);
     }
 
     /// <summary>
