@@ -40,7 +40,6 @@
   <ItemGroup>
     <None Include="..\..\LICENSE" Pack="true" Visible="false" PackagePath="" />
     <None Include="..\..\content\Nuget.png" Pack="true" Visible="false" PackagePath="" />
-    <None Include="..\MudBlazor.Docs\Pages\Components\Link\LinkOnClickExample.razor" Link="LinkOnClickExample.razor" />
   </ItemGroup>
 
   <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
