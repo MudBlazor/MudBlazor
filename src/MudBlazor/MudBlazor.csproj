@@ -111,9 +111,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>MudBlazor.UnitTests</_Parameter1>
-    </AssemblyAttribute>
+    <InternalsVisibleTo Include="MudBlazor.UnitTests" />
   </ItemGroup>
 
   <ItemGroup>
