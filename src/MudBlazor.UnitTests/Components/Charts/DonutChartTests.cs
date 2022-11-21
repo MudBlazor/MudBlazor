@@ -4,6 +4,7 @@
 
 using MudBlazor.UnitTests.Components;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using MudBlazor.Charts;
@@ -40,48 +41,44 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        [TestCase(new decimal[]{50, 25, 20, 5 })]
-        [TestCase(new decimal[]{50, 25, 20, 5 , 12})]
-        public void DonutChartExampleData(decimal[] data)
+        [TestCase(new List<decimal>(4) { 50m, 25m, 20m, 5m })]
+        [TestCase(new List<decimal>(5) { 50m, 25m, 20m, 5m , 12m })]
+        public void DonutChartExampleData(List<decimal> data)
         {
-            string[] labels = { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
-                "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil",
-                "Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
-            
+            var labels = new List<string>(20) { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
+                "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass", "Hydro",
+                "Geothermal" };
+
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")
                 .Add(p => p.InputData, data)
                 .Add(p => p.ChartOptions, new ChartOptions {ChartPalette = _baseChartPalette})
-                .Add(p => p.InputLabels,labels));
-            
+                .Add(p => p.InputLabels, labels));
+
             comp.Markup.Should().Contain("class=\"mud-chart-donut\"");
             comp.Markup.Should().Contain("class=\"mud-chart-serie mud-donut-segment\"");
             comp.Markup.Should().Contain("mud-chart-legend-item");
             
-            if (data.Length <= 4)
+            if (data.Count < 5)
             {
-                comp.Markup.Should().
-                    Contain("Fossil").And.Contain("Nuclear").And.Contain("Solar").And.Contain("Wind");
+                comp.Markup.Should().Contain("Fossil").And.Contain("Nuclear").And.Contain("Solar").And.Contain("Wind");
             }
             
-            if (data.Length >= 5)
+            if (data.Count > 4)
             {
-                comp.Markup.Should()
-                    .Contain("Oil");
+                comp.Markup.Should().Contain("Oil");
             }
             
-            if (data.Length == 4 && data.Contains(50))
+            if (data.Count == 4 && data.Contains(50))
             {
-                comp.Markup.Should()
-                    .Contain("stroke-dasharray=\"50 50\" stroke-dashoffset=\"125\"");
+                comp.Markup.Should().Contain("stroke-dasharray=\"50 50\" stroke-dashoffset=\"125\"");
             }
 
-            if (data.Length == 4 && data.Contains(5))
+            if (data.Count == 4 && data.Contains(5))
             {
-                comp.Markup.Should()
-                    .Contain("stroke-dasharray=\"5 95\" stroke-dashoffset=\"30\"");
+                comp.Markup.Should().Contain("stroke-dasharray=\"5 95\" stroke-dashoffset=\"30\"");
             }
             
             comp.SetParametersAndRender(parameters => parameters
@@ -91,22 +88,22 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        [TestCase(new decimal[]{50, 25, 20, 5 })]
-        [TestCase(new decimal[]{50, 25, 20, 5 , 12})]
-        public void DonutCirclePosition(decimal[] data)
+        [TestCase(new List<decimal>(4) { 50m, 25m, 20m, 5m })]
+        [TestCase(new List<decimal>(5) { 50m, 25m, 20m, 5m, 12m })]
+        public void DonutCirclePosition(List<decimal> data)
         {
-            string[] labels = { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
-                "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil",
-                "Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
-            
+            var labels = new List<string>(20) { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
+                "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass", "Hydro",
+                "Geothermal" };
+
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")
                 .Add(p => p.InputData, data)
-                .Add(p => p.ChartOptions, new ChartOptions {ChartPalette = _baseChartPalette})
+                .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette })
                 .Add(p => p.InputLabels,labels));
-            
+
             var svgViewBox = comp.Find("svg").GetAttribute("viewBox")?.Split(" ")?.Select(s => Int32.Parse(s))?.ToArray();
             var circles = comp.FindAll("circle");
 
