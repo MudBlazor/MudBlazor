@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Charts
                 new ChartSeries { Name = "Series 1", Data = new decimal[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
                 new ChartSeries { Name = "Series 2", Data = new decimal[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
             };
-            string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+            var xAxisLabels = new List<string>(9) { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
             
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.Width, "100%")
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.XAxisLabels, xAxisLabels)
-                .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette, InterpolationOption = opt}));
+                .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette, InterpolationOption = opt }));
 
             comp.Instance.ChartSeries.Should().NotBeEmpty();
             
@@ -70,10 +70,9 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().Contain("class=\"mud-charts-yaxis\"");
             comp.Markup.Should().Contain("mud-chart-legend-item");
             
-            if (chartSeries.Count <= 3)
+            if (chartSeries.Count < 4)
             {
-                comp.Markup.Should().
-                    Contain("Series 1").And.Contain("Series 2");
+                comp.Markup.Should().Contain("Series 1").And.Contain("Series 2");
             }
 
             if (chartSeries.FirstOrDefault(x => x.Name == "Series 1") is not null)
