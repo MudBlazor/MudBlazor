@@ -3,14 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Generic;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
-using static MudBlazor.Colors;
 
 namespace MudBlazor
 {
@@ -299,7 +298,8 @@ namespace MudBlazor
                 _ => ColorPickerMode.RGB,
             };
 
-        public async Task ChangeView(ColorPickerView value) {
+        public async Task ChangeView(ColorPickerView value)
+        {
 
             var oldValue = _activeColorPickerView;
 
@@ -315,7 +315,7 @@ namespace MudBlazor
             {
                 _attachedMouseEvent = true;
             }
-        } 
+        }
 
         private void UpdateBaseColorSlider(int value)
         {
@@ -530,6 +530,7 @@ namespace MudBlazor
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
         private string GetColorTextValue() => (DisableAlpha == true || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _color.ToString(MudColorOutputFormats.Hex) : _color.ToString(MudColorOutputFormats.HexA);
+        private int GetHexColorInputMaxLength() => DisableAlpha ? 7 : 9;
 
         private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => Close());
         private bool IsAnyControlVisible() => !(DisablePreview && DisableSliders && DisableInputs);
@@ -566,7 +567,7 @@ namespace MudBlazor
         {
             if (DisableDragEffect == true) { return; }
 
-            if(_throttledEventManager == null)
+            if (_throttledEventManager == null)
             {
                 _throttledEventManager = ThrottledEventManagerFactory.Create();
             }
@@ -589,7 +590,7 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
-           if(_throttledEventManager == null) { return; }
+            if (_throttledEventManager == null) { return; }
 
             await _throttledEventManager.DisposeAsync();
         }
