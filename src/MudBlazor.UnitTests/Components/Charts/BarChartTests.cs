@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Charts
                 new () { Name = "Germany", Data = new decimal[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
                 new () { Name = "Sweden", Data = new decimal[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
             };
-            string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+            var xAxisLabels = new List<string>(9)  { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Bar)
@@ -77,22 +77,19 @@ namespace MudBlazor.UnitTests.Charts
             legend.FindAll(LEGEND_CSS_SELECTOR).Skip(0).First().Click();
             comp.Instance.SelectedIndex.Should().Be(0, because: "first legend item was clicked");
 
-            if (chartSeries.Count <= 3)
+            if (chartSeries.Count < 4)
             {
-                comp.Markup.Should().
-                    Contain("United States").And.Contain("Germany").And.Contain("Sweden");
+                comp.Markup.Should().Contain("United States").And.Contain("Germany").And.Contain("Sweden");
             }
 
             if (chartSeries.Count == 3 && chartSeries.Any(x => x.Data.Contains(40)))
             {
-                comp.Markup.Should()
-                    .Contain("d=\"M 30 325 L 30 205\"");
+                comp.Markup.Should().Contain("d=\"M 30 325 L 30 205\"");
             }
 
             if (chartSeries.Count == 3 && chartSeries.Any(x => x.Data.Contains(80)))
             {
-                comp.Markup.Should()
-                    .Contain("d=\"M 546.25 325 L 546.25 85\"");
+                comp.Markup.Should().Contain("d=\"M 546.25 325 L 546.25 85\"");
             }
 
             comp.SetParametersAndRender(parameters => parameters
