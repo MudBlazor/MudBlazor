@@ -120,7 +120,7 @@ namespace MudBlazor
             return InputData.Select(x => Math.Abs(x) / total).ToList();
         }
 
-        protected string ToS(decimal d, string format = null)
+        protected string ToS(double d, string format = null)
         {
             if (string.IsNullOrEmpty(format))
                 return d.ToString(CultureInfo.InvariantCulture);
@@ -128,9 +128,7 @@ namespace MudBlazor
             return d.ToString(format);
         }
 
-        protected string ToS(double d) => ToS((decimal)d);
-
-        protected string ToS(double d, string format) => ToS((decimal)d, format);
+        protected string ToS(decimal @decimal) => ToS((double)@decimal);
     }
 
     public enum ChartType
