@@ -1,4 +1,3 @@
-﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,12 +76,12 @@ namespace MudBlazor.UnitTests.Components
         public void BarChartYAxisFormat()
         {
             var options = new ChartOptions();
-            var series = new List<ChartSeries>()
+            var series = new List<ChartSeries>(2)
             {
-                new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
-                new ChartSeries() { Name = "Series 2", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
+                new ChartSeries { Name = "Series 1", Data = new decimal[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+                new ChartSeries { Name = "Series 2", Data = new decimal[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
             };
-            var xAxis = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+            var xAxis = new List<string>(9) { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
             var width = "100%";
             var height = "350px";
 
