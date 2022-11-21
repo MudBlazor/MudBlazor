@@ -314,7 +314,7 @@ namespace MudBlazor
             ToggleMenu(args);
         }
 
-        public void MouseEnter(EventArgs args)
+        public void MouseEnter(MouseEventArgs args)
         {
             _isMouseOver = true;
 

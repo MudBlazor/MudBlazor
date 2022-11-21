@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor.Components.Snackbar
 {
@@ -13,11 +14,15 @@ namespace MudBlazor.Components.Snackbar
         internal Dictionary<string, object> ComponentParameters { get; }
         internal string Key { get; }
 
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(InternalComponents.SnackbarMessageRenderFragment))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(InternalComponents.SnackbarMessageText))]
         internal SnackbarMessage(Type componentType, Dictionary<string, object> componentParameters = null, string key = "")
         {
             ComponentType = componentType;
             ComponentParameters = componentParameters;
             Key = key;
         }
+
+        public string Text { get; set; }
     }
 }

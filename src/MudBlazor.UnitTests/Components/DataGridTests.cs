@@ -366,6 +366,25 @@ namespace MudBlazor.UnitTests.Components
             //if no crash occurs, we know the datagrid is properly filtering out the GetOnly property when calling set
         }
 
+        /// <summary>
+        /// DataGrid edit form should trigger the FormFieldChanged event
+        /// </summary>
+        [Test]
+        public async Task DataGridFormFieldChangedTest()
+        {
+            var comp = Context.RenderComponent<DataGridFormFieldChangedTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormFieldChangedTest.Item>>();
+            //open edit dialog
+            dataGrid.FindAll("tbody tr")[0].Click();
+
+            //edit data
+            comp.Find("div input").Change("J K Simmons");
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("J K Simmons");
+
+            var textfield = comp.FindComponent<MudTextField<string>>();
+            Assert.AreSame(comp.Instance.FormFieldChangedEventArgs.Field, textfield.Instance);
+        }
+
         [Test]
         public async Task DataGridVisualStylingTest()
         {

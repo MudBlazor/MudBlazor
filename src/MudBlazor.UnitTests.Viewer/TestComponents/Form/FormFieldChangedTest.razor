@@ -4,8 +4,7 @@
 @using System.ComponentModel.DataAnnotations
 
 <MudForm @ref="form" FieldChanged="((v) => FormFieldChangedEventArgs = v)">
-    <MudTextField T="string" Label="Username" />
-    <MudTextField T="string" Label="Email" />
+    <MudTextField T="string"/>
     <MudNumericField T="int" />
     <div class="d-flex">
         <MudRadioGroup T="string" Required="true" RequiredError="Account type is required!">

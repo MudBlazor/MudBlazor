@@ -135,7 +135,7 @@ namespace MudBlazor
 
             return Add
             (
-                new SnackbarMessage(typeof(SnackbarMessageText), componentParams, string.IsNullOrEmpty(key) ? message : key),
+                new SnackbarMessage(typeof(SnackbarMessageText), componentParams, string.IsNullOrEmpty(key) ? message : key) { Text = message },
                 severity,
                 configure
             );
@@ -165,8 +165,8 @@ namespace MudBlazor
 
         public void Remove(Snackbar snackbar)
         {
-            snackbar.Dispose();
             snackbar.OnClose -= Remove;
+            snackbar.Dispose();
 
             SnackBarLock.EnterWriteLock();
             try
@@ -191,7 +191,7 @@ namespace MudBlazor
 
         private bool SnackbarAlreadyPresent(Snackbar newSnackbar)
         {
-            return !string.IsNullOrEmpty(newSnackbar.Message.Key) && SnackBarList.Any(snackbar => newSnackbar.Message.Key == snackbar.Message.Key);
+            return !string.IsNullOrEmpty(newSnackbar.SnackbarMessage.Key) && SnackBarList.Any(snackbar => newSnackbar.SnackbarMessage.Key == snackbar.SnackbarMessage.Key);
         }
 
         private void ConfigurationUpdated()
