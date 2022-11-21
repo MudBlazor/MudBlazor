@@ -42,8 +42,8 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Theory]
-        [TestCase(77m, 25m, 20m, 5m)]
-        [TestCase(77m, 25m, 20m, 5m, 8m)]
+        [TestCase(77, 25, 20, 5)]
+        [TestCase(77, 25, 20, 5, 8)]
         public void PieChartExampleData(params decimal[] data)
         {
             var labels = new List<string>(20) { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium",
