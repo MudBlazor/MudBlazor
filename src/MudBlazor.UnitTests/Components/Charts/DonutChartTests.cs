@@ -41,8 +41,8 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        [TestCase(50m, 25m, 20m, 5m)]
-        [TestCase(50m, 25m, 20m, 5m, 12m)]
+        [TestCase(50, 25, 20, 5)]
+        [TestCase(50, 25, 20, 5, 12)]
         public void DonutChartExampleData(params decimal[] data)
         {
             var labels = new List<string>(20) { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
@@ -88,8 +88,8 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        [TestCase(50m, 25m, 20m, 5m)]
-        [TestCase(50m, 25m, 20m, 5m, 12m)]
+        [TestCase(50, 25, 20, 5)]
+        [TestCase(50, 25, 20, 5, 12)]
         public void DonutCirclePosition(params decimal[] data)
         {
             var labels = new List<string>(20) { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
