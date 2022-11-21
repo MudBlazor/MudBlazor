@@ -55,7 +55,7 @@ namespace MudBlazor.UnitTests.Charts
                 new ChartSeries { Name = "Series 2", Data = new decimal[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
             };
             var xAxisLabels = new List<string>(9) { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
-            
+
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.Height, "350px")
