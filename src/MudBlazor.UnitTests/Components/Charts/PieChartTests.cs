@@ -44,7 +44,7 @@ namespace MudBlazor.UnitTests.Charts
         [Theory]
         [TestCase(new List<decimal>(4) { 77m, 25m, 20m, 5m })]
         [TestCase(new List<decimal>(5) { 77m, 25m, 20m, 5m, 8m })]
-        public void PieChartExampleData(decimal[] data)
+        public void PieChartExampleData(List<decimal> data)
         {
             var labels = new List<string>(20) { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium",
                 "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Protactinium", "Neptunium",
@@ -78,7 +78,7 @@ namespace MudBlazor.UnitTests.Charts
                 comp.Markup.Should().Contain("M 1 0 A 1 1 0 1 1 -0.7851254621398548 -0.6193367490305087 L 0 0");
             }
 
-            if (data.Length == 4 && data.Contains(5))
+            if (data.Count == 4 && data.Contains(5))
             {
                 comp.Markup.Should()
                     .Contain("M 0.9695598647982466 -0.24485438238350116 A 1 1 0 0 1 1 -2.4492935982947064E-16 L 0 0");
