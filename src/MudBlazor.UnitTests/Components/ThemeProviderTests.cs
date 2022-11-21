@@ -307,5 +307,26 @@ namespace MudBlazor.UnitTests.Components
             Assert.AreEqual(new MudColor(Colors.Red.Default),DefaultTheme.Palette.Error);
             Assert.AreEqual(new MudColor(Colors.Shades.White),DefaultTheme.Palette.White);
         }
+
+        [Test]
+        [TestCase(SudoCssScope.Root)]
+        [TestCase(SudoCssScope.Host)]
+        public void SudoCssScope_Test(SudoCssScope sudoScope)
+        {
+            var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters.Add(p => p.SudoCssScope, sudoScope));
+            comp.Should().NotBeNull();
+
+            var styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
+
+            var rootStyleNode = styleNodes[2];
+
+            var styleLines = rootStyleNode.InnerHtml.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+
+            if (sudoScope == SudoCssScope.Root)
+                styleLines.Should().Contain(":root{");
+
+            if (sudoScope == SudoCssScope.Host)
+                styleLines.Should().Contain(":host{");
+        }
     }
 }

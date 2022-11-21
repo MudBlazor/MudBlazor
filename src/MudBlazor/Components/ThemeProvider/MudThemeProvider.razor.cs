@@ -22,6 +22,12 @@ namespace MudBlazor
         [Parameter]
         public bool DefaultScrollbar { get; set; }
 
+        /// <summary>
+        /// Allows you to specify a different Css Sudo scope, usefull in cases where you are using the Shadow DOM.
+        /// </summary>
+        [Parameter]
+        public SudoCssScope SudoCssScope { get; set; }
+
         #region Dark mode handling
 
         public BaseMudThemeProvider()
@@ -83,7 +89,18 @@ namespace MudBlazor
         {
             var theme = new StringBuilder();
             theme.AppendLine("<style>");
-            theme.Append(":root");
+
+            switch (SudoCssScope)
+            {
+                case SudoCssScope.Host:
+                    theme.Append(":host");
+                    break;
+                case SudoCssScope.Root:
+                default:
+                    theme.Append(":root");
+                    break;
+            }
+
             theme.AppendLine("{");
             GenerateTheme(theme);
             theme.AppendLine("}");

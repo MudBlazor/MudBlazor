@@ -1,0 +1,22 @@
+﻿@page "/customization/sudocss"
+<DocsPage>
+    <DocsPageHeader Title="Sudo CSS scopes">
+        <Description>When building Web Components you might want to scope the CSS using the shadow DOM, this setting will allow the MudThemeProvider to generate different Sudo CSS scopes</Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="MudBlazor Sudo CSS">
+                <Description>There are currently two diffrent options.</Description>
+            </SectionHeader>
+            <ul class="docs-list mx-2">
+                <li><MudText Inline="true">Root <CodeInline>MudThemeProvider SudoCssScope="SudoCssScope.Root"</CodeInline></MudText></li>
+                <li><MudText Inline="true">Host <CodeInline>MudThemeProvider SudoCssScope="SudoCssScope.Host"</CodeInline></MudText></li>
+            </ul>
+            <MudText Class="mt-4 mb-16">These values can be changed in the <CodeInline>MudThemeProvider</CodeInline> class, where Root is the default</MudText>
+        </DocsPageSection>
+        <DocsPageSection>
+            <MudDivider Class="my-16" Style="opacity:0;" />
+            @*You are cool like a swimming pool!*@
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
