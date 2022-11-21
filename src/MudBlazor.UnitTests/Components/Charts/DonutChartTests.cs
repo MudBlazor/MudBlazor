@@ -15,6 +15,12 @@ namespace MudBlazor.UnitTests.Charts
 {
     public class DonutChartTests : BunitTest
     {
+        private static readonly object[] _decimals =
+        {
+            new object[] { new List<decimal>(4) { 50m, 25m, 20m, 5m } },
+            new object[] { new List<decimal>(5) { 50m, 25m, 20m, 5m, 12m } }
+        };
+
         private readonly string[] _baseChartPalette = 
         {
             "#2979FF", "#1DE9B6", "#FFC400", "#FF9100", "#651FFF", "#00E676", "#00B0FF", "#26A69A", "#FFCA28",
@@ -41,9 +47,8 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        [TestCase(50, 25, 20, 5)]
-        [TestCase(50, 25, 20, 5, 12)]
-        public void DonutChartExampleData(params decimal[] data)
+        [TestCaseSource(nameof(_decimals))]
+        public void DonutChartExampleData(List<decimal> data)
         {
             var labels = new List<string>(20) { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
                 "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass", "Hydro",
@@ -53,7 +58,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")
-                .Add(p => p.InputData, data.ToList())
+                .Add(p => p.InputData, data)
                 .Add(p => p.ChartOptions, new ChartOptions {ChartPalette = _baseChartPalette})
                 .Add(p => p.InputLabels, labels));
 
@@ -61,22 +66,22 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().Contain("class=\"mud-chart-serie mud-donut-segment\"");
             comp.Markup.Should().Contain("mud-chart-legend-item");
             
-            if (data.Length < 5)
+            if (data.Count < 5)
             {
                 comp.Markup.Should().Contain("Fossil").And.Contain("Nuclear").And.Contain("Solar").And.Contain("Wind");
             }
             
-            if (data.Length > 4)
+            if (data.Count > 4)
             {
                 comp.Markup.Should().Contain("Oil");
             }
             
-            if (data.Length == 4 && data.Contains(50))
+            if (data.Count == 4 && data.Contains(50))
             {
                 comp.Markup.Should().Contain("stroke-dasharray=\"50 50\" stroke-dashoffset=\"125\"");
             }
 
-            if (data.Length == 4 && data.Contains(5))
+            if (data.Count == 4 && data.Contains(5))
             {
                 comp.Markup.Should().Contain("stroke-dasharray=\"5 95\" stroke-dashoffset=\"30\"");
             }
@@ -88,9 +93,8 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        [TestCase(50, 25, 20, 5)]
-        [TestCase(50, 25, 20, 5, 12)]
-        public void DonutCirclePosition(params decimal[] data)
+        [TestCaseSource(nameof(_decimals))]
+        public void DonutCirclePosition(List<decimal> data)
         {
             var labels = new List<string>(20) { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
                 "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass", "Hydro",
@@ -100,7 +104,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")
-                .Add(p => p.InputData, data.ToList())
+                .Add(p => p.InputData, data)
                 .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette })
                 .Add(p => p.InputLabels,labels));
 
