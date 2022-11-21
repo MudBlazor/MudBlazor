@@ -4,21 +4,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MudBlazor.Services
 {
     public class SubscriptionInfo<TAction,TOption>
     {
-        private Dictionary<Guid, Action<TAction>> _subscriptions;
+        private readonly Dictionary<Guid, Action<TAction>> _subscriptions;
         public TOption Option { get; init; }
 
         public SubscriptionInfo(TOption options)
         {
-            _subscriptions = new();
-
             Option = options;
             _subscriptions = new();
         }
