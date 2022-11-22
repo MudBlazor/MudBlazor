@@ -2,6 +2,14 @@
 <!--Use: dotnet msbuild -preprocess:<fileName>.xml to evaluate this project-->
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
+  <!--Hook for the generated static content-->
+  <PropertyGroup>
+    <ResolveStaticWebAssetsInputsDependsOn>
+      IncludeGeneratedStaticFiles;
+      $(ResolveStaticWebAssetsInputsDependsOn)
+    </ResolveStaticWebAssetsInputsDependsOn>
+  </PropertyGroup>
+
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
@@ -104,14 +112,13 @@
   </Target>
 
   <!--Output of Excubo webcompiler-->
-  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler" BeforeTargets="BeforeBuild">
-    <Error Condition="!Exists('$(MSBuildProjectDirectory)/wwwroot/MudBlazorDocs.min.css')" Text="Missing MudBlazorDocs.min.css in wwwroot" />
+  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler">
+    <Error Condition="!Exists('wwwroot/MudBlazorDocs.min.css')" Text="Missing MudBlazorDocs.min.css in wwwroot" />
     <!--If we ever bundle js  for the docs site uncomment the below check-->
     <!--<Error Condition="!Exists('wwwroot/MudBlazorDocs.min.js')" Text="Missing MudBlazorDocs.min.js in wwwroot" />-->
     <ItemGroup>
-      <!--Include without duplication-->
-      <_NewCompiledDocsCssFiles Include="wwwroot/MudBlazorDocs.min.css" Exclude="@(Content)" />
-      <Content Include="@(_NewCompiledDocsCssFiles)" />
+      <Content Include="wwwroot/MudBlazorDocs.min.css" Condition="!Exists('wwwroot/MudBlazorDocs.min.css')" />
+      <Content Include="wwwroot/MudBlazorDocs.min.js" Condition="!Exists('wwwroot/MudBlazorDocs.min.js')" />
     </ItemGroup>
   </Target>
 
@@ -119,6 +126,9 @@
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
     <Content Remove="excubowebcompiler.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\images\landingpage" />
   </ItemGroup>
 
 </Project>
