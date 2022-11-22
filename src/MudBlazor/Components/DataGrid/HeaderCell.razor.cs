@@ -193,20 +193,20 @@ namespace MudBlazor
                 await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.Field, _initialDirection, Column.GetLocalSortFunc()));
             }
 
-            if (DataGrid != null)
+            if (DataGrid is not null)
             {
                 DataGrid.SortChangedEvent += OnGridSortChanged;
                 DataGrid.SelectedAllItemsChangedEvent += OnSelectedAllItemsChanged;
                 DataGrid.SelectedItemsChangedEvent += OnSelectedItemsChanged;
             }
 
-            if (null != Column)
+            if (Column is not null)
             {
                 Column.HeaderCell = this;
 
                 if (Column.filterable)
                 {
-                    Column.filterContext._headerCell = this;
+                    Column.filterContext.HeaderCell = this;
                 }
             }
         }

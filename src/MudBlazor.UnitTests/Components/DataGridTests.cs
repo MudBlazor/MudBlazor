@@ -3523,7 +3523,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".filters-panel").Count.Should().Be(0);
 
             // test internal filter class for string data type.
-            var internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition, null);
+            var internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition);
             internalFilter.dataType.Should().Be(typeof(string));
             await comp.InvokeAsync(() => internalFilter.StringValueChanged("J"));
             filterDefinition.Value.Should().Be("J");
@@ -3534,24 +3534,24 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => internalFilter.RemoveFilter());
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(7);
             // test internal filter class for number data type.
-            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition2, null);
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition2);
             internalFilter.dataType.Should().Be(typeof(int));
             await comp.InvokeAsync(() => internalFilter.NumberValueChanged(35));
             filterDefinition2.Value.Should().Be(35);
             // test internal filter class for enum data type.
-            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition3, null);
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition3);
             internalFilter.dataType.Should().Be(typeof(Severity));
             await comp.InvokeAsync(() => internalFilter.NumberValueChanged(35));
             filterDefinition3.Value.Should().Be(35);
             internalFilter.isEnum.Should().Be(true);
             // test internal filter class for bool data type.
-            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition4, null);
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition4);
             internalFilter.dataType.Should().Be(typeof(bool));
             await comp.InvokeAsync(() => internalFilter.BoolValueChanged(false));
             filterDefinition4.Value.Should().Be(false);
             // test internal filter class for datetime data type.
             var date = DateTime.UtcNow;
-            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition5, null);
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition5);
             internalFilter.dataType.Should().Be(typeof(DateTime));
             await comp.InvokeAsync(() => internalFilter.DateValueChanged(date));
             filterDefinition5.Value.Should().Be(date.Date);

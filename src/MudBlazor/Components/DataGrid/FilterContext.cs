@@ -11,28 +11,28 @@ namespace MudBlazor
 {
     public class FilterContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
-        internal MudDataGrid<T>? _dataGrid;
-        internal HeaderCell<T>? _headerCell;
+        internal MudDataGrid<T>? DataGrid { get; set; }
+        internal HeaderCell<T>? HeaderCell { get; set; }
         public IEnumerable<T> Items
         {
-            get => _dataGrid?.Items ?? Enumerable.Empty<T>();
+            get => DataGrid?.Items ?? Enumerable.Empty<T>();
         }
         public List<FilterDefinition<T>> FilterDefinitions
         {
-            get => _dataGrid?.FilterDefinitions ?? new List<FilterDefinition<T>>();
+            get => DataGrid?.FilterDefinitions ?? new List<FilterDefinition<T>>();
         }
         internal FilterDefinition<T>? FilterDefinition { get; set; }
         public FilterActions? Actions { get; internal set; }
 
         public FilterContext(MudDataGrid<T> dataGrid)
         {
-            _dataGrid = dataGrid;
+            DataGrid = dataGrid;
             Actions = new FilterActions
             {
-                ApplyFilter = x => _headerCell?.ApplyFilter(x),
-                ApplyFilters = x => _headerCell?.ApplyFilters(x),
-                ClearFilter = x => _headerCell?.ClearFilter(x),
-                ClearFilters = x => _headerCell?.ClearFilters(x),
+                ApplyFilter = x => HeaderCell?.ApplyFilter(x),
+                ApplyFilters = x => HeaderCell?.ApplyFilters(x),
+                ClearFilter = x => HeaderCell?.ClearFilter(x),
+                ClearFilters = x => HeaderCell?.ClearFilters(x),
             };
         }
 
