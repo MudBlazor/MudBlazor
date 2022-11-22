@@ -112,8 +112,10 @@ namespace MudBlazor
         {
             if (GroupDefinition.InnerGroup != null)
             {
-                _innerGroupItems = Table?.GetItemsOfGroup(GroupDefinition.InnerGroup, Items);
+                _innerGroupItems = Table?.GetItemsOfGroup(GroupDefinition.InnerGroup, Items);                
             }
+            if (IsCheckable && Items is not null && Table is not null && Table.SelectedItems.Count > 0)
+                _checked = Items.All(Table.SelectedItems.Contains);
         }
 
         public void Dispose()

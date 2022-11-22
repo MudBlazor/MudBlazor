@@ -1631,8 +1631,8 @@ namespace MudBlazor.UnitTests.Components
             inputs = comp.FindAll("input").ToArray();
             inputs.Where(x => x.IsChecked()).Count().Should().Be(5);
 
-            buttons[2].Click(); //collapse            
-            buttons[2].Click(); //expand            
+            buttons[0].Click(); //collapse            
+            buttons[0].Click(); //expand            
             //selected item should persist
             table.SelectedItems.Count.Should().Be(2);
 
