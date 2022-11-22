@@ -17,8 +17,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
-    public partial class MudDataGrid<T> : MudComponentBase
+    public partial class MudDataGrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
         private int _currentPage = 0;
         internal int? _rowsPerPage;
@@ -79,24 +78,19 @@ namespace MudBlazor
 
         internal SortDirection GetColumnSortDirection(string columnName)
         {
-            if (columnName == null)
+            if (columnName is null)
             {
                 return SortDirection.None;
             }
-            else
-            {
-                SortDefinition<T> sortDefinition = null;
-                var ok = SortDefinitions.TryGetValue(columnName, out sortDefinition);
 
-                if (ok)
-                {
-                    return sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending;
-                }
-                else
-                {
-                    return SortDirection.None;
-                }
+            var ok = SortDefinitions.TryGetValue(columnName, out var sortDefinition);
+
+            if (ok)
+            {
+                return sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending;
             }
+
+            return SortDirection.None;
         }
 
         protected int numPages
@@ -363,9 +357,9 @@ namespace MudBlazor
                 }
 
                 // Setup ObservableCollection functionality.
-                if (_items is INotifyCollectionChanged)
+                if (_items is INotifyCollectionChanged changed)
                 {
-                    (_items as INotifyCollectionChanged).CollectionChanged += (s, e) =>
+                    changed.CollectionChanged += (s, e) =>
                     {
                         if (Groupable)
                             GroupItems();
@@ -713,7 +707,6 @@ namespace MudBlazor
 
         #endregion
 
-        [UnconditionalSuppressMessage("Trimming", "IL2046: 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.", Justification = "Suppressing because we annotating the whole component with RequiresUnreferencedCodeAttribute for information that generic type must be preserved.")]
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -730,7 +723,6 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        [UnconditionalSuppressMessage("Trimming", "IL2046: 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.", Justification = "Suppressing because we annotating the whole component with RequiresUnreferencedCodeAttribute for information that generic type must be preserved.")]
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             var sortModeBefore = SortMode;

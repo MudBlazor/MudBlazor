@@ -7,23 +7,23 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Text.Json;
-using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
-    public class FilterDefinition<T>
+    public class FilterDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         internal MudDataGrid<T> DataGrid { get; set; }
 
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Field { get; set; }
         public string Title { get; set; }
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicProperties)]
         public Type FieldType { get; set; }
         public string Operator { get; set; }
         public object Value { get; set; }
         public Func<T, bool> FilterFunction { get; set; }
 
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicProperties)]
         private Type dataType
         {
             get
@@ -222,7 +222,7 @@ namespace MudBlazor
         private Expression GenerateFilterExpressionForGuidTypes(ParameterExpression parameter)
         {
             var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(Guid?));
-            Guid? valueGuid = Value == null ? null : ParseGuid((String)Value);
+            Guid? valueGuid = Value == null ? null : ParseGuid((string)Value);
             var isnotnull = Expression.IsTrue(Expression.Property(field, typeof(Guid?), "HasValue"));
             var isnull = Expression.IsFalse(Expression.Property(field, typeof(Guid?), "HasValue"));
             var notNullGuid = Expression.Convert(field, typeof(Guid));

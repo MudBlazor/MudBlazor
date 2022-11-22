@@ -38,12 +38,7 @@ namespace MudBlazor
                 if (typeof(T) == typeof(IDictionary<string, object>) && _filterDefinition.FieldType is null)
                     throw new ArgumentNullException(nameof(_filterDefinition.FieldType));
 
-                var type = typeof(T).GetProperty(_filterDefinition.Field)?.PropertyType;
-                if (type is null)
-                {
-                    return typeof(object);
-                }
-
+                var type = typeof(T).GetProperty(_filterDefinition.Field)?.PropertyType!;
                 return Nullable.GetUnderlyingType(type) ?? type;
 
             }

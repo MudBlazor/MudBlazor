@@ -4,11 +4,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace MudBlazor
 {
-    public class HeaderContext<T>
+    public class HeaderContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         internal MudDataGrid<T> _dataGrid;
         public IEnumerable<T> Items

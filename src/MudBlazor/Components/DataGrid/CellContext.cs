@@ -4,10 +4,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor
 {
-    public class CellContext<T>
+    public class CellContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         internal HashSet<T> selection;
         internal HashSet<T> openHierarchies;

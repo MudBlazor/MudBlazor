@@ -3,16 +3,17 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace MudBlazor
 {
     public static class DataGridExtensions
     {
-        public static IEnumerable<T> OrderBySortDefinitions<T>(this IEnumerable<T> source, GridState<T> state)
+        public static IEnumerable<T> OrderBySortDefinitions<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this IEnumerable<T> source, GridState<T> state)
             => OrderBySortDefinitions(source, state?.SortDefinitions);
 
-        public static IEnumerable<T> OrderBySortDefinitions<T>(this IEnumerable<T> source, ICollection<SortDefinition<T>> sortDefinitions)
+        public static IEnumerable<T> OrderBySortDefinitions<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this IEnumerable<T> source, ICollection<SortDefinition<T>> sortDefinitions)
         {
             if (null == source || !source.Any())
                 return source;

@@ -15,7 +15,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
     public partial class Column<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
@@ -32,7 +31,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Field { get; set; }
 
-        [Parameter] public Type FieldType { get; set; }
+
+        [Parameter]
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicProperties)]
+        public Type FieldType { get; set; }
         [Parameter] public string Title { get; set; }
         [Parameter] public bool HideSmall { get; set; }
         [Parameter] public int FooterColSpan { get; set; } = 1;
@@ -209,14 +211,12 @@ namespace MudBlazor
                     // get the first item where we have a non-null value in the field to be filtered.
                     var first = DataGrid.Items.FirstOrDefault(x => ((IDictionary<string, object>)x)[Field] != null);
 
-                    if (first != null)
+                    if (first is not null)
                     {
                         return ((IDictionary<string, object>)first)[Field].GetType();
                     }
-                    else
-                    {
-                        return typeof(object);
-                    }
+
+                    return typeof(object);
                 }
 
                 return dataType;
