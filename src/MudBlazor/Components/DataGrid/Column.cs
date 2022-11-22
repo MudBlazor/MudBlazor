@@ -179,7 +179,6 @@ namespace MudBlazor
 
         #region Computed Properties
 
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
         internal Type dataType
         {
             get
