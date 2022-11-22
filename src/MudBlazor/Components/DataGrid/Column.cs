@@ -16,7 +16,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
-    public partial class Column<T> : MudComponentBase
+    public partial class Column<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
 
@@ -179,6 +179,7 @@ namespace MudBlazor
 
         #region Computed Properties
 
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
         internal Type dataType
         {
             get

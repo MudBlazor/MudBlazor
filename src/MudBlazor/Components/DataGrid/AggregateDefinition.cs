@@ -4,12 +4,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace MudBlazor
 {
-    public class AggregateDefinition<T>
+    public class AggregateDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         public AggregateType Type { get; set; } = AggregateType.Count;
         public string DisplayFormat { get; set; } = "{value}";

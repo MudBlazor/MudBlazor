@@ -1,7 +1,7 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
-
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -108,19 +108,23 @@ namespace MudBlazor
             return new string[] { };
         }
 
-        internal static string[] GetFields([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type type)
+        internal static string[] GetFields([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields)] Type type)
         {
-            List<string> fields = new List<string>();
+            var fields = new List<string>();
 
             foreach (var field in type.GetFields().Where(fi => fi.IsLiteral))
             {
-                fields.Add((string)field.GetValue(null));
+                var value = (string?)field.GetValue(null);
+                if (value is not null)
+                {
+                    fields.Add(value);
+                }
             }
 
             return fields.ToArray();
         }
 
-        internal static readonly HashSet<Type> NumericTypes = new HashSet<Type>
+        internal static readonly HashSet<Type> NumericTypes = new()
         {
             typeof(int),
             typeof(double),
@@ -148,48 +152,57 @@ namespace MudBlazor
             typeof(BigInteger?),
         };
 
-        internal static bool IsNumber([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type type)
+        internal static bool IsNumber(Type? type)
         {
-            return NumericTypes.Contains(type);
+            return type is not null && NumericTypes.Contains(type);
         }
 
-        internal static bool IsEnum([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type type)
+        internal static bool IsEnum(Type? type)
         {
-            if (null == type)
+            if (type is null)
                 return false;
 
             if (type.IsEnum)
                 return true;
 
-            Type u = Nullable.GetUnderlyingType(type);
-            return (u != null) && u.IsEnum;
+            var underlyingType = Nullable.GetUnderlyingType(type);
+            return underlyingType is { IsEnum: true };
         }
 
-        internal static bool IsDateTime([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type type)
+        internal static bool IsDateTime(Type? type)
         {
+            if (type is null)
+                return false;
+
             if (type == typeof(System.DateTime))
                 return true;
 
-            Type u = Nullable.GetUnderlyingType(type);
-            return (u != null) && u == typeof(System.DateTime);
+            var underlyingType = Nullable.GetUnderlyingType(type);
+            return underlyingType is not null && underlyingType == typeof(System.DateTime);
         }
 
-        internal static bool IsBoolean([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type type)
+        internal static bool IsBoolean(Type? type)
         {
+            if (type is null)
+                return false;
+
             if (type == typeof(bool))
                 return true;
 
-            Type u = Nullable.GetUnderlyingType(type);
-            return (u != null) && u == typeof(bool);
+            var underlyingType = Nullable.GetUnderlyingType(type);
+            return underlyingType is not null && underlyingType == typeof(bool);
         }
 
-        internal static bool IsGuid(Type type)
+        internal static bool IsGuid(Type? type)
         {
+            if (type is null)
+                return false;
+
             if (type == typeof(System.Guid))
                 return true;
 
-            Type u = Nullable.GetUnderlyingType(type);
-            return (u != null) && u == typeof(System.Guid);
+            var underlyingType = Nullable.GetUnderlyingType(type);
+            return underlyingType is not null && underlyingType == typeof(System.Guid);
         }
     }
 }

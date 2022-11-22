@@ -37,7 +37,7 @@ namespace MudBlazor
                 if (typeof(T) == typeof(IDictionary<string, object>) && FieldType == null)
                     throw new ArgumentNullException(nameof(FieldType));
 
-                return typeof(T).GetProperty(Field).PropertyType;
+                return typeof(T).GetProperty(Field)?.PropertyType;
             }
         }
 
@@ -676,109 +676,78 @@ namespace MudBlazor
 
         private static bool IsNullableEnum(Type t)
         {
-            Type u = Nullable.GetUnderlyingType(t);
-            return (u != null) && u.IsEnum;
+            var type = Nullable.GetUnderlyingType(t);
+            return type is { IsEnum: true };
         }
 
-        private string GetStringFromObject(object o)
+        private string GetStringFromObject(object obj)
         {
-            if (o == null)
-                return null;
-            else if (o.GetType() == typeof(JsonElement))
+            return obj switch
             {
-                return ((JsonElement)o).GetString();
-            }
-            else
-            {
-                return (string)o;
-            }
+                null => null,
+                JsonElement element => element.GetString(),
+                _ => (string)obj
+            };
         }
 
-        private double? GetDoubleFromObject(object o)
+        private double? GetDoubleFromObject(object obj)
         {
-            if (o == null)
-                return null;
-
-            if (o.GetType() == typeof(JsonElement))
+            return obj switch
             {
-                return ((JsonElement)o).GetDouble();
-            }
-            else
-            {
-                return Convert.ToDouble(o);
-            }
+                null => null,
+                JsonElement element => element.GetDouble(),
+                _ => Convert.ToDouble(obj)
+            };
         }
 
-        private Enum GetEnumFromObject(object o)
+        private Enum GetEnumFromObject(object obj)
         {
-            if (o == null)
-                return null;
-
-            if (o.GetType() == typeof(JsonElement))
+            return obj switch
             {
-                return (Enum)Enum.ToObject(FieldType, ((JsonElement)o).GetInt32());
-            }
-            else
-            {
-                return (Enum)Enum.ToObject(FieldType, o);
-            }
+                null => null,
+                JsonElement element => (Enum)Enum.ToObject(FieldType, element.GetInt32()),
+                _ => (Enum)Enum.ToObject(FieldType, obj)
+            };
         }
 
-        private bool? GetBoolFromObject(object o)
+        private bool? GetBoolFromObject(object obj)
         {
-            if (o == null)
-                return null;
-
-            if (o.GetType() == typeof(JsonElement))
+            return obj switch
             {
-                return ((JsonElement)o).GetBoolean();
-            }
-            else
-            {
-                return Convert.ToBoolean(o);
-            }
+                null => null,
+                JsonElement element => element.GetBoolean(),
+                _ => Convert.ToBoolean(obj)
+            };
         }
 
-        private DateTime? GetDateTimeFromObject(object o)
+        private DateTime? GetDateTimeFromObject(object obj)
         {
-            if (o == null)
-                return null;
-
-            if (o.GetType() == typeof(JsonElement))
+            return obj switch
             {
-                return ((JsonElement)o).GetDateTime();
-            }
-            else
-            {
-                return Convert.ToDateTime(o);
-            }
+                null => null,
+                JsonElement element => element.GetDateTime(),
+                _ => Convert.ToDateTime(obj)
+            };
         }
 
-        private Guid? GetGuidFromObject(object o)
+        private Guid? GetGuidFromObject(object obj)
         {
-            if (o == null)
-                return null;
-
-            if (o.GetType() == typeof(JsonElement))
+            return obj switch
             {
-                return ParseGuid(((JsonElement)o).GetString());
-            }
-            else
-            {
-                return ParseGuid(Convert.ToString(o));
-            }
+                null => null,
+                JsonElement element => ParseGuid(element.GetString()),
+                _ => ParseGuid(Convert.ToString(obj))
+            };
         }
 
         private Guid? ParseGuid(string value)
         {
-            if (value != null && Guid.TryParse(value, out Guid guid))
+            if (value is not null && Guid.TryParse(value, out var guid))
             {
                 return guid;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
     }
 }
