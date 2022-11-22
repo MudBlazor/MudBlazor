@@ -1,6 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
+    <ResolveStaticWebAssetsInputsDependsOn>
+      IncludeGeneratedStaticFiles;
+      $(ResolveStaticWebAssetsInputsDependsOn)
+    </ResolveStaticWebAssetsInputsDependsOn>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
   </PropertyGroup>
 
@@ -83,15 +90,12 @@
     <Exec Command="dotnet webcompiler ./TScripts/combined/MudBlazor.js -c excubowebcompiler.json" StandardOutputImportance="high" StandardErrorImportance="high" />
   </Target>
 
-  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler" BeforeTargets="BeforeBuild">
-    <Error Condition="!Exists('$(MSBuildProjectDirectory)/wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
-    <Error Condition="!Exists('$(MSBuildProjectDirectory)/wwwroot/MudBlazor.min.js')" Text="Missing MudBlazor.min.js in wwwroot" />
+  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler">
+    <Error Condition="!Exists('wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
+    <Error Condition="!Exists('wwwroot/MudBlazor.min.js')" Text="Missing MudBlazor.min.js in wwwroot" />
     <ItemGroup>
-      <!--Include without duplication-->
-      <_NewCompiledCssFiles Include="wwwroot/MudBlazor.min.css" Exclude="@(Content)" />
-      <_NewCompiledJsFiles Include="wwwroot/MudBlazor.min.js" Exclude="@(Content)" />
-      <Content Include="@(_NewCompiledCssFiles)" />
-      <Content Include="@(_NewCompiledJsFiles)" />
+      <Content Include="wwwroot/MudBlazor.min.css" Condition="!Exists('wwwroot/MudBlazor.min.css')" />
+      <Content Include="wwwroot/MudBlazor.min.js" Condition="!Exists('wwwroot/MudBlazor.min.js')" />
     </ItemGroup>
   </Target>
 
@@ -99,9 +103,11 @@
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
     <Content Remove="excubowebcompiler.json" />
-    <Content Remove="wwwroot/DoNotRemove.txt" />
-    <!--macOS hidden file (causes problems with dotnet pack)-->
-    <Content Remove="**/*/.DS_Store" />
+    <Content Remove="**/*/DoNotRemove.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TScripts\combined\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
