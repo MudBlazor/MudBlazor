@@ -11,22 +11,21 @@ namespace MudBlazor
 {
     public class FilterContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
-        internal MudDataGrid<T>? DataGrid { get; set; }
+        private readonly MudDataGrid<T>? _dataGrid;
+
         internal HeaderCell<T>? HeaderCell { get; set; }
-        public IEnumerable<T> Items
-        {
-            get => DataGrid?.Items ?? Enumerable.Empty<T>();
-        }
-        public List<FilterDefinition<T>> FilterDefinitions
-        {
-            get => DataGrid?.FilterDefinitions ?? new List<FilterDefinition<T>>();
-        }
+
         internal FilterDefinition<T>? FilterDefinition { get; set; }
+
+        public IEnumerable<T> Items => _dataGrid?.Items ?? Enumerable.Empty<T>();
+
+        public List<FilterDefinition<T>> FilterDefinitions => _dataGrid?.FilterDefinitions ?? new List<FilterDefinition<T>>();
+
         public FilterActions? Actions { get; internal set; }
 
-        public FilterContext(MudDataGrid<T> dataGrid)
+        public FilterContext(MudDataGrid<T>? dataGrid)
         {
-            DataGrid = dataGrid;
+            _dataGrid = dataGrid;
             Actions = new FilterActions
             {
                 ApplyFilter = x => HeaderCell?.ApplyFilter(x),

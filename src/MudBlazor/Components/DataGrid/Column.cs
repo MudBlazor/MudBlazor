@@ -278,7 +278,7 @@ namespace MudBlazor
             if (groupable && Grouping)
                 grouping = Grouping;
 
-            if (null != DataGrid)
+            if (DataGrid is not null)
                 DataGrid.AddColumn(this);
 
             // Add the HeaderContext

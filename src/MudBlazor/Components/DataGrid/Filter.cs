@@ -134,13 +134,6 @@ namespace MudBlazor
             if (value is not null)
             {
                 var date = value.Value.Date;
-
-                // get the time component and add it to the date.
-                if (_valueTime is not null)
-                {
-                    date = date.Add(_valueTime.Value);
-                }
-
                 _filterDefinition.Value = date;
             }
             else
