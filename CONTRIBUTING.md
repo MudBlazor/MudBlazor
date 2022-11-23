@@ -12,6 +12,7 @@ Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 
 ## Pull Requests
 - Your Pull Request must only consist of one topic. It is better to split Pull Requests with more than one feature or bug fix in seperate Pull Requests
+- You must fork the repository first. (The main repository is protected and does not accept direct commits.)
 - You must choose `dev` as the target branch
 - All tests must pass
 - You must include tests when your Pull Requests alters any logic. This also ensures that your feature will not break in the future. For more information on testing, see one of the following sections
