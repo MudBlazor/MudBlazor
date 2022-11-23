@@ -23,7 +23,6 @@
 .mud-table-root {
     width: 100%;
     border-spacing: 0;
-    border-collapse: separate;
 
     & .mud-table-head {
         display: table-header-group;
@@ -175,7 +174,6 @@
     }
 
     & * .mud-table-root {
-        border-collapse: separate;
 
         .mud-table-head {
             & * .mud-table-cell:first-child {
@@ -202,7 +200,6 @@
     }
 
     & * .mud-table-root {
-        border-collapse: separate;
 
         .mud-table-foot {
 
