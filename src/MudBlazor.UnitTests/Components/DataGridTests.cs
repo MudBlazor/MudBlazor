@@ -137,10 +137,9 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("C");
 
             // Add a FilterDefinition to filter where the Name = "C".
-            dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridFilterableTest.Item>
+            dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridFilterableTest.Item, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Equal,
                 Value = "C"
             });
@@ -169,10 +168,9 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("C");
 
             // Add a FilterDefinition to filter where the Name = "C".
-            dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridFilterableServerDataTest.Item>
+            dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridFilterableServerDataTest.Item, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Equal,
                 Value = "C"
             });
@@ -407,11 +405,13 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.CommittedItemChanges.HasDelegate.Should().Be(true);
 
             // Set some parameters manually so that they are covered.
-            var parameters = new List<ComponentParameter>();
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.MultiSelection), true));
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.ReadOnly), false));
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.EditMode), DataGridEditMode.Cell));
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.EditTrigger), DataGridEditTrigger.OnRowClick));
+            var parameters = new List<ComponentParameter>
+            {
+                    ComponentParameter.CreateParameter(nameof(dataGrid.Instance.MultiSelection), true),
+                    ComponentParameter.CreateParameter(nameof(dataGrid.Instance.ReadOnly), false),
+                    ComponentParameter.CreateParameter(nameof(dataGrid.Instance.EditMode), DataGridEditMode.Cell),
+                    ComponentParameter.CreateParameter(nameof(dataGrid.Instance.EditTrigger), DataGridEditTrigger.OnRowClick)
+                };
             dataGrid.SetParametersAndRender(parameters.ToArray());
 
             // Make sure that the callbacks have not been fired yet.
@@ -503,10 +503,9 @@ namespace MudBlazor.UnitTests.Components
             #region FilterOperator.String.Contains
 
             //default Case sensitivity
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Contains,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -518,10 +517,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new(null, 45)));
 
             //case insensitive
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Contains,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -534,10 +532,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new(null, 45)));
 
             // null value default case sensitivity
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Contains,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -548,10 +545,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new(null, 45)));
 
             // null value default case insensitive
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Contains,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -567,10 +563,9 @@ namespace MudBlazor.UnitTests.Components
             #region FilterOperator.String.NotContains
 
             // default case sensitivity
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotContains,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -582,10 +577,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new(null, 45)));
 
             // case insensitive
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotContains,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -598,10 +592,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new(null, 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotContains,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -616,10 +609,9 @@ namespace MudBlazor.UnitTests.Components
             #region FilterOperator.String.Equal
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Equal,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -631,10 +623,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("joe", 45)));
 
             //case insensitive
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Equal,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -647,10 +638,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("joe", 45)));
 
             // null value default case sensitivity
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Equal,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -661,10 +651,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new(null, 45)));
 
             // null value case insensitive
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Equal,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -682,10 +671,9 @@ namespace MudBlazor.UnitTests.Components
             #region FilterOperator.String.NotEqual
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotEqual,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -697,10 +685,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("joe", 45)));
 
             //case insensitive
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotEqual,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -713,10 +700,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("joe", 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotEqual,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -731,10 +717,9 @@ namespace MudBlazor.UnitTests.Components
             #region FilterOperator.String.StartsWith
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.StartsWith,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -746,10 +731,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("joe", 45)));
 
             //case insensitive
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.StartsWith,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -762,10 +746,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("joe", 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.StartsWith,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -780,10 +763,9 @@ namespace MudBlazor.UnitTests.Components
             #region FilterOperator.String.EndsWith
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.EndsWith,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -795,10 +777,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("joe", 45)));
 
             //case insensitive
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.EndsWith,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -811,10 +792,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("joe", 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.EndsWith,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -828,10 +808,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.Empty
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Empty,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -840,13 +819,12 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("Joe Not", 45)));
             Assert.IsTrue(func.Invoke(new("", 45)));
             Assert.IsTrue(func.Invoke(new(null, 45)));
-            Assert.IsTrue(func.Invoke(new(String.Empty, 45)));
+            Assert.IsTrue(func.Invoke(new(string.Empty, 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotEmpty,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -855,16 +833,15 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
             Assert.IsFalse(func.Invoke(new("", 45)));
             Assert.IsFalse(func.Invoke(new(null, 45)));
-            Assert.IsFalse(func.Invoke(new(String.Empty, 45)));
+            Assert.IsFalse(func.Invoke(new(string.Empty, 45)));
 
             #endregion
 
             #region FilterOperator.String.NotEmpty
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotEmpty,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -873,13 +850,12 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
             Assert.IsFalse(func.Invoke(new("", 45)));
             Assert.IsFalse(func.Invoke(new(null, 45)));
-            Assert.IsFalse(func.Invoke(new(String.Empty, 45)));
+            Assert.IsFalse(func.Invoke(new(string.Empty, 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotEmpty,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -888,15 +864,14 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("Joe Not", 45)));
             Assert.IsFalse(func.Invoke(new("", 45)));
             Assert.IsFalse(func.Invoke(new(null, 45)));
-            Assert.IsFalse(func.Invoke(new(String.Empty, 45)));
+            Assert.IsFalse(func.Invoke(new(string.Empty, 45)));
 
             #endregion
 
             // handle null operator
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = null,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -1239,7 +1214,7 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "" }, { "Age", 45 } }));
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", String.Empty }, { "Age", 45 } }));
+            Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", string.Empty }, { "Age", 45 } }));
 
             // null value
             filterDefinition = new FilterDefinition<IDictionary<string, object>>
@@ -1255,7 +1230,7 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "" }, { "Age", 45 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", String.Empty }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", string.Empty }, { "Age", 45 } }));
 
             #endregion
 
@@ -1274,7 +1249,7 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "" }, { "Age", 45 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", String.Empty }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", string.Empty }, { "Age", 45 } }));
 
             // null value
             filterDefinition = new FilterDefinition<IDictionary<string, object>>
@@ -1290,7 +1265,7 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe Not" }, { "Age", 45 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "" }, { "Age", 45 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", null }, { "Age", 45 } }));
-            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", String.Empty }, { "Age", 45 } }));
+            Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", string.Empty }, { "Age", 45 } }));
 
             #endregion
 
@@ -1318,10 +1293,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.Number.Equal
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.Equal,
                 Value = 45
             };
@@ -1331,10 +1305,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.Equal,
                 Value = null
             };
@@ -1348,10 +1321,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.Number.NotEqual
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.NotEqual,
                 Value = 45
             };
@@ -1361,10 +1333,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("Joe", 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.NotEqual,
                 Value = null
             };
@@ -1377,10 +1348,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.Number.GreaterThan
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.GreaterThan,
                 Value = 45
             };
@@ -1390,10 +1360,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("Joe", null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.GreaterThan,
                 Value = null
             };
@@ -1406,10 +1375,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.Number.LessThan
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.LessThan,
                 Value = 45
             };
@@ -1419,10 +1387,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("Joe", null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.LessThan,
                 Value = null
             };
@@ -1435,10 +1402,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.Number.GreaterThanOrEqual
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.GreaterThanOrEqual,
                 Value = 45
             };
@@ -1448,10 +1414,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.GreaterThanOrEqual,
                 Value = null
             };
@@ -1464,10 +1429,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.Number.LessThanOrEqual
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.LessThanOrEqual,
                 Value = 45
             };
@@ -1477,10 +1441,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.LessThanOrEqual,
                 Value = null
             };
@@ -1492,10 +1455,9 @@ namespace MudBlazor.UnitTests.Components
             #endregion
 
             // null operator
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = null,
                 Value = 45
             };
@@ -1718,10 +1680,9 @@ namespace MudBlazor.UnitTests.Components
         {
             #region FilterOperator.Boolean.Is
 
-            var filterDefinition = new FilterDefinition<TestModel4>
+            var filterDefinition = new FilterDefinition<TestModel4, bool?>(model => model.Hired)
             {
                 Id = Guid.NewGuid(),
-                Field = "Hired",
                 Operator = FilterOperator.Boolean.Is,
                 Value = true
             };
@@ -1731,10 +1692,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel4>
+            filterDefinition = new FilterDefinition<TestModel4, bool?>(model => model.Hired)
             {
                 Id = Guid.NewGuid(),
-                Field = "Hired",
                 Operator = FilterOperator.Boolean.Is,
                 Value = null
             };
@@ -1746,10 +1706,9 @@ namespace MudBlazor.UnitTests.Components
             #endregion
 
             // null operator
-            filterDefinition = new FilterDefinition<TestModel4>
+            filterDefinition = new FilterDefinition<TestModel4, bool?>(model => model.Hired)
             {
                 Id = Guid.NewGuid(),
-                Field = "Hired",
                 Operator = null,
                 Value = true
             };
@@ -1813,10 +1772,9 @@ namespace MudBlazor.UnitTests.Components
         {
             #region FilterOperator.Enum.Is
 
-            var filterDefinition = new FilterDefinition<TestModel3>
+            var filterDefinition = new FilterDefinition<TestModel3, Severity?>(model => model.Status)
             {
                 Id = Guid.NewGuid(),
-                Field = "Status",
                 Operator = FilterOperator.Enum.Is,
                 Value = Severity.Normal
             };
@@ -1826,10 +1784,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel3>
+            filterDefinition = new FilterDefinition<TestModel3, Severity?>(model => model.Status)
             {
                 Id = Guid.NewGuid(),
-                Field = "Status",
                 Operator = FilterOperator.Enum.Is,
                 Value = null
             };
@@ -1842,10 +1799,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.Enum.IsNot
 
-            filterDefinition = new FilterDefinition<TestModel3>
+            filterDefinition = new FilterDefinition<TestModel3, Severity?>(model => model.Status)
             {
                 Id = Guid.NewGuid(),
-                Field = "Status",
                 Operator = FilterOperator.Enum.IsNot,
                 Value = Severity.Normal
             };
@@ -1855,10 +1811,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel3>
+            filterDefinition = new FilterDefinition<TestModel3, Severity?>(model => model.Status)
             {
                 Id = Guid.NewGuid(),
-                Field = "Status",
                 Operator = FilterOperator.Enum.IsNot,
                 Value = null
             };
@@ -1870,10 +1825,9 @@ namespace MudBlazor.UnitTests.Components
             #endregion
 
             // null operator
-            filterDefinition = new FilterDefinition<TestModel3>
+            filterDefinition = new FilterDefinition<TestModel3, Severity?>(model => model.Status)
             {
                 Id = Guid.NewGuid(),
-                Field = "Status",
                 Operator = null,
                 Value = Severity.Normal
             };
@@ -1970,10 +1924,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.DateTime.Is
 
-            var filterDefinition = new FilterDefinition<TestModel2>
+            var filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.Is,
                 Value = utcnow
             };
@@ -1982,10 +1935,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.Is,
                 Value = null
             };
@@ -1997,10 +1949,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.DateTime.IsNot
 
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.IsNot,
                 Value = utcnow
             };
@@ -2009,10 +1960,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.IsNot,
                 Value = null
             };
@@ -2024,10 +1974,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.DateTime.After
 
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.After,
                 Value = utcnow
             };
@@ -2036,10 +1985,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.After,
                 Value = null
             };
@@ -2051,10 +1999,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.DateTime.OnOrAfter
 
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.OnOrAfter,
                 Value = utcnow
             };
@@ -2063,10 +2010,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.OnOrAfter,
                 Value = null
             };
@@ -2078,10 +2024,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.DateTime.Before
 
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.Before,
                 Value = utcnow
             };
@@ -2090,10 +2035,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.Before,
                 Value = null
             };
@@ -2105,10 +2049,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.DateTime.OnOrBefore
 
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.OnOrBefore,
                 Value = utcnow
             };
@@ -2117,10 +2060,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.OnOrBefore,
                 Value = null
             };
@@ -2132,10 +2074,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.DateTime.Empty
 
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.Empty,
                 Value = utcnow
             };
@@ -2144,10 +2085,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.Empty,
                 Value = null
             };
@@ -2159,10 +2099,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.DateTime.NotEmpty
 
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.NotEmpty,
                 Value = utcnow
             };
@@ -2171,10 +2110,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.NotEmpty,
                 Value = null
             };
@@ -2185,10 +2123,9 @@ namespace MudBlazor.UnitTests.Components
             #endregion
 
             // null operator
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = null,
                 Value = utcnow
             };
@@ -2457,10 +2394,9 @@ namespace MudBlazor.UnitTests.Components
             #region FilterOperator.String.Contains
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Contains,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2473,10 +2409,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new(null, 45)));
 
             //case insensitive
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Contains,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2490,10 +2425,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new(null, 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Contains,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2509,10 +2443,9 @@ namespace MudBlazor.UnitTests.Components
             #region FilterOperator.String.NotContains
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotContains,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2525,10 +2458,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func3.Invoke(new(null, 45)));
 
             //case insensitive
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotContains,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2542,10 +2474,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func3.Invoke(new(null, 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotContains,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2561,10 +2492,9 @@ namespace MudBlazor.UnitTests.Components
             #region FilterOperator.String.Equal
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Equal,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2577,10 +2507,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func5.Invoke(new("joe", 45)));
 
             //case insensitive
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Equal,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2594,10 +2523,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func5.Invoke(new("joe", 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Equal,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2613,10 +2541,9 @@ namespace MudBlazor.UnitTests.Components
             #region FilterOperator.String.NotEqual
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotEqual,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2629,10 +2556,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func7.Invoke(new("joe", 45)));
 
             //case insensitive
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotEqual,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2646,10 +2572,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func7.Invoke(new("joe", 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotEqual,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2665,10 +2590,9 @@ namespace MudBlazor.UnitTests.Components
             #region FilterOperator.String.StartsWith
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.StartsWith,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2681,10 +2605,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func9.Invoke(new("joe", 45)));
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.StartsWith,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2698,10 +2621,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func9.Invoke(new("joe", 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.StartsWith,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2717,10 +2639,9 @@ namespace MudBlazor.UnitTests.Components
             #region FilterOperator.String.EndsWith
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.EndsWith,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2733,10 +2654,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func11.Invoke(new("joe", 45)));
 
             //case insensitive
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.EndsWith,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2750,10 +2670,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func11.Invoke(new("joe", 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.EndsWith,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2768,10 +2687,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.String.Empty
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.Empty,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2781,13 +2699,12 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func13.Invoke(new("Joe Not", 45)));
             Assert.IsTrue(func13.Invoke(new("", 45)));
             Assert.IsTrue(func13.Invoke(new(null, 45)));
-            Assert.IsTrue(func13.Invoke(new(String.Empty, 45)));
+            Assert.IsTrue(func13.Invoke(new(string.Empty, 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotEmpty,
                 Value = null
             };
@@ -2796,16 +2713,15 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func14.Invoke(new("Joe Not", 45)));
             Assert.IsFalse(func14.Invoke(new("", 45)));
             Assert.IsFalse(func14.Invoke(new(null, 45)));
-            Assert.IsFalse(func14.Invoke(new(String.Empty, 45)));
+            Assert.IsFalse(func14.Invoke(new(string.Empty, 45)));
 
             #endregion
 
             #region FilterOperator.String.NotEmpty
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotEmpty,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2815,13 +2731,12 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func15.Invoke(new("Joe Not", 45)));
             Assert.IsFalse(func15.Invoke(new("", 45)));
             Assert.IsFalse(func15.Invoke(new(null, 45)));
-            Assert.IsFalse(func15.Invoke(new(String.Empty, 45)));
+            Assert.IsFalse(func15.Invoke(new(string.Empty, 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = FilterOperator.String.NotEmpty,
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2831,15 +2746,14 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func16.Invoke(new("Joe Not", 45)));
             Assert.IsFalse(func16.Invoke(new("", 45)));
             Assert.IsFalse(func16.Invoke(new(null, 45)));
-            Assert.IsFalse(func16.Invoke(new(String.Empty, 45)));
+            Assert.IsFalse(func16.Invoke(new(string.Empty, 45)));
 
             #endregion
 
             // handle null operator
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = null,
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
@@ -2860,10 +2774,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.Number.Equal
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.Equal,
                 Value = 45
             };
@@ -2874,10 +2787,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.Equal,
                 Value = null
             };
@@ -2892,10 +2804,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.Number.NotEqual
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.NotEqual,
                 Value = 45
             };
@@ -2906,10 +2817,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func3.Invoke(new("Joe", 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.NotEqual,
                 Value = null
             };
@@ -2923,10 +2833,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.Number.GreaterThan
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.GreaterThan,
                 Value = 45
             };
@@ -2937,10 +2846,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func5.Invoke(new("Joe", null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.GreaterThan,
                 Value = null
             };
@@ -2954,10 +2862,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.Number.LessThan
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.LessThan,
                 Value = 45
             };
@@ -2968,10 +2875,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func7.Invoke(new("Joe", null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.LessThan,
                 Value = null
             };
@@ -2985,10 +2891,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.Number.GreaterThanOrEqual
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.GreaterThanOrEqual,
                 Value = 45
             };
@@ -2999,10 +2904,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func9.Invoke(new("Joe", 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.GreaterThanOrEqual,
                 Value = null
             };
@@ -3016,10 +2920,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.Number.LessThanOrEqual
 
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.LessThanOrEqual,
                 Value = 45
             };
@@ -3030,10 +2933,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func11.Invoke(new("Joe", 45)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = FilterOperator.Number.LessThanOrEqual,
                 Value = null
             };
@@ -3046,10 +2948,9 @@ namespace MudBlazor.UnitTests.Components
             #endregion
 
             // null operator
-            filterDefinition = new FilterDefinition<TestModel1>
+            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = null,
                 Value = 45
             };
@@ -3067,10 +2968,9 @@ namespace MudBlazor.UnitTests.Components
             #region FilterOperator.Boolean.Is
 
             Expression<Func<TestModel4, bool>> expression = null;
-            var filterDefinition = new FilterDefinition<TestModel4>
+            var filterDefinition = new FilterDefinition<TestModel4, bool?>(model => model.Hired)
             {
                 Id = Guid.NewGuid(),
-                Field = "Hired",
                 Operator = FilterOperator.Boolean.Is,
                 Value = true
             };
@@ -3081,10 +2981,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel4>
+            filterDefinition = new FilterDefinition<TestModel4, bool?>(model => model.Hired)
             {
                 Id = Guid.NewGuid(),
-                Field = "Hired",
                 Operator = FilterOperator.Boolean.Is,
                 Value = null
             };
@@ -3097,10 +2996,9 @@ namespace MudBlazor.UnitTests.Components
             #endregion
 
             // null operator
-            filterDefinition = new FilterDefinition<TestModel4>
+            filterDefinition = new FilterDefinition<TestModel4, bool?>(model => model.Hired)
             {
                 Id = Guid.NewGuid(),
-                Field = "Hired",
                 Operator = null,
                 Value = true
             };
@@ -3117,10 +3015,9 @@ namespace MudBlazor.UnitTests.Components
             #region FilterOperator.Enum.Is
 
             Expression<Func<TestModel3, bool>> expression = null;
-            var filterDefinition = new FilterDefinition<TestModel3>
+            var filterDefinition = new FilterDefinition<TestModel3, Severity?>(model => model.Status)
             {
                 Id = Guid.NewGuid(),
-                Field = "Status",
                 Operator = FilterOperator.Enum.Is,
                 Value = Severity.Normal
             };
@@ -3131,10 +3028,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel3>
+            filterDefinition = new FilterDefinition<TestModel3, Severity?>(model => model.Status)
             {
                 Id = Guid.NewGuid(),
-                Field = "Status",
                 Operator = FilterOperator.Enum.Is,
                 Value = null
             };
@@ -3148,10 +3044,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.Enum.IsNot
 
-            filterDefinition = new FilterDefinition<TestModel3>
+            filterDefinition = new FilterDefinition<TestModel3, Severity?>(model => model.Status)
             {
                 Id = Guid.NewGuid(),
-                Field = "Status",
                 Operator = FilterOperator.Enum.IsNot,
                 Value = Severity.Normal
             };
@@ -3162,10 +3057,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func3.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel3>
+            filterDefinition = new FilterDefinition<TestModel3, Severity?>(model => model.Status)
             {
                 Id = Guid.NewGuid(),
-                Field = "Status",
                 Operator = FilterOperator.Enum.IsNot,
                 Value = null
             };
@@ -3178,10 +3072,9 @@ namespace MudBlazor.UnitTests.Components
             #endregion
 
             // null operator
-            filterDefinition = new FilterDefinition<TestModel3>
+            filterDefinition = new FilterDefinition<TestModel3, Severity?>(model => model.Status)
             {
                 Id = Guid.NewGuid(),
-                Field = "Status",
                 Operator = null,
                 Value = Severity.Normal
             };
@@ -3199,10 +3092,9 @@ namespace MudBlazor.UnitTests.Components
             Expression<Func<TestModel2, bool>> expression = null;
             #region FilterOperator.DateTime.Is
 
-            var filterDefinition = new FilterDefinition<TestModel2>
+            var filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.Is,
                 Value = utcnow
             };
@@ -3212,10 +3104,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.Is,
                 Value = null
             };
@@ -3228,10 +3119,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.DateTime.IsNot
 
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.IsNot,
                 Value = utcnow
             };
@@ -3241,10 +3131,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func3.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.IsNot,
                 Value = null
             };
@@ -3257,10 +3146,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.DateTime.After
 
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.After,
                 Value = utcnow
             };
@@ -3270,10 +3158,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func5.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.After,
                 Value = null
             };
@@ -3286,10 +3173,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.DateTime.OnOrAfter
 
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.OnOrAfter,
                 Value = utcnow
             };
@@ -3299,10 +3185,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func7.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.OnOrAfter,
                 Value = null
             };
@@ -3315,10 +3200,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.DateTime.Before
 
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.Before,
                 Value = utcnow
             };
@@ -3328,10 +3212,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func9.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.Before,
                 Value = null
             };
@@ -3344,10 +3227,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.DateTime.OnOrBefore
 
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.OnOrBefore,
                 Value = utcnow
             };
@@ -3357,10 +3239,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func11.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.OnOrBefore,
                 Value = null
             };
@@ -3373,10 +3254,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.DateTime.Empty
 
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.Empty,
                 Value = utcnow
             };
@@ -3386,10 +3266,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsTrue(func13.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.Empty,
                 Value = null
             };
@@ -3402,10 +3281,9 @@ namespace MudBlazor.UnitTests.Components
 
             #region FilterOperator.DateTime.NotEmpty
 
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.NotEmpty,
                 Value = utcnow
             };
@@ -3415,10 +3293,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.IsFalse(func15.Invoke(new("Joe", 45, null)));
 
             // null value
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = FilterOperator.DateTime.NotEmpty,
                 Value = null
             };
@@ -3430,10 +3307,9 @@ namespace MudBlazor.UnitTests.Components
             #endregion
 
             // null operator
-            filterDefinition = new FilterDefinition<TestModel2>
+            filterDefinition = new FilterDefinition<TestModel2, DateTime?>(model => model.Date)
             {
                 Id = Guid.NewGuid(),
-                Field = "Date",
                 Operator = null,
                 Value = utcnow
             };
@@ -3450,42 +3326,37 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
 
             // test filter definition on the Name property (string contains)
-            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model, string>(model => model.Name)
             {
                 Id = Guid.NewGuid(),
-                Field = "Name",
                 Operator = "contains",
                 Value = "John"
             };
             // test filter definition on the Age property (int >)
-            var filterDefinition2 = new FilterDefinition<DataGridFiltersTest.Model>
+            var filterDefinition2 = new FilterDefinition<DataGridFiltersTest.Model, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
-                Field = "Age",
                 Operator = ">",
                 Value = 30
             };
             // test filter definition on the Status property (Enum is)
-            var filterDefinition3 = new FilterDefinition<DataGridFiltersTest.Model>
+            var filterDefinition3 = new FilterDefinition<DataGridFiltersTest.Model, Severity?>(model => model.Status)
             {
                 Id = Guid.NewGuid(),
-                Field = "Status",
                 Operator = "is",
                 Value = Severity.Normal
             };
             // test filter definition on the Hired property (Bool is)
-            var filterDefinition4 = new FilterDefinition<DataGridFiltersTest.Model>
+            var filterDefinition4 = new FilterDefinition<DataGridFiltersTest.Model, bool?>(model => model.Hired)
             {
                 Id = Guid.NewGuid(),
-                Field = "Hired",
                 Operator = "is",
                 Value = true
             };
             // test filter definition on the HiredOn property (DateTime is)
-            var filterDefinition5 = new FilterDefinition<DataGridFiltersTest.Model>
+            var filterDefinition5 = new FilterDefinition<DataGridFiltersTest.Model, DateTime?>(model => model.HiredOn)
             {
                 Id = Guid.NewGuid(),
-                Field = "HiredOn",
                 Operator = "is",
                 Value = DateTime.UtcNow
             };
@@ -3535,24 +3406,24 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(7);
             // test internal filter class for number data type.
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition2);
-            internalFilter.dataType.Should().Be(typeof(int));
+            internalFilter.dataType.Should().Be(typeof(int?));
             await comp.InvokeAsync(() => internalFilter.NumberValueChanged(35));
             filterDefinition2.Value.Should().Be(35);
             // test internal filter class for enum data type.
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition3);
-            internalFilter.dataType.Should().Be(typeof(Severity));
+            internalFilter.dataType.Should().Be(typeof(Severity?));
             await comp.InvokeAsync(() => internalFilter.NumberValueChanged(35));
             filterDefinition3.Value.Should().Be(35);
             internalFilter.isEnum.Should().Be(true);
             // test internal filter class for bool data type.
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition4);
-            internalFilter.dataType.Should().Be(typeof(bool));
+            internalFilter.dataType.Should().Be(typeof(bool?));
             await comp.InvokeAsync(() => internalFilter.BoolValueChanged(false));
             filterDefinition4.Value.Should().Be(false);
             // test internal filter class for datetime data type.
             var date = DateTime.UtcNow;
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition5);
-            internalFilter.dataType.Should().Be(typeof(DateTime));
+            internalFilter.dataType.Should().Be(typeof(DateTime?));
             await comp.InvokeAsync(() => internalFilter.DateValueChanged(date));
             filterDefinition5.Value.Should().Be(date.Date);
             await comp.InvokeAsync(() => internalFilter.TimeValueChanged(date.TimeOfDay));
@@ -3899,9 +3770,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".apply-filter-button").Click();
 
             // Cannot figure out why the above is not working...
-            await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridColumnPopupFilteringTest.Model>
+            await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridColumnPopupFilteringTest.Model, string>(x => x.Name)
             {
-                Field = "Name",
                 Operator = FilterOperator.String.Contains,
                 Value = "test"
             }));
@@ -4038,33 +3908,27 @@ namespace MudBlazor.UnitTests.Components
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
 
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast, Guid>(model => model.Id)
             {
-                Field = "Id",
                 Operator = "equals",
                 Value = "invalid guid",
-                FieldType = typeof(Guid),
             });
             grid.FilteredItems.Count().Should().Be(0);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast, Guid>(model => model.Id)
             {
-                Field = "Id",
                 Operator = "equals",
                 Value = comp.Instance.Guid1,
-                FieldType = typeof(Guid),
             });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast, Guid>(model => model.Id)
             {
-                Field = "Id",
                 Operator = "not equals",
                 Value = comp.Instance.Guid1,
-                FieldType = typeof(Guid),
             });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid2);
@@ -4073,39 +3937,33 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TableFilterNullableGuid()
         {
-            var comp = Context.RenderComponent<DataGridFilterGuid<Nullable<Guid>>>();
+            var comp = Context.RenderComponent<DataGridFilterGuid<Guid?>>();
             var grid = comp.Instance.MudGridRef;
 
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
 
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast, Guid?>(model => model.Id)
             {
-                Field = "Id",
                 Operator = "equals",
                 Value = "invalid guid",
-                FieldType = typeof(Nullable<Guid>),
             });
             grid.FilteredItems.Count().Should().Be(0);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast, Guid?>(model => model.Id)
             {
-                Field = "Id",
                 Operator = "equals",
-                Value = comp.Instance.Guid1,
-                FieldType = typeof(Nullable<Guid>),
+                Value = comp.Instance.Guid1
             });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast, Guid?>(model => model.Id)
             {
-                Field = "Id",
                 Operator = "not equals",
-                Value = comp.Instance.Guid1,
-                FieldType = typeof(Nullable<Guid>),
+                Value = comp.Instance.Guid1
             });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid2);
@@ -4125,7 +3983,7 @@ namespace MudBlazor.UnitTests.Components
                 Field = "Id",
                 Operator = "equals",
                 Value = "invalid guid",
-                FieldType = typeof(Nullable<Guid>),
+                FieldType = typeof(Guid?),
             });
             grid.FilteredItems.Count().Should().Be(0);
 
@@ -4135,7 +3993,7 @@ namespace MudBlazor.UnitTests.Components
                 Field = "Id",
                 Operator = "equals",
                 Value = comp.Instance.Guid1,
-                FieldType = typeof(Nullable<Guid>),
+                FieldType = typeof(Guid?),
             });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()["Id"].Should().Be(Guid.Parse(comp.Instance.Guid1));
@@ -4146,7 +4004,7 @@ namespace MudBlazor.UnitTests.Components
                 Field = "Id",
                 Operator = "not equals",
                 Value = comp.Instance.Guid1,
-                FieldType = typeof(Nullable<Guid>),
+                FieldType = typeof(Guid?),
             });
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()["Id"].Should().Be(Guid.Parse(comp.Instance.Guid2));

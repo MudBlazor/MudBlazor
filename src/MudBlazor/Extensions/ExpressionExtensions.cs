@@ -41,5 +41,22 @@ namespace MudBlazor
             var propertyInfo = memberExpression.Expression?.Type.GetProperty(memberExpression.Member.Name);
             return propertyInfo?.GetCustomAttributes(typeof(LabelAttribute), true).Cast<LabelAttribute>().FirstOrDefault()?.Name ?? string.Empty;
         }
+
+        public static PropertyInfo GetPropertyInfo<TSource, TProperty>(this Expression<Func<TSource, TProperty>> propertyLambda)
+        {
+            var type = typeof(TSource);
+            if (propertyLambda.Body is not MemberExpression member)
+                throw new ArgumentException($"Expression '{propertyLambda}' refers to a method, not a property.");
+
+            if (member.Member is not PropertyInfo propInfo)
+                throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
+
+            if (propInfo.ReflectedType is not null &&
+                type != propInfo.ReflectedType &&
+                !type.IsSubclassOf(propInfo.ReflectedType))
+                throw new ArgumentException($"Expression '{propertyLambda}' refers to a property that is not from type {type}.");
+
+            return propInfo;
+        }
     }
 }

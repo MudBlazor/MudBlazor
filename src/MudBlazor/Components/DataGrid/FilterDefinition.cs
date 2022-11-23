@@ -10,34 +10,62 @@ using System.Text.Json;
 
 namespace MudBlazor
 {
+    public class FilterDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] TProp>
+        : FilterDefinition<T>
+    {
+        public new Expression<Func<T, TProp>> Field { get; }
+
+        
+        public FilterDefinition(Expression<Func<T, TProp>> field) : base(field.GetPropertyInfo().Name, typeof(TProp))
+        {
+            Field = field;
+        }
+    }
+
     public class FilterDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         internal MudDataGrid<T> DataGrid { get; set; }
 
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Field { get; set; }
+        //public Expression<Func<T, TProp>> Field { get; set; }
         public string Title { get; set; }
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicProperties)]
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)]
         public Type FieldType { get; set; }
         public string Operator { get; set; }
         public object Value { get; set; }
         public Func<T, bool> FilterFunction { get; set; }
 
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicProperties)]
+        public FilterDefinition(string filedName, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] Type fieldType)
+        {
+            Field = filedName;
+            FieldType = fieldType;
+        }
+
+        public FilterDefinition()
+        {
+        }
+
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)]
         private Type dataType
         {
             get
             {
-                if (FieldType != null)
-                    return FieldType;
-
-                if (Field == null)
-                    return typeof(object);
-
-                if (typeof(T) == typeof(IDictionary<string, object>) && FieldType == null)
+                //if (typeof(T) == typeof(IDictionary<string, object>) && FieldType == null)
+                //    throw new ArgumentNullException(nameof(FieldType));
+                if (FieldType is null)
+                {
                     throw new ArgumentNullException(nameof(FieldType));
+                }
 
-                return typeof(T).GetProperty(Field)?.PropertyType;
+                return FieldType;
+                //if (FieldType != null)
+                //    return FieldType;
+
+                //if (Field == null)
+                //    return typeof(object);
+
+                //return typeof(T).GetProperty(Field)?.PropertyType;
             }
         }
 

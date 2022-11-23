@@ -829,19 +829,40 @@ namespace MudBlazor
             FilterDefinitions.Clear();
         }
 
+        internal void AddFilter(Guid id, Column<T> column)
+        {
+            if (column.filterable)
+            {
+                FilterDefinitions.Add(new FilterDefinition<T>
+                {
+                    Id = id,
+                    DataGrid = this,
+                    Field = column.Field,
+                    Title = column.Title,
+                    FieldType = column.FieldType,
+                });
+                _filtersMenuVisible = true;
+                StateHasChanged();
+            }
+        }
+
         internal void AddFilter(Guid id, string field)
         {
             var column = RenderedColumns.FirstOrDefault(x => x.Field == field && x.filterable);
-            FilterDefinitions.Add(new FilterDefinition<T>
+            if (column is not null)
             {
-                Id = id,
-                DataGrid = this,
-                Field = field,
-                Title = column?.Title,
-                FieldType = column?.FieldType,
-            });
-            _filtersMenuVisible = true;
-            StateHasChanged();
+                AddFilter(id, column);
+            }
+            //FilterDefinitions.Add(new FilterDefinition<T>
+            //{
+            //    Id = id,
+            //    DataGrid = this,
+            //    Field = field,
+            //    Title = column?.Title,
+            //    FieldType = column?.FieldType,
+            //});
+            //_filtersMenuVisible = true;
+            //StateHasChanged();
         }
 
         internal void RemoveFilter(Guid id)

@@ -2,6 +2,7 @@
 @inherits MudComponentBase
 @typeparam T
 @using MudBlazor.Utilities
+@using MudBlazor.Extensions
 
 <CascadingValue IsFixed="true" Value="this">@Columns</CascadingValue>
 
@@ -413,7 +414,7 @@
                     <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                         Class="filter-input">
                         <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
-                        @foreach (var item in Enum.GetValues(filter.dataType))
+                        @foreach (var item in EnumExtensions.GetSafeEnumValues(filter.dataType))
                         {
                             <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
                         }

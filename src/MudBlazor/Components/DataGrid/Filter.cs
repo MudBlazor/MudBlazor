@@ -88,10 +88,15 @@ namespace MudBlazor
 
         internal void FieldChanged(string field)
         {
-            _filterDefinition.Field = field;
-            var operators = FilterOperator.GetOperatorByDataType(dataType);
-            _filterDefinition.Operator = operators.FirstOrDefault();
-            _filterDefinition.Value = null;
+            var column = _dataGrid.RenderedColumns.FirstOrDefault(x => x.Field == field);
+            if (column is not null)
+            {
+                _filterDefinition.Field = column.Field;
+                _filterDefinition.FieldType = column.FieldType;
+                var operators = FilterOperator.GetOperatorByDataType(dataType);
+                _filterDefinition.Operator = operators.FirstOrDefault();
+                _filterDefinition.Value = null;
+            }
         }
 
         internal void StringValueChanged(string value)

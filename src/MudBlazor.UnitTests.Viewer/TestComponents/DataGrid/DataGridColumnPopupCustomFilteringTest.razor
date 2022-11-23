@@ -30,9 +30,8 @@
     };
 
     public bool FilterHired;
-    FilterDefinition<Model> _filterDefinition = new FilterDefinition<Model>
+    FilterDefinition<Model> _filterDefinition = new FilterDefinition<Model, bool?>(model => model.Hired)
     {
-        Field = nameof(Model.Hired),
         Operator = FilterOperator.Boolean.Is,
         Value = true
     };

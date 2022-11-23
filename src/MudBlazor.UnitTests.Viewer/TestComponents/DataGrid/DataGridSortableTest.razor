@@ -2,9 +2,9 @@
 
 <MudDataGrid Items="@_items" Sortable="true">
     <Columns>
-        <Column T="Item" Field="@nameof(Item.Name)" />
-        <Column T="Item" Field="@nameof(Item.Value)" />
-        <Column T="Item" Field="@nameof(Item.Misc)" SortBy="@(item => item.Misc.Length)" />
+        <Column T="Item" Field="@nameof(Item.Name)" FieldType="typeof(string)"/>
+        <Column T="Item" Field="@nameof(Item.Value)" FieldType="typeof(int)"/>
+        <Column T="Item" Field="@nameof(Item.Misc)" FieldType="typeof(string)" SortBy="@(item => item.Misc.Length)" />
     </Columns>
 </MudDataGrid>
 
@@ -30,7 +30,7 @@ Note that the 'Misc' column is being sorted by length and not by the content its
         public int Value { get; set; }
         public string Misc { get; set; }
 
-        public Item(string name, int value, String misc)
+        public Item(string name, int value, string misc)
         {
             Name = name;
             Value = value;

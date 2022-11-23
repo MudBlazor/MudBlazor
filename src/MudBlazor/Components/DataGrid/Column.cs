@@ -29,11 +29,11 @@ namespace MudBlazor
         /// <summary>
         /// Specifies the name of the object's property bound to the column
         /// </summary>
-        [Parameter] public string Field { get; set; }
-
+        [Parameter]
+        public string Field { get; set; }
 
         [Parameter]
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicProperties)]
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)]
         public Type FieldType { get; set; }
         [Parameter] public string Title { get; set; }
         [Parameter] public bool HideSmall { get; set; }
@@ -266,7 +266,6 @@ namespace MudBlazor
         internal FilterContext<T> filterContext;
         internal FooterContext<T> footerContext;
 
-        [UnconditionalSuppressMessage("Trimming", "IL2046: 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.", Justification = "Suppressing because we annotating the whole component with RequiresUnreferencedCodeAttribute for information that generic type must be preserved.")]
         protected override void OnInitialized()
         {
             if (!Hideable.HasValue)

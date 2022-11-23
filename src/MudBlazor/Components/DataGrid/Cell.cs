@@ -12,8 +12,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
-    internal class Cell<T>
+    internal class Cell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
         private readonly Column<T> _column;
