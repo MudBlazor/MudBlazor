@@ -85,29 +85,6 @@ class MudElementReference {
             element.select();
         }
     }
-    /**
-     * gets the client rect of the parent of the element
-     * @param {HTMLElement} element
-     */
-    getClientRectFromParent(element) {
-        if (!element) return;
-        let parent = element.parentElement;
-        if (!parent) return;
-        return this.getBoundingClientRect(parent);
-    }
-
-    /**
-     * Gets the client rect of the first child of the element
-     * @param {any} element
-     */
-
-    getClientRectFromFirstChild(element) {
-        if (!element) return;
-        let child = element.children && element.children[0];
-        if (!child) return;
-        return this.getBoundingClientRect(child);
-    }
-
 
     getBoundingClientRect(element) {
         if (!element) return;
@@ -122,43 +99,11 @@ class MudElementReference {
         return rect;
     }
 
-    /**
-     * Returns true if the element has any ancestor with style position==="fixed"
-     * @param {Element} element
-     */
-    hasFixedAncestors(element) {
-        for (; element && element !== document; element = element.parentNode) {
-            if (window.getComputedStyle(element).getPropertyValue("position") === "fixed")
-                return true;
-        }
-        return false;
-    }
-
     changeCss (element, css) {
         if (element)
         {
             element.className = css;
         }
-    }
-
-    changeCssVariable (element, name, newValue) {
-        if (element)
-        {
-            element.style.setProperty(name, newValue);
-        }
-    }
-
-    addEventListener (element, dotnet, event, callback, spec, stopPropagation) {
-        let listener = function (e) {
-            const args = Array.from(spec, x => serializeParameter(e, x));
-            dotnet.invokeMethodAsync(callback, ...args);
-            if (stopPropagation) {
-                e.stopPropagation();
-            }
-        };
-        element.addEventListener(event, listener);
-        this.eventListeners[++this.listenerId] = listener;
-        return this.listenerId;
     }
 
     removeEventListener (element, event, eventId) {

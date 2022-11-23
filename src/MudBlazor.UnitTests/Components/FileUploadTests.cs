@@ -182,11 +182,11 @@ namespace MudBlazor.UnitTests.Components
 
             var single = comp.FindComponent<MudFileUpload<IBrowserFile>>();
             single.Instance.ErrorText.Should().Be("'File' must not be empty.");
-            single.Markup.Should().Contain("&#x27;File&#x27; must not be empty.");
+            single.Markup.Should().Contain("'File' must not be empty.");
 
             var multiple = comp.FindComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
             multiple.Instance.ErrorText.Should().Be("'Files' must not be empty.");
-            multiple.Markup.Should().Contain("&#x27;Files&#x27; must not be empty.");
+            multiple.Markup.Should().Contain("'Files' must not be empty.");
 
             var singleInput = single.FindComponent<InputFile>();
             singleInput.UploadFiles(fileContent[0]); //upload first file
@@ -194,7 +194,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => form.Validate());
 
             single.Instance.ErrorText.Should().Be(null); //first input is now valid
-            single.Markup.Should().NotContain("&#x27;File&#x27; must not be empty.");
+            single.Markup.Should().NotContain("'File' must not be empty.");
 
             form.IsValid.Should().BeFalse(); //form is still invalid
 
@@ -204,7 +204,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => form.Validate());
 
             single.Instance.ErrorText.Should().Be(null); //second input is now valid
-            single.Markup.Should().NotContain("&#x27;Files&#x27; must not be empty.");
+            single.Markup.Should().NotContain("'Files' must not be empty.");
 
             form.IsValid.Should().BeTrue(); //form is now valid
         }
