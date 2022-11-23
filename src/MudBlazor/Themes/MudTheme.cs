@@ -9,6 +9,7 @@
         public Typography Typography { get; set; }
         public LayoutProperties LayoutProperties { get; set; }
         public ZIndex ZIndex { get; set; }
+        public PseudoCss PseudoCss { get; set; }
 
         public MudTheme()
         {
@@ -18,6 +19,7 @@
             Typography = new Typography();
             LayoutProperties = new LayoutProperties();
             ZIndex = new ZIndex();
+            PseudoCss = new PseudoCss();
         }
     }
 }
