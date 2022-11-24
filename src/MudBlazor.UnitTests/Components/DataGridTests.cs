@@ -1472,7 +1472,6 @@ namespace MudBlazor.UnitTests.Components
                 Value = 45
             };
             func = filterDefinition.GenerateFilterFunction();
-            func.Invoke(new("Joe", 45));
             Assert.IsFalse(func.Invoke(new("Sam", 46)));
             Assert.IsFalse(func.Invoke(new("Sam", null)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
@@ -1486,7 +1485,6 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
-            func.Invoke(new("Joe", 45));
             Assert.IsTrue(func.Invoke(new("Sam", 46)));
             Assert.IsTrue(func.Invoke(new("Sam", null)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
@@ -3027,7 +3025,6 @@ namespace MudBlazor.UnitTests.Components
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func11 = expression.Compile();
-            func11.Invoke(new("Joe", 45));
             Assert.IsFalse(func11.Invoke(new("Sam", 46)));
             Assert.IsFalse(func11.Invoke(new("Sam", null)));
             Assert.IsTrue(func11.Invoke(new("Joe", 45)));
@@ -3042,7 +3039,6 @@ namespace MudBlazor.UnitTests.Components
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func12 = expression.Compile();
-            func12.Invoke(new("Joe", 45));
             Assert.IsTrue(func12.Invoke(new("Sam", 46)));
             Assert.IsTrue(func12.Invoke(new("Sam", null)));
             Assert.IsTrue(func12.Invoke(new("Joe", 45)));
