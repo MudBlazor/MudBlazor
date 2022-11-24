@@ -627,8 +627,8 @@ namespace MudBlazor.UnitTests.Components
             popover.Square.Should().BeFalse();
             popover.Open.Should().BeFalse();
             popover.Fixed.Should().BeFalse();
-            popover.AnchorOrigin.Should().Be(Origin.TopLeft);
-            popover.TransformOrigin.Should().Be(Origin.TopLeft);
+            popover.AnchorOrigin.Should().Be(Origin.TopStart);
+            popover.TransformOrigin.Should().Be(Origin.TopStart);
             popover.RelativeWidth.Should().BeFalse();
             popover.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnOpen);
             popover.Duration.Should().Be(251);
