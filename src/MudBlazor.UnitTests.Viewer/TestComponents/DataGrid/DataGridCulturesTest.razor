@@ -9,11 +9,11 @@
     EditTrigger=@DataGridEditTrigger.OnRowClick
     FilterMode="@DataGridFilterMode.ColumnFilterRow">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Amount)" Culture="@CultureInfo.InvariantCulture" />
-        <Column T="Model" Field="@nameof(Model.Total)" Culture="@(new CultureInfo("es-ES"))"/>
-        <Column T="Model" Field="@nameof(Model.Distance)" Culture="@_customCulture" />
+        <Column T="Model" Field="@nameof(Model.Name)" FieldType="typeof(string)" />
+        <Column T="Model" Field="@nameof(Model.Age)" FieldType="typeof(int?)" />
+        <Column T="Model" Field="@nameof(Model.Amount)" FieldType="typeof(double?)" Culture="@CultureInfo.InvariantCulture" />
+        <Column T="Model" Field="@nameof(Model.Total)" FieldType="typeof(double?)" Culture="@(new CultureInfo("es-ES"))" />
+        <Column T="Model" Field="@nameof(Model.Distance)" FieldType="typeof(double?)" Culture="@_customCulture" />
     </Columns>
 </MudDataGrid>
 

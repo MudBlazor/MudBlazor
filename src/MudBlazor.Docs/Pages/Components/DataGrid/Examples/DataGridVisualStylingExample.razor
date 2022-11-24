@@ -6,11 +6,11 @@
 <MudDataGrid Items="@Elements.Take(4)" Hover="@_hover" Dense="@_dense" Striped="@_striped" Bordered="@_bordered"
     RowStyleFunc="@_rowStyleFunc">
     <Columns>
-        <Column T="Element" Field="Number" Title="Nr" />
-        <Column T="Element" Field="Sign" />
-        <Column T="Element" Field="Name" CellStyleFunc="@_cellStyleFunc" />
-        <Column T="Element" Field="Position" />
-        <Column T="Element" Field="Molar" Title="Molar mass" />
+        <Column T="Element" Field="Number" FieldType="typeof(int)" Title="Nr" />
+        <Column T="Element" Field="Sign" FieldType="typeof(string)" />
+        <Column T="Element" Field="Name" FieldType="typeof(string)" CellStyleFunc="@_cellStyleFunc" />
+        <Column T="Element" Field="Position" FieldType="typeof(int)" />
+        <Column T="Element" Field="Molar" FieldType="typeof(double)" Title="Molar mass" />
     </Columns>
 </MudDataGrid>
 

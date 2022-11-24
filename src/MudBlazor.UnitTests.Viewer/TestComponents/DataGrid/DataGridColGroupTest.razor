@@ -7,9 +7,9 @@
         <col />
     </ColGroup>
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Status)" />
+        <Column T="Model" Field="@nameof(Model.Name)" FieldType="typeof(string)" />
+        <Column T="Model" Field="@nameof(Model.Age)" FieldType="typeof(int)" />
+        <Column T="Model" Field="@nameof(Model.Status)" FieldType="typeof(Severity)" />
     </Columns>
 </MudDataGrid>
 

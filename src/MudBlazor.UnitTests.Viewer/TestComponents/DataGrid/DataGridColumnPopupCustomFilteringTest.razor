@@ -3,10 +3,10 @@
 
 <MudDataGrid Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterMenu">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Status)" />
-        <Column T="Model" Field="@nameof(Model.Hired)">
+        <Column T="Model" Field="@nameof(Model.Name)" FieldType="typeof(string)" />
+        <Column T="Model" Field="@nameof(Model.Age)" FieldType="typeof(int?)" />
+        <Column T="Model" Field="@nameof(Model.Status)" FieldType="typeof(Severity?)" />
+        <Column T="Model" Field="@nameof(Model.Hired)" FieldType="typeof(bool?)">
             <FilterTemplate>
                 <MudStack>
                     <MudSwitch T="bool" Color="@Color.Primary" @bind-Checked="FilterHired" Label="Show Hired"></MudSwitch>
@@ -14,7 +14,7 @@
                 </MudStack>
             </FilterTemplate>
         </Column>
-        <Column T="Model" Field="@nameof(Model.HiredOn)" />
+            <Column T="Model" Field="@nameof(Model.HiredOn)" FieldType="typeof(DateTime?)" />
     </Columns>
 </MudDataGrid>
 

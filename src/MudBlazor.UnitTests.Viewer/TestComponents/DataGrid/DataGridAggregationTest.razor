@@ -17,15 +17,15 @@
                 }
             </FooterTemplate>
         </Column>
-        <Column T="Model" Field="@nameof(Model.Age)" AggregateDefinition="_ageAggregation" />
-        <Column T="Model" Field="@nameof(Model.Status)" Grouping="true"></Column>
-        <Column T="Model" Field="@nameof(Model.Salary)" AggregateDefinition="_salaryAggregation" />
-        <Column T="Model" Field="HireDate" Title="Hired">
+        <Column T="Model" Field="@nameof(Model.Age)" FieldType="typeof(int)" AggregateDefinition="_ageAggregation" />
+        <Column T="Model" Field="@nameof(Model.Status)" FieldType="typeof(Severity)" Grouping="true"></Column>
+        <Column T="Model" Field="@nameof(Model.Salary)" FieldType="typeof(decimal)" AggregateDefinition="_salaryAggregation" />
+        <Column T="Model" Field="HireDate" FieldType="typeof(DateTime)" Title="Hired">
             <CellTemplate>
                 @context.Item.HireDate.ToString("d")
             </CellTemplate>
         </Column>
-        <Column T="Model" Field="IsManager" Title="Manager" />
+        <Column T="Model" Field="IsManager" FieldType="typeof(bool)" Title="Manager" />
     </Columns>
 </MudDataGrid>
 
