@@ -156,7 +156,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task FormIsTouchedAndNestedFormIsNotTouchedWhenParentFormFieldIsTouchedTest()
         {
             var comp = Context.RenderComponent<FormIsTouchedNestedTest>();
-            Console.WriteLine(comp.Markup);
             var formsComp = comp.FindComponents<MudForm>();
             var textCompFields = comp.FindComponents<MudTextField<string>>();
             var dateCompFields = comp.FindComponents<MudDatePicker>();
@@ -198,7 +197,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task FormIsUnTouchedWhenNestedFormTouchedTest()
         {
             var comp = Context.RenderComponent<FormIsTouchedNestedTest>();
-            Console.WriteLine(comp.Markup);
             var formsComp = comp.FindComponents<MudForm>();
             var textCompFields = comp.FindComponents<MudTextField<string>>();
             var dateCompFields = comp.FindComponents<MudDatePicker>();

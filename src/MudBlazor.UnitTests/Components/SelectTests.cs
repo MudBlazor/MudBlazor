@@ -1087,7 +1087,6 @@ namespace MudBlazor.UnitTests.Components
 
             //2a. Now check when SelectedItems is greater than one - Validation Should Pass
             var inputs = comp.FindAll("div.mud-input-control");
-            Console.WriteLine(comp.Markup);
             inputs[0].Click();//The 2nd one is the 
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();

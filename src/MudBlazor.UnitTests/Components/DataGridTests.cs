@@ -1474,7 +1474,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = 45
             };
             func = filterDefinition.GenerateFilterFunction();
-            Console.WriteLine(func.Invoke(new("Joe", 45)));
+            func.Invoke(new("Joe", 45));
             Assert.IsFalse(func.Invoke(new("Sam", 46)));
             Assert.IsFalse(func.Invoke(new("Sam", null)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
@@ -1488,7 +1488,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
-            Console.WriteLine(func.Invoke(new("Joe", 45)));
+            func.Invoke(new("Joe", 45));
             Assert.IsTrue(func.Invoke(new("Sam", 46)));
             Assert.IsTrue(func.Invoke(new("Sam", null)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
@@ -3029,7 +3029,7 @@ namespace MudBlazor.UnitTests.Components
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func11 = expression.Compile();
-            Console.WriteLine(func11.Invoke(new("Joe", 45)));
+            func11.Invoke(new("Joe", 45));
             Assert.IsFalse(func11.Invoke(new("Sam", 46)));
             Assert.IsFalse(func11.Invoke(new("Sam", null)));
             Assert.IsTrue(func11.Invoke(new("Joe", 45)));
@@ -3044,7 +3044,7 @@ namespace MudBlazor.UnitTests.Components
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func12 = expression.Compile();
-            Console.WriteLine(func12.Invoke(new("Joe", 45)));
+            func12.Invoke(new("Joe", 45));
             Assert.IsTrue(func12.Invoke(new("Sam", 46)));
             Assert.IsTrue(func12.Invoke(new("Sam", null)));
             Assert.IsTrue(func12.Invoke(new("Joe", 45)));
@@ -3642,9 +3642,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridHeaderTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHeaderTemplateTest.Model>>();
-
-            Console.WriteLine(dataGrid.Markup);
-
+            
             dataGrid.Find("thead th").TextContent.Trim().Should().Be("test");
 
             dataGrid.Find("span.column-header").FirstChild.NodeName.Should().Be("svg");

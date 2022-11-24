@@ -509,7 +509,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dialogReferenceLazy.Value);
             var dialogReference = await dialogReferenceLazy.Value;
             dialogReference.Should().NotBe(null);
-            Console.WriteLine(comp.Markup);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
             //close by click outside the dialog
