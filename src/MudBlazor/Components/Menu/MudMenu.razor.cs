@@ -154,14 +154,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupAppearance)]
-        public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
+        public Origin AnchorOrigin { get; set; } = Origin.TopStart;
 
         /// <summary>
         /// Sets the transform origin point for the popover.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupAppearance)]
-        public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+        public Origin TransformOrigin { get; set; } = Origin.TopStart;
 
         /// <summary>
         /// Sets the direction the select menu will start from relative to its parent.
@@ -269,7 +269,7 @@ namespace MudBlazor
         // Sets the popover style ONLY when there is an activator
         private void SetPopoverStyle(MouseEventArgs args)
         {
-            AnchorOrigin = Origin.TopLeft;
+            AnchorOrigin = Origin.TopStart;
             PopoverStyle = $"margin-top: {args?.OffsetY.ToPx()}; margin-left: {args?.OffsetX.ToPx()};";
         }
 
