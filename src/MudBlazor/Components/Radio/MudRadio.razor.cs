@@ -100,7 +100,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Behavior)]
-        public Placement Placement { get; set; } = Placement.Right;
+        public Placement Placement { get; set; } = Placement.End;
 
         /// <summary>
         /// The value to associate to the button.
