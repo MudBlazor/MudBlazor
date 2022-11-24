@@ -23,19 +23,16 @@
     private void OnRowClick(DataGridRowClickEventArgs<Item> args)
     {
         RowClicked = true;
-        Console.WriteLine("RowClicked fired.");
     }
 
     private void OnSelectedItemChanged(Item item)
     {
         SelectedItemChanged = true;
-        Console.WriteLine("OnSelectedItemChanged fired.");
     }
 
     private void OnCommittedItemChanges(Item item)
     {
         CommittedItemChanges = true;
-        Console.WriteLine("CommittedItemChanges fired.");
     }
 
     public class Item
