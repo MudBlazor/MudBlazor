@@ -16,8 +16,8 @@ namespace MudBlazor
            new CssBuilder("mud-popover")
             .AddClass($"mud-popover-fixed", Fixed)
             .AddClass($"mud-popover-open", Open)
-            .AddClass($"mud-popover-{TransformOrigin.ToDescriptionString()}")
-            .AddClass($"mud-popover-anchor-{AnchorOrigin.ToDescriptionString()}")
+            .AddClass($"mud-popover-{TransformOrigin.ConvertOrigin(RightToLeft).ToDescriptionString()}")
+            .AddClass($"mud-popover-anchor-{AnchorOrigin.ConvertOrigin(RightToLeft).ToDescriptionString()}")
             .AddClass($"mud-popover-overflow-{OverflowBehavior.ToDescriptionString()}")
             .AddClass($"mud-popover-relative-width", RelativeWidth)
             .AddClass($"mud-paper", Paper)
@@ -116,7 +116,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
+        public Origin AnchorOrigin { get; set; } = Origin.TopStart;
 
         /// <summary>
         /// Sets the intersection point if the anchor element. At this point the popover will lay above the popover. 
@@ -124,7 +124,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+        public Origin TransformOrigin { get; set; } = Origin.TopStart;
 
         /// <summary>
         /// Set the overflow behavior of a popover and controls how the element should react if there is not enough space for the element to be visible
