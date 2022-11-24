@@ -50,7 +50,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = ctx.RenderComponent<Docs.Pages.Components.Alert.AlertPage>();
             await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
-            //Console.WriteLine(comp.Markup);
         }
 
         [TearDown]

@@ -20,7 +20,6 @@ namespace MudBlazor.UnitTests.Components
         public void TimelineTest_DefaultValues()
         {
             var comp = Context.RenderComponent<MudTimeline>();
-            //Console.WriteLine(comp.Markup);
 
             comp.Instance.TimelineOrientation.Should().Be(TimelineOrientation.Vertical);
             comp.Instance.TimelinePosition.Should().Be(TimelinePosition.Alternate);
@@ -39,7 +38,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TimelineTest>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             //// select elements needed for the test
             var timeline = comp.FindComponent<MudTimeline>().Instance;
             //// validating some renders
@@ -105,7 +103,6 @@ namespace MudBlazor.UnitTests.Components
         public void TimelineTest_Position(TimelineOrientation orientation, TimelinePosition position, bool rtl, string[] expectedClass)
         {
             var comp = Context.RenderComponent<TimelineTest>(p => p.AddCascadingValue("RightToLeft", rtl));
-            //Console.WriteLine(comp.Markup);
 
             var timeline = comp.FindComponent<MudTimeline>();
 
@@ -126,7 +123,6 @@ namespace MudBlazor.UnitTests.Components
         public void TimelineTest_SelectItem()
         {
             var comp = Context.RenderComponent<TimelineTest>();
-            //Console.WriteLine(comp.Markup);
 
             var itemsDiv = comp.FindAll(".mud-timeline-item");
 

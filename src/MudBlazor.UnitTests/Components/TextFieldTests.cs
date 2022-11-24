@@ -59,7 +59,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudTextField<double>>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var textfield = comp.Instance;
             textfield.Value.Should().Be(0.0);
@@ -82,7 +81,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudTextField<double?>>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var textfield = comp.Instance;
             textfield.Value.Should().Be(null);
@@ -98,7 +96,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudTextField<int?>>(ComponentParameter.CreateParameter("Value", 17));
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", null));
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
@@ -115,10 +112,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudTextField<int?>>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             comp.Find("input").Change("seventeen");
             comp.Find("input").Blur();
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-input-error").Count.Should().Be(2);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         }
@@ -221,7 +216,6 @@ namespace MudBlazor.UnitTests.Components
                 .CreditCard());
             var comp = Context.RenderComponent<MudTextField<string>>(Parameter(nameof(MudTextField<string>.Validation), validator.Validation));
             var textfield = comp.Instance;
-            //Console.WriteLine(comp.Markup);
             // first try a valid credit card number
             comp.Find("input").Change("4012 8888 8888 1881");
             textfield.Error.Should().BeFalse(because: "The number is a valid VISA test credit card number");
@@ -229,7 +223,6 @@ namespace MudBlazor.UnitTests.Components
             // now try something that produces a validation error
             comp.Find("input").Change("0000 1111 2222 3333");
             textfield.Error.Should().BeTrue(because: "The credit card number is fake");
-            //Console.WriteLine("Error message: " + textfield.ErrorText);
             textfield.ErrorText.Should().NotBeNullOrEmpty();
         }
 
@@ -335,7 +328,6 @@ namespace MudBlazor.UnitTests.Components
                 Parameter(nameof(MudTextField<string>.Text), text),
                 Parameter(nameof(MudTextField<string>.Lines), 2));
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var textfield = comp.Instance;
             comp.Find("textarea").InnerHtml.Should().Be(text);
@@ -367,7 +359,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MultilineTextfieldBindingTest>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             var tf1 = comp.FindComponents<MudTextField<string>>()[0].Instance;
             var tf2 = comp.FindComponents<MudTextField<string>>()[1].Instance;
             comp.Find("input").Input("Bossmang");
@@ -385,7 +376,6 @@ namespace MudBlazor.UnitTests.Components
             tf1.Text.Should().Be("Beratna");
             tf2.Text.Should().Be("Beratna");
             comp.Find("textarea").TrimmedText().Should().Be("Beratna");
-            //Console.WriteLine(comp.Markup);
         }
 
         [Test]
@@ -433,7 +423,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_Should_Validate_Data_Attribute_Fail()
         {
             var comp = Context.RenderComponent<TextFieldValidationDataAttrTest>();
-            //Console.WriteLine(comp.Markup);
             var textfieldcomp = comp.FindComponent<MudTextField<string>>();
             var textfield = textfieldcomp.Instance;
             await comp.InvokeAsync(() => textfield.DebounceInterval = 0);
@@ -453,7 +442,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_Should_Validate_Data_Attribute_Success()
         {
             var comp = Context.RenderComponent<TextFieldValidationDataAttrTest>();
-            //Console.WriteLine(comp.Markup);
             var textfieldcomp = comp.FindComponent<MudTextField<string>>();
             var textfield = textfieldcomp.Instance;
             await comp.InvokeAsync(() => textfield.DebounceInterval = 0);
