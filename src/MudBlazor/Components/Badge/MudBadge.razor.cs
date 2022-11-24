@@ -14,9 +14,9 @@ namespace MudBlazor
         new CssBuilder("mud-badge-root")
           .AddClass(Class)
         .Build();
-        protected string WrapperClass =>
+                protected string WrapperClass =>
         new CssBuilder("mud-badge-wrapper")
-            .AddClass($"mud-badge-{Origin.ToDescriptionString().Replace("-", " ")}")
+            .AddClass($"mud-badge-{Origin.ConvertOrigin(RightToLeft).ToDescriptionString().Replace("-", " ")}")
         .Build();
 
         protected string BadgeClassName =>
@@ -24,7 +24,7 @@ namespace MudBlazor
             .AddClass("mud-badge-dot", Dot)
             .AddClass("mud-badge-bordered", Bordered)
             .AddClass("mud-badge-icon", !string.IsNullOrEmpty(Icon) && !Dot)
-            .AddClass($"mud-badge-{Origin.ToDescriptionString().Replace("-", " ")}")
+            .AddClass($"mud-badge-{Origin.ConvertOrigin(RightToLeft).ToDescriptionString().Replace("-", " ")}")
             .AddClass($"mud-elevation-{Elevation.ToString()}")
             .AddClass("mud-theme-" + Color.ToDescriptionString(), Color != Color.Default)
             .AddClass("mud-badge-default", Color == Color.Default)
@@ -33,11 +33,16 @@ namespace MudBlazor
         .Build();
 
         /// <summary>
+        /// If true, changes the layout to RightToLeft.
+        /// </summary>
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
+
+        /// <summary>
         /// The placement of the badge.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Badge.Appearance)]
-        public Origin Origin { get; set; } = Origin.TopRight;
+        public Origin Origin { get; set; } = Origin.TopEnd;
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow.
