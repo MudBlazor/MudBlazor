@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace MudBlazor
 {
-    public class FilterDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] TProp>
+    public class FilterDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TProp>
         : FilterDefinition<T>
     {
         public new Expression<Func<T, TProp>> Field { get; }
@@ -30,13 +30,13 @@ namespace MudBlazor
         public string Field { get; set; }
         //public Expression<Func<T, TProp>> Field { get; set; }
         public string Title { get; set; }
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)]
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
         public Type FieldType { get; set; }
         public string Operator { get; set; }
         public object Value { get; set; }
         public Func<T, bool> FilterFunction { get; set; }
 
-        public FilterDefinition(string filedName, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] Type fieldType)
+        public FilterDefinition(string filedName, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type fieldType)
         {
             Field = filedName;
             FieldType = fieldType;

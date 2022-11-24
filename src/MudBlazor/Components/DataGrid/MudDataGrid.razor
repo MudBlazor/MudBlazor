@@ -381,11 +381,10 @@
                 <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilter" Size="@Size.Small" Style="align-self:flex-end"></MudIconButton>
             </MudItem>
             <MudItem xs="4">
-                <MudSelect T="string" Value="@f.Field" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense"
-                    Class="filter-field">
+                <MudSelect T="IField" Value="@(Field.Create(f))" ToStringFunc="field => field?.Name" ValueChanged="field => filter.FieldChanged(field)" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense" Class="filter-field">
                     @foreach (var column in RenderedColumns ?? Enumerable.Empty<Column<T>>())
                     {
-                        <MudSelectItem Value="@column.Field">@column.computedTitle</MudSelectItem>
+                        <MudSelectItem Value="@(Field.Create(column.Field, column.FieldType))">@column.computedTitle</MudSelectItem>
                     }
                 </MudSelect>
             </MudItem>

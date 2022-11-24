@@ -3398,7 +3398,7 @@ namespace MudBlazor.UnitTests.Components
             internalFilter.dataType.Should().Be(typeof(string));
             await comp.InvokeAsync(() => internalFilter.StringValueChanged("J"));
             filterDefinition.Value.Should().Be("J");
-            await comp.InvokeAsync(() => internalFilter.FieldChanged("Age"));
+            await comp.InvokeAsync(() => internalFilter.FieldChanged(m => m.Age));
             filterDefinition.Value.Should().Be(null);
             internalFilter.isNumber.Should().Be(true);
             internalFilter.isEnum.Should().Be(false);
@@ -4042,11 +4042,12 @@ namespace MudBlazor.UnitTests.Components
             var filterAmount = comp.FindAll(".mud-list-item-clickable")[1];
             filterAmount.Click();
 
-            var filterField = comp.Find(".filters-panel .filter-field .mud-select-input");
-            filterField.TextContent.Trim().Should().Be("Amount");
+            var filterField = comp.Find(".filters-panel .filter-field .mud-select-input input");
+            var textAmount = filterField.Attributes["value"]?.Value;
+            textAmount.Should().Be("Amount");
 
             var filterInput = comp.FindAll(".filters-panel input")[2];
-            filterInput.Input(new ChangeEventArgs() { Value = "2,2" });
+            await filterInput.InputAsync(new ChangeEventArgs() { Value = "2,2" });
 
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
             dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(22.0);
@@ -4060,11 +4061,12 @@ namespace MudBlazor.UnitTests.Components
             var filterTotal = comp.FindAll(".mud-list-item-clickable")[1];
             filterTotal.Click();
 
-            var filterTotalField = comp.Find(".filters-panel .filter-field .mud-select-input");
-            filterTotalField.TextContent.Trim().Should().Be("Total");
+            var filterTotalField = comp.Find(".filters-panel .filter-field .mud-select-input input");
+            var textTotal = filterTotalField.Attributes["value"]?.Value;
+            textTotal.Should().Be("Total");
 
             var filterTotalInput = comp.FindAll(".filters-panel input")[2];
-            filterTotalInput.Input(new ChangeEventArgs() { Value = "2,2" });
+            await filterTotalInput.InputAsync(new ChangeEventArgs() { Value = "2,2" });
 
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
             dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(2.2);

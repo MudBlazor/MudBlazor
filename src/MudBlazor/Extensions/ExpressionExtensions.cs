@@ -58,5 +58,16 @@ namespace MudBlazor
 
             return propInfo;
         }
+
+        public static PropertyInfo GetPropertyInfo<TProperty>(this Expression<Func<TProperty>> propertyLambda)
+        {
+            if (propertyLambda.Body is not MemberExpression member)
+                throw new ArgumentException($"Expression '{propertyLambda}' refers to a method, not a property.");
+
+            if (member.Member is not PropertyInfo propInfo)
+                throw new ArgumentException($"Expression '{propertyLambda}' refers to a field, not a property.");
+
+            return propInfo;
+        }
     }
 }

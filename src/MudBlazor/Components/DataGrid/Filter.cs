@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace MudBlazor
 {
@@ -84,6 +85,21 @@ namespace MudBlazor
         internal void RemoveFilter()
         {
             _dataGrid.RemoveFilter(_filterDefinition.Id);
+        }
+
+        internal void FieldChanged<TProperty>(Expression<Func<T, TProperty>> fieldExpression)
+        {
+            var field = Field.Create(fieldExpression);
+            FieldChanged(field);
+        }
+
+        internal void FieldChanged(IField field)
+        {
+            _filterDefinition.Field = field.Name;
+            _filterDefinition.FieldType = field.Type;
+            var operators = FilterOperator.GetOperatorByDataType(dataType);
+            _filterDefinition.Operator = operators.FirstOrDefault();
+            _filterDefinition.Value = null;
         }
 
         internal void FieldChanged(string field)
