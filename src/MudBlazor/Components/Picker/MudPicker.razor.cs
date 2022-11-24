@@ -311,18 +311,18 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or sets the origin of the popover's anchor. Defaults to <see cref="Origin.TopLeft"/>
+        /// Gets or sets the origin of the popover's anchor. Defaults to <see cref="Origin.TopStart"/>
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
+        public Origin AnchorOrigin { get; set; } = Origin.TopStart;
 
         /// <summary>
-        /// Gets or sets the origin of the popover's transform. Defaults to <see cref="Origin.TopLeft"/>
+        /// Gets or sets the origin of the popover's transform. Defaults to <see cref="Origin.TopStart"/>
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+        public Origin TransformOrigin { get; set; } = Origin.TopStart;
 
         protected IMask _mask = null;
 
