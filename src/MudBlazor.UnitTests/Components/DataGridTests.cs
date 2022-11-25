@@ -886,13 +886,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FilterDefinitionStringForIDictionaryTest()
         {
-            var filterDefinition = new FilterDefinition<IDictionary<string, object>>();
-            Func<IDictionary<string, object>, bool> func = null;
-
             #region FilterOperator.String.Contains
 
             //default case sensitivity
-            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            var filterDefinition = new FilterDefinition<IDictionary<string, object>>
             {
                 Id = Guid.NewGuid(),
                 Field = "Name",
@@ -901,7 +898,7 @@ namespace MudBlazor.UnitTests.Components
                 FieldType = typeof(string),
                 DataGrid = new MudDataGrid<IDictionary<string, object>>()
             };
-            func = filterDefinition.GenerateFilterFunction();
+            var func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Does not contain" }, { "Age", 45 } }));
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "joe" }, { "Age", 45 } }));
@@ -1473,12 +1470,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FilterDefinitionNumberForDictionaryTest()
         {
-            var filterDefinition = new FilterDefinition<IDictionary<string, object>>();
-            Func<IDictionary<string, object>, bool> func = null;
-
             #region FilterOperator.Number.Equal
 
-            filterDefinition = new FilterDefinition<IDictionary<string, object>>
+            var filterDefinition = new FilterDefinition<IDictionary<string, object>>
             {
                 Id = Guid.NewGuid(),
                 Field = "Age",
@@ -1486,7 +1480,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = 45,
                 FieldType = typeof(int)
             };
-            func = filterDefinition.GenerateFilterFunction();
+            var func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 456 } }));
             Assert.IsFalse(func.Invoke(new Dictionary<string, object> { { "Name", "Sam" }, { "Age", null } }));
             Assert.IsTrue(func.Invoke(new Dictionary<string, object> { { "Name", "Joe" }, { "Age", 45 } }));
@@ -2434,7 +2428,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
             };
-            
+
             var func2 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func2.Invoke(new("Does not contain", 45)));
             Assert.IsTrue(func2.Invoke(new("Joe", 45)));
@@ -2452,7 +2446,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
             };
-           
+
             var func3 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func3.Invoke(new("Does not contain", 45)));
             Assert.IsFalse(func3.Invoke(new("Joe", 45)));
@@ -2468,7 +2462,7 @@ namespace MudBlazor.UnitTests.Components
                 DataGrid = new MudDataGrid<TestModel1>()
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-           
+
             func3 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func3.Invoke(new("Does not contain", 45)));
             Assert.IsFalse(func3.Invoke(new("Joe", 45)));
@@ -2483,7 +2477,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
             };
-            
+
             var func4 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func4.Invoke(new("Does not contain", 45)));
             Assert.IsTrue(func4.Invoke(new("Joe", 45)));
@@ -2501,7 +2495,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
             };
-            
+
             var func5 = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func5.Invoke(new("Not Joe", 45)));
             Assert.IsFalse(func5.Invoke(new(null, 45)));
@@ -2517,7 +2511,7 @@ namespace MudBlazor.UnitTests.Components
                 DataGrid = new MudDataGrid<TestModel1>()
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-            
+
             func5 = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func5.Invoke(new("Not Joe", 45)));
             Assert.IsFalse(func5.Invoke(new(null, 45)));
@@ -2532,7 +2526,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
             };
-            
+
             var func6 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func6.Invoke(new("Joe Not", 45)));
             Assert.IsTrue(func6.Invoke(new("Joe", 45)));
@@ -2550,7 +2544,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
             };
-            
+
             var func7 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func7.Invoke(new("Not Joe", 45)));
             Assert.IsFalse(func7.Invoke(new(null, 45)));
@@ -2566,7 +2560,7 @@ namespace MudBlazor.UnitTests.Components
                 DataGrid = new MudDataGrid<TestModel1>()
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-           
+
             func7 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func7.Invoke(new("Not Joe", 45)));
             Assert.IsFalse(func7.Invoke(new(null, 45)));
@@ -2581,7 +2575,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
             };
-           
+
             var func8 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func8.Invoke(new("Joe Not", 45)));
             Assert.IsTrue(func8.Invoke(new("Joe", 45)));
@@ -2599,7 +2593,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
             };
-            
+
             var func9 = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func9.Invoke(new("Not Joe", 45)));
             Assert.IsFalse(func9.Invoke(new(null, 45)));
@@ -2615,7 +2609,7 @@ namespace MudBlazor.UnitTests.Components
                 DataGrid = new MudDataGrid<TestModel1>()
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-            
+
             func9 = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func9.Invoke(new("Not Joe", 45)));
             Assert.IsFalse(func9.Invoke(new(null, 45)));
@@ -2630,7 +2624,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
             };
-           
+
             var func10 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func10.Invoke(new("Not Joe", 45)));
             Assert.IsTrue(func10.Invoke(new(null, 45)));
@@ -2648,7 +2642,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
             };
-            
+
             var func11 = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func11.Invoke(new("Joe Not", 45)));
             Assert.IsFalse(func11.Invoke(new(null, 45)));
@@ -2664,7 +2658,7 @@ namespace MudBlazor.UnitTests.Components
                 DataGrid = new MudDataGrid<TestModel1>()
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
-            
+
             func11 = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func11.Invoke(new("Joe Not", 45)));
             Assert.IsFalse(func11.Invoke(new(null, 45)));
@@ -2679,7 +2673,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
             };
-           
+
             var func12 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func12.Invoke(new("Joe Not", 45)));
             Assert.IsTrue(func12.Invoke(new(null, 45)));
@@ -2696,7 +2690,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
             };
-           
+
             var func13 = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func13.Invoke(new("Joe Not", 45)));
             Assert.IsTrue(func13.Invoke(new("", 45)));
@@ -2710,7 +2704,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.NotEmpty,
                 Value = null
             };
-           
+
             var func14 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func14.Invoke(new("Joe Not", 45)));
             Assert.IsFalse(func14.Invoke(new("", 45)));
@@ -2728,7 +2722,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
             };
-           
+
             var func15 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func15.Invoke(new("Joe Not", 45)));
             Assert.IsFalse(func15.Invoke(new("", 45)));
@@ -2743,7 +2737,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = null,
                 DataGrid = new MudDataGrid<TestModel1>()
             };
-            
+
             var func16 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func16.Invoke(new("Joe Not", 45)));
             Assert.IsFalse(func16.Invoke(new("", 45)));
@@ -2760,7 +2754,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = "Joe",
                 DataGrid = new MudDataGrid<TestModel1>()
             };
-            
+
             var func17 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func17.Invoke(new("Joe Not", 45)));
             Assert.IsTrue(func17.Invoke(new(null, 45)));
@@ -2771,17 +2765,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FilterDefinitionNumberExpressionTest()
         {
-            var filterDefinition = new FilterDefinition<TestModel1>();
-
             #region FilterOperator.Number.Equal
 
-            filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
+            var filterDefinition = new FilterDefinition<TestModel1, int?>(model => model.Age)
             {
                 Id = Guid.NewGuid(),
                 Operator = FilterOperator.Number.Equal,
                 Value = 45
             };
-            
+
             var func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new("Sam", 456)));
             Assert.IsFalse(func.Invoke(new("Sam", null)));
@@ -2794,7 +2786,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.Equal,
                 Value = null
             };
-           
+
             var func2 = filterDefinition.GenerateFilterFunction();
             // data type is an int
             Assert.IsTrue(func2.Invoke(new("Sam", 456)));
@@ -2811,7 +2803,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.NotEqual,
                 Value = 45
             };
-           
+
             var func3 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func3.Invoke(new("Sam", 456)));
             Assert.IsTrue(func3.Invoke(new("Sam", null)));
@@ -2824,7 +2816,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.NotEqual,
                 Value = null
             };
-           
+
             var func4 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func4.Invoke(new("Sam", 456)));
             Assert.IsTrue(func4.Invoke(new("Sam", null)));
@@ -2840,7 +2832,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.GreaterThan,
                 Value = 45
             };
-           
+
             var func5 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func5.Invoke(new("Sam", 456)));
             Assert.IsFalse(func5.Invoke(new("Joe", 45)));
@@ -2853,7 +2845,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.GreaterThan,
                 Value = null
             };
-          
+
             var func6 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func6.Invoke(new("Sam", 456)));
             Assert.IsTrue(func6.Invoke(new("Joe", 45)));
@@ -2869,7 +2861,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.LessThan,
                 Value = 45
             };
-            
+
             var func7 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func7.Invoke(new("Sam", 4)));
             Assert.IsFalse(func7.Invoke(new("Joe", 45)));
@@ -2882,7 +2874,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.LessThan,
                 Value = null
             };
-           
+
             var func8 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func8.Invoke(new("Sam", 4)));
             Assert.IsTrue(func8.Invoke(new("Joe", 45)));
@@ -2898,8 +2890,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.GreaterThanOrEqual,
                 Value = 45
             };
-           
-            var func9 = filterDefinition.GenerateFilterFunction(); 
+
+            var func9 = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func9.Invoke(new("Sam", 4)));
             Assert.IsFalse(func9.Invoke(new("Sam", null)));
             Assert.IsTrue(func9.Invoke(new("Joe", 45)));
@@ -2911,7 +2903,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.GreaterThanOrEqual,
                 Value = null
             };
-           
+
             var func10 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func10.Invoke(new("Sam", 4)));
             Assert.IsTrue(func10.Invoke(new("Sam", null)));
@@ -2927,7 +2919,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Number.LessThanOrEqual,
                 Value = 45
             };
-           
+
             var func11 = filterDefinition.GenerateFilterFunction();
 
             Assert.IsFalse(func11.Invoke(new("Sam", 46)));
@@ -2957,7 +2949,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = null,
                 Value = 45
             };
-           
+
             var func13 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func13.Invoke(new("Sam", 456)));
             Assert.IsTrue(func13.Invoke(new("Sam", null)));
@@ -2976,7 +2968,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Boolean.Is,
                 Value = true
             };
-            
+
             var func = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func.Invoke(new("Sam", 45, false)));
             Assert.IsTrue(func.Invoke(new("Joe", 45, true)));
@@ -2989,7 +2981,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Boolean.Is,
                 Value = null
             };
-           
+
             var func2 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func2.Invoke(new("Sam", 45, false)));
             Assert.IsTrue(func2.Invoke(new("Joe", 45, true)));
@@ -3004,7 +2996,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = null,
                 Value = true
             };
-            
+
             var func3 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func3.Invoke(new("Sam", 45, false)));
             Assert.IsTrue(func3.Invoke(new("Joe", 45, true)));
@@ -3035,7 +3027,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Enum.Is,
                 Value = null
             };
-           
+
             var func2 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func2.Invoke(new("Sam", 456, Severity.Info)));
             Assert.IsTrue(func2.Invoke(new("Joe", 45, Severity.Normal)));
@@ -3051,7 +3043,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Enum.IsNot,
                 Value = Severity.Normal
             };
-           
+
             var func3 = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func3.Invoke(new("Sam", 456, Severity.Normal)));
             Assert.IsTrue(func3.Invoke(new("Joe", 45, Severity.Info)));
@@ -3064,7 +3056,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.Enum.IsNot,
                 Value = null
             };
-           
+
             var func4 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func4.Invoke(new("Sam", 456, Severity.Normal)));
             Assert.IsTrue(func4.Invoke(new("Joe", 45, Severity.Info)));
@@ -3098,7 +3090,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.Is,
                 Value = utcnow
             };
-            
+
             var func = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func.Invoke(new("Sam", 45, utcnow)));
             Assert.IsFalse(func.Invoke(new("Joe", 45, null)));
@@ -3110,7 +3102,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.Is,
                 Value = null
             };
-            
+
             var func2 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func2.Invoke(new("Sam", 45, utcnow)));
             Assert.IsTrue(func2.Invoke(new("Joe", 45, null)));
@@ -3125,7 +3117,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.IsNot,
                 Value = utcnow
             };
-           
+
             var func3 = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func3.Invoke(new("Sam", 45, utcnow)));
             Assert.IsTrue(func3.Invoke(new("Joe", 45, null)));
@@ -3137,7 +3129,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.IsNot,
                 Value = null
             };
-            
+
             var func4 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func4.Invoke(new("Sam", 45, utcnow)));
             Assert.IsTrue(func4.Invoke(new("Joe", 45, null)));
@@ -3152,7 +3144,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.After,
                 Value = utcnow
             };
-            
+
             var func5 = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func5.Invoke(new("Sam", 45, utcnow)));
             Assert.IsFalse(func5.Invoke(new("Joe", 45, null)));
@@ -3164,7 +3156,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.After,
                 Value = null
             };
-            
+
             var func6 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func6.Invoke(new("Sam", 45, utcnow)));
             Assert.IsTrue(func6.Invoke(new("Joe", 45, null)));
@@ -3179,7 +3171,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.OnOrAfter,
                 Value = utcnow
             };
-            
+
             var func7 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func7.Invoke(new("Sam", 45, utcnow)));
             Assert.IsFalse(func7.Invoke(new("Joe", 45, null)));
@@ -3191,7 +3183,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.OnOrAfter,
                 Value = null
             };
-            
+
             var func8 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func8.Invoke(new("Sam", 45, utcnow)));
             Assert.IsTrue(func8.Invoke(new("Joe", 45, null)));
@@ -3206,7 +3198,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.Before,
                 Value = utcnow
             };
-            
+
             var func9 = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func9.Invoke(new("Sam", 45, utcnow)));
             Assert.IsFalse(func9.Invoke(new("Joe", 45, null)));
@@ -3218,7 +3210,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.Before,
                 Value = null
             };
-            
+
             var func10 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func10.Invoke(new("Sam", 45, utcnow)));
             Assert.IsTrue(func10.Invoke(new("Joe", 45, null)));
@@ -3233,7 +3225,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.OnOrBefore,
                 Value = utcnow
             };
-            
+
             var func11 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func11.Invoke(new("Sam", 45, utcnow)));
             Assert.IsFalse(func11.Invoke(new("Joe", 45, null)));
@@ -3245,7 +3237,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.OnOrBefore,
                 Value = null
             };
-           
+
             var func12 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func12.Invoke(new("Sam", 45, utcnow)));
             Assert.IsTrue(func12.Invoke(new("Joe", 45, null)));
@@ -3260,7 +3252,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.Empty,
                 Value = utcnow
             };
-            
+
             var func13 = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func13.Invoke(new("Sam", 45, utcnow)));
             Assert.IsTrue(func13.Invoke(new("Joe", 45, null)));
@@ -3272,7 +3264,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.Empty,
                 Value = null
             };
-          
+
             var func14 = filterDefinition.GenerateFilterFunction();
             Assert.IsFalse(func14.Invoke(new("Sam", 45, utcnow)));
             Assert.IsTrue(func14.Invoke(new("Joe", 45, null)));
@@ -3287,7 +3279,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.NotEmpty,
                 Value = utcnow
             };
-            
+
             var func15 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func15.Invoke(new("Sam", 45, utcnow)));
             Assert.IsFalse(func15.Invoke(new("Joe", 45, null)));
@@ -3299,7 +3291,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.DateTime.NotEmpty,
                 Value = null
             };
-           
+
             var func16 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func16.Invoke(new("Sam", 45, utcnow)));
             Assert.IsFalse(func16.Invoke(new("Joe", 45, null)));
@@ -3313,7 +3305,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = null,
                 Value = utcnow
             };
-           
+
             var func17 = filterDefinition.GenerateFilterFunction();
             Assert.IsTrue(func17.Invoke(new("Sam", 45, utcnow)));
             Assert.IsTrue(func17.Invoke(new("Joe", 45, null)));
@@ -3748,8 +3740,10 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridShowMenuIconTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridShowMenuIconTest.Item>>();
             dataGrid.FindAll(".mud-table-toolbar .mud-menu").Should().BeEmpty();
-            var parameters = new List<ComponentParameter>();
-            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.ShowMenuIcon), true));
+            var parameters = new List<ComponentParameter>
+            {
+                ComponentParameter.CreateParameter(nameof(dataGrid.Instance.ShowMenuIcon), true)
+            };
             dataGrid.SetParametersAndRender(parameters.ToArray());
             dataGrid.FindAll(".mud-table-toolbar .mud-menu").Should().NotBeEmpty();
         }
@@ -3764,8 +3758,10 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find(".filter-button").Click();
             var input = comp.FindComponent<MudTextField<string>>();
-            var parameters = new List<ComponentParameter>();
-            parameters.Add(ComponentParameter.CreateParameter(nameof(input.Instance.Value), "test"));
+            var parameters = new List<ComponentParameter>
+            {
+                ComponentParameter.CreateParameter(nameof(input.Instance.Value), "test")
+            };
             input.SetParametersAndRender(parameters.ToArray());
             comp.Find(".apply-filter-button").Click();
 
