@@ -19,7 +19,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudLink>(
                 Parameter(nameof(MudLink.Href), "#"),
                 Parameter(nameof(MudLink.Disabled), true));
-            //Console.WriteLine(comp.Markup);
             comp.Find("a").GetAttribute("href").Should().BeNullOrEmpty();
         }
 

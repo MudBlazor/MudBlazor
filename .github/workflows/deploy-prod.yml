@@ -34,4 +34,4 @@ jobs:
     with:
       azure-app-name: mudblazor
     secrets:
-      azure-cred: ${{ secrets.CHANGETHISWHENYOUWAKEUP }}
+      azure-cred: ${{ secrets.AZURE_CREDENTIALS_MUD_PROD }}

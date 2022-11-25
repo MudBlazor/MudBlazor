@@ -83,7 +83,6 @@ namespace MudBlazor.UnitTests.Other
                         property.GetCustomAttribute<CategoryAttribute>() == null)     // property doesn't have a category
                     {
                         isTestOK = false;
-                        Console.WriteLine($"{component}.{property.Name} property doesn't have a category");
                     }
                 }
             }
