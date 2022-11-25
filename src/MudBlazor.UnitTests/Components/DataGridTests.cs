@@ -422,7 +422,6 @@ namespace MudBlazor.UnitTests.Components
             // Fire RowClick, SelectedItemChanged, SelectedItemsChanged, and StartedEditingItem callbacks.
             dataGrid.FindAll(".mud-table-body tr")[0].Click();
 
-            //Console.WriteLine(dataGrid.Markup);
             // Edit an item.
             dataGrid.FindAll(".mud-table-body tr td input")[0].Change("A test");
 
@@ -1438,7 +1437,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = 45
             };
             func = filterDefinition.GenerateFilterFunction();
-            Console.WriteLine(func.Invoke(new("Joe", 45)));
+
             Assert.IsFalse(func.Invoke(new("Sam", 46)));
             Assert.IsFalse(func.Invoke(new("Sam", null)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
@@ -1451,7 +1450,7 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
-            Console.WriteLine(func.Invoke(new("Joe", 45)));
+
             Assert.IsTrue(func.Invoke(new("Sam", 46)));
             Assert.IsTrue(func.Invoke(new("Sam", null)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
@@ -2393,7 +2392,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task FilterDefinitionStringExpressionTest()
         {
             var filterDefinition = new FilterDefinition<TestModel1>();
-            //Expression<Func<TestModel1, bool>> expression = null;
 
             #region FilterOperator.String.Contains
 
@@ -2931,7 +2929,7 @@ namespace MudBlazor.UnitTests.Components
             };
            
             var func11 = filterDefinition.GenerateFilterFunction();
-            Console.WriteLine(func11.Invoke(new("Joe", 45)));
+
             Assert.IsFalse(func11.Invoke(new("Sam", 46)));
             Assert.IsFalse(func11.Invoke(new("Sam", null)));
             Assert.IsTrue(func11.Invoke(new("Joe", 45)));
@@ -2945,7 +2943,7 @@ namespace MudBlazor.UnitTests.Components
             };
 
             var func12 = filterDefinition.GenerateFilterFunction();
-            Console.WriteLine(func12.Invoke(new("Joe", 45)));
+
             Assert.IsTrue(func12.Invoke(new("Sam", 46)));
             Assert.IsTrue(func12.Invoke(new("Sam", null)));
             Assert.IsTrue(func12.Invoke(new("Joe", 45)));
@@ -3510,8 +3508,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridHeaderTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHeaderTemplateTest.Model>>();
 
-            Console.WriteLine(dataGrid.Markup);
-
             dataGrid.Find("thead th").TextContent.Trim().Should().Be("test");
 
             dataGrid.Find("span.column-header").FirstChild.NodeName.Should().Be("svg");
@@ -3598,8 +3594,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridFooterTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFooterTemplateTest.Model>>();
 
-            //Console.WriteLine(dataGrid.Markup);
-
             dataGrid.FindAll("tfoot td").First().TextContent.Trim().Should().Be("Names: Sam, Alicia, Ira, John");
             dataGrid.FindAll("tfoot td").Last().TextContent.Trim().Should().Be($"Highest: {132000:C0} | 2 Over {100000:C0}");
         }
@@ -3638,8 +3632,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridCellTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellTemplateTest.Model>>();
 
-            //Console.WriteLine(dataGrid.Markup);
-
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("John");
             dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("45");
         }
@@ -3651,8 +3643,6 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnChooserTest.Model>>();
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
             var popover = dataGrid.FindComponent<MudPopover>();
-
-            //Console.WriteLine(dataGrid.FindAll(".mud-table-head th").ToMarkup());
 
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
             await comp.InvokeAsync(() =>
@@ -3711,8 +3701,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridColumnHiddenTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnHiddenTest.Model>>();
-
-            //Console.WriteLine(dataGrid.FindAll(".mud-table-head th").ToMarkup());
 
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
             var popover = dataGrid.FindComponent<MudPopover>();
@@ -3878,8 +3866,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridAggregationTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridAggregationTest.Model>>();
-
-            //Console.WriteLine(dataGrid.Markup);
 
             dataGrid.FindAll("td.footer-cell")[1].TrimmedText().Should().Be("Average age is 56");
             dataGrid.FindAll("tfoot td.footer-cell")[1].TrimmedText().Should().Be("Average age is 43");
