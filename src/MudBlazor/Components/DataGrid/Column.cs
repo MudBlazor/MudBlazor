@@ -15,7 +15,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class Column<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
+    public class Column<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
 

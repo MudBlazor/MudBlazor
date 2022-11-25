@@ -32,7 +32,7 @@ namespace MudBlazor
             selection = dataGrid.Selection;
             openHierarchies = dataGrid._openHierarchies;
             Item = item;
-            Actions = new CellContext<T>.CellActions
+            Actions = new CellActions
             {
                 SetSelectedItem = async (x) => await dataGrid.SetSelectedItemAsync(x, item),
                 StartEditingItem = async () => await dataGrid.SetEditingItemAsync(item),

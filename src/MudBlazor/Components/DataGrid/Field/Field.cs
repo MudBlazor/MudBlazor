@@ -22,24 +22,12 @@ namespace MudBlazor
             Type = type;
         }
 
-        public static IField Create(string name, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type type)
-        {
-            return new Field(name, type);
-        }
+        public static IField Create(string name, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type type) => new Field(name, type);
 
-        public static IField Create<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(FilterDefinition<T> filedDefinition)
-        {
-            return new Field(filedDefinition.Field, filedDefinition.FieldType);
-        }
+        public static IField Create<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(FilterDefinition<T> filedDefinition) => new Field(filedDefinition.Field, filedDefinition.FieldType);
 
-        public static IField Create<T, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TValue>(Expression<Func<T, TValue>> fieldExpression)
-        {
-            return new Field(fieldExpression.GetPropertyInfo().Name, typeof(TValue));
-        }
+        public static IField Create<T, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TValue>(Expression<Func<T, TValue>> fieldExpression) => new Field(fieldExpression.GetPropertyInfo().Name, typeof(TValue));
 
-        public static IField Create<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TValue>(Expression<Func<TValue>> fieldExpression)
-        {
-            return new Field(fieldExpression.GetPropertyInfo().Name, typeof(TValue));
-        }
+        public static IField Create<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TValue>(Expression<Func<TValue>> fieldExpression) => new Field(fieldExpression.GetPropertyInfo().Name, typeof(TValue));
     }
 }

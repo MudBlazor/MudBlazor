@@ -44,22 +44,19 @@ namespace MudBlazor
                         if (o == null)
                             return null;
 
-                        if (o.GetType() == typeof(JsonElement))
+                        if (o is JsonElement json)
                         {
-                            var json = (JsonElement)o;
                             return Enum.ToObject(_column.FieldType, json.GetInt32());
                         }
-                        else
-                        {
-                            return Enum.ToObject(_column.FieldType, o);
-                        }
+
+                        return Enum.ToObject(_column.FieldType, o);
                     }
 
                     return ((IDictionary<string, object>)_item)[_column.Field];
                 }
 
                 var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
-                return property.GetValue(_item);
+                return property?.GetValue(_item);
             }
         }
         internal string computedClass
@@ -104,7 +101,7 @@ namespace MudBlazor
         public async Task StringValueChangedAsync(string value)
         {
             var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
-            property.SetValue(_item, value);
+            property?.SetValue(_item, value);
 
             // If the edit mode is Cell, we update immediately.
             if (_dataGrid.EditMode == DataGridEditMode.Cell)
@@ -114,7 +111,7 @@ namespace MudBlazor
         public async Task NumberValueChangedAsync(double? value)
         {
             var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
-            property.SetValue(_item, ChangeType(value, property.PropertyType));
+            property?.SetValue(_item, ChangeType(value, property.PropertyType));
 
             // If the edit mode is Cell, we update immediately.
             if (_dataGrid.EditMode == DataGridEditMode.Cell)
@@ -123,10 +120,9 @@ namespace MudBlazor
 
         private void OnStartedEditingItem()
         {
-
-            if (ComputedValue != null)
+            if (ComputedValue is not null)
             {
-                if (ComputedValue.GetType() == typeof(JsonElement))
+                if (ComputedValue is JsonElement)
                 {
                     if (_column.dataType == typeof(string))
                     {
@@ -155,7 +151,7 @@ namespace MudBlazor
         {
             var t = conversion;
 
-            if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 if (value == null)
                 {
