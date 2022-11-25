@@ -1,5 +1,5 @@
 ﻿
-<code class="docs-code @(SecondaryColor? $"docs-code-secondary {Class}": $"docs-code-primary {Class}")">
+<code class="docs-code @(SecondaryColor? $"docs-code-secondary {Class}": $"docs-code-primary {Class}")" style="@Style">
     @if (Tag) {<span>&lt;</span>}@Code@ChildContent@if (Tag) {<span>&gt;</span>}
 </code>
 
@@ -12,6 +12,8 @@
     [Parameter] public bool SecondaryColor { get; set; }
 
     [Parameter] public string Class { get; set; }
+    
+    [Parameter] public string Style { get; set; }
 
     [Parameter] public bool Tag { get; set; }
 }

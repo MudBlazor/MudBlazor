@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.Docs
 {
+    using MudBlazor.Utilities;
+
     public class Theme
     {
         public static MudTheme LandingPageTheme()
@@ -48,7 +50,13 @@ namespace MudBlazor.Docs
             AppbarBackground = "rgba(255,255,255,0.8)",
             DrawerBackground = "#ffffff",
             GrayLight = "#e8e8e8",
-            GrayLighter = "#f9f9f9"
+            GrayLighter = "#f9f9f9",
+            AdditionalStyles = new Dictionary<string, MudColor>()
+            {
+                {
+                    "--additional-color-demo", "#d00"
+                }
+            }
         };
 
         private static readonly PaletteDark DocsDarkPalette  = new()
@@ -77,7 +85,13 @@ namespace MudBlazor.Docs
             LinesDefault = "#33323e",
             TableLines = "#33323e",
             Divider = "#292838",
-            OverlayLight = "#1e1e2d80"
+            OverlayLight = "#1e1e2d80",
+            AdditionalStyles = new Dictionary<string, MudColor>
+            {
+                {
+                    "--additional-color-demo", new MudColor("#dd5050")
+                }
+            }
         };
         #endregion
         #region LandingPage

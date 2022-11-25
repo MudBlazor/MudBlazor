@@ -1,5 +1,6 @@
 ﻿@page "/customization/overview"
 
+<!--suppress CssUnresolvedCustomProperty -->
 <DocsPage>
     <DocsPageHeader Title="Theming" SubTitle="Customize MudBlazor so that it suits your needs. Change colors, typography, shapes and more." />
     <DocsPageContent>
@@ -58,6 +59,17 @@
                     the Dark Palette.</Description>
             </SectionHeader>
             <SectionContent Code="OverviewThemesCustomExample" />
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Custom Themes">
+                <Description>To add additional colors that are updated by the dark/light switch, add <CodeInline>AdditionalStyles</CodeInline> to your
+                    <CodeInline>Palette</CodeInline> It has to be defined in both the dark and light pallets.
+                    <br><br>
+                    Demo: <CodeInline>Code block</CodeInline> with <CodeInline Style="color: var(--additional-color-demo)">style="color: var(--additional-color-demo)"</CodeInline>
+                    </Description>
+            </SectionHeader>
+            <SectionContent Code="OverviewThemesExtraStylesExample" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
