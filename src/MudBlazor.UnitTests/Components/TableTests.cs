@@ -1589,8 +1589,8 @@ namespace MudBlazor.UnitTests.Components
 
             // expand and collapse groups:
             table.GroupBy.Indentation = false;
-            table.GroupBy.Expandable = true;            
-            table.GroupBy.InnerGroup.Expandable = true;            
+            table.GroupBy.Expandable = true;
+            table.GroupBy.InnerGroup.Expandable = true;
             comp.Render();
 
             var buttons = comp.FindAll("button").ToArray();
