@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -12,6 +14,9 @@ namespace MudBlazor
            .AddClass($"mud-{Color.ToDescriptionString()}-text")
           .AddClass($"mud-link-underline-{Underline.ToDescriptionString()}")
           .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
+          // When Href is empty, link's hover cursor is text "I beam" even when OnClick has a delegate.
+          // To change this for more expected look change hover cursor to a pointer:
+          .AddClass("cursor-pointer", Href == default && OnClick.HasDelegate && !Disabled)
           .AddClass($"mud-link-disabled", Disabled)
           .AddClass(Class)
         .Build();
@@ -59,6 +64,17 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Link.Behavior)]
         public string Target { get; set; }
+
+        /// <summary>
+        /// Link click event.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+        protected async Task OnClickHandler(MouseEventArgs ev)
+        {
+            if (Disabled) return;
+            await OnClick.InvokeAsync(ev);
+        }
 
         /// <summary>
         /// Child content of component.

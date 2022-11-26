@@ -9,6 +9,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
@@ -43,6 +44,19 @@ namespace MudBlazor
             _globalDialogOptions.Position = Position;
             _globalDialogOptions.FullWidth = FullWidth;
             _globalDialogOptions.MaxWidth = MaxWidth;
+        }
+
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (!firstRender)
+            {
+                foreach (var dialogReference in _dialogs.Where(x => !x.Result.IsCompleted))
+                {
+                    dialogReference.RenderCompleteTaskCompletionSource.TrySetResult(true);
+                }
+            }
+
+            return base.OnAfterRenderAsync(firstRender);
         }
 
         internal void DismissInstance(Guid id, DialogResult result)
