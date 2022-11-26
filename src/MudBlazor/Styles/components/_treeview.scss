@@ -119,6 +119,10 @@
     }
 }
 
+.mud-treeview-select-none {
+    user-select: none;
+}
+
 @keyframes rotation {
     from {
         transform: rotate(0deg);
