@@ -4,11 +4,17 @@ namespace MudBlazor
 {
     public enum Origin
     {
+        [Description("top-end")]
         TopEnd,
+        [Description("center-end")]
         CenterEnd,
+        [Description("bottom-end")]
         BottomEnd,
+        [Description("top-start")]
         TopStart,
+        [Description("center-start")]
         CenterStart,
+        [Description("bottom-start")]
         BottomStart,
         [Description("top-left")]
         TopLeft,
