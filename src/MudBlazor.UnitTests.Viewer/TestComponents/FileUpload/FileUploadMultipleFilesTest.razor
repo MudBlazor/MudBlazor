@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudFileUpload T="IReadOnlyList<IBrowserFile>" MaximumFileCount="100" OnFilesChanged="OnInputFileChanged">
+    <ButtonTemplate>
+        <MudButton HtmlTag="label" for="@context">Upload</MudButton>
+    </ButtonTemplate>
+    <SelectedTemplate>
+        <div>
+            Select Template
+        </div>
+    </SelectedTemplate>
+</MudFileUpload>
+
+<div>
+    @(fileCount)
+</div>
+
+
+@code {
+
+    private int? fileCount = null;
+
+    private void OnInputFileChanged(InputFileChangeEventArgs e)
+    {
+        var files = e.GetMultipleFiles(100);
+        fileCount = files.Count;
+    }
+
+
+}
