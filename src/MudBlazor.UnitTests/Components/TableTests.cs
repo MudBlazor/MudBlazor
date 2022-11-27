@@ -1579,6 +1579,46 @@ namespace MudBlazor.UnitTests.Components
             buttons[0].Click();
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(36);
+
+
+            //verify the collapse and expand selection on UI and items
+
+            inputs[1].Change(false); // LMP1 
+
+            table.GroupBy.Indentation = true;
+            table.GroupBy.Expandable = true;
+            table.GroupBy.IsInitiallyExpanded = true;
+            table.GroupBy.InnerGroup.Indentation = true;
+            table.GroupBy.InnerGroup.Expandable = true;
+            table.GroupBy.InnerGroup.IsInitiallyExpanded  = true;
+                       
+
+            comp.Render();            
+            
+            table.SelectedItems.Count.Should().Be(0);
+            inputs.Where(x => x.IsChecked()).Count().Should().Be(0);
+
+            inputs[1].Change(true); // LMP1            
+            table.SelectedItems.Count.Should().Be(2);
+
+            buttons = comp.FindAll("button").ToArray();
+            inputs = comp.FindAll("input").ToArray();
+            inputs.Where(x => x.IsChecked()).Count().Should().Be(5);
+
+            buttons[0].Click(); //collapse            
+            buttons[0].Click(); //expand            
+            //selected item should persist
+            table.SelectedItems.Count.Should().Be(2);
+
+            inputs = comp.FindAll("input").ToArray();
+            inputs.Where(x => x.IsChecked()).Count().Should().Be(5);
+
+            inputs[1].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+
+            inputs = comp.FindAll("input").ToArray();
+            inputs.Where(x => x.IsChecked()).Count().Should().Be(0);
+
         }
 
         /// <summary>

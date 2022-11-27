@@ -201,7 +201,7 @@
                 var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
              } 
              <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="IsEditable" IsExpandable="isExpandable"
-                        IsCheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
+                        IsChecked="Context.Selection.Contains(item)" IsCheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
 
                     @if ((!ReadOnly) && IsEditable && object.Equals(_editingItem, item))
                     {
