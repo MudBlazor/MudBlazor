@@ -39,7 +39,7 @@
 				 Variant="Variant.Filled"
 				 Margin="Margin.Dense"
 				 Max="9.9"
-				 Min="-5.0" 
+				 Min="-5.0"
 				 Immediate="true"/>
 <br/><br/>
 <MudNumericField @bind-Value="_nullable"
@@ -47,7 +47,7 @@
 				 Variant="Variant.Outlined"
 				 Margin="Margin.Dense"
 				 Max="10" />
-				 
+
 <br/>
 <MudNumericField T="double?"
 				 Label="double?"
@@ -55,9 +55,21 @@
 				 Margin="Margin.Dense" />
 <br/>
 <MudNumericField T="decimal?"
-				 Label="decimal?"
-				 Variant="Variant.Outlined"
-				 Margin="Margin.Dense" />
+                 Label="decimal?"
+                 Variant="Variant.Outlined"
+                 Margin="Margin.Dense" />
+<br/>
+<MudNumericField T="byte?"
+                 Label="byte?"
+                 Variant="Variant.Outlined"
+                 Margin="Margin.Dense" />
+ <br/>
+ <MudNumericField T="int?"
+                  Label="int? clearable with min/max"
+                  Variant="Variant.Outlined"
+                  Margin="Margin.Dense"
+                  Clearable="true"
+                  Min="1" Max="10" />
 
 @code {
 	public static string __description__ = "The textfield should be changed by up/down arrows";

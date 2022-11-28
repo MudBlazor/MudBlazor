@@ -42,7 +42,7 @@ namespace MudBlazor
 
         [CascadingParameter] protected internal MudBaseItemsControl<MudCarouselItem> Parent { get; set; }
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -13,7 +14,7 @@ namespace MudBlazor
 {
     // note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
 
-    public partial class MudTable<T> : MudTableBase
+    public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase
     {
         /// <summary>
         /// Defines how a table row looks like. Use MudTd to define the table cells and their content.
@@ -214,7 +215,9 @@ namespace MudBlazor
             get => _selectedItem;
             set
             {
-                if (EqualityComparer<T>.Default.Equals(SelectedItem, value))
+                if (_comparer != null && _comparer.Equals(SelectedItem, value))
+                    return;
+                else if (EqualityComparer<T>.Default.Equals(SelectedItem, value))
                     return;
                 _selectedItem = value;
                 SelectedItemChanged.InvokeAsync(value);
@@ -238,9 +241,9 @@ namespace MudBlazor
             {
                 if (!MultiSelection)
                     if (_selectedItem is null)
-                        return new HashSet<T>(Array.Empty<T>());
+                        return new HashSet<T>(Array.Empty<T>(), _comparer);
                     else
-                        return new HashSet<T>(new T[] { _selectedItem });
+                        return new HashSet<T>(new T[] { _selectedItem }, _comparer);
                 else
                     return Context.Selection;
             }
@@ -252,7 +255,7 @@ namespace MudBlazor
                 {
                     if (Context.Selection.Count == 0)
                         return;
-                    Context.Selection = new HashSet<T>();
+                    Context.Selection = new HashSet<T>(_comparer);
                 }
                 else
                     Context.Selection = value;
@@ -260,6 +263,25 @@ namespace MudBlazor
                 InvokeAsync(StateHasChanged);
             }
         }
+
+        /// <summary>
+        /// The Comparer to use for comparing selected items internally.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public IEqualityComparer<T> Comparer
+        {
+            get => _comparer;
+            set
+            {
+                if (value == _comparer) return;
+                _comparer = value;
+                // Apply comparer and (selected values are refreshed in the Context.Comparer setter)
+                Context.Comparer = _comparer;
+            }
+        }
+
+        private IEqualityComparer<T> _comparer;
 
         /// <summary>
         /// Callback is called whenever items are selected or deselected in multi selection mode.
@@ -411,6 +433,16 @@ namespace MudBlazor
                 _editingItem = item;
         }
 
+        public override bool ContainsItem(object item)
+        {
+            var t = item.As<T>();
+            if (t is null)
+                return false;
+            return FilteredItems?.Contains(t) ?? false;
+        }
+
+        public override void UpdateSelection() => SelectedItemsChanged.InvokeAsync(SelectedItems);
+
         public override TableContext TableContext
         {
             get
@@ -454,7 +486,6 @@ namespace MudBlazor
             TableContext.UpdateRowCheckBoxes();
             await base.OnAfterRenderAsync(firstRender);
         }
-
 
         /// <summary>
         /// Supply an async function which (re)loads filtered, paginated and sorted data from server.

@@ -18,6 +18,29 @@ namespace MudBlazor.UnitTests.Components
     public class DateRangePickerTests : BunitTest
     {
         [Test]
+        public void Default()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>();
+            var picker = comp.Instance;
+
+            picker.Text.Should().Be(null);
+            picker.DateRange.Should().Be(null);
+            picker.MaxDate.Should().Be(null);
+            picker.MinDate.Should().Be(null);
+            picker.OpenTo.Should().Be(OpenTo.Date);
+            picker.FirstDayOfWeek.Should().Be(null);
+            picker.ClosingDelay.Should().Be(100);
+            picker.DisplayMonths.Should().Be(2);
+            picker.MaxMonthColumns.Should().Be(null);
+            picker.StartMonth.Should().Be(null);
+            picker.ShowWeekNumbers.Should().BeFalse();
+            picker.AutoClose.Should().BeFalse();
+            picker.FixYear.Should().Be(null);
+            picker.FixMonth.Should().Be(null);
+            picker.FixDay.Should().Be(null);
+        }
+
+        [Test]
         public void DateRangePickerOpenButtonAriaLabel()
         {
             var comp = Context.RenderComponent<MudDateRangePicker>();
@@ -44,7 +67,6 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 10000; i++)
                 Context.RenderComponent<MudDateRangePicker>();
             watch.Stop();
-            //Console.WriteLine("Elapsed: " + watch.Elapsed);
             watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
@@ -63,7 +85,6 @@ namespace MudBlazor.UnitTests.Components
                 await comp.InvokeAsync(() => datepicker.Close());
             }
             watch.Stop();
-            //Console.WriteLine("Elapsed: " + watch.Elapsed);
             watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
@@ -336,11 +357,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
             var comp = Context.RenderComponent<SimpleMudMudDateRangePickerTest>();
-            //Console.WriteLine(comp.Markup + "\n");
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // open programmatically
             await comp.Instance.Open();
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-picker-content").Count.Should().Be(1);
             // closing programmatically
             await comp.Instance.Close();
@@ -545,6 +564,62 @@ namespace MudBlazor.UnitTests.Components
             dateRangePickerInstance.DateRange.Should().Be(null);
             dateRangePickerInstance.Error.Should().BeTrue("Value has been cleared and should be handled as invalid");
             dateRangePickerInstance.ErrorText.Should().Be(errorMessage);
+        }
+
+        [Test]
+        public void CheckAutoCloseDateRangePicker_DoNotCloseWhenValueIsOff()
+        {
+            // Define a date range for comparison
+            var initialDateRange = new DateRange(
+               new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01),
+                new DateTime(DateTime.Now.Year, DateTime.Now.Month, 02));
+
+            // Get access to the date range picker of the instance
+            var comp = Context.RenderComponent<AutoCloseDateRangePickerTest>(
+                Parameter(nameof(AutoCloseDateRangePickerTest.DateRange), initialDateRange));
+
+            // Open the date range picker
+            comp.Find("input").Click();
+
+            // Clicking day buttons to select a date range
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("10")).First().Click();
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("11")).First().Click();
+
+            // Check that the date range should remain the same because autoclose is false even when actions are defined
+            comp.Instance.DateRange.Should().Be(initialDateRange);
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
+        }
+
+        [Test]
+        public void CheckAutoCloseDateRangePicker_CloseWhenValueIsOn()
+        {
+            // Define a date range for comparison
+            var initialDateRange = new DateRange(
+                new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01),
+                  new DateTime(DateTime.Now.Year, DateTime.Now.Month, 02));
+
+            // Get access to the date range picker of the instance
+            var comp = Context.RenderComponent<AutoCloseDateRangePickerTest>(
+                Parameter(nameof(AutoCloseDateRangePickerTest.DateRange), initialDateRange),
+                Parameter(nameof(AutoCloseDateRangePickerTest.AutoClose), true));
+
+            // Open the date range picker
+            comp.Find("input").Click();
+
+            // Clicking day buttons to select a date range
+            comp.FindAll("button.mud-picker-calendar-day")
+               .Where(x => x.TrimmedText().Equals("10")).First().Click();
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("11")).First().Click();
+
+            // Check that the date range is changed because autoclose is true even when actions are defined
+            comp.Instance.DateRange.Should().NotBe(initialDateRange);
+            comp.Instance.DateRange.Should().Be(new DateRange(
+                new DateTime(DateTime.Now.Year, DateTime.Now.Month, 10),
+                  new DateTime(DateTime.Now.Year, DateTime.Now.Month, 11)));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(0));
         }
     }
 }

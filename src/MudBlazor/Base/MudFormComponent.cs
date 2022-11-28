@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -9,7 +10,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor.Interfaces;
-using MudBlazor.Utilities;
 using static System.String;
 
 namespace MudBlazor
@@ -30,8 +30,8 @@ namespace MudBlazor
         /// If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
         /// If it is sub-component, it will NOT do form validation!!
         /// </summary>
-        [CascadingParameter(Name = "Standalone")]
-        internal bool Standalone { get; set; } = true;
+        [CascadingParameter(Name = "SubscribeToParentForm")]
+        internal bool SubscribeToParentForm { get; set; } = true;
 
         /// <summary>
         /// If true, this form input is required to be filled out.
@@ -318,6 +318,7 @@ namespace MudBlazor
             return value != null;
         }
 
+        [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "In the context of EditContext.Model / FieldIdentifier.Model they won't get trimmed.")]
         protected virtual void ValidateWithAttribute(ValidationAttribute attr, T value, List<string> errors)
         {
             try
@@ -469,6 +470,15 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Notify the Form that a field has changed if SubscribeToParentForm is true
+        /// </summary>
+        protected void FieldChanged(object newValue)
+        {
+            if (SubscribeToParentForm)
+                Form?.FieldChanged(this, newValue);
+        }
+
+        /// <summary>
         /// Reset the value and the validation.
         /// </summary>
         public void Reset()
@@ -520,13 +530,14 @@ namespace MudBlazor
 
         /// <summary>
         /// Specify an expression which returns the model's field for which validation messages should be displayed.
-        /// Currently only string fields are supported.
         /// </summary>
 #nullable enable
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public Expression<Func<T>>? For { get; set; }
 #nullable disable
+
+        public bool IsForNull => For == null;
 
         /// <summary>
         /// Stores the list of validation attributes attached to the property targeted by <seealso cref="For"/>. If <seealso cref="For"/> is null, this property is null too.
@@ -605,7 +616,7 @@ namespace MudBlazor
 
         protected virtual void RegisterAsFormComponent()
         {
-            if (Standalone)
+            if (SubscribeToParentForm)
             {
                 Form?.Add(this);
             }
