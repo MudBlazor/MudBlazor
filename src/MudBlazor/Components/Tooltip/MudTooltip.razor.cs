@@ -135,7 +135,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public TooltipClickBehavior ClickBehavior { get; set; } = TooltipClickBehavior.ClickToHide;
+        public bool ToggleOnClick { get; set; }
 
         /// <summary>
         /// The visible state of the Tooltip.
@@ -163,7 +163,7 @@ namespace MudBlazor
 
         private void HandleMouseEnter()
         {
-            if (ShowOnHover && ClickBehavior != TooltipClickBehavior.ClickToShow)
+            if (ShowOnHover && ToggleOnClick != true)
             {
                 IsVisible = true;
             }
@@ -171,7 +171,7 @@ namespace MudBlazor
 
         private void HandleMouseLeave()
         {
-            if (ClickBehavior != TooltipClickBehavior.ClickToShow)
+            if (ToggleOnClick != true)
             {
                 IsVisible = false;
             }
@@ -179,7 +179,7 @@ namespace MudBlazor
 
         private void HandleFocusIn()
         {
-            if (ShowOnFocus && ClickBehavior != TooltipClickBehavior.ClickToShow)
+            if (ShowOnFocus && ToggleOnClick != true)
             {
                 IsVisible = true;
             }
@@ -187,7 +187,7 @@ namespace MudBlazor
 
         private void HandleFocusOut()
         {
-            if (ClickBehavior == TooltipClickBehavior.ClickToShow && ShowOnFocus == false)
+            if (ToggleOnClick == true && ShowOnFocus == false)
             {
                 return;
             }
@@ -195,12 +195,8 @@ namespace MudBlazor
         }
 
         private void HandleMouseUp()
-        {
-            if (ClickBehavior == TooltipClickBehavior.ClickToHide)
-            {
-                IsVisible = false;
-            }
-            else if (ClickBehavior == TooltipClickBehavior.ClickToShow)
+        { 
+            if (ToggleOnClick == true)
             {
                 IsVisible = !IsVisible;
             }
