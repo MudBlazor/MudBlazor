@@ -13,20 +13,26 @@
 
 @code {
     public record Model (string Name, int Age, Severity Status);
-    private int _totalItems;
+    private int _totalItems = 100;
+    IEnumerable<Model> _data;
 
-    private async Task<GridData<Model>> ServerReload(GridState<Model> state)
+    protected override void OnInitialized()
     {
         List<Model> data = new List<Model>();
 
-        int increment = state.Page * state.PageSize;
-
-        for (var i = increment; i < (increment + 10); i++)
+        // populate the data
+        for (var i = 0; i < 100; i++)
         {
             data.Add(new Model($"Name {i}", i, Severity.Info));
         }
 
-        _totalItems = 100;
+        _data = data;
+    }
+
+    private async Task<GridData<Model>> ServerReload(GridState<Model> state)
+    {
+        var data = _data.OrderBySortDefinitions(state);
+        data = data.Skip(state.Page * state.PageSize).Take(state.PageSize);
 
         return await Task.FromResult(new GridData<Model>() { TotalItems = _totalItems, Items = data });
     }

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
@@ -17,6 +18,12 @@ namespace MudBlazor
         /// Set true to hide the part of the pager which allows to change the page size.
         /// </summary>
         [Parameter] public bool DisableRowsPerPage { get; set; }
+
+        /// <summary>
+        /// Set true to disable user interaction with the backward/forward buttons
+        /// and the part of the pager which allows to change the page size.
+        /// </summary>
+        [Parameter] public bool Disabled { get; set; }
 
         /// <summary>
         /// Define a list of available page size options for the user to choose from
@@ -40,9 +47,9 @@ namespace MudBlazor
             .Replace("{last_item}", $"{Math.Min((DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage, DataGrid.GetFilteredItemsCount())}")
             .Replace("{all_items}", $"{DataGrid.GetFilteredItemsCount()}");
 
-        private bool BackButtonsDisabled => DataGrid == null ? false : DataGrid.CurrentPage == 0;
+        private bool BackButtonsDisabled => Disabled || (DataGrid == null ? false : DataGrid.CurrentPage == 0);
 
-        private bool ForwardButtonsDisabled => DataGrid == null ? false : (DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage >= DataGrid.GetFilteredItemsCount();
+        private bool ForwardButtonsDisabled => Disabled || (DataGrid == null ? false : (DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage >= DataGrid.GetFilteredItemsCount());
 
         protected string Classname =>
             new CssBuilder("mud-table-pagination-toolbar")
@@ -54,14 +61,14 @@ namespace MudBlazor
             await DataGrid?.SetRowsPerPageAsync(int.Parse(size));
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            base.OnInitialized();
-
             if (DataGrid != null)
             {
                 DataGrid.HasPager = true;
                 DataGrid.PagerStateHasChangedEvent += StateHasChanged;
+                var size = DataGrid._rowsPerPage ?? PageSizeOptions.First();
+                await DataGrid.SetRowsPerPageAsync(size);
             }
         }
 

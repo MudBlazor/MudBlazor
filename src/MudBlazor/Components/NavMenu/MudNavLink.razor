@@ -9,7 +9,7 @@
                  class="@LinkClassname" 
                  @attributes="@Attributes"
                  Match="@Match" 
-                 ActiveClass="active">
+                 ActiveClass="@ActiveClass">
             @if (!string.IsNullOrEmpty(Icon))
             {
                 <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname"/>
@@ -23,7 +23,7 @@
     {
         <div @onclick="OnClickHandler"
              class="@LinkClassname"
-             ActiveClass="active">
+             ActiveClass="@ActiveClass">
             @if (!string.IsNullOrEmpty(Icon))
             {
                 <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" />

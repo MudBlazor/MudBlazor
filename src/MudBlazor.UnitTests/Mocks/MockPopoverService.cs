@@ -16,6 +16,8 @@ namespace MudBlazor.UnitTests.Mocks
         private static RenderFragment DefaultFragment = (builder) => { };
         public IEnumerable<MudPopoverHandler> Handlers => _handlers;
 
+        public bool ThrowOnDuplicateProvider => false;
+
         public event EventHandler FragmentsChanged;
 
         public Task InitializeIfNeeded() => Task.FromResult(true);
@@ -26,5 +28,7 @@ namespace MudBlazor.UnitTests.Mocks
         });
 
         public Task<bool> Unregister(MudPopoverHandler handler) => Task.FromResult(true);
+
+        public ValueTask<int> CountProviders() => ValueTask.FromResult(0);
     }
 }

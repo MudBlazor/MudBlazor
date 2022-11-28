@@ -1,0 +1,46 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudFileUpload T="IBrowserFile">
+    <ButtonTemplate>
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   for="@context">
+            Single File
+        </MudButton>
+    </ButtonTemplate>
+    <SelectedTemplate>
+        @if (context != null)
+        {
+            <MudText>@context.Name</MudText>
+        }
+        else
+        {
+            <MudText>No File</MudText>
+        }
+    </SelectedTemplate>
+</MudFileUpload>
+
+<MudFileUpload T="IReadOnlyList<IBrowserFile>" Multiple>
+    <ButtonTemplate>
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Secondary"
+                   for="@context">
+            Multiple Files
+        </MudButton>
+    </ButtonTemplate>
+    <SelectedTemplate>
+        @if (context != null)
+        {
+            @foreach (var file in context)
+            {
+                <MudText>@file.Name</MudText>
+            }
+        }
+        else
+        {
+            <MudText>No Files</MudText>
+        }
+    </SelectedTemplate>
+</MudFileUpload>

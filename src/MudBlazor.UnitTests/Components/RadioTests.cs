@@ -14,10 +14,27 @@ namespace MudBlazor.UnitTests.Components
     public class RadioTests : BunitTest
     {
         [Test]
+        public void RadiGroup_CheckClassTest()
+        {
+            var comp = Context.RenderComponent<RadioGroupTest1>();
+
+            var inputControl = comp.FindComponent<MudInputControl>();
+            inputControl.Instance.InputContent.Should().NotBeNull();
+
+            comp.FindAll("div.mud-radio-group").Should().ContainSingle();
+            comp.FindAll("div.some-main-class").Should().ContainSingle();
+            comp.FindAll("div.some-input-class").Should().ContainSingle();
+            comp.FindAll(".some-main-class .some-input-class").Should().ContainSingle();
+            comp.FindAll(".mud-radio").Count.Should().Be(3);
+            // Input content should not have main class (Classname), but should have input class (InputClass)
+            comp.FindAll(".mud-radio-group.some-main-class").Should().BeEmpty();
+            comp.FindAll(".mud-radio-group.some-input-class").Should().ContainSingle();
+        }
+
+        [Test]
         public void RadioGroupTest1()
         {
             var comp = Context.RenderComponent<RadioGroupTest1>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
@@ -61,7 +78,6 @@ namespace MudBlazor.UnitTests.Components
         public void RadioGroupTest2()
         {
             var comp = Context.RenderComponent<RadioGroupTest2>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var spans = comp.FindAll("span.mud-radio-icons").ToArray();
@@ -76,7 +92,6 @@ namespace MudBlazor.UnitTests.Components
         public void RadioGroupTest3()
         {
             var comp = Context.RenderComponent<RadioGroupTest3>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var groups = comp.FindComponents<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
@@ -112,7 +127,6 @@ namespace MudBlazor.UnitTests.Components
         public void RadioGroupTest4()
         {
             var comp = Context.RenderComponent<RadioGroupTest4>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var groups = comp.FindComponents<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
@@ -148,7 +162,6 @@ namespace MudBlazor.UnitTests.Components
         public void RadioGroupTest5()
         {
             var comp = Context.RenderComponent<RadioGroupTest5>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
@@ -178,7 +191,6 @@ namespace MudBlazor.UnitTests.Components
         public void RadioGroupTest6()
         {
             var comp = Context.RenderComponent<RadioGroupTest6>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var buttons = comp.FindAll("label > span").ToArray();
@@ -204,7 +216,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<RadioGroupTest1>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var radio = comp.FindComponent<MudRadioGroup<string>>();
             radio.Instance.SelectedOption.Should().Be(null);
@@ -245,7 +256,7 @@ namespace MudBlazor.UnitTests.Components
             }
             catch (Exception ex)
             {
-                ex.Message.Should().Be("Unable to set property 'IMudRadioGroup' on object of type 'MudBlazor.MudRadio`1[[System.String, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'. The error was: MudRadioGroup<Char> has a child MudRadio<System.String> with mismatching generic type.");
+                Assert.AreEqual(ex.InnerException.GetType(), typeof(MudBlazor.Utilities.Exceptions.GenericTypeMismatchException));
             }
         }
     }

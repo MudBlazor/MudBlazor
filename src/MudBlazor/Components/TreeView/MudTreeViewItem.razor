@@ -3,7 +3,7 @@
 @typeparam T
 
 <li @attributes="UserAttributes" class="@Classname" style="@Style">
-    <div class="@ContentClassname" @onclick="OnItemClicked" @onclick:stopPropagation="true">
+    <div class="@ContentClassname" @onclick="OnItemClicked" @onclick:stopPropagation="true" @ondblclick="OnItemDoubleClicked" @ondblclick:stopPropagation="true">
         @if (Content != null)
         {
             @Content
@@ -14,7 +14,7 @@
 
             @if (MudTreeRoot != null && MudTreeRoot.MultiSelection)
             {
-                <MudCheckBox Class="mud-treeview-item-checkbox" Color="Color.Inherit" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" @bind-Checked="IsChecked" Disabled="@Disabled"></MudCheckBox> 
+                <MudCheckBox Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" @bind-Checked="IsChecked" Disabled="@Disabled"></MudCheckBox> 
             }
 
             @if (!string.IsNullOrEmpty(Icon))

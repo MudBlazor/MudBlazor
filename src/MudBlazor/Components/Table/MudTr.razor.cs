@@ -36,9 +36,6 @@ namespace MudBlazor
 
         [Parameter] public bool IsExpandable { get; set; }
 
-        [Parameter] public bool IsHeader { get; set; }
-
-        [Parameter] public bool IsFooter { get; set; }
 
         [Parameter]
         public EventCallback<bool> IsCheckedChanged { get; set; }
@@ -60,15 +57,31 @@ namespace MudBlazor
 
         public void OnRowClicked(MouseEventArgs args)
         {
+            StartEditingItem(buttonClicked: false);
+
+            if (Context?.Table.MultiSelection == true && !(Context?.Table.IsEditable == true))
+            {
+                IsChecked = !IsChecked;
+            }
+            Context?.Table.FireRowClickEvent(args, this, Item);
+        }
+
+        private void StartEditingItem() => StartEditingItem(buttonClicked: true);
+
+        private void StartEditingItem(bool buttonClicked)
+        {
             if (Context?.Table.IsEditable == true && Context?.Table.IsEditing == true && Context?.Table.IsEditRowSwitchingBlocked == true) return;
+
+            if ((Context?.Table.EditTrigger == TableEditTrigger.RowClick && buttonClicked) || (Context?.Table.EditTrigger == TableEditTrigger.EditButton && !buttonClicked)) return;
 
             // Manage any previous edited row
             Context.ManagePreviousEditedRow(this);
 
-            if (IsHeader || !(Context?.Table.Validator.IsValid ?? true))
+            if (!(Context?.Table.Validator.IsValid ?? true))
                 return;
 
-            Context?.Table.SetSelectedItem(Item);
+            if (!buttonClicked)
+                Context?.Table.SetSelectedItem(Item);
 
             // Manage edition the first time the row is clicked and if the table is editable
             if (!hasBeenClickedFirstTime && IsEditable)
@@ -89,12 +102,6 @@ namespace MudBlazor
 
                 Context?.Table.SetEditingItem(Item);
             }
-
-            if (Context?.Table.MultiSelection == true && !IsHeader && !(Context?.Table.IsEditable == true))
-            {
-                IsChecked = !IsChecked;
-            }
-            Context?.Table.FireRowClickEvent(args, this, Item);
         }
 
         protected override Task OnInitializedAsync()

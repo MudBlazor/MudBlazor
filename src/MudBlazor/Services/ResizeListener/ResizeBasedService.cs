@@ -4,22 +4,24 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
 namespace MudBlazor.Services
 {
-    public abstract class ResizeBasedService<TSelf, TInfo, TAction, TaskOption> : IAsyncDisposable
+    public abstract class ResizeBasedService<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] TSelf, TInfo, TAction, TTaskOption> : IAsyncDisposable
         where TSelf : class
-        where TInfo : SubscriptionInfo<TAction, TaskOption>
+        where TInfo : SubscriptionInfo<TAction, TTaskOption>
     {
-        protected SemaphoreSlim Semaphore = new (1, 1);
+        protected SemaphoreSlim Semaphore = new(1, 1);
 
         protected Dictionary<Guid, TInfo> Listeners { get; } = new();
+
         protected IJSRuntime JsRuntime { get; init; }
+
         protected DotNetObjectReference<TSelf> DotNetRef { get; set; }
 
         public ResizeBasedService(IJSRuntime jsRuntime)
@@ -27,16 +29,15 @@ namespace MudBlazor.Services
             JsRuntime = jsRuntime;
         }
 
-
         public async Task<bool> Unsubscribe(Guid subscriptionId)
         {
-            if (DotNetRef == null)
+            if (DotNetRef is null)
             {
                 return false;
             }
 
-            var info = Listeners.FirstOrDefault(x => x.Value.ContainsSubscription(subscriptionId) == true);
-            if (info.Value == null)
+            var info = Listeners.FirstOrDefault(x => x.Value.ContainsSubscription(subscriptionId));
+            if (info.Value is null)
             {
                 return false;
             }
@@ -46,16 +47,11 @@ namespace MudBlazor.Services
                 await Semaphore.WaitAsync();
 
                 var isLastSubscriber = info.Value.RemoveSubscription(subscriptionId);
-                if (isLastSubscriber == true)
+                if (isLastSubscriber)
                 {
                     Listeners.Remove(info.Key);
 
-                    try
-                    {
-                        await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.cancelListener", info.Key);
-                    }
-                    catch (JSDisconnectedException) { }
-                    catch (TaskCanceledException) { }
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.cancelListener", info.Key);
                 }
 
                 if (Listeners.Count == 0)
@@ -74,18 +70,13 @@ namespace MudBlazor.Services
 
         public async ValueTask DisposeAsync()
         {
-            if (DotNetRef == null) { return; }
+            if (DotNetRef is null) { return; }
             if (Listeners.Count == 0) { return; }
 
             var ids = Listeners.Keys.ToArray();
             Listeners.Clear();
 
-            try
-            {
-                await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.cancelListeners", ids);
-            }
-            catch (JSDisconnectedException) { }
-            catch (TaskCanceledException) { }
+            await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.cancelListeners", ids);
 
             DotNetRef.Dispose();
         }

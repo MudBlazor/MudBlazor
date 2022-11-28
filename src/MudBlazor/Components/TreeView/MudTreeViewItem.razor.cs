@@ -18,6 +18,7 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-treeview-item")
+            .AddClass("mud-treeview-select-none", MudTreeRoot?.ExpandOnDoubleClick == true)
           .AddClass(Class)
         .Build();
 
@@ -255,6 +256,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        /// <summary>
+        /// Tree item double click event.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnDoubleClick { get; set; }
+
         public bool Loading { get; set; }
 
         bool HasChild => ChildContent != null ||
@@ -321,6 +327,23 @@ namespace MudBlazor
             {
                 Command.Execute(Value);
             }
+        }
+
+        protected async Task OnItemDoubleClicked(MouseEventArgs ev)
+        {
+            if (MudTreeRoot?.IsSelectable ?? false)
+            {
+                await MudTreeRoot.UpdateSelected(this, !_isSelected);
+            }
+
+            if (HasChild && (MudTreeRoot?.ExpandOnDoubleClick ?? false))
+            {
+                Expanded = !Expanded;
+                TryInvokeServerLoadFunc();
+                await ExpandedChanged.InvokeAsync(Expanded);
+            }
+
+            await OnDoubleClick.InvokeAsync(ev);
         }
 
         protected internal Task OnItemExpanded(bool expanded)

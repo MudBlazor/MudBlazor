@@ -10,7 +10,7 @@ namespace MudBlazor
 {
     public partial class MudRadio<T> : MudComponentBase, IDisposable
     {
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         protected string Classname =>
         new CssBuilder("mud-radio")
@@ -27,6 +27,7 @@ namespace MudBlazor
             .AddClass($"mud-radio-dense", Dense)
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-checked", Checked)
+            .AddClass("mud-error-text", MudRadioGroup?.HasErrors)
             .Build();
 
         protected string RadioIconsClassNames =>
@@ -42,6 +43,11 @@ namespace MudBlazor
         protected string CheckedIconClassName =>
         new CssBuilder("mud-icon-root mud-svg-icon mud-radio-icon-checked")
             .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
+            .Build();
+
+        protected string ChildSpanClassName =>
+        new CssBuilder("mud-radio-content mud-typography mud-typography-body1")
+            .AddClass("mud-error-text", MudRadioGroup.HasErrors)
             .Build();
 
         private IMudRadioGroup _parent;
@@ -69,8 +75,8 @@ namespace MudBlazor
         {
             return placement switch
             {
-                Placement.Left => RightToLeft ? Placement.Right : Placement.Left,
-                Placement.Right => RightToLeft ? Placement.Left : Placement.Right,
+                Placement.Left => RightToLeft ? Placement.End : Placement.Start,
+                Placement.Right => RightToLeft ? Placement.Start : Placement.End,
                 _ => placement
             };
         }
@@ -94,7 +100,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Behavior)]
-        public Placement Placement { get; set; } = Placement.Right;
+        public Placement Placement { get; set; } = Placement.End;
 
         /// <summary>
         /// The value to associate to the button.
@@ -190,9 +196,11 @@ namespace MudBlazor
         public void Dispose()
         {
             MudRadioGroup?.UnregisterRadio(this);
+            _keyInterceptor?.Dispose();
         }
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+        private IKeyInterceptor _keyInterceptor;
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         private string _elementId = "radio" + Guid.NewGuid().ToString().Substring(0, 8);
 
@@ -200,6 +208,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _keyInterceptor = _keyInterceptorFactory.Create();
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -214,5 +223,6 @@ namespace MudBlazor
             }
             await base.OnAfterRenderAsync(firstRender);
         }
+
     }
 }

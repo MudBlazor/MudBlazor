@@ -9,7 +9,7 @@
         <MudText Typo="Typo.body2" Class="mud-table-pagination-caption">
             @RowsPerPageString
         </MudText>
-        <MudSelect T="string" ValueChanged="@SetRowsPerPageAsync" Value="@DataGrid?.RowsPerPage.ToString()" Class="mud-table-pagination-select" DisableUnderLine="true" Dense="true">
+        <MudSelect T="string" ValueChanged="@SetRowsPerPageAsync" Value="@DataGrid?.RowsPerPage.ToString()" Class="mud-table-pagination-select" DisableUnderLine="true" Dense="true" Disabled="@Disabled">
             @foreach (int pageSize in PageSizeOptions)
             {
                 <MudSelectItem T="string" Value="@pageSize.ToString()">@pageSize.ToString().ToUpper()</MudSelectItem>

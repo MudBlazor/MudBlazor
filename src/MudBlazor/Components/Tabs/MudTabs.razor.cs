@@ -31,10 +31,11 @@ namespace MudBlazor
         private double _allTabsSize;
         private double _scrollPosition;
 
+        private IResizeObserver _resizeObserver;
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
-        [Inject] private IResizeObserver _resizeObserver { get; set; }
+        [Inject] private IResizeObserverFactory _resizeObserverFactory { get; set; }
 
         /// <summary>
         /// If true, render all tabs and hide (display:none) every non-active.
@@ -279,8 +280,19 @@ namespace MudBlazor
             Panels = _panels.AsReadOnly();
         }
 
+        protected override void OnInitialized()
+        {
+            _resizeObserver = _resizeObserverFactory.Create();
+            base.OnInitialized();
+        }
+
         protected override void OnParametersSet()
         {
+            if (_resizeObserver == null)
+            {
+                _resizeObserver = _resizeObserverFactory.Create();
+            }
+
             Rerender();
         }
 

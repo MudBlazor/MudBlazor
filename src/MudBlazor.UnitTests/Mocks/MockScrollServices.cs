@@ -3,6 +3,16 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Mocks
 {
+    public class MockScrollListenerFactory : IScrollListenerFactory
+    {
+
+        public IScrollListener Create(string selector) =>
+            new MockScrollListener()
+            {
+                Selector = selector,
+            };
+    }
+
     /// <summary>
     /// Mock for scroll listener
     /// </summary>
@@ -15,6 +25,11 @@ namespace MudBlazor.UnitTests.Mocks
         public MockScrollListener()
         {
             OnScroll?.Invoke(this, new ScrollEventArgs());
+        }
+
+        public void Dispose()
+        {
+           
         }
     }
 
@@ -31,6 +46,8 @@ namespace MudBlazor.UnitTests.Mocks
         public Task ScrollTo(int left, int top, ScrollBehavior scrollBehavior) => Task.CompletedTask;
 
         public ValueTask ScrollToAsync(string id, int left, int top, ScrollBehavior scrollBehavior) => ValueTask.CompletedTask;
+
+        public ValueTask ScrollIntoViewAsync(string selector, ScrollBehavior behavior) => ValueTask.CompletedTask;
 
         public Task ScrollToFragment(string id, ScrollBehavior behavior) => Task.CompletedTask;
 

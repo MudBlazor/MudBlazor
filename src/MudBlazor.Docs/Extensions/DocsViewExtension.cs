@@ -1,11 +1,11 @@
-﻿using Blazored.LocalStorage;
-using Blazor.Analytics;
+﻿using Blazor.Analytics;
+using Blazored.LocalStorage;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
 using MudBlazor.Docs.Services.UserPreferences;
-using MudBlazor.Services;
 using MudBlazor.Examples.Data;
+using MudBlazor.Services;
 
 namespace MudBlazor.Docs.Extensions
 {
@@ -16,13 +16,20 @@ namespace MudBlazor.Docs.Extensions
             services.AddMudServices(config =>
             {
                 config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
-                config.SnackbarConfiguration.PreventDuplicates = false;
                 config.SnackbarConfiguration.NewestOnTop = false;
                 config.SnackbarConfiguration.ShowCloseIcon = true;
                 config.SnackbarConfiguration.VisibleStateDuration = 10000;
                 config.SnackbarConfiguration.HideTransitionDuration = 500;
                 config.SnackbarConfiguration.ShowTransitionDuration = 500;
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+
+                // we're currently planning on deprecating `PreventDuplicates`, at least to the end dev. however,
+                // we may end up wanting to instead set it as internal because the docs project relies on it
+                // to ensure that the Snackbar always allows duplicates. disabling the warning for now because
+                // the project is set to treat warnings as errors.
+#pragma warning disable 0618
+                config.SnackbarConfiguration.PreventDuplicates = false;
+#pragma warning restore 0618
             });
 
             services.AddScoped<GitHubApiClient>();

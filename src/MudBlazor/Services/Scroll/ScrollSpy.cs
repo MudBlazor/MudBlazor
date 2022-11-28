@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
@@ -61,6 +62,7 @@ namespace MudBlazor
         private readonly IJSRuntime _js;
         private DotNetObjectReference<ScrollSpy> _dotNetRef;
 
+        [DynamicDependency(nameof(SectionChangeOccured))]
         public ScrollSpy(IJSRuntime js)
         {
             _js = js;
@@ -82,14 +84,14 @@ namespace MudBlazor
         public async Task ScrollToSection(string id)
         {
             CenteredSection = id;
-            await _js.InvokeVoidAsync
+            await _js.InvokeVoidAsyncWithErrorHandling
             ("mudScrollSpy.scrollToSection", id.Trim('#'));
         }
 
         public async Task SetSectionAsActive(string id)
         {
             CenteredSection = id;
-            await _js.InvokeVoidAsync
+            await _js.InvokeVoidAsyncWithErrorHandling
             ("mudScrollSpy.activateSection", id.Trim('#'));
         }
 
@@ -100,7 +102,7 @@ namespace MudBlazor
             try
             {
                 _dotNetRef?.Dispose();
-                await _js.InvokeVoidAsync("mudScrollSpy.unspy");
+                await _js.InvokeVoidAsyncWithErrorHandling("mudScrollSpy.unspy");
             }
             catch (Exception)
             {

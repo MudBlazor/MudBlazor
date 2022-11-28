@@ -76,6 +76,13 @@ namespace MudBlazor
         public bool ExpandOnClick { get; set; }
 
         /// <summary>
+        /// If true, double clicking anywhere on the item will expand it, if it has childs.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.ClickAction)]
+        public bool ExpandOnDoubleClick { get; set; }
+
+        /// <summary>
         /// Hover effect for item's on mouse-over.
         /// </summary>
         [Parameter]
@@ -233,6 +240,11 @@ namespace MudBlazor
             }
 
             return SelectedValuesChanged.InvokeAsync(new HashSet<T>(_selectedValues.Select(i => i.Value)));
+        }
+
+        public async Task Select(MudTreeViewItem<T> item, bool isSelected = true)
+        {
+            await UpdateSelected(item, isSelected);
         }
 
         internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
