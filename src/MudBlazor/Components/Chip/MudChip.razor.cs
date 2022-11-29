@@ -16,26 +16,21 @@ namespace MudBlazor
 
         [Inject] public IJsApiService JsApiService { get; set; }
 
-        protected string Classname
-        {
-            get
-            {
-                bool isClickable
-                    = !ChipSet?.ReadOnly ?? (OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
+        protected string Classname =>
+            new CssBuilder("mud-chip")
+                .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
+                .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
+                .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
+                .AddClass("mud-clickable", IsClickable)
+                .AddClass("mud-ripple", IsClickable && !DisableRipple)
+                .AddClass("mud-chip-label", Label)
+                .AddClass("mud-disabled", Disabled)
+                .AddClass("mud-chip-selected", IsSelected)
+                .AddClass(Class)
+                .Build();
 
-                return new CssBuilder("mud-chip")
-                    .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
-                    .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
-                    .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
-                    .AddClass("mud-clickable", isClickable)
-                    .AddClass("mud-ripple", isClickable && !DisableRipple)
-                    .AddClass("mud-chip-label", Label)
-                    .AddClass("mud-disabled", Disabled)
-                    .AddClass("mud-chip-selected", IsSelected)
-                    .AddClass(Class)
-                    .Build();
-            }
-        }
+        private bool IsClickable =>
+            !ChipSet?.ReadOnly ?? (OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
 
         //Cannot test the get variant (last line)
         [ExcludeFromCodeCoverage]
