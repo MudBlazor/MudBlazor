@@ -17,17 +17,20 @@ namespace MudBlazor
         [Inject] public IJsApiService JsApiService { get; set; }
 
         protected string Classname =>
-        new CssBuilder("mud-chip")
-          .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
-          .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
-          .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
-          .AddClass("mud-clickable", !ChipSet?.ReadOnly ?? OnClick.HasDelegate)
-          .AddClass("mud-ripple", !ChipSet?.ReadOnly ?? OnClick.HasDelegate && !DisableRipple)
-          .AddClass("mud-chip-label", Label)
-          .AddClass("mud-disabled", Disabled)
-          .AddClass("mud-chip-selected", IsSelected)
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-chip")
+                .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
+                .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
+                .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
+                .AddClass("mud-clickable", IsClickable)
+                .AddClass("mud-ripple", IsClickable && !DisableRipple)
+                .AddClass("mud-chip-label", Label)
+                .AddClass("mud-disabled", Disabled)
+                .AddClass("mud-chip-selected", IsSelected)
+                .AddClass(Class)
+                .Build();
+
+        private bool IsClickable =>
+            !ChipSet?.ReadOnly ?? (OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
 
         //Cannot test the get variant (last line)
         [ExcludeFromCodeCoverage]
@@ -48,7 +51,7 @@ namespace MudBlazor
             {
                 return SelectedColor;
             }
-            else if(IsSelected && SelectedColor == Color.Inherit)
+            else if (IsSelected && SelectedColor == Color.Inherit)
             {
                 return Color;
             }
@@ -207,7 +210,7 @@ namespace MudBlazor
         public bool ForceLoad { get; set; }
 
         /// <summary>
-        /// If true, this chip is selected by default if used in a ChipSet. 
+        /// If true, this chip is selected by default if used in a ChipSet.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chip.Behavior)]

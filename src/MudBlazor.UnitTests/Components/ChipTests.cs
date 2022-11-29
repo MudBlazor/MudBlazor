@@ -23,12 +23,12 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ChipOnClickTest>();
             // print the generated html
-            
+
             // chip should have mud-clickable and mud-ripple classes
             var chip = comp.Find("div.mud-chip");
             chip.ClassName.Should().Contain("mud-clickable");
             chip.ClassName.Should().Contain("mud-ripple");
-            
+
             // click on chip
             chip.Click();
 
@@ -44,12 +44,12 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ChipOnClickTest>();
             // print the generated html
-            
+
             // chip should have mud-clickable and mud-ripple classes
             var chip = comp.Find("div.mud-chip");
             chip.ClassName.Should().Contain("mud-clickable");
             chip.ClassName.Should().Contain("mud-ripple");
-            
+
             // click on close button
             comp.Find("button.mud-chip-close-button").Click();
 
@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ChipLinkTest>();
             var chip = comp.FindComponent<MudChip>();
-            
+
             await comp.InvokeAsync(() => chip.Instance.ForceRerender());
             await comp.InvokeAsync(() => chip.Instance.OnClickHandler(new MouseEventArgs()));
 
@@ -72,6 +72,20 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => chip.Instance.OnClickHandler(new MouseEventArgs()));
 
             comp.WaitForAssertion(() => comp.Find("#chip-click-test-expected-value").InnerHtml.Should().Be(""));
+        }
+
+        /// <summary>
+        /// If href set on chip pointer cursor should be visible
+        /// </summary>
+        [Test]
+        public void Chip_Href_Cursor_Test()
+        {
+            var comp = Context.RenderComponent<ChipHrefCursorTest>();
+
+            // chip should have mud-clickable and mud-ripple classes
+            var chip = comp.Find("div.mud-chip");
+            chip.ClassName.Should().Contain("mud-clickable");
+            chip.ClassName.Should().Contain("mud-ripple");
         }
     }
 }
