@@ -851,6 +851,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Should_IndicateLoadingWithCircularProgressIndicator()
         {
+            // TODO: use a TaskCompletionSource that allows control over the search task
+            // for reliable testing.  Applies to other tests like this one.
+            // Currently we increase the load time to 50mms to catch the progress UI
+
             // Arrange
             var comp = Context.RenderComponent<AutocompleteTest1>();
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
