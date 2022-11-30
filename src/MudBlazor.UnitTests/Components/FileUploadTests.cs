@@ -26,12 +26,20 @@ namespace MudBlazor.UnitTests.Components
     public class FileUploadTests : BunitTest
     {
         /// <summary>
-        /// Verifies that T is a valid type
+        /// Verifies that invalid T values are logged using the provided ILogger
         /// </summary>
         [Test]
-        public void FileUpload_VerifyGenericTest()
+        public void InvalidTLogWarning_Test()
         {
-            //waiting for #5549
+            var provider = new MockLoggerProvider();
+            var logger = provider.CreateLogger(GetType().FullName) as MockLogger;
+            Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider)); //set up the logging provider
+            var comp = Context.RenderComponent<MudFileUpload<MudTextField<string>>>();
+
+            var entries = logger.GetEntries();
+            entries.Count.Should().Be(1);
+            entries[0].Level.Should().Be(LogLevel.Warning);
+            entries[0].Message.Should().Be(string.Format("T must be of type {0} or {1}", typeof(IReadOnlyList<IBrowserFile>), typeof(IBrowserFile)));
         }
 
         /// <summary>
@@ -211,55 +219,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that invalid T values are logged using the provided ILogger
+        /// Tests that more than 10 files can be uploaded
         /// </summary>
         [Test]
-        public void InvalidTLogWarning_Test()
+        public void FileUpload_MaximumFileCountTest()
         {
-            var provider = new MockLoggerProvider();
-            var logger = provider.CreateLogger(GetType().FullName) as MockLogger;
-            Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider)); //set up the logging provider
-            var comp = Context.RenderComponent<MudFileUpload<MudTextField<string>>>();
+            List<InputFileContent> Files = new();
+            for (var i = 0; i < 11; i++)
+            {
+                Files.Add(InputFileContent.CreateFromText("Garderoben is a farmer!", $"upload{i}.txt"));
+            }
 
-            var entries = logger.GetEntries();
-            entries.Count.Should().Be(1);
-            entries[0].Level.Should().Be(LogLevel.Warning);
-            entries[0].Message.Should().Be(string.Format("T must be of type {0} or {1}", typeof(IReadOnlyList<IBrowserFile>), typeof(IBrowserFile)));
-        }
-
-        /// <summary>
-        /// Tests multiple file upload
-        /// </summary>
-        [Test]
-        public async Task FileUpload_MultipleFiles()
-        {
-            int nFiles = 20;
-            TestFile[] testFiles = new TestFile[nFiles];
-            for (int i = 0; i < 20; i++)
-                testFiles[i] = new TestFile() { Name = i.ToString() };
-
-            var testFilesArgs = new InputFileChangeEventArgs(testFiles);
+            Files.Count.Should().Be(11); //ensure there are 11 files
 
             var comp = Context.RenderComponent<FileUploadMultipleFilesTest>();
 
             var multiple = comp.FindComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
-            var multipleInput = multiple.FindComponent<InputFile>().Instance;
-            await comp.InvokeAsync(() => multipleInput.OnChange.InvokeAsync(testFilesArgs));
+            var multipleInput = multiple.FindComponent<InputFile>();
+            multipleInput.UploadFiles(Files.ToArray()); //upload second files
 
-            var outputs = comp.Find(".multipleFileUploadResult");
-            outputs.InnerHtml.Should().Be(nFiles.ToString());
-        }
-        record TestFile : IBrowserFile
-        {
-            public string Name { get; init; }
-            public DateTimeOffset LastModified { get; init; }
-            public long Size { get; init; }
-            public string ContentType { get; init; } = string.Empty;
-
-            public Stream OpenReadStream(long maxAllowedSize = 512000, CancellationToken cancellationToken = default)
-            {
-                throw new NotImplementedException();
-            }
+            comp.Instance.Files.Count.Should().Be(11); //if no error occurs, we have successfully uploaded more than 10 files
         }
     }
 }

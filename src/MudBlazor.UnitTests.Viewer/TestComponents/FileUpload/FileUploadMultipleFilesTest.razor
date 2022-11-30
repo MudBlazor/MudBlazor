@@ -1,6 +1,8 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudFileUpload T="IReadOnlyList<IBrowserFile>" MaximumFileCount="100" OnFilesChanged="OnInputFileChanged">
+
+
+<MudFileUpload T="IReadOnlyList<IBrowserFile>" MaximumFileCount="100" @bind-Files="Files">
     <ButtonTemplate>
         <MudButton HtmlTag="label" for="@context">Upload</MudButton>
     </ButtonTemplate>
@@ -11,20 +13,7 @@
     </SelectedTemplate>
 </MudFileUpload>
 
-<div class="multipleFileUploadResult">
-    @(fileCount)
-</div>
-
 
 @code {
-
-    private int? fileCount = null;
-
-    private void OnInputFileChanged(InputFileChangeEventArgs e)
-    {
-        var files = e.GetMultipleFiles(100);
-        fileCount = files.Count;
-    }
-
-
+    public IReadOnlyList<IBrowserFile> Files { get; set; }
 }
