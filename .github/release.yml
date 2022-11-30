@@ -1,0 +1,20 @@
+changelog:
+  exclude:
+    labels:
+      - build
+      - docs
+      - tests
+      - dependencies
+  categories:
+    - title: New Features
+      labels:
+        - enhancement
+    - title: Bug Fixes
+      labels:
+        - bug
+    - title: Breaking Changes
+      labels:
+        - breaking change
+    - title: Other Changes
+      labels:
+        - "*"
