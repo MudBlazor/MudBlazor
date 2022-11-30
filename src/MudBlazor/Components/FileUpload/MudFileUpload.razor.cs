@@ -98,12 +98,18 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
         public string InputStyle { get; set; }
+        /// <summary>
+        /// Maximum number of files that can be uploaded
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public int MaximumFileCount { get; set; } = 10;
 
         private async Task OnChange(InputFileChangeEventArgs args)
         {
             if (typeof(T) == typeof(IReadOnlyList<IBrowserFile>))
             {
-                _value = (T)args.GetMultipleFiles();
+                _value = (T)args.GetMultipleFiles(MaximumFileCount);
             }
             else if (typeof(T) == typeof(IBrowserFile))
             {
