@@ -124,18 +124,18 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public bool Hover { get; set; } = true;
+        public bool ShowOnHover { get; set; } = true;
 
         /// <summary>
         /// Determines on which events the tooltip will act
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public bool Focus { get; set; } = true;
+        public bool ShowOnFocus { get; set; } = true;
 
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public bool Click { get; set; } = false;
+        public bool ShowOnClick { get; set; } = false;
 
         /// <summary>
         /// The visible state of the Tooltip.
@@ -163,7 +163,7 @@ namespace MudBlazor
 
         private void HandleMouseEnter()
         {
-            if (Hover)
+            if (ShowOnHover)
             {
                 IsVisible = true;
             }
@@ -171,14 +171,14 @@ namespace MudBlazor
 
         private void HandleMouseLeave()
         {
-            if (Hover == false)
+            if (ShowOnHover == false)
                 return;
             IsVisible = false;
         }
 
         private void HandleFocusIn()
         {
-            if (Focus)
+            if (ShowOnFocus)
             {
                 IsVisible = true;
             }
@@ -186,7 +186,7 @@ namespace MudBlazor
 
         private void HandleFocusOut()
         {
-            if (Focus == false)
+            if (ShowOnFocus == false)
             {
                 return;
             }
@@ -195,7 +195,7 @@ namespace MudBlazor
 
         private void HandleMouseUp()
         {
-            if (Click == true)
+            if (ShowOnClick == true)
             {
                 IsVisible = !IsVisible;
             }

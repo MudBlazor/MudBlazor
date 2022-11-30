@@ -3,7 +3,7 @@
 <MudGrid>
     <MudItem xs="12" sm="6" md="9" Class="d-flex flex-column align-center justify-center">
         <MudButton Class="mb-4" tabindex="-1" Variant="Variant.Outlined" OnClick="@(async() => await _iconButton1.FocusAsync())">Focus The Element</MudButton>
-        <MudTooltip Click="_click" Focus="_focus" Hover="_hover" Text="Im Mud Tooltip">
+        <MudTooltip ShowOnClick="_click" ShowOnFocus="_focus" ShowOnHover="_hover" Text="Im Mud Tooltip">
             <MudIconButton @ref="_iconButton1" Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Primary" Size="Size.Large" />
         </MudTooltip>
     </MudItem>
