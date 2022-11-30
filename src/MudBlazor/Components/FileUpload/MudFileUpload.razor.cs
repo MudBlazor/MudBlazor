@@ -99,7 +99,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FileUpload.Appearance)]
         public string InputStyle { get; set; }
         /// <summary>
-        /// Number of files accepted when multiple attribute is set
+        /// Maximum number of files that can be uploaded
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
