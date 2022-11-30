@@ -97,7 +97,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        protected async Task OnClickHandler(MouseEventArgs ev)
+        protected virtual async Task OnClickHandler(MouseEventArgs ev)
         {
             if (Disabled)
                 return;
