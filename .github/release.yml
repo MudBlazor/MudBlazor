@@ -4,7 +4,8 @@ changelog:
       - build
       - docs
       - tests
-      - dependencies
+      - dependency
+      - refactor
   categories:
     - title: New Features
       labels:
