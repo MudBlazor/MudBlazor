@@ -669,7 +669,73 @@ namespace MudBlazor.UnitTests.Components
             datepicker.ErrorText.Should().Be("Only full hours allowed");
         }
 
+        /// <summary>
+        /// TimePicker should be validated like every other form component when time is selected using picker
+        /// </summary>
+        [Test]
+        public async Task FormWithTimePickerTest_When_TimeSelectedViaPicker()
+        {
+            var comp = Context.RenderComponent<FormWithTimePickerTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dateComp = comp.FindComponent<MudTimePicker>();
+            var datepicker = comp.FindComponent<MudTimePicker>().Instance;
+            // check initial state: form should not be valid because datepicker is required
+            form.IsValid.Should().Be(false);
+            datepicker.Error.Should().BeFalse();
+            datepicker.ErrorText.Should().BeNullOrEmpty();
+            comp.Find("input").Click();
+            // select 09:30
+            comp.FindAll("div.mud-picker-stick-inner.mud-hour")[8].Click();
+            comp.FindAll("div.mud-minute")[30].Click();
+            // wait for picker to close
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            form.IsTouched.Should().Be(true);
+            form.IsValid.Should().Be(true);
+            form.Errors.Length.Should().Be(0);
+            datepicker.Error.Should().BeFalse();
+            datepicker.ErrorText.Should().BeNullOrEmpty();
+            // clear selection
+            comp.SetParam(x => x.Time, null);
+            form.IsValid.Should().Be(false);
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Required");
+            datepicker.Error.Should().BeTrue();
+            datepicker.ErrorText.Should().Be("Required");
+        }
 
+        /// <summary>
+        /// TimePicker should be validated like every other form component when time is selected using picker
+        /// </summary>
+        [Test]
+        public async Task Form_Should_ValidateTimePickerTest_When_TimeSelectedViaPicker()
+        {
+            var comp = Context.RenderComponent<FormWithTimePickerTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dateComp = comp.FindComponent<MudTimePicker>();
+            var datepicker = comp.FindComponent<MudTimePicker>().Instance;
+            dateComp.SetParam(x => x.Validation, new Func<TimeSpan?, string>(time => time != null && time.Value.Minutes == 0 ? null : "Only full hours allowed"));
+            comp.Find("input").Click();
+            // select 09:00
+            comp.FindAll("div.mud-picker-stick-inner.mud-hour")[8].Click();
+            comp.FindAll("div.mud-minute")[0].Click();
+            // wait for picker to close
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            form.IsTouched.Should().Be(true);
+            form.IsValid.Should().Be(true);
+            form.Errors.Length.Should().Be(0);
+            datepicker.Error.Should().BeFalse();
+            datepicker.ErrorText.Should().BeNullOrEmpty();
+            // set invalid date:
+            comp.Find("input").Click();
+            // select 17:05
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[4].Click();
+            comp.FindAll("div.mud-minute")[5].Click();
+            form.IsValid.Should().Be(false);
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Only full hours allowed");
+            datepicker.Error.Should().BeTrue();
+            datepicker.ErrorText.Should().Be("Only full hours allowed");
+        }
 
         /// <summary>
         /// Testing the functionality of the EditForm example from the docs.
