@@ -50,6 +50,9 @@ namespace MudBlazor.UnitTests.Mocks
             if (breakpoint == Breakpoint.None)
                 return false;
 
+            if (breakpoint == Breakpoint.Always)
+                return true;
+
             return breakpoint switch
             {
                 Breakpoint.Xs => reference == Breakpoint.Xs,
