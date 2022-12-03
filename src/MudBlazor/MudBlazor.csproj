@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>6.1.2</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>Nuget.png</PackageIcon>
     <Company>MudBlazor</Company>
