@@ -3,11 +3,11 @@ name: deploy-mudblazor
 on:
   workflow_dispatch:
     inputs:
-        website-version:
-          description: 'Tag to publish v[0-9]+.[0-9]+.[0-9]+*'
-          required: true
-          default: '' 
-          type: string
+      website-version:
+        description: 'Tag to publish v[0-9]+.[0-9]+.[0-9]+*'
+        required: true
+        default: ''
+        type: string
   push:
     tags: 
       - "v[0-9]+.[0-9]+.[0-9]+*"
@@ -43,4 +43,3 @@ jobs:
     secrets:
       publish-profile: ${{ secrets.PUBLISH_MUDBLAZOR }}
       azure-cred: ${{ secrets.AZURE_CREDENTIALS_MUD_PROD }}
-
