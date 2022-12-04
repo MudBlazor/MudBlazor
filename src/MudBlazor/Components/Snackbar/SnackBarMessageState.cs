@@ -78,6 +78,17 @@ namespace MudBlazor
             }
         }
 
+        public string SnackbarContentMessageClass
+        {
+            get
+            {
+                var result = IsNullOrEmpty(Options.SnackbarContentMessageClass) ?
+                    $"mud-snackbar-content-message" :
+                    Options.SnackbarContentMessageClass;
+                return result;
+            }
+        }
+
         public string TransitionClass
         {
             get
