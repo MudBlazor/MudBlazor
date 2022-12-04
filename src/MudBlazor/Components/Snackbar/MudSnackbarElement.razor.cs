@@ -25,6 +25,7 @@ namespace MudBlazor
         private Variant ActionVariant => Snackbar?.State.Options.ActionVariant ?? Snackbar?.State.Options.SnackbarVariant ?? Variant.Text;
         private string AnimationStyle => Snackbar?.State.AnimationStyle + Style;
         private string SnackbarClass => Snackbar?.State.SnackbarClass;
+        private string SnackbarContentMessageClass => Snackbar?.State?.SnackbarContentMessageClass;
         private RenderFragment Css;
         private bool ShowActionButton => Snackbar?.State.ShowActionButton == true;
         private bool ShowCloseIcon => Snackbar?.State.ShowCloseIcon == true;

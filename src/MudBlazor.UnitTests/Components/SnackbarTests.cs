@@ -259,5 +259,28 @@ namespace MudBlazor.UnitTests.Components
             _provider.Find("#mud-snackbar-container").InnerHtml.Trim().Should().NotBeEmpty();
             _provider.Find("div.mud-snackbar-content-message").TrimmedText().Should().Be("Boom, big reveal. Im a pickle!");
         }
+
+        [Test]
+        public async Task SnackbarContentMessageClassIsDefaultTest()
+        {
+            var defaultClassName = "mud-snackbar-content-message";
+
+            await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!"));
+
+            _provider.Find($"div.{defaultClassName}").Should().NotBe(null);
+        }
+
+        [Test]
+        public async Task SnackbarContentMessageClassIsCustomTest()
+        {
+            var defaultClassName = "mud-snackbar-content-message";
+            var customClassName = "mud-typography-nowrap";
+
+            await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Success, config => { config.SnackbarContentMessageClass = customClassName; }));
+
+            Assert.Throws(typeof(ElementNotFoundException), ()=>_provider.Find($"div.{defaultClassName}"));
+            _provider.Find($"div.{customClassName}").Should().NotBe(null);
+        }
+
     }
 }

@@ -23,6 +23,11 @@ namespace MudBlazor
 
         public string SnackbarTypeClass { get; set; }
 
+        /// <summary>
+        /// Overwrites mud-snackbar-content-message class applied by default
+        /// </summary>
+        public string SnackbarContentMessageClass { get; set; }
+
         public bool CloseAfterNavigation { get; set; }
 
         public bool HideIcon { get; set; }
