@@ -20,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Set tag from input
-      if: ${{ github.event.inputs.nuget-version != '' }}
+      if: ${{ github.event.inputs.website-version != '' }}
       env:
-        TAG: ${{ github.event.inputs.nuget-version }}
+        TAG: ${{ github.event.inputs.website-version }}
       run: echo "VERSION=${TAG#v}" >> $GITHUB_ENV
     - name: Set version variable from tag
       if: ${{ github.ref_type == 'tag' }}
