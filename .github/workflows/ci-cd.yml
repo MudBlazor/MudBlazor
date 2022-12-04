@@ -1,10 +1,10 @@
 name: ci-cd
 
 on:
-  workflow_dispatch:
-  push:
+  #workflow_dispatch:
+  #push:
     branches: [ dev ]
-  pull_request:
+  #pull_request:
 
 jobs:
   pipeline:

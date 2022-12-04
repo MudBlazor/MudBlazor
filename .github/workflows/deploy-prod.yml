@@ -1,7 +1,7 @@
 name: deploy-prod
 
 on:
-  workflow_dispatch:
+  #workflow_dispatch:
     inputs:
         deploy-task:
           description: 'Publish to staging or swap slots'
