@@ -39,8 +39,11 @@
   <!--We need to do this because the project is not yet aware of files that were generated after the build started-->  
   <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild" DependsOnTargets="CompileDocs;ReadFromFile">
     <ItemGroup>
-      <Compile Include="Models/Snippets.generated.cs" Condition="!Exists('Models/Snippets.generated.cs')" />
-      <Compile Include="Models/DocStrings.generated.cs" Condition="!Exists('Models/DocStrings.generated.cs')" />
+      <!--Include without duplication-->
+      <_NewCompiledSnippets Include="Models/Snippets.generated.cs" Exclude="@(Compile)" />
+      <_NewCompiledDocsStrings Include="Models/DocStrings.generated.cs" Exclude="@(Compile)" />
+      <Compile Include="@(_NewCompiledSnippets)" />
+      <Compile Include="@(_NewCompiledDocsStrings)" />
       <EmbeddedResource Include="@(NewExampleCodeToBuild)" Condition="@(NewExampleCodeToBuild-&gt;Count()) != 0" />
     </ItemGroup>
   </Target>
