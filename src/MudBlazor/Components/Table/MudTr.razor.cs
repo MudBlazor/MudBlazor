@@ -57,6 +57,7 @@ namespace MudBlazor
 
         public void OnRowClicked(MouseEventArgs args)
         {
+            Context?.Table.SetSelectedItem(Item);
             StartEditingItem(buttonClicked: false);
 
             if (Context?.Table.MultiSelection == true && !(Context?.Table.IsEditable == true))
@@ -79,9 +80,6 @@ namespace MudBlazor
 
             if (!(Context?.Table.Validator.IsValid ?? true))
                 return;
-
-            if (!buttonClicked)
-                Context?.Table.SetSelectedItem(Item);
 
             // Manage edition the first time the row is clicked and if the table is editable
             if (!hasBeenClickedFirstTime && IsEditable)
