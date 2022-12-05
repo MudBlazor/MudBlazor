@@ -40,8 +40,8 @@
   <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild" DependsOnTargets="CompileDocs;ReadFromFile">
     <ItemGroup>
       <!--Include without duplication-->
-      <_NewCompiledSnippets Include="Models/Snippets.generated.cs" Exclude="@(Compile)" />
-      <_NewCompiledDocsStrings Include="Models/DocStrings.generated.cs" Exclude="@(Compile)" />
+      <_NewCompiledSnippets Include="Models\Snippets.generated.cs" Exclude="@(Compile)" />
+      <_NewCompiledDocsStrings Include="Models\DocStrings.generated.cs" Exclude="@(Compile)" />
       <Compile Include="@(_NewCompiledSnippets)" />
       <Compile Include="@(_NewCompiledDocsStrings)" />
       <EmbeddedResource Include="@(NewExampleCodeToBuild)" Condition="@(NewExampleCodeToBuild-&gt;Count()) != 0" />
