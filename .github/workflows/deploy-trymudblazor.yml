@@ -9,6 +9,7 @@ on:
 jobs:
   wait-for-nuget:
     name: Wait for nuget
+    runs-on: ubuntu-latest
     if: ${{ github.ref_type == 'tag' }}
     steps:
     - name: Sleep for 5 mins
