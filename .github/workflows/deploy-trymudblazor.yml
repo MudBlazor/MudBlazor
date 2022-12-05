@@ -10,9 +10,9 @@ jobs:
   wait-for-nuget:
     name: Wait for nuget
     if: ${{ github.ref_type == 'tag' }}
+    steps:
     - name: Sleep for 5 mins
       run: sleep 300s
-      shell: bash
 
   deploy-web-app:
     name: Deploy web app to try.mudblazor.com
