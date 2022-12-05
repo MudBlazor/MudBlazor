@@ -10,10 +10,11 @@ jobs:
   wait-for-nuget:
     name: Wait for nuget
     runs-on: ubuntu-latest
-    if: ${{ github.ref_type == 'tag' }}
     steps:
-    - name: Sleep for 5 mins
+    - name: Wait for nuget
+      if: ${{ github.ref_type == 'tag' }}
       run: sleep 300s
+
 
   deploy-web-app:
     name: Deploy web app to try.mudblazor.com
@@ -22,6 +23,7 @@ jobs:
     uses: MudBlazor/Workflows/.github/workflows/template-deploy-web-app.yml@main
     with:
       checkout-repository: MudBlazor/TryMudBlazor
+      checkout-ref: main
       web-app-name: trymudblazor
       web-app-slot-name:  'staging'
       swap-slots: true
