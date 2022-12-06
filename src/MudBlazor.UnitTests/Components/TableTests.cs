@@ -177,9 +177,12 @@ namespace MudBlazor.UnitTests.Components
         /// should only be able to select one item and selecteditems.count should never exceed 1
         /// </summary>
         [Test]
-        public void TableSingleSelection()
+        [TestCase(TableEditTrigger.RowClick)]
+        [TestCase(TableEditTrigger.EditButton)]
+        public void TableSingleSelection(TableEditTrigger trigger)
         {
-            var comp = Context.RenderComponent<TableSingleSelectionTest1>();
+            var comp = Context.RenderComponent<TableSingleSelectionTest1>(parameters => parameters
+                .Add(p => p.EditTrigger, trigger));
             // print the generated html      
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int?>>().Instance;
@@ -1590,11 +1593,11 @@ namespace MudBlazor.UnitTests.Components
             table.GroupBy.IsInitiallyExpanded = true;
             table.GroupBy.InnerGroup.Indentation = true;
             table.GroupBy.InnerGroup.Expandable = true;
-            table.GroupBy.InnerGroup.IsInitiallyExpanded  = true;
-                       
+            table.GroupBy.InnerGroup.IsInitiallyExpanded = true;
 
-            comp.Render();            
-            
+
+            comp.Render();
+
             table.SelectedItems.Count.Should().Be(0);
             inputs.Where(x => x.IsChecked()).Count().Should().Be(0);
 
