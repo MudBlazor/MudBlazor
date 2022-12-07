@@ -1,0 +1,28 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@inject ISnackbar SnackbarService
+
+<MudButton OnClick="@ShowDefault">Show default snackbar</MudButton>
+
+@code {
+    public static string __description__ = "Show snackbar that has custom content message class applied";
+
+    private string messageText = "Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch is a village in Anglesey, Wales, United Kingdom.";
+    private string actionText = "Learn Pronunciation";
+
+    protected override void OnInitialized()
+    {
+        SnackbarService.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+        SnackbarService.Configuration.PreventDuplicates = false;
+        SnackbarService.Configuration.ShowCloseIcon = true;
+        SnackbarService.Configuration.RequireInteraction = true;
+    }
+
+
+    private void ShowDefault()
+    {
+        SnackbarService.Add(messageText, Severity.Info, options =>
+        {
+            options.Action = actionText;
+        });
+    }
+}
