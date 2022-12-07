@@ -677,12 +677,12 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormWithTimePickerTest>();
             var form = comp.FindComponent<MudForm>().Instance;
-            var dateComp = comp.FindComponent<MudTimePicker>();
-            var datepicker = comp.FindComponent<MudTimePicker>().Instance;
+            var timeComp = comp.FindComponent<MudTimePicker>();
+            var timePicker = comp.FindComponent<MudTimePicker>().Instance;
             // check initial state: form should not be valid because datepicker is required
             form.IsValid.Should().Be(false);
-            datepicker.Error.Should().BeFalse();
-            datepicker.ErrorText.Should().BeNullOrEmpty();
+            timePicker.Error.Should().BeFalse();
+            timePicker.ErrorText.Should().BeNullOrEmpty();
             comp.Find("input").Click();
             // select 09:30
             comp.FindAll("div.mud-picker-stick-inner.mud-hour")[8].Click();
@@ -692,15 +692,15 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().Be(true);
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            datepicker.Error.Should().BeFalse();
-            datepicker.ErrorText.Should().BeNullOrEmpty();
+            timePicker.Error.Should().BeFalse();
+            timePicker.ErrorText.Should().BeNullOrEmpty();
             // clear selection
             comp.SetParam(x => x.Time, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            datepicker.Error.Should().BeTrue();
-            datepicker.ErrorText.Should().Be("Required");
+            timePicker.Error.Should().BeTrue();
+            timePicker.ErrorText.Should().Be("Required");
         }
 
         /// <summary>
