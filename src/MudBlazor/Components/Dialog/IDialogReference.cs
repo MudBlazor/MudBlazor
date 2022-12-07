@@ -22,7 +22,7 @@ namespace MudBlazor
 
         Task<DialogResult> Result { get; }
 
-        internal TaskCompletionSource<bool> RenderCompleteTaskCompletionSource { get; }
+        TaskCompletionSource<bool> RenderCompleteTaskCompletionSource { get; }
 
         void Close();
 

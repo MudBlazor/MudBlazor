@@ -801,6 +801,13 @@ namespace MudBlazor.UnitTests.Components
 
             result.Should().Be(true);
         }
+
+        [Test]
+        public void MockIDialogReferenceShouldWork()
+        {
+            Func<IDialogReference> createMock = Moq.Mock.Of<IDialogReference>;
+            createMock.Should().NotThrow();
+        }
     }
 
     internal class CustomDialogService : DialogService
