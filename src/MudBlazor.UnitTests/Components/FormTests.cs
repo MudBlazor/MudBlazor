@@ -711,30 +711,32 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormWithTimePickerTest>();
             var form = comp.FindComponent<MudForm>().Instance;
-            var dateComp = comp.FindComponent<MudTimePicker>();
-            var datepicker = comp.FindComponent<MudTimePicker>().Instance;
-            dateComp.SetParam(x => x.Validation, new Func<TimeSpan?, string>(time => time != null && time.Value.Minutes == 0 ? null : "Only full hours allowed"));
-            comp.Find("input").Click();
+            var timePickerComp = comp.FindComponent<MudTimePicker>();
+            var timePicker = comp.FindComponent<MudTimePicker>().Instance;
+            timePickerComp.SetParam(x => x.Validation, new Func<TimeSpan?, string>(time => time != null && time.Value.Minutes == 0 ? null : "Only full hours allowed"));
+            await comp.InvokeAsync(() => comp.Find("input").Click());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
             // select 09:00
-            comp.FindAll("div.mud-picker-stick-inner.mud-hour")[8].Click();
-            comp.FindAll("div.mud-minute")[0].Click();
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-stick-inner.mud-hour")[8].Click());
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-minute")[0].Click());
             // wait for picker to close
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
             form.IsTouched.Should().Be(true);
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            datepicker.Error.Should().BeFalse();
-            datepicker.ErrorText.Should().BeNullOrEmpty();
+            timePicker.Error.Should().BeFalse();
+            timePicker.ErrorText.Should().BeNullOrEmpty();
             // set invalid date:
-            comp.Find("input").Click();
+            await comp.InvokeAsync(() => comp.Find("input").Click());;
             // select 17:05
-            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[4].Click();
-            comp.FindAll("div.mud-minute")[5].Click();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-stick-outer.mud-hour")[4].Click());
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-minute")[5].Click());
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Only full hours allowed");
-            datepicker.Error.Should().BeTrue();
-            datepicker.ErrorText.Should().Be("Only full hours allowed");
+            timePicker.Error.Should().BeTrue();
+            timePicker.ErrorText.Should().Be("Only full hours allowed");
         }
 
         /// <summary>
