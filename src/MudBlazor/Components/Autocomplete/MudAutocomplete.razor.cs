@@ -275,6 +275,12 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public Func<T, bool> ItemDisabledFunc { get; set; }
 
+        /// <summary>
+        /// If true, the results are displayed in a Virtualize component, allowing a boost in rendering speed.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        [Parameter] public bool Virtualize { get; set; }
+
         private bool _isOpen;
 
         /// <summary>
