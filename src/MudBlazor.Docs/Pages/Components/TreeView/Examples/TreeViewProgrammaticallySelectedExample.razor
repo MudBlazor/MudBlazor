@@ -1,26 +1,36 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudPaper Width="300px" Elevation="0">
-    <MudTreeView @ref="_treeView" Items="TreeItems" @bind-SelectedValue="SelectedValue" Hover="true">
-        <ItemTemplate>
-            <MudMenu Class="mud-width-full" ActivationEvent="MouseEvent.RightClick" @oncontextmenu:stopPropagation PositionAtCursor="true">
-                <ActivatorContent>
-                    <MudTreeViewItem Value="@context" Items="@context.TreeItems" Icon="@context.Icon" LoadingIconColor="Color.Info" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
-                </ActivatorContent>
-                <ChildContent>
-                    <MudMenuItem OnClick="@(() => _treeView.Select(context))">Select</MudMenuItem>
-                    <MudMenuItem OnClick="@(() => _treeView.Select(context, false))">Deselect</MudMenuItem>
-                </ChildContent>
-            </MudMenu>
-        </ItemTemplate>
-    </MudTreeView>
-</MudPaper>
+<MudGrid>
+    <MudItem xs="12" sm="8" Class="d-flex- justify-center">
+        <MudPaper Width="300px" Elevation="0">
+            <MudTreeView @ref="_treeView" Items="TreeItems" @bind-SelectedValue="SelectedValue" Hover="true">
+                <ItemTemplate>
+                    <MudMenu Class="mud-width-full" ActivationEvent="MouseEvent.RightClick" @oncontextmenu:stopPropagation PositionAtCursor="true">
+                        <ActivatorContent>
+                            <MudTreeViewItem Value="@context" Items="@context.TreeItems" Icon="@context.Icon" LoadingIconColor="Color.Info" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
+                        </ActivatorContent>
+                        <ChildContent>
+                            <MudMenuItem OnClick="@(() => _treeView.Select(context))">Select</MudMenuItem>
+                            <MudMenuItem OnClick="@(() => _treeView.Select(context, false))">Deselect</MudMenuItem>
+                        </ChildContent>
+                    </MudMenu>
+                </ItemTemplate>
+            </MudTreeView>
+        </MudPaper>
+    </MudItem>
 
-<MudText Style="width: 100%" Typo="@Typo.subtitle1">Selected item: @SelectedValue?.Title</MudText>
+    <MudItem xs="12" sm="4">
+        <MudStack Style="mud-width-full">
+            <MudText Typo="@Typo.subtitle1">Selected item: @SelectedValue?.Title</MudText>
+            <MudButton OnClick="@(() => _treeView.Select(TreeItems.First()))">Select First Item</MudButton>
+            <MudButton OnClick="@(() => _treeView.Select(TreeItems.FirstOrDefault(x => x.Title == "Trash")))">Select Second Item</MudButton>
+            <MudButton OnClick="@(() => _treeView.Select(_treeView.GetAllItems().FirstOrDefault(x => x.Value.Title == "Social")))">Select 'Social' Item</MudButton>
+        </MudStack>
+    </MudItem>
+</MudGrid>
 
-<MudButton OnClick="@(() => _treeView.Select(TreeItems.First()))">Select First Item</MudButton>
-<MudButton OnClick="@(() => _treeView.Select(TreeItems.FirstOrDefault(x => x.Title == "Trash")))">Select Second Item</MudButton>
-<MudButton OnClick="@(() => _treeView.Select(_treeView.GetAllItems().FirstOrDefault(x => x.Value.Title == "Social")))">Select Second Item</MudButton>
+
+
 
 @code {
     MudTreeView<TreeItemData> _treeView;
