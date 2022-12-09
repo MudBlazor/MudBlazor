@@ -391,6 +391,11 @@ namespace MudBlazor
 
         private void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
 
+        internal List<MudTreeViewItem<T>> GetChildItems()
+        {
+            return _childItems;
+        }
+
         internal IEnumerable<MudTreeViewItem<T>> GetSelectedItems()
         {
             if (_isChecked)

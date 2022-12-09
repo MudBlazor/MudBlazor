@@ -1,0 +1,71 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="300px" Elevation="0">
+    <MudTreeView @ref="_treeView" Items="TreeItems" @bind-SelectedValue="SelectedValue" Hover="true">
+        <ItemTemplate>
+            <MudMenu Class="mud-width-full" ActivationEvent="MouseEvent.RightClick" @oncontextmenu:stopPropagation PositionAtCursor="true">
+                <ActivatorContent>
+                    <MudTreeViewItem Value="@context" Items="@context.TreeItems" Icon="@context.Icon" LoadingIconColor="Color.Info" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
+                </ActivatorContent>
+                <ChildContent>
+                    <MudMenuItem OnClick="@(() => _treeView.Select(context))">Select</MudMenuItem>
+                    <MudMenuItem OnClick="@(() => _treeView.Select(context, false))">Deselect</MudMenuItem>
+                </ChildContent>
+            </MudMenu>
+        </ItemTemplate>
+    </MudTreeView>
+</MudPaper>
+
+<MudText Style="width: 100%" Typo="@Typo.subtitle1">Selected item: @SelectedValue?.Title</MudText>
+
+<MudButton OnClick="@(() => _treeView.Select(TreeItems.First()))">Select First Item</MudButton>
+<MudButton OnClick="@(() => _treeView.Select(TreeItems.FirstOrDefault(x => x.Title == "Trash")))">Select Second Item</MudButton>
+<MudButton OnClick="@(() => _treeView.Select(_treeView.GetAllItems().FirstOrDefault(x => x.Value.Title == "Social")))">Select Second Item</MudButton>
+
+@code {
+    MudTreeView<TreeItemData> _treeView;
+    TreeItemData SelectedValue { get; set; }
+
+    private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+
+    public class TreeItemData
+    {
+        public string Title { get; set; }
+
+        public string Icon { get; set; }
+
+        public int? Number { get; set; }
+
+        public HashSet<TreeItemData> TreeItems { get; set; }
+
+        public TreeItemData(string title, string icon, int? number = null)
+        {
+            Title = title;
+            Icon = icon;
+            Number = number;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        TreeItems.Add(new TreeItemData("All Mail", Icons.Filled.Email));
+        TreeItems.Add(new TreeItemData("Trash", Icons.Filled.Delete));
+        TreeItems.Add(new TreeItemData("Categories", Icons.Filled.Label)
+            {
+                TreeItems = new HashSet<TreeItemData>()
+            {
+                new TreeItemData("Social", Icons.Filled.Group, 90),
+                new TreeItemData("Updates", Icons.Filled.Info, 2294),
+                new TreeItemData("Forums", Icons.Filled.QuestionAnswer, 3566),
+                new TreeItemData("Promotions", Icons.Filled.LocalOffer, 733) 
+                {
+                    TreeItems = new HashSet<TreeItemData>()
+                    {
+                        new TreeItemData("Rare", Icons.Filled.LocalOffer, 20)
+                    }
+                }
+            }
+            });
+        TreeItems.Add(new TreeItemData("History", Icons.Filled.Label));
+    }
+}
