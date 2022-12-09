@@ -1170,6 +1170,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Tests that adding an item and programmatically editing it should set the row to edit mode.
+        /// </summary>
+        [Test]
+        public void TableInlineEditAfterAddingItemTest()
+        {
+            var comp = Context.RenderComponent<TableSetEditingItem>();
+
+            // Start with a table without rows.
+            comp.FindAll("tbody tr").Count.Should().Be(0);
+
+            // Click the add row button that also sets the current edit row.
+            var addRowButton = comp.Find("button");
+            addRowButton.Click();
+
+            // Check the table to make sure a row has been added.
+            comp.FindAll("tbody tr").Count.Should().Be(1);
+
+            // Verify the row is in edit mode.
+            comp.FindAll("tbody tr input").Count.Should().Be(1);
+        }
+
+        /// <summary>
         /// This test validates the processing of the Commit and Cancel buttons for an inline editing table.
         /// </summary>
         [Test]

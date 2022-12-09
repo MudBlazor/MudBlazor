@@ -347,28 +347,17 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Grouping)]
         public RenderFragment<TableGroupData<object, T>> GroupFooterTemplate { get; set; }
 
-        private IEnumerable<T> _preEditSort { get; set; } = null;
-        private bool _hasPreEditSort => _preEditSort != null;
-
+        private IEnumerable<T> _preEditFilteredItemsCache = null;
         public IEnumerable<T> FilteredItems
         {
             get
             {
-                if (IsEditing && _hasPreEditSort)
-                    return _preEditSort;
-                if (ServerData != null)
-                {
-                    _preEditSort = _server_data.Items.ToList();
-                    return _preEditSort;
-                }
+                if (IsEditing && _preEditFilteredItemsCache != null)
+                    return _preEditFilteredItemsCache;
+                else
+                    _preEditFilteredItemsCache = null;
 
-                if (Filter == null)
-                {
-                    _preEditSort = Context.Sort(Items).ToList();
-                    return _preEditSort;
-                }
-                _preEditSort = Context.Sort(Items.Where(Filter)).ToList();
-                return _preEditSort;
+                return GetFilteredItems();
             }
         }
 
@@ -415,6 +404,17 @@ namespace MudBlazor
             }
         }
 
+        private IEnumerable<T> GetFilteredItems()
+        {
+            if (ServerData != null)
+                return _server_data.Items.ToList();
+
+            if (Filter == null)
+                return Context.Sort(Items).ToList();
+
+            return Context.Sort(Items.Where(Filter)).ToList();
+        }
+
         public override int GetFilteredItemsCount()
         {
             if (ServerData != null)
@@ -430,7 +430,10 @@ namespace MudBlazor
         public override void SetEditingItem(object item)
         {
             if (!ReferenceEquals(_editingItem, item))
+            {
+                _preEditFilteredItemsCache = GetFilteredItems();
                 _editingItem = item;
+            }
         }
 
         public override bool ContainsItem(object item)
