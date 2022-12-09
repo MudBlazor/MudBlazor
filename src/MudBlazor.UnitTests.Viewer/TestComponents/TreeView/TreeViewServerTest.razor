@@ -17,7 +17,7 @@
 
         public int? Number { get; set; }
 
-        public HashSet<TreeItemData> TreeItems { get; set; }
+        public ICollection<TreeItemData> TreeItems { get; set; }
 
         public TreeItemData(string title, string icon, int? number = null)
         {
@@ -44,7 +44,7 @@
         TreeItems.Add(new TreeItemData("History", Icons.Filled.Label));
     }
 
-    public Task<HashSet<TreeItemData>> LoadServerData(TreeItemData parentNode)
+    public Task<ICollection<TreeItemData>> LoadServerData(TreeItemData parentNode)
     {
         return Task.FromResult(parentNode.TreeItems);
     }
