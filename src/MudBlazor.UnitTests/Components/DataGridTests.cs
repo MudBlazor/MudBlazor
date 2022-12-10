@@ -3831,11 +3831,11 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridColumnHiddenTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnHiddenTest.Model>>();
 
+            //Console.WriteLine(dataGrid.FindAll(".mud-table-head th").ToMarkup());
+
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
             var popover = dataGrid.FindComponent<MudPopover>();
             popover.Instance.Open.Should().BeFalse("Should start as closed");
-
-
 
             var columnsButton = dataGrid.Find("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
             columnsButton.Click();
@@ -3862,13 +3862,66 @@ namespace MudBlazor.UnitTests.Components
             // 2 columns, 2 hidden
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
 
-
             // this is the show all button
             buttons[1].Find("button").Click();
             switches[0].Instance.Checked.Should().BeFalse();
             switches[1].Instance.Checked.Should().BeFalse();
             // 2 columns, 0 hidden
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+        }
+
+        [Test]
+        public async Task DataGridFilterRowHiddenTest()
+        {
+            var comp = Context.RenderComponent<DataGridFilterRowHiddenTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterRowHiddenTest.Model>>();
+
+            //there should be only one filter cell visible
+            dataGrid.FindAll(".mud-input-control-input-container").Count.Should().Be(1);
+
+            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
+            var popover = dataGrid.FindComponent<MudPopover>();
+            popover.Instance.Open.Should().BeFalse("Should start as closed");
+
+            var columnsButton = dataGrid.Find("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
+            columnsButton.Click();
+
+            popover.Instance.Open.Should().BeTrue("Should be open once clicked");
+            var listItems = popoverProvider.FindComponents<MudListItem>();
+            listItems.Count.Should().Be(1);
+            var clickablePopover = listItems[0].Find(".mud-list-item");
+            clickablePopover.Click();
+
+            // at this point, the column picker should be open
+            var switches = dataGrid.FindComponents<MudSwitch<bool>>();
+            switches.Count.Should().Be(2);
+
+            switches[0].Instance.Checked.Should().BeFalse();
+            switches[1].Instance.Checked.Should().BeTrue();
+
+            var buttons = dataGrid.FindComponents<MudButton>();
+
+            // this is the hide all button
+            buttons[0].Find("button").Click();
+            switches[0].Instance.Checked.Should().BeTrue();
+            switches[1].Instance.Checked.Should().BeTrue();
+            // 2 columns, 2 hidden
+            dataGrid.FindAll(".mud-input-control-input-container").Count.Should().Be(0);
+
+            // this is the show all button
+            buttons[1].Find("button").Click();
+            switches[0].Instance.Checked.Should().BeFalse();
+            switches[1].Instance.Checked.Should().BeFalse();
+            // 2 columns, 0 hidden
+            dataGrid.FindAll(".mud-input-control-input-container").Count.Should().Be(2);
+
+            dataGrid.Instance.RenderedColumns[0].Filterable = false;
+            await comp.InvokeAsync(dataGrid.Instance.ExternalStateHasChanged);
+
+            //If the column is visible and Filterable is false there still shouldďbe the cell
+            //without the input
+            dataGrid.FindAll(".mud-table-cell.filter-header-cell").Count.Should().Be(2);
+            dataGrid.FindAll(".mud-input-control-input-container").Count.Should().Be(1);
         }
 
         [Test]
