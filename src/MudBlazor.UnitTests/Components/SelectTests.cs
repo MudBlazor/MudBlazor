@@ -19,6 +19,17 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class SelectTests : BunitTest
     {
+        [Test]
+        public async Task SelectTest_CheckListClass()
+        {
+            var comp = Context.RenderComponent<SelectRequiredTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter" }));
+            await comp.InvokeAsync(() => select.SetParam("ListClass", "my-list-class"));
+            var list = comp.FindComponent<MudList>();
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-list-class"));
+        }
+
         /// <summary>
         /// Select id should propagate to label for attribute
         /// </summary>
