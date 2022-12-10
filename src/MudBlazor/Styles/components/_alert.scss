@@ -57,6 +57,10 @@
         color: var(--mud-palette-dark-text);
         font-weight: 500;
         background-color: var(--mud-palette-dark);
+
+        & .mud-alert-close .mud-button-root {
+            color: currentColor;
+        }
     }
 
     @each $color in $mud-palette-colors {
@@ -64,6 +68,10 @@
             color: var(--mud-palette-#{$color}-text);
             font-weight: 500;
             background-color: var(--mud-palette-#{$color});
+
+            & .mud-button-root {
+                color: currentColor;
+            }
         }
     }
 }
