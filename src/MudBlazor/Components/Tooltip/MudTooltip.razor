@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@ContainerClass" style="@RootStyle" @onmouseenter="@HandleMouseOver" @onmouseleave="@HandleMouseOut" @onfocusin="@HandleMouseOver" @onfocusout="@HandleMouseOut" >
+<div @attributes="UserAttributes" class="@ContainerClass" style="@RootStyle" @onmouseenter="@HandleMouseEnter" @onmouseleave="@HandleMouseLeave" @onmouseup="@HandleMouseUp" @onfocusin="@HandleFocusIn" @onfocusout="@HandleFocusOut" >
 	@ChildContent
 	@if (TooltipContent != null || string.IsNullOrEmpty(Text) == false)
 	{

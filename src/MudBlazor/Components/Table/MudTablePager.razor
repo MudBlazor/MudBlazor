@@ -15,7 +15,7 @@
             <div class="mud-table-pagination-caption">
                 <div class="mud-table-pagination-information">@RowsPerPageString</div>
             </div>
-            <CascadingValue Name="Standalone" Value="false" IsFixed>
+            <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed>
                 <MudSelect T="string" ValueChanged="SetRowsPerPage" Value="@Table?.RowsPerPage.ToString()" Class="mud-table-pagination-select" DisableUnderLine="true" Dense="true">
                     @foreach (int pageSize in PageSizeOptions)
                     {

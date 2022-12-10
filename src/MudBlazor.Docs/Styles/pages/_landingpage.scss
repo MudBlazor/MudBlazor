@@ -69,7 +69,7 @@
             height: 100%;
             z-index: 2;
             background-color: var(--mud-palette-background);
-            border-right: 1px solid var(--mud-palette-divider-light);
+            border-right: 1px solid var(--mud-palette-divider);
             overflow: hidden;
             transition: width ease-in 0.1s;
         }
@@ -96,20 +96,20 @@
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 
         & + .lp-app-grid {
-            margin-top: 24px;
+            margin-top:24px;
         }
     }
 
     .lp-device {
         overflow: hidden;
         position: absolute;
-        outline: var(--mud-palette-divider-light) solid 1px;
+        outline: var(--mud-palette-divider) solid 1px;
         box-shadow: inset 0 1px 1px 0 hsla(0deg, 0%, 100%, 0.1), 0 50px 100px -20px rgba(50, 50, 93, 0.25), 0 30px 60px -30px rgba(0, 0, 0, 0.3);
         background: linear-gradient(0deg, rgba(0,0,0,0.2) 0%, rgba(255,255,255,0.2) 50%, rgba(0,0,0,0.2) 100%);
 
         @supports ((-webkit-backdrop-filter: blur(5px)) or (backdrop-filter: blur(5px))) {
-            background: rgba(255, 255, 255, .2);
-            backdrop-filter: blur(5px);
+          background: rgba(255, 255, 255, .2);
+          backdrop-filter: blur(5px);
         }
 
         .lp-device-screen {
@@ -127,28 +127,30 @@
             border-radius: 46px;
 
             .lp-device-toolbar {
+              width: 100%;
+              height: 50px;
+              display: flex;
+              justify-content: space-between;
+              padding: 0 24px 0 24px;
+              
+              .lp-time, .lp-device-info{
+                width: 30%;
+              }
+
+              .lp-phone-notch {
+                position: absolute;
                 width: 100%;
-                height: 50px;
-                display: flex;
-                justify-content: space-between;
-                padding: 0 24px 0 24px;
+                height: auto;
+                left: 0;
+                fill: var(--mud-palette-background);
+                z-index: -1;
 
-                .lp-time, .lp-device-info {
-                    width: 30%;
+
+                .lp-phone-notch-speaker{
+
+
                 }
-
-                .lp-phone-notch {
-                    position: absolute;
-                    width: 100%;
-                    height: auto;
-                    left: 0;
-                    fill: var(--mud-palette-background);
-                    z-index: -1;
-
-
-                    .lp-phone-notch-speaker {
-                    }
-                }
+              }
             }
 
             .lp-device-screen {
@@ -161,7 +163,7 @@
                 transform: scale(var(--mobile-scale-value));
                 width: calc(100% / var(--mobile-scale-value));
                 height: calc(100% / var(--mobile-scale-value));
-                top: 0;
+                top:0;
                 left: 0;
             }
 
@@ -170,19 +172,19 @@
                 border-radius: 0 0 60px 60px;
 
                 .mini-drawer {
-                    top: 42px;
-                    height: calc(100% - 60px);
-                    border-top-left-radius: 60px;
-                    border-bottom-left-radius: 60px;
-                    padding: 0 !important;
-                    padding-top: 24px !important;
+                  top: 42px;
+                  height: calc(100% - 60px);
+                  border-top-left-radius: 60px;
+                  border-bottom-left-radius: 60px;
+                  padding: 0 !important;
+                  padding-top: 24px !important;
                 }
 
-                .phone-to-home {
-                    position: absolute;
-                    width: 100%;
-                    bottom: 24px;
-                }
+              .phone-to-home{
+                position: absolute;
+                width:100%;
+                bottom:24px;
+              }
             }
         }
 
@@ -218,7 +220,7 @@
                 transform: scale(var(--browser-scaler-value));
                 width: calc(100% / var(--browser-scaler-value));
                 height: calc(100% / var(--browser-scaler-value) - 18px);
-                top: 0;
+                top:0;
                 left: 0;
             }
 
@@ -343,7 +345,7 @@
             z-index: -1;
         }
     }
-
+  
     .landing-h1-gradient {
         background: linear-gradient(82deg, rgba(89,74,226,1) 0%, rgba(255,102,153,1) 100%);
         -webkit-background-clip: text;
@@ -366,7 +368,7 @@
             }
 
             &.background {
-                background-color: var(--mud-palette-background);
+              background-color: var(--mud-palette-background);
             }
 
             &.sweet {
@@ -403,11 +405,11 @@
                 }
 
                 &.sweet {
-                    background-color: var(--mud-palette-background-grey);
+                  background-color: var(--mud-palette-background-grey);
                 }
 
                 &.background {
-                    background-color: var(--mud-palette-background);
+                  background-color: var(--mud-palette-background);
                 }
 
                 &.surface {
@@ -436,21 +438,20 @@
             padding-bottom: calc(var(--section-diff) * 1.5) !important;
         }
 
-        @media (max-width:600px) {
-            h1 {
-                font-size: 2.5rem;
-            }
-
-            h6 {
-                font-size: .875rem;
-            }
+      @media (max-width:600px) {
+        h1{
+          font-size: 2.5rem;
         }
-
-        .graphic-wrapper {
-            position: absolute;
-            top: 0;
-            right: 0;
+        h6{
+          font-size: .875rem;
         }
+      }
+      
+      .graphic-wrapper{
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
     }
 
     .code-animation-container {
@@ -610,30 +611,29 @@
             }
         }
     }
+  
+  .lp-testimonials{
+    position: relative;
+    max-height: 1200px;
+    transition: max-height 0.15s ease-in-out;
+    
+    &.hide-testimonials{
+      max-height: 300px;
 
-    .lp-testimonials {
-        position: relative;
-        max-height: 1200px;
-        transition: max-height 0.15s ease-in-out;
-
-        &.hide-testimonials {
-            max-height: 300px;
-
-            .lp-fader {
-                position: absolute;
-                bottom: -100%;
-                width: 100%;
-                height: 150%;
-                background: linear-gradient(0deg, var(--mud-palette-background-grey) 0%, rgba(249,250,252,0) 100%);
-            }
-        }
-
-        @media (max-width:600px) {
-            .mud-typography-h3 {
-                font-size: 1.5rem;
-            }
-        }
+      .lp-fader{
+        position: absolute;
+        bottom: -100%;
+        width: 100%;
+        height: 150%;
+        background: linear-gradient(0deg, var(--mud-palette-background-grey) 0%, rgba(249,250,252,0) 100%);
+      }
     }
+    @media (max-width:600px) {
+      .mud-typography-h3{
+        font-size: 1.5rem;
+      }
+    }
+  }
 }
 
     .typed-code {

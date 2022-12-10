@@ -2,7 +2,7 @@
 @typeparam T
 @inherits MudDebouncedInput<T>
 
-<CascadingValue Name="Standalone" Value="@Standalone" IsFixed="true">
+<CascadingValue Name="SubscribeToParentForm" Value="@SubscribeToParentForm" IsFixed="true">
     <MudInputControl Label="@Label"
                      Variant="@Variant"
                      HelperText="@HelperText"
@@ -18,7 +18,7 @@
                      Required="@Required"
                      ForId="@FieldId">
         <InputContent>
-            <CascadingValue Name="Standalone" Value="false" IsFixed="true">
+            <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 @if (_mask == null)
                 {
                     <MudInput T="string"

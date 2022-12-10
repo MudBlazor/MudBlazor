@@ -51,7 +51,7 @@ namespace MudBlazor.Docs
             GrayLighter = "#f9f9f9"
         };
 
-        private static readonly Palette DocsDarkPalette  = new()
+        private static readonly PaletteDark DocsDarkPalette  = new()
         {
             Primary = "#7e6fff",
             Surface= "#1e1e2d",
@@ -78,7 +78,6 @@ namespace MudBlazor.Docs
             TableLines = "#33323e",
             Divider = "#292838",
             OverlayLight = "#1e1e2d80"
-
         };
         #endregion
         #region LandingPage
@@ -155,7 +154,7 @@ namespace MudBlazor.Docs
             GrayLight = "#9CA3AF",
             GrayLighter = "#adbdccff"
         };
-        private static readonly Palette LandingPageDarkPalette = new()
+        private static readonly PaletteDark LandingPageDarkPalette = new()
         {
             AppbarText = "#92929f",
             AppbarBackground = "rgba(0,0,0,0)",

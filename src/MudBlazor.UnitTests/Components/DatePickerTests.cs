@@ -70,7 +70,6 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 1000; i++)
                 Context.RenderComponent<MudDatePicker>();
             watch.Stop();
-            //Console.WriteLine("Elapsed: " + watch.Elapsed);
             watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
@@ -89,7 +88,6 @@ namespace MudBlazor.UnitTests.Components
                 await comp.InvokeAsync(() => datepicker.Close());
             }
             watch.Stop();
-            //Console.WriteLine("Elapsed: " + watch.Elapsed);
             watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
@@ -207,7 +205,6 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.DateFormat, "dd/MM/yyyy")
                 .Add(p => p.Date, date)
             );
-            //Console.WriteLine(comp.Markup);
             var picker = comp.Instance;
             var instance = comp.Instance;
             picker.Date.Should().Be(new DateTime(2021, 1, 13));
@@ -510,11 +507,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
-            //Console.WriteLine(comp.Markup + "\n");
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // open programmatically
             await comp.InvokeAsync(() => comp.Instance.Open());
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-picker-content").Count.Should().Be(1);
             // closing programmatically
             await comp.InvokeAsync(() => comp.Instance.Close());
@@ -533,7 +528,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PersianDatePickerTest>();
             var datePicker = comp.FindComponent<MudDatePicker>();
             await comp.InvokeAsync(() => datePicker.Instance.Open());
-            //Console.WriteLine(comp.Markup);
 
             // didn't have time to finish this test case
             // TODO: check that the days are like here https://mrmashal.github.io/angular-material-persian-datepicker/demo/demoBasicUsage/index.html
@@ -607,7 +601,22 @@ namespace MudBlazor.UnitTests.Components
                 .Should().OnlyContain(disabled => disabled == false);
         }
 
+        
         [Test]
+        public void AdditionalDateClassesFunc_ClassIsAdded()
+        {
+            Func<DateTime, string> additionalDateClassesFunc = date => "__addedtestclass__";
+            var comp = Context.RenderComponent<MudDatePicker>(
+                Parameter(nameof(MudDatePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
+
+            var daysCount = comp.FindAll("button.mud-picker-calendar-day").Select(button =>
+                ((IHtmlBaseElement)button)).Count();
+
+            comp.FindAll("button.mud-picker-calendar-day").Select(button =>
+                ((IHtmlBaseElement)button).ClassName.Contains("__addedtestclass__"))
+                .Should().HaveCount(daysCount);
+        }
+
         public async Task CheckAutoCloseDatePickerTest()
         {
             // Define a date for comparison
@@ -785,8 +794,6 @@ namespace MudBlazor.UnitTests.Components
             var dateComp = Context.RenderComponent<MudDatePicker>(p =>
             p.Add(x => x.PickerVariant, PickerVariant.Dialog));
 
-            //Console.WriteLine(dateComp.Markup);
-
             //open picker
             dateComp.Find(".mud-picker input").Click();
 
@@ -827,8 +834,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task DatePickerTest_KeyboardNavigation()
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
-
-            //Console.WriteLine(comp.Markup);
             var datePicker = comp.FindComponent<MudDatePicker>().Instance;
 
             await comp.InvokeAsync(() => comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));

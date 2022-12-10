@@ -38,7 +38,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SelectTest1>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
             var menu = comp.Find("div.mud-popover");
@@ -83,7 +82,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 var comp = Context.RenderComponent<MultiSelectTest1>();
                 // print the generated html
-                //Console.WriteLine(comp.Markup);
                 // select elements needed for the test
                 var select = comp.FindComponent<MudSelect<string>>();
                 var menu = comp.Find("div.mud-popover");
@@ -111,7 +109,6 @@ namespace MudBlazor.UnitTests.Components
                 select.Instance.SelectedValues.Count().Should().Be(2);
                 select.Instance.SelectedValues.Should().Contain("2");
                 select.Instance.SelectedValues.Should().Contain("3");
-                //Console.WriteLine(comp.Markup);
                 const string @unchecked =
                     "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z";
                 const string @checked =
@@ -130,7 +127,6 @@ namespace MudBlazor.UnitTests.Components
                     comp.FindAll("div.mud-list-item path")[1].Attributes["d"].Value.Should().Be(@checked));
                 comp.FindAll("div.mud-list-item path")[3].Attributes["d"].Value.Should().Be(@checked);
                 comp.FindAll("div.mud-list-item path")[5].Attributes["d"].Value.Should().Be(@unchecked);
-                //Console.WriteLine(comp.Markup);
             });
         }
 
@@ -143,7 +139,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task SelectWithEnumTest()
         {
             var comp = Context.RenderComponent<SelectWithEnumTest>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<MyEnum>>();
             var input = comp.Find("div.mud-input-control");
@@ -153,8 +148,6 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").Attributes["value"]?.Value.Should().Be("First");
             comp.RenderCount.Should().Be(1);
-
-            //Console.WriteLine(comp.Markup);
             input.Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
@@ -179,7 +172,6 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
-            //Console.WriteLine(comp.Markup);
             comp.WaitForAssertion(() => comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("Two"));
             select.Instance.Value.Should().Be(2);
             select.Instance.Text.Should().Be("2");
@@ -192,7 +184,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task SelectUnrepresentableValueTest2()
         {
             var comp = Context.RenderComponent<SelectUnrepresentableValueTest2>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<int>>();
             var input = comp.Find("div.mud-input-control");
@@ -209,7 +200,6 @@ namespace MudBlazor.UnitTests.Components
             items[1].Click();
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be(2));
             select.Instance.Text.Should().Be("2");
-            //Console.WriteLine(comp.Markup);
             comp.FindComponent<MudInput<string>>().Instance.Value.Should().Be("2");
             comp.FindComponent<MudInput<string>>().Instance.InputType.Should().Be(InputType.Text); // because list item has no render fragment, so we show it as text
         }
@@ -221,7 +211,6 @@ namespace MudBlazor.UnitTests.Components
         public void SelectWithoutItemPresentersTest()
         {
             var comp = Context.RenderComponent<SelectWithoutItemPresentersTest>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<int>>();
             var input = comp.Find("div.mud-input-control");
@@ -230,7 +219,6 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Text.Should().Be("1");
             comp.Find("div.mud-input-slot").Attributes["style"].Value.Should().Contain("display:none");
             comp.RenderCount.Should().Be(1);
-            //Console.WriteLine(comp.Markup);
 
             input.Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
@@ -246,7 +234,6 @@ namespace MudBlazor.UnitTests.Components
         public void Select_Should_FireTextChangedWithNewValue()
         {
             var comp = Context.RenderComponent<SelectTest1>();
-            //Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
             select.SetCallback(s => s.TextChanged, x => text = x);
@@ -288,7 +275,6 @@ namespace MudBlazor.UnitTests.Components
         public void SingleSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
         {
             var comp = Context.RenderComponent<SelectTest1>();
-            //Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
             IEnumerable<string> selectedValues = null;
@@ -349,7 +335,6 @@ namespace MudBlazor.UnitTests.Components
         public void MulitSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
         {
             var comp = Context.RenderComponent<SelectTest1>();
-            //Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
             IEnumerable<string> selectedValues = null;
@@ -396,7 +381,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task Select_Should_FireOnBlur()
         {
             var comp = Context.RenderComponent<SelectTest1>();
-            //Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             var eventCounter = 0;
             select.SetCallback(s => s.OnBlur, x => eventCounter++);
@@ -413,7 +397,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
-            //Console.WriteLine(comp.Markup);
 
             var selectElement = comp.Find("div.mud-input-control");
             selectElement.Click();
@@ -430,7 +413,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 var comp = Context.RenderComponent<MultiSelectTest1>();
                 // print the generated html
-                //Console.WriteLine(comp.Markup);
                 // select elements needed for the test
                 var select = comp.FindComponent<MudSelect<string>>();
                 string validatedValue = null;
@@ -547,7 +529,6 @@ namespace MudBlazor.UnitTests.Components
         public void SingleSelect_Should_CallValidationFunc()
         {
             var comp = Context.RenderComponent<SelectTest1>();
-            //Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             string validatedValue = null;
             select.SetParam(x => x.Validation, (object)new Func<string, bool>(value =>
@@ -592,7 +573,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MultiSelectWithInitialValues>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
 
             // select the input of the select
             var input = comp.Find("input");
@@ -655,7 +635,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ReselectValueTest>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
             var menu = comp.Find("div.mud-popover");
@@ -690,7 +669,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_Should_Validate_Data_Attribute_Fail()
         {
             var comp = Context.RenderComponent<SelectValidationDataAttrTest>();
-            //Console.WriteLine(comp.Markup);
             var selectcomp = comp.FindComponent<MudSelect<string>>();
             var select = selectcomp.Instance;
             // Select invalid option
@@ -709,7 +687,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task TextField_Should_Validate_Data_Attribute_Success()
         {
             var comp = Context.RenderComponent<SelectValidationDataAttrTest>();
-            //Console.WriteLine(comp.Markup);
             var selectcomp = comp.FindComponent<MudSelect<string>>();
             var select = selectcomp.Instance;
             // Select valid option
@@ -744,7 +721,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SelectTest1>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             var input = comp.Find("div.mud-input-control");
 
@@ -781,14 +757,12 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SelectTest2>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             comp.Find("div.mud-popover").ClassList.Should().Contain("select-popover-class");
             select.Instance.Value.Should().Be("2");
             comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
             // open the select
             comp.Find("div.mud-input-control").Click();
-            //Console.WriteLine(comp.Markup);
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             // Nr 2 should be hilited
             comp.WaitForAssertion(()=>comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
@@ -853,7 +827,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SelectTest1>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
 
             var select = comp.FindComponent<MudSelect<string>>();
@@ -885,7 +858,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SelectTest1>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
 
@@ -954,7 +926,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MultiSelectTest3>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
 
@@ -1017,7 +988,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudSelect<string>>();
 
             // print the generated html
-            //Console.WriteLine(comp.Markup);
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowDown", Type = "keydown", }));
@@ -1033,7 +1003,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MultiSelectWithCustomComparerTest>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // Click select button
             comp.Find("button").Click();
             // Check input text
@@ -1087,7 +1056,6 @@ namespace MudBlazor.UnitTests.Components
 
             //2a. Now check when SelectedItems is greater than one - Validation Should Pass
             var inputs = comp.FindAll("div.mud-input-control");
-            Console.WriteLine(comp.Markup);
             inputs[0].Click();//The 2nd one is the 
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();

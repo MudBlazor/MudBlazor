@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -121,6 +120,24 @@ namespace MudBlazor
         public string RootClass { get; set; }
 
         /// <summary>
+        /// Determines on which events the tooltip will act
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public bool ShowOnHover { get; set; } = true;
+
+        /// <summary>
+        /// Determines on which events the tooltip will act
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public bool ShowOnFocus { get; set; } = true;
+
+        [Parameter]
+        [Category(CategoryTypes.Tooltip.Appearance)]
+        public bool ShowOnClick { get; set; } = false;
+
+        /// <summary>
         /// The visible state of the Tooltip.
         /// </summary>
         [Parameter]
@@ -144,8 +161,45 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public EventCallback<bool> IsVisibleChanged { get; set; }
 
-        private void HandleMouseOver() { IsVisible = true; }
-        private void HandleMouseOut() { IsVisible = false; }
+        private void HandleMouseEnter()
+        {
+            if (ShowOnHover)
+            {
+                IsVisible = true;
+            }
+        }
+
+        private void HandleMouseLeave()
+        {
+            if (ShowOnHover == false)
+                return;
+            IsVisible = false;
+        }
+
+        private void HandleFocusIn()
+        {
+            if (ShowOnFocus)
+            {
+                IsVisible = true;
+            }
+        }
+
+        private void HandleFocusOut()
+        {
+            if (ShowOnFocus == false)
+            {
+                return;
+            }
+            IsVisible = false;
+        }
+
+        private void HandleMouseUp()
+        {
+            if (ShowOnClick == true)
+            {
+                IsVisible = !IsVisible;
+            }
+        }
 
         private Origin ConvertPlacement()
         {

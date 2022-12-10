@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -13,7 +14,7 @@ namespace MudBlazor
 {
     // note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
 
-    public partial class MudTable<T> : MudTableBase
+    public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase
     {
         /// <summary>
         /// Defines how a table row looks like. Use MudTd to define the table cells and their content.
@@ -431,6 +432,16 @@ namespace MudBlazor
             if (!ReferenceEquals(_editingItem, item))
                 _editingItem = item;
         }
+
+        public override bool ContainsItem(object item)
+        {
+            var t = item.As<T>();
+            if (t is null)
+                return false;
+            return FilteredItems?.Contains(t) ?? false;
+        }
+
+        public override void UpdateSelection() => SelectedItemsChanged.InvokeAsync(SelectedItems);
 
         public override TableContext TableContext
         {

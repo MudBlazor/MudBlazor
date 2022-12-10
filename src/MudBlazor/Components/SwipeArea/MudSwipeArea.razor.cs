@@ -9,6 +9,7 @@ namespace MudBlazor
     public partial class MudSwipeArea : MudComponentBase
     {
         internal double? _xDown, _yDown;
+        private double? _swipeDelta;
         internal ElementReference _componentRef;
         private static readonly string[] _preventDefaultEventNames = { "touchstart", "touchend", "touchcancel" };
         internal int[] _listenerIds;
@@ -20,6 +21,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public Action<SwipeDirection> OnSwipe { get; set; }
+
+        /// <summary>
+        /// Swipe threshold in pixels. If SwipeDelta is below Sensitivity then OnSwipe is not called.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.SwipeArea.Behavior)]
+        public int Sensitivity { get; set; } = 100;
 
         /// <summary>
         /// Prevents default behavior of the browser when swiping.
@@ -81,7 +89,7 @@ namespace MudBlazor
             var xDiff = _xDown.Value - arg.ChangedTouches[0].ClientX;
             var yDiff = _yDown.Value - arg.ChangedTouches[0].ClientY;
 
-            if (Math.Abs(xDiff) < 100 && Math.Abs(yDiff) < 100)
+            if (Math.Abs(xDiff) < Sensitivity && Math.Abs(yDiff) < Sensitivity)
             {
                 _xDown = _yDown = null;
                 return;
@@ -97,6 +105,7 @@ namespace MudBlazor
                 {
                     InvokeAsync(() => OnSwipe(SwipeDirection.LeftToRight));
                 }
+                _swipeDelta = xDiff;
             }
             else
             {
@@ -108,10 +117,15 @@ namespace MudBlazor
                 {
                     InvokeAsync(() => OnSwipe(SwipeDirection.TopToBottom));
                 }
+                _swipeDelta = yDiff;
             }
-
             _xDown = _yDown = null;
         }
+
+        /// <summary>
+        /// The last successful swipe difference in pixels since the last OnSwipe invocation
+        /// </summary>
+        public double? GetSwipeDelta() => _swipeDelta;
 
         internal void OnTouchCancel(TouchEventArgs arg)
         {

@@ -3,6 +3,8 @@
 
 using System;
 using System.Threading;
+using MudBlazor.Components.Snackbar;
+using MudBlazor.Components.Snackbar.InternalComponents;
 
 namespace MudBlazor
 {
@@ -10,14 +12,15 @@ namespace MudBlazor
     {
         private Timer Timer { get; set; }
         internal SnackBarMessageState State { get; }
-        public string Message { get; }
+        public string Message => SnackbarMessage.Text;
+        internal SnackbarMessage SnackbarMessage { get; }
         public event Action<Snackbar> OnClose;
         public event Action OnUpdate;
         public Severity Severity => State.Options.Severity;
 
-        internal Snackbar(string message, SnackbarOptions options)
+        internal Snackbar(SnackbarMessage message, SnackbarOptions options)
         {
-            Message = message;
+            SnackbarMessage = message;
             State = new SnackBarMessageState(options);
             Timer = new Timer(TimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
         }

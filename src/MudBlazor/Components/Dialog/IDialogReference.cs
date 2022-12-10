@@ -14,6 +14,7 @@ namespace MudBlazor
     public interface IDialogReference
     {
         Guid Id { get; }
+
         RenderFragment RenderFragment { get; set; }
 
         [Obsolete("This will always return true"), ExcludeFromCodeCoverage]
@@ -21,7 +22,10 @@ namespace MudBlazor
 
         Task<DialogResult> Result { get; }
 
+        TaskCompletionSource<bool> RenderCompleteTaskCompletionSource { get; }
+
         void Close();
+
         void Close(DialogResult result);
 
         bool Dismiss(DialogResult result);

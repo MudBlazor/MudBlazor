@@ -37,7 +37,6 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldSynchronizeStateWithOtherComponent()
         {
             var comp = Context.RenderComponent<ToggleIconButtonTest1>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponents<MudToggleIconButton>();
             var comp1 = group[0];

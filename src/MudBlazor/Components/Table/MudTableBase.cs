@@ -359,6 +359,26 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Editing)]
         public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
 
+        /// <summary>
+        /// Set the positon of the StartEdit button, if <see cref="IsEditable"/> IsEditable is true. Defaults to the end of the row
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Editing)]
+        public TableEditButtonPosition EditButtonPosition { get; set; } = TableEditButtonPosition.End;
+
+        /// <summary>
+        /// Defines how a table row edit will be triggered
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Editing)]
+        public TableEditTrigger EditTrigger { get; set; } = TableEditTrigger.RowClick;
+
+        /// <summary>
+        /// Defines the edit button that will be rendered when EditTrigger.EditButton
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Editing)]
+        public RenderFragment<MudBlazorFix.EditButtonContext> EditButtonContent { get; set; }
 
         /// <summary>
         /// The method is called before the item is modified in inline editing.
@@ -511,6 +531,9 @@ namespace MudBlazor
         internal abstract void OnHeaderCheckboxClicked(bool value);
 
         internal abstract bool IsEditable { get; }
+
+        public abstract bool ContainsItem(object item);
+        public abstract void UpdateSelection();
 
         public Interfaces.IForm Validator { get; set; } = new TableRowValidator();
     }

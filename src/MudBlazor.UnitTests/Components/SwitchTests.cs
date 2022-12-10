@@ -17,7 +17,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task SwitchTest_KeyboardNavigation()
         {
             var comp = Context.RenderComponent<MudSwitch<bool>>();
-            //Console.WriteLine(comp.Markup);
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Checked.Should().Be(true));
@@ -85,7 +84,6 @@ namespace MudBlazor.UnitTests.Components
         public void SwitchLabelPositionTest()
         {
             var comp = Context.RenderComponent<SwitchWithLabelExample>();
-            //Console.WriteLine(comp.Markup);
             var switches = comp.FindAll("label.mud-switch");
 
             switches[0].ClassList.Should().Contain("mud-ltr"); // 1st switch: (default) LabelPosition.End

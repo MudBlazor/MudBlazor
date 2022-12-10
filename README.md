@@ -1,6 +1,6 @@
 # ![MudBlazor](content/MudBlazor-GitHub-NoBg.png)
 # Material Design components for Blazor
-![GitHub Workflow Status (event)](https://img.shields.io/github/workflow/status/mudblazor/mudblazor/dev-ci?event=push&label=dev-ci&logo=github&style=flat-square)
+![GitHub Workflow Status (event)](https://img.shields.io/github/workflow/status/mudblazor/mudblazor/build-test-mudblazor?event=push&label=dev&logo=github&style=flat-square)
 ![Codecov](https://img.shields.io/codecov/c/github/MudBlazor/MudBlazor?logo=codecov&logoColor=white&style=flat-square&token=4BBNQPPATD)
 [![GitHub](https://img.shields.io/github/license/mudblazor/mudblazor?color=594ae2&logo=github&style=flat-square)](https://github.com/mudblazor/MudBlazor/blob/master/LICENSE)
 [![GitHub Repo stars](https://img.shields.io/github/stars/mudblazor/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/mudblazor/MudBlazor/stargazers)
@@ -29,7 +29,9 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
  - Releasing often so developers can get their PRs and fixes in a timely fashion.
 
 ## Prerequisites
-- [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0) for v6.x.x or [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) for v5.x.x (legacy)
+- Supported .NET versions
+  - [.NET 7.0](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) for versions greater than v6.1.0
+  - [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0) for v6.x.x
 
 ## Stats
 ![Alt](https://repobeats.axiom.co/api/embed/db53a44092e88fc34a4c0f37db12773b6787ec7e.svg "Repobeats analytics image")

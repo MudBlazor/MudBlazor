@@ -43,7 +43,8 @@ namespace MudBlazor.Docs.Compiler
                     }
 
                     // TableContext was causing conflicts due to the imperfect mapping from the name of class to the name of field in DocStrings
-                    if (type.IsSubclassOf(typeof(Attribute)) || GetSaveTypename(type) == "TypeInference" || type == typeof(Utilities.CssBuilder) || type == typeof(TableContext))
+                    if (type.IsSubclassOf(typeof(Attribute)) || GetSaveTypename(type) == "TypeInference"
+                            || type == typeof(Utilities.CssBuilder) || type == typeof(TableContext) || GetSaveTypename(type).StartsWith("EventUtil_"))
                         continue;
 
                     foreach (var method in type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy))

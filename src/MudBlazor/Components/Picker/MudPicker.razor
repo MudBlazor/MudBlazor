@@ -47,7 +47,7 @@
         <div class="@PickerClass" id="@_elementId">
             @if (PickerVariant != PickerVariant.Static)
             {
-                <CascadingValue Name="Standalone" Value="false" IsFixed="true">
+                <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
 					@if(InputContent != null) {    
 						@InputContent
 					}
@@ -55,7 +55,7 @@
             }
             @if (IsOpen && PickerVariant == PickerVariant.Inline)
             {
-				<MudPopover Open="IsOpen" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" OverflowBehavior="OverflowBehavior.FilpOnOpen" Paper="false">
+				<MudPopover Open="IsOpen" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" OverflowBehavior="OverflowBehavior.FlipOnOpen" Paper="false">
 				   <div @ref="_pickerInlineRef" class="@PickerInlineClass">
 					   <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
 						   <div class="@PickerContainerClass">

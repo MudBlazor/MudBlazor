@@ -154,6 +154,7 @@ namespace MudBlazor
         {
             if (_value != time)
             {
+                Touched = true;
                 TimeIntermediate = time;
                 _value = time;
                 if (updateValue)
@@ -161,6 +162,7 @@ namespace MudBlazor
                 UpdateTimeSetFromTime();
                 await TimeChanged.InvokeAsync(_value);
                 BeginValidate();
+                FieldChanged(_value);
             }
         }
 

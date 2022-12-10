@@ -22,7 +22,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<PieExample1>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
             comp.FindAll("path.mud-chart-serie")[0].Click();
@@ -36,7 +35,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DonutExample1>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
             comp.FindAll("circle.mud-chart-serie")[0].Click();
@@ -50,7 +48,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<LineExample1>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
             comp.FindAll("path.mud-chart-line")[0].Click();
@@ -64,7 +61,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<BarExample1>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
             comp.FindAll("path.mud-chart-bar")[0].Click();

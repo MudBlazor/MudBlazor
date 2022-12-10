@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using MudBlazor.Extensions;
@@ -27,7 +28,7 @@ namespace MudBlazor
         public abstract void ManagePreviousEditedRow(MudTr row);
     }
 
-    public class TableContext<T> : TableContext
+    public class TableContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : TableContext
     {
         private MudTr editedRow;
 
@@ -111,6 +112,11 @@ namespace MudBlazor
                 return;
             if (Rows[t] == row)
                 Rows.Remove(t);
+            if (!Table.ContainsItem(item))
+            {
+                Selection.Remove(t);
+                Table.UpdateSelection();
+            }
         }
 
         #region --> Sorting

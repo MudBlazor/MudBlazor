@@ -2,16 +2,8 @@
 <!--Use: dotnet msbuild -preprocess:<fileName>.xml to evaluate this project-->
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <!--Hook for the generated static content-->
   <PropertyGroup>
-    <ResolveStaticWebAssetsInputsDependsOn>
-      IncludeGeneratedStaticFiles;
-      $(ResolveStaticWebAssetsInputsDependsOn)
-    </ResolveStaticWebAssetsInputsDependsOn>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
 
   <!--Outside Visual Studio SolutionDir is not available-->  
@@ -19,18 +11,9 @@
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)../</SolutionDir>
   </PropertyGroup>
 
-  <!--Binary path for the code generator-->
-  <Choose>
-    <When Condition="'$(TargetFramework)' == 'netstandard2.1'">
-      <PropertyGroup><BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/netcoreapp3.1/MudBlazor.Docs.Compiler.dll</BinDocsCompiler></PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup><BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net6.0/MudBlazor.Docs.Compiler.dll</BinDocsCompiler></PropertyGroup>
-    </Otherwise>
-  </Choose>
-
   <!--Project path for code generator-->
   <PropertyGroup>
+    <BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net7.0/MudBlazor.Docs.Compiler.dll</BinDocsCompiler>
     <ProjectDocsCompiler>dotnet run --configuration release --project "$(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj"</ProjectDocsCompiler>
   </PropertyGroup>
 
@@ -56,8 +39,11 @@
   <!--We need to do this because the project is not yet aware of files that were generated after the build started-->  
   <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild" DependsOnTargets="CompileDocs;ReadFromFile">
     <ItemGroup>
-      <Compile Include="Models/Snippets.generated.cs" Condition="!Exists('Models/Snippets.generated.cs')" />
-      <Compile Include="Models/DocStrings.generated.cs" Condition="!Exists('Models/DocStrings.generated.cs')" />
+      <!--Include without duplication-->
+      <_NewCompiledSnippets Include="Models\Snippets.generated.cs" Exclude="@(Compile)" />
+      <_NewCompiledDocsStrings Include="Models\DocStrings.generated.cs" Exclude="@(Compile)" />
+      <Compile Include="@(_NewCompiledSnippets)" />
+      <Compile Include="@(_NewCompiledDocsStrings)" />
       <EmbeddedResource Include="@(NewExampleCodeToBuild)" Condition="@(NewExampleCodeToBuild-&gt;Count()) != 0" />
     </ItemGroup>
   </Target>
@@ -89,11 +75,11 @@
   <!--Packages-->
   <ItemGroup>
     <PackageReference Include="Blazor-Analytics" Version="3.11.0" />
-    <PackageReference Include="FluentValidation" Version="11.2.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.9.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9.*" />
+    <PackageReference Include="FluentValidation" Version="11.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
   </ItemGroup>
 
   <!--Project dependencies-->
@@ -112,13 +98,14 @@
   </Target>
 
   <!--Output of Excubo webcompiler-->
-  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler">
-    <Error Condition="!Exists('wwwroot/MudBlazorDocs.min.css')" Text="Missing MudBlazorDocs.min.css in wwwroot" />
+  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler" BeforeTargets="BeforeBuild">
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)/wwwroot/MudBlazorDocs.min.css')" Text="Missing MudBlazorDocs.min.css in wwwroot" />
     <!--If we ever bundle js  for the docs site uncomment the below check-->
     <!--<Error Condition="!Exists('wwwroot/MudBlazorDocs.min.js')" Text="Missing MudBlazorDocs.min.js in wwwroot" />-->
     <ItemGroup>
-      <Content Include="wwwroot/MudBlazorDocs.min.css" Condition="!Exists('wwwroot/MudBlazorDocs.min.css')" />
-      <Content Include="wwwroot/MudBlazorDocs.min.js" Condition="!Exists('wwwroot/MudBlazorDocs.min.js')" />
+      <!--Include without duplication-->
+      <_NewCompiledDocsCssFiles Include="wwwroot\MudBlazorDocs.min.css" Exclude="@(Content)" />
+      <Content Include="@(_NewCompiledDocsCssFiles)" />
     </ItemGroup>
   </Target>
 
@@ -126,9 +113,6 @@
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
     <Content Remove="excubowebcompiler.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwwroot\images\landingpage" />
   </ItemGroup>
 
 </Project>

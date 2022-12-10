@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
@@ -9,6 +11,37 @@ namespace MudBlazor
 {
     public static class IIJSRuntimeExtentions
     {
+        /// <summary>
+        /// Invokes the specified JavaScript function asynchronously and catches JSException, JSDisconnectedException and TaskCanceledException
+        /// </summary>
+        /// <param name="jsRuntime">The <see cref="IJSRuntime"/>.</param>
+        /// <param name="identifier">An identifier for the function to invoke. For example, the value <c>"someScope.someFunction"</c> will invoke the function <c>window.someScope.someFunction</c>.</param>
+        /// <param name="args">JSON-serializable arguments.</param>
+        /// <returns>A <see cref="ValueTask"/> that represents the asynchronous invocation operation.</returns>
+        public static async ValueTask InvokeVoidAsyncIgnoreErrors(this IJSRuntime jsRuntime, string identifier, params object[] args)
+        {
+            try
+            {
+                await jsRuntime.InvokeVoidAsync(identifier, args);
+            }
+#if DEBUG
+#else
+            catch (JSException)
+            {
+            }
+#endif
+            // catch prerending errors since there is no browser at this point.
+            catch (InvalidOperationException ex) when (ex.Message.Contains("prerender", StringComparison.InvariantCultureIgnoreCase))
+            {
+            }
+            catch (JSDisconnectedException)
+            {
+            }
+            catch (TaskCanceledException)
+            {
+            }
+        }
+
         /// <summary>
         /// Invokes the specified JavaScript function asynchronously and catches JSException, JSDisconnectedException and TaskCanceledException
         /// </summary>
@@ -30,6 +63,11 @@ namespace MudBlazor
                 return false;
             }
 #endif
+            // catch prerending errors since there is no browser at this point.
+            catch (InvalidOperationException ex) when (ex.Message.Contains("prerender", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return false;
+            }
             catch (JSDisconnectedException)
             {
                 return false;
@@ -60,7 +98,7 @@ namespace MudBlazor
         /// <param name="identifier">An identifier for the function to invoke. For example, the value <c>"someScope.someFunction"</c> will invoke the function <c>window.someScope.someFunction</c>.</param>
         /// <param name="args">JSON-serializable arguments.</param>
         /// <returns>An instance of <typeparamref name="TValue"/> obtained by JSON-deserializing the return value into a tuple. The first item (sucess) is true in case where there was no exception, otherwise fall.</returns>
-        public static async ValueTask<(bool success, TValue value)> InvokeAsyncWithErrorHandling<TValue>(this IJSRuntime jsRuntime, TValue fallbackValue, string identifier, params object[] args)
+        public static async ValueTask<(bool success, TValue value)> InvokeAsyncWithErrorHandling<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] TValue>(this IJSRuntime jsRuntime, TValue fallbackValue, string identifier, params object[] args)
         {
             try
             {
@@ -74,6 +112,11 @@ namespace MudBlazor
                 return (false, fallbackValue);
             }
 #endif
+            // catch prerending errors since there is no browser at this point.
+            catch (InvalidOperationException ex) when (ex.Message.Contains("prerender", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return (false, fallbackValue);;
+            }
             catch (JSDisconnectedException)
             {
                 return (false, fallbackValue);

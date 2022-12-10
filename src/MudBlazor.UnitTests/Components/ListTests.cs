@@ -23,7 +23,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task ListSelectionTest()
         {
             var comp = Context.RenderComponent<ListSelectionTest>();
-            //Console.WriteLine(comp.Markup);
             var list = comp.FindComponent<MudList>().Instance;
             list.SelectedItem.Should().Be(null);
             // we have seven choices, none is active
@@ -55,7 +54,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task ListWithPreSelectedValueTest()
         {
             var comp = Context.RenderComponent<ListSelectionInitialValueTest>();
-            //Console.WriteLine(comp.Markup);
             var list = comp.FindComponent<MudList>().Instance;
             list.SelectedItem.Text.Should().Be("Sparkling Water");
             // we have seven choices, 1 is active because of the initial value of SelectedValue

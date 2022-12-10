@@ -18,6 +18,7 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-treeview-item")
+            .AddClass("mud-treeview-select-none", MudTreeRoot?.ExpandOnDoubleClick == true)
           .AddClass(Class)
         .Build();
 

@@ -19,7 +19,6 @@ namespace MudBlazor.UnitTests.Components
         public void RatingTest1()
         {
             var comp = Context.RenderComponent<MudRating>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             var inputs = comp.FindAll("input[type=\"radio\"].mud-rating-input").ToArray();
@@ -59,7 +58,6 @@ namespace MudBlazor.UnitTests.Components
         public void RatingTest2()
         {
             var comp = Context.RenderComponent<MudRating>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             // check initial state
@@ -99,7 +97,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudRating>(("SelectedValue", 3));
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // check initial state
             comp.Instance.SelectedValue.Should().Be(3);
         }
@@ -112,7 +109,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudRating>(("Disabled", true), ("SelectedValue", 2));
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             // check initial state
@@ -148,7 +144,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudRating>(("MaxValue", 12));
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             // check initial state
@@ -174,7 +169,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudRating>(("MaxValue", 12));
             var item = comp.FindComponent<MudRatingItem>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
 
             await comp.InvokeAsync(() => item.Instance.HandleMouseOut(new MouseEventArgs()));
             await comp.InvokeAsync(() => item.Instance.HandleMouseOver(new MouseEventArgs()));

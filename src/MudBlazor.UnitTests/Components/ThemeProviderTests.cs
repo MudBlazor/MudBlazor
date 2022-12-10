@@ -6,6 +6,7 @@ using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -26,7 +27,6 @@ namespace MudBlazor.UnitTests.Components
             CultureInfo.CurrentUICulture = culture;
 
             var comp = Context.RenderComponent<MudThemeProvider>();
-            //Console.WriteLine(comp.Markup);
 
             var styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
             styleNodes.Should().HaveCount(3);
@@ -105,8 +105,8 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-palette-table-lines: #e0e0e0ff;",
                 "--mud-palette-table-striped: #00000005;",
                 "--mud-palette-table-hover: #0000000a;",
-                "--mud-palette-divider: #000000cc;",
-                "--mud-palette-divider-light: #e0e0e0ff;",
+                "--mud-palette-divider: #e0e0e0ff;",
+                "--mud-palette-divider-light: #000000cc;",
                 "--mud-palette-grey-default: #9E9E9E;",
                 "--mud-palette-grey-light: #BDBDBD;",
                 "--mud-palette-grey-lighter: #E0E0E0;",
@@ -252,6 +252,59 @@ namespace MudBlazor.UnitTests.Components
 #pragma warning disable BL0005
             comp.Instance.IsDarkMode = true;
             comp.Instance._isDarkMode.Should().BeTrue();
+        }
+
+        [Test]
+        public void CustomThemeDarkModeTest()
+        {
+            var myCustomTheme = new MudTheme()
+            {
+                PaletteDark = new PaletteDark()
+                {
+                    Primary = Colors.Blue.Lighten1,
+                    Secondary = "#F50057"
+                }
+            };
+            Assert.AreEqual(new MudColor(Colors.Blue.Lighten1),myCustomTheme.PaletteDark.Primary);// Set by user
+            Assert.AreEqual(new MudColor("#f64e62"),myCustomTheme.PaletteDark.Error);// Default dark overwritten from light
+            Assert.AreEqual(new MudColor(Colors.Shades.White),myCustomTheme.PaletteDark.White);// Equal in dark and light.
+            Assert.AreEqual(new MudColor("#F50057"),myCustomTheme.PaletteDark.Secondary);// Setting not in PaletteDark()
+        }
+
+        [Test]
+        public void CustomThemeDarkModeBackwardsCompatibleTest()
+        {
+            // ensure it is backwards compatible by setting Palette() instead of PaletteDark()
+            var myCustomTheme = new MudTheme()
+            {
+                PaletteDark = new Palette()
+                {
+                    Primary = Colors.Blue.Lighten1,
+                    Secondary = "#F50057"
+                }
+            };
+            Assert.AreEqual(new MudColor(Colors.Blue.Lighten1),myCustomTheme.PaletteDark.Primary);// Set by user
+            Assert.AreEqual(new MudColor(Colors.Red.Default),myCustomTheme.PaletteDark.Error);// Default from light not overwritten by dark theme 
+            Assert.AreEqual(new MudColor(Colors.Shades.White),myCustomTheme.PaletteDark.White);// Equal in dark and light.
+            Assert.AreEqual(new MudColor("#F50057"),myCustomTheme.PaletteDark.Secondary);// Setting not in PaletteDark()
+        }
+
+        [Test]
+        public void CustomThemeDefaultTest()
+        {
+            var DefaultTheme = new MudTheme();
+            
+            //Dark theme
+            Assert.IsInstanceOf(typeof(PaletteDark), DefaultTheme.PaletteDark);
+            Assert.AreEqual(new MudColor("#776be7"),DefaultTheme.PaletteDark.Primary);
+            Assert.AreEqual(new MudColor("#f64e62"),DefaultTheme.PaletteDark.Error);
+            Assert.AreEqual(new MudColor(Colors.Shades.White),DefaultTheme.PaletteDark.White);
+            
+            //Light theme
+            Assert.IsInstanceOf(typeof(Palette), DefaultTheme.Palette);
+            Assert.AreEqual(new MudColor("#594AE2"),DefaultTheme.Palette.Primary);
+            Assert.AreEqual(new MudColor(Colors.Red.Default),DefaultTheme.Palette.Error);
+            Assert.AreEqual(new MudColor(Colors.Shades.White),DefaultTheme.Palette.White);
         }
     }
 }
