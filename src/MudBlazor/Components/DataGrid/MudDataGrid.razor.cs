@@ -718,9 +718,11 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _isFirstRendered = true;
-                GroupItems();
                 await InvokeServerLoadFunc();
+                GroupItems();
+                if (ServerData == null)
+                    StateHasChanged();
+                _isFirstRendered = true;
             }
             else
             {
@@ -1083,8 +1085,13 @@ namespace MudBlazor
         private async Task InvokeSortUpdates(Dictionary<string, SortDefinition<T>> activeSortDefinitions, HashSet<string> removedSortDefinitions)
         {
             SortChangedEvent?.Invoke(activeSortDefinitions, removedSortDefinitions);
-            await InvokeServerLoadFunc();
-            StateHasChanged();
+
+            if (_isFirstRendered)
+            {
+                await InvokeServerLoadFunc();
+                if (ServerData == null)
+                    StateHasChanged();
+            }
         }
 
         /// <summary>
@@ -1212,7 +1219,8 @@ namespace MudBlazor
             if (GroupedColumn == null)
             {
                 _groups = new List<GroupDefinition<T>>();
-                StateHasChanged();
+                if (_isFirstRendered)
+                    StateHasChanged();
                 return;
             }
 
@@ -1236,7 +1244,8 @@ namespace MudBlazor
             _groups = groupings.Select(x => new GroupDefinition<T>(x,
                 _groupExpansions.Contains(x.Key))).ToList();
 
-            StateHasChanged();
+            if (_isFirstRendered || ServerData != null)
+                StateHasChanged();
         }
 
         internal void ChangedGrouping(Column<T> column)
