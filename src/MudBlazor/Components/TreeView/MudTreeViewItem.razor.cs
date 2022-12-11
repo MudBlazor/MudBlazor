@@ -122,7 +122,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If true, ServerData will be ignored
+        /// If false, TreeViewItem will not be able to expand.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
