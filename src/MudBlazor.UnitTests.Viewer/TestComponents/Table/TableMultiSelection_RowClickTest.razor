@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudText>SelectedItems { @string.Join(", ", selectedItems) }</MudText>
+<MudTable Items="items" @bind-SelectedItems="selectedItems" MultiSelection="true">
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "A row click should not set the checkbox.";
+
+    int[] items = new int[]{0,1,2};
+    HashSet<int> selectedItems=new HashSet<int>();
+}

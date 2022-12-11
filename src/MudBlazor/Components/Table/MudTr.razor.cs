@@ -59,11 +59,6 @@ namespace MudBlazor
         {
             Context?.Table.SetSelectedItem(Item);
             StartEditingItem(buttonClicked: false);
-
-            if (Context?.Table.MultiSelection == true && !(Context?.Table.IsEditable == true))
-            {
-                IsChecked = !IsChecked;
-            }
             Context?.Table.FireRowClickEvent(args, this, Item);
         }
 
