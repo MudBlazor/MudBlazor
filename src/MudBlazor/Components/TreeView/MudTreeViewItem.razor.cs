@@ -11,7 +11,8 @@ namespace MudBlazor
     public partial class MudTreeViewItem<T> : MudComponentBase
     {
         private string _text;
-        private bool _disabled, _stopExpanding;
+        private bool _disabled;
+        private bool _canExpand = true;
         private bool _isChecked, _isSelected, _isServerLoaded;
         private Converter<T> _converter = new DefaultConverter<T>();
         private readonly List<MudTreeViewItem<T>> _childItems = new();
@@ -125,10 +126,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
-        public bool StopExpanding
+        public bool CanExpand
         {
-            get => _stopExpanding;
-            set => _stopExpanding = value;
+            get => _canExpand;
+            set => _canExpand = value;
         }
 
         /// <summary>
@@ -276,7 +277,7 @@ namespace MudBlazor
 
         bool HasChild => ChildContent != null ||
              (MudTreeRoot != null && Items != null && Items.Count != 0) ||
-             (MudTreeRoot?.ServerData != null && !_stopExpanding && !_isServerLoaded && (Items == null || Items.Count == 0));
+             (MudTreeRoot?.ServerData != null && _canExpand && !_isServerLoaded && (Items == null || Items.Count == 0));
 
         protected bool IsChecked
         {
@@ -418,7 +419,7 @@ namespace MudBlazor
 
         internal async void TryInvokeServerLoadFunc()
         {
-            if (Expanded && (Items == null || Items.Count == 0) && !_stopExpanding && MudTreeRoot?.ServerData != null)
+            if (Expanded && (Items == null || Items.Count == 0) && _canExpand && MudTreeRoot?.ServerData != null)
             {
                 Loading = true;
                 StateHasChanged();
