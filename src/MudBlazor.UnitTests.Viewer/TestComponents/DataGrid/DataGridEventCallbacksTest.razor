@@ -1,10 +1,9 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid T="Item" Items="@_items" RowClick="@OnRowClick" SelectedItemChanged="@OnSelectedItemChanged"
-    SelectedItemsChanged="@OnSelectedItemsChanged" StartedEditingItem="@OnStartedEditingItem"
-    StartedCommittingItemChanges="@OnStartedCommittingItemChanges" EditingItemCancelled="@OnEditingItemCancelled">
+<MudDataGrid T="Item" Items="@_items" EditMode="@DataGridEditMode.Cell" RowClick="@OnRowClick" 
+    SelectedItemChanged="@OnSelectedItemChanged" CommittedItemChanges="@OnCommittedItemChanges" 
+    ReadOnly="false">
     <Columns>
-        <Column T="Item" Type="ColumnType.SelectionCheckBox" EnableFooterSelection="true" />
         <Column T="Item" Field="@nameof(Item.Name)" />
     </Columns>
 </MudDataGrid>
@@ -19,10 +18,7 @@
 
     public bool RowClicked { get; set; }
     public bool SelectedItemChanged { get; set; }
-    public bool SelectedItemsChanged { get; set; }
-    public bool StartedEditingItem { get; set; }
-    public bool StartedCommittingItemChanges { get; set; }
-    public bool EditingItemCancelled { get; set; }
+    public bool CommittedItemChanges { get; set; }
 
     private void OnRowClick(DataGridRowClickEventArgs<Item> args)
     {
@@ -34,24 +30,9 @@
         SelectedItemChanged = true;
     }
 
-    private void OnSelectedItemsChanged(HashSet<Item> items)
+    private void OnCommittedItemChanges(Item item)
     {
-        SelectedItemsChanged = true;
-    }
-
-    private void OnStartedEditingItem(Item item)
-    {
-        StartedEditingItem = true;
-    }
-
-    private void OnStartedCommittingItemChanges(Item item)
-    {
-        StartedCommittingItemChanges = true;
-    }
-
-    private void OnEditingItemCancelled(Item item)
-    {
-        EditingItemCancelled = true;
+        CommittedItemChanges = true;
     }
 
     public class Item

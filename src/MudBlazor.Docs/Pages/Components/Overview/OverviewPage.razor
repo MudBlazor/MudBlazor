@@ -86,6 +86,13 @@
                         <DocsExploreCard Title="Divider">
                             <MudPaper Width="100%" Height="1px" Elevation="25" Class="flex-grow-1 mud-theme-primary"/>
                         </DocsExploreCard>
+                        <DocsExploreCard Title="Stack">
+                            <MudStack>
+                                <MudPaper Elevation="25" Class="py-2 px-4"/>
+                                <MudPaper Elevation="25" Class="py-2 px-4"/>
+                                <MudPaper Elevation="25" Class="py-2 px-4"/>
+                            </MudStack>
+                        </DocsExploreCard>
                         <DocsExploreCard Title="ToolBar">
                             <MudPaper Elevation="25" Width="100%" Class="px-2 py-1 d-flex align-center">
                                 <MudPaper Elevation="0" Width="8px" Height="8px" Square="true" Class="mud-theme-primary"/>
@@ -175,6 +182,12 @@
                         <DocsExploreCard Title="Field">
                             <MudPaper Elevation="25" Width="100%" Class="pa-2 rounded-lg d-flex align-center">
                                 <MudPaper Elevation="0" Width="100%" Height="12px" Class="docs-gray-bg"/>
+                            </MudPaper>
+                        </DocsExploreCard>
+                        <DocsExploreCard Title="File Upload">
+                            <MudPaper Elevation="25" Width="100%" Class="pa-2 rounded-lg d-flex align-center">
+                                <MudPaper Elevation="0" Width="100%" Height="12px" Class="mr-1 docs-gray-bg"/>
+                                <MudIcon Icon="@Icons.Filled.FileUpload" Color="Color.Primary" Class="my-n2 mr-n1" Size="Size.Small"/>
                             </MudPaper>
                         </DocsExploreCard>
                         <DocsExploreCard Title="Form">
@@ -632,20 +645,20 @@
                 </MudItem>
                 <MudItem xs="12" md="9" Class="mt-16">
                     <div class="explore-mudblazor-items">
-                        <DocsExploreCard Title="Border Radius" Link="/features/border-radius">
+                        <DocsExploreCard Title="Border Radius" Link="/utilities/border-radius">
                             <MudPaper Elevation="25" Height="68px" Width="68px" Class="rounded-tr-xl rounded-bl-xl rounded-tl-lg rounded-br-lg"/>
                         </DocsExploreCard>
-                        <DocsExploreCard Title="Display" Link="/features/display">
+                        <DocsExploreCard Title="Display" Link="/utilities/display">
                             <div>
                                 <MudPaper Elevation="25" Height="32px" Width="32px"/>
                                 <MudPaper Elevation="25" Height="32px" Width="32px" Class="mt-2"/>
                             </div>
                         </DocsExploreCard>
-                        <DocsExploreCard Title="Flex" Link="/features/flex">
+                        <DocsExploreCard Title="Flex" Link="/utilities/flex">
                             <MudPaper Elevation="25" Height="32px" Width="32px"/>
                             <MudPaper Elevation="25" Height="32px" Width="32px" Class="ml-2"/>
                         </DocsExploreCard>
-                        <DocsExploreCard Title="Spacing" Link="/features/spacing">
+                        <DocsExploreCard Title="Spacing" Link="/utilities/spacing">
                             <MudPaper Elevation="25" Class="pa-2 ma-2"/>
                             <MudPaper Elevation="25" Class="pa-3 ma-2"/>
                             <MudPaper Elevation="25" Class="pa-4 ma-2"/>

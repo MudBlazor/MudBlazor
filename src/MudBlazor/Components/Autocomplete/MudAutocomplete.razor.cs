@@ -21,12 +21,31 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        protected string AutocompleteClassname =>
+            new CssBuilder("mud-select")
+            .AddClass("mud-autocomplete")
+            .AddClass("mud-width-full", FullWidth)
+            .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
+            .Build();
+
+        protected string CircularProgressClassname =>
+            new CssBuilder("progress-indicator-circular")
+            .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
+            .Build();
+
         /// <summary>
         /// User class names for the popover, separated by space
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public string PopoverClass { get; set; }
+
+        /// <summary>
+        /// User class names for the internal list, separated by space
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string ListClass { get; set; }
 
         /// <summary>
         /// Set the anchor origin point to determen where the popover will open from.
@@ -120,6 +139,35 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Whether to show the progress indicator. 
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool ShowProgressIndicator { get; set; } = false;
+
+        /// <summary>
+        /// The color of the progress indicator. 
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color ProgressIndicatorColor { get; set; } = Color.Default;
+
+        private Task _currentSearchTask;
+
+        private bool IsLoading => _currentSearchTask != null && !_currentSearchTask.IsCompleted;
+
+        /// <summary>
+        /// Func that returns a list of items matching the typed text. Provides a cancellation token that
+        /// is marked as cancelled when the user changes the search text or selects a value from the list. 
+        /// This can be used to cancel expensive asynchronous work occuring within the SearchFunc itself.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public Func<string, CancellationToken, Task<IEnumerable<T>>> SearchFuncWithCancel { get; set; }
+
+        private CancellationTokenSource _cancellationTokenSrc;
+
+        /// <summary>
         /// The SearchFunc returns a list of items matching the typed text
         /// </summary>
         [Parameter]
@@ -184,6 +232,34 @@ namespace MudBlazor
         public RenderFragment<T> ItemDisabledTemplate { get; set; }
 
         /// <summary>
+        /// Optional presentation template for when more items were returned from the Search function than the MaxItems limit
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment MoreItemsTemplate { get; set; }
+
+        /// <summary>
+        /// Optional presentation template for when no items were returned from the Search function
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment NoItemsTemplate { get; set; }
+
+        /// <summary>
+        /// Optional template for progress indicator
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment ProgressIndicatorTemplate { get; set; }
+
+        /// <summary>
+        /// Optional template for showing progress indicator inside the popover
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment ProgressIndicatorInPopoverTemplate { get; set; }
+
+        /// <summary>
         /// On drop-down close override Text with selected Value. This makes it clear to the user
         /// which list value is currently selected and disallows incomplete values in Text.
         /// </summary>
@@ -221,7 +297,7 @@ namespace MudBlazor
                 if (value == _isOpen)
                     return;
                 _isOpen = value;
-                UpdateIcon();
+
                 IsOpenChanged.InvokeAsync(_isOpen).AndForget();
             }
         }
@@ -250,7 +326,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
-        private string _currentIcon;
+        private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
 
         /// <summary>
         /// This boolean will keep track if the clear function is called too keep the set text function to be called.
@@ -310,14 +386,9 @@ namespace MudBlazor
             }
         }
 
-        private void UpdateIcon()
-        {
-            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
-        }
 
         protected override void OnInitialized()
         {
-            UpdateIcon();
             var text = GetItemString(Value);
             if (!string.IsNullOrWhiteSpace(text))
                 Text = text;
@@ -356,6 +427,20 @@ namespace MudBlazor
 
         private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearchAsync);
 
+        private void CancelToken()
+        {
+            try
+            {
+                _cancellationTokenSrc?.Cancel();
+            }
+            catch
+            { }
+
+            _cancellationTokenSrc = new CancellationTokenSource();
+        }
+        
+        private int _itemsReturned; //the number of items returned by the search function
+
         /// <remarks>
         /// This async method needs to return a task and be awaited in order for
         /// unit tests that trigger this method to work correctly.
@@ -370,16 +455,41 @@ namespace MudBlazor
             }
 
             IEnumerable<T> searched_items = Array.Empty<T>();
+            CancelToken();
+
             try
             {
-                searched_items = (await SearchFunc(Text)) ?? Array.Empty<T>();
+                if (ProgressIndicatorInPopoverTemplate != null)
+                {
+                    IsOpen = true;
+                }
+
+                var searchTask = SearchFuncWithCancel != null ?
+                    SearchFuncWithCancel(Text, _cancellationTokenSrc.Token) :
+                    SearchFunc(Text);
+
+                _currentSearchTask = searchTask;
+
+                StateHasChanged();
+
+                searched_items = await searchTask ?? Array.Empty<T>();
+            }
+            catch (TaskCanceledException)
+            {
+            }
+            catch (OperationCanceledException)
+            {
             }
             catch (Exception e)
             {
                 Console.WriteLine("The search function failed to return results: " + e.Message);
             }
+
+            _itemsReturned = searched_items.Count();
             if (MaxItems.HasValue)
+            {
                 searched_items = searched_items.Take(MaxItems.Value);
+            }
             _items = searched_items.ToArray();
 
             _enabledItemIndices = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).Select(tuple => tuple.idx).ToList();
@@ -408,7 +518,8 @@ namespace MudBlazor
             IsOpen = false;
             await SetTextAsync(string.Empty, updateValue: false);
             await CoerceValueToText();
-            await _elementReference.SetText("");
+            if (_elementReference != null)
+                await _elementReference.SetText("");
             _timer?.Dispose();
             StateHasChanged();
         }
@@ -517,7 +628,7 @@ namespace MudBlazor
             if (increment == 0 || _items == null || _items.Length == 0 || !_enabledItemIndices.Any())
                 return ValueTask.CompletedTask;
             // if we are at the end, or the beginning we just do an rollover
-            _selectedListItemIndex = Math.Clamp(value: (10 * _items.Length + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length-1);
+            _selectedListItemIndex = Math.Clamp(value: (10 * _items.Length + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length - 1);
             return ScrollToListItem(_selectedListItemIndex);
         }
 
@@ -560,7 +671,7 @@ namespace MudBlazor
             return $"{_componentId}_item{index}";
         }
 
-        private Task OnEnterKey()
+        internal Task OnEnterKey()
         {
             if (IsOpen == false)
                 return Task.CompletedTask;
@@ -608,6 +719,16 @@ namespace MudBlazor
         protected override void Dispose(bool disposing)
         {
             _timer?.Dispose();
+            
+            if (_cancellationTokenSrc != null)
+            {
+                try
+                {
+                    _cancellationTokenSrc.Dispose();
+                }
+                catch { }
+            }
+
             base.Dispose(disposing);
         }
 
@@ -617,6 +738,14 @@ namespace MudBlazor
         public override ValueTask FocusAsync()
         {
             return _elementReference.FocusAsync();
+        }
+
+        /// <summary>
+        /// Blur from the input in the Autocomplete component.
+        /// </summary>
+        public override ValueTask BlurAsync()
+        {
+            return _elementReference.BlurAsync();
         }
 
         /// <summary>
@@ -642,6 +771,11 @@ namespace MudBlazor
             if (text == null)
                 return;
             await SetTextAsync(text, true);
+        }
+
+        private async Task ListItemOnClick(T item)
+        {
+            await SelectOption(item);
         }
 
     }

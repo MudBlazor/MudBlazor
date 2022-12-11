@@ -3,11 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Generic;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -21,6 +21,7 @@ namespace MudBlazor
             DisableToolbar = true;
             Value = "#594ae2"; //MudBlazor Blue
             Text = GetColorTextValue();
+            AdornmentAriaLabel = "Open Color Picker";
         }
 
         #region Fields
@@ -51,13 +52,14 @@ namespace MudBlazor
         private readonly Guid _id = Guid.NewGuid();
         private Guid _throttledMouseOverEventId;
 
-        [Inject] IEventListener ThrottledEventManager { get; set; }
+        private IEventListener _throttledEventManager;
+        [Inject] IEventListenerFactory ThrottledEventManagerFactory { get; set; }
 
         #endregion
 
         #region Parameters
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         private bool _disableAlpha = false;
 
@@ -128,6 +130,7 @@ namespace MudBlazor
         public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
 
         private ColorPickerView _colorPickerView = ColorPickerView.Spectrum;
+        private ColorPickerView _activeColorPickerView = ColorPickerView.Spectrum;
 
         /// <summary>
         /// The initial view of the picker. Views can be changed if toolbar is enabled. 
@@ -141,20 +144,8 @@ namespace MudBlazor
             {
                 if (value != _colorPickerView)
                 {
-                    var oldValue = _colorPickerView;
-
                     _colorPickerView = value;
-                    Text = GetColorTextValue();
-
-                    if (oldValue == ColorPickerView.Spectrum)
-                    {
-                        RemoveMouseOverEvent().AndForget();
-                    }
-
-                    if (value == ColorPickerView.Spectrum)
-                    {
-                        _attachedMouseEvent = true;
-                    }
+                    ChangeView(value).AndForget();
                 }
             }
         }
@@ -190,14 +181,16 @@ namespace MudBlazor
                         UpdateColorSelectorBasedOnRgb();
                     }
 
-                    SetTextAsync(GetColorTextValue(), true).AndForget();
+                    SetTextAsync(GetColorTextValue(), false).AndForget();
                     ValueChanged.InvokeAsync(value).AndForget();
+                    FieldChanged(value);
                 }
 
                 if (rgbChanged == false && UpdateBindingIfOnlyHSLChanged && hslChanged == true)
                 {
-                    SetTextAsync(GetColorTextValue(), true).AndForget();
+                    SetTextAsync(GetColorTextValue(), false).AndForget();
                     ValueChanged.InvokeAsync(value).AndForget();
+                    FieldChanged(value);
                 }
             }
         }
@@ -290,7 +283,7 @@ namespace MudBlazor
             _collectionOpen = false;
 
             if (
-                IsAnyControlVisible() == false || ColorPickerView is ColorPickerView.GridCompact or ColorPickerView.Palette)
+                IsAnyControlVisible() == false || _activeColorPickerView is ColorPickerView.GridCompact or ColorPickerView.Palette)
             {
                 Close();
             }
@@ -305,7 +298,24 @@ namespace MudBlazor
                 _ => ColorPickerMode.RGB,
             };
 
-        public void ChangeView(ColorPickerView view) => ColorPickerView = view;
+        public async Task ChangeView(ColorPickerView value)
+        {
+
+            var oldValue = _activeColorPickerView;
+
+            _activeColorPickerView = value;
+            Text = GetColorTextValue();
+
+            if (oldValue == ColorPickerView.Spectrum)
+            {
+                await RemoveMouseOverEvent();
+            }
+
+            if (value == ColorPickerView.Spectrum)
+            {
+                _attachedMouseEvent = true;
+            }
+        }
 
         private void UpdateBaseColorSlider(int value)
         {
@@ -493,6 +503,12 @@ namespace MudBlazor
             Value = color;
         }
 
+        protected override Task StringValueChanged(string value)
+        {
+            SetInputString(value);
+            return Task.CompletedTask;
+        }
+
         private bool _attachedMouseEvent = false;
 
         protected override void OnPickerOpened()
@@ -513,13 +529,14 @@ namespace MudBlazor
         #region helper
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
-        private string GetColorTextValue() => (DisableAlpha == true || ColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _color.ToString(MudColorOutputFormats.Hex) : _color.ToString(MudColorOutputFormats.HexA);
+        private string GetColorTextValue() => (DisableAlpha == true || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _color.ToString(MudColorOutputFormats.Hex) : _color.ToString(MudColorOutputFormats.HexA);
+        private int GetHexColorInputMaxLength() => DisableAlpha ? 7 : 9;
 
         private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => Close());
         private bool IsAnyControlVisible() => !(DisablePreview && DisableSliders && DisableInputs);
         private EventCallback<MouseEventArgs> GetSelectPaletteColorCallback(MudColor color) => new EventCallbackFactory().Create(this, (MouseEventArgs e) => SelectPaletteColor(color));
 
-        private Color GetButtonColor(ColorPickerView view) => ColorPickerView == view ? Color.Primary : Color.Inherit;
+        private Color GetButtonColor(ColorPickerView view) => _activeColorPickerView == view ? Color.Primary : Color.Inherit;
         private string GetColorDotClass(MudColor color) => new CssBuilder("mud-picker-color-dot").AddClass("selected", color == Value).ToString();
         private string AlphaSliderStyle => new StyleBuilder().AddStyle($"background-image: linear-gradient(to {(RightToLeft ? "left" : "right")}, transparent, {_color.ToString(MudColorOutputFormats.RGB)})").Build();
 
@@ -550,8 +567,13 @@ namespace MudBlazor
         {
             if (DisableDragEffect == true) { return; }
 
+            if (_throttledEventManager == null)
+            {
+                _throttledEventManager = ThrottledEventManagerFactory.Create();
+            }
+
             _throttledMouseOverEventId = await
-                ThrottledEventManager.Subscribe<MouseEventArgs>("mousemove", _id.ToString(), "mudEventProjections.correctOffset", 10, async (x) =>
+                _throttledEventManager.Subscribe<MouseEventArgs>("mousemove", _id.ToString(), "mudEventProjections.correctOffset", 10, async (x) =>
                 {
                     var e = x as MouseEventArgs;
                     await InvokeAsync(() => OnMouseOver(e));
@@ -563,12 +585,14 @@ namespace MudBlazor
         {
             if (_throttledMouseOverEventId == default) { return Task.CompletedTask; }
 
-            return ThrottledEventManager.Unsubscribe(_throttledMouseOverEventId);
+            return _throttledEventManager.Unsubscribe(_throttledMouseOverEventId);
         }
 
         public async ValueTask DisposeAsync()
         {
-            await ThrottledEventManager.Unsubscribe(_throttledMouseOverEventId);
+            if (_throttledEventManager == null) { return; }
+
+            await _throttledEventManager.DisposeAsync();
         }
 
         #endregion

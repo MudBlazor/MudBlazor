@@ -1,0 +1,47 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDatePicker @ref="_picker" @bind-Date="date" PickerVariant="PickerVariant.Static" MaxDate="maxDate">
+    <PickerActions>
+        <MudButton Class="mr-auto align-self-start" OnClick="Today">Today</MudButton>
+    </PickerActions>
+</MudDatePicker>
+
+<div class="d-flex flex-column gap-4">
+    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="CurrentDate">Move To Current Date</MudButton>
+    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="MudRelease">When First Mud Released?</MudButton>
+    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="GoMaxDateWithoutSubmit">Go To Max Date Without Submit</MudButton>
+</div>
+
+@code {
+    MudDatePicker _picker;
+    DateTime? date = DateTime.Today.AddDays(210);
+    DateTime? maxDate = new DateTime(2050, 12, 31);
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _picker.GoToDate();
+        }
+    }
+
+    private async Task Today()
+    {
+        await _picker.GoToDate(DateTime.Today);
+    }
+
+    private void CurrentDate()
+    {
+        _picker.GoToDate();
+    }
+
+    private async Task MudRelease()
+    {
+        await _picker.GoToDate(new DateTime(2020, 10, 18));
+    }
+
+    private async Task GoMaxDateWithoutSubmit()
+    {
+        await _picker.GoToDate(maxDate.Value, false);
+    }
+}

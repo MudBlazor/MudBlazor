@@ -22,14 +22,14 @@ namespace MudBlazor
         private bool _dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
+        private IKeyInterceptor _keyInterceptor;
 
         protected string Classname =>
             new CssBuilder("mud-select")
             .AddClass(Class)
             .Build();
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
-
+        [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
         [Inject] IScrollManager ScrollManager { get; set; }
 
         private string _elementId = "select_" + Guid.NewGuid().ToString().Substring(0, 8);
@@ -161,6 +161,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public string PopoverClass { get; set; }
+
+        /// <summary>
+        /// User class names for the internal list, separated by space
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string ListClass { get; set; }
 
         /// <summary>
         /// If true, compact vertical padding will be applied to all Select items.
@@ -411,12 +418,24 @@ namespace MudBlazor
 
         internal event Action<ICollection<T>> SelectionChangedFromOutside;
 
+        private bool _multiSelection;
         /// <summary>
         /// If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool MultiSelection { get; set; }
+        public bool MultiSelection
+        {
+            get => _multiSelection;
+            set
+            {
+                if (value != _multiSelection)
+                {
+                    _multiSelection = value;
+                    UpdateTextPropertyAsync(false).AndForget();
+                }
+            }
+        }
 
         /// <summary>
         /// The collection of items within this select
@@ -574,8 +593,8 @@ namespace MudBlazor
             else
             {
                 // single selection
-                _isOpen = false;
-                UpdateIcon();
+                // CloseMenu(true) doesn't close popover in BSS
+                await CloseMenu(false);
 
                 if (EqualityComparer<T>.Default.Equals(Value, value))
                 {
@@ -587,13 +606,13 @@ namespace MudBlazor
                 _elementReference.SetText(Text).AndForget();
                 _selectedValues.Clear();
                 _selectedValues.Add(value);
-                HilightItemForValue(value);
             }
 
+            HilightItemForValue(value);
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T)(object)Text, updateText: false);
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
 
         private async void HilightItemForValue(T value)
@@ -722,6 +741,8 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _keyInterceptor = KeyInterceptorFactory.Create();
+
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -741,8 +762,9 @@ namespace MudBlazor
                     },
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
-                _keyInterceptor.KeyUp += HandleKeyUp;
+                _keyInterceptor.KeyUp += HandleKeyUp;    
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -756,6 +778,11 @@ namespace MudBlazor
         public override ValueTask FocusAsync()
         {
             return _elementReference.FocusAsync();
+        }
+
+        public override ValueTask BlurAsync()
+        {
+            return _elementReference.BlurAsync();
         }
 
         public override ValueTask SelectAsync()
@@ -1026,6 +1053,36 @@ namespace MudBlazor
                 _elementReference.FocusAsync().AndForget(TaskOption.Safe);
             }
             base.OnBlur.InvokeAsync(obj);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                if (_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDown;
+                    _keyInterceptor.KeyUp -= HandleKeyUp;
+
+                    _keyInterceptor.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Fixes issue #4328
+        /// Returns true when MultiSelection is true and it has selected values(Since Value property is not used when MultiSelection=true
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns>True when component has a value</returns>
+        protected override bool HasValue(T value)
+        {
+            if (MultiSelection)
+                return SelectedValues?.Count() > 0;
+            else
+                return base.HasValue(value);
         }
     }
 }

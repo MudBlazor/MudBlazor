@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -7,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTableGroupRow<T> : MudComponentBase
+    public partial class MudTableGroupRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudComponentBase
     {
         protected string HeaderClassname => new CssBuilder("mud-table-row")
                                 .AddClass(HeaderClass)
@@ -113,6 +114,8 @@ namespace MudBlazor
             {
                 _innerGroupItems = Table?.GetItemsOfGroup(GroupDefinition.InnerGroup, Items);
             }
+            if (IsCheckable && Items is not null && Table is not null && Table.SelectedItems.Count > 0)
+                _checked = Items.All(Table.SelectedItems.Contains);
         }
 
         public void Dispose()

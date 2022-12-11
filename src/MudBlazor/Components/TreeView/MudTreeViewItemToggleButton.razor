@@ -10,10 +10,11 @@
  
 @code {
     protected string Classname =>
-    new CssBuilder()
-        .AddClass("mud-treeview-item-arrow-expand mud-transform", Expanded && !Loading)
-        .AddClass("mud-treeview-item-arrow-load", Loading)
-    .Build();
+        new CssBuilder()
+            .AddClass("mud-treeview-item-arrow-expand", !Loading)
+            .AddClass("mud-transform", Expanded && !Loading)
+            .AddClass("mud-treeview-item-arrow-load", Loading)
+            .Build();
 
     /// <summary>
     /// If true, displays the button.

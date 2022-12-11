@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudDataGrid Items="@_items" Filterable="true">
+    <Columns>
+        <Column T="Model" Field="@nameof(Model.Id)" />
+        <Column T="Model" Field="@nameof(Model.Name)" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("B"), 
+        new Model("A"), 
+        new Model("C"),
+        new Model("C")
+    };
+
+    public class Model
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+
+        public Model(string name)
+        {
+            Id = Guid.NewGuid();
+            Name = name;
+        }
+    }
+
+}

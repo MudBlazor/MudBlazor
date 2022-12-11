@@ -38,29 +38,32 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DropZone_Defaults()
         {
-            var container = new MudDropZone<object>();
+            var zone = new MudDropZone<object>();
 
-            container.ApplyDropClassesOnDragStarted.Should().BeNull();
-            container.CanDrop.Should().BeNull();
-            container.CanDropClass.Should().BeNullOrEmpty();
-            container.DisabledClass.Should().BeNullOrEmpty();
-            container.DraggingClass.Should().BeNullOrEmpty();
-            container.ItemDraggingClass.Should().BeNullOrEmpty();
-            container.ItemIsDisabled.Should().BeNull();
-            container.ItemsSelector.Should().BeNull();
-            container.NoDropClass.Should().BeNullOrEmpty();
+            zone.ApplyDropClassesOnDragStarted.Should().BeNull();
+            zone.CanDrop.Should().BeNull();
+            zone.CanDropClass.Should().BeNullOrEmpty();
+            zone.DisabledClass.Should().BeNullOrEmpty();
+            zone.DraggingClass.Should().BeNullOrEmpty();
+            zone.ItemDraggingClass.Should().BeNullOrEmpty();
+            zone.ItemIsDisabled.Should().BeNull();
+            zone.ItemsSelector.Should().BeNull();
+            zone.NoDropClass.Should().BeNullOrEmpty();
+            zone.OnlyZone.Should().BeFalse();
+            zone.AllowReorder.Should().BeFalse();
         }
 
         [Test]
         public void DropItem_Defaults()
         {
-            var container = new MudDynamicDropItem<object>();
+            var item = new MudDynamicDropItem<object>();
 
-            container.Disabled.Should().BeFalse();
-            container.DisabledClass.Should().BeNullOrEmpty();
-            container.DraggingClass.Should().BeNullOrEmpty();
-            container.ZoneIdentifier.Should().BeNullOrEmpty();
-            container.Item.Should().BeNull();
+            item.Disabled.Should().BeFalse();
+            item.DisabledClass.Should().BeNullOrEmpty();
+            item.DraggingClass.Should().BeNullOrEmpty();
+            item.ZoneIdentifier.Should().BeNullOrEmpty();
+            item.Item.Should().BeNull();
+            item.HideContent.Should().BeFalse();
         }
 
         [Test]
@@ -149,19 +152,12 @@ namespace MudBlazor.UnitTests.Components
             var firstDropZone = container.Children[0];
             firstDropZone.Children.Should().HaveCount(2);
 
-            var secondDropZone = container.Children[1];
             var firstDropItem = firstDropZone.Children[1];
 
-            firstDropZone.ClassList.Should().NotContain("mud-drop-zone-drag-block");
-            secondDropZone.ClassList.Should().NotContain("mud-drop-zone-drag-block");
-
+            firstDropItem.TextContent.Should().Be("First Item");
             await firstDropItem.DragStartAsync(new DragEventArgs());
 
-            firstDropZone = comp.Find(".first-drop-zone");
-            firstDropZone.ClassList.Should().NotContain("mud-drop-zone-drag-block");
-
-            secondDropZone = comp.Find(".second-drop-zone");
-            secondDropZone.ClassList.Should().Contain("mud-drop-zone-drag-block");
+            var secondDropZone = comp.Find(".second-drop-zone");
 
             await secondDropZone.DropAsync(new DragEventArgs());
 
@@ -183,6 +179,8 @@ namespace MudBlazor.UnitTests.Components
             secondDropZone = comp.Find(".second-drop-zone");
             firstDropZone.ClassList.Should().NotContain("mud-drop-zone-drag-block");
             secondDropZone.ClassList.Should().NotContain("mud-drop-zone-drag-block");
+
+            comp.Instance.IndexHistory.Distinct().Should().ContainSingle().And.Contain(-1);
         }
 
         [Test]
@@ -325,7 +323,25 @@ namespace MudBlazor.UnitTests.Components
             firstDropZone.ClassList.Should().NotContain("my-special-dragging-class");
             firstDropItem.ClassList.Should().NotContain("my-special-item-dragging-class");
         }
+        
+        [Test]
+        public async Task DropZone_DropItem_DragEnterNotTrackedItem()
+        {
+            var comp = Context.RenderComponent<DropzoneBasicTest>();
+            
+            var tempContainer = comp.Find(".mud-drop-container");
+            tempContainer.Children.Should().HaveCount(2);
 
+            var firstDropZone = tempContainer.Children[0];
+            var firstDropItem = firstDropZone.Children[1];
+            
+            await firstDropItem.DragEnterAsync(new DragEventArgs());
+            
+            tempContainer.Children.Should().HaveCount(2);
+            tempContainer.Children[0].Children.Should().HaveCount(2);
+            tempContainer.Children[1].Children.Should().HaveCount(3);
+        }
+        
         [Test]
         public async Task DropZone_DropNotTrackedItem()
         {
@@ -609,6 +625,77 @@ namespace MudBlazor.UnitTests.Components
             thirdDropZone.ClassList.Should().NotContain("can-drop-from-container");
             thirdDropZone.ClassList.Should().Contain("no-drop-class-from-container");
         }
+        
+        [Test]
+        public async Task DropZone_CheckDropClasses_ApplyClassesOnDragStarted_DragFinished()
+        {
+            var comp = Context.RenderComponent<DropzoneCanDropTest>(p =>
+            {
+                p.Add(x => x.SecondColumnAppliesClassesOnDragStarted, false);
+                p.Add(x => x.ApplyDropClassesOnDragStarted, true);
+            });
+
+            var firstDropZone = comp.Find(".first-drop-zone");
+            var secondDropZone = comp.Find(".second-drop-zone");
+            var thirdDropZone = comp.Find(".third-drop-zone");
+
+            var dragItem = firstDropZone.Children[1];
+
+            //start dragging
+            await dragItem.DragStartAsync(new DragEventArgs());
+            
+            //enter second drop zone
+            await secondDropZone.DragEnterAsync(new DragEventArgs());
+            
+            //drop to second drop zone
+            await secondDropZone.DropAsync(new DragEventArgs());
+
+            //first zone, as source, should not have classes applied
+            firstDropZone.ClassList.Should().NotContain("can-drop-from-container");
+            firstDropZone.ClassList.Should().NotContain("no-drop-class-from-container");
+
+            //second zone, should not have styles because it is explicit set to false
+            secondDropZone.ClassList.Should().NotContain("can-drop-from-zone");
+            secondDropZone.ClassList.Should().NotContain("no-drop-class-from-zone");
+
+            //third zone, should not have classes applied after drop
+            thirdDropZone.ClassList.Should().NotContain("can-drop-from-container");
+            thirdDropZone.ClassList.Should().NotContain("no-drop-class-from-container");
+        }
+        
+        [Test]
+        public async Task DropZone_CheckDropClasses_ApplyClassesOnDragStarted_DragCancelled()
+        {
+            var comp = Context.RenderComponent<DropzoneCanDropTest>(p =>
+            {
+                p.Add(x => x.SecondColumnAppliesClassesOnDragStarted, false);
+                p.Add(x => x.ApplyDropClassesOnDragStarted, true);
+            });
+
+            var firstDropZone = comp.Find(".first-drop-zone");
+            var secondDropZone = comp.Find(".second-drop-zone");
+            var thirdDropZone = comp.Find(".third-drop-zone");
+
+            var dragItem = firstDropZone.Children[1];
+
+            //start dragging
+            await dragItem.DragStartAsync(new DragEventArgs());
+            
+            //cancel drag transaction
+            await dragItem.DragEndAsync(new DragEventArgs());
+
+            //first zone, as source, should not have classes applied
+            firstDropZone.ClassList.Should().NotContain("can-drop-from-container");
+            firstDropZone.ClassList.Should().NotContain("no-drop-class-from-container");
+
+            //second zone, should not have styles because it is explicit set to false
+            secondDropZone.ClassList.Should().NotContain("can-drop-from-zone");
+            secondDropZone.ClassList.Should().NotContain("no-drop-class-from-zone");
+
+            //third zone, should not have classes applied after cancellation
+            thirdDropZone.ClassList.Should().NotContain("can-drop-from-container");
+            thirdDropZone.ClassList.Should().NotContain("no-drop-class-from-container");
+        }
 
         [Test]
         public void DropZone_CheckDropClasses_DisabledItems()
@@ -682,6 +769,411 @@ namespace MudBlazor.UnitTests.Components
 
             //items should have been rendered
             secondDropZone.Children.Should().HaveCount(1);
+        }
+
+        [Test]
+        public void DropZone_OnlyZone()
+        {
+            var comp = Context.RenderComponent<DropzoneVisbilityTest>();
+
+            var container = comp.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(2);
+
+            var firstDropZone = container.Children[0];
+            firstDropZone.Children.Should().ContainSingle();
+            firstDropZone.Children[0].TextContent.Should().Be("Drop Zone 1");
+
+            var secondDropZone = container.Children[1];
+            secondDropZone.Children.Should().HaveCount(3);
+
+            secondDropZone.Children[0].TextContent.Should().Be("Drop Zone 2");
+            secondDropZone.Children[1].TextContent.Should().Be("Second Item");
+            secondDropZone.Children[2].TextContent.Should().Be("Third Item");
+
+            comp.SetParametersAndRender(x => x.Add(p => p.HideItemsInFirstDropZone, false));
+
+            container = comp.Find(".mud-drop-container");
+            firstDropZone = container.Children[0];
+            firstDropZone.Children.Should().HaveCount(2);
+            firstDropZone.Children[0].TextContent.Should().Be("Drop Zone 1");
+            firstDropZone.Children[1].TextContent.Should().Be("First Item");
+        }
+
+        [Test]
+        public async Task DropZone_Reorder_PlaceIntoEmptyZone()
+        {
+            var comp = Context.RenderComponent<DropzoneReorderTest>();
+
+            comp.Find(".mud-drop-container");
+            var firstDropZone = comp.Find(".dropzone-1");
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 1");
+            firstDropZone.Children[3].TextContent.Should().Be("Item 2");
+            firstDropZone.Children[4].TextContent.Should().Be("Item 3");
+            firstDropZone.Children[5].TextContent.Should().Be("Item 4");
+
+            var firstDropItem = firstDropZone.Children[2];
+
+            await firstDropItem.DragStartAsync(new DragEventArgs());
+
+            var thirdDropZone = comp.Find(".dropzone-3");
+            thirdDropZone.Children.Should().ContainSingle();
+            thirdDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+
+            await thirdDropZone.DragEnterAsync(new DragEventArgs());
+
+            thirdDropZone.Children.Should().ContainSingle();
+            thirdDropZone.Children[0].ClassList.Should().Contain("mud-dropitem-placeholder").And.NotContain("d-none");
+
+            await thirdDropZone.DropAsync(new DragEventArgs());
+
+            thirdDropZone.Children.Should().HaveCount(3);
+            thirdDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            thirdDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            thirdDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            thirdDropZone.Children[2].TextContent.Should().Be("Item 1");
+
+            comp.Instance.IndexHistory.Distinct().Should().ContainSingle().And.Contain(0);
+        }
+
+        [Test]
+        public async Task DropZone_Reorder_MoveWithinContainer_Down()
+        {
+            var comp = Context.RenderComponent<DropzoneReorderTest>();
+
+            comp.Find(".mud-drop-container");
+            var firstDropZone = comp.Find(".dropzone-1");
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 1");
+
+            var secondDropItem = firstDropZone.Children[3];
+            secondDropItem.TextContent.Should().Be("Item 2");
+            await secondDropItem.DragStartAsync(new DragEventArgs());
+
+            var thirdDropItem = firstDropZone.Children[3];
+            thirdDropItem.TextContent.Should().Be("Item 3");
+            await thirdDropItem.DragEnterAsync(new DragEventArgs());
+
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[4].ClassList.Should().Contain("mud-dropitem-placeholder").And.NotContain("d-none");
+
+            await firstDropZone.DropAsync(new DragEventArgs());
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 1");
+            firstDropZone.Children[3].TextContent.Should().Be("Item 3");
+            firstDropZone.Children[4].TextContent.Should().Be("Item 2");
+            firstDropZone.Children[5].TextContent.Should().Be("Item 4");
+
+            comp.Instance.IndexHistory.Distinct().Should().ContainSingle().And.Contain(2);
+        }
+
+        [Test]
+        public async Task DropZone_Reorder_MoveWithinContainer_Up()
+        {
+            var comp = Context.RenderComponent<DropzoneReorderTest>();
+
+            comp.Find(".mud-drop-container");
+            var firstDropZone = comp.Find(".dropzone-1");
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 1");
+
+            var thirdDropItem = firstDropZone.Children[4];
+            thirdDropItem.TextContent.Should().Be("Item 3");
+            await thirdDropItem.DragStartAsync(new DragEventArgs());
+
+            var firstDropItem = firstDropZone.Children[1];
+            firstDropItem.TextContent.Should().Be("Item 1");
+            await firstDropItem.DragEnterAsync(new DragEventArgs());
+
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[2].ClassList.Should().Contain("mud-dropitem-placeholder").And.NotContain("d-none");
+
+            await firstDropZone.DropAsync(new DragEventArgs());
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 1");
+            firstDropZone.Children[3].TextContent.Should().Be("Item 3");
+            firstDropZone.Children[4].TextContent.Should().Be("Item 2");
+            firstDropZone.Children[5].TextContent.Should().Be("Item 4");
+
+            comp.Instance.IndexHistory.Distinct().Should().ContainSingle().And.Contain(1);
+
+        }
+
+        [Test]
+        public async Task DropZone_Reorder_MoveWithinContainer_ToBottom()
+        {
+            var comp = Context.RenderComponent<DropzoneReorderTest>();
+
+            comp.Find(".mud-drop-container");
+            var firstDropZone = comp.Find(".dropzone-1");
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 1");
+
+            var secondDropItem = firstDropZone.Children[3];
+            secondDropItem.TextContent.Should().Be("Item 2");
+            await secondDropItem.DragStartAsync(new DragEventArgs());
+
+            var lastDropItem = firstDropZone.Children[4];
+            lastDropItem.TextContent.Should().Be("Item 4");
+            await lastDropItem.DragEnterAsync(new DragEventArgs());
+
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[5].ClassList.Should().Contain("mud-dropitem-placeholder").And.NotContain("d-none");
+
+            await firstDropZone.DropAsync(new DragEventArgs());
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 1");
+            firstDropZone.Children[3].TextContent.Should().Be("Item 3");
+            firstDropZone.Children[4].TextContent.Should().Be("Item 4");
+            firstDropZone.Children[5].TextContent.Should().Be("Item 2");
+
+            comp.Instance.IndexHistory.Distinct().Should().ContainSingle().And.Contain(3);
+
+        }
+
+        [Test]
+        public async Task DropZone_Reorder_MoveWithinContainer_Top()
+        {
+            var comp = Context.RenderComponent<DropzoneReorderTest>();
+
+            comp.Find(".mud-drop-container");
+            var firstDropZone = comp.Find(".dropzone-1");
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 1");
+
+            var thirdDropItem = firstDropZone.Children[4];
+            thirdDropItem.TextContent.Should().Be("Item 3");
+            await thirdDropItem.DragStartAsync(new DragEventArgs());
+
+            var firstDropItem = firstDropZone.Children[0];
+            firstDropItem.TextContent.Should().BeEmpty();
+            await firstDropItem.DragEnterAsync(new DragEventArgs());
+
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[0].ClassList.Should().Contain("mud-dropitem-placeholder").And.NotContain("d-none");
+
+            await firstDropZone.DropAsync(new DragEventArgs());
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 3");
+            firstDropZone.Children[3].TextContent.Should().Be("Item 1");
+            firstDropZone.Children[4].TextContent.Should().Be("Item 2");
+            firstDropZone.Children[5].TextContent.Should().Be("Item 4");
+
+            comp.Instance.IndexHistory.Distinct().Should().ContainSingle().And.Contain(0);
+        }
+
+        [Test]
+        public async Task DropZone_Reorder_MoveBetweenZones()
+        {
+            var comp = Context.RenderComponent<DropzoneReorderTest>();
+
+            comp.Find(".mud-drop-container");
+            var firstDropZone = comp.Find(".dropzone-1");
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 1");
+
+            var secondDropZone = comp.Find(".dropzone-2");
+
+            var secondDropItemInFirstZone = firstDropZone.Children[3];
+            secondDropItemInFirstZone.TextContent.Should().Be("Item 2");
+            await secondDropItemInFirstZone.DragStartAsync(new DragEventArgs());
+
+            await secondDropZone.DragEnterAsync(new DragEventArgs());
+
+            var firstItemInSecondDropZone = secondDropZone.Children[3];
+            firstItemInSecondDropZone.TextContent.Should().Be("Item 6");
+            await firstItemInSecondDropZone.DragEnterAsync(new DragEventArgs());
+
+            secondDropZone.Children.Should().HaveCount(4);
+            secondDropZone.Children[3].ClassList.Should().Contain("mud-dropitem-placeholder").And.NotContain("d-none");
+
+            await secondDropZone.DropAsync(new DragEventArgs());
+            firstDropZone.Children.Should().HaveCount(5);
+            firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 1");
+            firstDropZone.Children[3].TextContent.Should().Be("Item 3");
+            firstDropZone.Children[4].TextContent.Should().Be("Item 4");
+
+            secondDropZone.Children.Should().HaveCount(5);
+            secondDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            secondDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            secondDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            secondDropZone.Children[2].TextContent.Should().Be("Item 5");
+            secondDropZone.Children[3].TextContent.Should().Be("Item 6");
+            secondDropZone.Children[4].TextContent.Should().Be("Item 2");
+
+            await secondDropZone.Children[3].DragStartAsync(new DragEventArgs());
+            await firstDropZone.DragEnterAsync(new DragEventArgs());
+            await firstDropZone.Children[3].DragEnterAsync(new DragEventArgs());
+            await firstDropZone.DropAsync(new DragEventArgs());
+
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 1");
+            firstDropZone.Children[3].TextContent.Should().Be("Item 3");
+            firstDropZone.Children[4].TextContent.Should().Be("Item 6");
+            firstDropZone.Children[5].TextContent.Should().Be("Item 4");
+
+            secondDropZone.Children.Should().HaveCount(4);
+            secondDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            secondDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            secondDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            secondDropZone.Children[2].TextContent.Should().Be("Item 5");
+            secondDropZone.Children[3].TextContent.Should().Be("Item 2");
+
+            await firstDropZone.Children[4].DragStartAsync(new DragEventArgs());
+            await secondDropZone.DragEnterAsync(new DragEventArgs());
+            await secondDropZone.Children[3].DragEnterAsync(new DragEventArgs());
+            await secondDropZone.DropAsync(new DragEventArgs());
+
+            firstDropZone.Children.Should().HaveCount(5);
+            firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 1");
+            firstDropZone.Children[3].TextContent.Should().Be("Item 3");
+            firstDropZone.Children[4].TextContent.Should().Be("Item 4");
+
+            secondDropZone.Children.Should().HaveCount(5);
+            secondDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            secondDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            secondDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            secondDropZone.Children[2].TextContent.Should().Be("Item 5");
+            secondDropZone.Children[3].TextContent.Should().Be("Item 2");
+            secondDropZone.Children[4].TextContent.Should().Be("Item 6");
+
+            await secondDropZone.Children[3].DragStartAsync(new DragEventArgs());
+            await firstDropZone.DragEnterAsync(new DragEventArgs());
+            await firstDropZone.Children[2].DragEnterAsync(new DragEventArgs());
+            await firstDropZone.DropAsync(new DragEventArgs());
+
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 1");
+            firstDropZone.Children[3].TextContent.Should().Be("Item 2");
+            firstDropZone.Children[4].TextContent.Should().Be("Item 3");
+            firstDropZone.Children[5].TextContent.Should().Be("Item 4");
+
+            secondDropZone.Children.Should().HaveCount(4);
+            secondDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            secondDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            secondDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            secondDropZone.Children[2].TextContent.Should().Be("Item 5");
+            secondDropZone.Children[3].TextContent.Should().Be("Item 6");
+
+            comp.Instance.IndexHistory.Should().ContainInOrder(
+                new[] { 2, 2, 2, 1 });
+
+        }
+
+        [Test]
+        public async Task DropZone_Reorder_NoPreviewOnSameItem()
+        {
+            var comp = Context.RenderComponent<DropzoneReorderTest>();
+
+            comp.Find(".mud-drop-container");
+            var firstDropZone = comp.Find(".dropzone-1");
+            firstDropZone.Children.Should().HaveCount(6);
+            firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
+            firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
+            firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 1");
+
+            var thirdDropItem = firstDropZone.Children[4];
+            thirdDropItem.TextContent.Should().Be("Item 3");
+            await thirdDropItem.DragStartAsync(new DragEventArgs());
+
+            firstDropZone.Children.Should().HaveCount(5);
+            firstDropZone.Children[0].TextContent.Should().BeNullOrEmpty();
+            firstDropZone.Children[1].TextContent.Should().Be("Item 1");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 2");
+            firstDropZone.Children[3].TextContent.Should().Be("Item 3");
+            firstDropZone.Children[4].TextContent.Should().Be("Item 4");
+
+            await firstDropZone.Children[3].DragEnterAsync(new DragEventArgs());
+
+            firstDropZone.Children.Should().HaveCount(5);
+            firstDropZone.Children[0].TextContent.Should().BeNullOrEmpty();
+            firstDropZone.Children[1].TextContent.Should().Be("Item 1");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 2");
+            firstDropZone.Children[3].TextContent.Should().Be("Item 3");
+            firstDropZone.Children[4].TextContent.Should().Be("Item 4");
+
+            await firstDropZone.Children[2].DragEnterAsync(new DragEventArgs());
+
+            firstDropZone.Children.Should().HaveCount(5);
+            firstDropZone.Children[0].TextContent.Should().BeNullOrEmpty();
+            firstDropZone.Children[1].TextContent.Should().Be("Item 1");
+            firstDropZone.Children[2].TextContent.Should().Be("Item 2");
+            firstDropZone.Children[3].TextContent.Should().Be("Item 3");
+            firstDropZone.Children[4].TextContent.Should().Be("Item 4");
+        }
+        
+        [Test]
+        public async Task DropZone_DragFinished_DropNotAllowed_KeepOrder()
+        {
+            var comp = Context.RenderComponent<DropzoneDraggingTestCantDropSecondZoneTest>();
+        
+            var container = comp.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(2);
+        
+            var firstDropZone = container.Children[0];
+            var secondDropZone = container.Children[1];
+        
+            secondDropZone.Children.Should().HaveCount(3);
+            var secondDropItem = secondDropZone.Children[1];
+            var secondDropItemText = secondDropItem.Children[0].TextContent;
+            
+            secondDropItemText.Should().Be("Second Item");
+            
+            await secondDropItem.DragStartAsync(new DragEventArgs());
+        
+            //drop item in first zone
+            await firstDropZone.DropAsync(new DragEventArgs());
+        
+            //reload DOM references
+            container = comp.Find(".mud-drop-container");
+            secondDropZone = container.Children[1];
+            secondDropItem = secondDropZone.Children[1];
+            secondDropItemText = secondDropItem.Children[0].TextContent;
+            
+            secondDropItemText.Should().Be("Second Item");
         }
     }
 }

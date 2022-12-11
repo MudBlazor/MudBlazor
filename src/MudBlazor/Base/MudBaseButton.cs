@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -35,7 +36,19 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
-        public string Link { get; set; }
+        public string Href { get; set; }
+        /// <summary>
+        /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where (Obsolete replaced by Href)
+        /// </summary>
+        
+        [Obsolete("Use Href Instead.", false)]
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public string Link
+        {
+            get => Href;
+            set => Href = value;
+        }
 
         /// <summary>
         /// The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
@@ -84,7 +97,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        protected async Task OnClickHandler(MouseEventArgs ev)
+        protected virtual async Task OnClickHandler(MouseEventArgs ev)
         {
             if (Disabled)
                 return;
@@ -113,13 +126,13 @@ namespace MudBlazor
             if (Disabled)
             {
                 HtmlTag = "button";
-                Link = null;
+                Href = null;
                 Target = null;
                 return;
             }
 
             // Render an anchor element if Link property is set and is not disabled
-            if (!IsNullOrWhiteSpace(Link))
+            if (!IsNullOrWhiteSpace(Href))
             {
                 HtmlTag = "a";
             }

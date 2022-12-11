@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using MudBlazor.Extensions;
@@ -27,12 +28,23 @@ namespace MudBlazor
         public abstract void ManagePreviousEditedRow(MudTr row);
     }
 
-    public class TableContext<T> : TableContext
+    public class TableContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : TableContext
     {
         private MudTr editedRow;
 
-        public HashSet<T> Selection { get; set; } = new HashSet<T>();
+        public IEqualityComparer<T> Comparer //when the comparer value is setup, update the collections with the new comparer
+        {
+            get => _comparer; 
+            set
+            {
+                _comparer = value;
+                Selection = new HashSet<T>(Selection, _comparer);
+                Rows = new Dictionary<T, MudTr>(Rows, _comparer);
+            }
+        }
+        private IEqualityComparer<T> _comparer;
 
+        public HashSet<T> Selection { get; set; } = new HashSet<T>();
         public Dictionary<T, MudTr> Rows { get; set; } = new Dictionary<T, MudTr>();
         public List<MudTableGroupRow<T>> GroupRows { get; set; } = new List<MudTableGroupRow<T>>();
 
@@ -98,7 +110,13 @@ namespace MudBlazor
             var t = item.As<T>();
             if (t is null)
                 return;
-            Rows.Remove(t);
+            if (Rows[t] == row)
+                Rows.Remove(t);
+            if (!Table.ContainsItem(item))
+            {
+                Selection.Remove(t);
+                Table.UpdateSelection();
+            }
         }
 
         #region --> Sorting

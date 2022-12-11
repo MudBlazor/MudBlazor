@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -23,6 +24,7 @@ namespace MudBlazor.Services
         /// <param name="jsRuntime"></param>
         /// <param name="browserWindowSizeProvider"></param>
         /// <param name="options"></param>
+        [DynamicDependency(nameof(RaiseOnResized))]
         public ResizeService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null) :
             base(jsRuntime)
         {
@@ -88,12 +90,7 @@ namespace MudBlazor.Services
 
                 Listeners.Add(listenerId, subscriptionInfo);
 
-                try
-                {
-                    await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
-                }
-                catch (JSDisconnectedException) { }
-                catch (TaskCanceledException) { }
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling($"mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
 
                 return subscriptionId;
             }

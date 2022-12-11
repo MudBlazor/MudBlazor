@@ -11,13 +11,15 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDialogInstance : MudComponentBase
+    public partial class MudDialogInstance : MudComponentBase, IDisposable
     {
         private DialogOptions _options = new();
         private string _elementId = "dialog_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private IKeyInterceptor _keyInterceptor;
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
+
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
 
@@ -79,6 +81,8 @@ namespace MudBlazor
                 //Since CloseOnEscapeKey is the only thing to be handled, turn interceptor off
                 if (CloseOnEscapeKey)
                 {
+                    _keyInterceptor = _keyInterceptorFactory.Create();
+
                     await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                     {
                         TargetClass = "mud-dialog",
@@ -163,13 +167,13 @@ namespace MudBlazor
         {
             Position = SetPosition();
             DialogMaxWidth = SetMaxWidth();
-            Class = Classname;
             NoHeader = SetHideHeader();
             CloseButton = SetCloseButton();
             FullWidth = SetFullWidth();
             FullScreen = SetFulScreen();
             DisableBackdropClick = SetDisableBackdropClick();
             CloseOnEscapeKey = SetCloseOnEscapeKey();
+            Class = Classname;
         }
 
         private string SetPosition()
@@ -238,7 +242,7 @@ namespace MudBlazor
                 .AddClass("mud-dialog-width-full", FullWidth && !FullScreen)
                 .AddClass("mud-dialog-fullscreen", FullScreen)
                 .AddClass("mud-dialog-rtl", RightToLeft)
-                .AddClass(Class)
+                .AddClass(_dialog?.Class)
             .Build();
 
         private bool SetHideHeader()
@@ -289,10 +293,19 @@ namespace MudBlazor
         {
             if (DisableBackdropClick)
                 return;
-            Cancel();
+
+            if (_dialog?.OnBackdropClick == null)
+            {
+                Cancel();
+                return;
+            }
+
+            _dialog?.OnBackdropClick.Invoke();
         }
 
         private MudDialog _dialog;
+        private bool _disposedValue;
+
         public void Register(MudDialog dialog)
         {
             if (dialog == null)
@@ -307,6 +320,37 @@ namespace MudBlazor
         public void ForceRender()
         {
             StateHasChanged();
+        }
+
+        /// <summary>
+        /// Cancels all dialogs in dialog provider collection.
+        /// </summary>
+        public void CancelAll()
+        {
+            Parent?.DismissAll();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    if (_keyInterceptor != null)
+                    {
+                        _keyInterceptor.KeyDown -= HandleKeyDown;
+                        _keyInterceptor.Dispose();
+                    }
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

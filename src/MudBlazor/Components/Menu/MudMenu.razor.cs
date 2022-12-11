@@ -266,11 +266,6 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public void PopoverMouseEnter()
-        {
-            _isMouseOver = true;
-        }
-
         // Sets the popover style ONLY when there is an activator
         private void SetPopoverStyle(MouseEventArgs args)
         {
@@ -292,6 +287,23 @@ namespace MudBlazor
                 OpenMenu(args);
         }
 
+        public void ToggleMenuTouch(TouchEventArgs args)
+        {
+            if (Disabled)
+            {
+                return;
+            }
+
+            if (_isOpen)
+            {
+                CloseMenu();
+            }
+            else
+            {
+                OpenMenu(args);
+            }
+        }
+
         /// <summary>
         /// Implementation of IActivatable.Activate, toggles the menu.
         /// </summary>
@@ -302,9 +314,22 @@ namespace MudBlazor
             ToggleMenu(args);
         }
 
+        public void MouseEnter(MouseEventArgs args)
+        {
+            _isMouseOver = true;
+
+            if (ActivationEvent == MouseEvent.MouseOver)
+            {
+                OpenMenu(args);
+            }
+        }
+
         public async void MouseLeave()
         {
+            _isMouseOver = false;
+
             await Task.Delay(100);
+
             if (ActivationEvent == MouseEvent.MouseOver && _isMouseOver == false)
             {
                 CloseMenu();

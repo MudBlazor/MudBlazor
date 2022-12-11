@@ -3,32 +3,27 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:60343/",
-      "sslPort": 44399
+      "applicationUrl": "http://localhost:28650",
+      "sslPort": 44342
     }
   },
   "profiles": {
     "MudBlazor.Docs.Server": {
       "commandName": "Project",
+      "dotnetRunMessages": true,
       "launchBrowser": true,
-      "launchUrl": "docs/overview",
+      "applicationUrl": "https://localhost:7128;http://localhost:5128",
+      "launchUrl": "components/tooltip",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "APIBASE": "https://localhost:5001/"
-      },
-      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
-      "dotnetRunMessages": true
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "docs/overview",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "APIBASE": "https://localhost:44399/"
-      },
-      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }

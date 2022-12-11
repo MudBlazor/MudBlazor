@@ -22,7 +22,7 @@ namespace MudBlazor
         [Parameter]
         public bool DefaultScrollbar { get; set; }
 
-        #region Dark mode handeling
+        #region Dark mode handling
 
         public BaseMudThemeProvider()
         {
@@ -41,7 +41,7 @@ namespace MudBlazor
             return await JsRuntime.InvokeAsync<bool>("darkModeChange", _dotNetRef);
         }
 
-        private bool _isDarkMode;
+        internal bool _isDarkMode;
 
         /// <summary>
         /// The active palette of the theme.
@@ -114,6 +114,8 @@ namespace MudBlazor
 
         protected virtual void GenerateTheme(StringBuilder theme)
         {
+            if (Theme == null)
+                return;
             var palette = _isDarkMode == false ? Theme.Palette : Theme.PaletteDark;
             
             //Palette

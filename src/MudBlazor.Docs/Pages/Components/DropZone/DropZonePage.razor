@@ -1,8 +1,7 @@
 ﻿@page "/components/dropzone"
 
 <DocsPage>
-	<DocsPageHeader Title="Drop Zone" SubTitle="Drag and Drop">
-	</DocsPageHeader>
+	<DocsPageHeader Title="Drop Zone" SubTitle="Drag and Drop"/>
 
 	<DocsPageContent>
 		<DocsPageSection>
@@ -27,13 +26,46 @@
 				<DocsPageSection>
 					<SectionHeader Title="Drop Item Selector">
 						<Description>
-							Each <CodeInline>MudDropZone</CodeInline> has a unique settable <CodeInline>Identifier</CodeInline> that is used used to determine what item should be placed in what dropzone.
+							Each <CodeInline>MudDropZone</CodeInline> has a unique settable <CodeInline>Identifier</CodeInline> that is used to determine what item should be placed in what dropzone.
 							Provide the <CodeInline>MudDropContainer</CodeInline> with a selector function (<CodeInline>@("Func<T, string, bool>")</CodeInline>) for the property <CodeInline>ItemSelector</CodeInline> to place the items correctly. This method can be overriden by each drop zone.
 							The callback  <CodeInline>ItemDropped</CodeInline> should be used to update the data item, when a drag operation has finished.
 						</Description>
 					</SectionHeader>
 					<SectionContent DarkenBackground="true" ShowCode="false" Code="DropZoneItemSelectorExample">
 						<DropZoneItemSelectorExample />
+					</SectionContent>
+				</DocsPageSection>
+
+                <DocsPageSection>
+					<SectionHeader Title="Reorder items">
+                        <Description>
+                            Items can be reordered inside each dropzone with the <CodeInline>AllowReorder</CodeInline> bool set to true on the dropzone.
+                        </Description>
+					</SectionHeader>
+					<SectionContent DarkenBackground="true" ShowCode="false" Code="DropZoneItemSelectorReorderingExample">
+						<DropZoneItemSelectorReorderingExample />
+					</SectionContent>
+				</DocsPageSection>
+
+                <DocsPageSection>
+			        <SectionHeader Title="Save Reorder data">
+				        <Description>
+                            In this example we show one way to save the re-ordered data, click load and drag some items around then hit save and load again.
+				        </Description>
+			        </SectionHeader>
+			        <SectionContent ShowCode="false" Code="DropZoneReorderSaveExample">
+				        <DropZoneReorderSaveExample />
+			        </SectionContent>
+		        </DocsPageSection>
+
+                <DocsPageSection>
+					<SectionHeader Title="Only Zones">
+						<Description>
+							With the <CodeInline>OnlyZone</CodeInline> property set to true, the dropzone will only act as a dropable zone and not render any items.
+						</Description>
+					</SectionHeader>
+					<SectionContent ShowCode="false" Code="DropZoneItemSelectorOnlyZoneExample">
+						<DropZoneItemSelectorOnlyZoneExample />
 					</SectionContent>
 				</DocsPageSection>
 			</SectionSubGroups>
@@ -91,7 +123,7 @@
         <DocsPageSection>
             <SectionHeader Title="Disabled items">
                 <Description>
-                    Drop items can be preveted from being draged by using the <CodeInline>ItemIsDisbaled</CodeInline> property.
+                    Drop items can be prevented from being dragged by using the <CodeInline>ItemIsDisabled</CodeInline> property.
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="DropZoneDisabledExample">
@@ -115,6 +147,16 @@
                         <DropZoneKanbanExample/>
                     </SectionContent>
                 </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Mailbox">
+                        <Description>Demonstrates the usage of the <CodeInline>OnlyZone</CodeInline> property as well as multiple dropzones connected to the same Identifier.<br/>Try drag items onto the list items, click on them to open the "mailbox".</Description>
+                    </SectionHeader>
+                    <SectionContent Code="DropZoneMailExample" Block="true" FullWidth="true">
+                        <DropZoneMailExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
 
                 <DocsPageSection>
                     <SectionHeader Title="Chess Board">

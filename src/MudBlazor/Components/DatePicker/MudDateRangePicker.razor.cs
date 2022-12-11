@@ -18,6 +18,7 @@ namespace MudBlazor
         public MudDateRangePicker()
         {
             DisplayMonths = 2;
+            AdornmentAriaLabel = "Open Date Range Picker";
         }
 
         /// <summary>
@@ -241,7 +242,7 @@ namespace MudBlazor
             }
 
             _secondDate = dateTime;
-            if (PickerActions == null)
+            if (PickerActions == null || AutoClose)
             {
                 Submit();
 
@@ -259,7 +260,7 @@ namespace MudBlazor
             base.OnOpened();
         }
 
-        protected override async void Submit()
+        protected internal override async void Submit()
         {
             if (ReadOnly)
                 return;

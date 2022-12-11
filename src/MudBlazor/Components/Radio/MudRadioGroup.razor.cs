@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
@@ -14,6 +15,30 @@ namespace MudBlazor
         private MudRadio<T> _selectedRadio;
 
         private HashSet<MudRadio<T>> _radios = new();
+
+        protected string Classname =>
+        new CssBuilder("mud-input-control-boolean-input")
+            .AddClass(Class)
+            .Build();
+
+        private string GetInputClass() =>
+        new CssBuilder("mud-radio-group")
+            .AddClass(InputClass)
+            .Build();
+
+        /// <summary>
+        /// User class names for the input, separated by space
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public string InputClass { get; set; }
+
+        /// <summary>
+        /// User style definitions for the input
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public string InputStyle { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.Radio.Behavior)]
@@ -50,6 +75,7 @@ namespace MudBlazor
                 await SelectedOptionChanged.InvokeAsync(_value);
 
                 BeginValidate();
+                FieldChanged(_value);
             }
         }
 

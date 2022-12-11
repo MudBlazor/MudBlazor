@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.Docs.Examples
+
 <MudTextField Style="max-width:250px" @bind-Value="@highlightedText" Immediate="true" Label="Highlighted Text" />
 <MudPaper Class="pa-4 mt-4" Elevation="0">
     @foreach (var paragraph in paragraphs)
@@ -22,10 +23,9 @@
     bool untilNextBoundary;
     bool caseSensitive;
     IEnumerable<string> paragraphs = new List<string>
-{
+    {
         "MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure.",
         "MudLists are easily customizable and scrollable lists. Make them suit your needs with avatars, icons, or something like checkboxes.",
         "Use mud-* classes to customize your MudBlazor components."
     };
-
 }

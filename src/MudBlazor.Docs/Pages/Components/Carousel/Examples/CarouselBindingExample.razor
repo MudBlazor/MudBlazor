@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudCarousel Class="mud-width-full" @ref="_carousel" ItemsSource="@_source" @bind-SelectedIndex="selectedIndex" Style="height:200px;" ShowArrows="@_arrows" ShowBullets="@_bullets" AutoCycle="@_autocycle">
+<MudCarousel Class="mud-width-full" @ref="_carousel" ItemsSource="@_source" @bind-SelectedIndex="selectedIndex" Style="height:200px;" ShowArrows="@_arrows" ShowBullets="@_bullets" EnableSwipeGesture="@_enableSwipeGesture" AutoCycle="@_autocycle">
 	<ItemTemplate>
 		<div class="d-flex flex-column flex-column justify-center" style="height:100%">
 			<MudIcon Class="mx-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
@@ -10,6 +10,7 @@
 </MudCarousel>
 <MudSwitch @bind-Checked="@_arrows" Color="Color.Primary">Show Arrows</MudSwitch>
 <MudSwitch @bind-Checked="@_bullets" Color="Color.Primary">Show Bullets</MudSwitch>
+<MudSwitch @bind-Checked="@_enableSwipeGesture" Color="Color.Primary">Enable Swap Gesture</MudSwitch>
 <MudSwitch @bind-Checked="@_autocycle" Color="Color.Primary">Auto Cycle (Default: 5 secs)</MudSwitch>
 <br />
 <MudButton Class="ma-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="AddAsync">Add</MudButton>
@@ -29,6 +30,7 @@
 	private MudCarousel<string> _carousel;
 	private bool _arrows = true;
 	private bool _bullets = true;
+	private bool _enableSwipeGesture = true;
 	private bool _autocycle = true;
 	private IList<string> _source = new List<string>() { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
 	private int selectedIndex = 2;

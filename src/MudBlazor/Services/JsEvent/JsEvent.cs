@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -14,7 +15,7 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-    public interface IJsEvent
+    public interface IJsEvent : IDisposable
     {
         Task Connect(string elementId, JsEventOptions options);
         Task Disconnect();
@@ -26,7 +27,7 @@ namespace MudBlazor.Services
     /// <summary>
     /// Subscribe JS events of any element by html id
     /// </summary>
-    public class JsEvent : IJsEvent, IDisposable
+    public class JsEvent : IJsEvent
     {
         private bool _isDisposed = false;
 
@@ -36,6 +37,10 @@ namespace MudBlazor.Services
         private bool _isObserving;
         internal HashSet<string> _subscribedEvents = new HashSet<string>();
 
+        [DynamicDependency(nameof(OnCaretPositionChanged))]
+        [DynamicDependency(nameof(OnPaste))]
+        [DynamicDependency(nameof(OnSelect))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(JsEventOptions))]
         public JsEvent(IJSRuntime jsRuntime)
         {
             _dotNetRef = DotNetObjectReference.Create(this);
@@ -49,16 +54,10 @@ namespace MudBlazor.Services
         /// <param name="options">Define here the descendant(s) by setting TargetClass and the keystrokes to be monitored</param>
         public async Task Connect(string elementId, JsEventOptions options)
         {
-            if (_isObserving)
+            if (_isObserving || _isDisposed)
                 return;
             _elementId = elementId;
-            try
-            {
-                await _jsRuntime.InvokeVoidAsync("mudJsEvent.connect", _dotNetRef, elementId, options);
-                _isObserving = true;
-            }
-            catch (JSDisconnectedException) { }
-            catch (TaskCanceledException) { }
+            _isObserving = await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudJsEvent.connect", _dotNetRef, elementId, options); ;
         }
 
         /// <summary>
@@ -70,7 +69,7 @@ namespace MudBlazor.Services
                 return;
             await UnsubscribeAll();
             try
-            {                
+            {
                 await _jsRuntime.InvokeVoidAsync($"mudJsEvent.disconnect", _elementId);
             }
             catch (Exception) {  /*ignore*/ }
@@ -81,7 +80,7 @@ namespace MudBlazor.Services
         {
             if (_elementId == null)
                 throw new InvalidOperationException("Call Connect(...) before attaching events!");
-            if (_subscribedEvents.Contains(eventName))
+            if (_subscribedEvents.Contains(eventName) || _isDisposed)
                 return;
             try
             {
@@ -110,7 +109,7 @@ namespace MudBlazor.Services
                 return;
             try
             {
-                foreach(var eventName in _subscribedEvents)
+                foreach (var eventName in _subscribedEvents)
                     await _jsRuntime.InvokeVoidAsync($"mudJsEvent.unsubscribe", _elementId, eventName);
             }
             catch (Exception) {  /*ignore*/ }

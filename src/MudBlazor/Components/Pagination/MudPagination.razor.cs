@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -229,7 +230,7 @@ namespace MudBlazor
         [Category(CategoryTypes.Pagination.Appearance)]
         public string LastIcon { get; set; } = Icons.Material.Filled.LastPage;
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         #endregion
 
@@ -297,10 +298,12 @@ namespace MudBlazor
             NavigateTo(page);
         }
 
+        //Last line cannot be tested because Page enum has 4 items
         /// <summary>
         /// Navigates to the specified page.
         /// </summary>
         /// <param name="page">The target page. page=Page.Next navigates to the next page.</param>
+        [ExcludeFromCodeCoverage]
         public void NavigateTo(Page page)
         {
             Selected = page switch

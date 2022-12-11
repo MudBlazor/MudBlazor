@@ -12,17 +12,9 @@ namespace MudBlazor
     public static class TaskExtensions
     {
         /// <summary>
-        /// Task will be awaited and exceptions will be managed by the Blazor framework.
-        /// </summary>
-        public static async void AndForget(this Task task)
-        {
-            await task;
-        }
-
-        /// <summary>
         /// Task will be awaited and exceptions will be logged to console (TaskOption.Safe) or managed by the Blazor framework (TaskOption.None).
         /// </summary>
-        public static async void AndForget(this Task task, TaskOption option)
+        public static async void AndForget(this Task task, TaskOption option = TaskOption.None)
         {
             try
             {
@@ -38,17 +30,27 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// ValueTask will be awaited and exceptions will be managed by the Blazor framework.
+        /// ValueTask will be awaited and exceptions will be logged to console (TaskOption.Safe) or managed by the Blazor framework (TaskOption.None).
         /// </summary>
-        public static async void AndForget(this ValueTask task)
+        public static async void AndForget(this ValueTask task, TaskOption option = TaskOption.None)
         {
-            await task;
+            try
+            {
+                await task;
+            }
+            catch (Exception ex)
+            {
+                if (option != TaskOption.Safe)
+                    throw;
+
+                Console.WriteLine(ex);
+            }
         }
 
         /// <summary>
-        /// ValueTask will be awaited and exceptions will be logged to console (TaskOption.Safe) or managed by the Blazor framework (TaskOption.None).
+        /// ValueTask(bool) will be awaited and exceptions will be logged to console (TaskOption.Safe) or managed by the Blazor framework (TaskOption.None).
         /// </summary>
-        public static async void AndForget(this ValueTask task, TaskOption option)
+        public static async void AndForget(this ValueTask<bool> task, TaskOption option = TaskOption.None)
         {
             try
             {

@@ -15,7 +15,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudMask : MudBaseInput<string>
+    public partial class MudMask : MudBaseInput<string>, IDisposable
     {
         public MudMask()
         {
@@ -65,9 +65,12 @@ namespace MudBlazor
 
         private ElementReference _elementReference;
         private ElementReference _elementReference1;
+        private IJsEvent _jsEvent;
+        private IKeyInterceptor _keyInterceptor;
+        
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
-        [Inject] private IJsEvent _jsEvent { get; set; }
+        [Inject] private IJsEventFactory _jsEventFactory { get; set; }
         [Inject] private IJsApiService _jsApiService { get; set; }
 
         private string _elementId = "mask_" + Guid.NewGuid().ToString().Substring(0, 8);
@@ -131,7 +134,6 @@ namespace MudBlazor
 
         protected override async Task OnInitializedAsync()
         {
-            //Console.WriteLine($"OnInitialized Text:{Text}, Value:{Value}, Mask:{Mask}");
             if (Text != Mask.Text)
                 await SetTextAsync(Mask.Text, updateValue: false);
             await base.OnInitializedAsync();
@@ -141,6 +143,8 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                _jsEvent = _jsEventFactory.Create();
+
                 await _jsEvent.Connect(_elementId,
                     new JsEventOptions
                     {
@@ -151,6 +155,9 @@ namespace MudBlazor
                 _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
                 _jsEvent.Paste += OnPaste;
                 _jsEvent.Select += OnSelect;
+
+                _keyInterceptor = _keyInterceptorFactory.Create();
+
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -171,23 +178,33 @@ namespace MudBlazor
                         new KeyOptions { Key = "Delete", PreventDown = "key+none" },
                     },
                 });
-                _keyInterceptor.KeyDown += e => HandleKeyDown(e).AndForget();
+                _keyInterceptor.KeyDown += HandleKeyDownInternally;
             }
             if (_isFocused && Mask.Selection == null)
                 SetCaretPosition(Mask.CaretPos, _selection, render: false);
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        private async void HandleKeyDownInternally(KeyboardEventArgs args)
+        {
+            await HandleKeyDown(args);
+        }
+
         protected internal async Task HandleKeyDown(KeyboardEventArgs e)
         {
             try
             {
-                if (e.CtrlKey || e.AltKey)
-                    return;
-                // Console.WriteLine($"HandleKeyDown: '{e.Key}'");
+                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || ReadOnly)
+                        return;
                 switch (e.Key)
                 {
                     case "Backspace":
+                        if (e.CtrlKey)
+                        {
+                            Mask.Clear();
+                            await Update();
+                            return;
+                        }
                         Mask.Backspace();
                         await Update();
                         return;
@@ -239,6 +256,7 @@ namespace MudBlazor
         {
             Mask.Clear();
             await Update();
+            await _elementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
 
@@ -255,7 +273,6 @@ namespace MudBlazor
             Mask.SetText(text);
             if (maskText == Mask.Text)
                 return; // no change, stop update loop
-            //Console.WriteLine("UpdateTextPropertyAsync: " + Mask);
             await Update();
         }
 
@@ -271,7 +288,6 @@ namespace MudBlazor
             Mask.SetText(text);
             if (maskText == Mask.Text)
                 return; // no change, stop update loop
-            //Console.WriteLine("UpdateValuePropertyAsync: " + Mask);
             await Update();
         }
 
@@ -310,7 +326,6 @@ namespace MudBlazor
 
         internal void OnCopy()
         {
-            //Console.WriteLine($"Copy: {text}");
             var text = Text;
             if (Mask.Selection != null)
             {
@@ -321,8 +336,7 @@ namespace MudBlazor
 
         internal async void OnPaste(string text)
         {
-            //Console.WriteLine($"Paste: {text}");
-            if (text == null)
+            if (text == null || ReadOnly)
                 return;
             Mask.Insert(text);
             await Update();
@@ -331,13 +345,11 @@ namespace MudBlazor
         public void OnSelect(int start, int end)
         {
             Mask.Selection = _selection = (start, end);
-            //Console.WriteLine($"OnSelect: {Mask}");
         }
 
         internal void OnFocused(FocusEventArgs obj)
         {
             _isFocused = true;
-            //Console.WriteLine($"OnFocused: {Mask}");
         }
 
         protected internal override void OnBlurred(FocusEventArgs obj)
@@ -359,13 +371,11 @@ namespace MudBlazor
             _selection = selection;
             if (selection == null)
             {
-                //Console.WriteLine("#Setting Caret Position: " + caret);
                 _elementReference.MudSelectRangeAsync(caret, caret).AndForget();
             }
             else
             {
                 var sel = selection.Value;
-                //Console.WriteLine($"#Setting Selection: ({sel.Item1}..{sel.Item2})");
                 _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2).AndForget();
             }
         }
@@ -385,7 +395,6 @@ namespace MudBlazor
                 return;
             Mask.Selection = null;
             Mask.CaretPos = pos;
-            //Console.WriteLine($"OnCaretPositionChanged: '{Mask}' ({pos})");
         }
 
         private void SetMask(IMask other)
@@ -404,10 +413,30 @@ namespace MudBlazor
 
         private async void OnCut(ClipboardEventArgs obj)
         {
+            if (ReadOnly)
+                return;
+            
             if (_selection!=null)
                 Mask.Delete();
             await Update();
-            //Console.WriteLine($"OnCut: '{Mask}'");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                _jsEvent?.Dispose();
+
+                if (_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDownInternally;
+                    _keyInterceptor.Dispose();
+                }
+
+                _keyInterceptor?.Dispose();
+            }
         }
     }
 }

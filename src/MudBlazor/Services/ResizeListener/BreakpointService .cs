@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -13,7 +14,7 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor.Services
 {
-  
+
     public class BreakpointService :
         ResizeBasedService<BreakpointService, BreakpointServiceSubscriptionInfo, Breakpoint, ResizeOptions>,
         IBreakpointService
@@ -23,7 +24,6 @@ namespace MudBlazor.Services
         private IBrowserWindowSizeProvider _browserWindowSizeProvider;
         private BrowserWindowSize _windowSize;
         private Breakpoint _breakpoint = Breakpoint.None;
-        private SemaphoreSlim _subscribeSemaphore = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// 
@@ -31,6 +31,7 @@ namespace MudBlazor.Services
         /// <param name="jsRuntime"></param>
         /// <param name="browserWindowSizeProvider"></param>
         /// <param name="options"></param>
+        [DynamicDependency(nameof(RaiseOnResized))]
         public BreakpointService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null)
             : base(jsRuntime)
         {
@@ -145,11 +146,12 @@ namespace MudBlazor.Services
                 DotNetRef = DotNetObjectReference.Create(this);
             }
 
-            var existingOptionId = Listeners.Where(x => x.Value.Option == options).Select(x => x.Key).FirstOrDefault();
 
             try
             {
-                await _subscribeSemaphore.WaitAsync();
+                await Semaphore.WaitAsync();
+
+                var existingOptionId = Listeners.Where(x => x.Value.Option == options).Select(x => x.Key).FirstOrDefault();
 
                 if (existingOptionId == default)
                 {
@@ -159,24 +161,19 @@ namespace MudBlazor.Services
 
                     Listeners.Add(listenerId, subscriptionInfo);
 
-                    try
+                    var interopResult = await JsRuntime.InvokeVoidAsyncWithErrorHandling
+                        ("mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
+                    
+                    if (interopResult == true)
                     {
-                        await JsRuntime.InvokeVoidAsync($"mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
                         if (_breakpoint == Breakpoint.None)
                         {
                             _breakpoint = await GetBreakpoint();
 
                         }
-                        return new BreakpointServiceSubscribeResult(subscriptionId, _breakpoint);
                     }
-                    catch (JSDisconnectedException)
-                    {
-                        return new BreakpointServiceSubscribeResult(subscriptionId, _breakpoint);
-                    }
-                    catch (TaskCanceledException)
-                    {
-                        return new BreakpointServiceSubscribeResult(subscriptionId, _breakpoint);
-                    }
+
+                    return new BreakpointServiceSubscribeResult(subscriptionId, _breakpoint);
                 }
                 else
                 {
@@ -188,7 +185,7 @@ namespace MudBlazor.Services
             }
             finally
             {
-                _subscribeSemaphore.Release();
+                Semaphore.Release();
             }
         }
     }
@@ -216,7 +213,7 @@ namespace MudBlazor.Services
         /// <param name="reference">The reference breakpoint (xs,sm,md,lg,xl)</param>
         /// <returns>True if the media size is meet, false otherwise. For instance if the reference size is sm and the breakpoint is SmAndSmaller, this method returns true</returns>
         bool IsMediaSize(Breakpoint breakpoint, Breakpoint reference);
-        
+
         /// <summary>
         /// Get the current breakpoint
         /// </summary>

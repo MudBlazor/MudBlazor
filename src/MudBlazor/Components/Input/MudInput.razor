@@ -13,6 +13,7 @@
                 Text="@AdornmentText" 
                 Edge="@Edge.Start" 
                 AdornmentClick="@OnAdornmentClick" 
+                AriaLabel="@AdornmentAriaLabel"
         />
 	}
 
@@ -41,6 +42,8 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel" 
                 @onwheel="@OnMouseWheel"
+                aria-invalid="@Error.ToString().ToLower()"
+                aria-describedby="@ErrorId"
         > 
             @Text
         </textarea>
@@ -71,6 +74,8 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel" 
                 @onwheel="@OnMouseWheel"
+                aria-invalid="@Error.ToString().ToLower()"
+                aria-describedby="@ErrorId"
          />
 	     @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
       
@@ -105,6 +110,7 @@
                     Icon="@ClearIcon" 
                     Size="@Size.Small" 
                     OnClick="@ClearButtonClickHandlerAsync"
+                    tabindex="-1"
                 />
 	}
 
@@ -117,6 +123,7 @@
                 Text="@AdornmentText" 
                 Edge="@Edge.End" 
                 AdornmentClick="@OnAdornmentClick" 
+                AriaLabel="@AdornmentAriaLabel"
         />
 	}
 
