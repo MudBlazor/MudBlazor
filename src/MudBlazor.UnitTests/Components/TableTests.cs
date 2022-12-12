@@ -453,27 +453,27 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void TableMultiSelection_RowClickTest()
-        {
-            var comp = Context.RenderComponent<TableMultiSelection_RowClickTest>();
-            var table = comp.FindComponent<MudTable<int>>().Instance;
-            var rows = comp.FindComponent<MudTable<int>>().FindAll("tr").ToArray();
-
-            foreach (var row in rows) row.Click();
-            table.SelectedItems.Count.Should().Be(0);
-        }
-
-        [Test]
         public void TableMultiSelection_CheckboxClickTest()
         {
-            var comp = Context.RenderComponent<TableMultiSelection_RowClickTest>();
-            var table = comp.FindComponent<MudTable<int>>().Instance;
+            var comp = Context.RenderComponent<TableMultiSelection_CheckboxClickTest>();
             var checkboxes = comp.FindComponent<MudTable<int>>().FindAll("input").ToArray();
+            var table = comp.FindComponent<MudTable<int>>().Instance;
 
             foreach (var cbx in checkboxes) cbx.Change(true);
             table.SelectedItems.Count.Should().Be(3);
 
             foreach (var cbx in checkboxes) cbx.Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+        }
+
+        [Test]
+        public void TableMultiSelection_IgnoreCheckbox_RowClickTest()
+        {
+            var comp = Context.RenderComponent<TableMultiSelection_IgnoreCheckbox_RowClickTest>();
+            var rows = comp.FindComponent<MudTable<int>>().FindAll("tr").ToArray();
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+
+            foreach (var row in rows) row.Click();
             table.SelectedItems.Count.Should().Be(0);
         }
 
@@ -505,7 +505,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
             // row click
             tr[1].Click();
-            comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1 }");
         }
 
         /// <summary>
