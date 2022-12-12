@@ -3,7 +3,12 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems1" Hover="@hover">
+<MudSwitch @bind-Checked="@_setCheckboxOnRowClick">SetCheckboxOnRowClick: @_setCheckboxOnRowClick</MudSwitch>
+<MudText Inline="true">Clicked: @_rowClicks</MudText>
+<MudText >Selected items: @(selectedItems1 == null ? "" : string.Join(", ", selectedItems1.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
+
+<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems1" Hover="@hover"
+          @ref="_table" T="Element" SetCheckboxOnRowClick="@_setCheckboxOnRowClick" OnRowClick="@OnRowClick">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -26,16 +31,23 @@
     </FooterContent>
 </MudTable>
 
-<MudText Inline="true">Selected items: @(selectedItems1==null ? "" : string.Join(", ", selectedItems1.OrderBy(x=>x.Sign).Select(x=>x.Sign)))</MudText>
+   @code {
+   private bool hover = true;
+   private HashSet<Element> selectedItems1 = new HashSet<Element>();
 
-@code {
-    private bool hover = true;
-    private HashSet<Element> selectedItems1 = new HashSet<Element>();
+   private IEnumerable<Element> Elements = new List<Element>();
+   private bool _setCheckboxOnRowClick = true;
+   private MudTable<Element> _table;
+   private int _rowClicks;
 
-    private IEnumerable<Element> Elements = new List<Element>();
+   protected override async Task OnInitializedAsync()
+   {
+      Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+   }
 
-    protected override async Task OnInitializedAsync()
-    {
-        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-    } 
+   Task OnRowClick()
+   {
+      ++_rowClicks;
+      return Task.CompletedTask;
+   }
 }
