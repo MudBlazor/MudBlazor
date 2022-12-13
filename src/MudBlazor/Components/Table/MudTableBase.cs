@@ -193,6 +193,13 @@ namespace MudBlazor
         public bool MultiSelection { get; set; }
 
         /// <summary>
+        /// When <c>true</c>, a row-click also toggles the checkbox state.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Rows)]
+        public bool SelectOnRowClick { get; set; } = true;
+
+        /// <summary>
         /// Optional. Add any kind of toolbar to this render fragment.
         /// </summary>
         [Parameter]

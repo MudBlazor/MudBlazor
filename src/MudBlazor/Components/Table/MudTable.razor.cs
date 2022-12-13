@@ -171,7 +171,7 @@ namespace MudBlazor
         public Func<T, bool> Filter { get; set; } = null;
 
         /// <summary>
-        /// Button click event.
+        /// Row click event.
         /// </summary>
         [Parameter] public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
 

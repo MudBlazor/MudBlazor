@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Logging;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -438,7 +439,7 @@ namespace MudBlazor
 
             _cancellationTokenSrc = new CancellationTokenSource();
         }
-        
+
         private int _itemsReturned; //the number of items returned by the search function
 
         /// <remarks>
@@ -482,7 +483,7 @@ namespace MudBlazor
             }
             catch (Exception e)
             {
-                Console.WriteLine("The search function failed to return results: " + e.Message);
+                Logger.LogWarning("The search function failed to return results: " + e.Message);
             }
 
             _itemsReturned = searched_items.Count();

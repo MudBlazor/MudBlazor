@@ -42,6 +42,9 @@ namespace MudBlazor.UnitTests.Mocks
             if (breakpoint == Breakpoint.None)
                 return false;
 
+            if (breakpoint == Breakpoint.Always)
+                return true;
+
             return IsMediaSize(breakpoint, await GetBreakpoint());
         }
 
@@ -49,6 +52,9 @@ namespace MudBlazor.UnitTests.Mocks
         {
             if (breakpoint == Breakpoint.None)
                 return false;
+
+            if (breakpoint == Breakpoint.Always)
+                return true;
 
             return breakpoint switch
             {
