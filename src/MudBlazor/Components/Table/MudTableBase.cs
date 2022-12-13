@@ -197,7 +197,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
-        public bool SetCheckboxOnRowClick { get; set; } = true;
+        public bool SelectOnRowClick { get; set; } = true;
 
         /// <summary>
         /// Optional. Add any kind of toolbar to this render fragment.

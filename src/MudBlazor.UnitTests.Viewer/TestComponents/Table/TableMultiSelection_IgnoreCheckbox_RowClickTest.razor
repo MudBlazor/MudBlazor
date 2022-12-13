@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
 <MudText>SelectedItems { @string.Join(", ", selectedItems) }</MudText>
-<MudTable T="int" Items="items" @bind-SelectedItems="selectedItems" MultiSelection="true" SetCheckboxOnRowClick="false" OnRowClick="@OnRowClick">
+<MudTable T="int" Items="items" @bind-SelectedItems="selectedItems" MultiSelection="true" SelectOnRowClick="false" OnRowClick="@OnRowClick">
     <RowTemplate>
         <MudTd >@context</MudTd>
     </RowTemplate>

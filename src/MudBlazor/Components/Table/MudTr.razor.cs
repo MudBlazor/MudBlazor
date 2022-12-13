@@ -62,7 +62,7 @@ namespace MudBlazor
 
             table.SetSelectedItem(Item);
             StartEditingItem(buttonClicked: false);
-            if (table.MultiSelection && table.SetCheckboxOnRowClick && !table.IsEditable) IsChecked = !IsChecked;
+            if (table.MultiSelection && table.SelectOnRowClick && !table.IsEditable) IsChecked = !IsChecked;
             table.FireRowClickEvent(args, this, Item);
         }
 

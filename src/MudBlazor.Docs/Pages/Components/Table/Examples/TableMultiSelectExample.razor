@@ -3,51 +3,53 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudSwitch @bind-Checked="@_setCheckboxOnRowClick">SetCheckboxOnRowClick: @_setCheckboxOnRowClick</MudSwitch>
-<MudText Inline="true">Clicked: @_rowClicks</MudText>
-<MudText >Selected items: @(selectedItems1 == null ? "" : string.Join(", ", selectedItems1.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
+<MudSwitch @bind-Checked="@_selectOnRowClick">SelectOnRowClick: @_selectOnRowClick</MudSwitch>
+<MudText Inline="true">Clicks: @_clickCount</MudText>
+<MudText Inline="true">Item: @_clickText</MudText>
+<MudText>Selected items: @(selectedItems1 == null ? "" : string.Join(", ", selectedItems1.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
 
-<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems1" Hover="@hover"
-          @ref="_table" T="Element" SetCheckboxOnRowClick="@_setCheckboxOnRowClick" OnRowClick="@OnRowClick">
-    <HeaderContent>
-        <MudTh>Nr</MudTh>
-        <MudTh>Sign</MudTh>
-        <MudTh>Name</MudTh>
-        <MudTh>Position</MudTh>
-        <MudTh>Molar mass</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="Nr">@context.Number</MudTd>
-        <MudTd DataLabel="Sign">@context.Sign</MudTd>
-        <MudTd DataLabel="Name">@context.Name</MudTd>
-        <MudTd DataLabel="Position">@context.Position</MudTd>
-        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
-    </RowTemplate>
-    <PagerContent>
-        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-    </PagerContent>
-    <FooterContent>
-        <MudTd colspan="5">Select All</MudTd>
-    </FooterContent>
+
+   <MudTable @ref="_table" T="Element" Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems1" Hover="true"
+             OnRowClick="@OnRowClick" @bind-SelectOnRowClick="@_selectOnRowClick">
+   <HeaderContent>
+      <MudTh>Nr</MudTh>
+      <MudTh>Sign</MudTh>
+      <MudTh>Name</MudTh>
+      <MudTh>Position</MudTh>
+      <MudTh>Molar mass</MudTh>
+   </HeaderContent>
+   <RowTemplate>
+      <MudTd DataLabel="Nr">@context.Number</MudTd>
+      <MudTd DataLabel="Sign">@context.Sign</MudTd>
+      <MudTd DataLabel="Name">@context.Name</MudTd>
+      <MudTd DataLabel="Position">@context.Position</MudTd>
+      <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+   </RowTemplate>
+   <PagerContent>
+      <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+   </PagerContent>
+   <FooterContent>
+      <MudTd colspan="5">Select All</MudTd>
+   </FooterContent>
 </MudTable>
 
-   @code {
-   private bool hover = true;
-   private HashSet<Element> selectedItems1 = new HashSet<Element>();
 
+@code {
+   private HashSet<Element> selectedItems1 = new HashSet<Element>();
    private IEnumerable<Element> Elements = new List<Element>();
-   private bool _setCheckboxOnRowClick = true;
+   private bool _selectOnRowClick = true;
    private MudTable<Element> _table;
-   private int _rowClicks;
+   private int _clickCount;
+   private string _clickText = "No row clicked";
 
    protected override async Task OnInitializedAsync()
    {
       Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
    }
 
-   Task OnRowClick()
+   void OnRowClick(TableRowClickEventArgs<Element> args)
    {
-      ++_rowClicks;
-      return Task.CompletedTask;
+      ++_clickCount;
+      _clickText = args.Item.Sign;
    }
 }
