@@ -65,19 +65,24 @@ namespace MudBlazor
             foreach (var row in GroupRows)
             {
                 var rowGroupItems = row.Items.ToList();
-                row.SetChecked(Selection.Intersect(rowGroupItems).Count() == rowGroupItems.Count, notify: false);
+                var itemsCount = Selection.Intersect(rowGroupItems).Count();
+                var selectAll = itemsCount == rowGroupItems.Count;
+                var indeterminate = !selectAll && Selection.Count > 0;
+                row.SetChecked(indeterminate && !selectAll ? null : selectAll, notify: false);
             }
             if (HeaderRows.Count > 0 || FooterRows.Count > 0)
             {
                 var itemsCount = Table.GetFilteredItemsCount();
-                var b = Selection.Count == itemsCount && itemsCount != 0;
+                var selectAll = Selection.Count == itemsCount;
+                var indeterminate = !selectAll && Selection.Count > 0;
+                var isChecked = selectAll && itemsCount != 0;
                 // update header checkbox
                 foreach (var header in HeaderRows)
-                    header.SetChecked(b, notify: false);
+                    header.SetChecked(indeterminate ? null : isChecked, notify: false);
 
                 // update footer checkbox
                 foreach (var footer in FooterRows)
-                    footer.SetChecked(b, notify: false);
+                    footer.SetChecked(indeterminate ? null : isChecked, notify: false);
             }
         }
 

@@ -535,7 +535,7 @@ namespace MudBlazor
 
         internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
 
-        internal abstract void OnHeaderCheckboxClicked(bool value);
+        internal abstract void OnHeaderCheckboxClicked(bool? value);
 
         internal abstract bool IsEditable { get; }
 

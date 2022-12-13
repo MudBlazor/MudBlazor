@@ -465,9 +465,9 @@ namespace MudBlazor
             SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
-        internal override void OnHeaderCheckboxClicked(bool value)
+        internal override void OnHeaderCheckboxClicked(bool? value)
         {
-            if (!value)
+            if (value.HasValue && !value.Value)
                 Context.Selection.Clear();
             else
             {
@@ -562,9 +562,9 @@ namespace MudBlazor
             return sourceList.GroupBy(parent.Selector).ToList();
         }
 
-        internal void OnGroupHeaderCheckboxClicked(bool value, IEnumerable<T> items)
+        internal void OnGroupHeaderCheckboxClicked(bool? value, IEnumerable<T> items)
         {
-            if (value)
+            if (value.HasValue && value.Value)
             {
                 foreach (var item in items)
                     Context.Selection.Add(item);

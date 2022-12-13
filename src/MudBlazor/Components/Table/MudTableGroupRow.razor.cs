@@ -80,17 +80,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnRowClick { get; set; }
 
-        private bool _checked;
-        public bool IsChecked
+        private bool? _checked;
+        public bool? IsChecked
         {
             get => _checked;
             set
             {
-                if (value != _checked)
+                if (value.HasValue && value.Value != _checked)
                 {
-                    _checked = value;
+                    _checked = value.Value;
                     if (IsCheckable)
-                        Table.OnGroupHeaderCheckboxClicked(value, Items.ToList());
+                        Table.OnGroupHeaderCheckboxClicked(_checked.Value, Items.ToList());
                 }
             }
         }
@@ -123,7 +123,7 @@ namespace MudBlazor
             ((TableContext<T>)Context)?.GroupRows.Remove(this);
         }
 
-        public void SetChecked(bool b, bool notify)
+        public void SetChecked(bool? b, bool notify)
         {
             if (notify)
                 IsChecked = b;

@@ -36,17 +36,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnRowClick { get; set; }
 
-        private bool _checked;
-        public bool IsChecked
+        private bool? _checked;
+        public bool? IsChecked
         {
             get => _checked;
             set
             {
-                if (value != _checked)
+                if (value.HasValue && value.Value != _checked)
                 {
-                    _checked = value;
+                    _checked = value.Value;
                     if (IsCheckable)
-                        Context.Table.OnHeaderCheckboxClicked(value);
+                        Context.Table.OnHeaderCheckboxClicked(_checked.Value);
                 }
             }
         }
@@ -62,7 +62,7 @@ namespace MudBlazor
             Context?.FooterRows.Remove(this);
         }
 
-        public void SetChecked(bool b, bool notify)
+        public void SetChecked(bool? b, bool notify)
         {
             if (notify)
                 IsChecked = b;
