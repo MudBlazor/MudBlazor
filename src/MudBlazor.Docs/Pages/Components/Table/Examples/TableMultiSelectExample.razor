@@ -9,47 +9,47 @@
 <MudText>Selected items: @(selectedItems1 == null ? "" : string.Join(", ", selectedItems1.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
 
 
-   <MudTable @ref="_table" T="Element" Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems1" Hover="true"
-             OnRowClick="@OnRowClick" @bind-SelectOnRowClick="@_selectOnRowClick">
-   <HeaderContent>
-      <MudTh>Nr</MudTh>
-      <MudTh>Sign</MudTh>
-      <MudTh>Name</MudTh>
-      <MudTh>Position</MudTh>
-      <MudTh>Molar mass</MudTh>
-   </HeaderContent>
-   <RowTemplate>
-      <MudTd DataLabel="Nr">@context.Number</MudTd>
-      <MudTd DataLabel="Sign">@context.Sign</MudTd>
-      <MudTd DataLabel="Name">@context.Name</MudTd>
-      <MudTd DataLabel="Position">@context.Position</MudTd>
-      <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
-   </RowTemplate>
-   <PagerContent>
-      <MudTablePager PageSizeOptions="new int[]{50, 100}" />
-   </PagerContent>
-   <FooterContent>
-      <MudTd colspan="5">Select All</MudTd>
-   </FooterContent>
+<MudTable @ref="_table" T="Element" Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems1" Hover="true"
+          OnRowClick="@OnRowClick" @bind-SelectOnRowClick="@_selectOnRowClick">
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+    <FooterContent>
+        <MudTd colspan="5">Select All</MudTd>
+    </FooterContent>
 </MudTable>
 
 
 @code {
-   private HashSet<Element> selectedItems1 = new HashSet<Element>();
-   private IEnumerable<Element> Elements = new List<Element>();
-   private bool _selectOnRowClick = true;
-   private MudTable<Element> _table;
-   private int _clickCount;
-   private string _clickText = "No row clicked";
+    private HashSet<Element> selectedItems1 = new HashSet<Element>();
+    private IEnumerable<Element> Elements = new List<Element>();
+    private bool _selectOnRowClick = true;
+    private MudTable<Element> _table;
+    private int _clickCount;
+    private string _clickText = "No row clicked";
 
-   protected override async Task OnInitializedAsync()
-   {
-      Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-   }
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
 
-   void OnRowClick(TableRowClickEventArgs<Element> args)
-   {
-      ++_clickCount;
-      _clickText = args.Item.Sign;
-   }
+    void OnRowClick(TableRowClickEventArgs<Element> args)
+    {
+        ++_clickCount;
+        _clickText = args.Item.Sign;
+    }
 }
