@@ -451,6 +451,33 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(0);
         }
 
+
+        [Test]
+        public void TableMultiSelection_CheckboxClickTest()
+        {
+            var comp = Context.RenderComponent<TableMultiSelection_CheckboxClickTest>();
+            var checkboxes = comp.FindComponent<MudTable<int>>().FindAll("input").ToArray();
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+
+            foreach (var cbx in checkboxes) cbx.Change(true);
+            table.SelectedItems.Count.Should().Be(3);
+
+            foreach (var cbx in checkboxes) cbx.Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+        }
+
+        [Test]
+        public void TableMultiSelection_IgnoreCheckbox_RowClickTest()
+        {
+            var comp = Context.RenderComponent<TableMultiSelection_IgnoreCheckbox_RowClickTest>();
+            var rows = comp.FindComponent<MudTable<int>>().FindAll("tr").ToArray();
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+
+            foreach (var row in rows) row.Click();
+            table.SelectedItems.Count.Should().Be(0);
+        }
+
+
         /// <summary>
         /// the selected items (check-box click or row click) should be in SelectedItems
         /// </summary>

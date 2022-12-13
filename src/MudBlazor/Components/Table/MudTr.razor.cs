@@ -57,14 +57,14 @@ namespace MudBlazor
 
         public void OnRowClicked(MouseEventArgs args)
         {
-            Context?.Table.SetSelectedItem(Item);
+            var table = Context?.Table;
+            if (table is null)
+                return;
+            table.SetSelectedItem(Item);
             StartEditingItem(buttonClicked: false);
-
-            if (Context?.Table.MultiSelection == true && !(Context?.Table.IsEditable == true))
-            {
+            if (table.MultiSelection && table.SelectOnRowClick && !table.IsEditable)
                 IsChecked = !IsChecked;
-            }
-            Context?.Table.FireRowClickEvent(args, this, Item);
+            table.FireRowClickEvent(args, this, Item);
         }
 
         private void StartEditingItem() => StartEditingItem(buttonClicked: true);
