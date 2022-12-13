@@ -86,12 +86,9 @@ namespace MudBlazor
             get => _checked;
             set
             {
-                if (value.HasValue && value.Value != _checked)
-                {
-                    _checked = value.Value;
-                    if (IsCheckable)
-                        Table.OnGroupHeaderCheckboxClicked(_checked.Value, Items.ToList());
-                }
+                _checked = value;
+                if (IsCheckable)
+                    Table.OnGroupHeaderCheckboxClicked(_checked, Items.ToList());
             }
         }
 

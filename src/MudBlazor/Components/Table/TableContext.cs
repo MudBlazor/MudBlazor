@@ -67,7 +67,7 @@ namespace MudBlazor
                 var rowGroupItems = row.Items.ToList();
                 var itemsCount = Selection.Intersect(rowGroupItems).Count();
                 var selectAll = itemsCount == rowGroupItems.Count;
-                var indeterminate = !selectAll && Selection.Count > 0;
+                var indeterminate = !selectAll && itemsCount > 0 && Selection.Count > 0;
                 row.SetChecked(indeterminate && !selectAll ? null : selectAll, notify: false);
             }
             if (HeaderRows.Count > 0 || FooterRows.Count > 0)

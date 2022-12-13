@@ -564,19 +564,22 @@ namespace MudBlazor
 
         internal void OnGroupHeaderCheckboxClicked(bool? value, IEnumerable<T> items)
         {
-            if (value.HasValue && value.Value)
+            if (value.HasValue)
             {
-                foreach (var item in items)
-                    Context.Selection.Add(item);
-            }
-            else
-            {
-                foreach (var item in items)
-                    Context.Selection.Remove(item);
-            }
+                if (value.Value)
+                {
+                    foreach (var item in items)
+                        Context.Selection.Add(item);
+                }
+                else
+                {
+                    foreach (var item in items)
+                        Context.Selection.Remove(item);
+                }
 
-            Context.UpdateRowCheckBoxes(false);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
+                Context.UpdateRowCheckBoxes(false);
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
+            }
         }
     }
 }
