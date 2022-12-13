@@ -50,7 +50,7 @@ namespace MudBlazor
                 if (value != _checked)
                 {
                     _checked = value;
-                    IsCheckedChanged.InvokeAsync(value);
+                    IsCheckedChanged.InvokeAsync(_checked);
                 }
             }
         }

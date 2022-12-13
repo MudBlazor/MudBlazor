@@ -42,11 +42,11 @@ namespace MudBlazor
             get => _checked;
             set
             {
-                if (value.HasValue && value.Value != _checked)
+                if (value != _checked)
                 {
-                    _checked = value.Value;
+                    _checked = value;
                     if (IsCheckable)
-                        Context.Table.OnHeaderCheckboxClicked(_checked.Value);
+                        Context.Table.OnHeaderCheckboxClicked(_checked);
                 }
             }
         }
