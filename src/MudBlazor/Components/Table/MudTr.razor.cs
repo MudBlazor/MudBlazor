@@ -113,13 +113,13 @@ namespace MudBlazor
             Context?.Remove(this, Item);
         }
 
-        public void SetChecked(bool b, bool notify)
+        public void SetChecked(bool checkedState, bool notify)
         {
             if (notify)
-                IsChecked = b;
+                IsChecked = checkedState;
             else
             {
-                _checked = b;
+                _checked = checkedState;
                 InvokeAsync(StateHasChanged);
             }
         }
