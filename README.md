@@ -1,4 +1,11 @@
-# ![MudBlazor](content/MudBlazor-GitHub-NoBg.png)
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="content/MudBlazor-GitHub-NoBg-Dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="content/MudBlazor-GitHub-NoBg.png">
+    <img alt="MudBlazor" src="content/MudBlazor-GitHub-NoBg.png">
+  </picture>
+</h1>
+
 # Material Design components for Blazor
 ![GitHub Workflow Status (event)](https://img.shields.io/github/workflow/status/mudblazor/mudblazor/build-test-mudblazor?event=push&label=dev&logo=github&style=flat-square)
 ![Codecov](https://img.shields.io/codecov/c/github/MudBlazor/MudBlazor?logo=codecov&logoColor=white&style=flat-square&token=4BBNQPPATD)
