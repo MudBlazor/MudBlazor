@@ -115,12 +115,16 @@ namespace MudBlazor
 
         public void SetChecked(bool checkedState, bool notify)
         {
-            if (notify)
-                IsChecked = checkedState;
-            else
+            if (_checked != checkedState)
             {
-                _checked = checkedState;
-                InvokeAsync(StateHasChanged);
+                if (notify)
+                    IsChecked = checkedState;
+                else
+                {
+                    _checked = checkedState;
+                    if (IsCheckable)
+                        InvokeAsync(StateHasChanged);
+                }
             }
         }
 
