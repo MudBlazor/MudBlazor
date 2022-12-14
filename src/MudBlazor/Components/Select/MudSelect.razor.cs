@@ -1087,7 +1087,7 @@ namespace MudBlazor
         {
             base.Dispose(disposing);
 
-            if (disposing == true)
+            if (disposing)
             {
                 if (_keyInterceptor != null)
                 {
@@ -1096,6 +1096,8 @@ namespace MudBlazor
 
                     _keyInterceptor.Dispose();
                 }
+
+                _timer?.Dispose();
             }
         }
 
