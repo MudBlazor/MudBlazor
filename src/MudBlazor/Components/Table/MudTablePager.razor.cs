@@ -48,6 +48,11 @@ namespace MudBlazor
         [Parameter] public bool HidePagination { get; set; }
 
         /// <summary>
+        /// Appends a "All" option to the end of the page options.
+        /// </summary>
+        [Parameter] public bool ShowAllSizeOption { get; set; }
+
+        /// <summary>
         /// Set the horizontal alignment position.
         /// </summary>
         [Parameter] public HorizontalAlignment HorizontalAlignment { get; set; } = HorizontalAlignment.Right;
@@ -105,10 +110,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string LastIcon { get; set; } = Icons.Material.Filled.LastPage;
 
-        private void SetRowsPerPage(string size)
-        {
-            Table?.SetRowsPerPage(int.Parse(size));
-        }
+        private void SetRowsPerPage(int size) => Table?.SetRowsPerPage(size);
 
         private bool BackButtonsDisabled => Table == null ? false : Table.CurrentPage == 0;
 
