@@ -7,7 +7,7 @@
 </h1>
 
 # Material Design components for Blazor
-![GitHub Workflow Status (event)](https://img.shields.io/github/workflow/status/mudblazor/mudblazor/build-test-mudblazor?event=push&label=dev&logo=github&style=flat-square)
+![GitHub Workflow Status (event)](https://img.shields.io/github/actions/workflow/status/mudblazor/mudblazor/build-test-mudblazor.yml?branch=dev&style=flat-square)
 ![Codecov](https://img.shields.io/codecov/c/github/MudBlazor/MudBlazor?logo=codecov&logoColor=white&style=flat-square&token=4BBNQPPATD)
 [![GitHub](https://img.shields.io/github/license/mudblazor/mudblazor?color=594ae2&logo=github&style=flat-square)](https://github.com/mudblazor/MudBlazor/blob/master/LICENSE)
 [![GitHub Repo stars](https://img.shields.io/github/stars/mudblazor/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/mudblazor/MudBlazor/stargazers)
