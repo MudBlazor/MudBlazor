@@ -1284,10 +1284,10 @@ namespace MudBlazor
 
         public void CollapseAllGroups()
         {
+            _groupExpansions.Clear();
+
             foreach (var group in _groups)
-            {
                 group.IsExpanded = false;
-            }
         }
 
         #endregion
