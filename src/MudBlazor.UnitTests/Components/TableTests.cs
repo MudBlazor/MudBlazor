@@ -365,15 +365,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[2].IsDisabled().Should().Be(true);
             comp.FindAll("button")[3].IsDisabled().Should().Be(true);
             pager.Value.Should().Be(int.MaxValue);
-            // change page size back to "normal" option
-            await table.InvokeAsync(() => table.Instance.SetRowsPerPage(25));
-            pager.Value.Should().Be(25);
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(25);
-            comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-25 of 59");
-            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
         }
 
         /// <summary>

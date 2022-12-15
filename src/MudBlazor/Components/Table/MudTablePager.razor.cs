@@ -48,11 +48,6 @@ namespace MudBlazor
         [Parameter] public bool HidePagination { get; set; }
 
         /// <summary>
-        /// Appends a "All" option to the end of the page options.
-        /// </summary>
-        [Parameter] public bool ShowAllSizeOption { get; set; }
-
-        /// <summary>
         /// Set the horizontal alignment position.
         /// </summary>
         [Parameter] public HorizontalAlignment HorizontalAlignment { get; set; } = HorizontalAlignment.Right;
