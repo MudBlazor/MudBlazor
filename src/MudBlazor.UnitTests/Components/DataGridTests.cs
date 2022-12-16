@@ -4345,5 +4345,24 @@ namespace MudBlazor.UnitTests.Components
             // datagrid should be expanded with the new category
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(8);
         }
+
+        [Test]
+        public async Task DataGridGroupCollapseAllTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupCollapseAllTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupCollapseAllTest.TestObject>>();
+
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+            comp.Instance.ExpandAllGroups();
+            comp.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(15);
+            comp.Instance.CollapseAllGroups();
+            comp.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+            comp.Instance.RefreshList();
+            comp.Render();
+            // after all groups are expanded
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+        }
     }
 }
