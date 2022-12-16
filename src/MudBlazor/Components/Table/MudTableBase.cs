@@ -436,6 +436,16 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Behavior)]
         public bool Virtualize { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value that determines how many additional items will be rendered
+        /// before and after the visible region. This help to reduce the frequency of rendering
+        /// during scrolling. However, higher values mean that more elements will be present
+        /// in the page.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public int OverscanCount { get; set; } = 3;
+
         #region --> Obsolete Forwarders for Backwards-Compatiblilty
         /// <summary>
         /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />
