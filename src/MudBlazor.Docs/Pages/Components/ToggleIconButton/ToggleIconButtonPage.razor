@@ -9,7 +9,18 @@
 
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader Title="Basic usage">
+            <SectionHeader Title="Basic Usage">
+                <Description>You can toggle Color, Variant, Size, Icon, Title or combination of these.</Description>
+                </SectionHeader>
+                <SectionContent Code="ToggleIconButtonBasicExample">
+                    <ToggleIconButtonBasicExample />
+                </SectionContent>
+            </DocsPageSection>
+        </DocsPageContent>
+
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Two Way Bind">
                 <Description>Use two-way binding <CodeInline>@(@"@bind-Toggle=""...""")</CodeInline> to update a bound value in the parent component.</Description>
             </SectionHeader>
             <SectionContent Code="ToggleIconButtonTwoWayBindingExample">
@@ -20,7 +31,7 @@
 
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader Title="Advanced usage">
+            <SectionHeader Title="Advanced Usage">
                 <Description>You may act on the toggled state by using the <CodeInline>Toggled</CodeInline> EventCallback.</Description>
             </SectionHeader>
             <SectionContent Code="ToggleIconButtonEventCallbackExample" ShowCode="false">

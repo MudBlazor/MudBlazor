@@ -101,6 +101,13 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
 
+        /// <summary>
+        /// The toggled variant to use.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Variant ToggledVariant { get; set; } = Variant.Text;
+
         public Task Toggle()
         {
             return SetToggledAsync(!Toggled);
