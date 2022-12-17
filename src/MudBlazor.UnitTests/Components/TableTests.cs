@@ -1611,7 +1611,7 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(2);
 
             inputs = comp.FindAll("input").ToArray();
-            inputs.Where(x => x.IsChecked()).Count().Should().Be(5);
+            inputs.Where(x => x.IsChecked()).Count().Should().Be(3);
 
             inputs[1].Change(false);
             table.SelectedItems.Count.Should().Be(0);
