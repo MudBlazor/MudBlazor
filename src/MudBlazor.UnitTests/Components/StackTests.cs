@@ -26,6 +26,7 @@ namespace MudBlazor.UnitTests.Components
             stack.Spacing.Should().Be(3);
             stack.Justify.Should().BeNull();
             stack.AlignItems.Should().BeNull();
+            stack.StretchChildren.Should().BeNull();
         }
 
         [Test]
@@ -108,6 +109,18 @@ namespace MudBlazor.UnitTests.Components
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"align-{expectedClass}", "gap-3" });
+        }
+
+        [Test]
+        [TestCase(StretchChildren.FirstChild, "first-child")]
+        [TestCase(StretchChildren.LastChild, "last-child")]
+        [TestCase(StretchChildren.AllChildren, "all-children")]
+        public void CheckStretchChildrenClass(StretchChildren stretch, string expectedClass)
+        {
+            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.StretchChildren, stretch));
+
+            var stackClass = stack.Find(".d-flex");
+            stackClass.ClassList.Should().Contain(new[] { "d-flex", $"flex-grow-{expectedClass}" });
         }
     }
 }

@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Outlined="true" Class="border-dashed">
+    <MudStack StretchChildren="@_stretch" Row="true">
+        <MudPaper Class="pa-3 mud-theme-primary">Item 1</MudPaper>
+        <MudPaper Class="pa-3 mud-theme-primary">Item 2</MudPaper>
+        <MudPaper Class="pa-3 mud-theme-primary">Item 3</MudPaper>
+    </MudStack>
+</MudPaper>
+
+<MudChipSet Filter="true" Mandatory="true" Class="d-flex justify-center mt-12">
+    <MudChip Text="Do Not Stretch" OnClick="@(() => _stretch = null)" SelectedColor="Color.Primary" />
+    <MudChip Text="Stretch First Child" OnClick="@(() => _stretch = StretchChildren.FirstChild)" SelectedColor="Color.Primary" Default="true" />
+    <MudChip Text="Stretch Last Child" OnClick="@(() => _stretch = StretchChildren.LastChild)" SelectedColor="Color.Primary" />
+    <MudChip Text="Stretch All Children" OnClick="@(() => _stretch = StretchChildren.AllChildren)" SelectedColor="Color.Primary" />
+</MudChipSet>
+
+
+@code {
+    StretchChildren? _stretch = null;
+}

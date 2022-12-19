@@ -12,11 +12,12 @@ public partial class MudStack : MudComponentBase
 {
     protected string Classname =>
     new CssBuilder("d-flex")
-      .AddClass($"flex-{(Row ? "row" : "column")}{(Reverse ? "-reverse" : string.Empty)}")
-      .AddClass($"justify-{Justify?.ToDescriptionString()}", Justify != null)
-      .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems != null)
-      .AddClass($"gap-{Spacing}")
-      .AddClass(Class)
+        .AddClass($"flex-{(Row ? "row" : "column")}{(Reverse ? "-reverse" : string.Empty)}")
+        .AddClass($"justify-{Justify?.ToDescriptionString()}", Justify != null)
+        .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems != null)
+        .AddClass($"gap-{Spacing}")
+        .AddClass($"flex-grow-{StretchChildren?.ToDescriptionString()}", StretchChildren is not null)
+        .AddClass(Class)
     .Build();
 
     /// <summary>
@@ -53,6 +54,13 @@ public partial class MudStack : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
     public AlignItems? AlignItems { get; set; }
+
+    /// <summary>
+    /// Defines stretching the Stack's children on the cross axis.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Stack.Behavior)]
+    public StretchChildren? StretchChildren { get; set; }
 
     /// <summary>
     /// Child content of the component.
