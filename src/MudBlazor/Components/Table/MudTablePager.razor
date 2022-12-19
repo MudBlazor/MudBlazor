@@ -3,9 +3,9 @@
 
 <MudToolBar @attributes="UserAttributes" Class="@Classname" Style="@Style">
     @if (HorizontalAlignment == HorizontalAlignment.End ||
-    (HorizontalAlignment == HorizontalAlignment.Right && !RightToLeft) ||
-    (HorizontalAlignment == HorizontalAlignment.Left && RightToLeft) ||
-     HorizontalAlignment == HorizontalAlignment.Center)
+   (HorizontalAlignment == HorizontalAlignment.Right && !RightToLeft) ||
+   (HorizontalAlignment == HorizontalAlignment.Left && RightToLeft) ||
+    HorizontalAlignment == HorizontalAlignment.Center)
     {
         <div class="mud-table-pagination-spacer"></div>
     }
@@ -21,8 +21,7 @@
                     {
                         if (pageSize == int.MaxValue)
                         {
-                            <MudSelectItem T="int" Value="@pageSize">All</MudSelectItem>
-
+                            <MudSelectItem T="int" Value="@pageSize">@AllItemsText</MudSelectItem>
                         }
                         else
                         {
@@ -49,9 +48,9 @@
         </div>
     }
     @if (HorizontalAlignment == HorizontalAlignment.Start ||
-  (HorizontalAlignment == HorizontalAlignment.Left && !RightToLeft) ||
-  (HorizontalAlignment == HorizontalAlignment.Right && RightToLeft) ||
-   HorizontalAlignment == HorizontalAlignment.Center)
+ (HorizontalAlignment == HorizontalAlignment.Left && !RightToLeft) ||
+ (HorizontalAlignment == HorizontalAlignment.Right && RightToLeft) ||
+  HorizontalAlignment == HorizontalAlignment.Center)
     {
         <div class="mud-table-pagination-spacer"></div>
     }
