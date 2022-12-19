@@ -396,6 +396,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task DataGridEventCallbacksTest()
         {
             var comp = Context.RenderComponent<DataGridEventCallbacksTest>();
@@ -405,6 +406,17 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.CommittedItemChanges.HasDelegate.Should().Be(true);
+            dataGrid.Instance.StartedEditingItem.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CanceledEditingItem.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CanceledEditingItem.Should().Be(dataGrid.Instance.CanceledEditingItem);
+
+            // we test to make sure that we can set and get the cancelCallback via the CancelledEditingItem property
+            var cancelCallback = dataGrid.Instance.CanceledEditingItem;
+            dataGrid.SetCallback(dg => dg.CancelledEditingItem, x => { return; });
+            dataGrid.Instance.CanceledEditingItem.Should().NotBe(cancelCallback);
+            dataGrid.Instance.CancelledEditingItem = cancelCallback;
+            dataGrid.Instance.CancelledEditingItem.Should().Be(cancelCallback);
+
 
             // Set some parameters manually so that they are covered.
             var parameters = new List<ComponentParameter>();
@@ -418,9 +430,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.RowClicked.Should().Be(false);
             comp.Instance.SelectedItemChanged.Should().Be(false);
             comp.Instance.CommittedItemChanges.Should().Be(false);
+            comp.Instance.StartedEditingItem.Should().Be(false);
+            comp.Instance.CanceledEditingItem.Should().Be(false);
 
             // Fire RowClick, SelectedItemChanged, SelectedItemsChanged, and StartedEditingItem callbacks.
             dataGrid.FindAll(".mud-table-body tr")[0].Click();
+
             // Edit an item.
             dataGrid.FindAll(".mud-table-body tr td input")[0].Change("A test");
 
@@ -428,6 +443,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.RowClicked.Should().Be(true);
             comp.Instance.SelectedItemChanged.Should().Be(true);
             comp.Instance.CommittedItemChanges.Should().Be(true);
+            comp.Instance.CanceledEditingItem.Should().Be(false);
+
+            // TODO: Triggering of the CancelEditingItem callback appears to require the Form edit mode
+            // but we can brute force it by directly calling the CancelEditingItemAsync method on the datagrid
+            await dataGrid.InvokeAsync(dataGrid.Instance.CancelEditingItemAsync);
+            comp.Instance.CanceledEditingItem.Should().Be(true);
         }
 
         [Test]
