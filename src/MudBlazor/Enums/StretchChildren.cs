@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+public enum StretchChildren
 {
-    public enum StretchChildren
-    {
-        [Description("first-child")]
-        FirstChild,
-        [Description("last-child")]
-        LastChild,
-        [Description("all-children")]
-        AllChildren,
-    }
+    [Description("none")]
+    None,
+    [Description("first-child")]
+    FirstChild,
+    [Description("last-child")]
+    LastChild,
+    [Description("all-children")]
+    AllChildren,
 }

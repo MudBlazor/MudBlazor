@@ -16,7 +16,7 @@ public partial class MudStack : MudComponentBase
         .AddClass($"justify-{Justify?.ToDescriptionString()}", Justify != null)
         .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems != null)
         .AddClass($"gap-{Spacing}")
-        .AddClass($"flex-grow-{StretchChildren?.ToDescriptionString()}", StretchChildren is not null)
+        .AddClass($"flex-grow-{StretchChildren?.ToDescriptionString()}", StretchChildren is not null and not MudBlazor.StretchChildren.None)
         .AddClass(Class)
     .Build();
 

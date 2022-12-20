@@ -122,6 +122,15 @@ namespace MudBlazor.UnitTests.Components
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().Contain(new[] { "d-flex", $"flex-grow-{expectedClass}" });
         }
+
+        [Test]
+        public void CheckStretchChildrenNoneClass()
+        {
+            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.StretchChildren, StretchChildren.None));
+
+            var stackClass = stack.Find(".d-flex");
+            stackClass.ClassList.Should().NotContain(new[] { "flex-grow-first-child", "flex-grow-last-child", "flex-grow-all-children" });
+        }
     }
 }
 
