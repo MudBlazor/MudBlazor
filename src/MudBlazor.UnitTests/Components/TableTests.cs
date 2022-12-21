@@ -313,10 +313,10 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html      
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<string>>();
-            var pager = comp.FindComponent<MudSelect<string>>().Instance;
+            var pager = comp.FindComponent<MudSelect<int>>().Instance;
             // change page size
             await table.InvokeAsync(() => table.Instance.SetRowsPerPage(20));
-            pager.Value.Should().Be("20");
+            pager.Value.Should().Be(20);
             comp.FindAll("tr.mud-table-row").Count.Should().Be(20);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-20 of 59");
             comp.FindAll("button")[0].IsDisabled().Should().Be(true);
@@ -325,7 +325,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[3].IsDisabled().Should().Be(false);
             // change page size
             await table.InvokeAsync(() => table.Instance.SetRowsPerPage(60));
-            pager.Value.Should().Be("60");
+            pager.Value.Should().Be(60);
             comp.FindAll("tr.mud-table-row").Count.Should().Be(59);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-59 of 59");
             comp.FindAll("button")[0].IsDisabled().Should().Be(true);
@@ -334,13 +334,37 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[3].IsDisabled().Should().Be(true);
             // change page size
             await table.InvokeAsync(() => table.Instance.SetRowsPerPage(10));
-            pager.Value.Should().Be("10");
+            pager.Value.Should().Be(10);
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
             comp.FindAll("button")[0].IsDisabled().Should().Be(true);
             comp.FindAll("button")[1].IsDisabled().Should().Be(true);
             comp.FindAll("button")[2].IsDisabled().Should().Be(false);
             comp.FindAll("button")[3].IsDisabled().Should().Be(false);
+        }
+
+        /// <summary>
+        /// Tests that the "All" table pager option shows all items
+        /// </summary>
+        [Test]
+        public async Task TablePagingAllTest()
+        {
+            var comp = Context.RenderComponent<TablePagingTest1>();
+
+            var table = comp.FindComponent<MudTable<string>>();
+            var pager = comp.FindComponent<MudSelect<int>>().Instance;
+
+            comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59"); //check initial value
+            // change page size
+            await table.InvokeAsync(() => table.Instance.SetRowsPerPage(int.MaxValue));
+            pager.Value.Should().Be(int.MaxValue);
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(59);
+            comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-59 of 59");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(true); //buttons are disabled
+            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
+            pager.Value.Should().Be(int.MaxValue);
         }
 
         /// <summary>
@@ -353,7 +377,7 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>();
-            var pager = comp.FindComponent<MudSelect<string>>().Instance;
+            var pager = comp.FindComponent<MudSelect<int>>().Instance;
             // after initial load
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
@@ -376,7 +400,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[3].IsDisabled().Should().Be(true);
             // change page size
             await table.InvokeAsync(() => table.Instance.SetRowsPerPage(100));
-            pager.Value.Should().Be("100");
+            pager.Value.Should().Be(100);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-99 of 99");
             comp.FindAll("button")[0].IsDisabled().Should().Be(true);
             comp.FindAll("button")[1].IsDisabled().Should().Be(true);
