@@ -26,7 +26,7 @@ namespace MudBlazor
             }
         }
 
-        public CellContext(MudDataGrid<T> dataGrid, T item, Action<object> cellValueChanged)
+        public CellContext(MudDataGrid<T> dataGrid, T item, Action<object> cellValueChanged = null)
         {
             selection = dataGrid.Selection;
             openHierarchies = dataGrid._openHierarchies;
