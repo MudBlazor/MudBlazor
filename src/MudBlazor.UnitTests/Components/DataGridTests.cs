@@ -207,7 +207,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
 
-            // deselect all programmatically
+            // select all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(true));
             dataGrid.Instance.SelectedItems.Count.Should().Be(3);
 
@@ -230,7 +230,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, dataGrid.Instance.SelectedItems.First()));
             dataGrid.Instance.SelectedItems.Count.Should().Be(2);
 
-            // TODO: select an item programmatically
+            // select an item programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(dataGrid.Instance.ServerItems.First()));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
 
             // deselect all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));

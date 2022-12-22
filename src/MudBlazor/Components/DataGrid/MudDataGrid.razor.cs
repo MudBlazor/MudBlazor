@@ -646,6 +646,7 @@ namespace MudBlazor
 
         public HashSet<T> Selection { get; set; } = new HashSet<T>();
         public bool HasPager { get; set; }
+        public IEnumerable<T> ServerItems => _server_data.Items;
         private GridData<T> _server_data = new GridData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
 
         public IEnumerable<T> FilteredItems
@@ -875,7 +876,7 @@ namespace MudBlazor
         internal async Task SetSelectAllAsync(bool value)
         {
             var items = ServerData != null
-                    ? _server_data.Items
+                    ? ServerItems
                     : Items;
                     
             if (value)
