@@ -194,6 +194,9 @@ namespace MudBlazor
         $iconSvg = $iconSvg.Replace(' />', '/>')
         $iconSvg = $iconSvg.Replace("`"", "\`"")
 
+        ## Use regex to remove the title
+        $iconSvg = $iconSvg -replace "<title>.+?</title>", ""
+
         ## Keep track for comparison purposes
         $nextIcons[$famName][$iconVar] = $iconSvg
 
