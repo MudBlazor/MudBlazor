@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items="@_items" Loading="true">
+@*<MudDataGrid Items="@_items" Loading="true">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />
@@ -9,7 +9,7 @@
     <LoadingContent>
         Data loading, please wait...
     </LoadingContent>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     private IEnumerable<Model> _items = new List<Model>();

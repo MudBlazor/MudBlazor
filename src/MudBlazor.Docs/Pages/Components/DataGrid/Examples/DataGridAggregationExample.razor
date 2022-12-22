@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid Items="@_items" Groupable="true" Filterable="true">
+@*<MudDataGrid Items="@_items" Groupable="true" Filterable="true">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)">
             <FooterTemplate>
@@ -30,7 +30,7 @@
         </Column>
         <Column T="Model" Field="IsManager" Title="Manager" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code { 
     public record Model (string Name, int Age, Severity Status, decimal Salary, DateTime HireDate, bool IsManager);

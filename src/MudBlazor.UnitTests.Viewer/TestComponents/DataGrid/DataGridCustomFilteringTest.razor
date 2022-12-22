@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDataGrid Items="@_items" Filterable="true">
+@*<MudDataGrid Items="@_items" Filterable="true">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />
@@ -13,7 +13,7 @@
         <MudSwitch T="bool" Color="@Color.Primary" Checked="FilterHired" Label="Show Hired" CheckedChanged="@((value) => FilterHiredToggled(value, context))"></MudSwitch>
     </FilterTemplate>
 </MudDataGrid>
-
+*@
 @code {
     public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
 

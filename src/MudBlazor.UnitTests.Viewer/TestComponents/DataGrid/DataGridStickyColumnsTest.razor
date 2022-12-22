@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items="@_items" HorizontalScrollbar="true" Bordered="true">
+@*<MudDataGrid Items="@_items" HorizontalScrollbar="true" Bordered="true">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Column1)" StickyLeft="true" />
         <Column T="Model" Field="@nameof(Model.Column2)" />
@@ -27,7 +27,7 @@
         <Column T="Model" Field="@nameof(Model.Column23)" />
         <Column T="Model" Field="@nameof(Model.Column24)" StickyRight="true" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     private IEnumerable<Model> _items = new List<Model>()

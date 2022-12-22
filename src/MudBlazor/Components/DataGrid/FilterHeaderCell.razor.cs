@@ -45,7 +45,8 @@ namespace MudBlazor
                 if (DataGrid == null)
                     return false;
 
-                return DataGrid.FilterDefinitions.Any(x => x.Field == Column.Field && x.Operator != null && x.Value != null);
+                return false;
+                //return DataGrid.FilterDefinitions.Any(x => x.Field == Column.Field && x.Operator != null && x.Value != null);
             }
         }
 
@@ -53,7 +54,7 @@ namespace MudBlazor
         {
             get
             {
-                return Column?.dataType;
+                return Column?.PropertyType;
             }
         }
 

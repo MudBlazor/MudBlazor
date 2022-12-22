@@ -2,13 +2,13 @@
 
 <MudDialogProvider />
 
-<MudDataGrid T="Model" Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Form" EditTrigger="@DataGridEditTrigger.OnRowClick">
+@*<MudDataGrid T="Model" Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Form" EditTrigger="@DataGridEditTrigger.OnRowClick">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />
         <Column T="Model" Field="@nameof(Model.GetOnly)" IsEditable="false" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     private IEnumerable<Model> _items = new List<Model>()

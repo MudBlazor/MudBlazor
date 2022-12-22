@@ -1,10 +1,10 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items="@_items">
+@*<MudDataGrid Items="@_items">
     <Columns>
         <Column T="Item" Field="@nameof(Item.Name)" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 
 <div>
     @string.Join(",", _selectedItems.Select(x => x.Name))

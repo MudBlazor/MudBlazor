@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text.Json;
 using MudBlazor.Utilities;
 
@@ -15,6 +16,7 @@ namespace MudBlazor
     public class FilterDefinition<T>
     {
         internal MudDataGrid<T> DataGrid { get; set; }
+        internal Expression? PropertyExpression { get; set; }
 
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Field { get; set; }
@@ -119,7 +121,6 @@ namespace MudBlazor
             else
             {
                 var expression = GenerateFilterExpression();
-
                 return expression.Compile();
             }
         }
@@ -158,7 +159,7 @@ namespace MudBlazor
                 expression = Expression.Constant(true, typeof(bool));
             }
 
-            return Expression.Lambda<Func<T, bool>>(expression, parameter);
+            return (Expression<Func<T, bool>>)expression;
         }
 
         private Expression GenerateFilterExpressionForDateTimeTypes(ParameterExpression parameter)
@@ -313,71 +314,111 @@ namespace MudBlazor
             };
         }
 
+        private static LambdaExpression CreateExpression(Type type, string propertyName)
+        {           
+            Type t = type;
+            var param = Expression.Parameter(type, "x");
+            Expression body = param;
+            foreach (var member in propertyName.Split('.'))
+            {
+                if (member == "x")
+                    continue;
+
+                var pInfo = t.GetProperty(member);
+                t = pInfo.PropertyType;
+
+                body = Expression.PropertyOrField(body, member);
+            }
+            param = Expression.Parameter(t, "x");
+            return Expression.Lambda(body, param);
+        }
+
         private Expression GenerateFilterExpressionForStringType(ParameterExpression parameter)
         {
+            //var field = CreateExpression(typeof(T), PropertyExpression.ToString()).Body;
             var field = Expression.Property(parameter, typeof(T).GetProperty(Field));
+            //var field = PropertyExpression ?? Expression.Property(parameter, typeof(T).GetProperty(Field));
+            //Console.WriteLine(Expression.Property(field, ));
             var valueString = Value?.ToString();
             var trim = Expression.Call(field, dataType.GetMethod("Trim", Type.EmptyTypes));
             var isnull = Expression.Equal(field, Expression.Constant(null));
             var isnotnull = Expression.NotEqual(field, Expression.Constant(null));
 
+            var exp = (Expression<Func<T, string>>)PropertyExpression;
+            //var b = exp.Compose(x => x ==  valueString);
+            //Console.WriteLine(b);
+
             return Operator switch
             {
                 FilterOperator.String.Contains when Value != null && DataGrid.FilterCaseSensitivity == DataGridFilterCaseSensitivity.Default =>
-                    Expression.AndAlso(isnotnull,
-                        Expression.Call(field, dataType.GetMethod("Contains", new[] { dataType }), Expression.Constant(valueString))),
+                    exp.Compose(x => x != null && x.Contains(valueString)),
+                    //Expression.AndAlso(isnotnull,
+                    //    Expression.Call(field, dataType.GetMethod("Contains", new[] { dataType }), Expression.Constant(valueString))),
 
                 FilterOperator.String.Contains when Value != null && DataGrid.FilterCaseSensitivity == DataGridFilterCaseSensitivity.CaseInsensitive =>
-                    Expression.AndAlso(isnotnull,
-                        Expression.Call(field, dataType.GetMethod("Contains", new[] { dataType, typeof(StringComparison) }), new[] { Expression.Constant(valueString), Expression.Constant(StringComparison.OrdinalIgnoreCase) })),
+                    exp.Compose(x => x != null && x.Contains(valueString, StringComparison.OrdinalIgnoreCase)),
+                    //Expression.AndAlso(isnotnull,
+                    //    Expression.Call(field, dataType.GetMethod("Contains", new[] { dataType, typeof(StringComparison) }), new[] { Expression.Constant(valueString), Expression.Constant(StringComparison.OrdinalIgnoreCase) })),
 
                 FilterOperator.String.NotContains when Value != null && DataGrid.FilterCaseSensitivity == DataGridFilterCaseSensitivity.Default =>
-                    Expression.AndAlso(isnotnull,
-                        Expression.Not(Expression.Call(field, dataType.GetMethod("Contains", new[] { dataType }), Expression.Constant(valueString)))),
+                exp.Compose(x => x != null && !x.Contains(valueString)),
+                    //Expression.AndAlso(isnotnull,
+                    //    Expression.Not(Expression.Call(field, dataType.GetMethod("Contains", new[] { dataType }), Expression.Constant(valueString)))),
 
                 FilterOperator.String.NotContains when Value != null && DataGrid.FilterCaseSensitivity == DataGridFilterCaseSensitivity.CaseInsensitive =>
-                    Expression.AndAlso(isnotnull,
-                        Expression.Not(Expression.Call(field, dataType.GetMethod("Contains", new[] { dataType, typeof(StringComparison) }), new[] { Expression.Constant(valueString), Expression.Constant(StringComparison.OrdinalIgnoreCase) }))),
+                    exp.Compose(x => x != null && !x.Contains(valueString, StringComparison.OrdinalIgnoreCase)),
+                //Expression.AndAlso(isnotnull,
+                //    Expression.Not(Expression.Call(field, dataType.GetMethod("Contains", new[] { dataType, typeof(StringComparison) }), new[] { Expression.Constant(valueString), Expression.Constant(StringComparison.OrdinalIgnoreCase) }))),
 
                 FilterOperator.String.Equal when Value != null && DataGrid.FilterCaseSensitivity == DataGridFilterCaseSensitivity.Default =>
-                    Expression.AndAlso(isnotnull,
-                        Expression.Equal(field, Expression.Constant(valueString))),
+                    exp.Compose(x => x != null && x == valueString),
+                //Expression.AndAlso(isnotnull,
+                //    Expression.Equal(field, Expression.Constant(valueString))),
 
                 FilterOperator.String.Equal when Value != null && DataGrid.FilterCaseSensitivity == DataGridFilterCaseSensitivity.CaseInsensitive =>
-                    Expression.AndAlso(isnotnull,
-                        Expression.Call(field, dataType.GetMethod("Equals", new[] { dataType, typeof(StringComparison) }), new[] { Expression.Constant(valueString), Expression.Constant(StringComparison.OrdinalIgnoreCase) })),
+                    exp.Compose(x => x != null && x.Equals(valueString, StringComparison.OrdinalIgnoreCase)),
+                //Expression.AndAlso(isnotnull,
+                //    Expression.Call(field, dataType.GetMethod("Equals", new[] { dataType, typeof(StringComparison) }), new[] { Expression.Constant(valueString), Expression.Constant(StringComparison.OrdinalIgnoreCase) })),
 
                 FilterOperator.String.NotEqual when Value != null && DataGrid.FilterCaseSensitivity == DataGridFilterCaseSensitivity.Default =>
-                    Expression.AndAlso(isnotnull,
-                        Expression.Not(Expression.Equal(field, Expression.Constant(valueString)))),
+                    exp.Compose(x => x != null && x != valueString),
+                //Expression.AndAlso(isnotnull,
+                //    Expression.Not(Expression.Equal(field, Expression.Constant(valueString)))),
 
                 FilterOperator.String.NotEqual when Value != null && DataGrid.FilterCaseSensitivity == DataGridFilterCaseSensitivity.CaseInsensitive =>
-                    Expression.AndAlso(isnotnull,
-                        Expression.Not(Expression.Call(field, dataType.GetMethod("Equals", new[] { dataType, typeof(StringComparison) }), new[] { Expression.Constant(valueString), Expression.Constant(StringComparison.OrdinalIgnoreCase) }))),
+                    exp.Compose(x => x != null && !x.Equals(valueString, StringComparison.OrdinalIgnoreCase)),
+                //Expression.AndAlso(isnotnull,
+                //    Expression.Not(Expression.Call(field, dataType.GetMethod("Equals", new[] { dataType, typeof(StringComparison) }), new[] { Expression.Constant(valueString), Expression.Constant(StringComparison.OrdinalIgnoreCase) }))),
 
                 FilterOperator.String.StartsWith when Value != null && DataGrid.FilterCaseSensitivity == DataGridFilterCaseSensitivity.Default =>
-                    Expression.AndAlso(isnotnull,
-                        Expression.Call(field, dataType.GetMethod("StartsWith", new[] { dataType }), Expression.Constant(valueString))),
+                    exp.Compose(x => x != null && x.StartsWith(valueString)),
+                //Expression.AndAlso(isnotnull,
+                //    Expression.Call(field, dataType.GetMethod("StartsWith", new[] { dataType }), Expression.Constant(valueString))),
 
                 FilterOperator.String.StartsWith when Value != null && DataGrid.FilterCaseSensitivity == DataGridFilterCaseSensitivity.CaseInsensitive =>
-                    Expression.AndAlso(isnotnull,
-                        Expression.Call(field, dataType.GetMethod("StartsWith", new[] { dataType, typeof(StringComparison) }), new[] { Expression.Constant(valueString), Expression.Constant(StringComparison.OrdinalIgnoreCase) })),
+                    exp.Compose(x => x != null && x.StartsWith(valueString, StringComparison.OrdinalIgnoreCase)),
+                //Expression.AndAlso(isnotnull,
+                //    Expression.Call(field, dataType.GetMethod("StartsWith", new[] { dataType, typeof(StringComparison) }), new[] { Expression.Constant(valueString), Expression.Constant(StringComparison.OrdinalIgnoreCase) })),
 
                 FilterOperator.String.EndsWith when Value != null && DataGrid.FilterCaseSensitivity == DataGridFilterCaseSensitivity.Default =>
-                    Expression.AndAlso(isnotnull,
-                        Expression.Call(field, dataType.GetMethod("EndsWith", new[] { dataType }), Expression.Constant(valueString))),
+                    exp.Compose(x => x != null && x.EndsWith(valueString)),
+                //Expression.AndAlso(isnotnull,
+                //    Expression.Call(field, dataType.GetMethod("EndsWith", new[] { dataType }), Expression.Constant(valueString))),
 
                 FilterOperator.String.EndsWith when Value != null && DataGrid.FilterCaseSensitivity == DataGridFilterCaseSensitivity.CaseInsensitive =>
-                    Expression.AndAlso(isnotnull,
-                        Expression.Call(field, dataType.GetMethod("EndsWith", new[] { dataType, typeof(StringComparison) }), new[] { Expression.Constant(valueString), Expression.Constant(StringComparison.OrdinalIgnoreCase) })),
+                    exp.Compose(x => x != null && x.EndsWith(valueString, StringComparison.OrdinalIgnoreCase)),
+                //Expression.AndAlso(isnotnull,
+                //    Expression.Call(field, dataType.GetMethod("EndsWith", new[] { dataType, typeof(StringComparison) }), new[] { Expression.Constant(valueString), Expression.Constant(StringComparison.OrdinalIgnoreCase) })),
 
                 FilterOperator.String.Empty =>
-                    Expression.OrElse(isnull,
-                        Expression.Equal(trim, Expression.Constant(string.Empty, dataType))),
+                    exp.Compose(x => x == null || string.IsNullOrWhiteSpace(x)),
+                //Expression.OrElse(isnull,
+                //    Expression.Equal(trim, Expression.Constant(string.Empty, dataType))),
 
                 FilterOperator.String.NotEmpty =>
-                    Expression.AndAlso(isnotnull,
-                        Expression.NotEqual(trim, Expression.Constant(string.Empty, dataType))),
+                    exp.Compose(x => x != null && !string.IsNullOrWhiteSpace(x)),
+                //Expression.AndAlso(isnotnull,
+                //    Expression.NotEqual(trim, Expression.Constant(string.Empty, dataType))),
 
                 _ => Expression.Constant(true, typeof(bool))
             };
@@ -779,6 +820,23 @@ namespace MudBlazor
             {
                 return null;
             }
+        }
+
+
+    }
+
+    public class ParameterReplaceVisitor : ExpressionVisitor
+    {
+        private ParameterExpression from;
+        private Expression to;
+        public ParameterReplaceVisitor(ParameterExpression from, Expression to)
+        {
+            this.from = from;
+            this.to = to;
+        }
+        protected override Expression VisitParameter(ParameterExpression node)
+        {
+            return node == from ? to : node;
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDataGrid T="Item" Filterable="true" QuickFilter="this.QuickFilterFunc" ServerData="this.ServerDataFunc">
+@*<MudDataGrid T="Item" Filterable="true" QuickFilter="this.QuickFilterFunc" ServerData="this.ServerDataFunc">
     <Columns>
         <Column T="Item" Field="@nameof(Item.Name)" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     private IEnumerable<Item> _items = new List<Item>()

@@ -2,7 +2,7 @@
 @using System.Globalization
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDataGrid Items="@_items" Filterable="true">
+@*<MudDataGrid Items="@_items" Filterable="true">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />
@@ -10,7 +10,7 @@
         <Column T="Model" Field="@nameof(Model.Total)" Culture="@(new CultureInfo("es-ES"))"/>
     </Columns>
 </MudDataGrid>
-
+*@
 @code {
     private IEnumerable<Model> _items = new List<Model>()
     {

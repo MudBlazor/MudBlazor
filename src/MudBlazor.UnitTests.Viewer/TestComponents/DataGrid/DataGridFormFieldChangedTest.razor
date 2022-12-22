@@ -2,11 +2,11 @@
 
 <MudDialogProvider />
 
-<MudDataGrid T="Item" Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Form" EditTrigger="DataGridEditTrigger.OnRowClick" FormFieldChanged="((args) => FormFieldChangedEventArgs = args)">
+@*<MudDataGrid T="Item" Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Form" EditTrigger="DataGridEditTrigger.OnRowClick" FormFieldChanged="((args) => FormFieldChangedEventArgs = args)">
     <Columns>
         <Column T="Item" Field="@nameof(Item.Name)" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     public MudBlazor.Utilities.FormFieldChangedEventArgs FormFieldChangedEventArgs { get; private set; }

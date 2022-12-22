@@ -18,6 +18,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
+    [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<T> : MudComponentBase
     {
         private int _currentPage = 0;
@@ -818,9 +819,9 @@ namespace MudBlazor
             {
                 Id = Guid.NewGuid(),
                 DataGrid = this,
-                Field = column?.Field,
+                Field = column?.PropertyName,
                 Title = column?.Title,
-                FieldType = column?.FieldType
+                FieldType = column?.PropertyType
             });
             _filtersMenuVisible = true;
             StateHasChanged();
@@ -839,14 +840,15 @@ namespace MudBlazor
 
         internal void AddFilter(Guid id, string field)
         {
-            var column = RenderedColumns.FirstOrDefault(x => x.Field == field && x.filterable);
+            var column = RenderedColumns.FirstOrDefault(x => x.PropertyName == field && x.filterable);
             FilterDefinitions.Add(new FilterDefinition<T>
             {
                 Id = id,
                 DataGrid = this,
                 Field = field,
                 Title = column?.Title,
-                FieldType = column?.FieldType,
+                FieldType = column?.PropertyType,
+                PropertyExpression = column is PropertyColumn ? (column as PropertyColumn<,>).Property : null,
             });
             _filtersMenuVisible = true;
             StateHasChanged();
@@ -1208,7 +1210,7 @@ namespace MudBlazor
         }
 
         public void GroupItems()
-        {
+        {          
             if (GroupedColumn == null)
             {
                 _groups = new List<GroupDefinition<T>>();
@@ -1243,7 +1245,7 @@ namespace MudBlazor
         {
             foreach (var c in RenderedColumns)
             {
-                if (c.Field != column.Field)
+                if (c.PropertyName != column.PropertyName)
                     c.RemoveGrouping();
             }
 

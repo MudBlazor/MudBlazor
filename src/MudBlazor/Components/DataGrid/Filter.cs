@@ -28,7 +28,7 @@ namespace MudBlazor
             get
             {
                 if (_column != null)
-                    return _column.dataType;
+                    return _column.PropertyType;
 
                 if (_filterDefinition.FieldType != null)
                     return _filterDefinition.FieldType;
@@ -61,7 +61,7 @@ namespace MudBlazor
         internal Column<T> filterColumn =>
             _column != null
                 ? _column
-                : _dataGrid.RenderedColumns?.FirstOrDefault(c => c.Field == _filterDefinition.Field);
+                : _dataGrid.RenderedColumns?.FirstOrDefault(c => c.PropertyName == _filterDefinition.Field);
 
         public Filter(MudDataGrid<T> dataGrid, FilterDefinition<T> filterDefinition, Column<T> column)
         {

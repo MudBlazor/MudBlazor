@@ -25,44 +25,52 @@ namespace MudBlazor
 
         #region Computed Properties
 
+        //internal object ComputedValue
+        //{
+        //    get
+        //    {
+        //        if (_item == null || propertyColumn.Property == null)
+        //            return null;
+
+        //        // Handle case where T is IDictionary.
+        //        if (typeof(T) == typeof(IDictionary<string, object>))
+        //        {
+        //            if (_column.FieldType == null)
+        //                throw new ArgumentNullException(nameof(_column.FieldType));
+
+        //            if (_column.FieldType.IsEnum)
+        //            {
+        //                var o = ((IDictionary<string, object>)_item)[_column.Field];
+
+        //                if (o == null)
+        //                    return null;
+
+        //                if (o.GetType() == typeof(JsonElement))
+        //                {
+        //                    var json = (JsonElement)o;
+        //                    return Enum.ToObject(_column.FieldType, json.GetInt32());
+        //                }
+        //                else
+        //                {
+        //                    return Enum.ToObject(_column.FieldType, o);
+        //                }
+        //            }
+
+        //            return ((IDictionary<string, object>)_item)[_column.Field];
+        //        }
+
+        //        var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
+        //        return property.GetValue(_item);
+        //    }
+        //}
         internal object ComputedValue
         {
             get
             {
-                if (_item == null || _column.Field == null)
-                    return null;
-
-                // Handle case where T is IDictionary.
-                if (typeof(T) == typeof(IDictionary<string, object>))
-                {
-                    if (_column.FieldType == null)
-                        throw new ArgumentNullException(nameof(_column.FieldType));
-
-                    if (_column.FieldType.IsEnum)
-                    {
-                        var o = ((IDictionary<string, object>)_item)[_column.Field];
-
-                        if (o == null)
-                            return null;
-
-                        if (o.GetType() == typeof(JsonElement))
-                        {
-                            var json = (JsonElement)o;
-                            return Enum.ToObject(_column.FieldType, json.GetInt32());
-                        }
-                        else
-                        {
-                            return Enum.ToObject(_column.FieldType, o);
-                        }
-                    }
-
-                    return ((IDictionary<string, object>)_item)[_column.Field];
-                }
-
-                var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
-                return property.GetValue(_item);
+                return _column.CellContent(_item);
             }
         }
+
         internal string computedClass
         {
             get
@@ -104,8 +112,7 @@ namespace MudBlazor
 
         public async Task StringValueChangedAsync(string value)
         {
-            var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
-            property.SetValue(_item, value);
+            _column.SetProperty(_item, value);
 
             // If the edit mode is Cell, we update immediately.
             if (_dataGrid.EditMode == DataGridEditMode.Cell)
@@ -114,8 +121,7 @@ namespace MudBlazor
 
         public async Task NumberValueChangedAsync(double? value)
         {
-            var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
-            property.SetValue(_item, ChangeType(value, property.PropertyType));
+            _column.SetProperty(_item, value);
 
             // If the edit mode is Cell, we update immediately.
             if (_dataGrid.EditMode == DataGridEditMode.Cell)
@@ -152,21 +158,21 @@ namespace MudBlazor
             }
         }
 
-        private object ChangeType(object value, Type conversion)
-        {
-            var t = conversion;
+        //private object ChangeType(object value, Type conversion)
+        //{
+        //    var t = conversion;
 
-            if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-            {
-                if (value == null)
-                {
-                    return null;
-                }
+        //    if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+        //    {
+        //        if (value == null)
+        //        {
+        //            return null;
+        //        }
 
-                t = Nullable.GetUnderlyingType(t);
-            }
+        //        t = Nullable.GetUnderlyingType(t);
+        //    }
 
-            return Convert.ChangeType(value, t);
-        }
+        //    return Convert.ChangeType(value, t);
+        //}
     }
 }

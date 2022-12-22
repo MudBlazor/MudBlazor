@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 @using System.Text.Json
 
-<MudDataGrid @ref="_grid" Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Bordered="true"
+@*<MudDataGrid @ref="_grid" Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Bordered="true"
     Dense="true">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
@@ -10,7 +10,7 @@
         <Column T="Model" Field="@nameof(Model.Hired)" />
         <Column T="Model" Field="@nameof(Model.HiredOn)" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 <MudButton OnClick="@CheckFilters">check</MudButton>
 @code {
     public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);

@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid T="Element" Items="@Elements" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow">
+@*<MudDataGrid T="Element" Items="@Elements" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow">
     <Columns>
         <Column T="Element" Field="Number" Title="Nr" Filterable="false" />
         <Column T="Element" Field="Sign">
@@ -37,7 +37,7 @@
     <PagerContent>
         <MudDataGridPager T="Element" />
     </PagerContent>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     IEnumerable<Element> Elements = new List<Element>();

@@ -1,13 +1,13 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items="@_items" MultiSelection="true" @bind-SelectedItems="_selectedItems" Sortable="true"
+@*<MudDataGrid Items="@_items" MultiSelection="true" @bind-SelectedItems="_selectedItems" Sortable="true"
     Bordered="true">
     <Columns>
         <SelectColumn T="Item"/>
         <Column T="Item" Field="@nameof(Item.Name)" />
     </Columns>
 </MudDataGrid>
-
+*@
 <div>
     @string.Join(",", _selectedItems.Select(x => x.Name))
 </div>

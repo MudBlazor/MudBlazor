@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDataGrid Items="@_items" Filterable="true">
+@*<MudDataGrid Items="@_items" Filterable="true">
     <Columns>
         <Column T="IDictionary<string, object>" Field="Name" FieldType="typeof(string)" />
         <Column T="IDictionary<string, object>" Field="Age" FieldType="typeof(int)" />
@@ -9,7 +9,7 @@
         <Column T="IDictionary<string, object>" Field="Hired" FieldType="typeof(bool)" />
         <Column T="IDictionary<string, object>" Field="HiredOn" FieldType="typeof(DateTime)" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     private IEnumerable<IDictionary<string, object>> _items = new List<IDictionary<string, object>>

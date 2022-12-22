@@ -1,12 +1,12 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid ServerData="@(new Func<GridState<Item>, Task<GridData<Item>>>(ServerReload))" Sortable="true">
+@*<MudDataGrid ServerData="@(new Func<GridState<Item>, Task<GridData<Item>>>(ServerReload))" Sortable="true">
     <Columns>
         <Column T="Item" Field="@nameof(Item.Name)" />
         <Column T="Item" Field="@nameof(Item.Value)" />
         <Column T="Item" Field="@nameof(Item.Misc)" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     public static string __description__ = @"Test Sortable DataGrid with loading of data and sorting being simulated on server side.";

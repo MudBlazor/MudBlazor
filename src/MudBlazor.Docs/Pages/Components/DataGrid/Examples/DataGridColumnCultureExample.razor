@@ -1,7 +1,7 @@
 @using System.Globalization
 @namespace MudBlazor.Docs.Examples
 
-<MudDataGrid Items="@_items" Filterable="true">
+@*<MudDataGrid Items="@_items" Filterable="true">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />
@@ -14,7 +14,7 @@
             Title="Total (invariant culture)"
             Culture="@CultureInfo.InvariantCulture" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     private IEnumerable<Model> _items = new List<Model>()

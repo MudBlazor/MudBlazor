@@ -2,7 +2,7 @@
 @using System.Globalization
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDataGrid Items="@_items"
+@*<MudDataGrid Items="@_items"
     Filterable="true"
     ReadOnly="@false"
     EditMode="@DataGridEditMode.Cell"
@@ -15,7 +15,7 @@
         <Column T="Model" Field="@nameof(Model.Total)" Culture="@(new CultureInfo("es-ES"))"/>
         <Column T="Model" Field="@nameof(Model.Distance)" Culture="@_customCulture" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     private CultureInfo _customCulture = new CultureInfo("es")

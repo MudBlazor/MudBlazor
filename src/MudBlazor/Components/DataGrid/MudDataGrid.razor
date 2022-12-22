@@ -45,7 +45,7 @@
                         <tr class="mud-table-row">
                             @foreach (var column in RenderedColumns)
                             {
-                                <HeaderCell SortDirection="@(GetColumnSortDirection(column.Field))" T="T" Column="@column"></HeaderCell>
+                                <HeaderCell SortDirection="@(GetColumnSortDirection(column.PropertyName))" T="T" Column="@column"></HeaderCell>
                             }
                         </tr>
                         @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
@@ -81,7 +81,7 @@
                                     @foreach (var column in RenderedColumns)
                                     {
                                         <MudItem xs="12">
-                                            <MudSwitch T="bool" Disabled="@(!(column.Hideable ?? false))" Checked="@column.Hidden" CheckedChanged="@column.ToggleAsync" Converter="_oppositeBoolConverter" Color="Color.Primary" Label="@(column.Title ?? @column.Field)" />
+                                            <MudSwitch T="bool" Disabled="@(!(column.Hideable ?? false))" Checked="@column.Hidden" CheckedChanged="@column.ToggleAsync" Converter="_oppositeBoolConverter" Color="Color.Primary" Label="@column.Title" />
                                         </MudItem>
                                     }
                                     <MudItem xs="6">
@@ -133,7 +133,7 @@
 
                                             @if (GroupedColumn.GroupTemplate == null)
                                             {
-                                                <span style="font-weight:bold">@GroupedColumn.computedTitle: @g.Grouping.Key</span>
+                                                <span style="font-weight:bold">@GroupedColumn.Title: @g.Grouping.Key</span>
                                             }
                                             else
                                             {
@@ -258,14 +258,16 @@
                     }
                     else
                     {
-                        if (column.dataType == typeof(string))
+                        var propertyType = column.PropertyType;
+
+                        if (propertyType == typeof(string))
                         {
-                            <MudTextField T="string" Label="@column.computedTitle" Value="@cell.valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
+                            <MudTextField T="string" Label="@column.Title" Value="@cell.valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
                                 Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
                         }
-                        else if (column.isNumber)
+                        else if (FilterOperator.NumericTypes.Contains(propertyType))
                         {
-                            <MudNumericField T="double?" Label="@column.computedTitle" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
+                            <MudNumericField T="double?" Label="@column.Title" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
                                 Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
                         }
                     }
@@ -326,7 +328,7 @@
         @{
             var cell = new Cell<T>(this, column, item);
         }
-        <td data-label="@column.computedTitle" class="@cell.computedClass" style="@cell.computedStyle">
+        <td data-label="@column.Title" class="@cell.computedClass" style="@cell.computedStyle">
             @if (column.IsEditable && !ReadOnly && DataGridEditMode.Cell == EditMode)
             {
                 if (column.EditTemplate != null)
@@ -335,7 +337,7 @@
                 }
                 else
                 {
-                    if (column.dataType == typeof(string))
+                    if (column.PropertyType == typeof(string))
                     {
                         <MudTextField T="string" Value="@cell.valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense" Style="margin-top:0"
                             Required="true" Variant="@Variant.Text" />
@@ -384,7 +386,7 @@
                     Class="filter-field">
                     @foreach (var column in RenderedColumns ?? Enumerable.Empty<Column<T>>())
                     {
-                        <MudSelectItem Value="@column.Field">@column.computedTitle</MudSelectItem>
+                        //<MudSelectItem Value="@column.Field">@column.Title</MudSelectItem>
                     }
                 </MudSelect>
             </MudItem>
