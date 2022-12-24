@@ -424,3 +424,8 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+/src/MudBlazor/Styles/utilities/flexbox/_flex-grow.css
+/src/MudBlazor/Styles/utilities/flexbox/_flex-grow.min.css
+/src/MudBlazor/compilerconfig.json
+/src/MudBlazor/compilerconfig.json.defaults
+/src/MudBlazor/MudBlazor.csproj
