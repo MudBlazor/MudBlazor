@@ -17,6 +17,10 @@
         flex-grow: 1 !important;
     }
 
+    .flex-#{$breakpoint}grow-middle-children > *:not(:first-child):not(:last-child) {
+        flex-grow: 1 !important;
+    }
+
     .flex-#{$breakpoint}grow-all-children > * {
         flex-grow: 1 !important;
     }

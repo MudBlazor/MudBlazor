@@ -56,7 +56,11 @@ public partial class MudStack : MudComponentBase
     public AlignItems? AlignItems { get; set; }
 
     /// <summary>
-    /// Defines stretching the Stack's children on the cross axis.
+    /// Defines stretching the Stack's children on the main axis.
+    /// If there is only one child, StretchChildren.FirstChild and
+    /// StretchChildren.LastChild will have the same effect and the child will be stretched.
+    /// StretchChildren.MiddleChildren will stretch all children except the first and last child.
+    /// If there are two or fewer elements StretchChildren.MiddleChildren will have no effect.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]

@@ -114,6 +114,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(StretchChildren.FirstChild, "first-child")]
         [TestCase(StretchChildren.LastChild, "last-child")]
+        [TestCase(StretchChildren.MiddleChildren, "middle-children")]
         [TestCase(StretchChildren.AllChildren, "all-children")]
         public void CheckStretchChildrenClass(StretchChildren stretch, string expectedClass)
         {

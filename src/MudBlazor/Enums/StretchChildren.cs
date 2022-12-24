@@ -10,6 +10,8 @@ public enum StretchChildren
     FirstChild,
     [Description("last-child")]
     LastChild,
+    [Description("middle-children")]
+    MiddleChildren,
     [Description("all-children")]
     AllChildren,
 }
