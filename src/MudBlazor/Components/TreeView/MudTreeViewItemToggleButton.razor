@@ -4,7 +4,7 @@
 <div class="mud-treeview-item-arrow">
     @if (Visible)
     {
-        <MudIconButton OnClick="@ToggleAsync" Icon="@(Loading ? LoadingIcon : ExpandedIcon)" Color="@(Loading ? LoadingIconColor : ExpandedIconColor)" Class="@Classname"></MudIconButton>
+        <MudIconButton OnClick="@ToggleAsync" Icon="@(Loading ? LoadingIcon : ExpandedIcon)" Color="@(Loading ? LoadingIconColor : ExpandedIconColor)" Size="@IconSize" Class="@Classname"></MudIconButton>
     }
 </div>
  
@@ -55,6 +55,11 @@
     /// The color of the expand/collapse. It supports the theme colors.
     /// </summary>
     [Parameter] [Category(CategoryTypes.TreeView.Appearance)] public Color ExpandedIconColor { get; set; } = Color.Default;
+
+    /// <summary>
+    /// The color of the expand/collapse. It supports the theme colors.
+    /// </summary>
+    [Parameter] [Category(CategoryTypes.TreeView.Appearance)] public Size IconSize { get; set; } = Size.Medium;
 
 
     private Task ToggleAsync()

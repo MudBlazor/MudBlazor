@@ -212,6 +212,13 @@ namespace MudBlazor
         public Color IconColor { get; set; } = Color.Default;
 
         /// <summary>
+        /// Size of the icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Appearance)]
+        public Size IconSize { get; set; } = Size.Medium;
+
+        /// <summary>
         /// Icon placed after the text if set.
         /// </summary>
         [Parameter]
