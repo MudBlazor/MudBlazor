@@ -194,7 +194,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudButtonDefaultSizesTest()
+        public void MudButtonSizesTest()
         {
             var comp = Context.RenderComponent<ButtonSizeExample>();
 
@@ -208,7 +208,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudButtonDifferentIconSizesTest()
+        public void MudButtonIconSizesTest()
         {
             var comp = Context.RenderComponent<ButtonSizeExample>();
 
@@ -221,12 +221,19 @@ namespace MudBlazor.UnitTests.Components
             var button4Svg = button4Span.Children[0];
             button4Svg.ClassName.Contains("mud-icon-size-large").Should().BeTrue();
 
+            // Button 5: Defaults: Medium button- and icon size.
+            ((IHtmlButtonElement)buttons[4]).ClassList.Contains("mud-button-filled-size-medium").Should().BeTrue();
+            var button5Span = ((IHtmlButtonElement)buttons[4]).Children[0].Children[0];
+            button5Span.ClassName.Contains("mud-button-icon-size-medium").Should().BeTrue();
+            var button5Svg = button5Span.Children[0];
+            button5Svg.ClassName.Contains("mud-icon-size-medium").Should().BeTrue();
+
             // Button 6: Large button- with small icon size: Size="Size.Large", IconSize="Size.Small"
             ((IHtmlButtonElement)buttons[5]).ClassList.Contains("mud-button-filled-size-large").Should().BeTrue();
-            var button5Span = ((IHtmlButtonElement)buttons[5]).Children[0].Children[0];
-            button5Span.ClassName.Contains("mud-button-icon-size-small").Should().BeTrue();
-            var button5Svg = button5Span.Children[0];
-            button5Svg.ClassName.Contains("mud-icon-size-small").Should().BeTrue();
+            var button6Span = ((IHtmlButtonElement)buttons[5]).Children[0].Children[0];
+            button6Span.ClassName.Contains("mud-button-icon-size-small").Should().BeTrue();
+            var button6Svg = button6Span.Children[0];
+            button6Svg.ClassName.Contains("mud-icon-size-small").Should().BeTrue();
         }
     }
 }
