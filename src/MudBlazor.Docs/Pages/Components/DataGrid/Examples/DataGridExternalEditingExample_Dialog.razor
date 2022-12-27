@@ -1,0 +1,44 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="@form">
+            <MudTextField Label="Number" @bind-Value="SelectedElement.Number" For="@(() => SelectedElement.Number)" Margin="Margin.Dense" Variant="Variant.Outlined" Disabled="true" Class="my-3" />
+            <MudTextField Label="Name" @bind-Value="SelectedElement.Name" For="@(() => SelectedElement.Name)" Margin="Margin.Dense" Variant="Variant.Outlined" Class="my-3" />
+            <MudSelect @bind-Value="SelectedElement.Position" Label="Position" Margin="@Margin.Dense" Variant="Variant.Outlined">
+                <MudSelectItem Value="0">zero</MudSelectItem>
+                <MudSelectItem Value="1">one</MudSelectItem>
+                <MudSelectItem Value="17">seventeen</MudSelectItem>
+            </MudSelect>
+            <MudTextField Label="Molar" @bind-Value="SelectedElement.Molar" For="@(() => SelectedElement.Molar)" Margin="Margin.Dense" Variant="Variant.Outlined" Class="my-3" />
+            <MudTextField Label="Sign" @bind-Value="SelectedElement.Sign" For="@(() => SelectedElement.Sign)" Margin="Margin.Dense" Variant="Variant.Outlined" Class="my-3" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel" Class="px-10">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" OnClick="Save" Class="px-10" Color="Color.Primary">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [Inject] public IDialogService DialogService { get; set; }
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public Element SelectedElement { get; set; }
+
+    private MudForm form;
+
+    void Cancel() => MudDialog.Cancel();
+
+    private async Task Save()
+    {
+        await form.Validate();
+        if (form.IsValid)
+        {
+            MudDialog!.Close(DialogResult.Ok(SelectedElement));
+        }
+    }
+}
