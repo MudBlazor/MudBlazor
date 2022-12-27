@@ -1,5 +1,12 @@
-﻿namespace MudBlazor.Interop
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace MudBlazor.Interop
 {
+    [JsonConverter(typeof(BoundingClientRectJsonConverter))]
     public class BoundingClientRect
     {
         public double Top { get; set; }
@@ -80,5 +87,46 @@
                 && sourceRect.ScrollX == targetRect.ScrollX
                 && sourceRect.ScrollY == targetRect.ScrollY;
         }
+    }
+
+    public class BoundingClientRectJsonConverter : JsonConverter<BoundingClientRect>
+    {
+        public override BoundingClientRect Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType != JsonTokenType.StartObject)
+            {
+                throw new JsonException();
+            }
+
+            var value = new BoundingClientRect();
+
+            var properties = typeof(BoundingClientRect).GetProperties().Where(p => p.CanWrite).ToDictionary(p => p.Name.ToLower());
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.EndObject)
+                {
+                    return value;
+                }
+
+                var propertyName = reader.GetString()!.ToLower();
+                reader.Read();
+
+                if (reader.TokenType == JsonTokenType.Number)
+                {
+                    if (properties.ContainsKey(propertyName))
+                    {
+                        properties[propertyName].SetValue(value, reader.GetDouble());
+                    }
+                }
+                else
+                {
+                    throw new JsonException($"Unexpected token type: {reader.TokenType}");
+                }
+            }
+            throw new JsonException("Unexpected end of stream.");
+        }
+
+        public override void Write(Utf8JsonWriter writer, BoundingClientRect value, JsonSerializerOptions options) => throw new NotSupportedException(); // We only read it, so no point making a serializer aswell
     }
 }
