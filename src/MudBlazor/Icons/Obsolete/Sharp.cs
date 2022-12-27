@@ -767,6 +767,7 @@ namespace MudBlazor
             public const string FlipToBack = Material.Sharp.FlipToBack;
             public const string FlipToFront = Material.Sharp.FlipToFront;
             public const string Flood = Material.Sharp.Flood;
+            public const string Flourescent = Material.Sharp.Flourescent;
             public const string FlutterDash = Material.Sharp.FlutterDash;
             public const string FmdBad = Material.Sharp.FmdBad;
             public const string FmdGood = Material.Sharp.FmdGood;
@@ -1356,6 +1357,7 @@ namespace MudBlazor
             public const string PhoneDisabled = Material.Sharp.PhoneDisabled;
             public const string PhoneEnabled = Material.Sharp.PhoneEnabled;
             public const string PhoneForwarded = Material.Sharp.PhoneForwarded;
+            public const string PhoneInTalk = Material.Sharp.PhoneInTalk;
             public const string PhoneIphone = Material.Sharp.PhoneIphone;
             public const string PhoneLocked = Material.Sharp.PhoneLocked;
             public const string PhoneMissed = Material.Sharp.PhoneMissed;
@@ -2031,6 +2033,7 @@ namespace MudBlazor
             public const string Webhook = Material.Sharp.Webhook;
             public const string Weekend = Material.Sharp.Weekend;
             public const string West = Material.Sharp.West;
+            public const string Whatsapp = Material.Sharp.Whatsapp;
             public const string Whatshot = Material.Sharp.Whatshot;
             public const string WheelchairPickup = Material.Sharp.WheelchairPickup;
             public const string WhereToVote = Material.Sharp.WhereToVote;

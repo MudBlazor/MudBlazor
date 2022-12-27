@@ -10,7 +10,7 @@ namespace MudBlazor
     public partial class Icons
     {
         [ExcludeFromCodeCoverage]
-        public partial class TwoTone
+        public class TwoTone
         {
             public const string _10k = Material.TwoTone._10k;
             public const string _10mp = Material.TwoTone._10mp;
@@ -767,6 +767,7 @@ namespace MudBlazor
             public const string FlipToBack = Material.TwoTone.FlipToBack;
             public const string FlipToFront = Material.TwoTone.FlipToFront;
             public const string Flood = Material.TwoTone.Flood;
+            public const string Flourescent = Material.TwoTone.Flourescent;
             public const string FlutterDash = Material.TwoTone.FlutterDash;
             public const string FmdBad = Material.TwoTone.FmdBad;
             public const string FmdGood = Material.TwoTone.FmdGood;
@@ -1356,6 +1357,7 @@ namespace MudBlazor
             public const string PhoneDisabled = Material.TwoTone.PhoneDisabled;
             public const string PhoneEnabled = Material.TwoTone.PhoneEnabled;
             public const string PhoneForwarded = Material.TwoTone.PhoneForwarded;
+            public const string PhoneInTalk = Material.TwoTone.PhoneInTalk;
             public const string PhoneIphone = Material.TwoTone.PhoneIphone;
             public const string PhoneLocked = Material.TwoTone.PhoneLocked;
             public const string PhoneMissed = Material.TwoTone.PhoneMissed;
@@ -2031,6 +2033,7 @@ namespace MudBlazor
             public const string Webhook = Material.TwoTone.Webhook;
             public const string Weekend = Material.TwoTone.Weekend;
             public const string West = Material.TwoTone.West;
+            public const string Whatsapp = Material.TwoTone.Whatsapp;
             public const string Whatshot = Material.TwoTone.Whatshot;
             public const string WheelchairPickup = Material.TwoTone.WheelchairPickup;
             public const string WhereToVote = Material.TwoTone.WhereToVote;
