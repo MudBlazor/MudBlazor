@@ -1,7 +1,15 @@
-﻿namespace MudBlazor.Interop
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace MudBlazor.Interop
 {
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
     public class BoundingClientRect
     {
+        public BoundingClientRect()
+        {
+            //This must be here or we can't deserialize when trimmed
+        }
+
         public double Top { get; set; }
         public double Left { get; set; }
 
