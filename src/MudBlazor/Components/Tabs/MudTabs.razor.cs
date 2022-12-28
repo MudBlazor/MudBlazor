@@ -84,14 +84,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public string PrevIcon { get; set; } = Icons.Filled.ChevronLeft;
+        public string PrevIcon { get; set; } = Icons.Material.Filled.ChevronLeft;
 
         /// <summary>
         /// Icon to use for right pagination.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public string NextIcon { get; set; } = Icons.Filled.ChevronRight;
+        public string NextIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
         /// <summary>
         /// If true, always display the scroll buttons even if the tabs are smaller than the required with, buttons will be disabled if there is nothing to scroll.

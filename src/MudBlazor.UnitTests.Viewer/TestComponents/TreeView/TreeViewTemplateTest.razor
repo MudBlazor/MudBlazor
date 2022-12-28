@@ -35,19 +35,19 @@
 
     public TreeViewTemplateTest()
     {
-        TreeItems.Add(new TreeItemData("All Mail", Icons.Filled.Email));
-        TreeItems.Add(new TreeItemData("Trash", Icons.Filled.Delete));
-        TreeItems.Add(new TreeItemData("Categories", Icons.Filled.Label)
+        TreeItems.Add(new TreeItemData("All Mail", Icons.Material.Filled.Email));
+        TreeItems.Add(new TreeItemData("Trash", Icons.Material.Filled.Delete));
+        TreeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label)
         {
             IsExpanded = true,
             TreeItems = new HashSet<TreeItemData>()
             {
-                new TreeItemData("Social", Icons.Filled.Group, 90),
-                new TreeItemData("Updates", Icons.Filled.Info, 2294),
-                new TreeItemData("Forums", Icons.Filled.QuestionAnswer, 3566),
-                new TreeItemData("Promotions", Icons.Filled.LocalOffer, 733)
+                new TreeItemData("Social", Icons.Material.Filled.Group, 90),
+                new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
+                new TreeItemData("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
+                new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733)
             }
         });
-        TreeItems.Add(new TreeItemData("History", Icons.Filled.Label));
+        TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label));
     }
 }
