@@ -12,12 +12,14 @@ namespace MudBlazor
     {
         private string _text;
         private bool _disabled;
+        private bool _canExpand = true;
         private bool _isChecked, _isSelected, _isServerLoaded;
         private Converter<T> _converter = new DefaultConverter<T>();
         private readonly List<MudTreeViewItem<T>> _childItems = new();
 
         protected string Classname =>
         new CssBuilder("mud-treeview-item")
+            .AddClass("mud-treeview-select-none", MudTreeRoot?.ExpandOnDoubleClick == true)
           .AddClass(Class)
         .Build();
 
@@ -117,6 +119,17 @@ namespace MudBlazor
         {
             get => _disabled || (MudTreeRoot?.Disabled ?? false);
             set => _disabled = value;
+        }
+
+        /// <summary>
+        /// If false, TreeViewItem will not be able to expand.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public bool CanExpand
+        {
+            get => _canExpand;
+            set => _canExpand = value;
         }
 
         /// <summary>
@@ -263,8 +276,8 @@ namespace MudBlazor
         public bool Loading { get; set; }
 
         bool HasChild => ChildContent != null ||
-            (MudTreeRoot != null && Items != null && Items.Count != 0) ||
-            (MudTreeRoot?.ServerData != null && !_isServerLoaded && (Items == null || Items.Count == 0));
+             (MudTreeRoot != null && Items != null && Items.Count != 0) ||
+             (MudTreeRoot?.ServerData != null && _canExpand && !_isServerLoaded && (Items == null || Items.Count == 0));
 
         protected bool IsChecked
         {
@@ -406,7 +419,7 @@ namespace MudBlazor
 
         internal async void TryInvokeServerLoadFunc()
         {
-            if (Expanded && (Items == null || Items.Count == 0) && MudTreeRoot?.ServerData != null)
+            if (Expanded && (Items == null || Items.Count == 0) && _canExpand && MudTreeRoot?.ServerData != null)
             {
                 Loading = true;
                 StateHasChanged();

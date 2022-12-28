@@ -156,7 +156,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Cancel the dialog. DialogResult.Cancelled will be set to true
+        /// Cancel the dialog. DialogResult.Canceled will be set to true
         /// </summary>
         public void Cancel()
         {

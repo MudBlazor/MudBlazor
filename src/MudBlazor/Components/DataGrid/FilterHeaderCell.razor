@@ -1,11 +1,11 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
 
-<th scope="col" class="@_classname" style="@_style" colspan="@Column?.HeaderColSpan" @attributes="@UserAttributes">
-    @if (null != Column && Column.filterable)
-    {
-        @if (Column.FilterTemplate != null)
+@if (Column != null && !Column.Hidden)
+{
+    <th scope="col" class="@_classname" style="@_style" colspan="@Column?.HeaderColSpan" @attributes="@UserAttributes">
+        @if (Column.filterable)
         {
             @Column.FilterTemplate(Column.FilterContext) 
         }
@@ -52,14 +52,46 @@
                 <MudMenu Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" Dense="true">
                     @foreach (var o in operators)
                     {
-                        if (!string.IsNullOrWhiteSpace(o))
-                        {
-                            <MudMenuItem Style="@chosenOperatorStyle(o)" OnClick="@(() => ChangeOperator(o))">@o</MudMenuItem>
-                        }
+                        <MudSelect T="Enum" Value="@_valueEnum" ValueChanged="@EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense">
+                            <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
+                            @foreach (var item in Enum.GetValues(dataType))
+                            {
+                                <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
+                            }
+                        </MudSelect>
                     }
-                </MudMenu>
-                <MudIconButton Class="align-self-center" Icon="@Icons.Material.Filled.FilterAltOff" Size="@Size.Small" OnClick="@ClearFilter"></MudIconButton>
-            </MudStack>
+                    else if (dataType == typeof(bool))
+                    {
+                        <MudSelect T="bool?" Value="@_valueBool" ValueChanged="@BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense">
+                            <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
+                            <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
+                            <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
+                        </MudSelect>
+                    }
+                    else if (dataType == typeof(DateTime) && !(_operator ?? "").EndsWith("empty"))
+                    {
+                        <MudGrid Spacing="0">
+                            <MudItem xs="7">
+                                <MudDatePicker Date="@_valueDate" DateChanged="@DateValueChanged" Margin="@Margin.Dense" />
+                            </MudItem>
+                            <MudItem xs="5">
+                                <MudTimePicker Time="@_valueTime" TimeChanged="@TimeValueChanged" Margin="@Margin.Dense" />
+                            </MudItem>
+                        </MudGrid>
+                    }
+                    <MudMenu Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" Dense="true">
+                        @foreach (var o in operators)
+                        {
+                            if (!string.IsNullOrWhiteSpace(o))
+                            {
+                                <MudMenuItem Style="@chosenOperatorStyle(o)" OnClick="@(() => ChangeOperator(o))">@o</MudMenuItem>
+                            }
+                        }
+                    </MudMenu>
+                    <MudIconButton Class="align-self-center" Icon="@Icons.Material.Filled.FilterAltOff" Size="@Size.Small" OnClick="@ClearFilter"></MudIconButton>
+                </MudStack>
+            }
         }
-    }
-</th>
+    </th>
+}
+

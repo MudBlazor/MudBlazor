@@ -7,7 +7,7 @@
             <MudButton HtmlTag="label" for="@context"></MudButton>
         </ButtonTemplate>
     </MudFileUpload>
-    <MudFileUpload T="IReadOnlyList<IBrowserFile>" Multiple For="@(() => Model.Files)" @bind-Files="Model.Files">
+    <MudFileUpload T="IReadOnlyList<IBrowserFile>" For="@(() => Model.Files)" @bind-Files="Model.Files">
         <ButtonTemplate>
             <MudButton HtmlTag="label" for="@context"></MudButton>
         </ButtonTemplate>

@@ -3,7 +3,13 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems1" Hover="@hover">
+<MudSwitch @bind-Checked="@_selectOnRowClick">SelectOnRowClick: @_selectOnRowClick</MudSwitch>
+<MudText Inline="true">Item: @_selectedItemText</MudText>
+<MudText>Selected items (@selectedItems?.Count): @(selectedItems == null ? "" : string.Join(", ", selectedItems.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
+
+
+<MudTable @ref="_table" T="Element" Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems" Hover="true"
+          OnRowClick="@OnRowClick" @bind-SelectOnRowClick="@_selectOnRowClick">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -26,16 +32,21 @@
     </FooterContent>
 </MudTable>
 
-<MudText Inline="true">Selected items: @(selectedItems1==null ? "" : string.Join(", ", selectedItems1.OrderBy(x=>x.Sign).Select(x=>x.Sign)))</MudText>
 
 @code {
-    private bool hover = true;
-    private HashSet<Element> selectedItems1 = new HashSet<Element>();
-
+    private HashSet<Element> selectedItems = new HashSet<Element>();
     private IEnumerable<Element> Elements = new List<Element>();
+    private bool _selectOnRowClick = true;
+    private MudTable<Element> _table;
+    private string _selectedItemText = "No row clicked";
 
     protected override async Task OnInitializedAsync()
     {
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-    } 
+    }
+
+    void OnRowClick(TableRowClickEventArgs<Element> args)
+    {
+        _selectedItemText = $"{args.Item.Name} ({args.Item.Sign})";
+    }
 }

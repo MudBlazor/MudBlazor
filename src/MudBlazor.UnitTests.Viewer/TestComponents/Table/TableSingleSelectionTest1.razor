@@ -1,14 +1,17 @@
 @namespace MudBlazor.UnitTests.TestComponents
 
 <MudText>Seleted Item: @(selectedItem.ToString())</MudText>
-<MudTable Items="items"  @bind-SelectedItems="selectedItems" @bind-SelectedItem="selectedItem" Hover="true" MultiSelection="false">
+<MudTable Items="items"  @bind-SelectedItems="selectedItems" @bind-SelectedItem="selectedItem" Hover="true" MultiSelection="false" EditTrigger="EditTrigger">
     <RowTemplate>
         <MudTd>@context</MudTd>
     </RowTemplate> 
 </MudTable>
 
-@code {
+    @code {
     public static string __description__ = "can only select one item";
+
+    [Parameter]
+    public TableEditTrigger EditTrigger { get; set; }
 
     private HashSet<int?> selectedItems;
     private int? selectedItem;

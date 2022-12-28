@@ -101,6 +101,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
             comp.FindAll("div.mud-treeview-item-content")[0].Click();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-content")[3]
+                .GetElementsByClassName("mud-treeview-item-arrow")[0]
+                .ChildElementCount.Should().Be(0);
             comp.FindAll("div.mud-treeview-item-content")[2].Click();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
         }
@@ -166,6 +169,22 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("div.mud-treeview-item-content").DoubleClick();
             selectedItem.Should().Be("content");
+        }
+
+        [Test]
+        public async Task TreeViewItem_ProgrammaticallySelect()
+        {
+            var comp = Context.RenderComponent<TreeViewTest4>();
+            var treeView = comp.FindComponent<MudTreeView<string>>();
+
+            await comp.InvokeAsync(() => comp.Instance.SelectFirst());
+            comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be("content"));
+
+            await comp.InvokeAsync(() => comp.Instance.SelectSecond());
+            comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be("src"));
+
+            await comp.InvokeAsync(() => comp.Instance.DeselectSecond());
+            comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be(null));
         }
     }
 }

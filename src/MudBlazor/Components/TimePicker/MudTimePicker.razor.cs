@@ -154,6 +154,7 @@ namespace MudBlazor
         {
             if (_value != time)
             {
+                Touched = true;
                 TimeIntermediate = time;
                 _value = time;
                 if (updateValue)

@@ -184,7 +184,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DropZone_DragAndDropDraggingClass_DragCancelled()
+        public async Task DropZone_DragAndDropDraggingClass_DragCanceled()
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
 
@@ -664,7 +664,7 @@ namespace MudBlazor.UnitTests.Components
         }
         
         [Test]
-        public async Task DropZone_CheckDropClasses_ApplyClassesOnDragStarted_DragCancelled()
+        public async Task DropZone_CheckDropClasses_ApplyClassesOnDragStarted_DragCanceled()
         {
             var comp = Context.RenderComponent<DropzoneCanDropTest>(p =>
             {

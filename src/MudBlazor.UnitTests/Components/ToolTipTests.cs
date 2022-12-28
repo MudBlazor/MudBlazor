@@ -266,6 +266,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Tooltip_On_Click()
+        {
+            var comp = Context.RenderComponent<TooltipClickTest>();
+            var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
+            tooltipComp.IsVisible.Should().BeFalse();
+            var button = comp.Find("button");
+            await button.ParentElement.TriggerEventAsync("onmouseup", new MouseEventArgs());
+
+            var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
+            tooltipComp.IsVisible.Should().BeTrue();
+            popoverContentNode.Should().NotBeNull();
+        }
+
+        [Test]
         [TestCase(true)]
         [TestCase(false)]        
         public async Task Visible_ByDefault(bool usingFocusout)
