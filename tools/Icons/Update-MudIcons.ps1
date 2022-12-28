@@ -61,7 +61,7 @@ $familyMap = @{
 $nextIcons = @{}
 
 ## Sanity check the families we get with what we expect
-$iconsFamilies = $iconsMeta.families | % { $_.ToLower().Replace(' ', '') }
+$iconsFamilies = $iconsMeta.families | ForEach-Object { $_.ToLower().Replace(' ', '') }
 if ($iconsFamilies.Count -ne $familyMap.Count) {
     Write-Warning "Unexpected family count $($iconsFamilies.Count) -ne $($familyMap.Count)"
 }
@@ -157,7 +157,7 @@ namespace MudBlazor
         }
     }
 }
-"@.Replace("`r`n", "`n") } 
+"@.Replace("`r`n", "`n") }
 
     ## Pull into scope
     $nextIcons = $using:nextIcons
@@ -182,7 +182,7 @@ namespace MudBlazor
 
         ## Convert the name to a valid C# identifier
         $iconVar = $iconName.Trim()
-        $iconVarParts = $iconVar.Split($varSplitters) | % { $_[0].ToString().ToUpper() + $_.Substring(1) }
+        $iconVarParts = $iconVar.Split($varSplitters) | ForEach-Object { $_[0].ToString().ToUpper() + $_.Substring(1) }
         $iconVar = [string]::Join("", $iconVarParts)
         ## In case it doesn't start with a letter
         ## (i.e. number) prefix with an underscore
