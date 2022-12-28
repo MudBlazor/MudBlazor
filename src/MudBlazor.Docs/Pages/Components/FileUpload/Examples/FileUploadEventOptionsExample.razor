@@ -5,7 +5,7 @@
         <MudButton HtmlTag="label"
                    Variant="Variant.Filled"
                    Color="Color.Primary"
-                   StartIcon="@Icons.Filled.CloudUpload"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
                    for="@context">
             Upload using FileValueChanged
         </MudButton>
@@ -17,7 +17,7 @@
         <MudButton HtmlTag="label"
                    Variant="Variant.Filled"
                    Color="Color.Primary"
-                   StartIcon="@Icons.Filled.CloudUpload"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
                    for="@context">
             Upload using OnFilesChanged
         </MudButton>
@@ -30,7 +30,7 @@
     <MudList>
         @foreach (var file in files)
         {
-            <MudListItem Icon="@Icons.Filled.AttachFile" @key="@file">
+            <MudListItem Icon="@Icons.Material.Filled.AttachFile" @key="@file">
                 @file.Name <code>@file.Size bytes</code>
             </MudListItem>
         }

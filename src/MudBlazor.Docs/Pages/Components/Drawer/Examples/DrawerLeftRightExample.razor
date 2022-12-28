@@ -7,9 +7,9 @@
                 <MudText Typo="Typo.h6">My App</MudText>
             </MudDrawerHeader>
             <MudNavMenu>
-                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Store">Store</MudNavLink>
-                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.LocalLibrary">Library</MudNavLink>
-                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Forum">Community</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Store">Store</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.LocalLibrary">Library</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Forum">Community</MudNavLink>
             </MudNavMenu>
         </MudDrawer>
         <MudDrawer @bind-Open="@openRight" Fixed="false" Anchor="Anchor.Right" Elevation="0" Variant="@DrawerVariant.Persistent">
@@ -17,21 +17,21 @@
                 <MudText Typo="Typo.h6">Settings</MudText>
             </MudDrawerHeader>
             <MudNavMenu>
-                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.AccountBox">Profile</MudNavLink>
-                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.ShoppingCart">Orders</MudNavLink>
-                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.History">Order History</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AccountBox">Profile</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.ShoppingCart">Orders</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.History">Order History</MudNavLink>
             </MudNavMenu>
         </MudDrawer>
         <div class="d-flex justify-center align-center mud-height-full">
             @if (Rtl)
             {
-                <MudButton Color="Color.Inherit" OnClick="@ToggleRightDrawer" StartIcon="@Icons.Filled.East" Class="mx-2">Toggle right</MudButton>
-                <MudButton Color="Color.Inherit" OnClick="@ToggleLeftDrawer" EndIcon="@Icons.Filled.West" Class="mx-2">Toggle left</MudButton>
+                <MudButton Color="Color.Inherit" OnClick="@ToggleRightDrawer" StartIcon="@Icons.Material.Filled.East" Class="mx-2">Toggle right</MudButton>
+                <MudButton Color="Color.Inherit" OnClick="@ToggleLeftDrawer" EndIcon="@Icons.Material.Filled.West" Class="mx-2">Toggle left</MudButton>
             }
             else
             {
-                <MudButton Color="Color.Inherit" OnClick="@ToggleLeftDrawer" StartIcon="@Icons.Filled.West" Class="mx-2">Toggle left</MudButton>
-                <MudButton Color="Color.Inherit" OnClick="@ToggleRightDrawer" EndIcon="@Icons.Filled.East" Class="mx-2">Toggle right</MudButton>
+                <MudButton Color="Color.Inherit" OnClick="@ToggleLeftDrawer" StartIcon="@Icons.Material.Filled.West" Class="mx-2">Toggle left</MudButton>
+                <MudButton Color="Color.Inherit" OnClick="@ToggleRightDrawer" EndIcon="@Icons.Material.Filled.East" Class="mx-2">Toggle right</MudButton>
             }
         </div>
     </MudDrawerContainer>

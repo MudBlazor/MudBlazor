@@ -171,7 +171,7 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldRenderTitle()
         {
             var title = "Title and tooltip";
-            var icon = Parameter(nameof(MudIconButton.Icon), Icons.Filled.Add);
+            var icon = Parameter(nameof(MudIconButton.Icon), Icons.Material.Filled.Add);
             var titleParam = Parameter(nameof(MudIconButton.Title), title);
             var comp = Context.RenderComponent<MudIconButton>(icon, titleParam);
             comp.Find($"button[title=\"{title}\"]");

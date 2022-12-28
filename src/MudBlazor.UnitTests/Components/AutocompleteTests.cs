@@ -814,7 +814,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Should_ChangeAdornmentIcon()
         {
-            var icon = Parameter(nameof(AutocompleteAdornmentChange.Icon), Icons.Filled.Abc);
+            var icon = Parameter(nameof(AutocompleteAdornmentChange.Icon), Icons.Material.Filled.Abc);
             var comp = Context.RenderComponent<AutocompleteAdornmentChange>(icon);
             var instance = comp.Instance;
 
@@ -824,7 +824,7 @@ namespace MudBlazor.UnitTests.Components
             var markupBefore = comp.Find("svg.mud-icon-root").Children.ToMarkup().Trim();
 
             // change icon and render again
-            instance.Icon = Icons.Filled.Remove;
+            instance.Icon = Icons.Material.Filled.Remove;
 
             comp.Render();
 
@@ -882,7 +882,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTest1>();
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             autocompletecomp.SetParam(x => x.ShowProgressIndicator, true);
-            autocompletecomp.SetParam(x => x.AdornmentIcon, Icons.Filled.Info);
+            autocompletecomp.SetParam(x => x.AdornmentIcon, Icons.Material.Filled.Info);
             autocompletecomp.SetParam(x => x.Adornment, Adornment.End);
 
             comp.Markup.Should().NotContain("progress-indicator-circular");
