@@ -112,7 +112,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public string CustomMinimumTabWidth { get; set; }
+        public string MinimumTabWidth { get; set; } = "160px";
 
         /// <summary>
         /// Sets the position of the tabs itself.
@@ -539,7 +539,7 @@ namespace MudBlazor
         string GetTabStyle(MudTabPanel panel)
         {
             var tabStyle = new StyleBuilder()
-            .AddStyle("min-width", CustomMinimumTabWidth, when: !string.IsNullOrEmpty(CustomMinimumTabWidth))
+            .AddStyle("min-width", MinimumTabWidth)
             .AddStyle(panel.Style)
             .Build();
 
