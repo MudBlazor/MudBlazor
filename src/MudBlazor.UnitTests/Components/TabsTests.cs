@@ -958,9 +958,9 @@ namespace MudBlazor.UnitTests.Components
         ///  Specifying a custom minimum width should add a min-width style to each tab
         /// </summary>
         [Test]
-        public async Task CustomMinimumTabWidth()
+        public async Task MinimumTabWidth()
         {
-            var comp = Context.RenderComponent<CustomMinimumWidthTabs>();
+            var comp = Context.RenderComponent<MinimumWidthTabs>();
 
             //Check if style respects minimum width from test
             comp.Find(".mud-tab").GetAttribute("style").Contains("min-width").Should().BeTrue();
