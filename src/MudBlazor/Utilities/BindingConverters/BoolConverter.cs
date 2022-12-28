@@ -31,12 +31,12 @@ namespace MudBlazor
                     return (T)(object)(value == true ? 1 : (value == false ? (int?)0 : null));
                 else
                 {
-                    UpdateGetError(string.Format(BindingConvertersErrorMessages.GetErrorMessage(BindingConvertersErrorMessageEnum.CONVERSION_NOT_IMPLEMENTED), typeof(T)));
+                    UpdateGetError(string.Format(MudBindingConvertersErrorMessages.GetErrorMessage(BindingConvertersErrorMessageEnum.CONVERSION_NOT_IMPLEMENTED), typeof(T)));
                 }
             }
             catch (Exception e)
             {
-                UpdateGetError(BindingConvertersErrorMessages.GetErrorMessage(BindingConvertersErrorMessageEnum.CONVERSION_ERROR) + ": " + e.Message);
+                UpdateGetError(MudBindingConvertersErrorMessages.GetErrorMessage(BindingConvertersErrorMessageEnum.CONVERSION_ERROR) + ": " + e.Message);
                 return default(T);
             }
             return default(T);
@@ -69,13 +69,13 @@ namespace MudBlazor
                 }
                 else
                 {
-                    UpdateSetError(string.Format(BindingConvertersErrorMessages.GetErrorMessage(BindingConvertersErrorMessageEnum.CONVERSION_TO_BOOL_FAILED), typeof(T).Name));
+                    UpdateSetError(string.Format(MudBindingConvertersErrorMessages.GetErrorMessage(BindingConvertersErrorMessageEnum.CONVERSION_TO_BOOL_FAILED), typeof(T).Name));
                     return null;
                 }
             }
             catch (FormatException e)
             {
-                UpdateSetError(BindingConvertersErrorMessages.GetErrorMessage(BindingConvertersErrorMessageEnum.CONVERSION_ERROR) + ": " + e.Message);
+                UpdateSetError(MudBindingConvertersErrorMessages.GetErrorMessage(BindingConvertersErrorMessageEnum.CONVERSION_ERROR) + ": " + e.Message);
                 return null;
             }
         }

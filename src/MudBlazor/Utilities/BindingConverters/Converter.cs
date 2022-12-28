@@ -32,7 +32,7 @@ namespace MudBlazor
             catch (Exception e)
             {
                 SetError = true;
-                SetErrorMessage = string.Format(BindingConvertersErrorMessages.GetErrorMessage(BindingConvertersErrorMessageEnum.CONVERSION_FAILED), typeof(T).Name, typeof(U).Name) + ": " + e.Message;
+                SetErrorMessage = string.Format(MudBindingConvertersErrorMessages.GetErrorMessage(BindingConvertersErrorMessageEnum.CONVERSION_FAILED), typeof(T).Name, typeof(U).Name) + ": " + e.Message;
             }
             return default(U);
         }
@@ -50,7 +50,7 @@ namespace MudBlazor
             catch (Exception e)
             {
                 GetError = true;
-                GetErrorMessage = string.Format(BindingConvertersErrorMessages.GetErrorMessage(BindingConvertersErrorMessageEnum.CONVERSION_FAILED), typeof(U).Name, typeof(T).Name) + ": " + e.Message;
+                GetErrorMessage = string.Format(MudBindingConvertersErrorMessages.GetErrorMessage(BindingConvertersErrorMessageEnum.CONVERSION_FAILED), typeof(U).Name, typeof(T).Name) + ": " + e.Message;
             }
             return default(T);
         }

@@ -15,7 +15,10 @@
         CONVERSION_TO_BOOL_FAILED
     }
 
-    internal static class BindingConvertersErrorMessages
+    /// <summary>
+    /// Localize binding converters error messages
+    /// </summary>
+    public static class MudBindingConvertersErrorMessages
     {
         private static string[] ErrorMessages = {
             "Not a valid boolean",
@@ -35,11 +38,19 @@
             return ErrorMessages[(int)bindingConvertersErrorMessage];
         }
 
+        /// <summary>
+        /// Gets error messages used by binding converters
+        /// </summary>
+        /// <returns>Array of messages</returns>
         public static string[] GetErrorMessages()
         {
             return ErrorMessages;
         }
 
+        /// <summary>
+        /// Sets localized error messages to be used by binding converters
+        /// </summary>
+        /// <param name="messages">Localized messages array (same order as GetErrorMessages)</param>
         public static void SetErrorMessages(string[] messages)
         {
             if (messages == null)

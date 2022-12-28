@@ -11,6 +11,5 @@
         public ResizeOptions ResizeOptions { get; set; } = new ResizeOptions();
         public ResizeObserverOptions ResizeObserverOptions { get; set; } = new ResizeObserverOptions();
         public PopoverOptions PopoverOptions { get; set; } = new PopoverOptions();
-        public LocalizationOptions LocalizationOptions { get; set; } = new LocalizationOptions();
     }
 }
