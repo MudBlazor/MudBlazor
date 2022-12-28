@@ -63,12 +63,12 @@ namespace MudBlazor
                     return (T)(object)Convert.ToDecimal(value);
                 else
                 {
-                    UpdateGetError($"Conversion to type {typeof(T)} not implemented");
+                    UpdateGetError(string.Format(BindingConvertersErrorMessages.GetErrorMessage(BindingConvertersErrorMessageEnum.CONVERSION_NOT_IMPLEMENTED), typeof(T)));
                 }
             }
             catch (Exception e)
             {
-                UpdateGetError("Conversion error: " + e.Message);
+                UpdateGetError(BindingConvertersErrorMessages.GetErrorMessage(BindingConvertersErrorMessageEnum.CONVERSION_ERROR) + ": " + e.Message);
                 return default(T);
             }
             return default(T);
@@ -146,7 +146,7 @@ namespace MudBlazor
             }
             catch (FormatException e)
             {
-                UpdateSetError("Conversion error: " + e.Message);
+                UpdateSetError(BindingConvertersErrorMessages.GetErrorMessage(BindingConvertersErrorMessageEnum.CONVERSION_ERROR) + ": " + e.Message);
                 return double.NaN;
             }
         }
