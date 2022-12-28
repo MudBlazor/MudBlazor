@@ -17,7 +17,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
     [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<T> : MudComponentBase
     {
@@ -821,7 +820,8 @@ namespace MudBlazor
                 DataGrid = this,
                 Field = column?.PropertyName,
                 Title = column?.Title,
-                FieldType = column?.PropertyType
+                FieldType = column?.PropertyType,
+                PropertyExpression = column?.PropertyExpression,
             });
             _filtersMenuVisible = true;
             StateHasChanged();
@@ -838,18 +838,9 @@ namespace MudBlazor
             FilterDefinitions.Clear();
         }
 
-        internal void AddFilter(Guid id, string field)
+        internal void AddFilter(FilterDefinition<T> definition)
         {
-            var column = RenderedColumns.FirstOrDefault(x => x.PropertyName == field && x.filterable);
-            FilterDefinitions.Add(new FilterDefinition<T>
-            {
-                Id = id,
-                DataGrid = this,
-                Field = field,
-                Title = column?.Title,
-                FieldType = column?.PropertyType,
-                PropertyExpression = column is PropertyColumn ? (column as PropertyColumn<,>).Property : null,
-            });
+            FilterDefinitions.Add(definition);
             _filtersMenuVisible = true;
             StateHasChanged();
         }

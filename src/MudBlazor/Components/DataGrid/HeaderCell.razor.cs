@@ -22,7 +22,6 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private SortDirection _initialDirection;
-        private Type _dataType;
         private bool _isSelected;
 
         [Parameter]
@@ -206,15 +205,9 @@ namespace MudBlazor
 
                 if (Column.filterable)
                 {
-                    Column.filterContext._headerCell = this;
+                    Column.FilterContext._headerCell = this;
                 }
             }
-        }
-
-        internal void GetDataType()
-        {
-            //var p = typeof(T).GetProperty(Column?.Field);
-            _dataType = Column.PropertyType;
         }
 
         #region Events
@@ -331,8 +324,10 @@ namespace MudBlazor
 
         internal void AddFilter()
         {
-            if (DataGrid.FilterMode == DataGridFilterMode.Simple)
-                DataGrid.AddFilter(Guid.NewGuid(), Column.PropertyName);
+            if (DataGrid.FilterMode == DataGridFilterMode.Simple && Column != null)
+            {
+                DataGrid.AddFilter(Column.FilterContext.FilterDefinition);
+            }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
                 _filtersMenuVisible = true;
         }
@@ -347,7 +342,7 @@ namespace MudBlazor
 
         internal void ApplyFilter()
         {
-            DataGrid.FilterDefinitions.Add(Column.filterContext.FilterDefinition);
+            DataGrid.FilterDefinitions.Add(Column.FilterContext.FilterDefinition);
             DataGrid.ExternalStateHasChanged();
             _filtersMenuVisible = false;
         }
@@ -368,8 +363,8 @@ namespace MudBlazor
 
         internal void ClearFilter()
         {
-            DataGrid.RemoveFilter(Column.filterContext.FilterDefinition.Id);
-            Column.filterContext.FilterDefinition.Value = null;
+            DataGrid.RemoveFilter(Column.FilterContext.FilterDefinition.Id);
+            Column.FilterContext.FilterDefinition.Value = null;
             _filtersMenuVisible = false;
         }
 

@@ -16,10 +16,11 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
     public abstract partial class Column<T> : MudComponentBase
     {
-        private readonly static RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
+        private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
+
+        internal readonly Guid uid = Guid.NewGuid();
 
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
 
@@ -45,24 +46,6 @@ namespace MudBlazor
         [Parameter] public RenderFragment<FooterContext<T>> FooterTemplate { get; set; }
         [Parameter] public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
         [Parameter] public Func<T, object> GroupBy { get; set; }
-
-        #region Abstract Members
-
-        public abstract string PropertyName { get; }
-
-        protected internal abstract object CellContent(T item);
-
-        protected internal abstract object PropertyFunc(T item);
-
-        //protected internal abstract MemberExpression? PropertyExpression();
-
-        protected internal abstract Type PropertyType { get; }
-
-        protected internal abstract string FullPropertyName { get; }
-
-        protected internal abstract void SetProperty(object item, object value);
-
-        #endregion
 
         #region HeaderCell Properties
 
@@ -265,10 +248,33 @@ namespace MudBlazor
         private Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
         internal HeaderContext<T> headerContext;
-        internal FilterContext<T> filterContext;
+        private FilterContext<T> filterContext;
         internal FooterContext<T> footerContext;
 
-        [UnconditionalSuppressMessage("Trimming", "IL2046: 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.", Justification = "Suppressing because we annotating the whole component with RequiresUnreferencedCodeAttribute for information that generic type must be preserved.")]
+        public FilterContext<T> FilterContext
+        {
+            get
+            {
+                // Make sure that when we access filterContext properties, they have been defined...
+                if (filterContext.FilterDefinition == null)
+                {
+                    var operators = FilterOperator.GetOperatorByDataType(PropertyType);
+                    filterContext.FilterDefinition = new FilterDefinition<T>()
+                    {
+                        DataGrid = DataGrid,
+                        Field = PropertyName,
+                        //FieldType = PropertyType,
+                        Title = Title,
+                        Operator = operators.FirstOrDefault(),
+                        PropertyExpression = PropertyExpression,
+                        Column = this,
+                    };
+                }
+
+                return filterContext;
+            }
+        }
+
         protected override void OnInitialized()
         {
             if (!Hideable.HasValue)
@@ -286,19 +292,22 @@ namespace MudBlazor
             headerContext = new HeaderContext<T>(DataGrid);
 
             // Add the FilterContext
-            if (filterable)
-            {
-                filterContext = new FilterContext<T>(DataGrid);
-                var operators = FilterOperator.GetOperatorByDataType(dataType);
-                filterContext.FilterDefinition = new FilterDefinition<T>()
-                {
-                    DataGrid = this.DataGrid,
-                    Field = PropertyName,
-                    FieldType = dataType,
-                    Title = Title,
-                    Operator = operators.FirstOrDefault()
-                };
-            }
+            //if (filterable)
+            //{
+            //    filterContext = new FilterContext<T>(DataGrid);
+            //    var operators = FilterOperator.GetOperatorByDataType(dataType);
+            //    filterContext.FilterDefinition = new FilterDefinition<T>()
+            //    {
+            //        DataGrid = this.DataGrid,
+            //        Field = PropertyName,
+            //        FieldType = dataType,
+            //        Title = Title,
+            //        Operator = operators.FirstOrDefault()
+            //    };
+            //}
+
+            // Add the FilterContext
+            filterContext = new FilterContext<T>(DataGrid);
 
             // Add the FooterContext
             footerContext = new FooterContext<T>(DataGrid);
@@ -345,9 +354,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        var parameter = Expression.Parameter(type, "x");
-                        var field = Expression.Convert(Expression.Property(parameter, type.GetProperty(PropertyName)), typeof(object));
-                        _sortBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
+                        _sortBy = PropertyExpression.ChangeExpressionReturnType<T, object>().Compile();
                     }
                 }
             }
@@ -409,5 +416,30 @@ namespace MudBlazor
             DataGrid.ExternalStateHasChanged();
         }
 
+
+        #region Abstract Members
+
+#nullable enable
+        protected internal virtual LambdaExpression? PropertyExpression { get; }
+#nullable disable
+
+        protected internal virtual Func<T, bool> GetFilterExpression()
+        {
+            return x => true;
+        }
+
+        public virtual string PropertyName { get; }
+
+        protected internal abstract object CellContent(T item);
+
+        protected internal abstract object PropertyFunc(T item);
+
+        protected internal virtual Type PropertyType { get; }
+
+        protected internal virtual string FullPropertyName { get; }
+
+        protected internal abstract void SetProperty(object item, object value);
+
+        #endregion
     }
 }

@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
@@ -12,11 +13,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    #nullable enable
+#nullable enable
 
     /// <typeparam name="T">The type of data represented by each row in the data grid.</typeparam>
     /// <typeparam name="TProperty">The type of the value being displayed in the column's cells.</typeparam>
-    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
     public partial class PropertyColumn<T, TProperty> : Column<T>
     {
         [Parameter] public Expression<Func<T, TProperty>> Property { get; set; } = default!;
@@ -48,14 +48,13 @@ namespace MudBlazor
             }
 
             CompileGroupBy();
-
-            // update filter context
-            if (filterable)
-            {
-                filterContext.FilterDefinition.Field = _propertyName;
-                filterContext.FilterDefinition.PropertyExpression = Property;
-            }
         }
+
+        protected internal override LambdaExpression? PropertyExpression
+            => Property;
+
+        public override string? PropertyName
+            => _propertyName;
 
         protected internal override object? CellContent(T item)
             => _cellContentFunc!(item);
@@ -63,14 +62,8 @@ namespace MudBlazor
         protected internal override object? PropertyFunc(T item)
             => Property.Compile()(item);
 
-        //protected internal override MemberExpression? PropertyExpression()
-        //    => Property.Body as MemberExpression;
-
         protected internal override Type PropertyType
             => typeof(TProperty);
-
-        public override string? PropertyName
-            => _propertyName;
 
         protected internal override string? FullPropertyName
             => _fullPropertyName;
@@ -89,6 +82,8 @@ namespace MudBlazor
                 }
             }
         }
+
+
     }
 
 #nullable disable

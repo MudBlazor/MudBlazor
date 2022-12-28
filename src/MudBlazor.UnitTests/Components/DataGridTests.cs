@@ -3981,14 +3981,14 @@ namespace MudBlazor.UnitTests.Components
             var column = dataGrid.Instance.RenderedColumns.First();
             var cell = new Cell<DataGridCellContextTest.Model>(dataGrid.Instance, column, item);
 
-            cell.cellContext.IsSelected.Should().Be(false);
-            cell.cellContext.Actions.SetSelectedItem(true);
-            cell.cellContext.IsSelected.Should().Be(true);
+            cell._cellContext.IsSelected.Should().Be(false);
+            cell._cellContext.Actions.SetSelectedItem(true);
+            cell._cellContext.IsSelected.Should().Be(true);
 
-            cell.cellContext.Actions.ToggleHierarchyVisibilityForItem();
-            cell.cellContext.openHierarchies.Should().Contain(item);
-            cell.cellContext.Actions.ToggleHierarchyVisibilityForItem();
-            cell.cellContext.openHierarchies.Should().NotContain(item);
+            cell._cellContext.Actions.ToggleHierarchyVisibilityForItem();
+            cell._cellContext.openHierarchies.Should().Contain(item);
+            cell._cellContext.Actions.ToggleHierarchyVisibilityForItem();
+            cell._cellContext.openHierarchies.Should().NotContain(item);
         }
 
         [Test]
