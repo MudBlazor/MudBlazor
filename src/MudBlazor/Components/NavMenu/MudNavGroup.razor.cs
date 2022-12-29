@@ -101,7 +101,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-        public string ExpandIcon { get; set; } = @Icons.Filled.ArrowDropDown;
+        public string ExpandIcon { get; set; } = @Icons.Material.Filled.ArrowDropDown;
         
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
