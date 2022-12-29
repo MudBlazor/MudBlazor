@@ -400,6 +400,40 @@ namespace MudBlazor.UnitTests.Components
             //if no crash occurs, we know the datagrid is properly calling external method to set values
         }
 
+        [Test]
+        public async Task DataGridExternalDialogEditNotSaveTest()
+        {
+            var comp = Context.RenderComponent<DataGridExternalFormEditNotSaveTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridExternalFormEditNotSaveTest.Model>>();
+
+            //verify values before opening dialog
+            dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
+            dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
+            dataGrid.FindAll("td")[2].Html().Trim().Should().Be("snakex64");
+            dataGrid.FindAll("td")[3].Html().Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td")[4].Html().Trim().Should().Be("23");
+            dataGrid.FindAll("td")[5].Html().Trim().Should().Be("snakex64");
+            dataGrid.FindAll("td")[6].Html().Trim().Should().Be("Steve");
+            dataGrid.FindAll("td")[7].Html().Trim().Should().Be("32");
+            dataGrid.FindAll("td")[8].Html().Trim().Should().Be("snakex64");
+
+            //open edit dialog
+            dataGrid.FindAll("tbody tr")[1].Click();
+
+            //verify values after saving dialog
+            dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
+            dataGrid.FindAll("td")[1].Html().Trim().Should().Be("45");
+            dataGrid.FindAll("td")[2].Html().Trim().Should().Be("snakex64");
+            dataGrid.FindAll("td")[3].Html().Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td")[4].Html().Trim().Should().Be("23");
+            dataGrid.FindAll("td")[5].Html().Trim().Should().Be("snakex64");
+            dataGrid.FindAll("td")[6].Html().Trim().Should().Be("Steve");
+            dataGrid.FindAll("td")[7].Html().Trim().Should().Be("32");
+            dataGrid.FindAll("td")[8].Html().Trim().Should().Be("snakex64");
+
+            //if no crash occurs, we know the datagrid is properly calling external method to set values
+        }
+
         /// <summary>
         /// DataGrid edit form should trigger the FormFieldChanged event
         /// </summary>
