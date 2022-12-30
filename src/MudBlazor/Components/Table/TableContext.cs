@@ -115,7 +115,7 @@ namespace MudBlazor
             var t = item.As<T>();
             if (t is null)
                 return;
-            if (Rows[t] == row)
+            if (Rows.TryGetValue(t, out var value) && value == row)
                 Rows.Remove(t);
             if (!Table.ContainsItem(item))
             {
