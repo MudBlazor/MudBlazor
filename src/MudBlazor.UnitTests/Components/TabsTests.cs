@@ -1045,7 +1045,7 @@ namespace MudBlazor.UnitTests.Components
             // Remove
             userTabs.Remove(userTabs.Last());
             userTabs.Count.Should().Be(2);
-            // MudbTabs needs render.
+            // MudTabs needs render.
             mudTabs.Panels.Count.Should().Be(3);
             comp.Render();
             mudTabs.Panels.Count.Should().Be(userTabs.Count);
@@ -1053,7 +1053,7 @@ namespace MudBlazor.UnitTests.Components
             // Add
             userTabs.Add(userTabs.First());
             userTabs.Count.Should().Be(3);
-            // MudbTabs needs render.
+            // MudTabs needs render.
             mudTabs.Panels.Count.Should().Be(2);
             comp.Render();
             mudTabs.Panels.Count.Should().Be(userTabs.Count);
@@ -1063,7 +1063,7 @@ namespace MudBlazor.UnitTests.Components
             userTabs.Remove(userTabs.Last());
             userTabs.Remove(userTabs.Last());
             userTabs.Count.Should().Be(0);
-            // MudbTabs needs render.
+            // MudTabs needs render.
             mudTabs.Panels.Count.Should().Be(3);
             comp.Render();
             mudTabs.Panels.Count.Should().Be(userTabs.Count);
