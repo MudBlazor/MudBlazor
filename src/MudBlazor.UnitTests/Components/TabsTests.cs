@@ -1040,7 +1040,7 @@ namespace MudBlazor.UnitTests.Components
             var mudTabs = comp.Instance.DynamicTabs;
 
             userTabs.Count.Should().Be(3);
-            mudTabs.Panels.Count.Should().Be(userTabs.Count);
+            mudTabs.Panels.Count.Should().Be(3);
 
             // Remove
             userTabs.Remove(userTabs.Last());
@@ -1048,15 +1048,14 @@ namespace MudBlazor.UnitTests.Components
             // MudTabs needs render.
             mudTabs.Panels.Count.Should().Be(3);
             comp.Render();
-            mudTabs.Panels.Count.Should().Be(userTabs.Count);
+            mudTabs.Panels.Count.Should().Be(2);
 
             // Add
             userTabs.Add(userTabs.First());
             userTabs.Count.Should().Be(3);
             // MudTabs needs render.
-            mudTabs.Panels.Count.Should().Be(2);
             comp.Render();
-            mudTabs.Panels.Count.Should().Be(userTabs.Count);
+            mudTabs.Panels.Count.Should().Be(3);
 
             // Remove all, no ArgumentOutOfRangeException may be thrown.
             userTabs.Remove(userTabs.Last());
@@ -1064,12 +1063,13 @@ namespace MudBlazor.UnitTests.Components
             userTabs.Remove(userTabs.Last());
             userTabs.Count.Should().Be(0);
             // MudTabs needs render.
-            mudTabs.Panels.Count.Should().Be(3);
             comp.Render();
-            mudTabs.Panels.Count.Should().Be(userTabs.Count);
+            mudTabs.Panels.Count.Should().Be(0);
 
             // No panels means no active panel index.
-            mudTabs.ActivePanelIndex.Should().Be(-1);
+            // Note that in the docs example -1 is returned instead of 0.
+            comp.Instance.UserIndex.Should().Be(0);
+            mudTabs.ActivePanelIndex.Should().Be(0);
         }
     }
 }

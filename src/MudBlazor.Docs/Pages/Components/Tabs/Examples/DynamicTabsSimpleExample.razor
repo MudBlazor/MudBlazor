@@ -4,7 +4,7 @@
                 Elevation="4" PanelClass="px-4 py-6"
                 Rounded="true" ApplyEffectsToContainer="true"
                 AddTab="AddTabCallback"
-                CloseTab="@((panel) => CloseTabCallback(panel))" @bind-ActivePanelIndex="_index"
+                CloseTab="@((panel) => CloseTabCallback(panel))" @bind-ActivePanelIndex="UserIndex"
                 AddIconToolTip="Click here to add a new tab"
                 CloseIconToolTip="Close this tab. All data will be lost">
     @foreach (var item in UserTabs)
@@ -13,7 +13,7 @@
     }
 </MudDynamicTabs>
 <MudButton Color="Color.Primary" OnClick="Restore" Size="Size.Small" Class="ml-2 mt-1 mb-n2">Restore</MudButton>
-<MudText>UserTabs index: @_index / DynamicTabs ActivePanelIndex: @DynamicTabs.ActivePanelIndex</MudText>
+<MudText>UserTabs index: @UserIndex / DynamicTabs ActivePanelIndex: @DynamicTabs.ActivePanelIndex</MudText>
 <MudText>UserTabs.Count: @UserTabs.Count / DynamicTabs Panels.Count: @DynamicTabs.Panels.Count</MudText>
 
 @code {
@@ -27,7 +27,7 @@
 
     public MudDynamicTabs DynamicTabs;
     public List<TabView> UserTabs = new();
-    private int _index = 0;
+    public int UserIndex = 0;
     private bool _updateIndex = false;
 
     private void Restore()
@@ -66,9 +66,9 @@
     {
         if (_updateIndex == true)
         {
-            _index = UserTabs.Count - 1;
-            StateHasChanged();
+            UserIndex = UserTabs.Count - 1;
             _updateIndex = false;
+            StateHasChanged();
         }
     }
 }
