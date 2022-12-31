@@ -5,72 +5,72 @@
     {
         <MudTabPanel Text="@item.Name" Tag="@item.Id" ShowCloseIcon="@item.ShowCloseIcon">@item.Content</MudTabPanel>
     }
-    </MudDynamicTabs>
-    <MudButton Color="Color.Primary" OnClick="Restore" Size="Size.Small" Class="ml-2 mt-1 mb-n2">Restore</MudButton>
-    <MudSwitch Color="Color.Primary" Size="Size.Small" Class="ml-2 mt-1 mb-n2"
-               T="bool" Checked="@_showCloseIcon" CheckedChanged="@ToggleShowCloseIcon">Show close icon</MudSwitch>
+</MudDynamicTabs>
+<MudButton Color="Color.Primary" OnClick="Restore" Size="Size.Small" Class="ml-2 mt-1 mb-n2">Restore</MudButton>
+<MudSwitch Color="Color.Primary" Size="Size.Small" Class="ml-2 mt-1 mb-n2"
+           T="bool" Checked="@_showCloseIcon" CheckedChanged="@ToggleShowCloseIcon">Show close icon</MudSwitch>
 
 @code {
 
-        private class TabView
-        {
-            public String Name { get; set; }
-            public String Content { get; set; }
-            public Guid Id { get; set; }
-            public bool ShowCloseIcon { get; set; } = true;
-        }
+    private class TabView
+    {
+        public String Name { get; set; }
+        public String Content { get; set; }
+        public Guid Id { get; set; }
+        public bool ShowCloseIcon { get; set; } = true;
+    }
 
-        private List<TabView> _tabs = new();
-        private int _index = 0;
-        private bool _updateIndex = false;
-        private bool _showCloseIcon = false;
+    private List<TabView> _tabs = new();
+    private int _index = 0;
+    private bool _updateIndex = false;
+    private bool _showCloseIcon = false;
 
-        private void Restore()
-        {
-            _tabs.Clear();
-            _tabs.Add(new TabView { ShowCloseIcon = _showCloseIcon, Content = "First tab content", Name = "Tab A", Id = Guid.NewGuid() });
-            _tabs.Add(new TabView { Content = "Second tab content", Name = "Tab B", Id = Guid.NewGuid() });
-            _tabs.Add(new TabView { Content = "Third tab content", Name = "Tab C", Id = Guid.NewGuid() });
-        }
+    private void Restore()
+    {
+        _tabs.Clear();
+        _tabs.Add(new TabView { ShowCloseIcon = _showCloseIcon, Content = "First tab content", Name = "Tab A", Id = Guid.NewGuid() });
+        _tabs.Add(new TabView { Content = "Second tab content", Name = "Tab B", Id = Guid.NewGuid() });
+        _tabs.Add(new TabView { Content = "Third tab content", Name = "Tab C", Id = Guid.NewGuid() });
+    }
 
-        private Task ToggleShowCloseIcon(bool show)
-        {
-            if (_tabs.Count > 0 && _tabs[0].Name == "Tab A")
-                _tabs[0].ShowCloseIcon = _showCloseIcon = show;
-            else
-                _showCloseIcon = false;
-            return Task.CompletedTask;
-        }
+    private Task ToggleShowCloseIcon(bool show)
+    {
+        if (_tabs.Count > 0 && _tabs[0].Name == "Tab A")
+            _tabs[0].ShowCloseIcon = _showCloseIcon = show;
+        else
+            _showCloseIcon = false;
+        return Task.CompletedTask;
+    }
 
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            Restore();
-        }
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Restore();
+    }
 
-        private void AddTabCallback()
-        {
-            _tabs.Add(new TabView { Name = "Dynamic Content", Content = "A new tab", Id = Guid.NewGuid() });
-            //the tab becomes available after it is rendered. Hence, we can't set the index here
-            _updateIndex = true;
-        }
+    private void AddTabCallback()
+    {
+        _tabs.Add(new TabView { Name = "Dynamic Content", Content = "A new tab", Id = Guid.NewGuid() });
+        //the tab becomes available after it is rendered. Hence, we can't set the index here
+        _updateIndex = true;
+    }
 
-        private void CloseTabCallback(MudTabPanel panel)
+    private void CloseTabCallback(MudTabPanel panel)
+    {
+        var tabView = _tabs.FirstOrDefault(x => x.Id == (Guid)panel.Tag);
+        if (tabView != null)
         {
-            var tabView = _tabs.FirstOrDefault(x => x.Id == (Guid)panel.Tag);
-            if (tabView != null)
-            {
-                _tabs.Remove(tabView);
-            }
+            _tabs.Remove(tabView);
         }
+    }
 
-        protected override void OnAfterRender(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (_updateIndex == true)
         {
-            if (_updateIndex == true)
-            {
-                _index = _tabs.Count - 1;
-                StateHasChanged();
-                _updateIndex = false;
-            }
+            _index = _tabs.Count - 1;
+            StateHasChanged();
+            _updateIndex = false;
         }
+    }
 }
