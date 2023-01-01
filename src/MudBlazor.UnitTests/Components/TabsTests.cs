@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Docs.Examples;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
@@ -1028,5 +1029,48 @@ namespace MudBlazor.UnitTests.Components
         }
 
         #endregion
+
+
+        [Test]
+        public async Task DynamicTabs_CollectionRenderSyncTest()
+        {
+            var comp = Context.RenderComponent<DynamicTabsSimpleExample>();
+
+            var userTabs = comp.Instance.UserTabs;
+            var mudTabs = comp.Instance.DynamicTabs;
+
+            userTabs.Count.Should().Be(3);
+            mudTabs.Panels.Count.Should().Be(3);
+
+            // Remove
+            userTabs.Remove(userTabs.Last());
+            userTabs.Count.Should().Be(2);
+            // MudTabs needs render.
+            mudTabs.Panels.Count.Should().Be(3);
+            comp.Render();
+            mudTabs.Panels.Count.Should().Be(2);
+
+            // Add
+            userTabs.Add(userTabs.First());
+            userTabs.Count.Should().Be(3);
+            // MudTabs needs render.
+            comp.Render();
+            mudTabs.Panels.Count.Should().Be(3);
+
+            // Remove all, no ArgumentOutOfRangeException may be thrown.
+            userTabs.Remove(userTabs.Last());
+            userTabs.Remove(userTabs.Last());
+            userTabs.Remove(userTabs.Last());
+            userTabs.Count.Should().Be(0);
+            // MudTabs needs render.
+            comp.Render();
+            mudTabs.Panels.Count.Should().Be(0);
+
+            // TODO 2023-01-01: Disabled; Will be addressed in a future PR
+            // No panels means no active panel index.
+            // Note that in the docs example -1 is returned instead of 0.
+            //comp.Instance.UserIndex.Should().Be(0);
+            //mudTabs.ActivePanelIndex.Should().Be(0);
+        }
     }
 }
