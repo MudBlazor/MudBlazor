@@ -1065,6 +1065,12 @@ namespace MudBlazor.UnitTests.Components
             // MudTabs needs render.
             comp.Render();
             mudTabs.Panels.Count.Should().Be(0);
+
+            // TODO 2023-01-01: Disabled; Will be addressed in a future PR
+            // No panels means no active panel index.
+            // Note that in the docs example -1 is returned instead of 0.
+            //comp.Instance.UserIndex.Should().Be(0);
+            //mudTabs.ActivePanelIndex.Should().Be(0);
         }
     }
 }
