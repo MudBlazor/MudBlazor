@@ -462,7 +462,9 @@ namespace MudBlazor
                 Context.Selection.Add(item);
             else
                 Context.Selection.Remove(item);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
+
+            if (SelectedItemsChanged.HasDelegate)
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
         internal override void OnHeaderCheckboxClicked(bool checkedState)
@@ -474,16 +476,17 @@ namespace MudBlazor
             }
             else
                 Context.Selection.Clear();
-            
-            Context.UpdateRowCheckBoxes(notify: false);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
+
+            Context.UpdateRowCheckBoxes(notify: false, updateRows: false);
+
+            if (SelectedItemsChanged.HasDelegate)
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
                 await InvokeServerLoadFunc();
-
             TableContext.UpdateRowCheckBoxes();
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -576,8 +579,10 @@ namespace MudBlazor
                     Context.Selection.Remove(item);
             }
 
-            Context.UpdateRowCheckBoxes(notify: false);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
+            Context.UpdateRowCheckBoxes(notify: false, updateRows: false);
+
+            if (SelectedItemsChanged.HasDelegate)
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
     }
 }

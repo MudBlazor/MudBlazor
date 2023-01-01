@@ -43,6 +43,8 @@ else
 
 @if (IsExpanded)
 {
+    Context.UpdateRowCheckBoxes(notify: false, updateRows: false);
+
     @*CHILDREN:*@
     @if (_innerGroupItems != null && GroupDefinition != null)
     {

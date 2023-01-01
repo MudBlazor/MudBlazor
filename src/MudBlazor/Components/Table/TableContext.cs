@@ -15,7 +15,7 @@ namespace MudBlazor
         public bool HasPager { get; set; }
         public abstract void Add(MudTr row, object item);
         public abstract void Remove(MudTr row, object item);
-        public abstract void UpdateRowCheckBoxes(bool notify = true);
+        public abstract void UpdateRowCheckBoxes(bool notify = true, bool updateRows = true);
         public List<MudTHeadRow> HeaderRows { get; set; } = new List<MudTHeadRow>();
         public List<MudTFootRow> FooterRows { get; set; } = new List<MudTFootRow>();
 
@@ -50,17 +50,25 @@ namespace MudBlazor
 
         public List<MudTableSortLabel<T>> SortLabels { get; set; } = new List<MudTableSortLabel<T>>();
 
-        public override void UpdateRowCheckBoxes(bool notify = true)
+        /// <summary>
+        /// Updates the checkboxe checked state of all row-, group-, header- and footer items.
+        /// </summary>
+        public override void UpdateRowCheckBoxes(bool notify = true, bool updateRows = true)
         {
             if (!Table.MultiSelection)
                 return;
-            // Update row checkboxes
-            foreach (var pair in Rows.ToArray())
+
+            if (updateRows)
             {
-                var row = pair.Value;
-                var item = pair.Key;
-                row.SetChecked(Selection.Contains(item), notify);
+                // Update row checkboxes
+                foreach (var pair in Rows.ToArray())
+                {
+                    var row = pair.Value;
+                    var item = pair.Key;
+                    row.SetChecked(Selection.Contains(item), notify);
+                }
             }
+
             // Update group checkboxes
             foreach (var row in GroupRows)
             {
@@ -68,21 +76,25 @@ namespace MudBlazor
                 var itemsCount = Selection.Intersect(rowGroupItems).Count();
                 var selectAll = itemsCount == rowGroupItems.Count;
                 var indeterminate = !selectAll && itemsCount > 0 && Selection.Count > 0;
-                row.SetChecked(indeterminate && !selectAll ? null : selectAll, notify: false);
+                var state = indeterminate && !selectAll ? (bool?)null : selectAll;
+                row.SetChecked(state, notify: false);
             }
+
             if (HeaderRows.Count > 0 || FooterRows.Count > 0)
             {
                 var itemsCount = Table.GetFilteredItemsCount();
                 var selectAll = Selection.Count == itemsCount;
                 var indeterminate = !selectAll && Selection.Count > 0;
                 var isChecked = selectAll && itemsCount != 0;
+                var state = indeterminate ? (bool?)null : isChecked;
+
                 // Update header checkbox
                 foreach (var header in HeaderRows)
-                    header.SetChecked(indeterminate ? null : isChecked, notify: false);
+                    header.SetChecked(state, notify: false);
 
                 // Update footer checkbox
                 foreach (var footer in FooterRows)
-                    footer.SetChecked(indeterminate ? null : isChecked, notify: false);
+                    footer.SetChecked(state, notify: false);
             }
         }
 
