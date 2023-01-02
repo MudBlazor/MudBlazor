@@ -477,7 +477,7 @@ namespace MudBlazor
             else
                 Context.Selection.Clear();
 
-            Context.UpdateRowCheckBoxes(notify: false, updateRows: false);
+            Context.UpdateRowCheckBoxes();
 
             if (SelectedItemsChanged.HasDelegate)
                 SelectedItemsChanged.InvokeAsync(SelectedItems);
@@ -579,7 +579,7 @@ namespace MudBlazor
                     Context.Selection.Remove(item);
             }
 
-            Context.UpdateRowCheckBoxes(notify: false, updateRows: false);
+            Context.UpdateRowCheckBoxes();
 
             if (SelectedItemsChanged.HasDelegate)
                 SelectedItemsChanged.InvokeAsync(SelectedItems);

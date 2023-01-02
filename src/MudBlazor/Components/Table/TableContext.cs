@@ -15,7 +15,7 @@ namespace MudBlazor
         public bool HasPager { get; set; }
         public abstract void Add(MudTr row, object item);
         public abstract void Remove(MudTr row, object item);
-        public abstract void UpdateRowCheckBoxes(bool notify = true, bool updateRows = true);
+        public abstract void UpdateRowCheckBoxes();
         public List<MudTHeadRow> HeaderRows { get; set; } = new List<MudTHeadRow>();
         public List<MudTFootRow> FooterRows { get; set; } = new List<MudTFootRow>();
 
@@ -51,23 +51,12 @@ namespace MudBlazor
         public List<MudTableSortLabel<T>> SortLabels { get; set; } = new List<MudTableSortLabel<T>>();
 
         /// <summary>
-        /// Updates the checkboxe checked state of all row-, group-, header- and footer items.
+        /// Updates the state of all group-, header- and footer checkboxs.
         /// </summary>
-        public override void UpdateRowCheckBoxes(bool notify = true, bool updateRows = true)
+        public override void UpdateRowCheckBoxes()
         {
             if (!Table.MultiSelection)
                 return;
-
-            if (updateRows)
-            {
-                // Update row checkboxes
-                foreach (var pair in Rows.ToArray())
-                {
-                    var row = pair.Value;
-                    var item = pair.Key;
-                    row.SetChecked(Selection.Contains(item), notify);
-                }
-            }
 
             // Update group checkboxes
             foreach (var row in GroupRows)
