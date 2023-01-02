@@ -503,16 +503,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TableMultiSelection_Grouping2ndLevelCheckboxStateTest()
+        public void TableMultiSelection_MultiGrouping_DefaultCheckboxStatesTest()
         {
-            //var comp = Context.RenderComponent<TableMultiGroupingExample>();
-            //var rows = comp.FindComponent<MudTable<int>>().FindAll("tr").ToArray();
-            //var table = comp.FindComponent<MudTable<int>>().Instance;
+            var comp = Context.RenderComponent<TableMultiSelection_MultiGrouping_DefaultCheckboxStatesTest>();
+            var mudTable = comp.Instance.MudTable;
 
-            //foreach (var row in rows) row.Click();
-            //table.SelectedItems.Count.Should().Be(0);
+            // All row checkbox states must be false.
+            mudTable.Context.Rows.Count(r => r.Value.IsChecked).Should().Be(0);
+
+            // All grouprow checkbox states must be false.
+            mudTable.Context.GroupRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(14);
+
+            // The headerrow checkbox state must be false.
+            mudTable.Context.HeaderRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(1);
+
+            // The footerrow checkbox state must be false.
+            mudTable.Context.FooterRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(0);
         }
-
 
         /// <summary>
         /// checking the header checkbox should select all items (all checkboxes on, all items in SelectedItems)

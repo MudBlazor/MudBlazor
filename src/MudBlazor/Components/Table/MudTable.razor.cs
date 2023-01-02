@@ -483,14 +483,6 @@ namespace MudBlazor
                 SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-                await InvokeServerLoadFunc();
-            TableContext.UpdateRowCheckBoxes(updateGroups: false);
-            await base.OnAfterRenderAsync(firstRender);
-        }
-
         /// <summary>
         /// Supply an async function which (re)loads filtered, paginated and sorted data from server.
         /// Table will await this func and update based on the returned TableData.
@@ -537,6 +529,14 @@ namespace MudBlazor
             base.OnAfterRender(firstRender);
             if (!firstRender)
                 Context?.PagerStateHasChanged?.Invoke();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
+                await InvokeServerLoadFunc();
+            TableContext.UpdateRowCheckBoxes(updateGroups: false);
         }
 
         /// <summary>

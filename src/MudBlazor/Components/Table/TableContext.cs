@@ -53,6 +53,9 @@ namespace MudBlazor
         /// <summary>
         /// Updates the state of all group- and/or header/footer checkboxs.
         /// </summary>
+        /// <remarks>
+        /// Setting checkbox state for Row items and refresh all, is triggered from MudTable OnAfterRenderAsync.
+        /// </remarks>
         public override void UpdateRowCheckBoxes(bool updateGroups = true, bool updateHeaderFooter = true)
         {
             if (!Table.MultiSelection)
@@ -61,14 +64,14 @@ namespace MudBlazor
             if (updateGroups)
             {
                 // Update group checkboxes
-                foreach (var row in GroupRows)
+                foreach (var groupRow in GroupRows)
                 {
-                    var rowGroupItems = row.Items.ToList();
+                    var rowGroupItems = groupRow.Items.ToList();
                     var itemsCount = Selection.Intersect(rowGroupItems).Count();
                     var selectAll = itemsCount == rowGroupItems.Count;
                     var indeterminate = !selectAll && itemsCount > 0 && Selection.Count > 0;
                     var state = indeterminate && !selectAll ? (bool?)null : selectAll;
-                    row.SetChecked(state, notify: false);
+                    groupRow.SetChecked(state, notify: false);
                 }
             }
 
@@ -83,12 +86,12 @@ namespace MudBlazor
                     var state = indeterminate ? (bool?)null : isChecked;
 
                     // Update header checkbox
-                    foreach (var header in HeaderRows)
-                        header.SetChecked(state, notify: false);
+                    foreach (var headerRow in HeaderRows)
+                        headerRow.SetChecked(state, notify: false);
 
                     // Update footer checkbox
-                    foreach (var footer in FooterRows)
-                        footer.SetChecked(state, notify: false);
+                    foreach (var footerRow in FooterRows)
+                        footerRow.SetChecked(state, notify: false);
                 }
             }
         }
