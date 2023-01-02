@@ -15,7 +15,7 @@ namespace MudBlazor
         public bool HasPager { get; set; }
         public abstract void Add(MudTr row, object item);
         public abstract void Remove(MudTr row, object item);
-        public abstract void UpdateRowCheckBoxes();
+        public abstract void UpdateRowCheckBoxes(bool updateGroups = true, bool updateHeaderFooter = true);
         public List<MudTHeadRow> HeaderRows { get; set; } = new List<MudTHeadRow>();
         public List<MudTFootRow> FooterRows { get; set; } = new List<MudTFootRow>();
 
@@ -51,39 +51,45 @@ namespace MudBlazor
         public List<MudTableSortLabel<T>> SortLabels { get; set; } = new List<MudTableSortLabel<T>>();
 
         /// <summary>
-        /// Updates the state of all group-, header- and footer checkboxs.
+        /// Updates the state of all group- and/or header/footer checkboxs.
         /// </summary>
-        public override void UpdateRowCheckBoxes()
+        public override void UpdateRowCheckBoxes(bool updateGroups = true, bool updateHeaderFooter = true)
         {
             if (!Table.MultiSelection)
                 return;
 
-            // Update group checkboxes
-            foreach (var row in GroupRows)
+            if (updateGroups)
             {
-                var rowGroupItems = row.Items.ToList();
-                var itemsCount = Selection.Intersect(rowGroupItems).Count();
-                var selectAll = itemsCount == rowGroupItems.Count;
-                var indeterminate = !selectAll && itemsCount > 0 && Selection.Count > 0;
-                var state = indeterminate && !selectAll ? (bool?)null : selectAll;
-                row.SetChecked(state, notify: false);
+                // Update group checkboxes
+                foreach (var row in GroupRows)
+                {
+                    var rowGroupItems = row.Items.ToList();
+                    var itemsCount = Selection.Intersect(rowGroupItems).Count();
+                    var selectAll = itemsCount == rowGroupItems.Count;
+                    var indeterminate = !selectAll && itemsCount > 0 && Selection.Count > 0;
+                    var state = indeterminate && !selectAll ? (bool?)null : selectAll;
+                    row.SetChecked(state, notify: false);
+                }
             }
 
-            if (HeaderRows.Count > 0 || FooterRows.Count > 0)
+            if (updateHeaderFooter)
             {
-                var itemsCount = Table.GetFilteredItemsCount();
-                var selectAll = Selection.Count == itemsCount;
-                var indeterminate = !selectAll && Selection.Count > 0;
-                var isChecked = selectAll && itemsCount != 0;
-                var state = indeterminate ? (bool?)null : isChecked;
+                if (HeaderRows.Count > 0 || FooterRows.Count > 0)
+                {
+                    var itemsCount = Table.GetFilteredItemsCount();
+                    var selectAll = Selection.Count == itemsCount;
+                    var indeterminate = !selectAll && Selection.Count > 0;
+                    var isChecked = selectAll && itemsCount != 0;
+                    var state = indeterminate ? (bool?)null : isChecked;
 
-                // Update header checkbox
-                foreach (var header in HeaderRows)
-                    header.SetChecked(state, notify: false);
+                    // Update header checkbox
+                    foreach (var header in HeaderRows)
+                        header.SetChecked(state, notify: false);
 
-                // Update footer checkbox
-                foreach (var footer in FooterRows)
-                    footer.SetChecked(state, notify: false);
+                    // Update footer checkbox
+                    foreach (var footer in FooterRows)
+                        footer.SetChecked(state, notify: false);
+                }
             }
         }
 
