@@ -223,8 +223,8 @@ namespace MudBlazor
                 {
                     _activePanelIndex = value;
                     if (_isRendered)
-                        ActivePanel = _panels[_activePanelIndex];
-                    ActivePanelIndexChanged.InvokeAsync(value);
+                        ActivePanel = _activePanelIndex != -1 ? _panels[_activePanelIndex] : null;
+                    ActivePanelIndexChanged.InvokeAsync(_activePanelIndex);
                 }
             }
         }
