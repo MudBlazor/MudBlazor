@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudChipSet ReadOnly="true">
+    <MudChip OnClose="Close" Text="Milk"></MudChip>
+    <MudChip Text="Eggs"></MudChip>
+    <MudChip Text="Soap"></MudChip>
+    <MudChip Text="Corn flakes"></MudChip>
+    <MudChip Text="Salad"></MudChip>
+    <MudChip Text="Apples"></MudChip>
+    <MudChip Text="Red wine"></MudChip>
+</MudChipSet>
+
+@code
+{
+    private static void Close() {
+        throw new Exception("OnClose should not be possible with ReadOnly=true.");
+    }
+}

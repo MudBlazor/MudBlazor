@@ -1,6 +1,5 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@PopoverClass" style="@PopoverStyles">
-    @ChildContent
+<div id="@($"popover-{_handler.Id}")" class="mud-popover-cascading-value">
 </div>

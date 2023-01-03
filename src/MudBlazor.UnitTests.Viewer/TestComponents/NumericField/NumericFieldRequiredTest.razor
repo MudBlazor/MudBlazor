@@ -1,0 +1,12 @@
+﻿<MudNumericField
+    @bind-Value="_value"
+     Label="Input" 
+     Variant="Variant.Filled"
+     Required="true"
+/>
+   
+@code {
+    public static string __description__ = "The numericfield should not show required-error initially!";
+
+    private int? _value = null;
+}

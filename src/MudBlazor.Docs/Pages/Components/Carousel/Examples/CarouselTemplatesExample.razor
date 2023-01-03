@@ -1,0 +1,44 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudCarousel Class="mud-width-full" Style="height:200px;" AutoCycle="false" TData="object">
+    <BulletTemplate Context="selected">
+        <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+            <span class="mud-icon-button-label">
+                <MudIcon Icon="@(selected ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Circle)" Color="@Color.Inherit" />
+            </span>
+        </div>
+    </BulletTemplate>
+    <PreviousButtonTemplate>
+        <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+            <span class="mud-icon-button-label">
+                <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.SkipPrevious" Color="@Color.Inherit" />
+            </span>
+        </div>
+    </PreviousButtonTemplate>
+    <NextButtonTemplate>
+        <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+            <span class="mud-icon-button-label">
+                <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.SkipNext" Color="@Color.Inherit" />
+            </span>
+        </div>
+    </NextButtonTemplate>
+    <ChildContent>
+        <MudCarouselItem Color="@Color.Primary">
+            <div class="d-flex" style="height:100%">
+                <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
+            </div>
+        </MudCarouselItem>
+        <MudCarouselItem Color="@Color.Secondary">
+            <div class="d-flex" style="height:100%">
+                <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
+            </div>
+        </MudCarouselItem>
+        <MudCarouselItem>
+            <div class="d-flex" style="height:100%">
+                <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Color="@Color.Primary" Size="@Size.Large" />
+            </div>
+        </MudCarouselItem>
+    </ChildContent>
+</MudCarousel>
+
+@code { }

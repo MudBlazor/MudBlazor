@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudPaper Class="pa-4" Style="@($"color:{Theme.Palette.Dark}; background:{Theme.Palette.Warning};")">
+    Warning with Dark text
+</MudPaper>
+<MudPaper Class="pa-4" Style="@($"color:{Theme.Palette.SuccessLighten}; background:{Theme.Palette.Dark};")">
+    Dark with Success lighten
+</MudPaper>
+
+@code {
+    private MudTheme Theme = new MudTheme();
+}

@@ -1,6 +1,12 @@
 ﻿@using MudBlazor.Services
 @namespace MudBlazor.Docs.Examples
-@implements IDisposable
+@implements IAsyncDisposable
+
+<MudAlert Severity=Severity.Warning>
+	MudBlazor 5.2 introduced new implementations for handling browser resize events.
+	The <strong>IResizeListenerService</strong> can still be used but we strongly encourage you to move to the 
+	<strong>IResizeService </strong>
+</MudAlert>
 
 <MudCard Class="pa-5">
     <MudText>
@@ -11,23 +17,29 @@
 
 @code
 {
-    [Inject] IResizeListenerService ResizeListener { get; set; }
+	[Inject] IResizeService ResizeService { get; set; }
 
     int width = 0;
     int height = 0;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-    }
+	private Guid _subscriptionId;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            ResizeListener.OnResized += OnResized;
+			_subscriptionId = await ResizeService.Subscribe((size) =>
+			{
+				width = size.Width;
+				height = size.Height;
+				InvokeAsync(StateHasChanged);
+			}, new ResizeOptions
+			{
+				ReportRate = 50,
+				NotifyOnBreakpointOnly = false,
+			});
 
-            var size = await ResizeListener.GetBrowserWindowSize();
+            var size = await ResizeService.GetBrowserWindowSize();
             height = size.Height;
             width = size.Width;
             StateHasChanged();
@@ -36,15 +48,5 @@
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private void OnResized(object sender, BrowserWindowSize size)
-    {
-        width = size.Width;
-        height = size.Height;
-        InvokeAsync(StateHasChanged);
-    }
-
-    public void Dispose()
-    {
-        ResizeListener.OnResized -= OnResized;
-    }
+    public async ValueTask DisposeAsync() => await ResizeService.Unsubscribe(_subscriptionId);
 }

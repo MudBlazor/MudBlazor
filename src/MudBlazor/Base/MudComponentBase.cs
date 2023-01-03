@@ -1,30 +1,49 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 
 namespace MudBlazor
 {
     public abstract class MudComponentBase : ComponentBase
     {
-        /// <summary>
-        /// User class names, separated by space
-        /// </summary>
-        [Parameter] public string Class { get; set; }
+        [Inject]
+        private ILoggerFactory LoggerFactory { get; set; }
+        private ILogger _logger;
+        protected ILogger Logger => _logger ??= LoggerFactory.CreateLogger(GetType());
 
         /// <summary>
-        /// User styles, applied on top of the component's own classes and styles
+        /// User class names, separated by space.
         /// </summary>
-        [Parameter] public string Style { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ComponentBase.Common)]
+        public string Class { get; set; }
+
+        /// <summary>
+        /// User styles, applied on top of the component's own classes and styles.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ComponentBase.Common)]
+        public string Style { get; set; }
 
         /// <summary>
         /// Use Tag to attach any user data object to the component for your convenience.
         /// </summary>
-        [Parameter] public object Tag { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.ComponentBase.Common)]
+        public object Tag { get; set; }
 
         /// <summary>
         /// UserAttributes carries all attributes you add to the component that don't match any of its parameters.
         /// They will be splatted onto the underlying HTML tag.
         /// </summary>
         [Parameter(CaptureUnmatchedValues = true)]
+        [Category(CategoryTypes.ComponentBase.Common)]
         public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
+
+        /// <summary>
+        /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
+        /// </summary>
+        public string FieldId => (UserAttributes?.ContainsKey("id") == true ? UserAttributes["id"].ToString() : $"mudinput-{Guid.NewGuid()}");
     }
 }

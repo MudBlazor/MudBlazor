@@ -4,7 +4,7 @@
 
 @if (!DisableToolbar)
 {
-    <MudToolBar Class="@Classnames">
+    <MudToolBar Class="@Classnames" Style="@Style">
         @ChildContent
     </MudToolBar>
 }
@@ -19,6 +19,7 @@
     .Build();
 
     [Parameter] public string Class { get; set; }
+    [Parameter] public string Style { get; set; }
     [Parameter] public bool DisableToolbar { get; set; }
     [Parameter] public Orientation Orientation { get; set; }
     [Parameter] public Color Color { get; set; }

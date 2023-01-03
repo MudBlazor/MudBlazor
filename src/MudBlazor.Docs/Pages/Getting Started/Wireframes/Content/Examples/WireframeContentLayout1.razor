@@ -1,12 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Wireframes
 @inherits LayoutComponentBase
+@layout WireframeLayout
 
 <MudThemeProvider />
 
 <MudLayout>
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudAppBarSpacer />
+        <MudSpacer />
         <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" Elevation="2">
@@ -28,8 +29,3 @@
         _drawerOpen = !_drawerOpen;
     }
 }
-
-
-<div class="d-flex" style="position: absolute; bottom: 0; right: 0;">
-    <MudFab Color="Color.Secondary" Icon="@Icons.Material.Filled.ArrowBack" Class="mt-auto mb-4 mr-4" Link="/getting-started/wireframes/" />
-</div>

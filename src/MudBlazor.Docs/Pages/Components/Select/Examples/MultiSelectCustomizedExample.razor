@@ -1,0 +1,62 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Linq
+
+<MudSelect MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options" T="string" Label="US States" AdornmentIcon="@Icons.Material.Filled.Search" AnchorOrigin="Origin.BottomCenter">
+    @foreach (var state in states)
+    {
+        <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
+    }
+</MudSelect>
+
+<MudSwitch @bind-Checked="multiselectionTextChoice" Class="mud-width-full" Color="Color.Primary">MultiSelection Text choice</MudSwitch>  
+
+<MudGrid Class="mt-3 px-4">
+    <MudItem xs="6">
+        <MudText Typo="Typo.subtitle2">Value:</MudText>
+        <MudText Typo="Typo.subtitle2">"</MudText>
+        <MudText Typo="Typo.body2" Class="pl-4">@value</MudText>
+        <MudText Typo="Typo.subtitle2">"</MudText>
+    </MudItem>
+    <MudItem xs="6">
+        <MudText Typo="Typo.subtitle2">SelectedValues: HashSet&lt;string&gt;</MudText>
+        <MudText Typo="Typo.subtitle2">{</MudText>
+        <MudText Typo="Typo.body2" Class="pl-4">@(string.Join(", ", options.Select(x=>$"\"{x}\"")))</MudText>
+        <MudText Typo="Typo.subtitle2">}</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private bool multiselectionTextChoice;
+    private string value { get; set; } = "Nothing selected";
+    private IEnumerable<string> options { get; set; } = new HashSet<string>() { "Alaska" };
+
+    private string[] states =
+    {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+    };
+
+    private string GetMultiSelectionText(List<string> selectedValues)
+    {
+        if (multiselectionTextChoice)
+        {
+            return $"Selected state{(selectedValues.Count > 1 ? "s" : "")}: {string.Join(", ", selectedValues.Select(x => x))}";
+        }
+        else
+        {
+            return $"{selectedValues.Count} state{(selectedValues.Count > 1 ? "s have":" has")} been selected";
+        }
+    }
+}

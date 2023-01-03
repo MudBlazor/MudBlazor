@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudNumericField HideSpinButtons="true" @bind-Value="IntValue" Label="Standard" Variant="Variant.Text" Min="0" Max="10" />
+<MudNumericField HideSpinButtons="true" @bind-Value="DoubleValue" Label="Filled" Variant="Variant.Filled" Min="0.0" />
+<MudNumericField HideSpinButtons="true" @bind-Value="DecimalValue" Label="Outlined" Variant="Variant.Outlined" Step=".2M" />
+
+@code {
+    public int IntValue { get; set; }
+    public double DoubleValue { get; set; }
+    public decimal DecimalValue { get; set; }
+}

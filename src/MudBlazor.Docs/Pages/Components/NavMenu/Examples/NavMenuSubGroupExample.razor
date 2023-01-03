@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="250px" Class="d-inline-flex py-3" Elevation="0">
+    <MudNavMenu Class="mud-width-full">
+        <MudText Typo="Typo.h6" Class="px-4">My Application</MudText>
+        <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">Secondary Text</MudText>
+        <MudDivider Class="my-2" />
+        <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+        <MudNavGroup Title="Level 0" Icon="@Icons.Material.Filled.Settings" Expanded="true">
+            <MudNavGroup Title="Level 1" Icon="@Icons.Material.Filled.AdminPanelSettings" Expanded="true">
+                <MudNavGroup Title="Level 2" Icon="@Icons.Material.Filled.People" Expanded="true">
+                    <MudNavGroup Title="Level 3" Icon="@Icons.Material.Filled.Lock" Expanded="true">
+                        <MudNavLink Href="/delete" Icon="@Icons.Material.Filled.DeleteForever">Delete Password</MudNavLink>
+                    </MudNavGroup>
+                </MudNavGroup>
+            </MudNavGroup>
+        </MudNavGroup>
+        <MudNavLink Href="/billing" Icon="@Icons.Material.Filled.Receipt">Billing</MudNavLink>
+    </MudNavMenu>
+</MudPaper>

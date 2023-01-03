@@ -16,13 +16,13 @@ namespace MudBlazor.Utilities
         /// Call Build() to return the completed CSS Classes as a string. 
         /// </summary>
         /// <param name="value"></param>
-        public static CssBuilder Default(string value) => new CssBuilder(value);
+        public static CssBuilder Default(string value) => new(value);
 
         /// <summary>
         /// Creates an Empty CssBuilder used to define conditional CSS classes used in a component.
         /// Call Build() to return the completed CSS Classes as a string. 
         /// </summary>
-        public static CssBuilder Empty() => new CssBuilder();
+        public static CssBuilder Empty() => new();
 
         /// <summary>
         /// Creates a CssBuilder used to define conditional CSS classes used in a component.
@@ -71,7 +71,7 @@ namespace MudBlazor.Utilities
         /// <param name="value">CSS Class to conditionally add.</param>
         /// <param name="when">Condition in which the CSS Class is added.</param>
         /// <returns>CssBuilder</returns>
-        public CssBuilder AddClass(string value, Func<bool> when = null) => this.AddClass(value, when());
+        public CssBuilder AddClass(string value, Func<bool> when = null) => this.AddClass(value, when != null && when());
 
         /// <summary>
         /// Adds a conditional CSS Class to the builder with space separator.
@@ -87,7 +87,7 @@ namespace MudBlazor.Utilities
         /// <param name="value">Function that returns a CSS Class to conditionally add.</param>
         /// <param name="when">Condition in which the CSS Class is added.</param>
         /// <returns>CssBuilder</returns>
-        public CssBuilder AddClass(Func<string> value, Func<bool> when = null) => this.AddClass(value, when());
+        public CssBuilder AddClass(Func<string> value, Func<bool> when = null) => this.AddClass(value, when != null && when());
 
         /// <summary>
         /// Adds a conditional nested CssBuilder to the builder with space separator.
@@ -103,7 +103,7 @@ namespace MudBlazor.Utilities
         /// <param name="builder">CSS Class to conditionally add.</param>
         /// <param name="when">Condition in which the CSS Class is added.</param>
         /// <returns>CssBuilder</returns>
-        public CssBuilder AddClass(CssBuilder builder, Func<bool> when = null) => this.AddClass(builder, when());
+        public CssBuilder AddClass(CssBuilder builder, Func<bool> when = null) => this.AddClass(builder, when != null && when());
 
         /// <summary>
         /// Adds a conditional CSS Class when it exists in a dictionary to the builder with space separator.

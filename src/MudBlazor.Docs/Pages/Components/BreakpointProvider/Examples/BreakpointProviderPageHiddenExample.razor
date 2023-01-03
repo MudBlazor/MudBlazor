@@ -1,0 +1,71 @@
+﻿@using MudBlazor.Services
+@namespace MudBlazor.Docs.Examples
+
+<MudBreakpointProvider>
+	@for (int i = 0; i < _amountOfRows; i++)
+	{
+		<MudHidden Breakpoint="Breakpoint.Xl" Invert="true">
+			<MudCard Class="pa-5">
+				<MudText>XL</MudText>
+			</MudCard>
+		</MudHidden>
+		<MudHidden Breakpoint="Breakpoint.Lg" Invert="true">
+			<MudCard Class="pa-5">
+				<MudText>LG</MudText>
+			</MudCard>
+		</MudHidden>
+		<MudHidden Breakpoint="Breakpoint.Md" Invert="true">
+			<MudCard Class="pa-5">
+				<MudText>MD</MudText>
+			</MudCard>
+		</MudHidden>
+		<MudHidden Breakpoint="Breakpoint.Sm" Invert="true">
+			<MudCard Class="pa-5">
+				<MudText>SM</MudText>
+			</MudCard>
+		</MudHidden>
+		<MudHidden Breakpoint="Breakpoint.Xs" Invert="true">
+			<MudCard Class="pa-5">
+				<MudText>XS</MudText>
+			</MudCard>
+		</MudHidden>
+		<MudHidden Breakpoint="Breakpoint.LgAndUp" Invert="true">
+			<MudCard Class="pa-5">
+				<MudText>LG and Up</MudText>
+			</MudCard>
+		</MudHidden>
+		<MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+			<MudCard Class="pa-5">
+				<MudText>MD and Up</MudText>
+			</MudCard>
+		</MudHidden>
+		<MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
+			<MudCard Class="pa-5">
+				<MudText>SM and Up</MudText>
+			</MudCard>
+		</MudHidden>
+		<MudHidden Breakpoint="Breakpoint.LgAndDown" Invert="true">
+			<MudCard Class="pa-5">
+				<MudText>LG and Down</MudText>
+			</MudCard>
+		</MudHidden>
+		<MudHidden Breakpoint="Breakpoint.MdAndDown" Invert="true">
+			<MudCard Class="pa-5">
+				<MudText>MD and Down</MudText>
+			</MudCard>
+		</MudHidden>
+		<MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+			<MudCard Class="pa-5">
+				<MudText>SM and Down</MudText>
+			</MudCard>
+		</MudHidden>
+	}
+</MudBreakpointProvider>
+
+<MudSlider @bind-Value="_amountOfRows" Min="1" Max="100"></MudSlider>
+<MudText>Rows: @_amountOfRows</MudText>
+
+@code {
+	private int _amountOfRows = 2;
+
+} 

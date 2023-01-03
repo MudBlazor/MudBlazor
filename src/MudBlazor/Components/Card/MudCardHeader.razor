@@ -1,11 +1,21 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div class="@Classname" style="@Style">
+<div @attributes="UserAttributes" class="@Classname" style="@Style">
     @if (CardHeaderAvatar != null)
-    {<div class="mud-card-header-avatar">@CardHeaderAvatar</div>}
+    {
+        <div class="mud-card-header-avatar">@CardHeaderAvatar</div>
+    }
     @if (CardHeaderContent != null)
-    {<div class="mud-card-header-content">@CardHeaderContent</div>}
+    {
+        <div class="mud-card-header-content">@CardHeaderContent</div>
+    }
     @if (CardHeaderActions != null)
-    {<div class="mud-card-header-actions">@CardHeaderActions</div>}
+    {
+        <div class="mud-card-header-actions">@CardHeaderActions</div>
+    }
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
 </div>

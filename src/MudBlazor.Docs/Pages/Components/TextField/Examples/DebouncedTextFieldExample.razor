@@ -1,42 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudTextField @bind-Value="@_normalText"
-                      Label="Normal"
-                      Variant="Variant.Outlined"
-                      Adornment="Adornment.End"
-                      AdornmentIcon="@Icons.Filled.Search"/>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudTextField @bind-Value="@_immediateText"
-                      Label="Immediate"
-                      Variant="Variant.Outlined"
-                      Adornment="Adornment.End"
-                      AdornmentIcon="@Icons.Filled.Search"
-                      Immediate="true" />
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudTextField @bind-Value="@_debouncedText"
-                      Label="Debounced"
-                      Variant="Variant.Outlined"
-                      Adornment="Adornment.End"
-                      AdornmentIcon="@Icons.Filled.Search"
-                      DebounceInterval="500"
-                      OnDebounceIntervalElapsed="HandleIntervalElapsed" />
-    </MudItem>
-</MudGrid>
-<div class="mt-3">
-    <MudText>Normal: @_normalText</MudText>
-    <MudText>Immediate: @_immediateText</MudText>
-    <MudText>Debounced: @_debouncedText</MudText>
-</div>
-
+<MudTextField @bind-Value="@_normalText" HelperText="@_normalText" Label="Normal" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search"/>
+<MudTextField Immediate="true" @bind-Value="@_immediateText" HelperText="@_immediateText" Label="Immediate" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
+<MudTextField DebounceInterval="500" OnDebounceIntervalElapsed="HandleIntervalElapsed" @bind-Value="@_debouncedText" HelperText="@_debouncedText" Label="Debounced" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
 
 @code {
-    string _normalText;
-    string _immediateText;
-    string _debouncedText;
+    string _normalText = "w";
+    string _immediateText = "t";
+    string _debouncedText = "f";
 
     void HandleIntervalElapsed(string debouncedText)
     {

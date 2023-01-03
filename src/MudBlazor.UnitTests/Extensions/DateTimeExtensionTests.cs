@@ -1,11 +1,7 @@
 ﻿// Copyright (c) 2021 - MudBlazor
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using MudBlazor.Extensions;
 using NUnit.Framework;

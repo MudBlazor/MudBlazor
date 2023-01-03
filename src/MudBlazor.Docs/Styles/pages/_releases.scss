@@ -1,0 +1,29 @@
+﻿.docs-github-release-body{
+  white-space: pre-line;
+  font-size: var(--mud-typography-body1-size);
+  font-family: var(--mud-typography-body1-family);
+  font-weight: var(--mud-typography-body1-weight);
+  line-height: var(--mud-typography-body1-lineheight);
+  letter-spacing: var(--mud-typography-body1-letterspacing);
+  text-transform: var(--mud-typography-body1-text-transform);
+  
+  a{
+    color:var(--mud-palette-primary);
+    line-height: normal;
+    font-weight: 500;
+    
+    &:hover{
+      cursor:pointer;
+      text-decoration: underline;
+    }
+  }
+  
+  h5{
+    margin-bottom: -12px;
+  }
+  
+  h6{
+    margin-top: -25px;
+    margin-bottom: -15px;
+  }
+}

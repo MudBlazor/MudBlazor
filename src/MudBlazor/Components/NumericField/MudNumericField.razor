@@ -1,0 +1,63 @@
+﻿@namespace MudBlazor
+@typeparam T
+@inherits MudDebouncedInput<T>
+
+@using System.Globalization;
+
+<CascadingValue Name="SubscribeToParentForm" Value="@SubscribeToParentForm" IsFixed="true">
+    <MudInputControl id="@_elementId"
+                     Label="@Label"
+                     Variant="@Variant"
+                     HelperText="@HelperText"
+                     HelperTextOnFocus="@HelperTextOnFocus"
+                     FullWidth="@FullWidth"
+                     Class="@Classname"
+                     Error="@HasErrors"
+                     ErrorText="@GetErrorText()"
+                     Disabled="@Disabled"
+                     Margin="@Margin"
+                     Required="@Required"
+                     CounterText="@GetCounterText()"
+                     ForId="@FieldId">
+        <InputContent>
+            <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
+                <MudInput T="string"
+                          @ref="@_elementReference"
+                          @attributes="@UserAttributes"
+                          InputType="@InputType.Text"
+                          Style="@Style"
+                          Variant="@Variant"
+                          TextUpdateSuppression="@TextUpdateSuppression"
+                          Value="@Text"
+                          ValueChanged="@OnInputValueChanged"
+                          Placeholder="@Placeholder"
+                          Disabled="@Disabled"
+                          DisableUnderLine="@DisableUnderLine"
+                          ReadOnly="@ReadOnly"
+                          Adornment="@Adornment"
+                          AdornmentText="@AdornmentText"
+                          AdornmentIcon="@AdornmentIcon"
+                          AdornmentColor="@AdornmentColor"
+                          IconSize="@IconSize"
+                          Error="@Error"
+                          Immediate="@(Immediate)"
+                          Margin="@Margin"
+                          MaxLength="@MaxLength"
+                          HideSpinButtons="@HideSpinButtons"
+                          min="@(_minHasValue ? FormatParam(_min) : null)"
+                          max="@(_maxHasValue ? FormatParam(_max) : null)"
+                          step="@(_stepHasValue ? FormatParam(_step) : null)"
+                          InputMode="@InputMode"
+                          Pattern="@((Pattern ?? "[0-9]").TrimEnd('*')+"*")"
+                          OnAdornmentClick="@OnAdornmentClick"
+                          OnBlur="@OnBlurred"
+                          OnKeyDown="@HandleKeydown"
+                          OnKeyUp="@HandleKeyUp"
+                          OnIncrement="@Increment"
+                          OnDecrement="@Decrement"
+                          OnMouseWheel="@OnMouseWheel"
+                          Clearable="@Clearable" />
+            </CascadingValue>
+        </InputContent>
+    </MudInputControl>
+</CascadingValue>

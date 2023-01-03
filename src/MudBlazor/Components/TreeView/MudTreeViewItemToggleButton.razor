@@ -1,25 +1,61 @@
-﻿@namespace MudBlazor
+﻿@using MudBlazor.Utilities 
+@namespace MudBlazor
 
 <div class="mud-treeview-item-arrow">
     @if (Visible)
     {
-        <MudIconButton OnClick="@ToggleAsync" Icon="@ExpandedIcon"
-                       Class="@(Expanded? "mud-treeview-item-arrow-expand mud-transform" : "mud-treeview-item-arrow-expand")"></MudIconButton>
+        <MudIconButton OnClick="@ToggleAsync" Icon="@(Loading ? LoadingIcon : ExpandedIcon)" Color="@(Loading ? LoadingIconColor : ExpandedIconColor)" Class="@Classname"></MudIconButton>
     }
 </div>
  
 @code {
-    [Parameter]
-    public bool Visible { get; set; }
+    protected string Classname =>
+        new CssBuilder()
+            .AddClass("mud-treeview-item-arrow-expand", !Loading)
+            .AddClass("mud-transform", Expanded && !Loading)
+            .AddClass("mud-treeview-item-arrow-load", Loading)
+            .Build();
 
-    [Parameter]
-    public bool Expanded { get; set; }
+    /// <summary>
+    /// If true, displays the button.
+    /// </summary>
+    [Parameter] [Category(CategoryTypes.TreeView.Behavior)] public bool Visible { get; set; }
 
-    [Parameter]
-    public EventCallback<bool> ExpandedChanged { get; set; }
+    /// <summary>
+    /// Determens when to flip the expanded icon.
+    /// </summary>
+    [Parameter] [Category(CategoryTypes.TreeView.Behavior)] public bool Expanded { get; set; }
 
-    [Parameter]
-    public string ExpandedIcon { get; set; } = Icons.Material.Filled.ChevronRight;
+    /// <summary>
+    /// If true, displays the loading icon.
+    /// </summary>
+    [Parameter] [Category(CategoryTypes.TreeView.Behavior)] public bool Loading { get; set; }
+
+    /// <summary>
+    /// Called whenever expanded changed.
+    /// </summary>
+    [Parameter] public EventCallback<bool> ExpandedChanged { get; set; }
+
+    /// <summary>
+    /// The loading icon.
+    /// </summary>
+    [Parameter] [Category(CategoryTypes.TreeView.Appearance)] public string LoadingIcon { get; set; } = Icons.Material.Filled.Loop;
+
+    /// <summary>
+    /// The color of the loading. It supports the theme colors.
+    /// </summary>
+    [Parameter] [Category(CategoryTypes.TreeView.Appearance)] public Color LoadingIconColor { get; set; } = Color.Default;
+
+    /// <summary>
+    /// The expand/collapse icon.
+    /// </summary>
+    [Parameter] [Category(CategoryTypes.TreeView.Appearance)] public string ExpandedIcon { get; set; } = Icons.Material.Filled.ChevronRight;
+
+    /// <summary>
+    /// The color of the expand/collapse. It supports the theme colors.
+    /// </summary>
+    [Parameter] [Category(CategoryTypes.TreeView.Appearance)] public Color ExpandedIconColor { get; set; } = Color.Default;
+
 
     private Task ToggleAsync()
     {

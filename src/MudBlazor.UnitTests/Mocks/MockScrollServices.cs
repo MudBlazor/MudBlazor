@@ -3,6 +3,16 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Mocks
 {
+    public class MockScrollListenerFactory : IScrollListenerFactory
+    {
+
+        public IScrollListener Create(string selector) =>
+            new MockScrollListener()
+            {
+                Selector = selector,
+            };
+    }
+
     /// <summary>
     /// Mock for scroll listener
     /// </summary>
@@ -15,6 +25,11 @@ namespace MudBlazor.UnitTests.Mocks
         public MockScrollListener()
         {
             OnScroll?.Invoke(this, new ScrollEventArgs());
+        }
+
+        public void Dispose()
+        {
+           
         }
     }
 
@@ -32,15 +47,19 @@ namespace MudBlazor.UnitTests.Mocks
 
         public ValueTask ScrollToAsync(string id, int left, int top, ScrollBehavior scrollBehavior) => ValueTask.CompletedTask;
 
+        public ValueTask ScrollIntoViewAsync(string selector, ScrollBehavior behavior) => ValueTask.CompletedTask;
+
         public Task ScrollToFragment(string id, ScrollBehavior behavior) => Task.CompletedTask;
 
         public ValueTask ScrollToFragmentAsync(string id, ScrollBehavior behavior) => ValueTask.CompletedTask;
 
-        public ValueTask ScrollToListItemAsync(string elementId, int increment, bool onEdges) => ValueTask.CompletedTask;
+        public ValueTask ScrollToListItemAsync(string elementId) => ValueTask.CompletedTask;
 
         public Task ScrollToTop(ScrollBehavior scrollBehavior = ScrollBehavior.Auto) => Task.CompletedTask;
-
+        
         public ValueTask ScrollToTopAsync(string id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) => ValueTask.CompletedTask;
+
+        public ValueTask ScrollToBottomAsync(string id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) => ValueTask.CompletedTask;
 
         public ValueTask ScrollToYearAsync(string elementId) => ValueTask.CompletedTask;
 

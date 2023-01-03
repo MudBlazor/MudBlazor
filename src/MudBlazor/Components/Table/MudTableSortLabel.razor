@@ -1,20 +1,23 @@
 ﻿@namespace MudBlazor
-@typeparam T;
+@typeparam T
 @inherits MudComponentBase
-@implements IDisposable;
+@implements IDisposable
 
 <span  @onclick="ToggleSortDirection" class="@Classname" style="@Style" @attributes="@UserAttributes">
     @if (!AppendIcon)
     {
         @ChildContent
     }
-    @if (_direction != SortDirection.None)
+    @if (Enabled)
     {
-        <MudIcon Icon="@SortIcon" Class="@GetSortIconClass()" />
-    }
-    else
-    {
-        <MudIcon Icon="@SortIcon" Class="mud-table-sort-label-icon"/>
+        @if (_direction != SortDirection.None)
+        {
+            <MudIcon Icon="@SortIcon" Class="@GetSortIconClass()" />
+        }
+        else
+        {
+            <MudIcon Icon="@SortIcon" Class="mud-table-sort-label-icon"/>
+        }
     }
     @if (AppendIcon)
     {

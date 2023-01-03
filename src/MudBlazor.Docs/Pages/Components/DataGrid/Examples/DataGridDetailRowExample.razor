@@ -1,0 +1,40 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudDataGrid Items="@Elements">
+    <Columns>
+        <HierarchyColumn T="Element" ButtonDisabledFunc="@(x => x.Sign == "He")" />
+        <Column T="Element" Field="Number" Title="Nr" />
+        <Column T="Element" Field="Sign" />
+        <Column T="Element" Field="Name" />
+        <Column T="Element" Field="Position" />
+        <Column T="Element" Field="Molar" Title="Molar mass" />
+    </Columns>
+    <ChildRowContent>
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">@context.Item.Name</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>This element is number @context.Item.Number</MudText>
+                <MudText>This element has a molar mass of @context.Item.Molar</MudText>
+            </MudCardContent>
+        </MudCard>
+    </ChildRowContent>
+    <PagerContent>
+        <MudDataGridPager T="Element" />
+    </PagerContent>
+</MudDataGrid>
+
+@code { 
+    private IEnumerable<Element> Elements = new List<Element>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+}

@@ -1,11 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTreeView CanActivate="true" Items="TreeItems" CanSelect="true" @bind-ActivatedValue="ActivatedValue" @bind-SelectedValues="SelectedValues">
-    <ItemTemplate>
-        <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems" Value="@context"
-                         Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
-    </ItemTemplate>
-</MudTreeView>
+<MudPaper Width="300px" Elevation="0">
+    <MudTreeView Items="TreeItems" MultiSelection="true" @bind-ActivatedValue="ActivatedValue" @bind-SelectedValues="SelectedValues">
+        <ItemTemplate>
+            <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems" Value="@context"
+                             Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
+        </ItemTemplate>
+    </MudTreeView>
+</MudPaper>
 
 <div style="width: 100%">
     <MudText Typo="@Typo.subtitle1">Activated item: @(ActivatedValue?.Title)</MudText>
@@ -41,20 +43,20 @@
 
     protected override void OnInitialized()
     {
-        TreeItems.Add(new TreeItemData("All Mail", Icons.Filled.Email));
-        TreeItems.Add(new TreeItemData("Trash", Icons.Filled.Delete));
-        TreeItems.Add(new TreeItemData("Categories", Icons.Filled.Label)
+        TreeItems.Add(new TreeItemData("All Mail", Icons.Material.Filled.Email));
+        TreeItems.Add(new TreeItemData("Trash", Icons.Material.Filled.Delete));
+        TreeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label)
         {
             IsExpanded = true,
             TreeItems = new HashSet<TreeItemData>()
             {
-                new TreeItemData("Social", Icons.Filled.Group, 90),
-                new TreeItemData("Updates", Icons.Filled.Info, 2294),
-                new TreeItemData("Forums", Icons.Filled.QuestionAnswer, 3566),
-                new TreeItemData("Promotions", Icons.Filled.LocalOffer, 733)
+                new TreeItemData("Social", Icons.Material.Filled.Group, 90),
+                new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
+                new TreeItemData("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
+                new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733)
             }
         });
-        TreeItems.Add(new TreeItemData("History", Icons.Filled.Label));
+        TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label));
     }
 
     public int GetSelectedSum()

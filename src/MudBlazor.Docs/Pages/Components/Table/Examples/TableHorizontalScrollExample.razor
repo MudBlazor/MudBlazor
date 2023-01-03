@@ -1,0 +1,84 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTable Items="_items" Height="350px" Breakpoint="Breakpoint.Sm" HorizontalScrollbar="true">
+    <HeaderContent>
+        <MudTh>Column1</MudTh>
+        <MudTh>Column2</MudTh>
+        <MudTh>Column3</MudTh>
+        <MudTh>Column4</MudTh>
+        <MudTh>Column5</MudTh>
+        <MudTh>Column6</MudTh>
+        <MudTh>Column7</MudTh>
+        <MudTh>Column8</MudTh>
+        <MudTh>Column9</MudTh>
+        <MudTh>Column10</MudTh>
+        <MudTh>Column11</MudTh>
+        <MudTh>Column12</MudTh>
+        <MudTh>Column13</MudTh>
+        <MudTh>Column14</MudTh>
+        <MudTh>Column15</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Column1">@context.Column1</MudTd>
+        <MudTd DataLabel="Column2">@context.Column2</MudTd>
+        <MudTd DataLabel="Column3">@context.Column3</MudTd>
+        <MudTd DataLabel="Column4">@context.Column4</MudTd>
+        <MudTd DataLabel="Column5">@context.Column5</MudTd>
+        <MudTd DataLabel="Column6">@context.Column6</MudTd>
+        <MudTd DataLabel="Column7">@context.Column7</MudTd>
+        <MudTd DataLabel="Column8">@context.Column8</MudTd>
+        <MudTd DataLabel="Column9">@context.Column9</MudTd>
+        <MudTd DataLabel="Column10">@context.Column10</MudTd>
+        <MudTd DataLabel="Column11">@context.Column11</MudTd>
+        <MudTd DataLabel="Column12">@context.Column12</MudTd>
+        <MudTd DataLabel="Column13">@context.Column13</MudTd>
+        <MudTd DataLabel="Column14">@context.Column14</MudTd>
+        <MudTd DataLabel="Column15">@context.Column15</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public class TestItem{
+        public string Column1 {get;set;}
+        public string Column2 {get;set;}
+        public string Column3 {get;set;}
+        public string Column4 {get;set;}
+        public string Column5 {get;set;}
+        public string Column6 {get;set;}
+        public string Column7 {get;set;}
+        public string Column8 {get;set;}
+        public string Column9 {get;set;}
+        public string Column10 {get;set;}
+        public string Column11 {get;set;}
+        public string Column12 {get;set;}
+        public string Column13 {get;set;}
+        public string Column14 {get;set;}
+        public string Column15 {get;set;}
+    }
+    
+    
+    private List<TestItem> _items;
+
+    protected override void OnInitialized() {
+        _items = new List<TestItem>();
+        for (int i = 0; i < 20; i++) {
+            _items.Add(new TestItem {
+                Column1 = $"Value_{i}",
+                Column2 = $"Value_{i}",
+                Column3 = $"Value_{i}",
+                Column4 = $"Value_{i}",
+                Column5 = $"Value_{i}",
+                Column6 = $"Value_{i}",
+                Column7 = $"Value_{i}",
+                Column8 = $"Value_{i}",
+                Column9 = $"Value_{i}",
+                Column10 = $"Value_{i}",
+                Column11 = $"Value_{i}",
+                Column12 = $"Value_{i}",
+                Column13 = $"Value_{i}",
+                Column14 = $"Value_{i}",
+                Column15 = $"Value_{i}"
+            });
+        }
+    }
+}

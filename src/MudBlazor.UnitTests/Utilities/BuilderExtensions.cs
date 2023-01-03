@@ -30,7 +30,6 @@ namespace UtilityTests
         /// Used to convert a string.IsNullOrEmpty into a null when it is empty.
         /// Usage: attribute=null causes the attribute to be excluded when rendered.
         /// </summary>
-        /// <param name="builder"></param>
         /// <returns>string</returns>
         public static string NullIfEmpty(this string s) =>
             string.IsNullOrEmpty(s) ? null : s;

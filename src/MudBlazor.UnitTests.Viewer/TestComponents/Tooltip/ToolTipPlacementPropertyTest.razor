@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudRTLProvider RightToLeft="@RightToLeft">
+	<MudTooltip Placement="@Placement">
+		<ChildContent>
+			<MudButton>My Buttion</MudButton>
+		</ChildContent>
+		<TooltipContent>
+			<div id="my-tooltip-content">
+				<p>Some Text</p>
+			</div>
+		</TooltipContent>
+	</MudTooltip>
+</MudRTLProvider>
+
+
+@code {
+	[Parameter] public Placement Placement { get; set; } = Placement.Bottom;
+	[Parameter] public bool RightToLeft { get; set; } = false;
+
+}

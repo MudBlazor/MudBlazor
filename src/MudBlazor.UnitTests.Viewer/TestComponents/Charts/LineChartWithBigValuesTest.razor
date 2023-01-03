@@ -1,0 +1,16 @@
+﻿<div>
+    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
+</div>
+
+@code {
+    public static string __description__ = "Number of horizontal tick lines should be limited to sane values.";
+
+    private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
+
+    public List<ChartSeries> Series = new List<ChartSeries>()
+    {
+        new ChartSeries() { Name = "Series 1", Data = new double[] { 112368124, 114457907, 108509186, 69, 62, 62, 55, 65, 70 } }
+    };
+    public string[] XAxisLabels = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+    
+}

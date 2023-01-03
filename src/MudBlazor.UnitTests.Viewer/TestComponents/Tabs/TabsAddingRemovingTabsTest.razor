@@ -3,10 +3,10 @@
 <MudButton OnClick="AddTab">Add Tab</MudButton>
 <MudButton OnClick="RemoveLast">Remove Last</MudButton>
 
-<MudTabs Elevation="1">
+<MudTabs Elevation="1" @ref="Tabs">
     @foreach (var tab in _tabs)
     {
-        <MudTabPanel Text="@tab">
+        <MudTabPanel @key="tab" Text="@tab">
             <MudText>@tab</MudText>
         </MudTabPanel>
     }    
@@ -19,14 +19,20 @@
     private List<string> _tabs = new List<string>();
     private int i = 0;
 
-    private void AddTab()
+    public MudTabs Tabs { get; set; }
+
+    private async Task AddTab()
     {
         _tabs.Add($"Tab {i++}");
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void RemoveLast()
+    private async Task RemoveLast()
     {
         if(_tabs.Any())
-            _tabs.RemoveAt(_tabs.Count-1);
+        {
+            _tabs.RemoveAt(_tabs.Count - 1);
+            await InvokeAsync(StateHasChanged);
+        }
     }
 }

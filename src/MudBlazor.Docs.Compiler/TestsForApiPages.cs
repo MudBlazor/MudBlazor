@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Docs.Compiler
@@ -48,6 +47,8 @@ namespace MudBlazor.Docs.Compiler
                         continue;
                     if (type.Namespace.Contains("InternalComponents"))
                         continue;
+                    if (IsObsolete(type))
+                        continue;
                     cb.AddLine("[Test]");
                     cb.AddLine($"public void {SafeTypeName(type, removeT: true)}_API_Test()");
                     cb.AddLine("{");
@@ -74,6 +75,13 @@ namespace MudBlazor.Docs.Compiler
             }
 
             return success;
+        }
+
+        public static bool IsObsolete(Type type)
+        {
+            var attributes = (ObsoleteAttribute[])
+                type.GetCustomAttributes(typeof(ObsoleteAttribute), false);
+            return (attributes != null && attributes.Length > 0);
         }
 
         private static string SafeTypeName(Type type, bool removeT = false)

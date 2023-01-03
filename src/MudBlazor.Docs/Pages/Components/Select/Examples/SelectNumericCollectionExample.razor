@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSelect T="double" Label="Price (Datatype: double)" Clearable="true" Required="true">
+    @foreach (var price in prices)
+    {
+    <MudSelectItem Value="@price" />
+    }
+</MudSelect>
+
+<MudSelect T="double?" Label="Price (Datatype: double?)" Clearable="true" Required="true">
+    @foreach (double? price in prices)
+    {
+    <MudSelectItem Value="@price" />
+    }
+</MudSelect>
+
+@code
+{
+    private double[] prices = { 4.50, 4.99, 3.60, 21.99 };
+}

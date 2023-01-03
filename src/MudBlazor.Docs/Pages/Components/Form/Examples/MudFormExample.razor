@@ -2,51 +2,49 @@
 @using System.ComponentModel.DataAnnotations
 @namespace MudBlazor.Docs.Examples
 
-
-<div style="max-width: 400px;">
-    <MudCard>
-        <MudCardContent>
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
             <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!"/>
-                <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
-                              Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})"/>
-                <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="pwField1"
-                              InputType="InputType.Password"
-                              Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
-                              RequiredError="Password is required!"/>
-                <MudTextField T="string"
-                              Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
-                              Validation="@(new Func<string, string>(PasswordMatch))"/>
-                <div class="d-flex">
-                    <MudRadioGroup T="string" Required="true" RequiredError="Account type is required!">
-                        <MudRadio Option="@("Personal")">Personal</MudRadio>
-                        <MudRadio Option="@("Professional")">Professional</MudRadio>
-                    </MudRadioGroup>
-                </div>
-                <MudCheckBox T="bool" Required="true" RequiredError="You must agree" Class="ml-n2"
-                             Label="I agree that MudBlazor is awesome!"/>
-            </MudForm>
-        </MudCardContent>
-        <MudCardActions>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Register</MudButton>
-        </MudCardActions>
-    </MudCard>
-    
-    <MudPaper Class="pa-4 justify-center my-4 mud-text-align-center">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(()=>form.Validate())">Validate</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
-        <MudButton Variant="Variant.Filled" OnClick="@(()=>form.ResetValidation())">Reset Validation</MudButton>
-    </MudPaper>
+                    <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!"/>
+                    <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
+                                  Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})"/>
+                    <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="pwField1"
+                                  InputType="InputType.Password"
+                                  Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
+                                  RequiredError="Password is required!"/>
+                    <MudTextField T="string"
+                                  Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
+                                  Validation="@(new Func<string, string>(PasswordMatch))"/>
+                    <div class="d-flex">
+                        <MudRadioGroup T="string" Required="true" RequiredError="Account type is required!">
+                            <MudRadio Option="@("Personal")">Personal</MudRadio>
+                            <MudRadio Option="@("Professional")">Professional</MudRadio>
+                        </MudRadioGroup>
+                    </div>
+                    <div class="d-flex align-center justify-space-between">
+                        <MudCheckBox T="bool" Required="true" RequiredError="You must agree" Label="I agree!"  />
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Register</MudButton>
+                    </div>
+            </MudForm>   
+        </MudPaper>
+        <MudPaper Class="pa-4 mt-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(()=>form.Validate())">Validate</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
+            <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(()=>form.ResetValidation())">Reset Validation</MudButton>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="5">
+        <MudPaper Class="pa-4 mud-height-full">
+            <MudText Typo="Typo.subtitle2">@($"Errors ({errors.Length})")</MudText>
+                @foreach (var error in errors)
+                {
+                    <MudText Color="@Color.Error">@error</MudText>
+                }
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
-    <MudExpansionPanels>
-        <MudExpansionPanel Text="@($"Show Errors ({errors.Length})")">
-            @foreach (var error in errors)
-            {
-                <MudText Color="@Color.Error">@error</MudText>
-            }
-        </MudExpansionPanel>
-    </MudExpansionPanels>
-</div>
 
 @code {
     bool success;

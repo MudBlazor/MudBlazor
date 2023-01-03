@@ -23,6 +23,9 @@
     /// </summary>
     private async Task<TableData<int>> ServerReload(TableState state)
     {
+        //if (state.SortDirection != SortDirection.None && string.IsNullOrWhiteSpace(state.SortLabel))
+        //    throw new ArgumentException("SortDirection is set but SortLabel is not");
+
         var p = state.Page*3;
         IEnumerable<int> data = new List<int>() { 1 + p, 2 + p, 3 + p };
         totalItems = 99;

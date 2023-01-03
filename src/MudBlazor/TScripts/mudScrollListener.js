@@ -1,8 +1,14 @@
-﻿//Functions related to scroll events
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+//Functions related to scroll events
 class MudScrollListener {
 
     constructor() {
         this.throttleScrollHandlerId = -1;
+        //needed as variable to remove the event listeners
+        this.handlerRef = null;
     }
 
     // subscribe to throttled scroll event
@@ -12,10 +18,11 @@ class MudScrollListener {
             ? document.querySelector(selector)
             : document;
 
+        this.handlerRef = this.throttleScrollHandler.bind(this, dotnetReference);
         // add the event listener
         element.addEventListener(
             'scroll',
-            this.throttleScrollHandler.bind(this, dotnetReference),
+            this.handlerRef,
             false
         );
     }
@@ -50,7 +57,6 @@ class MudScrollListener {
             //data to pass
             let firstChild = element.firstElementChild;
             let firstChildBoundingClientRect = firstChild.getBoundingClientRect();
-
             //invoke C# method
             dotnetReference.invokeMethodAsync('RaiseOnScroll', {
                 firstChildBoundingClientRect,
@@ -69,9 +75,9 @@ class MudScrollListener {
     cancelListener(selector) {
         let element = selector
             ? document.querySelector(selector)
-            : document.documentElement;
+            : document;
 
-        element.removeEventListener('scroll', this.throttleScrollHandler);
+        element.removeEventListener('scroll', this.handlerRef);
     }
 };
 window.mudScrollListener = new MudScrollListener();

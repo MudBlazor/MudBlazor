@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<MudElement HtmlTag="div" Class="@Classname" Style="@Style" Tag="@Tag" UserAttributes="@UserAttributes">
+    @ChildContent
+</MudElement>
+
+@{
+    if(!UserAttributes.ContainsKey("role"))
+       UserAttributes.Add("role", "group");
+}

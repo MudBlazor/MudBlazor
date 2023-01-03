@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="250px" Class="py-3" Elevation="0">
+    <MudNavMenu Dense="true" Color="Color.Info">
+        <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+            <MudNavLink Href="/components/navmenu" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Storage">Servers</MudNavLink>
+            <MudNavLink Href="/billing" Disabled="true">Billing</MudNavLink>
+            <MudNavGroup Title="Settings" Expanded="true">
+                <MudNavLink Href="/users">Users</MudNavLink>
+                <MudNavLink Href="/security">Security</MudNavLink>
+            </MudNavGroup>
+            <MudNavLink Href="/about">About</MudNavLink>
+    </MudNavMenu>
+</MudPaper>
+<MudPaper Width="250px" Class="py-3" Elevation="0">
+    <MudNavMenu Dense="true" Rounded="true" Margin="Margin.Dense" Color="Color.Secondary" Class="pa-2">
+        <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+        <MudNavLink Href="/components/navmenu" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Storage">Servers</MudNavLink>
+        <MudNavLink Href="/billing" Disabled="true">Billing</MudNavLink>
+        <MudNavGroup Title="Settings" Expanded="true">
+            <MudNavLink Href="/users">Users</MudNavLink>
+            <MudNavLink Href="/security">Security</MudNavLink>
+        </MudNavGroup>
+        <MudNavLink Href="/about">About</MudNavLink>
+    </MudNavMenu>
+</MudPaper>

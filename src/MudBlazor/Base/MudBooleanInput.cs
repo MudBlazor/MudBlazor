@@ -11,22 +11,34 @@ namespace MudBlazor
         /// <summary>
         /// If true, the input will be disabled.
         /// </summary>
-        [Parameter] public bool Disabled { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, the input will be read only.
+        /// If true, the input will be read-only.
         /// </summary>
-        [Parameter] public bool ReadOnly { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool ReadOnly { get; set; }
 
         /// <summary>
         /// The state of the component
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
         public T Checked
         {
             get => _value;
             set => _value = value;
         }
+
+        /// <summary>
+        /// If true will prevent the click from bubbling up the event tree.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool StopClickPropagation { get; set; } = true;
 
         /// <summary>
         /// Fired when Checked changes.
@@ -35,7 +47,7 @@ namespace MudBlazor
 
         protected bool? BoolValue => Converter.Set(Checked);
 
-        protected Task OnChange(ChangeEventArgs args)
+        protected virtual Task OnChange(ChangeEventArgs args)
         {
             Touched = true;
             return SetBoolValueAsync((bool?)args.Value);
@@ -55,6 +67,7 @@ namespace MudBlazor
                 Checked = value;
                 await CheckedChanged.InvokeAsync(value);
                 BeginValidate();
+                FieldChanged(Checked);
             }
         }
 

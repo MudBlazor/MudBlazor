@@ -1,0 +1,53 @@
+﻿<MudPopoverProvider></MudPopoverProvider>
+
+<MudGrid>
+    <MudItem xs="12" md="12">
+        <MudSelect T="string" Label="US States" HelperText="Pick your favorite states" @bind-Value="value">
+            @foreach (var state in states)
+            {
+                <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.body2">MudSelect.Value: "@value"</MudText>
+    </MudItem>
+</MudGrid>
+<br>   
+<MudButton Class="reload" OnClick="ChangeStates" Variant="Variant.Filled">Load new states</MudButton>
+
+@code {
+    public static string __description__ = "After clicking 'load new states' selecting items should result in the correct values being selected.";
+    private string value { get; set; } = "Nothing selected";
+    
+
+    List<string> states2 = new List<string>()
+    {
+        "Alabama", "Alaska", "American Samoa"
+    };
+
+    List<string> states = new List<string>()
+    {
+        "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    };
+
+    void ChangeStates()
+    {
+        value = "Nothing selected";
+        states = states2;
+    }
+
+}

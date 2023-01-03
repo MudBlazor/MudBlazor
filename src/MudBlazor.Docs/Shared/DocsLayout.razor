@@ -1,0 +1,80 @@
+﻿@inherits LayoutComponentBase
+@layout MainLayout
+
+<MudLayout Class="mudblazor-docs">
+    <MudAppBar Class="docs-appbar-filter" Color="Color.Transparent" Elevation="0"></MudAppBar>
+    <MudAppBar Class="docs-appbar" Elevation="0">
+        <Appbar DrawerToggleCallback="ToggleDrawer" DisplaySearchBar="true" />
+    </MudAppBar>
+    <MudDrawer Open="@_drawerOpen" OpenChanged="OnDrawerOpenChanged" ClipMode="DrawerClipMode.Docked" Elevation="0" Breakpoint="Breakpoint.Lg">
+        <MudHidden Breakpoint="Breakpoint.MdAndUp">
+            <MudToolBar Dense="true" DisableGutters="true" Class="docs-gray-bg">
+                @if (_topMenuOpen == false)
+                {
+                    <MudIconButton Icon="@Icons.Material.Rounded.ArrowBack" Color="Color.Inherit" OnClick="@((e) => OpenTopMenu())"/>
+                }
+                else
+                {
+                    <MudIconButton Icon="@Icons.Material.Rounded.Close" Color="Color.Inherit" OnClick="ToggleDrawer"/>
+                }
+                <MudSpacer/>
+                <AppbarButtons/>
+            </MudToolBar>
+    
+            @if (_topMenuOpen == true)
+            {
+                <MudNavMenu Color="Color.Primary" Margin="Margin.Dense" Rounded="true" Class="pa-2">
+                    <MudNavLink Href="/docs/overview">Docs</MudNavLink>
+                    <MudNavLink Href="/getting-started/installation">Getting Started</MudNavLink>
+                    <MudNavLink Href="/mud/introduction" Match="NavLinkMatch.All">Discover More</MudNavLink>
+                    <MudNavGroup Title="Products" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+                        <MudNavLink Href="https://mudblazor.com/">MudBlazor</MudNavLink>
+                        <MudNavLink Href="https://try.mudblazor.com/">TryMudBlazor</MudNavLink>
+                        <MudNavLink Href="https://github.com/MudBlazor/ThemeManager">ThemeManager</MudNavLink>
+                        <MudNavLink Href="https://github.com/MudBlazor/Templates">Templates</MudNavLink>
+                        <MudListSubheader Class="mt-4 pl-8 pb-2"><b>Coming soon</b></MudListSubheader>
+                        <MudNavLink Disabled="true">MudStore</MudNavLink>
+                        <MudNavLink Disabled="true">MudAcademy</MudNavLink>
+                        <MudNavLink Disabled="true">MudExtensions</MudNavLink>
+                    </MudNavGroup>
+                </MudNavMenu>
+            }
+        </MudHidden>
+         <MudNavMenu Color="Color.Primary" Rounded="true" Dense="true" Margin="Margin.Dense" Class="pa-2 overflow-auto mb-3">
+            @if (!_topMenuOpen && LayoutService.GetDocsBasePage(NavigationManager.Uri) == DocsBasePage.Docs)
+            {
+                <NavMenu @ref="@_navMenuRef"/>
+            }
+            else if (!_topMenuOpen && LayoutService.GetDocsBasePage(NavigationManager.Uri) == DocsBasePage.GettingStarted)
+            {
+                <MudText Typo="Typo.subtitle1" Class="mt-1 mb-2 ml-2 d-flex d-md-none"><b>Getting Started</b></MudText>
+                <MudNavLink Href="/getting-started/installation">Installation</MudNavLink>
+                <MudNavLink Href="/getting-started/layouts">Layouts</MudNavLink>
+                <MudNavLink Href="/getting-started/usage">Usage</MudNavLink>
+                <MudNavLink Href="/getting-started/wireframes">Wireframes</MudNavLink>
+            }
+            else if (!_topMenuOpen && LayoutService.GetDocsBasePage(NavigationManager.Uri) == DocsBasePage.DiscoverMore)
+            {
+                <MudText Typo="Typo.subtitle1" Class="mt-1 mb-2 ml-2 d-flex d-md-none"><b>Discover More</b></MudText>
+                <MudNavLink Href="/mud/introduction" Class="docs-single-link">What is MudBlazor?</MudNavLink>
+                <MudNavGroup Title="Community" Expanded="true" HideExpandIcon="true">
+                    <MudNavLink Href="/mud/community/getting-help">Getting Help</MudNavLink>
+                    <MudNavLink Href="/mud/community/reporting-bugs">Reporting Bugs</MudNavLink>
+                    <MudNavLink Href="/mud/community/contribution">Contribution</MudNavLink>
+                </MudNavGroup>
+                <MudNavGroup Title="Project" Expanded="true" HideExpandIcon="true">
+                    <MudNavLink Href="/mud/announcements">Announcements</MudNavLink>
+                    <MudNavLink Href="/mud/project/how-it-started">How it started</MudNavLink>
+                    <MudNavLink Href="/mud/project/releases">Releases</MudNavLink>
+                    <MudNavLink Href="/mud/project/roadmap">Roadmap</MudNavLink>
+                    <MudNavLink Href="/mud/project/sponsor">Sponsors & Backers</MudNavLink>
+                    <MudNavLink Href="/mud/project/team">Team & Contributors</MudNavLink>
+                </MudNavGroup>
+            }
+        </MudNavMenu>
+    </MudDrawer>
+    @Body
+    <MudScrollToTop TopOffset="400" Style="z-index:2000;">
+        <MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary"/>
+    </MudScrollToTop>
+</MudLayout>

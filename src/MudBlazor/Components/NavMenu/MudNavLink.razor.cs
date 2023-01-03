@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -25,7 +26,7 @@ namespace MudBlazor
           .AddClass($"mud-nav-link-icon-default", IconColor == Color.Default)
           .Build();
 
-        private Dictionary<string, object> Attributes
+        protected Dictionary<string, object> Attributes
         {
             get => Disabled ? null : new Dictionary<string, object>()
             {
@@ -38,26 +39,40 @@ namespace MudBlazor
         /// <summary>
         /// Icon to use if set.
         /// </summary>
-        [Parameter] public string Icon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Behavior)]
+        public string Icon { get; set; }
 
         /// <summary>
         /// The color of the icon. It supports the theme colors, default value uses the themes drawer icon color.
         /// </summary>
-        [Parameter] public Color IconColor { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Appearance)]
+        public Color IconColor { get; set; } = Color.Default;
 
-        [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Behavior)]
+        public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
 
-        [Parameter] public string Target { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.ClickAction)]
+        public string Target { get; set; }
+
+        /// <summary>
+        /// User class names when active, separated by space.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ComponentBase.Common)]
+        public string ActiveClass { get; set; } = "active";
 
         [CascadingParameter] INavigationEventReceiver NavigationEventReceiver { get; set; }
 
-        private Task HandleNavigation()
+        protected Task HandleNavigation()
         {
             if (!Disabled && NavigationEventReceiver != null)
             {
                 return NavigationEventReceiver.OnNavigation();
             }
-
             return Task.CompletedTask;
         }
     }

@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable Items="@Elements" FixedHeader="@fixed_header" Height="@(fixed_header?"400px":"")">
+<MudTable Items="@Elements" FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ?"400px":"")">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -18,19 +18,29 @@
         <MudTd DataLabel="Position">@context.Position</MudTd>
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
+    <FooterContent>
+        <MudTd>Nr</MudTd>
+        <MudTd>Sign</MudTd>
+        <MudTd>Name</MudTd>
+        <MudTd>Position</MudTd>
+        <MudTd>Molar mass</MudTd>
+    </FooterContent>
     <PagerContent>
         <MudTablePager PageSizeOptions="new int[]{50, 100}" />
     </PagerContent>
 </MudTable>
+
 <MudSwitch @bind-Checked="@fixed_header">Fixed Header</MudSwitch>
+<MudSwitch @bind-Checked="@fixed_footer">Fixed Footer</MudSwitch>
 
 @code {
     bool fixed_header = true;
+    bool fixed_footer = false;
 
     private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()
     {
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-    } 
+    }
 }

@@ -1,0 +1,31 @@
+﻿<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="string" Label="Coffee" Strict="true" AnchorOrigin="Origin.BottomCenter">
+            <MudSelectItem Value="@("Cappuccino")" />
+            <MudSelectItem Value="@("Cafe Latte")" />
+            <MudSelectItem Value="@("Espresso")" />
+            <MudSelectItem Value="@("Irish Coffee")" />
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="double" Label="Price" Strict="true" Variant="Variant.Outlined" Format="F2" AnchorOrigin="Origin.BottomCenter">
+            <MudSelectItem T="double" Value="4.50"/>
+            <MudSelectItem T="double" Value="4.99"/>
+            <MudSelectItem T="double" Value="3.60"/>
+            <MudSelectItem T="double" Value="21.99"/>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect T="string" Label="Pies" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+            <MudSelectItem Value="@("Apple Pie")" />
+            <MudSelectItem Value="@("Blackberry Pie")" />
+            <MudSelectItem Value="@("Rhubarb Pie")" />
+            <MudSelectItem Value="@("Lemon Pie")" />
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public static string __description__ = "The first two selects are Strict and should not crash in WASM on navigating the list with arrows.";
+
+}

@@ -348,13 +348,14 @@ $colors: (
         color: $color_value;
       }
     }
-    @else if $name != "shades" {
-      .#{$name}.#{$color_type} {
-        background-color: $color_value;
-      }
-      .#{$name}-text.text-#{$color_type} {
-        color: $color_value;
-      }
+    @else if $name != "base" {
+        .#{$name}.#{$color_type} {
+            background-color: $color_value;
+        }
+
+        .#{$name}-text.text-#{$color_type} {
+            color: $color_value;
+        }
     }
   }
 }

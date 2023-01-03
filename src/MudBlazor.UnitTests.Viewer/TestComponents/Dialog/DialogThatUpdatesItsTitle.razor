@@ -1,0 +1,25 @@
+﻿<MudDialog>
+    <TitleContent>
+     Title: @textTest
+    </TitleContent>
+    <DialogContent>
+      Body: @textTest
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    string textTest;
+    void Submit(){
+        textTest = "Test123";
+        MudDialog.ForceRender();
+    }
+    void Cancel(){
+        
+    }
+}

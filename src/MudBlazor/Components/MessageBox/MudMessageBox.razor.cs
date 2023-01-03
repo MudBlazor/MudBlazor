@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -17,24 +14,35 @@ namespace MudBlazor
         /// The message box title. If null or empty, title will be hidden
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public string Title { get; set; }
 
         /// <summary>
         /// Define the message box title as a renderfragment (overrides Title)
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public RenderFragment TitleContent { get; set; }
 
         /// <summary>
-        /// The message box title. If null or empty, title will be hidden
+        /// The message box message as string.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public string Message { get; set; }
+
+        /// <summary>
+        /// The message box message as markup string.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
+        public MarkupString MarkupMessage { get; set; }
 
         /// <summary>
         /// Define the message box body as a renderfragment (overrides Message)
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public RenderFragment MessageContent { get; set; }
 
 
@@ -42,6 +50,7 @@ namespace MudBlazor
         /// Text of the cancel button. Leave null to hide the button.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public string CancelText { get; set; }
 
         /// <summary>
@@ -49,12 +58,14 @@ namespace MudBlazor
         /// Must be a MudButton
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public RenderFragment CancelButton { get; set; }
 
         /// <summary>
         /// Text of the no button. Leave null to hide the button.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public string NoText { get; set; }
 
         /// <summary>
@@ -62,12 +73,14 @@ namespace MudBlazor
         /// Must be a MudButton
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public RenderFragment NoButton { get; set; }
 
         /// <summary>
         /// Text of the yes/OK button. Leave null to hide the button.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public string YesText { get; set; } = "OK";
 
         /// <summary>
@@ -75,6 +88,7 @@ namespace MudBlazor
         /// Must be a MudButton
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public RenderFragment YesButton { get; set; }
 
         /// <summary>
@@ -99,6 +113,7 @@ namespace MudBlazor
         /// Bind this two-way to show and close an inlined message box. Has no effect on opened msg boxes
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
         public bool IsVisible
         {
             get => _isVisible;
@@ -139,6 +154,7 @@ namespace MudBlazor
                 [nameof(Title)] = Title,
                 [nameof(TitleContent)] = TitleContent,
                 [nameof(Message)] = Message,
+                [nameof(MarkupMessage)] = MarkupMessage,
                 [nameof(MessageContent)] = MessageContent,
                 [nameof(CancelText)] = CancelText,
                 [nameof(CancelButton)] = CancelButton,
@@ -147,11 +163,11 @@ namespace MudBlazor
                 [nameof(YesText)] = YesText,
                 [nameof(YesButton)] = YesButton,
             };
-            _reference = DialogService.Show<MudMessageBox>(parameters: parameters, options: options, title: Title);
+            _reference = await DialogService.ShowAsync<MudMessageBox>(parameters: parameters, options: options, title: Title);
             var result = await _reference.Result;
-            if (result.Cancelled || !(result.Data is bool))
+            if (result.Canceled || result.Data is not bool data)
                 return null;
-            return (bool)result.Data;
+            return data;
         }
 
         public void Close()
@@ -183,7 +199,14 @@ namespace MudBlazor
         private void OnNoClicked() => DialogInstance.Close(DialogResult.Ok(false));
 
         private void OnCancelClicked() => DialogInstance.Close(DialogResult.Cancel());
+
+        private void HandleKeyDown(KeyboardEventArgs args)
+        {
+            if (args.Key == "Escape")
+            {
+                OnCancelClicked();
+            }
+        }
+
     }
-
-
 }

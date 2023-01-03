@@ -7,12 +7,21 @@
     &.mud-link-underline-hover {
         text-decoration: none;
 
-        &:hover {
+        &:hover, &:focus-visible {
             text-decoration: underline;
         }
     }
 
     &.mud-link-underline-always {
         text-decoration: underline;
+    }
+
+    &.mud-link-disabled {
+        cursor: default;
+        color: var(--mud-palette-action-disabled) !important;
+
+        &:not(.mud-link-underline-always) {
+            text-decoration: none;
+        }
     }
 }

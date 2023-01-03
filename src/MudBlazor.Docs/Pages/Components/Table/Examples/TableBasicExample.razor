@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm">
+<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -21,13 +21,16 @@
 </MudTable>
 
 <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
+<MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch>
 
-@code {
+@code { 
     private bool _hidePosition;
+    private bool _loading;
     private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()
     {
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
+
 }

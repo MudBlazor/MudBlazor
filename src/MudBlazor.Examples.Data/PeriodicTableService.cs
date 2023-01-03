@@ -10,9 +10,9 @@ namespace MudBlazor.Examples.Data
 {
     public class PeriodicTableService : IPeriodicTableService
     {
-        public async Task<IEnumerable<Element>> GetElements()
+        public Task<IEnumerable<Element>> GetElements()
         {
-            return await GetElements(string.Empty);
+            return GetElements(string.Empty);
         }
 
         public async Task<IEnumerable<Element>> GetElements(string search = "")

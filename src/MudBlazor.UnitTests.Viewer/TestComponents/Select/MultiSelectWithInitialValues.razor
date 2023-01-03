@@ -1,0 +1,38 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudSelect Label="Select Item" 
+    MultiSelection="true" 
+    T="@TestItem" 
+    SelectedValues="@SelectedItems" 
+    ToStringFunc="@ToString">
+
+    @foreach (TestItem item in AllItems)
+    {
+        <MudSelectItem Value="@item" />
+    }
+</MudSelect>
+
+@code {
+
+    private List<TestItem> AllItems = new();    
+    private HashSet<TestItem> SelectedItems = new();
+    protected override async Task OnInitializedAsync()
+    {
+        AllItems.Add(new TestItem { A = "FirstA" });
+        AllItems.Add(new TestItem { A = "SecondA" });
+        AllItems.Add(new TestItem { A = "ThirdA" });
+        
+        SelectedItems.Add(AllItems[0]);
+        SelectedItems.Add(AllItems[1]);
+        await base.OnInitializedAsync();
+    }
+
+    private string ToString(TestItem x)
+        => x is null ? string.Empty : $"{x.A}";
+
+    private class TestItem
+    {
+        public string A { get; set; }        
+    }
+}

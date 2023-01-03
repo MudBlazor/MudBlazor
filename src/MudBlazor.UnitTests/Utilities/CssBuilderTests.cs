@@ -34,7 +34,7 @@ namespace UtilityTests
         }
 
         [Test]
-        public void ShouldBulidConditionalCssClasses()
+        public void ShouldBuildConditionalCssClasses()
         {
             //arrange
             var hasTwo = false;
@@ -52,7 +52,7 @@ namespace UtilityTests
             classToRender.Should().Be("item-one item-three item-four");
         }
         [Test]
-        public void ShouldBulidConditionalCssBuilderClasses()
+        public void ShouldBuildConditionalCssBuilderClasses()
         {
             //arrange
             var hasTwo = false;
@@ -73,7 +73,7 @@ namespace UtilityTests
             classToRender.Should().Be("item-one item-three item-sub-three item-four");
         }
         [Test]
-        public void ShouldBulidEmptyClasses()
+        public void ShouldBuildEmptyClasses()
         {
             //arrange
             var shouldShow = false;

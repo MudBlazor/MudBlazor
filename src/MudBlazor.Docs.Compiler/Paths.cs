@@ -15,12 +15,18 @@ namespace MudBlazor.Docs.Compiler
 
         public const string ExampleDiscriminator = "Example"; // example components must contain this string
 
-        public string SrcDirPath
+        public static string SrcDirPath
         {
             get
             {
-                var exePath = Path.GetFullPath(".");
-                return string.Join("/", exePath.Split('/', '\\').TakeWhile(x => x != "src").Concat(new[] { "src" }));
+                var workingPath = Path.GetFullPath(".");
+                do
+                {
+                    workingPath = Path.GetDirectoryName(workingPath);
+                }
+                while (Path.GetFileName(workingPath) != "src" && !string.IsNullOrWhiteSpace(workingPath));
+
+                return workingPath;
             }
         }
 

@@ -9,8 +9,8 @@ namespace MudBlazor.Charts
     {
         [CascadingParameter] public MudChart MudChartParent { get; set; }
 
-        private List<SvgPath> _paths = new List<SvgPath>();
-        private List<SvgLegend> _legends = new List<SvgLegend>();
+        private List<SvgPath> _paths = new();
+        private List<SvgLegend> _legends = new();
 
         protected override void OnParametersSet()
         {

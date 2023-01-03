@@ -1,22 +1,17 @@
-﻿@using MudBlazor.Utilities
-
-<div class="@Classname">
-    <MudText Typo="Typo.h4">@Title</MudText>
-    <MudText Typo="Typo.h6">@SubTitle</MudText>
-    <MudText>@Description</MudText>
+﻿
+<div @ref="@SectionReference" id="@GetSectionId()" class="@Classname">
+	@if (!String.IsNullOrWhiteSpace(Title) && HideTitle == false)
+	{
+		<MudText Typo="@GetTitleTypo()">
+			<b>@Title</b>
+		</MudText>
+	}
+	@if (SubTitle != null)
+	{
+		<MudText Typo="Typo.h6">@SubTitle</MudText>
+	}
+	@if (Description != null)
+	{
+		<MudText Class="mb-5">@Description</MudText>
+	}
 </div>
-
-@code {
-
-    protected string Classname =>
-    new CssBuilder("docs-section-header")
-    .AddClass(Class)
-    .Build();
-
-    [Parameter] public string Class { get; set; }
-
-    [Parameter] public RenderFragment Title { get; set; }
-    [Parameter] public RenderFragment SubTitle { get; set; }
-    [Parameter] public RenderFragment Description { get; set; }
-
-}

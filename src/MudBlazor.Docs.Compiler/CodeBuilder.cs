@@ -5,21 +5,20 @@ namespace MudBlazor.Docs.Compiler
     public class CodeBuilder
     {
         private readonly StringBuilder _code;
-        private int _indentLevel;
 
         public CodeBuilder()
         {
             _code = new StringBuilder();
-            _indentLevel = 0;
+            IndentLevel = 0;
         }
 
         public string Code { get => _code.ToString(); }
 
-        public int IndentLevel { get => _indentLevel; set => _indentLevel = value; }
+        public int IndentLevel { get; set; }
 
         public void Add(string codeString)
         {
-            Add(codeString, _indentLevel);
+            Add(codeString, IndentLevel);
         }
 
         public void Add(string codeString, int indentLevel)

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.AspNetCore.Components;
 
@@ -7,13 +6,14 @@ namespace MudBlazor
 {
     public abstract class MudDebouncedInput<T> : MudBaseInput<T>
     {
-        private Timer _timer;
+        private System.Timers.Timer _timer;
         private double _debounceInterval;
 
         /// <summary>
         /// Interval to be awaited in milliseconds before changing the Text value
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public double DebounceInterval
         {
             get => _debounceInterval;
@@ -37,6 +37,17 @@ namespace MudBlazor
         /// receives the Text as a parameter
         /// </summary>
         [Parameter] public EventCallback<string> OnDebounceIntervalElapsed { get; set; }
+
+        protected Task OnChange()
+        {
+            if (DebounceInterval > 0 && _timer != null)
+            {
+                _timer.Stop();
+                return base.UpdateValuePropertyAsync(false);
+            }
+
+            return Task.CompletedTask;
+        }
 
         protected override Task UpdateValuePropertyAsync(bool updateText)
         {
@@ -71,7 +82,7 @@ namespace MudBlazor
         {
             if (_timer == null)
             {
-                _timer = new Timer();
+                _timer = new System.Timers.Timer();
                 _timer.Elapsed += OnTimerTick;
                 _timer.AutoReset = false;
             }

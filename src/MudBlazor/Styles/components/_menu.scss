@@ -1,14 +1,21 @@
 ﻿.mud-menu {
     display: inline-flex;
+    align-self: center;
     position: relative;
-}
 
-.mud-menu-container {
-    max-width: max-content;
-    width: max-content !important;
+    & * {
+        cursor: pointer;
+    }
 
-    &.mud-menu-fullwidth {
-        width: 100% !important;
-        max-width: none;
+    & > div.mud-disabled {
+        cursor: default;
+
+        & * {
+            cursor: default;
+        }
+    }
+
+    & > div.mud-menu-activator {
+        display: contents;
     }
 }

@@ -52,6 +52,8 @@
     .mud-chip-icon {
         margin-left: -4px;
         margin-right: 4px;
+        margin-inline-start: -4px;
+        margin-inline-end: 4px;
         color: inherit;
     }
 
@@ -59,6 +61,8 @@
         padding: 1px;
         margin-right: -4px;
         margin-left: 6px;
+        margin-inline-end: -4px;
+        margin-inline-start: 6px;
         height: 18px;
         width: 18px;
         color: inherit;
@@ -82,13 +86,11 @@
     }
 }
 
-
-
 .mud-chip-filled {
     color: var(--mud-palette-text-primary);
     background-color: var(--mud-palette-action-disabled-background);
 
-    &:hover {
+    &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
         background-color: var(--mud-palette-action-disabled);
     }
 
@@ -97,13 +99,8 @@
             color: var(--mud-palette-#{$color}-text);
             background-color: var(--mud-palette-#{$color});
 
-            &:hover {
+            &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
                 background-color: var(--mud-palette-#{$color}-darken);
-            }
-
-            &.mud-chip-selected {
-                color: var(--mud-palette-#{$color});
-                background-color: var(--mud-palette-#{$color}-hover) !important;
             }
         }
     }
@@ -112,7 +109,7 @@
     color: var(--mud-palette-text-primary);
     border: 1px solid var(--mud-palette-lines-inputs);
 
-    &:hover {
+    &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
         background-color: var(--mud-palette-action-default-hover);
     }
 
@@ -121,14 +118,36 @@
             color: var(--mud-palette-#{$color});
             border: 1px solid var(--mud-palette-#{$color});
 
-            &:hover {
+            &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
                 background-color: var(--mud-palette-#{$color}-hover);
+            }
+
+            &.mud-chip-selected {
+                background-color: var(--mud-palette-#{$color}-hover);
+
+                &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+                    background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+                }
             }
         }
     }
 }
+.mud-chip-text {
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-action-default-hover);
 
-.mud-chip-selected {
-    color: var(--mud-palette-primary);
-    background-color: var(--mud-palette-primary-hover) !important;
+    &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+        background-color: var(--mud-palette-action-disabled-background);
+    }
+
+    @each $color in $mud-palette-colors {
+        &.mud-chip-color-#{$color} {
+            color: var(--mud-palette-#{$color});
+            background-color: var(--mud-palette-#{$color}-hover);
+
+            &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+                background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+            }
+        }
+    }
 }

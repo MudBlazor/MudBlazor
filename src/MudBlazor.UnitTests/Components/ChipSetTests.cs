@@ -1,5 +1,4 @@
 ﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System;
@@ -8,35 +7,22 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.ChipSet;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
-    public class ChipSetTests
+    public class ChipSetTests : BunitTest
     {
-        private Bunit.TestContext ctx;
-
-        [SetUp]
-        public void Setup()
-        {
-            ctx = new Bunit.TestContext();
-            ctx.AddTestServices();
-        }
-
-        [TearDown]
-        public void TearDown() => ctx.Dispose();
-
         /// <summary>
         /// Clicking a chip selects it, clicking again de-selects it. Clicking one chip de-selects the other
         /// </summary>
         [Test]
         public async Task ChipSet_SingleSelection()
         {
-            var comp = ctx.RenderComponent<ChipSetTest>();
+            var comp = Context.RenderComponent<ChipSetTest>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var chipset = comp.FindComponent<MudChipSet>();
             comp.FindAll("div.mud-chip").Count.Should().Be(7);
@@ -66,9 +52,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ChipSet_SingleSelection_Mandatory()
         {
-            var comp = ctx.RenderComponent<ChipSetTest>();
+            var comp = Context.RenderComponent<ChipSetTest>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var chipset = comp.FindComponent<MudChipSet>();
             await chipset.InvokeAsync(() => chipset.Instance.Mandatory = true);
@@ -96,9 +81,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ChipSet_MultiSelection()
         {
-            var comp = ctx.RenderComponent<ChipSetTest>();
+            var comp = Context.RenderComponent<ChipSetTest>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var chipset = comp.FindComponent<MudChipSet>();
             await chipset.InvokeAsync(() => chipset.Instance.MultiSelection = true);
@@ -133,9 +117,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ChipSet_SingleSelection_WithMultipleDefaultChips()
         {
-            var comp = ctx.RenderComponent<ChipSetDefaultChipsTest>();
+            var comp = Context.RenderComponent<ChipSetDefaultChipsTest>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var chipset = comp.FindComponent<MudChipSet>();
             comp.FindAll("div.mud-chip").Count.Should().Be(7);
@@ -162,9 +145,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ChipSet_MultiSelection_DefaultChipsShouldBeInitiallySelected()
         {
-            var comp = ctx.RenderComponent<ChipSetDefaultChipsTest>(ComponentParameter.CreateParameter("MultiSelection", true));
+            var comp = Context.RenderComponent<ChipSetDefaultChipsTest>(ComponentParameter.CreateParameter("MultiSelection", true));
             // print the generated html
-            Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var chipset = comp.FindComponent<MudChipSet>();
             comp.FindAll("div.mud-chip").Count.Should().Be(7);
@@ -178,6 +160,125 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-chip")[1].Click();
             comp.FindAll("p")[0].TrimmedText().Should().Be("Corn flakes, Salad");
             string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Corn flakes, Salad");
+        }
+
+
+        [Test]
+        public async Task ChipSet_MultiSelection_LateDefaultChipsShouldBeInitiallySelected()
+        {
+            var comp = Context.RenderComponent<ChipSetLateDefaultTest>();
+            // print the generated html
+            // check that only one item is present
+            var chipset = comp.FindComponent<MudChipSet>();
+            comp.FindAll("div.mud-chip").Count.Should().Be(1);
+            chipset.Instance.SelectedChips.Length.Should().Be(1);
+            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Primary");
+            // select extra item
+            comp.FindAll("button")[0].Click();
+            // check that extra item is selected
+            comp.FindAll("div.mud-chip").Count.Should().Be(2);
+            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Extra Chip, Primary");
+        }
+
+        /// <summary>
+        /// If chip set parameter ReadOnly is set to true, mud-clickable and mud-ripple should not be
+        /// added to chips and chip click event should return without executing any code
+        /// </summary>
+        [Test]
+        public async Task ChipSet_ReadOnly()
+        {
+            var comp = Context.RenderComponent<ChipSetReadOnlyTest>();
+            // print the generated html
+            // no chip should have mud-clickable or mud-ripple classes
+            var chipset = comp.FindComponent<MudChipSet>();
+            comp.FindAll("div.mud-clickable").Count.Should().Be(0);
+            comp.FindAll("div.mud-ripple").Count.Should().Be(0);
+
+            //Click test
+            comp.FindAll("div.mud-chip")[0].Click();
+            
+            //Should not throw an error
+            comp.FindAll("button.mud-chip-close-button")[0].Click();
+
+            chipset.Instance.SelectedChip.Should().Be(null);
+        }
+
+        /// <summary>
+        /// In this test component two chipsets are synchronized via a single selectedValues collection
+        /// Whenever one ChipSet changes the other must update to the same selection state.
+        /// </summary>
+        [Test]
+        public async Task ChipSet_SelectedValues_TwoWayBinding()
+        {
+            var comp = Context.RenderComponent<ChipSetSelectionTwoWayBindingTest>();
+            // print the generated html
+            // initial values check
+            comp.Find("p.set1").TrimmedText().Should().Be("Set1 Selection: Set1 Chip1");
+            comp.Find("p.set2").TrimmedText().Should().Be("Set2 Selection: Set2 Chip1");
+
+            // change selection and check state of both sets
+            comp.FindAll("div.mud-chip")[0].Click();
+            comp.WaitForAssertion(() => comp.Find("p.set1").TrimmedText().Should().Be("Set1 Selection:"));
+            comp.WaitForAssertion(() => comp.Find("p.set2").TrimmedText().Should().Be("Set2 Selection:"));
+            comp.FindAll("div.mud-chip")[1].Click();
+            comp.WaitForAssertion(() => comp.Find("p.set1").TrimmedText().Should().Be("Set1 Selection: Set1 Chip2"));
+            comp.WaitForAssertion(() => comp.Find("p.set2").TrimmedText().Should().Be("Set2 Selection: Set2 Chip2"));
+            comp.FindAll("div.mud-chip")[2].Click();
+            comp.WaitForAssertion(() => comp.Find("p.set1").TrimmedText().Should().Be("Set1 Selection: Set1 Chip1, Set1 Chip2"));
+            comp.WaitForAssertion(() => comp.Find("p.set2").TrimmedText().Should().Be("Set2 Selection: Set2 Chip1, Set2 Chip2"));
+            comp.FindAll("div.mud-chip")[3].Click();
+            comp.WaitForAssertion(() => comp.Find("p.set1").TrimmedText().Should().Be("Set1 Selection: Set1 Chip1"));
+            comp.WaitForAssertion(() => comp.Find("p.set2").TrimmedText().Should().Be("Set2 Selection: Set2 Chip1"));
+        }
+
+        [Test]
+        public async Task ChipSet_InitialSelectedValuesShouldBeApplied_ButOverriddenByChipDefault()
+        {
+            var comp = Context.RenderComponent<ChipSetSelectionInitialValuesTest>();
+            // print the generated html
+            // initial values check
+            comp.WaitForAssertion(() => comp.Find("p.sel").TrimmedText().Should().Be("Selection: Chip1, Chip3"));
+
+            // change selection and check state
+            comp.FindAll("div.mud-chip")[0].Click();
+            comp.WaitForAssertion(() => comp.Find("p.sel").TrimmedText().Should().Be("Selection: Chip3"));
+        }
+
+        [Test]
+        public async Task ChipSetComparerTest()
+        {
+            var comp = Context.RenderComponent<ChipSetComparerTest>();
+            // print the generated html
+            // initial values check
+            comp.WaitForAssertion(() => comp.Find("p.sel").TrimmedText().Should().Be("Selection:"));
+
+            // change selection and check state
+            comp.FindAll("div.mud-chip")[0].Click();
+            comp.WaitForAssertion(() => comp.Find("p.sel").TrimmedText().Should().Be("Selection: Cappuccino"));
+
+            // set new selection and see if the comparer works correctly
+            comp.FindComponent<MudButton>().Find("button").Click();
+            comp.WaitForAssertion(() => comp.Find("p.sel").TrimmedText().Should().Be("Selection: Cafe Latte, Espresso"));
+        }
+
+        [Test]
+        public async Task ChipSet_OtherTest()
+        {
+            var comp = Context.RenderComponent<ChipSetTest>();
+            var chipSet = comp.FindComponent<MudChipSet>();
+            var chip = comp.FindComponents<MudChip>().FirstOrDefault();
+
+            comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
+            await comp.InvokeAsync(() => chipSet.Instance.SelectedChip = (MudChip)chip.Instance.Value);
+            comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(1));
+
+
+            await comp.InvokeAsync(() => chipSet.Instance.OnChipDeleted((MudChip)chip.Instance.Value));
+            comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
+
+            await comp.InvokeAsync(() => chipSet.Instance.SelectedChip = null);
+            await comp.InvokeAsync(() => chipSet.Instance.SetSelectedValues(null));
+            comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
         }
     }
 

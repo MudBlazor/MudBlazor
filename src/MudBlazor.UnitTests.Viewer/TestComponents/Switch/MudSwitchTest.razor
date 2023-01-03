@@ -1,0 +1,8 @@
+﻿<MudSwitch @bind-Checked="@Label_Switch2"  T="bool" Disabled="true" Label="Disabled" />
+<MudSwitch @bind-Checked="@Label_Switch2"  T="bool" ReadOnly="true" Label="ReadOnly"  Color="Color.Success"  />
+<MudSwitch @bind-Checked="@Label_Switch2"  T="bool" DisableRipple="true" Label="Disabled Ripple" />
+<MudSwitch @bind-Checked="@Label_Switch2"  T="bool"  Label="Test" />
+
+@code{
+    public bool Label_Switch2 { get; set; } = true;
+}

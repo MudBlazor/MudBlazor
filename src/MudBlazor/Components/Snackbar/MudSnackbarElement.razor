@@ -7,10 +7,19 @@
 @inherits MudComponentBase
 
 @Css
-<div class="@SnackbarClass" style="@AnimationStyle" @onclick="@SnackbarClicked">
+<div @attributes="UserAttributes" class="@SnackbarClass" style="@AnimationStyle" @onclick="@SnackbarClicked">
+    @if (!HideIcon)
+    {
+        <div class="mud-snackbar-icon">
+            <MudIcon Icon="@Icon" Color="@IconColor" Size="@IconSize" />
+        </div>
+    }
 
     <div class="mud-snackbar-content-message">
-        @((MarkupString)Message)
+        @if (Message?.ComponentType != null)
+        {
+            <DynamicComponent Type="Message.ComponentType" Parameters="Message.ComponentParameters" />
+        }
     </div>
 
     @if (ShowCloseIcon || ShowActionButton)
@@ -24,10 +33,8 @@
 
             @if (ShowCloseIcon)
             {
-                <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" Class="ml-2" OnClick="CloseIconClicked" />
+                <MudIconButton Icon="@CloseIcon" Size="Size.Small" Class="ms-2" OnClick="CloseIconClicked" />
             }
-
         </div>
     }
-
 </div>

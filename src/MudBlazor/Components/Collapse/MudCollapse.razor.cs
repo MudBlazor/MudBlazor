@@ -3,30 +3,29 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudCollapse : MudComponentBase, IDisposable
+    public partial class MudCollapse : MudComponentBase
     {
-        private enum CollapseState
+        internal enum CollapseState
         {
             Entering, Entered, Exiting, Exited
         }
 
-        private double _height;
-        private int _listenerId;
-        private bool _expanded, _isRendered;
-        private ElementReference _container, _wrapper;
-        private CollapseState _state = CollapseState.Exited;
+        internal double _height;
+        private bool _expanded, _isRendered, _updateHeight;
+        private ElementReference _wrapper;
+        internal CollapseState _state = CollapseState.Exited;
 
         protected string Stylename =>
             new StyleBuilder()
-            .AddStyle("max-height", $"{MaxHeight?.ToString("#.##", CultureInfo.InvariantCulture)}px", MaxHeight != null)
+            .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
             .AddStyle("height", "auto", _state == CollapseState.Entered)
-            .AddStyle("height", $"{_height.ToString("#.##", CultureInfo.InvariantCulture)}px", _state == CollapseState.Entering || _state == CollapseState.Exiting)
+            .AddStyle("height", _height.ToPx(), _state is CollapseState.Entering or CollapseState.Exiting)
             .AddStyle("animation-duration", $"{CalculatedAnimationDuration.ToString("#.##", CultureInfo.InvariantCulture)}s", _state == CollapseState.Entering)
+            .AddStyle(Style)
             .Build();
 
         protected string Classname =>
@@ -48,17 +47,19 @@ namespace MudBlazor
             {
                 if (_expanded == value)
                     return;
-
                 _expanded = value;
+
                 if (_isRendered)
                 {
                     _state = _expanded ? CollapseState.Entering : CollapseState.Exiting;
                     _ = UpdateHeight();
+                    _updateHeight = true;
                 }
                 else if (_expanded)
                 {
                     _state = CollapseState.Entered;
                 }
+
                 _ = ExpandedChanged.InvokeAsync(_expanded);
             }
         }
@@ -97,9 +98,17 @@ namespace MudBlazor
             set { }
         }
 
-        private async Task UpdateHeight()
+        internal async Task UpdateHeight()
         {
-            _height = (await _wrapper.MudGetBoundingClientRectAsync())?.Height ?? 0;
+            try
+            {
+                _height = (await _wrapper.MudGetBoundingClientRectAsync())?.Height ?? 0;
+            }
+            catch (Exception ex) when (ex is JSDisconnectedException || ex is TaskCanceledException)
+            {
+                _height = 0;
+            }
+
             if (MaxHeight != null && _height > MaxHeight)
             {
                 _height = MaxHeight.Value;
@@ -112,17 +121,16 @@ namespace MudBlazor
             {
                 _isRendered = true;
                 await UpdateHeight();
-                _listenerId = await _container.MudAddEventListenerAsync(DotNetObjectReference.Create(this), "animationend", nameof(AnimationEnd));
+            }
+            else if (_updateHeight && _state is CollapseState.Entering or CollapseState.Exiting)
+            {
+                _updateHeight = false;
+                await UpdateHeight();
+                StateHasChanged();
             }
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        public void Dispose()
-        {
-            _ = _container.MudRemoveEventListenerAsync("animationend", _listenerId);
-        }
-
-        [JSInvokable]
         public void AnimationEnd()
         {
             if (_state == CollapseState.Entering)

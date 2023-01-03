@@ -1,0 +1,56 @@
+﻿@namespace MudBlazor.Docs.Components
+@using MudBlazor.Utilities
+
+
+<section class="@SectionClassnames">
+    <div class="section-background-container">
+        <div class="@BackgroundClassnames">
+            @Stripes
+        </div>
+        @if (StraightEnd)
+        {
+            <div class="@EndBackgroundClassnames"></div>
+        }
+    </div>
+    <MudContainer MaxWidth="MaxWidth.Large">
+        <div class="@ContainerClassnames">
+            @ChildContent
+        </div>
+    </MudContainer>
+</section>
+
+
+
+@code {
+    [Parameter] public RenderFragment Stripes { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public bool Straight { get; set; }
+    [Parameter] public bool StraightEnd { get; set; }
+    [Parameter] public string SectionClass { get; set; }
+    [Parameter] public string BackgroundClass { get; set; }
+    [Parameter] public string Class { get; set; }
+
+    protected string SectionClassnames =>
+        new CssBuilder("mud-landingpage-section")
+          .AddClass(SectionClass)
+        .Build();
+
+    protected string BackgroundClassnames =>
+        new CssBuilder("section-background d-flex flex-column justify-end")
+          .AddClass("straight", Straight)
+          .AddClass("skew", !Straight)
+          .AddClass(BackgroundClass)
+        .Build();
+
+    protected string EndBackgroundClassnames =>
+        new CssBuilder("section-background straight-end")
+          .AddClass(BackgroundClass)
+        .Build();
+
+    protected string ContainerClassnames =>
+        new CssBuilder("section-container")
+          .AddClass("padding-straight", Straight)
+          .AddClass("padding-skew", !Straight)
+          .AddClass(Class)
+        .Build();
+}

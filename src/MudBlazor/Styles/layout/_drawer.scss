@@ -7,7 +7,7 @@
     flex: 0 0 auto;
     outline: 0;
     position: fixed;
-    z-index: calc(var(--mud-zindex-drawer) + 1);
+    z-index: var(--mud-zindex-drawer);
     overflow-y: auto;
     flex-direction: column;
     color: var(--mud-palette-drawer-text);
@@ -15,6 +15,7 @@
     --mud-drawer-content-height: 0;
 
     .mud-drawer-content {
+        height: 100%;
         max-height: 100%;
         display: flex;
         flex-shrink: 0;
@@ -28,11 +29,11 @@
     }
 
     @each $breakpoint in map-keys($breakpoints) {
-        &.mud-drawer-responsive.mud-drawer-#{$breakpoint} {
+        &.mud-drawer-mini.mud-drawer-#{$breakpoint}:not(.mud-drawer--closed), &.mud-drawer-responsive.mud-drawer-#{$breakpoint} {
             @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
-                z-index: calc(var(--mud-zindex-dialog) + 1);
+                z-index: calc(var(--mud-zindex-appbar) + 2);
 
-                &.mud-drawer--initial {
+                &.mud-drawer--initial:not(.mud-drawer-mini) {
                     display: none !important;
                 }
             }
@@ -42,7 +43,7 @@
     &.mud-drawer-responsive, &.mud-drawer-persistent {
         height: 100%;
 
-        &.mud-drawer-anchor-left {
+        &.mud-drawer-pos-left {
             right: auto;
             width: var(--mud-drawer-width, var(--mud-drawer-width-left));
 
@@ -55,6 +56,7 @@
             }
 
             &.mud-drawer--closed {
+                box-shadow: none;
                 left: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-left)));
 
                 &:not(.mud-drawer--initial) {
@@ -63,7 +65,7 @@
             }
         }
 
-        &.mud-drawer-anchor-right {
+        &.mud-drawer-pos-right {
             left: auto;
             width: var(--mud-drawer-width, var(--mud-drawer-width-right));
 
@@ -76,6 +78,7 @@
             }
 
             &.mud-drawer--closed {
+                box-shadow: none;
                 right: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-right)));
 
                 &:not(.mud-drawer--initial) {
@@ -85,12 +88,43 @@
         }
     }
 
+    &.mud-drawer-mini {
+        height: 100%;
+        transition: width 225ms cubic-bezier(0, 0, 0.2, 1);
+
+        &.mud-drawer-pos-left {
+            left: 0;
+            right: auto;
+
+            &.mud-drawer--closed {
+                width: var(--mud-drawer-width-mini-left);
+            }
+
+            &.mud-drawer--open {
+                width: var(--mud-drawer-width-left);
+            }
+        }
+
+        &.mud-drawer-pos-right {
+            left: auto;
+            right: 0;
+
+            &.mud-drawer--closed {
+                width: var(--mud-drawer-width-mini-right);
+            }
+
+            &.mud-drawer--open {
+                width: var(--mud-drawer-width-right);
+            }
+        }
+    }
+
     &.mud-drawer-temporary {
         margin: 0 !important;
-        z-index: calc(var(--mud-zindex-dialog) + 1);
+        z-index: calc(var(--mud-zindex-appbar) + 2);
         transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
 
-        &.mud-drawer-anchor-left {
+        &.mud-drawer-pos-left {
             right: auto;
             top: 0;
             height: 100%;
@@ -113,7 +147,7 @@
             }
         }
 
-        &.mud-drawer-anchor-right {
+        &.mud-drawer-pos-right {
             left: auto;
             top: 0;
             height: 100%;
@@ -136,7 +170,7 @@
             }
         }
 
-        &.mud-drawer-anchor-bottom {
+        &.mud-drawer-pos-bottom {
             left: 0;
             top: auto;
             width: 100%;
@@ -158,7 +192,7 @@
             }
         }
 
-        &.mud-drawer-anchor-top {
+        &.mud-drawer-pos-top {
             left: 0;
             bottom: auto;
             width: 100%;
@@ -181,81 +215,97 @@
         }
     }
 
-    &.mud-drawer-persistent.mud-drawer-anchor-left ~ div:not(.mud-main-content) {
+    &.mud-drawer-mini.mud-drawer-pos-left ~ div:not(.mud-main-content),
+    &.mud-drawer-mini.mud-drawer-pos-right ~ div:not(.mud-main-content),
+    &.mud-drawer-persistent.mud-drawer-pos-left ~ div:not(.mud-main-content),
+    &.mud-drawer-persistent.mud-drawer-pos-right ~ div:not(.mud-main-content) {
         transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
     }
 
-    &.mud-drawer-persistent.mud-drawer-anchor-left.mud-drawer--open ~ div:not(.mud-main-content) {
+    &.mud-drawer-mini.mud-drawer-pos-left.mud-drawer--open ~ div:not(.mud-main-content),
+    &.mud-drawer-persistent.mud-drawer-pos-left.mud-drawer--open ~ div:not(.mud-main-content) {
         margin-left: var(--mud-drawer-width, var(--mud-drawer-width-left));
     }
 
-    &.mud-drawer-persistent.mud-drawer-anchor-right.mud-drawer--open ~ div:not(.mud-main-content) {
+    &.mud-drawer-mini.mud-drawer-pos-right.mud-drawer--open ~ div:not(.mud-main-content),
+    &.mud-drawer-persistent.mud-drawer-pos-right.mud-drawer--open ~ div:not(.mud-main-content) {
         margin-right: var(--mud-drawer-width, var(--mud-drawer-width-right));
+    }
+
+    &.mud-drawer-mini.mud-drawer-pos-left.mud-drawer--closed ~ div:not(.mud-main-content) {
+        margin-left: var(--mud-drawer-width, var(--mud-drawer-width-mini-left));
+    }
+
+    &.mud-drawer-mini.mud-drawer-pos-right.mud-drawer--closed ~ div:not(.mud-main-content) {
+        margin-right: var(--mud-drawer-width, var(--mud-drawer-width-mini-right));
     }
 }
 
 .mud-drawer-header {
     display: flex;
-    min-height: var(--mud-appbar-min-height);
+    min-height: var(--mud-appbar-height);
     padding: 12px 24px 12px 24px;
 
     &.mud-drawer-header-dense {
-        min-height: calc(var(--mud-appbar-min-height) - 16px);
+        min-height: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
         padding: 8px 24px 8px 24px;
     }
 }
 
 .mud-drawer-fixed {
+    &.mud-drawer-mini.mud-drawer-clipped-always,
     &.mud-drawer-persistent:not(.mud-drawer-clipped-never),
     &.mud-drawer-responsive.mud-drawer-clipped-always,
     &.mud-drawer-temporary.mud-drawer-clipped-always {
-        top: var(--mud-appbar-min-height);
-        height: calc(100% - var(--mud-appbar-min-height));
+        top: var(--mud-appbar-height);
+        height: calc(100% - var(--mud-appbar-height));
 
         @media (max-width:$breakpoint-sm - 1px) and (orientation: landscape) {
-            top: calc(var(--mud-appbar-min-height) - 16px);
-            height: calc(100% - var(--mud-appbar-min-height) + 16px);
+            top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
+            height: calc(100% - calc(var(--mud-appbar-height) - var(--mud-appbar-height)/4));
         }
 
         @media (max-width:$breakpoint-sm - 1px) and (orientation: portrait) {
-            top: 56px;
-            height: calc(100% - 56px);
+            top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 8);
+            height: calc(100% - calc(var(--mud-appbar-height) - var(--mud-appbar-height)/8));
         }
     }
 
     @each $breakpoint in map-keys($breakpoints) {
+        &.mud-drawer-mini.mud-drawer-clipped-docked.mud-drawer-#{$breakpoint},
         &.mud-drawer-responsive.mud-drawer-clipped-docked.mud-drawer-#{$breakpoint} {
             @media (min-width: map-get($breakpoints, $breakpoint)) {
-                top: var(--mud-appbar-min-height);
-                height: calc(100% - var(--mud-appbar-min-height));
+                top: var(--mud-appbar-height);
+                height: calc(100% - var(--mud-appbar-height));
 
                 @media (max-width:$breakpoint-sm - 1px) and (orientation: landscape) {
-                    top: calc(var(--mud-appbar-min-height) - 16px);
-                    height: calc(100% - var(--mud-appbar-min-height) + 16px);
+                    top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
+                    height: calc(100% - var(--mud-appbar-height) + var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
                 }
 
                 @media (max-width:$breakpoint-sm - 1px) and (orientation: portrait) {
-                    top: 56px;
-                    height: calc(100% - 56px);
+                    top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 8);
+                    height: calc(100% - var(--mud-appbar-height) / 8);
                 }
             }
         }
     }
 }
 
-.mud-appbar-dense + .mud-drawer-fixed {
+.mud-appbar-dense ~ .mud-drawer-fixed {
+    &.mud-drawer-mini:not(.mud-drawer-clipped-never),
     &.mud-drawer-persistent:not(.mud-drawer-clipped-never),
     &.mud-drawer-responsive.mud-drawer-clipped-always,
     &.mud-drawer-temporary.mud-drawer-clipped-always {
-        top: calc(var(--mud-appbar-min-height) - 16px);
-        height: calc(100% - var(--mud-appbar-min-height) + 16px);
+        top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
+        height: calc(100% - var(--mud-appbar-height) + var(--mud-appbar-height) / 4);
     }
 
     @each $breakpoint in map-keys($breakpoints) {
         @media (min-width: map-get($breakpoints, $breakpoint)) {
             &.mud-drawer-responsive.mud-drawer-clipped-docked.mud-drawer-#{$breakpoint} {
-                top: calc(var(--mud-appbar-min-height) - 16px);
-                height: calc(100% - var(--mud-appbar-min-height) + 16px);
+                top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
+                height: calc(100% - var(--mud-appbar-height) + var(--mud-appbar-height) / 4);
             }
         }
     }
@@ -273,6 +323,12 @@
                     &.mud-drawer--initial {
                         display: none;
                     }
+                }
+            }
+
+            &.mud-drawer-overlay-mini.mud-drawer-overlay-#{$breakpoint} {
+                @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
+                    display: block;
                 }
             }
         }

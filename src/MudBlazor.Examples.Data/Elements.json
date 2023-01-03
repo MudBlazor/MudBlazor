@@ -4,7 +4,7 @@
       "wiki": "https://en.wikipedia.org/wiki/Period%201%20element",
       "elements": [
         {
-          "group": "",
+          "group": "Other",
           "position": 0,
           "name": "Hydrogen",
           "number": 1,
@@ -15,7 +15,7 @@
           ]
         },
         {
-          "group": "Element Noble p",
+          "group": "Noble Gas (p)",
           "position": 17,
           "name": "Helium",
           "number": 2,
@@ -31,7 +31,7 @@
       "wiki": "https://en.wikipedia.org/wiki/Period%202%20element",
       "elements": [
         {
-          "group": "Element Alkali s",
+          "group": "Alkaline Earth Metal (s)",
           "position": 0,
           "name": "Lithium",
           "number": 3,
@@ -43,7 +43,7 @@
           ]
         },
         {
-          "group": "Element Alkaline s",
+          "group": "Alkaline Metal (s)",
           "position": 1,
           "name": "Beryllium",
           "number": 4,
@@ -55,7 +55,7 @@
           ]
         },
         {
-          "group": "Element Metalloid Boron p",
+          "group": "Metalloid Boron (p)",
           "position": 12,
           "name": "Boron",
           "number": 5,
@@ -67,7 +67,7 @@
           ]
         },
         {
-          "group": "Element Nonmetal Carbon p",
+          "group": "Nonmetal Carbon (p)",
           "position": 13,
           "name": "Carbon",
           "number": 6,
@@ -79,7 +79,7 @@
           ]
         },
         {
-          "group": "Element Nonmetal Pnictogen p",
+          "group": "Nonmetal Pnictogen (p)",
           "position": 14,
           "name": "Nitrogen",
           "number": 7,
@@ -91,7 +91,7 @@
           ]
         },
         {
-          "group": "Element Nonmetal Chalcogen p",
+          "group": "Nonmetal Chalcogen (p)",
           "position": 15,
           "name": "Oxygen",
           "number": 8,
@@ -103,7 +103,7 @@
           ]
         },
         {
-          "group": "Element Halogen p",
+          "group": "Halogen (p)",
           "position": 16,
           "name": "Fluorine",
           "number": 9,
@@ -115,7 +115,7 @@
           ]
         },
         {
-          "group": "Element Noble p",
+          "group": "Noble Gas (p)",
           "position": 17,
           "name": "Neon",
           "number": 10,
@@ -132,7 +132,7 @@
       "wiki": "https://en.wikipedia.org/wiki/Period%203%20element",
       "elements": [
         {
-          "group": "Element Alkali s",
+          "group": "Alkaline Earth Metal (s)",
           "position": 0,
           "name": "Sodium",
           "number": 11,
@@ -145,7 +145,7 @@
           ]
         },
         {
-          "group": "Element Alkaline s",
+          "group": "Alkaline Metal (s)",
           "position": 1,
           "name": "Magnesium",
           "number": 12,
@@ -158,7 +158,7 @@
           ]
         },
         {
-          "group": "Element Poor Boron p",
+          "group": "Poor Boron (p)",
           "position": 12,
           "name": "Aluminium",
           "number": 13,
@@ -171,7 +171,7 @@
           ]
         },
         {
-          "group": "Element Metalloid Carbon p",
+          "group": "Metalloid Carbon (p)",
           "position": 13,
           "name": "Silicon",
           "number": 14,
@@ -184,7 +184,7 @@
           ]
         },
         {
-          "group": "Element Nonmetal Pnictogen p",
+          "group": "Nonmetal Pnictogen (p)",
           "position": 14,
           "name": "Phosphorus",
           "number": 15,
@@ -197,7 +197,7 @@
           ]
         },
         {
-          "group": "Element Nonmetal Chalcogen p",
+          "group": "Nonmetal Chalcogen (p)",
           "position": 15,
           "name": "Sulfur",
           "number": 16,
@@ -210,7 +210,7 @@
           ]
         },
         {
-          "group": "Element Halogen p",
+          "group": "Halogen (p)",
           "position": 16,
           "name": "Chlorine",
           "number": 17,
@@ -223,7 +223,7 @@
           ]
         },
         {
-          "group": "Element Noble p",
+          "group": "Noble Gas (p)",
           "position": 17,
           "name": "Argon",
           "number": 18,
@@ -241,7 +241,7 @@
       "wiki": "https://en.wikipedia.org/wiki/Period%204%20element",
       "elements": [
         {
-          "group": "Element Alkali s",
+          "group": "Alkaline Earth Metal (s)",
           "position": 0,
           "name": "Potassium",
           "number": 19,
@@ -255,7 +255,7 @@
           ]
         },
         {
-          "group": "Element Alkaline s",
+          "group": "Alkaline Metal (s)",
           "position": 1,
           "name": "Calcium",
           "number": 20,
@@ -269,7 +269,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 2,
           "name": "Scandium",
           "number": 21,
@@ -283,7 +283,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 3,
           "name": "Titanium",
           "number": 22,
@@ -297,7 +297,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 4,
           "name": "Vanadium",
           "number": 23,
@@ -311,7 +311,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 5,
           "name": "Chromium",
           "number": 24,
@@ -325,7 +325,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 6,
           "name": "Manganese",
           "number": 25,
@@ -339,7 +339,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 7,
           "name": "Iron",
           "number": 26,
@@ -353,7 +353,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 8,
           "name": "Cobalt",
           "number": 27,
@@ -367,7 +367,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 9,
           "name": "Nickel",
           "number": 28,
@@ -381,7 +381,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 10,
           "name": "Copper",
           "number": 29,
@@ -395,7 +395,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 11,
           "name": "Zinc",
           "number": 30,
@@ -409,7 +409,7 @@
           ]
         },
         {
-          "group": "Element Poor Boron p",
+          "group": "Poor Boron (p)",
           "position": 12,
           "name": "Gallium",
           "number": 31,
@@ -423,7 +423,7 @@
           ]
         },
         {
-          "group": "Element Metalloid Carbon p",
+          "group": "Metalloid Carbon (p)",
           "position": 13,
           "name": "Germanium",
           "number": 32,
@@ -437,7 +437,7 @@
           ]
         },
         {
-          "group": "Element Metalloid Pnictogen p",
+          "group": "Metalloid Pnictogen (p)",
           "position": 14,
           "name": "Arsenic",
           "number": 33,
@@ -451,7 +451,7 @@
           ]
         },
         {
-          "group": "Element Nonmetal Chalcogen p",
+          "group": "Nonmetal Chalcogen (p)",
           "position": 15,
           "name": "Selenium",
           "number": 34,
@@ -465,7 +465,7 @@
           ]
         },
         {
-          "group": "Element Halogen p",
+          "group": "Halogen (p)",
           "position": 16,
           "name": "Bromine",
           "number": 35,
@@ -479,7 +479,7 @@
           ]
         },
         {
-          "group": "Element Noble p",
+          "group": "Noble Gas (p)",
           "position": 17,
           "name": "Krypton",
           "number": 36,
@@ -498,7 +498,7 @@
       "wiki": "https://en.wikipedia.org/wiki/Period%205%20element",
       "elements": [
         {
-          "group": "Element Alkali s",
+          "group": "Alkaline Earth Metal (s)",
           "position": 0,
           "name": "Rubidium",
           "number": 37,
@@ -513,7 +513,7 @@
           ]
         },
         {
-          "group": "Element Alkaline s",
+          "group": "Alkaline Metal (s)",
           "position": 1,
           "name": "Strontium",
           "number": 38,
@@ -528,7 +528,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 2,
           "name": "Yttrium",
           "number": 39,
@@ -543,7 +543,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 3,
           "name": "Zirconium",
           "number": 40,
@@ -558,7 +558,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 4,
           "name": "Niobium",
           "number": 41,
@@ -573,7 +573,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 5,
           "name": "Molybdenum",
           "number": 42,
@@ -588,7 +588,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 6,
           "name": "Technetium",
           "number": 43,
@@ -603,7 +603,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 7,
           "name": "Ruthenium",
           "number": 44,
@@ -618,7 +618,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 8,
           "name": "Rhodium",
           "number": 45,
@@ -633,7 +633,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 9,
           "name": "Palladium",
           "number": 46,
@@ -647,7 +647,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 10,
           "name": "Silver",
           "number": 47,
@@ -662,7 +662,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 11,
           "name": "Cadmium",
           "number": 48,
@@ -677,7 +677,7 @@
           ]
         },
         {
-          "group": "Element Poor Boron p",
+          "group": "Poor Boron (p)",
           "position": 12,
           "name": "Indium",
           "number": 49,
@@ -692,7 +692,7 @@
           ]
         },
         {
-          "group": "Element Poor Carbon p",
+          "group": "Poor Carbon (p)",
           "position": 13,
           "name": "Tin",
           "number": 50,
@@ -707,7 +707,7 @@
           ]
         },
         {
-          "group": "Element Metalloid Pnictogen p",
+          "group": "Metalloid Pnictogen (p)",
           "position": 14,
           "name": "Antimony",
           "number": 51,
@@ -722,7 +722,7 @@
           ]
         },
         {
-          "group": "Element Metalloid Chalcogen p",
+          "group": "Metalloid Chalcogen (p)",
           "position": 15,
           "name": "Tellurium",
           "number": 52,
@@ -737,7 +737,7 @@
           ]
         },
         {
-          "group": "Element Halogen p",
+          "group": "Halogen (p)",
           "position": 16,
           "name": "Iodine",
           "number": 53,
@@ -752,7 +752,7 @@
           ]
         },
         {
-          "group": "Element Noble p",
+          "group": "Noble Gas (p)",
           "position": 17,
           "name": "Xenon",
           "number": 54,
@@ -772,7 +772,7 @@
       "wiki": "https://en.wikipedia.org/wiki/Period%206%20element",
       "elements": [
         {
-          "group": "Element Alkali s",
+          "group": "Alkaline Earth Metal (s)",
           "position": 0,
           "name": "Caesium",
           "number": 55,
@@ -788,7 +788,7 @@
           ]
         },
         {
-          "group": "Element Alkaline s",
+          "group": "Alkaline Metal (s)",
           "position": 1,
           "name": "Barium",
           "number": 56,
@@ -804,7 +804,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 3,
           "name": "Hafnium",
           "number": 72,
@@ -820,7 +820,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 4,
           "name": "Tantalum",
           "number": 73,
@@ -836,7 +836,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 5,
           "name": "Tungsten",
           "number": 74,
@@ -852,7 +852,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 6,
           "name": "Rhenium",
           "number": 75,
@@ -868,7 +868,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 7,
           "name": "Osmium",
           "number": 76,
@@ -884,7 +884,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 8,
           "name": "Iridium",
           "number": 77,
@@ -900,7 +900,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 9,
           "name": "Platinum",
           "number": 78,
@@ -916,7 +916,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 10,
           "name": "Gold",
           "number": 79,
@@ -932,7 +932,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 11,
           "name": "Mercury",
           "number": 80,
@@ -948,7 +948,7 @@
           ]
         },
         {
-          "group": "Element Poor Boron p",
+          "group": "Poor Boron (p)",
           "position": 12,
           "name": "Thallium",
           "number": 81,
@@ -964,7 +964,7 @@
           ]
         },
         {
-          "group": "Element Poor Carbon p",
+          "group": "Poor Carbon (p)",
           "position": 13,
           "name": "Lead",
           "number": 82,
@@ -980,7 +980,7 @@
           ]
         },
         {
-          "group": "Element Poor Pnictogen p",
+          "group": "Poor Pnictogen (p)",
           "position": 14,
           "name": "Bismuth",
           "number": 83,
@@ -996,7 +996,7 @@
           ]
         },
         {
-          "group": "Element Metalloid Chalcogen p",
+          "group": "Metalloid Chalcogen (p)",
           "position": 15,
           "name": "Polonium",
           "number": 84,
@@ -1012,7 +1012,7 @@
           ]
         },
         {
-          "group": "Element Halogen p",
+          "group": "Halogen (p)",
           "position": 16,
           "name": "Astatine",
           "number": 85,
@@ -1028,7 +1028,7 @@
           ]
         },
         {
-          "group": "Element Noble p",
+          "group": "Noble Gas (p)",
           "position": 17,
           "name": "Radon",
           "number": 86,
@@ -1049,7 +1049,7 @@
       "wiki": "https://en.wikipedia.org/wiki/Period%207%20element",
       "elements": [
         {
-          "group": "Element Alkali s",
+          "group": "Alkaline Earth Metal (s)",
           "position": 0,
           "name": "Francium",
           "number": 87,
@@ -1066,7 +1066,7 @@
           ]
         },
         {
-          "group": "Element Alkaline s",
+          "group": "Alkaline Metal (s)",
           "position": 1,
           "name": "Radium",
           "number": 88,
@@ -1083,7 +1083,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 3,
           "name": "Rutherfordium",
           "number": 104,
@@ -1100,7 +1100,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 4,
           "name": "Dubnium",
           "number": 105,
@@ -1117,7 +1117,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 5,
           "name": "Seaborgium",
           "number": 106,
@@ -1134,7 +1134,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 6,
           "name": "Bohrium",
           "number": 107,
@@ -1151,7 +1151,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 7,
           "name": "Hassium",
           "number": 108,
@@ -1168,7 +1168,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 8,
           "name": "Meitnerium",
           "number": 109,
@@ -1185,7 +1185,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 9,
           "name": "Darmstadtium",
           "number": 110,
@@ -1202,7 +1202,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 10,
           "name": "Roentgenium",
           "number": 111,
@@ -1219,7 +1219,7 @@
           ]
         },
         {
-          "group": "Element Transition d",
+          "group": "Transition Metal (d)",
           "position": 11,
           "name": "Copernicium",
           "number": 112,
@@ -1236,7 +1236,7 @@
           ]
         },
         {
-          "group": "Element Poor Boron p",
+          "group": "Poor Boron (p)",
           "position": 12,
           "name": "Nihonium",
           "number": 113,
@@ -1253,7 +1253,7 @@
           ]
         },
         {
-          "group": "Element Poor Carbon p",
+          "group": "Poor Carbon (p)",
           "position": 13,
           "name": "Flerovium",
           "number": 114,
@@ -1270,7 +1270,7 @@
           ]
         },
         {
-          "group": "Element Poor Pnictogen p",
+          "group": "Poor Pnictogen (p)",
           "position": 14,
           "name": "Moscovium",
           "number": 115,
@@ -1287,7 +1287,7 @@
           ]
         },
         {
-          "group": "Element Poor Chalcogen p",
+          "group": "Poor Chalcogen (p)",
           "position": 15,
           "name": "Livermorium",
           "number": 116,
@@ -1304,7 +1304,7 @@
           ]
         },
         {
-          "group": "Element Halogen p",
+          "group": "Halogen (p)",
           "position": 16,
           "name": "Tennessine",
           "number": 117,
@@ -1321,7 +1321,7 @@
           ]
         },
         {
-          "group": "Element Noble p",
+          "group": "Noble Gas (p)",
           "position": 17,
           "name": "Oganesson",
           "number": 118,
@@ -1342,7 +1342,7 @@
   ],
   "lanthanoids": [
     {
-      "group": "Element Lanthanoid f",
+      "group": "Lanthanide (f)",
       "position": 2,
       "name": "Lanthanum",
       "number": 57,
@@ -1358,7 +1358,7 @@
       ]
     },
     {
-      "group": "Element Lanthanoid f",
+      "group": "Lanthanide (f)",
       "position": 3,
       "name": "Cerium",
       "number": 58,
@@ -1374,7 +1374,7 @@
       ]
     },
     {
-      "group": "Element Lanthanoid f",
+      "group": "Lanthanide (f)",
       "position": 4,
       "name": "Praseodymium",
       "number": 59,
@@ -1390,7 +1390,7 @@
       ]
     },
     {
-      "group": "Element Lanthanoid f",
+      "group": "Lanthanide (f)",
       "position": 5,
       "name": "Neodymium",
       "number": 60,
@@ -1406,7 +1406,7 @@
       ]
     },
     {
-      "group": "Element Lanthanoid f",
+      "group": "Lanthanide (f)",
       "position": 6,
       "name": "Promethium",
       "number": 61,
@@ -1422,7 +1422,7 @@
       ]
     },
     {
-      "group": "Element Lanthanoid f",
+      "group": "Lanthanide (f)",
       "position": 7,
       "name": "Samarium",
       "number": 62,
@@ -1438,7 +1438,7 @@
       ]
     },
     {
-      "group": "Element Lanthanoid f",
+      "group": "Lanthanide (f)",
       "position": 8,
       "name": "Europium",
       "number": 63,
@@ -1454,7 +1454,7 @@
       ]
     },
     {
-      "group": "Element Lanthanoid f",
+      "group": "Lanthanide (f)",
       "position": 9,
       "name": "Gadolinium",
       "number": 64,
@@ -1470,7 +1470,7 @@
       ]
     },
     {
-      "group": "Element Lanthanoid f",
+      "group": "Lanthanide (f)",
       "position": 10,
       "name": "Terbium",
       "number": 65,
@@ -1486,7 +1486,7 @@
       ]
     },
     {
-      "group": "Element Lanthanoid f",
+      "group": "Lanthanide (f)",
       "position": 11,
       "name": "Dysprosium",
       "number": 66,
@@ -1502,7 +1502,7 @@
       ]
     },
     {
-      "group": "Element Lanthanoid f",
+      "group": "Lanthanide (f)",
       "position": 12,
       "name": "Holmium",
       "number": 67,
@@ -1518,7 +1518,7 @@
       ]
     },
     {
-      "group": "Element Lanthanoid f",
+      "group": "Lanthanide (f)",
       "position": 13,
       "name": "Erbium",
       "number": 68,
@@ -1534,7 +1534,7 @@
       ]
     },
     {
-      "group": "Element Lanthanoid f",
+      "group": "Lanthanide (f)",
       "position": 14,
       "name": "Thulium",
       "number": 69,
@@ -1550,7 +1550,7 @@
       ]
     },
     {
-      "group": "Element Lanthanoid f",
+      "group": "Lanthanide (f)",
       "position": 15,
       "name": "Ytterbium",
       "number": 70,
@@ -1566,7 +1566,7 @@
       ]
     },
     {
-      "group": "Element Lanthanoid d",
+      "group": "Lanthanide (d)",
       "position": 16,
       "name": "Lutetium",
       "number": 71,
@@ -1584,7 +1584,7 @@
   ],
   "actinoids": [
     {
-      "group": "Element Actinoid f",
+      "group": "Actinide (f)",
       "position": 2,
       "name": "Actinium",
       "number": 89,
@@ -1601,7 +1601,7 @@
       ]
     },
     {
-      "group": "Element Actinoid f",
+      "group": "Actinide (f)",
       "position": 3,
       "name": "Thorium",
       "number": 90,
@@ -1618,7 +1618,7 @@
       ]
     },
     {
-      "group": "Element Actinoid f",
+      "group": "Actinide (f)",
       "position": 4,
       "name": "Protactinium",
       "number": 91,
@@ -1635,7 +1635,7 @@
       ]
     },
     {
-      "group": "Element Actinoid f",
+      "group": "Actinide (f)",
       "position": 5,
       "name": "Uranium",
       "number": 92,
@@ -1652,7 +1652,7 @@
       ]
     },
     {
-      "group": "Element Actinoid f",
+      "group": "Actinide (f)",
       "position": 6,
       "name": "Neptunium",
       "number": 93,
@@ -1669,7 +1669,7 @@
       ]
     },
     {
-      "group": "Element Actinoid f",
+      "group": "Actinide (f)",
       "position": 7,
       "name": "Plutonium",
       "number": 94,
@@ -1686,7 +1686,7 @@
       ]
     },
     {
-      "group": "Element Actinoid f",
+      "group": "Actinide (f)",
       "position": 8,
       "name": "Americium",
       "number": 95,
@@ -1703,7 +1703,7 @@
       ]
     },
     {
-      "group": "Element Actinoid f",
+      "group": "Actinide (f)",
       "position": 9,
       "name": "Curium",
       "number": 96,
@@ -1720,7 +1720,7 @@
       ]
     },
     {
-      "group": "Element Actinoid f",
+      "group": "Actinide (f)",
       "position": 10,
       "name": "Berkelium",
       "number": 97,
@@ -1737,7 +1737,7 @@
       ]
     },
     {
-      "group": "Element Actinoid f",
+      "group": "Actinide (f)",
       "position": 11,
       "name": "Californium",
       "number": 98,
@@ -1754,7 +1754,7 @@
       ]
     },
     {
-      "group": "Element Actinoid f",
+      "group": "Actinide (f)",
       "position": 12,
       "name": "Einsteinium",
       "number": 99,
@@ -1771,7 +1771,7 @@
       ]
     },
     {
-      "group": "Element Actinoid f",
+      "group": "Actinide (f)",
       "position": 13,
       "name": "Fermium",
       "number": 100,
@@ -1788,7 +1788,7 @@
       ]
     },
     {
-      "group": "Element Actinoid f",
+      "group": "Actinide (f)",
       "position": 14,
       "name": "Mendelevium",
       "number": 101,
@@ -1805,7 +1805,7 @@
       ]
     },
     {
-      "group": "Element Actinoid f",
+      "group": "Actinide (f)",
       "position": 15,
       "name": "Nobelium",
       "number": 102,
@@ -1822,7 +1822,7 @@
       ]
     },
     {
-      "group": "Element Actinoid d",
+      "group": "Actinoide (d)",
       "position": 16,
       "name": "Lawrencium",
       "number": 103,

@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudFileUpload T="IBrowserFile" OnFilesChanged="UploadFiles">
+    <ButtonTemplate>
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   for="@context">
+            Upload using OnFilesChanged
+        </MudButton>
+    </ButtonTemplate>
+</MudFileUpload>
+
+@code{ 
+
+    public IBrowserFile File { get; private set; }
+    private void UploadFiles(InputFileChangeEventArgs args)
+    {
+        File = args.File;
+    }
+}

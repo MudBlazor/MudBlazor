@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div class="@Classname" style="@Style" @onclick="@OnClickHandler">
+<div tabindex="0" @attributes="UserAttributes" class="@Classname" style="@Style" @onclick="@OnClickHandler">
     @if (!String.IsNullOrEmpty(Avatar))
     {
         <MudAvatar Class="@AvatarClass" Color="@Color">
@@ -14,7 +14,7 @@
     }
     else if (IsChecked)
     {
-        <MudIcon Icon="@Icons.Material.Filled.Check" Class="mud-chip-icon" Size="Size.Small" />
+        <MudIcon Icon="@CheckedIcon" Class="mud-chip-icon" Size="Size.Small" />
     }
     <span class="mud-chip-content">
         @if (ChildContent == null)

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -15,20 +13,30 @@ namespace MudBlazor
         /// <summary>
         /// Child content
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Element.Misc)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// The HTML element that will be rendered in the root by the component
         /// </summary>
-        [Parameter] public string HtmlTag { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Element.Misc)]
+        public string HtmlTag { get; set; } = "span";
         /// <summary>
         /// The ElementReference to bind to.
         /// Use like @bind-Ref="myRef"
         /// </summary>
-        [Parameter] public ElementReference? Ref { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Element.Misc)]
+        public ElementReference? Ref { get; set; }
 
         [Parameter] public EventCallback<ElementReference> RefChanged { get; set; }
 
+        /// <summary>
+        /// Calling StateHasChanged to refresh the component's state
+        /// </summary>
+        public void Refresh() => StateHasChanged();
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
@@ -37,14 +45,22 @@ namespace MudBlazor
             builder.OpenElement(0, HtmlTag);
 
             //splatted attributes
-            builder.AddMultipleAttributes(1, UserAttributes);
+            foreach (var attribute in UserAttributes)
+            {
+                // checking if the value is null, we can get rid of null event handlers
+                // for example `@onmouseenter=@(IsOpen ? HandleEnter : null)`
+                // this is a powerful feature that in normal HTML elements doesn't work, because
+                // Blazor adds always the attribute value and creates an EventCallback
+                if (attribute.Value != null)
+                    builder.AddAttribute(1, attribute.Key, attribute.Value);
+            }
             //Class
             builder.AddAttribute(2, "class", Class);
             //Style
             builder.AddAttribute(3, "style", Style);
 
             // StopPropagation
-            //the order matters. This has to be before content is added
+            // the order matters. This has to be before content is added
             if (HtmlTag == "button")
                 builder.AddEventStopPropagationAttribute(5, "onclick", true);
 

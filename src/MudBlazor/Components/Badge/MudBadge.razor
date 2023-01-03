@@ -1,21 +1,24 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<span class="@Classname">
+<span @attributes="UserAttributes" class="@Classname" style="@Style">
     @ChildContent
-    <span class="mud-badge-wrapper">
-        <span class="@BadgeClass">
-            @if (!Dot)
-            {
-                @if (!String.IsNullOrEmpty(Icon))
-                {
-                    <MudIcon Icon="@Icon" Class="mud-icon-badge" />
-                }
-                else
-                {
-                    @_content
-                }
-            }
-        </span>
-    </span>
+	@if (Visible)
+	{
+		<span class="@WrapperClass">
+			<span class="@BadgeClassName" @onclick="HandleBadgeClick">
+				@if (!Dot)
+				{
+					@if (!String.IsNullOrEmpty(Icon))
+					{
+						<MudIcon Icon="@Icon" Class="mud-icon-badge" />
+					}
+					else
+					{
+						@_content
+					}
+				}
+			</span>
+		</span>
+	}
 </span>

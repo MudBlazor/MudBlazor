@@ -15,10 +15,16 @@ namespace MudBlazor
              .AddClass(Class)
            .Build();
 
+        protected string HelperContainer =>
+           new CssBuilder("mud-input-control-helper-container")
+           .AddClass($"px-1", Variant == Variant.Filled)
+           .AddClass($"px-2", Variant == Variant.Outlined)
+           .Build();
+
         protected string HelperClass =>
            new CssBuilder("mud-input-helper-text")
+             .AddClass("mud-input-helper-onfocus", HelperTextOnFocus)
              .AddClass("mud-input-error", Error)
-             .AddClass(Class)
            .Build();
 
         /// <summary>
@@ -50,11 +56,25 @@ namespace MudBlazor
         /// The ErrorText that will be displayed if Error true
         /// </summary>
         [Parameter] public string ErrorText { get; set; }
+        /// <summary>
+        /// The ErrorId that will be used by aria-describedby if Error true
+        /// </summary>
+        [Parameter] public string ErrorId { get; set; }
 
         /// <summary>
         /// The HelperText will be displayed below the text field.
         /// </summary>
         [Parameter] public string HelperText { get; set; }
+
+        /// <summary>
+        /// If true, the helper text will only be visible on focus.
+        /// </summary>
+        [Parameter] public bool HelperTextOnFocus { get; set; }
+
+        /// <summary>
+        /// The current character counter, displayed below the text field.
+        /// </summary>
+        [Parameter] public string CounterText { get; set; }
 
         /// <summary>
         /// If true, the input will take up the full width of its container.
@@ -76,5 +96,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
 
+        /// <summary>
+        /// If string has value the label "for" attribute will be added.
+        /// </summary>
+        [Parameter] public string ForId { get; set; } = string.Empty;
     }
 }

@@ -17,6 +17,13 @@ namespace MudBlazor
         protected string Classname => MudInputCssHelper.GetClassname(this,
             () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(PlaceholderStart) || !string.IsNullOrWhiteSpace(PlaceholderEnd));
 
+        /// <summary>
+        /// Type of the input element. It should be a valid HTML5 input type.
+        /// </summary>
+        [Parameter] public InputType InputType { get; set; } = InputType.Text;
+
+        internal override InputType GetInputType() => InputType;
+
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
         protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
@@ -37,6 +44,53 @@ namespace MudBlazor
         /// ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        private ElementReference _elementReferenceStart, _elementReferenceEnd;
+
+        /// <summary>
+        /// Custom separator icon, leave null for default.
+        /// </summary>
+        [Parameter] public string SeparatorIcon { get; set; } = Icons.Material.Filled.ArrowRightAlt;
+
+        /// <summary>
+        /// Focuses the start input of MudRangeInput
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask FocusStartAsync() => _elementReferenceStart.FocusAsync();
+
+        /// <summary>
+        /// Selects the start text of MudRangeInput
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask SelectStartAsync() => _elementReferenceStart.MudSelectAsync();
+
+        /// <summary>
+        /// Selects the specified range of the start text
+        /// </summary>
+        /// <param name="pos1">Start position of the selection</param>
+        /// <param name="pos2">End position of the selection</param>
+        /// <returns></returns>
+        public ValueTask SelectRangeStartAsync(int pos1, int pos2) => _elementReferenceStart.MudSelectRangeAsync(pos1, pos2);
+
+        /// <summary>
+        /// Focuses the end input of MudRangeInput
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask FocusEndAsync() => _elementReferenceEnd.FocusAsync();
+
+        /// <summary>
+        /// Selects the end text of MudRangeInput
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask SelectEndAsync() => _elementReferenceEnd.MudSelectAsync();
+
+        /// <summary>
+        /// Selects the specified range of the end text
+        /// </summary>
+        /// <param name="pos1">Start position of the selection</param>
+        /// <param name="pos2">End position of the selection</param>
+        /// <returns></returns>
+        public ValueTask SelectRangeEndAsync(int pos1, int pos2) => _elementReferenceEnd.MudSelectRangeAsync(pos1, pos2);
 
         public string TextStart
         {

@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudSelect id="selectLabelTest" @bind-Value="value" Label="RequiredTest" Required="true">
+    <MudSelectItem Value="@(string.Empty)" />
+    <MudSelectItem Value="@("1")" />
+    <MudSelectItem Value="@("2")" />
+    <MudSelectItem Value="@("3")" />
+</MudSelect>
+
+@code
+{
+    public static string __description__ = "The Select should not show required-error initially. The first (empty) item should.";
+
+    string value = null;
+}

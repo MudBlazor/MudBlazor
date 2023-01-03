@@ -2,38 +2,45 @@
 
 <DocsPage>
     <DocsPageHeader Title="Swipe area">
-        <Description>Note: these examples only works on devices where touch events are supported.</Description>
+        <Description>Note: these examples only work on devices where touch events are supported.</Description>
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Swipe directions</Title>
-                <Description>Swipe your finger in different direction to see how the component works.</Description>
+            <SectionHeader Title="Swipe directions">
+                <Description>Swipe your finger in different directions to see how the component works.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent DarkenBackground="true" Code="SwipeDirectionsExample">
                 <SwipeDirectionsExample />
             </SectionContent>
-            <SectionSource Code="SwipeDirectionsExample" GitHubFolderName="Tree" />
         </DocsPageSection>
+        
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Usage: open and close drawer</Title>
+            <SectionHeader Title="Prevent default browser behavior">
+                <Description>Browser will not scroll when <CodeInline>PreventDefault</CodeInline> is set to <CodeInline>true</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="SwipeDirectionsPreventDefaultExample">
+                <SwipeDirectionsPreventDefaultExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Drawer Example">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent DarkenBackground="true" Code="SwipeDrawerExample" ShowCode="false">
                 <SwipeDrawerExample />
             </SectionContent>
-            <SectionSource Code="SwipeDrawerExample" GitHubFolderName="Tree" />
         </DocsPageSection>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Usage: navigate a date picker</Title>
+            <SectionHeader Title="DatePicker Example">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true">
+            <SectionContent DarkenBackground="true" Code="SwipeDatePickerExample" ShowCode="false">
                 <SwipeDatePickerExample />
             </SectionContent>
-            <SectionSource Code="SwipeDatePickerExample" GitHubFolderName="Tree" />
         </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

@@ -3,22 +3,23 @@
 @inherits MudChartBase
 
 <CascadingValue Value="@this" IsFixed="true">
-    <div class="@Classname">
+    <div @attributes="UserAttributes" class="@Classname" style="@Style" dir="ltr">
         @if (ChartType == ChartType.Donut)
         {
-            <Donut InputData="@InputData" InputLabels="@InputLabels"></Donut>
+            <Donut InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Donut>
         }
         @if (ChartType == ChartType.Pie)
         {
-            <Pie InputData="@InputData" InputLabels="@InputLabels"></Pie>
+            <Pie InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Pie>
         }
         @if (ChartType == ChartType.Line)
         {
-            <Line ChartSeries="@ChartSeries" XAxisLabels="@XAxisLabels"></Line>
+            <Line ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Line>
         }
         @if (ChartType == ChartType.Bar)
         {
-            <Bar ChartSeries="@ChartSeries" XAxisLabels="@XAxisLabels"></Bar>
+            <Bar ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Bar>
         }
     </div>
 </CascadingValue>
+

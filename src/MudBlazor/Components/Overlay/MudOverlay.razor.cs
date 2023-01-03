@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -23,7 +20,6 @@ namespace MudBlazor
             new CssBuilder("mud-overlay-scrim")
                 .AddClass("mud-overlay-dark", DarkBackground)
                 .AddClass("mud-overlay-light", LightBackground)
-                .AddClass(Class)
                 .Build();
 
         protected string Styles =>
@@ -37,7 +33,9 @@ namespace MudBlazor
         /// <summary>
         /// Child content of the component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Overlay.Behavior)]
+        public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// Fires when Visible changes
@@ -49,6 +47,7 @@ namespace MudBlazor
         /// If true overlay will be visible. Two-way bindable.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Overlay.Behavior)]
         public bool Visible
         {
             get => _visible;
@@ -64,54 +63,72 @@ namespace MudBlazor
         /// <summary>
         /// If true overlay will set Visible false on click.
         /// </summary>
-        [Parameter] public bool AutoClose { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Overlay.ClickAction)]
+        public bool AutoClose { get; set; }
 
         /// <summary>
         /// If true (default), the Document.body element will not be able to scroll
         /// </summary>
-        [Parameter] public bool LockScroll { get; set; } = true;
+        [Parameter]
+        [Category(CategoryTypes.Overlay.Behavior)]
+        public bool LockScroll { get; set; } = true;
 
         /// <summary>
         /// The css class that will be added to body if lockscroll is used.
         /// </summary>
-        [Parameter] public string LockScrollClass { get; set; } = "scroll-locked";
+        [Parameter]
+        [Category(CategoryTypes.Overlay.Behavior)]
+        public string LockScrollClass { get; set; } = "scroll-locked";
 
         /// <summary>
         /// If true applys the themes dark overlay color.
         /// </summary>
-        [Parameter] public bool DarkBackground { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Overlay.Behavior)]
+        public bool DarkBackground { get; set; }
 
         /// <summary>
         /// If true applys the themes light overlay color.
         /// </summary>
-        [Parameter] public bool LightBackground { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Overlay.Behavior)]
+        public bool LightBackground { get; set; }
 
         /// <summary>
         /// Icon class names, separated by space
         /// </summary>
-        [Parameter] public bool Absolute { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Overlay.Behavior)]
+        public bool Absolute { get; set; }
 
         /// <summary>
         /// Sets the z-index of the overlay.
         /// </summary>
-        [Parameter] public int ZIndex { get; set; } = 5;
+        [Parameter]
+        [Category(CategoryTypes.Overlay.Behavior)]
+        public int ZIndex { get; set; } = 5;
 
         /// <summary>
         /// Command parameter.
         /// </summary>
-        [Parameter] public object CommandParameter { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Overlay.ClickAction)]
+        public object CommandParameter { get; set; }
 
         /// <summary>
         /// Command executed when the user clicks on an element.
         /// </summary>
-        [Parameter] public ICommand Command { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Overlay.ClickAction)]
+        public ICommand Command { get; set; }
 
         /// <summary>
         /// Fired when the overlay is clicked
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
-        protected void OnClickHandler(MouseEventArgs ev)
+        protected internal void OnClickHandler(MouseEventArgs ev)
         {
             if (AutoClose)
                 Visible = false;
@@ -125,15 +142,14 @@ namespace MudBlazor
         //if not visible or CSS `position:absolute`, don't lock scroll
         protected override void OnAfterRender(bool firstTime)
         {
-            if (!Visible || Absolute)
-            {
-                UnblockScroll();
+            if (!LockScroll || Absolute)
                 return;
-            }
-            if (LockScroll)
-            {
+
+            if (Visible)
                 BlockScroll();
-            }
+            else
+                UnblockScroll();
+
         }
 
         //locks the scroll attaching a CSS class to the specified element, in this case the body

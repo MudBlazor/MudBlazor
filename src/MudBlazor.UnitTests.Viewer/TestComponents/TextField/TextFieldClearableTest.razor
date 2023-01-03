@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTextField @bind-Value="_value" Clearable="true" OnClearButtonClick="@ClearButtonClickHandler" />
+  <MudTextField T="string" Mask="@(new PatternMask("0000 0000 0000 0000"))" Label="Mask Clear Test" 
+                      Variant="@Variant.Text" Clearable="true" />
+@code {
+    public static string __description__ = "Initially hidden clear button should show when text is entered.";
+
+    private string _value = string.Empty;
+
+    public bool ClearButtonClicked { get; set; }
+
+    private void ClearButtonClickHandler(MouseEventArgs e)
+    {
+        ClearButtonClicked = true;
+    }
+}

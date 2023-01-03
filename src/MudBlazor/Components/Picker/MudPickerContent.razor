@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
 
-<div class="@Classnames">
+<div class="@Classnames" @onclick:stopPropagation="true">
     @ChildContent
 </div>
 
