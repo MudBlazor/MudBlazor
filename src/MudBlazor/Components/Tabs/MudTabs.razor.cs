@@ -219,13 +219,19 @@ namespace MudBlazor
             get => _activePanelIndex;
             set
             {
+                var validPanel = _panels.Count > 0 && value != -1 && value <= _panels.Count - 1;
+
                 if (_activePanelIndex != value)
                 {
                     _activePanelIndex = value;
                     if (_isRendered)
-                        ActivePanel = _activePanelIndex != -1 ? _panels[_activePanelIndex] : null;
-                    ActivePanelIndexChanged.InvokeAsync(_activePanelIndex);
+                    {
+                        ActivePanel = validPanel ? _panels[value] : null;
+                        ActivePanelIndexChanged.InvokeAsync(value);
+                    }
                 }
+                else if (validPanel)
+                    ActivePanel = _panels[value];
             }
         }
 
@@ -342,8 +348,10 @@ namespace MudBlazor
             _panels.Add(tabPanel);
             if (_panels.Count == 1)
                 ActivePanel = tabPanel;
-
             StateHasChanged();
+
+            if (_panels.Count == 1 && _activePanelIndex == -1)
+                ActivePanelIndex = 0;
         }
 
         internal async Task SetPanelRef(ElementReference reference)
@@ -362,24 +370,16 @@ namespace MudBlazor
                 return;
 
             var index = _panels.IndexOf(tabPanel);
-            var newIndex = index;
-            if (ActivePanelIndex == index && index == _panels.Count - 1)
-            {
-                newIndex = index > 0 ? index - 1 : 0;
-                if (_panels.Count == 1)
-                {
-                    ActivePanel = null;
-                }
-            }
+
+            // We're at the right-most tab.
+            if (_activePanelIndex == index && index == _panels.Count - 1)
+                ActivePanelIndex = _panels.Count == 1 ? -1 : index > 0 ? index - 1 : 0;
+
+            // Active tab is not necessarily the tab being closed.
             else if (_activePanelIndex > index)
             {
                 _activePanelIndex--;
                 await ActivePanelIndexChanged.InvokeAsync(_activePanelIndex);
-            }
-
-            if (index != newIndex)
-            {
-                ActivePanelIndex = newIndex;
             }
 
             _panels.Remove(tabPanel);
@@ -411,9 +411,7 @@ namespace MudBlazor
             if (!panel.Disabled || ignoreDisabledState)
             {
                 ActivePanelIndex = _panels.IndexOf(panel);
-
-                if (ev != null)
-                    ActivePanel.OnClick.InvokeAsync(ev);
+                ActivePanel?.OnClick.InvokeAsync(ev);
 
                 CenterScrollPositionAroundSelectedItem();
                 SetSliderState();
