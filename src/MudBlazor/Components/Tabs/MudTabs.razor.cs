@@ -316,7 +316,7 @@ namespace MudBlazor
                 var items = _panels.Select(x => x.PanelRef).ToList();
                 items.Add(_tabsContentSize);
 
-                if (_panels.Count > 0)
+                if (_activePanelIndex != -1 && _panels.Count > 0)
                     ActivePanel = _panels[_activePanelIndex];
 
                 await _resizeObserver.Observe(items);
@@ -349,9 +349,6 @@ namespace MudBlazor
             if (_panels.Count == 1)
                 ActivePanel = tabPanel;
             StateHasChanged();
-
-            if (_panels.Count == 1 && _activePanelIndex == -1)
-                ActivePanelIndex = 0;
         }
 
         internal async Task SetPanelRef(ElementReference reference)
