@@ -1,5 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
+<MudText>Latest button click item: @LatestButtonClickItem</MudText>
 <MudTable @ref="Table" T="string" Items="items" EditTrigger="TableEditTrigger.EditButton" EditButtonPosition="EditButtonPosition" ApplyButtonPosition="ApplyButtonPosition">
     <HeaderContent>
         <MudTh>#</MudTh>
@@ -17,16 +18,27 @@
         </MudTd>
     </RowEditingTemplate>
     <EditButtonContent Context="button">
-        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="button.ButtonAction" Disabled="button.ButtonDisabled" />
+        <MudButton Size="@Size.Small" Class="pa-0" OnClick="@(() => CustomButtonClick(button.Item))">
+            Custom Button
+        </MudButton>
     </EditButtonContent>
 </MudTable>
 
 @code {
-    public static string __description__ = "Inline Edit Table: Custom edit button content";
+    public static string __description__ = "Inline Edit Table: Custom edit button - Item context";
     string[] items = new string[] { "A", "B", "C" };
+    
+    public object LatestButtonClickItem;
+    
     [Parameter]
     public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
     [Parameter]
     public TableEditButtonPosition EditButtonPosition { get; set; } = TableEditButtonPosition.End;
+    
     public MudTable<string> Table { get; private set; }
+
+    private void CustomButtonClick(object item)
+    {
+        LatestButtonClickItem = item;
+    } 
 }
