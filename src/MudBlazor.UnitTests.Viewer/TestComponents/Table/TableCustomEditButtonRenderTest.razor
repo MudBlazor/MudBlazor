@@ -1,5 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
+<MudText>Last Delete Click: @_lastDeletedClick</MudText>
+
 <MudTable @ref="Table" T="string" Items="items" EditTrigger="TableEditTrigger.EditButton" EditButtonPosition="EditButtonPosition" ApplyButtonPosition="ApplyButtonPosition">
     <HeaderContent>
         <MudTh>#</MudTh>
@@ -18,15 +20,27 @@
     </RowEditingTemplate>
     <EditButtonContent Context="button">
         <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="button.ButtonAction" Disabled="button.ButtonDisabled" />
+        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Class="pa-0" OnClick="@(() => OnDeleteClick(button.Item))" />
     </EditButtonContent>
 </MudTable>
 
 @code {
     public static string __description__ = "Inline Edit Table: Custom edit button content";
     string[] items = new string[] { "A", "B", "C" };
+    string _lastDeletedClick;
+    
     [Parameter]
     public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
     [Parameter]
     public TableEditButtonPosition EditButtonPosition { get; set; } = TableEditButtonPosition.End;
+    
     public MudTable<string> Table { get; private set; }
+
+    private void OnDeleteClick(object item)
+    {
+        if (item is string value) 
+        {
+            _lastDeletedClick = value;
+        }
+    }
 }
