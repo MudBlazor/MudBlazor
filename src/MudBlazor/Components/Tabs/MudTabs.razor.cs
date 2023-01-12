@@ -370,7 +370,14 @@ namespace MudBlazor
 
             // We're at the right-most tab.
             if (_activePanelIndex == index && index == _panels.Count - 1)
-                ActivePanelIndex = _panels.Count == 1 ? -1 : index > 0 ? index - 1 : 0;
+            {
+                if (_panels.Count == 1)
+                    ActivePanelIndex = -1;
+                else if (index > 0)
+                    ActivePanelIndex = index - 1;
+                else
+                    ActivePanelIndex = 0;
+            }
 
             // Active tab is not necessarily the tab being closed.
             else if (_activePanelIndex > index)
