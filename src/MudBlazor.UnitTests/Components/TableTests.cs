@@ -8,6 +8,7 @@ using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -501,6 +502,24 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(0);
         }
 
+        [Test]
+        public void TableMultiSelection_MultiGrouping_DefaultCheckboxStatesTest()
+        {
+            var comp = Context.RenderComponent<TableMultiSelection_MultiGrouping_DefaultCheckboxStatesTest>();
+            var mudTable = comp.Instance.MudTable;
+
+            // All row checkbox states must be false.
+            mudTable.Context.Rows.Count(r => r.Value.IsChecked).Should().Be(0);
+
+            // All grouprow checkbox states must be false.
+            mudTable.Context.GroupRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(14);
+
+            // The headerrow checkbox state must be false.
+            mudTable.Context.HeaderRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(1);
+
+            // The footerrow checkbox state must be false.
+            mudTable.Context.FooterRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(0);
+        }
 
         /// <summary>
         /// checking the header checkbox should select all items (all checkboxes on, all items in SelectedItems)
@@ -1635,7 +1654,7 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(2);
 
             inputs = comp.FindAll("input").ToArray();
-            inputs.Where(x => x.IsChecked()).Count().Should().Be(3);
+            inputs.Where(x => x.IsChecked()).Count().Should().Be(5);
 
             inputs[1].Change(false);
             table.SelectedItems.Count.Should().Be(0);
