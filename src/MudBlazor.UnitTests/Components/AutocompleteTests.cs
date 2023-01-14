@@ -1018,5 +1018,27 @@ namespace MudBlazor.UnitTests.Components
             autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-autocomplete");
             autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-width-full");
         }
+
+        [Test]
+        public async Task Autocomplete_Should_HaveValueWithTextChangedEvent()
+        {
+            // Arrange
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+
+            const string testText = "testText";
+            string eventText = null;
+            autocompletecomp.Instance.TextChanged = new EventCallbackFactory().Create<string>(this, v =>
+            {
+                eventText = v;
+            });
+
+            // Act
+            // enter a text so the TextChanged event will fire
+            autocompletecomp.SetParam(a => a.Text, testText);
+
+            // Assert
+            autocompletecomp.WaitForAssertion(() => Assert.AreEqual(testText, eventText));
+        }
     }
 }

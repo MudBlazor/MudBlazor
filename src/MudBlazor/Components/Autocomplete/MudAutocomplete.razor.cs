@@ -767,7 +767,7 @@ namespace MudBlazor
 
         private async Task OnTextChanged(string text)
         {
-            await base.TextChanged.InvokeAsync();
+            await base.TextChanged.InvokeAsync(text);
 
             if (text == null)
                 return;
