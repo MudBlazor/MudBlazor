@@ -5,7 +5,7 @@
 	@ChildContent
 	@if (TooltipContent != null || string.IsNullOrEmpty(Text) == false)
 	{
-		<MudPopover Open="_isVisible" Duration="@Duration" Delay="@Delay" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="@Classname" Paper="false">
+		<MudPopover Open="_isVisible" Duration="@Duration" Delay="@Delay" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="@Classname" Style="@Style" Paper="false">
 				@if (TooltipContent != null)
 				{
 					@TooltipContent
