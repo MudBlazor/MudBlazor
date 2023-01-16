@@ -12,7 +12,7 @@ namespace MudBlazor.Docs.Services
     {
         NavigationFooterLink Next { get; }
         NavigationFooterLink Previous { get; }
-        NavigationSection? Section { get; }
+        NavigationSection Section { get; }
     }
 
 
@@ -42,7 +42,7 @@ namespace MudBlazor.Docs.Services
         /// <summary>
         /// The section of the menu: components or api
         /// </summary>
-        public NavigationSection? Section
+        public NavigationSection Section
         {
             get
             {
@@ -54,7 +54,7 @@ namespace MudBlazor.Docs.Services
                     "features" => NavigationSection.Features,
                     "customization" => NavigationSection.Customization,
                     "utilities" => NavigationSection.Utilities,
-                    _ => null,
+                    _ => NavigationSection.Unspecified,
                 };
             }
         }
@@ -99,7 +99,7 @@ namespace MudBlazor.Docs.Services
         /// </summary>
         /// <param name="section"> components or api </param>
         /// <returns></returns>
-        private List<NavigationFooterLink> GetOrderedMenuLinks(NavigationSection? section)
+        private List<NavigationFooterLink> GetOrderedMenuLinks(NavigationSection section)
         {
             if (section == NavigationSection.Api || section == NavigationSection.Components)
             {
@@ -173,7 +173,7 @@ namespace MudBlazor.Docs.Services
 
     public enum NavigationOrder { Previous, Next }
 
-    public enum NavigationSection { Api, Components, Features, Customization, Utilities, Unspecified }
+    public enum NavigationSection { Unspecified = 0, Api, Components, Features, Customization, Utilities }
 
     #endregion
 }

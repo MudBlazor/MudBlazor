@@ -14,7 +14,7 @@
     }
 </style>
 
-<MudText>Selected items (@selectedItems?.Count): @(selectedItems == null ? "" : string.Join(", ", selectedItems.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
+<MudText>Total items: @Elements?.Count() - Selected items: @selectedItems?.Count</MudText>
 
 <MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
           Items="@Elements"
