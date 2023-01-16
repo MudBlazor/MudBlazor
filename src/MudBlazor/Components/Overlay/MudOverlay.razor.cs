@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -128,11 +129,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
-        protected internal void OnClickHandler(MouseEventArgs ev)
+        protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (AutoClose)
                 Visible = false;
-            OnClick.InvokeAsync(ev);
+            await OnClick.InvokeAsync(ev);
             if (Command?.CanExecute(CommandParameter) ?? false)
             {
                 Command.Execute(CommandParameter);
