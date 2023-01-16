@@ -1,12 +1,12 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" id="@_elementId" class="mud-dialog-container @Position">
+<div @attributes="UserAttributes" id="@_elementId" class="mud-dialog-container @Position" @onmousemove:preventDefault @onmousemove="Drag" @onmouseup="StopDragging">
     <MudOverlay Visible="true" OnClick="HandleBackgroundClick" Class="mud-overlay-dialog" DarkBackground="true" />
-    <div id="_@Id.ToString("N")" role="dialog" class="@Classname" style="@Style">
+    <div id="_@Id.ToString("N")" role="dialog" class="@Classname" style="@InternalStyle">
         @if (!NoHeader)
         {
-            <div class="mud-dialog-title">
+            <div class="@InternalClass" @onmousedown:preventDefault @onmousedown="StartDragging" @ref="_dialogTitle">
                 @if (TitleContent == null)
                 {
                     <MudText Typo="Typo.h6">@Title</MudText>

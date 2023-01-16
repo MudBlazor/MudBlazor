@@ -65,9 +65,9 @@ namespace MudBlazor
         private bool CloseOnEscapeKey { get; set; }
         private bool NoHeader { get; set; }
         private bool CloseButton { get; set; }
+        private bool Draggable { get; set; }
         private bool FullScreen { get; set; }
         private bool FullWidth { get; set; }
-
 
         protected override void OnInitialized()
         {
@@ -169,11 +169,42 @@ namespace MudBlazor
             DialogMaxWidth = SetMaxWidth();
             NoHeader = SetHideHeader();
             CloseButton = SetCloseButton();
+            Draggable = SetDraggable();
             FullWidth = SetFullWidth();
             FullScreen = SetFulScreen();
             DisableBackdropClick = SetDisableBackdropClick();
             CloseOnEscapeKey = SetCloseOnEscapeKey();
             Class = Classname;
+        }
+
+        private string InternalStyle
+        {
+            get
+            {
+                if (!Draggable || !_hasBeenDragged)
+                    return Style;
+                else
+                    return StyleBuilder.Empty()
+                        .AddStyle(Style)
+                        .AddStyle("position", "absolute")
+                        .AddStyle("top", $"{_dialogY}px")
+                        .AddStyle("left", $"{_dialogX}px")
+                        .Build();
+            }
+        }
+
+        private string InternalClass
+        {
+            get
+            {
+                if (!Draggable)
+                    return "mud-dialog-title";
+                else
+                    return CssBuilder.Empty()
+                        .AddClass("mud-dialog-title")
+                        .AddClass("cursor-move")
+                        .Build();
+            }
         }
 
         private string SetPosition()
@@ -267,6 +298,17 @@ namespace MudBlazor
             return false;
         }
 
+        private bool SetDraggable()
+        {
+            if (Options.Draggable.HasValue)
+                return Options.Draggable.Value;
+
+            if (GlobalDialogOptions.Draggable.HasValue)
+                return GlobalDialogOptions.Draggable.Value;
+
+            return false;
+        }
+
         private bool SetDisableBackdropClick()
         {
             if (Options.DisableBackdropClick.HasValue)
@@ -301,6 +343,43 @@ namespace MudBlazor
             }
 
             _dialog?.OnBackdropClick.Invoke();
+        }
+
+        /// <summary> Variables for the draggable functionality. </summary>
+        private ElementReference _dialogTitle;
+
+        private double _mouseX;
+        private double _mouseY;
+        private double _dialogX;
+        private double _dialogY;
+        private bool _dragging = false;
+        private bool _hasBeenDragged = false;
+
+        private void StartDragging(MouseEventArgs mouseEventArgs)
+        {
+            _mouseX = mouseEventArgs.ClientX;
+            _mouseY = mouseEventArgs.ClientY;
+            _dragging = true;
+        }
+
+        private async Task Drag(MouseEventArgs mouseEventArgs)
+        {
+            if (!_dragging) return;
+
+            var boundingRect = await _dialogTitle.MudGetBoundingClientRectAsync();
+
+            _dialogX = boundingRect.Left - (_mouseX - mouseEventArgs.ClientX);
+            _dialogY = boundingRect.Top - (_mouseY - mouseEventArgs.ClientY);
+
+            _mouseX = mouseEventArgs.ClientX;
+            _mouseY = mouseEventArgs.ClientY;
+
+            _hasBeenDragged = true;
+        }
+
+        private void StopDragging(MouseEventArgs mouseEventArgs)
+        {
+            _dragging = false;
         }
 
         private MudDialog _dialog;

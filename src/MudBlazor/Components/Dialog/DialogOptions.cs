@@ -21,6 +21,7 @@ namespace MudBlazor
         public bool? CloseOnEscapeKey { get; set; }
         public bool? NoHeader { get; set; }
         public bool? CloseButton { get; set; }
+        public bool? Draggable { get; set; }
         public bool? FullScreen { get; set; }
         public bool? FullWidth { get; set; }
     }
