@@ -84,14 +84,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public string PrevIcon { get; set; } = Icons.Filled.ChevronLeft;
+        public string PrevIcon { get; set; } = Icons.Material.Filled.ChevronLeft;
 
         /// <summary>
         /// Icon to use for right pagination.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public string NextIcon { get; set; } = Icons.Filled.ChevronRight;
+        public string NextIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
         /// <summary>
         /// If true, always display the scroll buttons even if the tabs are smaller than the required with, buttons will be disabled if there is nothing to scroll.
@@ -106,6 +106,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public int? MaxHeight { get; set; } = null;
+
+        /// <summary>
+        /// Sets the min-wdth of the tabs. 160px by default.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public string MinimumTabWidth { get; set; } = "160px";
 
         /// <summary>
         /// Sets the position of the tabs itself.
@@ -216,8 +223,8 @@ namespace MudBlazor
                 {
                     _activePanelIndex = value;
                     if (_isRendered)
-                        ActivePanel = _panels[_activePanelIndex];
-                    ActivePanelIndexChanged.InvokeAsync(value);
+                        ActivePanel = _activePanelIndex != -1 ? _panels[_activePanelIndex] : null;
+                    ActivePanelIndexChanged.InvokeAsync(_activePanelIndex);
                 }
             }
         }
@@ -532,6 +539,7 @@ namespace MudBlazor
         string GetTabStyle(MudTabPanel panel)
         {
             var tabStyle = new StyleBuilder()
+            .AddStyle("min-width", MinimumTabWidth)
             .AddStyle(panel.Style)
             .Build();
 

@@ -73,7 +73,7 @@
     max-height: calc(100vh - var(--mud-appbar-height));
     overflow-y: auto;
     
-    &.mud-dialog-rtl .mud-dialog-title .mud-button-root {
+    &.mud-dialog-rtl .mud-dialog-title .mud-button-close {
         right: unset;
         left: 8px;
     }
@@ -89,7 +89,7 @@
         + * > .mud-dialog-content {
             border-radius: 0
         }
-        & .mud-button-root {
+        & .mud-button-close {
             top: 8px;
             right: 8px;
             position: absolute;

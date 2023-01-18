@@ -45,7 +45,7 @@ namespace MudBlazor
             .AddClass(FooterClass).Build();
 
         /// <summary>
-        /// When editing a row and this is true, the editing row must be saved/cancelled before a new row will be selected.
+        /// When editing a row and this is true, the editing row must be saved/canceled before a new row will be selected.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
@@ -191,6 +191,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Table.Selecting)]
         public bool MultiSelection { get; set; }
+
+        /// <summary>
+        /// When <c>true</c>, a row-click also toggles the checkbox state.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Rows)]
+        public bool SelectOnRowClick { get; set; } = true;
 
         /// <summary>
         /// Optional. Add any kind of toolbar to this render fragment.
@@ -429,6 +436,16 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Behavior)]
         public bool Virtualize { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value that determines how many additional items will be rendered
+        /// before and after the visible region. This help to reduce the frequency of rendering
+        /// during scrolling. However, higher values mean that more elements will be present
+        /// in the page.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public int OverscanCount { get; set; } = 3;
+
         #region --> Obsolete Forwarders for Backwards-Compatiblilty
         /// <summary>
         /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />
@@ -528,7 +545,7 @@ namespace MudBlazor
 
         internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
 
-        internal abstract void OnHeaderCheckboxClicked(bool value);
+        internal abstract void OnHeaderCheckboxClicked(bool checkedState);
 
         internal abstract bool IsEditable { get; }
 

@@ -8,6 +8,7 @@ using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -313,10 +314,10 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html      
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<string>>();
-            var pager = comp.FindComponent<MudSelect<string>>().Instance;
+            var pager = comp.FindComponent<MudSelect<int>>().Instance;
             // change page size
             await table.InvokeAsync(() => table.Instance.SetRowsPerPage(20));
-            pager.Value.Should().Be("20");
+            pager.Value.Should().Be(20);
             comp.FindAll("tr.mud-table-row").Count.Should().Be(20);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-20 of 59");
             comp.FindAll("button")[0].IsDisabled().Should().Be(true);
@@ -325,7 +326,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[3].IsDisabled().Should().Be(false);
             // change page size
             await table.InvokeAsync(() => table.Instance.SetRowsPerPage(60));
-            pager.Value.Should().Be("60");
+            pager.Value.Should().Be(60);
             comp.FindAll("tr.mud-table-row").Count.Should().Be(59);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-59 of 59");
             comp.FindAll("button")[0].IsDisabled().Should().Be(true);
@@ -334,13 +335,37 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[3].IsDisabled().Should().Be(true);
             // change page size
             await table.InvokeAsync(() => table.Instance.SetRowsPerPage(10));
-            pager.Value.Should().Be("10");
+            pager.Value.Should().Be(10);
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
             comp.FindAll("button")[0].IsDisabled().Should().Be(true);
             comp.FindAll("button")[1].IsDisabled().Should().Be(true);
             comp.FindAll("button")[2].IsDisabled().Should().Be(false);
             comp.FindAll("button")[3].IsDisabled().Should().Be(false);
+        }
+
+        /// <summary>
+        /// Tests that the "All" table pager option shows all items
+        /// </summary>
+        [Test]
+        public async Task TablePagingAllTest()
+        {
+            var comp = Context.RenderComponent<TablePagingTest1>();
+
+            var table = comp.FindComponent<MudTable<string>>();
+            var pager = comp.FindComponent<MudSelect<int>>().Instance;
+
+            comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59"); //check initial value
+            // change page size
+            await table.InvokeAsync(() => table.Instance.SetRowsPerPage(int.MaxValue));
+            pager.Value.Should().Be(int.MaxValue);
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(59);
+            comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-59 of 59");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(true); //buttons are disabled
+            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
+            pager.Value.Should().Be(int.MaxValue);
         }
 
         /// <summary>
@@ -353,7 +378,7 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>();
-            var pager = comp.FindComponent<MudSelect<string>>().Instance;
+            var pager = comp.FindComponent<MudSelect<int>>().Instance;
             // after initial load
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
@@ -376,7 +401,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[3].IsDisabled().Should().Be(true);
             // change page size
             await table.InvokeAsync(() => table.Instance.SetRowsPerPage(100));
-            pager.Value.Should().Be("100");
+            pager.Value.Should().Be(100);
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-99 of 99");
             comp.FindAll("button")[0].IsDisabled().Should().Be(true);
             comp.FindAll("button")[1].IsDisabled().Should().Be(true);
@@ -451,34 +476,49 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(0);
         }
 
-        /// <summary>
-        /// the selected items (check-box click or row click) should be in SelectedItems
-        /// </summary>
+
         [Test]
-        public void TableMultiSelectionTest1()
+        public void TableMultiSelection_CheckboxAndRowClickTest()
         {
-            var comp = Context.RenderComponent<TableMultiSelectionTest1>();
-            // print the generated html
-            // select elements needed for the test
+            var comp = Context.RenderComponent<TableMultiSelection_CheckboxAndRowClickTest>();
+            var checkboxes = comp.FindComponent<MudTable<int>>().FindAll("input").ToArray();
             var table = comp.FindComponent<MudTable<int>>().Instance;
-            var tr = comp.FindAll("tr").ToArray();
-            tr.Length.Should().Be(3);
-            var td = comp.FindAll("td").ToArray();
-            td.Length.Should().Be(6); // two td per row for multi selection
-            var inputs = comp.FindAll("input").ToArray();
-            inputs.Length.Should().Be(3); // one checkbox per row
-            table.SelectedItems.Count.Should().Be(0); // selected items should be empty
-            // click checkboxes and verify selection text
-            inputs[0].Change(true);
-            table.SelectedItems.Count.Should().Be(1);
-            comp.Find("p").TextContent.Should().Be("SelectedItems { 0 }");
-            inputs = comp.FindAll("input").ToArray();
-            inputs[0].Change(false);
+
+            foreach (var cbx in checkboxes) cbx.Change(true);
+            table.SelectedItems.Count.Should().Be(3);
+
+            foreach (var cbx in checkboxes) cbx.Change(false);
             table.SelectedItems.Count.Should().Be(0);
-            comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
-            // row click
-            tr[1].Click();
-            comp.Find("p").TextContent.Should().Be("SelectedItems { 1 }");
+        }
+
+        [Test]
+        public void TableMultiSelection_IgnoreCheckbox_RowClickTest()
+        {
+            var comp = Context.RenderComponent<TableMultiSelection_IgnoreCheckbox_RowClickTest>();
+            var rows = comp.FindComponent<MudTable<int>>().FindAll("tr").ToArray();
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+
+            foreach (var row in rows) row.Click();
+            table.SelectedItems.Count.Should().Be(0);
+        }
+
+        [Test]
+        public void TableMultiSelection_MultiGrouping_DefaultCheckboxStatesTest()
+        {
+            var comp = Context.RenderComponent<TableMultiSelection_MultiGrouping_DefaultCheckboxStatesTest>();
+            var mudTable = comp.Instance.MudTable;
+
+            // All row checkbox states must be false.
+            mudTable.Context.Rows.Count(r => r.Value.IsChecked).Should().Be(0);
+
+            // All grouprow checkbox states must be false.
+            mudTable.Context.GroupRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(14);
+
+            // The headerrow checkbox state must be false.
+            mudTable.Context.HeaderRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(1);
+
+            // The footerrow checkbox state must be false.
+            mudTable.Context.FooterRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(0);
         }
 
         /// <summary>
@@ -506,7 +546,7 @@ namespace MudBlazor.UnitTests.Components
             inputs[0].Change(true);
             table.SelectedItems.Count.Should().Be(3);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4);
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3);
             inputs = comp.FindAll("input").ToArray();
             inputs[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
@@ -539,7 +579,7 @@ namespace MudBlazor.UnitTests.Components
             inputs[0].Change(true);
             table.SelectedItems.Count.Should().Be(3);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4);
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3);
             inputs = comp.FindAll("input").ToArray();
             inputs[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
@@ -564,9 +604,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1 }");
             checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(1);
             checkboxes[0].Checked.Should().Be(false);
-            checkboxes[2].Checked.Should().Be(true);
+            checkboxes[1].Checked.Should().Be(true);
             // uncheck it
-            checkboxRendered[2].Find("input").Change(false);
+            checkboxRendered[1].Find("input").Change(false);
             // check result
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
@@ -588,12 +628,12 @@ namespace MudBlazor.UnitTests.Components
             var checkboxes = checkboxRendered.Select(x => x.Instance).ToArray();
             table.SelectedItems.Count.Should().Be(3);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4);
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3);
             // uncheck only row 1 => header checkbox should be off then
             checkboxRendered[2].Find("input").Change(false);
-            checkboxes[0].Checked.Should().Be(false); // header checkbox should be off
+            checkboxes[0].Checked.Should().Be(true); // header checkbox should be on
             table.SelectedItems.Count.Should().Be(2);
-            comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 2 }");
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1 }");
             checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(2);
         }
 
@@ -612,7 +652,7 @@ namespace MudBlazor.UnitTests.Components
             var checkboxes = checkboxRendered.Select(x => x.Instance).ToArray();
             table.SelectedItems.Count.Should().Be(4);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2, 3 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3);
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(2);
             // uncheck a row then switch to page 2 and both checkboxes on page 2 should be checked
             checkboxRendered[1].Find("input").Change(false);
             checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(1);
@@ -648,7 +688,7 @@ namespace MudBlazor.UnitTests.Components
             inputs[4].Change(true);
             table.SelectedItems.Count.Should().Be(3);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(5);
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3);
             inputs = comp.FindAll("input").ToArray();
             inputs[4].Change(false);
             table.SelectedItems.Count.Should().Be(0);
@@ -681,7 +721,7 @@ namespace MudBlazor.UnitTests.Components
             inputs[4].Change(true);
             table.SelectedItems.Count.Should().Be(3);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(5);
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3);
             inputs = comp.FindAll("input").ToArray();
             inputs[4].Change(false);
             table.SelectedItems.Count.Should().Be(0);
@@ -716,7 +756,7 @@ namespace MudBlazor.UnitTests.Components
             inputs[0].Change(true);
             table.SelectedItems.Count.Should().Be(1);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1 }"); // only "1" should be present
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(2);
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(1);
             inputs[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
@@ -728,7 +768,7 @@ namespace MudBlazor.UnitTests.Components
             inputs[0].Change(true);
             table.SelectedItems.Count.Should().Be(3);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }"); // we reset search, so all three numbers should be searched
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4);
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3);
             inputs[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
@@ -751,7 +791,7 @@ namespace MudBlazor.UnitTests.Components
             inputs.Change(true);
             table.SelectedItems.Count.Should().Be(5);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2, 3, 4 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(6);
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(5);
 
             // click delete button
             var buttons = comp.FindAll("button");
@@ -770,7 +810,7 @@ namespace MudBlazor.UnitTests.Components
             //verify selection
             table.SelectedItems.Count.Should().Be(4);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 3, 4 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(5);
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4);
 
             checkboxes[0].Checked.Should().BeTrue(); //manually verify header is checked after deleting item
         }
@@ -1850,7 +1890,7 @@ namespace MudBlazor.UnitTests.Components
             inputs[0].Change(true);
             table.SelectedItems.Count.Should().Be(3);
 
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4); //there should be 4 items
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3); //there should be 3 items
             comp.Find("p").TextContent.Should().Be("Elements { A, B, C }");
 
             // Click on the second row
@@ -1863,7 +1903,7 @@ namespace MudBlazor.UnitTests.Components
 
             table.SelectedItems.Count.Should().Be(3);
 
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4); //there should be 4 items
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3); //there should be 3 items
             comp.Find("p").TextContent.Should().Be("Elements { A, Change, C }");
 
             // Uncheck and verify that all items are removed

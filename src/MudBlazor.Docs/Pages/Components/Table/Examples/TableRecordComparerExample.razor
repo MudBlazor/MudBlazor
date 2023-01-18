@@ -27,7 +27,7 @@
     </FooterContent>
 </MudTable>
 
-<MudText Inline="true">Selected items: @(selectedItems1==null ? "" : string.Join(", ", selectedItems1.OrderBy(x=>x.Sign).Select(x=>x.Sign)))</MudText>
+<MudText Inline="true">Selected items: @(selectedItems1 == null ? "" : string.Join(", ", selectedItems1.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
 
 @code {
     private HashSet<Element> selectedItems1 = new HashSet<Element>();
@@ -38,7 +38,8 @@
 
     private void OnSelectedItemsChanged(HashSet<Element> elements)
     {
-        elements.First().Name = "Changed";
+        if (elements.Any())
+            elements.First().Name = "Changed";
     }
 
     protected override async Task OnInitializedAsync()
