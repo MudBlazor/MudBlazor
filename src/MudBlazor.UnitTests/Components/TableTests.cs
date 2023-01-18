@@ -1967,5 +1967,35 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell")[1].TextContent.Should().Be("Value_0");
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(true);
         }
+        [Test]
+        public async Task TestTogglingColumnsSmallScreen()
+        {
+            var comp = Context.RenderComponent<TableToggleColumnsTest2>();
+            var tableCellsMarkup = comp.FindAll(".mud-table-cell").Select(x => x.ToMarkupElementOnly()).ToList();
+            tableCellsMarkup[0].Should().Be("<th scope=\"col\" class=\"mud-table-cell\" style=\"display:none;\">...</th>");
+            tableCellsMarkup.Skip(1).Take(3).All(x => x == "<td style=\"display:none;\" class=\"mud-table-cell\">...</td>").Should().Be(true);
+            tableCellsMarkup.Count.Should().Be(4);
+            comp.Instance.Visible = true;
+            comp.Render();
+            var updatedMarkup = comp.FindAll(".mud-table-cell").Select(x => x.ToMarkupElementOnly()).ToList();
+            updatedMarkup[0].Should().Be("<th scope=\"col\" class=\"mud-table-cell\" style=\"\">...</th>");
+            updatedMarkup.Skip(1).Take(3).All(x => x == "<td style=\"\" class=\"mud-table-cell\">...</td>").Should().Be(true);
+            updatedMarkup.Count.Should().Be(4);
+        }
+        [Test]
+        public async Task TestTogglingColumnsWideScreen()
+        {
+            var comp = Context.RenderComponent<TableToggleColumnsTest1>();
+            var tableCellsMarkup = comp.FindAll(".mud-table-cell").Select(x => x.ToMarkupElementOnly()).ToList();
+            tableCellsMarkup[0].Should().Be("<th scope=\"col\" class=\"mud-table-cell\" style=\"display:none;\">...</th>");
+            tableCellsMarkup.Skip(1).Take(3).All(x => x == "<td style=\"display:none;\" class=\"mud-table-cell\">...</td>").Should().Be(true);
+            tableCellsMarkup.Count.Should().Be(4);
+            comp.Instance.Visible = true;
+            comp.Render();
+            var updatedMarkup = comp.FindAll(".mud-table-cell").Select(x => x.ToMarkupElementOnly()).ToList();
+            updatedMarkup[0].Should().Be("<th scope=\"col\" class=\"mud-table-cell\" style=\"\">...</th>");
+            updatedMarkup.Skip(1).Take(3).All(x => x == "<td style=\"\" class=\"mud-table-cell\">...</td>").Should().Be(true);
+            updatedMarkup.Count.Should().Be(4);
+        }
     }
 }

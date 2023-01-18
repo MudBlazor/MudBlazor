@@ -76,6 +76,21 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Dynamically Toggling Columns">
+                <Description>
+                    By setting the <CodeInline>Visibile</CodeInline> property on the <CodeInline>&lt;MudTh></CodeInline> and <CodeInline>&lt;MudTd></CodeInline> of the desired column, you are able to
+                    dynamically toggle columns.
+                        <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                            <CodeInline>Visible</CodeInline> of <CodeInline>&lt;MudTh></CodeInline> and <CodeInline>&lt;MudTd></CodeInline> must be set simultaneously to ensure columns appear/dissappear correctly
+                        </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="TableToggleColumnsExample" ShowCode="false" Block="true" FullWidth="true">
+                <TableToggleColumnsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Multi-Selection">
                 <Description>
                     To enable multiselection of rows using checkboxes, set <CodeInline>MultiSelection="true"</CodeInline>.<br />

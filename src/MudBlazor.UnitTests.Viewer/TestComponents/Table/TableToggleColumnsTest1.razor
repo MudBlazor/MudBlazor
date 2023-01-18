@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+
+<MudTable Items="@Examples" T="string">
+    <HeaderContent>
+        <MudTh Visible="Visible">#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd Visible="Visible">@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public bool Visible;
+    private IEnumerable<string> Examples = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        Examples = new List<string>() { "A","B","C" };
+    }
+}
