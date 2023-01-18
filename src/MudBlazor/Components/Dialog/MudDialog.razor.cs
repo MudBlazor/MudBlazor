@@ -136,7 +136,8 @@ namespace MudBlazor
             _reference = DialogService.Show<MudDialog>(title, parameters, options ?? Options);
             _reference.Result.ContinueWith(t =>
             {
-                InvokeAsync(() => IsVisibleChanged.InvokeAsync(false));
+                IsVisible = false;
+                InvokeAsync(() => IsVisibleChanged.InvokeAsync(IsVisible));
             });
             return _reference;
         }
