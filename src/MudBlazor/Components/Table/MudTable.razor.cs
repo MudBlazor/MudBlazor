@@ -358,7 +358,7 @@ namespace MudBlazor
                     return _preEditSort;
                 if (ServerData != null)
                 {
-                    _preEditSort = _server_data.Items.ToList();
+                    _preEditSort = _server_data.Items?.ToList();
                     return _preEditSort;
                 }
 
