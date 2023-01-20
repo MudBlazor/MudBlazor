@@ -1022,6 +1022,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The table should not crash if its ServerData Items are null
+        /// </summary>
+        [Test]
+        public async Task TableServerSideDataNull()
+        {
+            var comp = Context.RenderComponent<TableServerSideDataTest6>();
+        }
+
+        /// <summary>
         /// The table should render the classes and style to the tr using the RowStyleFunc and RowClassFunc parameters
         /// </summary>
         [Test]
