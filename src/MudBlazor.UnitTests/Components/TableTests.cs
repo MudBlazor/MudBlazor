@@ -1063,6 +1063,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task TableInlineEdit_SetValidatorModel()
+        {
+            var comp = Context.RenderComponent<TableInlineEditTest>();
+            var validator = comp.Instance.Table.Validator;
+
+            var trs = comp.FindAll("tr");
+            trs.Count.Should().Be(4); // three rows + header row
+
+            trs[1].Click();
+            validator.Model.Should().Be("A");
+            trs[2].Click();
+            validator.Model.Should().Be("B");
+            trs[3].Click();
+            validator.Model.Should().Be("C");
+        }
+
+        [Test]
         public async Task TableInlineEdit_TableRowValidator()
         {
             var comp = Context.RenderComponent<TableInlineEditTest>();
