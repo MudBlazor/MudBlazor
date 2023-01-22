@@ -11,8 +11,8 @@
 					<MudText Typo="Typo.subtitle1"><b>@item.Name</b></MudText>
 					<MudSpacer />
 					<MudMenu Icon="@Icons.Material.Rounded.MoreHoriz" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" ListClass="pa-2 d-flex flex-column" PopoverClass="mud-elevation-25">
-						<MudButton Size="Size.Small" Color="Color.Error" StartIcon="@Icons.Outlined.Delete" OnClick="@( () => DeleteSection(item))">Delete Section</MudButton>
-						<MudButton Size="Size.Small" Color="Color.Default" StartIcon="@Icons.Rounded.Edit">Rename Section</MudButton>
+						<MudButton Size="Size.Small" Color="Color.Error" StartIcon="@Icons.Material.Outlined.Delete" OnClick="@( () => DeleteSection(item))">Delete Section</MudButton>
+						<MudButton Size="Size.Small" Color="Color.Default" StartIcon="@Icons.Material.Rounded.Edit">Rename Section</MudButton>
 					</MudMenu>
 				</MudToolBar>
 				<MudDropZone T="KanbanTaskItem" Identifier="@item.Name" Class="mud-height-full" />
@@ -25,7 +25,7 @@
 				}
 				else
 				{
-					<MudButton OnClick="@(() => item.NewTaskOpen = !item.NewTaskOpen)" StartIcon="@Icons.Filled.Add" FullWidth="true" Class="rounded-lg py-2">Add Task</MudButton>
+					<MudButton OnClick="@(() => item.NewTaskOpen = !item.NewTaskOpen)" StartIcon="@Icons.Material.Filled.Add" FullWidth="true" Class="rounded-lg py-2">Add Task</MudButton>
 				}
 			</MudPaper>
 		}
@@ -42,7 +42,7 @@
 			}
 			else
 			{
-				<MudButton OnClick="OpenAddNewSection" Variant="Variant.Outlined" StartIcon="@Icons.Filled.Add" Color="Color.Primary" Class="rounded-lg py-2" FullWidth="true">Add Section</MudButton>
+				<MudButton OnClick="OpenAddNewSection" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" Class="rounded-lg py-2" FullWidth="true">Add Section</MudButton>
 			}
 		</MudPaper>
 	</ChildContent>

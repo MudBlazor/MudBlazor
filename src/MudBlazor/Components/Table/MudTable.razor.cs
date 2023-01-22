@@ -358,7 +358,7 @@ namespace MudBlazor
                     return _preEditSort;
                 if (ServerData != null)
                 {
-                    _preEditSort = _server_data.Items.ToList();
+                    _preEditSort = _server_data.Items?.ToList();
                     return _preEditSort;
                 }
 
@@ -462,7 +462,9 @@ namespace MudBlazor
                 Context.Selection.Add(item);
             else
                 Context.Selection.Remove(item);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
+
+            if (SelectedItemsChanged.HasDelegate)
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
         internal override void OnHeaderCheckboxClicked(bool checkedState)
@@ -474,18 +476,11 @@ namespace MudBlazor
             }
             else
                 Context.Selection.Clear();
-            
-            Context.UpdateRowCheckBoxes(notify: false);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
-        }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-                await InvokeServerLoadFunc();
+            Context.UpdateRowCheckBoxes();
 
-            TableContext.UpdateRowCheckBoxes();
-            await base.OnAfterRenderAsync(firstRender);
+            if (SelectedItemsChanged.HasDelegate)
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
         /// <summary>
@@ -536,6 +531,14 @@ namespace MudBlazor
                 Context?.PagerStateHasChanged?.Invoke();
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
+                await InvokeServerLoadFunc();
+            TableContext.UpdateRowCheckBoxes(updateGroups: false);
+        }
+
         /// <summary>
         /// Call this to reload the server-filtered, -sorted and -paginated items
         /// </summary>
@@ -576,8 +579,10 @@ namespace MudBlazor
                     Context.Selection.Remove(item);
             }
 
-            Context.UpdateRowCheckBoxes(notify: false);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
+            Context.UpdateRowCheckBoxes();
+
+            if (SelectedItemsChanged.HasDelegate)
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
     }
 }

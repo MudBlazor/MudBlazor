@@ -45,7 +45,7 @@
     HashSet<Element> _filterItems = new();
     FilterDefinition<Element> _filterDefinition;
     bool _selectAll = true;
-    string _icon = Icons.Outlined.FilterAlt;
+    string _icon = Icons.Material.Outlined.FilterAlt;
 
     bool _filterOpen = false;
 
@@ -82,7 +82,7 @@
     {
         _selectedItems = Elements.ToHashSet();
         _filterItems = Elements.ToHashSet();
-        _icon = Icons.Outlined.FilterAlt;
+        _icon = Icons.Material.Outlined.FilterAlt;
         context.Actions.ClearFilter(_filterDefinition);
         _filterOpen = false;
     }
@@ -90,7 +90,7 @@
     void ApplyFilter(FilterContext<Element> context)
     {
         _filterItems = _selectedItems.ToHashSet();
-        _icon = _filterItems.Count == Elements.Count() ? Icons.Outlined.FilterAlt : Icons.Filled.FilterAlt;
+        _icon = _filterItems.Count == Elements.Count() ? Icons.Material.Outlined.FilterAlt : Icons.Material.Filled.FilterAlt;
         context.Actions.ApplyFilter(_filterDefinition);
         _filterOpen = false;
     }

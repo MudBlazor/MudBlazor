@@ -84,14 +84,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public string PrevIcon { get; set; } = Icons.Filled.ChevronLeft;
+        public string PrevIcon { get; set; } = Icons.Material.Filled.ChevronLeft;
 
         /// <summary>
         /// Icon to use for right pagination.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public string NextIcon { get; set; } = Icons.Filled.ChevronRight;
+        public string NextIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
         /// <summary>
         /// If true, always display the scroll buttons even if the tabs are smaller than the required with, buttons will be disabled if there is nothing to scroll.
@@ -106,6 +106,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public int? MaxHeight { get; set; } = null;
+
+        /// <summary>
+        /// Sets the min-wdth of the tabs. 160px by default.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public string MinimumTabWidth { get; set; } = "160px";
 
         /// <summary>
         /// Sets the position of the tabs itself.
@@ -212,13 +219,19 @@ namespace MudBlazor
             get => _activePanelIndex;
             set
             {
+                var validPanel = _panels.Count > 0 && value != -1 && value <= _panels.Count - 1;
+
                 if (_activePanelIndex != value)
                 {
                     _activePanelIndex = value;
                     if (_isRendered)
-                        ActivePanel = _panels[_activePanelIndex];
-                    ActivePanelIndexChanged.InvokeAsync(value);
+                    {
+                        ActivePanel = validPanel ? _panels[value] : null;
+                        ActivePanelIndexChanged.InvokeAsync(value);
+                    }
                 }
+                else if (validPanel)
+                    ActivePanel = _panels[value];
             }
         }
 
@@ -303,7 +316,7 @@ namespace MudBlazor
                 var items = _panels.Select(x => x.PanelRef).ToList();
                 items.Add(_tabsContentSize);
 
-                if (_panels.Count > 0)
+                if (_activePanelIndex != -1 && _panels.Count > 0)
                     ActivePanel = _panels[_activePanelIndex];
 
                 await _resizeObserver.Observe(items);
@@ -335,7 +348,6 @@ namespace MudBlazor
             _panels.Add(tabPanel);
             if (_panels.Count == 1)
                 ActivePanel = tabPanel;
-
             StateHasChanged();
         }
 
@@ -355,24 +367,23 @@ namespace MudBlazor
                 return;
 
             var index = _panels.IndexOf(tabPanel);
-            var newIndex = index;
-            if (ActivePanelIndex == index && index == _panels.Count - 1)
+
+            // We're at the right-most tab.
+            if (_activePanelIndex == index && index == _panels.Count - 1)
             {
-                newIndex = index > 0 ? index - 1 : 0;
                 if (_panels.Count == 1)
-                {
-                    ActivePanel = null;
-                }
+                    ActivePanelIndex = -1;
+                else if (index > 0)
+                    ActivePanelIndex = index - 1;
+                else
+                    ActivePanelIndex = 0;
             }
+
+            // Active tab is not necessarily the tab being closed.
             else if (_activePanelIndex > index)
             {
                 _activePanelIndex--;
                 await ActivePanelIndexChanged.InvokeAsync(_activePanelIndex);
-            }
-
-            if (index != newIndex)
-            {
-                ActivePanelIndex = newIndex;
             }
 
             _panels.Remove(tabPanel);
@@ -404,9 +415,7 @@ namespace MudBlazor
             if (!panel.Disabled || ignoreDisabledState)
             {
                 ActivePanelIndex = _panels.IndexOf(panel);
-
-                if (ev != null)
-                    ActivePanel.OnClick.InvokeAsync(ev);
+                ActivePanel?.OnClick.InvokeAsync(ev);
 
                 CenterScrollPositionAroundSelectedItem();
                 SetSliderState();
@@ -532,6 +541,7 @@ namespace MudBlazor
         string GetTabStyle(MudTabPanel panel)
         {
             var tabStyle = new StyleBuilder()
+            .AddStyle("min-width", MinimumTabWidth)
             .AddStyle(panel.Style)
             .Build();
 
