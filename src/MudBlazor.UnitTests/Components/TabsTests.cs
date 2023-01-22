@@ -1039,38 +1039,36 @@ namespace MudBlazor.UnitTests.Components
             var userTabs = comp.Instance.UserTabs;
             var mudTabs = comp.Instance.DynamicTabs;
 
+            // Initial
             userTabs.Count.Should().Be(3);
             mudTabs.Panels.Count.Should().Be(3);
 
             // Remove
-            userTabs.Remove(userTabs.Last());
+            comp.Instance.RemoveTab(userTabs.Last().Id);
             userTabs.Count.Should().Be(2);
-            // MudTabs needs render.
-            mudTabs.Panels.Count.Should().Be(3);
-            comp.Render();
+            comp.Render(); // Render to refresh MudTabs
             mudTabs.Panels.Count.Should().Be(2);
 
             // Add
-            userTabs.Add(userTabs.First());
+            comp.Instance.AddTab(Guid.NewGuid());
             userTabs.Count.Should().Be(3);
-            // MudTabs needs render.
-            comp.Render();
+            comp.Render(); // Render to refresh MudTabs
             mudTabs.Panels.Count.Should().Be(3);
 
-            // Remove all, no ArgumentOutOfRangeException may be thrown.
-            userTabs.Remove(userTabs.Last());
-            userTabs.Remove(userTabs.Last());
-            userTabs.Remove(userTabs.Last());
+            // Remove all, no ArgumentOutOfRangeException should be thrown.
+            comp.Instance.RemoveTab(userTabs.Last().Id);
+            comp.Instance.RemoveTab(userTabs.Last().Id);
+            comp.Instance.RemoveTab(userTabs.Last().Id);
             userTabs.Count.Should().Be(0);
-            // MudTabs needs render.
-            comp.Render();
+            comp.Render(); // Render to refresh MudTabs.
             mudTabs.Panels.Count.Should().Be(0);
 
-            // TODO 2023-01-01: Disabled; Will be addressed in a future PR
-            // No panels means no active panel index.
-            // Note that in the docs example -1 is returned instead of 0.
-            //comp.Instance.UserIndex.Should().Be(0);
-            //mudTabs.ActivePanelIndex.Should().Be(0);
+            // No active panel.
+            mudTabs.ActivePanel.Should().BeNull();
+
+            // No active panel means no active panel index.
+            comp.Instance.UserIndex.Should().Be(-1);
+            mudTabs.ActivePanelIndex.Should().Be(-1);
         }
     }
 }
