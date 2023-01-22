@@ -1081,5 +1081,16 @@ namespace MudBlazor.UnitTests.Components
             tabs[1].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeTrue();
             tabs[2].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeTrue();
         }
+
+
+        [Test]
+        public async Task TabPanel_ShowCloseIconTest()
+        {
+            var comp = Context.RenderComponent<DynamicTabsSimpleExample>();
+            var tabs = comp.FindAll("div.mud-tab");
+            tabs[0].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeFalse(); // The close icon is not shown.
+            tabs[1].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeTrue();
+            tabs[2].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeTrue();
+        }
     }
 }
