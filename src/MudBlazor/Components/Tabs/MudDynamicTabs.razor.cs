@@ -12,7 +12,7 @@ namespace MudBlazor
         public string AddTabIcon { get; set; } = Icons.Material.Filled.Add;
 
         /// <summary>
-        /// the icon used of the close button
+        /// The icon used for the close button
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
