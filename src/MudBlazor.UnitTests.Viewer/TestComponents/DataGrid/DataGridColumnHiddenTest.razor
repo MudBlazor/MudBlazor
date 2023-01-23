@@ -2,17 +2,17 @@
 
 <MudPopoverProvider />
 
-@*<MudDataGrid ShowMenuIcon="true" Hideable="true" Items="@_items" >
+<MudDataGrid ShowMenuIcon="true" Hideable="true" Items="@_items" >
     <Columns>
         @foreach(var columnProp in _columnProps)
         {
-            <Column T="Model"
-                    Field="@columnProp.Field"
+            <PropertyColumn
+                    Property="x => columnProp.Field"
                     @bind-Hidden="columnProp.IsHidden"
                     Title="@columnProp.Label"/>
         }
     </Columns>
-</MudDataGrid>*@
+</MudDataGrid>
 
 
 @code {

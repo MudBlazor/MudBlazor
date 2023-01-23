@@ -2,12 +2,12 @@
 
 <MudPopoverProvider />
 
-@*<MudDataGrid Items="@_items" Hideable="true" ShowMenuIcon="true" >
+<MudDataGrid Items="@_items" Hideable="true" ShowMenuIcon="true" >
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
     </Columns>
-</MudDataGrid>*@
+</MudDataGrid>
 
 @code {
     public record Model(string Name, int Age);
