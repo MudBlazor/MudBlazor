@@ -176,7 +176,7 @@ namespace MudBlazor
                 if (DataGrid == null)
                     return false;
 
-                return DataGrid.FilterDefinitions.Any(x => x.Column.PropertyName == Column.PropertyName && x.Operator != null && x.Value != null);
+                return DataGrid.FilterDefinitions.Any(x => x.Column?.PropertyName == Column?.PropertyName && x.Operator != null && x.Value != null);
             }
         }
 
@@ -327,7 +327,7 @@ namespace MudBlazor
         {
             if (DataGrid.FilterMode == DataGridFilterMode.Simple && Column != null)
             {
-                DataGrid.AddFilter(Column.FilterContext.FilterDefinition);
+                DataGrid.AddFilter(Column.FilterContext.FilterDefinition.Clone());
             }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
                 _filtersMenuVisible = true;

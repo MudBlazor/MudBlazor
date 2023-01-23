@@ -173,5 +173,19 @@ namespace MudBlazor
                 return FilterOperator.IsGuid(dataType);
             }
         }
+
+        public FilterDefinition<T> Clone()
+        {
+            return new()
+            {
+                Column = Column,
+                DataGrid = DataGrid,
+                FilterFunction = FilterFunction,
+                Operator = Operator,
+                PropertyExpression = PropertyExpression,
+                Title = Title,
+                Value = Value,
+            };
+        }
     }
 }
