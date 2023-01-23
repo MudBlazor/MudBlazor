@@ -5,11 +5,11 @@
 @if (Column != null && !Column.Hidden)
 {
     <th scope="col" class="@_classname" style="@_style" colspan="@Column?.HeaderColSpan" @attributes="@UserAttributes">
-        @if (Column.filterable)
+        @if (Column.filterable && Column.FilterTemplate != null)
         {
             @Column.FilterTemplate(Column.FilterContext) 
         }
-        else
+        else if (Column.filterable)
         {
             <MudStack Row="true">
                 @if (dataType == typeof(string) && !(_operator ?? "").EndsWith("empty"))
