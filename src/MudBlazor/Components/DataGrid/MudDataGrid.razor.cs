@@ -827,9 +827,9 @@ namespace MudBlazor
             {
                 Id = Guid.NewGuid(),
                 DataGrid = this,
-                Field = column?.PropertyName,
+                //Field = column?.PropertyName,
                 Title = column?.Title,
-                FieldType = column?.PropertyType,
+                //FieldType = column?.PropertyType,
                 PropertyExpression = column?.PropertyExpression,
             });
             _filtersMenuVisible = true;

@@ -25,19 +25,19 @@ namespace MudBlazor
         {
             get
             {
-                return FilterOperator.IsNumber(_filterDefinition.FieldType);
+                return FilterOperator.IsNumber(_filterDefinition.dataType);
             }
         }
         internal bool isEnum
         {
             get
             {
-                return FilterOperator.IsEnum(_filterDefinition.FieldType);
+                return FilterOperator.IsEnum(_filterDefinition.dataType);
             }
         }
 
         internal Column<T> filterColumn =>
-            _column ?? (_dataGrid.RenderedColumns?.FirstOrDefault(c => c.PropertyName == _filterDefinition.Field));
+            _column ?? (_dataGrid.RenderedColumns?.FirstOrDefault(c => c.PropertyName == _filterDefinition.Column.PropertyName));
 
         public Filter(MudDataGrid<T> dataGrid, FilterDefinition<T> filterDefinition, Column<T> column)
         {
@@ -45,15 +45,15 @@ namespace MudBlazor
             _filterDefinition = filterDefinition;
             _column = column;
 
-            if (_filterDefinition.FieldType == typeof(string))
+            if (_filterDefinition.dataType == typeof(string))
                 _valueString = _filterDefinition.Value == null ? null : _filterDefinition.Value.ToString();
             else if (isNumber)
                 _valueNumber = _filterDefinition.Value == null ? null : Convert.ToDouble(_filterDefinition.Value);
             else if (isEnum)
                 _valueEnum = _filterDefinition.Value == null ? null : (Enum)_filterDefinition.Value;
-            else if (_filterDefinition.FieldType == typeof(bool))
+            else if (_filterDefinition.dataType == typeof(bool))
                 _valueBool = _filterDefinition.Value == null ? null : Convert.ToBoolean(_filterDefinition.Value);
-            else if (_filterDefinition.FieldType == typeof(DateTime) || _filterDefinition.FieldType == typeof(DateTime?))
+            else if (_filterDefinition.dataType == typeof(DateTime) || _filterDefinition.dataType == typeof(DateTime?))
             {
                 var dateTime = Convert.ToDateTime(_filterDefinition.Value);
                 _valueDate = _filterDefinition.Value == null ? null : dateTime;
@@ -69,8 +69,8 @@ namespace MudBlazor
         internal void FieldChanged(Column<T> column)
         {
             _filterDefinition.Column = column;
-            _filterDefinition.Field = column.PropertyName;
-            _filterDefinition.FieldType = column.PropertyType;
+            //_filterDefinition.Field = column.PropertyName;
+            //_filterDefinition.FieldType = column.PropertyType;
             _filterDefinition.PropertyExpression = column.PropertyExpression;
             var operators = FilterOperator.GetOperatorByDataType(column.PropertyType);
             _filterDefinition.Operator = operators.FirstOrDefault();

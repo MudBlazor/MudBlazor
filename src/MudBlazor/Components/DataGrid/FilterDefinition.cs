@@ -7,23 +7,23 @@ using System.Linq.Expressions;
 
 namespace MudBlazor
 {
-#nullable enable
-
     public class FilterDefinition<T>
     {
         internal MudDataGrid<T> DataGrid { get; set; }
+#nullable enable
         internal LambdaExpression? PropertyExpression { get; set; }
+#nullable disable
 
         public Guid Id { get; set; } = Guid.NewGuid();
         public Column<T> Column { get; set; }
-        public string Field { get; set; }
+        //public string Field { get; set; }
         public string Title { get; set; }
-        public Type FieldType { get; set; }
+        //public Type FieldType { get; set; }
         public string Operator { get; set; }
         public object Value { get; set; }
         public Func<T, bool> FilterFunction { get; set; }
 
-        private Type dataType
+        internal Type dataType
         {
             get
             {
@@ -174,6 +174,4 @@ namespace MudBlazor
             }
         }
     }
-
-#nullable disable
 }

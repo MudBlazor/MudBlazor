@@ -262,7 +262,7 @@ namespace MudBlazor
                     filterContext.FilterDefinition = new FilterDefinition<T>()
                     {
                         DataGrid = DataGrid,
-                        Field = PropertyName,
+                        //Field = PropertyName,
                         //FieldType = PropertyType,
                         Title = Title,
                         Operator = operators.FirstOrDefault(),
