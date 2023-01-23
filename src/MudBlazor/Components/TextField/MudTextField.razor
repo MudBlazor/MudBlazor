@@ -81,13 +81,24 @@
                              AdornmentText="@AdornmentText"
                              AdornmentIcon="@AdornmentIcon"
                              AdornmentColor="@AdornmentColor"
+                             AdornmentAriaLabel="@AdornmentAriaLabel"
                              IconSize="@IconSize"
                              OnAdornmentClick="@OnAdornmentClick"
                              Error="@Error"
+                             ErrorId="@ErrorId"
                              Immediate="@Immediate"
-                             Margin="@Margin" OnBlur="@OnBlurred"
+                             Margin="@Margin"
+                             OnBlur="@OnBlurred"
+                             OnKeyDown="@InvokeKeyDown"
+                             OnInternalInputChanged="OnChange"
+                             OnKeyPress="@InvokeKeyPress"
+                             OnKeyUp="@InvokeKeyUp"
+                             KeyDownPreventDefault="KeyDownPreventDefault"
+                             KeyPressPreventDefault="KeyPressPreventDefault"
+                             KeyUpPreventDefault="KeyUpPreventDefault"
                              Clearable="@Clearable"
-                             OnClearButtonClick="@OnClearButtonClick"/>
+                             OnClearButtonClick="@OnClearButtonClick"
+                             Pattern="@Pattern"/>
                 }
             </CascadingValue>
         </InputContent>
