@@ -133,7 +133,7 @@ else
         if(_disposed == true) { return;  }
 
         _disposed = true;
-        await Parent?.RemovePanel(this);
-
+        if (Parent is not null)
+            await Parent.RemovePanel(this);
     }
 }

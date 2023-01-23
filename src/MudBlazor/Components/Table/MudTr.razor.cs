@@ -99,6 +99,9 @@ namespace MudBlazor
                 Context.Table.RowEditPreview?.Invoke(Item);
 
                 Context?.Table.SetEditingItem(Item);
+
+                if (Context != null)
+                    Context.Table.Validator.Model = Item;
             }
         }
 
