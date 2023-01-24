@@ -3055,6 +3055,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridFilterableFalseTest()
+        {
+            var comp = Context.RenderComponent<DataGridFilterableFalseTest>();
+
+            comp.Find(".filter-button").Click();
+            comp.FindAll(".filters-panel").Count.Should().Be(1);
+
+            comp.FindAll("div.mud-input-control")[0].Click();
+            comp.FindAll("div.mud-list-item").Count.Should().Be(3);
+        }
+
+        [Test]
         public async Task DataGridColumnPopupCustomFilteringTest()
         {
             var comp = Context.RenderComponent<DataGridColumnPopupCustomFilteringTest>();
