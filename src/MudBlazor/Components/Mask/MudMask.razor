@@ -12,7 +12,8 @@
                            Size="@IconSize"
                            Text="@AdornmentText"
                            Edge="@Edge.Start"
-                           AdornmentClick="@OnAdornmentClick"/>
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     <input class="@InputClassname"
@@ -28,6 +29,9 @@
            @oncut="OnCut"
            @oncopy="OnCopy"
            inputmode="@InputMode.ToString()"
+           pattern="@Pattern"
+           aria-invalid="@Error.ToString().ToLower()"
+           aria-describedby="@ErrorId"
            />
 
     @if (Disabled)
@@ -70,7 +74,8 @@
                            Size="@IconSize"
                            Text="@AdornmentText"
                            Edge="@Edge.End"
-                           AdornmentClick="@OnAdornmentClick"/>
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (Variant == Variant.Outlined)
