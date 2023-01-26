@@ -61,7 +61,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If true overlay will set Visible false on click.
+        /// Sets absolute position to the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Overlay.ClickAction)]
