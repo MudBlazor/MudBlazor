@@ -96,7 +96,7 @@ namespace MudBlazor
         public bool LightBackground { get; set; }
 
         /// <summary>
-        /// If tue, use absolute positioning for the overlay.
+        /// If true, use absolute positioning for the overlay.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
