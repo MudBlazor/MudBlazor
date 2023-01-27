@@ -42,9 +42,9 @@
         }
     }
 
-    & .mud-table-body:last-child {
-        & .mud-table-row:last-child {
-            & .mud-table-cell {
+    > .mud-table-body:last-child {
+        > .mud-table-row:last-child {
+            > .mud-table-cell {
                 border-bottom: none;
             }
         }

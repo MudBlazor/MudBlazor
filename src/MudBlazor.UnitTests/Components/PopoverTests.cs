@@ -191,7 +191,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MudPopoverHandler_InitializeAndDetach_DetachThrowsTaskCancelledException()
+        public async Task MudPopoverHandler_InitializeAndDetach_DetachThrowsTaskCanceledException()
         {
             var handlerId = Guid.NewGuid();
 
@@ -220,7 +220,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MudPopoverHandler_InitializeAndDetach_DetachThrowsNotTaskCancelledException()
+        public async Task MudPopoverHandler_InitializeAndDetach_DetachThrowsNotTaskCanceledException()
         {
             var handlerId = Guid.NewGuid();
 
@@ -360,7 +360,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MudPopoverService_Initialize_Catch_TaskCancelledException()
+        public async Task MudPopoverService_Initialize_Catch_TaskCanceledException()
         {
             var mock = new Mock<IJSRuntime>();
 

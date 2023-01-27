@@ -279,11 +279,12 @@ namespace MudBlazor
             {
                 _resizerHeight = gridHeight;
                 _width = targetWidth;
-                if (finishResize)
-                {
-                    _isResizing = false;
-                }
+                await InvokeAsync(StateHasChanged);
+            }
 
+            if (finishResize)
+            {
+                _isResizing = false;
                 await InvokeAsync(StateHasChanged);
             }
 

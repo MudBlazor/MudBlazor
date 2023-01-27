@@ -20,7 +20,7 @@
     private async void OnButtonClicked()
     {
         bool? result = await mbox.Show();
-        state= result==null ? "Cancelled" : "Deleted!";
+        state = result == null ? "Canceled" : "Deleted!";
         StateHasChanged();
     }
 }

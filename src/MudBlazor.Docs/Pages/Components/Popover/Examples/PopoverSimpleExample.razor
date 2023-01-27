@@ -2,7 +2,7 @@
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ToggleOpen">Open</MudButton>
 <MudSwitch @bind-Checked="@_isOpen" Color="Color.Primary" />
-<MudToggleIconButton @bind-Toggled="@_isOpen" Icon="@Icons.Filled.Fullscreen" Color="@Color.Primary" ToggledIcon="@Icons.Filled.FullscreenExit" ToggledColor="@Color.Secondary" />
+<MudToggleIconButton @bind-Toggled="@_isOpen" Icon="@Icons.Material.Filled.Fullscreen" Color="@Color.Primary" ToggledIcon="@Icons.Material.Filled.FullscreenExit" ToggledColor="@Color.Secondary" />
 
 <MudPopover Open="@_isOpen" Fixed="true" Class="px-4 pt-4">
     <div class="d-flex flex-column">

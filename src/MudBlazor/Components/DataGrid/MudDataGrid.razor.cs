@@ -132,7 +132,7 @@ namespace MudBlazor
         internal Action<HashSet<T>> SelectedItemsChangedEvent { get; set; }
         internal Action<bool> SelectedAllItemsChangedEvent { get; set; }
         internal Action StartedEditingItemEvent { get; set; }
-        internal Action EditingCancelledEvent { get; set; }
+        internal Action EditingCanceledEvent { get; set; }
         public Action PagerStateHasChangedEvent { get; set; }
 
         #endregion
@@ -160,9 +160,16 @@ namespace MudBlazor
         [Parameter] public EventCallback<T> StartedEditingItem { get; set; }
 
         /// <summary>
-        /// Callback is called when the process of editing an item has been cancelled. Returns the item which was previously in edit mode.
+        /// Callback is called when the process of editing an item has been canceled. Returns the item which was previously in edit mode.
         /// </summary>
-        [Parameter] public EventCallback<T> CancelledEditingItem { get; set; }
+        [Parameter] public EventCallback<T> CanceledEditingItem { get; set; }
+
+        /// <summary>
+        /// Callback is called when the process of editing an item has been canceled. Returns the item which was previously in edit mode.
+        /// NOTE: Obsolete, use CanceledEditingItem instead
+        /// </summary>
+        [Obsolete("Use CanceledEditingItem instead", false)]
+        [Parameter] public EventCallback<T> CancelledEditingItem { get => CanceledEditingItem; set => CanceledEditingItem = value; }
 
         /// <summary>
         /// Callback is called when the changes to an item are committed. Returns the item whose changes were committed.
@@ -718,9 +725,11 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _isFirstRendered = true;
-                GroupItems();
                 await InvokeServerLoadFunc();
+                GroupItems();
+                if (ServerData == null)
+                    StateHasChanged();
+                _isFirstRendered = true;
             }
             else
             {
@@ -1083,8 +1092,13 @@ namespace MudBlazor
         private async Task InvokeSortUpdates(Dictionary<string, SortDefinition<T>> activeSortDefinitions, HashSet<string> removedSortDefinitions)
         {
             SortChangedEvent?.Invoke(activeSortDefinitions, removedSortDefinitions);
-            await InvokeServerLoadFunc();
-            StateHasChanged();
+
+            if (_isFirstRendered)
+            {
+                await InvokeServerLoadFunc();
+                if (ServerData == null)
+                    StateHasChanged();
+            }
         }
 
         /// <summary>
@@ -1123,7 +1137,7 @@ namespace MudBlazor
             if (ReadOnly) return;
 
             editingSourceItem = item;
-            EditingCancelledEvent?.Invoke();
+            EditingCanceledEvent?.Invoke();
             _previousEditingItem = _editingItem;
             _editingItem = JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(item));
             StartedEditingItemEvent?.Invoke();
@@ -1136,8 +1150,8 @@ namespace MudBlazor
         /// </summary>
         public async Task CancelEditingItemAsync()
         {
-            EditingCancelledEvent?.Invoke();
-            await CancelledEditingItem.InvokeAsync(_editingItem);
+            EditingCanceledEvent?.Invoke();
+            await CanceledEditingItem.InvokeAsync(_editingItem);
             ClearEditingItem();
             isEditFormOpen = false;
         }
@@ -1212,7 +1226,8 @@ namespace MudBlazor
             if (GroupedColumn == null)
             {
                 _groups = new List<GroupDefinition<T>>();
-                StateHasChanged();
+                if (_isFirstRendered)
+                    StateHasChanged();
                 return;
             }
 
@@ -1236,7 +1251,8 @@ namespace MudBlazor
             _groups = groupings.Select(x => new GroupDefinition<T>(x,
                 _groupExpansions.Contains(x.Key))).ToList();
 
-            StateHasChanged();
+            if (_isFirstRendered || ServerData != null)
+                StateHasChanged();
         }
 
         internal void ChangedGrouping(Column<T> column)
@@ -1275,10 +1291,10 @@ namespace MudBlazor
 
         public void CollapseAllGroups()
         {
+            _groupExpansions.Clear();
+
             foreach (var group in _groups)
-            {
                 group.IsExpanded = false;
-            }
         }
 
         #endregion

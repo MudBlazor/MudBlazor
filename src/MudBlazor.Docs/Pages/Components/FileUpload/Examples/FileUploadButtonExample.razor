@@ -5,7 +5,7 @@
         <MudButton HtmlTag="label"
                    Variant="Variant.Filled"
                    Color="Color.Primary"
-                   StartIcon="@Icons.Filled.CloudUpload"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
                    for="@context">
             Upload Files
         </MudButton>
@@ -16,7 +16,7 @@
     <ButtonTemplate>
         <MudFab HtmlTag="label"
                 Color="Color.Secondary"
-                Icon="@Icons.Filled.Image"
+                Icon="@Icons.Material.Filled.Image"
                 Label="Load picture"
                 for="@context" />
     </ButtonTemplate>
@@ -26,7 +26,7 @@
     <ButtonTemplate>
         <MudFab HtmlTag="label"
                 Color="Color.Success"
-                Icon="@Icons.Filled.AttachFile"
+                Icon="@Icons.Material.Filled.AttachFile"
                 for="@context" />
     </ButtonTemplate>
 </MudFileUpload>
@@ -35,7 +35,7 @@
     <ButtonTemplate>
         <MudIconButton HtmlTag="label"
                        Color="Color.Info"
-                       Icon="@Icons.Filled.PhotoCamera"
+                       Icon="@Icons.Material.Filled.PhotoCamera"
                        for="@context">
         </MudIconButton>
     </ButtonTemplate>
@@ -47,7 +47,7 @@
     <MudList>
         @foreach (var file in files)
         {
-            <MudListItem Icon="@Icons.Filled.AttachFile" @key="@file">
+            <MudListItem Icon="@Icons.Material.Filled.AttachFile" @key="@file">
                 @file.Name <code>@file.Size bytes</code>
             </MudListItem>
         }
