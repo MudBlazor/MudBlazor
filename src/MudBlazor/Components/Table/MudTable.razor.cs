@@ -171,7 +171,7 @@ namespace MudBlazor
         public Func<T, bool> Filter { get; set; } = null;
 
         /// <summary>
-        /// Button click event.
+        /// Row click event.
         /// </summary>
         [Parameter] public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
 
@@ -358,7 +358,7 @@ namespace MudBlazor
                     return _preEditSort;
                 if (ServerData != null)
                 {
-                    _preEditSort = _server_data.Items.ToList();
+                    _preEditSort = _server_data.Items?.ToList();
                     return _preEditSort;
                 }
 
@@ -456,35 +456,31 @@ namespace MudBlazor
         // TableContext provides shared functionality between all table sub-components
         public TableContext<T> Context { get; } = new TableContext<T>();
 
-        private void OnRowCheckboxChanged(bool value, T item)
+        private void OnRowCheckboxChanged(bool checkedState, T item)
         {
-            if (value)
+            if (checkedState)
                 Context.Selection.Add(item);
             else
                 Context.Selection.Remove(item);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
+
+            if (SelectedItemsChanged.HasDelegate)
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
-        internal override void OnHeaderCheckboxClicked(bool value)
+        internal override void OnHeaderCheckboxClicked(bool checkedState)
         {
-            if (!value)
-                Context.Selection.Clear();
-            else
+            if (checkedState)
             {
                 foreach (var item in FilteredItems)
                     Context.Selection.Add(item);
             }
-            Context.UpdateRowCheckBoxes(false);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
-        }
+            else
+                Context.Selection.Clear();
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-                await InvokeServerLoadFunc();
+            Context.UpdateRowCheckBoxes();
 
-            TableContext.UpdateRowCheckBoxes();
-            await base.OnAfterRenderAsync(firstRender);
+            if (SelectedItemsChanged.HasDelegate)
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
         /// <summary>
@@ -535,6 +531,14 @@ namespace MudBlazor
                 Context?.PagerStateHasChanged?.Invoke();
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
+                await InvokeServerLoadFunc();
+            TableContext.UpdateRowCheckBoxes(updateGroups: false);
+        }
+
         /// <summary>
         /// Call this to reload the server-filtered, -sorted and -paginated items
         /// </summary>
@@ -562,9 +566,9 @@ namespace MudBlazor
             return sourceList.GroupBy(parent.Selector).ToList();
         }
 
-        internal void OnGroupHeaderCheckboxClicked(bool value, IEnumerable<T> items)
+        internal void OnGroupHeaderCheckboxClicked(bool checkedState, IEnumerable<T> items)
         {
-            if (value)
+            if (checkedState)
             {
                 foreach (var item in items)
                     Context.Selection.Add(item);
@@ -575,8 +579,10 @@ namespace MudBlazor
                     Context.Selection.Remove(item);
             }
 
-            Context.UpdateRowCheckBoxes(false);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
+            Context.UpdateRowCheckBoxes();
+
+            if (SelectedItemsChanged.HasDelegate)
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
     }
 }

@@ -13,7 +13,7 @@
     {
         var result = await DialogService.Show<DialogScrollableExample_Dialog>("MudBlazor License").Result;
 
-        if (!result.Cancelled)
+        if (!result.Canceled)
         {
             license_accepted = (bool)(result.Data ?? false);
         }

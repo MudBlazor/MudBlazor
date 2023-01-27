@@ -223,7 +223,7 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         {
             iconDrawerOpen = true;
             SelectedIcon = new MudIcons(icon.Name, icon.Code, icon.Category);
-            IconCodeOutput = $"@Icons{(SelectedIconOrigin == IconOrigin.Material ? "" : ".Custom")}.{icon.Category}.{icon.Name}";
+            IconCodeOutput = $"@Icons{(SelectedIconOrigin == IconOrigin.Material ? ".Material" : ".Custom")}.{icon.Category}.{icon.Name}";
         }
         void CloseIconDrawer()
         {

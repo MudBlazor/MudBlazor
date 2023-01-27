@@ -44,7 +44,7 @@
                     } 
                     else if (_items != null && _items.Length != 0)
                     {
-                        <MudList Clickable="true" Dense="@Dense">
+                        <MudList Class="@ListClass" Clickable="true" Dense="@Dense">
                             @for (var index = 0; index < _items.Length; index++)
                             {
                                 var item = _items[index];

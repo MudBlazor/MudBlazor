@@ -620,5 +620,13 @@ namespace MudBlazor.UnitTests.Services
             actual.Should().BeFalse();
 
         }
+
+        [Test]
+        public async Task IsMediaSize_ReturnTrueForAlwaysBreakpoint()
+        {
+            var actual = await _service.IsMediaSize(Breakpoint.Always);
+            actual.Should().BeTrue();
+
+        }
     }
 }
