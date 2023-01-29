@@ -5,13 +5,13 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="Element" Label="Search While Selected with ToString" @bind-Value="value1"
-                         SearchFunc="@Search" SearchWhileSelected>
+        <MudAutocomplete T="Element" Label="Strict false with ToString" @bind-Value="value1"
+                         SearchFunc="@Search" Strict="false">
         </MudAutocomplete>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="Element" Label="Search While Selected with ToStringFunc" @bind-Value="value2"
-                         SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")" SearchWhileSelected>
+        <MudAutocomplete T="Element" Label="Strict false with ToStringFunc" @bind-Value="value2"
+                         SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")" Strict="false">
         </MudAutocomplete>
     </MudItem>
 </MudGrid>

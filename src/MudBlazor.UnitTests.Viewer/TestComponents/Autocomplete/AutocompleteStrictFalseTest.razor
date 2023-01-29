@@ -3,11 +3,11 @@
 
 <MudAutocomplete Label="State" SearchFunc="@SearchStateAsync" 
                  @bind-Value="@StateDetails" Variant="Variant.Outlined" 
-                 Margin="MudBlazor.Margin.Dense" ResetValueOnEmptyText="true" SearchWhileSelected ToStringFunc="@(s=> s == null ? null : s.StateName)" />
+                 Margin="MudBlazor.Margin.Dense" ResetValueOnEmptyText="true" Strict="false" ToStringFunc="@(s=> s == null ? null : s.StateName)" />
 
 <MudAutocomplete Label="State" SearchFunc="@SearchStateToStringAsync"
                  @bind-Value="@StateDetails2" Variant="Variant.Outlined"
-                 Margin="MudBlazor.Margin.Dense" ResetValueOnEmptyText="true" SearchWhileSelected />
+                 Margin="MudBlazor.Margin.Dense" ResetValueOnEmptyText="true" Strict="false" />
 
 @code {
     public static string __description__ = "Autocomplete should show the dropdown when an item is selected and the string matches ToString or ToStringFunc.";

@@ -1044,15 +1044,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(0)] //test toStringFunc
         [TestCase(1)] //test toString
-        public async Task AutocompleteSearchWhileSelectedTest(int index)
+        public async Task AutocompleteStrictFalseTest(int index)
         {
             var listItemQuerySelector = "div.mud-list-item";
             var selectedItemClassName = "mud-selected-item";
             var californiaString = "California";
             var virginiaString = "Virginia";
 
-            var comp = Context.RenderComponent<AutocompleteSearchWhileSelectedTest>();
-            var autocompletecomp = comp.FindComponents<MudAutocomplete<AutocompleteSearchWhileSelectedTest.State>>()[index];
+            var comp = Context.RenderComponent<AutocompleteStrictFalseTest>();
+            var autocompletecomp = comp.FindComponents<MudAutocomplete<AutocompleteStrictFalseTest.State>>()[index];
             var autocomplete = autocompletecomp.Instance;
             
             //search for and select California

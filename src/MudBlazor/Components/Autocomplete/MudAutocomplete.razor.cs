@@ -203,14 +203,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool SelectOnClick { get; set; } = true;
-        
+
         /// <summary>
         /// If true, clicking on the Autocomplete after selecting an option will query the Search method again with an empty string. This makes it easier to view and select other options without resetting the Value.
         /// T must either be a record or override GetHashCode and Equals.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool SearchWhileSelected { get; set; } 
+        public bool Strict { get; set; } = true;
 
         /// <summary>
         /// Debounce interval in milliseconds.
@@ -474,7 +474,7 @@ namespace MudBlazor
                     IsOpen = true;
                 }
 
-                searchingWhileSelected = SearchWhileSelected && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text)); //search while selected if enabled and the Text is equivalent to the Value
+                searchingWhileSelected = !Strict && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text)); //search while selected if enabled and the Text is equivalent to the Value
                 var searchText = searchingWhileSelected ? string.Empty : Text;
 
                 var searchTask = SearchFuncWithCancel != null ?
