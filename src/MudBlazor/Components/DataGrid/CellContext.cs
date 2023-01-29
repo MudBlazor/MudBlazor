@@ -26,7 +26,7 @@ namespace MudBlazor
             }
         }
 
-        public CellContext(MudDataGrid<T> dataGrid, T item)
+        public CellContext(MudDataGrid<T> dataGrid, T item, Action<object> cellValueChanged = null)
         {
             selection = dataGrid.Selection;
             openHierarchies = dataGrid._openHierarchies;
@@ -37,6 +37,7 @@ namespace MudBlazor
                 StartEditingItem = async () => await dataGrid.SetEditingItemAsync(item),
                 CancelEditingItem = async () => await dataGrid.CancelEditingItemAsync(),
                 ToggleHierarchyVisibilityForItem = async () => await dataGrid.ToggleHierarchyVisibilityAsync(item),
+                ValueChanged = cellValueChanged ??= (object x) => { }
             };
         }
 
@@ -46,6 +47,10 @@ namespace MudBlazor
             public Action StartEditingItem { get; internal set; }
             public Action CancelEditingItem { get; internal set; }
             public Action ToggleHierarchyVisibilityForItem { get; internal set; }
+            /// <summary>
+            /// Alerts the datagrid that this cell has changed. Only triggers CommitedItemChanges if the validation passes
+            /// </summary>
+            public Action<object> ValueChanged { get; internal set; }
         }
     }
 }

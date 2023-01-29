@@ -9,10 +9,14 @@
     <Columns>
         <Column T="Element" Field="Number" Title="Nr" IsEditable="false" />
         <Column T="Element" Field="Sign" />
-        <Column T="Element" Field="Name" />
+        <Column T="Element" Field="Name">
+            <EditTemplate>
+                <MudTextField T="string" Value="context.Item.Name" Required ValueChanged="context.Actions.ValueChanged" />
+            </EditTemplate>
+        </Column>
         <Column T="Element" Field="Position">
             <EditTemplate>
-                <MudSelect @bind-Value="context.Item.Position" Required RequiredError="You must select a Position!!!" Margin="@Margin.Dense">
+                <MudSelect T="int" Value="context.Item.Position" ValueChanged="((int x) => context.Actions.ValueChanged(x))" Required RequiredError="You must select a Position!!!" Margin="@Margin.Dense">
                     <MudSelectItem Value="0">zero</MudSelectItem>
                     <MudSelectItem Value="1">one</MudSelectItem>
                     <MudSelectItem Value="17">seventeen</MudSelectItem>
@@ -46,10 +50,10 @@
         {
             <MudText Typo="@Typo.body2">@message</MudText>
         }
-        @if(_events.Count > 0) 
+        @if (_events.Count > 0)
         {
             <div class="d-flex">
-                <MudSpacer/>
+                <MudSpacer />
                 <MudButton Class="mt-3" ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="@(() => _events.Clear())">Clear</MudButton>
             </div>
         }
