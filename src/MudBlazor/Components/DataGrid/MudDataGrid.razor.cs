@@ -655,6 +655,7 @@ namespace MudBlazor
         public bool HasPager { get; set; }
         private GridData<T> _server_data = new GridData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
 
+        // TODO: When adding one FilterDefinition, this is called once for each RenderedColumn...
         public IEnumerable<T> FilteredItems
         {
             get

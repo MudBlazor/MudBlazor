@@ -137,13 +137,15 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("C");
 
             // Add a FilterDefinition to filter where the Name = "C".
-            dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridFilterableTest.Item>
+            await comp.InvokeAsync(() =>
             {
-                Id = Guid.NewGuid(),
-                Operator = FilterOperator.String.Equal,
-                Value = "C"
+                dataGrid.Instance.AddFilter(new FilterDefinition<DataGridFilterableTest.Item>
+                {
+                    Column = dataGrid.Instance.RenderedColumns.First(),
+                    Operator = FilterOperator.String.Equal,
+                    Value = "C"
+                });
             });
-            dataGrid.Render();
 
             // Check the values of rows
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("C");

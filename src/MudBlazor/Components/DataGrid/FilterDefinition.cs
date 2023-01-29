@@ -3,12 +3,16 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace MudBlazor
 {
     public class FilterDefinition<T>
     {
+        private int cachedExpressionHashCode;
+        private Func<T, bool> cachedFilterFunction = null;
+
         internal MudDataGrid<T> DataGrid { get; set; }
 #nullable enable
         internal LambdaExpression? PropertyExpression { get; set; }
@@ -41,8 +45,23 @@ namespace MudBlazor
 
             if (Column != null)
             {
+                // We need a PropertyExpression to filter. This allows us to pass in an arbitrary PropertyExpression.
+                // Although, it would be better in that case to simple use the FilterFunction so that we do not 
+                // have to generate and compile anything.
+                if (PropertyExpression == null)
+                    PropertyExpression = Column.PropertyExpression;
+
+                var hash = HashCode.Combine(PropertyExpression, Operator, Value);
+
+                if (cachedExpressionHashCode == hash)
+                    return cachedFilterFunction;
+
                 var expression = GenerateFilterExpression();
-                return expression.Compile();
+                var f = expression.Compile();                
+                cachedExpressionHashCode = hash;
+                cachedFilterFunction = f;
+
+                return f;
             }
 
             return x => true;
