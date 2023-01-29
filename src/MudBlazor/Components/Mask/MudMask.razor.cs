@@ -134,7 +134,6 @@ namespace MudBlazor
 
         protected override async Task OnInitializedAsync()
         {
-            //Console.WriteLine($"OnInitialized Text:{Text}, Value:{Value}, Mask:{Mask}");
             if (Text != Mask.Text)
                 await SetTextAsync(Mask.Text, updateValue: false);
             await base.OnInitializedAsync();
@@ -179,11 +178,16 @@ namespace MudBlazor
                         new KeyOptions { Key = "Delete", PreventDown = "key+none" },
                     },
                 });
-                _keyInterceptor.KeyDown += e => HandleKeyDown(e).AndForget();
+                _keyInterceptor.KeyDown += HandleKeyDownInternally;
             }
             if (_isFocused && Mask.Selection == null)
                 SetCaretPosition(Mask.CaretPos, _selection, render: false);
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        private async void HandleKeyDownInternally(KeyboardEventArgs args)
+        {
+            await HandleKeyDown(args);
         }
 
         protected internal async Task HandleKeyDown(KeyboardEventArgs e)
@@ -192,7 +196,6 @@ namespace MudBlazor
             {
                 if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || ReadOnly)
                         return;
-                // Console.WriteLine($"HandleKeyDown: '{e.Key}'");
                 switch (e.Key)
                 {
                     case "Backspace":
@@ -270,7 +273,6 @@ namespace MudBlazor
             Mask.SetText(text);
             if (maskText == Mask.Text)
                 return; // no change, stop update loop
-            //Console.WriteLine("UpdateTextPropertyAsync: " + Mask);
             await Update();
         }
 
@@ -286,7 +288,6 @@ namespace MudBlazor
             Mask.SetText(text);
             if (maskText == Mask.Text)
                 return; // no change, stop update loop
-            //Console.WriteLine("UpdateValuePropertyAsync: " + Mask);
             await Update();
         }
 
@@ -325,7 +326,6 @@ namespace MudBlazor
 
         internal void OnCopy()
         {
-            //Console.WriteLine($"Copy: {text}");
             var text = Text;
             if (Mask.Selection != null)
             {
@@ -336,7 +336,6 @@ namespace MudBlazor
 
         internal async void OnPaste(string text)
         {
-            //Console.WriteLine($"Paste: {text}");
             if (text == null || ReadOnly)
                 return;
             Mask.Insert(text);
@@ -346,13 +345,11 @@ namespace MudBlazor
         public void OnSelect(int start, int end)
         {
             Mask.Selection = _selection = (start, end);
-            //Console.WriteLine($"OnSelect: {Mask}");
         }
 
         internal void OnFocused(FocusEventArgs obj)
         {
             _isFocused = true;
-            //Console.WriteLine($"OnFocused: {Mask}");
         }
 
         protected internal override void OnBlurred(FocusEventArgs obj)
@@ -374,13 +371,11 @@ namespace MudBlazor
             _selection = selection;
             if (selection == null)
             {
-                //Console.WriteLine("#Setting Caret Position: " + caret);
                 _elementReference.MudSelectRangeAsync(caret, caret).AndForget();
             }
             else
             {
                 var sel = selection.Value;
-                //Console.WriteLine($"#Setting Selection: ({sel.Item1}..{sel.Item2})");
                 _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2).AndForget();
             }
         }
@@ -400,7 +395,6 @@ namespace MudBlazor
                 return;
             Mask.Selection = null;
             Mask.CaretPos = pos;
-            //Console.WriteLine($"OnCaretPositionChanged: '{Mask}' ({pos})");
         }
 
         private void SetMask(IMask other)
@@ -425,7 +419,6 @@ namespace MudBlazor
             if (_selection!=null)
                 Mask.Delete();
             await Update();
-            //Console.WriteLine($"OnCut: '{Mask}'");
         }
 
         protected override void Dispose(bool disposing)
@@ -435,6 +428,13 @@ namespace MudBlazor
             if (disposing == true)
             {
                 _jsEvent?.Dispose();
+
+                if (_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDownInternally;
+                    _keyInterceptor.Dispose();
+                }
+
                 _keyInterceptor?.Dispose();
             }
         }

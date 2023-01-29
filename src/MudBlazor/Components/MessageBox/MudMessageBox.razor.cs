@@ -163,11 +163,11 @@ namespace MudBlazor
                 [nameof(YesText)] = YesText,
                 [nameof(YesButton)] = YesButton,
             };
-            _reference = DialogService.Show<MudMessageBox>(parameters: parameters, options: options, title: Title);
+            _reference = await DialogService.ShowAsync<MudMessageBox>(parameters: parameters, options: options, title: Title);
             var result = await _reference.Result;
-            if (result.Cancelled || !(result.Data is bool))
+            if (result.Canceled || result.Data is not bool data)
                 return null;
-            return (bool)result.Data;
+            return data;
         }
 
         public void Close()

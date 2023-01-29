@@ -7,7 +7,7 @@
     <td class="@_classname" style="@_style" colspan="@Column.FooterColSpan" @attributes="@UserAttributes">
         @if (Column.AggregateDefinition != null)
         {
-            @Column.AggregateDefinition?.GetValue(Column.Field, DataGrid.CurrentPageItems)
+            @Column.AggregateDefinition?.GetValue(Column.Field, items)
         }
         else if (Column.FooterTemplate != null)
         {

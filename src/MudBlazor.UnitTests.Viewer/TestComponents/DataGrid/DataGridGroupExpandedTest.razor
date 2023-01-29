@@ -1,0 +1,62 @@
+@namespace MudBlazor.UnitTests.TestComponents
+@using System.Collections.ObjectModel
+<MudDataGrid @ref="dataGrid"
+             Items="@Fruits"
+             Sortable="true"
+             Filterable="true"
+             Hideable="true"
+             Groupable="true"
+             GroupExpanded="false">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Fruits</MudText>
+        <MudSpacer />
+    </ToolBarContent>
+    <Columns>
+        <Column T="Fruit" Field="Name" Title="Name" Filterable="false" Groupable="false" />
+        <Column T="Fruit" Field="Count" />
+        <Column T="Fruit" Field="Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
+            <GroupTemplate>
+                <span style="font-weight:bold">Category: @context.Grouping.Key</span>
+            </GroupTemplate>
+        </Column>
+    </Columns>
+</MudDataGrid>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudButton Class="expand-all" OnClick="@ExpandAllGroups" Color="@Color.Primary">Expand All</MudButton>
+    <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">Collapse All</MudButton>
+    <MudButton Class="add-button" OnClick="@AddFruit" Color="@Color.Primary">Add Fruit</MudButton>
+</div>
+
+@code {
+    MudDataGrid<Fruit> dataGrid;
+    public record Fruit(string Name, int Count, string Category);
+
+    ObservableCollection<Fruit> Fruits { get; set; } =
+        new ObservableCollection<Fruit>()
+        {
+            new Fruit("Apple", 2, "Pome"),
+            new Fruit("Pear", 4, "Pome"),
+            new Fruit("Orange", 4, "Citrus")
+        };
+    
+    Func<Fruit, object> _groupBy = x => 
+    {
+        return x.Category;
+    };
+
+    public void AddFruit()
+    {
+        Fruits.Add(new Fruit("Banana", 5, "Musa"));
+    }
+
+    public void ExpandAllGroups()
+    {
+        dataGrid?.ExpandAllGroups();
+    }
+
+    public void CollapseAllGroups()
+    {
+        dataGrid?.CollapseAllGroups();
+    }
+}

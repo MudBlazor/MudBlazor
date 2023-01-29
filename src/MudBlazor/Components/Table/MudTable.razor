@@ -15,14 +15,15 @@
         @if (Context.SortLabels.Any())
         {
             <div Class="mud-table-smalldevices-sortselect">
-                <MudSelect Value="@Context.CurrentSortLabel" Label="@SortLabel" ValueChanged="@(v => Context.SetSortFunc(v, override_direction_none: true))" T="MudTableSortLabel<T>">
-                    @foreach (var label in Context.SortLabels)
-                    {
-                        <MudSelectItem Value="@label">@label.ChildContent</MudSelectItem>
-                    }
-                </MudSelect>
+                <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed>
+                    <MudSelect Value="@Context.CurrentSortLabel" Label="@SortLabel" ValueChanged="@(v => Context.SetSortFunc(v, override_direction_none: true))" T="MudTableSortLabel<T>">
+                        @foreach (var label in Context.SortLabels)
+                        {
+                            <MudSelectItem Value="@label">@label.ChildContent</MudSelectItem>
+                        }
+                    </MudSelect>
+                </CascadingValue>
             </div>
-
         }
         <div class="mud-table-container" style="@TableStyle @(GetHorizontalScrollbarStyle())">
             <table class="mud-table-root">
@@ -81,10 +82,11 @@
                         @if (CurrentPageItems != null && CurrentPageItems.Count() > 0)
                         {
                             var rowIndex = 0;
-                            <MudVirtualize IsEnabled="@Virtualize" Items="@CurrentPageItems?.ToList()" Context="item">
+                            <MudVirtualize IsEnabled="@Virtualize" OverscanCount="@OverscanCount" Items="@CurrentPageItems?.ToList()" Context="item">
                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
-                               <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="IsEditable" 
+                               <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="IsEditable"
+                                      IsChecked="@(Context.Selection.Contains(item))"
                                       IsCheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
 
                                    @if ((!ReadOnly) && IsEditable && object.Equals(_editingItem, item))
@@ -199,7 +201,7 @@
                 var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
              } 
              <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="IsEditable" IsExpandable="isExpandable"
-                        IsCheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
+                        IsChecked="Context.Selection.Contains(item)" IsCheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
 
                     @if ((!ReadOnly) && IsEditable && object.Equals(_editingItem, item))
                     {

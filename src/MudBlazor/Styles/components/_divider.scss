@@ -1,9 +1,9 @@
 ﻿.mud-divider {
-    border: none;
-    height: 1px;
     margin: 0;
     flex-shrink: 0;
-    background-color: var(--mud-palette-divider);
+    border-color: var(--mud-palette-divider);
+    border-width: 1px;
+    border-style: solid none none none;
 }
 
 .mud-divider-absolute {
@@ -20,7 +20,7 @@
 }
 
 .mud-divider-light {
-    background-color: var(--mud-palette-divider-light);
+    border-color: var(--mud-palette-divider-light);
 }
 
 .mud-divider-middle {
@@ -29,11 +29,16 @@
 }
 
 .mud-divider-vertical {
-    width: 1px;
+    border-style: none solid none none;
     height: 100%;
 }
 
 .mud-divider-flexitem {
     height: auto;
     align-self: stretch;
+}
+
+.mud-divider-fullwidth {
+    flex-grow: 1;
+    width: 100%;
 }

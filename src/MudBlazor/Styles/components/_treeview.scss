@@ -45,8 +45,10 @@
     align-items: center;
     -webkit-tap-highlight-color: transparent;
 
-    .mud-icon-button {
-        padding: 4px;
+    .mud-treeview-item-arrow, .mud-treeview-item-checkbox {
+        .mud-icon-button {
+            padding: 4px;
+        }
     }
 }
 
@@ -115,6 +117,10 @@
     .mud-icon-button {
         padding: 0;
     }
+}
+
+.mud-treeview-select-none {
+    user-select: none;
 }
 
 @keyframes rotation {

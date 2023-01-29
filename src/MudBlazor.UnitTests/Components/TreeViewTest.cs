@@ -17,7 +17,6 @@ namespace MudBlazor.UnitTests.Components
         public void Collapsed_ClickOnArrowButton_CheckClose()
         {
             var comp = Context.RenderComponent<TreeViewTest1>();
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
             comp.Find("button").Click();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
@@ -31,7 +30,6 @@ namespace MudBlazor.UnitTests.Components
         public void Collapsed_ClickOnTreeItem_CheckClose()
         {
             var comp = Context.RenderComponent<TreeViewTest2>();
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
             comp.Find("button").Click();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
@@ -47,7 +45,6 @@ namespace MudBlazor.UnitTests.Components
         public void Unselected_Select_CheckSelected_Deselect_CheckDeselected()
         {
             var comp = Context.RenderComponent<TreeViewTest1>();
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
             comp.Find("button").Click();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
@@ -64,7 +61,6 @@ namespace MudBlazor.UnitTests.Components
         public void Normal_Activate_CheckActivated_ActivateAnother_CheckBoth()
         {
             var comp = Context.RenderComponent<TreeViewTest1>();
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
             comp.Find("div.mud-treeview-item-content").Click();
             comp.Instance.Item1Activated.Should().BeTrue();
@@ -80,7 +76,6 @@ namespace MudBlazor.UnitTests.Components
         public void Normal_Activate_CheckActivated_Deactivate_Check()
         {
             var comp = Context.RenderComponent<TreeViewTest1>();
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
             comp.Find("div.mud-treeview-item-content").Click();
             comp.Instance.Item1Activated.Should().BeTrue();
@@ -96,7 +91,6 @@ namespace MudBlazor.UnitTests.Components
         public void RenderWithTemplate_CheckResult()
         {
             var comp = Context.RenderComponent<TreeViewTemplateTest>();
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
         }
 
@@ -104,10 +98,12 @@ namespace MudBlazor.UnitTests.Components
         public void TreeViewServerTest()
         {
             var comp = Context.RenderComponent<TreeViewServerTest>();
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
             comp.FindAll("div.mud-treeview-item-content")[0].Click();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-content")[3]
+                .GetElementsByClassName("mud-treeview-item-arrow")[0]
+                .ChildElementCount.Should().Be(0);
             comp.FindAll("div.mud-treeview-item-content")[2].Click();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
         }
@@ -173,6 +169,22 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("div.mud-treeview-item-content").DoubleClick();
             selectedItem.Should().Be("content");
+        }
+
+        [Test]
+        public async Task TreeViewItem_ProgrammaticallySelect()
+        {
+            var comp = Context.RenderComponent<TreeViewTest4>();
+            var treeView = comp.FindComponent<MudTreeView<string>>();
+
+            await comp.InvokeAsync(() => comp.Instance.SelectFirst());
+            comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be("content"));
+
+            await comp.InvokeAsync(() => comp.Instance.SelectSecond());
+            comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be("src"));
+
+            await comp.InvokeAsync(() => comp.Instance.DeselectSecond());
+            comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be(null));
         }
     }
 }

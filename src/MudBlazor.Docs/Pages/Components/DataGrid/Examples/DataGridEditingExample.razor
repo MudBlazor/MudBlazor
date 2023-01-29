@@ -4,7 +4,7 @@
 @inject HttpClient httpClient
 
 <MudDataGrid T="Element" Items="@Elements.Take(4)" ReadOnly="@_readOnly" EditMode="@(_isCellEditMode ? DataGridEditMode.Cell : DataGridEditMode.Form)"
-    StartedEditingItem="@StartedEditingItem" CancelledEditingItem="@CancelledEditingItem" CommittedItemChanges="@CommittedItemChanges"
+    StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommittedItemChanges"
     Bordered="true" Dense="true" EditTrigger="@(_editTriggerRowClick ? DataGridEditTrigger.OnRowClick : DataGridEditTrigger.Manual)">
     <Columns>
         <Column T="Element" Field="Number" Title="Nr" IsEditable="false" />
@@ -22,7 +22,7 @@
         <Column T="Element" Field="Molar" Title="Molar mass" />
         <Column T="Element" Hidden="@(_isCellEditMode || _readOnly || _editTriggerRowClick)" CellClass="d-flex justify-end">
             <CellTemplate>
-                <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" OnClick="@context.Actions.StartEditingItem" />
+                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItem" />
             </CellTemplate>
         </Column>
     </Columns>
@@ -74,9 +74,9 @@
         _events.Insert(0, $"Event = StartedEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 
-    void CancelledEditingItem(Element item)
+    void CanceledEditingItem(Element item)
     {
-        _events.Insert(0, $"Event = CancelledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+        _events.Insert(0, $"Event = CanceledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 
     void CommittedItemChanges(Element item)

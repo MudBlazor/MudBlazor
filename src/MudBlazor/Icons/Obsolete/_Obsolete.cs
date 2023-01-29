@@ -8,6 +8,7 @@ namespace MudBlazor
     // it is strongly recommended to remove or update any references to them.
     public partial class Icons
     {
+        [Obsolete("Use Icons.Material.Filled instead.")]
         public partial class Filled
         {
             [Obsolete("Removed from Material Design Icons.", true)]
@@ -83,6 +84,7 @@ namespace MudBlazor
             public string LockOutline => Filled.Lock;
         }
 
+        [Obsolete("Use Icons.Material.Outlined instead.")]
         public partial class Outlined
         {
             [Obsolete("Removed from Material Design Icons.", true)]
@@ -119,6 +121,7 @@ namespace MudBlazor
             public string Facebook => Custom.Brands.Facebook;
         }
 
+        [Obsolete("Use Icons.Material.Rounded instead.")]
         public partial class Rounded
         {
             [Obsolete("Removed from Material Design Icons.", true)]
@@ -155,6 +158,7 @@ namespace MudBlazor
             public string Facebook => Custom.Brands.Facebook;
         }
 
+        [Obsolete("Use Icons.Material.Sharp instead.")]
         public partial class Sharp
         {
             [Obsolete("Removed from Material Design Icons.", true)]

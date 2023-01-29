@@ -87,7 +87,7 @@
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to group data by column. Setting the <CodeInline>Grouping</CodeInline> property
                     to <CodeInline>true</CodeInline> will turn on grouping which will add a menu item in the column options to toggle grouping of that column. 
-                    To disable editing on a column, set its <CodeInline>IsEditable</CodeInline> property to <CodeInline>false</CodeInline>.
+                    To disable grouping on a column, set its <CodeInline>Groupable</CodeInline> property to <CodeInline>false</CodeInline>.
 
                 </Description>
             </SectionHeader>
@@ -123,6 +123,8 @@
                     <CodeInline>DataGridFilterMode.Simple</CodeInline> is the default where all filters are managed in one popover in the data grid. It allows you to
                     set multiple filters at one time for multiple different columns. In <CodeInline>DataGridFilterMode.ColumnFilterMenu</CodeInline> mode, there is a dedicated popover for 
                     each column. Lastly, <CodeInline>DataGridFilterMode.ColumnFilterRow</CodeInline> allows you to inline the filtering behavior directly into the data grid.
+                    <br><br>
+                    Is it possibile to define the case sensitivity when filtering string values by setting the parameter <CodeInline>FilterCaseSensitivity</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="DataGridFilteringExample" ShowCode="false" Block="true" FullWidth="true">
@@ -146,6 +148,19 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="DataGridAdvancedFilteringExample" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridAdvancedFilteringExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Row Detail View">
+                <Description>
+                    The The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to create hierarchical layouts. To do that the <CodeInline>HierarchyColumn</CodeInline> has to be added in the <CodeInline>Columns</CodeInline> definitions. 
+                    <br><br>
+                    You can customize the icon to toggle the RowDetail and also disable the toggle button.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridDetailRowExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridDetailRowExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -220,5 +235,43 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Virtualization">
+                <Description>
+                    The items in the <CodeInline>&lt;MudDataGrid></CodeInline> can be virtualized to provide better rendering performance. Setting the <CodeInline>Virtualize</CodeInline> property
+                    to <CodeInline>true</CodeInline> will cause the items to be rendered virtually. You must restrict the height for virtualization to work.
+
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridVirtualizationExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridVirtualizationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Observability">
+                <Description>
+                    When loading the <CodeInline>&lt;MudDataGrid></CodeInline> with a collection that implements <CodeInline>INotifyCollectionChanged</CodeInline>, changes to the 
+                    underlying collection will automatically be reflected in the <CodeInline>&lt;MudDataGrid></CodeInline>.
+
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridObservabilityExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridObservabilityExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="CultureInfo">
+                <Description>
+                    DataGrid <CodeInline>Culture</CodeInline> (CultureInfo) property is used to display and editing/filter columns data.
+                    Each <CodeInline>&lt;Column></CodeInline> can define his own culture,
+                    to allow specify its format individually.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridColumnCultureExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridColumnCultureExample />
+            </SectionContent>
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

@@ -170,6 +170,7 @@ namespace MudBlazor
             if (formControl.Required)
                 SetIsValid(false);
             _formControls.Add(formControl);
+            SetDefaultControlValidation(formControl);
         }
 
         void IForm.Remove(IFormComponent formControl)
@@ -299,24 +300,17 @@ namespace MudBlazor
                     SetIsValid(valid);
                 }
 
-                SetDefaultControlValidation(Validation, OverrideFieldValidation ?? true);
             }
             return base.OnAfterRenderAsync(firstRender);
         }
 
-        private void SetDefaultControlValidation(object validation, bool overrideFieldValidation)
+        private void SetDefaultControlValidation(IFormComponent formComponent)
         {
-            if (validation == null)
+            if (Validation == null) return;
+
+            if (!formComponent.IsForNull && (formComponent.Validation == null || (OverrideFieldValidation ?? true)))
             {
-                return;
-            }
-            
-            foreach (var formControl in _formControls)
-            {
-                if (formControl.Validation == null || overrideFieldValidation)
-                {
-                    formControl.Validation = validation;
-                }
+                formComponent.Validation = Validation;
             }
         }
 

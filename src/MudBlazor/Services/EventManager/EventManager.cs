@@ -43,7 +43,7 @@ namespace MudBlazor
         /// <param name="throotleInterval">The delay between the last time the event occurred and the callback is fired. Set to zero, if no delay is requested</param>
         /// <param name="callback">The method that is invoked, if the DOM element is fired. Object will be of type T</param>
         /// <returns>A unique identifier for the event subscription. Should be used to cancel the subscription</returns>
-        Task<Guid> Subscribe<T>(string eventName, string elementId, string projectionName, int throotleInterval, Func<object, Task> callback);
+        Task<Guid> Subscribe<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(string eventName, string elementId, string projectionName, int throotleInterval, Func<object, Task> callback);
 
         /// <summary>
         /// Listing to a javascript event on the document itself
@@ -53,7 +53,7 @@ namespace MudBlazor
         /// <param name="throotleInterval">The delay between the last time the event occurred and the callback is fired. Set to zero, if no delay is requested</param>
         /// <param name="callback">The method that is invoked, if the DOM element is fired. Object will be of type T</param>
         /// <returns>A unique identifier for the event subscription. Should be used to cancel the subscription</returns>
-        Task<Guid> SubscribeGlobal<T>(string eventName, int throotleInterval, Func<object, Task> callback);
+        Task<Guid> SubscribeGlobal<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(string eventName, int throotleInterval, Func<object, Task> callback);
 
         /// <summary>
         /// Cancel (unsubscribe) the listening to a DOM event, previous connected by Subscribe
@@ -97,22 +97,22 @@ namespace MudBlazor
             }
         }
 
-        public async Task<Guid> Subscribe<T>(string eventName, string elementId, string projectionName, int throotleInterval, Func<object, Task> callback)
+        public async Task<Guid> Subscribe<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(string eventName, string elementId, string projectionName, int throotleInterval, Func<object, Task> callback)
         {
             var (type, properties) = GetTypeInformation<T>();
             var key = RegisterCallBack(type, callback);
 
-            await _jsRuntime.InvokeVoidAsync("mudThrottledEventManager.subscribe", eventName, elementId, projectionName, throotleInterval, key, properties, _dotNetRef);
+            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudThrottledEventManager.subscribe", eventName, elementId, projectionName, throotleInterval, key, properties, _dotNetRef);
 
             return key;
         }
 
-        public async Task<Guid> SubscribeGlobal<T>(string eventName, int throotleInterval, Func<object, Task> callback)
+        public async Task<Guid> SubscribeGlobal<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(string eventName, int throotleInterval, Func<object, Task> callback)
         {
             var (type, properties) = GetTypeInformation<T>();
             var key = RegisterCallBack(type, callback);
 
-            await _jsRuntime.InvokeVoidAsync("mudThrottledEventManager.subscribeGlobal", eventName, throotleInterval, key, properties, _dotNetRef);
+            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudThrottledEventManager.subscribeGlobal", eventName, throotleInterval, key, properties, _dotNetRef);
 
             return key;
         }
@@ -123,7 +123,7 @@ namespace MudBlazor
 
             try
             {
-                await _jsRuntime.InvokeVoidAsync("mudThrottledEventManager.unsubscribe", key);
+                await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudThrottledEventManager.unsubscribe", key);
                 return true;
             }
             catch (Exception)
@@ -132,7 +132,7 @@ namespace MudBlazor
             }
         }
 
-        private (Type Type, string[] Properties) GetTypeInformation<T>()
+        private (Type Type, string[] Properties) GetTypeInformation<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>()
         {
             var type = typeof(T);
             var properties = type.GetProperties().Select(x => char.ToLower(x.Name[0]) + x.Name.Substring(1)).ToArray();
@@ -158,7 +158,7 @@ namespace MudBlazor
             {
                 try
                 {
-                    await _jsRuntime.InvokeVoidAsync("mudThrottledEventManager.unsubscribe", item.Key);
+                    await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudThrottledEventManager.unsubscribe", item.Key);
                 }
                 catch (Exception)
                 {

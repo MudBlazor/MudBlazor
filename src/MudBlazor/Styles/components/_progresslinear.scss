@@ -258,5 +258,9 @@
         .mud-progress-linear-bar {
             border-radius: var(--mud-default-borderradius);
         }
+
+        &::before {
+            border-radius: var(--mud-default-borderradius);
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace MudBlazor
 
         [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
 
@@ -156,7 +156,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Cancel the dialog. DialogResult.Cancelled will be set to true
+        /// Cancel the dialog. DialogResult.Canceled will be set to true
         /// </summary>
         public void Cancel()
         {
@@ -336,7 +336,11 @@ namespace MudBlazor
             {
                 if (disposing)
                 {
-                    _keyInterceptor?.Dispose();
+                    if (_keyInterceptor != null)
+                    {
+                        _keyInterceptor.KeyDown -= HandleKeyDown;
+                        _keyInterceptor.Dispose();
+                    }
                 }
 
                 _disposedValue = true;

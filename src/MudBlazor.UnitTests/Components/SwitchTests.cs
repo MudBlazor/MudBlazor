@@ -1,11 +1,11 @@
-﻿
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Docs.Examples;
 using MudBlazor.Extensions;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -17,7 +17,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task SwitchTest_KeyboardNavigation()
         {
             var comp = Context.RenderComponent<MudSwitch<bool>>();
-            //Console.WriteLine(comp.Markup);
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.Instance.Checked.Should().Be(true));
@@ -71,6 +70,36 @@ namespace MudBlazor.UnitTests.Components
             input.Change(true);
             box.Checked.Should().Be(true);
             checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
+        }
+
+        [Test]
+        public void SwitchDisabledTest()
+        {
+            var comp = Context.RenderComponent<SwitchWithLabelExample>();
+            var switches = comp.FindAll("label.mud-switch");
+            switches[3].ClassList.Should().Contain("mud-disabled"); // 4rd switch
+        }
+
+        [Test]
+        public void SwitchLabelPositionTest()
+        {
+            var comp = Context.RenderComponent<SwitchWithLabelExample>();
+            var switches = comp.FindAll("label.mud-switch");
+
+            switches[0].ClassList.Should().Contain("mud-ltr"); // 1st switch: (default) LabelPosition.End
+            switches[2].ClassList.Should().Contain("mud-rtl"); // 3rd switch: LabelPosition.Start
+        }
+
+        [Test]
+        public void SwitchLabelTest()
+        {
+            var value = new DisplayNameLabelClass();
+
+            var comp = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(f => f.For, () => value.Boolean));
+            comp.Instance.Label.Should().Be("Boolean LabelAttribute"); //label should be set by the attribute
+
+            var comp2 = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(f => f.For, () => value.Boolean).Add(l => l.Label, "Label Parameter"));
+            comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
     }
 }

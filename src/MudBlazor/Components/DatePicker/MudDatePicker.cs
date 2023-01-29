@@ -27,13 +27,6 @@ namespace MudBlazor
             set => SetDateAsync(value, true).AndForget();
         }
 
-        /// <summary>
-        /// If AutoClose is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public bool AutoClose { get; set; }
-
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
             if (_value != date)
@@ -54,6 +47,7 @@ namespace MudBlazor
                 }
                 await DateChanged.InvokeAsync(_value);
                 BeginValidate();
+                FieldChanged(_value);
             }
         }
 
@@ -73,6 +67,7 @@ namespace MudBlazor
         protected override string GetDayClasses(int month, DateTime day)
         {
             var b = new CssBuilder("mud-day");
+            b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
             if (day < GetMonthStart(month) || day > GetMonthEnd(month))
                 return b.AddClass("mud-hidden").Build();
             if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)

@@ -45,7 +45,7 @@ namespace MudBlazor
             };
         }
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         /// <summary>
         /// Sets the maxheight the popover can have when open.
@@ -97,7 +97,7 @@ namespace MudBlazor
         public double Duration { get; set; } = 251;
 
         /// <summary>
-        /// Sets the amount of time to wait from opening the popover before beginning to perform the transition. 
+        /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
@@ -132,7 +132,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FilpOnOpen;
+        public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
 
         /// <summary>
         /// If true, the select menu will open either above or bellow the input depending on the direction.

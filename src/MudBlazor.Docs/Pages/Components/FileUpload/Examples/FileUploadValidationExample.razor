@@ -1,27 +1,91 @@
 ﻿@namespace MudBlazor.Docs.Examples
+@using FluentValidation
+@using Severity = MudBlazor.Severity;
 @inject ISnackbar Snackbar
-<InputFile id="fileInput112" OnChange="UploadFiles" hidden multiple accept=".jpg, .jpeg, .png" />
 
-<MudButton HtmlTag="label"
-           Variant="Variant.Filled"
-           Color="Color.Primary"
-           StartIcon="@Icons.Filled.CloudUpload"
-           for="fileInput112">
-    Upload your images
-</MudButton>
-
+<MudCard>
+    <MudForm Model="@model" @ref="@form" Validation="@(ValidationRules.ValidateValue)" ValidationDelay="0">
+        <MudCardContent>
+            <MudTextField @bind-Value="model.Name"
+                          For="@(() => model.Name)"
+                          Immediate="true"
+                          Label="Name" />
+            <MudFileUpload T="IBrowserFile" For="@(() => model.File)" @bind-Files="model.File" OnFilesChanged="UploadFiles" SuppressOnChangeWhenInvalid="SuppressOnChangeWhenInvalid">
+                <ButtonTemplate>
+                    <MudButton HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               for="@context">
+                        Upload Files
+                    </MudButton>
+                </ButtonTemplate>
+            </MudFileUpload>
+        </MudCardContent>
+        <MudCardActions>
+            <MudSwitch Color="Color.Primary" @bind-Checked="SuppressOnChangeWhenInvalid">Suppress OnChange When Invalid</MudSwitch>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await Submit())">Submit</MudButton>
+        </MudCardActions>
+    </MudForm>
+</MudCard>
 
 @code
 {
+    private MudForm form;
+    private FileModel model = new();
+    private FileModelFluentValidator ValidationRules = new();
+    private bool SuppressOnChangeWhenInvalid;
+
     private void UploadFiles(InputFileChangeEventArgs e)
     {
-        var entries = e.GetMultipleFiles();
-        //Do your validations here
+        //If SuppressOnChangeWhenInvalid is false, perform your validations here
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-        Snackbar.Add($"Files with {entries.FirstOrDefault().Size} bytes size are not allowed", Severity.Error);
-        Snackbar.Add($"Files starting with letter {entries.FirstOrDefault().Name.Substring(0, 1)} are not recommended", Severity.Warning);
-        Snackbar.Add($"This file has the extension {entries.FirstOrDefault().Name.Split(".").Last()}", Severity.Info);
+        Snackbar.Add($"This file has the extension {model.File.Name.Split(".").Last()}", Severity.Info);
 
         //TODO upload the files to the server
+    }
+
+    private async Task Submit()
+    {
+        await form.Validate();
+
+        if (form.IsValid)
+        {
+            Snackbar.Add("Submited!");
+        }
+    }
+
+    public class FileModel
+    {
+        public string Name { get; set; }
+        public IBrowserFile File { get; set; }
+    }
+
+    /// <summary>
+    /// A standard AbstractValidator which contains multiple rules and can be shared with the back end API
+    /// </summary>
+    /// <typeparam name="OrderModel"></typeparam>
+    public class FileModelFluentValidator : AbstractValidator<FileModel>
+    {
+        public FileModelFluentValidator()
+        {
+            RuleFor(x => x.Name)
+                .NotEmpty()
+                .Length(1, 100);
+            RuleFor(x => x.File)
+            .NotEmpty();
+            When(x => x.File != null, () =>
+            {
+                RuleFor(x => x.File.Size).LessThanOrEqualTo(10485760).WithMessage("The maximum file size is 10 MB");
+            });
+        }
+
+        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
+        {
+            var result = await ValidateAsync(ValidationContext<FileModel>.CreateWithOptions((FileModel)model, x => x.IncludeProperties(propertyName)));
+            if (result.IsValid)
+                return Array.Empty<string>();
+            return result.Errors.Select(e => e.ErrorMessage);
+        };
     }
 }

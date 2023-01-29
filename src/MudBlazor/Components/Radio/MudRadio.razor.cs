@@ -10,7 +10,7 @@ namespace MudBlazor
 {
     public partial class MudRadio<T> : MudComponentBase, IDisposable
     {
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         protected string Classname =>
         new CssBuilder("mud-radio")
@@ -75,8 +75,8 @@ namespace MudBlazor
         {
             return placement switch
             {
-                Placement.Left => RightToLeft ? Placement.Right : Placement.Left,
-                Placement.Right => RightToLeft ? Placement.Left : Placement.Right,
+                Placement.Left => RightToLeft ? Placement.End : Placement.Start,
+                Placement.Right => RightToLeft ? Placement.Start : Placement.End,
                 _ => placement
             };
         }
@@ -100,7 +100,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Behavior)]
-        public Placement Placement { get; set; } = Placement.Right;
+        public Placement Placement { get; set; } = Placement.End;
 
         /// <summary>
         /// The value to associate to the button.

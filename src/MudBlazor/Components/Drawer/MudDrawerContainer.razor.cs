@@ -27,8 +27,7 @@ namespace MudBlazor
             .AddStyle(Style)
         .Build();
 
-        [CascadingParameter]
-        public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
@@ -45,7 +44,11 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        internal void Remove(MudDrawer drawer) => _drawers.Remove(drawer);
+        internal void Remove(MudDrawer drawer)
+        {
+            _drawers.Remove(drawer);
+            StateHasChanged();
+        }
 
         private string GetDrawerClass(MudDrawer drawer)
         {

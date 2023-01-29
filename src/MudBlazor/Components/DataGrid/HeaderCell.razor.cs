@@ -24,6 +24,16 @@ namespace MudBlazor
         private Type _dataType;
         private bool _isSelected;
 
+        [Parameter]
+        public SortDirection SortDirection
+        {
+            get => _initialDirection;
+            set
+            {
+                _initialDirection = value;
+            }
+        }
+
         private string _classname =>
             new CssBuilder(Column?.HeaderClass)
                 .AddClass(Column?.headerClassname)
@@ -269,11 +279,12 @@ namespace MudBlazor
             {
                 _resizerHeight = gridHeight;
                 _width = targetWidth;
-                if (finishResize)
-                {
-                    _isResizing = false;
-                }
+                await InvokeAsync(StateHasChanged);
+            }
 
+            if (finishResize)
+            {
+                _isResizing = false;
                 await InvokeAsync(StateHasChanged);
             }
 

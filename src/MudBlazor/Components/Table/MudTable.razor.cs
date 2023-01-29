@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -13,7 +14,7 @@ namespace MudBlazor
 {
     // note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
 
-    public partial class MudTable<T> : MudTableBase
+    public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase
     {
         /// <summary>
         /// Defines how a table row looks like. Use MudTd to define the table cells and their content.
@@ -170,7 +171,7 @@ namespace MudBlazor
         public Func<T, bool> Filter { get; set; } = null;
 
         /// <summary>
-        /// Button click event.
+        /// Row click event.
         /// </summary>
         [Parameter] public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
 
@@ -214,7 +215,9 @@ namespace MudBlazor
             get => _selectedItem;
             set
             {
-                if (EqualityComparer<T>.Default.Equals(SelectedItem, value))
+                if (_comparer != null && _comparer.Equals(SelectedItem, value))
+                    return;
+                else if (EqualityComparer<T>.Default.Equals(SelectedItem, value))
                     return;
                 _selectedItem = value;
                 SelectedItemChanged.InvokeAsync(value);
@@ -238,9 +241,9 @@ namespace MudBlazor
             {
                 if (!MultiSelection)
                     if (_selectedItem is null)
-                        return new HashSet<T>(Array.Empty<T>());
+                        return new HashSet<T>(Array.Empty<T>(), _comparer);
                     else
-                        return new HashSet<T>(new T[] { _selectedItem });
+                        return new HashSet<T>(new T[] { _selectedItem }, _comparer);
                 else
                     return Context.Selection;
             }
@@ -252,7 +255,7 @@ namespace MudBlazor
                 {
                     if (Context.Selection.Count == 0)
                         return;
-                    Context.Selection = new HashSet<T>();
+                    Context.Selection = new HashSet<T>(_comparer);
                 }
                 else
                     Context.Selection = value;
@@ -260,6 +263,25 @@ namespace MudBlazor
                 InvokeAsync(StateHasChanged);
             }
         }
+
+        /// <summary>
+        /// The Comparer to use for comparing selected items internally.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public IEqualityComparer<T> Comparer
+        {
+            get => _comparer;
+            set
+            {
+                if (value == _comparer) return;
+                _comparer = value;
+                // Apply comparer and (selected values are refreshed in the Context.Comparer setter)
+                Context.Comparer = _comparer;
+            }
+        }
+
+        private IEqualityComparer<T> _comparer;
 
         /// <summary>
         /// Callback is called whenever items are selected or deselected in multi selection mode.
@@ -336,7 +358,7 @@ namespace MudBlazor
                     return _preEditSort;
                 if (ServerData != null)
                 {
-                    _preEditSort = _server_data.Items.ToList();
+                    _preEditSort = _server_data.Items?.ToList();
                     return _preEditSort;
                 }
 
@@ -411,6 +433,16 @@ namespace MudBlazor
                 _editingItem = item;
         }
 
+        public override bool ContainsItem(object item)
+        {
+            var t = item.As<T>();
+            if (t is null)
+                return false;
+            return FilteredItems?.Contains(t) ?? false;
+        }
+
+        public override void UpdateSelection() => SelectedItemsChanged.InvokeAsync(SelectedItems);
+
         public override TableContext TableContext
         {
             get
@@ -424,37 +456,32 @@ namespace MudBlazor
         // TableContext provides shared functionality between all table sub-components
         public TableContext<T> Context { get; } = new TableContext<T>();
 
-        private void OnRowCheckboxChanged(bool value, T item)
+        private void OnRowCheckboxChanged(bool checkedState, T item)
         {
-            if (value)
+            if (checkedState)
                 Context.Selection.Add(item);
             else
                 Context.Selection.Remove(item);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
+
+            if (SelectedItemsChanged.HasDelegate)
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
-        internal override void OnHeaderCheckboxClicked(bool value)
+        internal override void OnHeaderCheckboxClicked(bool checkedState)
         {
-            if (!value)
-                Context.Selection.Clear();
-            else
+            if (checkedState)
             {
                 foreach (var item in FilteredItems)
                     Context.Selection.Add(item);
             }
-            Context.UpdateRowCheckBoxes(false);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
+            else
+                Context.Selection.Clear();
+
+            Context.UpdateRowCheckBoxes();
+
+            if (SelectedItemsChanged.HasDelegate)
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-                await InvokeServerLoadFunc();
-
-            TableContext.UpdateRowCheckBoxes();
-            await base.OnAfterRenderAsync(firstRender);
-        }
-
 
         /// <summary>
         /// Supply an async function which (re)loads filtered, paginated and sorted data from server.
@@ -504,6 +531,14 @@ namespace MudBlazor
                 Context?.PagerStateHasChanged?.Invoke();
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
+                await InvokeServerLoadFunc();
+            TableContext.UpdateRowCheckBoxes(updateGroups: false);
+        }
+
         /// <summary>
         /// Call this to reload the server-filtered, -sorted and -paginated items
         /// </summary>
@@ -531,9 +566,9 @@ namespace MudBlazor
             return sourceList.GroupBy(parent.Selector).ToList();
         }
 
-        internal void OnGroupHeaderCheckboxClicked(bool value, IEnumerable<T> items)
+        internal void OnGroupHeaderCheckboxClicked(bool checkedState, IEnumerable<T> items)
         {
-            if (value)
+            if (checkedState)
             {
                 foreach (var item in items)
                     Context.Selection.Add(item);
@@ -544,8 +579,10 @@ namespace MudBlazor
                     Context.Selection.Remove(item);
             }
 
-            Context.UpdateRowCheckBoxes(false);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
+            Context.UpdateRowCheckBoxes();
+
+            if (SelectedItemsChanged.HasDelegate)
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
     }
 }

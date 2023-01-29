@@ -2,7 +2,7 @@
 @typeparam T
 @inherits MudBaseInput<T>
 
-<CascadingValue Name="Standalone" Value="false" IsFixed="true">
+<CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
 	<div class="mud-select" id="@_elementId">
 		<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
 						 Error="@Error" ErrorText="@ErrorText" ErrorId="@ErrorId" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
@@ -24,7 +24,7 @@
                 </MudInput>
 				<MudPopover Open=@(_isOpen) MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
 					<CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
-						<MudList Clickable="true" Dense="@Dense" @bind-SelectedValue="_activeItemId">
+						<MudList Class="@ListClass" Clickable="true" Dense="@Dense" @bind-SelectedValue="_activeItemId">
                             @if (MultiSelection && SelectAll)
 							{
 								<MudListItem Icon="@SelectAllCheckBoxIcon" Text="@SelectAllText" OnClick="SelectAllClickAsync" OnClickHandlerPreventDefault="true" Dense="@Dense" Class="mb-2" />
