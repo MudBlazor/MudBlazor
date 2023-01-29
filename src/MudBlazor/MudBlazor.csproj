@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-     <version>6.1.8-mblichowski-dev1.1.0</version>
+     <version>6.1.8-mblichowski-dev1.2.0</version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>Nuget.png</PackageIcon>
     <Company>MudBlazor</Company>
