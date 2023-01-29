@@ -55,12 +55,15 @@ namespace MudBlazor
                 string value = Value == null ? null : Value.ToString();
                 var stringComparer = DataGrid.FilterCaseSensitivity == DataGridFilterCaseSensitivity.Default ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
+                if (value == null)
+                    return x => true;
+
                 return Operator switch
                 {
                     FilterOperator.String.Contains =>
-                        PropertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && value != null && x.Contains(value, stringComparer))),
+                        PropertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && x.Contains(value, stringComparer))),
                     FilterOperator.String.NotContains =>
-                        PropertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && value != null && !x.Contains(value, stringComparer))),
+                        PropertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && !x.Contains(value, stringComparer))),
                     FilterOperator.String.Equal =>
                         PropertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && x.Equals(value, stringComparer))),
                     FilterOperator.String.NotEqual =>
