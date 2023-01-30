@@ -1040,5 +1040,54 @@ namespace MudBlazor.UnitTests.Components
             // Assert
             autocompletecomp.WaitForAssertion(() => Assert.AreEqual(testText, eventText));
         }
+
+        [Test]
+        [TestCase(0)] //test toStringFunc
+        [TestCase(1)] //test toString
+        public async Task AutocompleteStrictFalseTest(int index)
+        {
+            var listItemQuerySelector = "div.mud-list-item";
+            var selectedItemClassName = "mud-selected-item";
+            var californiaString = "California";
+            var virginiaString = "Virginia";
+
+            var comp = Context.RenderComponent<AutocompleteStrictFalseTest>();
+            var autocompletecomp = comp.FindComponents<MudAutocomplete<AutocompleteStrictFalseTest.State>>()[index];
+            var autocomplete = autocompletecomp.Instance;
+            
+            //search for and select California
+            autocompletecomp.Find("input").Input("Calif");
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
+            autocomplete.Text.Should().Be(californiaString);
+            autocomplete.Value.StateName.Should().Be(californiaString);
+
+            //California should appear as index 5 and be selected
+            autocompletecomp.Find("input").Click();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
+            var items = comp.FindComponents<MudListItem>().ToArray();
+            items.Length.Should().Be(10);
+            var item = items.SingleOrDefault(x => x.Markup.Contains(californiaString));
+            items.ToList().IndexOf(item).Should().Be(5);
+            comp.WaitForAssertion(() => items.Single(s => s.Markup.Contains(californiaString)).Find(listItemQuerySelector).ClassList.Should().Contain(selectedItemClassName));
+
+            autocompletecomp.Find("input").Click(); //close autocomplete
+
+            //search for and select Virginia
+            autocompletecomp.Find("input").Input("Virginia");
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
+            autocomplete.Text.Should().Be(virginiaString);
+            autocomplete.Value.StateName.Should().Be(virginiaString);
+
+            //West Virginia is not in the first 10 states, so it should not appear in the list
+            autocompletecomp.Find("input").Click();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
+            var items2 = comp.FindComponents<MudListItem>().ToArray();
+            items2.Length.Should().Be(10);
+            var item2 = items2.SingleOrDefault(x => x.Markup.Contains(virginiaString));
+            items2.ToList().IndexOf(item).Should().Be(-1);
+            items2.Count(s => s.Find(listItemQuerySelector).ClassList.Contains(selectedItemClassName)).Should().Be(0);
+        }
     }
 }
