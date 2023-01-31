@@ -327,6 +327,10 @@ namespace MudBlazor
         public void Dispose()
         {
             _timer?.Dispose();
+            if (ParentMudForm != null)
+            {
+                ParentMudForm.ChildForms.Remove(this);
+            }
         }
     }
 }
