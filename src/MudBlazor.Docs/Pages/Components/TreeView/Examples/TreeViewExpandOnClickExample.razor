@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTreeView T="string" ExpandOnClick="true">
+<MudTreeView T="string" ExpandOnClick="true" CanSelectDisabledItem=false @bind-SelectedValue=_selectedValue>
     <MudTreeViewItem Value="@("Applications")">
         <MudTreeViewItem Value="@("Terminal")" />
     </MudTreeViewItem>
@@ -9,5 +9,15 @@
             <MudTreeViewItem Value="@("Api")" />
             <MudTreeViewItem Value="@("Components")" />
         </MudTreeViewItem>
+		<MudTreeViewItem Value="@("MudBlazor Disabled")" Disabled=true>
+			<MudTreeViewItem Value="@("Api Disabled")" Disabled=true />
+			<MudTreeViewItem Value="@("Components")" />
+		</MudTreeViewItem>
     </MudTreeViewItem>
 </MudTreeView>
+
+<MudText Style="width: 100%" Typo="@Typo.subtitle1">Selected item: @_selectedValue</MudText>
+
+@code {
+	string _selectedValue;
+}

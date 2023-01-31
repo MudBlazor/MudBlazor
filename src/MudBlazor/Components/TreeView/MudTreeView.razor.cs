@@ -45,12 +45,28 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Selecting)]
         public Color CheckBoxColor { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public int? VisibleItemsLimit { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public int VisibleItemsIncrement { get; set; } = 10;
+
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public string VisibleItemsExtendText { get; set; } = "...and {0} more items";
+
         /// <summary>
         /// if true, multiple values can be selected via checkboxes which are automatically shown in the tree view.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public bool MultiSelection { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public bool CanSelectDisabledItem { get; set; } = true;
 
         /// <summary>
         /// if true, multiple values can be selected via checkboxes which are automatically shown in the tree view.
@@ -144,7 +160,8 @@ namespace MudBlazor
 
         [ExcludeFromCodeCoverage]
         [Obsolete("Use SelectedValueChanged instead.", true)]
-        [Parameter] public EventCallback<T> ActivatedValueChanged
+        [Parameter]
+        public EventCallback<T> ActivatedValueChanged
         {
             get => SelectedValueChanged;
             set => SelectedValueChanged = value;
@@ -203,6 +220,9 @@ namespace MudBlazor
 
         internal async Task UpdateSelected(MudTreeViewItem<T> item, bool requestedValue)
         {
+            if (!CanSelectDisabledItem && item.Disabled)
+                return;
+
             if ((_selectedValue == item && requestedValue) ||
                 (_selectedValue != item && !requestedValue))
                 return;

@@ -3,17 +3,49 @@
 @typeparam T
 
 <ul @attributes="UserAttributes" class="@Classname" style="@Stylename">
-    <CascadingValue Value="@MudTreeRoot" IsFixed="true">
-        @if (ItemTemplate != null && Items != null)
-        {
-            @foreach (var item in Items)
-            {
-                @ItemTemplate(item)
-            }
-        }
-        else if (ChildContent != null)
-        {
-            @ChildContent
-        }
-    </CascadingValue>
+	<CascadingValue Value="@MudTreeRoot" IsFixed="true">
+		@if (ItemTemplate != null && Items != null)
+		{
+			@if (VisibleItemsLimit > 0)
+			{
+				foreach (var item in GetTrimmedItems())
+					@ItemTemplate(item)
+
+				@if (Items.Count > _currentVisibleItemsLimit)
+				{
+					<li>
+						<div class="mud-treeview-item-content gap-2 justify-end">
+							@String.Format(MudTreeRoot.VisibleItemsExtendText, Items.Count - _currentVisibleItemsLimit)
+							<MudIconButton Variant=Variant.Filled OnClick=IncrementVisibleItemsLimit Icon=@Icons.Material.Filled.MoreHoriz />
+						</div>
+					</li>
+				}
+			}
+			else
+			{
+				foreach (var item in Items)
+					@ItemTemplate(item)
+			}
+		}
+		else if (ChildContent != null)
+		{
+			@ChildContent
+		}
+	</CascadingValue>
 </ul>
+
+@code{
+	private int? _currentVisibleItemsLimit;
+
+	private void IncrementVisibleItemsLimit()
+	{
+		_currentVisibleItemsLimit += this.VisibleItemsIncrement;
+	}
+
+	private IEnumerable<T> GetTrimmedItems()
+	{
+		_currentVisibleItemsLimit ??= VisibleItemsLimit;
+
+		return Items.Take(_currentVisibleItemsLimit.Value);
+	}
+}
