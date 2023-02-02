@@ -1,42 +1,36 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSelect T="string" Label="Coffee" AnchorOrigin="Origin.BottomCenter">
+<MudSelect @ref="_select" T="string" ValueChanged="ValueChange" Label="Coffee" AnchorOrigin="Origin.BottomCenter">
     <MudSelectItem Value="@("Cappuccino")" />
     <MudSelectItem Value="@("Cafe Latte")" />
     <MudSelectItem Value="@("Espresso")" />
 </MudSelect>
-<MudSelect T="double" Label="Price" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
-    <MudSelectItem T="double" Value="4.50"/>
-    <MudSelectItem T="double" Value="4.99"/>
-    <MudSelectItem T="double" Value="3.60"/>
-</MudSelect>
-<MudSelect T="Pizza" Label="Pizza" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
-    <MudSelectItem Value="@(new Pizza("Cardinale"))" />
-    <MudSelectItem Value="@(new Pizza("Diavolo"))" />
-    <MudSelectItem Value="@(new Pizza("Margarita"))" />
-    <MudSelectItem Value="@(new Pizza("Spinaci"))" />
-</MudSelect>
+
+<MudButton OnClick="ChangeValue">Change Value</MudButton>
+<MudText>@changeCount</MudText>
+<MudText>Current Value: @_select?.Value</MudText>
 
 @code {
-    public class Pizza
+    MudSelect<string> _select;
+    int changeCount;
+
+    private void ChangeValue()
     {
-        public Pizza(string name)
+        if (_select.Value == "Cappuccino")
         {
-            Name = name;
+            _select.Value = "Cafe Latte";
+            _select.ForceUpdate();
         }
-
-        public readonly string Name;
-
-        // Note: this is important so the MudSelect can compare pizzas
-        public override bool Equals(object o) {
-            var other = o as Pizza;
-            return other?.Name==Name;
+        else
+        {
+            _select.Value = "Cappuccino";
+            _select.ForceUpdate();
         }
+        StateHasChanged();
+    }
 
-        // Note: this is important too!
-        public override int GetHashCode() => Name?.GetHashCode() ?? 0;
-
-        // Implement this for the Pizza to display correctly in MudSelect
-        public override string ToString() => Name;
+    private void ValueChange()
+    {
+        changeCount++;
     }
 }
