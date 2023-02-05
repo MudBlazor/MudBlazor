@@ -2,7 +2,7 @@
 
 <MudPaper Width="300px" Elevation="0">
 	<MudTreeView Items="TreeItems" MultiSelection="true" @bind-ActivatedValue="ActivatedValue" @bind-SelectedValues="SelectedValues"
-		ExpandOnClick=true VisibleItemsLimit=3 VisibleItemsIncrement=2 VisibleItemsExtendText="Random >>{0}<< text for extension">
+		ExpandOnClick=true VisibleItemsLimit=3 VisibleItemsIncrement=2 EnableShowAllItemsButton=true VisibleItemsExtendText="Random >>{0}<< text for extension">
 		<ItemTemplate>
 			<MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems" Value="@context"
 							 Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />

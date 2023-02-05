@@ -17,6 +17,11 @@
 						<div class="mud-treeview-item-content gap-2 justify-end">
 							@String.Format(MudTreeRoot.VisibleItemsExtendText, Items.Count - _currentVisibleItemsLimit)
 							<MudIconButton Variant=Variant.Filled OnClick=IncrementVisibleItemsLimit Icon=@Icons.Material.Filled.MoreHoriz />
+
+							@if (MudTreeRoot.EnableShowAllItemsButton)
+							{
+								<MudIconButton Variant=Variant.Filled OnClick=ShowAllItems Icon=@Icons.Material.Filled.AllInclusive />
+							}
 						</div>
 					</li>
 				}
@@ -40,6 +45,11 @@
 	private void IncrementVisibleItemsLimit()
 	{
 		_currentVisibleItemsLimit += this.VisibleItemsIncrement;
+	}
+
+	private void ShowAllItems()
+	{
+		_currentVisibleItemsLimit = this.Items.Count;
 	}
 
 	private IEnumerable<T> GetTrimmedItems()

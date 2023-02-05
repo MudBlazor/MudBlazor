@@ -57,6 +57,10 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Selecting)]
         public string VisibleItemsExtendText { get; set; } = "...and {0} more items";
 
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public bool EnableShowAllItemsButton { get; set; }
+
         /// <summary>
         /// if true, multiple values can be selected via checkboxes which are automatically shown in the tree view.
         /// </summary>
