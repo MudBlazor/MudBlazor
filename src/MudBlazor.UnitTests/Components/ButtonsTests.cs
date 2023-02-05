@@ -196,7 +196,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonSizesTest()
         {
-            var comp = Context.RenderComponent<ButtonSizeExample>();
+            var comp = Context.RenderComponent<ButtonSizeIconSizeTest>();
 
             var buttons = comp.Nodes.Where(n => n.NodeName.Equals("BUTTON")).ToArray();
             buttons.Length.Should().Be(6);
@@ -210,7 +210,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudButtonIconSizesTest()
         {
-            var comp = Context.RenderComponent<ButtonSizeExample>();
+            var comp = Context.RenderComponent<ButtonSizeIconSizeTest>();
 
             var buttons = comp.Nodes.Where(n => n.NodeName.Equals("BUTTON")).ToArray();
 
