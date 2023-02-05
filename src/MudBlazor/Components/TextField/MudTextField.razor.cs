@@ -127,7 +127,7 @@ namespace MudBlazor
             }
         }
 
-        protected override Task SetValueAsync(T value, bool updateText = true)
+        protected override Task SetValueAsync(T value, bool updateText = true, bool force = false)
         {
             if (_mask != null)
             {
