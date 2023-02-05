@@ -37,7 +37,7 @@ namespace MudBlazor
                 if (typeof(T) == typeof(IDictionary<string, object>) && FieldType == null)
                     throw new ArgumentNullException(nameof(FieldType));
 
-                return typeof(T).GetProperty(Field).PropertyType;
+                return NestedUtil.GetPropertyInfo(typeof(T), Field).PropertyType;
             }
         }
 
@@ -163,7 +163,7 @@ namespace MudBlazor
 
         private Expression GenerateFilterExpressionForDateTimeTypes(ParameterExpression parameter)
         {
-            var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(DateTime?));
+            var field = Expression.Convert(NestedUtil.GetProperty(parameter, Field), typeof(DateTime?));
             DateTime? valueDateTime = Value == null ? null : (DateTime)Value;
             var isnotnull = Expression.NotEqual(field, Expression.Constant(null));
             var isnull = Expression.Equal(field, Expression.Constant(null));
@@ -205,7 +205,7 @@ namespace MudBlazor
 
         private Expression GenerateFilterExpressionForBooleanTypes(ParameterExpression parameter)
         {
-            var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(bool?));
+            var field = Expression.Convert(NestedUtil.GetProperty(parameter, Field), typeof(bool?));
             bool? valueBool = Value == null ? null : Convert.ToBoolean(Value);
             var isnotnull = Expression.NotEqual(field, Expression.Constant(null));
             var notNullBool = Expression.Convert(field, typeof(bool));
@@ -221,7 +221,7 @@ namespace MudBlazor
 
         private Expression GenerateFilterExpressionForGuidTypes(ParameterExpression parameter)
         {
-            var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(Guid?));
+            var field = Expression.Convert(NestedUtil.GetProperty(parameter, Field), typeof(Guid?));
             Guid? valueGuid = Value == null ? null : ParseGuid((String)Value);
             var isnotnull = Expression.IsTrue(Expression.Property(field, typeof(Guid?), "HasValue"));
             var isnull = Expression.IsFalse(Expression.Property(field, typeof(Guid?), "HasValue"));
@@ -248,7 +248,7 @@ namespace MudBlazor
 
         private Expression GenerateFilterExpressionForEnumTypes(ParameterExpression parameter)
         {
-            var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), dataType);
+            var field = Expression.Convert(NestedUtil.GetProperty(parameter, Field), dataType);
             var valueEnum = Value == null ? null : (Enum)Value;
             var _null = Expression.Convert(Expression.Constant(null), dataType);
             var isnull = Expression.Equal(field, _null);
@@ -273,7 +273,7 @@ namespace MudBlazor
 
         private Expression GenerateFilterExpressionForNumericTypes(ParameterExpression parameter)
         {
-            var field = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(Field)), typeof(double?));
+            var field = Expression.Convert(NestedUtil.GetProperty(parameter, Field), typeof(double?));
             double? valueNumber = Value == null ? null : Convert.ToDouble(Value);
             var isnotnull = Expression.NotEqual(field, Expression.Constant(null));
             var isnull = Expression.Equal(field, Expression.Constant(null));
@@ -315,7 +315,7 @@ namespace MudBlazor
 
         private Expression GenerateFilterExpressionForStringType(ParameterExpression parameter)
         {
-            var field = Expression.Property(parameter, typeof(T).GetProperty(Field));
+            var field = NestedUtil.GetProperty(parameter, Field);
             var valueString = Value?.ToString();
             var trim = Expression.Call(field, dataType.GetMethod("Trim", Type.EmptyTypes));
             var isnull = Expression.Equal(field, Expression.Constant(null));

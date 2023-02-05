@@ -59,8 +59,7 @@ namespace MudBlazor
                     return ((IDictionary<string, object>)_item)[_column.Field];
                 }
 
-                var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
-                return property.GetValue(_item);
+                return NestedUtil.GetPropertyValue(_item, _column.Field);
             }
         }
         internal string computedClass
@@ -104,8 +103,7 @@ namespace MudBlazor
 
         public async Task StringValueChangedAsync(string value)
         {
-            var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
-            property.SetValue(_item, value);
+            NestedUtil.SetPropertyValue(_item, _column.Field, value);
 
             // If the edit mode is Cell, we update immediately.
             if (_dataGrid.EditMode == DataGridEditMode.Cell)
@@ -114,8 +112,8 @@ namespace MudBlazor
 
         public async Task NumberValueChangedAsync(double? value)
         {
-            var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
-            property.SetValue(_item, ChangeType(value, property.PropertyType));
+            var property = NestedUtil.GetPropertyInfo(_item.GetType(), _column.Field);
+            NestedUtil.SetPropertyValue(_item, _column.Field, ChangeType(value, property.PropertyType));
 
             // If the edit mode is Cell, we update immediately.
             if (_dataGrid.EditMode == DataGridEditMode.Cell)

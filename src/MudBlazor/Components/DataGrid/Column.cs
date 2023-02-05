@@ -192,7 +192,7 @@ namespace MudBlazor
                 if (typeof(T) == typeof(IDictionary<string, object>) && FieldType == null)
                     throw new ArgumentNullException(nameof(FieldType));
 
-                var t = typeof(T).GetProperty(Field).PropertyType;
+                var t = NestedUtil.GetPropertyInfo(typeof(T), Field).PropertyType;
                 return Nullable.GetUnderlyingType(t) ?? t;
             }
         }
@@ -339,7 +339,7 @@ namespace MudBlazor
                 else
                 {
                     var parameter = Expression.Parameter(type, "x");
-                    var field = Expression.Convert(Expression.Property(parameter, type.GetProperty(Field)), typeof(object));
+                    var field = Expression.Convert(NestedUtil.GetProperty(parameter, Field), typeof(object));
                     _sortBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
                 }
             }
@@ -361,7 +361,7 @@ namespace MudBlazor
                 else
                 {
                     var parameter = Expression.Parameter(type, "x");
-                    var field = Expression.Convert(Expression.Property(parameter, type.GetProperty(Field)), typeof(object));
+                    var field = Expression.Convert(NestedUtil.GetProperty(parameter, Field), typeof(object));
                     groupBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
                 }
             }

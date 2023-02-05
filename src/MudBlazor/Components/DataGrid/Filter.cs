@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -39,7 +40,7 @@ namespace MudBlazor
                 if (typeof(T) == typeof(IDictionary<string, object>) && _filterDefinition.FieldType == null)
                     throw new ArgumentNullException(nameof(_filterDefinition.FieldType));
 
-                var t = typeof(T).GetProperty(_filterDefinition.Field).PropertyType;
+                var t = NestedUtil.GetPropertyInfo(typeof(T), _filterDefinition.Field).PropertyType;
                 return Nullable.GetUnderlyingType(t) ?? t;
             }
         }
