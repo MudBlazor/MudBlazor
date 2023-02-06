@@ -78,7 +78,8 @@ namespace MudBlazor
 
                 if (propertyInfo != null)
                 {
-                    propertyInfo.SetValue(item, value, null);
+                    var actualType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? PropertyType;
+                    propertyInfo.SetValue(item, Convert.ChangeType(value, actualType), null);
                 }
             }
         }

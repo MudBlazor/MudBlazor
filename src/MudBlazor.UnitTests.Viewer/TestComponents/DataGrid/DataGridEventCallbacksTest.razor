@@ -1,6 +1,6 @@
 @namespace MudBlazor.UnitTests.TestComponents
 
-@*<MudDataGrid T="Item" Items="@_items" EditMode="@DataGridEditMode.Cell"
+<MudDataGrid T="Item" Items="@_items" EditMode="@DataGridEditMode.Cell"
     RowClick="@OnRowClick" 
     SelectedItemChanged="@OnSelectedItemChanged"
     CommittedItemChanges="@OnCommittedItemChanges" 
@@ -8,9 +8,9 @@
     CanceledEditingItem="@OnCanceledEditingItem"
     ReadOnly="false">
     <Columns>
-        <Column T="Item" Field="@nameof(Item.Name)" />
+        <PropertyColumn Property="x => x.Name" />
     </Columns>
-</MudDataGrid>*@
+</MudDataGrid>
 
 @code {
     private IEnumerable<Item> _items = new List<Item>()

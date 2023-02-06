@@ -38,6 +38,14 @@ namespace MudBlazor
             }
         }
 
+        internal Type underlyingDataType
+        {
+            get
+            {
+                return Nullable.GetUnderlyingType(dataType) ?? dataType;
+            }
+        }
+
         public Func<T, bool> GenerateFilterFunction()
         {
             if (FilterFunction != null)

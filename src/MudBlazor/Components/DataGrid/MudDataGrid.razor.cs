@@ -275,7 +275,7 @@ namespace MudBlazor
 
         [Parameter] public DataGridFilterCaseSensitivity FilterCaseSensitivity { get; set; }
 
-        [Parameter] public RenderFragment<List<FilterDefinition<T>>> FilterTemplate { get; set; }
+        [Parameter] public RenderFragment<MudDataGrid<T>> FilterTemplate { get; set; }
 
         /// <summary>
         /// The list of FilterDefinitions that have been added to the data grid. FilterDefinitions are managed by the data
@@ -821,7 +821,7 @@ namespace MudBlazor
         /// <summary>
         /// Called by the DataGrid when the "Add Filter" button is pressed.
         /// </summary>
-        internal void AddFilter()
+        public void AddFilter()
         {
             var column = RenderedColumns.FirstOrDefault(x => x.filterable);
             FilterDefinitions.Add(new FilterDefinition<T>
@@ -843,12 +843,12 @@ namespace MudBlazor
             InvokeServerLoadFunc().AndForget();
         }
 
-        internal void ClearFilters()
+        public void ClearFilters()
         {
             FilterDefinitions.Clear();
         }
 
-        internal void AddFilter(FilterDefinition<T> definition)
+        public void AddFilter(FilterDefinition<T> definition)
         {
             FilterDefinitions.Add(definition);
             _filtersMenuVisible = true;
@@ -1136,6 +1136,7 @@ namespace MudBlazor
             _editingItem = JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(item));
             StartedEditingItemEvent?.Invoke();
             await StartedEditingItem.InvokeAsync(_editingItem);
+            Console.WriteLine("editing");
             isEditFormOpen = true;
         }
 

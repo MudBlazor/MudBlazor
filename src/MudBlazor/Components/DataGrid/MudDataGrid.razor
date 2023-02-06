@@ -69,7 +69,7 @@
                                 }
                                 else
                                 {
-                                    @FilterTemplate(FilterDefinitions)
+                                    @FilterTemplate(this)
                                 }
                             </MudPaper>
                         }
@@ -240,45 +240,50 @@
             }
         }
     </div>
-    <MudDialog @bind-IsVisible="isEditFormOpen" Options="EditDialogOptions">
-        <TitleContent>
-            <MudText Typo="Typo.h6">
-                Edit
-            </MudText>
-        </TitleContent>
-        <DialogContent>
-            <MudForm FieldChanged="FormFieldChanged">
-                @foreach (var column in RenderedColumns)
-                {
-                    var cell = new Cell<T>(this, column, _editingItem);
+    @if (isEditFormOpen)
+    {
+        <div class="mud-dialog-container mud-dialog-center" style="left:0;top:0">
+            <div class="mud-overlay mud-overlay-dialog" style=""><div class="mud-overlay-scrim mud-overlay-dark"></div></div>
+            <div class="mud-dialog mud-dialog-width-xs mud-dialog-width-full">
+                <div class="mud-dialog-title"><h6 class="mud-typography mud-typography-h6">Edit</h6></div>
+                <div class="outline-none" tabindex="-1">
+                    <div class="mud-dialog-content">
+                        <MudForm FieldChanged="FormFieldChanged">
+                            @foreach (var column in RenderedColumns)
+                            {
+                                var cell = new Cell<T>(this, column, _editingItem);
 
-                    if (column.EditTemplate != null)
-                    {
-                        @column.EditTemplate(cell._cellContext)
-                    }
-                    else
-                    {
-                        var propertyType = column.PropertyType;
+                                if (column.EditTemplate != null)
+                                {
+                                    @column.EditTemplate(cell._cellContext)
+                                }
+                                else
+                                {
+                                    var propertyType = column.PropertyType;
 
-                        if (propertyType == typeof(string))
-                        {
-                            <MudTextField T="string" Label="@column.Title" Value="@cell._valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
-                                Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
-                        }
-                        else if (FilterOperator.NumericTypes.Contains(propertyType))
-                        {
-                            <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
-                                Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
-                        }
-                    }
-                }
-            </MudForm>
-        </DialogContent>
-        <DialogActions>
-            <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@CancelEditingItemAsync" Class="px-10">Cancel</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10">Save</MudButton>
-        </DialogActions>
-    </MudDialog>
+                                    if (propertyType == typeof(string))
+                                    {
+                                        <MudTextField T="string" Label="@column.Title" Value="@cell._valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
+                                            Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                                    }
+                                    else if (FilterOperator.NumericTypes.Contains(propertyType))
+                                    {
+                                        <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
+                                            Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                                    }
+                                }
+                            }
+                        </MudForm>
+
+                    </div>
+                    <div class="mud-dialog-actions">
+                        <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@CancelEditingItemAsync" Class="px-10">Cancel</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10">Save</MudButton>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </CascadingValue>
 
 @code {
@@ -415,7 +420,7 @@
                     <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                         Class="filter-input">
                         <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
-                        @foreach (var item in Enum.GetValues(f.dataType))
+                        @foreach (var item in Enum.GetValues(f.underlyingDataType))
                         {
                             <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
                         }
