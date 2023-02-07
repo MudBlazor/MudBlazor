@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -19,6 +20,9 @@ namespace MudBlazor
             .AddClass(Class)
         .Build();
 
+        protected string SwitchLabelClassname =>
+        new CssBuilder($"mud-switch-label-{Size.ToDescriptionString()}")
+        .Build();
         protected string SwitchClassname =>
         new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
             .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple && !ReadOnly && !Disabled)
@@ -27,6 +31,7 @@ namespace MudBlazor
             .AddClass($"mud-switch-disabled", Disabled)
             .AddClass($"mud-readonly", ReadOnly)
             .AddClass($"mud-checked", BoolValue)
+            .AddClass($"mud-switch-base-{Size.ToDescriptionString()}")
         .Build();
 
         protected string TrackClassname =>
@@ -35,10 +40,14 @@ namespace MudBlazor
             .AddClass($"mud-{UnCheckedColor.ToDescriptionString()}", BoolValue == false)
         .Build();
 
-        //Excluded because not used
-        [ExcludeFromCodeCoverage]
+        protected string ThumbClassname =>
+            new CssBuilder($"mud-switch-thumb-{Size.ToDescriptionString()}")
+            .AddClass("d-flex align-center justify-center")
+        .Build();
+            
         protected string SpanClassname =>
         new CssBuilder("mud-switch-span mud-flip-x-rtl")
+            .AddClass($"mud-switch-span-{Size.ToDescriptionString()}")
         .Build();
 
         private IKeyInterceptor _keyInterceptor;
@@ -92,6 +101,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool DisableRipple { get; set; }
+
+        /// <summary>
+        /// The Size of the switch.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
 
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {
