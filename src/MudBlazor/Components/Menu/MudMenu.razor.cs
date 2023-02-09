@@ -140,7 +140,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public RenderFragment ActivatorContent { get; set; }
+        public RenderFragment<bool> ActivatorContent { get; set; }
 
         /// <summary>
         /// Specify the activation event when ActivatorContent is set

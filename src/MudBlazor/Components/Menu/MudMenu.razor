@@ -11,7 +11,7 @@
     {
         <CascadingValue Value="@((IActivatable) this)" IsFixed="true">
             <div @onclick="ToggleMenu" @ontouchend="@(ActivationEvent == MouseEvent.RightClick ? ToggleMenuTouch : null)" @oncontextmenu="@(ActivationEvent==MouseEvent.RightClick ? ToggleMenu : null)" disabled="@Disabled" class="@ActivatorClassname">
-                @ActivatorContent
+                @ActivatorContent(_isOpen)
             </div>
         </CascadingValue>
     }

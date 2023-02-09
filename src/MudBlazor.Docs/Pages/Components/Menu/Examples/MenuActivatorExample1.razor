@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudMenu FullWidth="true">
-    <ActivatorContent>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary">I am a button</MudButton>
+<MudMenu FullWidth="true" TransformOrigin="Origin.TopCenter" AnchorOrigin="Origin.BottomCenter">
+    <ActivatorContent Context="isOpen">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@(isOpen ? Icons.Material.Filled.ArrowDropUp : Icons.Material.Filled.ArrowDropDown)">I am a button</MudButton>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem>Profile</MudMenuItem>
