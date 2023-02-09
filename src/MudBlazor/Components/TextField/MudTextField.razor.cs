@@ -47,6 +47,14 @@ namespace MudBlazor
                 return _maskReference.FocusAsync();
         }
 
+        public override ValueTask BlurAsync()
+        {
+            if (_mask == null)
+                return InputReference.BlurAsync();
+            else
+                return _maskReference.BlurAsync();
+        }
+
         public override ValueTask SelectAsync()
         {
             if (_mask == null)
@@ -119,7 +127,7 @@ namespace MudBlazor
             }
         }
 
-        protected override Task SetValueAsync(T value, bool updateText = true)
+        protected override Task SetValueAsync(T value, bool updateText = true, bool force = false)
         {
             if (_mask != null)
             {

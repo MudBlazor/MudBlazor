@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSwitch @bind-Checked="@Basic_Switch1" Color="Color.Success" UnCheckedColor="Color.Error" />
+<MudSwitch @bind-Checked="@Basic_Switch2" Color="Color.Primary" UnCheckedColor="Color.Secondary" />
+<MudSwitch @bind-Checked="@Basic_Switch3" Color="Color.Info" UnCheckedColor="Color.Warning" />
+<MudSwitch T="bool" Disabled="true" UnCheckedColor="Color.Dark" />
+
+@code{
+    public bool Basic_Switch1 { get; set; } = false;
+    public bool Basic_Switch2 { get; set; } = true;
+    public bool Basic_Switch3 { get; set; } = true;
+}

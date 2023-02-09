@@ -15,6 +15,43 @@
         }
     }
 
+    &.mud-autocomplete--with-progress {
+        & .mud-select-input input {
+            padding-right: 3.5rem !important;
+        }
+
+        & .mud-input-adorned-end input {
+            padding-right: 4.5rem !important;
+        }
+
+        & .mud-select-input .mud-icon-button {
+            display: none !important;
+        }
+
+        & .progress-indicator-circular {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            padding-right: 1rem;
+        }
+
+        & .progress-indicator-circular--with-adornment {
+            padding-right: 3rem;
+        }
+
+        & .mud-progress-linear {
+            position: absolute;
+            bottom: -1px;
+            height: 2px;
+        }
+    }
+
     .mud-select-input {
         cursor: pointer;
 
@@ -43,11 +80,6 @@
 
 .mud-select > .mud-form-helpertext {
     margin-top: -21px;
-}
-
-.mud-selected-item {
-    color: var(--mud-palette-primary);
-    background-color: var(--mud-palette-primary-hover);
 }
 
 .mud-select-all {

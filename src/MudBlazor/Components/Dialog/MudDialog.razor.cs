@@ -52,6 +52,10 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Misc)]  // Behavior and Appearance
         public DialogOptions Options { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public Action OnBackdropClick { get; set; }
+        
         /// <summary>
         /// No padding at the sides
         /// </summary>

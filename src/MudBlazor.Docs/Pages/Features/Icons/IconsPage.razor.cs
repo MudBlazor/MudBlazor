@@ -56,16 +56,16 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             return iconlist.Chunk(CardsPerRow).Select(row => new MudVirtualizedIcons(row)).ToList();
         }
 
-        private readonly IDictionary<string, object> IconTypes = new Dictionary<string, object>()
+        private readonly IconStorage IconTypes = new()
         {
-            { IconType.Filled,new Filled()},
-            { IconType.Outlined, new Outlined()},
-            { IconType.Rounded, new Rounded()},
-            { IconType.Sharp, new Sharp()},
-            { IconType.TwoTone, new TwoTone()},
-            { IconType.Brands, new Brands()},
-            { IconType.FileFormats, new FileFormats()},
-            { IconType.Uncategorized, new Uncategorized()}
+            { IconType.Filled, typeof(MudBlazor.Icons.Material.Filled) },
+            { IconType.Outlined, typeof(MudBlazor.Icons.Material.Outlined) },
+            { IconType.Rounded, typeof(MudBlazor.Icons.Material.Rounded) },
+            { IconType.Sharp, typeof(MudBlazor.Icons.Material.Sharp) },
+            { IconType.TwoTone, typeof(MudBlazor.Icons.Material.TwoTone) },
+            { IconType.Brands, typeof(MudBlazor.Icons.Custom.Brands) },
+            { IconType.FileFormats, typeof(MudBlazor.Icons.Custom.FileFormats) },
+            { IconType.Uncategorized, typeof(MudBlazor.Icons.Custom.Uncategorized) }
         };
 
         protected override async Task OnInitializedAsync()
@@ -110,10 +110,15 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         {
             var result = new List<MudIcons>();
             var icons = IconTypes[type];
+            var iconsInstance = Activator.CreateInstance(icons);
 
-            foreach (var prop in icons.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
+            foreach (var prop in icons.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
             {
-                result.Add(new MudIcons(prop.Name, prop.GetValue(icons).ToString(), type));
+                result.Add(new MudIcons(prop.Name, prop.GetValue(iconsInstance).ToString(), type));
+            }
+            foreach (var prop in icons.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+            {
+                result.Add(new MudIcons(prop.Name, prop.GetRawConstantValue().ToString(), type));
             }
 
             await Task.WhenAll();
@@ -123,31 +128,44 @@ namespace MudBlazor.Docs.Pages.Features.Icons
 
         public async Task LoadCustomIcons()
         {
-            var brands = new Brands();
+            var brands = new MudBlazor.Icons.Custom.Brands();
 
-            foreach (var prop in typeof(Brands).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
+            foreach (var prop in typeof(MudBlazor.Icons.Custom.Brands).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
             {
                 CustomBrands.Add(new MudIcons(prop.Name, prop.GetValue(brands).ToString(), IconType.Brands));
+            }
+            foreach (var prop in typeof(MudBlazor.Icons.Custom.Brands).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+            {
+                CustomBrands.Add(new MudIcons(prop.Name, prop.GetRawConstantValue().ToString(), IconType.Brands));
             }
 
             CustomAll.AddRange(CustomBrands);
 
-            var fileFormats = new FileFormats();
+            var fileFormats = new MudBlazor.Icons.Custom.FileFormats();
 
-            foreach (var prop in typeof(FileFormats).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
+            foreach (var prop in typeof(MudBlazor.Icons.Custom.FileFormats).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
             {
                 CustomFileFormats.Add(new MudIcons(prop.Name, prop.GetValue(fileFormats).ToString(), IconType.FileFormats));
             }
-                
+            foreach (var prop in typeof(MudBlazor.Icons.Custom.FileFormats).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+            {
+                CustomFileFormats.Add(new MudIcons(prop.Name, prop.GetRawConstantValue().ToString(), IconType.FileFormats));
+            }
+
             CustomAll.AddRange(CustomFileFormats);
 
-            var uncategorized = new Uncategorized();
+            var uncategorized = new MudBlazor.Icons.Custom.Uncategorized();
 
-            foreach (var prop in typeof(Uncategorized).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
+            foreach (var prop in typeof(MudBlazor.Icons.Custom.Uncategorized).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
             {
                 CustomUncategorized.Add(new MudIcons(prop.Name, prop.GetValue(uncategorized).ToString(), IconType.Uncategorized));
             }
-                
+            foreach (var prop in typeof(MudBlazor.Icons.Custom.Uncategorized).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+            {
+                CustomUncategorized.Add(new MudIcons(prop.Name, prop.GetRawConstantValue().ToString(), IconType.Uncategorized));
+            }
+
+
             CustomAll.AddRange(CustomUncategorized);
 
             await Task.WhenAll();
@@ -205,7 +223,7 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         {
             iconDrawerOpen = true;
             SelectedIcon = new MudIcons(icon.Name, icon.Code, icon.Category);
-            IconCodeOutput = $"@Icons{(SelectedIconOrigin == IconOrigin.Material ? "" : ".Custom")}.{icon.Category}.{icon.Name}";
+            IconCodeOutput = $"@Icons{(SelectedIconOrigin == IconOrigin.Material ? ".Material" : ".Custom")}.{icon.Category}.{icon.Name}";
         }
         void CloseIconDrawer()
         {

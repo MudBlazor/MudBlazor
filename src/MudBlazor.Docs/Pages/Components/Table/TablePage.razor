@@ -44,13 +44,16 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="TabPager Customization">
+            <SectionHeader Title="TablePager Customization">
                 <Description>
-                    By setting <CodeInline>HideRowsPerPage</CodeInline> property or the <CodeInline>HidePageNumber</CodeInline> property or the <CodeInline>HidePagination</CodeInline> property to <CodeInline>true</CodeInline>, the corresponding information is hidden in the <CodeInline>MudTabPager</CodeInline>.
+                    By setting <CodeInline>HideRowsPerPage</CodeInline> property or the <CodeInline>HidePageNumber</CodeInline> property or the <CodeInline>HidePagination</CodeInline> property to <CodeInline>true</CodeInline>, the corresponding information is hidden in the <CodeInline>MudTablePager</CodeInline>.
                     The pager's position can be defined with the <CodeInline>HorizontalAlignment</CodeInline> property.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
                         <CodeInline>@("RowsPerPage")</CodeInline> parameter of MudTable is independent of <CodeInline>@("PageSizeOptions")</CodeInline> parameter of PagerContent. Therefore, the RowsPerPage value does not have
                         to be one of the values ​​in the PageSizeOptions list. If the table pager is shown you should make sure the value of RowsPerPage is also available in the PageSizeOptions list, otherwise the users can not go back to this RowsPerPage value once they have chosen another one.
+                    </MudAlert>
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-2">
+                        Specifying <CodeInline>int.MaxValue</CodeInline> in the <CodeInline>@("PageSizeOptions")</CodeInline> will render as "All" in the Page Size dropdown. Use it when you want users to be able to show all items at once, but be careful, as this can lead to poor performance.
                     </MudAlert>
                 </Description>
             </SectionHeader>
@@ -75,7 +78,8 @@
         <DocsPageSection>
             <SectionHeader Title="Multi-Selection">
                 <Description>
-                    Setting <CodeInline>MultiSelection="true"</CodeInline> will enable selection check boxes for selecting multiple lines.
+                    To enable multiselection of rows using checkboxes, set <CodeInline>MultiSelection="true"</CodeInline>.<br />
+                    To disable toggling the checkbox state on row-click, set <CodeInline>SelectOnRowClick="false"</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="TableMultiSelectExample" ShowCode="false" Block="true" FullWidth="true">
@@ -137,6 +141,19 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Record Type Support">
+                <Description>
+                    By default, mutable <CodeInline>record</CodeInline> types do not work with multi-selection or editing. This is due to the way record equality works. To support multi-selection or editing of records in a <CodeInline>MudTable</CodeInline>,
+                    you must define a custom <CodeInline>Comparer</CodeInline> that implements <CodeInline>IEqualityComparer&lt;T&gt;</CodeInline>.
+                    The example below demonstrates multi-selection and paging while modifying a <CodeInline>record</CodeInline> type on <CodeInline>SelectedItemsChanged</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="TableRecordComparerExample" ShowCode="false" Block="true" FullWidth="true">
+                <TableRecordComparerExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Header and Footer">
                 <Description>
                     By default, you can put a list of <CodeInline>&lt;MudTh></CodeInline> inside <CodeInline>&lt;HeaderContent></CodeInline> and <CodeInline>&lt;MudTd></CodeInline> inside <CodeInline>&lt;FooterContent></CodeInline>, MudTable will automatically manage the table row for you, including the select-all column and adding an empty column for editable tables.<br />
@@ -190,7 +207,7 @@
             <SectionHeader Title="Grouping (Basic)">
                 <Description>
                     Displays items in a grouped way, with Header and Footer by every group, allowing summaries on both.<br />
-                    NOTE: Grouping and Virtualization should not work together.
+                    NOTE: Grouping and Virtualization should not be used together.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="TableBasicGroupingExample" ShowCode="false" Block="true" FullWidth="true">

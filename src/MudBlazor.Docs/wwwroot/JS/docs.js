@@ -9,3 +9,12 @@ var mudBlazorDocs = {
     }
 }
 
+// Workaround for #5482
+if(typeof window.GoogleAnalyticsInterop === 'undefined') {
+    window.GoogleAnalyticsInterop = {
+        debug : false,
+        navigate(){},
+        trackEvent(){},
+        configure(){}
+    };
+}

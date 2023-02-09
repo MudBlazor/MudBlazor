@@ -27,29 +27,29 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IResizeService>(new MockResizeService());
             ctx.Services.AddSingleton<IBreakpointService>(new MockBreakpointService());
             ctx.Services.AddTransient<IScrollManager, MockScrollManager>();
-            ctx.Services.AddTransient<IScrollListener, MockScrollListener>();
+            ctx.Services.AddTransient<IScrollListenerFactory, MockScrollListenerFactory>();
             ctx.Services.AddTransient<IJsApiService, MockJsApiServices>();
-            ctx.Services.AddTransient<IResizeObserver, MockResizeObserver>();
-            ctx.Services.AddTransient<IScrollSpy, MockScrollSpy>();
+            ctx.Services.AddTransient<IResizeObserverFactory, MockResizeObserverFactory>();
+            ctx.Services.AddTransient<IScrollSpyFactory, MockScrollSpyFactory>();
+            ctx.Services.AddTransient<IEventListenerFactory, MockEventListenerFactory>();
             ctx.Services.AddTransient<IEventListener, MockEventListener>();
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             ctx.Services.AddSingleton<IDocsNavigationService, DocsNavigationService>();
             ctx.Services.AddSingleton<IMenuService, MenuService>();
             ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
-            ctx.Services.AddTransient<IKeyInterceptor, MockKeyInterceptorService>();
-            ctx.Services.AddTransient<IJsEvent, MockJsEvent>();
+            ctx.Services.AddTransient<IKeyInterceptorFactory, MockKeyInterceptorServiceFactory>();
+            ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
             ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddScoped(sp => new HttpClient());
         }
 
-        // This shows how to test a docs page with incremental rendering. 
+        // This shows how to test a docs page with incremental rendering.
         // We are not (yet) testing all docs pages (just the examples), but if we wanted to, this would be the way.
         [Test]
         public async Task AlertPage_Test()
         {
             var comp = ctx.RenderComponent<Docs.Pages.Components.Alert.AlertPage>();
             await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
-            //Console.WriteLine(comp.Markup);
         }
 
         [TearDown]

@@ -11,17 +11,23 @@ namespace MudBlazor
     public partial class MudCheckBox<T> : MudBooleanInput<T>
     {
         protected string Classname =>
+        new CssBuilder("mud-input-control-boolean-input")
+            .AddClass(Class)
+            .Build();
+
+        protected string LabelClassname =>
         new CssBuilder("mud-checkbox")
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-readonly", ReadOnly)
-          .AddClass(Class)
+            .AddClass(LabelPosition == LabelPosition.End ? "mud-ltr" : "mud-rtl", true)
         .Build();
 
         protected string CheckBoxClassname =>
         new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-icon-button-color-{Color.ToDescriptionString()}")
+            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", UnCheckedColor == null || (UnCheckedColor != null && BoolValue == true))
+            .AddClass($"mud-{UnCheckedColor?.ToDescriptionString()}-text hover:mud-{UnCheckedColor?.ToDescriptionString()}-hover", UnCheckedColor != null && BoolValue == false)
             .AddClass($"mud-checkbox-dense", Dense)
-            .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple)
+            .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple && !ReadOnly && !Disabled)
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-readonly", ReadOnly)
         .Build();
@@ -34,11 +40,32 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// If applied the text will be added to the component.
+        /// The base color of the component in its none active/unchecked state. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public Color? UnCheckedColor { get; set; } = null;
+
+        /// <summary>
+        /// The text/label will be displayed next to the checkbox if set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string Label { get; set; }
+
+        /// <summary>
+        /// The position of the text/label.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public LabelPosition LabelPosition { get; set; } = LabelPosition.End;
+
+        /// <summary>
+        /// If true, the checkbox can be controlled with the keyboard.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool KeyboardEnabled { get; set; } = true;
 
         /// <summary>
         /// If true, disables ripple effect.
@@ -136,7 +163,7 @@ namespace MudBlazor
 
         protected void HandleKeyDown(KeyboardEventArgs obj)
         {
-            if (Disabled || ReadOnly)
+            if (Disabled || ReadOnly || !KeyboardEnabled)
                 return;
             switch (obj.Key)
             {
@@ -177,14 +204,25 @@ namespace MudBlazor
             }
         }
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
+        private IKeyInterceptor _keyInterceptor;
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         private string _elementId = "checkbox" + Guid.NewGuid().ToString().Substring(0, 8);
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            if (Label == null && For != null)
+                Label = For.GetLabelString();
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
+                _keyInterceptor = _keyInterceptorFactory.Create();
+
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
@@ -199,6 +237,20 @@ namespace MudBlazor
                 _keyInterceptor.KeyDown += HandleKeyDown;
             }
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing == true)
+            {
+                if(_keyInterceptor != null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDown;
+                    _keyInterceptor.Dispose();
+                }
+            }
         }
     }
 }

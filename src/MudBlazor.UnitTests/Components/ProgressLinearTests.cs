@@ -97,8 +97,6 @@ namespace MudBlazor.UnitTests.Components
                     x.Add(y => y.Vertical, isVertical);
                 });
 
-            //Console.WriteLine(comp.Markup);
-
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
 
@@ -113,7 +111,7 @@ namespace MudBlazor.UnitTests.Components
 
             barElement.GetAttribute("style").Should().Be(
                 isVertical == true ?
-                $"top: 90%;" : $"right: 90%;");
+                $"transform: translateY(90%);" : $"transform: translateX(-90%);");
         }
 
         [Test]
@@ -127,8 +125,6 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(y => y.Class, "my-custom-class");
                 x.Add(y => y.Indeterminate, true);
             });
-
-            //Console.WriteLine(comp.Markup);
 
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
@@ -162,8 +158,6 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(y => y.Vertical, isVertical);
             });
 
-            //Console.WriteLine(comp.Markup);
-
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
 
@@ -182,14 +176,14 @@ namespace MudBlazor.UnitTests.Components
 
             secondBarElement.GetAttribute("style").Should().Be(
                 isVertical == true ?
-                $"top: 90%;" : $"right: 90%;");
+                $"transform: translateY(90%);" : $"transform: translateX(-90%);");
 
             var thirdBarElement = barContainer.Children[2];
             thirdBarElement.ClassList.Should().Contain("mud-progress-linear-bar", "last");
 
             thirdBarElement.GetAttribute("style").Should().Be(
                 isVertical == true ?
-                $"top: 60%;" : $"right: 60%;");
+                $"transform: translateY(60%);" : $"transform: translateX(-60%);");
         }
 
         [Test]
@@ -204,8 +198,6 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(y => y.Indeterminate, true);
                 x.Add(y => y.ChildContent, "<p>my content</p>");
             });
-
-            //Console.WriteLine(comp.Markup);
 
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
@@ -379,8 +371,6 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(y => y.Value, 75.3);
                 x.Add(y => y.Class, "my-custom-class");
             });
-
-            //Console.WriteLine(comp.Markup);
 
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");

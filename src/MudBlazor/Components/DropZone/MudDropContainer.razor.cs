@@ -64,7 +64,7 @@ namespace MudBlazor
         /// <param name="identifier">The identifier of the drop zone, where the transaction started</param>
         /// <param name="index">The source index</param>
         /// <param name="commitCallback">A callback that is invokde when the transaction has been successful</param>
-        /// <param name="cancelCallback">A callback that is inviked when the transaction has been cancelled</param>
+        /// <param name="cancelCallback">A callback that is inviked when the transaction has been canceled</param>
         public MudDragAndDropItemTransaction(T item, string identifier, int index, Func<Task> commitCallback, Func<Task> cancelCallback)
         {
             Item = item;
@@ -312,15 +312,17 @@ namespace MudBlazor
             }
 
             await ItemDropped.InvokeAsync(new MudItemDropInfo<T>(_transaction.Item, dropzoneIdentifier, index));
-            TransactionEnded?.Invoke(this, new MudDragAndDropTransactionFinishedEventArgs<T>(dropzoneIdentifier, true, _transaction));
+            var transactionFinishedEventArgs = new MudDragAndDropTransactionFinishedEventArgs<T>(dropzoneIdentifier, true, _transaction);
             _transaction = null;
+            TransactionEnded?.Invoke(this, transactionFinishedEventArgs);
         }
 
         public async Task CancelTransaction()
         {
             await _transaction.Cancel();
-            TransactionEnded?.Invoke(this, new MudDragAndDropTransactionFinishedEventArgs<T>(_transaction));
+            var transactionFinishedEventArgs = new MudDragAndDropTransactionFinishedEventArgs<T>(_transaction);
             _transaction = null;
+            TransactionEnded?.Invoke(this, transactionFinishedEventArgs);
         }
 
         public void UpdateTransactionIndex(int index)

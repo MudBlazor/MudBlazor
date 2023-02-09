@@ -14,7 +14,7 @@ namespace MudBlazor
     {
         [Inject] private ISnackbar Snackbars { get; set; }
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         protected IEnumerable<Snackbar> Snackbar => Snackbars.Configuration.NewestOnTop
                 ? Snackbars.ShownSnackbars.Reverse()

@@ -21,7 +21,7 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
         [CascadingParameter] public TableContext Context { get; set; }
 
@@ -64,6 +64,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string InfoFormat { get; set; } = "{first_item}-{last_item} of {all_items}";
 
+        /// <summary>
+        /// Defines the text shown in the items per page dropdown when a user provides int.MaxValue as an option
+        /// </summary>
+        [Parameter] public string AllItemsText { get; set; } = "All";
+
         private string Info
         {
             get
@@ -105,10 +110,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string LastIcon { get; set; } = Icons.Material.Filled.LastPage;
 
-        private void SetRowsPerPage(string size)
-        {
-            Table?.SetRowsPerPage(int.Parse(size));
-        }
+        private void SetRowsPerPage(int size) => Table?.SetRowsPerPage(size);
 
         private bool BackButtonsDisabled => Table == null ? false : Table.CurrentPage == 0;
 

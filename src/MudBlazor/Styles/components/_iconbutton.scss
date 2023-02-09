@@ -1,6 +1,4 @@
-﻿@import '../abstracts/variables';
-
-.mud-icon-button {
+﻿.mud-icon-button {
     flex: 0 0 auto;
     padding: 12px;
     overflow: visible;
@@ -36,17 +34,6 @@
         background-color: var(--mud-palette-action-default-hover);
     }
 }
-
-@each $color in $mud-palette-colors {
-    .mud-icon-button-color-#{$color} {
-        color: var(--mud-palette-#{$color});
-
-        &:hover, &:focus-visible {
-            background-color: var(--mud-palette-#{$color}-hover);
-        }
-    }
-}
-
 
 .mud-icon-button-label {
     width: 100%;

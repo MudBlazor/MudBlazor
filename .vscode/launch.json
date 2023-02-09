@@ -5,23 +5,57 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "unit test viewer",
+            "name": "unit test viewer (wasm)",
             "type": "blazorwasm",
             "request": "launch",
-            "cwd": "${workspaceFolder}/src/MudBlazor.UnitTests.Viewer"
-        },
-        {
-            "name": "docs server and wasm",
-            "type": "blazorwasm",
-            "request": "launch",
-            "hosted": true,
-            "program": "${workspaceFolder}/src/MudBlazor.Docs.Server/bin/Debug/net6.0/MudBlazor.Docs.Server.dll",
-            "cwd": "${workspaceFolder}/src/MudBlazor.Docs.Server",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/MudBlazor.UnitTests.Viewer/bin/Debug/net7.0/MudBlazor.UnitTests.Viewer.dll",
+            "cwd": "${workspaceFolder}/src/MudBlazor.UnitTests.Viewer",
             "browser": "edge",
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "docs (hosted wasm)",
+            "type": "blazorwasm",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "hosted": true,
+            "program": "${workspaceFolder}/src/MudBlazor.Docs.WasmHost/bin/Debug/net7.0/MudBlazor.Docs.WasmHost.dll",
+            "cwd": "${workspaceFolder}/src/MudBlazor.Docs.WasmHost",
+            "browser": "edge",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "docs (wasm)",
+            "type": "blazorwasm",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/MudBlazor.Docs.Wasm/bin/Debug/net7.0/MudBlazor.Docs.Wasm.dll",
+            "cwd": "${workspaceFolder}/src/MudBlazor.Docs.Wasm",
+            "browser": "edge",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "docs (BSS)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/MudBlazor.Docs.Server/bin/Debug/net7.0/MudBlazor.Docs.Server.dll",
+            "cwd": "${workspaceFolder}/src/MudBlazor.Docs.Server",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
-
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
         }
     ]
 }

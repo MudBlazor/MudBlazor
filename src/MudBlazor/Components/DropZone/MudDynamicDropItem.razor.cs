@@ -53,7 +53,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     public EventCallback<T> OnDragStarted { get; set; }
 
     /// <summary>
-    /// An event callback set fires, when a drag operation has been eneded. This included also a cancelled transaction
+    /// An event callback set fires, when a drag operation has been eneded. This included also a canceled transaction
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.DropZone.Behavior)]
@@ -123,6 +123,8 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
 
     private void HandleDragEnter()
     {
+        if (Container == null || Container.TransactionInProgress() == false) { return; }
+        
         Container.UpdateTransactionIndex(Index);
     }
 

@@ -36,7 +36,6 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.Breakpoint, Breakpoint.Lg);
                 p.Add(x => x.Invert, invert);
             });
-            //Console.WriteLine(comp.Markup);
 
             if (isHidden == true)
             {
@@ -88,7 +87,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void InvertChangedAfterInitilizing()
+        public void InvertChangedAfterInitializing()
         {
             var listenerMock = new Mock<IBreakpointService>();
             listenerMock.Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>())).ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md)).Verifiable();
@@ -101,7 +100,6 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.Breakpoint, Breakpoint.Lg);
                 p.Add(x => x.Invert, false);
             });
-            //Console.WriteLine(comp.Markup);
 
             comp.Find("p").TextContent.Should().Be("MudHidden content");
 
@@ -114,7 +112,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ReferenceBreakpointChangedAfterInitilizing()
+        public void ReferenceBreakpointChangedAfterInitializing()
         {
             var listenerMock = new Mock<IBreakpointService>();
             listenerMock.Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>())).ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md)).Verifiable();
@@ -128,7 +126,6 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.Breakpoint, Breakpoint.Lg);
                 p.Add(x => x.Invert, false);
             });
-            //Console.WriteLine(comp.Markup);
 
             comp.Find("p").TextContent.Should().Be("MudHidden content");
 

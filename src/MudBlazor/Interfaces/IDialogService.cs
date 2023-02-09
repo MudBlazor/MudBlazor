@@ -6,6 +6,7 @@
 
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -16,25 +17,45 @@ namespace MudBlazor
         public event Action<IDialogReference> OnDialogInstanceAdded;
         public event Action<IDialogReference, DialogResult> OnDialogCloseRequested;
 
-        IDialogReference Show<TComponent>() where TComponent : ComponentBase;
+        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>() where TComponent : ComponentBase;
 
-        IDialogReference Show<TComponent>(string title) where TComponent : ComponentBase;
+        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title) where TComponent : ComponentBase;
 
-        IDialogReference Show<TComponent>(string title, DialogOptions options) where TComponent : ComponentBase;
+        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogOptions options) where TComponent : ComponentBase;
 
-        IDialogReference Show<TComponent>(string title, DialogParameters parameters) where TComponent : ComponentBase;
+        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogParameters parameters) where TComponent : ComponentBase;
 
-        IDialogReference Show<TComponent>(string title, DialogParameters parameters = null, DialogOptions options = null) where TComponent : ComponentBase;
+        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogParameters parameters, DialogOptions options) where TComponent : ComponentBase;
 
-        IDialogReference Show(Type component);
+        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component);
 
-        IDialogReference Show(Type component, string title);
+        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title);
 
-        IDialogReference Show(Type component, string title, DialogOptions options);
+        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title, DialogOptions options);
 
-        IDialogReference Show(Type component, string title, DialogParameters parameters);
+        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title, DialogParameters parameters);
 
-        IDialogReference Show(Type component, string title, DialogParameters parameters, DialogOptions options);
+        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title, DialogParameters parameters, DialogOptions options);
+
+        Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>() where TComponent : ComponentBase;
+
+        Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title) where TComponent : ComponentBase;
+
+        Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogOptions options) where TComponent : ComponentBase;
+
+        Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogParameters parameters) where TComponent : ComponentBase;
+
+        Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string title, DialogParameters parameters, DialogOptions options) where TComponent : ComponentBase;
+
+        Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component);
+
+        Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title);
+
+        Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title, DialogOptions options);
+
+        Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title, DialogParameters parameters);
+
+        Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string title, DialogParameters parameters, DialogOptions options);
 
         IDialogReference CreateReference();
 
@@ -44,7 +65,7 @@ namespace MudBlazor
         Task<bool?> ShowMessageBox(string title, MarkupString markupMessage, string yesText = "OK",
             string noText = null, string cancelText = null, DialogOptions options = null);
 
-        Task<bool?> ShowMessageBox(MessageBoxOptions mboxOptions, DialogOptions options = null);
+        Task<bool?> ShowMessageBox(MessageBoxOptions messageBoxOptions, DialogOptions options = null);
 
         void Close(DialogReference dialog);
 

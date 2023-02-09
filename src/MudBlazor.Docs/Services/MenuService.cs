@@ -68,7 +68,6 @@ namespace MudBlazor.Docs.Services
             .AddItem("Highlighter", typeof(MudHighlighter))
             .AddItem("Element", typeof(MudElement))
             .AddItem("Focus Trap", typeof(MudFocusTrap))
-            .AddItem("File Upload", typeof(MudFileUploader))
             .AddItem("TreeView", typeof(MudTreeView<T>), typeof(MudTreeViewItem<T>), typeof(MudTreeViewItemToggleButton))
             .AddItem("Breadcrumbs", typeof(MudBreadcrumbs))
             .AddItem("ScrollToTop", typeof(MudScrollToTop))
@@ -94,6 +93,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Form", typeof(MudForm))
                 .AddItem("Autocomplete", typeof(MudAutocomplete<T>))
                 .AddItem("Field", typeof(MudField))
+                .AddItem("File Upload", typeof(MudFileUpload<T>))
             )
 
             //Pickers
@@ -234,6 +234,7 @@ namespace MudBlazor.Docs.Services
             new DocsLink {Title = "Palette", Href = "customization/palette"},
             new DocsLink {Title = "Typography", Href = "customization/typography"},
             new DocsLink {Title = "z-index", Href = "customization/z-index"},
+            new DocsLink {Title = "Pseudo CSS", Href = "customization/pseudocss"},
         }.OrderBy(x => x.Title);
         
         private IEnumerable<DocsLink> _utilities;

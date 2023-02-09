@@ -42,6 +42,8 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel" 
                 @onwheel="@OnMouseWheel"
+                aria-invalid="@Error.ToString().ToLower()"
+                aria-describedby="@ErrorId"
         > 
             @Text
         </textarea>
@@ -72,6 +74,8 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel" 
                 @onwheel="@OnMouseWheel"
+                aria-invalid="@Error.ToString().ToLower()"
+                aria-describedby="@ErrorId"
          />
 	     @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
       
@@ -105,7 +109,9 @@
                     Color="@Color.Default" 
                     Icon="@ClearIcon" 
                     Size="@Size.Small" 
-                    OnClick="@ClearButtonClickHandlerAsync"
+                    OnClick="@ClearButtonClickHandlerAsync" 
+                    aria-label="Clear"
+                    tabindex="-1"
                 />
 	}
 
@@ -131,10 +137,10 @@
 	{
 	    <div class="mud-input-numeric-spin">
             <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1">
-                <MudIcon Icon="@NumericUpIcon" Size="@GetButtonSize()" />
+                <MudIcon aria-label="Increment" Icon="@NumericUpIcon" Size="@GetButtonSize()" />
             </MudButton>
             <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1">
-                <MudIcon Icon="@NumericDownIcon" Size="@GetButtonSize()" />
+                <MudIcon aria-label="Decrement" Icon="@NumericDownIcon" Size="@GetButtonSize()" />
             </MudButton>
 	    </div>
 	}

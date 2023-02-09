@@ -7,21 +7,21 @@
             <MudList Clickable="true" Dense="true" @bind-SelectedValue="_selectedFolder">
                 <MudListSubheader>MailBox</MudListSubheader>
                 <MudDropZone T="DropItem" Identifier="Inbox" OnlyZone="true">
-                    <MudListItem Text="Inbox" Value="@("Inbox")" Icon="@Icons.Filled.Inbox"/>
+                    <MudListItem Text="Inbox" Value="@("Inbox")" Icon="@Icons.Material.Filled.Inbox"/>
                 </MudDropZone>
                 <MudDropZone T="DropItem" Identifier="Sent" OnlyZone="true">
-                    <MudListItem Text="Sent" Value="@("Sent")" Icon="@Icons.Filled.Send"/>
+                    <MudListItem Text="Sent" Value="@("Sent")" Icon="@Icons.Material.Filled.Send"/>
                 </MudDropZone>
                 <MudDropZone T="DropItem" Identifier="Drafts" OnlyZone="true">
-                    <MudListItem Text="Drafts" Value="@("Drafts")" Icon="@Icons.Filled.Drafts"/>
+                    <MudListItem Text="Drafts" Value="@("Drafts")" Icon="@Icons.Material.Filled.Drafts"/>
                 </MudDropZone>
                 <MudListItem Icon="@Icons.Material.Filled.Label" Text="Categories" InitiallyExpanded="true">
                     <NestedList>
                         <MudDropZone T="DropItem" Identifier="Social" OnlyZone="true">
-                            <MudListItem Dense="true" Text="Social" Value="@("Social")" Icon="@Icons.Filled.Group" Class="pl-8"/>
+                            <MudListItem Dense="true" Text="Social" Value="@("Social")" Icon="@Icons.Material.Filled.Group" Class="pl-8"/>
                         </MudDropZone>
                         <MudDropZone T="DropItem" Identifier="Forums" OnlyZone="true">
-                            <MudListItem Dense="true" Text="Forums" Value="@("Forums")" Icon="@Icons.Filled.Forum" Class="pl-8"/>
+                            <MudListItem Dense="true" Text="Forums" Value="@("Forums")" Icon="@Icons.Material.Filled.Forum" Class="pl-8"/>
                         </MudDropZone>
                     </NestedList>
                 </MudListItem>

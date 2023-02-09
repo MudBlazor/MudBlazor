@@ -3,13 +3,13 @@
 <MudPaper Elevation="0">
     <MudList>
         <MudListSubheader>
-            <MudTextField @bind-Value="@searchTerm" AdornmentIcon="@Icons.Filled.Brush"
+            <MudTextField @bind-Value="@searchTerm" AdornmentIcon="@Icons.Material.Filled.Brush"
                           Adornment="Adornment.End" Immediate="true" Variant="Variant.Outlined" />
         </MudListSubheader>
 
         @foreach (var sentence in sentences)
         {
-            <MudListItem @key="sentence" Icon="@Icons.Filled.Folder">
+            <MudListItem @key="sentence" Icon="@Icons.Material.Filled.Folder">
                 <MudHighlighter Class="mud-primary-text"
                              Style="background-color:transparent;font-weight:bold"
                              Text="@sentence"
@@ -25,6 +25,4 @@
     {
         "This is the first item", "This is the second item", "This is the third item"
     };
-
-
 }

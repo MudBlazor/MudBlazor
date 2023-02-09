@@ -49,6 +49,11 @@
         output = Regex.Replace(output, @"(^|\n)# .+", "<h5 class=\"mud-typography mud-typography-h5 mud-inherit-text\">$&</h5>");
         output = Regex.Replace(output, @"(^|\n)## .+", "<h5 class=\"mud-typography mud-typography-h5 mud-inherit-text\">$&</h5>");
         output = Regex.Replace(output, @"(^|\n)### .+", "<h6 class=\"mud-typography mud-typography-h6 mud-inherit-text\">$&</h6>");
+        // Markdown links
+        output = Regex.Replace(output, @"\[(.*?)\]\((.*?)\)", "<a target=\"_blank\" href=\"$2\">$1</a>");
+        // Http links
+        output = Regex.Replace(output, @"(?<!"")(?>https?:\/\/)[^\s<>]+(?:[\w\d]+|(?>[^[\p{P}\s]|\/))", "<a target=\"_blank\" href=\"$0\">$0</a>");
+        // Issue / PR links
         output = Regex.Replace(output, @"(#){1}([0-9]{4}){1}", "<a target=\"_blank\" href=\"https://github.com/MudBlazor/MudBlazor/pull/$2\">#$2</a>");
         output = output.Replace("- **", "<b class=\"mx-3\">•</b><b>").Replace("**:",":</b>");
         output = output.Replace("### ", "").Replace("## ","").Replace("# ","#");

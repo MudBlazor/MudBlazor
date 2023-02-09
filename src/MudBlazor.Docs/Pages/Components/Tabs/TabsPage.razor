@@ -59,6 +59,16 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Minimum Tab Width">
+                <Description>The minimum tab width can be set by specifying a css width against the <CodeInline>MinimumTabWidth</CodeInline> property.</Description>
+            </SectionHeader>
+            <SectionContent Code="TabsMinimumTabWidthExample" ShowCode="false">
+                <TabsMinimumTabWidthExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+
+        <DocsPageSection>
             <SectionHeader Title="Badges">
                 <Description>Badges can be be applied to both icons and texts in the same way.</Description>
             </SectionHeader>
@@ -72,6 +82,15 @@
             </SectionHeader>
             <SectionContent Code="TabsToolTipExample">
                 <TabsToolTipExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Tab Content">
+                <Description>Custom tab header content can be provided for special scenarios. Specify only <CodeInline>TabContent</CodeInline> to customize the tab content, or specify <CodeInline>TabWrapperContent</CodeInline> to provide a wrapper around the entire tab header.</Description>
+            </SectionHeader>
+            <SectionContent Code="TabsContentExample" ShowCode="false" HighLight="TabContent,TabWrapperContent">
+                <TabsContentExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -93,7 +112,10 @@
 
         <DocsPageSection>
             <SectionHeader Title="Simple Dynamic Tabs">
-                <Description>A browser like tab experience, where uses can add new tabs and close existing ones. Add and Close needs to be provided as callbacks.</Description>
+                <Description>
+                    A browser like tab experience, where users can add new tabs and close existing ones. Add and Close needs to be provided as callbacks.
+                    <br /> To hide the close icon, set <CodeInline>ShowCloseIcon = false</CodeInline>
+                </Description>
             </SectionHeader>
             <SectionContent Code="DynamicTabsSimpleExample" ShowCode="false"  Block="true">
                 <DynamicTabsSimpleExample />

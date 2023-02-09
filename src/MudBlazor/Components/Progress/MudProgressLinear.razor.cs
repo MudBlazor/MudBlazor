@@ -79,7 +79,7 @@ namespace MudBlazor
         public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// The minimum allowed value of the linear prgoress. Should not be equal to max.
+        /// The minimum allowed value of the linear progress. Should not be equal to max.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
@@ -94,7 +94,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The maximum allowed value of the linear prgoress. Should not be equal to min.
+        /// The maximum allowed value of the linear progress. Should not be equal to min.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
@@ -115,7 +115,7 @@ namespace MudBlazor
         private double _bufferValue;
 
         /// <summary>
-        /// The maximum allowed value of the linear prgoress. Should not be equal to min.
+        /// The maximum allowed value of the linear progress. Should not be equal to min.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
@@ -166,7 +166,7 @@ namespace MudBlazor
         public double GetBufferPercent() => GetPercentage(_bufferValue);
 
         private string GetStyleBarTransform(double input) =>
-        Vertical? $"top: {(int)Math.Round(100 - input)}%;" : $"right: {(int)Math.Round(100 -input)}%;";
+            Vertical == true ? $"transform: translateY({(int)Math.Round(100 - input)}%);" : $"transform: translateX(-{(int)Math.Round(100 - input)}%);";
 
         public string GetStyledBar1Transform() => GetStyleBarTransform(ValuePercent);
         public string GetStyledBar2Transform() => GetStyleBarTransform(BufferPercent);

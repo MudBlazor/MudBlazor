@@ -11,7 +11,7 @@
                     You can play with MudBlazor online directly in your browser with TryMudBlazor, no installation required.
                 </Description>
             </SectionHeader>
-            <MudButton DisableElevation="true" EndIcon="@Icons.Rounded.OpenInNew" Variant="Variant.Filled" Color="Color.Primary" Class="docs-no-text-transform" Link="https://try.mudblazor.com/" Target="_blank">Play on TryMudBlazor</MudButton>
+            <MudButton DisableElevation="true" EndIcon="@Icons.Material.Rounded.OpenInNew" Variant="Variant.Filled" Color="Color.Primary" Class="docs-no-text-transform" Link="https://try.mudblazor.com/" Target="_blank">Play on TryMudBlazor</MudButton>
         </DocsPageSection>
         
         <DocsPageSection>
@@ -91,7 +91,7 @@
                 <DocsPageSection>
                     <SectionHeader Title="Removing references">
                         <Description>
-                            In the same file as above, the default blazor template load's bootstrap, this is no longer needed and can be removed. Delete the bootstrap and open-iconic folder as well if you decidce to get rid of bootstrap from your project.
+                            In the same file as above, the default blazor template load's bootstrap, this is no longer needed and can be removed. Delete the bootstrap and open-iconic folder as well if you decide to get rid of bootstrap from your project.
                             The <CodeInline>site.css</CodeInline> file you can either remove or keep but make sure you clear it out of any content.
                         </Description>
                     </SectionHeader>
@@ -99,7 +99,7 @@
 
                 <DocsPageSection>
                     <SectionHeader Title="Register Services">
-                        <Description></Description>
+                        <Description>Add the following in <CodeInline>Program.cs</CodeInline></Description>
                     </SectionHeader>
                     <SectionContent Codes="@(new[] {new CodeFile(".NET 6", "InstallServicesNET6Manual"), new CodeFile(".NET 5 Wasm", "InstallServicesNET5WasmManual"), new CodeFile(".NET 5 Server", "InstallServicesNET5ServerManual")})"/>
                 </DocsPageSection>

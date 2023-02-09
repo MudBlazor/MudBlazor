@@ -19,11 +19,15 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class DynamicTabsTests : BunitTest
     {
+        public override void Setup()
+        {
+            base.Setup();
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), new MockResizeObserverFactory()));
+        }
+
         [Test]
         public async Task DefaultValues()
         {
-            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
-
             var comp = Context.RenderComponent<MudDynamicTabs>();
             var tabs = comp.Instance;
 
@@ -53,10 +57,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task BasicParameters()
         {
-            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
-
             var comp = Context.RenderComponent<SimpleDynamicTabsTest>();
-            //Console.WriteLine(comp.Markup);
 
             // three panels three close icons;
             var closeButtons = comp.FindAll(".my-close-icon-class");
@@ -92,10 +93,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task BasicParameters_WithToolTips()
         {
-            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
-
             var comp = Context.RenderComponent<SimpleDynamicTabsTestWithToolTips>();
-            //Console.WriteLine(comp.Markup);
 
             // three panels three close icons;
             var closeButtons = comp.FindAll(".my-close-icon-class");
@@ -157,10 +155,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TestInteractions_AddTab()
         {
-            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
             var comp = Context.RenderComponent<SimpleDynamicTabsInteractionTest>();
-
-            //Console.WriteLine(comp.Markup);
 
             var addButton = comp.Find(".my-add-icon-class");
             addButton.Click();
@@ -172,10 +167,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TestInteractions_RemoveTab()
         {
-            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
             var comp = Context.RenderComponent<SimpleDynamicTabsInteractionTest>();
-
-            //Console.WriteLine(comp.Markup);
 
             for (var i = 0; i < 3; i++)
             {
