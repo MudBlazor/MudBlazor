@@ -58,6 +58,13 @@ namespace MudBlazor
         public string Target { get; set; }
 
         /// <summary>
+        /// Specifies if the link should have rel="nofollow" attribute
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public bool Nofollow { get; set; }
+
+        /// <summary>
         /// If true, the button will be disabled.
         /// </summary>
         [Parameter]

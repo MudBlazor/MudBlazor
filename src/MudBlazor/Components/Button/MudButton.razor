@@ -11,7 +11,7 @@
             type="@ButtonType.ToDescriptionString()"
             href="@Href" 
             target="@Target"
-            rel="@(Target=="_blank"?"noopener":null)"
+            rel="@GetRel()"
             disabled="@Disabled">
     <span class="mud-button-label">
         @if (!string.IsNullOrWhiteSpace(StartIcon))
@@ -29,3 +29,15 @@
         }
     </span>
 </MudElement>
+
+@code {
+    private string GetRel()
+    {
+        var values = new List<string>(2);
+        if (Target == "_blank")
+            values.Add("noopener");
+        if (Nofollow)
+            values.Add("nofollow");
+        return string.Join(' ', values);
+    }
+}
