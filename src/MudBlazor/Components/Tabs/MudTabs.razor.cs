@@ -419,6 +419,7 @@ namespace MudBlazor
 
                 CenterScrollPositionAroundSelectedItem();
                 SetSliderState();
+                SetScrollButtonVisibility();
                 SetScrollabilityStates();
                 StateHasChanged();
             }
@@ -627,13 +628,14 @@ namespace MudBlazor
 
         private void SetScrollButtonVisibility()
         {
-            _showScrollButtons = AlwaysShowScrollButtons || _allTabsSize > _toolbarContentSize;
+            _showScrollButtons = AlwaysShowScrollButtons || _allTabsSize > _toolbarContentSize || _scrollIndex != 0;
         }
 
         private void ScrollPrev()
         {
             _scrollIndex = Math.Max(_scrollIndex - GetVisiblePanels(), 0);
             ScrollToItem(_panels[_scrollIndex]);
+            SetScrollButtonVisibility();
             SetScrollabilityStates();
         }
 
@@ -745,7 +747,7 @@ namespace MudBlazor
             if (isEnoughSpace)
             {
                 _nextButtonDisabled = true;
-                _prevButtonDisabled = true;
+                _prevButtonDisabled = _scrollIndex == 0;
             }
             else
             {
