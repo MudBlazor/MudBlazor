@@ -633,7 +633,8 @@ namespace MudBlazor
 
         private void ScrollPrev()
         {
-            _scrollIndex = Math.Max(_scrollIndex - GetVisiblePanels(), 0);
+            var scrollAmount = Math.Max(GetVisiblePanels(), 1);
+            _scrollIndex = Math.Max(_scrollIndex - scrollAmount, 0);
             ScrollToItem(_panels[_scrollIndex]);
             SetScrollButtonVisibility();
             SetScrollabilityStates();
@@ -641,7 +642,8 @@ namespace MudBlazor
 
         private void ScrollNext()
         {
-            _scrollIndex = Math.Min(_scrollIndex + GetVisiblePanels(), _panels.Count - 1);
+            var scrollAmount = Math.Max(GetVisiblePanels(), 1);
+            _scrollIndex = Math.Min(_scrollIndex + scrollAmount, _panels.Count - 1);
             ScrollToItem(_panels[_scrollIndex]);
             SetScrollabilityStates();
         }
@@ -689,6 +691,7 @@ namespace MudBlazor
             var length = GetPanelLength(panelToStart);
             if (length >= _toolbarContentSize)
             {
+                _scrollIndex = _panels.IndexOf(panelToStart);
                 ScrollToItem(panelToStart);
                 return;
             }
@@ -752,7 +755,7 @@ namespace MudBlazor
             else
             {
                 // Disable next button if the last panel is completely visible
-                _nextButtonDisabled = Math.Abs(_scrollPosition) >= GetLengthOfPanelItems(_panels.Last(), true) - _toolbarContentSize;
+                _nextButtonDisabled = _scrollIndex == _panels.Count - 1 || Math.Abs(_scrollPosition) >= GetLengthOfPanelItems(_panels.Last(), true) - _toolbarContentSize;
                 _prevButtonDisabled = _scrollIndex == 0;
             }
         }
