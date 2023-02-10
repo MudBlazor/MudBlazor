@@ -43,7 +43,8 @@ namespace MudBlazor.Services
 
         public bool Equals(ResizeOptions other)
         {
-            if (ReportRate != other.ReportRate ||
+            if (other is null ||
+               ReportRate != other.ReportRate ||
                EnableLogging != other.EnableLogging ||
                SuppressInitEvent != other.SuppressInitEvent ||
                NotifyOnBreakpointOnly != other.NotifyOnBreakpointOnly)
