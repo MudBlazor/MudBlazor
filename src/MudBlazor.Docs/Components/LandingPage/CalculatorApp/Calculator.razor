@@ -114,7 +114,7 @@
         }
         var exp = new Expression(CalcExpression);
         var result=exp.Eval();
-        if (result == double.NaN)
+        if (double.IsNaN(result))
         {
             Current = "ERROR";
             return;
