@@ -2,7 +2,7 @@
 
 <MudDataGrid Items="@_items" MultiSelection @bind-SelectedItems="_selectedItems" Bordered>
     <Columns>
-        <TemplateColumn T="object" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
+        @*<TemplateColumn Title="Select Template Column" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
                         Filterable="false">
             <HeaderTemplate>
 
@@ -15,7 +15,8 @@
             <FooterTemplate>
                     <MudCheckBox T="bool" Size="Size.Small" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAll" />
             </FooterTemplate>
-        </TemplateColumn>
+        </TemplateColumn>*@
+        <SelectColumn />
         <PropertyColumn Property="x => x.Name" />
     </Columns>
 </MudDataGrid>

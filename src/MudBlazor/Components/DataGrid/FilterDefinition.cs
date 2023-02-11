@@ -56,8 +56,7 @@ namespace MudBlazor
                 // We need a PropertyExpression to filter. This allows us to pass in an arbitrary PropertyExpression.
                 // Although, it would be better in that case to simple use the FilterFunction so that we do not 
                 // have to generate and compile anything.
-                if (PropertyExpression == null)
-                    PropertyExpression = Column.PropertyExpression;
+                PropertyExpression ??= Column.PropertyExpression;
 
                 var hash = HashCode.Combine(PropertyExpression, Operator, Value);
 
@@ -82,7 +81,7 @@ namespace MudBlazor
                 string value = Value == null ? null : Value.ToString();
                 var stringComparer = DataGrid.FilterCaseSensitivity == DataGridFilterCaseSensitivity.Default ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
-                if (value == null)
+                if (value == null && Operator != FilterOperator.String.Empty && Operator != FilterOperator.String.NotEmpty)
                     return x => true;
 
                 return Operator switch
@@ -106,6 +105,9 @@ namespace MudBlazor
             }
             else if (isNumber)
             {
+                if (Value == null && Operator != FilterOperator.Number.Empty && Operator != FilterOperator.Number.NotEmpty)
+                    return x => true;
+
                 return Operator switch
                 {
                     FilterOperator.Number.Equal => PropertyExpression.GenerateBinary<T>(ExpressionType.Equal, Value),
@@ -121,6 +123,9 @@ namespace MudBlazor
             }
             else if (isDateTime)
             {
+                if (Value == null && Operator != FilterOperator.DateTime.Empty && Operator != FilterOperator.DateTime.NotEmpty)
+                    return x => true;
+
                 return Operator switch
                 {
                     FilterOperator.DateTime.Is => PropertyExpression.GenerateBinary<T>(ExpressionType.Equal, Value),
@@ -136,6 +141,9 @@ namespace MudBlazor
             }
             else if (isBoolean)
             {
+                if (Value == null)
+                    return x => true;
+
                 return Operator switch
                 {
                     FilterOperator.Boolean.Is => PropertyExpression.GenerateBinary<T>(ExpressionType.Equal, Value),
@@ -144,6 +152,9 @@ namespace MudBlazor
             }
             else if (isEnum)
             {
+                if (Value == null)
+                    return x => true;
+
                 return Operator switch
                 {
                     FilterOperator.Enum.Is => PropertyExpression.GenerateBinary<T>(ExpressionType.Equal, Value),

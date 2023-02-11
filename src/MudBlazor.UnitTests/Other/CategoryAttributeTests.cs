@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Other
                 typeof(FooterContext<>),
                 typeof(CellContext<>),
                 typeof(MudDataGridPager<>),
-                typeof(SelectColumn),
+                typeof(SelectColumn<>),
                 typeof(HierarchyColumn<>),
 
                 typeof(MudTHeadRow),

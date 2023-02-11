@@ -1,15 +1,15 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-@*<MudDataGrid Items="@_items">
+<MudDataGrid Items="@_items">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Status)" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Status" />
     </Columns>
     <NoRecordsContent>
         There are no records to view.
     </NoRecordsContent>
-</MudDataGrid>*@
+</MudDataGrid>
 
 @code {
     private IEnumerable<Model> _items = new List<Model>();

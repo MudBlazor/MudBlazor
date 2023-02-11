@@ -4,16 +4,16 @@
 <MudButton OnClick="@AddItem" Color="@Color.Success" Class="add-item-btn">Add Item</MudButton>
 <MudButton OnClick="@RemoveItem" Color="@Color.Error" Class="remove-item-btn">Remove Item</MudButton>
 
-@*<MudDataGrid Items="@_items">
+<MudDataGrid Items="@_items">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Status)" />
-        <Column T="Model" Field="@nameof(Model.Salary)" />
-        <Column T="Model" Field="HireDate" Title="Hired" />
-        <Column T="Model" Field="IsManager" Title="Manager" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Status" />
+        <PropertyColumn Property="x => x.Salary" />
+        <PropertyColumn Property="x => x.HireDate" Title="Hired" />
+        <PropertyColumn Property="x => x.IsManager" Title="Manager" />
     </Columns>
-</MudDataGrid>*@
+</MudDataGrid>
 
 @code {
 

@@ -1,10 +1,10 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-@*<MudDataGrid Items="@_items">
+<MudDataGrid Items="@_items">
     <Columns>
-        <Column T="Item" Field="Name" CellStyleFunc="@_cellStyleFunc" />
+        <PropertyColumn Property="x => x.Name" CellStyleFunc="@_cellStyleFunc" />
     </Columns>
-</MudDataGrid>*@
+</MudDataGrid>
 
 @code {
     private IEnumerable<Item> _items = new List<Item>()
