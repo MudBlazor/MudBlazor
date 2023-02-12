@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
 using MudBlazor.Extensions;
+using MudBlazor.UnitTests.TestComponents.Switch;
 using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
 
@@ -105,7 +106,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SwitchLabelTextSizeTest()
         {
-            var comp = Context.RenderComponent<SwitchWithLabelExample>();
+            var comp = Context.RenderComponent<MudSwitchTest>();
             var switches = comp.FindAll("label.mud-switch", true);
             var inputs = comp.FindAll("input");
             switches[3].Children[1].ClassList.Should().Contain("mud-switch-label-medium"); //4th switch doesn't have size set, it should be at default values
