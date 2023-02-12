@@ -2471,7 +2471,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 Column = dataGrid.Instance.GetColumnByPropertyName("HiredOn"),
                 Operator = "is",
-                Value = DateTime.UtcNow
+                Value = DateTime.UtcNow.Date
             };
 
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(filterDefinition));

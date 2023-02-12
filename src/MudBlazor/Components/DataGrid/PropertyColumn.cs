@@ -32,7 +32,7 @@ namespace MudBlazor
                 _cellContentFunc = item => compiledPropertyExpression!(item);
             }
 
-            if (Property.Body is MemberExpression memberExpression)
+            if (Property != null && Property.Body is MemberExpression memberExpression)
             {
                 _fullPropertyName = Property.Body.ToString();
                 _propertyName = memberExpression.Member.Name;
