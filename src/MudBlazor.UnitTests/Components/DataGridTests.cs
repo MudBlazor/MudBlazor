@@ -2883,7 +2883,6 @@ namespace MudBlazor.UnitTests.Components
         //    switches[1].Instance.Checked.Should().BeTrue();
 
         //    var buttons = dataGrid.FindComponents<MudButton>();
-
         //    // this is the hide all button
         //    buttons[0].Find("button").Click();
         //    switches[0].Instance.Checked.Should().BeTrue();
@@ -2897,10 +2896,8 @@ namespace MudBlazor.UnitTests.Components
         //    switches[1].Instance.Checked.Should().BeFalse();
         //    // 2 columns, 0 hidden
         //    dataGrid.FindAll(".mud-input-control-input-container").Count.Should().Be(2);
-
         //    dataGrid.Instance.RenderedColumns[0].Filterable = false;
         //    await comp.InvokeAsync(dataGrid.Instance.ExternalStateHasChanged);
-
         //    //If the column is visible and Filterable is false there still shouldďbe the cell
         //    //without the input
         //    dataGrid.FindAll(".mud-table-cell.filter-header-cell").Count.Should().Be(2);
