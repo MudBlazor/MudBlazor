@@ -116,13 +116,13 @@ namespace MudBlazor
                 // get the time component and add it to the date.
                 if (_valueTime != null)
                 {
-                    date.Add(_valueTime.Value);
+                    date = date.Add(_valueTime.Value);
                 }
 
                 _filterDefinition.Value = date;
             }
             else
-                _filterDefinition.Value = value;
+                _filterDefinition.Value = null;
 
             _dataGrid.GroupItems();
         }
