@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public class BaseMudThemeProvider : ComponentBase
+    public class BaseMudThemeProvider : ComponentBase, IDisposable
     {
         /// <summary>
         /// The theme used by the application.
@@ -21,6 +21,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public bool DefaultScrollbar { get; set; }
+        
+        private event Func<bool,Task> _darkLightModeChanged;
 
         #region Dark mode handling
 
@@ -39,6 +41,20 @@ namespace MudBlazor
         public async Task<bool> GetSystemPreference()
         {
             return await JsRuntime.InvokeAsync<bool>("darkModeChange", _dotNetRef);
+        }
+
+        public async Task WatchSystemPreference(Func<bool,Task> functionOnChange)
+        {
+            _darkLightModeChanged += functionOnChange;
+            await JsRuntime.InvokeVoidAsync("watchDarkThemeMedia", _dotNetRef);
+        }
+        
+        [JSInvokable]
+        public async Task SystemPreferenceChanged(bool isDarkMode)
+        {
+           var task = _darkLightModeChanged?.Invoke(isDarkMode);
+           if (task != null)
+               await task;
         }
 
         internal bool _isDarkMode;
@@ -408,6 +424,11 @@ namespace MudBlazor
             theme.AppendLine($"--{Zindex}-popover: {Theme.ZIndex.Popover};");
             theme.AppendLine($"--{Zindex}-snackbar: {Theme.ZIndex.Snackbar};");
             theme.AppendLine($"--{Zindex}-tooltip: {Theme.ZIndex.Tooltip};");
+        }
+
+        public void Dispose()
+        {
+            _darkLightModeChanged = null;
         }
     }
 }

@@ -4,6 +4,8 @@
 
 namespace MudBlazor.Docs.Services.UserPreferences
 {
+    using MudBlazor.Docs.Enums;
+
     public class UserPreferences
     {
         /// <summary>
@@ -14,6 +16,6 @@ namespace MudBlazor.Docs.Services.UserPreferences
         /// <summary>
         /// If true DarkTheme is used. LightTheme otherwise
         /// </summary>
-        public bool DarkTheme { get; set; }
+        public DarkLightMode DarkTheme { get; set; }
     }
 }
