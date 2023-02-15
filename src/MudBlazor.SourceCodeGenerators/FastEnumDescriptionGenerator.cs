@@ -50,8 +50,7 @@ public sealed class FastEnumDescriptionGenerator : IIncrementalGenerator
         var classname = $"{enumSymbol.Name}{ExtensionClassName}";
         var @namespace = enumSymbol.ContainingNamespace.ToString();
         var name = enumSymbol.ToString();
-        var accessibility = enumSymbol.DeclaredAccessibility;
-        var accessModifier = GetAccessModifier(accessibility);
+        var accessModifier = GetAccessModifier(enumSymbol);
         if (accessModifier == null)
         {
             return null;
@@ -60,8 +59,13 @@ public sealed class FastEnumDescriptionGenerator : IIncrementalGenerator
         return new EnumData(classname, name, @namespace, accessModifier, GetMembers(enumSymbol));
     }
 
-    private static string? GetAccessModifier(Accessibility accessibility)
+    private static string? GetAccessModifier(ISymbol enumSymbol)
     {
+        var accessibility = enumSymbol.DeclaredAccessibility;
+        if (enumSymbol.ContainingType != null && accessibility > enumSymbol.ContainingType.DeclaredAccessibility)
+        {
+            accessibility = enumSymbol.ContainingType.DeclaredAccessibility;
+        }
         return accessibility switch
 
         {

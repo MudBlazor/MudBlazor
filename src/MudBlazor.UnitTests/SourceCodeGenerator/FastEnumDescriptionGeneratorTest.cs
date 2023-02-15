@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Linq;
 using System.Reflection;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
@@ -95,5 +96,34 @@ private enum Priority
         // Assert
         result.GeneratedTrees.Length.Should().Be(0);
 
+    }
+    
+    [Test]
+    public void Initialize_ShouldUseContainingAccessModifier_WhenNestedEnumIsUsed()
+    {
+        
+        // Arrange
+        const string SourceCodeToTest = """
+namespace MudBlazor;
+
+internal class ParentClass
+{
+    public enum Priority
+    {
+        [Description("Lowest")]
+        Lowest,
+    }
+}
+""";
+        var generator = new FastEnumDescriptionGenerator();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+        var compiledSourceCode = CreateCompilation(SourceCodeToTest);
+        
+        // Act
+        driver.RunGeneratorsAndUpdateCompilation(compiledSourceCode, out var outputCompilation, out _);
+        
+        // Assert
+        var generatedSourceCode = outputCompilation.SyntaxTrees.Last().ToString();
+        generatedSourceCode.Should().Contain("internal static class PriorityMudEnumExtensions").And.Contain("internal static string ToDescriptionString");
     }
 }
