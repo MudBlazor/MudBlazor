@@ -13,11 +13,15 @@ namespace MudBlazor
     public partial class MudSwitch<T> : MudBooleanInput<T>
     {
         protected string Classname =>
-        new CssBuilder("mud-switch")
-            .AddClass($"mud-disabled", Disabled)
-            .AddClass($"mud-readonly", ReadOnly)
-            .AddClass(LabelPosition == LabelPosition.End ? "mud-ltr" : "mud-rtl", true)
+        new CssBuilder("mud-input-control-boolean-input")
             .AddClass(Class)
+            .Build();
+        
+        protected string LabelClassname =>
+        new CssBuilder("mud-switch")
+            .AddClass("mud-disabled", Disabled)
+            .AddClass("mud-readonly", ReadOnly)
+            .AddClass(LabelPosition == LabelPosition.End ? "mud-ltr" : "mud-rtl", true)
         .Build();
 
         protected string SwitchLabelClassname =>
