@@ -148,5 +148,13 @@ namespace MudBlazor
         protected ElementReference _elementReference;
 
         public ValueTask FocusAsync() => _elementReference.FocusAsync();
+
+        protected string GetRel()
+        {
+            var stringBuffer = Target == "_blank" ? "noopener" : Empty;
+            if (Nofollow)
+                stringBuffer += " nofollow";
+            return stringBuffer.Trim();
+        }
     }
 }

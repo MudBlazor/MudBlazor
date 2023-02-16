@@ -25,15 +25,3 @@
         <MudText Typo="Typo.body2" Color="Color.Inherit">@ChildContent</MudText>
     }
 </MudElement>
-
-@code {
-    private string GetRel()
-    {
-        var values = new List<string>(2);
-        if (Target == "_blank")
-            values.Add("noopener");
-        if (Nofollow)
-            values.Add("nofollow");
-        return string.Join(' ', values);
-    }
-}
