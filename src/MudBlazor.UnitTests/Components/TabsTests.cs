@@ -1170,6 +1170,18 @@ namespace MudBlazor.UnitTests.Components
             content.NextElementSibling.ClassList.Should().Contain("mud-tabs-panels");
         }
 
+        [Test]
+        public async Task CancelPanelActivation()
+        {
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+            var comp = Context.RenderComponent<CancelActivationTabsTest>();
+            comp.SetParametersAndRender(p => p.Add(x => x.Position, Position.Left));
+
+            comp.Instance.SetPanelActive(2);
+            comp.Instance.ActivePanel.Should().NotBe(2);
+        }
+        
         #region Helper
 
         private static double GetSliderValue(IRenderedComponent<ScrollableTabsTest> comp, string attribute = "left")
