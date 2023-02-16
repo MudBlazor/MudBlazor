@@ -1,68 +1,34 @@
 ﻿@page "/components/fileupload"
 @page "/components/fileuploader"
 <DocsPage>
-    <DocsPageHeader Title="File Upload"
-                    SubTitle="Example on how to compose a file upload button">
+    <DocsPageHeader Title="File Upload">
         <Description>
 
             <MudText Typo="@Typo.body1" Class="mt-4">
-                To create a file upload button, we must use two elements: a <CodeInline>label</CodeInline> and an <CodeInline>input</CodeInline>.
+                To create a file upload button, two elements are needed: a <CodeInline>label</CodeInline> or <CodeInline>button</CodeInline> and an <CodeInline>input</CodeInline>.
             </MudText>
             <br />
             <MudText Typo="@Typo.body1">
-                When we set the <CodeInline>for</CodeInline> attribute to the same value as the <CodeInline>id</CodeInline> of the input, we enable the input to be triggered by clicking on the label. So the trick is to style the label to look like a button and hide the input.
+                When we set the <CodeInline>for</CodeInline> attribute to the same value as the <CodeInline>id</CodeInline> of the input, we enable the input to be triggered by clicking on the label or button. We then hide the input.
             </MudText>
-            <br />
-            <MudText Typo="@Typo.body1">
-                So, the styling part is solved. But to handle the files in Blazor without using JavaScript, we need an <CodeInline>InputFile</CodeInline> component.
-            </MudText>
-            <br />
-            <MudText Typo="@Typo.body1">
-                If you are working with .Net Core 3.1 or earlier, you should install the
-                <MudButton Variant="Variant.Text"
-                           Color="Color.Primary"
-                           EndIcon="@Icons.Filled.Link"
-                           Link="https://www.nuget.org/packages/BlazorInputFile" target="_blank" rel="noopener noreferrer">
-                    nuget package InputFile
-                </MudButton>
-                , created by Steve Sanderson and reference it in your _host.cshtml or index.html (Server Side Blazor or Client Side Blazor).
-            </MudText>
-            <br />
-            <MudText Typo="@Typo.body1">
-                See
-                <MudButton Variant="Variant.Text"
-                           Color="Color.Primary"
-                           EndIcon="@Icons.Filled.Info"
-                           Link="https://blog.stevensanderson.com/2019/09/13/blazor-inputfile/" target="_blank" rel="noopener noreferrer">
-                    more info
-                </MudButton>
-                on how to install it.
-            </MudText>
-            <br />
-            <MudText Typo="@Typo.body1">
-                After uploading the files, you will receive an <CodeInline>IFileListEntry[]</CodeInline> and then you will have to manage the upload or make the appropriate validations.
-            </MudText>
-            <br />
             <br />
 
             <MudText Typo="@Typo.body1">
-                If your project is .Net 5.0, <CodeInline>InputFile</CodeInline> is a native component and you don't need to install it.
-                See more info
-                <MudButton Variant="Variant.Text"
-                           Color="Color.Primary"
-                           EndIcon="@Icons.Filled.Info"
-                           Link="https://docs.microsoft.com/en-us/aspnet/core/blazor/file-uploads?view=aspnetcore-5.0" target="_blank" rel="noopener noreferrer">
-                   here
-                </MudButton>
-
+                After uploading the files, you will receive an <CodeInline>IReadOnlyList&#60IBrowserFile&#62</CodeInline> or <CodeInline>IBrowserFile</CodeInline> and you will need to manually handle the upload in <CodeInline>HandleFilesChanged</CodeInline>.
+                Instead of using <CodeInline>multiple</CodeInline> to allow multiple files, you set T to <CodeInline>IReadOnlyList&#60IBrowserFile&#62</CodeInline>. Using <CodeInline>IBrowserFile</CodeInline> restricts the component to a single file.
             </MudText>
+            <br />
+            <br />
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Use any type of MudButton">
-                <Description>Use a <CodeInline>MudButton</CodeInline>, a <CodeInline>MudIconButton</CodeInline> or a <CodeInline>MudFab</CodeInline> with the <CodeInline>HtmlTag</CodeInline> property set to "label" in combination with a hidden <CodeInline>InputFile</CodeInline>. That way, the <CodeInline>MudButton</CodeInline> will render a label element.</Description>
+                <Description>
+                    Use a <CodeInline>MudButton</CodeInline>, a <CodeInline>MudIconButton</CodeInline> or a <CodeInline>MudFab</CodeInline> with the HtmlTag property set to "label" within the <CodeInline>ButtonTemplate</CodeInline> render fragment.
+                    Be sure to set the button's ID using the <CodeInline>&#64;context</CodeInline> parameter.
+                </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadButtonExample">
                 <FileUploadButtonExample />
@@ -70,29 +36,60 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Use a standard label">
-                <Description>Use an html label styled to your liking in combination with a hidden <CodeInline>InputFile</CodeInline>.</Description>
+            <SectionHeader Title="Multiple and Accept">
+                <Description>
+                    Allow multiple files with <CodeInline>T="IReadOnlyList&#60IBrowserFile&#62"</CodeInline> or limit the valid file types with <CodeInline>Accept</CodeInline>.
+                    To upload more than 10 files, you must specify a <CodeInline>MaximumFileCount</CodeInline>.
+                </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadIconButtonExample">
-                <FileUploadIconButtonExample />
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadMultipleAcceptExample">
+                <FileUploadMultipleAcceptExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Validation">
-                <Description>Use the <CodeInline>accept</CodeInline> attribute to limit the type of files you want.</Description>
-            </SectionHeader>            
+            <SectionHeader Title="Form Validation">
+                <Description>
+                    Use the <CodeInline>For</CodeInline> property to validate your files within a form, and bind your files to your model class using <CodeInline>&#64;bind-Files</CodeInline>.
+                    You can then handle the file upload logic within your <CodeInline>MudForm</CodeInline> submit method.
+                </Description>
+            </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadValidationExample">
                 <FileUploadValidationExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Event Options">
+                <Description>
+                    You can use either <CodeInline>Files</CodeInline> and <CodeInline>FilesChanged</CodeInline> or the <CodeInline>OnFilesChanged</CodeInline> callback.
+                    The former is better when used within a <CodeInline>MudForm</CodeInline>, and the latter is better for custom scenarios.
+                    When using <CodeInline>OnFilesChanged</CodeInline>, it will fire regardless of validation by default, but can be configured to only fire when valid using <CodeInline>SuppressOnChangeWhenInvalid</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadEventOptionsExample">
+                <FileUploadEventOptionsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="SelectedTemplate">
+                <Description>
+                    You can use the <CodeInline>SelectedTemplate</CodeInline> RenderFragment to display the current files.
+                    Its <CodeInline>&#64;context</CodeInline> parameter matches <CodeInline>T</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadSelectedTemplateExample">
+                <FileUploadSelectedTemplateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Drag and Drop Example">
                 <Description>Using the example below, you can compose a drag-and-drop uploader.</Description>
-            </SectionHeader>            
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="DragAndDropFileUploadExample">
-                <DragAndDropFileUploadExample />
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadDragAndDropExample">
+                <FileUploadDragAndDropExample />
             </SectionContent>
         </DocsPageSection>
 

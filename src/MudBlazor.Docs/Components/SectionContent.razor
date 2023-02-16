@@ -25,10 +25,10 @@
                 <MudSpacer/>
                 @if (_hasCode && ChildContent != null)
                 {
-                    <MudTooltip Text="Online Playground" Arrow="true" Color="Color.Dark" Placement="Placement.Top" Delay="300" Duration="500">
-                        <MudButton OnClick="RunOnTryMudBlazor" StartIcon="@Icons.Rounded.PlayArrow" IconColor="Color.Success" Color="Color.Default" Size="Size.Small">Run</MudButton>
+                    <MudTooltip Text="Online Playground" Arrow="true" Color="Color.Dark" Placement="Placement.Top" Delay="300" Duration="500" ShowOnFocus="false">
+                        <MudButton OnClick="RunOnTryMudBlazor" StartIcon="@Icons.Material.Rounded.PlayArrow" IconColor="Color.Success" Color="Color.Default" Size="Size.Small">Run</MudButton>
                     </MudTooltip>
-                    <MudButton OnClick="OnShowCode" StartIcon="@(ShowCode ? @Icons.Rounded.CodeOff : Icons.Rounded.Code)" Color="Color.Default" Size="Size.Small">
+                    <MudButton OnClick="OnShowCode" StartIcon="@(ShowCode ? @Icons.Material.Rounded.CodeOff : Icons.Material.Rounded.Code)" Color="Color.Default" Size="Size.Small">
                         @(ShowCode ? "Hide code" : "Show code")
                     </MudButton>
                 }

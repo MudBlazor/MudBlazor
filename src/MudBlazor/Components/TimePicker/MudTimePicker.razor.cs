@@ -79,7 +79,7 @@ namespace MudBlazor
         public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
 
         /// <summary>
-        /// Milliseconds to wait before closing the picker. This helps the user see that the time was selected before the popover disappears.
+        /// Sets the amount of time in milliseconds to wait before closing the picker. This helps the user see that the time was selected before the popover disappears.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -154,6 +154,7 @@ namespace MudBlazor
         {
             if (_value != time)
             {
+                Touched = true;
                 TimeIntermediate = time;
                 _value = time;
                 if (updateValue)
@@ -161,6 +162,7 @@ namespace MudBlazor
                 UpdateTimeSetFromTime();
                 await TimeChanged.InvokeAsync(_value);
                 BeginValidate();
+                FieldChanged(_value);
             }
         }
 

@@ -11,11 +11,11 @@
             <MudToolBar Dense="true" DisableGutters="true" Class="docs-gray-bg">
                 @if (_topMenuOpen == false)
                 {
-                    <MudIconButton Icon="@Icons.Rounded.ArrowBack" Color="Color.Inherit" OnClick="@((e) => OpenTopMenu())"/>
+                    <MudIconButton Icon="@Icons.Material.Rounded.ArrowBack" Color="Color.Inherit" OnClick="@((e) => OpenTopMenu())"/>
                 }
                 else
                 {
-                    <MudIconButton Icon="@Icons.Rounded.Close" Color="Color.Inherit" OnClick="ToggleDrawer"/>
+                    <MudIconButton Icon="@Icons.Material.Rounded.Close" Color="Color.Inherit" OnClick="ToggleDrawer"/>
                 }
                 <MudSpacer/>
                 <AppbarButtons/>

@@ -23,35 +23,40 @@
         }
     </DialogContent>
     <DialogActions>
-        @if (CancelButton != null)
-        {
-            <CascadingValue Value="@_cancelCallback">
-                @CancelButton
-            </CascadingValue>
-        }
-        else if(!string.IsNullOrWhiteSpace(CancelText))
-        {
-            <MudButton OnClick="OnCancelClicked">@CancelText</MudButton>
-        }
-        @if (NoButton != null)
-        {
-            <CascadingValue Value="@_noCallback">
-                @NoButton
-            </CascadingValue>
-        }
-        else if(!string.IsNullOrWhiteSpace(NoText))
-        {
-            <MudButton OnClick="OnNoClicked">@NoText</MudButton>
-        }
-        @if (YesButton != null)
-        {
-            <CascadingValue Value="@_yesCallback">
-                @YesButton
-            </CascadingValue>
-        }
-        else if(!string.IsNullOrWhiteSpace(YesText))
-        {
-            <MudButton Color="Color.Primary" OnClick="OnYesClicked">@YesText</MudButton>
-        }
+        <div tabindex="-1" @onkeydown="HandleKeyDown">
+            <MudFocusTrap DefaultFocus="DefaultFocus.LastChild">
+                @if (CancelButton != null)
+                {
+                    <CascadingValue Value="@_cancelCallback">
+                        @CancelButton
+                    </CascadingValue>
+                }
+                else if (!string.IsNullOrWhiteSpace(CancelText))
+                {
+                    <MudButton OnClick="OnCancelClicked">@CancelText</MudButton>
+                }
+                @if (NoButton != null)
+                {
+                    <CascadingValue Value="@_noCallback">
+                        @NoButton
+                    </CascadingValue>
+                }
+                else if (!string.IsNullOrWhiteSpace(NoText))
+                {
+                    <MudButton OnClick="OnNoClicked">@NoText</MudButton>
+                }
+                @if (YesButton != null)
+                {
+                    <CascadingValue Value="@_yesCallback">
+                        @YesButton
+                    </CascadingValue>
+                }
+                else if (!string.IsNullOrWhiteSpace(YesText))
+                {
+                    <MudButton Color="Color.Primary" OnClick="OnYesClicked">@YesText</MudButton>
+                }
+            </MudFocusTrap>
+        </div>
+        
     </DialogActions>
 </MudDialog>

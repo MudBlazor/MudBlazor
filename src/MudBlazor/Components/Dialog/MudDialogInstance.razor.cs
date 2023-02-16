@@ -19,7 +19,7 @@ namespace MudBlazor
 
         [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
 
@@ -156,7 +156,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Cancel the dialog. DialogResult.Cancelled will be set to true
+        /// Cancel the dialog. DialogResult.Canceled will be set to true
         /// </summary>
         public void Cancel()
         {
@@ -167,13 +167,13 @@ namespace MudBlazor
         {
             Position = SetPosition();
             DialogMaxWidth = SetMaxWidth();
-            Class = Classname;
             NoHeader = SetHideHeader();
             CloseButton = SetCloseButton();
             FullWidth = SetFullWidth();
             FullScreen = SetFulScreen();
             DisableBackdropClick = SetDisableBackdropClick();
             CloseOnEscapeKey = SetCloseOnEscapeKey();
+            Class = Classname;
         }
 
         private string SetPosition()
@@ -242,7 +242,7 @@ namespace MudBlazor
                 .AddClass("mud-dialog-width-full", FullWidth && !FullScreen)
                 .AddClass("mud-dialog-fullscreen", FullScreen)
                 .AddClass("mud-dialog-rtl", RightToLeft)
-                .AddClass(Class)
+                .AddClass(_dialog?.Class)
             .Build();
 
         private bool SetHideHeader()
@@ -322,13 +322,25 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Cancels all dialogs in dialog provider collection.
+        /// </summary>
+        public void CancelAll()
+        {
+            Parent?.DismissAll();
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
             {
                 if (disposing)
                 {
-                    _keyInterceptor?.Dispose();
+                    if (_keyInterceptor != null)
+                    {
+                        _keyInterceptor.KeyDown -= HandleKeyDown;
+                        _keyInterceptor.Dispose();
+                    }
                 }
 
                 _disposedValue = true;

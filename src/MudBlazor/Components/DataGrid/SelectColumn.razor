@@ -2,7 +2,8 @@
 @inherits MudComponentBase
 @typeparam T
 
-<Column T="T" Tag="@("select-column")" Sortable="false" ShowColumnOptions="false" HeaderStyle="width:0%">
+<Column T="T" Tag="@("select-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%" FieldType="@typeof(object)"
+    Filterable="false">
     <HeaderTemplate>
         @if (ShowInHeader)
         {

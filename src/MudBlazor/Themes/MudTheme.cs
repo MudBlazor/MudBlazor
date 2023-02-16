@@ -9,15 +9,17 @@
         public Typography Typography { get; set; }
         public LayoutProperties LayoutProperties { get; set; }
         public ZIndex ZIndex { get; set; }
+        public PseudoCss PseudoCss { get; set; }
 
         public MudTheme()
         {
             Palette = new Palette();
-            PaletteDark = Palette.ConvertToDarkTheme(new Palette());
+            PaletteDark = new PaletteDark();
             Shadows = new Shadow();
             Typography = new Typography();
             LayoutProperties = new LayoutProperties();
             ZIndex = new ZIndex();
+            PseudoCss = new PseudoCss();
         }
     }
 }

@@ -54,6 +54,8 @@ namespace MudBlazor
                     return;
                 }
 
+                Touched = true;
+
                 _dateRange = range;
                 _value = range?.End;
 
@@ -76,6 +78,7 @@ namespace MudBlazor
 
                 await DateRangeChanged.InvokeAsync(_dateRange);
                 BeginValidate();
+                FieldChanged(_value);
             }
         }
 
@@ -242,7 +245,7 @@ namespace MudBlazor
             }
 
             _secondDate = dateTime;
-            if (PickerActions == null)
+            if (PickerActions == null || AutoClose)
             {
                 Submit();
 

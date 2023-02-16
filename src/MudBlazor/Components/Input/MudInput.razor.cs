@@ -86,6 +86,11 @@ namespace MudBlazor
             }
         }
 
+        public override ValueTask BlurAsync()
+        {
+            return ElementReference.MudBlurAsync();
+        }
+
         public override ValueTask SelectAsync()
         {
             return ElementReference.MudSelectAsync();

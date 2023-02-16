@@ -17,14 +17,14 @@
         @if (!string.IsNullOrWhiteSpace(StartIcon))
         {
             <span class="@StartIconClass">
-                <MudIcon Icon="@StartIcon" Size="@Size" Color="@IconColor" />
+                <MudIcon Icon="@StartIcon" Size="@(IconSize ?? Size)" Color="@IconColor" />
             </span>
         }
         @ChildContent
         @if (!string.IsNullOrWhiteSpace(@EndIcon))
         {
             <span class="@EndIconClass">
-                <MudIcon Icon="@EndIcon" Size="@Size" Color="@IconColor" />
+                <MudIcon Icon="@EndIcon" Size="@(IconSize ?? Size)" Color="@IconColor" />
             </span>
         }
     </span>
