@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTabs Elevation="1" @ref="_tabElement" AlwaysShowScrollButtons="true" Position="Position" OnPanelActivation="_ => Task.FromResult(true)">
+<MudTabs Elevation="1" @ref="_tabElement" AlwaysShowScrollButtons="true" Position="Position" OnPreviewInteraction="OnPreviewTabInteraction">
     @foreach (var tab in _tabs)
     {
         <MudTabPanel @key="tab" Text="@tab">
@@ -25,5 +25,12 @@
     public void SetPanelActive(int index)
     {
         InvokeAsync(() => _tabElement.ActivatePanel(index));
+    }
+
+    private Task OnPreviewTabInteraction(TabInteractionEventArgs args)
+    {
+        args.Cancel = true;
+
+        return Task.CompletedTask;
     }
 }

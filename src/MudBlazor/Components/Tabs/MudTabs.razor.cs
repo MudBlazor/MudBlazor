@@ -264,12 +264,12 @@ namespace MudBlazor
         public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
         
         /// <summary>
-        /// Fired when a panel gets activated. Returned boolean controls wether activation should be canceled or not.
+        /// Fired when a panel gets activated. Returned boolean controls whether activation should be canceled or not.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
-        public Func<int, Task<bool>> OnPanelActivation { get; set; }
-
+        public Func<TabInteractionEventArgs, Task> OnPreviewInteraction { get; set; }
+        
         /// <summary>
         /// Can be used in derived class to add a class to the main container. If not overwritten return an empty string
         /// </summary>
@@ -412,9 +412,14 @@ namespace MudBlazor
             {
                 var index = _panels.IndexOf(panel);
                 
-                if (OnPanelActivation != null && await OnPanelActivation.Invoke(index)) return;
+                var previewArgs = new TabInteractionEventArgs { PanelIndex = index, InteractionType = TabInteractionType.Activate };
+
+                if (OnPreviewInteraction != null)
+                    await OnPreviewInteraction.Invoke(previewArgs);
+
+                if (previewArgs.Cancel) return;
                 
-                ActivePanelIndex = index;
+                ActivePanelIndex = previewArgs.PanelIndex;
 
                 if (ev != null)
                     await ActivePanel.OnClick.InvokeAsync(ev);
