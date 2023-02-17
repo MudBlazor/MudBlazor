@@ -164,16 +164,17 @@ namespace MudBlazor
 
         private MudPopoverHandler _handler;
 
+        private bool _afterFirstRender;
+
         protected override void OnInitialized()
         {
             _handler = Service.Register(ChildContent ?? new RenderFragment((x) => { }));
-            _handler.SetComponentBaseParameters(this, PopoverClass, PopoverStyles, Open);
             base.OnInitialized();
         }
 
-        protected override void OnParametersSet()
+        protected override async Task OnParametersSetAsync()
         {
-            base.OnParametersSet();
+            await base.OnParametersSetAsync();
 
             // henon: this change by PR #3776 caused problems on BSS (#4303)
             //// Only update the fragment if the popover is currently shown or will show
@@ -181,7 +182,7 @@ namespace MudBlazor
             //if (!_handler.ShowContent && !Open)
             //    return;
 
-            _handler.UpdateFragment(ChildContent, this, PopoverClass, PopoverStyles, Open);
+            if (_afterFirstRender) await _handler.UpdateFragment(ChildContent, this, PopoverClass, PopoverStyles, Open);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -190,6 +191,8 @@ namespace MudBlazor
             {
                 await _handler.Initialize();
                 await Service.InitializeIfNeeded();
+                await _handler.UpdateFragment(ChildContent, this, PopoverClass, PopoverStyles, Open);
+                _afterFirstRender = true;
             }
 
             await base.OnAfterRenderAsync(firstRender);
