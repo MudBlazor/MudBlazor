@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -25,12 +26,20 @@ namespace MudBlazor.UnitTests.Components
     public class FileUploadTests : BunitTest
     {
         /// <summary>
-        /// Verifies that T is a valid type
+        /// Verifies that invalid T values are logged using the provided ILogger
         /// </summary>
         [Test]
-        public void FileUpload_VerifyGenericTest()
+        public void InvalidTLogWarning_Test()
         {
-            //waiting for #5549
+            var provider = new MockLoggerProvider();
+            var logger = provider.CreateLogger(GetType().FullName) as MockLogger;
+            Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider)); //set up the logging provider
+            var comp = Context.RenderComponent<MudFileUpload<MudTextField<string>>>();
+
+            var entries = logger.GetEntries();
+            entries.Count.Should().Be(1);
+            entries[0].Level.Should().Be(LogLevel.Warning);
+            entries[0].Message.Should().Be(string.Format("T must be of type {0} or {1}", typeof(IReadOnlyList<IBrowserFile>), typeof(IBrowserFile)));
         }
 
         /// <summary>
@@ -182,11 +191,11 @@ namespace MudBlazor.UnitTests.Components
 
             var single = comp.FindComponent<MudFileUpload<IBrowserFile>>();
             single.Instance.ErrorText.Should().Be("'File' must not be empty.");
-            single.Markup.Should().Contain("&#x27;File&#x27; must not be empty.");
+            single.Markup.Should().Contain("'File' must not be empty.");
 
             var multiple = comp.FindComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
             multiple.Instance.ErrorText.Should().Be("'Files' must not be empty.");
-            multiple.Markup.Should().Contain("&#x27;Files&#x27; must not be empty.");
+            multiple.Markup.Should().Contain("'Files' must not be empty.");
 
             var singleInput = single.FindComponent<InputFile>();
             singleInput.UploadFiles(fileContent[0]); //upload first file
@@ -194,7 +203,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => form.Validate());
 
             single.Instance.ErrorText.Should().Be(null); //first input is now valid
-            single.Markup.Should().NotContain("&#x27;File&#x27; must not be empty.");
+            single.Markup.Should().NotContain("'File' must not be empty.");
 
             form.IsValid.Should().BeFalse(); //form is still invalid
 
@@ -204,26 +213,32 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => form.Validate());
 
             single.Instance.ErrorText.Should().Be(null); //second input is now valid
-            single.Markup.Should().NotContain("&#x27;Files&#x27; must not be empty.");
+            single.Markup.Should().NotContain("'Files' must not be empty.");
 
             form.IsValid.Should().BeTrue(); //form is now valid
         }
 
         /// <summary>
-        /// Verifies that invalid T values are logged using the provided ILogger
+        /// Tests that more than 10 files can be uploaded
         /// </summary>
         [Test]
-        public void InvalidTLogWarning_Test()
+        public void FileUpload_MaximumFileCountTest()
         {
-            var provider = new MockLoggerProvider();
-            var logger = provider.CreateLogger(GetType().FullName) as MockLogger;
-            Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider)); //set up the logging provider
-            var comp = Context.RenderComponent<MudFileUpload<MudTextField<string>>>();
+            List<InputFileContent> Files = new();
+            for (var i = 0; i < 11; i++)
+            {
+                Files.Add(InputFileContent.CreateFromText("Garderoben is a farmer!", $"upload{i}.txt"));
+            }
 
-            var entries = logger.GetEntries();
-            entries.Count.Should().Be(1);
-            entries[0].Level.Should().Be(LogLevel.Warning);
-            entries[0].Message.Should().Be(string.Format("T must be of type {0} or {1}", typeof(IReadOnlyList<IBrowserFile>), typeof(IBrowserFile)));
+            Files.Count.Should().Be(11); //ensure there are 11 files
+
+            var comp = Context.RenderComponent<FileUploadMultipleFilesTest>();
+
+            var multiple = comp.FindComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
+            var multipleInput = multiple.FindComponent<InputFile>();
+            multipleInput.UploadFiles(Files.ToArray()); //upload second files
+
+            comp.Instance.Files.Count.Should().Be(11); //if no error occurs, we have successfully uploaded more than 10 files
         }
     }
 }

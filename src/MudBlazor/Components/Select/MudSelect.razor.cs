@@ -163,6 +163,13 @@ namespace MudBlazor
         public string PopoverClass { get; set; }
 
         /// <summary>
+        /// User class names for the internal list, separated by space
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string ListClass { get; set; }
+
+        /// <summary>
         /// If true, compact vertical padding will be applied to all Select items.
         /// </summary>
         [Parameter]
@@ -1077,5 +1084,19 @@ namespace MudBlazor
             else
                 return base.HasValue(value);
         }
+
+        public override async Task ForceUpdate()
+        {
+            await base.ForceUpdate();
+            if (MultiSelection == false)
+            {
+                SelectedValues = new HashSet<T>(_comparer) { Value };
+            }
+            else
+            {
+                await SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer));
+            }
+        }
+
     }
 }

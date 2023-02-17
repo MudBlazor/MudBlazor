@@ -83,7 +83,7 @@ namespace MudBlazor
         {
             var theme = new StringBuilder();
             theme.AppendLine("<style>");
-            theme.Append(":root");
+            theme.Append(Theme.PseudoCss.Scope);
             theme.AppendLine("{");
             GenerateTheme(theme);
             theme.AppendLine("}");

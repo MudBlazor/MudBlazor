@@ -22,9 +22,7 @@
 
 .mud-table-root {
     width: 100%;
-    //display: table;
     border-spacing: 0;
-    border-collapse: collapse;
 
     & .mud-table-head {
         display: table-header-group;
@@ -44,9 +42,9 @@
         }
     }
 
-    & .mud-table-body:last-child {
-        & .mud-table-row:last-child {
-            & .mud-table-cell {
+    > .mud-table-body:last-child {
+        > .mud-table-row:last-child {
+            > .mud-table-cell {
                 border-bottom: none;
             }
         }
@@ -176,7 +174,6 @@
     }
 
     & * .mud-table-root {
-        border-collapse: separate;
 
         .mud-table-head {
             & * .mud-table-cell:first-child {
@@ -203,7 +200,6 @@
     }
 
     & * .mud-table-root {
-        border-collapse: separate;
 
         .mud-table-foot {
 

@@ -19,13 +19,13 @@ namespace MudBlazor
 
         protected string StartIconClass =>
         new CssBuilder("mud-button-icon-start")
-          .AddClass($"mud-button-icon-size-{Size.ToDescriptionString()}")
+          .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToDescriptionString()}")
           .AddClass(IconClass)
         .Build();
 
         protected string EndIconClass =>
         new CssBuilder("mud-button-icon-end")
-          .AddClass($"mud-button-icon-size-{Size.ToDescriptionString()}")
+          .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToDescriptionString()}")
           .AddClass(IconClass)
         .Build();
 
@@ -49,6 +49,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public Color IconColor { get; set; } = Color.Inherit;
+
+        /// <summary>
+        /// The size of the icon. When null, the value of Size is used.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Size? IconSize { get; set; }
 
         /// <summary>
         /// Icon class names, separated by space

@@ -244,5 +244,15 @@ namespace MudBlazor.UnitTests.Services
             option1.Should().NotBe(option2);
             option2.Should().NotBe(option1);
         }
+
+        [Test]
+        public void ComparingWithNull_ShouldNot_Fail()
+        {
+            var option = new ResizeOptions();
+            // this should not cause nullref
+            (option == null).Should().Be(false);
+            (option != null).Should().Be(true);
+        }
     }
+
 }

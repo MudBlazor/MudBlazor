@@ -47,6 +47,13 @@ else
     public bool Disabled { get; set; }
 
     /// <summary>
+    /// MudDynamicTabs: If true, shows the close icon in the TabPanel.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public bool ShowCloseIcon { get; set; } = true;
+
+    /// <summary>
     /// Optional information to be showed into a badge
     /// </summary>
     [Parameter] 
@@ -133,7 +140,7 @@ else
         if(_disposed == true) { return;  }
 
         _disposed = true;
-        await Parent?.RemovePanel(this);
-
+        if (Parent is not null)
+            await Parent.RemovePanel(this);
     }
 }

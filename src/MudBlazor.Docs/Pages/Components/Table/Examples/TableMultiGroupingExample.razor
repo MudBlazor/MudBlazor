@@ -14,13 +14,16 @@
     }
 </style>
 
+<MudText>Total items: @Elements?.Count() - Selected items: @selectedItems?.Count</MudText>
+
 <MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
           Items="@Elements"
           GroupBy="@_groupDefinition"
           GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
           GroupFooterClass="mb-4"
           Dense="_dense"
-          MultiSelection="_multiSelect">
+          MultiSelection="_multiSelect"
+          @bind-SelectedItems="selectedItems">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -53,6 +56,7 @@
 @code {
     private bool _dense = false;
     private bool _multiSelect = true;
+    private HashSet<Element> selectedItems = new HashSet<Element>();
 
     private TableGroupDefinition<Element> _groupDefinition = new TableGroupDefinition<Element>()
     {

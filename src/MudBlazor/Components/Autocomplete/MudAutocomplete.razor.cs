@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Logging;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -39,6 +40,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public string PopoverClass { get; set; }
+
+        /// <summary>
+        /// User class names for the internal list, separated by space
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string ListClass { get; set; }
 
         /// <summary>
         /// Set the anchor origin point to determen where the popover will open from.
@@ -195,6 +203,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool SelectOnClick { get; set; } = true;
+
+        /// <summary>
+        /// If true, clicking on the Autocomplete after selecting an option will query the Search method again with an empty string. This makes it easier to view and select other options without resetting the Value.
+        /// T must either be a record or override GetHashCode and Equals.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Strict { get; set; } = true;
 
         /// <summary>
         /// Debounce interval in milliseconds.
@@ -431,7 +447,7 @@ namespace MudBlazor
 
             _cancellationTokenSrc = new CancellationTokenSource();
         }
-        
+
         private int _itemsReturned; //the number of items returned by the search function
 
         /// <remarks>
@@ -450,6 +466,7 @@ namespace MudBlazor
             IEnumerable<T> searched_items = Array.Empty<T>();
             CancelToken();
 
+            var searchingWhileSelected = false;
             try
             {
                 if (ProgressIndicatorInPopoverTemplate != null)
@@ -457,9 +474,12 @@ namespace MudBlazor
                     IsOpen = true;
                 }
 
+                searchingWhileSelected = !Strict && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text)); //search while selected if enabled and the Text is equivalent to the Value
+                var searchText = searchingWhileSelected ? string.Empty : Text;
+
                 var searchTask = SearchFuncWithCancel != null ?
-                    SearchFuncWithCancel(Text, _cancellationTokenSrc.Token) :
-                    SearchFunc(Text);
+                    SearchFuncWithCancel(searchText, _cancellationTokenSrc.Token) :
+                    SearchFunc(searchText);
 
                 _currentSearchTask = searchTask;
 
@@ -475,7 +495,7 @@ namespace MudBlazor
             }
             catch (Exception e)
             {
-                Console.WriteLine("The search function failed to return results: " + e.Message);
+                Logger.LogWarning("The search function failed to return results: " + e.Message);
             }
 
             _itemsReturned = searched_items.Count();
@@ -485,8 +505,16 @@ namespace MudBlazor
             }
             _items = searched_items.ToArray();
 
-            _enabledItemIndices = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).Select(tuple => tuple.idx).ToList();
-            _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices.First() : -1;
+            var enabledItems = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).ToList();
+            _enabledItemIndices = enabledItems.Select(tuple => tuple.idx).ToList();
+            if (searchingWhileSelected) //compute the index of the currently select value, if it exists
+            {
+                _selectedListItemIndex = enabledItems.Select(x => x.item).ToList().IndexOf(Value);
+            }
+            else
+            {
+                _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices.First() : -1;
+            }
 
             IsOpen = true;
 
@@ -759,7 +787,7 @@ namespace MudBlazor
 
         private async Task OnTextChanged(string text)
         {
-            await base.TextChanged.InvokeAsync();
+            await base.TextChanged.InvokeAsync(text);
 
             if (text == null)
                 return;

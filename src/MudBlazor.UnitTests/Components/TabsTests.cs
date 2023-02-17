@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Docs.Examples;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
@@ -29,14 +30,12 @@ namespace MudBlazor.UnitTests.Components
         public async Task AddingAndRemovingTabPanels()
         {
             var comp = Context.RenderComponent<TabsAddingRemovingTabsTest>();
-            //Console.WriteLine(comp.Markup);
             comp.Find("div.mud-tabs-panels").InnerHtml.Trim().Should().BeEmpty();
             comp.FindAll("div.mud-tab").Should().BeEmpty();
             comp.Instance.Tabs.Panels.Should().NotBeNull().And.BeEmpty();
 
             // add a panel
             comp.FindAll("button")[0].Click();
-            //Console.WriteLine("\n" + comp.Markup);
             comp.Find("div.mud-tabs-panels").InnerHtml.Trim().Should().NotBeEmpty();
             comp.FindAll("div.mud-tab").Count.Should().Be(1);
             comp.FindAll("p.mud-typography").Count.Should().Be(1);
@@ -46,7 +45,6 @@ namespace MudBlazor.UnitTests.Components
 
             // add another
             comp.FindAll("button")[0].Click();
-            //Console.WriteLine("\n" + comp.Markup);
             comp.FindAll("div.mud-tab").Count.Should().Be(2);
 
             comp.Instance.Tabs.Panels.Should().NotBeNull().And.HaveCount(2);
@@ -1063,6 +1061,18 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain("Content Three");
         }
 
+        [Test]
+        public async Task CancelPanelActivation()
+        {
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+            var comp = Context.RenderComponent<CancelActivationTabsTest>();
+            comp.SetParametersAndRender(p => p.Add(x => x.Position, Position.Left));
+
+            comp.Instance.SetPanelActive(2);
+            comp.Instance.ActivePanel.Should().NotBe(2);
+        }
+        
         #region Helper
 
         private static double GetSliderValue(IRenderedComponent<ScrollableTabsTest> comp, string attribute = "left")

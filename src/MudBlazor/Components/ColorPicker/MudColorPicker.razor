@@ -112,7 +112,7 @@
                                             <MudNumericField Value="@_color.L" T="double"  ValueChanged="SetL" Class="mud-picker-color-inputfield" HelperText="L"Step="0.01"  Min="0" Max="100" Variant="Variant.Outlined" HideSpinButtons="true" />
                                             break;
                                         case ColorPickerMode.HEX:
-                                            <MudTextField Value="@GetColorTextValue()" ValueChanged="SetInputString" T="string" Class="mud-picker-color-inputfield" Variant="Variant.Outlined" HelperText="HEX" />
+                                            <MudTextField Value="@GetColorTextValue()" ValueChanged="SetInputString" T="string" Class="mud-picker-color-inputfield" Variant="Variant.Outlined" MaxLength="@GetHexColorInputMaxLength()" HelperText="HEX" />
                                             break;
                                         default:
                                             break;

@@ -396,6 +396,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task DataGridEventCallbacksTest()
         {
             var comp = Context.RenderComponent<DataGridEventCallbacksTest>();
@@ -405,6 +406,17 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.CommittedItemChanges.HasDelegate.Should().Be(true);
+            dataGrid.Instance.StartedEditingItem.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CanceledEditingItem.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CanceledEditingItem.Should().Be(dataGrid.Instance.CanceledEditingItem);
+
+            // we test to make sure that we can set and get the cancelCallback via the CancelledEditingItem property
+            var cancelCallback = dataGrid.Instance.CanceledEditingItem;
+            dataGrid.SetCallback(dg => dg.CancelledEditingItem, x => { return; });
+            dataGrid.Instance.CanceledEditingItem.Should().NotBe(cancelCallback);
+            dataGrid.Instance.CancelledEditingItem = cancelCallback;
+            dataGrid.Instance.CancelledEditingItem.Should().Be(cancelCallback);
+
 
             // Set some parameters manually so that they are covered.
             var parameters = new List<ComponentParameter>();
@@ -418,11 +430,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.RowClicked.Should().Be(false);
             comp.Instance.SelectedItemChanged.Should().Be(false);
             comp.Instance.CommittedItemChanges.Should().Be(false);
+            comp.Instance.StartedEditingItem.Should().Be(false);
+            comp.Instance.CanceledEditingItem.Should().Be(false);
 
             // Fire RowClick, SelectedItemChanged, SelectedItemsChanged, and StartedEditingItem callbacks.
             dataGrid.FindAll(".mud-table-body tr")[0].Click();
 
-            //Console.WriteLine(dataGrid.Markup);
             // Edit an item.
             dataGrid.FindAll(".mud-table-body tr td input")[0].Change("A test");
 
@@ -430,6 +443,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.RowClicked.Should().Be(true);
             comp.Instance.SelectedItemChanged.Should().Be(true);
             comp.Instance.CommittedItemChanges.Should().Be(true);
+            comp.Instance.CanceledEditingItem.Should().Be(false);
+
+            // TODO: Triggering of the CancelEditingItem callback appears to require the Form edit mode
+            // but we can brute force it by directly calling the CancelEditingItemAsync method on the datagrid
+            await dataGrid.InvokeAsync(dataGrid.Instance.CancelEditingItemAsync);
+            comp.Instance.CanceledEditingItem.Should().Be(true);
         }
 
         [Test]
@@ -1474,7 +1493,6 @@ namespace MudBlazor.UnitTests.Components
                 Value = 45
             };
             func = filterDefinition.GenerateFilterFunction();
-            Console.WriteLine(func.Invoke(new("Joe", 45)));
             Assert.IsFalse(func.Invoke(new("Sam", 46)));
             Assert.IsFalse(func.Invoke(new("Sam", null)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
@@ -1488,7 +1506,6 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
-            Console.WriteLine(func.Invoke(new("Joe", 45)));
             Assert.IsTrue(func.Invoke(new("Sam", 46)));
             Assert.IsTrue(func.Invoke(new("Sam", null)));
             Assert.IsTrue(func.Invoke(new("Joe", 45)));
@@ -3029,7 +3046,6 @@ namespace MudBlazor.UnitTests.Components
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func11 = expression.Compile();
-            Console.WriteLine(func11.Invoke(new("Joe", 45)));
             Assert.IsFalse(func11.Invoke(new("Sam", 46)));
             Assert.IsFalse(func11.Invoke(new("Sam", null)));
             Assert.IsTrue(func11.Invoke(new("Joe", 45)));
@@ -3044,7 +3060,6 @@ namespace MudBlazor.UnitTests.Components
             };
             expression = filterDefinition.GenerateFilterExpression();
             var func12 = expression.Compile();
-            Console.WriteLine(func12.Invoke(new("Joe", 45)));
             Assert.IsTrue(func12.Invoke(new("Sam", 46)));
             Assert.IsTrue(func12.Invoke(new("Sam", null)));
             Assert.IsTrue(func12.Invoke(new("Joe", 45)));
@@ -3642,9 +3657,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridHeaderTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHeaderTemplateTest.Model>>();
-
-            Console.WriteLine(dataGrid.Markup);
-
+            
             dataGrid.Find("thead th").TextContent.Trim().Should().Be("test");
 
             dataGrid.Find("span.column-header").FirstChild.NodeName.Should().Be("svg");
@@ -3731,8 +3744,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridFooterTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFooterTemplateTest.Model>>();
 
-            //Console.WriteLine(dataGrid.Markup);
-
             dataGrid.FindAll("tfoot td").First().TextContent.Trim().Should().Be("Names: Sam, Alicia, Ira, John");
             dataGrid.FindAll("tfoot td").Last().TextContent.Trim().Should().Be($"Highest: {132000:C0} | 2 Over {100000:C0}");
         }
@@ -3771,8 +3782,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridCellTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellTemplateTest.Model>>();
 
-            //Console.WriteLine(dataGrid.Markup);
-
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("John");
             dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("45");
         }
@@ -3784,8 +3793,6 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnChooserTest.Model>>();
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
             var popover = dataGrid.FindComponent<MudPopover>();
-
-            //Console.WriteLine(dataGrid.FindAll(".mud-table-head th").ToMarkup());
 
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
             await comp.InvokeAsync(() =>
@@ -3851,8 +3858,6 @@ namespace MudBlazor.UnitTests.Components
             var popover = dataGrid.FindComponent<MudPopover>();
             popover.Instance.Open.Should().BeFalse("Should start as closed");
 
-
-
             var columnsButton = dataGrid.Find("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
             columnsButton.Click();
 
@@ -3878,13 +3883,66 @@ namespace MudBlazor.UnitTests.Components
             // 2 columns, 2 hidden
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
 
-
             // this is the show all button
             buttons[1].Find("button").Click();
             switches[0].Instance.Checked.Should().BeFalse();
             switches[1].Instance.Checked.Should().BeFalse();
             // 2 columns, 0 hidden
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+        }
+
+        [Test]
+        public async Task DataGridFilterRowHiddenTest()
+        {
+            var comp = Context.RenderComponent<DataGridFilterRowHiddenTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterRowHiddenTest.Model>>();
+
+            //there should be only one filter cell visible
+            dataGrid.FindAll(".mud-input-control-input-container").Count.Should().Be(1);
+
+            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
+            var popover = dataGrid.FindComponent<MudPopover>();
+            popover.Instance.Open.Should().BeFalse("Should start as closed");
+
+            var columnsButton = dataGrid.Find("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
+            columnsButton.Click();
+
+            popover.Instance.Open.Should().BeTrue("Should be open once clicked");
+            var listItems = popoverProvider.FindComponents<MudListItem>();
+            listItems.Count.Should().Be(1);
+            var clickablePopover = listItems[0].Find(".mud-list-item");
+            clickablePopover.Click();
+
+            // at this point, the column picker should be open
+            var switches = dataGrid.FindComponents<MudSwitch<bool>>();
+            switches.Count.Should().Be(2);
+
+            switches[0].Instance.Checked.Should().BeFalse();
+            switches[1].Instance.Checked.Should().BeTrue();
+
+            var buttons = dataGrid.FindComponents<MudButton>();
+
+            // this is the hide all button
+            buttons[0].Find("button").Click();
+            switches[0].Instance.Checked.Should().BeTrue();
+            switches[1].Instance.Checked.Should().BeTrue();
+            // 2 columns, 2 hidden
+            dataGrid.FindAll(".filter-header-cell .mud-input-control-input-container").Count.Should().Be(0);
+
+            // this is the show all button
+            buttons[1].Find("button").Click();
+            switches[0].Instance.Checked.Should().BeFalse();
+            switches[1].Instance.Checked.Should().BeFalse();
+            // 2 columns, 0 hidden
+            dataGrid.FindAll(".filter-header-cell .mud-input-control-input-container").Count.Should().Be(2);
+
+            dataGrid.Instance.RenderedColumns[0].Filterable = false;
+            await comp.InvokeAsync(dataGrid.Instance.ExternalStateHasChanged);
+
+            //If the column is visible and Filterable is false there still shouldďbe the cell
+            //without the input
+            dataGrid.FindAll(".mud-table-cell.filter-header-cell").Count.Should().Be(2);
+            dataGrid.FindAll(".filter-header-cell .mud-input-control-input-container").Count.Should().Be(1);
         }
 
         [Test]
@@ -4012,8 +4070,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridAggregationTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridAggregationTest.Model>>();
-
-            //Console.WriteLine(dataGrid.Markup);
 
             dataGrid.FindAll("td.footer-cell")[1].TrimmedText().Should().Be("Average age is 56");
             dataGrid.FindAll("tfoot td.footer-cell")[1].TrimmedText().Should().Be("Average age is 43");
@@ -4309,6 +4365,25 @@ namespace MudBlazor.UnitTests.Components
                 comp.Instance.AddFruit());
             // datagrid should be expanded with the new category
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(8);
+        }
+
+        [Test]
+        public async Task DataGridGroupCollapseAllTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupCollapseAllTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupCollapseAllTest.TestObject>>();
+
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+            comp.Instance.ExpandAllGroups();
+            comp.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(15);
+            comp.Instance.CollapseAllGroups();
+            comp.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+            comp.Instance.RefreshList();
+            comp.Render();
+            // after all groups are expanded
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
         }
     }
 }

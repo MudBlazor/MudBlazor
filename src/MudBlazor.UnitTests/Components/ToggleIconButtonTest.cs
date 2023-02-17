@@ -37,7 +37,6 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldSynchronizeStateWithOtherComponent()
         {
             var comp = Context.RenderComponent<ToggleIconButtonTest1>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponents<MudToggleIconButton>();
             var comp1 = group[0];
@@ -60,8 +59,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var title = "Title and tooltip";
             var toggledTitle = "toggled!";
-            var icon = Parameter(nameof(MudToggleIconButton.Icon), Icons.Filled.Add);
-            var toggledIcon = Parameter(nameof(MudToggleIconButton.ToggledIcon), Icons.Filled.Remove);
+            var icon = Parameter(nameof(MudToggleIconButton.Icon), Icons.Material.Filled.Add);
+            var toggledIcon = Parameter(nameof(MudToggleIconButton.ToggledIcon), Icons.Material.Filled.Remove);
             var titleParam = Parameter(nameof(MudToggleIconButton.Title), title);
             var toggledTitleParam = Parameter(nameof(MudToggleIconButton.ToggledTitle), toggledTitle);
             var comp = Context.RenderComponent<MudToggleIconButton>(icon, toggledIcon, titleParam, toggledTitleParam);

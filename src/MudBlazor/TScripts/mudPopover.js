@@ -142,11 +142,12 @@ window.mudpopoverHelper = {
         if (popoverNode && popoverNode.parentNode) {
             const id = popoverNode.id.substr(8);
             const popoverContentNode = document.getElementById('popovercontent-' + id);
-            if (popoverContentNode.classList.contains('mud-popover-open') == false) {
+
+            if (!popoverContentNode) {
                 return;
             }
 
-            if (!popoverContentNode) {
+            if (popoverContentNode.classList.contains('mud-popover-open') == false) {
                 return;
             }
 

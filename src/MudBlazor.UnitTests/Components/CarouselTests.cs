@@ -24,7 +24,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<CarouselTest>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             //// select elements needed for the test
             var carousel = comp.FindComponent<MudCarousel<object>>().Instance;
             //// validating some renders
@@ -146,7 +145,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudCarousel<object>>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2); //left + right
             // adding some pages
             comp.Instance.Items.Add(new());
@@ -182,7 +180,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudCarousel<object>>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // adding some pages
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
@@ -243,7 +240,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<CarouselBindingTest>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             //// select elements needed for the test
             var carousel = comp.FindComponent<MudCarousel<string>>().Instance;
             //// validating some renders

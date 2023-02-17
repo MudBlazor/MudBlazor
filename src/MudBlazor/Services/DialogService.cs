@@ -6,6 +6,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -126,6 +127,66 @@ namespace MudBlazor
             return dialogReference;
         }
 
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>() where T : ComponentBase
+        {
+            return ShowAsync<T>(string.Empty, new DialogParameters(), new DialogOptions());
+        }
+
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string title) where T : ComponentBase
+        {
+            return ShowAsync<T>(title, new DialogParameters(), new DialogOptions());
+        }
+
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string title, DialogOptions options) where T : ComponentBase
+        {
+            return ShowAsync<T>(title, new DialogParameters(), options);
+        }
+
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string title, DialogParameters parameters) where T : ComponentBase
+        {
+            return ShowAsync<T>(title, parameters, new DialogOptions());
+        }
+
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string title, DialogParameters parameters, DialogOptions options) where T : ComponentBase
+        {
+            return ShowAsync(typeof(T), title, parameters, options);
+        }
+
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent)
+        {
+            return ShowAsync(contentComponent, string.Empty, new DialogParameters(), new DialogOptions());
+        }
+
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string title)
+        {
+            return ShowAsync(contentComponent, title, new DialogParameters(), new DialogOptions());
+        }
+
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string title, DialogOptions options)
+        {
+            return ShowAsync(contentComponent, title, new DialogParameters(), options);
+        }
+
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string title, DialogParameters parameters)
+        {
+            return ShowAsync(contentComponent, title, parameters, new DialogOptions());
+        }
+
+        public async Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string title, DialogParameters parameters, DialogOptions options)
+        {
+            var dialogReference = Show(contentComponent, title, parameters, options);
+
+            //Do not wait forever, what if render fails because of some internal exception and we will never release the method.
+            var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            var token = cancellationTokenSource.Token;
+            await using (token.Register(() => dialogReference.RenderCompleteTaskCompletionSource.TrySetResult(false)))
+            {
+                await dialogReference.RenderCompleteTaskCompletionSource.Task;
+
+                return dialogReference;
+            }
+        }
+
         public Task<bool?> ShowMessageBox(string title, string message, string yesText = "OK",
             string noText = null, string cancelText = null, DialogOptions options = null)
         {
@@ -163,9 +224,9 @@ namespace MudBlazor
                 [nameof(MessageBoxOptions.NoText)] = messageBoxOptions.NoText,
                 [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText,
             };
-            var reference = Show<MudMessageBox>(parameters: parameters, options: options, title: messageBoxOptions.Title);
+            var reference = await ShowAsync<MudMessageBox>(parameters: parameters, options: options, title: messageBoxOptions.Title);
             var result = await reference.Result;
-            if (result.Cancelled || result.Data is not bool data)
+            if (result.Canceled || result.Data is not bool data)
                 return null;
             return data;
         }

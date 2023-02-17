@@ -46,6 +46,8 @@ namespace MudBlazor
 
         public Task<DialogResult> Result => _resultCompletion.Task;
 
+        TaskCompletionSource<bool> IDialogReference.RenderCompleteTaskCompletionSource { get; } = new();
+
         public void InjectDialog(object inst)
         {
             Dialog = inst;

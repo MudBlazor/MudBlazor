@@ -57,13 +57,14 @@ namespace MudBlazor
 
         public void OnRowClicked(MouseEventArgs args)
         {
+            var table = Context?.Table;
+            if (table is null)
+                return;
+            table.SetSelectedItem(Item);
             StartEditingItem(buttonClicked: false);
-
-            if (Context?.Table.MultiSelection == true && !(Context?.Table.IsEditable == true))
-            {
+            if (table.MultiSelection && table.SelectOnRowClick && !table.IsEditable)
                 IsChecked = !IsChecked;
-            }
-            Context?.Table.FireRowClickEvent(args, this, Item);
+            table.FireRowClickEvent(args, this, Item);
         }
 
         private void StartEditingItem() => StartEditingItem(buttonClicked: true);
@@ -80,9 +81,6 @@ namespace MudBlazor
             if (!(Context?.Table.Validator.IsValid ?? true))
                 return;
 
-            if (!buttonClicked)
-                Context?.Table.SetSelectedItem(Item);
-
             // Manage edition the first time the row is clicked and if the table is editable
             if (!hasBeenClickedFirstTime && IsEditable)
             {
@@ -90,7 +88,7 @@ namespace MudBlazor
                 hasBeenClickedFirstTime = true;
 
                 // Set to false that the item has been committed
-                // Set to false that the item has been cancelled
+                // Set to false that the item has been canceled
                 hasBeenCanceled = false;
                 hasBeenCommitted = false;
 
@@ -101,6 +99,9 @@ namespace MudBlazor
                 Context.Table.RowEditPreview?.Invoke(Item);
 
                 Context?.Table.SetEditingItem(Item);
+
+                if (Context != null)
+                    Context.Table.Validator.Model = Item;
             }
         }
 
@@ -115,14 +116,18 @@ namespace MudBlazor
             Context?.Remove(this, Item);
         }
 
-        public void SetChecked(bool b, bool notify)
+        public void SetChecked(bool checkedState, bool notify)
         {
-            if (notify)
-                IsChecked = b;
-            else
+            if (_checked != checkedState)
             {
-                _checked = b;
-                InvokeAsync(StateHasChanged);
+                if (notify)
+                    IsChecked = checkedState;
+                else
+                {
+                    _checked = checkedState;
+                    if (IsCheckable)
+                        InvokeAsync(StateHasChanged);
+                }
             }
         }
 
@@ -141,7 +146,7 @@ namespace MudBlazor
             Context.Table.RowEditCommit?.Invoke(Item);
 
             // Set to true that the item has been committed
-            // Set to false that the item has been cancelled
+            // Set to false that the item has been canceled
             hasBeenCommitted = true;
             hasBeenCanceled = false;
 

@@ -268,11 +268,13 @@ namespace MudBlazor
             switch (direction)
             {
                 case SwipeDirection.LeftToRight:
-                    Previous();
+                    if(RightToLeft) Next();
+                    else Previous();
                     break;
 
                 case SwipeDirection.RightToLeft:
-                    Next();
+                    if(RightToLeft) Previous();
+                    else Next();
                     break;
             }
         }
