@@ -275,7 +275,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
-
+        
+        /// <summary>
+        /// Fired when a panel gets activated. Returned Task will be awaited.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
+        public Func<TabInteractionEventArgs, Task> OnPreviewInteraction { get; set; }
+        
         /// <summary>
         /// Can be used in derived class to add a class to the main container. If not overwritten return an empty string
         /// </summary>
@@ -410,15 +417,24 @@ namespace MudBlazor
                 ActivatePanel(panel, null, ignoreDisabledState);
         }
 
-        private void ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool ignoreDisabledState = false)
+        private async void ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool ignoreDisabledState = false)
         {
             if (!panel.Disabled || ignoreDisabledState)
             {
-                ActivePanelIndex = _panels.IndexOf(panel);
-                ActivePanel?.OnClick.InvokeAsync(ev);
+                var index = _panels.IndexOf(panel);
+                var previewArgs = new TabInteractionEventArgs { PanelIndex = index, InteractionType = TabInteractionType.Activate };
+
+                if (OnPreviewInteraction != null)
+                    await OnPreviewInteraction.Invoke(previewArgs);
+
+                if (previewArgs.Cancel) return;
+                
+                ActivePanelIndex = previewArgs.PanelIndex;
+                await ActivePanel?.OnClick.InvokeAsync(ev);
 
                 CenterScrollPositionAroundSelectedItem();
                 SetSliderState();
+                SetScrollButtonVisibility();
                 SetScrollabilityStates();
                 StateHasChanged();
             }
@@ -627,19 +643,22 @@ namespace MudBlazor
 
         private void SetScrollButtonVisibility()
         {
-            _showScrollButtons = AlwaysShowScrollButtons || _allTabsSize > _toolbarContentSize;
+            _showScrollButtons = AlwaysShowScrollButtons || _allTabsSize > _toolbarContentSize || _scrollIndex != 0;
         }
 
         private void ScrollPrev()
         {
-            _scrollIndex = Math.Max(_scrollIndex - GetVisiblePanels(), 0);
+            var scrollAmount = Math.Max(GetVisiblePanels(), 1);
+            _scrollIndex = Math.Max(_scrollIndex - scrollAmount, 0);
             ScrollToItem(_panels[_scrollIndex]);
+            SetScrollButtonVisibility();
             SetScrollabilityStates();
         }
 
         private void ScrollNext()
         {
-            _scrollIndex = Math.Min(_scrollIndex + GetVisiblePanels(), _panels.Count - 1);
+            var scrollAmount = Math.Max(GetVisiblePanels(), 1);
+            _scrollIndex = Math.Min(_scrollIndex + scrollAmount, _panels.Count - 1);
             ScrollToItem(_panels[_scrollIndex]);
             SetScrollabilityStates();
         }
@@ -687,6 +706,7 @@ namespace MudBlazor
             var length = GetPanelLength(panelToStart);
             if (length >= _toolbarContentSize)
             {
+                _scrollIndex = _panels.IndexOf(panelToStart);
                 ScrollToItem(panelToStart);
                 return;
             }
@@ -745,12 +765,12 @@ namespace MudBlazor
             if (isEnoughSpace)
             {
                 _nextButtonDisabled = true;
-                _prevButtonDisabled = true;
+                _prevButtonDisabled = _scrollIndex == 0;
             }
             else
             {
                 // Disable next button if the last panel is completely visible
-                _nextButtonDisabled = Math.Abs(_scrollPosition) >= GetLengthOfPanelItems(_panels.Last(), true) - _toolbarContentSize;
+                _nextButtonDisabled = _scrollIndex == _panels.Count - 1 || Math.Abs(_scrollPosition) >= GetLengthOfPanelItems(_panels.Last(), true) - _toolbarContentSize;
                 _prevButtonDisabled = _scrollIndex == 0;
             }
         }

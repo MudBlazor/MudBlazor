@@ -1084,5 +1084,19 @@ namespace MudBlazor
             else
                 return base.HasValue(value);
         }
+
+        public override async Task ForceUpdate()
+        {
+            await base.ForceUpdate();
+            if (MultiSelection == false)
+            {
+                SelectedValues = new HashSet<T>(_comparer) { Value };
+            }
+            else
+            {
+                await SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer));
+            }
+        }
+
     }
 }
