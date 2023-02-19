@@ -3345,5 +3345,18 @@ namespace MudBlazor.UnitTests.Components
             // after all groups are expanded
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
         }
+
+        [Test]
+        public async Task DataGridPropertyColumnFormatTest()
+        {
+            var comp = Context.RenderComponent<DataGridFormatTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormatTest.Employee>>();
+
+            comp.FindAll("tbody.mud-table-body td")[3].TextContent.Should().Be("$87,000.00");
+            var column = (PropertyColumn<DataGridFormatTest.Employee, int>)dataGrid.Instance.GetColumnByPropertyName("Salary");
+            await comp.InvokeAsync(() => column.Format = "C0");
+            comp.Find(".mud-switch-input").Change(new ChangeEventArgs { Value = true });
+            comp.FindAll("tbody.mud-table-body td")[3].TextContent.Should().Be("$87,000");
+        }
     }
 }

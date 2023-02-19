@@ -16,6 +16,7 @@ namespace MudBlazor
     public partial class PropertyColumn<T, TProperty> : Column<T>
     {
         [Parameter] public Expression<Func<T, TProperty>> Property { get; set; } = default!;
+        [Parameter] public string Format { get; set; }
 
         private Expression<Func<T, TProperty>>? _lastAssignedProperty;
         private Func<T, object?>? _cellContentFunc;
@@ -32,14 +33,21 @@ namespace MudBlazor
                 _cellContentFunc = item => compiledPropertyExpression!(item);
             }
 
-            if (Property != null && Property.Body is MemberExpression memberExpression)
+            if (Property != null)
             {
-                _fullPropertyName = Property.Body.ToString();
-                _propertyName = memberExpression.Member.Name;
-
-                if (Title is null)
+                if (Property.Body is MemberExpression memberExpression)
                 {
-                    Title = _propertyName;
+                    _fullPropertyName = Property.Body.ToString();
+                    _propertyName = memberExpression.Member.Name;
+
+                    if (Title is null)
+                    {
+                        Title = _propertyName;
+                    }
+                }
+                else
+                {
+                    _propertyName = _fullPropertyName = Property.Body.ToString();
                 }
             }
 
@@ -51,6 +59,9 @@ namespace MudBlazor
 
         public override string? PropertyName
             => _propertyName;
+
+        protected internal override string ContentFormat
+            => Format;
 
         protected internal override object? CellContent(T item)
             => _cellContentFunc!(item);

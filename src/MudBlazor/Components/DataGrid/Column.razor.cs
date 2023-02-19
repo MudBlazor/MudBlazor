@@ -315,46 +315,12 @@ namespace MudBlazor
         {
             if (null == _sortBy)
             {
-                var type = typeof(T);
-
-                // set the default SortBy
-                if (type == typeof(IDictionary<string, object>))
+                if (this is TemplateColumn<T>)
                 {
-                    if (dataType == null)
-                        throw new ArgumentNullException(nameof(PropertyType));
-
-                    var innerType = innerDataType;
-
-                    if (innerType == typeof(JsonElement))
-                    {
-                        _sortBy = x =>
-                        {
-                            var json = (JsonElement)(x as IDictionary<string, object>)[PropertyName];
-
-                            if (dataType == typeof(string))
-                                return json.GetString();
-                            else if (isNumber)
-                                return json.GetDouble();
-                            else
-                                return json.GetRawText();
-                        };
-                    }
-                    else
-                    {
-                        _sortBy = x => Convert.ChangeType((x as IDictionary<string, object>)[PropertyName], innerType);
-                    }
+                    _sortBy = x => true;
                 }
                 else
-                {
-                    if (this.GetType() == typeof(PropertyColumn<,>))
-                    {
-                        _sortBy = x => PropertyFunc(x);
-                    }
-                    else
-                    {
-                        _sortBy = PropertyExpression.ChangeExpressionReturnType<T, object>().Compile();
-                    }
-                }
+                    _sortBy = x => PropertyFunc(x);
             }
 
             return _sortBy;
@@ -427,6 +393,7 @@ namespace MudBlazor
         }
 
         public virtual string PropertyName { get; }
+        protected internal virtual string ContentFormat { get; }
 
         protected internal abstract object CellContent(T item);
 

@@ -1136,7 +1136,6 @@ namespace MudBlazor
             _editingItem = JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(item));
             StartedEditingItemEvent?.Invoke();
             await StartedEditingItem.InvokeAsync(_editingItem);
-            Console.WriteLine("editing");
             isEditFormOpen = true;
         }
 

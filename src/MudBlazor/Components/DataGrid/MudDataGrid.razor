@@ -366,7 +366,12 @@
                 }
                 else
                 {
-                    @cell.ComputedValue
+                    if (column.ContentFormat != null)
+                    {
+                        @(((IFormattable)cell.ComputedValue).ToString(column.ContentFormat, null))
+                    }
+                    else
+                        @cell.ComputedValue
                 }
             }
         </td>
