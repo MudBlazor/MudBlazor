@@ -362,13 +362,18 @@
                 }
                 else if (column.Culture != null && column.isNumber)
                 {
-                    @cell._valueNumber?.ToString(column.Culture)
+                    if (column.ContentFormat != null)
+                    {
+                        @(((IFormattable)cell._valueNumber)?.ToString(column.ContentFormat, column.Culture))
+                    }
+                    else
+                        @cell._valueNumber?.ToString(column.Culture)
                 }
                 else
                 {
                     if (column.ContentFormat != null)
                     {
-                        @(((IFormattable)cell.ComputedValue).ToString(column.ContentFormat, null))
+                        @(((IFormattable)cell.ComputedValue).ToString(column.ContentFormat, column.Culture))
                     }
                     else
                         @cell.ComputedValue

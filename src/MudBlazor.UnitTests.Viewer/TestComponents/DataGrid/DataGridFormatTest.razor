@@ -1,6 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items="@employees" Filterable="false" SortMode="@SortMode.None" Groupable="false">
+<MudDataGrid Items="@employees" Filterable="false" SortMode="@SortMode.None" Groupable="false"
+    Culture="@(new System.Globalization.CultureInfo("en-US"))">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Position" />
