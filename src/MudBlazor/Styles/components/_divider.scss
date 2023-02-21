@@ -37,3 +37,8 @@
     height: auto;
     align-self: stretch;
 }
+
+.mud-divider-fullwidth {
+    flex-grow: 1;
+    width: 100%;
+}

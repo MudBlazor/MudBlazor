@@ -644,10 +644,10 @@ namespace MudBlazor.UnitTests.Components
             picker.Time.Should().Be(new TimeSpan(00, 45, 00));
 
             await comp.InvokeAsync(() => timePicker.Instance.Open());
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
             await comp.InvokeAsync(() => timePicker.Instance.Clear());
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
             await comp.InvokeAsync(() => timePicker.Instance.Close(false));
 
             // Change the value of autoclose
@@ -672,10 +672,11 @@ namespace MudBlazor.UnitTests.Components
             picker.Time.Should().Be(new TimeSpan(16, 30, 00));
 
             await comp.InvokeAsync(() => timePicker.Instance.Open());
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
             await comp.InvokeAsync(() => timePicker.Instance.Clear());
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(0));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
         }
 
         [Test]

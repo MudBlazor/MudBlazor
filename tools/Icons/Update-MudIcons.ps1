@@ -61,7 +61,7 @@ $familyMap = @{
 $nextIcons = @{}
 
 ## Sanity check the families we get with what we expect
-$iconsFamilies = $iconsMeta.families | % { $_.ToLower().Replace(' ', '') }
+$iconsFamilies = $iconsMeta.families | ForEach-Object { $_.ToLower().Replace(' ', '') }
 if ($iconsFamilies.Count -ne $familyMap.Count) {
     Write-Warning "Unexpected family count $($iconsFamilies.Count) -ne $($familyMap.Count)"
 }
@@ -176,11 +176,13 @@ namespace MudBlazor
 
         ## This should pull the SVG down as an XML document
         $iconUrl = "https://$iconsUrlHost/s/i/$famPath/$iconName/v$iconVers/24px.svg"
-        $iconSvg = Invoke-RestMethod $iconUrl
+
+        ## Setting SslProtocol solves the error: Authentication failed because the remote party sent a TLS alert: 'DecryptError'
+        $iconSvg = Invoke-RestMethod $iconUrl -SslProtocol Tls12 
 
         ## Convert the name to a valid C# identifier
         $iconVar = $iconName.Trim()
-        $iconVarParts = $iconVar.Split($varSplitters) | % { $_[0].ToString().ToUpper() + $_.Substring(1) }
+        $iconVarParts = $iconVar.Split($varSplitters) | ForEach-Object { $_[0].ToString().ToUpper() + $_.Substring(1) }
         $iconVar = [string]::Join("", $iconVarParts)
         ## In case it doesn't start with a letter
         ## (i.e. number) prefix with an underscore
@@ -193,6 +195,9 @@ namespace MudBlazor
         $iconSvg = $iconSvg.Replace(' xmlns="http://www.w3.org/2000/svg"', '')
         $iconSvg = $iconSvg.Replace(' />', '/>')
         $iconSvg = $iconSvg.Replace("`"", "\`"")
+
+        ## Use regex to remove the title
+        $iconSvg = $iconSvg -replace "<title>.+?</title>", ""
 
         ## Keep track for comparison purposes
         $nextIcons[$famName][$iconVar] = $iconSvg

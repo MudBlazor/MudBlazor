@@ -3,7 +3,7 @@
 <MudPaper Elevation="0">
     <MudList>
         <MudListSubheader>
-            <MudTextField @bind-Value="searchTerm" AdornmentIcon="@Icons.Filled.People"
+            <MudTextField @bind-Value="searchTerm" AdornmentIcon="@Icons.Material.Filled.People"
                           Adornment="Adornment.End" Immediate="true" Variant="Variant.Outlined"
                           Label="Names to search"/>
         </MudListSubheader>
@@ -15,7 +15,7 @@
         }
         @foreach (var name in names)
         {
-            <MudListItem @key="name" Icon="@Icons.Filled.Person">
+            <MudListItem @key="name" Icon="@Icons.Material.Filled.Person">
                 <MudHighlighter Text="@name" HighlightedTexts="@searchTerms" />
             </MudListItem>
         }

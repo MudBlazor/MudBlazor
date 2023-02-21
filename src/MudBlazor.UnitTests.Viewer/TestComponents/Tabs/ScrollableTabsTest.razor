@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTabs Elevation="1" @ref="_tabElement" AlwaysShowScrollButtons="true" Position="Position">
+<MudTabs Elevation="1" @ref="_tabElement" AlwaysShowScrollButtons="AlwaysShowScrollButtons" Position="Position">
 @foreach (var tab in _tabs)
 {
     <MudTabPanel @key="tab" Text="@tab">
@@ -10,7 +10,7 @@
 </MudTabs>
 
 @code
-{ 
+    {
     private MudTabs _tabElement;
 
     public static string __description__ = "scrolling should work";
@@ -18,11 +18,14 @@
     [Parameter]
     public Position Position { get; set; } = Position.Top;
 
+    [Parameter]
+    public bool AlwaysShowScrollButtons { get; set; } = true;
+
     private List<string> _tabs = new List<string> { "1", "2", "3", "4", "5", "6" };
 
     public void  SetPanelActive(int index)
     {
-      InvokeAsync(() => _tabElement.ActivatePanel(index));
+        InvokeAsync(() => _tabElement.ActivatePanel(index));
     }
 
     public async Task AddPanel()

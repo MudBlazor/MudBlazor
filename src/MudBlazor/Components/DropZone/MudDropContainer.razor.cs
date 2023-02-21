@@ -64,7 +64,7 @@ namespace MudBlazor
         /// <param name="identifier">The identifier of the drop zone, where the transaction started</param>
         /// <param name="index">The source index</param>
         /// <param name="commitCallback">A callback that is invokde when the transaction has been successful</param>
-        /// <param name="cancelCallback">A callback that is inviked when the transaction has been cancelled</param>
+        /// <param name="cancelCallback">A callback that is inviked when the transaction has been canceled</param>
         public MudDragAndDropItemTransaction(T item, string identifier, int index, Func<Task> commitCallback, Func<Task> cancelCallback)
         {
             Item = item;

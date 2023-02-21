@@ -15,7 +15,7 @@
                 }
                 else
                 {
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context.EditButtonDisabled(Item)" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context.EditButtonDisabled(Item)" />
                 }
             }
             else if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtStart() == true)
@@ -58,7 +58,7 @@
                 }
                 else
                 {
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context.EditButtonDisabled(Item)" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context.EditButtonDisabled(Item)" />
                 }
             }
             else if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd() == true)

@@ -343,9 +343,9 @@ namespace MudBlazor
             set => _value = value;
         }
 
-        protected virtual async Task SetValueAsync(T value, bool updateText = true)
+        protected virtual async Task SetValueAsync(T value, bool updateText = true, bool force = false)
         {
-            if (!EqualityComparer<T>.Default.Equals(Value, value))
+            if (!EqualityComparer<T>.Default.Equals(Value, value) || force == true)
             {
                 _isDirty = true;
                 Value = value;
@@ -355,6 +355,15 @@ namespace MudBlazor
                 BeginValidate();
                 FieldChanged(Value);
             }
+        }
+
+        /// <summary>
+        /// Sync the value, values and text, calls validation manually. Useful to call after user changes value or text programmatically.
+        /// </summary>
+        /// <returns></returns>
+        public virtual async Task ForceUpdate()
+        {
+            await SetValueAsync(Value, force: true);
         }
 
         /// <summary>

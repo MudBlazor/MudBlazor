@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -616,6 +617,74 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// DateRangePicker should be validated like every other form component when the dateRange
+        /// is changed via inputs
+        /// </summary>
+        [Test]
+        public async Task Form_Should_Validate_DateRangePicker_When_DateRangeSelectedViaInputs()
+        {
+            var comp = Context.RenderComponent<FormWithDateRangePickerTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dateRangeComp = comp.FindComponent<MudDateRangePicker>();
+            var dateRangePicker = comp.FindComponent<MudDateRangePicker>().Instance;
+            var firstDateTime = new DateTime(2023, 01, 20);
+            var secondDateTime = new DateTime(2023, 02, 20);
+            // check initial state: form should not be valid because dateRangePicker is required
+            form.IsValid.Should().Be(false);
+            dateRangePicker.Error.Should().BeFalse();
+            dateRangePicker.ErrorText.Should().BeNullOrEmpty();
+            // input a date
+            await comp.InvokeAsync(() => dateRangeComp.FindAll("input")[0].Change(firstDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern)));
+            await comp.InvokeAsync(() => dateRangeComp.FindAll("input")[1].Change(secondDateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern)));
+            form.IsValid.Should().Be(true);
+            form.Errors.Length.Should().Be(0);
+            dateRangePicker.Error.Should().BeFalse();
+            dateRangePicker.ErrorText.Should().BeNullOrEmpty();
+            // clear selection
+            comp.SetParam(x => x.DateRange, null);
+            form.IsValid.Should().Be(false);
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Required");
+            dateRangePicker.Error.Should().BeTrue();
+            dateRangePicker.ErrorText.Should().Be("Required");
+        }
+        
+        /// <summary>
+        /// DateRangePicker should be validated like every other form component when the dateRange is selected using
+        /// the picker
+        /// </summary>
+        [Test]
+        public async Task Form_Should_Validate_DateRangePicker_When_DateRangeSelectedViaPicker()
+        {
+            var comp = Context.RenderComponent<FormWithDateRangePickerTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dateRangePicker = comp.FindComponent<MudDateRangePicker>().Instance;
+            // check initial state: form should not be valid because dateRangePicker is required
+            form.IsValid.Should().Be(false);
+            dateRangePicker.Error.Should().BeFalse();
+            dateRangePicker.ErrorText.Should().BeNullOrEmpty();
+            comp.Find("input").Click();
+            // clicking day buttons to select a date range
+            await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).Click());
+            await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("11")).Click());
+            // wait for picker to close
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
+            form.IsTouched.Should().Be(true);
+            form.IsValid.Should().Be(true);
+            form.Errors.Length.Should().Be(0);
+            dateRangePicker.Error.Should().BeFalse();
+            dateRangePicker.ErrorText.Should().BeNullOrEmpty();
+            // clear selection
+            comp.SetParam(x => x.DateRange, null);
+            form.IsValid.Should().Be(false);
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Required");
+            dateRangePicker.Error.Should().BeTrue();
+            dateRangePicker.ErrorText.Should().Be("Required");
+        }
+
+        /// <summary>
         /// TimePicker should be validated like every other form component
         /// </summary>
         [Test]
@@ -623,25 +692,25 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormWithTimePickerTest>();
             var form = comp.FindComponent<MudForm>().Instance;
-            var dateComp = comp.FindComponent<MudTimePicker>();
-            var datepicker = comp.FindComponent<MudTimePicker>().Instance;
+            var timePickerComp = comp.FindComponent<MudTimePicker>();
+            var timePicker = comp.FindComponent<MudTimePicker>().Instance;
             // check initial state: form should not be valid because datepicker is required
             form.IsValid.Should().Be(false);
-            datepicker.Error.Should().BeFalse();
-            datepicker.ErrorText.Should().BeNullOrEmpty();
+            timePicker.Error.Should().BeFalse();
+            timePicker.ErrorText.Should().BeNullOrEmpty();
             // input a date
-            dateComp.Find("input").Change("09:30");
+            timePickerComp.Find("input").Change("09:30");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            datepicker.Error.Should().BeFalse();
-            datepicker.ErrorText.Should().BeNullOrEmpty();
+            timePicker.Error.Should().BeFalse();
+            timePicker.ErrorText.Should().BeNullOrEmpty();
             // clear selection
             comp.SetParam(x => x.Time, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
-            datepicker.Error.Should().BeTrue();
-            datepicker.ErrorText.Should().Be("Required");
+            timePicker.Error.Should().BeTrue();
+            timePicker.ErrorText.Should().Be("Required");
         }
 
         /// <summary>
@@ -652,21 +721,21 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormWithTimePickerTest>();
             var form = comp.FindComponent<MudForm>().Instance;
-            var dateComp = comp.FindComponent<MudTimePicker>();
-            var datepicker = comp.FindComponent<MudTimePicker>().Instance;
-            dateComp.SetParam(x => x.Validation, new Func<TimeSpan?, string>(time => time != null && time.Value.Minutes == 0 ? null : "Only full hours allowed"));
-            dateComp.Find("input").Change("09:00");
+            var timeComp = comp.FindComponent<MudTimePicker>();
+            var timePicker = comp.FindComponent<MudTimePicker>().Instance;
+            timeComp.SetParam(x => x.Validation, new Func<TimeSpan?, string>(time => time != null && time.Value.Minutes == 0 ? null : "Only full hours allowed"));
+            timeComp.Find("input").Change("09:00");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
-            datepicker.Error.Should().BeFalse();
-            datepicker.ErrorText.Should().BeNullOrEmpty();
+            timePicker.Error.Should().BeFalse();
+            timePicker.ErrorText.Should().BeNullOrEmpty();
             // set invalid date:
             comp.SetParam(x => x.Time, (TimeSpan?)new TimeSpan(0, 17, 05, 00)); // "17:05"
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Only full hours allowed");
-            datepicker.Error.Should().BeTrue();
-            datepicker.ErrorText.Should().Be("Only full hours allowed");
+            timePicker.Error.Should().BeTrue();
+            timePicker.ErrorText.Should().Be("Only full hours allowed");
         }
 
         /// <summary>
@@ -677,9 +746,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormWithTimePickerTest>();
             var form = comp.FindComponent<MudForm>().Instance;
-            var timeComp = comp.FindComponent<MudTimePicker>();
             var timePicker = comp.FindComponent<MudTimePicker>().Instance;
-            // check initial state: form should not be valid because datepicker is required
+            // check initial state: form should not be valid because timePicker is required
             form.IsValid.Should().Be(false);
             timePicker.Error.Should().BeFalse();
             timePicker.ErrorText.Should().BeNullOrEmpty();

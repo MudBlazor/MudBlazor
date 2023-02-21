@@ -234,6 +234,7 @@ namespace MudBlazor.Docs.Services
             new DocsLink {Title = "Palette", Href = "customization/palette"},
             new DocsLink {Title = "Typography", Href = "customization/typography"},
             new DocsLink {Title = "z-index", Href = "customization/z-index"},
+            new DocsLink {Title = "Pseudo CSS", Href = "customization/pseudocss"},
         }.OrderBy(x => x.Title);
         
         private IEnumerable<DocsLink> _utilities;

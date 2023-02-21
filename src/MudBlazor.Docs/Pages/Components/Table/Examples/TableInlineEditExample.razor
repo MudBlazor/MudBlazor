@@ -62,7 +62,7 @@
         <MudTablePager />
     </PagerContent>
     <EditButtonContent Context="button">
-        <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
     </EditButtonContent>
 </MudTable>
 
@@ -170,7 +170,7 @@
         ((Element)element).Name = elementBeforeEdit.Name;
         ((Element)element).Molar = elementBeforeEdit.Molar;
         ((Element)element).Position = elementBeforeEdit.Position;
-        AddEditionEvent($"RowEditCancel event: Editing of Element {((Element)element).Name} cancelled");
+        AddEditionEvent($"RowEditCancel event: Editing of Element {((Element)element).Name} canceled");
     }
 
     private bool FilterFunc(Element element)

@@ -29,7 +29,7 @@
     };
 
 	[Parameter]
-	public string Icon { get; set; } = Icons.Filled.Abc;
+	public string Icon { get; set; } = Icons.Material.Filled.Abc;
 
 	private async Task<IEnumerable<string>> Search1(string value)
 	{
@@ -45,7 +45,7 @@
 
 	public void ChangeIcon()
 	{
-		Icon = Icons.Filled.AccessAlarm;
+		Icon = Icons.Material.Filled.AccessAlarm;
 		StateHasChanged();
 	}
 

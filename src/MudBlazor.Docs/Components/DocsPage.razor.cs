@@ -22,7 +22,7 @@ namespace MudBlazor.Docs.Components
         private MudPageContentNavigation _contentNavigation;
         private NavigationFooterLink _previous;
         private NavigationFooterLink _next;
-        private NavigationSection? _section = null;
+        private NavigationSection _section;
         private Stopwatch _stopwatch = Stopwatch.StartNew();
         private string _anchor = null;
         private bool _displayView;
