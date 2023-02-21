@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@using MudBlazor.Extensions
 
-<img @attributes="UserAttributes" src="@Src" alt="@Alt" class="@Classname" style="@Style" width="@Width" height="@Height">
+<img @attributes="UserAttributes" src="@Src" alt="@Alt" class="@Classname" style="@Style" width="@Width" height="@Height" loading="@Loading.ToDescriptionString()"/>

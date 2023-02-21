@@ -18,7 +18,7 @@ public partial class MudImage : MudComponentBase
             .AddClass($"mud-elevation-{Elevation}", Elevation > 0)
             .AddClass(Class)
             .Build();
-    
+
     /// <summary>
     /// Applies the fluid class so the image scales with the parent width.
     /// </summary>
@@ -74,4 +74,11 @@ public partial class MudImage : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Image.Appearance)]
     public ObjectPosition ObjectPosition { set; get; } = ObjectPosition.Center;
+    
+    /// <summary>
+    /// Specifies whether a browser should load an image immediately or to defer loading of off-screen images.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Image.Appearance)]
+    public ImageLoading Loading { set; get; } = ImageLoading.Eager;
 }

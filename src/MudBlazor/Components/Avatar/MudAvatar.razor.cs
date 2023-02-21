@@ -83,6 +83,13 @@ namespace MudBlazor
         public Variant Variant { get; set; } = Variant.Filled;
 
         /// <summary>
+        /// Specifies whether a browser should load an image immediately or to defer loading of off-screen images.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Image.Appearance)]
+        public ImageLoading Loading { set; get; } = ImageLoading.Eager;
+        
+        /// <summary>
         /// Child content of the component.
         /// </summary>
         [Parameter]
