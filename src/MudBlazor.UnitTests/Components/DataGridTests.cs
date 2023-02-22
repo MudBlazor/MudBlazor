@@ -10,10 +10,12 @@ using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
+using static MudBlazor.Docs.Examples.TableRelationalExample;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -3343,6 +3345,83 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(true);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
+        }
+
+        [Test]
+        public async Task DataGridCustomSortTest()
+        {
+            var comp = Context.RenderComponent<DataGridCustomSortableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCustomSortableTest.Item>>();
+            dataGrid.Instance.SortMode = SortMode.Single;
+            dataGrid.Instance.SortMode.Should().Be(SortMode.Single);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value, new DataGridCustomSortableTest.NaturalComparer()));
+            dataGrid.FindAll("th .sortable-column-header")[1].TextContent.Trim().Should().Be("Value");
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(true);
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Descending, x => x.Value, new DataGridCustomSortableTest.NaturalComparer()));
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Descending);
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-desc").Should().Be(true);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value));
+            dataGrid.FindAll("th .sortable-column-header")[1].TextContent.Trim().Should().Be("Value");
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(true);
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name, new DataGridCustomSortableTest.NaturalComparer()));
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Ascending);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(true);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => x.Name, new DataGridCustomSortableTest.NaturalComparer()));
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Descending);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-desc").Should().Be(true);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
+
+            dataGrid.Instance.SortMode = SortMode.Multiple;
+            dataGrid.Instance.SortMode.Should().Be(SortMode.Multiple);
+
+            //Assign a comparer to a column
+            var column = dataGrid.FindComponent<Column<DataGridCustomSortableTest.Item>>();
+            await comp.InvokeAsync(() => column.Instance.Comparer = new DataGridCustomSortableTest.NaturalComparer());
+            //Clear sorting
+            await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
+            //Sort by clicking on the header cell
+            dataGrid.Find(".column-options button").Click();
+            var cells = dataGrid.FindAll("td");
+
+            // Check the values of rows - should not be sorted and should be in the original order.
+            cells[0].TextContent.Should().Be("0");
+            cells[3].TextContent.Should().Be("1");
+            cells[6].TextContent.Should().Be("1_2");
+            cells[9].TextContent.Should().Be("1_10");
+            cells[12].TextContent.Should().Be("1_11");
+            cells[15].TextContent.Should().Be("2");
+            cells[18].TextContent.Should().Be("10");
+
+            //Multi click second column
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridCustomSortableTest.Item>>()[1];
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { CtrlKey = true, Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Ascending);
+
+            //Multi click second column a second time to change it to descending
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { CtrlKey = true, Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Descending);
+
+            //remove first column from sort
+            headerCell = dataGrid.FindComponents<HeaderCell<DataGridCustomSortableTest.Item>>()[0];
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { AltKey = true, Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.None);
         }
 
         [Test]

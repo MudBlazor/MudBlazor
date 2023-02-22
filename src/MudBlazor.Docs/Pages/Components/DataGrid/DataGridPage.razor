@@ -125,6 +125,20 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Advanced Sorting">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to provide your own <CodeInline>Comparer</CodeInline> for advanced sorting. Keep in mind that the <CodeInline>Comparer</CodeInline>
+                    will use the same object passed by the <CodeInline>SortBy</CodeInline> parameter. If <CodeInline>SortBy</CodeInline> is not supplied, it will use the column item for its comparison.
+                    You can also manually call <CodeInline>SetSortAsync</CodeInline> on the DataGrid while passing your <CodeInline>Comparer</CodeInline>.
+                    <CodeInline>Comparer</CodeInline> must implement <CodeInline>IComparer&lt;object></CodeInline>. This example uses a natural sorting algorithm to sort strings with numbers properly.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridCustomSortingExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridCustomSortingExample />
+            </SectionContent>
+        </DocsPageSection>
+
          <DocsPageSection>
             <SectionHeader Title="Filtering">
                 <Description>

@@ -313,9 +313,9 @@ namespace MudBlazor
             };
 
             if (args.CtrlKey && DataGrid.SortMode == SortMode.Multiple)
-                await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, _initialDirection, Column.GetLocalSortFunc()));
+                await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, _initialDirection, Column.GetLocalSortFunc(), Column.Comparer));
             else
-                await InvokeAsync(() => DataGrid.SetSortAsync(Column.PropertyName, _initialDirection, Column.GetLocalSortFunc()));
+                await InvokeAsync(() => DataGrid.SetSortAsync(Column.PropertyName, _initialDirection, Column.GetLocalSortFunc(), Column.Comparer));
         }
 
         internal async Task RemoveSortAsync()
