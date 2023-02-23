@@ -186,6 +186,11 @@ namespace MudBlazor
         #region Parameters
 
         /// <summary>
+        /// Enables the Edit Dialog.
+        /// </summary>
+        [Parameter] public bool EnableEditDialog { get; set; } = true;
+
+        /// <summary>
         /// Controls whether data in the DataGrid can be sorted. This is overridable by each column.
         /// </summary>
         [Parameter] public SortMode SortMode { get; set; } = SortMode.Multiple;

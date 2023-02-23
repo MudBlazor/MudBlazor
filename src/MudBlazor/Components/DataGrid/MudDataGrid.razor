@@ -240,7 +240,9 @@
             }
         }
     </div>
-    <MudDialog @bind-IsVisible="isEditFormOpen" Options="EditDialogOptions">
+    @if (EnableEditDialog)
+	{
+		<MudDialog @bind-IsVisible="isEditFormOpen" Options="EditDialogOptions">
         <TitleContent>
             <MudText Typo="Typo.h6">
                 Edit
@@ -277,6 +279,7 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10">Save</MudButton>
         </DialogActions>
     </MudDialog>
+	}
 </CascadingValue>
 
 @code {
