@@ -243,7 +243,7 @@
     <MudDialog @bind-IsVisible="isEditFormOpen" Options="EditDialogOptions">
         <TitleContent>
             <MudText Typo="Typo.h6">
-                Edit
+                @(EditDialogOptions?.TitleValue ?? "Edit")
             </MudText>
         </TitleContent>
         <DialogContent>
@@ -261,20 +261,20 @@
                         if (column.dataType == typeof(string))
                         {
                             <MudTextField T="string" Label="@column.computedTitle" Value="@cell.valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
-                                Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                                Required="@(column.EntryRequired)" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" Lines="@(column.EditDialogTextFieldLines)" />
                         }
                         else if (column.isNumber)
                         {
                             <MudNumericField T="double?" Label="@column.computedTitle" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
-                                Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                                Required="@(column.EntryRequired)" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" Lines="@(column.EditDialogTextFieldLines)" />
                         }
                     }
                 }
             </MudForm>
         </DialogContent>
         <DialogActions>
-            <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@CancelEditingItemAsync" Class="px-10">Cancel</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10">Save</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@CancelEditingItemAsync" Class="px-10">@(EditDialogOptions?.CancelValue ??"Cancel")</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10">@(EditDialogOptions?.SaveValue ?? "Save")</MudButton>
         </DialogActions>
     </MudDialog>
 </CascadingValue>
@@ -338,12 +338,12 @@
                     if (column.dataType == typeof(string))
                     {
                         <MudTextField T="string" Value="@cell.valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense" Style="margin-top:0"
-                            Required="true" Variant="@Variant.Text" />
+                            Required="@(column.EntryRequired)" Variant="@Variant.Text" />
                     }
                     else if (column.isNumber)
                     {
                         <MudNumericField T="double?" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense" Style="margin-top:0"
-                            Required="true" Variant="@Variant.Text" Culture="@column.Culture" />
+                            Required="@(column.EntryRequired)" Variant="@Variant.Text" Culture="@column.Culture" />
                     }
                 }
             }
