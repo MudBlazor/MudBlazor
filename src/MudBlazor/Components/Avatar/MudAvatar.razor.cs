@@ -51,7 +51,6 @@ namespace MudBlazor
         /// Link to image, if set a image will be displayed instead of text.
         /// </summary>
         [Parameter]
-        //[Category(CategoryTypes.Avatar.Behavior)]
         [Obsolete("Add a MudImage as the ChildContent instead", true)]
         public string Image { get; set; }
 
@@ -59,7 +58,6 @@ namespace MudBlazor
         /// If set (and Image is also set), will add an alt property to the img element
         /// </summary>
         [Parameter]
-        //[Category(CategoryTypes.Avatar.Behavior)]
         [Obsolete("Add a MudImage as the ChildContent instead", true)]
         public string Alt { get; set; }
 
