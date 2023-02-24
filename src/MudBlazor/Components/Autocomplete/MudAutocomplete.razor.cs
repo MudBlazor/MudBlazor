@@ -537,7 +537,7 @@ namespace MudBlazor
         {
             _isCleared = true;
             IsOpen = false;
-            await SetTextAsync(string.Empty, updateValue: false);
+            await SetTextAsync(null, updateValue: false);
             await CoerceValueToText();
             if (_elementReference != null)
                 await _elementReference.SetText("");
@@ -548,7 +548,6 @@ namespace MudBlazor
         protected override async void ResetValue()
         {
             await Clear();
-            base.ResetValue();
         }
 
 
@@ -740,7 +739,7 @@ namespace MudBlazor
         protected override void Dispose(bool disposing)
         {
             _timer?.Dispose();
-            
+
             if (_cancellationTokenSrc != null)
             {
                 try
