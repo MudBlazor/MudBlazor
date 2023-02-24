@@ -51,7 +51,7 @@ namespace MudBlazor
         /// Link to image, if set a image will be displayed instead of text.
         /// </summary>
         [Parameter]
-        [Obsolete("Add a MudImage as the ChildContent instead", true)]
+        [Obsolete("Add a MudImage as the ChildContent instead", false)]
         public string Image { get; set; }
 
         /// <summary>
