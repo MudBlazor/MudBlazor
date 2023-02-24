@@ -58,7 +58,7 @@ namespace MudBlazor
         /// If set (and Image is also set), will add an alt property to the img element
         /// </summary>
         [Parameter]
-        [Obsolete("Add a MudImage as the ChildContent instead", true)]
+        [Obsolete("Add a MudImage as the ChildContent instead", false)]
         public string Alt { get; set; }
 
         /// <summary>
