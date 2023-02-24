@@ -537,7 +537,7 @@ namespace MudBlazor
         {
             _isCleared = true;
             IsOpen = false;
-            await SetTextAsync(null, updateValue: false);
+            await SetTextAsync(string.Empty, updateValue: false);
             await CoerceValueToText();
             if (_elementReference != null)
                 await _elementReference.SetText("");

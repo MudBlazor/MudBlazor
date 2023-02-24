@@ -491,7 +491,7 @@ namespace MudBlazor
 
         protected override void ResetValue()
         {
-            SetTextAsync(null, updateValue: true).AndForget();
+            SetTextAsync(string.Empty, updateValue: true).AndForget();
             this._isDirty = false;
             base.ResetValue();
         }
