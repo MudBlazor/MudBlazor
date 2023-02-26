@@ -55,7 +55,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
         public Action OnBackdropClick { get; set; }
-        
+
         /// <summary>
         /// No padding at the sides
         /// </summary>
@@ -107,6 +107,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
 
+        /// <summary>
+        /// If true, the Dialog will always behave as if it is inline, even if it recieves a DialogInstance
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public bool ForceInline { get; set; }
 
         /// <summary>
         /// Define the dialog title as a renderfragment (overrides Title)
@@ -115,7 +121,7 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Behavior)]
         public DefaultFocus DefaultFocus { get; set; }
 
-        private bool IsInline => DialogInstance == null;
+        private bool IsInline => ForceInline || DialogInstance == null;
 
         private IDialogReference _reference;
 
@@ -195,7 +201,8 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            DialogInstance?.Register(this);
+            if (!ForceInline)
+                DialogInstance?.Register(this);
         }
     }
 }
