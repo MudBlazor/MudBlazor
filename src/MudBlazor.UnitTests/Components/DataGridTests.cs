@@ -255,17 +255,20 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridCellEditTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditTest.Model>>();
-
-            dataGrid.FindAll("td input")[0].GetAttribute("value").Trim().Should().Be("John");
-            dataGrid.FindAll("td input")[1].GetAttribute("value").Trim().Should().Be("45");
-            dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("Johanna");
-            dataGrid.FindAll("td input")[3].GetAttribute("value").Trim().Should().Be("23");
-            dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("Steve");
-            dataGrid.FindAll("td input")[5].GetAttribute("value").Trim().Should().Be("32");
-            dataGrid.FindAll(".mud-table-body tr td input")[0].Change("Jonathan");
-            dataGrid.FindAll(".mud-table-body tr td input")[1].Change(52d);
-            dataGrid.FindAll(".mud-table-body tr td input")[0].GetAttribute("value").Trim().Should().Be("Jonathan");
-            dataGrid.FindAll(".mud-table-body tr td input")[1].GetAttribute("value").Trim().Should().Be("52");
+            
+            dataGrid.FindAll("td input")[0].GetAttribute("type").Trim().Should().Be("checkbox");
+            dataGrid.FindAll("td input")[1].GetAttribute("value").Trim().Should().Be("John");
+            dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("45");
+            dataGrid.FindAll("td input")[3].GetAttribute("type").Trim().Should().Be("checkbox");
+            dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td input")[5].GetAttribute("value").Trim().Should().Be("23");
+            dataGrid.FindAll("td input")[6].GetAttribute("type").Trim().Should().Be("checkbox");
+            dataGrid.FindAll("td input")[7].GetAttribute("value").Trim().Should().Be("Steve");
+            dataGrid.FindAll("td input")[8].GetAttribute("value").Trim().Should().Be("32");
+            dataGrid.FindAll(".mud-table-body tr td input")[1].Change("Jonathan");
+            dataGrid.FindAll(".mud-table-body tr td input")[2].Change(52d);
+            dataGrid.FindAll(".mud-table-body tr td input")[1].GetAttribute("value").Trim().Should().Be("Jonathan");
+            dataGrid.FindAll(".mud-table-body tr td input")[2].GetAttribute("value").Trim().Should().Be("52");
 
             var name = dataGrid.Instance.Items.First().Name;
             var age = dataGrid.Instance.Items.First().Age;
