@@ -205,7 +205,7 @@ namespace MudBlazor
         public bool SelectOnClick { get; set; } = true;
 
         /// <summary>
-        /// If true, clicking on the Autocomplete after selecting an option will query the Search method again with an empty string. This makes it easier to view and select other options without resetting the Value.
+        /// If false, clicking on the Autocomplete after selecting an option will query the Search method again with an empty string. This makes it easier to view and select other options without resetting the Value.
         /// T must either be a record or override GetHashCode and Equals.
         /// </summary>
         [Parameter]
