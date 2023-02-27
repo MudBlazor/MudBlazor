@@ -111,13 +111,14 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Force Inlining Dialog">
+            <SectionHeader Title="Nested Inline Dialogs">
                 <Description>
-                    You can inline a <CodeInline>MudDialog</CodeInline> within another <CodeInline>MudDialog</CodeInline> if you set <CodeInline>ForceInline</CodeInline> to true.
+                    You can inline a <CodeInline>MudDialog</CodeInline> within another <CodeInline>MudDialog</CodeInline>. 
+                    When using <CodeInline>DialogService.Show()</CodeInline>, you must wrap a <CodeInline>MudDialog</CodeInline> around the content in your dialog component, or your nested <CodeInline>MudDialog</CodeInline> will show instead.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="DialogForceInlineExample">
-                <DialogForceInlineExample />
+            <SectionContent Code="DialogNestedInlineExample">
+                <DialogNestedInlineExample />
             </SectionContent>
         </DocsPageSection>
 
