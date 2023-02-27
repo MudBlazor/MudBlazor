@@ -137,14 +137,14 @@ namespace MudBlazor.UnitTests.Components
         /// Nested dialogs should not appear unless manually shown
         /// </summary>
         [Test]
-        public async Task ForceInlineDialogTest()
+        public async Task NestedInlineDialogTest()
         {
             var provider = Context.RenderComponent<MudDialogProvider>();
             provider.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             // displaying the component with the inline dialog only renders the open button
-            var comp = Context.RenderComponent<TestForceInlineDialog>();
+            var comp = Context.RenderComponent<TestNestedInlineDialog>();
             comp.FindComponents<MudButton>().Count.Should().Be(1);
             // open the dialog
             comp.Find("button").Click();

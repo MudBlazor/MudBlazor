@@ -20,6 +20,7 @@ namespace MudBlazor
         .Build();
 
         [CascadingParameter] private MudDialogInstance DialogInstance { get; set; }
+        [CascadingParameter(Name = "IsNested")] private bool IsNested { get; set; }
 
         [Inject] public IDialogService DialogService { get; set; }
 
@@ -108,20 +109,13 @@ namespace MudBlazor
         [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
 
         /// <summary>
-        /// If true, the Dialog will always behave as if it is inline, even if it recieves a DialogInstance
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Dialog.Behavior)]
-        public bool ForceInline { get; set; }
-
-        /// <summary>
         /// Define the dialog title as a renderfragment (overrides Title)
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
         public DefaultFocus DefaultFocus { get; set; }
 
-        private bool IsInline => ForceInline || DialogInstance == null;
+        private bool IsInline => IsNested || DialogInstance == null;
 
         private IDialogReference _reference;
 
@@ -201,7 +195,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            if (!ForceInline)
+            if (!IsNested)
                 DialogInstance?.Register(this);
         }
     }

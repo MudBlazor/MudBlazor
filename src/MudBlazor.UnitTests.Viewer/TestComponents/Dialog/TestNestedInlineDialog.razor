@@ -6,7 +6,7 @@
     <DialogContent>
         <MudText>Scorpiany!</MudText>
         <MudButton Variant="Variant.Filled" OnClick="()=>nestedVisible=true">Open Nested</MudButton>
-        <MudDialog @bind-IsVisible="nestedVisible" ForceInline>
+        <MudDialog @bind-IsVisible="nestedVisible">
             <DialogContent>
                 <MudText Class="nested">Nested dialog!</MudText>
             </DialogContent>
