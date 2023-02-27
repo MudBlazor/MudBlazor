@@ -5,7 +5,7 @@ namespace MudBlazor.Extensions
 {
     public static class EnumExtensions
     {
-        [Obsolete("Please use custom source code generated ToDescriptionString method instead or implement a own extension method.")]
+        [Obsolete("Please use the auto-generated ToDescriptionString method instead or implement your own extension method.")]
         public static string ToDescriptionString(this Enum val)
         {
             var attributes = (DescriptionAttribute[])val.GetType().GetField(val.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false);
