@@ -5,10 +5,12 @@
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Open">Open Inline</MudButton>
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Open2">Open With Show</MudButton>
 
+@*Outer inline dialog*@
 <MudDialog @bind-IsVisible="visible">
     <DialogContent>
         <MudText>Hi There, I'm an inline dialog!</MudText>
         <MudButton Variant="Variant.Filled" Color="Color.Tertiary" OnClick="OpenNested">Open Nested</MudButton>
+        @*Nested inline dialog*@
         <MudDialog @bind-IsVisible="nestedVisible">
             <DialogContent>
                 <MudText Class="nested">Nested inline dialog!</MudText>
@@ -32,5 +34,6 @@
     private void OpenNested() => nestedVisible = true;
     private void CloseNested() => nestedVisible = false;
 
+    @*Open a non-inline dialog component that nests an inline dialog*@
     private void Open2() => DialogService.Show<DialogNestedInlineExample_Dialog>();
 }

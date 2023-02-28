@@ -1,10 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudDialog @bind-IsVisible="visible">
+@*Outer dialog*@
+<MudDialog>
     <DialogContent>
         <MudText>Hi There, I'm a regular dialog!</MudText>
         <MudButton Variant="Variant.Filled" Color="Color.Tertiary" OnClick="OpenNested">Open Nested</MudButton>
-        @*Without the parent dialog, this nested dialog would appear without being opened*@
+        @*Nested dialog*@
         <MudDialog @bind-IsVisible="nestedVisible">
             <DialogContent>
                 <MudText Class="nested">Nested inline dialog!</MudText>
@@ -23,10 +24,6 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
-
-    private bool visible;
     private bool nestedVisible;
     private void OpenNested() => nestedVisible = true;
     private void CloseNested() => nestedVisible = false;
