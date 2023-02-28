@@ -16,6 +16,6 @@ namespace MudBlazor.Docs.Services.UserPreferences
         /// <summary>
         /// The current dark light mode that is used
         /// </summary>
-        public DarkLightMode DarkTheme { get; set; }
+        public DarkLightMode DarkLightTheme { get; set; }
     }
 }

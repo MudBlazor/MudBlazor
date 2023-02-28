@@ -42,7 +42,7 @@ public class LayoutService
         _userPreferences = await _userPreferencesService.LoadUserPreferences();
         if (_userPreferences != null)
         {
-            IsDarkMode = _userPreferences.DarkTheme switch
+            IsDarkMode = _userPreferences.DarkLightTheme switch
             {
                 DarkLightMode.Dark => true,
                 DarkLightMode.Light => false,
@@ -54,7 +54,7 @@ public class LayoutService
         else
         {
             IsDarkMode = isDarkModeDefaultTheme;
-            _userPreferences = new UserPreferences.UserPreferences {DarkTheme = DarkLightMode.System};
+            _userPreferences = new UserPreferences.UserPreferences {DarkLightTheme = DarkLightMode.System};
             await _userPreferencesService.SaveUserPreferences(_userPreferences);
         }
     }
@@ -91,7 +91,7 @@ public class LayoutService
                 break;
         }
 
-        _userPreferences.DarkTheme = DarkModeToggle;
+        _userPreferences.DarkLightTheme = DarkModeToggle;
         await _userPreferencesService.SaveUserPreferences(_userPreferences);
         OnMajorUpdateOccured();
     }
