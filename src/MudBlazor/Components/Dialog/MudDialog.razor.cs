@@ -20,6 +20,7 @@ namespace MudBlazor
         .Build();
 
         [CascadingParameter] private MudDialogInstance DialogInstance { get; set; }
+        [CascadingParameter(Name = "IsNested")] private bool IsNested { get; set; }
 
         [Inject] public IDialogService DialogService { get; set; }
 
@@ -55,7 +56,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
         public Action OnBackdropClick { get; set; }
-        
+
         /// <summary>
         /// No padding at the sides
         /// </summary>
@@ -107,7 +108,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
 
-
         /// <summary>
         /// Define the dialog title as a renderfragment (overrides Title)
         /// </summary>
@@ -115,7 +115,7 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Behavior)]
         public DefaultFocus DefaultFocus { get; set; }
 
-        private bool IsInline => DialogInstance == null;
+        private bool IsInline => IsNested || DialogInstance == null;
 
         private IDialogReference _reference;
 
@@ -195,7 +195,8 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            DialogInstance?.Register(this);
+            if (!IsNested)
+                DialogInstance?.Register(this);
         }
     }
 }

@@ -115,10 +115,10 @@ namespace MudBlazor
             {
                 builder.OpenComponent<MudDialogInstance>(0);
                 builder.SetKey(dialogReference.Id);
-                builder.AddAttribute(1, "Options", options);
-                builder.AddAttribute(2, "Title", title);
-                builder.AddAttribute(3, "Content", dialogContent);
-                builder.AddAttribute(4, "Id", dialogReference.Id);
+                builder.AddAttribute(1, nameof(MudDialogInstance.Options), options);
+                builder.AddAttribute(2, nameof(MudDialogInstance.Title), title);
+                builder.AddAttribute(3, nameof(MudDialogInstance.Content), dialogContent);
+                builder.AddAttribute(4, nameof(MudDialogInstance.Id), dialogReference.Id);
                 builder.CloseComponent();
             });
             dialogReference.InjectRenderFragment(dialogInstance);

@@ -1,19 +1,23 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudCarousel Style="height:200px;" ShowArrows="true" ArrowsPosition="Position.Top" BulletsPosition="Position.Start" ShowDelimiters="true" AutoCycle="false" AutoCycleTime="TimeSpan.FromMilliseconds(500)" TData="object">
-    <MudCarouselItem Class="fake-class-item1">
+<MudCarousel @bind-SelectedIndex="SelectedIndex" Style="height:200px;" ShowArrows="true" ArrowsPosition="Position.Top" BulletsPosition="Position.Start" ShowDelimiters="true" AutoCycle="false" AutoCycleTime="TimeSpan.FromMilliseconds(500)" TData="object">
+    <MudCarouselItem Class="fake-class-item1" Transition="Transition.Slide">
         <div class="d-flex" style="background-color:#594AE2; height:100%">
             <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
         </div>
     </MudCarouselItem>
-    <MudCarouselItem Class="fake-class-item2">
+    <MudCarouselItem Class="fake-class-item2" Transition="Transition.Slide">
         <div class="d-flex" style="background-color:#FF4081; height:100%">
             <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
         </div>
     </MudCarouselItem>
-    <MudCarouselItem Class="fake-class-item3">
+    <MudCarouselItem Class="fake-class-item3" Transition="Transition.Slide">
         <div class="d-flex" style="background-color:lightgray; height:100%">
             <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Color="@Color.Primary" Size="@Size.Large" />
         </div>
     </MudCarouselItem>
 </MudCarousel>
+
+@code {
+    public int SelectedIndex { get; set; }
+}
