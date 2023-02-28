@@ -181,6 +181,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<FormFieldChangedEventArgs> FormFieldChanged { get; set; }
 
+        [Parameter] public Func<T, Task<bool>> OpenExternalEditForm { get; set; }
+
         #endregion
 
         #region Parameters
@@ -1142,7 +1144,22 @@ namespace MudBlazor
             _editingItem = JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(item));
             StartedEditingItemEvent?.Invoke();
             await StartedEditingItem.InvokeAsync(_editingItem);
-            isEditFormOpen = true;
+
+            if (OpenExternalEditForm != null)
+            {
+                if (await OpenExternalEditForm(_editingItem))
+                {
+                    await CommitItemChangesAsync();
+                }
+                else
+                {
+                    await CancelEditingItemAsync();
+                }
+            }
+            else
+            {
+                isEditFormOpen = true;
+            }
         }
 
         /// <summary>
