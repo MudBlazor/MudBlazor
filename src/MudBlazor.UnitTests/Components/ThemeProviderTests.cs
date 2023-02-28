@@ -2,6 +2,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
@@ -11,7 +12,6 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-    using System.Threading.Tasks;
 
     [TestFixture]
     public class ThemeProviderTests : BunitTest
