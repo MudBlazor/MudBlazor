@@ -1,14 +1,10 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-@inject IDialogService DialogService
-
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Open">Open Inline</MudButton>
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Open2">Open With Show</MudButton>
-
 <MudDialog @bind-IsVisible="visible">
     <DialogContent>
-        <MudText>Hi There, I'm an inline dialog!</MudText>
+        <MudText>Hi There, I'm a regular dialog!</MudText>
         <MudButton Variant="Variant.Filled" Color="Color.Tertiary" OnClick="OpenNested">Open Nested</MudButton>
+        @*Without the parent dialog, this nested dialog would appear without being opened*@
         <MudDialog @bind-IsVisible="nestedVisible">
             <DialogContent>
                 <MudText Class="nested">Nested inline dialog!</MudText>
@@ -19,18 +15,19 @@
         </MudDialog>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Primary" OnClick="Close">Close</MudButton>
+        <MudButton Color="Color.Primary" OnClick="(() => MudDialog.Close())">Close</MudButton>
     </DialogActions>
 </MudDialog>
 
+
 @code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+
     private bool visible;
     private bool nestedVisible;
-
-    private void Open() => visible = true;
-    private void Close() => visible = false;
     private void OpenNested() => nestedVisible = true;
     private void CloseNested() => nestedVisible = false;
-
-    private void Open2() => DialogService.Show<DialogNestedInlineExample_Dialog>();
 }
