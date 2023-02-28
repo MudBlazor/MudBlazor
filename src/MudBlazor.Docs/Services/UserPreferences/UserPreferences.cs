@@ -14,7 +14,7 @@ namespace MudBlazor.Docs.Services.UserPreferences
         public bool RightToLeft { get; set; }
         
         /// <summary>
-        /// If true DarkTheme is used. LightTheme otherwise
+        /// The current dark light mode that is used
         /// </summary>
         public DarkLightMode DarkTheme { get; set; }
     }
