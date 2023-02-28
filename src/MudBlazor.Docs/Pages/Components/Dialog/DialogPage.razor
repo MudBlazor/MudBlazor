@@ -111,6 +111,18 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Nested Inline Dialogs">
+                <Description>
+                    You can inline a <CodeInline>MudDialog</CodeInline> within another <CodeInline>MudDialog</CodeInline>. 
+                    When using <CodeInline>DialogService.Show()</CodeInline>, you must wrap a <CodeInline>MudDialog</CodeInline> around the content in your dialog component, or your nested <CodeInline>MudDialog</CodeInline> will show instead.
+                </Description>
+            </SectionHeader>
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogNestedInlineExample"), new CodeFile("Dialog.razor", "DialogNestedInlineExample_Dialog")})">
+                <DialogNestedInlineExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Nested Dialog and Cancel All">
                 <Description>
                     It is possible to open multiple dialogs at the same time.
