@@ -13,7 +13,7 @@
 
         public MudTheme()
         {
-            Palette = new Palette();
+            Palette = new PaletteLight();
             PaletteDark = new PaletteDark();
             Shadows = new Shadow();
             Typography = new Typography();

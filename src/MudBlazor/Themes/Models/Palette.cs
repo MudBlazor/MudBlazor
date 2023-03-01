@@ -2,6 +2,9 @@
 
 namespace MudBlazor
 {
+    using System;
+
+    [Obsolete("This property will be abstract in a future update. Use PaletteLight, PaletteDark or your own implementation.", false)]
     public class Palette
     {
         private MudColor _primaryDarken = null;
@@ -22,23 +25,23 @@ namespace MudBlazor
         private MudColor _darkLighten = null;
 
         public virtual MudColor Black { get; set; } = "#272c34";
-        public MudColor White { get; set; } = Colors.Shades.White;
+        public virtual MudColor White { get; set; } = Colors.Shades.White;
         public virtual MudColor Primary { get; set; } = "#594AE2";
-        public MudColor PrimaryContrastText { get; set; } = Colors.Shades.White;
-        public MudColor Secondary { get; set; } = Colors.Pink.Accent2;
-        public MudColor SecondaryContrastText { get; set; } = Colors.Shades.White;
-        public MudColor Tertiary { get; set; } = "#1EC8A5";
-        public MudColor TertiaryContrastText { get; set; } = Colors.Shades.White;
+        public virtual MudColor PrimaryContrastText { get; set; } = Colors.Shades.White;
+        public virtual MudColor Secondary { get; set; } = Colors.Pink.Accent2;
+        public virtual MudColor SecondaryContrastText { get; set; } = Colors.Shades.White;
+        public virtual MudColor Tertiary { get; set; } = "#1EC8A5";
+        public virtual MudColor TertiaryContrastText { get; set; } = Colors.Shades.White;
         public virtual MudColor Info { get; set; } = Colors.Blue.Default;
-        public MudColor InfoContrastText { get; set; } = Colors.Shades.White;
+        public virtual MudColor InfoContrastText { get; set; } = Colors.Shades.White;
         public virtual MudColor Success { get; set; } = Colors.Green.Accent4;
-        public MudColor SuccessContrastText { get; set; } = Colors.Shades.White;
+        public virtual MudColor SuccessContrastText { get; set; } = Colors.Shades.White;
         public virtual MudColor Warning { get; set; } = Colors.Orange.Default;
-        public MudColor WarningContrastText { get; set; } = Colors.Shades.White;
+        public virtual MudColor WarningContrastText { get; set; } = Colors.Shades.White;
         public virtual MudColor Error { get; set; } = Colors.Red.Default;
-        public MudColor ErrorContrastText { get; set; } = Colors.Shades.White;
+        public virtual MudColor ErrorContrastText { get; set; } = Colors.Shades.White;
         public virtual MudColor Dark { get; set; } = Colors.Grey.Darken3;
-        public MudColor DarkContrastText { get; set; } = Colors.Shades.White;
+        public virtual MudColor DarkContrastText { get; set; } = Colors.Shades.White;
         public virtual MudColor TextPrimary { get; set; } = Colors.Grey.Darken3;
         public virtual MudColor TextSecondary { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.54).ToString(MudColorOutputFormats.RGBA);
         public virtual MudColor TextDisabled { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.38).ToString(MudColorOutputFormats.RGBA);
@@ -57,7 +60,7 @@ namespace MudBlazor
         public virtual MudColor LinesInputs { get; set; } = Colors.Grey.Lighten1;
         public virtual MudColor TableLines { get; set; } = new MudColor(Colors.Grey.Lighten2).SetAlpha(1.0).ToString(MudColorOutputFormats.RGBA);
         public virtual MudColor TableStriped { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.02).ToString(MudColorOutputFormats.RGBA);
-        public MudColor TableHover { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.04).ToString(MudColorOutputFormats.RGBA);
+        public virtual MudColor TableHover { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.04).ToString(MudColorOutputFormats.RGBA);
         public virtual MudColor Divider { get; set; } = Colors.Grey.Lighten2;
         public virtual MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
 
