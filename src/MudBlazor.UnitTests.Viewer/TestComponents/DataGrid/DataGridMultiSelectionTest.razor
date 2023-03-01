@@ -1,10 +1,23 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items="@_items" MultiSelection="true" @bind-SelectedItems="_selectedItems" Sortable="true"
-    Bordered="true">
+<MudDataGrid Items="@_items" MultiSelection @bind-SelectedItems="_selectedItems" Bordered>
     <Columns>
-        <SelectColumn T="Item"/>
-        <Column T="Item" Field="@nameof(Item.Name)" />
+        @*<TemplateColumn Title="Select Template Column" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
+                        Filterable="false">
+            <HeaderTemplate>
+
+                    <MudCheckBox T="bool" Size="Size.Small" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAll" />
+                
+            </HeaderTemplate>
+            <CellTemplate>
+                <MudCheckBox T="bool" Size="Size.Small" Checked="@context.IsSelected" CheckedChanged="@context.Actions.SetSelectedItem" />
+            </CellTemplate>
+            <FooterTemplate>
+                    <MudCheckBox T="bool" Size="Size.Small" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAll" />
+            </FooterTemplate>
+        </TemplateColumn>*@
+        <SelectColumn />
+        <PropertyColumn Property="x => x.Name" />
     </Columns>
 </MudDataGrid>
 

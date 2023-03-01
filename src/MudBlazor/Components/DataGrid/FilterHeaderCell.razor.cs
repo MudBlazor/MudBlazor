@@ -45,7 +45,8 @@ namespace MudBlazor
                 if (DataGrid == null)
                     return false;
 
-                return DataGrid.FilterDefinitions.Any(x => x.Field == Column.Field && x.Operator != null && x.Value != null);
+                return false;
+                //return DataGrid.FilterDefinitions.Any(x => x.Field == Column.Field && x.Operator != null && x.Value != null);
             }
         }
 
@@ -53,7 +54,7 @@ namespace MudBlazor
         {
             get
             {
-                return Column?.dataType;
+                return Column?.PropertyType;
             }
         }
 
@@ -100,40 +101,40 @@ namespace MudBlazor
         private void ChangeOperator(string o)
         {
             _operator = o;
-            Column.filterContext.FilterDefinition.Operator = _operator;
-            ApplyFilter(Column.filterContext.FilterDefinition);
+            Column.FilterContext.FilterDefinition.Operator = _operator;
+            ApplyFilter(Column.FilterContext.FilterDefinition);
         }
 
         internal void StringValueChanged(string value)
         {
             _valueString = value;
-            Column.filterContext.FilterDefinition.Operator = _operator;
-            Column.filterContext.FilterDefinition.Value = value;
-            ApplyFilter(Column.filterContext.FilterDefinition);
+            Column.FilterContext.FilterDefinition.Operator = _operator;
+            Column.FilterContext.FilterDefinition.Value = value;
+            ApplyFilter(Column.FilterContext.FilterDefinition);
         }
 
         internal void NumberValueChanged(double? value)
         {
             _valueNumber = value;
-            Column.filterContext.FilterDefinition.Operator = _operator;
-            Column.filterContext.FilterDefinition.Value = value;
-            ApplyFilter(Column.filterContext.FilterDefinition);
+            Column.FilterContext.FilterDefinition.Operator = _operator;
+            Column.FilterContext.FilterDefinition.Value = value;
+            ApplyFilter(Column.FilterContext.FilterDefinition);
         }
 
         internal void EnumValueChanged(Enum value)
         {
             _valueEnum = value;
-            Column.filterContext.FilterDefinition.Operator = _operator;
-            Column.filterContext.FilterDefinition.Value = value;
-            ApplyFilter(Column.filterContext.FilterDefinition);
+            Column.FilterContext.FilterDefinition.Operator = _operator;
+            Column.FilterContext.FilterDefinition.Value = value;
+            ApplyFilter(Column.FilterContext.FilterDefinition);
         }
 
         internal void BoolValueChanged(bool? value)
         {
             _valueBool = value;
-            Column.filterContext.FilterDefinition.Operator = _operator;
-            Column.filterContext.FilterDefinition.Value = value;
-            ApplyFilter(Column.filterContext.FilterDefinition);
+            Column.FilterContext.FilterDefinition.Operator = _operator;
+            Column.FilterContext.FilterDefinition.Value = value;
+            ApplyFilter(Column.FilterContext.FilterDefinition);
         }
 
         internal void DateValueChanged(DateTime? value)
@@ -150,15 +151,15 @@ namespace MudBlazor
                     date.Add(_valueTime.Value);
                 }
 
-                Column.filterContext.FilterDefinition.Operator = _operator;
-                Column.filterContext.FilterDefinition.Value = date;
-                ApplyFilter(Column.filterContext.FilterDefinition);
+                Column.FilterContext.FilterDefinition.Operator = _operator;
+                Column.FilterContext.FilterDefinition.Value = date;
+                ApplyFilter(Column.FilterContext.FilterDefinition);
             }
             else
             {
-                Column.filterContext.FilterDefinition.Operator = _operator;
-                Column.filterContext.FilterDefinition.Value = value;
-                ApplyFilter(Column.filterContext.FilterDefinition);
+                Column.FilterContext.FilterDefinition.Operator = _operator;
+                Column.FilterContext.FilterDefinition.Value = value;
+                ApplyFilter(Column.FilterContext.FilterDefinition);
             }
         }
 
@@ -176,9 +177,9 @@ namespace MudBlazor
                     date = date.Add(_valueTime.Value);
                 }
 
-                Column.filterContext.FilterDefinition.Operator = _operator;
-                Column.filterContext.FilterDefinition.Value = date;
-                ApplyFilter(Column.filterContext.FilterDefinition);
+                Column.FilterContext.FilterDefinition.Operator = _operator;
+                Column.FilterContext.FilterDefinition.Value = date;
+                ApplyFilter(Column.FilterContext.FilterDefinition);
             }
         }
 
@@ -193,7 +194,7 @@ namespace MudBlazor
 
         private void ClearFilter()
         {
-            ClearFilter(Column.filterContext.FilterDefinition);
+            ClearFilter(Column.FilterContext.FilterDefinition);
 
             if (dataType == typeof(string))
                 _valueString = null;

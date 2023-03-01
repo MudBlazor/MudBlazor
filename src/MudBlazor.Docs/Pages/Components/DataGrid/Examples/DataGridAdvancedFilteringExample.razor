@@ -5,8 +5,8 @@
 
 <MudDataGrid T="Element" Items="@Elements" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow">
     <Columns>
-        <Column T="Element" Field="Number" Title="Nr" Filterable="false" />
-        <Column T="Element" Field="Sign">
+        <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" />
+        <PropertyColumn Property="x => x.Sign">
             <FilterTemplate>
                 <MudIconButton OnClick="@OpenFilter" Icon="@_icon" Size="@Size.Small" />
                 <MudOverlay Visible="@_filterOpen" OnClick="@(() => _filterOpen = false)" />
@@ -28,11 +28,11 @@
                    </MudStack>
 	            </MudPopover>
             </FilterTemplate>
-        </Column>
-        <Column T="Element" Field="Name" />
-        <Column T="Element" Field="Position" />
-        <Column T="Element" Field="Molar" Title="Molar mass" />
-        <Column T="Element" Field="Group" Title="Category" />
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Position" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <PropertyColumn Property="x => x.Group" Title="Category" />
     </Columns>
     <PagerContent>
         <MudDataGridPager T="Element" />
