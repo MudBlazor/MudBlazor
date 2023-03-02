@@ -45,6 +45,12 @@ namespace MudBlazor
             .AddClass(FooterClass).Build();
 
         /// <summary>
+        /// Sets the location of the table pager.
+        /// </summary>
+        [Parameter]
+        public TablePagerPosition PagerPosition { get; set; } = TablePagerPosition.Bottom;
+
+        /// <summary>
         /// When editing a row and this is true, the editing row must be saved/canceled before a new row will be selected.
         /// </summary>
         [Parameter]
