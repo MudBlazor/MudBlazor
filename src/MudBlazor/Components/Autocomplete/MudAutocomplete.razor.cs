@@ -341,6 +341,10 @@ namespace MudBlazor
         /// This boolean will keep track if the clear function is called too keep the set text function to be called.
         /// </summary>
         private bool _isCleared;
+        /// <summary>
+        /// This boolean will keep track if the clear function is called with SuppressOpen = true.
+        /// </summary>
+        private bool _suppressOpen;
 
         private MudInput<string> _elementReference;
 
@@ -456,6 +460,11 @@ namespace MudBlazor
         /// </remarks>
         private async Task OnSearchAsync()
         {
+            if (_suppressOpen)
+            {
+                _suppressOpen = false;
+                return;
+            }
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
             {
                 IsOpen = false;
@@ -533,9 +542,10 @@ namespace MudBlazor
         /// <summary>
         /// Clears the autocomplete's text
         /// </summary>
-        public async Task Clear()
+        public async Task Clear(bool suppressOpen = false)
         {
             _isCleared = true;
+            _suppressOpen = suppressOpen;
             IsOpen = false;
             await SetTextAsync(string.Empty, updateValue: false);
             await CoerceValueToText();
@@ -547,7 +557,7 @@ namespace MudBlazor
 
         protected override async void ResetValue()
         {
-            await Clear();
+            await Clear(true);
             base.ResetValue();
         }
 
