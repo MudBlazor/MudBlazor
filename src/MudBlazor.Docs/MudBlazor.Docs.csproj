@@ -86,6 +86,7 @@
   <ItemGroup>
     <ProjectReference Include="../MudBlazor/MudBlazor.csproj" />
       <ProjectReference Include="../MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj" />
+      <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <!--Excubo  webcompiler -  used for scss and js compilation-->

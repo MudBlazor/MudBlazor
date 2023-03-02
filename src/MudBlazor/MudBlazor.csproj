@@ -115,4 +115,8 @@
     <Watch Include="**/*.scss" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
 </Project>
