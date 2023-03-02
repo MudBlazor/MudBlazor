@@ -114,9 +114,7 @@
                             </tr>
                         }
 
-                        @{
-                            var resolvedPageItems = CurrentPageItems.ToList();
-                        }
+                        @{var resolvedPageItems = CurrentPageItems.ToList();}
                         @if (resolvedPageItems != null && resolvedPageItems.Count > 0)
                         {
                             if (GroupedColumn != null)
@@ -124,12 +122,8 @@
                                 foreach (var g in _groups)
                                 {
                                     <tr class="mud-table-row">
-                                        @{
-                                            var groupClass = new CssBuilder(GroupClass).AddClass(GroupClassFunc?.Invoke(g)).Build();
-                                        }
-                                        @{
-                                            var groupStyle = new StyleBuilder().AddStyle(GroupStyle).AddStyle(GroupStyleFunc?.Invoke(g)).Build();
-                                        }
+                                        @{ var groupClass = new CssBuilder(GroupClass).AddClass(GroupClassFunc?.Invoke(g)).Build(); }
+                                        @{ var groupStyle = new StyleBuilder().AddStyle(GroupStyle).AddStyle(GroupStyleFunc?.Invoke(g)).Build(); }
 
                                         <td class="mud-table-cell @groupClass" colspan="1000" style="background-color:var(--mud-palette-background-grey);@groupStyle">
                                             <MudIconButton Class="mud-table-row-expander"
@@ -151,15 +145,9 @@
                                     @if (g.IsExpanded)
                                     {
                                         <MudVirtualize IsEnabled="@Virtualize" Items="@g.Grouping.ToList()" OverscanCount=@OverscanCount Context="item">
-                                            @{
-                                                var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build();
-                                            }
-                                            @{
-                                                var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
-                                            }
-                                            @{
-                                                var tmpRowIndex = rowIndex;
-                                            }
+                                            @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
+                                            @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
+                                            @{ var tmpRowIndex = rowIndex; }
                                             <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">
                                                 <CascadingValue Value="@Validator" IsFixed="true">
                                                     @foreach (var column in RenderedColumns)
@@ -179,9 +167,7 @@
                                                     </td>
                                                 </tr>
                                             }
-                                            @{
-                                                rowIndex++;
-                                            }
+                                            @{ rowIndex++; }
                                         </MudVirtualize>
                                         @*Group Footer*@
                                         <tr class="mud-table-row">
@@ -194,15 +180,9 @@
                             {
                                 var rowIndex = 0;
                                 <MudVirtualize IsEnabled="@Virtualize" Items="@resolvedPageItems" OverscanCount=@OverscanCount Context="item">
-                                    @{
-                                        var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build();
-                                    }
-                                    @{
-                                        var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
-                                    }
-                                    @{
-                                        var tmpRowIndex = rowIndex;
-                                    }
+                                    @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
+                                    @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
+                                    @{ var tmpRowIndex = rowIndex; }
                                     <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">
                                         <CascadingValue Value="@Validator" IsFixed="true">
                                             @foreach (var column in RenderedColumns)
@@ -222,9 +202,7 @@
                                             </td>
                                         </tr>
                                     }
-                                    @{
-                                        rowIndex++;
-                                    }
+                                    @{ rowIndex++; }
                                 </MudVirtualize>
                             }
                         }
