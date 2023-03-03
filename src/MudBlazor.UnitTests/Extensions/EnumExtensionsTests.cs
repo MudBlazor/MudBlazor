@@ -16,7 +16,7 @@ namespace MudBlazor.UnitTests.Extensions
         }
 
 #pragma warning disable CS0618
-        /// <remarks>Remove during The Big Break: Breaking Changes in v7</remarks>>
+        /// <remarks>Remove this test(including DummyEnumEmpty) during The Big Break: Breaking Changes in v7</remarks>>
         [Test]
         public void ToDescriptionStringOld()
         {
