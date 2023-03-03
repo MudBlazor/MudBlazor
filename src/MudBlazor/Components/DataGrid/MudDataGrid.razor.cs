@@ -954,12 +954,7 @@ namespace MudBlazor
 
         internal async Task OnRowClickedAsync(MouseEventArgs args, T item, int rowIndex)
         {
-            await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>
-            {
-                MouseEventArgs = args,
-                Item = item,
-                RowIndex = rowIndex
-            });
+            await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
 
             if (EditMode != DataGridEditMode.Cell && EditTrigger == DataGridEditTrigger.OnRowClick)
                 await SetEditingItemAsync(item);
@@ -1319,12 +1314,7 @@ namespace MudBlazor
         {
             get
             {
-                if (null == _resizeService)
-                {
-                    _resizeService = new DataGridColumnResizeService<T>(this, EventListener);
-                }
-
-                return _resizeService;
+                return _resizeService ??= new DataGridColumnResizeService<T>(this, EventListener);
             }
         }
 

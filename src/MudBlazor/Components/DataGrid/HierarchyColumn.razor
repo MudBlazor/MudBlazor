@@ -7,7 +7,7 @@
     <CellTemplate>
         <label class="ma-n3">
             <MudIconButton
-            Icon="@(context.openHierarchies.Contains(context.Item) ?  OpenIcon : ClosedIcon)" 
+            Icon="@(context.OpenHierarchies.Contains(context.Item) ?  OpenIcon : ClosedIcon)" 
             OnClick="context.Actions.ToggleHierarchyVisibilityForItem"
             Size="@IconSize"
             Disabled="ButtonDisabledFunc.Invoke(context.Item)"/>
