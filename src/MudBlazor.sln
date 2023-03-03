@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Examples.Data", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs.Server", "MudBlazor.Docs.Server\MudBlazor.Docs.Server.csproj", "{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.SourceCodeGenerator", "MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj", "{CDE02174-96AB-4E97-AFA8-391C0FF98225}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDE02174-96AB-4E97-AFA8-391C0FF98225}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDE02174-96AB-4E97-AFA8-391C0FF98225}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDE02174-96AB-4E97-AFA8-391C0FF98225}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDE02174-96AB-4E97-AFA8-391C0FF98225}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

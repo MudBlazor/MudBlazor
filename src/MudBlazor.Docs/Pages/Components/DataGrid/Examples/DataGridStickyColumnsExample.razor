@@ -3,19 +3,19 @@
 
 <MudDataGrid Items="@_users" HorizontalScrollbar="true" Bordered="true" Dense="true">
     <Columns>
-        <Column T="User" Field="Name" StickyLeft="true" />
-        <Column T="User" Field="Age" />
-        <Column T="User" Field="FillerColumn" HeaderStyle="white-space:nowrap">
+        <PropertyColumn Property="x => x.Name" StickyLeft="true" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.FillerColumn" HeaderStyle="white-space:nowrap">
             <HeaderTemplate>
                 @((MarkupString)$"This is a really long column{string.Join("", Enumerable.Repeat("&nbsp;", 1000))}...")
             </HeaderTemplate>
-        </Column>
-        <Column T="User" Field="Salary" />
-        <Column T="User" StickyRight="true">
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Salary" />
+        <TemplateColumn StickyRight="true">
             <CellTemplate>
                 <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="@Size.Small" />
             </CellTemplate>
-        </Column>
+        </TemplateColumn>
     </Columns>
 </MudDataGrid>
 
@@ -28,6 +28,5 @@
         new User("Alicia", 54, "...", 75_000.00M), 
         new User("Ira", 27, "...", 102_000.00M),
         new User("John", 32, "...", 132_000.00M),
-
     };
 }

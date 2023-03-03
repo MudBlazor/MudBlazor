@@ -12,16 +12,15 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
     internal class Cell<T>
     {
         private readonly MudDataGrid<T> _dataGrid;
         private readonly Column<T> _column;
         internal T _item;
-        internal string valueString;
-        internal double? valueNumber;
-        internal bool isEditing;
-        internal CellContext<T> cellContext;
+        internal string _valueString;
+        internal double? _valueNumber;
+        internal bool _isEditing;
+        internal CellContext<T> _cellContext;
 
         #region Computed Properties
 
@@ -29,40 +28,10 @@ namespace MudBlazor
         {
             get
             {
-                if (_item == null || _column.Field == null)
-                    return null;
-
-                // Handle case where T is IDictionary.
-                if (typeof(T) == typeof(IDictionary<string, object>))
-                {
-                    if (_column.FieldType == null)
-                        throw new ArgumentNullException(nameof(_column.FieldType));
-
-                    if (_column.FieldType.IsEnum)
-                    {
-                        var o = ((IDictionary<string, object>)_item)[_column.Field];
-
-                        if (o == null)
-                            return null;
-
-                        if (o.GetType() == typeof(JsonElement))
-                        {
-                            var json = (JsonElement)o;
-                            return Enum.ToObject(_column.FieldType, json.GetInt32());
-                        }
-                        else
-                        {
-                            return Enum.ToObject(_column.FieldType, o);
-                        }
-                    }
-
-                    return ((IDictionary<string, object>)_item)[_column.Field];
-                }
-
-                var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
-                return property.GetValue(_item);
+                return _column.CellContent(_item);
             }
         }
+
         internal string computedClass
         {
             get
@@ -99,13 +68,12 @@ namespace MudBlazor
             OnStartedEditingItem();
 
             // Create the CellContext
-            cellContext = new CellContext<T>(_dataGrid, _item);
+            _cellContext = new CellContext<T>(_dataGrid, _item);
         }
 
         public async Task StringValueChangedAsync(string value)
         {
-            var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
-            property.SetValue(_item, value);
+            _column.SetProperty(_item, value);
 
             // If the edit mode is Cell, we update immediately.
             if (_dataGrid.EditMode == DataGridEditMode.Cell)
@@ -114,8 +82,7 @@ namespace MudBlazor
 
         public async Task NumberValueChangedAsync(double? value)
         {
-            var property = _item.GetType().GetProperties().SingleOrDefault(x => x.Name == _column.Field);
-            property.SetValue(_item, ChangeType(value, property.PropertyType));
+            _column.SetProperty(_item, value);
 
             // If the edit mode is Cell, we update immediately.
             if (_dataGrid.EditMode == DataGridEditMode.Cell)
@@ -131,42 +98,25 @@ namespace MudBlazor
                 {
                     if (_column.dataType == typeof(string))
                     {
-                        valueString = ((JsonElement)ComputedValue).GetString();
+                        _valueString = ((JsonElement)ComputedValue).GetString();
                     }
                     else if (_column.isNumber)
                     {
-                        valueNumber = ((JsonElement)ComputedValue).GetDouble();
+                        _valueNumber = ((JsonElement)ComputedValue).GetDouble();
                     }
                 }
                 else
                 {
                     if (_column.dataType == typeof(string))
                     {
-                        valueString = (string)ComputedValue;
+                        _valueString = (string)ComputedValue;
                     }
                     else if (_column.isNumber)
                     {
-                        valueNumber = Convert.ToDouble(ComputedValue);
+                        _valueNumber = Convert.ToDouble(ComputedValue);
                     }
                 }
             }
-        }
-
-        private object ChangeType(object value, Type conversion)
-        {
-            var t = conversion;
-
-            if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-            {
-                if (value == null)
-                {
-                    return null;
-                }
-
-                t = Nullable.GetUnderlyingType(t);
-            }
-
-            return Convert.ChangeType(value, t);
         }
     }
 }

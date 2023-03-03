@@ -3,13 +3,13 @@
 
 <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="@AddPerson"/>
 
-<MudDataGrid T="Model" Items="@_items" Groupable="true">
+@*<MudDataGrid T="Model" Items="@_items" Groupable="true">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />
         <Column T="Model" Field="@nameof(Model.Gender)" Grouping="true" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     private ObservableCollection<Model> _items = new ObservableCollection<Model>()

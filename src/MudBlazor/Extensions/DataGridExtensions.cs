@@ -34,5 +34,10 @@ namespace MudBlazor
 
             return orderedEnumerable ?? source;
         }
+
+        public static Column<T> GetColumnByPropertyName<T>(this MudDataGrid<T> dataGrid, string propertyName)
+        {
+            return dataGrid.RenderedColumns.FirstOrDefault(x => x.PropertyName == propertyName);
+        }
     }
 }

@@ -4,7 +4,7 @@
     <DocsPageHeader Title="DataGrid - Experimental" SubTitle="A sortable, filterable data grid with multiselection and pagination" />
     <DocsPageContent>
 
-        <DocsPageSection>
+    @*<DocsPageSection>           
             <MudAlert Severity="Severity.Warning">
                 <b>Warning experimental component!</b>
             </MudAlert>
@@ -13,16 +13,35 @@
                 <b>DO NOT</b> use this component if you are not prepared to update your code and adapt to new changes.<br />
                 The finished component might not have the same name, might not have the features it has now, or look the same.
             </MudAlert>
-        </DocsPageSection>
-        <DocsPageSection>
+            </DocsPageSection>*@
+            <DocsPageSection>
             <SectionHeader Title="Default Data Grid">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> is used to display and work with small amounts of data up to very large datasets, easily and efficiently. In it's 
-                    simplest form, the data grid is a just a table, displaying data from a data source.
+                    simplest form, the data grid is just a table, displaying data from a data source. In it's most complex form, the data grid allows filtering, editing, grouping, and much more.
+                    <br><br>
+                    Using the data grid is pretty simple to start with and just requires setting the <CodeInline>Items</CodeInline> property to an collection of data as IEnumerable, and adding 
+                    <CodeInline>Columns</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="DataGridBasicExample" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Column Types">
+                <Description>
+                    There are two main column types: <CodeInline>&lt;PropertyColumn></CodeInline> and <CodeInline>&lt;TemplateColumn></CodeInline>. PropertyColumns
+                    are typically used to display a single property defined by the parameter, <CodeInline>Property</CodeInline>.
+                    You would use TemplateColumns when you want to display a column without linking it directly to a property in the data source. For example, if you
+                    wanted to show a column that has action buttons. TemplateColumn cannot infer things such as Title and SortBy like the PropertyColumn.
+                    <br><br>
+                    You can pass a format string in the <CodeInline>Format</CodeInline> parameter on PropertyColumn to format the value for the cells.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridColumnTypesExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridColumnTypesExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -198,7 +217,7 @@
             </SectionContent>
         </DocsPageSection>
 
-        <DocsPageSection>
+        @*<DocsPageSection>
             <SectionHeader Title="Advanced Data Grid Using IDictionary">
                 <Description>
                     This example uses a <CodeInline>List&lt;IDictionary&lt;string, object>></CodeInline> for the <CodeInline>Items</CodeInline> data source.
@@ -215,7 +234,7 @@
             <SectionContent DarkenBackground="true" Code="DataGridAdvancedIDictionaryExample" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridAdvancedIDictionaryExample />
             </SectionContent>
-        </DocsPageSection>
+        </DocsPageSection>*@
 
         <DocsPageSection>
             <SectionHeader Title="Sticky Columns">

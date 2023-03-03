@@ -49,7 +49,8 @@ namespace MudBlazor.UnitTests.UserAttributes
             {
                 // these components do not need to have markup
                 if (componentType == typeof(MudPopover) || componentType.Name == "Column`1" || componentType.Name == "FooterCell`1"
-                    || componentType.Name == "HeaderCell`1" || componentType.Name == "FilterHeaderCell`1" || componentType.Name == "SelectColumn`1" || componentType.Name == "HierarchyColumn`1")
+                    || componentType.Name == "HeaderCell`1" || componentType.Name == "FilterHeaderCell`1" || componentType.Name == "SelectColumn`1"
+                    || componentType.Name == "HierarchyColumn`1" || componentType.Name == "PropertyColumn`2" || componentType.Name == "TemplateColumn`1")
                 {
                     continue;
                 }

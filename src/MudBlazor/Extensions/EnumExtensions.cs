@@ -3,15 +3,23 @@ using System.ComponentModel;
 
 namespace MudBlazor.Extensions
 {
+#nullable enable
     public static class EnumExtensions
     {
-        public static string ToDescriptionString(this Enum val)
+        [Obsolete("Please use the auto-generated ToDescriptionString method instead or implement your own extension method.")]
+        public static string ToDescriptionString(this Enum value)
         {
-            var attributes = (DescriptionAttribute[])val.GetType().GetField(val.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false);
+            var field = value.GetType().GetField(value.ToString());
+            if (field is null)
+            {
+                return value.ToString().ToLower();
+            }
 
-            return attributes.Length > 0
+            var attributes = Attribute.GetCustomAttributes(field, typeof(DescriptionAttribute), false) as DescriptionAttribute[];
+
+            return attributes is { Length: > 0 }
                 ? attributes[0].Description
-                : val.ToString().ToLower();
+                : value.ToString().ToLower();
         }
     }
 }

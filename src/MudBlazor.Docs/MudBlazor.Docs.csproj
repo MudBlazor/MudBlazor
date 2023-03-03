@@ -85,16 +85,17 @@
   <!--Project dependencies-->
   <ItemGroup>
     <ProjectReference Include="../MudBlazor/MudBlazor.csproj" />
-      <ProjectReference Include="../MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj" />
+    <ProjectReference Include="../MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj" />
+    <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <!--Excubo  webcompiler -  used for scss and js compilation-->
   <Target Name="ToolRestore">
-      <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
+    <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
   </Target>
 
   <Target Name="WebCompiler" DependsOnTargets="ToolRestore">
-      <Exec Command="dotnet webcompiler ./Styles/MudBlazorDocs.scss -c excubowebcompiler.json" StandardOutputImportance="high" StandardErrorImportance="high" />
+    <Exec Command="dotnet webcompiler ./Styles/MudBlazorDocs.scss -c excubowebcompiler.json" StandardOutputImportance="high" StandardErrorImportance="high" />
   </Target>
 
   <!--Output of Excubo webcompiler-->

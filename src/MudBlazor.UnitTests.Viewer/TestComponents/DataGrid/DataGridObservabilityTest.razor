@@ -6,12 +6,12 @@
 
 <MudDataGrid Items="@_items">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Status)" />
-        <Column T="Model" Field="@nameof(Model.Salary)" />
-        <Column T="Model" Field="HireDate" Title="Hired" />
-        <Column T="Model" Field="IsManager" Title="Manager" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Status" />
+        <PropertyColumn Property="x => x.Salary" />
+        <PropertyColumn Property="x => x.HireDate" Title="Hired" />
+        <PropertyColumn Property="x => x.IsManager" Title="Manager" />
     </Columns>
 </MudDataGrid>
 
