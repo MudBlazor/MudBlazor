@@ -1,11 +1,5 @@
 ﻿using FluentAssertions;
-using MudBlazor.Extensions;
-
-
 using NUnit.Framework;
-// Disable obsolete warning of the extension method for this unit test.
-#pragma warning disable CS0618
-
 
 namespace MudBlazor.UnitTests.Extensions
 {
@@ -15,9 +9,9 @@ namespace MudBlazor.UnitTests.Extensions
         [Test]
         public void ToDescriptionString()
         {
-            EnumExtensions.ToDescriptionString(Adornment.Start).Should().Be("start");
-            EnumExtensions.ToDescriptionString(Align.Inherit).Should().Be("inherit");
-            EnumExtensions.ToDescriptionString(Breakpoint.Sm).Should().Be("sm");
+            Adornment.Start.ToDescriptionString().Should().Be("start");
+            Align.Inherit.ToDescriptionString().Should().Be("inherit");
+            Breakpoint.Sm.ToDescriptionString().Should().Be("sm");
         }
     }
 }
