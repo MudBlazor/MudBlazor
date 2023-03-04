@@ -126,7 +126,6 @@ namespace MudBlazor
             {
                 var date = _valueDate.Value.Date;
 
-
                 // get the time component and add it to the date.
                 if (_valueTime is not null)
                 {
