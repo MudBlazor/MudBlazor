@@ -15,7 +15,7 @@ namespace MudBlazor
         public bool HasPager { get; set; }
         public abstract void Add(MudTr row, object item);
         public abstract void Remove(MudTr row, object item);
-        public abstract void UpdateRowCheckBoxes(bool notify = true);
+        public abstract void UpdateRowCheckBoxes(bool updateGroups = true, bool updateHeaderFooter = true);
         public List<MudTHeadRow> HeaderRows { get; set; } = new List<MudTHeadRow>();
         public List<MudTFootRow> FooterRows { get; set; } = new List<MudTFootRow>();
 
@@ -34,7 +34,7 @@ namespace MudBlazor
 
         public IEqualityComparer<T> Comparer //when the comparer value is setup, update the collections with the new comparer
         {
-            get => _comparer; 
+            get => _comparer;
             set
             {
                 _comparer = value;
@@ -50,34 +50,49 @@ namespace MudBlazor
 
         public List<MudTableSortLabel<T>> SortLabels { get; set; } = new List<MudTableSortLabel<T>>();
 
-        public override void UpdateRowCheckBoxes(bool notify = true)
+        /// <summary>
+        /// Updates the state of all group- and/or header/footer checkboxs.
+        /// </summary>
+        /// <remarks>
+        /// Setting checkbox state for Row items and refresh all, is triggered from MudTable OnAfterRenderAsync.
+        /// </remarks>
+        public override void UpdateRowCheckBoxes(bool updateGroups = true, bool updateHeaderFooter = true)
         {
             if (!Table.MultiSelection)
                 return;
-            // update row checkboxes
-            foreach (var pair in Rows.ToArray())
-            {
-                var row = pair.Value;
-                var item = pair.Key;
-                row.SetChecked(Selection.Contains(item), notify: notify);
-            }
-            //update group checkboxes
-            foreach (var row in GroupRows)
-            {
-                var rowGroupItems = row.Items.ToList();
-                row.SetChecked(Selection.Intersect(rowGroupItems).Count() == rowGroupItems.Count, notify: false);
-            }
-            if (HeaderRows.Count > 0 || FooterRows.Count > 0)
-            {
-                var itemsCount = Table.GetFilteredItemsCount();
-                var b = Selection.Count == itemsCount && itemsCount != 0;
-                // update header checkbox
-                foreach (var header in HeaderRows)
-                    header.SetChecked(b, notify: false);
 
-                // update footer checkbox
-                foreach (var footer in FooterRows)
-                    footer.SetChecked(b, notify: false);
+            if (updateGroups)
+            {
+                // Update group checkboxes
+                foreach (var groupRow in GroupRows)
+                {
+                    var rowGroupItems = groupRow.Items.ToList();
+                    var itemsCount = Selection.Intersect(rowGroupItems).Count();
+                    var selectAll = itemsCount == rowGroupItems.Count;
+                    var indeterminate = !selectAll && itemsCount > 0 && Selection.Count > 0;
+                    var state = indeterminate && !selectAll ? (bool?)null : selectAll;
+                    groupRow.SetChecked(state, notify: false);
+                }
+            }
+
+            if (updateHeaderFooter)
+            {
+                if (HeaderRows.Count > 0 || FooterRows.Count > 0)
+                {
+                    var itemsCount = Table.GetFilteredItemsCount();
+                    var selectAll = Selection.Count == itemsCount;
+                    var indeterminate = !selectAll && Selection.Count > 0;
+                    var isChecked = selectAll && itemsCount != 0;
+                    var state = indeterminate ? (bool?)null : isChecked;
+
+                    // Update header checkbox
+                    foreach (var headerRow in HeaderRows)
+                        headerRow.SetChecked(state, notify: false);
+
+                    // Update footer checkbox
+                    foreach (var footerRow in FooterRows)
+                        footerRow.SetChecked(state, notify: false);
+                }
             }
         }
 
@@ -110,7 +125,7 @@ namespace MudBlazor
             var t = item.As<T>();
             if (t is null)
                 return;
-            if (Rows[t] == row)
+            if (Rows.TryGetValue(t, out var value) && value == row)
                 Rows.Remove(t);
             if (!Table.ContainsItem(item))
             {

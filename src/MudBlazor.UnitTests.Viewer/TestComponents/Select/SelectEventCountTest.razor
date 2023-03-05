@@ -1,0 +1,44 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+<MudSelect @ref="_select" T="string" ValueChanged="ValueChanged" SelectedValuesChanged="ValuesChanged" MultiSelection="MultiSelection">
+    <MudSelectItem @ref="FirstItem" T="string" Value="@("1")" />
+    <MudSelectItem @ref="SecondItem" T="string" Value="@("2")" />
+    <MudSelectItem @ref="ThirdItem" T="string" Value="@("3")" />
+    <MudSelectItem T="string" Value="@("4")" Disabled="true" />
+</MudSelect>
+
+@code {
+    [Parameter]
+    public bool MultiSelection { get; set; }
+
+    public int ValueChangeCount { get; set; }
+    public int ValuesChangeCount { get; set; }
+    public int ItemChangeCount { get; set; }
+    public int ItemsChangeCount { get; set; }
+
+    MudSelect<string> _select;
+    MudSelectItem<string> FirstItem { get; set; }
+    MudSelectItem<string> SecondItem { get; set; }
+    MudSelectItem<string> ThirdItem { get; set; }
+
+    private void ValueChanged()
+    {
+        ValueChangeCount++;
+    }
+
+    private void ValuesChanged()
+    {
+        ValuesChangeCount++;
+    }
+
+    private void ItemChanged()
+    {
+        ItemChangeCount++;
+    }
+
+    private void ItemsChanged()
+    {
+        ItemsChangeCount++;
+    }
+}

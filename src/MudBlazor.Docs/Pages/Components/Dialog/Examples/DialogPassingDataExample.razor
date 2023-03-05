@@ -22,7 +22,7 @@
         var dialog = await DialogService.ShowAsync<DialogPassingDataExample_Dialog>("Delete Server", parameters);
         var result = await dialog.Result;
 
-        if (!result.Cancelled)
+        if (!result.Canceled)
         {
             //In a real world scenario we would reload the data from the source here since we "removed" it in the dialog already.
             Guid.TryParse(result.Data.ToString(), out Guid deletedServer);

@@ -1,11 +1,11 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Bordered="true">
+@*<MudDataGrid Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Bordered="true">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)">
             <FilterTemplate>
-                <MudIconButton OnClick="@OpenFilter" Icon="@Icons.Filled.KeyboardArrowDown" Size="@Size.Small" />
+                <MudIconButton OnClick="@OpenFilter" Icon="@Icons.Material.Filled.KeyboardArrowDown" Size="@Size.Small" />
                 <MudOverlay Visible="@_filterOpen" OnClick="@(() => _filterOpen = false)" />
                 <MudPopover Open="@_filterOpen" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"
                     Style="width:150px">
@@ -27,7 +27,7 @@
         <Column T="Model" Field="@nameof(Model.Hired)" />
         <Column T="Model" Field="@nameof(Model.HiredOn)" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);

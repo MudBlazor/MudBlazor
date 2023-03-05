@@ -1,8 +1,7 @@
 ﻿@namespace MudBlazor
-@inherits MudComponentBase
 @typeparam T
 
-<Column T="T" Tag="@("select-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%" FieldType="@typeof(object)"
+<TemplateColumn T="T" Tag="@("select-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
     Filterable="false">
     <HeaderTemplate>
         @if (ShowInHeader)
@@ -19,10 +18,4 @@
             <MudCheckBox T="bool" Size="@Size" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAll" />
         }
     </FooterTemplate>
-</Column>
-
-@code {
-    [Parameter] public bool ShowInHeader { get; set; } = true;
-    [Parameter] public bool ShowInFooter { get; set; } = true;
-    [Parameter] public Size Size { get; set; } = Size.Medium;
-}
+</TemplateColumn>

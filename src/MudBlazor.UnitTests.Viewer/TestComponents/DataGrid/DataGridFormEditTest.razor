@@ -4,9 +4,13 @@
 
 <MudDataGrid T="Model" Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Form" EditTrigger="@DataGridEditTrigger.OnRowClick">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.GetOnly)" IsEditable="false" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <TemplateColumn>
+            <CellTemplate>
+                snakex64
+            </CellTemplate>
+        </TemplateColumn>
     </Columns>
 </MudDataGrid>
 

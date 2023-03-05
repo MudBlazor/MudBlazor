@@ -205,6 +205,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Testing Transition With SelectedIndex
+        /// </summary>
+        [Test]
+        public void CarouselTest_SelectedIndexTransition()
+        {
+            var comp = Context.RenderComponent<CarouselTest>();
+
+            // No change
+            comp.Instance.SelectedIndex = 0;
+            comp.Render();
+            comp.Find(".mud-carousel-transition-slide-next-enter.fake-class-item1");
+            comp.FindAll(".mud-carousel-item").Should().HaveCount(1);
+
+            // Slide next
+            comp.Instance.SelectedIndex = 2;
+            comp.Render();
+            comp.Find(".mud-carousel-transition-slide-next-exit.fake-class-item1");
+            comp.Find(".mud-carousel-transition-slide-next-enter.fake-class-item3");
+
+            // Slide prev
+            comp.Instance.SelectedIndex = 0;
+            comp.Render();
+            comp.Find(".mud-carousel-transition-slide-prev-exit.fake-class-item3");
+            comp.Find(".mud-carousel-transition-slide-prev-enter.fake-class-item1");
+
+        }
+
+        /// <summary>
         /// Testing when DisableSwipeGesture
         /// </summary>
         [Test]

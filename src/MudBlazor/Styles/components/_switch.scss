@@ -38,7 +38,7 @@
         opacity: 0.48;
         z-index: -1;
         transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-        border-radius: 7px;
+        border-radius: 9px;
         background-color: var(--mud-palette-black);
     }
 }
@@ -96,11 +96,82 @@
         position: absolute;
     }
 
-    & .mud-switch-thumb {
+    & .mud-switch-thumb-small {
+        width: 14px;
+        height: 14px;
+        box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+        border-radius: 50%;
+        background-color: currentColor;
+    }
+
+    & .mud-switch-thumb-medium {
         width: 20px;
         height: 20px;
         box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
         border-radius: 50%;
         background-color: currentColor;
     }
+
+    & .mud-switch-thumb-large {
+        width: 26px;
+        height: 26px;
+        box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+        border-radius: 50%;
+        background-color: currentColor;
+    }
+}
+
+.mud-switch-base-small {
+    &.mud-switch-base {
+        padding: 5px;
+    }
+}
+
+.mud-switch-base-medium {
+    &.mud-switch-base {
+        padding: 9px;
+    }
+}
+
+.mud-switch-base-large {
+    &.mud-switch-base {
+        padding: 13px;
+    }
+}
+
+
+.mud-switch-span-small {
+    &.mud-switch-span {
+        padding: 7px;
+        width: 44px;
+        height: 24px;
+    } 
+}
+
+.mud-switch-span-medium {
+    &.mud-switch-span {
+        padding: 12px;
+        width: 58px;
+        height: 38px;
+    }
+}
+
+.mud-switch-span-large {
+    &.mud-switch-span {
+        padding: 17px;
+        width: 72px;
+        height: 52px;
+        }
+}
+
+.mud-switch-label-small {
+    font-size: 0.8125rem !important;
+}
+
+.mud-switch-label-medium {
+    font-size: 1rem !important;
+}
+
+.mud-switch-label-large {
+    font-size: 1.1875rem !important;
 }

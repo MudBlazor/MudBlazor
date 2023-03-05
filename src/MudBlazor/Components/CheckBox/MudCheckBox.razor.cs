@@ -19,7 +19,7 @@ namespace MudBlazor
         new CssBuilder("mud-checkbox")
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-readonly", ReadOnly)
-            .AddClass(LabelPosition == LabelPosition.End ? "mud-ltr" : "mud-rtl", true)
+            .AddClass("flex-row-reverse", LabelPosition == LabelPosition.Start)
         .Build();
 
         protected string CheckBoxClassname =>

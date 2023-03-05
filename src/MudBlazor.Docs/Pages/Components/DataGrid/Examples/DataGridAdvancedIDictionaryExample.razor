@@ -4,7 +4,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid T="IDictionary<string, object>" MultiSelection="true" Items="@Elements" Sortable="true" Filterable="true" QuickFilter="@_quickFilter"
+@*<MudDataGrid T="IDictionary<string, object>" MultiSelection="true" Items="@Elements" Sortable="true" Filterable="true" QuickFilter="@_quickFilter"
     Hideable="true" RowClick="@RowClicked" SelectedItemsChanged="@SelectedItemsChanged">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
@@ -24,7 +24,7 @@
     <PagerContent>
         <MudDataGridPager T="IDictionary<string, object>" />
     </PagerContent>
-</MudDataGrid>
+</MudDataGrid>*@
 
 <div class="d-flex flex-wrap mt-4">
     <MudSwitch @bind-Checked="@_sortNameByLength" Color="Color.Primary">Sort Name Column By Length</MudSwitch>

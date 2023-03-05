@@ -64,7 +64,7 @@ namespace MudBlazor
         /// <param name="identifier">The identifier of the drop zone, where the transaction started</param>
         /// <param name="index">The source index</param>
         /// <param name="commitCallback">A callback that is invokde when the transaction has been successful</param>
-        /// <param name="cancelCallback">A callback that is inviked when the transaction has been cancelled</param>
+        /// <param name="cancelCallback">A callback that is inviked when the transaction has been canceled</param>
         public MudDragAndDropItemTransaction(T item, string identifier, int index, Func<Task> commitCallback, Func<Task> cancelCallback)
         {
             Item = item;
@@ -150,6 +150,8 @@ namespace MudBlazor
     public partial class MudDropContainer<T> : MudComponentBase
     {
         private MudDragAndDropItemTransaction<T> _transaction;
+
+        internal Dictionary<string, MudDropZone<T>> MudDropZones { get; set; } = new Dictionary<string, MudDropZone<T>>();
 
         protected string Classname =>
         new CssBuilder("mud-drop-container")
@@ -342,6 +344,18 @@ namespace MudBlazor
             TransactionIndexChanged?.Invoke(this, new MudDragAndDropIndexChangedEventArgs(_transaction.CurrentZone, oldValue, _transaction.Index));
         }
 
+        internal bool RegisterDropZone(MudDropZone<T> dropZone)
+        {
+            return MudDropZones.TryAdd(dropZone.Identifier, dropZone);
+        }
+        internal void RemoveDropZone(string identifier)
+        {
+            MudDropZones.Remove(identifier);
+        }
+        internal MudDropZone<T> GetDropZone(string identifier)
+        {
+            return MudDropZones.TryGetValue(identifier, out var dropZone) ? dropZone : null;
+        }
 
         /// <summary>
         /// Refreshes the dropzone and all items within. This is neded in case of adding items to the collection or changed values of items

@@ -814,7 +814,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Should_ChangeAdornmentIcon()
         {
-            var icon = Parameter(nameof(AutocompleteAdornmentChange.Icon), Icons.Filled.Abc);
+            var icon = Parameter(nameof(AutocompleteAdornmentChange.Icon), Icons.Material.Filled.Abc);
             var comp = Context.RenderComponent<AutocompleteAdornmentChange>(icon);
             var instance = comp.Instance;
 
@@ -824,7 +824,7 @@ namespace MudBlazor.UnitTests.Components
             var markupBefore = comp.Find("svg.mud-icon-root").Children.ToMarkup().Trim();
 
             // change icon and render again
-            instance.Icon = Icons.Filled.Remove;
+            instance.Icon = Icons.Material.Filled.Remove;
 
             comp.Render();
 
@@ -882,7 +882,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTest1>();
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             autocompletecomp.SetParam(x => x.ShowProgressIndicator, true);
-            autocompletecomp.SetParam(x => x.AdornmentIcon, Icons.Filled.Info);
+            autocompletecomp.SetParam(x => x.AdornmentIcon, Icons.Material.Filled.Info);
             autocompletecomp.SetParam(x => x.Adornment, Adornment.End);
 
             comp.Markup.Should().NotContain("progress-indicator-circular");
@@ -1017,6 +1017,77 @@ namespace MudBlazor.UnitTests.Components
 
             autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-autocomplete");
             autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-width-full");
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_HaveValueWithTextChangedEvent()
+        {
+            // Arrange
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+
+            const string testText = "testText";
+            string eventText = null;
+            autocompletecomp.Instance.TextChanged = new EventCallbackFactory().Create<string>(this, v =>
+            {
+                eventText = v;
+            });
+
+            // Act
+            // enter a text so the TextChanged event will fire
+            autocompletecomp.SetParam(a => a.Text, testText);
+
+            // Assert
+            autocompletecomp.WaitForAssertion(() => Assert.AreEqual(testText, eventText));
+        }
+
+        [Test]
+        [TestCase(0)] //test toStringFunc
+        [TestCase(1)] //test toString
+        public async Task AutocompleteStrictFalseTest(int index)
+        {
+            var listItemQuerySelector = "div.mud-list-item";
+            var selectedItemClassName = "mud-selected-item";
+            var californiaString = "California";
+            var virginiaString = "Virginia";
+
+            var comp = Context.RenderComponent<AutocompleteStrictFalseTest>();
+            var autocompletecomp = comp.FindComponents<MudAutocomplete<AutocompleteStrictFalseTest.State>>()[index];
+            var autocomplete = autocompletecomp.Instance;
+            
+            //search for and select California
+            autocompletecomp.Find("input").Input("Calif");
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
+            autocomplete.Text.Should().Be(californiaString);
+            autocomplete.Value.StateName.Should().Be(californiaString);
+
+            //California should appear as index 5 and be selected
+            autocompletecomp.Find("input").Click();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
+            var items = comp.FindComponents<MudListItem>().ToArray();
+            items.Length.Should().Be(10);
+            var item = items.SingleOrDefault(x => x.Markup.Contains(californiaString));
+            items.ToList().IndexOf(item).Should().Be(5);
+            comp.WaitForAssertion(() => items.Single(s => s.Markup.Contains(californiaString)).Find(listItemQuerySelector).ClassList.Should().Contain(selectedItemClassName));
+
+            autocompletecomp.Find("input").Click(); //close autocomplete
+
+            //search for and select Virginia
+            autocompletecomp.Find("input").Input("Virginia");
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
+            await comp.InvokeAsync(async () => await autocomplete.OnInputKeyUp(new KeyboardEventArgs() { Key = "Enter" }));
+            autocomplete.Text.Should().Be(virginiaString);
+            autocomplete.Value.StateName.Should().Be(virginiaString);
+
+            //West Virginia is not in the first 10 states, so it should not appear in the list
+            autocompletecomp.Find("input").Click();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
+            var items2 = comp.FindComponents<MudListItem>().ToArray();
+            items2.Length.Should().Be(10);
+            var item2 = items2.SingleOrDefault(x => x.Markup.Contains(virginiaString));
+            items2.ToList().IndexOf(item).Should().Be(-1);
+            items2.Count(s => s.Find(listItemQuerySelector).ClassList.Contains(selectedItemClassName)).Should().Be(0);
         }
     }
 }

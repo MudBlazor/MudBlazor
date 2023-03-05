@@ -6,16 +6,17 @@ changelog:
       - tests
       - dependency
       - refactor
+      - reverted
   categories:
+    - title: Breaking Changes
+      labels:
+        - breaking change
     - title: New Features
       labels:
         - enhancement
     - title: Bug Fixes
       labels:
         - bug
-    - title: Breaking Changes
-      labels:
-        - breaking change
     - title: Other Changes
       labels:
         - "*"

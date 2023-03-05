@@ -1,6 +1,5 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
-@using MudBlazor.Extensions 
 @inherits MudComponentBase
 
 <hr @attributes="UserAttributes" class="@Classname" style="@Style"/>
@@ -13,7 +12,7 @@
       .AddClass($"mud-divider-flexitem", FlexItem)
       .AddClass($"mud-divider-light", Light)
       .AddClass($"mud-divider-vertical", Vertical)
-      .AddClass($"mud-divider-{DividerType.ToDescriptionString()}", when: () => DividerType != DividerType.FullWidth)
+      .AddClass($"mud-divider-{DividerType.ToDescriptionString()}", DividerType != DividerType.FullWidth || (DividerType == DividerType.FullWidth && Vertical == false))
       .AddClass(Class)
     .Build();
 

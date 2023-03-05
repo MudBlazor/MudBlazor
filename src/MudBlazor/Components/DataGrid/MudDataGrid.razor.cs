@@ -17,7 +17,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
+    [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<T> : MudComponentBase
     {
         private int _currentPage = 0;
@@ -132,7 +132,7 @@ namespace MudBlazor
         internal Action<HashSet<T>> SelectedItemsChangedEvent { get; set; }
         internal Action<bool> SelectedAllItemsChangedEvent { get; set; }
         internal Action StartedEditingItemEvent { get; set; }
-        internal Action EditingCancelledEvent { get; set; }
+        internal Action EditingCanceledEvent { get; set; }
         public Action PagerStateHasChangedEvent { get; set; }
 
         #endregion
@@ -160,9 +160,16 @@ namespace MudBlazor
         [Parameter] public EventCallback<T> StartedEditingItem { get; set; }
 
         /// <summary>
-        /// Callback is called when the process of editing an item has been cancelled. Returns the item which was previously in edit mode.
+        /// Callback is called when the process of editing an item has been canceled. Returns the item which was previously in edit mode.
         /// </summary>
-        [Parameter] public EventCallback<T> CancelledEditingItem { get; set; }
+        [Parameter] public EventCallback<T> CanceledEditingItem { get; set; }
+
+        /// <summary>
+        /// Callback is called when the process of editing an item has been canceled. Returns the item which was previously in edit mode.
+        /// NOTE: Obsolete, use CanceledEditingItem instead
+        /// </summary>
+        [Obsolete("Use CanceledEditingItem instead", false)]
+        [Parameter] public EventCallback<T> CancelledEditingItem { get => CanceledEditingItem; set => CanceledEditingItem = value; }
 
         /// <summary>
         /// Callback is called when the changes to an item are committed. Returns the item whose changes were committed.
@@ -268,7 +275,7 @@ namespace MudBlazor
 
         [Parameter] public DataGridFilterCaseSensitivity FilterCaseSensitivity { get; set; }
 
-        [Parameter] public RenderFragment<List<FilterDefinition<T>>> FilterTemplate { get; set; }
+        [Parameter] public RenderFragment<MudDataGrid<T>> FilterTemplate { get; set; }
 
         /// <summary>
         /// The list of FilterDefinitions that have been added to the data grid. FilterDefinitions are managed by the data
@@ -649,6 +656,7 @@ namespace MudBlazor
         public IEnumerable<T> ServerItems => _server_data.Items;
         private GridData<T> _server_data = new GridData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
 
+        // TODO: When adding one FilterDefinition, this is called once for each RenderedColumn...
         public IEnumerable<T> FilteredItems
         {
             get
@@ -814,16 +822,17 @@ namespace MudBlazor
         /// <summary>
         /// Called by the DataGrid when the "Add Filter" button is pressed.
         /// </summary>
-        internal void AddFilter()
+        public void AddFilter()
         {
             var column = RenderedColumns.FirstOrDefault(x => x.filterable);
             FilterDefinitions.Add(new FilterDefinition<T>
             {
                 Id = Guid.NewGuid(),
                 DataGrid = this,
-                Field = column?.Field,
+                //Field = column?.PropertyName,
                 Title = column?.Title,
-                FieldType = column?.FieldType
+                //FieldType = column?.PropertyType,
+                PropertyExpression = column?.PropertyExpression,
             });
             _filtersMenuVisible = true;
             StateHasChanged();
@@ -835,22 +844,14 @@ namespace MudBlazor
             InvokeServerLoadFunc().AndForget();
         }
 
-        internal void ClearFilters()
+        public void ClearFilters()
         {
             FilterDefinitions.Clear();
         }
 
-        internal void AddFilter(Guid id, string field)
+        public void AddFilter(FilterDefinition<T> definition)
         {
-            var column = RenderedColumns.FirstOrDefault(x => x.Field == field && x.filterable);
-            FilterDefinitions.Add(new FilterDefinition<T>
-            {
-                Id = id,
-                DataGrid = this,
-                Field = field,
-                Title = column?.Title,
-                FieldType = column?.FieldType,
-            });
+            FilterDefinitions.Add(definition);
             _filtersMenuVisible = true;
             StateHasChanged();
         }
@@ -1135,7 +1136,7 @@ namespace MudBlazor
             if (ReadOnly) return;
 
             editingSourceItem = item;
-            EditingCancelledEvent?.Invoke();
+            EditingCanceledEvent?.Invoke();
             _previousEditingItem = _editingItem;
             _editingItem = JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(item));
             StartedEditingItemEvent?.Invoke();
@@ -1148,8 +1149,8 @@ namespace MudBlazor
         /// </summary>
         public async Task CancelEditingItemAsync()
         {
-            EditingCancelledEvent?.Invoke();
-            await CancelledEditingItem.InvokeAsync(_editingItem);
+            EditingCanceledEvent?.Invoke();
+            await CanceledEditingItem.InvokeAsync(_editingItem);
             ClearEditingItem();
             isEditFormOpen = false;
         }
@@ -1220,7 +1221,7 @@ namespace MudBlazor
         }
 
         public void GroupItems()
-        {
+        {          
             if (GroupedColumn == null)
             {
                 _groups = new List<GroupDefinition<T>>();
@@ -1257,7 +1258,7 @@ namespace MudBlazor
         {
             foreach (var c in RenderedColumns)
             {
-                if (c.Field != column.Field)
+                if (c.PropertyName != column.PropertyName)
                     c.RemoveGrouping();
             }
 

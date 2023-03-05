@@ -307,5 +307,16 @@ namespace MudBlazor.UnitTests.Components
             tooltipComp.IsVisible.Should().BeFalse();
             comp.Instance.TooltipVisible.Should().BeFalse();
         }
+
+        [Test]
+        public async Task Tooltip_Style_Respected()
+        {
+            var comp = Context.RenderComponent<TestComponents.Tooltip.TooltipStylingTest>();
+            var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
+            var button = comp.Find("button");
+            await button.ParentElement.TriggerEventAsync("onmouseup", new MouseEventArgs());
+
+            tooltipComp.Style.Should().Contain("background-color").And.Contain("orangered");
+        }
     }
 }

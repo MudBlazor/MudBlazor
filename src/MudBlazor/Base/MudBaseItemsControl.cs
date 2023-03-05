@@ -34,6 +34,7 @@ namespace MudBlazor
                 if (SelectedIndex == value)
                     return;
 
+                _moveNext = value >= _selectedIndexField;
                 LastContainer = _selectedIndexField >= 0 ? SelectedContainer : null;
                 _selectedIndexField = value;
                 SelectionChanged();

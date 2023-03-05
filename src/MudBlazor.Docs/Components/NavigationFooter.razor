@@ -3,7 +3,7 @@
     {
         <MudButton Color="Color.Primary"
                    Style="text-transform:none;"
-                   StartIcon="@Icons.Filled.NavigateBefore"
+                   StartIcon="@Icons.Material.Filled.NavigateBefore"
                    Link="@($"{Section.ToDescriptionString()}/{Previous.Link}")">
             @Previous.Name
         </MudButton>
@@ -13,7 +13,7 @@
     {
         <MudButton Color="Color.Primary"
                    Style="float:right;text-transform:none;"
-                   EndIcon="@Icons.Filled.NavigateNext"
+                   EndIcon="@Icons.Material.Filled.NavigateNext"
                    Link="@($"{Section.ToDescriptionString()}/{Next.Link}")">
             @Next.Name
         </MudButton>
@@ -23,7 +23,7 @@
 @code{
 
     [Parameter]
-    public NavigationSection? Section { get; set; }
+    public NavigationSection Section { get; set; }
 
     [Parameter]
     public NavigationFooterLink Previous { get; set; }

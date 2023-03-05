@@ -63,19 +63,19 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-overlay").Click();
             comp.Markup.Trim().Should().BeEmpty();
             var result = await dialogReference.Result;
-            result.Cancelled.Should().BeTrue();
+            result.Canceled.Should().BeTrue();
             // open simple test dialog
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
             // close by click on cancel button
             comp.FindAll("button")[0].Click();
             result = await dialogReference.Result;
-            result.Cancelled.Should().BeTrue();
+            result.Canceled.Should().BeTrue();
             // open simple test dialog
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
             // close by click on ok button
             comp.FindAll("button")[1].Click();
             result = await dialogReference.Result;
-            result.Cancelled.Should().BeFalse();
+            result.Canceled.Should().BeFalse();
 
             //create 2 instances and dismiss all
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
@@ -85,6 +85,24 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.DismissAll());
             cont = comp.FindAll("div.mud-dialog-container");
             cont.Count.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Cancelled property is obsolete, but it should still be equivalent to Canceled property
+        /// We'll just confirm the equivalence in both states
+        /// </summary>
+        [Test]
+        [Obsolete]
+        public async Task ObsoleteEquivalenceTest()
+        {
+            var value = "Test";
+            var result = new DialogResult(value, value.GetType(), false);
+            result.Canceled.Should().BeFalse();
+            result.Cancelled.Should().Be(result.Canceled);
+
+            result = new DialogResult(value, value.GetType(), true);
+            result.Canceled.Should().BeTrue();
+            result.Cancelled.Should().Be(result.Canceled);
         }
 
         /// <summary>
@@ -113,6 +131,36 @@ namespace MudBlazor.UnitTests.Components
             // close by click on ok button
             comp.Find("button").Click();
             comp.Markup.Trim().Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Nested dialogs should not appear unless manually shown
+        /// </summary>
+        [Test]
+        public async Task NestedInlineDialogTest()
+        {
+            var provider = Context.RenderComponent<MudDialogProvider>();
+            provider.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            // displaying the component with the inline dialog only renders the open button
+            var comp = Context.RenderComponent<TestNestedInlineDialog>();
+            comp.FindComponents<MudButton>().Count.Should().Be(1);
+            // open the dialog
+            comp.Find("button").Click();
+            comp.WaitForAssertion(() =>
+                provider.Find("div.mud-dialog-container").Should().NotBe(null)
+            );
+            provider.Find("p.mud-typography").TrimmedText().Should().Be("Scorpiany!");
+            provider.FindComponents<MudText>().Count.Should().Be(2); //counts both the dialog header and the text in our test component
+
+            provider.Find("button").Click(); //open nested dialog
+            comp.WaitForAssertion(() =>
+                provider.Find(".nested").Should().NotBe(null)
+            );
+
+            provider.FindAll("p.mud-typography")[1].TrimmedText().Should().Be("Nested dialog!");
+            provider.FindComponents<MudText>().Count.Should().Be(4); //now we have another MudText
         }
 
         /// <summary>
@@ -502,7 +550,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-overlay").Click();
             comp.Markup.Trim().Should().BeEmpty();
             var result = await dialogReference.Result;
-            result.Cancelled.Should().BeTrue();
+            result.Canceled.Should().BeTrue();
             //open simple test dialog
             dialogReferenceLazy = new Lazy<Task<IDialogReference>>(() => service?.ShowAsync<DialogOkCancel>());
             await comp.InvokeAsync(() => dialogReferenceLazy.Value);
@@ -510,7 +558,7 @@ namespace MudBlazor.UnitTests.Components
             //close by click on cancel button
             comp.FindAll("button")[0].Click();
             result = await dialogReference.Result;
-            result.Cancelled.Should().BeTrue();
+            result.Canceled.Should().BeTrue();
             //open simple test dialog
             dialogReferenceLazy = new Lazy<Task<IDialogReference>>(() => service?.ShowAsync<DialogOkCancel>());
             await comp.InvokeAsync(() => dialogReferenceLazy.Value);
@@ -518,7 +566,7 @@ namespace MudBlazor.UnitTests.Components
             //close by click on ok button
             comp.FindAll("button")[1].Click();
             result = result = await dialogReference.Result;
-            result.Cancelled.Should().BeFalse();
+            result.Canceled.Should().BeFalse();
 
             //create 2 instances and dismiss all
             dialogReferenceLazy = new Lazy<Task<IDialogReference>>(() => service?.ShowAsync<DialogOkCancel>());

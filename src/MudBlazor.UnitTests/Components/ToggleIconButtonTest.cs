@@ -59,8 +59,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var title = "Title and tooltip";
             var toggledTitle = "toggled!";
-            var icon = Parameter(nameof(MudToggleIconButton.Icon), Icons.Filled.Add);
-            var toggledIcon = Parameter(nameof(MudToggleIconButton.ToggledIcon), Icons.Filled.Remove);
+            var icon = Parameter(nameof(MudToggleIconButton.Icon), Icons.Material.Filled.Add);
+            var toggledIcon = Parameter(nameof(MudToggleIconButton.ToggledIcon), Icons.Material.Filled.Remove);
             var titleParam = Parameter(nameof(MudToggleIconButton.Title), title);
             var toggledTitleParam = Parameter(nameof(MudToggleIconButton.ToggledTitle), toggledTitle);
             var comp = Context.RenderComponent<MudToggleIconButton>(icon, toggledIcon, titleParam, toggledTitleParam);

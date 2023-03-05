@@ -15,11 +15,11 @@
                      Bordered="true"
                      FixedHeader="true">
             <Columns>
-                <Column T="WeatherForecast" Field="@nameof(WeatherForecast.Id)" Title="Id" Sortable="true" />
-                <Column T="WeatherForecast" Field="@nameof(WeatherForecast.Date)" Title="Date" Sortable="true" />
-                <Column T="WeatherForecast" Field="@nameof(WeatherForecast.TemperatureC)" Title="Temp. (C)" Sortable="true" />
-                <Column T="WeatherForecast" Field="@nameof(WeatherForecast.TemperatureF)" Title="Temp. (F)" Sortable="true" />
-                <Column T="WeatherForecast" Field="@nameof(WeatherForecast.Summary)" Title="Summary" Sortable="true" />
+                <PropertyColumn Property="x => x.Id" Title="Id" Sortable="true" />
+                <PropertyColumn Property="x => x.Date" Title="Date" Sortable="true" />
+                <PropertyColumn Property="x => x.TemperatureC" Title="Temp. (C)" Sortable="true" />
+                <PropertyColumn Property="x => x.TemperatureF" Title="Temp. (F)" Sortable="true" />
+                <PropertyColumn Property="x => x.Summary" Title="Summary" Sortable="true" />
             </Columns>
             <PagerContent>
                 <MudDataGridPager T="WeatherForecast" />
@@ -33,8 +33,11 @@
     private bool _loading;
     private IEnumerable<WeatherForecast> forecasts = new List<WeatherForecast>();
 
-    public string Guid1 => "98ee67d6-0302-40f4-935a-0014e712a9e1";
-    public string Guid2 => "C3D88136-44AF-4955-B422-5EE13463FDCE";
+    // These cannot be strings...
+    //public string Guid1 => "98ee67d6-0302-40f4-935a-0014e712a9e1";
+    //public string Guid2 => "C3D88136-44AF-4955-B422-5EE13463FDCE";
+    public Guid Guid1 => Guid.Parse("98ee67d6-0302-40f4-935a-0014e712a9e1");
+    public Guid Guid2 => Guid.Parse("C3D88136-44AF-4955-B422-5EE13463FDCE");
 
     protected override void OnInitialized()
     {
@@ -43,14 +46,14 @@
         {
             new WeatherForecast()
             {
-                Id = ParseId(Guid1),
+                Id = Parse(Guid1),
                 Date = DateTime.UtcNow,
                 TemperatureC = 14,
                 Summary = "Bracing"
             },
             new WeatherForecast()
             {
-                Id = ParseId(Guid2),
+                Id = Parse(Guid2),
                 Date = DateTime.UtcNow,
                 TemperatureC = 64,
                 Summary = "Bracing"
@@ -59,9 +62,9 @@
         _loading = false;
     }
 
-    private TItem ParseId(string id)
+    public dynamic Parse(Guid id)
     {
-        return Guid.Parse(id) as dynamic;
+        return id;
     }
 
     public class WeatherForecast

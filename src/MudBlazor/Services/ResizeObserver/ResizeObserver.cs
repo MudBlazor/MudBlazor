@@ -25,6 +25,7 @@ namespace MudBlazor.Services
 
         [DynamicDependency(nameof(OnSizeChanged))]
         [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(SizeChangeUpdateInfo))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(BoundingClientRect))]
         public ResizeObserver(IJSRuntime jsRuntime, ResizeObserverOptions options)
         {
             _dotNetRef = DotNetObjectReference.Create(this);

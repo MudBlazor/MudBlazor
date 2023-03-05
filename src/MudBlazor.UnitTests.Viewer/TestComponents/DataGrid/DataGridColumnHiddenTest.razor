@@ -6,8 +6,8 @@
     <Columns>
         @foreach(var columnProp in _columnProps)
         {
-            <Column T="Model"
-                    Field="@columnProp.Field"
+            <PropertyColumn
+                    Property="x => columnProp.Field"
                     @bind-Hidden="columnProp.IsHidden"
                     Title="@columnProp.Label"/>
         }

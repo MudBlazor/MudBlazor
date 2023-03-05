@@ -88,7 +88,7 @@ namespace MudBlazor
                 hasBeenClickedFirstTime = true;
 
                 // Set to false that the item has been committed
-                // Set to false that the item has been cancelled
+                // Set to false that the item has been canceled
                 hasBeenCanceled = false;
                 hasBeenCommitted = false;
 
@@ -99,6 +99,9 @@ namespace MudBlazor
                 Context.Table.RowEditPreview?.Invoke(Item);
 
                 Context?.Table.SetEditingItem(Item);
+
+                if (Context != null)
+                    Context.Table.Validator.Model = Item;
             }
         }
 
@@ -113,14 +116,18 @@ namespace MudBlazor
             Context?.Remove(this, Item);
         }
 
-        public void SetChecked(bool b, bool notify)
+        public void SetChecked(bool checkedState, bool notify)
         {
-            if (notify)
-                IsChecked = b;
-            else
+            if (_checked != checkedState)
             {
-                _checked = b;
-                InvokeAsync(StateHasChanged);
+                if (notify)
+                    IsChecked = checkedState;
+                else
+                {
+                    _checked = checkedState;
+                    if (IsCheckable)
+                        InvokeAsync(StateHasChanged);
+                }
             }
         }
 
@@ -139,7 +146,7 @@ namespace MudBlazor
             Context.Table.RowEditCommit?.Invoke(Item);
 
             // Set to true that the item has been committed
-            // Set to false that the item has been cancelled
+            // Set to false that the item has been canceled
             hasBeenCommitted = true;
             hasBeenCanceled = false;
 
