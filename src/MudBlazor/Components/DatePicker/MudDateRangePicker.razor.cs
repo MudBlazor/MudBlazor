@@ -22,6 +22,27 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// The short hint displayed in the start input before the user enters a value.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string PlaceholderStart { get; set; }
+
+        /// <summary>
+        /// The short hint displayed in the end input before the user enters a value.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string PlaceholderEnd { get; set; }
+
+        /// <summary>
+        /// Custom separator icon, leave null for default.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string SeparatorIcon { get; set; } = Icons.Material.Filled.ArrowRightAlt;
+
+        /// <summary>
         /// Fired when the DateFormat changes.
         /// </summary>
         [Parameter] public EventCallback<DateRange> DateRangeChanged { get; set; }
