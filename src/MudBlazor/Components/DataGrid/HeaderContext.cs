@@ -15,7 +15,7 @@ namespace MudBlazor
         {
             get
             {
-                return _dataGrid.Items;
+                return (_dataGrid.ServerData == null) ? _dataGrid.Items : _dataGrid.ServerItems;
             }
         }
         public HeaderActions Actions { get; internal set; }

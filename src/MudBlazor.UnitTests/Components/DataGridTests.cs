@@ -209,6 +209,37 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
 
+            // select all programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(true));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+
+            // deselect from the footer
+            dataGrid.Find("tfoot input").Change(false);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+        }
+        
+        [Test]
+        public async Task DataGridServerMultiSelectionTest()
+        {
+            var comp = Context.RenderComponent<DataGridServerMultiSelectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerMultiSelectionTest.Item>>();
+
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.FindAll("input")[0].Change(true);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+
+            // deselect an item programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, dataGrid.Instance.SelectedItems.First()));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+
+            // select an item programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(dataGrid.Instance.ServerItems.First()));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+
+            // deselect all programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
             // deselect all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(true));
             dataGrid.Instance.SelectedItems.Count.Should().Be(3);
