@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Services;
+@using System.Globalization;
+
+<MudText>Non-immediate: Enter '100.00'.</MudText>
+<MudNumericField Immediate="false" Label="Will fail" Format="N2" Culture="@_fr" FullWidth
+                 T="double?" @bind-Value="_valueBadFr" HelperText="@_valueBadFr.ToString()" />
+<MudNumericField Immediate="false" Label="Won't fail." Format="N2" Culture="@_fr" FullWidth
+                 T="double?" @bind-Value="_valueFr" HelperText="@_valueFr.ToString()" LocalKeyOverrides="@LocalKeyOverrides" />
+
+<MudText>Immediate: Enter '100.00'.</MudText>
+<MudNumericField Immediate Label="Will fail." Format="N2" Culture="@_fr" FullWidth
+                 T="double?" @bind-Value="_valueImmediateBadFr" HelperText="@_valueImmediateBadFr.ToString()" />
+<MudNumericField Immediate Label="Won't fail." Format="N2" Culture="@_fr" FullWidth
+                 T="double?" @bind-Value="_valueImmediateFr" HelperText="@_valueImmediateFr.ToString()" LocalKeyOverrides="@LocalKeyOverrides" />
+
+@code {
+    public CultureInfo _fr = CultureInfo.GetCultureInfo("fr-FR");
+
+    public double? _valueImmediateFr = 0;
+    public double? _valueImmediateBadFr = 0;
+    public double? _valueFr = 0;
+    public double? _valueBadFr = 0;
+
+    public IList<KeyOptions> LocalKeyOverrides = new List<KeyOptions>() { new KeyOptions() { Key = ".", Replace = "," } };
+}
