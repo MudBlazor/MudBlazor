@@ -1,0 +1,40 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+@{
+    // Adding an item and programmatically editing it should set the row to edit mode.
+}
+
+<MudTable T="LineItem" Items="items" @ref="table">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">String Table</MudText>
+        <MudButton OnClick="AddNewLineItem" Color="Color.Primary">Add Row</MudButton>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Item</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Item">@context.ItemData</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="Item">
+            <MudTextField @bind-Value="@context.ItemData" Variant="Variant.Outlined" />
+        </MudTd>
+    </RowEditingTemplate>
+</MudTable>
+@code {
+    MudTable<LineItem> table;
+
+    public class LineItem
+    {
+        public string ItemData { get; set; }
+    }
+
+    List<LineItem> items = new List<LineItem>();
+
+    void AddNewLineItem()
+    {
+        var newItem = new LineItem();
+        items.Add(newItem);
+        table.SetEditingItem(newItem);
+    }
+}
