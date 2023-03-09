@@ -6,7 +6,7 @@
     <div @attributes="UserAttributes" class="@Classname" style="@Stylesname">
         @if (!String.IsNullOrEmpty(Image))
         {
-            <MudImage Src="Image" Alt="Alt"/>
+            <MudImage Src="@Image" Alt="@Alt"/>
         }
         @ChildContent
     </div>
