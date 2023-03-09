@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using FluentValidation;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -258,6 +260,59 @@ namespace MudBlazor.UnitTests.Components
             {
                 Assert.AreEqual(ex.InnerException.GetType(), typeof(MudBlazor.Utilities.Exceptions.GenericTypeMismatchException));
             }
+        }
+
+        /// <summary>
+        /// Tests the Disabled property of the MudRadio
+        /// </summary>
+        [Test]
+        public void RadioDisabledTest()
+        {
+            var comp = Context.RenderComponent<RadioGroupExample>();
+            comp.Instance.SelectedOption.Should().BeNull();
+
+            var inputs = comp.FindAll("input");
+            inputs[2].Click(); //click enabled radio
+            comp.Instance.SelectedOption.Should().Be("Radio 3");
+            inputs[3].Click(); //click disable radio
+            comp.Instance.SelectedOption.Should().Be("Radio 3");
+
+            var labels = comp.FindAll("label");
+            labels[3].ClassList.Contains("mud-disabled").Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Tests the Disabled property of the MudRadioGroup
+        /// </summary>
+        [Test]
+        public void RadioGroupDisabledTest()
+        {
+            var comp = Context.RenderComponent<RadioReadOnlyDisabledExample>();
+            var radioGroup = comp.FindComponents<MudRadioGroup<string>>()[1];
+
+            var radios = radioGroup.FindComponents<MudRadio<string>>();
+            radios.Count.Should().Be(4);
+            radioGroup.FindAll(".mud-radio.mud-disabled").Count.Should().Be(0);
+
+            comp.FindAll(".mud-switch-button > input")[1].Change(true);
+            radioGroup.FindAll(".mud-radio.mud-disabled").Count.Should().Be(4);
+        }
+
+        /// <summary>
+        /// Tests the Readonly property of the MudRadioGroup
+        /// </summary>
+        [Test]
+        public async Task RadioGroupReadOnlyTest()
+        {
+            var comp = Context.RenderComponent<RadioReadOnlyDisabledExample>();
+            var radioGroup = comp.FindComponents<MudRadioGroup<string>>()[0];
+
+            var radios = radioGroup.FindComponents<MudRadio<string>>();
+            radios.Count.Should().Be(4);
+            radioGroup.FindAll(".mud-radio.mud-readonly").Count.Should().Be(0);
+
+            comp.FindAll(".mud-switch-button > input")[0].Change(true);
+            radioGroup.FindAll(".mud-radio.mud-readonly").Count.Should().Be(4);
         }
     }
 }
