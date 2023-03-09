@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,11 +22,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public bool DefaultScrollbar { get; set; }
-        
-        private event Func<bool,Task> _darkLightModeChanged;
+
+        private event Func<bool, Task> _darkLightModeChanged;
 
         #region Dark mode handling
 
+        [DynamicDependency(nameof(SystemPreferenceChanged))]
         public BaseMudThemeProvider()
         {
             _dotNetRef = DotNetObjectReference.Create(this);
@@ -43,18 +45,18 @@ namespace MudBlazor
             return await JsRuntime.InvokeAsync<bool>("darkModeChange", _dotNetRef);
         }
 
-        public async Task WatchSystemPreference(Func<bool,Task> functionOnChange)
+        public async Task WatchSystemPreference(Func<bool, Task> functionOnChange)
         {
             _darkLightModeChanged += functionOnChange;
             await JsRuntime.InvokeVoidAsync("watchDarkThemeMedia", _dotNetRef);
         }
-        
+
         [JSInvokable]
         public async Task SystemPreferenceChanged(bool isDarkMode)
         {
-           var task = _darkLightModeChanged?.Invoke(isDarkMode);
-           if (task != null)
-               await task;
+            var task = _darkLightModeChanged?.Invoke(isDarkMode);
+            if (task != null)
+                await task;
         }
 
         internal bool _isDarkMode;
@@ -133,7 +135,7 @@ namespace MudBlazor
             if (Theme == null)
                 return;
             var palette = _isDarkMode == false ? Theme.Palette : Theme.PaletteDark;
-            
+
             //Palette
             theme.AppendLine($"--{Palette}-black: {palette.Black};");
             theme.AppendLine($"--{Palette}-white: {palette.White};");
