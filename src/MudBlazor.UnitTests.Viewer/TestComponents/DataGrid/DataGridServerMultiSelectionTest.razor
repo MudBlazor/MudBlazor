@@ -1,0 +1,44 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid MultiSelection="true" @bind-SelectedItems="_selectedItems"
+    ServerData="@(new Func<GridState<Item>, Task<GridData<Item>>>(ServerReload))">
+    <Columns>
+        <SelectColumn T="Item"/>
+        <Column T="Item" Field="@nameof(Item.Name)" />
+    </Columns>
+</MudDataGrid>
+
+<div>
+    @string.Join(",", _selectedItems.Select(x => x.Name))
+</div>
+
+@code {
+    private HashSet<Item> _selectedItems = new();
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+
+    /// <summary>
+    /// Here we simulate getting the data from the server
+    /// </summary>
+    private async Task<GridData<Item>> ServerReload(GridState<Item> state)
+    {
+        var letters = "ABC";
+        var data = new List<Item>();
+        foreach (var c in letters)
+        {
+            data.Add(new Item(c.ToString()));
+        }
+
+        var totalItems = 3;
+
+        return await Task.FromResult(new GridData<Item>() { TotalItems = totalItems, Items = data });
+    }    
+}

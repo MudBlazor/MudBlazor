@@ -5,20 +5,18 @@
 <div class="@Classname" style="@($"{Style};touch-action:none;transform: translate3d(0px, 0px, 0px);")"
      id="@($"mud-drop-item-{_id}")"
      index="@Index"
-	 @attributes="UserAttributes"
-	 draggable="@(Disabled == false ? "true" : "false")"
-
-	 @ondragstart="DragStarted"
-
+     @attributes="UserAttributes"
+     draggable="@(Disabled == false ? "true" : "false")"
+     @ondragstart="DragStarted"
      @ontouchstart="TouchStarted"
      @ontouchend="TouchEnded"
      @ontouchmove="TouchMoved"
+     @ondragend="DragEnded"
+     @ondragenter="HandleDragEnter"
+     @ondragleave="HandleDragLeave">
 
-	 @ondragend="DragEnded"
-	 @ondragenter="HandleDragEnter"
-	 @ondragleave="HandleDragLeave">
-	@if (HideContent == false)
-	{
-		@ChildContent
-	}
+    @if (HideContent == false)
+    {
+        @ChildContent
+    }
 </div>

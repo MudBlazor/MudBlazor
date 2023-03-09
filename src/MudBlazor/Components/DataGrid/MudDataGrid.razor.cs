@@ -653,6 +653,7 @@ namespace MudBlazor
 
         public HashSet<T> Selection { get; set; } = new HashSet<T>();
         public bool HasPager { get; set; }
+        public IEnumerable<T> ServerItems => _server_data.Items;
         private GridData<T> _server_data = new GridData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
 
         // TODO: When adding one FilterDefinition, this is called once for each RenderedColumn...
@@ -875,8 +876,12 @@ namespace MudBlazor
 
         internal async Task SetSelectAllAsync(bool value)
         {
+            var items = ServerData != null
+                    ? ServerItems
+                    : Items;
+                    
             if (value)
-                Selection = new HashSet<T>(Items);
+                Selection = new HashSet<T>(items);
             else
                 Selection.Clear();
 
