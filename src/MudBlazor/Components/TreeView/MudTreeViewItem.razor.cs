@@ -380,20 +380,20 @@ namespace MudBlazor
         /// </summary>
         public void Reload()
         {
-			if (Items != null)
-			{
-				Items.Clear();
-			}
-			TryInvokeServerLoadFunc();
+            if (Items != null)
+            {
+                Items.Clear();
+            }
+            TryInvokeServerLoadFunc();
 
-			if (Parent != null)
-			{
-				Parent.StateHasChanged();
-			}
-			else if (MudTreeRoot != null)
-			{
-				MudTreeRoot.CallStateHasChanged();
-			}
+            if (Parent != null)
+            {
+                Parent.StateHasChanged();
+            }
+            else if (MudTreeRoot != null)
+            {
+                MudTreeRoot.CallStateHasChanged();
+            }
         }
 
         internal Task Select(bool value)
