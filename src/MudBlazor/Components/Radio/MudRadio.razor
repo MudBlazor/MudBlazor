@@ -5,7 +5,7 @@
 <label class="@Classname" style="@Style" id="@_elementId" @onkeydown="@HandleKeyDown">
     <span tabindex="0" class="@ButtonClassname">
         <span class="mud-radio-button">
-            <input tabindex="-1" @attributes="UserAttributes" aria-checked="@(Checked.ToString().ToLower())" aria-disabled="@(Disabled.ToString().ToLower())" role="radio" type="radio" class="mud-radio-input" name="@MudRadioGroup?.Name" disabled="@Disabled" @onclick="OnClick" />
+            <input tabindex="-1" @attributes="UserAttributes" aria-checked="@(Checked.ToString().ToLower())" aria-disabled="@(IsDisabled.ToString().ToLower())" role="radio" type="radio" class="mud-radio-input" name="@MudRadioGroup?.Name" disabled="@IsDisabled" @onclick="OnClick" />
             <span class="@RadioIconsClassNames">
                 <svg class="@IconClassName" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"></path>
