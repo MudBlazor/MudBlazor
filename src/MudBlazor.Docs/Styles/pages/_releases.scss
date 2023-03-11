@@ -1,29 +1,62 @@
-﻿.docs-github-release-body{
-  white-space: pre-line;
-  font-size: var(--mud-typography-body1-size);
-  font-family: var(--mud-typography-body1-family);
-  font-weight: var(--mud-typography-body1-weight);
-  line-height: var(--mud-typography-body1-lineheight);
-  letter-spacing: var(--mud-typography-body1-letterspacing);
-  text-transform: var(--mud-typography-body1-text-transform);
-  
-  a{
-    color:var(--mud-palette-primary);
-    line-height: normal;
-    font-weight: 500;
-    
-    &:hover{
-      cursor:pointer;
-      text-decoration: underline;
+﻿.docs-github-releases{
+    .mud-grid-item-md-4:first-child + .mud-grid-item-md-8 {
+        h2:first-child {
+            border-top: none !important;
+        }
     }
-  }
-  
-  h5{
-    margin-bottom: -12px;
-  }
-  
-  h6{
-    margin-top: -25px;
-    margin-bottom: -15px;
-  }
+    .docs-github-release-body {
+        font-size: var(--mud-typography-body1-size);
+        font-family: var(--mud-typography-body1-family);
+        font-weight: var(--mud-typography-body1-weight);
+        line-height: var(--mud-typography-body1-lineheight);
+        letter-spacing: var(--mud-typography-body1-letterspacing);
+        text-transform: var(--mud-typography-body1-text-transform);
+        padding-bottom: 24px;
+    
+        a {
+            color: var(--mud-palette-primary);
+            line-height: normal;
+            font-weight: 500;
+    
+            &:hover {
+                cursor: pointer;
+                text-decoration: underline;
+            }
+
+            &.docs-code{
+                font-weight: 700;
+            }
+        }
+    
+        h2 {
+            font-size: var(--mud-typography-h5-size);
+            font-family: var(--mud-typography-h5-family);
+            font-weight: 500;
+            line-height: normal;
+            letter-spacing: var(--mud-typography-h5-letterspacing);
+            text-transform: var(--mud-typography-h5-text-transform);
+    
+            &:first-child {
+                padding: 12px 0;
+                margin-bottom: 24px;
+                border-top: var(--mud-palette-lines-default) 1px solid;
+                border-bottom: var(--mud-palette-lines-default) 1px solid;
+            }
+        }
+    
+        strong {
+            font-weight: 500;
+        }
+    
+        ul {
+            padding: 12px 0 24px 24px;
+            list-style: disc;
+        }
+
+        .github-user {
+            font-weight: 700;
+            color: var(--mud-palette-text-primary);
+        }
+    }
 }
+

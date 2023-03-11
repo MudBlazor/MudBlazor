@@ -12,13 +12,13 @@
         }
         else
         {
-            <MudGrid>
+            <MudGrid Class="docs-github-releases">
                 @foreach (var release in _githubReleases)
                 {
                     <MudItem xs="12" md="4">
                         <div class="docs-sticky-info">
                             <MudText Typo="Typo.h5" Inline="true">Version </MudText>
-                            <MudText Typo="Typo.h5" Inline="true" Color="Color.Primary"><b>@release.name</b></MudText>
+                            <MudText Typo="Typo.h5" Inline="true" Color="Color.Primary"><b>@release.tag_name</b></MudText>
                             <MudText Typo="Typo.subtitle1">Released on @release.published_at.ToString("MMMM MM, yyyy")</MudText>
                         </div>
                     </MudItem>
@@ -36,7 +36,7 @@
 @code {
 
     private GitHubReleases[] _githubReleases;
-    
+
     protected override async Task OnInitializedAsync()
     {
         _githubReleases = await _gitHubApiClient.GetReleasesAsync();
@@ -46,18 +46,12 @@
     private string GetBody(string value)
     {
         string output = value;
-        output = Regex.Replace(output, @"(^|\n)# .+", "<h5 class=\"mud-typography mud-typography-h5 mud-inherit-text\">$&</h5>");
-        output = Regex.Replace(output, @"(^|\n)## .+", "<h5 class=\"mud-typography mud-typography-h5 mud-inherit-text\">$&</h5>");
-        output = Regex.Replace(output, @"(^|\n)### .+", "<h6 class=\"mud-typography mud-typography-h6 mud-inherit-text\">$&</h6>");
-        // Markdown links
-        output = Regex.Replace(output, @"\[(.*?)\]\((.*?)\)", "<a target=\"_blank\" href=\"$2\">$1</a>");
-        // Http links
-        output = Regex.Replace(output, @"(?<!"")(?>https?:\/\/)[^\s<>]+(?:[\w\d]+|(?>[^[\p{P}\s]|\/))", "<a target=\"_blank\" href=\"$0\">$0</a>");
-        // Issue / PR links
-        output = Regex.Replace(output, @"(#){1}([0-9]{4}){1}", "<a target=\"_blank\" href=\"https://github.com/MudBlazor/MudBlazor/pull/$2\">#$2</a>");
-        output = output.Replace("- **", "<b class=\"mx-3\">•</b><b>").Replace("**:",":</b>");
-        output = output.Replace("### ", "").Replace("## ","").Replace("# ","#");
-        output = output.Replace(">#MudBlazor", ">MudBlazor");
+        output = Regex.Replace(output, @"((#{3}\s)(?<subtitle>.+))", "<h3>${subtitle}</h3>");
+        output = Regex.Replace(output, @"((#{2}\s)(?<title>.+))", "<h2>${title}</h2>");
+        output = Regex.Replace(output, @"(([*] )(?<row>.+))", "<div><b class=\"mx-3\">•</b>${row}</div>");
+        output = Regex.Replace(output, @"(@)(\S+)", "<a target=\"_blank\" href=\"https://github.com/$2\" class=\"github-user\">@$2</a>");
+        output = Regex.Replace(output, @"https://github.com/MudBlazor/MudBlazor/pull/([0-9]{4})", "<a target=\"_blank\" href=\"$0\">#$1</a>");
+        output = Regex.Replace(output, @"([*][*]Full Changelog[*][*]: )(https://github.com/MudBlazor/MudBlazor/compare/)(.+)", "Full Changelog: <a target=\"_blank\" href=\"$2$3\" class=\"docs-code docs-code-primary\">$3</a>");
         return output;
     }
 
