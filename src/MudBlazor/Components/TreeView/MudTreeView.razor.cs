@@ -249,10 +249,10 @@ namespace MudBlazor
 
         internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
 
-		internal void CallStateHasChanged()
-		{
-			base.StateHasChanged();
-		}
+        internal void CallStateHasChanged()
+        {
+            base.StateHasChanged();
+        }
 
     }
 }
