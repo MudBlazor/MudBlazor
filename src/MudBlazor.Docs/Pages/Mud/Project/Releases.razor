@@ -3,6 +3,8 @@
 
 @inject GitHubApiClient _gitHubApiClient;
 
+<PageTitle>Releases - MudBlazor</PageTitle>
+
 <DocsPage DisplayFooter="true">
     <DocsPageHeader Title="Releases" />
     <DocsPageContent>
@@ -52,5 +54,4 @@
         value = Regex.Replace(value, @"([*][*]Full Changelog[*][*]: )(https://github.com/MudBlazor/MudBlazor/compare/)(.+)", "<p class=\"mud-typography mud-typography-body1\">Full Changelog: <a target=\"_blank\" href=\"$2$3\" class=\"docs-code docs-code-primary\">$3</a></p>");
         return value;
     }
-
 }
