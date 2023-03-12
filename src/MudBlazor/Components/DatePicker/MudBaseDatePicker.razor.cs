@@ -21,6 +21,35 @@ namespace MudBlazor
             AdornmentAriaLabel = "Open Date Picker";
         }
 
+        private bool _exceedMinDateDateView = false;
+        private bool _exceedMaxDateDateView = false;
+        private bool _exceedMinDateMonthView = false;
+        private bool _exceedMaxDateMonthView = false;
+
+        protected string DatePrevButtonClass =>
+            new CssBuilder("mud-picker-nav-button-prev")
+            .AddClass("mud-flip-x-rtl")
+            .AddClass("invisible", _exceedMinDateDateView)
+            .Build();
+
+        protected string DateNextButtonClass =>
+            new CssBuilder("mud-picker-nav-button-next")
+            .AddClass("mud-flip-x-rtl")
+            .AddClass("invisible", _exceedMaxDateDateView)
+            .Build();
+
+        protected string MonthPrevButtonClass =>
+            new CssBuilder("")
+            .AddClass("mud-flip-x-rtl")
+            .AddClass("invisible", _exceedMinDateMonthView)
+            .Build();
+
+        protected string MonthNextButtonClass =>
+            new CssBuilder("")
+            .AddClass("mud-flip-x-rtl")
+            .AddClass("invisible", _exceedMaxDateMonthView)
+            .Build();
+
         [Inject] protected IScrollManager ScrollManager { get; set; }
 
         /// <summary>
@@ -103,9 +132,10 @@ namespace MudBlazor
             get => _picker_month;
             set
             {
-                if (value == _picker_month)
+                if (value == _picker_month || value > DateTime.MaxValue || DateTime.MinValue > value)
                     return;
                 _picker_month = value;
+                UpdateMinMaxDateExceedStatus();
                 InvokeAsync(StateHasChanged);
                 PickerMonthChanged.InvokeAsync(value);
             }
@@ -263,6 +293,10 @@ namespace MudBlazor
             if (_picker_month.HasValue && _picker_month.Value.Year == 1 && _picker_month.Value.Month == 1)
             {
                 return Culture.Calendar.MinSupportedDateTime;
+            }
+            else if (_picker_month.HasValue && _picker_month > new DateTime(9999, 11, 01))
+            {
+                return new DateTime(9999, 11, 01);
             }
             return Culture.Calendar.AddMonths(monthStartDate, month);
         }
@@ -441,7 +475,10 @@ namespace MudBlazor
 
         private void OnNextMonthClick()
         {
-            PickerMonth = GetMonthEnd(0).AddDays(1);
+            if (new DateTime(9999, 11, 01) > PickerMonth)
+            {
+                PickerMonth = GetMonthEnd(0).AddDays(1);
+            }
         }
 
         private void OnPreviousYearClick()
@@ -559,8 +596,6 @@ namespace MudBlazor
             return Typo.subtitle1;
         }
 
-        
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -574,6 +609,7 @@ namespace MudBlazor
             if (firstRender)
             {
                 _picker_month ??= GetCalendarStartOfMonth();
+                UpdateMinMaxDateExceedStatus();
             }
 
             if (firstRender && CurrentView == OpenTo.Year)
@@ -591,6 +627,71 @@ namespace MudBlazor
         private int GetCalendarDayOfMonth(DateTime date)
         {
             return Culture.Calendar.GetDayOfMonth(date);
+        }
+
+        private void UpdateMinMaxDateExceedStatus()
+        {
+            if (PickerMonth.HasValue && DateTime.MinValue >= PickerMonth)
+            {
+                _exceedMinDateDateView = true;
+                _exceedMinDateMonthView = true;
+            }
+            else if (!(MinDate.HasValue) || !(PickerMonth.HasValue))
+            {
+                _exceedMinDateDateView = false;
+                _exceedMinDateMonthView = false;
+            }
+            else
+            {
+                if (MinDate.HasValue && PickerMonth.HasValue && PickerMonth.Value.AddMonths(-1) >= MinDate.Value.StartOfMonth(CultureInfo.CurrentCulture))
+                {
+                    _exceedMinDateDateView = false;
+                }
+                else
+                {
+                    _exceedMinDateDateView = true;
+                }
+
+                if (MinDate.HasValue && PickerMonth.HasValue && new DateTime(PickerMonth.Value.Year, 01, 01) >= MinDate.Value)
+                {
+                    _exceedMinDateMonthView = false;
+                }
+                else
+                {
+                    _exceedMinDateMonthView = true;
+                }
+            }
+
+            if (PickerMonth.HasValue && PickerMonth >= new DateTime(9999, 11, 01))
+            {
+                _exceedMaxDateDateView = true;
+                _exceedMaxDateMonthView = true;
+            }
+            else if (!(MaxDate.HasValue) || !(PickerMonth.HasValue))
+            {
+                _exceedMaxDateDateView = false;
+                _exceedMaxDateMonthView = false;
+            }
+            else
+            {
+                if (MaxDate.HasValue && PickerMonth.HasValue && MaxDate.Value >= PickerMonth.Value.AddMonths(1))
+                {
+                    _exceedMaxDateDateView = false;
+                }
+                else
+                {
+                    _exceedMaxDateDateView = true;
+                }
+
+                if (MaxDate.HasValue && PickerMonth.HasValue && MaxDate.Value >= new DateTime(PickerMonth.Value.Year, 12, 31))
+                {
+                    _exceedMaxDateMonthView = false;
+                }
+                else
+                {
+                    _exceedMaxDateMonthView = true;
+                }
+            }
         }
 
         /// <summary>

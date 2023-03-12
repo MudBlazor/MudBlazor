@@ -246,14 +246,6 @@
     }
 }
 
-:not(.mud-picker-hidden) {
-    .mud-picker-calendar-header-last {
-        .mud-picker-nav-button-next {
-            visibility: inherit !important;
-        }
-    }
-}
-
 .mud-picker-hidden {
     .mud-picker-nav-button-next, .mud-picker-nav-button-prev {
         visibility: hidden !important;

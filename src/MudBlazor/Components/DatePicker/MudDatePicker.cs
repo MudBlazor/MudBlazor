@@ -29,6 +29,10 @@ namespace MudBlazor
 
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
+            if ((MinDate.HasValue && MinDate > date) || (MaxDate.HasValue && date > MaxDate))
+            {
+                return;
+            }
             if (_value != date)
             {
                 Touched = true;
