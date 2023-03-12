@@ -61,21 +61,13 @@
                                     }
                                 </div>
                             </div>
-                            <div class="mud-picker-month-container">
+                            <div class="mud-picker-month-container mud-button-root">
                                 @foreach (var month in GetAllMonths())
                                 {
-                                    @if ((month < MinDate) || (month > MaxDate))
-                                    {
-                                        <button type="button" disabled="true" aria-label="@GetMonthName(month)" class="mud-picker-month" @onclick="(() => OnMonthSelected(month))" @onclick:stopPropagation="true">
-                                            <MudText Typo="@GetMonthTypo(month)" Class="@GetMonthClasses(month)">@GetAbbreviatedMonthName(month)</MudText>
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button type="button" aria-label="@GetMonthName(month)" class="mud-picker-month" @onclick="(() => OnMonthSelected(month))" @onclick:stopPropagation="true">
-                                            <MudText Typo="@GetMonthTypo(month)" Class="@GetMonthClasses(month)">@GetAbbreviatedMonthName(month)</MudText>
-                                        </button>
-                                    }
+                                    <button type="button" disabled=@(month < MinDate || month > MaxDate) aria-label="@GetMonthName(month)" class="mud-picker-month mud-button-root" @onclick="(() => OnMonthSelected(month))" @onclick:stopPropagation="true">
+                                        <MudText Typo="@GetMonthTypo(month)" Class="@GetMonthClasses(month)">@GetAbbreviatedMonthName(month)</MudText>
+                                    </button>
+
                                 }
                             </div>
                         }

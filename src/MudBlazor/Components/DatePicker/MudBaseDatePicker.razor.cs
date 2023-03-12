@@ -547,7 +547,7 @@ namespace MudBlazor
 
         private string GetMonthClasses(DateTime month)
         {
-            if (month < MinDate || month > MaxDate)
+            if (month <= MinDate || month >= MaxDate)
                 return "mud-text-disabled";
             if (GetMonthStart(0) == month)
                 return $"mud-picker-month-selected mud-{Color.ToDescriptionString()}-text";

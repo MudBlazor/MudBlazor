@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
@@ -901,6 +902,30 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => datePicker.GoToDate());
             comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2023, 04, 21)));
+        }
+
+        [Test]
+        public async Task DatePickerTest_CheckIfMonthsAreDisabled()
+        {
+            var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
+            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+
+            datePicker.MinDate = DateTime.Now.AddDays(-1);
+            datePicker.MaxDate = DateTime.Now.AddDays(1);
+            
+
+            // Open the datepicker
+            await comp.InvokeAsync(datePicker.Open);
+
+            comp.Find("button.mud-button-month").Click();
+            comp.WaitForAssertion(() => comp.FindAll("button.mud-picker-month").Any(x => x.IsDisabled()).Should().Be(true));
+
+            comp.FindAll("button.mud-picker-month").First(x => x.IsDisabled()).Click();
+
+            var months = comp.FindAll("button.mud-picker-month");
+            months.Should().NotBeNull();
+            comp.Instance.Date.Should().BeNull();
+            
         }
     }
 }
