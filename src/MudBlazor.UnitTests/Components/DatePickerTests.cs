@@ -662,6 +662,50 @@ namespace MudBlazor.UnitTests.Components
                 .Should().ContainInConsecutiveOrder(expectedResult);
         }
 
+        [TestCase(30, 3, 2)]
+        [TestCase(31, 3, 2)]
+        [TestCase(1, 4, 3)]
+        [TestCase(2, 4, 3)]
+        public void MinDateEffectOnDisablingMonthsIfDayNotFixed(int minDatesDay, int month, int disabledOnes)
+        {
+            var currentYear = DateTime.Now.Year;
+            var minDate = new DateTime(currentYear, month, minDatesDay);
+            var comp = OpenPicker(new[]
+            {
+                Parameter(nameof(MudDatePicker.MinDate), minDate),
+                Parameter(nameof(MudDatePicker.OpenTo), OpenTo.Month),
+            });
+
+            var expectedResult = new bool[12];
+            for (var i = 0; i < disabledOnes; ++i) expectedResult[i] = true;
+
+            comp.Instance.MinDate.Should().Be(minDate);
+            comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
+                .Should().ContainInConsecutiveOrder(expectedResult);
+        }
+
+        [TestCase(1, 10, 2)]
+        [TestCase(2, 10, 2)]
+        [TestCase(30, 9, 3)]
+        [TestCase(29, 9, 3)]
+        public void MaxDateEffectOnDisablingMonthsIfDayNotFixed(int maxDatesDay, int month, int disabledOnes)
+        {
+            var currentYear = DateTime.Now.Year;
+            var maxDate = new DateTime(currentYear, month, maxDatesDay);
+            var comp = OpenPicker(new[]
+            {
+                Parameter(nameof(MudDatePicker.MaxDate), maxDate),
+                Parameter(nameof(MudDatePicker.OpenTo), OpenTo.Month),
+            });
+
+            var expectedResult = new bool[12];
+            for (var i = 0; i < disabledOnes; ++i) expectedResult[11 - i] = true;
+
+            comp.Instance.MaxDate.Should().Be(maxDate);
+            comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
+                .Should().ContainInConsecutiveOrder(expectedResult);
+        }
+
         [Test]
         public void IsDateDisabledFunc_SettingDateToADisabledDateYieldsNull()
         {

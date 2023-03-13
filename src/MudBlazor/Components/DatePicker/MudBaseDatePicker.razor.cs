@@ -393,11 +393,14 @@ namespace MudBlazor
         /// <summary>
         /// Check if month is disabled
         /// </summary>
-        /// <param name="month"></param>
-        /// <returns></returns>
+        /// <param name="month">Month given with first day of the month</param>
+        /// <returns>True if month should be disabled, false otherwise</returns>
         private bool IsMonthDisabled(DateTime month)
         {
-            if (!FixDay.HasValue) return false;
+            if (!FixDay.HasValue)
+            {
+                return month.EndOfMonth(Culture) < MinDate || month > MaxDate;
+            }
             var day = new DateTime(month.Year, month.Month, FixDay!.Value);
             return day < MinDate || day > MaxDate || IsDateDisabledFunc(day);
         }
