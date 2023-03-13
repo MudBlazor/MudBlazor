@@ -547,6 +547,8 @@ namespace MudBlazor
 
         private string GetMonthClasses(DateTime month)
         {
+            if (month <= MinDate || month >= MaxDate)
+                return "mud-text-disabled";
             if (GetMonthStart(0) == month)
                 return $"mud-picker-month-selected mud-{Color.ToDescriptionString()}-text";
             return null;
@@ -554,13 +556,10 @@ namespace MudBlazor
 
         private Typo GetMonthTypo(DateTime month)
         {
-            if (GetMonthStart(0) == month)
+            if (GetMonthStart(0) == month && (month > MinDate || month < MaxDate))
                 return Typo.h5;
             return Typo.subtitle1;
         }
-
-        
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
