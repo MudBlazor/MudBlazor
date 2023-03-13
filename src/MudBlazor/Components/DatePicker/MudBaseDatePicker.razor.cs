@@ -391,6 +391,21 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Check if month is disabled
+        /// </summary>
+        /// <param name="month">Month given with first day of the month</param>
+        /// <returns>True if month should be disabled, false otherwise</returns>
+        private bool IsMonthDisabled(DateTime month)
+        {
+            if (!FixDay.HasValue)
+            {
+                return month.EndOfMonth(Culture) < MinDate || month > MaxDate;
+            }
+            var day = new DateTime(month.Year, month.Month, FixDay!.Value);
+            return day < MinDate || day > MaxDate || IsDateDisabledFunc(day);
+        }
+
+        /// <summary>
         /// return Mo, Tu, We, Th, Fr, Sa, Su in the right culture
         /// </summary>
         /// <returns></returns>
@@ -547,16 +562,14 @@ namespace MudBlazor
 
         private string GetMonthClasses(DateTime month)
         {
-            if (month <= MinDate || month >= MaxDate)
-                return "mud-text-disabled";
-            if (GetMonthStart(0) == month)
+            if (GetMonthStart(0) == month && !IsMonthDisabled(month))
                 return $"mud-picker-month-selected mud-{Color.ToDescriptionString()}-text";
             return null;
         }
 
         private Typo GetMonthTypo(DateTime month)
         {
-            if (GetMonthStart(0) == month && (month > MinDate || month < MaxDate))
+            if (GetMonthStart(0) == month)
                 return Typo.h5;
             return Typo.subtitle1;
         }

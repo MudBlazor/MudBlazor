@@ -2,6 +2,7 @@
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudDatePicker>();
             var picker = comp.Instance;
-            
+
             picker.Text.Should().Be(null);
             picker.Date.Should().Be(null);
             picker.MaxDate.Should().Be(null);
@@ -51,7 +52,7 @@ namespace MudBlazor.UnitTests.Components
             var openButton = comp.Find(".mud-input-adornment button");
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Date Picker");
         }
-        
+
         [Test]
         public void DatePickerLabelFor()
         {
@@ -59,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
             var label = comp.Find(".mud-input-label");
             label.Attributes.GetNamedItem("for")?.Value.Should().Be("datePickerLabelTest");
         }
-        
+
         [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public void DatePicker_Render_Performance()
@@ -178,7 +179,7 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be("26 10 2020");
         }
 
-        [Test]        
+        [Test]
         public async Task DatePicker_Should_Clear()
         {
             var comp = Context.RenderComponent<MudDatePicker>();
@@ -562,6 +563,150 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void IsDateDisabledFunc_DisablesCalendarMonthButtons()
+        {
+            Func<DateTime, bool> isDisabledFunc = date => true;
+            var comp = OpenPicker(new[]
+            {
+                Parameter(nameof(MudDatePicker.IsDateDisabledFunc), isDisabledFunc),
+                Parameter(nameof(MudDatePicker.OpenTo), OpenTo.Month),
+                Parameter(nameof(MudDatePicker.FixDay), 1)
+            });
+
+            comp.Instance.IsDateDisabledFunc.Should().Be(isDisabledFunc);
+            comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
+                .Should().OnlyContain(disabled => disabled == true);
+
+            // None should be selected
+            comp.FindAll("button.mud-picker-month > .mud-typography").Select(
+                text => ((IHtmlElement)text).ClassList.Any(cls => cls == "mud-picker-month-select" || cls == "mud-primary-text"))
+                .Should().OnlyContain(selected => selected == false);
+        }
+
+        [Test]
+        public void IsDateDisabledFunc_DoesNotHaveEffectOnMonthsIfDayNotFixed()
+        {
+            Func<DateTime, bool> isDisabledFunc = date => true;
+            var comp = OpenPicker(new[]
+            {
+                Parameter(nameof(MudDatePicker.IsDateDisabledFunc), isDisabledFunc),
+                Parameter(nameof(MudDatePicker.OpenTo), OpenTo.Month)
+            });
+
+            comp.Instance.IsDateDisabledFunc.Should().Be(isDisabledFunc);
+            comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
+                .Should().OnlyContain(disabled => disabled == false);
+        }
+
+        [Test]
+        public void IsDateDisabledFunc_DoesNotHaveEffectOnMonthsIfFuncReturnsFalse()
+        {
+            Func<DateTime, bool> isDisabledFunc = date => false;
+            var comp = OpenPicker(new[]
+            {
+                Parameter(nameof(MudDatePicker.IsDateDisabledFunc), isDisabledFunc),
+                Parameter(nameof(MudDatePicker.OpenTo), OpenTo.Month),
+                Parameter(nameof(MudDatePicker.FixDay), 1)
+            });
+
+            comp.Instance.IsDateDisabledFunc.Should().Be(isDisabledFunc);
+            comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
+                .Should().OnlyContain(disabled => disabled == false);
+        }
+
+        [TestCase(10, 8, 2, 2)]
+        [TestCase(10, 9, 2, 2)]
+        [TestCase(10, 10, 2, 1)]
+        [TestCase(10, 11, 2, 1)]
+        public void MinDateEffectOnDisablingMonthsIfDayFixed(int minDatesDay, int fixedDay,
+            int month, int disabledOnes)
+        {
+            var currentDate = DateTime.Now;
+            var minDate = new DateTime(currentDate.Year, month, minDatesDay);
+            var comp = OpenPicker(new[]
+            {
+                Parameter(nameof(MudDatePicker.MinDate), minDate),
+                Parameter(nameof(MudDatePicker.OpenTo), OpenTo.Month),
+                Parameter(nameof(MudDatePicker.FixDay), fixedDay),
+            });
+
+            var expectedResult = new bool[12];
+            for (var i = 0; i < disabledOnes; ++i) expectedResult[i] = true;
+
+            comp.Instance.MinDate.Should().Be(minDate);
+            comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
+                .Should().ContainInConsecutiveOrder(expectedResult);
+        }
+
+        [TestCase(10, 9, 11, 1)]
+        [TestCase(10, 10, 11, 1)]
+        [TestCase(10, 11, 11, 2)]
+        [TestCase(10, 12, 11, 2)]
+        public void MaxDateEffectOnDisablingMonthsIfDayFixed(int maxDatesDay, int fixedDay,
+            int month, int disabledOnes)
+        {
+            var currentDate = DateTime.Now;
+            var maxDate = new DateTime(currentDate.Year, month, maxDatesDay);
+            var comp = OpenPicker(new[]
+            {
+                Parameter(nameof(MudDatePicker.MaxDate), maxDate),
+                Parameter(nameof(MudDatePicker.OpenTo), OpenTo.Month),
+                Parameter(nameof(MudDatePicker.FixDay), fixedDay),
+            });
+
+            var expectedResult = new bool[12];
+            for (var i = 0; i < disabledOnes; ++i) expectedResult[11 - i] = true;
+
+            comp.Instance.MaxDate.Should().Be(maxDate);
+            comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
+                .Should().ContainInConsecutiveOrder(expectedResult);
+        }
+
+        [TestCase(30, 3, 2)]
+        [TestCase(31, 3, 2)]
+        [TestCase(1, 4, 3)]
+        [TestCase(2, 4, 3)]
+        public void MinDateEffectOnDisablingMonthsIfDayNotFixed(int minDatesDay, int month, int disabledOnes)
+        {
+            var currentYear = DateTime.Now.Year;
+            var minDate = new DateTime(currentYear, month, minDatesDay);
+            var comp = OpenPicker(new[]
+            {
+                Parameter(nameof(MudDatePicker.MinDate), minDate),
+                Parameter(nameof(MudDatePicker.OpenTo), OpenTo.Month),
+            });
+
+            var expectedResult = new bool[12];
+            for (var i = 0; i < disabledOnes; ++i) expectedResult[i] = true;
+
+            comp.Instance.MinDate.Should().Be(minDate);
+            comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
+                .Should().ContainInConsecutiveOrder(expectedResult);
+        }
+
+        [TestCase(1, 10, 2)]
+        [TestCase(2, 10, 2)]
+        [TestCase(30, 9, 3)]
+        [TestCase(29, 9, 3)]
+        public void MaxDateEffectOnDisablingMonthsIfDayNotFixed(int maxDatesDay, int month, int disabledOnes)
+        {
+            var currentYear = DateTime.Now.Year;
+            var maxDate = new DateTime(currentYear, month, maxDatesDay);
+            var comp = OpenPicker(new[]
+            {
+                Parameter(nameof(MudDatePicker.MaxDate), maxDate),
+                Parameter(nameof(MudDatePicker.OpenTo), OpenTo.Month),
+            });
+
+            var expectedResult = new bool[12];
+            for (var i = 0; i < disabledOnes; ++i) expectedResult[11 - i] = true;
+
+            comp.Instance.MaxDate.Should().Be(maxDate);
+            comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
+                .Should().ContainInConsecutiveOrder(expectedResult);
+        }
+
+        [Test]
         public void IsDateDisabledFunc_SettingDateToADisabledDateYieldsNull()
         {
             var wasEventCallbackCalled = false;
@@ -602,7 +747,20 @@ namespace MudBlazor.UnitTests.Components
                 .Should().OnlyContain(disabled => disabled == false);
         }
 
+
         
+        [Test]
+        //mud-button-root added for greying out and making buttons not clickable if month is disabled
+        public void MonthButtons_ButtonRootClassPresent()
+        {
+            var comp = OpenPicker(Parameter(nameof(MudDatePicker.FixDay), 1));
+            var monthsCount = 12;
+
+            comp.FindAll("button.mud-picker-month").Select(button =>
+                ((IHtmlButtonElement)button).ClassName.Contains("mud-button-root"))
+                .Should().HaveCount(monthsCount);
+        }
+
         [Test]
         public void AdditionalDateClassesFunc_ClassIsAdded()
         {
@@ -649,7 +807,7 @@ namespace MudBlazor.UnitTests.Components
             datePicker.Instance.Date.Should().Be(now);
 
             // Close the datepicker without submitting the date
-            // The date of the datepicker remains equal to now 
+            // The date of the datepicker remains equal to now
             await comp.InvokeAsync(() => datePicker.Instance.Close(false));
 
             await comp.InvokeAsync(() => datePicker.Instance.Open());

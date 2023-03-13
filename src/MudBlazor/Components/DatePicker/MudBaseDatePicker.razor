@@ -61,13 +61,13 @@
                                     }
                                 </div>
                             </div>
-                            <div class="mud-picker-month-container mud-button-root">
+                            <div class="mud-picker-month-container">
                                 @foreach (var month in GetAllMonths())
                                 {
-                                    <button type="button" disabled=@(month < MinDate || month > MaxDate) aria-label="@GetMonthName(month)" class="mud-picker-month mud-button-root" @onclick="(() => OnMonthSelected(month))" @onclick:stopPropagation="true">
+                                    <button type="button" aria-label="@GetMonthName(month)" disabled="@IsMonthDisabled(month)"
+                                    class="mud-picker-month mud-button-root" @onclick="(() => OnMonthSelected(month))" @onclick:stopPropagation="true">
                                         <MudText Typo="@GetMonthTypo(month)" Class="@GetMonthClasses(month)">@GetAbbreviatedMonthName(month)</MudText>
                                     </button>
-
                                 }
                             </div>
                         }
@@ -125,20 +125,20 @@
                                             {
                                                 var selectedDay = !firstMonthFirstYear ? day : day.AddDays(-1);
                                                 <button @key="@(!firstMonthFirstYear ? selectedDay : tempId)" type="button" style="--day-id: @(!firstMonthFirstYear ? tempId: tempId + 1);"
-                                class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @(!firstMonthFirstYear || day.Day == _picker_month.Value.Day? GetDayClasses(tempMonth, day) : GetDayClasses(tempMonth, selectedDay))"
-                                    @onclick="(() => { var d = selectedDay; OnDayClicked(d); })"
-                                    @onclick:stopPropagation="true"
-                                aria-label='@selectedDay.ToString("dddd, dd MMMM yyyy")'
-                                onmouseover="this.closest('.mud-picker-calendar-content').style.setProperty('--selected-day', @(!firstMonthFirstYear ? tempId: tempId + 1));"
-                                disabled="@((selectedDay < MinDate) || (selectedDay > MaxDate) || IsDateDisabledFunc(selectedDay))">
+                                                        class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @(!firstMonthFirstYear || day.Day == _picker_month.Value.Day? GetDayClasses(tempMonth, day) : GetDayClasses(tempMonth, selectedDay))"
+                                                        @onclick="(() => { var d = selectedDay; OnDayClicked(d); })"
+                                                        @onclick:stopPropagation="true"
+                                                        aria-label='@selectedDay.ToString("dddd, dd MMMM yyyy")'
+                                                        onmouseover="this.closest('.mud-picker-calendar-content').style.setProperty('--selected-day', @(!firstMonthFirstYear ? tempId: tempId + 1));"
+                                                        disabled="@((selectedDay < MinDate) || (selectedDay > MaxDate) || IsDateDisabledFunc(selectedDay))">
                                                     <p class="mud-typography mud-typography-body2 mud-inherit-text">@GetCalendarDayOfMonth(selectedDay)</p>
                                                 </button>
                                             }
                                             else
                                             {
                                                 <button @key="0" type="button" style="--day-id: 1;"
-                                class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day mud-day"
-                                aria-label='' disabled>
+                                                        class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day mud-day"
+                                                        aria-label='' disabled>
                                                     <p class="mud-typography mud-typography-body2 mud-inherit-text"></p>
                                                 </button>
                                             }
