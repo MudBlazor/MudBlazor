@@ -1105,7 +1105,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Autocomplete_Should_Throw_KeyDown_KeyUp_Event()
+        public async Task Autocomplete_Should_Raise_KeyDown_KeyUp_Event()
         {
             //Create comp
             var comp = Context.RenderComponent<AutocompleteTest1>();
