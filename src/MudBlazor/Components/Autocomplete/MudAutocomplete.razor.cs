@@ -579,6 +579,7 @@ namespace MudBlazor
                         IsOpen = false;
                     break;
             }
+            base.InvokeKeyDown(args);
         }
 
         internal virtual async Task OnInputKeyUp(KeyboardEventArgs args)
