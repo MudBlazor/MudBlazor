@@ -497,7 +497,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             await comp.InvokeAsync(() => autocomplete.Clear().Wait());
             comp.Markup.Should().NotContain("mud-popover-open");
-            autocomplete.Value.Should().Be("");
+            autocomplete.Value.Should().Be(null);
             autocomplete.Text.Should().Be("");
 
             // now let's type a different state
@@ -510,7 +510,7 @@ namespace MudBlazor.UnitTests.Components
             // Clearing it and check the close status text and value again
             await comp.InvokeAsync(() => autocomplete.Clear().Wait());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            autocomplete.Value.Should().Be("");
+            autocomplete.Value.Should().Be(null);
             autocomplete.Text.Should().Be("");
         }
 
@@ -577,7 +577,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => autocomplete.Reset());
             comp.Markup.Should().NotContain("mud-popover-open");
             autocomplete.Value.Should().Be(null);
-            autocomplete.Text.Should().Be(null);
+            autocomplete.Text.Should().Be("");
 
             // now let's type a different state
             autocompletecomp.Find("input").Input("Calif");
@@ -590,7 +590,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => autocomplete.Reset());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             autocomplete.Value.Should().Be(null);
-            autocomplete.Text.Should().Be(null);
+            autocomplete.Text.Should().Be("");
         }
 
         [Test]
