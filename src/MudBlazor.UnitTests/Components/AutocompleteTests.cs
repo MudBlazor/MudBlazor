@@ -1115,6 +1115,8 @@ namespace MudBlazor.UnitTests.Components
             var customEvent = new EventCallbackFactory().Create<KeyboardEventArgs>("A",() => result.Add("keyevent thrown"));
 
             //set eventCallback
+            //SetCallback also possible
+            //autocompletecomp.SetCallback(p => p.OnKeyDown, (KeyboardEventArgs e ) => result.Add("keyevent thrown"));
             autocompletecomp.SetParam(p => p.OnKeyDown, customEvent);
             autocompletecomp.SetParam(p => p.OnKeyUp, customEvent);
 
