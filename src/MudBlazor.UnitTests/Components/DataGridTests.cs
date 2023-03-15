@@ -3355,14 +3355,14 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.SortMode = SortMode.Single;
             dataGrid.Instance.SortMode.Should().Be(SortMode.Single);
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value, new DataGridCustomSortableTest.NaturalComparer()));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value, new MudBlazor.Utilities.NaturalComparer()));
             dataGrid.FindAll("th .sortable-column-header")[1].TextContent.Trim().Should().Be("Value");
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(true);
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Descending, x => x.Value, new DataGridCustomSortableTest.NaturalComparer()));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Descending, x => x.Value, new MudBlazor.Utilities.NaturalComparer()));
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Descending);
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
@@ -3375,13 +3375,13 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name, new DataGridCustomSortableTest.NaturalComparer()));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name, new MudBlazor.Utilities.NaturalComparer()));
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Ascending);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(true);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => x.Name, new DataGridCustomSortableTest.NaturalComparer()));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => x.Name, new MudBlazor.Utilities.NaturalComparer()));
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Descending);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-desc").Should().Be(true);
@@ -3392,7 +3392,7 @@ namespace MudBlazor.UnitTests.Components
 
             //Assign a comparer to a column
             var column = dataGrid.FindComponent<Column<DataGridCustomSortableTest.Item>>();
-            await comp.InvokeAsync(() => column.Instance.Comparer = new DataGridCustomSortableTest.NaturalComparer());
+            await comp.InvokeAsync(() => column.Instance.Comparer = new MudBlazor.Utilities.NaturalComparer());
             //Clear sorting
             await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
