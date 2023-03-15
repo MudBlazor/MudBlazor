@@ -54,6 +54,8 @@ namespace MudBlazor
                     return;
                 }
 
+                Touched = true;
+
                 _dateRange = range;
                 _value = range?.End;
 
@@ -76,6 +78,7 @@ namespace MudBlazor
 
                 await DateRangeChanged.InvokeAsync(_dateRange);
                 BeginValidate();
+                FieldChanged(_value);
             }
         }
 

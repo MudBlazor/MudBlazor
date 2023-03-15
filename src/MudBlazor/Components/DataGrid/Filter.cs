@@ -3,18 +3,15 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MudBlazor
 {
     internal class Filter<T>
     {
-        private readonly MudDataGrid<T> _dataGrid;
-        private readonly FilterDefinition<T> _filterDefinition;
-        private readonly Column<T> _column;
+        private MudDataGrid<T> _dataGrid;
+        internal readonly FilterDefinition<T> _filterDefinition;
+        private Column<T> _column;
 
         internal string _valueString;
         internal double? _valueNumber;
@@ -22,46 +19,24 @@ namespace MudBlazor
         internal bool? _valueBool;
         internal DateTime? _valueDate;
         internal TimeSpan? _valueTime;
-
-        internal Type dataType
-        {
-            get
-            {
-                if (_column != null)
-                    return _column.dataType;
-
-                if (_filterDefinition.FieldType != null)
-                    return _filterDefinition.FieldType;
-
-                if (_filterDefinition.Field == null)
-                    return typeof(object);
-
-                if (typeof(T) == typeof(IDictionary<string, object>) && _filterDefinition.FieldType == null)
-                    throw new ArgumentNullException(nameof(_filterDefinition.FieldType));
-
-                var t = typeof(T).GetProperty(_filterDefinition.Field).PropertyType;
-                return Nullable.GetUnderlyingType(t) ?? t;
-            }
-        }
+        
         internal bool isNumber
         {
             get
             {
-                return FilterOperator.IsNumber(dataType);
+                return FilterOperator.IsNumber(_filterDefinition.dataType);
             }
         }
         internal bool isEnum
         {
             get
             {
-                return FilterOperator.IsEnum(dataType);
+                return FilterOperator.IsEnum(_filterDefinition.dataType);
             }
         }
 
         internal Column<T> filterColumn =>
-            _column != null
-                ? _column
-                : _dataGrid.RenderedColumns?.FirstOrDefault(c => c.Field == _filterDefinition.Field);
+            _column ?? (_dataGrid.RenderedColumns?.FirstOrDefault(c => c.PropertyName == _filterDefinition.Column.PropertyName));
 
         public Filter(MudDataGrid<T> dataGrid, FilterDefinition<T> filterDefinition, Column<T> column)
         {
@@ -69,15 +44,15 @@ namespace MudBlazor
             _filterDefinition = filterDefinition;
             _column = column;
 
-            if (dataType == typeof(string))
+            if (_filterDefinition.dataType == typeof(string))
                 _valueString = _filterDefinition.Value == null ? null : _filterDefinition.Value.ToString();
             else if (isNumber)
                 _valueNumber = _filterDefinition.Value == null ? null : Convert.ToDouble(_filterDefinition.Value);
             else if (isEnum)
                 _valueEnum = _filterDefinition.Value == null ? null : (Enum)_filterDefinition.Value;
-            else if (dataType == typeof(bool))
+            else if (_filterDefinition.dataType == typeof(bool))
                 _valueBool = _filterDefinition.Value == null ? null : Convert.ToBoolean(_filterDefinition.Value);
-            else if (dataType == typeof(DateTime) || dataType == typeof(DateTime?))
+            else if (_filterDefinition.dataType == typeof(DateTime) || _filterDefinition.dataType == typeof(DateTime?))
             {
                 var dateTime = Convert.ToDateTime(_filterDefinition.Value);
                 _valueDate = _filterDefinition.Value == null ? null : dateTime;
@@ -90,10 +65,13 @@ namespace MudBlazor
             _dataGrid.RemoveFilter(_filterDefinition.Id);
         }
 
-        internal void FieldChanged(string field)
+        internal void FieldChanged(Column<T> column)
         {
-            _filterDefinition.Field = field;
-            var operators = FilterOperator.GetOperatorByDataType(dataType);
+            _filterDefinition.Column = column;
+            //_filterDefinition.Field = column.PropertyName;
+            //_filterDefinition.FieldType = column.PropertyType;
+            _filterDefinition.PropertyExpression = column.PropertyExpression;
+            var operators = FilterOperator.GetOperatorByDataType(column.PropertyType);
             _filterDefinition.Operator = operators.FirstOrDefault();
             _filterDefinition.Value = null;
         }
@@ -137,13 +115,13 @@ namespace MudBlazor
                 // get the time component and add it to the date.
                 if (_valueTime != null)
                 {
-                    date.Add(_valueTime.Value);
+                    date = date.Add(_valueTime.Value);
                 }
 
                 _filterDefinition.Value = date;
             }
             else
-                _filterDefinition.Value = value;
+                _filterDefinition.Value = null;
 
             _dataGrid.GroupItems();
         }
@@ -168,6 +146,5 @@ namespace MudBlazor
 
             _dataGrid.GroupItems();
         }
-
     }
 }

@@ -1,9 +1,9 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid T="Model" Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Cell">
+<MudDataGrid Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Cell">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
     </Columns>
 </MudDataGrid>
 

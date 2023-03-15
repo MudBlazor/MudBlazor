@@ -6,6 +6,7 @@ changelog:
       - tests
       - dependency
       - refactor
+      - reverted
   categories:
     - title: Breaking Changes
       labels:

@@ -1022,6 +1022,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The table should not crash if its ServerData Items are null
+        /// </summary>
+        [Test]
+        public async Task TableServerSideDataNull()
+        {
+            var comp = Context.RenderComponent<TableServerSideDataTest6>();
+        }
+
+        /// <summary>
         /// The table should render the classes and style to the tr using the RowStyleFunc and RowClassFunc parameters
         /// </summary>
         [Test]
@@ -1051,6 +1060,23 @@ namespace MudBlazor.UnitTests.Components
         public class TableRowValidatorTest : TableRowValidator
         {
             public int ControlCount => _formControls.Count;
+        }
+
+        [Test]
+        public async Task TableInlineEdit_SetValidatorModel()
+        {
+            var comp = Context.RenderComponent<TableInlineEditTest>();
+            var validator = comp.Instance.Table.Validator;
+
+            var trs = comp.FindAll("tr");
+            trs.Count.Should().Be(4); // three rows + header row
+
+            trs[1].Click();
+            validator.Model.Should().Be("A");
+            trs[2].Click();
+            validator.Model.Should().Be("B");
+            trs[3].Click();
+            validator.Model.Should().Be("C");
         }
 
         [Test]

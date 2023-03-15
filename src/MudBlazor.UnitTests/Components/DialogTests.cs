@@ -10,9 +10,6 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.JSInterop;
-using Moq;
-using MudBlazor.Interop;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Dialog;
 using NUnit.Framework;
@@ -134,6 +131,36 @@ namespace MudBlazor.UnitTests.Components
             // close by click on ok button
             comp.Find("button").Click();
             comp.Markup.Trim().Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Nested dialogs should not appear unless manually shown
+        /// </summary>
+        [Test]
+        public async Task NestedInlineDialogTest()
+        {
+            var provider = Context.RenderComponent<MudDialogProvider>();
+            provider.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            // displaying the component with the inline dialog only renders the open button
+            var comp = Context.RenderComponent<TestNestedInlineDialog>();
+            comp.FindComponents<MudButton>().Count.Should().Be(1);
+            // open the dialog
+            comp.Find("button").Click();
+            comp.WaitForAssertion(() =>
+                provider.Find("div.mud-dialog-container").Should().NotBe(null)
+            );
+            provider.Find("p.mud-typography").TrimmedText().Should().Be("Scorpiany!");
+            provider.FindComponents<MudText>().Count.Should().Be(2); //counts both the dialog header and the text in our test component
+
+            provider.Find("button").Click(); //open nested dialog
+            comp.WaitForAssertion(() =>
+                provider.Find(".nested").Should().NotBe(null)
+            );
+
+            provider.FindAll("p.mud-typography")[1].TrimmedText().Should().Be("Nested dialog!");
+            provider.FindComponents<MudText>().Count.Should().Be(4); //now we have another MudText
         }
 
         /// <summary>
@@ -828,48 +855,6 @@ namespace MudBlazor.UnitTests.Components
         {
             Func<IDialogReference> createMock = Moq.Mock.Of<IDialogReference>;
             createMock.Should().NotThrow();
-        }
-
-        [Test]
-        public async Task DialogDraggableOption()
-        {
-            var comp = Context.RenderComponent<MudDialogProvider>();
-            var service = Context.Services.GetService<IDialogService>();
-            IDialogReference dialogReference = null;
-            //draggable dialog
-            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>(string.Empty, new DialogOptions() { Draggable = true }));
-            dialogReference.Should().NotBe(null);
-
-            comp.Find("div.mud-dialog .mud-dialog-title").GetAttribute("class").Should().Be("mud-dialog-title cursor-move");
-        }
-
-        [Test]
-        public async Task DraggableDialogDragged()
-        {
-            Mock<IJSRuntime> _jsruntimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
-
-            Context.Services.AddSingleton(typeof(IJSRuntime), _jsruntimeMock.Object);
-
-            _jsruntimeMock.Setup(x => x.InvokeAsync<BoundingClientRect>("mudElementRef.getBoundingClientRect", It.IsAny<object[]>()
-                                )).ReturnsAsync(new BoundingClientRect()).Verifiable();
-
-
-            var comp = Context.RenderComponent<MudDialogProvider>();
-            var service = Context.Services.GetService<IDialogService>();
-            IDialogReference dialogReference = null;
-
-            //draggable dialog
-            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>(string.Empty, new DialogOptions() { Draggable = true }));
-            dialogReference.Should().NotBe(null);
-
-            var dialogTitle = comp.Find("div.mud-dialog .mud-dialog-title");
-
-            comp.Find("div.mud-dialog").GetAttribute("style").Should().NotContain("position:absolute");
-
-            await dialogTitle.MouseDownAsync(new MouseEventArgs() { ClientX = 13, ClientY = 37 });
-            await dialogTitle.MouseMoveAsync(new MouseEventArgs() { ClientX = 13, ClientY = 37 });
-
-            comp.Find("div.mud-dialog").GetAttribute("style").Should().Contain("position:absolute");
         }
     }
 

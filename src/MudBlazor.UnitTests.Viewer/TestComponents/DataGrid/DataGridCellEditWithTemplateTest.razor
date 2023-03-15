@@ -2,13 +2,13 @@
 
 <MudDataGrid Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Cell">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Hired)">
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Hired">
             <EditTemplate>
                 <MudCheckBox T="bool" @bind-Checked="context.Item.Hired" Label="Hired" Required />
             </EditTemplate>
-        </Column>
+        </PropertyColumn>
     </Columns>
 </MudDataGrid>
 

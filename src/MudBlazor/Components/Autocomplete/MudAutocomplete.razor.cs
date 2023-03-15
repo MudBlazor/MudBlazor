@@ -205,6 +205,14 @@ namespace MudBlazor
         public bool SelectOnClick { get; set; } = true;
 
         /// <summary>
+        /// If false, clicking on the Autocomplete after selecting an option will query the Search method again with an empty string. This makes it easier to view and select other options without resetting the Value.
+        /// T must either be a record or override GetHashCode and Equals.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Strict { get; set; } = true;
+
+        /// <summary>
         /// Debounce interval in milliseconds.
         /// </summary>
         [Parameter]
@@ -458,6 +466,7 @@ namespace MudBlazor
             IEnumerable<T> searched_items = Array.Empty<T>();
             CancelToken();
 
+            var searchingWhileSelected = false;
             try
             {
                 if (ProgressIndicatorInPopoverTemplate != null)
@@ -465,9 +474,12 @@ namespace MudBlazor
                     IsOpen = true;
                 }
 
+                searchingWhileSelected = !Strict && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text)); //search while selected if enabled and the Text is equivalent to the Value
+                var searchText = searchingWhileSelected ? string.Empty : Text;
+
                 var searchTask = SearchFuncWithCancel != null ?
-                    SearchFuncWithCancel(Text, _cancellationTokenSrc.Token) :
-                    SearchFunc(Text);
+                    SearchFuncWithCancel(searchText, _cancellationTokenSrc.Token) :
+                    SearchFunc(searchText);
 
                 _currentSearchTask = searchTask;
 
@@ -493,8 +505,16 @@ namespace MudBlazor
             }
             _items = searched_items.ToArray();
 
-            _enabledItemIndices = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).Select(tuple => tuple.idx).ToList();
-            _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices.First() : -1;
+            var enabledItems = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).ToList();
+            _enabledItemIndices = enabledItems.Select(tuple => tuple.idx).ToList();
+            if (searchingWhileSelected) //compute the index of the currently select value, if it exists
+            {
+                _selectedListItemIndex = enabledItems.Select(x => x.item).ToList().IndexOf(Value);
+            }
+            else
+            {
+                _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices.First() : -1;
+            }
 
             IsOpen = true;
 
@@ -517,7 +537,7 @@ namespace MudBlazor
         {
             _isCleared = true;
             IsOpen = false;
-            await SetTextAsync(string.Empty, updateValue: false);
+            await SetTextAsync(null, updateValue: false);
             await CoerceValueToText();
             if (_elementReference != null)
                 await _elementReference.SetText("");
@@ -528,7 +548,6 @@ namespace MudBlazor
         protected override async void ResetValue()
         {
             await Clear();
-            base.ResetValue();
         }
 
 
@@ -559,6 +578,7 @@ namespace MudBlazor
                         IsOpen = false;
                     break;
             }
+            base.InvokeKeyDown(args);
         }
 
         internal virtual async Task OnInputKeyUp(KeyboardEventArgs args)
@@ -720,7 +740,7 @@ namespace MudBlazor
         protected override void Dispose(bool disposing)
         {
             _timer?.Dispose();
-            
+
             if (_cancellationTokenSrc != null)
             {
                 try

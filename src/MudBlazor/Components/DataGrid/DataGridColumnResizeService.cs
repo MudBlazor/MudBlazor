@@ -49,7 +49,7 @@ namespace MudBlazor
             if (_resizeMode == ResizeMode.Column)
             {
                 // In case resize mode is column, we have to find any column right of the current one that can also be resized and is not hidden.
-                var nextResizableColumn = _columns.Skip(_columns.IndexOf(headerCell.Column) + 1).FirstOrDefault(c => c.Resizable ?? true && !c.Hidden);
+                var nextResizableColumn = _columns.Skip(_columns.IndexOf(headerCell.Column) + 1).FirstOrDefault(c => (c.Resizable ?? true) && !c.Hidden);
                 if (null == nextResizableColumn)
                     return false;
 

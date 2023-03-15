@@ -10,19 +10,19 @@
 <MudDialog @bind-IsVisible="visible" Options="dialogOptions">
     <TitleContent>
         <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3"/> Edit rating
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" /> Edit rating
         </MudText>
     </TitleContent>
     <DialogContent>
         <p>How awesome are inline dialogs?</p>
-        <MudRating @bind-SelectedValue="rating" Class="mt-3"/>
+        <MudRating @bind-SelectedValue="rating" Class="mt-3" />
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="px-10">Close</MudButton>
     </DialogActions>
 </MudDialog>
 
-@code { 
+@code {
     private bool visible;
     private int rating;
     private void OpenDialog() => visible = true;

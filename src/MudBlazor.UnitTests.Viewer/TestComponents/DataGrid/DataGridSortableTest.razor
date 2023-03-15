@@ -2,9 +2,9 @@
 
 <MudDataGrid Items="@_items" Sortable="true">
     <Columns>
-        <Column T="Item" Field="@nameof(Item.Name)" />
-        <Column T="Item" Field="@nameof(Item.Value)" />
-        <Column T="Item" Field="@nameof(Item.Misc)" SortBy="@(item => item.Misc.Length)" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Value" />
+        <PropertyColumn Property="x => x.Misc" SortBy="@(item => item.Misc.Length)" />
     </Columns>
 </MudDataGrid>
 

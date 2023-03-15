@@ -53,12 +53,12 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.11" />
-	</ItemGroup>
+  </ItemGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.1" />
-	</ItemGroup>
+  </ItemGroup>
 
   <Target Name="ToolRestore">
     <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
@@ -113,6 +113,10 @@
     dotnet watch webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json
     -->
     <Watch Include="**/*.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>
