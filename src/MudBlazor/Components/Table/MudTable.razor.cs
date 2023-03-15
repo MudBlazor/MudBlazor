@@ -348,26 +348,24 @@ namespace MudBlazor
         public RenderFragment<TableGroupData<object, T>> GroupFooterTemplate { get; set; }
 
         private IEnumerable<T> _preEditSort { get; set; } = null;
+        private IEnumerable<T> _currentRenderFilteredItems;
         private bool _hasPreEditSort => _preEditSort != null;
 
         public IEnumerable<T> FilteredItems
         {
             get
             {
+                if (_currentRenderFilteredItems != null) return _currentRenderFilteredItems;
                 if (IsEditing && _hasPreEditSort)
                     return _preEditSort;
                 if (HasServerData)
-                {
                     _preEditSort = _server_data.Items?.ToList();
-                    return _preEditSort;
-                }
-
-                if (Filter == null)
-                {
+                else if (Filter == null)
                     _preEditSort = Context.Sort(Items).ToList();
-                    return _preEditSort;
-                }
-                _preEditSort = Context.Sort(Items.Where(Filter)).ToList();
+                else
+                    _preEditSort = Context.Sort(Items.Where(Filter)).ToList();
+
+                _currentRenderFilteredItems = _preEditSort;
                 return _preEditSort;
             }
         }
