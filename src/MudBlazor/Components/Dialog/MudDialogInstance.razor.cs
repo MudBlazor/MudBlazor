@@ -294,13 +294,13 @@ namespace MudBlazor
             if (DisableBackdropClick)
                 return;
 
-            if (_dialog?.OnBackdropClick.HasDelegate == false)
+            if (_dialog is null || !_dialog.OnBackdropClick.HasDelegate)
             {
                 Cancel();
                 return;
             }
 
-            await _dialog?.OnBackdropClick.InvokeAsync(args);
+            await _dialog.OnBackdropClick.InvokeAsync(args);
         }
 
         private MudDialog _dialog;
