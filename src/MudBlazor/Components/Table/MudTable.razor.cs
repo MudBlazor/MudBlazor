@@ -351,6 +351,13 @@ namespace MudBlazor
         private bool _currentRenderFilteredItemsCached;
         private bool HasPreEditSort => _preEditSort != null;
 
+        /// <summary>
+        /// For unit testing the filtering cache mechanism.
+        /// </summary>
+        public uint FilteringRunCount { get; private set; } = 0;
+
+
+
         public IEnumerable<T> FilteredItems
         {
             get
@@ -366,6 +373,7 @@ namespace MudBlazor
                     _preEditSort = Context.Sort(Items.Where(Filter)).ToList();
 
                 _currentRenderFilteredItemsCached = true;
+                unchecked { FilteringRunCount++; }
                 return _preEditSort;
             }
         }
