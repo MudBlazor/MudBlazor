@@ -347,27 +347,33 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Grouping)]
         public RenderFragment<TableGroupData<object, T>> GroupFooterTemplate { get; set; }
 
-        private IEnumerable<T> _preEditSort { get; set; } = null;
-        private bool _hasPreEditSort => _preEditSort != null;
+        private IEnumerable<T> _preEditSort;
+        private bool _currentRenderFilteredItemsCached;
+        private bool HasPreEditSort => _preEditSort != null;
+
+        /// <summary>
+        /// For unit testing the filtering cache mechanism.
+        /// </summary>
+        public uint FilteringRunCount { get; private set; } = 0;
+
+
 
         public IEnumerable<T> FilteredItems
         {
             get
             {
-                if (IsEditing && _hasPreEditSort)
+                if (_currentRenderFilteredItemsCached) return _preEditSort;
+                if (IsEditing && HasPreEditSort)
                     return _preEditSort;
                 if (HasServerData)
-                {
                     _preEditSort = _server_data.Items?.ToList();
-                    return _preEditSort;
-                }
-
-                if (Filter == null)
-                {
+                else if (Filter == null)
                     _preEditSort = Context.Sort(Items).ToList();
-                    return _preEditSort;
-                }
-                _preEditSort = Context.Sort(Items.Where(Filter)).ToList();
+                else
+                    _preEditSort = Context.Sort(Items.Where(Filter)).ToList();
+
+                _currentRenderFilteredItemsCached = true;
+                unchecked { FilteringRunCount++; }
                 return _preEditSort;
             }
         }
