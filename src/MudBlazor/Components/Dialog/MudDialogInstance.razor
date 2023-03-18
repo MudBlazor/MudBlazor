@@ -2,7 +2,7 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" id="@_elementId" class="mud-dialog-container @Position">
-    <MudOverlay Visible="true" OnClick="HandleBackgroundClick" Class="mud-overlay-dialog" DarkBackground="true" />
+    <MudOverlay Visible="true" OnClick="HandleBackgroundClickAsync" Class="mud-overlay-dialog" DarkBackground="true" />
     <div id="_@Id.ToString("N")" role="dialog" class="@Classname" style="@Style">
         @if (!NoHeader)
         {

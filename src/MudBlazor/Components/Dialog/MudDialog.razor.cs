@@ -4,6 +4,7 @@
 
 using System;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -53,9 +54,15 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Misc)]  // Behavior and Appearance
         public DialogOptions Options { get; set; }
 
+        /// <summary>
+        /// Defines delegate with custom logic when user clicks overlay behind dialogue.
+        /// Is being invoked instead of default "Backdrop Click" logic.
+        /// Setting DisableBackdropClick to "true" disables both - OnBackdropClick as well
+        /// as the default logic.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public Action OnBackdropClick { get; set; }
+        public EventCallback<MouseEventArgs> OnBackdropClick { get; set; }
 
         /// <summary>
         /// No padding at the sides
