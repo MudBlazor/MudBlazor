@@ -108,8 +108,8 @@ namespace MudBlazor.UnitTests.Components
 
             timeline.SetParametersAndRender(p =>
             {
-                p.Add(x => x.TimelineOrientation, orientation);
-                p.Add(x => x.TimelinePosition, position);
+                p.Add(static x => x.TimelineOrientation, orientation);
+                p.Add(static x => x.TimelinePosition, position);
             });
 
 

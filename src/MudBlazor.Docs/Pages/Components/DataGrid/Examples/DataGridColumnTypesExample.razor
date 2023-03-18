@@ -5,11 +5,11 @@
 
 <MudDataGrid Items="@employees" Filterable="false" SortMode="@SortMode.None" Groupable="false">
     <Columns>
-        <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Position" />
-        <PropertyColumn Property="x => x.YearsEmployed" Title="Years Employed" />
-        <PropertyColumn Property="x => x.Salary" Format="C" />
-        <PropertyColumn Property="x => x.Salary * x.YearsEmployed" Title="Total Earned" Format="C" />
+        <PropertyColumn Property="static x => x.Name" />
+        <PropertyColumn Property="static x => x.Position" />
+        <PropertyColumn Property="static x => x.YearsEmployed" Title="Years Employed" />
+        <PropertyColumn Property="static x => x.Salary" Format="C" />
+        <PropertyColumn Property="static x => x.Salary * x.YearsEmployed" Title="Total Earned" Format="C" />
         <TemplateColumn CellClass="d-flex justify-end">
             <CellTemplate>
                 <MudStack Row>

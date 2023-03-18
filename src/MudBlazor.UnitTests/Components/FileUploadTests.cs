@@ -48,9 +48,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void FileUpload_CSSTest()
         {
-            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
-            .Add(x => x.Class, "outer-test")
-            .Add(x => x.InputClass, "inner-test"));
+            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(static parameters => parameters
+            .Add(static x => x.Class, "outer-test")
+            .Add(static x => x.InputClass, "inner-test"));
 
             comp.Find(".mud-input-control.mud-file-upload.outer-test"); //find outer div
 
@@ -101,8 +101,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void FileUpload_AcceptTest()
         {
-            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
-            .Add(x => x.Accept, ".png, .jpg"));
+            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(static parameters => parameters
+            .Add(static x => x.Accept, ".png, .jpg"));
 
             var input = comp.Find("input");
             input.GetAttribute("accept").Should().Be(".png, .jpg");

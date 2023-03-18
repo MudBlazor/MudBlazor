@@ -134,7 +134,7 @@ namespace MudBlazor
                 _toStringFunc = value;
                 Converter = new Converter<T>
                 {
-                    SetFunc = _toStringFunc ?? (x => x?.ToString()),
+                    SetFunc = _toStringFunc ?? (static x => x?.ToString()),
                 };
             }
         }
@@ -505,11 +505,11 @@ namespace MudBlazor
             }
             _items = searched_items.ToArray();
 
-            var enabledItems = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).ToList();
-            _enabledItemIndices = enabledItems.Select(tuple => tuple.idx).ToList();
+            var enabledItems = _items.Select(static (item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).ToList();
+            _enabledItemIndices = enabledItems.Select(static tuple => tuple.idx).ToList();
             if (searchingWhileSelected) //compute the index of the currently select value, if it exists
             {
-                _selectedListItemIndex = enabledItems.Select(x => x.item).ToList().IndexOf(Value);
+                _selectedListItemIndex = enabledItems.Select(static x => x.item).ToList().IndexOf(Value);
             }
             else
             {

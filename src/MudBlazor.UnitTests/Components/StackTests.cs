@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckRowClass()
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.Row, true));
+            var stack = Context.RenderComponent<MudStack>(static x => x.Add(static c => c.Row, true));
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-row", "gap-3" });
@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckReverseClass()
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.Reverse, true));
+            var stack = Context.RenderComponent<MudStack>(static x => x.Add(static c => c.Reverse, true));
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column-reverse", "gap-3" });
@@ -75,7 +75,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(16)]
         public void CheckSpacingClass(int spacing)
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.Spacing, spacing));
+            var stack = Context.RenderComponent<MudStack>(x => x.Add(static c => c.Spacing, spacing));
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"gap-{spacing}" });
@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Justify.SpaceEvenly, "space-evenly")]
         public void CheckJustifyClass(Justify justify, string expectedClass)
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.Justify, justify));
+            var stack = Context.RenderComponent<MudStack>(x => x.Add(static c => c.Justify, justify));
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"justify-{expectedClass}", "gap-3" });
@@ -104,7 +104,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(AlignItems.Stretch, "stretch")]
         public void CheckAlignItemsClass(AlignItems align, string expectedClass)
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.AlignItems, align));
+            var stack = Context.RenderComponent<MudStack>(x => x.Add(static c => c.AlignItems, align));
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"align-{expectedClass}", "gap-3" });

@@ -13,7 +13,7 @@
 
 @if (selected != null && selected.Length>0)
 {
-    <MudText>@string.Join(", ", selected.Select(chip=>chip.Text).OrderBy(x => x))</MudText>
+    <MudText>@string.Join(", ", selected.Select(static chip=>chip.Text).OrderBy(static x => x))</MudText>
 }
 else
 {

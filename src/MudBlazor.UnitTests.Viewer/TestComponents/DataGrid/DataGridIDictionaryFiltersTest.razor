@@ -3,11 +3,11 @@
 @*TODO: Needs work*@
 <MudDataGrid Items="@_items" Filterable>
     <Columns>
-        <PropertyColumn Property="@(x => x["Name"])" />
-        <PropertyColumn Property="@(x => x["Age"])" />
-        <PropertyColumn Property="@(x => x["Status"])" />
-        <PropertyColumn Property="@(x => x["Hired"])" />
-        <PropertyColumn Property="@(x => x["HiredOn"])" />
+        <PropertyColumn Property="@(static x => x["Name"])" />
+        <PropertyColumn Property="@(static x => x["Age"])" />
+        <PropertyColumn Property="@(static x => x["Status"])" />
+        <PropertyColumn Property="@(static x => x["Hired"])" />
+        <PropertyColumn Property="@(static x => x["HiredOn"])" />
     </Columns>
 </MudDataGrid>
 

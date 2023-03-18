@@ -5,7 +5,7 @@
 
 <MudSwitch @bind-Checked="@_selectOnRowClick">SelectOnRowClick: @_selectOnRowClick</MudSwitch>
 <MudText Inline="true">Item: @_selectedItemText</MudText>
-<MudText>Selected items (@selectedItems?.Count): @(selectedItems == null ? "" : string.Join(", ", selectedItems.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
+<MudText>Selected items (@selectedItems?.Count): @(selectedItems == null ? "" : string.Join(", ", selectedItems.OrderBy(static x => x.Sign).Select(static x => x.Sign)))</MudText>
 
 
 <MudTable @ref="_table" T="Element" Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems" Hover="true"

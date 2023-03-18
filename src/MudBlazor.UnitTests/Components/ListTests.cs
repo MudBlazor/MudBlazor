@@ -92,7 +92,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Dark)]
         public void ListColorTest(Color color)
         {
-            var comp = Context.RenderComponent<ListSelectionInitialValueTest>(x => x.Add(c => c.Color, color));
+            var comp = Context.RenderComponent<ListSelectionInitialValueTest>(x => x.Add(static c => c.Color, color));
 
             var list = comp.FindComponent<MudList>().Instance;
             list.SelectedItem.Text.Should().Be("Sparkling Water");
@@ -113,7 +113,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false, true, 4)]
         public async Task ListDenseInheritanceTest(bool dense, bool? innerListDense, int expectedDenseClassCount)
         {
-            var comp = Context.RenderComponent<ListDenseInheritanceTest>(x => x.Add(c => c.Dense, dense).Add(c => c.InnerListDense, innerListDense));
+            var comp = Context.RenderComponent<ListDenseInheritanceTest>(x => x.Add(static c => c.Dense, dense).Add(static c => c.InnerListDense, innerListDense));
             var list = comp.FindComponent<MudList>().Instance;
 
             comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups

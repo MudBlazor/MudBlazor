@@ -85,7 +85,7 @@ namespace MudBlazor
                 Columns = context => builder =>
                 {
                     var myType = context.GetType();
-                    IList<PropertyInfo> propertylist = new List<PropertyInfo>(myType.GetProperties().Where(p => p.PropertyType.IsPublic));
+                    IList<PropertyInfo> propertylist = new List<PropertyInfo>(myType.GetProperties().Where(static p => p.PropertyType.IsPublic));
 
                     if (quickcolumnslist == null)
                     {

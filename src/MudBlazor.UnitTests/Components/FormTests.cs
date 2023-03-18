@@ -233,7 +233,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormValidationTest1()
         {
-            var validationFunc = new Func<string, bool>(x => x?.StartsWith("Marilyn") == true);
+            var validationFunc = new Func<string, bool>(static x => x?.StartsWith("Marilyn") == true);
             var comp = Context.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
@@ -477,7 +477,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudFormExample>();
             var form = comp.FindComponent<MudForm>().Instance;
-            comp.FindComponent<MudForm>().SetParam(x => x.ValidationDelay, 0);
+            comp.FindComponent<MudForm>().SetParam(static x => x.ValidationDelay, 0);
             comp.WaitForAssertion(() => form.IsValid.Should().BeFalse(because: "it contains required fields that are not filled out"));
             var buttons = comp.FindComponents<MudButton>();
             // click validate button
@@ -583,7 +583,7 @@ namespace MudBlazor.UnitTests.Components
             datepicker.Error.Should().BeFalse();
             datepicker.ErrorText.Should().BeNullOrEmpty();
             // clear selection
-            comp.SetParam(x => x.Date, null);
+            comp.SetParam(static x => x.Date, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
@@ -601,14 +601,14 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
             var datepicker = comp.FindComponent<MudDatePicker>().Instance;
-            dateComp.SetParam(x => x.Validation, new Func<DateTime?, string>(date => date != null && date.Value.Year >= 2000 ? null : "Year must be >= 2000"));
+            dateComp.SetParam(static x => x.Validation, new Func<DateTime?, string>(static date => date != null && date.Value.Year >= 2000 ? null : "Year must be >= 2000"));
             dateComp.Find("input").Change(new DateTime(2001, 01, 31).ToShortDateString());
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
             datepicker.Error.Should().BeFalse();
             datepicker.ErrorText.Should().BeNullOrEmpty();
             // set invalid date:
-            comp.SetParam(x => x.Date, (DateTime?)new DateTime(1999, 1, 1));
+            comp.SetParam(static x => x.Date, (DateTime?)new DateTime(1999, 1, 1));
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Year must be >= 2000");
@@ -641,7 +641,7 @@ namespace MudBlazor.UnitTests.Components
             dateRangePicker.Error.Should().BeFalse();
             dateRangePicker.ErrorText.Should().BeNullOrEmpty();
             // clear selection
-            comp.SetParam(x => x.DateRange, null);
+            comp.SetParam(static x => x.DateRange, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
@@ -665,8 +665,8 @@ namespace MudBlazor.UnitTests.Components
             dateRangePicker.ErrorText.Should().BeNullOrEmpty();
             comp.Find("input").Click();
             // clicking day buttons to select a date range
-            await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("10")).Click());
-            await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("11")).Click());
+            await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(static x => x.TrimmedText().Equals("10")).Click());
+            await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(static x => x.TrimmedText().Equals("11")).Click());
             // wait for picker to close
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
@@ -676,7 +676,7 @@ namespace MudBlazor.UnitTests.Components
             dateRangePicker.Error.Should().BeFalse();
             dateRangePicker.ErrorText.Should().BeNullOrEmpty();
             // clear selection
-            comp.SetParam(x => x.DateRange, null);
+            comp.SetParam(static x => x.DateRange, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
@@ -705,7 +705,7 @@ namespace MudBlazor.UnitTests.Components
             timePicker.Error.Should().BeFalse();
             timePicker.ErrorText.Should().BeNullOrEmpty();
             // clear selection
-            comp.SetParam(x => x.Time, null);
+            comp.SetParam(static x => x.Time, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
@@ -723,14 +723,14 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudForm>().Instance;
             var timeComp = comp.FindComponent<MudTimePicker>();
             var timePicker = comp.FindComponent<MudTimePicker>().Instance;
-            timeComp.SetParam(x => x.Validation, new Func<TimeSpan?, string>(time => time != null && time.Value.Minutes == 0 ? null : "Only full hours allowed"));
+            timeComp.SetParam(static x => x.Validation, new Func<TimeSpan?, string>(static time => time != null && time.Value.Minutes == 0 ? null : "Only full hours allowed"));
             timeComp.Find("input").Change("09:00");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
             timePicker.Error.Should().BeFalse();
             timePicker.ErrorText.Should().BeNullOrEmpty();
             // set invalid date:
-            comp.SetParam(x => x.Time, (TimeSpan?)new TimeSpan(0, 17, 05, 00)); // "17:05"
+            comp.SetParam(static x => x.Time, (TimeSpan?)new TimeSpan(0, 17, 05, 00)); // "17:05"
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Only full hours allowed");
@@ -763,7 +763,7 @@ namespace MudBlazor.UnitTests.Components
             timePicker.Error.Should().BeFalse();
             timePicker.ErrorText.Should().BeNullOrEmpty();
             // clear selection
-            comp.SetParam(x => x.Time, null);
+            comp.SetParam(static x => x.Time, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
@@ -781,7 +781,7 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudForm>().Instance;
             var timePickerComp = comp.FindComponent<MudTimePicker>();
             var timePicker = comp.FindComponent<MudTimePicker>().Instance;
-            timePickerComp.SetParam(x => x.Validation, new Func<TimeSpan?, string>(time => time != null && time.Value.Minutes == 0 ? null : "Only full hours allowed"));
+            timePickerComp.SetParam(static x => x.Validation, new Func<TimeSpan?, string>(static time => time != null && time.Value.Minutes == 0 ? null : "Only full hours allowed"));
             await comp.InvokeAsync(() => comp.Find("input").Click());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
             // select 09:00

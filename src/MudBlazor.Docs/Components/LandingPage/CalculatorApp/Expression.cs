@@ -127,7 +127,7 @@ namespace PrimitiveCalculator
                 // repeated contraction by precedence
                 while (_operations.Count > 1)
                 {
-                    var highest_op = _operations.Select(x => x.Operator).OrderByDescending(x => Precedence(x)).First();
+                    var highest_op = _operations.Select(static x => x.Operator).OrderByDescending(x => Precedence(x)).First();
                     if (Precedence(highest_op) == 0)
                     {
                         double sum = 0;

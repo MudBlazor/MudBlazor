@@ -74,7 +74,7 @@ public class InMemoryNotificationService : INotificationService
     public async Task<IDictionary<NotificationMessage, bool>> GetNotifications()
     {
         var lastReadTimestamp = await GetLastReadTimestamp();
-        var items = _messages.ToDictionary(x => x, x => lastReadTimestamp > x.PublishDate);
+        var items = _messages.ToDictionary(static x => x, x => lastReadTimestamp > x.PublishDate);
         return items;
     }
 

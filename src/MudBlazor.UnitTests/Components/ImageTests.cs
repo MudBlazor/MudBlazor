@@ -32,18 +32,18 @@ namespace MudBlazor.UnitTests.Components
         public void Image_GeneralStructure()
         {
 
-            var comp = Context.RenderComponent<MudImage>(p =>
+            var comp = Context.RenderComponent<MudImage>(static p =>
             {
-                p.Add(x => x.Fluid, true);
-                p.Add(x => x.Src, "https://myimgsource.com/image.png");
-                p.Add(x => x.Alt, "my description");
-                p.Add(x => x.Height, 20);
-                p.Add(x => x.Width, 120);
-                p.Add(x => x.Elevation, 25);
-                p.Add(x => x.ObjectFit, ObjectFit.Cover);
-                p.Add(x => x.ObjectPosition, ObjectPosition.Bottom);
-                p.Add(x => x.Class, "my-custom-class");
-                p.Add(x => x.Style, "background:gray");
+                p.Add(static x => x.Fluid, true);
+                p.Add(static x => x.Src, "https://myimgsource.com/image.png");
+                p.Add(static x => x.Alt, "my description");
+                p.Add(static x => x.Height, 20);
+                p.Add(static x => x.Width, 120);
+                p.Add(static x => x.Elevation, 25);
+                p.Add(static x => x.ObjectFit, ObjectFit.Cover);
+                p.Add(static x => x.ObjectPosition, ObjectPosition.Bottom);
+                p.Add(static x => x.Class, "my-custom-class");
+                p.Add(static x => x.Style, "background:gray");
             });
 
             var img = comp.Find("img");

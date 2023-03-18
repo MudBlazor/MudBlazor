@@ -19,16 +19,16 @@
     {
         await Task.Delay(5);
         if (string.IsNullOrEmpty(value))
-            return states.Select(x => new State(x));
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)).Select(x => new State(x));
+            return states.Select(static x => new State(x));
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)).Select(static x => new State(x));
     }
 
     public async Task<IEnumerable<State>> SearchStateToStringAsync(string value)
     {
         await Task.Delay(5);
         if (string.IsNullOrEmpty(value))
-            return states.Select(x => new StateToString(x));
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)).Select(x => new StateToString(x));
+            return states.Select(static x => new StateToString(x));
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)).Select(static x => new StateToString(x));
     }
 
     public record StateToString : State

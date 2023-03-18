@@ -126,34 +126,34 @@
     {
         public OrderModelFluentValidator()
         {
-            RuleFor(x => x.Name)
+            RuleFor(static x => x.Name)
                 .NotEmpty()
                 .Length(1,100);
 
-            RuleFor(x => x.Email)
+            RuleFor(static x => x.Email)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .EmailAddress()
                 .MustAsync(async (value, cancellationToken) => await IsUniqueAsync(value));
 
-            RuleFor(x => x.CCNumber)
+            RuleFor(static x => x.CCNumber)
                 .NotEmpty()
                 .Length(1,100)
                 .CreditCard();
 
-            RuleFor(x => x.Address.Address)
+            RuleFor(static x => x.Address.Address)
                 .NotEmpty()
                 .Length(1,100);
 
-            RuleFor(x => x.Address.City)
+            RuleFor(static x => x.Address.City)
                 .NotEmpty()
                 .Length(1,100);
 
-            RuleFor(x => x.Address.Country)
+            RuleFor(static x => x.Address.Country)
                 .NotEmpty()
                 .Length(1,100);
 
-			RuleForEach(x => x.OrderDetails)
+			RuleForEach(static x => x.OrderDetails)
 				.SetValidator(new OrderDetailsModelFluentValidator());
 		}
 
@@ -169,7 +169,7 @@
             var result = await ValidateAsync(ValidationContext<OrderModel>.CreateWithOptions((OrderModel)model, x => x.IncludeProperties(propertyName)));
             if (result.IsValid)
                 return Array.Empty<string>();
-            return result.Errors.Select(e => e.ErrorMessage);
+            return result.Errors.Select(static e => e.ErrorMessage);
         };
     }
 
@@ -181,11 +181,11 @@
     {
         public OrderDetailsModelFluentValidator()
         {
-            RuleFor(x => x.Description)
+            RuleFor(static x => x.Description)
                 .NotEmpty()
                 .Length(1,100);
 
-			RuleFor(x => x.Offer)
+			RuleFor(static x => x.Offer)
 				.GreaterThan(0)
 				.LessThan(999);
         }
@@ -195,7 +195,7 @@
             var result = await ValidateAsync(ValidationContext<OrderDetailsModel>.CreateWithOptions((OrderDetailsModel)model, x => x.IncludeProperties(propertyName)));
             if (result.IsValid)
                 return Array.Empty<string>();
-            return result.Errors.Select(e => e.ErrorMessage);
+            return result.Errors.Select(static e => e.ErrorMessage);
         };
     }
 }

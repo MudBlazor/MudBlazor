@@ -7,7 +7,7 @@
                    MultiSelection="true"
                    SelectedValues="Selected" SelectedValuesChanged="SelectedChanged"
                    Comparer="Comparer"
-                   ToStringFunc="@(x => x.Name)">
+                   ToStringFunc="@(static x => x.Name)">
             <MudSelectItem Value="@(new Coffee("cap","Cappuccino"))" />
             <MudSelectItem Value="@(new Coffee("lat","Cafe Latte"))" />
             <MudSelectItem Value="@(new Coffee("esp","Espresso"))" />

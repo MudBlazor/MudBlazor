@@ -12,8 +12,8 @@
 		<MudSpacer />
 	</ToolBarContent>
 	<Columns>
-		<PropertyColumn Property="x => x.Name" Title="Name" Filterable="false" Groupable="false" />
-		<PropertyColumn Property="x => x.Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
+		<PropertyColumn Property="static x => x.Name" Title="Name" Filterable="false" Groupable="false" />
+		<PropertyColumn Property="static x => x.Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
 			<GroupTemplate>
 				<span style="font-weight:bold">Category: @context.Grouping.Key</span>
 			</GroupTemplate>
@@ -47,15 +47,15 @@
 			new TestObject("3-2", "3")
 					};
 
-	Func<TestObject, object> _groupBy = x =>
-	{
+    Func<TestObject, object> _groupBy = static x =>
+    {
 		return x.Category;
 	};
 
 	public void RefreshList()
 	{
-		Fruits = Fruits.Select(x => new TestObject(x.Name, x.Category)).ToList();
-	}
+        Fruits = Fruits.Select(static x => new TestObject(x.Name, x.Category)).ToList();
+    }
 
 	public void ExpandAllGroups()
 	{

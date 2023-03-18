@@ -100,7 +100,7 @@ namespace MudBlazor.UnitTests.Components
             secondDropZone.Children[2].TextContent.Should().Be("Third Item");
 
             var items = comp.FindAll(".mud-drop-item");
-            items.Count(x => x.GetAttribute("draggable") == "true").Should().Be(3);
+            items.Count(static x => x.GetAttribute("draggable") == "true").Should().Be(3);
         }
 
         [Test]
@@ -110,7 +110,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.AddSingleton(typeof(IJSRuntime), _jsruntimeMock.Object);
 
-            _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudDragAndDrop.initDropZone", It.Is<object[]>(y => y.Length == 1 && Guid.Parse(y[0].ToString()) != Guid.Empty)))
+            _jsruntimeMock.Setup(static x => x.InvokeAsync<IJSVoidResult>("mudDragAndDrop.initDropZone", It.Is<object[]>(static y => y.Length == 1 && Guid.Parse(y[0].ToString()) != Guid.Empty)))
                 .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200)).Verifiable();
 
             var comp = Context.RenderComponent<DropzoneBasicTest>();
@@ -448,7 +448,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DropZone_CheckDropClasses_ApplyOnDrag_OnlySecondZone()
         {
             var comp = Context.RenderComponent<DropzoneCanDropTest>(
-                p => p.Add(x => x.SecondColumnAppliesClassesOnDragStarted, true));
+                static p => p.Add(static x => x.SecondColumnAppliesClassesOnDragStarted, true));
 
             var firstDropZone = comp.Find(".first-drop-zone");
             var secondDropZone = comp.Find(".second-drop-zone");
@@ -506,10 +506,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_CheckDropClasses_ApplyClassesOnDragStarted()
         {
-            var comp = Context.RenderComponent<DropzoneCanDropTest>(p =>
+            var comp = Context.RenderComponent<DropzoneCanDropTest>(static p =>
             {
-                p.Add(x => x.SecondColumnAppliesClassesOnDragStarted, false);
-                p.Add(x => x.ApplyDropClassesOnDragStarted, true);
+                p.Add(static x => x.SecondColumnAppliesClassesOnDragStarted, false);
+                p.Add(static x => x.ApplyDropClassesOnDragStarted, true);
             });
 
             var firstDropZone = comp.Find(".first-drop-zone");
@@ -629,10 +629,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_CheckDropClasses_ApplyClassesOnDragStarted_DragFinished()
         {
-            var comp = Context.RenderComponent<DropzoneCanDropTest>(p =>
+            var comp = Context.RenderComponent<DropzoneCanDropTest>(static p =>
             {
-                p.Add(x => x.SecondColumnAppliesClassesOnDragStarted, false);
-                p.Add(x => x.ApplyDropClassesOnDragStarted, true);
+                p.Add(static x => x.SecondColumnAppliesClassesOnDragStarted, false);
+                p.Add(static x => x.ApplyDropClassesOnDragStarted, true);
             });
 
             var firstDropZone = comp.Find(".first-drop-zone");
@@ -666,10 +666,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DropZone_CheckDropClasses_ApplyClassesOnDragStarted_DragCanceled()
         {
-            var comp = Context.RenderComponent<DropzoneCanDropTest>(p =>
+            var comp = Context.RenderComponent<DropzoneCanDropTest>(static p =>
             {
-                p.Add(x => x.SecondColumnAppliesClassesOnDragStarted, false);
-                p.Add(x => x.ApplyDropClassesOnDragStarted, true);
+                p.Add(static x => x.SecondColumnAppliesClassesOnDragStarted, false);
+                p.Add(static x => x.ApplyDropClassesOnDragStarted, true);
             });
 
             var firstDropZone = comp.Find(".first-drop-zone");
@@ -790,7 +790,7 @@ namespace MudBlazor.UnitTests.Components
             secondDropZone.Children[1].TextContent.Should().Be("Second Item");
             secondDropZone.Children[2].TextContent.Should().Be("Third Item");
 
-            comp.SetParametersAndRender(x => x.Add(p => p.HideItemsInFirstDropZone, false));
+            comp.SetParametersAndRender(static x => x.Add(static p => p.HideItemsInFirstDropZone, false));
 
             container = comp.Find(".mud-drop-container");
             firstDropZone = container.Children[0];

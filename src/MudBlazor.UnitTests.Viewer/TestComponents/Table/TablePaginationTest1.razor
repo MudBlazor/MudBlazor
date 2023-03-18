@@ -10,7 +10,7 @@
               Filter="new Func<Item, bool>(viewModel.Filter)"
               SortLabel="Sort By">
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortBy="new Func<Item, object>(x => x.Text)">Text</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Item, object>(static x => x.Text)">Text</MudTableSortLabel></MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Text">@context.Text</MudTd>

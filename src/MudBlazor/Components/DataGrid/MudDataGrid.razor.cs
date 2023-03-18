@@ -688,7 +688,7 @@ namespace MudBlazor
         {
             get
             {
-                return RenderedColumns.FirstOrDefault(x => x.grouping);
+                return RenderedColumns.FirstOrDefault(static x => x.grouping);
             }
         }
 
@@ -700,7 +700,7 @@ namespace MudBlazor
         {
             get
             {
-                return RenderedColumns.Any(x => !x.Hidden && (x.FooterTemplate != null || x.AggregateDefinition != null));
+                return RenderedColumns.Any(static x => !x.Hidden && (x.FooterTemplate != null || x.AggregateDefinition != null));
             }
         }
 
@@ -708,7 +708,7 @@ namespace MudBlazor
         {
             get
             {
-                return RenderedColumns.Any(x => x.StickyLeft || x.StickyRight);
+                return RenderedColumns.Any(static x => x.StickyLeft || x.StickyRight);
             }
         }
 
@@ -716,7 +716,7 @@ namespace MudBlazor
         {
             get
             {
-                return RenderedColumns.Any(x => x.Tag?.ToString() == "hierarchy-column");
+                return RenderedColumns.Any(static x => x.Tag?.ToString() == "hierarchy-column");
             }
         }
 
@@ -780,7 +780,7 @@ namespace MudBlazor
             {
                 Page = CurrentPage,
                 PageSize = RowsPerPage,
-                SortDefinitions = SortDefinitions.Values.OrderBy(sd => sd.Index).ToList(),
+                SortDefinitions = SortDefinitions.Values.OrderBy(static sd => sd.Index).ToList(),
                 // Additional ToList() here to decouple clients from internal list avoiding runtime issues
                 FilterDefinitions = FilterDefinitions.ToList()
             };
@@ -804,7 +804,7 @@ namespace MudBlazor
             else if (column.Tag?.ToString() == "select-column")
             {
                 // Position SelectColumn after HierarchyColumn if present
-                if (RenderedColumns.Select(x => x.Tag).Contains("hierarchy-column"))
+                if (RenderedColumns.Select(static x => x.Tag).Contains("hierarchy-column"))
                 {
                     RenderedColumns.Insert(1, column);
                 }
@@ -824,7 +824,7 @@ namespace MudBlazor
         /// </summary>
         public void AddFilter()
         {
-            var column = RenderedColumns.FirstOrDefault(x => x.filterable);
+            var column = RenderedColumns.FirstOrDefault(static x => x.filterable);
             FilterDefinitions.Add(new FilterDefinition<T>
             {
                 Id = Guid.NewGuid(),
@@ -901,7 +901,7 @@ namespace MudBlazor
 
             IOrderedEnumerable<T> orderedEnumerable = null;
 
-            foreach (var sortDefinition in SortDefinitions.Values.Where(sd => null != sd.SortFunc).OrderBy(sd => sd.Index))
+            foreach (var sortDefinition in SortDefinitions.Values.Where(static sd => null != sd.SortFunc).OrderBy(static sd => sd.Index))
             {
                 if (null == orderedEnumerable)
                     orderedEnumerable = sortDefinition.Descending ? items.OrderByDescending(item => sortDefinition.SortFunc(item))

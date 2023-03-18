@@ -12,7 +12,7 @@
 <div class="d-flex justify-center">
     @if (selected != null && selected.Length>0)
     {
-        <MudText>You selected @string.Join(", ", selected.Select(chip=>chip.Text)).</MudText>
+        <MudText>You selected @string.Join(", ", selected.Select(static chip=>chip.Text)).</MudText>
     }
     else
     {

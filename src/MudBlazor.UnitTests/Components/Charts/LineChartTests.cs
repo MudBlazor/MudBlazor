@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.Charts
                     Contain("Series 1").And.Contain("Series 2");
             }
 
-            if (chartSeries.FirstOrDefault(x => x.Name == "Series 1") is not null)
+            if (chartSeries.FirstOrDefault(static x => x.Name == "Series 1") is not null)
             {
                 switch (opt)
                 {
@@ -96,7 +96,7 @@ namespace MudBlazor.UnitTests.Charts
                 }
             }
 
-            if (comp.Instance.ChartOptions.InterpolationOption == InterpolationOption.Straight && chartSeries.FirstOrDefault(x => x.Name == "Series 2") is not null)
+            if (comp.Instance.ChartOptions.InterpolationOption == InterpolationOption.Straight && chartSeries.FirstOrDefault(static x => x.Name == "Series 2") is not null)
             {
                 comp.Markup.Should()
                     .Contain("d=\"M 30 306.25 L 103.75 248.125 L 177.5 259.375 L 251.25 229.375 L 325 233.125 L 398.75 208.75 L 472.5 195.625 L 546.25 154.375 L 620 47.5\"");

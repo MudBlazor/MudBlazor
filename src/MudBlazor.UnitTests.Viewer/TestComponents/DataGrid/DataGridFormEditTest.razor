@@ -4,8 +4,8 @@
 
 <MudDataGrid T="Model" Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Form" EditTrigger="@DataGridEditTrigger.OnRowClick">
     <Columns>
-        <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="static x => x.Name" />
+        <PropertyColumn Property="static x => x.Age" />
         <TemplateColumn>
             <CellTemplate>
                 snakex64

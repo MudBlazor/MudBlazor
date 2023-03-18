@@ -6,11 +6,11 @@
 <MudDataGrid Items="@Elements.Take(4)" Hover="@_hover" Dense="@_dense" Striped="@_striped" Bordered="@_bordered"
     RowStyleFunc="@_rowStyleFunc">
     <Columns>
-        <PropertyColumn Property="x => x.Number" Title="Nr" />
-        <PropertyColumn Property="x => x.Sign" />
-        <PropertyColumn Property="x => x.Name" CellStyleFunc="@_cellStyleFunc" />
-        <PropertyColumn Property="x => x.Position" />
-        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <PropertyColumn Property="static x => x.Number" Title="Nr" />
+        <PropertyColumn Property="static x => x.Sign" />
+        <PropertyColumn Property="static x => x.Name" CellStyleFunc="@_cellStyleFunc" />
+        <PropertyColumn Property="static x => x.Position" />
+        <PropertyColumn Property="static x => x.Molar" Title="Molar mass" />
     </Columns>
 </MudDataGrid>
 
@@ -28,7 +28,7 @@
     private bool _striped;
     private bool _bordered;
     // style the rows where the Element.Position == 0 to have italic text.
-    private Func<Element, int, string> _rowStyleFunc => (x, i) =>
+    private Func<Element, int, string> _rowStyleFunc => static (x, i) =>
     {
         if (x.Position == 0)
             return "font-style:italic";
@@ -36,7 +36,7 @@
         return "";
     };
     // style the cells according to the element's physical classification and the molar mass.
-    private Func<Element, string> _cellStyleFunc => x =>
+    private Func<Element, string> _cellStyleFunc => static x =>
     {
         string style = "";
 

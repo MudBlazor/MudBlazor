@@ -6,12 +6,12 @@
 <MudDataGrid Items="@Elements"
              ReadOnly="@_isReadOnly" EditMode="@DataGridEditMode.Cell">
     <Columns>
-        <HierarchyColumn T="Element" ButtonDisabledFunc="@(x => x.Sign == "He")" />
-        <PropertyColumn Property="x => x.Number" Title="Nr" />
-        <PropertyColumn Property="x => x.Sign" />
-        <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Position" />
-        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <HierarchyColumn T="Element" ButtonDisabledFunc="@(static x => x.Sign == "He")" />
+        <PropertyColumn Property="static x => x.Number" Title="Nr" />
+        <PropertyColumn Property="static x => x.Sign" />
+        <PropertyColumn Property="static x => x.Name" />
+        <PropertyColumn Property="static x => x.Position" />
+        <PropertyColumn Property="static x => x.Molar" Title="Molar mass" />
     </Columns>
     <ChildRowContent>
         <MudCard>

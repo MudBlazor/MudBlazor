@@ -117,7 +117,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockScrollSpyFactory(mockedScrollSpy);
             Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), factory));
 
-            var comp = Context.RenderComponent<MudPageContentNavigation>(p => p.Add(x => x.ActivateFirstSectionAsDefault, true));
+            var comp = Context.RenderComponent<MudPageContentNavigation>(static p => p.Add(static x => x.ActivateFirstSectionAsDefault, true));
 
             var section1 = new MudPageContentSection("my section", "my-id");
             var section2 = new MudPageContentSection("my section 2", "my-id-2");
@@ -189,7 +189,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockScrollSpyFactory(spyMock);
             Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), factory));
 
-            var comp = Context.RenderComponent<MudPageContentNavigation>(x => x.Add(y => y.SectionClassSelector, "my-section-class"));
+            var comp = Context.RenderComponent<MudPageContentNavigation>(static x => x.Add(static y => y.SectionClassSelector, "my-section-class"));
 
             spyMock.SpyingInitiated.Should().BeTrue();
             spyMock.SpyingClassSelector.Should().Be("my-section-class");

@@ -239,7 +239,7 @@ namespace MudBlazor
                 }
             }
 
-            return SelectedValuesChanged.InvokeAsync(new HashSet<T>(_selectedValues.Select(i => i.Value)));
+            return SelectedValuesChanged.InvokeAsync(new HashSet<T>(_selectedValues.Select(static i => i.Value)));
         }
 
         public async Task Select(MudTreeViewItem<T> item, bool isSelected = true)

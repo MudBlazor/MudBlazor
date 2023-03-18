@@ -19,5 +19,5 @@
     [Parameter] public string ClosedIcon { get; set; } = Icons.Material.Filled.ChevronRight;
     [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ExpandMore;
     [Parameter] public Size IconSize { get; set; } = Size.Medium;
-    [Parameter] public Func<T, bool> ButtonDisabledFunc { get; set; } = x => false;
+    [Parameter] public Func<T, bool> ButtonDisabledFunc { get; set; } = static x => false;
 }

@@ -4,7 +4,7 @@
 
 <MudDataGrid T="Item" Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Form" EditTrigger="DataGridEditTrigger.OnRowClick" FormFieldChanged="((args) => FormFieldChangedEventArgs = args)">
     <Columns>
-        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="static x => x.Name" />
     </Columns>
 </MudDataGrid>
 

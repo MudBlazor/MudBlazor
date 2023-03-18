@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Services
         {
             var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
 
-            runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("myMethod", It.IsAny<object[]>()))
+            runtimeMock.Setup(static x => x.InvokeAsync<IJSVoidResult>("myMethod", It.IsAny<object[]>()))
                 .ReturnsAsync(Mock.Of<IJSVoidResult>()).Verifiable();
 
             var runtime = runtimeMock.Object;
@@ -48,7 +48,7 @@ namespace MudBlazor.UnitTests.Services
         {
             var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
 
-            runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("myMethod", It.IsAny<object[]>()))
+            runtimeMock.Setup(static x => x.InvokeAsync<IJSVoidResult>("myMethod", It.IsAny<object[]>()))
                 .Throws(ex).Verifiable();
 
             var runtime = runtimeMock.Object;
@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Services
         {
             var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
 
-            runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("myMethod", It.IsAny<object[]>()))
+            runtimeMock.Setup(static x => x.InvokeAsync<IJSVoidResult>("myMethod", It.IsAny<object[]>()))
                 .Throws(new InvalidOperationException("mhh that is odd")).Verifiable();
 
             var runtime = runtimeMock.Object;
@@ -80,7 +80,7 @@ namespace MudBlazor.UnitTests.Services
         {
             var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
 
-            runtimeMock.Setup(x => x.InvokeAsync<double>("myMethod", It.IsAny<object[]>()))
+            runtimeMock.Setup(static x => x.InvokeAsync<double>("myMethod", It.IsAny<object[]>()))
                 .ReturnsAsync(42.0).Verifiable();
 
             var runtime = runtimeMock.Object;
@@ -97,7 +97,7 @@ namespace MudBlazor.UnitTests.Services
         {
             var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
 
-            runtimeMock.Setup(x => x.InvokeAsync<double>("myMethod", It.IsAny<object[]>()))
+            runtimeMock.Setup(static x => x.InvokeAsync<double>("myMethod", It.IsAny<object[]>()))
                 .Throws(ex).Verifiable();
 
             var runtime = runtimeMock.Object;
@@ -114,7 +114,7 @@ namespace MudBlazor.UnitTests.Services
         {
             var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
 
-            runtimeMock.Setup(x => x.InvokeAsync<double>("myMethod", It.IsAny<object[]>()))
+            runtimeMock.Setup(static x => x.InvokeAsync<double>("myMethod", It.IsAny<object[]>()))
                 .Throws(ex).Verifiable();
 
             var runtime = runtimeMock.Object;
@@ -131,7 +131,7 @@ namespace MudBlazor.UnitTests.Services
         {
             var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
 
-            runtimeMock.Setup(x => x.InvokeAsync<double>("myMethod", It.IsAny<object[]>()))
+            runtimeMock.Setup(static x => x.InvokeAsync<double>("myMethod", It.IsAny<object[]>()))
                  .Throws(new InvalidOperationException("mhh that is odd")).Verifiable();
 
             var runtime = runtimeMock.Object;

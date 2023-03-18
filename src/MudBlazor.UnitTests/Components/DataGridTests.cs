@@ -46,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
             cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
             cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, static x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted ascending by Name.
@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Components
             cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
             cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => { return x.Name; }));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, static x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted descending by Name.
@@ -83,7 +83,7 @@ namespace MudBlazor.UnitTests.Components
             cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
             var column = dataGrid.FindComponent<Column<DataGridSortableTest.Item>>();
-            await comp.InvokeAsync(() => column.Instance.SortBy = x => { return x.Name; });
+            await comp.InvokeAsync(() => column.Instance.SortBy = static x => { return x.Name; });
             ////await comp.InvokeAsync(() => column.Instance.CompileSortBy());
 
             // Check the values of rows - should not be sorted and should be in the original order.
@@ -445,7 +445,7 @@ namespace MudBlazor.UnitTests.Components
 
             // we test to make sure that we can set and get the cancelCallback via the CancelledEditingItem property
             var cancelCallback = dataGrid.Instance.CancelledEditingItem;
-            dataGrid.SetCallback(dg => dg.CancelledEditingItem, x => { return; });
+            dataGrid.SetCallback(static dg => dg.CancelledEditingItem, static x => { return; });
             dataGrid.Instance.CancelledEditingItem.Should().NotBe(cancelCallback);
             dataGrid.Instance.CancelledEditingItem = cancelCallback;
             dataGrid.Instance.CancelledEditingItem.Should().Be(cancelCallback);
@@ -505,7 +505,7 @@ namespace MudBlazor.UnitTests.Components
             cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
             cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, static x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted ascending by Name.
@@ -517,7 +517,7 @@ namespace MudBlazor.UnitTests.Components
             cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
             cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => { return x.Name; }));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, static x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted descending by A.
@@ -2531,7 +2531,7 @@ namespace MudBlazor.UnitTests.Components
             //await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(Guid.NewGuid(), "Status"));
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(new FilterDefinition<DataGridFiltersTest.Model>
             {
-                Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Status")
+                Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(static x => x.PropertyName == "Status")
             }));
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
@@ -2674,7 +2674,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
 
-            dataGrid.FindAll("td").SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Sam|56|Normal|")).Should().BeNull();
+            dataGrid.FindAll("td").SingleOrDefault(static x => x.TextContent.Trim().StartsWith("uid = Sam|56|Normal|")).Should().BeNull();
         }
 
         [Test]
@@ -2699,7 +2699,7 @@ namespace MudBlazor.UnitTests.Components
                 buttons[10].Click();
 
                 dataGrid.FindAll("td")
-                .SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Alicia|54|Info|")).Should().BeNull();
+                .SingleOrDefault(static x => x.TextContent.Trim().StartsWith("uid = Alicia|54|Info|")).Should().BeNull();
             });
         }
 
@@ -2709,7 +2709,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridChildRowContentTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridChildRowContentTest.Model>>();
 
-            dataGrid.FindAll("td").SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Sam|56|Normal|")).Should().NotBeNull();
+            dataGrid.FindAll("td").SingleOrDefault(static x => x.TextContent.Trim().StartsWith("uid = Sam|56|Normal|")).Should().NotBeNull();
         }
 
         [Test]
@@ -3107,7 +3107,7 @@ namespace MudBlazor.UnitTests.Components
 
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
-            var guidColumn = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Id");
+            var guidColumn = grid.RenderedColumns.FirstOrDefault(static x => x.PropertyName == "Id");
 
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
             {
@@ -3146,7 +3146,7 @@ namespace MudBlazor.UnitTests.Components
 
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
-            var guidColumn = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Id");
+            var guidColumn = grid.RenderedColumns.FirstOrDefault(static x => x.PropertyName == "Id");
 
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
             {
@@ -3321,20 +3321,20 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridSortableTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, static x => x.Value));
             dataGrid.FindAll("th .sortable-column-header")[1].TextContent.Trim().Should().Be("Value");
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(true);
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Descending, x => x.Value));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Descending, static x => x.Value));
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Descending);
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-desc").Should().Be(true);
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Value));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, static x => x.Value));
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Ascending);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(true);

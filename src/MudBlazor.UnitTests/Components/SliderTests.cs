@@ -47,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Size.Large, "large")]
         public void CheckSizeCssClass(Size size, string expectedSizeClass)
         {
-            var comp = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Size, size));
+            var comp = Context.RenderComponent<MudSlider<int>>(x => x.Add(static p => p.Size, size));
 
             var slider = comp.Find(".mud-slider");
             slider.ClassList.Should().ContainInOrder(new[] { "mud-slider", $"mud-slider-{expectedSizeClass}" });
@@ -57,12 +57,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckVerticalClass()
         {
-            var verticalSliderComponent = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Vertical, true));
+            var verticalSliderComponent = Context.RenderComponent<MudSlider<int>>(static x => x.Add(static p => p.Vertical, true));
 
             var verticalSlider = verticalSliderComponent.Find(".mud-slider");
             verticalSlider.ClassList.Should().ContainInOrder(new[] { "mud-slider", "mud-slider-small", "mud-slider-vertical" });
 
-            var horizontalSliderComponent = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Vertical, true));
+            var horizontalSliderComponent = Context.RenderComponent<MudSlider<int>>(static x => x.Add(static p => p.Vertical, true));
 
             var horizontalSlider = horizontalSliderComponent.Find(".mud-slider");
             horizontalSlider.ClassList.Should().ContainInOrder(new[] { "mud-slider", "mud-slider-small" });
@@ -74,7 +74,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Size.Large, "large")]
         public void CheckInputSizeCssClass(Size size, string expectedSizeClass)
         {
-            var comp = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Size, size));
+            var comp = Context.RenderComponent<MudSlider<int>>(x => x.Add(static p => p.Size, size));
 
             var slider = comp.Find(".mud-slider");
             slider.ClassList.Should().ContainInOrder(new[] { "mud-slider", $"mud-slider-{expectedSizeClass}", "mud-slider-primary" });
@@ -95,7 +95,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Surface, "surface")]
         public void CheckColorCssClass(Color color, string expectedColorClass)
         {
-            var comp = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Color, color));
+            var comp = Context.RenderComponent<MudSlider<int>>(x => x.Add(static p => p.Color, color));
 
             var slider = comp.Find(".mud-slider");
             slider.ClassList.Should().ContainInOrder(new[] { "mud-slider", "mud-slider-small", $"mud-slider-{expectedColorClass}" });
@@ -104,12 +104,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void GenerellStructure()
         {
-            var comp = Context.RenderComponent<MudSlider<double>>(x =>
+            var comp = Context.RenderComponent<MudSlider<double>>(static x =>
             {
-                x.Add(p => p.Min, 100.0);
-                x.Add(p => p.Max, 200.0);
-                x.Add(p => p.Step, 10.0);
-                x.Add(p => p.Value, 120.0);
+                x.Add(static p => p.Min, 100.0);
+                x.Add(static p => p.Max, 200.0);
+                x.Add(static p => p.Step, 10.0);
+                x.Add(static p => p.Value, 120.0);
 
             });
 
@@ -150,7 +150,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Structure_WithChildContent()
         {
-            var comp = Context.RenderComponent<SliderWithContentTest>(x => x.Add(p => p.Text, "my text"));
+            var comp = Context.RenderComponent<SliderWithContentTest>(static x => x.Add(static p => p.Text, "my text"));
 
             comp.Nodes.Should().ContainSingle();
 
@@ -173,10 +173,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Structure_WithFilled()
         {
-            var comp = Context.RenderComponent<MudSlider<double>>(x =>
+            var comp = Context.RenderComponent<MudSlider<double>>(static x =>
             {
-                x.Add(p => p.Value, 20.0);
-                x.Add(p => p.Variant, Variant.Filled);
+                x.Add(static p => p.Value, 20.0);
+                x.Add(static p => p.Variant, Variant.Filled);
             });
 
             comp.Nodes.Should().ContainSingle();
@@ -203,11 +203,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TickMarksEnabled_ButNoLabels()
         {
-            var comp = Context.RenderComponent<MudSlider<double>>(x =>
+            var comp = Context.RenderComponent<MudSlider<double>>(static x =>
             {
-                x.Add(p => p.Value, 20.0);
-                x.Add(p => p.Step, 25.0);
-                x.Add(p => p.TickMarks, true);
+                x.Add(static p => p.Value, 20.0);
+                x.Add(static p => p.Step, 25.0);
+                x.Add(static p => p.TickMarks, true);
             });
 
             comp.Nodes.Should().ContainSingle();
@@ -249,10 +249,10 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<MudSlider<double>>(x =>
             {
-                x.Add(p => p.Value, 20.0);
-                x.Add(p => p.Step, 25.0);
-                x.Add(p => p.TickMarks, true);
-                x.Add(p => p.TickMarkLabels, labels);
+                x.Add(static p => p.Value, 20.0);
+                x.Add(static p => p.Step, 25.0);
+                x.Add(static p => p.TickMarks, true);
+                x.Add(static p => p.TickMarkLabels, labels);
             });
 
             comp.Nodes.Should().ContainSingle();
@@ -303,10 +303,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudSlider<double>>(x =>
             {
-                x.Add(p => p.Min, min);
-                x.Add(p => p.Max, max);
-                x.Add(p => p.Step, step);
-                x.Add(p => p.TickMarks, true);
+                x.Add(static p => p.Min, min);
+                x.Add(static p => p.Max, max);
+                x.Add(static p => p.Step, step);
+                x.Add(static p => p.TickMarks, true);
             });
 
             comp.Nodes.Should().ContainSingle();
@@ -358,11 +358,11 @@ namespace MudBlazor.UnitTests.Components
 
                 var comp = Context.RenderComponent<MudSlider<double>>(x =>
                 {
-                    x.Add(p => p.Max, max);
-                    x.Add(p => p.Min, min);
-                    x.Add(p => p.Value, value);
-                    x.Add(p => p.Variant, Variant.Filled);
-                    x.Add(p => p.ValueLabel, true);
+                    x.Add(static p => p.Max, max);
+                    x.Add(static p => p.Min, min);
+                    x.Add(static p => p.Value, value);
+                    x.Add(static p => p.Variant, Variant.Filled);
+                    x.Add(static p => p.ValueLabel, true);
                 });
 
                 var thumb = comp.Find(".mud-slider-value-label");
@@ -380,11 +380,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudSlider<double>>(x =>
             {
-                x.Add(p => p.Max, 200);
-                x.Add(p => p.Min, 100);
-                x.Add(p => p.Value, 150);
-                x.Add(p => p.Immediate, immediate);
-                x.Add(p => p.Variant, Variant.Filled);
+                x.Add(static p => p.Max, 200);
+                x.Add(static p => p.Min, 100);
+                x.Add(static p => p.Value, 150);
+                x.Add(static p => p.Immediate, immediate);
+                x.Add(static p => p.Variant, Variant.Filled);
             });
 
             var input = comp.Find(".mud-slider-input");

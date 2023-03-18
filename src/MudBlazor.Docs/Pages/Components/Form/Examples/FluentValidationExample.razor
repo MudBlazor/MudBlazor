@@ -34,7 +34,7 @@
             var result = Validate(arg);
             if (result.IsValid)
                 return new string[0];
-            return result.Errors.Select(e => e.ErrorMessage);
+            return result.Errors.Select(static e => e.ErrorMessage);
         }
 
         public Func<T, IEnumerable<string>> Validation => ValidateValue;

@@ -42,10 +42,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudProgressLinear>(x =>
             {
-                x.Add(y => y.Min, min);
-                x.Add(y => y.Max, max);
-                x.Add(y => y.Value, value);
-                x.Add(y => y.BufferValue, buffervalue);
+                x.Add(static y => y.Min, min);
+                x.Add(static y => y.Max, max);
+                x.Add(static y => y.Value, value);
+                x.Add(static y => y.BufferValue, buffervalue);
             });
 
             comp.Instance.Value.Should().Be(value);
@@ -70,10 +70,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudProgressLinear>(x =>
             {
-                x.Add(y => y.Min, min);
-                x.Add(y => y.Max, max);
-                x.Add(y => y.Value, value);
-                x.Add(y => y.BufferValue, buffervalue);
+                x.Add(static y => y.Min, min);
+                x.Add(static y => y.Max, max);
+                x.Add(static y => y.Value, value);
+                x.Add(static y => y.BufferValue, buffervalue);
             });
 
             comp.Instance.Value.Should().Be(value);
@@ -90,11 +90,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudProgressLinear>(x =>
                 {
-                    x.Add(y => y.Min, -500);
-                    x.Add(y => y.Max, 500);
-                    x.Add(y => y.Value, -400);
-                    x.Add(y => y.Class, "my-custom-class");
-                    x.Add(y => y.Vertical, isVertical);
+                    x.Add(static y => y.Min, -500);
+                    x.Add(static y => y.Max, 500);
+                    x.Add(static y => y.Value, -400);
+                    x.Add(static y => y.Class, "my-custom-class");
+                    x.Add(static y => y.Vertical, isVertical);
                 });
 
             var container = comp.Find(".my-custom-class");
@@ -117,13 +117,13 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void IndeterminateStructure()
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x =>
+            var comp = Context.RenderComponent<MudProgressLinear>(static x =>
             {
-                x.Add(y => y.Min, -500);
-                x.Add(y => y.Max, 500);
-                x.Add(y => y.Value, -400);
-                x.Add(y => y.Class, "my-custom-class");
-                x.Add(y => y.Indeterminate, true);
+                x.Add(static y => y.Min, -500);
+                x.Add(static y => y.Max, 500);
+                x.Add(static y => y.Value, -400);
+                x.Add(static y => y.Class, "my-custom-class");
+                x.Add(static y => y.Indeterminate, true);
             });
 
             var container = comp.Find(".my-custom-class");
@@ -149,13 +149,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudProgressLinear>(x =>
             {
-                x.Add(y => y.Min, -500);
-                x.Add(y => y.Max, 500);
-                x.Add(y => y.Value, -400);
-                x.Add(y => y.BufferValue, -100);
-                x.Add(y => y.Class, "my-custom-class");
-                x.Add(y => y.Buffer, true);
-                x.Add(y => y.Vertical, isVertical);
+                x.Add(static y => y.Min, -500);
+                x.Add(static y => y.Max, 500);
+                x.Add(static y => y.Value, -400);
+                x.Add(static y => y.BufferValue, -100);
+                x.Add(static y => y.Class, "my-custom-class");
+                x.Add(static y => y.Buffer, true);
+                x.Add(static y => y.Vertical, isVertical);
             });
 
             var container = comp.Find(".my-custom-class");
@@ -189,14 +189,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void IndeterminateWithChildContent()
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x =>
+            var comp = Context.RenderComponent<MudProgressLinear>(static x =>
             {
-                x.Add(y => y.Min, -500);
-                x.Add(y => y.Max, 500);
-                x.Add(y => y.Value, -400);
-                x.Add(y => y.Class, "my-custom-class");
-                x.Add(y => y.Indeterminate, true);
-                x.Add(y => y.ChildContent, "<p>my content</p>");
+                x.Add(static y => y.Min, -500);
+                x.Add(static y => y.Max, 500);
+                x.Add(static y => y.Value, -400);
+                x.Add(static y => y.Class, "my-custom-class");
+                x.Add(static y => y.Indeterminate, true);
+                x.Add(static y => y.ChildContent, "<p>my content</p>");
             });
 
             var container = comp.Find(".my-custom-class");
@@ -226,7 +226,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true)]
         public void TestClassesForRounded(bool rounded)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Rounded, rounded));
+            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(static y => y.Rounded, rounded));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -245,7 +245,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true)]
         public void TestClassesForStriped(bool striped)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Striped, striped));
+            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(static y => y.Striped, striped));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -264,7 +264,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true)]
         public void TestClassesForIntermediate(bool indeterminate)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Indeterminate, indeterminate));
+            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(static y => y.Indeterminate, indeterminate));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -287,8 +287,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudProgressLinear>(x =>
             {
-                x.Add(y => y.Indeterminate, indeterminate);
-                x.Add(y => y.Buffer, buffer);
+                x.Add(static y => y.Indeterminate, indeterminate);
+                x.Add(static y => y.Buffer, buffer);
 
             });
 
@@ -310,7 +310,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Size.Small, "small")]
         public void TestClassesForSize(Size size, string expectedString)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Size, size));
+            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(static y => y.Size, size));
 
             var container = comp.Find(".mud-progress-linear");
             
@@ -323,7 +323,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Error, "error")]
         public void TestClassesForColor(Color color, string expectedString)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Color, color));
+            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(static y => y.Color, color));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -335,7 +335,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true)]
         public void TestClassesForVertical(bool vertical)
         {
-            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Vertical, vertical));
+            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(static y => y.Vertical, vertical));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -364,12 +364,12 @@ namespace MudBlazor.UnitTests.Components
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
 
-            var comp = Context.RenderComponent<MudProgressLinear>(x =>
+            var comp = Context.RenderComponent<MudProgressLinear>(static x =>
             {
-                x.Add(y => y.Min, 10.2);
-                x.Add(y => y.Max, 125.22);
-                x.Add(y => y.Value, 75.3);
-                x.Add(y => y.Class, "my-custom-class");
+                x.Add(static y => y.Min, 10.2);
+                x.Add(static y => y.Max, 125.22);
+                x.Add(static y => y.Value, 75.3);
+                x.Add(static y => y.Class, "my-custom-class");
             });
 
             var container = comp.Find(".my-custom-class");

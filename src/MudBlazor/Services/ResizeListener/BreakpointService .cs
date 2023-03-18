@@ -144,7 +144,7 @@ namespace MudBlazor.Services
             options ??= _options;
             if (options.BreakpointDefinitions == null || options.BreakpointDefinitions.Count == 0)
             {
-                options.BreakpointDefinitions = DefaultBreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
+                options.BreakpointDefinitions = DefaultBreakpointDefinitions.ToDictionary(static x => x.Key.ToString(), static x => x.Value);
             }
 
             if (DotNetRef == null)
@@ -157,7 +157,7 @@ namespace MudBlazor.Services
             {
                 await Semaphore.WaitAsync();
 
-                var existingOptionId = Listeners.Where(x => x.Value.Option == options).Select(x => x.Key).FirstOrDefault();
+                var existingOptionId = Listeners.Where(x => x.Value.Option == options).Select(static x => x.Key).FirstOrDefault();
 
                 if (existingOptionId == default)
                 {

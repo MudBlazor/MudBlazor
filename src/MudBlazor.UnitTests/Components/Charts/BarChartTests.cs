@@ -83,20 +83,20 @@ namespace MudBlazor.UnitTests.Charts
                     Contain("United States").And.Contain("Germany").And.Contain("Sweden");
             }
 
-            if (chartSeries.Count == 3 && chartSeries.Any(x => x.Data.Contains(40)))
+            if (chartSeries.Count == 3 && chartSeries.Any(static x => x.Data.Contains(40)))
             {
                 comp.Markup.Should()
                     .Contain("d=\"M 30 325 L 30 205\"");
             }
 
-            if (chartSeries.Count == 3 && chartSeries.Any(x => x.Data.Contains(80)))
+            if (chartSeries.Count == 3 && chartSeries.Any(static x => x.Data.Contains(80)))
             {
                 comp.Markup.Should()
                     .Contain("d=\"M 546.25 325 L 546.25 85\"");
             }
 
             comp.SetParametersAndRender(parameters => parameters
-                .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
+                .Add(static p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
         }

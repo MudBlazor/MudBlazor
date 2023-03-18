@@ -116,7 +116,7 @@
             }
             else
             {
-                @foreach (var contributor in _githubContributors.OrderByDescending(x => x.contributions))
+                @foreach (var contributor in _githubContributors.OrderByDescending(static x => x.contributions))
                 {
                     <MudItem xs="12" md="6">
                         <MudContributor Firstname="@contributor.login" AvatarLink="@contributor.avatar_url" GithubLink="@contributor.html_url" />

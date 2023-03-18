@@ -49,7 +49,7 @@ namespace MudBlazor
                 if (value == null)
                 {
                     // We can short circuit here because the value to be compared is null and the property type is not nullable.
-                    return x => true;
+                    return static x => true;
                 }
 
                 b = Expression.MakeBinary(binaryOperation, body, Expression.Convert(Expression.Constant(value), body.Type));

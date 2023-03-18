@@ -247,7 +247,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
-            comp.SetParametersAndRender(p => p.Add(x => x.Position, Position.Left));
+            comp.SetParametersAndRender(static p => p.Add(static x => x.Position, Position.Left));
 
             comp.Instance.SetPanelActive(2);
 
@@ -576,7 +576,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.AlwaysShowScrollButtons, false));
+            comp.SetParametersAndRender(static x => x.Add(static y => y.AlwaysShowScrollButtons, false));
             comp.Instance.SetPanelActive(5);
 
 
@@ -610,7 +610,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.AlwaysShowScrollButtons, false));
+            comp.SetParametersAndRender(static x => x.Add(static y => y.AlwaysShowScrollButtons, false));
             comp.Instance.SetPanelActive(5);
 
 
@@ -818,7 +818,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockResizeObserverFactory(observer);
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
-            var comp = Context.RenderComponent<SimplifiedScrollableTabsTest>(p => p.Add(x => x.StartAmount, 5));
+            var comp = Context.RenderComponent<SimplifiedScrollableTabsTest>(static p => p.Add(static x => x.StartAmount, 5));
 
             var buttonContainer = comp.FindAll(".mud-tabs-scroll-button");
             buttonContainer.Should().HaveCount(2);
@@ -989,8 +989,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task RenderHeaderBasedOnPosition(TabHeaderPosition position)
         {
             var comp = Context.RenderComponent<TabsWithHeaderTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, position));
-            comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
+            comp.SetParametersAndRender(x => x.Add(static y => y.TabHeaderPosition, position));
+            comp.SetParametersAndRender(static x => x.Add(static y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
 
             var headerContent = comp.Find(".test-header-content");
             headerContent.TextContent.Should().Be($"Count: {3}");
@@ -1019,8 +1019,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task RenderHeaderBasedOnPosition_None()
         {
             var comp = Context.RenderComponent<TabsWithHeaderTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
-            comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
+            comp.SetParametersAndRender(static x => x.Add(static y => y.TabHeaderPosition, TabHeaderPosition.None));
+            comp.SetParametersAndRender(static x => x.Add(static y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
 
             var headerContent = comp.FindAll(".test-header-content");
             headerContent.Should().BeEmpty();
@@ -1035,13 +1035,13 @@ namespace MudBlazor.UnitTests.Components
         public async Task RenderHeaderPanelBasedOnPosition(TabHeaderPosition position)
         {
             var comp = Context.RenderComponent<TabsWithHeaderTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
-            comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, position));
+            comp.SetParametersAndRender(static x => x.Add(static y => y.TabHeaderPosition, TabHeaderPosition.None));
+            comp.SetParametersAndRender(x => x.Add(static y => y.TabPanelHeaderPosition, position));
 
             var headerContent = comp.FindAll(".test-panel-header-content");
             headerContent.Should().HaveCount(3);
 
-            headerContent.Select(x => x.TextContent).ToList().Should().BeEquivalentTo("Index: 0", "Index: 1", "Index: 2");
+            headerContent.Select(static x => x.TextContent).ToList().Should().BeEquivalentTo("Index: 0", "Index: 1", "Index: 2");
 
             foreach (var item in headerContent)
             {
@@ -1070,8 +1070,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task RenderHeaderPanelBasedOnPosition_None()
         {
             var comp = Context.RenderComponent<TabsWithHeaderTest>();
-            comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
-            comp.SetParametersAndRender(x => x.Add(y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
+            comp.SetParametersAndRender(static x => x.Add(static y => y.TabHeaderPosition, TabHeaderPosition.None));
+            comp.SetParametersAndRender(static x => x.Add(static y => y.TabPanelHeaderPosition, TabHeaderPosition.None));
 
             var headerContent = comp.FindAll(".test-panel-header-content");
             headerContent.Should().BeEmpty();
@@ -1151,7 +1151,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task PrePanelContent()
         {
-            var comp = Context.RenderComponent<TabsWithPrePanelContent>(p => p.Add(x => x.SelectedIndex, 0));
+            var comp = Context.RenderComponent<TabsWithPrePanelContent>(static p => p.Add(static x => x.SelectedIndex, 0));
 
             var content =  comp.Find(".pre-panel-content-custom");
 
@@ -1160,7 +1160,7 @@ namespace MudBlazor.UnitTests.Components
             content.PreviousElementSibling.ClassList.Should().Contain("mud-tabs-toolbar");
             content.NextElementSibling.ClassList.Should().Contain("mud-tabs-panels");
 
-            comp.SetParametersAndRender(p => p.Add(x => x.SelectedIndex, 1));
+            comp.SetParametersAndRender(static p => p.Add(static x => x.SelectedIndex, 1));
 
             content = comp.Find(".pre-panel-content-custom");
 
@@ -1176,7 +1176,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             var comp = Context.RenderComponent<CancelActivationTabsTest>();
-            comp.SetParametersAndRender(p => p.Add(x => x.Position, Position.Left));
+            comp.SetParametersAndRender(static p => p.Add(static x => x.Position, Position.Left));
 
             comp.Instance.SetPanelActive(2);
             comp.Instance.ActivePanel.Should().NotBe(2);

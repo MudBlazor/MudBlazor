@@ -3,10 +3,10 @@
 
 <MudDataGrid Items="@_items" Filterable="true">
     <Columns>
-        <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Age" />
-        <PropertyColumn Property="x => x.Amount" Title="Amount (es-ES culture)" Culture="@(new CultureInfo("es-ES"))" />
-        <PropertyColumn Property="x => x.Total" Title="Total (invariant culture)" Culture="@CultureInfo.InvariantCulture" />
+        <PropertyColumn Property="static x => x.Name" />
+        <PropertyColumn Property="static x => x.Age" />
+        <PropertyColumn Property="static x => x.Amount" Title="Amount (es-ES culture)" Culture="@(new CultureInfo("es-ES"))" />
+        <PropertyColumn Property="static x => x.Total" Title="Total (invariant culture)" Culture="@CultureInfo.InvariantCulture" />
     </Columns>
 </MudDataGrid>
 

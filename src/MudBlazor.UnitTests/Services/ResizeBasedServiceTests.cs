@@ -41,12 +41,12 @@ namespace MudBlazor.UnitTests.Services
                 Width = 200,
             };
 
-            _browserWindowSizeProvider.Setup(x => x.GetBrowserWindowSize()).ReturnsAsync(size);
+            _browserWindowSizeProvider.Setup(static x => x.GetBrowserWindowSize()).ReturnsAsync(size);
 
             var actualSize = await _service.GetBrowserWindowSize();
 
             actualSize.Should().Be(size);
-            _browserWindowSizeProvider.Verify(x => x.GetBrowserWindowSize(), Times.Once());
+            _browserWindowSizeProvider.Verify(static x => x.GetBrowserWindowSize(), Times.Once());
         }
 
         private record ListenForResizeCallbackInfo(
@@ -102,7 +102,7 @@ namespace MudBlazor.UnitTests.Services
             };
 
             var optionGetter = new Mock<IOptions<ResizeOptions>>();
-            optionGetter.SetupGet(x => x.Value).Returns(customResizeOptioons);
+            optionGetter.SetupGet(static x => x.Value).Returns(customResizeOptioons);
 
             _service = new ResizeService(_jsruntimeMock.Object, _browserWindowSizeProvider.Object, optionGetter.Object);
             await CheckSubscriptionOptions(customResizeOptioons);
@@ -271,7 +271,7 @@ namespace MudBlazor.UnitTests.Services
                 SetupJsMockForSubscription(item, feedbackCaller);
             }
 
-            var subscriptionIds = options.ToDictionary(x => x, x => new HashSet<Guid>());
+            var subscriptionIds = options.ToDictionary(static x => x, static  x => new HashSet<Guid>());
 
             for (int i = 0; i < 40; i++)
             {
@@ -294,7 +294,7 @@ namespace MudBlazor.UnitTests.Services
                 feedback.options.Should().Be(options[i]);
             }
 
-            callerFeedbacks.Select(x => x.ListenerId).ToHashSet().Should().HaveCount(4);
+            callerFeedbacks.Select(static x => x.ListenerId).ToHashSet().Should().HaveCount(4);
 
             _jsruntimeMock.Verify();
 

@@ -555,7 +555,7 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
-            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(static x => x.Instance).ToArray();
             var tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(4); // <-- one header, three rows
             var th = comp.FindAll("th").ToArray();
@@ -569,12 +569,12 @@ namespace MudBlazor.UnitTests.Components
             inputs[0].Change(true);
             table.SelectedItems.Count.Should().Be(3);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(3);
             inputs = comp.FindAll("input").ToArray();
             inputs[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(0);
         }
 
         /// <summary>
@@ -588,7 +588,7 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
-            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(static x => x.Instance).ToArray();
             var tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(4); // <-- one header, three rows
             var th = comp.FindAll("th").ToArray();
@@ -602,12 +602,12 @@ namespace MudBlazor.UnitTests.Components
             inputs[0].Change(true);
             table.SelectedItems.Count.Should().Be(3);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(3);
             inputs = comp.FindAll("input").ToArray();
             inputs[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(0);
         }
 
         /// <summary>
@@ -622,10 +622,10 @@ namespace MudBlazor.UnitTests.Components
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
             var checkboxRendered = comp.FindComponents<MudCheckBox<bool>>().ToArray();
-            var checkboxes = checkboxRendered.Select(x => x.Instance).ToArray();
+            var checkboxes = checkboxRendered.Select(static x => x.Instance).ToArray();
             table.SelectedItems.Count.Should().Be(1); // selected items should be empty
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(1);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(1);
             checkboxes[0].Checked.Should().Be(false);
             checkboxes[1].Checked.Should().Be(true);
             // uncheck it
@@ -633,7 +633,7 @@ namespace MudBlazor.UnitTests.Components
             // check result
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(0);
         }
 
         /// <summary>
@@ -648,16 +648,16 @@ namespace MudBlazor.UnitTests.Components
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
             var checkboxRendered = comp.FindComponents<MudCheckBox<bool>>().ToArray();
-            var checkboxes = checkboxRendered.Select(x => x.Instance).ToArray();
+            var checkboxes = checkboxRendered.Select(static x => x.Instance).ToArray();
             table.SelectedItems.Count.Should().Be(3);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(3);
             // uncheck only row 1 => header checkbox should be off then
             checkboxRendered[2].Find("input").Change(false);
             checkboxes[0].Checked.Should().Be(true); // header checkbox should be on
             table.SelectedItems.Count.Should().Be(2);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(2);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(2);
         }
 
         /// <summary>
@@ -672,18 +672,18 @@ namespace MudBlazor.UnitTests.Components
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
             var checkboxRendered = comp.FindComponents<MudCheckBox<bool>>().ToArray();
-            var checkboxes = checkboxRendered.Select(x => x.Instance).ToArray();
+            var checkboxes = checkboxRendered.Select(static x => x.Instance).ToArray();
             table.SelectedItems.Count.Should().Be(4);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2, 3 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(2);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(2);
             // uncheck a row then switch to page 2 and both checkboxes on page 2 should be checked
             checkboxRendered[1].Find("input").Change(false);
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(1);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(1);
             // switch page 
             await comp.InvokeAsync(() => table.CurrentPage = 1);
             // now two checkboxes should be checked on page 2
-            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(2);
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(static x => x.Instance).ToArray();
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(2);
         }
 
         /// <summary>
@@ -697,7 +697,7 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
-            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(static x => x.Instance).ToArray();
             var tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(5); // <-- one header, three rows, one footer
             var th = comp.FindAll("th").ToArray();
@@ -711,12 +711,12 @@ namespace MudBlazor.UnitTests.Components
             inputs[4].Change(true);
             table.SelectedItems.Count.Should().Be(3);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(3);
             inputs = comp.FindAll("input").ToArray();
             inputs[4].Change(false);
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(0);
         }
 
         /// <summary>
@@ -730,7 +730,7 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
-            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(static x => x.Instance).ToArray();
             var tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(5); // <-- one header, three rows
             var th = comp.FindAll("th").ToArray();
@@ -744,12 +744,12 @@ namespace MudBlazor.UnitTests.Components
             inputs[4].Change(true);
             table.SelectedItems.Count.Should().Be(3);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(3);
             inputs = comp.FindAll("input").ToArray();
             inputs[4].Change(false);
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(0);
         }
 
         /// <summary>
@@ -761,7 +761,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TableMultiSelectionTest7>();
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
-            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(static x => x.Instance).ToArray();
             var tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(4); // <-- one header, three rows
             var th = comp.FindAll("th").ToArray();
@@ -773,29 +773,29 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(0); // selected items should be empty
 
             inputs[4].Change("1"); // search for 1
-            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(static x => x.Instance).ToArray();
 
             // click header checkbox and verify selection text
             inputs[0].Change(true);
             table.SelectedItems.Count.Should().Be(1);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1 }"); // only "1" should be present
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(1);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(1);
             inputs[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
 
             inputs[4].Change(""); // reset to default
-            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(static x => x.Instance).ToArray();
 
             // click header checkbox and verify selection text
             inputs[0].Change(true);
             table.SelectedItems.Count.Should().Be(3);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }"); // we reset search, so all three numbers should be searched
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(3);
             inputs[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(0);
         }
 
         /// <summary>
@@ -807,20 +807,20 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TableMultiSelectionTest8>();
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
-            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(static x => x.Instance).ToArray();
 
             // click header checkbox and verify selection text
             var inputs = comp.Find("input");
             inputs.Change(true);
             table.SelectedItems.Count.Should().Be(5);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2, 3, 4 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(5);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(5);
 
             // click delete button
             var buttons = comp.FindAll("button");
             buttons[2].Click(); //delete one of the elements
 
-            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(static x => x.Instance).ToArray();
 
             //verify table markup
             var tr = comp.FindAll("tr").ToArray();
@@ -833,7 +833,7 @@ namespace MudBlazor.UnitTests.Components
             //verify selection
             table.SelectedItems.Count.Should().Be(4);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 3, 4 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4);
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(4);
 
             checkboxes[0].Checked.Should().BeTrue(); //manually verify header is checked after deleting item
         }
@@ -1128,7 +1128,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TableInlineEdit_ApplyButtonPosition(TableApplyButtonPosition position)
         {
             var comp = Context.RenderComponent<TableInlineEditTestApplyButtons>(
-                p => p.Add(x => x.ApplyButtonPosition, position));
+                p => p.Add(static x => x.ApplyButtonPosition, position));
 
             var trs = comp.FindAll("tr");
 
@@ -1688,14 +1688,14 @@ namespace MudBlazor.UnitTests.Components
             comp.Render();
 
             table.SelectedItems.Count.Should().Be(0);
-            inputs.Where(x => x.IsChecked()).Count().Should().Be(0);
+            inputs.Where(static x => x.IsChecked()).Count().Should().Be(0);
 
             inputs[1].Change(true); // LMP1            
             table.SelectedItems.Count.Should().Be(2);
 
             buttons = comp.FindAll("button").ToArray();
             inputs = comp.FindAll("input").ToArray();
-            inputs.Where(x => x.IsChecked()).Count().Should().Be(5);
+            inputs.Where(static x => x.IsChecked()).Count().Should().Be(5);
 
             buttons[0].Click(); //collapse            
             buttons[0].Click(); //expand            
@@ -1703,13 +1703,13 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(2);
 
             inputs = comp.FindAll("input").ToArray();
-            inputs.Where(x => x.IsChecked()).Count().Should().Be(5);
+            inputs.Where(static x => x.IsChecked()).Count().Should().Be(5);
 
             inputs[1].Change(false);
             table.SelectedItems.Count.Should().Be(0);
 
             inputs = comp.FindAll("input").ToArray();
-            inputs.Where(x => x.IsChecked()).Count().Should().Be(0);
+            inputs.Where(static x => x.IsChecked()).Count().Should().Be(0);
 
         }
 
@@ -1930,7 +1930,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TableRecordComparerTest>();
             var table = comp.FindComponent<MudTable<TableRecordComparerTest.Element>>().Instance;
 
-            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(static x => x.Instance).ToArray();
 
             var inputs = comp.FindAll("input").ToArray();
             inputs.Length.Should().Be(4); // one checkbox per row + one for the header
@@ -1939,7 +1939,7 @@ namespace MudBlazor.UnitTests.Components
             inputs[0].Change(true);
             table.SelectedItems.Count.Should().Be(3);
 
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3); //there should be 3 items
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(3); //there should be 3 items
             comp.Find("p").TextContent.Should().Be("Elements { A, B, C }");
 
             // Click on the second row
@@ -1952,13 +1952,13 @@ namespace MudBlazor.UnitTests.Components
 
             table.SelectedItems.Count.Should().Be(3);
 
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3); //there should be 3 items
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(3); //there should be 3 items
             comp.Find("p").TextContent.Should().Be("Elements { A, Change, C }");
 
             // Uncheck and verify that all items are removed
             inputs[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0); //there should be 4 items
+            checkboxes.Sum(static x => x.Checked ? 1 : 0).Should().Be(0); //there should be 4 items
             comp.Find("p").TextContent.Should().Be("Elements {  }");
         }
 

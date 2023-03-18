@@ -3,7 +3,7 @@
 
 <MudDataGrid T="Item" Filterable="true" QuickFilter="this.QuickFilterFunc" ServerData="this.ServerDataFunc">
     <Columns>
-        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="static x => x.Name" />
     </Columns>
 </MudDataGrid>
 

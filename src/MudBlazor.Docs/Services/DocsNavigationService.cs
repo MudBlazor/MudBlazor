@@ -120,8 +120,8 @@ namespace MudBlazor.Docs.Services
 
                     if (menuElement.GroupComponents != null)
                     {
-                        links.AddRange(menuElement.GroupComponents.Select(i => new NavigationFooterLink(i.Name, i.Link))
-                            .OrderBy(i => i.Link));
+                        links.AddRange(menuElement.GroupComponents.Select(static i => new NavigationFooterLink(i.Name, i.Link))
+                            .OrderBy(static i => i.Link));
                     }
                 }
 
@@ -138,7 +138,7 @@ namespace MudBlazor.Docs.Services
                     _ => Array.Empty<DocsLink>()
                 };
 
-                return potentialLinks.Select((x => new NavigationFooterLink(x.Title, x.Href.Split("/").Last())))
+                return potentialLinks.Select((static x => new NavigationFooterLink(x.Title, x.Href.Split("/").Last())))
                     .ToList();
             }
         }

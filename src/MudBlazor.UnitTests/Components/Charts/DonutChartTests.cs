@@ -107,7 +107,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartOptions, new ChartOptions {ChartPalette = _baseChartPalette})
                 .Add(p => p.InputLabels,labels));
             
-            var svgViewBox = comp.Find("svg").GetAttribute("viewBox")?.Split(" ")?.Select(s => Int32.Parse(s))?.ToArray();
+            var svgViewBox = comp.Find("svg").GetAttribute("viewBox")?.Split(" ")?.Select(static s => Int32.Parse(s))?.ToArray();
             var circles = comp.FindAll("circle");
 
             svgViewBox.Should().NotBeNullOrEmpty("must have a valid viewbox", svgViewBox);

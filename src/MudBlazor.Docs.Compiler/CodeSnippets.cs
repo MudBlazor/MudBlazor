@@ -30,7 +30,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.IndentLevel++;
 
                 foreach (var entry in Directory.EnumerateFiles(paths.DocsDirPath, "*.razor", SearchOption.AllDirectories)
-                    .OrderBy(e => e.Replace("\\", "/"), StringComparer.Ordinal))
+                    .OrderBy(static e => e.Replace("\\", "/"), StringComparer.Ordinal))
                 {
                     var filename = Path.GetFileName(entry);
                     var componentName = Path.GetFileNameWithoutExtension(filename);

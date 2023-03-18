@@ -70,7 +70,7 @@ namespace MudBlazor.UnitTests.Other
             bool isTestOK = true;
 
             IEnumerable<Type> components = typeof(MudElement).Assembly.GetTypes()
-                                                                      .Where(type => type.IsSubclassOf(typeof(MudComponentBase)))
+                                                                      .Where(static type => type.IsSubclassOf(typeof(MudComponentBase)))
                                                                       .Except(exceptions);
 
             foreach (Type component in components)

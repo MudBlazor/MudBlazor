@@ -2,9 +2,9 @@
 
 <MudDataGrid T="Item" ServerData="@(new Func<GridState<Item>, Task<GridData<Item>>>(ServerReload))">
     <Columns>
-        <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Value" />
-        <PropertyColumn Property="x => x.Misc" />
+        <PropertyColumn Property="static x => x.Name" />
+        <PropertyColumn Property="static x => x.Value" />
+        <PropertyColumn Property="static x => x.Misc" />
     </Columns>
 </MudDataGrid>
 

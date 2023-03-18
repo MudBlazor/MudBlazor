@@ -55,7 +55,7 @@ namespace MudBlazor.Docs.Extensions
             if (source.Length == 0)
                 return string.Empty;
             var tokens = Regex.Split(source, @"[-_ ]");
-            return string.Join("", tokens.Select(x => x.Capitalize()));
+            return string.Join("", tokens.Select(static x => x.Capitalize()));
         }
 
         public static string Capitalize(this string str)

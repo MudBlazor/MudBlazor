@@ -317,7 +317,7 @@ namespace MudBlazor
             {
                 if (this is TemplateColumn<T>)
                 {
-                    _sortBy = x => true;
+                    _sortBy = static x => true;
                 }
                 else
                     _sortBy = x => PropertyFunc(x);
@@ -389,7 +389,7 @@ namespace MudBlazor
 
         protected internal virtual Func<T, bool> GetFilterExpression()
         {
-            return x => true;
+            return static x => true;
         }
 
         public virtual string PropertyName { get; }

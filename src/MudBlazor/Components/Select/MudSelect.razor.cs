@@ -82,7 +82,7 @@ namespace MudBlazor
         {
             if (_items == null || _items.Count == 0)
                 return;
-            var items = _items.Where(x => !x.Disabled);
+            var items = _items.Where(static x => !x.Disabled);
             var firstItem = items.FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(startChar))
             {
@@ -118,7 +118,7 @@ namespace MudBlazor
         {
             if (_items == null || _items.Count == 0)
                 return;
-            var item = _items.LastOrDefault(x => !x.Disabled);
+            var item = _items.LastOrDefault(static x => !x.Disabled);
             if (item == null)
                 return;
             if (!MultiSelection)
@@ -286,7 +286,7 @@ namespace MudBlazor
             }
         }
 
-        private Func<T, string> _toStringFunc = x => x?.ToString();
+        private Func<T, string> _toStringFunc = static x => x?.ToString();
 
         private MudInput<string> _elementReference;
 
@@ -305,7 +305,7 @@ namespace MudBlazor
                 _toStringFunc = value;
                 Converter = new Converter<T>
                 {
-                    SetFunc = _toStringFunc ?? (x => x?.ToString()),
+                    SetFunc = _toStringFunc ?? (static x => x?.ToString()),
                     //GetFunc = LookupValue,
                 };
             }
@@ -454,7 +454,7 @@ namespace MudBlazor
             if (item == null)
                 return false;
             bool? result = null;
-            if (!_items.Select(x => x.Value).Contains(item.Value))
+            if (!_items.Select(static x => x.Value).Contains(item.Value))
             {
                 _items.Add(item);
 
@@ -643,7 +643,7 @@ namespace MudBlazor
         {
             await WaitForRender();
             if (MultiSelection)
-                HilightItem(_items.FirstOrDefault(x => !x.Disabled));
+                HilightItem(_items.FirstOrDefault(static x => !x.Disabled));
             else
                 HilightItemForValue(Value);
         }
@@ -1010,7 +1010,7 @@ namespace MudBlazor
         {
             if (!MultiSelection)
                 return;
-            var selectedValues = new HashSet<T>(_items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), _comparer);
+            var selectedValues = new HashSet<T>(_items.Where(static x => !x.Disabled && x.Value != null).Select(static x => x.Value), _comparer);
             _selectedValues = new HashSet<T>(selectedValues, _comparer);
             if (MultiSelectionTextFunc != null)
             {

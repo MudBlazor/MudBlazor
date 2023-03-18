@@ -9,7 +9,7 @@
 </MudDataGrid>
 
 <div>
-    @string.Join(",", _selectedItems.Select(x => x.Name))
+    @string.Join(",", _selectedItems.Select(static x => x.Name))
 </div>
 
 @code {

@@ -28,12 +28,12 @@ namespace MudBlazor
 
         private static Dictionary<int, (Func<int, int> r, Func<int, int> g, Func<int, int> b, string dominantColorPart)> _rgbToHueMapper = new()
         {
-            { 0, ((x) => 255, x => x, x => 0, "rb") },
-            { 1, ((x) => 255 - x, x => 255, x => 0, "gb") },
-            { 2, ((x) => 0, x => 255, x => x, "gr") },
-            { 3, ((x) => 0, x => 255 - x, x => 255, "br") },
-            { 4, ((x) => x, x => 0, x => 255, "bg") },
-            { 5, ((x) => 255, x => 0, x => 255 - x, "rg") },
+            { 0, (static (x) => 255, static x => x, static x => 0, "rb") },
+            { 1, (static (x) => 255 - x, static x => 255, static x => 0, "gb") },
+            { 2, (static (x) => 0, static x => 255, static x => x, "gr") },
+            { 3, (static (x) => 0, static x => 255 - x, static x => 255, "br") },
+            { 4, (static (x) => x, static x => 0, static x => 255, "bg") },
+            { 5, (static (x) => 255, static x => 0, static x => 255 - x, "rg") },
         };
 
         private const double _maxY = 250;

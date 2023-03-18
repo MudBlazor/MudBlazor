@@ -198,7 +198,7 @@ namespace MudBlazor.UnitTests.Components
                 var result = Validate(arg);
                 if (result.IsValid)
                     return Array.Empty<string>();
-                return result.Errors.Select(e => e.ErrorMessage);
+                return result.Errors.Select(static e => e.ErrorMessage);
             }
 
             public Func<T, IEnumerable<string>> Validation => ValidateValue;
@@ -210,7 +210,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TextFieldFluentValidationTest1()
         {
-            var validator = new FluentValueValidator<string>(x => x.Cascade(CascadeMode.Stop)
+            var validator = new FluentValueValidator<string>(static x => x.Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .Length(1, 100)
                 .CreditCard());
@@ -809,10 +809,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var value = new DisplayNameLabelClass();
 
-            var comp = Context.RenderComponent<MudTextField<string>>(x => x.Add(f => f.For, () => value.String));
+            var comp = Context.RenderComponent<MudTextField<string>>(x => x.Add(static f => f.For, () => value.String));
             comp.Instance.Label.Should().Be("String LabelAttribute"); //label should be set by the attribute
 
-            var comp2 = Context.RenderComponent<MudTextField<string>>(x => x.Add(f => f.For, () => value.String).Add(l => l.Label, "Label Parameter"));
+            var comp2 = Context.RenderComponent<MudTextField<string>>(x => x.Add(static f => f.For, () => value.String).Add(static l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
     }

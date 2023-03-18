@@ -26,7 +26,7 @@ namespace MudBlazor
         /// <summary>
         /// The currently active session. null if there is no section selected
         /// </summary>
-        public MudPageContentSection ActiveSection => _sections.FirstOrDefault(x => x.IsActive == true);
+        public MudPageContentSection ActiveSection => _sections.FirstOrDefault(static x => x.IsActive == true);
 
         /// <summary>
         /// The text displayed about the section links. Defaults to "Conents"
@@ -116,7 +116,7 @@ namespace MudBlazor
 
             int diffRootLevel = 1_000_000;
             int counter = 0;
-            foreach (var item in _sections.Where(x => x.Parent == null))
+            foreach (var item in _sections.Where(static x => x.Parent == null))
             {
                 item.SetLevelStructure(counter, diffRootLevel);
                 counter += diffRootLevel;

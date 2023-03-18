@@ -104,11 +104,11 @@ namespace MudBlazor.UnitTests.Components
             // select milk
             comp.FindAll("div.mud-chip")[0].Click();
             comp.FindAll("p")[0].TrimmedText().Should().Be("Corn flakes, Milk");
-            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Corn flakes, Milk");
+            string.Join(", ", chipset.Instance.SelectedChips.Select(static x => x.Text).OrderBy(static x => x)).Should().Be("Corn flakes, Milk");
             // select red wine
             comp.FindAll("div.mud-chip")[6].Click();
             comp.FindAll("p")[0].TrimmedText().Should().Be("Corn flakes, Milk, Red wine");
-            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Corn flakes, Milk, Red wine");
+            string.Join(", ", chipset.Instance.SelectedChips.Select(static x => x.Text).OrderBy(static x => x)).Should().Be("Corn flakes, Milk, Red wine");
         }
 
         /// <summary>
@@ -155,11 +155,11 @@ namespace MudBlazor.UnitTests.Components
             // select cornflakes
             comp.FindAll("div.mud-chip")[3].Click();
             comp.FindAll("p")[0].TrimmedText().Should().Be("Corn flakes, Eggs, Salad");
-            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Corn flakes, Eggs, Salad");
+            string.Join(", ", chipset.Instance.SelectedChips.Select(static x => x.Text).OrderBy(static x => x)).Should().Be("Corn flakes, Eggs, Salad");
             // de-select eggs
             comp.FindAll("div.mud-chip")[1].Click();
             comp.FindAll("p")[0].TrimmedText().Should().Be("Corn flakes, Salad");
-            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Corn flakes, Salad");
+            string.Join(", ", chipset.Instance.SelectedChips.Select(static x => x.Text).OrderBy(static x => x)).Should().Be("Corn flakes, Salad");
         }
 
 
@@ -172,12 +172,12 @@ namespace MudBlazor.UnitTests.Components
             var chipset = comp.FindComponent<MudChipSet>();
             comp.FindAll("div.mud-chip").Count.Should().Be(1);
             chipset.Instance.SelectedChips.Length.Should().Be(1);
-            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Primary");
+            string.Join(", ", chipset.Instance.SelectedChips.Select(static x => x.Text).OrderBy(static x => x)).Should().Be("Primary");
             // select extra item
             comp.FindAll("button")[0].Click();
             // check that extra item is selected
             comp.FindAll("div.mud-chip").Count.Should().Be(2);
-            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Extra Chip, Primary");
+            string.Join(", ", chipset.Instance.SelectedChips.Select(static x => x.Text).OrderBy(static x => x)).Should().Be("Extra Chip, Primary");
         }
 
         /// <summary>

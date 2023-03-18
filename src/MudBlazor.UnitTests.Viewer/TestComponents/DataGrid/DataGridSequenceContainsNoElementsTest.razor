@@ -3,8 +3,8 @@
 
 <MudDataGrid Items="@_items" Filterable="true">
     <Columns>
-        <PropertyColumn Property="x => x.Id" />
-        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="static x => x.Id" />
+        <PropertyColumn Property="static x => x.Name" />
     </Columns>
 </MudDataGrid>
 

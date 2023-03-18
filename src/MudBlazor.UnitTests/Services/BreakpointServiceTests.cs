@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Services
         public void SetUp()
         {
             _browserWindowSizeProvider = new Mock<IBrowserWindowSizeProvider>();
-            _browserWindowSizeProvider.Setup(x => x.GetBrowserWindowSize()).ReturnsAsync(new BrowserWindowSize { Width = 970, Height = 30 }).Verifiable();
+            _browserWindowSizeProvider.Setup(static x => x.GetBrowserWindowSize()).ReturnsAsync(new BrowserWindowSize { Width = 970, Height = 30 }).Verifiable();
             _jsruntimeMock = new Mock<IJSRuntime>();
             _service = new BreakpointService(_jsruntimeMock.Object, _browserWindowSizeProvider.Object);
         }
@@ -42,7 +42,7 @@ namespace MudBlazor.UnitTests.Services
         {
             if (setBreakpoints == true)
             {
-                expectedOptions.BreakpointDefinitions = BreakpointService.DefaultBreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
+                expectedOptions.BreakpointDefinitions = BreakpointService.DefaultBreakpointDefinitions.ToDictionary(static x => x.Key.ToString(), static x => x.Value);
             }
 
             _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize",
@@ -94,7 +94,7 @@ namespace MudBlazor.UnitTests.Services
             option.BreakpointDefinitions.Should().NotBeNull();
 
             option.BreakpointDefinitions.Should().NotBeNull();
-            option.BreakpointDefinitions.Keys.Should().BeEquivalentTo(BreakpointService.DefaultBreakpointDefinitions.Keys.Select(x => x.ToString()).ToList());
+            option.BreakpointDefinitions.Keys.Should().BeEquivalentTo(BreakpointService.DefaultBreakpointDefinitions.Keys.Select(static x => x.ToString()).ToList());
             option.BreakpointDefinitions.Values.Should().BeEquivalentTo(BreakpointService.DefaultBreakpointDefinitions.Values);
         }
 
@@ -125,7 +125,7 @@ namespace MudBlazor.UnitTests.Services
             };
 
             var optionGetter = new Mock<IOptions<ResizeOptions>>();
-            optionGetter.SetupGet(x => x.Value).Returns(customResizeOptioons);
+            optionGetter.SetupGet(static x => x.Value).Returns(customResizeOptioons);
 
             _service = new BreakpointService(_jsruntimeMock.Object, _browserWindowSizeProvider.Object, optionGetter.Object);
             await CheckSubscriptionOptions(customResizeOptioons, true);
@@ -195,7 +195,7 @@ namespace MudBlazor.UnitTests.Services
 
             result.Should().BeTrue();
 
-            _browserWindowSizeProvider.Verify(x => x.GetBrowserWindowSize(), Times.Once());
+            _browserWindowSizeProvider.Verify(static x => x.GetBrowserWindowSize(), Times.Once());
             _jsruntimeMock.Verify();
 
         }
@@ -269,7 +269,7 @@ namespace MudBlazor.UnitTests.Services
             subscriptionIds.Should().HaveCount(10);
 
             _jsruntimeMock.Verify();
-            _browserWindowSizeProvider.Verify(x => x.GetBrowserWindowSize(), Times.Once());
+            _browserWindowSizeProvider.Verify(static x => x.GetBrowserWindowSize(), Times.Once());
         }
 
         [Test]
@@ -300,7 +300,7 @@ namespace MudBlazor.UnitTests.Services
                 SetupJsMockForSubscription(item, true, feedbackCaller);
             }
 
-            var subscriptionIds = options.ToDictionary(x => x, x => new HashSet<Guid>());
+            var subscriptionIds = options.ToDictionary(static x => x, static x => new HashSet<Guid>());
 
             for (int i = 0; i < 40; i++)
             {
@@ -323,10 +323,10 @@ namespace MudBlazor.UnitTests.Services
                 feedback.options.Should().Be(options[i]);
             }
 
-            callerFeedbacks.Select(x => x.ListenerId).ToHashSet().Should().HaveCount(4);
+            callerFeedbacks.Select(static x => x.ListenerId).ToHashSet().Should().HaveCount(4);
 
             _jsruntimeMock.Verify();
-            _browserWindowSizeProvider.Verify(x => x.GetBrowserWindowSize(), Times.Once());
+            _browserWindowSizeProvider.Verify(static x => x.GetBrowserWindowSize(), Times.Once());
         }
 
         [Test]
@@ -473,7 +473,7 @@ namespace MudBlazor.UnitTests.Services
             }
 
             _jsruntimeMock.Verify();
-            _browserWindowSizeProvider.Verify(x => x.GetBrowserWindowSize(), Times.Once());
+            _browserWindowSizeProvider.Verify(static x => x.GetBrowserWindowSize(), Times.Once());
         }
 
         [Test]
@@ -506,7 +506,7 @@ namespace MudBlazor.UnitTests.Services
             var secondSubscribeResult = await _service.Subscribe((Breakpoint size) => { }, customResizeOptioons);
             secondSubscribeResult.Breakpoint.Should().Be(Breakpoint.Xl);
 
-            _browserWindowSizeProvider.Verify(x => x.GetBrowserWindowSize(), Times.Once());
+            _browserWindowSizeProvider.Verify(static x => x.GetBrowserWindowSize(), Times.Once());
             _jsruntimeMock.Verify();
 
         }

@@ -220,7 +220,7 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Icons", Href = "features/icons"},
                 new DocsLink {Title = "Masking", Href = "features/masking"},
                 new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
-            }.OrderBy(x => x.Title);
+            }.OrderBy(static x => x.Title);
 
 
         private IEnumerable<DocsLink> _customization;
@@ -235,7 +235,7 @@ namespace MudBlazor.Docs.Services
             new DocsLink {Title = "Typography", Href = "customization/typography"},
             new DocsLink {Title = "z-index", Href = "customization/z-index"},
             new DocsLink {Title = "Pseudo CSS", Href = "customization/pseudocss"},
-        }.OrderBy(x => x.Title);
+        }.OrderBy(static x => x.Title);
         
         private IEnumerable<DocsLink> _utilities;
 

@@ -248,7 +248,7 @@ namespace MudBlazor
                 {
                     int index = 0;
 
-                    foreach (var item in _indicies.OrderBy(x => x.Value).ToArray())
+                    foreach (var item in _indicies.OrderBy(static x => x.Value).ToArray())
                     {
                         _indicies[item.Key] = index++;
                     }

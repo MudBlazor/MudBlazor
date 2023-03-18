@@ -78,7 +78,7 @@
 
     IEnumerable<Type> getTestComponenTypes()
     {
-        foreach (var type in typeof(Program).Assembly.GetTypes().OrderBy(x => x.Name))
+        foreach (var type in typeof(Program).Assembly.GetTypes().OrderBy(static x => x.Name))
         {
             if (!type.Name.Contains("Test"))
                 continue;

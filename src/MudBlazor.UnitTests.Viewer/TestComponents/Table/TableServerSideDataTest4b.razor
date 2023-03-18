@@ -40,10 +40,10 @@
         switch (state.SortLabel)
         {
             case "a":
-                data = data.OrderByDirection(state.SortDirection, x => x.a);
+                data = data.OrderByDirection(state.SortDirection, static x => x.a);
                 break;
             case "b":
-                data = data.OrderByDirection(state.SortDirection, x => x.b);
+                data = data.OrderByDirection(state.SortDirection, static x => x.b);
                 break;
             default:
                 break;

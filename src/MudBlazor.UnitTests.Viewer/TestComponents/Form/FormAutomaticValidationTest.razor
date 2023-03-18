@@ -27,7 +27,7 @@
                 var result = await ValidateAsync(ValidationContext<TestClass>.CreateWithOptions((TestClass)model, x => x.IncludeProperties(propertyName)));
                 if (result.IsValid)
                     return Array.Empty<string>();
-                return result.Errors.Select(e => e.ErrorMessage);
+                return result.Errors.Select(static e => e.ErrorMessage);
             };
     }
 }

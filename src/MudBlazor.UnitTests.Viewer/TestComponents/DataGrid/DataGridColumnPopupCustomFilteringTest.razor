@@ -3,10 +3,10 @@
 
 <MudDataGrid @ref="grid" Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterMenu">
     <Columns>
-        <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Age" />
-        <PropertyColumn Property="x => x.Status" />
-        <PropertyColumn Property="x => x.Hired">
+        <PropertyColumn Property="static x => x.Name" />
+        <PropertyColumn Property="static x => x.Age" />
+        <PropertyColumn Property="static x => x.Status" />
+        <PropertyColumn Property="static x => x.Hired">
             <FilterTemplate>
                 <MudStack>
                     <MudSwitch T="bool" Color="@Color.Primary" @bind-Checked="FilterHired" Label="Show Hired"></MudSwitch>
@@ -40,7 +40,7 @@
         {
             _filterDefinition = new FilterDefinition<Model>
             {
-                Column = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Hired"),
+                Column = grid.RenderedColumns.FirstOrDefault(static x => x.PropertyName == "Hired"),
                 Operator = FilterOperator.Boolean.Is,
                 Value = true
             };

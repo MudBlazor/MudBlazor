@@ -36,7 +36,7 @@
 
 		var indexOffset = dropItem.DropzoneIdentifier switch
 		{
-			"2"  => _serverData.Count(x => x.Selector == "1"),
+			"2"  => _serverData.Count(static x => x.Selector == "1"),
 			_ => 0,
 		};
 
@@ -72,7 +72,7 @@
 	{
 		List<DropItem> newdata = new List<DropItem>();
 
-		foreach (var item in _serverData.OrderBy(x => x.Order))
+		foreach (var item in _serverData.OrderBy(static x => x.Order))
 		{
 			newdata.Add(item);
 		}

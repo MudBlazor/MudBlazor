@@ -22,9 +22,9 @@ namespace MudBlazor.UnitTests.Services
         public async Task NoSubscriptionWithoutConnectTest()
         {
             var jsevent = new JsEvent(new Mock<IJSRuntime>().Object);
-            Assert.Throws<InvalidOperationException>(() => jsevent.Paste += x => Console.WriteLine(x));
-            Assert.Throws<InvalidOperationException>(() => jsevent.CaretPositionChanged += x => Console.WriteLine(x));
-            Assert.Throws<InvalidOperationException>(() => jsevent.Select += (x, y) => Console.WriteLine());
+            Assert.Throws<InvalidOperationException>(() => jsevent.Paste += static x => Console.WriteLine(x));
+            Assert.Throws<InvalidOperationException>(() => jsevent.CaretPositionChanged += static  x => Console.WriteLine(x));
+            Assert.Throws<InvalidOperationException>(() => jsevent.Select += static (x, y) => Console.WriteLine());
             Assert.Throws<InvalidOperationException>(() => jsevent.Subscribe("copy"));
             // unsubscribing before connection is ignored
             await jsevent.Unsubscribe("copy");

@@ -35,7 +35,7 @@
 
     private string GetMultiSelectionText(List<string> selectedValues)
     {
-        return $"Selected values: {string.Join(", ", selectedValues.Select(x => x))}";
+        return $"Selected values: {string.Join(", ", selectedValues.Select(static x => x))}";
     }
 
     private class TestItem

@@ -50,7 +50,7 @@ namespace MudBlazor
         {
             if (!firstRender)
             {
-                foreach (var dialogReference in _dialogs.Where(x => !x.Result.IsCompleted))
+                foreach (var dialogReference in _dialogs.Where(static x => !x.Result.IsCompleted))
                 {
                     dialogReference.RenderCompleteTaskCompletionSource.TrySetResult(true);
                 }

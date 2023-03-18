@@ -2,7 +2,7 @@
 
 <MudDataGrid Items="@_items">
     <Columns>
-        <PropertyColumn Property="x => x.Name" CellStyleFunc="@_cellStyleFunc" />
+        <PropertyColumn Property="static x => x.Name" CellStyleFunc="@_cellStyleFunc" />
     </Columns>
 </MudDataGrid>
 
@@ -15,7 +15,7 @@
     };
 
     // style the cells according to the element's physical classification and the molar mass.
-    private Func<Item, string> _cellStyleFunc => x =>
+    private Func<Item, string> _cellStyleFunc => static x =>
     {
         if (x.Name == "B")
             return "background-color:#E5BDE5";

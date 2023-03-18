@@ -9,7 +9,7 @@
             @Headline
         </MudText>
         <MudNavMenu Class="pl-4">
-            @foreach (var docSection in _sections.OrderBy(x => x.LevelSortingValue))
+            @foreach (var docSection in _sections.OrderBy(static x => x.LevelSortingValue))
             {
                 <MudNavLink @key="docSection.Id" Match="NavLinkMatch.All" Class="@GetNavLinkClass(docSection)" @onclick="@(e => OnNavLinkClick(docSection.Id))">
                     @docSection.Title

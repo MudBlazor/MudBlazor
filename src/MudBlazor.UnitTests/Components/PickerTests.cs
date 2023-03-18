@@ -38,10 +38,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var value = new DisplayNameLabelClass();
 
-            var comp = Context.RenderComponent<MudPicker<DateTime?>>(x => x.Add(f => f.For, () => value.Date));
+            var comp = Context.RenderComponent<MudPicker<DateTime?>>(x => x.Add(static f => f.For, () => value.Date));
             comp.Instance.Label.Should().Be("Date LabelAttribute"); //label should be set by the attribute
 
-            var comp2 = Context.RenderComponent<MudPicker<DateTime?>>(x => x.Add(f => f.For, () => value.Date).Add(l => l.Label, "Label Parameter"));
+            var comp2 = Context.RenderComponent<MudPicker<DateTime?>>(x => x.Add(static f => f.For, () => value.Date).Add(l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
     }

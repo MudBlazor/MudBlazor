@@ -17,10 +17,10 @@
                 }
             </FooterTemplate>
         </TemplateColumn>
-        <PropertyColumn Property="x => x.Age" AggregateDefinition="_ageAggregation" />
-        <PropertyColumn Property="x => x.Status" Grouping="true" />
-        <PropertyColumn Property="x => x.Salary" AggregateDefinition="_salaryAggregation" />
-        <PropertyColumn Property="x => x.HireDate" Title="Hired">
+        <PropertyColumn Property="static x => x.Age" AggregateDefinition="_ageAggregation" />
+        <PropertyColumn Property="static x => x.Status" Grouping="true" />
+        <PropertyColumn Property="static x => x.Salary" AggregateDefinition="_salaryAggregation" />
+        <PropertyColumn Property="static x => x.HireDate" Title="Hired">
             <CellTemplate>
                 @context.Item.HireDate.ToString("d")
             </CellTemplate>
@@ -55,8 +55,8 @@
         Type = AggregateType.Custom,
         CustomAggregate = x =>
         {
-            var highestSalary = x.Max(z => z.Salary);
-            var countOver100Grand = x.Count(z => z.Salary > 100_000);
+                var highestSalary = x.Max(static z => z.Salary);
+                var countOver100Grand = x.Count(static z => z.Salary > 100_000);
             return $"Highest: {highestSalary.ToString("C0")} | {countOver100Grand} Over {100000:C0}";
         }
     };

@@ -21,30 +21,30 @@ namespace MudBlazor.UnitTests.UserAttributes
             // Add a custom create function for components that cannot be created automatically.
             // These include components that require certain attributes/preriquisites to be set before rendering anything.
             RegisterCustomFactoryFor<MudBreadcrumbs>(builder => builder
-                .Add(x => x.Items, new List<BreadcrumbItem> { new("text", "href") }));
+                .Add(static x => x.Items, new List<BreadcrumbItem> { new("text", "href") }));
 
-            RegisterCustomFactoryFor<MudCarouselItem>((builder, testContext) => builder
-                .Add(x => x.Parent, testContext.RenderComponent<MudCarousel<string>>(attributes => attributes
-                        .Add(x => x.SelectedIndex, 0))
+            RegisterCustomFactoryFor<MudCarouselItem>(static  (builder, testContext) => builder
+                .Add(static x => x.Parent, testContext.RenderComponent<MudCarousel<string>>(static attributes => attributes
+                        .Add(static x => x.SelectedIndex, 0))
                     .Instance));
 
-            RegisterCustomFactoryFor<MudDialog>((builder, testContext) => builder
+            RegisterCustomFactoryFor<MudDialog>(static (builder, testContext) => builder
                 .AddCascadingValue(testContext.RenderComponent<MudDialogInstance>().Instance));
 
-            RegisterCustomFactoryFor<MudElement>(builder => builder.Add(x => x.HtmlTag, "div"));
+            RegisterCustomFactoryFor<MudElement>(static builder => builder.Add(static x => x.HtmlTag, "div"));
 
-            RegisterCustomFactoryFor<MudMessageBox>((builder, testContext) => builder
+            RegisterCustomFactoryFor<MudMessageBox>(static (builder, testContext) => builder
                 .AddCascadingValue(testContext.RenderComponent<MudDialogInstance>().Instance));
 
-            RegisterCustomFactoryFor<MudOverlay>(builder => builder.Add(x => x.Visible, true));
+            RegisterCustomFactoryFor<MudOverlay>(static builder => builder.Add(static x => x.Visible, true));
 
-            RegisterCustomFactoryFor<MudHighlighter>(builder => builder
-                .Add(x => x.Text, "Hello world")
-                .Add(x => x.HighlightedText, "Hello"));
+            RegisterCustomFactoryFor<MudHighlighter>(static builder => builder
+                .Add(static x => x.Text, "Hello world")
+                .Add(static x => x.HighlightedText, "Hello"));
 
-            RegisterCustomFactoryFor<MudTabPanel>((builder, testContext) => builder
-                .AddCascadingValue(testContext.RenderComponent<MudTabs>(attributes => attributes
-                        .Add(x => x.KeepPanelsAlive, true))
+            RegisterCustomFactoryFor<MudTabPanel>(static  (builder, testContext) => builder
+                .AddCascadingValue(testContext.RenderComponent<MudTabs>(static attributes => attributes
+                        .Add(static x => x.KeepPanelsAlive, true))
                     .Instance));
         }
 
@@ -65,7 +65,7 @@ namespace MudBlazor.UnitTests.UserAttributes
         {
             // Use string as generic type parameter for generic components
             if (componentType.IsGenericType)
-                componentType = componentType.MakeGenericType(componentType.GetGenericArguments().Select(_ => typeof(string)).ToArray());
+                componentType = componentType.MakeGenericType(componentType.GetGenericArguments().Select(static _ => typeof(string)).ToArray());
 
             var defaultFactoryMethod = typeof(MudComponentFactory)
                 .GetMethod(nameof(DefaultFactory), BindingFlags.Instance | BindingFlags.NonPublic)
@@ -94,7 +94,7 @@ namespace MudBlazor.UnitTests.UserAttributes
             where TComponent : MudComponentBase
         {
             if (UserAttributes != null)
-                builder = builder.Add(x => x.UserAttributes, UserAttributes);
+                builder = builder.Add(static x => x.UserAttributes, UserAttributes);
 
             return builder;
         }

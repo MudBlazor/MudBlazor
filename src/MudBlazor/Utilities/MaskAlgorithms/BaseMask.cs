@@ -36,7 +36,7 @@ public abstract class BaseMask : IMask
 
     protected virtual void InitInternals()
     {
-        _maskDict = _maskChars.ToDictionary(x => x.Char);
+        _maskDict = _maskChars.ToDictionary(static x => x.Char);
         if (Mask == null)
             _delimiters = new();
         else

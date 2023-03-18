@@ -69,14 +69,14 @@
     {
         public FileModelFluentValidator()
         {
-            RuleFor(x => x.Name)
+            RuleFor(static x => x.Name)
                 .NotEmpty()
                 .Length(1, 100);
-            RuleFor(x => x.File)
+            RuleFor(static x => x.File)
             .NotEmpty();
-            When(x => x.File != null, () =>
+            When(static x => x.File != null, () =>
             {
-                RuleFor(x => x.File.Size).LessThanOrEqualTo(10485760).WithMessage("The maximum file size is 10 MB");
+                RuleFor(static x => x.File.Size).LessThanOrEqualTo(10485760).WithMessage("The maximum file size is 10 MB");
             });
         }
 
@@ -85,7 +85,7 @@
             var result = await ValidateAsync(ValidationContext<FileModel>.CreateWithOptions((FileModel)model, x => x.IncludeProperties(propertyName)));
             if (result.IsValid)
                 return Array.Empty<string>();
-            return result.Errors.Select(e => e.ErrorMessage);
+            return result.Errors.Select(static e => e.ErrorMessage);
         };
     }
 }

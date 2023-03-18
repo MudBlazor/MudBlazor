@@ -164,7 +164,7 @@
     {
         string saveTypename = DocStrings.GetSaveTypename(Type);
 
-        foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>().OrderBy(x => x.Name))
+        foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>().OrderBy(static x => x.Name))
         {
             if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && info.PropertyType.Name.Contains("EventCallback"))
             {
@@ -185,7 +185,7 @@
     {
         string saveTypename = DocStrings.GetSaveTypename(Type);
 
-        foreach (var info in Type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Static).OrderBy(x => x.Name))
+        foreach (var info in Type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Static).OrderBy(static x => x.Name))
         {
             if (!hiddenMethods.Any(x => x.Contains(info.Name)) && !info.Name.StartsWith("get_") && !info.Name.StartsWith("set_"))
             {
@@ -214,7 +214,7 @@
                                                    Grouping.Inheritance => -NumberOfAncestorClasses(BaseDefinitionClass(x)),
                                                    _ => 0
                                                })
-                                 .ThenBy(x => x.Name))
+                                 .ThenBy(static x => x.Name))
         {
             if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && !info.PropertyType.Name.Contains("EventCallback"))
             {

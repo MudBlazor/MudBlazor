@@ -247,7 +247,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
-            select.SetCallback(s => s.TextChanged, x => text = x);
+            select.SetCallback(static s => s.TextChanged, x => text = x);
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // check initial state
@@ -292,12 +292,12 @@ namespace MudBlazor.UnitTests.Components
             var eventCounter = 0;
             var textChangedCount = 0;
             var selectedValuesChangedCount = 0;
-            select.SetCallback(s => s.TextChanged, x =>
+            select.SetCallback(static s => s.TextChanged, x =>
               {
                   textChangedCount = eventCounter++;
                   text = x;
               });
-            select.SetCallback(s => s.SelectedValuesChanged, x =>
+            select.SetCallback(static s => s.SelectedValuesChanged, x =>
               {
                   selectedValuesChangedCount = eventCounter++;
                   selectedValues = x;
@@ -352,13 +352,13 @@ namespace MudBlazor.UnitTests.Components
             var eventCounter = 0;
             var textChangedCount = 0;
             var selectedValuesChangedCount = 0;
-            select.SetParam(s => s.MultiSelection, true);
-            select.SetCallback(s => s.TextChanged, x =>
+            select.SetParam(static s => s.MultiSelection, true);
+            select.SetCallback(static s => s.TextChanged, x =>
               {
                   textChangedCount = eventCounter++;
                   text = x;
               });
-            select.SetCallback(s => s.SelectedValuesChanged, x =>
+            select.SetCallback(static s => s.SelectedValuesChanged, x =>
               {
                   selectedValuesChangedCount = eventCounter++;
                   selectedValues = x;
@@ -394,7 +394,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
             var eventCounter = 0;
-            select.SetCallback(s => s.OnBlur, x => eventCounter++);
+            select.SetCallback(static s => s.OnBlur, x => eventCounter++);
             await comp.InvokeAsync(async () =>
             {
                 await select.Instance.OpenMenu();
@@ -427,7 +427,7 @@ namespace MudBlazor.UnitTests.Components
                 // select elements needed for the test
                 var select = comp.FindComponent<MudSelect<string>>();
                 string validatedValue = null;
-                select.SetParam(x => x.Validation, new Func<string, bool>(value =>
+                select.SetParam(static x => x.Validation, new Func<string, bool>(value =>
                 {
                     validatedValue = value; // NOTE: select does only update the value for T string
                     return true;
@@ -468,7 +468,7 @@ namespace MudBlazor.UnitTests.Components
             // select element needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
             string validatedValue = null;
-            select.SetParam(x => x.Validation, (object)new Func<string, bool>(value =>
+            select.SetParam(static x => x.Validation, (object)new Func<string, bool>(value =>
             {
                 validatedValue = value; // NOTE: select does only update the value for T string
                 return true;
@@ -502,7 +502,7 @@ namespace MudBlazor.UnitTests.Components
             selectAllItem.Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/>");
 
             // Check that all normal select items are actually selected
-            var items = comp.FindComponents<MudSelectItem<string>>().Where(x=>x.Instance.HideContent==false).ToArray();
+            var items = comp.FindComponents<MudSelectItem<string>>().Where(static x => x.Instance.HideContent == false).ToArray();
 
             items.Should().HaveCount(7);
             foreach (var item in items)
@@ -512,7 +512,7 @@ namespace MudBlazor.UnitTests.Components
             }
 
             // Check shadow items
-            var shadowItems = comp.FindComponents<MudSelectItem<string>>().Where(x => x.Instance.HideContent == true).ToArray();
+            var shadowItems = comp.FindComponents<MudSelectItem<string>>().Where(static x => x.Instance.HideContent == true).ToArray();
             foreach (var item in shadowItems)
             {
                 // shadow items don't render, their state is irrelevant, all they do is provide render fragments to the select
@@ -542,7 +542,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
             string validatedValue = null;
-            select.SetParam(x => x.Validation, (object)new Func<string, bool>(value =>
+            select.SetParam(static x => x.Validation, (object)new Func<string, bool>(value =>
             {
                 validatedValue = value; // NOTE: select does only update the value for T string
                 return true;
@@ -588,7 +588,7 @@ namespace MudBlazor.UnitTests.Components
             // select the input of the select
             var input = comp.Find("input");
             //the value of the input
-            var value = input.Attributes.Where(a => a.LocalName == "value").First().Value;
+            var value = input.Attributes.Where(static a => a.LocalName == "value").First().Value;
             value.Should().Be("FirstA, SecondA");
         }
 
@@ -606,7 +606,7 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("input");
 
             // The value of the input
-            var value = input.Attributes.Where(a => a.LocalName == "value").First().Value;
+            var value = input.Attributes.Where(static a => a.LocalName == "value").First().Value;
 
             // Value is equal to the customized values returned by the method
             value.Should().Be("Selected values: FirstA, SecondA");
@@ -1048,9 +1048,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Select_ValueChangeEventCountTest()
         {
-            var comp = Context.RenderComponent<SelectEventCountTest>(x =>
+            var comp = Context.RenderComponent<SelectEventCountTest>(static x =>
             {
-                x.Add(c => c.MultiSelection, false);
+                x.Add(static c => c.MultiSelection, false);
             });
             var select = comp.FindComponent<MudSelect<string>>();
             var input = comp.Find("div.mud-input-control");

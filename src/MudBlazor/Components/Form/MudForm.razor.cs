@@ -30,7 +30,7 @@ namespace MudBlazor
         [Category(CategoryTypes.Form.ValidationResult)]
         public bool IsValid
         {
-            get => _valid && ChildForms.All(x => x.IsValid);
+            get => _valid && ChildForms.All(static x => x.IsValid);
             set
             {
                 _valid = value;
@@ -210,12 +210,12 @@ namespace MudBlazor
             // form can only be valid if:
             // - none have an error
             // - all required fields have been touched (and thus validated)
-            var no_errors = _formControls.All(x => x.HasErrors == false);
-            var required_all_touched = _formControls.Where(x => x.Required).All(x => x.Touched);
+            var no_errors = _formControls.All(static x => x.HasErrors == false);
+            var required_all_touched = _formControls.Where(static x => x.Required).All(static x => x.Touched);
             var valid = no_errors && required_all_touched;
 
             var old_touched = _touched;
-            _touched = _formControls.Any(x => x.Touched);
+            _touched = _formControls.Any(static x => x.Touched);
             try
             {
                 _shouldRender = false;
@@ -242,11 +242,11 @@ namespace MudBlazor
         /// </summary>
         public async Task Validate()
         {
-            await Task.WhenAll(_formControls.Select(x => x.Validate()));
+            await Task.WhenAll(_formControls.Select(static x => x.Validate()));
 
             if (ChildForms.Count > 0)
             {
-                await Task.WhenAll(ChildForms.Select(x => x.Validate()));
+                await Task.WhenAll(ChildForms.Select(static x => x.Validate()));
             }
 
             EvaluateForm(debounce: false);
@@ -292,7 +292,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var valid = _formControls.All(x => x.Required == false);
+                var valid = _formControls.All(static x => x.Required == false);
                 if (valid != IsValid)
                 {
                     // the user probably bound a variable to IsValid and it conflicts with our state.

@@ -35,10 +35,10 @@ namespace MudBlazor.UnitTests.Utilities
 
             //move item item-5 to index 0
             var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[4], "something", 0);
-            items.UpdateOrder(dropInfo, x => x.Prio);
+            items.UpdateOrder(dropInfo, static x => x.Prio);
 
             var expectedOrders = new[] { 1, 2, 3, 4, 0, 5, 6, 7, 8, 9 };
-            var actualOrders = items.Select(x => x.Prio).ToList();
+            var actualOrders = items.Select(static x => x.Prio).ToList();
 
             actualOrders.Should().ContainInOrder(expectedOrders);
         }
@@ -50,10 +50,10 @@ namespace MudBlazor.UnitTests.Utilities
 
             //move item item-5 to index 0
             var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[3], "something", 4);
-            items.UpdateOrder(dropInfo, x => x.Prio);
+            items.UpdateOrder(dropInfo, static x => x.Prio);
 
             var expectedOrders = new[] { 0, 1, 2, 4, 3, 5, 6, 7, 8, 9 };
-            var actualOrders = items.Select(x => x.Prio).ToList();
+            var actualOrders = items.Select(static x => x.Prio).ToList();
 
             actualOrders.Should().ContainInOrder(expectedOrders);
         }
@@ -65,10 +65,10 @@ namespace MudBlazor.UnitTests.Utilities
 
             //move item item-5 to index 0
             var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[9], "something", 0);
-            items.UpdateOrder(dropInfo, x => x.Prio);
+            items.UpdateOrder(dropInfo, static x => x.Prio);
 
             var expectedOrders = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
-            var actualOrders = items.Select(x => x.Prio).ToList();
+            var actualOrders = items.Select(static x => x.Prio).ToList();
 
             actualOrders.Should().ContainInOrder(expectedOrders);
         }
@@ -80,10 +80,10 @@ namespace MudBlazor.UnitTests.Utilities
 
             //move item item-5 to index 0
             var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[2], "something", 5);
-            items.UpdateOrder(dropInfo, x => x.Prio);
+            items.UpdateOrder(dropInfo, static x => x.Prio);
 
             var expectedOrders = new[] { 0, 1, 5, 2, 3, 4, 6, 7, 8, 9 };
-            var actualOrders = items.Select(x => x.Prio).ToList();
+            var actualOrders = items.Select(static x => x.Prio).ToList();
 
             actualOrders.Should().ContainInOrder(expectedOrders);
         }
@@ -95,10 +95,10 @@ namespace MudBlazor.UnitTests.Utilities
 
             //move item item-5 to index 0
             var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[4], "something", 3);
-            items.UpdateOrder(dropInfo, x => x.Prio);
+            items.UpdateOrder(dropInfo, static x => x.Prio);
 
             var expectedOrders = new[] { 0, 1, 2, 4, 3, 5, 6, 7, 8, 9 };
-            var actualOrders = items.Select(x => x.Prio).ToList();
+            var actualOrders = items.Select(static x => x.Prio).ToList();
 
             actualOrders.Should().ContainInOrder(expectedOrders);
         }
@@ -110,10 +110,10 @@ namespace MudBlazor.UnitTests.Utilities
 
             //move item item-5 to index 0
             var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[0], "something", 9);
-            items.UpdateOrder(dropInfo, x => x.Prio);
+            items.UpdateOrder(dropInfo, static x => x.Prio);
 
             var expectedOrders = new[] { 9, 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-            var actualOrders = items.Select(x => x.Prio).ToList();
+            var actualOrders = items.Select(static x => x.Prio).ToList();
 
             actualOrders.Should().ContainInOrder(expectedOrders);
         }
@@ -124,10 +124,10 @@ namespace MudBlazor.UnitTests.Utilities
             var items = GenerateList();
 
             var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[3], "something", 3);
-            items.UpdateOrder(dropInfo, x => x.Prio);
+            items.UpdateOrder(dropInfo, static x => x.Prio);
 
             var expectedOrders = new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-            var actualOrders = items.Select(x => x.Prio).ToList();
+            var actualOrders = items.Select(static x => x.Prio).ToList();
 
             actualOrders.Should().ContainInOrder(expectedOrders);
         }

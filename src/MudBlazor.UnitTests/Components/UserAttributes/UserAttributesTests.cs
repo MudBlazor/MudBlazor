@@ -70,8 +70,8 @@ namespace MudBlazor.UnitTests.UserAttributes
         {
             return typeof(MudElement).Assembly
                 .GetTypes()
-                .Where(type => type.IsAssignableTo(typeof(MudComponentBase)) && !type.IsAbstract)
-                .Select(type => type.IsGenericType ? type.GetGenericTypeDefinition() : type)
+                .Where(static type => type.IsAssignableTo(typeof(MudComponentBase)) && !type.IsAbstract)
+                .Select(static type => type.IsGenericType ? type.GetGenericTypeDefinition() : type)
                 .Except(_excludedComponents)
                 .ToArray();
         }

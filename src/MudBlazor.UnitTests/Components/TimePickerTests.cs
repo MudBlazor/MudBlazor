@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-hour").Count.Should().Be(24);
             // change to 12 hour
 
-            underlyingPicker.SetParametersAndRender(x => x.Add(p =>
+            underlyingPicker.SetParametersAndRender(static x => x.Add(static p =>
                 p.AmPm, true));
 
             // count hours
@@ -204,10 +204,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SelectTime_UsingClicks_12HourMode_ChangeAmPm_CheckTime()
         {
-            var comp = Context.RenderComponent<MudTimePicker>(x =>
+            var comp = Context.RenderComponent<MudTimePicker>(static x =>
             {
-                x.Add(p => p.PickerVariant, PickerVariant.Static);
-                x.Add(p => p.AmPm, true);
+                x.Add(static p => p.PickerVariant, PickerVariant.Static);
+                x.Add(static p => p.AmPm, true);
             });
             var picker = comp.Instance;
 

@@ -25,7 +25,7 @@
     }
 </MudNavGroup>
 <MudNavGroup Title="API" Expanded="@(_section == "api")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
-    @foreach (var item in MenuService.Api.OrderBy(x => x.Name))
+    @foreach (var item in MenuService.Api.OrderBy(static x => x.Name))
     {
         <MudNavLink Href="@ApiLink.GetApiLinkFor(item.Type)">@item.Name</MudNavLink>
     }
@@ -43,7 +43,7 @@
     }
 </MudNavGroup>
 <MudNavGroup Title="CSS Utilities" Expanded="@(_section == "utilities")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
-    @foreach (var title in MenuService.Utilities.GroupBy(x => x.Group).Select(x => x.Key))
+        @foreach (var title in MenuService.Utilities.GroupBy(static x => x.Group).Select(static x => x.Key))
     {
         <div class="docs-css-utility-header">
             @title

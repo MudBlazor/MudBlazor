@@ -174,7 +174,7 @@ namespace MudBlazor
 
         public override void InitializeSorting()
         {
-            var initial_sortlabel = SortLabels.FirstOrDefault(x => x.InitialDirection != SortDirection.None);
+            var initial_sortlabel = SortLabels.FirstOrDefault(static x => x.InitialDirection != SortDirection.None);
             if (initial_sortlabel == null)
                 return;
             CurrentSortLabel = initial_sortlabel;

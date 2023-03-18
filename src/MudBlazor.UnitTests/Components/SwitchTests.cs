@@ -57,7 +57,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Dark, Color.Primary)]
         public void SwitchColorTest(Color color, Color uncheckedcolor)
         {
-            var comp = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UnCheckedColor, uncheckedcolor));
+            var comp = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(static c => c.Color, color).Add(static b => b.UnCheckedColor, uncheckedcolor));
 
             var box = comp.Instance;
             var input = comp.Find("input");
@@ -96,10 +96,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var value = new DisplayNameLabelClass();
 
-            var comp = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(f => f.For, () => value.Boolean));
+            var comp = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(static f => f.For, () => value.Boolean));
             comp.Instance.Label.Should().Be("Boolean LabelAttribute"); //label should be set by the attribute
 
-            var comp2 = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(f => f.For, () => value.Boolean).Add(l => l.Label, "Label Parameter"));
+            var comp2 = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(static f => f.For, () => value.Boolean).Add(static l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
 

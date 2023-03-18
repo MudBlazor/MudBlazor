@@ -190,7 +190,7 @@ namespace MudBlazor.UnitTests.Components
         public void CheckBoxTest_KeyboardInput()
         {
             var comp = Context.RenderComponent<MudCheckBox<bool?>>();
-            comp.SetParam(x => x.TriState, true);
+            comp.SetParam(static x => x.TriState, true);
             // print the generated html
             // select elements needed for the test
             var checkbox = comp.Instance;
@@ -218,7 +218,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
 
             //Backspace should not change state on non-tristate checkbox
-            comp.SetParam(x => x.TriState, false);
+            comp.SetParam(static x => x.TriState, false);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
             //Check tristate space key
@@ -239,8 +239,8 @@ namespace MudBlazor.UnitTests.Components
         public void CheckBoxTest_KeyboardDisabled()
         {
             var comp = Context.RenderComponent<MudCheckBox<bool?>>();
-            comp.SetParam(x => x.TriState, true);
-            comp.SetParam(x => x.KeyboardEnabled, false);
+            comp.SetParam(static x => x.TriState, true);
+            comp.SetParam(static x => x.KeyboardEnabled, false);
             // print the generated html
             // select elements needed for the test
             var checkbox = comp.Instance;
@@ -268,7 +268,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
 
             //Backspace should not change state on non-tristate checkbox
-            comp.SetParam(x => x.TriState, null);
+            comp.SetParam(static x => x.TriState, null);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
             comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
             //Check tristate space key
@@ -295,7 +295,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Dark, Color.Primary)]
         public void CheckBoxColorTest(Color color, Color uncheckedcolor)
         {
-            var comp = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UnCheckedColor, uncheckedcolor));
+            var comp = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(static c => c.Color, color).Add(static b => b.UnCheckedColor, uncheckedcolor));
 
             var box = comp.Instance;
             var input = comp.Find("input");
@@ -333,10 +333,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var value = new DisplayNameLabelClass();
 
-            var comp = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(f => f.For, () => value.Boolean));
+            var comp = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(static f => f.For, () => value.Boolean));
             comp.Instance.Label.Should().Be("Boolean LabelAttribute"); //label should be set by the attribute
 
-            var comp2 = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(f => f.For, () => value.Boolean).Add(l => l.Label, "Label Parameter"));
+            var comp2 = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(static f => f.For, () => value.Boolean).Add(static l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
     }

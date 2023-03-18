@@ -5,7 +5,7 @@
 
 <MudDataGrid Items="@_items" Groupable="true" Filterable="true">
     <Columns>
-        <PropertyColumn Property="x => x.Name">
+        <PropertyColumn Property="static x => x.Name">
             <FooterTemplate>
                 @{ int index = 1, count = @context.Items.Count(); }
                 People: 
@@ -20,15 +20,15 @@
                 }
             </FooterTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.Age" AggregateDefinition="_ageAggregation" />
-        <PropertyColumn Property="x => x.Status"></PropertyColumn>
-        <PropertyColumn Property="x => x.Salary" AggregateDefinition="_salaryAggregation" />
-        <PropertyColumn Property="x => x.HireDate" Title="Hired">
+        <PropertyColumn Property="static x => x.Age" AggregateDefinition="_ageAggregation" />
+        <PropertyColumn Property="static x => x.Status"></PropertyColumn>
+        <PropertyColumn Property="static x => x.Salary" AggregateDefinition="_salaryAggregation" />
+        <PropertyColumn Property="static x => x.HireDate" Title="Hired">
             <CellTemplate>
                 @context.Item.HireDate.ToString("d")
             </CellTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.IsManager" Title="Manager" />
+        <PropertyColumn Property="static x => x.IsManager" Title="Manager" />
     </Columns>
 </MudDataGrid>
 

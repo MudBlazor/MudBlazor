@@ -11,9 +11,9 @@
         <MudSpacer />
     </ToolBarContent>
     <Columns>
-        <PropertyColumn Property="x => x.Name" Title="Name" Filterable="false" Groupable="false" />
-        <PropertyColumn Property="x => x.Count" />
-        <PropertyColumn Property="x => x.Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
+        <PropertyColumn Property="static x => x.Name" Title="Name" Filterable="false" Groupable="false" />
+        <PropertyColumn Property="static x => x.Count" />
+        <PropertyColumn Property="static x => x.Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
             <GroupTemplate>
                 <span style="font-weight:bold">Category: @context.Grouping.Key</span>
             </GroupTemplate>
@@ -38,8 +38,8 @@
             new Fruit("Pear", 4, "Pome"),
             new Fruit("Orange", 4, "Citrus")
         };
-    
-    Func<Fruit, object> _groupBy = x => 
+
+    Func<Fruit, object> _groupBy = static x =>
     {
         return x.Category;
     };

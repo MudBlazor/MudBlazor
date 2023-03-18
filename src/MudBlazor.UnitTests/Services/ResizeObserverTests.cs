@@ -65,9 +65,9 @@ namespace MudBlazor.UnitTests.Services
                 allReferences.Add(reference);
             }
 
-            _runtimeMock.Setup(x => x.InvokeAsync<IEnumerable<BoundingClientRect>>(
+            _runtimeMock.Setup(static x => x.InvokeAsync<IEnumerable<BoundingClientRect>>(
                 "mudResizeObserver.connect",
-                It.Is<object[]>(z =>
+                It.Is<object[]>(static z =>
                     (Guid)z[0] != default &&
                     (z[1] is DotNetObjectReference<ResizeObserver>) == true &&
                     (z[2] is IEnumerable<ElementReference>) == true &&
@@ -158,9 +158,9 @@ namespace MudBlazor.UnitTests.Services
             List<Guid> ids = new();
             var observerId = Guid.Empty;
 
-            _runtimeMock.Setup(x => x.InvokeAsync<IEnumerable<BoundingClientRect>>(
+            _runtimeMock.Setup(static x => x.InvokeAsync<IEnumerable<BoundingClientRect>>(
                 "mudResizeObserver.connect",
-                It.Is<object[]>(z =>
+                It.Is<object[]>(static z =>
                     (Guid)z[0] != default &&
                     (z[1] is DotNetObjectReference<ResizeObserver>) == true &&
                     (z[2] is IEnumerable<ElementReference>) == true &&
@@ -216,9 +216,9 @@ namespace MudBlazor.UnitTests.Services
 
             List<Guid> ids = new();
 
-            _runtimeMock.Setup(x => x.InvokeAsync<IEnumerable<BoundingClientRect>>(
+            _runtimeMock.Setup(static x => x.InvokeAsync<IEnumerable<BoundingClientRect>>(
                 "mudResizeObserver.connect",
-                It.Is<object[]>(z =>
+                It.Is<object[]>(static z =>
                     (Guid)z[0] != default &&
                     (z[1] is DotNetObjectReference<ResizeObserver>) == true &&
                     (z[2] is IEnumerable<ElementReference>) == true &&

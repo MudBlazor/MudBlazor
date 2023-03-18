@@ -38,13 +38,13 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         public void NavMenuTests_CheckAllStyling()
         {
-            var comp = Context.RenderComponent<MudNavMenu>(x =>
+            var comp = Context.RenderComponent<MudNavMenu>(static x =>
             {
-                x.Add(p => p.Bordered, true);
-                x.Add(p => p.Color, Color.Success);
-                x.Add(p => p.Dense, true);
-                x.Add(p => p.Margin, Margin.Dense);
-                x.Add(p => p.Rounded, true);
+                x.Add(static p => p.Bordered, true);
+                x.Add(static p => p.Color, Color.Success);
+                x.Add(static p => p.Dense, true);
+                x.Add(static p => p.Margin, Margin.Dense);
+                x.Add(static p => p.Rounded, true);
             });
 
             comp.Markup.Should().Contain("mud-navmenu-bordered");

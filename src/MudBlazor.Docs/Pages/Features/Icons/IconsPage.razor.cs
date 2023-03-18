@@ -53,7 +53,7 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         {
             if (CardsPerRow <= 0)
                 return new List<MudVirtualizedIcons>();
-            return iconlist.Chunk(CardsPerRow).Select(row => new MudVirtualizedIcons(row)).ToList();
+            return iconlist.Chunk(CardsPerRow).Select(static row => new MudVirtualizedIcons(row)).ToList();
         }
 
         private readonly IconStorage IconTypes = new()

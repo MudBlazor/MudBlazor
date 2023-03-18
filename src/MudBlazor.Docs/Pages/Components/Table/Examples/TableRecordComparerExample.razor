@@ -27,7 +27,7 @@
     </FooterContent>
 </MudTable>
 
-<MudText Inline="true">Selected items: @(selectedItems1 == null ? "" : string.Join(", ", selectedItems1.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
+<MudText Inline="true">Selected items: @(selectedItems1 == null ? "" : string.Join(", ", selectedItems1.OrderBy(static x => x.Sign).Select(static x => x.Sign)))</MudText>
 
 @code {
     private HashSet<Element> selectedItems1 = new HashSet<Element>();

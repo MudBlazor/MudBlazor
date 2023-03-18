@@ -80,7 +80,7 @@ namespace MudBlazor.Services
                 DotNetRef = DotNetObjectReference.Create(this);
             }
 
-            var existingOptionId = Listeners.Where(x => x.Value.Option == options).Select(x => x.Key).FirstOrDefault();
+            var existingOptionId = Listeners.Where(x => x.Value.Option == options).Select(static x => x.Key).FirstOrDefault();
 
             if (existingOptionId == default)
             {

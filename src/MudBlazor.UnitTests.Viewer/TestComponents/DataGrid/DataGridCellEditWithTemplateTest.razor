@@ -2,9 +2,9 @@
 
 <MudDataGrid Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Cell">
     <Columns>
-        <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Age" />
-        <PropertyColumn Property="x => x.Hired">
+        <PropertyColumn Property="static x => x.Name" />
+        <PropertyColumn Property="static x => x.Age" />
+        <PropertyColumn Property="static x => x.Hired">
             <EditTemplate>
                 <MudCheckBox T="bool" @bind-Checked="context.Item.Hired" Label="Hired" Required />
             </EditTemplate>

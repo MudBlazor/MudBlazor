@@ -70,7 +70,7 @@ namespace MudBlazor
                 return f;
             }
 
-            return x => true;
+            return static x => true;
         }
 
         public Expression<Func<T, bool>> GenerateFilterExpression()
@@ -81,7 +81,7 @@ namespace MudBlazor
                 var stringComparer = DataGrid.FilterCaseSensitivity == DataGridFilterCaseSensitivity.Default ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
                 if (value == null && Operator != FilterOperator.String.Empty && Operator != FilterOperator.String.NotEmpty)
-                    return x => true;
+                    return static x => true;
 
                 return Operator switch
                 {
@@ -97,15 +97,15 @@ namespace MudBlazor
                         PropertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && x.StartsWith(value, stringComparer))),
                     FilterOperator.String.EndsWith =>
                         PropertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && x.EndsWith(value, stringComparer))),
-                    FilterOperator.String.Empty => PropertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => string.IsNullOrWhiteSpace(x))),
-                    FilterOperator.String.NotEmpty => PropertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => !string.IsNullOrWhiteSpace(x))),
-                    _ => x => true
+                    FilterOperator.String.Empty => PropertyExpression.Modify<T>((Expression<Func<string?, bool>>)(static x => string.IsNullOrWhiteSpace(x))),
+                    FilterOperator.String.NotEmpty => PropertyExpression.Modify<T>((Expression<Func<string?, bool>>)(static x => !string.IsNullOrWhiteSpace(x))),
+                    _ => static x => true
                 };
             }
             else if (isNumber)
             {
                 if (Value == null && Operator != FilterOperator.Number.Empty && Operator != FilterOperator.Number.NotEmpty)
-                    return x => true;
+                    return static x => true;
 
                 return Operator switch
                 {
@@ -117,7 +117,7 @@ namespace MudBlazor
                     FilterOperator.Number.LessThanOrEqual => PropertyExpression.GenerateBinary<T>(ExpressionType.LessThanOrEqual, Value),
                     FilterOperator.Number.Empty => PropertyExpression.GenerateBinary<T>(ExpressionType.Equal, null),
                     FilterOperator.Number.NotEmpty => PropertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, null),
-                    _ => x => true
+                    _ => static x => true
                 };
             }
             else if (isDateTime)
@@ -135,30 +135,30 @@ namespace MudBlazor
                     FilterOperator.DateTime.OnOrBefore => PropertyExpression.GenerateBinary<T>(ExpressionType.LessThanOrEqual, Value),
                     FilterOperator.DateTime.Empty => PropertyExpression.GenerateBinary<T>(ExpressionType.Equal, null),
                     FilterOperator.DateTime.NotEmpty => PropertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, null),
-                    _ => x => true
+                    _ => static x => true
                 };
             }
             else if (isBoolean)
             {
                 if (Value == null)
-                    return x => true;
+                    return static x => true;
 
                 return Operator switch
                 {
                     FilterOperator.Boolean.Is => PropertyExpression.GenerateBinary<T>(ExpressionType.Equal, Value),
-                    _ => x => true
+                    _ => static x => true
                 };
             }
             else if (isEnum)
             {
                 if (Value == null)
-                    return x => true;
+                    return static x => true;
 
                 return Operator switch
                 {
                     FilterOperator.Enum.Is => PropertyExpression.GenerateBinary<T>(ExpressionType.Equal, Value),
                     FilterOperator.Enum.IsNot => PropertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, Value),
-                    _ => x => true
+                    _ => static x => true
                 };
             }
             else if (isGuid)
@@ -167,11 +167,11 @@ namespace MudBlazor
                 {
                     FilterOperator.Guid.Equal => PropertyExpression.GenerateBinary<T>(ExpressionType.Equal, Value),
                     FilterOperator.Guid.NotEqual => PropertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, Value),
-                    _ => x => true
+                    _ => static x => true
                 };
             }
 
-            return x => true;
+            return static x => true;
         }
 
         private bool isNumber

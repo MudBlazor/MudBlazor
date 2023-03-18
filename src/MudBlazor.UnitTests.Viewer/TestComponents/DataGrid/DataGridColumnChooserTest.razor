@@ -4,8 +4,8 @@
 
 <MudDataGrid Items="@_items" Hideable="true" ShowMenuIcon="true" >
     <Columns>
-        <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="static x => x.Name" />
+        <PropertyColumn Property="static x => x.Age" />
     </Columns>
 </MudDataGrid>
 

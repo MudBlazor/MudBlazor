@@ -40,7 +40,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
 
             var crawlers = JsonSerializer.Deserialize<IEnumerable<CrawlerEntry>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            _patterns = crawlers.Select(x => new Regex(x.Pattern, RegexOptions.Compiled)).ToArray();
+            _patterns = crawlers.Select(static x => new Regex(x.Pattern, RegexOptions.Compiled)).ToArray();
         }
 
         public Task<bool> IsRequestByCrawler(HttpContext context)

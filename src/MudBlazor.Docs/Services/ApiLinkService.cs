@@ -46,7 +46,7 @@ namespace MudBlazor.Docs.Services
             return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>(
                 _lookup
                 .Where(x => IsMatch(x, s))
-                .Select(x => x.Value)
+                .Select(static x => x.Value)
                 .Distinct()
                 .OrderByDescending(e => e.Title.ToLowerInvariant().StartsWith(s))
                 .ToArray()
