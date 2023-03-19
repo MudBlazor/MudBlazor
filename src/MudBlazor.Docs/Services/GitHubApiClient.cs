@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -45,6 +46,38 @@ namespace MudBlazor.Docs.Services
             {
                 Console.WriteLine(e.Message);
                 return new GitHubReleases[0];
+            }
+        }
+
+        public async Task<GitHubRepository> GetRepositoryAsync(string owner, string repo)
+        {
+            try
+            {
+                var result = await _http.GetFromJsonAsync<GitHubRepository>($"https://api.github.com/repos/{owner}/{repo}");
+                return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
+        public async Task<int> GetContributorsCountAsync(string owner, string repo)
+        {
+            try
+            {
+                var result = await _http.GetAsync($"https://api.github.com/repos/{owner}/{repo}/contributors?per_page=1&anon=true");
+                var value = result.Headers.GetValues("Link").FirstOrDefault();
+                value = value.Substring(value.LastIndexOf("page=") + 5);
+                value = value.Substring(0, value.LastIndexOf(">;"));
+
+                return int.Parse(value);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return 0;
             }
         }
     }
