@@ -3,6 +3,10 @@
 @typeparam T
 @using MudBlazor.Utilities
 
+@{
+    _currentRenderFilteredItemsCache = null;
+}
+
 <CascadingValue IsFixed="true" Value="this">@Columns</CascadingValue>
 
 <CascadingValue IsFixed="true" Value="this">

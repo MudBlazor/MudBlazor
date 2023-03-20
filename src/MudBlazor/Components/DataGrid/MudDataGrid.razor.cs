@@ -374,6 +374,7 @@ namespace MudBlazor
                 {
                     (_items as INotifyCollectionChanged).CollectionChanged += (s, e) =>
                     {
+                        _currentRenderFilteredItemsCache = null;
                         if (Groupable)
                             GroupItems();
                     };
@@ -655,12 +656,15 @@ namespace MudBlazor
         public bool HasPager { get; set; }
         public IEnumerable<T> ServerItems => _server_data.Items;
         private GridData<T> _server_data = new GridData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
+        private IEnumerable<T> _currentRenderFilteredItemsCache = null;
+        public uint FilteringRunCount { get; private set; }
 
         // TODO: When adding one FilterDefinition, this is called once for each RenderedColumn...
         public IEnumerable<T> FilteredItems
         {
             get
             {
+                if (_currentRenderFilteredItemsCache != null) return _currentRenderFilteredItemsCache;
                 var items = ServerData != null
                     ? _server_data.Items
                     : Items;
@@ -678,7 +682,9 @@ namespace MudBlazor
                     items = items.Where(filterFunc);
                 }
 
-                return Sort(items);
+                _currentRenderFilteredItemsCache = Sort(items).ToList(); // To list to ensure evaluation only once per render
+                unchecked { FilteringRunCount++; }
+                return _currentRenderFilteredItemsCache;
             }
         }
 
