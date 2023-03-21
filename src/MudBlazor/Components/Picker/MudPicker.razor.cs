@@ -4,12 +4,13 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudPicker<T> : MudFormComponent<T, string>
+    public partial class MudPicker<T> : MudFormComponent<T, string>, IReadOnlyDisabledFormComponent
     {
         protected IKeyInterceptor _keyInterceptor;
 

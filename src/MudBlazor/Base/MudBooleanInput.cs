@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
-    public class MudBooleanInput<T> : MudFormComponent<T, bool?>
+    public class MudBooleanInput<T> : MudFormComponent<T, bool?>, IReadOnlyDisabledFormComponent
     {
         public MudBooleanInput() : base(new BoolConverter<T>()) { }
 
@@ -87,5 +88,6 @@ namespace MudBlazor
         {
             return (BoolValue == true);
         }
+
     }
 }

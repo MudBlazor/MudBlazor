@@ -1,0 +1,31 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<div style="max-width: 400px;">
+    <MudCard>
+        <MudCardContent>
+            <MudForm Disabled="Disabled" ReadOnly="ReadOnly">
+                <MudTextField T="string" />
+                <MudNumericField T="int" />
+                <MudDatePicker />
+                <MudSwitch T="bool" />
+                <MudCheckBox T="bool" />
+                <MudRadioGroup T="string">
+                    <MudRadio Option="@("1")" />
+                    <MudRadio Option="@("2")" />
+                </MudRadioGroup>
+            </MudForm>
+        </MudCardContent>
+        <MudCardActions>
+            <MudCheckBox @bind-Checked="ReadOnly">ReadOnly</MudCheckBox>
+            <MudCheckBox @bind-Checked="Disabled">Disabled</MudCheckBox>
+        </MudCardActions>
+    </MudCard>
+</div>
+@code
+{
+    public static string __description__ = "All child form fields should be disabled or readonly if the Form property is changed";
+    [Parameter]
+    public bool Disabled { get; set; }
+    [Parameter]
+    public bool ReadOnly { get; set; }
+}

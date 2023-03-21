@@ -15,6 +15,7 @@
     <PackageProjectUrl>http://mudblazor.com/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MudBlazor/MudBlazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <Version>6.1.10-dev1</Version>
   </PropertyGroup>
   
   <PropertyGroup>

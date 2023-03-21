@@ -63,6 +63,16 @@ namespace MudBlazor
 
         private bool _touched = false;
 
+        [Parameter]
+        [Category(CategoryTypes.Form.Behavior)]
+        public bool ReadOnly { get; set; }
+        private bool _readOnly;
+
+        [Parameter]
+        [Category(CategoryTypes.Form.Behavior)]
+        public bool Disabled { get; set; }
+        private bool _disabled;
+
         /// <summary>
         /// Validation debounce delay in milliseconds. This can help improve rendering performance of forms with real-time validation of inputs
         /// i.e. when textfields have Immediate="true".
@@ -171,6 +181,12 @@ namespace MudBlazor
                 SetIsValid(false);
             _formControls.Add(formControl);
             SetDefaultControlValidation(formControl);
+
+            if (formControl is IReadOnlyDisabledFormComponent component) //automaticlaly set the readonly and disabled state
+            {
+                component.ReadOnly = ReadOnly || (ParentMudForm?.ReadOnly).GetValueOrDefault();
+                component.Disabled = Disabled || (ParentMudForm?.Disabled).GetValueOrDefault();
+            }
         }
 
         void IForm.Remove(IFormComponent formControl)
@@ -312,6 +328,29 @@ namespace MudBlazor
             {
                 formComponent.Validation = Validation;
             }
+        }
+
+        protected override void OnParametersSet()
+        {
+            if ((ReadOnly || (ParentMudForm?.ReadOnly).GetValueOrDefault()) != _readOnly)
+            {
+                _readOnly = ReadOnly || (ParentMudForm?.ReadOnly).GetValueOrDefault();
+                foreach (var control in _formControls.Where(x => x is IReadOnlyDisabledFormComponent))
+                {
+                    ((IReadOnlyDisabledFormComponent)control).ReadOnly = _readOnly;
+                    control.InternalStateHasChanged();
+                }
+            }
+            if (Disabled || (ParentMudForm?.Disabled).GetValueOrDefault() != _disabled)
+            {
+                _disabled = Disabled || (ParentMudForm?.Disabled).GetValueOrDefault();
+                foreach (var control in _formControls.Where(x => x is IReadOnlyDisabledFormComponent))
+                {
+                    ((IReadOnlyDisabledFormComponent)control).Disabled = _disabled;
+                    control.InternalStateHasChanged();
+                }
+            }
+            base.OnParametersSet();
         }
 
         protected override void OnInitialized()

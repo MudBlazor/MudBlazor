@@ -227,6 +227,5 @@ namespace MudBlazor
             }
             await base.OnAfterRenderAsync(firstRender);
         }
-
     }
 }

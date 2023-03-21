@@ -640,5 +640,10 @@ namespace MudBlazor
             DetachValidationStateChangedListener();
             Dispose(disposing: true);
         }
+
+        public void InternalStateHasChanged()
+        {
+            StateHasChanged();
+        }
     }
 }

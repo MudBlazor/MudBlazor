@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
-    public partial class MudRadioGroup<T> : MudFormComponent<T, T>, IMudRadioGroup
+    public partial class MudRadioGroup<T> : MudFormComponent<T, T>, IMudRadioGroup, IReadOnlyDisabledFormComponent
     {
         public MudRadioGroup() : base(new Converter<T, T>()) { }
 
