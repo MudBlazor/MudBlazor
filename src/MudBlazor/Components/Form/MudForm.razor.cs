@@ -182,7 +182,7 @@ namespace MudBlazor
             _formControls.Add(formControl);
             SetDefaultControlValidation(formControl);
 
-            if (formControl is IReadOnlyDisabledFormComponent component) //automaticlaly set the readonly and disabled state
+            if (formControl is IReadOnlyDisabledFormComponent component) //automatically set the readonly and disabled state when adding new components
             {
                 component.ReadOnly = ReadOnly || (ParentMudForm?.ReadOnly).GetValueOrDefault();
                 component.Disabled = Disabled || (ParentMudForm?.Disabled).GetValueOrDefault();
@@ -332,7 +332,7 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            if ((ReadOnly || (ParentMudForm?.ReadOnly).GetValueOrDefault()) != _readOnly)
+            if ((ReadOnly || (ParentMudForm?.ReadOnly).GetValueOrDefault()) != _readOnly) //only run if the readonly state has changed
             {
                 _readOnly = ReadOnly || (ParentMudForm?.ReadOnly).GetValueOrDefault();
                 foreach (var control in _formControls.Where(x => x is IReadOnlyDisabledFormComponent))
@@ -341,7 +341,7 @@ namespace MudBlazor
                     control.InternalStateHasChanged();
                 }
             }
-            if (Disabled || (ParentMudForm?.Disabled).GetValueOrDefault() != _disabled)
+            if (Disabled || (ParentMudForm?.Disabled).GetValueOrDefault() != _disabled) //only run if the disabled state has changed
             {
                 _disabled = Disabled || (ParentMudForm?.Disabled).GetValueOrDefault();
                 foreach (var control in _formControls.Where(x => x is IReadOnlyDisabledFormComponent))
