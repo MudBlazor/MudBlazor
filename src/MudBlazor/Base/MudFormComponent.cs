@@ -641,9 +641,6 @@ namespace MudBlazor
             Dispose(disposing: true);
         }
 
-        public void InternalStateHasChanged()
-        {
-            StateHasChanged();
-        }
+        void IFormComponent.StateHasChanged() => StateHasChanged();
     }
 }

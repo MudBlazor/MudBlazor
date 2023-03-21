@@ -338,7 +338,7 @@ namespace MudBlazor
                 foreach (var control in _formControls.Where(x => x is IReadOnlyDisabledFormComponent))
                 {
                     ((IReadOnlyDisabledFormComponent)control).ReadOnly = _readOnly;
-                    control.InternalStateHasChanged();
+                    control.StateHasChanged();
                 }
             }
             if (Disabled || (ParentMudForm?.Disabled).GetValueOrDefault() != _disabled) //only run if the disabled state has changed
@@ -347,7 +347,7 @@ namespace MudBlazor
                 foreach (var control in _formControls.Where(x => x is IReadOnlyDisabledFormComponent))
                 {
                     ((IReadOnlyDisabledFormComponent)control).Disabled = _disabled;
-                    control.InternalStateHasChanged();
+                    control.StateHasChanged();
                 }
             }
             base.OnParametersSet();
