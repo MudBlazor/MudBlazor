@@ -2,6 +2,7 @@
 @inherits MudComponentBase
 @typeparam T
 @using MudBlazor.Utilities
+@using MudBlazor.Extensions
 
 <CascadingValue IsFixed="true" Value="this">@Columns</CascadingValue>
 
@@ -260,7 +261,7 @@
                                 <MudTextField T="string" Label="@column.Title" Value="@cell._valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
                                   Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
                             }
-                            else if (FilterOperator.NumericTypes.Contains(propertyType))
+                            else if (TypeIdentifier.IsNumber(propertyType))
                             {
                                 <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
                                      Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
@@ -411,17 +412,17 @@
                     <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
                       Immediate="true" Class="filter-input" />
                 }
-                else if (filter.isNumber && !(f.Operator ?? "").EndsWith("empty"))
+                else if (filter.IsNumber && !(f.Operator ?? "").EndsWith("empty"))
                 {
                     <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
-                         Immediate="true" Class="filter-input" Culture="@filter.filterColumn?.Culture" />
+                         Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture" />
                 }
-                else if (filter.isEnum)
+                else if (filter.IsEnum)
                 {
                     <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                    Class="filter-input">
                         <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
-                        @foreach (var item in Enum.GetValues(f.underlyingDataType))
+                        @foreach (var item in EnumExtensions.GetSafeEnumValues(f.dataType))
                         {
                             <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
                         }
@@ -471,12 +472,12 @@
                     <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense"
                       Immediate="true" Class="filter-input" />
                 }
-                else if (filter.isNumber && !(f.Operator ?? "").EndsWith("empty"))
+                else if (filter.IsNumber && !(f.Operator ?? "").EndsWith("empty"))
                 {
                     <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense"
-                         Immediate="true" Class="filter-input" Culture="@filter.filterColumn?.Culture" />
+                         Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture" />
                 }
-                else if (filter.isEnum)
+                else if (filter.IsEnum)
                 {
                     <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                    Class="filter-input">

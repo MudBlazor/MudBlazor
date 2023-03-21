@@ -2556,7 +2556,7 @@ namespace MudBlazor.UnitTests.Components
             filterDefinition3.Column.dataType.Should().Be(typeof(Severity?));
             await comp.InvokeAsync(() => internalFilter.NumberValueChanged(35));
             filterDefinition3.Value.Should().Be(35);
-            internalFilter.isEnum.Should().Be(true);
+            internalFilter.IsEnum.Should().Be(true);
             // test internal filter class for bool data type.
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition4, null);
             filterDefinition4.Column.dataType.Should().Be(typeof(bool?));
@@ -3056,9 +3056,9 @@ namespace MudBlazor.UnitTests.Components
             cell._cellContext.IsSelected.Should().Be(true);
 
             cell._cellContext.Actions.ToggleHierarchyVisibilityForItem();
-            cell._cellContext.openHierarchies.Should().Contain(item);
+            cell._cellContext.OpenHierarchies.Should().Contain(item);
             cell._cellContext.Actions.ToggleHierarchyVisibilityForItem();
-            cell._cellContext.openHierarchies.Should().NotContain(item);
+            cell._cellContext.OpenHierarchies.Should().NotContain(item);
         }
 
         [Test]

@@ -3,28 +3,26 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     internal class Cell<T>
     {
         private readonly MudDataGrid<T> _dataGrid;
         private readonly Column<T> _column;
         internal T _item;
-        internal string _valueString;
+        internal string? _valueString;
         internal double? _valueNumber;
         internal bool _isEditing;
         internal CellContext<T> _cellContext;
 
         #region Computed Properties
 
-        internal object ComputedValue
+        internal object? ComputedValue
         {
             get
             {
@@ -91,30 +89,31 @@ namespace MudBlazor
 
         private void OnStartedEditingItem()
         {
-
-            if (ComputedValue != null)
+            if (ComputedValue is null)
             {
-                if (ComputedValue.GetType() == typeof(JsonElement))
+                return;
+            }
+
+            if (ComputedValue is JsonElement element)
+            {
+                if (_column.dataType == typeof(string))
                 {
-                    if (_column.dataType == typeof(string))
-                    {
-                        _valueString = ((JsonElement)ComputedValue).GetString();
-                    }
-                    else if (_column.isNumber)
-                    {
-                        _valueNumber = ((JsonElement)ComputedValue).GetDouble();
-                    }
+                    _valueString = element.GetString();
                 }
-                else
+                else if (_column.isNumber)
                 {
-                    if (_column.dataType == typeof(string))
-                    {
-                        _valueString = (string)ComputedValue;
-                    }
-                    else if (_column.isNumber)
-                    {
-                        _valueNumber = Convert.ToDouble(ComputedValue);
-                    }
+                    _valueNumber = element.GetDouble();
+                }
+            }
+            else
+            {
+                if (_column.dataType == typeof(string))
+                {
+                    _valueString = (string)ComputedValue;
+                }
+                else if (_column.isNumber)
+                {
+                    _valueNumber = Convert.ToDouble(ComputedValue);
                 }
             }
         }
