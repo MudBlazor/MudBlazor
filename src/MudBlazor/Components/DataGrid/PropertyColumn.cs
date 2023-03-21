@@ -25,6 +25,8 @@ namespace MudBlazor
         private Func<T, object?>? _cellContentFunc;
         private string? _propertyName;
         private string? _fullPropertyName;
+        private Func<T, TProperty> _compiledPropertyFunc;
+        private Expression<Func<T, TProperty>> _compiledPropertyFuncFor;
 
         protected override void OnParametersSet()
         {
@@ -63,8 +65,17 @@ namespace MudBlazor
         protected internal override object? CellContent(T item)
             => _cellContentFunc!(item);
 
+
         protected internal override object? PropertyFunc(T item)
-            => Property.Compile()(item);
+        {
+            if (_compiledPropertyFunc == null || _compiledPropertyFuncFor != Property)
+            {
+                _compiledPropertyFunc = Property.Compile();
+                _compiledPropertyFuncFor = Property;
+            }
+            return _compiledPropertyFunc(item);
+
+        }
 
         protected internal override Type PropertyType
             => typeof(TProperty);

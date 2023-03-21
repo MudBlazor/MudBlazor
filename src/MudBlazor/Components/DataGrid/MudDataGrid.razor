@@ -4,6 +4,10 @@
 @using MudBlazor.Utilities
 @using MudBlazor.Extensions
 
+@{
+    _currentRenderFilteredItemsCache = null;
+}
+
 <CascadingValue IsFixed="true" Value="this">@Columns</CascadingValue>
 
 <CascadingValue IsFixed="true" Value="this">
