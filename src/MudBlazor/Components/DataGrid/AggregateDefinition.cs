@@ -125,8 +125,8 @@ namespace MudBlazor
 
         internal class AggregateDefinitionExpressionCache
         {
-            //Concrete type since all Functions convert Func<T, decimal?>
-            //Could be used Delegate, but then we will lose some performance
+            //Concrete type since all Functions converts to Func<T, decimal?>
+            //"Delegate" could be used, but then we will lose some performance
             private readonly ConcurrentDictionary<int, Func<T, decimal?>> _cache = new();
 
             public Func<T, decimal?> CachedCompile(Expression<Func<T, decimal?>> expression)
