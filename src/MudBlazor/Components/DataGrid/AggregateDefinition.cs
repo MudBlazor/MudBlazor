@@ -9,22 +9,26 @@ using System.Linq.Expressions;
 
 namespace MudBlazor
 {
-#nullable enable 
-
+#nullable enable
     public class AggregateDefinition<T>
     {
-        public AggregateType Type { get; set; } = AggregateType.Count;
-        public string DisplayFormat { get; set; } = "{value}";
-        public Func<IEnumerable<T>, string>? CustomAggregate { get; set; }
-
         private AggregateType? _cachedType;
         private Func<T, decimal>? _compiledAvgExpression;
         private Func<T, object>? _compiledMinMaxExpression;
         private Func<T, decimal>? _compiledSumExpression;
 
-        public string GetValue(LambdaExpression? propertyExpression, IEnumerable<T> items)
+        public AggregateType Type { get; set; } = AggregateType.Count;
+
+        public string DisplayFormat { get; set; } = "{value}";
+
+        public Func<IEnumerable<T>, string>? CustomAggregate { get; set; }
+
+        public string GetValue(LambdaExpression? propertyExpression, IEnumerable<T>? items)
         {
-            if (items == null || !items.Any())
+            //avoid multiple enumeration
+            var itemsArray = items as T[] ?? items?.ToArray() ?? Array.Empty<T>();
+
+            if (itemsArray.Length == 0)
             {
                 return DisplayFormat.Replace("{value}", "0");
             }
@@ -37,58 +41,70 @@ namespace MudBlazor
 
                 if (Type == AggregateType.Avg)
                 {
-                    _compiledAvgExpression = propertyExpression.ChangeExpressionReturnType<T, decimal>().Compile();
-                    value = items.Average(_compiledAvgExpression);
+                    _compiledAvgExpression = propertyExpression?.ChangeExpressionReturnType<T, decimal>().Compile();
+                    if (_compiledAvgExpression is not null)
+                    {
+                        value = itemsArray.Average(_compiledAvgExpression);
+                    }
                 }
                 else if (Type == AggregateType.Count)
                 {
-                    value = items.Count();
+                    value = itemsArray.Length;
                 }
-                else if (Type == AggregateType.Custom && CustomAggregate != null)
+                else if (Type == AggregateType.Custom && CustomAggregate is not null)
                 {
-                    return CustomAggregate.Invoke(items);
+                    return CustomAggregate.Invoke(itemsArray);
                 }
                 else if (Type == AggregateType.Max)
                 {
-                    _compiledMinMaxExpression = propertyExpression.ChangeExpressionReturnType<T, object>().Compile();
-                    value = items.Max(_compiledMinMaxExpression);
+                    _compiledMinMaxExpression = propertyExpression?.ChangeExpressionReturnType<T, object>().Compile();
+                    if (_compiledMinMaxExpression is not null)
+                    {
+                        value = itemsArray.Max(_compiledMinMaxExpression);
+                    }
                 }
                 else if (Type == AggregateType.Min)
                 {
-                    _compiledMinMaxExpression = propertyExpression.ChangeExpressionReturnType<T, object>().Compile();
-                    value = items.Min(_compiledMinMaxExpression);
+                    _compiledMinMaxExpression = propertyExpression?.ChangeExpressionReturnType<T, object>().Compile();
+                    if (_compiledMinMaxExpression is not null)
+                    {
+                        value = itemsArray.Min(_compiledMinMaxExpression);
+                    }
                 }
                 else if (Type == AggregateType.Sum)
                 {
-                    _compiledSumExpression = propertyExpression.ChangeExpressionReturnType<T, decimal>().Compile();
-                    value = items.Sum(_compiledSumExpression);
+                    _compiledSumExpression = propertyExpression?.ChangeExpressionReturnType<T, decimal>().Compile();
+                    if (_compiledSumExpression is not null)
+                    {
+                        value = itemsArray.Sum(_compiledSumExpression);
+                    }
                 }
             }
             else
             {
-                if (Type == AggregateType.Avg && _compiledAvgExpression != null)
+                if (Type == AggregateType.Avg && _compiledAvgExpression is not null)
                 {
-                    value = items.Average(_compiledAvgExpression);
+                    value = itemsArray.Average(_compiledAvgExpression);
                 }
                 else if (Type == AggregateType.Count)
                 {
-                    value = items.Count();
+                    value = itemsArray.Length;
                 }
-                else if (Type == AggregateType.Custom && CustomAggregate != null)
+                else if (Type == AggregateType.Custom && CustomAggregate is not null)
                 {
-                    return CustomAggregate.Invoke(items);
+                    return CustomAggregate.Invoke(itemsArray);
                 }
-                else if (Type == AggregateType.Max && _compiledMinMaxExpression != null)
+                else if (Type == AggregateType.Max && _compiledMinMaxExpression is not null)
                 {
-                    value = items.Max(_compiledMinMaxExpression);
+                    value = itemsArray.Max(_compiledMinMaxExpression);
                 }
-                else if (Type == AggregateType.Min && _compiledMinMaxExpression != null)
+                else if (Type == AggregateType.Min && _compiledMinMaxExpression is not null)
                 {
-                    value = items.Min(_compiledMinMaxExpression);
+                    value = itemsArray.Min(_compiledMinMaxExpression);
                 }
-                else if (Type == AggregateType.Sum && _compiledSumExpression != null)
+                else if (Type == AggregateType.Sum && _compiledSumExpression is not null)
                 {
-                    value = items.Sum(_compiledSumExpression);
+                    value = itemsArray.Sum(_compiledSumExpression);
                 }
             }
 
@@ -140,6 +156,4 @@ namespace MudBlazor
             };
         }
     }
-
-#nullable disable
 }

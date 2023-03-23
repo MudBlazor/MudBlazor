@@ -6,5 +6,6 @@ using System;
 
 namespace MudBlazor
 {
+#nullable enable
     public sealed record SortDefinition<T>(string SortBy, bool Descending, int Index, Func<T, object> SortFunc);
 }

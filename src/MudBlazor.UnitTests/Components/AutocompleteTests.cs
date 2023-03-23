@@ -497,7 +497,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             await comp.InvokeAsync(() => autocomplete.Clear().Wait());
             comp.Markup.Should().NotContain("mud-popover-open");
-            autocomplete.Value.Should().Be("");
+            autocomplete.Value.Should().Be(null);
             autocomplete.Text.Should().Be("");
 
             // now let's type a different state
@@ -510,7 +510,7 @@ namespace MudBlazor.UnitTests.Components
             // Clearing it and check the close status text and value again
             await comp.InvokeAsync(() => autocomplete.Clear().Wait());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            autocomplete.Value.Should().Be("");
+            autocomplete.Value.Should().Be(null);
             autocomplete.Text.Should().Be("");
         }
 
@@ -577,7 +577,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => autocomplete.Reset());
             comp.Markup.Should().NotContain("mud-popover-open");
             autocomplete.Value.Should().Be(null);
-            autocomplete.Text.Should().Be(null);
+            autocomplete.Text.Should().Be("");
 
             // now let's type a different state
             autocompletecomp.Find("input").Input("Calif");
@@ -590,7 +590,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => autocomplete.Reset());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             autocomplete.Value.Should().Be(null);
-            autocomplete.Text.Should().Be(null);
+            autocomplete.Text.Should().Be("");
         }
 
         [Test]
@@ -1088,6 +1088,44 @@ namespace MudBlazor.UnitTests.Components
             var item2 = items2.SingleOrDefault(x => x.Markup.Contains(virginiaString));
             items2.ToList().IndexOf(item).Should().Be(-1);
             items2.Count(s => s.Find(listItemQuerySelector).ClassList.Contains(selectedItemClassName)).Should().Be(0);
+        }
+        [Test]
+        public async Task Autocomplete_Should_Not_Throw_When_SearchFunc_Is_Null()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+
+            autocompletecomp.SetParam(p => p.SearchFunc, null);
+
+            comp.Find("input").Input("Foo");
+
+            await Task.Delay(20);
+
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ToMarkup().Should().NotContain("Foo"));
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_Raise_KeyDown_KeyUp_Event()
+        {
+            //Create comp
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var result = new List<string>();
+            //create eventCallback
+            var customEvent = new EventCallbackFactory().Create<KeyboardEventArgs>("A",() => result.Add("keyevent thrown"));
+
+            //set eventCallback
+            //SetCallback also possible
+            //autocompletecomp.SetCallback(p => p.OnKeyDown, (KeyboardEventArgs e ) => result.Add("keyevent thrown"));
+            autocompletecomp.SetParam(p => p.OnKeyDown, customEvent);
+            autocompletecomp.SetParam(p => p.OnKeyUp, customEvent);
+
+            result.Should().BeEmpty();
+            //Act
+            autocompletecomp.Find("input").KeyDown("a");
+            autocompletecomp.Find("input").KeyUp("a");
+            //Assert
+            result.Count.Should().Be(2);
         }
     }
 }

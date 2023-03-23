@@ -205,7 +205,7 @@ namespace MudBlazor
 
                 if (Column.filterable)
                 {
-                    Column.FilterContext._headerCell = this;
+                    Column.FilterContext.HeaderCell = this;
                 }
             }
         }

@@ -3,13 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Numerics;
 
 namespace MudBlazor
 {
+#nullable enable
     public static class FilterOperator
     {
         public static class String
@@ -67,9 +64,11 @@ namespace MudBlazor
 
         internal static string[] GetOperatorByDataType(Type type)
         {
-            if (type == typeof(string))
+            var fieldType = FieldType.Identify(type);
+
+            if (fieldType.IsString)
             {
-                return new []
+                return new[]
                 {
                     String.Contains,
                     String.NotContains,
@@ -81,7 +80,7 @@ namespace MudBlazor
                     String.NotEmpty,
                 };
             }
-            if (IsNumber(type))
+            if (fieldType.IsNumber)
             {
                 return new[]
                 {
@@ -95,21 +94,21 @@ namespace MudBlazor
                     Number.NotEmpty,
                 };
             }
-            if (IsEnum(type))
+            if (fieldType.IsEnum)
             {
                 return new[] {
                     Enum.Is,
                     Enum.IsNot,
                 };
             }
-            if (type == typeof(bool))
+            if (fieldType.IsBoolean)
             {
                 return new[]
                 {
                     Boolean.Is,
                 };
             }
-            if (type == typeof(System.DateTime))
+            if (fieldType.IsDateTime)
             {
                 return new[]
                 {
@@ -123,7 +122,7 @@ namespace MudBlazor
                     DateTime.NotEmpty,
                 };
             }
-            if (type == typeof(System.Guid))
+            if (fieldType.IsGuid)
             {
                 return new[]
                 {
@@ -133,79 +132,7 @@ namespace MudBlazor
             }
 
             // default
-            return new string[] { };
-        }
-
-        internal static readonly HashSet<Type> NumericTypes = new HashSet<Type>
-        {
-            typeof(int),
-            typeof(double),
-            typeof(decimal),
-            typeof(long),
-            typeof(short),
-            typeof(sbyte),
-            typeof(byte),
-            typeof(ulong),
-            typeof(ushort),
-            typeof(uint),
-            typeof(float),
-            typeof(BigInteger),
-            typeof(int?),
-            typeof(double?),
-            typeof(decimal?),
-            typeof(long?),
-            typeof(short?),
-            typeof(sbyte?),
-            typeof(byte?),
-            typeof(ulong?),
-            typeof(ushort?),
-            typeof(uint?),
-            typeof(float?),
-            typeof(BigInteger?),
-        };
-
-        internal static bool IsNumber(Type type)
-        {
-            return NumericTypes.Contains(type);
-        }
-
-        internal static bool IsEnum(Type type)
-        {
-            if (null == type)
-                return false;
-
-            if (type.IsEnum)
-                return true;
-
-            Type u = Nullable.GetUnderlyingType(type);
-            return (u != null) && u.IsEnum;
-        }
-
-        internal static bool IsDateTime(Type type)
-        {
-            if (type == typeof(System.DateTime))
-                return true;
-
-            Type u = Nullable.GetUnderlyingType(type);
-            return (u != null) && u == typeof(System.DateTime);
-        }
-
-        internal static bool IsBoolean(Type type)
-        {
-            if (type == typeof(bool))
-                return true;
-
-            Type u = Nullable.GetUnderlyingType(type);
-            return (u != null) && u == typeof(bool);
-        }
-
-        internal static bool IsGuid(Type type)
-        {
-            if (type == typeof(System.Guid))
-                return true;
-
-            Type u = Nullable.GetUnderlyingType(type);
-            return (u != null) && u == typeof(System.Guid);
+            return Array.Empty<string>();
         }
     }
 }

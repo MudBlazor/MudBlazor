@@ -2,6 +2,9 @@
 @inherits MudTableBase
 @using MudBlazor.Utilities
 @typeparam T
+
+@(_currentRenderFilteredItemsCached = false) @*Clear filtered items cache for this render*@
+
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
 @if (Items != null || ServerData != null)
 {

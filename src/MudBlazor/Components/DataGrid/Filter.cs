@@ -7,52 +7,44 @@ using System.Linq;
 
 namespace MudBlazor
 {
+#nullable enable
     internal class Filter<T>
     {
-        private MudDataGrid<T> _dataGrid;
-        internal readonly FilterDefinition<T> _filterDefinition;
-        private Column<T> _column;
+        private readonly MudDataGrid<T> _dataGrid;
+        private readonly FilterDefinition<T> _filterDefinition;
+        private readonly Column<T>? _column;
 
-        internal string _valueString;
+        internal string? _valueString;
         internal double? _valueNumber;
-        internal Enum _valueEnum = null;
+        internal Enum? _valueEnum;
         internal bool? _valueBool;
         internal DateTime? _valueDate;
         internal TimeSpan? _valueTime;
-        
-        internal bool isNumber
-        {
-            get
-            {
-                return FilterOperator.IsNumber(_filterDefinition.dataType);
-            }
-        }
-        internal bool isEnum
-        {
-            get
-            {
-                return FilterOperator.IsEnum(_filterDefinition.dataType);
-            }
-        }
 
-        internal Column<T> filterColumn =>
-            _column ?? (_dataGrid.RenderedColumns?.FirstOrDefault(c => c.PropertyName == _filterDefinition.Column.PropertyName));
+        internal bool IsNumber => TypeIdentifier.IsNumber(_filterDefinition.dataType);
 
-        public Filter(MudDataGrid<T> dataGrid, FilterDefinition<T> filterDefinition, Column<T> column)
+        internal bool IsEnum => TypeIdentifier.IsEnum(_filterDefinition.dataType);
+
+        internal Column<T>? FilterColumn =>
+            _column ?? (_dataGrid.RenderedColumns?.FirstOrDefault(c => c.PropertyName == _filterDefinition.Column?.PropertyName));
+
+        public Filter(MudDataGrid<T> dataGrid, FilterDefinition<T> filterDefinition, Column<T>? column)
         {
             _dataGrid = dataGrid;
             _filterDefinition = filterDefinition;
             _column = column;
 
-            if (_filterDefinition.dataType == typeof(string))
-                _valueString = _filterDefinition.Value == null ? null : _filterDefinition.Value.ToString();
-            else if (isNumber)
+            var fieldType = FieldType.Identify(_filterDefinition.dataType);
+
+            if (fieldType.IsString)
+                _valueString = _filterDefinition.Value?.ToString();
+            else if (fieldType.IsNumber)
                 _valueNumber = _filterDefinition.Value == null ? null : Convert.ToDouble(_filterDefinition.Value);
-            else if (isEnum)
-                _valueEnum = _filterDefinition.Value == null ? null : (Enum)_filterDefinition.Value;
-            else if (_filterDefinition.dataType == typeof(bool))
+            else if (fieldType.IsEnum)
+                _valueEnum = (Enum?)_filterDefinition.Value;
+            else if (fieldType.IsBoolean)
                 _valueBool = _filterDefinition.Value == null ? null : Convert.ToBoolean(_filterDefinition.Value);
-            else if (_filterDefinition.dataType == typeof(DateTime) || _filterDefinition.dataType == typeof(DateTime?))
+            else if (fieldType.IsDateTime)
             {
                 var dateTime = Convert.ToDateTime(_filterDefinition.Value);
                 _valueDate = _filterDefinition.Value == null ? null : dateTime;
@@ -108,12 +100,12 @@ namespace MudBlazor
         {
             _valueDate = value;
 
-            if (value != null)
+            if (value is not null)
             {
                 var date = value.Value.Date;
 
                 // get the time component and add it to the date.
-                if (_valueTime != null)
+                if (_valueTime is not null)
                 {
                     date = date.Add(_valueTime.Value);
                 }
@@ -130,13 +122,12 @@ namespace MudBlazor
         {
             _valueTime = value;
 
-            if (_valueDate != null)
+            if (_valueDate is not null)
             {
                 var date = _valueDate.Value.Date;
 
-
                 // get the time component and add it to the date.
-                if (_valueTime != null)
+                if (_valueTime is not null)
                 {
                     date = date.Add(_valueTime.Value);
                 }
