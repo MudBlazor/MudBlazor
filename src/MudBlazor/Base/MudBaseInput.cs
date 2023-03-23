@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -294,8 +295,10 @@ namespace MudBlazor
         /// <summary>
         /// Fired on the KeyPress event.
         /// </summary>
+        [Obsolete("This will be removed in v7")]
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
 
+        [Obsolete("This will be removed in v7")]
         protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
         {
             OnKeyPress.InvokeAsync(obj).AndForget();
@@ -306,6 +309,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
+        [Obsolete("This will be removed in v7")]
         public bool KeyPressPreventDefault { get; set; }
 
         /// <summary>
@@ -343,9 +347,9 @@ namespace MudBlazor
             set => _value = value;
         }
 
-        protected virtual async Task SetValueAsync(T value, bool updateText = true)
+        protected virtual async Task SetValueAsync(T value, bool updateText = true, bool force = false)
         {
-            if (!EqualityComparer<T>.Default.Equals(Value, value))
+            if (!EqualityComparer<T>.Default.Equals(Value, value) || force == true)
             {
                 _isDirty = true;
                 Value = value;
@@ -355,6 +359,15 @@ namespace MudBlazor
                 BeginValidate();
                 FieldChanged(Value);
             }
+        }
+
+        /// <summary>
+        /// Sync the value, values and text, calls validation manually. Useful to call after user changes value or text programmatically.
+        /// </summary>
+        /// <returns></returns>
+        public virtual async Task ForceUpdate()
+        {
+            await SetValueAsync(Value, force: true);
         }
 
         /// <summary>

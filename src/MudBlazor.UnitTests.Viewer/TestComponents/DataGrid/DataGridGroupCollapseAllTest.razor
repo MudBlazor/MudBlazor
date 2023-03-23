@@ -1,8 +1,8 @@
 @namespace MudBlazor.UnitTests.TestComponents
 @using System.Collections.ObjectModel
+
 <MudDataGrid @ref="dataGrid"
 	Items="@Fruits"
-	Sortable="true"
 	Filterable="true"
 	Hideable="true"
 	Groupable="true"
@@ -12,12 +12,12 @@
 		<MudSpacer />
 	</ToolBarContent>
 	<Columns>
-		<Column T="TestObject" Field="Name" Title="Name" Filterable="false" Groupable="false" />
-		<Column T="TestObject" Field="Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
+		<PropertyColumn Property="x => x.Name" Title="Name" Filterable="false" Groupable="false" />
+		<PropertyColumn Property="x => x.Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
 			<GroupTemplate>
 				<span style="font-weight:bold">Category: @context.Grouping.Key</span>
 			</GroupTemplate>
-		</Column>
+		</PropertyColumn>
 	</Columns>
 </MudDataGrid>
 

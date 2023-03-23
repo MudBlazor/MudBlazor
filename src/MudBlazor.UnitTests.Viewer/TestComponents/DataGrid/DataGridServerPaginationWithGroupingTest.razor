@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid ServerData="@(new Func<GridState<Model>, Task<GridData<Model>>>(ServerReload))" Groupable="true">
+@*<MudDataGrid ServerData="@(new Func<GridState<Model>, Task<GridData<Model>>>(ServerReload))" Groupable="true">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />
@@ -9,7 +9,7 @@
     <PagerContent>
         <MudDataGridPager T="Model" />
     </PagerContent>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     public record Model (string Name, int Age, Severity Status);

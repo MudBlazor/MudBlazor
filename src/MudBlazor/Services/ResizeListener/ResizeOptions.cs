@@ -31,8 +31,16 @@ namespace MudBlazor.Services
         /// </summary>
         public Dictionary<string, int> BreakpointDefinitions { get; set; } = new();
 
-        public static bool operator ==(ResizeOptions l, ResizeOptions r) => l.Equals(r);
-        public static bool operator !=(ResizeOptions l, ResizeOptions r) => !l.Equals(r);
+        public static bool operator ==(ResizeOptions l, ResizeOptions r)
+        {
+            if (l is null && r is null)
+                return true;
+            if (l is null && r is not null)
+                return false;
+            return l.Equals(r);
+        }
+
+        public static bool operator !=(ResizeOptions l, ResizeOptions r) => !(l == r);
 
         public override bool Equals(object obj)
         {
@@ -43,6 +51,8 @@ namespace MudBlazor.Services
 
         public bool Equals(ResizeOptions other)
         {
+            if (other is null)
+                return false;
             if (ReportRate != other.ReportRate ||
                EnableLogging != other.EnableLogging ||
                SuppressInitEvent != other.SuppressInitEvent ||
@@ -51,36 +61,21 @@ namespace MudBlazor.Services
                 return false;
             }
 
-            if (BreakpointDefinitions is not null)
-            {
-                if (other.BreakpointDefinitions is null) { return false; }
-                else
-                {
-                    if (BreakpointDefinitions.Count != other.BreakpointDefinitions.Count)
-                    {
-                        return false;
-                    }
-
-                    foreach (var item in BreakpointDefinitions.Keys)
-                    {
-                        if (other.BreakpointDefinitions.ContainsKey(item) == false)
-                        {
-                            return false;
-                        }
-
-                        if (BreakpointDefinitions[item] != other.BreakpointDefinitions[item])
-                        {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                }
-            }
-            else
-            {
+            if (BreakpointDefinitions is null)
                 return other.BreakpointDefinitions is null;
+            if (other.BreakpointDefinitions is null) 
+                return false;
+            if (BreakpointDefinitions.Count != other.BreakpointDefinitions.Count)
+                return false;
+            foreach (var item in BreakpointDefinitions.Keys)
+            {
+                if (other.BreakpointDefinitions.ContainsKey(item) == false)
+                    return false;
+                if (BreakpointDefinitions[item] != other.BreakpointDefinitions[item])
+                    return false;
             }
+
+            return true;
         }
 
         public override int GetHashCode() => ReportRate;

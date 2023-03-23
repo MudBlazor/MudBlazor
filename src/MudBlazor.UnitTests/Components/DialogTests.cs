@@ -134,6 +134,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Nested dialogs should not appear unless manually shown
+        /// </summary>
+        [Test]
+        public async Task NestedInlineDialogTest()
+        {
+            var provider = Context.RenderComponent<MudDialogProvider>();
+            provider.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            // displaying the component with the inline dialog only renders the open button
+            var comp = Context.RenderComponent<TestNestedInlineDialog>();
+            comp.FindComponents<MudButton>().Count.Should().Be(1);
+            // open the dialog
+            comp.Find("button").Click();
+            comp.WaitForAssertion(() =>
+                provider.Find("div.mud-dialog-container").Should().NotBe(null)
+            );
+            provider.Find("p.mud-typography").TrimmedText().Should().Be("Scorpiany!");
+            provider.FindComponents<MudText>().Count.Should().Be(2); //counts both the dialog header and the text in our test component
+
+            provider.Find("button").Click(); //open nested dialog
+            comp.WaitForAssertion(() =>
+                provider.Find(".nested").Should().NotBe(null)
+            );
+
+            provider.FindAll("p.mud-typography")[1].TrimmedText().Should().Be("Nested dialog!");
+            provider.FindComponents<MudText>().Count.Should().Be(4); //now we have another MudText
+        }
+
+        /// <summary>
         /// Click outside the dialog (or any other method) must update the IsVisible parameter two-way binding on close
         /// </summary>
         /// <returns></returns>

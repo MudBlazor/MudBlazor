@@ -2,7 +2,6 @@
 @using System.Collections.ObjectModel
 <MudDataGrid @ref="dataGrid"
              Items="@Fruits"
-             Sortable="true"
              Filterable="true"
              Hideable="true"
              Groupable="true"
@@ -12,13 +11,13 @@
         <MudSpacer />
     </ToolBarContent>
     <Columns>
-        <Column T="Fruit" Field="Name" Title="Name" Filterable="false" Groupable="false" />
-        <Column T="Fruit" Field="Count" />
-        <Column T="Fruit" Field="Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
+        <PropertyColumn Property="x => x.Name" Title="Name" Filterable="false" Groupable="false" />
+        <PropertyColumn Property="x => x.Count" />
+        <PropertyColumn Property="x => x.Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
             <GroupTemplate>
                 <span style="font-weight:bold">Category: @context.Grouping.Key</span>
             </GroupTemplate>
-        </Column>
+        </PropertyColumn>
     </Columns>
 </MudDataGrid>
 

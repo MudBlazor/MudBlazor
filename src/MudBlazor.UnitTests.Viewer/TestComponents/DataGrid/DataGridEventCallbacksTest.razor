@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+@namespace MudBlazor.UnitTests.TestComponents
 
 <MudDataGrid T="Item" Items="@_items" EditMode="@DataGridEditMode.Cell"
     RowClick="@OnRowClick" 
@@ -8,7 +8,7 @@
     CanceledEditingItem="@OnCanceledEditingItem"
     ReadOnly="false">
     <Columns>
-        <Column T="Item" Field="@nameof(Item.Name)" />
+        <PropertyColumn Property="x => x.Name" />
     </Columns>
 </MudDataGrid>
 

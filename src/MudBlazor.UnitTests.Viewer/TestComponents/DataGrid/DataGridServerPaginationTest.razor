@@ -1,13 +1,13 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid ServerData="@(new Func<GridState<Model>, Task<GridData<Model>>>(ServerReload))">
+<MudDataGrid T="Model" ServerData="@(new Func<GridState<Model>, Task<GridData<Model>>>(ServerReload))">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Status)" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Status" />
     </Columns>
     <PagerContent>
-        <MudDataGridPager T="Model" />
+        <MudDataGridPager />
     </PagerContent>
 </MudDataGrid>
 

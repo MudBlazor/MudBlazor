@@ -3,6 +3,8 @@
 
 @inject GitHubApiClient _gitHubApiClient;
 
+<PageTitle>Releases - MudBlazor</PageTitle>
+
 <DocsPage DisplayFooter="true">
     <DocsPageHeader Title="Releases" />
     <DocsPageContent>
@@ -12,31 +14,40 @@
         }
         else
         {
-            <MudGrid>
+            <MudGrid Class="docs-github-releases">
                 @foreach (var release in _githubReleases)
                 {
                     <MudItem xs="12" md="4">
                         <div class="docs-sticky-info">
                             <MudText Typo="Typo.h5" Inline="true">Version </MudText>
-                            <MudText Typo="Typo.h5" Inline="true" Color="Color.Primary"><b>@release.name</b></MudText>
+                            <MudText Typo="Typo.h5" Inline="true" Color="Color.Primary"><b>@release.tag_name</b></MudText>
                             <MudText Typo="Typo.subtitle1">Released on @release.published_at.ToString("MMMM MM, yyyy")</MudText>
                         </div>
                     </MudItem>
                     <MudItem xs="12" md="8">
-                        <div class="docs-github-release-body">
-                            @((MarkupString)GetBody(release.body))
-                        </div>
+                            @if (release.published_at > _oldReleases)
+                            {
+                                <div class="docs-github-release-body">
+                                    @((MarkupString)GetBody(release.body))
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="docs-github-release-body old-releases">
+                                    @((MarkupString)GetOldBody(release.body))
+                                </div>
+                            }
                     </MudItem>
                 }
-        </MudGrid>
+            </MudGrid>
         }
     </DocsPageContent>
 </DocsPage>
 
 @code {
-
     private GitHubReleases[] _githubReleases;
-    
+    private DateTime _oldReleases = DateTime.Parse("2022-11-09");
+
     protected override async Task OnInitializedAsync()
     {
         _githubReleases = await _gitHubApiClient.GetReleasesAsync();
@@ -45,20 +56,25 @@
 
     private string GetBody(string value)
     {
-        string output = value;
-        output = Regex.Replace(output, @"(^|\n)# .+", "<h5 class=\"mud-typography mud-typography-h5 mud-inherit-text\">$&</h5>");
-        output = Regex.Replace(output, @"(^|\n)## .+", "<h5 class=\"mud-typography mud-typography-h5 mud-inherit-text\">$&</h5>");
-        output = Regex.Replace(output, @"(^|\n)### .+", "<h6 class=\"mud-typography mud-typography-h6 mud-inherit-text\">$&</h6>");
-        // Markdown links
-        output = Regex.Replace(output, @"\[(.*?)\]\((.*?)\)", "<a target=\"_blank\" href=\"$2\">$1</a>");
-        // Http links
-        output = Regex.Replace(output, @"(?<!"")(?>https?:\/\/)[^\s<>]+(?:[\w\d]+|(?>[^[\p{P}\s]|\/))", "<a target=\"_blank\" href=\"$0\">$0</a>");
-        // Issue / PR links
-        output = Regex.Replace(output, @"(#){1}([0-9]{4}){1}", "<a target=\"_blank\" href=\"https://github.com/MudBlazor/MudBlazor/pull/$2\">#$2</a>");
-        output = output.Replace("- **", "<b class=\"mx-3\">•</b><b>").Replace("**:",":</b>");
-        output = output.Replace("### ", "").Replace("## ","").Replace("# ","#");
-        output = output.Replace(">#MudBlazor", ">MudBlazor");
-        return output;
+        value = Regex.Replace(value, @"((###\s)(?<subtitle>.+))(?<items>.*(?:\r?\n[*] .*)*)", "<h6 class=\"mud-typography mud-typography-h6\">${subtitle}</h6><ul class=\"mt-3 mb-6 px-6\">${items}</ul>");
+        value = Regex.Replace(value, @"((##\s)(?<title>.+))(?<items>.*(?:\r?\n[*] .*)*)", "<h5 class=\"mud-typography mud-typography-h5\">${title}</h5><ul class=\"mt-3 mb-6 px-6\">${items}</ul>");
+        value = Regex.Replace(value, @"(([*]\s)(?<row>.+))", "<li>${row}</li>");
+        value = Regex.Replace(value, @"(@)(\S+)", "<a target=\"_blank\" href=\"https://github.com/$2\" class=\"mud-link mud-default-text mud-link-underline-hover\"><b>@$2</b></a>");
+        value = Regex.Replace(value, @"https://github.com/MudBlazor/MudBlazor/pull/([0-9]{4})", "<a target=\"_blank\" href=\"\" class=\"mud-link mud-primary-text mud-link-underline-hover\"><b>#$1</b></a>");
+        value = Regex.Replace(value, @"([*][*]Full Changelog[*][*]: )(https://github.com/MudBlazor/MudBlazor/compare/)(.+)", "<p class=\"mud-typography mud-typography-body1\">Full Changelog: <a target=\"_blank\" href=\"$2$3\" class=\"docs-code docs-code-primary\">$3</a></p>");
+        return value;
     }
 
+    private string GetOldBody(string value)
+    {
+        value = Regex.Replace(value, @"((###\s)(?<subtitle>.+))(?<items>.*(?:\r?\n-\s[*][*].*)*)", "<h6 class=\"mud-typography mud-typography-h6\">${subtitle}</h6><ul class=\"mt-3 mb-6 px-6\">${items}</ul>");
+        value = Regex.Replace(value, @"^(#\s)(?<title>.+)", "<h5 class=\"mud-typography mud-typography-h5 mud-inherit-text\">${title}</h5>");
+        value = Regex.Replace(value, @"((-\s[*][*])(?<row>.+))", "<li>${row}</li>");
+        value = Regex.Replace(value, @"(#){1}([0-9]{4}){1}", "<a target=\"_blank\" href=\"https://github.com/MudBlazor/MudBlazor/pull/$2\" class=\"mud-link mud-primary-text mud-link-underline-hover\"><b>#$2</b></a>");
+        value = Regex.Replace(value, @"\[(.*?)\]\((.*?)\)", "<a target=\"_blank\" href=\"$2\" class=\"mud-link mud-primary-text mud-link-underline-hover\">$1</a>");
+        value = Regex.Replace(value, @"(https://github.com/MudBlazor/MudBlazor/compare/)(.+)", "<a target=\"_blank\" href=\"$1$2\" class=\"docs-code docs-code-primary\">$2</a>");
+        value = Regex.Replace(value, @"(https://github.com/MudBlazor/MudBlazor/milestone/)(.+)", "<a target=\"_blank\" href=\"$1$2\" class=\"docs-code docs-code-primary\">Milestone</a>");
+        value = value.Replace("**","");
+        return value;
+    }
 }

@@ -9,25 +9,31 @@ using System.Linq.Expressions;
 
 namespace MudBlazor
 {
+#nullable enable
     public class AggregateDefinition<T>
     {
-        public AggregateType Type { get; set; } = AggregateType.Count;
-        public string DisplayFormat { get; set; } = "{value}";
-        public Func<IEnumerable<T>, string> CustomAggregate { get; set; }
-
         private AggregateType? _cachedType;
-        private Func<T, decimal> _compiledAvgExpression;
-        private Func<T, object> _compiledMinMaxExpression;
-        private Func<T, decimal> _compiledSumExpression;
+        private Func<T, decimal>? _compiledAvgExpression;
+        private Func<T, object>? _compiledMinMaxExpression;
+        private Func<T, decimal>? _compiledSumExpression;
 
-        public string GetValue(string field, IEnumerable<T> items)
+        public AggregateType Type { get; set; } = AggregateType.Count;
+
+        public string DisplayFormat { get; set; } = "{value}";
+
+        public Func<IEnumerable<T>, string>? CustomAggregate { get; set; }
+
+        public string GetValue(LambdaExpression? propertyExpression, IEnumerable<T>? items)
         {
-            if (items == null || items.Count() == 0)
+            //avoid multiple enumeration
+            var itemsArray = items as T[] ?? items?.ToArray() ?? Array.Empty<T>();
+
+            if (itemsArray.Length == 0)
             {
                 return DisplayFormat.Replace("{value}", "0");
             }
 
-            object value = null;
+            object? value = null;
 
             if (_cachedType != Type)
             {
@@ -35,66 +41,70 @@ namespace MudBlazor
 
                 if (Type == AggregateType.Avg)
                 {
-                    var parameter = Expression.Parameter(typeof(T), "x");
-                    var f = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(field)), typeof(decimal));
-                    _compiledAvgExpression = Expression.Lambda<Func<T, decimal>>(f, parameter).Compile();
-                    value = items.Average(_compiledAvgExpression);
+                    _compiledAvgExpression = propertyExpression?.ChangeExpressionReturnType<T, decimal>().Compile();
+                    if (_compiledAvgExpression is not null)
+                    {
+                        value = itemsArray.Average(_compiledAvgExpression);
+                    }
                 }
                 else if (Type == AggregateType.Count)
                 {
-                    value = items.Count();
+                    value = itemsArray.Length;
                 }
-                else if (Type == AggregateType.Custom)
+                else if (Type == AggregateType.Custom && CustomAggregate is not null)
                 {
-                    return CustomAggregate.Invoke(items);
+                    return CustomAggregate.Invoke(itemsArray);
                 }
                 else if (Type == AggregateType.Max)
                 {
-                    var parameter = Expression.Parameter(typeof(T), "x");
-                    var f = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(field)), typeof(object));
-                    _compiledMinMaxExpression = Expression.Lambda<Func<T, object>>(f, parameter).Compile();
-                    value = items.Max(_compiledMinMaxExpression);
+                    _compiledMinMaxExpression = propertyExpression?.ChangeExpressionReturnType<T, object>().Compile();
+                    if (_compiledMinMaxExpression is not null)
+                    {
+                        value = itemsArray.Max(_compiledMinMaxExpression);
+                    }
                 }
                 else if (Type == AggregateType.Min)
                 {
-                    var parameter = Expression.Parameter(typeof(T), "x");
-                    var f = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(field)), typeof(object));
-                    _compiledMinMaxExpression = Expression.Lambda<Func<T, object>>(f, parameter).Compile();
-                    value = items.Min(_compiledMinMaxExpression);
+                    _compiledMinMaxExpression = propertyExpression?.ChangeExpressionReturnType<T, object>().Compile();
+                    if (_compiledMinMaxExpression is not null)
+                    {
+                        value = itemsArray.Min(_compiledMinMaxExpression);
+                    }
                 }
                 else if (Type == AggregateType.Sum)
                 {
-                    var parameter = Expression.Parameter(typeof(T), "x");
-                    var f = Expression.Convert(Expression.Property(parameter, typeof(T).GetProperty(field)), typeof(decimal));
-                    _compiledSumExpression = Expression.Lambda<Func<T, decimal>>(f, parameter).Compile();
-                    value = items.Sum(_compiledSumExpression);
+                    _compiledSumExpression = propertyExpression?.ChangeExpressionReturnType<T, decimal>().Compile();
+                    if (_compiledSumExpression is not null)
+                    {
+                        value = itemsArray.Sum(_compiledSumExpression);
+                    }
                 }
             }
             else
             {
-                if (Type == AggregateType.Avg)
+                if (Type == AggregateType.Avg && _compiledAvgExpression is not null)
                 {
-                    value = items.Average(_compiledAvgExpression);
+                    value = itemsArray.Average(_compiledAvgExpression);
                 }
                 else if (Type == AggregateType.Count)
                 {
-                    value = items.Count();
+                    value = itemsArray.Length;
                 }
-                else if (Type == AggregateType.Custom)
+                else if (Type == AggregateType.Custom && CustomAggregate is not null)
                 {
-                    return CustomAggregate.Invoke(items);
+                    return CustomAggregate.Invoke(itemsArray);
                 }
-                else if (Type == AggregateType.Max)
+                else if (Type == AggregateType.Max && _compiledMinMaxExpression is not null)
                 {
-                    value = items.Max(_compiledMinMaxExpression);
+                    value = itemsArray.Max(_compiledMinMaxExpression);
                 }
-                else if (Type == AggregateType.Min)
+                else if (Type == AggregateType.Min && _compiledMinMaxExpression is not null)
                 {
-                    value = items.Min(_compiledMinMaxExpression);
+                    value = itemsArray.Min(_compiledMinMaxExpression);
                 }
-                else if (Type == AggregateType.Sum)
+                else if (Type == AggregateType.Sum && _compiledSumExpression is not null)
                 {
-                    value = items.Sum(_compiledSumExpression);
+                    value = itemsArray.Sum(_compiledSumExpression);
                 }
             }
 

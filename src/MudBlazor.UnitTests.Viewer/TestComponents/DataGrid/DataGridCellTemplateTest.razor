@@ -2,16 +2,16 @@
 
 <MudDataGrid Items="@_items">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Hired)">
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Hired">
             <CellTemplate>
                 @if (context.Item.Hired)
                 {
                     <MudIcon Icon="@Icons.Material.Filled.Check" />
                 }
             </CellTemplate>
-        </Column>
+        </PropertyColumn>
     </Columns>
 </MudDataGrid>
 

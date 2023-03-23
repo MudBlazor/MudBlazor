@@ -8,17 +8,21 @@ using System.Linq;
 
 namespace MudBlazor
 {
+#nullable enable
     public class HeaderContext<T>
     {
-        internal MudDataGrid<T> _dataGrid;
+        private readonly MudDataGrid<T> _dataGrid;
+
         public IEnumerable<T> Items
         {
             get
             {
-                return _dataGrid.Items;
+                return (_dataGrid.ServerData == null) ? _dataGrid.Items : _dataGrid.ServerItems;
             }
         }
-        public HeaderActions Actions { get; internal set; }
+
+        public HeaderActions Actions { get; }
+
         public bool IsAllSelected
         {
             get
@@ -36,7 +40,7 @@ namespace MudBlazor
         public HeaderContext(MudDataGrid<T> dataGrid)
         {
             _dataGrid = dataGrid;
-            Actions = new HeaderContext<T>.HeaderActions
+            Actions = new HeaderActions
             {
                 SetSelectAll = async (x) => await _dataGrid.SetSelectAllAsync(x),
             };
@@ -45,7 +49,7 @@ namespace MudBlazor
 
         public class HeaderActions
         {
-            public Action<bool> SetSelectAll { get; internal set; }
+            public Action<bool>? SetSelectAll { get; internal set; }
         }
     }
 }

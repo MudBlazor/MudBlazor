@@ -325,8 +325,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<CheckboxLabelExample>();
             var checkboxes = comp.FindAll("label.mud-checkbox");
 
-            checkboxes[0].ClassList.Should().Contain("mud-ltr"); // 1st checkbox: (default) LabelPosition.End
-            checkboxes[2].ClassList.Should().Contain("mud-rtl"); // 3rd checkbox: LabelPosition.Start
+            checkboxes[2].ClassList.Should().Contain("flex-row-reverse"); // 3rd checkbox: LabelPosition.Start
         }
 
         [Test]

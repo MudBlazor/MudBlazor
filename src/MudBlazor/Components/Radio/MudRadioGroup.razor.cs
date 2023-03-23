@@ -55,6 +55,20 @@ namespace MudBlazor
                 throw new GenericTypeMismatchException("MudRadioGroup", "MudRadio", typeof(T), itemT);
         }
 
+        /// <summary>
+        /// If true, the input will be disabled.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Disabled { get; set; }
+
+        /// <summary>
+        /// If true, the input will be read-only.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool ReadOnly { get; set; }
+
         [Parameter]
         [Category(CategoryTypes.Radio.Data)]
         public T SelectedOption

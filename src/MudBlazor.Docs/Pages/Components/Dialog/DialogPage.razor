@@ -22,6 +22,10 @@
                     </p>
                     The advantage of having the dialog in its own Razor component is obviously the ability to reuse it throughout your code-base.
                     You can pass parameters to your dialog on show which allow you to load the dialog with custom data.
+                    <br />
+                    <MudAlert Class="my-3" Severity="Severity.Info">
+                        Note: Even though it is technically possible to show any razor component as a dialog it is highly recommended to use a <CodeInline Tag="true">MudDialog</CodeInline> as the top-level of your dialogs!
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogUsageExample"), new CodeFile("Dialog.razor", "DialogUsageExample_Dialog")})">
@@ -111,7 +115,19 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Nested Dialog and Cancel All">
+            <SectionHeader Title="Nested Inline Dialogs">
+                <Description>
+                    You can inline a <CodeInline>MudDialog</CodeInline> within another <CodeInline>MudDialog</CodeInline>, even in another inline dialog. This example shows both ways of nesting
+                    an inline dialog.
+                </Description>
+            </SectionHeader>
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogNestedInlineExample"), new CodeFile("Dialog.razor", "DialogNestedInlineExample_Dialog")})">
+                <DialogNestedInlineExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Nested Dialogs and Cancel All">
                 <Description>
                     It is possible to open multiple dialogs at the same time.
                     <br />

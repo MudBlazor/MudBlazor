@@ -32,6 +32,7 @@ namespace MudBlazor.UnitTests.Other
                 typeof(MudDataGrid<>),  // TODO: remove it later
                 typeof(FilterHeaderCell<>),
                 typeof(Column<>),
+                typeof(PropertyColumn<,>),
                 typeof(Row),
                 typeof(HeaderCell<>),
                 typeof(FooterCell<>),

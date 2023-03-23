@@ -107,6 +107,23 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Strict Mode">
+                <Description>
+                    <MudText>
+                        After selecting an option from a MudAutocomplete, it may be desired to change the selection. By default, clicking a MudAutocomplete while a value is selected will pass the <CodeInline>Text</CodeInline> string to the <CodeInline>SearchFunc</CodeInline>.
+                        Setting the <CodeInline>Strict</CodeInline> option to false modifies this behavior and passes an empty string to the <CodeInline>SearchFunc</CodeInline> instead.
+                    </MudText>
+                    <MudAlert Severity="Severity.Info" Class="mt-2">
+                        You must either use records or define <CodeInline>GetHashCode</CodeInline> and <CodeInline>Equals</CodeInline> for <CodeInline>T</CodeInline>.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="AutocompleteStrictFalseExample">
+                <AutocompleteStrictFalseExample />
+            </SectionContent>
+        </DocsPageSection>
+
 		<DocsPageSection>
 			<SectionHeader Title="Cancellation Token">
 				<Description>
