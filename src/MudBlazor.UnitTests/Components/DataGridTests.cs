@@ -209,6 +209,37 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
 
+            // select all programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(true));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+
+            // deselect from the footer
+            dataGrid.Find("tfoot input").Change(false);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+        }
+        
+        [Test]
+        public async Task DataGridServerMultiSelectionTest()
+        {
+            var comp = Context.RenderComponent<DataGridServerMultiSelectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerMultiSelectionTest.Item>>();
+
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.FindAll("input")[0].Change(true);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+
+            // deselect an item programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, dataGrid.Instance.SelectedItems.First()));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+
+            // select an item programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(dataGrid.Instance.ServerItems.First()));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+
+            // deselect all programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
             // deselect all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(true));
             dataGrid.Instance.SelectedItems.Count.Should().Be(3);
@@ -2525,7 +2556,7 @@ namespace MudBlazor.UnitTests.Components
             filterDefinition3.Column.dataType.Should().Be(typeof(Severity?));
             await comp.InvokeAsync(() => internalFilter.NumberValueChanged(35));
             filterDefinition3.Value.Should().Be(35);
-            internalFilter.isEnum.Should().Be(true);
+            internalFilter.IsEnum.Should().Be(true);
             // test internal filter class for bool data type.
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition4, null);
             filterDefinition4.Column.dataType.Should().Be(typeof(bool?));
@@ -3025,9 +3056,9 @@ namespace MudBlazor.UnitTests.Components
             cell._cellContext.IsSelected.Should().Be(true);
 
             cell._cellContext.Actions.ToggleHierarchyVisibilityForItem();
-            cell._cellContext.openHierarchies.Should().Contain(item);
+            cell._cellContext.OpenHierarchies.Should().Contain(item);
             cell._cellContext.Actions.ToggleHierarchyVisibilityForItem();
-            cell._cellContext.openHierarchies.Should().NotContain(item);
+            cell._cellContext.OpenHierarchies.Should().NotContain(item);
         }
 
         [Test]
@@ -3124,6 +3155,7 @@ namespace MudBlazor.UnitTests.Components
                 //Value = "invalid guid", cannot be a string here...
                 Value = Guid.Empty
             });
+            comp.Render();
             grid.FilteredItems.Count().Should().Be(0);
 
             grid.FilterDefinitions.Clear();
@@ -3133,6 +3165,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = "equals",
                 Value = comp.Instance.Guid1,
             });
+            comp.Render();
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
 
@@ -3143,6 +3176,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = "not equals",
                 Value = comp.Instance.Guid1,
             });
+            comp.Render();
             grid.FilteredItems.Count().Should().Be(1);
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid2);
         }
@@ -3357,6 +3391,53 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => column.Format = "C0");
             comp.Find(".mud-switch-input").Change(new ChangeEventArgs { Value = true });
             comp.FindAll("tbody.mud-table-body td")[3].TextContent.Should().Be("$87,000");
+        }
+
+        [Test]
+        public async Task DataGridFilteredItemsCacheTest()
+        {
+            var comp = Context.RenderComponent<DataGridSortableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
+
+            var initialFilterCount = dataGrid.Instance.FilteringRunCount;
+            
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
+            dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 1);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => { return x.Name; }));
+            dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 2);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
+            dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 3);
+
+
+            var column = dataGrid.FindComponent<Column<DataGridSortableTest.Item>>();
+            await comp.InvokeAsync(() => column.Instance.SortBy = x => { return x.Name; });
+            dataGrid.Render();
+            dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 4);
+
+            // sort through the sort icon
+            dataGrid.Find(".column-options button").Click();
+            dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 5);
+
+            // test other sort methods
+            var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableTest.Item>>();
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
+            dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 6);
+
+            //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
+            await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
+            dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 7);
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
+            dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 8);
+            await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
+            dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 9);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
+            dataGrid.Render();
+            dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 10);
+            // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
+            dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
         }
     }
 }

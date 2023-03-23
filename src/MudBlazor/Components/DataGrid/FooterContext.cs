@@ -8,23 +8,27 @@ using System.Linq;
 
 namespace MudBlazor
 {
+#nullable enable
     public class FooterContext<T>
     {
-        internal MudDataGrid<T> _dataGrid;
+        private readonly MudDataGrid<T> _dataGrid;
+
         public IEnumerable<T> Items
         {
             get
             {
-                return _dataGrid.Items;
+                return (_dataGrid.ServerData == null) ? _dataGrid.Items : _dataGrid.ServerItems;
             }
         }
-        public FooterActions Actions { get; internal set; }
+
+        public FooterActions Actions { get; }
+
         public bool IsAllSelected
         {
             get
             {
                 
-                if (_dataGrid.Selection != null && Items != null)
+                if (_dataGrid.Selection is not null && Items is not null)
                 {
                     return _dataGrid.Selection.Count == Items.Count();
                 }
@@ -36,7 +40,7 @@ namespace MudBlazor
         public FooterContext(MudDataGrid<T> dataGrid)
         {
             _dataGrid = dataGrid;
-            Actions = new FooterContext<T>.FooterActions
+            Actions = new FooterActions
             {
                 SetSelectAll = async (x) => await _dataGrid.SetSelectAllAsync(x),
             };
@@ -44,7 +48,7 @@ namespace MudBlazor
 
         public class FooterActions
         {
-            public Action<bool> SetSelectAll { get; internal set; }
+            public Action<bool>? SetSelectAll { get; internal set; }
         }
     }
 }

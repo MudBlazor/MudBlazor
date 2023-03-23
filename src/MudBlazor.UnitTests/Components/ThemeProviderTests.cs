@@ -2,6 +2,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
@@ -11,6 +12,7 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
+
     [TestFixture]
     public class ThemeProviderTests : BunitTest
     {
@@ -305,6 +307,21 @@ namespace MudBlazor.UnitTests.Components
             Assert.AreEqual(new MudColor("#594AE2"), DefaultTheme.Palette.Primary);
             Assert.AreEqual(new MudColor(Colors.Red.Default), DefaultTheme.Palette.Error);
             Assert.AreEqual(new MudColor(Colors.Shades.White), DefaultTheme.Palette.White);
+        }
+
+        private bool _systemMockValue;
+        private async Task SystemChangedResult(bool newValue)
+        {
+            _systemMockValue = newValue;
+        }
+        [Test]
+        public async Task WatchSystemTest()
+        {
+            Assert.IsFalse(_systemMockValue);
+            var comp = Context.RenderComponent<MudThemeProvider>();
+            await comp.Instance.WatchSystemPreference(SystemChangedResult);
+            await comp.Instance.SystemPreferenceChanged(true);
+            Assert.IsTrue(_systemMockValue);
         }
 
         [Test]

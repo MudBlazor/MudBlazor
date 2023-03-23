@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -263,6 +264,8 @@ namespace MudBlazor
 
         protected internal virtual void OnBlurred(FocusEventArgs obj)
         {
+            if (ReadOnly)
+                return;
             _isFocused = false;
 
             if (!OnlyValidateIfDirty || _isDirty)
@@ -294,8 +297,10 @@ namespace MudBlazor
         /// <summary>
         /// Fired on the KeyPress event.
         /// </summary>
+        [Obsolete("This will be removed in v7")]
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
 
+        [Obsolete("This will be removed in v7")]
         protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
         {
             OnKeyPress.InvokeAsync(obj).AndForget();
@@ -306,6 +311,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
+        [Obsolete("This will be removed in v7")]
         public bool KeyPressPreventDefault { get; set; }
 
         /// <summary>

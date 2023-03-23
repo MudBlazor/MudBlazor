@@ -307,7 +307,7 @@ namespace MudBlazor
             }
         }
 
-        private async Task HandleDrop()
+        internal async Task HandleDrop()
         {
             var (context, isValidZone) = ItemCanBeDropped();
             if (context == null)
@@ -387,6 +387,7 @@ namespace MudBlazor
                 Container.TransactionEnded += Container_TransactionEnded;
                 Container.RefreshRequested += Container_RefreshRequested;
                 Container.TransactionIndexChanged += Container_TransactionIndexChanged;
+                Container.RegisterDropZone(this);
             }
 
             base.OnParametersSet();
@@ -421,7 +422,7 @@ namespace MudBlazor
                         Container.TransactionEnded -= Container_TransactionEnded;
                         Container.RefreshRequested -= Container_RefreshRequested;
                         Container.TransactionIndexChanged -= Container_TransactionIndexChanged;
-
+                        Container.RemoveDropZone(Identifier);
                     }
                 }
 

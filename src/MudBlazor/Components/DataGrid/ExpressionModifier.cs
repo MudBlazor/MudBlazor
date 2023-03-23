@@ -3,23 +3,22 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
 namespace MudBlazor
 {
+#nullable enable
     internal static class ExpressionModifier
     {
-        internal static Expression<Func<T, bool>> Modify<T>(this Expression exp1, Expression exp2)
+        internal static Expression<Func<T, bool>> Modify<T>(this Expression firstExpression, Expression secondExpression)
         {
             var bodyIdentifier = new ExpressionBodyIdentifier();
-            var body = bodyIdentifier.Identify(exp1);
+            var body = bodyIdentifier.Identify(firstExpression);
             var parameterIdentifier = new ExpressionParameterIdentifier();
-            var parameter = (ParameterExpression)parameterIdentifier.Identify(exp1);
-
-            var bodyIdentifier2 = new ExpressionBodyIdentifier();
-            var body2 = bodyIdentifier.Identify(exp2);
-            var parameterIdentifier2 = new ExpressionParameterIdentifier();
-            var parameter2 = (ParameterExpression)parameterIdentifier.Identify(exp2);
+            var parameter = (ParameterExpression)parameterIdentifier.Identify(firstExpression);
+            var body2 = bodyIdentifier.Identify(secondExpression);
+            var parameter2 = (ParameterExpression)parameterIdentifier.Identify(secondExpression);
 
             var treeModifier = new ExpressionReplacer(parameter2, body);
             return Expression.Lambda<Func<T, bool>>(treeModifier.Visit(body2), parameter);
@@ -31,39 +30,39 @@ namespace MudBlazor
             return binaryReplacer.Visit(exp);
         }
 
-        public static Expression<Func<T, bool>> GenerateBinary<T>(this Expression exp1, ExpressionType binaryOperation, object value)
+        public static Expression<Func<T, bool>> GenerateBinary<T>(this Expression expression, ExpressionType binaryOperation, object? value)
         {
             var bodyIdentifier = new ExpressionBodyIdentifier();
-            var body = bodyIdentifier.Identify(exp1);
+            var body = bodyIdentifier.Identify(expression);
             var parameterIdentifier = new ExpressionParameterIdentifier();
-            var parameter = (ParameterExpression)parameterIdentifier.Identify(exp1);
-            BinaryExpression b = null;
+            var parameter = (ParameterExpression)parameterIdentifier.Identify(expression);
+            BinaryExpression? binaryExpression;
 
-            if (Nullable.GetUnderlyingType(body.Type) != null)
+            if (Nullable.GetUnderlyingType(body.Type) is not null)
             {
                 // property type is nullable...
-                b = Expression.MakeBinary(binaryOperation, body, Expression.Convert(Expression.Constant(value), body.Type));
+                binaryExpression = Expression.MakeBinary(binaryOperation, body, Expression.Convert(Expression.Constant(value), body.Type));
             }
             else
             {
-                if (value == null)
+                if (value is null)
                 {
                     // We can short circuit here because the value to be compared is null and the property type is not nullable.
                     return x => true;
                 }
 
-                b = Expression.MakeBinary(binaryOperation, body, Expression.Convert(Expression.Constant(value), body.Type));
+                binaryExpression = Expression.MakeBinary(binaryOperation, body, Expression.Convert(Expression.Constant(value), body.Type));
             }
 
-            return Expression.Lambda<Func<T, bool>>(b, parameter);
+            return Expression.Lambda<Func<T, bool>>(binaryExpression, parameter);
         }
 
-        public static Expression<Func<T, U>> ChangeExpressionReturnType<T, U>(this Expression exp)
+        public static Expression<Func<T, U>> ChangeExpressionReturnType<T, U>(this Expression expression)
         {
             var bodyIdentifier = new ExpressionBodyIdentifier();
-            var body = bodyIdentifier.Identify(exp);
+            var body = bodyIdentifier.Identify(expression);
             var parameterIdentifier = new ExpressionParameterIdentifier();
-            var parameter = (ParameterExpression)parameterIdentifier.Identify(exp);
+            var parameter = (ParameterExpression)parameterIdentifier.Identify(expression);
 
             if (body.Type is U)
             {
@@ -79,17 +78,19 @@ namespace MudBlazor
 
     internal class ExpressionReplacer : ExpressionVisitor
     {
-        Expression from, to;
+        private readonly Expression _from;
+        private readonly Expression _to;
 
         public ExpressionReplacer(Expression from, Expression to)
         {
-            this.from = from;
-            this.to = to;
+            _from = from;
+            _to = to;
         }
 
-        public override Expression Visit(Expression node)
+        [return: NotNullIfNotNull(nameof(node))]
+        public override Expression? Visit(Expression? node)
         {
-            if (node == from) return to;
+            if (node == _from) return _to;
             return base.Visit(node);
         }
     }
@@ -122,19 +123,20 @@ namespace MudBlazor
 
     internal class BinaryReplacer : ExpressionVisitor
     {
-        ExpressionType from, to;
+        private readonly ExpressionType _from;
+        private readonly ExpressionType _to;
 
         public BinaryReplacer(ExpressionType from, ExpressionType to)
         {
-            this.from = from;
-            this.to = to;
+            _from = from;
+            _to = to;
         }
 
         protected override Expression VisitBinary(BinaryExpression node)
         {
-            if (node.NodeType == from)
+            if (node.NodeType == _from)
             {
-                return Expression.MakeBinary(to, node.Left, node.Right);
+                return Expression.MakeBinary(_to, node.Left, node.Right);
             }
 
             return base.VisitBinary(node);

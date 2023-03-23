@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
@@ -218,7 +217,7 @@ namespace MudBlazor
         {
             get
             {
-                return FilterOperator.NumericTypes.Contains(PropertyType);
+                return TypeIdentifier.IsNumber(PropertyType);
             }
         }
 
@@ -393,7 +392,10 @@ namespace MudBlazor
         }
 
         public virtual string PropertyName { get; }
-        protected internal virtual string ContentFormat { get; }
+
+#nullable enable
+        protected internal virtual string? ContentFormat { get; }
+#nullable disable
 
         protected internal abstract object CellContent(T item);
 

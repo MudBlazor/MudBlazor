@@ -289,18 +289,18 @@ namespace MudBlazor
             return false;
         }
 
-        private void HandleBackgroundClick()
+        private async Task HandleBackgroundClickAsync(MouseEventArgs args)
         {
             if (DisableBackdropClick)
                 return;
 
-            if (_dialog?.OnBackdropClick == null)
+            if (_dialog is null || !_dialog.OnBackdropClick.HasDelegate)
             {
                 Cancel();
                 return;
             }
 
-            _dialog?.OnBackdropClick.Invoke();
+            await _dialog.OnBackdropClick.InvokeAsync(args);
         }
 
         private MudDialog _dialog;
