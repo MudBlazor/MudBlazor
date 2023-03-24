@@ -65,13 +65,29 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
-        public bool ReadOnly { get; set; }
+        public bool? ReadOnly { get; set; }
         private bool _readOnly;
+        /// <summary>
+        /// If true, this form or one of its parents has a non-null ReadOnly parameter
+        /// </summary>
+        private bool ShouldSetReadOnly => ReadOnly != null || ParentMudForm?.ShouldSetReadOnly == true;
+        /// <summary>
+        /// If true, this form or one of its parents is ReadOnly
+        /// </summary>
+        internal bool IsReadOnly => ReadOnly == true || ParentMudForm?.IsReadOnly == true;
 
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
-        public bool Disabled { get; set; }
+        public bool? Disabled { get; set; }
         private bool _disabled;
+        /// <summary>
+        /// If true, this form or one of its parents has a non-null Disabled parameter
+        /// </summary>
+        private bool ShouldSetDisabled => Disabled != null || ParentMudForm?.ShouldSetDisabled == true;
+        /// <summary>
+        /// If true, this form or one of its parents is Disabled
+        /// </summary>
+        internal bool IsDisabled => Disabled == true || ParentMudForm?.IsDisabled == true;
 
         /// <summary>
         /// Validation debounce delay in milliseconds. This can help improve rendering performance of forms with real-time validation of inputs
@@ -184,8 +200,10 @@ namespace MudBlazor
 
             if (formControl is IReadOnlyDisabledFormComponent component) //automatically set the readonly and disabled state when adding new components
             {
-                component.ReadOnly = ReadOnly || (ParentMudForm?.ReadOnly).GetValueOrDefault();
-                component.Disabled = Disabled || (ParentMudForm?.Disabled).GetValueOrDefault();
+                if (ShouldSetReadOnly)
+                    component.ReadOnly = IsReadOnly;
+                if (ShouldSetDisabled)
+                    component.Disabled = IsDisabled;
             }
         }
 
@@ -332,22 +350,28 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            if ((ReadOnly || (ParentMudForm?.ReadOnly).GetValueOrDefault()) != _readOnly) //only run if the readonly state has changed
+            if (ShouldSetReadOnly && _readOnly != IsReadOnly) //only run if the readonly state has changed
             {
-                _readOnly = ReadOnly || (ParentMudForm?.ReadOnly).GetValueOrDefault();
-                foreach (var control in _formControls.Where(x => x is IReadOnlyDisabledFormComponent))
+                _readOnly = IsReadOnly;
+                foreach (var control in _formControls)
                 {
-                    ((IReadOnlyDisabledFormComponent)control).ReadOnly = _readOnly;
-                    control.StateHasChanged();
+                    if (control is IReadOnlyDisabledFormComponent readOnlyDisabledFormComponent)
+                    {
+                        readOnlyDisabledFormComponent.ReadOnly = _readOnly;
+                        readOnlyDisabledFormComponent.StateHasChanged();
+                    }
                 }
             }
-            if (Disabled || (ParentMudForm?.Disabled).GetValueOrDefault() != _disabled) //only run if the disabled state has changed
+            if (ShouldSetDisabled && _disabled != IsDisabled) //only run if the disabled state has changed
             {
-                _disabled = Disabled || (ParentMudForm?.Disabled).GetValueOrDefault();
-                foreach (var control in _formControls.Where(x => x is IReadOnlyDisabledFormComponent))
+                _disabled = IsDisabled;
+                foreach (var control in _formControls)
                 {
-                    ((IReadOnlyDisabledFormComponent)control).Disabled = _disabled;
-                    control.StateHasChanged();
+                    if (control is IReadOnlyDisabledFormComponent readOnlyDisabledFormComponent)
+                    {
+                        readOnlyDisabledFormComponent.Disabled = _disabled;
+                        readOnlyDisabledFormComponent.StateHasChanged();
+                    }
                 }
             }
             base.OnParametersSet();
