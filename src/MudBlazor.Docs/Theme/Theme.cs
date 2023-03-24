@@ -41,7 +41,7 @@ namespace MudBlazor.Docs
 
         #region Docs
 
-        private static readonly Palette DocsLightPalette = new()
+        private static readonly PaletteLight DocsLightPalette = new()
         {
             Black = "#110e2d",
             AppbarText = "#424242",
@@ -142,7 +142,7 @@ namespace MudBlazor.Docs
                 TextTransform = "none"
             }
         };
-        private static readonly Palette LandingPageLightPalette = new()
+        private static readonly PaletteLight LandingPageLightPalette = new()
         {
             AppbarText = "#424242",
             AppbarBackground = "rgba(0,0,0,0)",

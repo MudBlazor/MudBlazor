@@ -615,7 +615,7 @@ namespace MudBlazor.UnitTests.Utilities
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
 
-            Palette palette = new Palette();
+            Palette palette = new PaletteLight();
 
             palette.Should().NotBeNull();
         }

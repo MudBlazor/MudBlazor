@@ -495,7 +495,7 @@ namespace MudBlazor.UnitTests.Components
             TestFailingModel model = new TestFailingModel2();
             var comp = Context.RenderComponent<MudTextField<string>>(
                 ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => (model as TestFailingModel2).Foo))
-                //ComponentParameter.CreateParameter("ForModel", typeof(TestFailingModel2)) // Explicitly set the `For` class
+            //ComponentParameter.CreateParameter("ForModel", typeof(TestFailingModel2)) // Explicitly set the `For` class
             );
             await comp.InvokeAsync(() => comp.Instance.Validate());
             comp.Instance.Error.Should().BeTrue();
@@ -814,6 +814,20 @@ namespace MudBlazor.UnitTests.Components
 
             var comp2 = Context.RenderComponent<MudTextField<string>>(x => x.Add(f => f.For, () => value.String).Add(l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
+        }
+
+        /// <summary>
+        /// ReadOnly TextFields should not validate when blurred
+        /// </summary>
+        [Test]
+        public async Task ReadOnlyTextFieldShouldNotValdidate()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+            .Add(p => p.ReadOnly, true)
+            .Add(p => p.Required, true));
+
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
         }
     }
 }
