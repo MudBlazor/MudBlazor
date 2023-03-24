@@ -77,7 +77,7 @@ namespace MudBlazor
         {
             get
             {
-                return FilterOperator.IsNumber(dataType);
+                return TypeIdentifier.IsNumber(dataType);
             }
         }
 
@@ -85,7 +85,7 @@ namespace MudBlazor
         {
             get
             {
-                return FilterOperator.IsEnum(dataType);
+                return TypeIdentifier.IsEnum(dataType);
             }
         }
 

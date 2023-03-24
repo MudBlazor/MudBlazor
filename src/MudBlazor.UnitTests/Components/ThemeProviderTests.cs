@@ -279,7 +279,7 @@ namespace MudBlazor.UnitTests.Components
             // ensure it is backwards compatible by setting Palette() instead of PaletteDark()
             var myCustomTheme = new MudTheme()
             {
-                PaletteDark = new Palette()
+                PaletteDark = new PaletteLight()
                 {
                     Primary = Colors.Blue.Lighten1,
                     Secondary = "#F50057"

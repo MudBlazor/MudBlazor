@@ -264,6 +264,8 @@ namespace MudBlazor
 
         protected internal virtual void OnBlurred(FocusEventArgs obj)
         {
+            if (ReadOnly)
+                return;
             _isFocused = false;
 
             if (!OnlyValidateIfDirty || _isDirty)

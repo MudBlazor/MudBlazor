@@ -15,13 +15,18 @@ namespace MudBlazor
     /// <typeparam name="TProperty">The type of the value being displayed in the column's cells.</typeparam>
     public partial class PropertyColumn<T, TProperty> : Column<T>
     {
-        [Parameter] public Expression<Func<T, TProperty>> Property { get; set; } = default!;
-        [Parameter] public string Format { get; set; }
+        [Parameter]
+        [EditorRequired]
+        public Expression<Func<T, TProperty>> Property { get; set; } = Expression.Lambda<Func<T, TProperty>>(Expression.Default(typeof(TProperty)), Expression.Parameter(typeof(T)));
+
+        [Parameter] public string? Format { get; set; }
 
         private Expression<Func<T, TProperty>>? _lastAssignedProperty;
         private Func<T, object?>? _cellContentFunc;
         private string? _propertyName;
         private string? _fullPropertyName;
+        private Func<T, TProperty> _compiledPropertyFunc;
+        private Expression<Func<T, TProperty>> _compiledPropertyFuncFor;
 
         protected override void OnParametersSet()
         {
@@ -33,22 +38,16 @@ namespace MudBlazor
                 _cellContentFunc = item => compiledPropertyExpression!(item);
             }
 
-            if (Property != null)
+            if (Property.Body is MemberExpression memberExpression)
             {
-                if (Property.Body is MemberExpression memberExpression)
-                {
-                    _fullPropertyName = Property.Body.ToString();
-                    _propertyName = memberExpression.Member.Name;
+                _fullPropertyName = Property.Body.ToString();
+                _propertyName = memberExpression.Member.Name;
 
-                    if (Title is null)
-                    {
-                        Title = _propertyName;
-                    }
-                }
-                else
-                {
-                    _propertyName = _fullPropertyName = Property.Body.ToString();
-                }
+                Title ??= _propertyName;
+            }
+            else
+            {
+                _propertyName = _fullPropertyName = Property.Body.ToString();
             }
 
             CompileGroupBy();
@@ -60,14 +59,23 @@ namespace MudBlazor
         public override string? PropertyName
             => _propertyName;
 
-        protected internal override string ContentFormat
+        protected internal override string? ContentFormat
             => Format;
 
         protected internal override object? CellContent(T item)
             => _cellContentFunc!(item);
 
+
         protected internal override object? PropertyFunc(T item)
-            => Property.Compile()(item);
+        {
+            if (_compiledPropertyFunc == null || _compiledPropertyFuncFor != Property)
+            {
+                _compiledPropertyFunc = Property.Compile();
+                _compiledPropertyFuncFor = Property;
+            }
+            return _compiledPropertyFunc(item);
+
+        }
 
         protected internal override Type PropertyType
             => typeof(TProperty);
@@ -77,22 +85,11 @@ namespace MudBlazor
 
         protected internal override void SetProperty(object item, object value)
         {
-            var memberExpression = Property.Body as MemberExpression;
-
-            if (memberExpression != null)
+            if (Property.Body is MemberExpression { Member: PropertyInfo propertyInfo })
             {
-                var propertyInfo = memberExpression.Member as PropertyInfo;
-
-                if (propertyInfo != null)
-                {
-                    var actualType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? PropertyType;
-                    propertyInfo.SetValue(item, Convert.ChangeType(value, actualType), null);
-                }
+                var actualType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? PropertyType;
+                propertyInfo.SetValue(item, Convert.ChangeType(value, actualType), null);
             }
         }
-
-
     }
-
-#nullable disable
 }
