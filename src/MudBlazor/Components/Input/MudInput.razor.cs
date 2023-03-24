@@ -27,11 +27,20 @@ namespace MudBlazor
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
         /// </summary>
-        [Parameter] public InputType InputType { get; set; } = InputType.Text;
+        [Parameter] 
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public InputType? InputType { get; set; }
 
-        internal override InputType GetInputType() => InputType;
+        /// <summary>
+        ///  Hints at the type of data that might be entered by the user while editing the input
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public virtual InputMode? InputMode { get; set; }
 
-        protected string InputTypeString => InputType.ToDescriptionString();
+        internal override InputType GetInputType() => InputType ?? For.GetInputTypeFromDataType();
+
+        internal override InputMode GetInputMode() => InputMode ?? For.GetInputModeFromDataType();
 
         protected Task OnInput(ChangeEventArgs args)
         {
@@ -75,7 +84,7 @@ namespace MudBlazor
         {
             try
             {
-                if (InputType == InputType.Hidden && ChildContent != null)
+                if (InputType == MudBlazor.InputType.Hidden && ChildContent != null)
                     await _elementReference1.FocusAsync();
                 else
                     await ElementReference.FocusAsync();
@@ -216,8 +225,8 @@ namespace MudBlazor
         // Certain HTML5 inputs (dates and color) have a native placeholder
         private bool HasNativeHtmlPlaceholder()
         {
-            return GetInputType() is InputType.Color or InputType.Date or InputType.DateTimeLocal or InputType.Month
-                or InputType.Time or InputType.Week;
+            return GetInputType() is MudBlazor.InputType.Color or MudBlazor.InputType.Date or MudBlazor.InputType.DateTimeLocal or MudBlazor.InputType.Month
+                or MudBlazor.InputType.Time or MudBlazor.InputType.Week;
         }
     }
 

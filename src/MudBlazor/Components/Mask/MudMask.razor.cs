@@ -33,7 +33,7 @@ namespace MudBlazor
                                 !string.IsNullOrWhiteSpace(Placeholder))
                 .AddClass("mud-disabled", Disabled)
                 .AddClass("mud-input-error", HasErrors)
-                .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
+                .AddClass("mud-ltr", GetInputType() == MudBlazor.InputType.Email || GetInputType() == MudBlazor.InputType.Telephone)
                 .AddClass(Class)
                 .Build();
 
@@ -100,7 +100,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public InputType InputType { get; set; } = InputType.Text;
+        public InputType? InputType { get; set; }
+
+        /// <summary>
+        ///  Hints at the type of data that might be entered by the user while editing the input
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public virtual InputMode? InputMode { get; set; }
 
         /// <summary>
         /// Show clear button.
@@ -291,7 +298,8 @@ namespace MudBlazor
             await Update();
         }
 
-        internal override InputType GetInputType() => InputType;
+        internal override InputType GetInputType() => InputType ?? this.For.GetInputTypeFromDataType();
+        internal override InputMode GetInputMode() => InputMode ?? this.For.GetInputModeFromDataType();
 
         private string GetCounterText() => Counter == null
             ? string.Empty

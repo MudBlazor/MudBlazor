@@ -385,12 +385,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool HideSpinButtons { get; set; }
 
-        /// <summary>
-        ///  Hints at the type of data that might be entered by the user while editing the input.
-        ///  Defaults to numeric
-        /// </summary>
-        [Parameter]
-        public override InputMode InputMode { get; set; } = InputMode.numeric;
+        internal override InputMode GetInputMode() => InputMode.numeric;
 
         /// <summary>
         /// The pattern attribute, when specified, is a regular expression which the input's value must match in order for the value to pass constraint validation. It must be a valid JavaScript regular expression

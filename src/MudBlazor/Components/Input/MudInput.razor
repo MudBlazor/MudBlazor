@@ -2,6 +2,7 @@
 @typeparam T
 @inherits MudBaseInput<T>
 @using MudBlazor.Internal
+@using MudBlazor.Extensions
 
 <div class="@Classname" style="@Style">
 	@if (Adornment == Adornment.Start)
@@ -23,11 +24,11 @@
                 @ref="ElementReference" 
                 rows="@Lines" 
                 @attributes="UserAttributes"
-                type="@InputTypeString"                  
+                type="@GetInputType().ToDescriptionString()"                  
                 placeholder="@Placeholder" 
                 disabled=@Disabled 
                 readonly="@ReadOnly" 
-                inputmode="@InputMode.ToString()"
+                inputmode="@GetInputMode().ToString()"
 			    @oninput="OnInput" 
                 @onchange="OnChange" 
                 @onblur="@OnBlurred" 
@@ -54,16 +55,16 @@
 	{
 	    <input class="@InputClassname"
                 @ref="ElementReference" 
-                @attributes="UserAttributes" 
-                type="@InputTypeString"                  
-                value="@_internalText" 
+                @attributes="UserAttributes"
+           type="@GetInputType().ToDescriptionString()"
+           value="@_internalText" 
                 @oninput="OnInput" 
                 @onchange="OnChange"
                 placeholder="@Placeholder" 
                 disabled=@Disabled 
                 readonly="@ReadOnly" 
                 @onblur="@OnBlurred" 
-                inputmode="@InputMode.ToString()" 
+                inputmode="@GetInputMode().ToString()" 
                 pattern="@Pattern"
                 @onkeydown="@InvokeKeyDown" 
                 @onkeypress="@InvokeKeyPress" 
@@ -84,8 +85,8 @@
                            In Disabled state the tabindex attribute must NOT be set at all or else it will get focus on click
              *@
 	        <div class="@InputClassname"
-                style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"                  
-                @onblur="@OnBlurred" @ref="@_elementReference1" 
+         style="@("display:"+(InputType == MudBlazor.InputType.Hidden && ChildContent != null ? "inline" : "none"))"
+         @onblur="@OnBlurred" @ref="@_elementReference1" 
             >
                 @ChildContent
             </div>
@@ -94,8 +95,8 @@
         {
              @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.*@
             <div class="@InputClassname"
-                 style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"  
-                 tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)" 
+                 style="@("display:"+(InputType == MudBlazor.InputType.Hidden && ChildContent != null ? "inline" : "none"))"  
+                 tabindex="@(InputType == MudBlazor.InputType.Hidden && ChildContent != null ? 0 : -1)" 
                  @onblur="@OnBlurred" @ref="@_elementReference1" 
             >
                 @ChildContent
