@@ -1,0 +1,31 @@
+﻿@using System.Globalization
+@namespace MudBlazor.Docs.Examples
+
+<div>
+    <MudChart ChartType="ChartType.Line" ChartSeries="@series" XAxisLabels="@XAxisLabels" Width="100%" Height="350" ChartOptions="options"></MudChart>
+</div>
+
+@code {
+    private readonly ChartOptions options = new()
+    {
+        YAxisLabelSpace = 50.0,
+        YAxisFormat = new CustomFormatter()
+    };
+    
+    private readonly List<ChartSeries> series = new()
+    {
+        new ChartSeries() { Name = "Series 1", Data = new double[] { 9000, 7900, 7200, 6900, 6200, 6200, 5500, 6500, 7000 } },
+        new ChartSeries() { Name = "Series 2", Data = new double[] { 3500, 4100, 3500, 5100, 4900, 6200, 6900, 9100, 14800 } },
+    };
+    private readonly string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+
+    private class CustomFormatter : IYAxisFormatter
+    {
+        private readonly CultureInfo usCultureInfo = new("en-US");
+
+        public string Format(double value)
+        {
+            return (value / 1000).ToString("N2", usCultureInfo) + "k";
+        }
+    }
+}

@@ -12,9 +12,15 @@
         /// </summary>
         public int MaxNumYAxisTicks { get; set; } = 20;
 
-        public string YAxisFormat { get; set; }
+        public IYAxisFormatter YAxisFormat { get; set; } = new DefaultYAxisFormatter();
+        
         public bool YAxisLines { get; set; } = true;
         public bool XAxisLines { get; set; }
+
+        /// <summary>
+        /// Space for the Y-axis label.
+        /// </summary>
+        public double YAxisLabelSpace { get; set; } = 30.0;
 
         /// <summary>
         /// If true, legend will not be displayed.

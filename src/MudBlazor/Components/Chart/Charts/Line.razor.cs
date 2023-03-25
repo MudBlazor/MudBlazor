@@ -33,9 +33,20 @@ namespace MudBlazor.Charts
             _legends.Clear();
             _chartLines.Clear();
 
+            IYAxisFormatter yAxisFormatter;
+            var horizontalStartSpace = 30.0;
+            
             if (MudChartParent != null)
+            {
                 _series = MudChartParent.ChartSeries;
-
+                yAxisFormatter = MudChartParent.ChartOptions.YAxisFormat;
+                horizontalStartSpace = MudChartParent.ChartOptions.YAxisLabelSpace;
+            }
+            else
+            {
+                yAxisFormatter = new DefaultYAxisFormatter();
+            }
+                
             var maxY = 0.0;
             var numValues = 0;
             var numXLabels = XAxisLabels.Length;
@@ -75,7 +86,6 @@ namespace MudBlazor.Charts
             }
 
             var verticalStartSpace = 25.0;
-            var horizontalStartSpace = 30.0;
             var verticalEndSpace = 25.0;
             var horizontalEndSpace = 30.0;
 
@@ -95,7 +105,7 @@ namespace MudBlazor.Charts
                 };
                 _horizontalLines.Add(line);
 
-                var lineValue = new SvgText() { X = (horizontalStartSpace - 10), Y = (boundHeight - y + 5), Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat) };
+                var lineValue = new SvgText() { X = (horizontalStartSpace - 10), Y = (boundHeight - y + 5), Value = yAxisFormatter.Format(startGridY) };
                 _horizontalValues.Add(lineValue);
 
                 startGridY += gridYUnits;

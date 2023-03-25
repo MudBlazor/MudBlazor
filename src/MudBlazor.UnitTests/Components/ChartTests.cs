@@ -97,7 +97,7 @@ namespace MudBlazor.UnitTests.Components
             yaxis[0].Children[0].InnerHtml.Trim().Should().Be("0");
 
             // now, we will apply currency format
-            options.YAxisFormat = "c2";
+            options.YAxisFormat = new StandardNumericFormatStringsYAxisFormatter("c2");
             comp.SetParametersAndRender(parameters => parameters
               .Add(p => p.ChartType, ChartType.Line)
               .Add(p => p.ChartSeries, series)
@@ -111,7 +111,7 @@ namespace MudBlazor.UnitTests.Components
             yaxis[0].Children[0].InnerHtml.Trim().Should().Be($"{0:c2}");
 
             //number format
-            options.YAxisFormat = "n6";
+            options.YAxisFormat = new StandardNumericFormatStringsYAxisFormatter("n6");
             comp.SetParametersAndRender(parameters => parameters
               .Add(p => p.ChartType, ChartType.Line)
               .Add(p => p.ChartSeries, series)
