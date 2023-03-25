@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -22,57 +23,48 @@ namespace MudBlazor.Utilities.Expressions
 
             visitor.Visit(expression);
 
-            return visitor.HashCode;
+            return visitor.ToHashCode();
         }
 
-        [ExcludeFromCodeCoverage]
         private sealed class HashVisitor : ExpressionVisitor
         {
             private int _hashCode;
-
-            public int HashCode { get => _hashCode; }
 
             public HashVisitor()
             {
                 _hashCode = 0;
             }
 
+            public int ToHashCode()
+            {
+                return _hashCode;
+            }
+
             private void UpdateHash(int value)
             {
-                unchecked
-                {
-                    _hashCode = (_hashCode * 397) ^ value;
-                }
+                _hashCode = HashCode.Combine(_hashCode, value);
             }
 
             private void UpdateHash(object? component)
             {
-                int componentHash;
+                int? componentHash;
 
-                if (component is null)
+                if (component is MemberInfo member)
                 {
-                    componentHash = NullHashCode;
+                    componentHash = member.Name.GetHashCode();
+
+                    var declaringType = member.DeclaringType;
+                    if (declaringType?.AssemblyQualifiedName is not null)
+                    {
+                        componentHash = HashCode.Combine(componentHash, declaringType.AssemblyQualifiedName.GetHashCode());
+                    }
                 }
                 else
                 {
-                    if (component is MemberInfo member)
-                    {
-                        componentHash = member.Name.GetHashCode();
-
-                        var declaringType = member.DeclaringType;
-                        if (declaringType?.AssemblyQualifiedName is not null)
-                            componentHash = (componentHash * 397) ^ declaringType.AssemblyQualifiedName.GetHashCode();
-                    }
-                    else
-                    {
-                        componentHash = component.GetHashCode();
-                    }
+                    componentHash = component?.GetHashCode();
                 }
 
-                unchecked
-                {
-                    _hashCode = (_hashCode * 397) ^ componentHash;
-                }
+                _hashCode = HashCode.Combine(_hashCode, componentHash);
             }
 
             [return: NotNullIfNotNull(nameof(node))]
@@ -151,6 +143,7 @@ namespace MudBlazor.Utilities.Expressions
             protected override Expression VisitTypeBinary(TypeBinaryExpression node)
             {
                 UpdateHash(node.Type);
+                UpdateHash(node.TypeOperand);
                 return base.VisitTypeBinary(node);
             }
         }
