@@ -369,7 +369,7 @@
                 {
                     if (column.ContentFormat != null)
                     {
-                        @(((IFormattable)cell.ComputedValue).ToString(column.ContentFormat, column.Culture))
+                        @(((IFormattable)cell.ComputedValue)?.ToString(column.ContentFormat, column.Culture))
                     }
                     else
                         @cell.ComputedValue
