@@ -1,5 +1,6 @@
 ﻿@page "/"
 @layout LandingLayout
+@inject DiscordApiClient _discordApiClient;
 @inject NugetApiClient _nugetApiClient;
 @inject GitHubApiClient _gitHubApiClient;
 @using MudBlazor.Docs.Components.LandingPage
@@ -316,7 +317,7 @@
         </MudItem>
         <MudItem xs="6" sm="3">
             <div class="global-scale-item">
-                <MudText Typo="Typo.h3" Color="Color.Primary">3.4K+</MudText>
+                    <MudText Typo="Typo.h3" Color="Color.Primary">@NumericExtensions.RoundedToString(_discordInvite.approximate_member_count)</MudText>
                 <div class="d-flex align-center">
                     <MudIcon Icon="@lpDiscord"/>
                     <MudText Typo="Typo.body1" Class="ml-4">Discord Members</MudText>
@@ -367,11 +368,13 @@
 
     private bool _showTestimonials { get; set; }
     private int _gitHubTotalContributors { get; set; }
+    private DiscordInvite _discordInvite { get; set; } = new();
     private NugetPackage _nugetPackage { get; set; } = new();
     private GitHubRepository _gitHubRepo { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
+        _discordInvite = await _discordApiClient.GetDiscordInviteAsync();
         _nugetPackage = await _nugetApiClient.GetPackageAsync("mudblazor");
         _gitHubRepo = await _gitHubApiClient.GetRepositoryAsync("MudBlazor", "MudBlazor");
         _gitHubTotalContributors = await _gitHubApiClient.GetContributorsCountAsync("MudBlazor", "MudBlazor");
