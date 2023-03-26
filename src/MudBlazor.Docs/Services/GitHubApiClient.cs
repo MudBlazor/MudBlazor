@@ -53,7 +53,7 @@ namespace MudBlazor.Docs.Services
         {
             try
             {
-                var result = await _http.GetFromJsonAsync<GitHubRepository>($"https://api.github.com/repos/{owner}/{repo}");
+                var result = await _http.GetFromJsonAsync<GitHubRepository>($"https://api.github.com:443/repos/{owner}/{repo}");
                 return result;
             }
             catch (Exception e)
@@ -67,7 +67,7 @@ namespace MudBlazor.Docs.Services
         {
             try
             {
-                var result = await _http.GetAsync($"https://api.github.com/repos/{owner}/{repo}/contributors?per_page=1&anon=true");
+                var result = await _http.GetAsync($"https://api.github.com:443/repos/{owner}/{repo}/contributors?per_page=1&anon=true");
                 var value = result.Headers.GetValues("Link").FirstOrDefault();
                 value = value.Substring(value.LastIndexOf("page=") + 5);
                 value = value.Substring(0, value.LastIndexOf(">;"));
