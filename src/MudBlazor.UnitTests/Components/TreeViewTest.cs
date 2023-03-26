@@ -203,7 +203,7 @@ namespace MudBlazor.UnitTests.Components
             //                 <svg..........</svg>
             //             </div>
             //             <div style="display: grid; grid-template-columns: 1fr auto; align-items: center; width: 100%">
-            //                 <p class="mud-typography mud-typography-body1" style="justify-self: start;">.github</p>
+            //                 <p class="mud-typography mud-typography-body1" style="justify-self: start;">Item One</p>
             //                 <div style="justify-self: end;">
             //                     <button type="button"><span class="mud-icon-button-label"><svg>..........</svg></span>
             //                     </button>
