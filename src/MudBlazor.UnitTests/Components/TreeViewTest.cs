@@ -186,5 +186,36 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.DeselectSecond());
             comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be(null));
         }
+        
+
+        [Test]
+        public async Task TreeViewItem_BodyContent()
+        {
+            var comp = Context.RenderComponent<TreeViewTest5>();
+            var treeView = comp.FindComponent<MudTreeView<string>>();
+
+            // TODO: Test that content are:
+            // <ul class="mud-treeview mud-treeview-hover mud-treeview-selected-primary mud-treeview-checked-default" style="width:100%;">
+            //     <li class="mud-treeview-item">
+            //         <div class="mud-treeview-item-content">
+            //             <div class="mud-treeview-item-arrow"></div>
+            //             <div class="mud-treeview-item-icon">
+            //                 <svg..........</svg>
+            //             </div>
+            //             <div style="display: grid; grid-template-columns: 1fr auto; align-items: center; width: 100%">
+            //                 <p class="mud-typography mud-typography-body1" style="justify-self: start;">.github</p>
+            //                 <div style="justify-self: end;">
+            //                     <button type="button"><span class="mud-icon-button-label"><svg>..........</svg></span>
+            //                     </button>
+            //                     <button type="button"><span class="mud-icon-button-label"><svg>..........</svg></span>
+            //                     </button>
+            //                 </div>
+            //             </div>
+            //         </div>
+            //     </li>
+            // </ul>            
+            
+        }
+        
     }
 }
