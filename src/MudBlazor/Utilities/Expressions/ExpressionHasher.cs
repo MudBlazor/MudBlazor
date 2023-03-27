@@ -28,43 +28,33 @@ namespace MudBlazor.Utilities.Expressions
 
         private sealed class HashVisitor : ExpressionVisitor
         {
-            private int _hashCode;
+            private HashCode _hashCode;
 
             public HashVisitor()
             {
-                _hashCode = 0;
+                _hashCode = new HashCode();
             }
 
-            public int ToHashCode()
-            {
-                return _hashCode;
-            }
+            public int ToHashCode() => _hashCode.ToHashCode();
 
-            private void UpdateHash(int value)
-            {
-                _hashCode = HashCode.Combine(_hashCode, value);
-            }
+            private void UpdateHash(int value) => _hashCode.Add(value);
 
             private void UpdateHash(object? component)
             {
-                int? componentHash;
-
                 if (component is MemberInfo member)
                 {
-                    componentHash = member.Name.GetHashCode();
+                    _hashCode.Add(member.Name.GetHashCode());
 
                     var declaringType = member.DeclaringType;
                     if (declaringType?.AssemblyQualifiedName is not null)
                     {
-                        componentHash = HashCode.Combine(componentHash, declaringType.AssemblyQualifiedName.GetHashCode());
+                        _hashCode.Add(declaringType.AssemblyQualifiedName.GetHashCode());
                     }
                 }
                 else
                 {
-                    componentHash = component?.GetHashCode();
+                    _hashCode.Add(component);
                 }
-
-                _hashCode = HashCode.Combine(_hashCode, componentHash);
             }
 
             [return: NotNullIfNotNull(nameof(node))]
