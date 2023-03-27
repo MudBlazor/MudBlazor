@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-
 namespace MudBlazor
 {
+#nullable enable
     public enum AlertTextPosition
     {
         [Description("center")]
