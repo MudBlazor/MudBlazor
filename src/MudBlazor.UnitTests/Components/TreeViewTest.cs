@@ -194,27 +194,15 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TreeViewTest5>();
             var treeView = comp.FindComponent<MudTreeView<string>>();
 
-            // TODO: Test that content are:
-            // <ul class="mud-treeview mud-treeview-hover mud-treeview-selected-primary mud-treeview-checked-default" style="width:100%;">
-            //     <li class="mud-treeview-item">
-            //         <div class="mud-treeview-item-content">
-            //             <div class="mud-treeview-item-arrow"></div>
-            //             <div class="mud-treeview-item-icon">
-            //                 <svg..........</svg>
-            //             </div>
-            //             <div style="display: grid; grid-template-columns: 1fr auto; align-items: center; width: 100%">
-            //                 <p class="mud-typography mud-typography-body1" style="justify-self: start;">Item One</p>
-            //                 <div style="justify-self: end;">
-            //                     <button type="button"><span class="mud-icon-button-label"><svg>..........</svg></span>
-            //                     </button>
-            //                     <button type="button"><span class="mud-icon-button-label"><svg>..........</svg></span>
-            //                     </button>
-            //                 </div>
-            //             </div>
-            //         </div>
-            //     </li>
-            // </ul>            
-            
+            comp.FindAll("ul.mud-treeview").Count.Should().Be(1);
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(1);
+            comp.FindAll("div.mud-treeview-item-content").Count.Should().Be(1);
+            comp.FindAll("div.mud-treeview-item-arrow").Count.Should().Be(1);
+            comp.FindAll("div.mud-treeview-item-icon").Count.Should().Be(1);
+            comp.FindAll("div.mud-treeview-item-bodycontent").Count.Should().Be(1);
+            comp.Find("p.mud-typography").InnerHtml.MarkupMatches("Item One");
+            comp.FindAll("div").Count.Should().Be(5);
+            comp.FindAll("button").Count.Should().Be(2);          
         }
         
     }
