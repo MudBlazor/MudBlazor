@@ -3,12 +3,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
-
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudAlert : MudComponentBase
     {
         protected string Classname =>
@@ -122,16 +121,16 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Alert.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// Custom icon, leave unset to use the standard icon which depends on the Severity
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
 
-        protected string _icon;
+        protected string? _icon;
 
         internal Task OnCloseIconClickAsync()
         {
@@ -171,5 +170,3 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
     }
 }
-
-
