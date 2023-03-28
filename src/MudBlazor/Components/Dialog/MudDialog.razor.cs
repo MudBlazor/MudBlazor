@@ -26,21 +26,21 @@ namespace MudBlazor
         [Inject] public IDialogService DialogService { get; set; }
 
         /// <summary>
-        /// Define the dialog title as a renderfragment (overrides Title)
+        /// Define the dialog title as a renderfragment (overrides Title).
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
         public RenderFragment TitleContent { get; set; }
 
         /// <summary>
-        /// Define the dialog body here
+        /// Define the dialog body here.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
         public RenderFragment DialogContent { get; set; }
 
         /// <summary>
-        /// Define the action buttons here
+        /// Define the action buttons here.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
@@ -65,35 +65,35 @@ namespace MudBlazor
         public EventCallback<MouseEventArgs> OnBackdropClick { get; set; }
 
         /// <summary>
-        /// No padding at the sides
+        /// No padding at the sides.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
         public bool DisableSidePadding { get; set; }
 
         /// <summary>
-        /// CSS class that will be applied to the dialog content
+        /// CSS class that will be applied to the dialog content.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
         public string ClassContent { get; set; }
 
         /// <summary>
-        /// CSS class that will be applied to the action buttons container
+        /// CSS class that will be applied to the action buttons container.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
         public string ClassActions { get; set; }
 
         /// <summary>
-        /// CSS styles to be applied to the dialog content
+        /// CSS styles to be applied to the dialog content.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
         public string ContentStyle { get; set; }
 
         /// <summary>
-        /// Bind this two-way to show and close an inlined dialog. Has no effect on opened dialogs
+        /// Bind this two-way to show and close an inlined dialog. Has no effect on opened dialogs.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
@@ -116,7 +116,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
 
         /// <summary>
-        /// Define the dialog title as a renderfragment (overrides Title)
+        /// Define the element that will get focus when opening a dialog.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
@@ -127,7 +127,7 @@ namespace MudBlazor
         private IDialogReference _reference;
 
         /// <summary>
-        /// Show this inlined dialog
+        /// Show this inlined dialog.
         /// </summary>
         /// <param name="title"></param>
         /// <param name="options"></param>
@@ -180,7 +180,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Used for forwarding state changes from inlined dialog to its instance
+        /// Used for forwarding state changes from inlined dialog to its instance.
         /// </summary>
         internal void ForceUpdate()
         {
@@ -188,7 +188,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Close the currently open inlined dialog
+        /// Close the currently open inlined dialog.
         /// </summary>
         /// <param name="result"></param>
         public void Close(DialogResult result = null)
