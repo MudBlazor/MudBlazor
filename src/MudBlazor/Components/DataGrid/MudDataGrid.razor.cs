@@ -331,6 +331,11 @@ namespace MudBlazor
         [Parameter] public bool MultiSelection { get; set; }
 
         /// <summary>
+        /// When true, row-click also toggles the checkbox state
+        /// </summary>
+        [Parameter] public bool SelectOnRowClick { get; set; } = true;
+
+        /// <summary>
         /// When the grid is not read only, you can specify what type of editing mode to use.
         /// </summary>
         [Parameter] public DataGridEditMode? EditMode { get; set; }
@@ -1108,7 +1113,7 @@ namespace MudBlazor
         /// <returns></returns>
         public async Task SetSelectedItemAsync(T item)
         {
-            if (MultiSelection)
+            if (MultiSelection && SelectOnRowClick)
             {
                 if (Selection.Contains(item))
                 {
