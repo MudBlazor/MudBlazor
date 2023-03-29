@@ -589,5 +589,11 @@ namespace MudBlazor
             if (SelectedItemsChanged.HasDelegate)
                 SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
+
+        private string ClearFilterCache()
+        {
+            _currentRenderFilteredItemsCached = false; 
+            return ""; 
+        }
     }
 }
