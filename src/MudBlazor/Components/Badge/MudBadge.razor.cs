@@ -3,11 +3,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudBadge : MudComponentBase
     {
         protected string Classname =>
@@ -107,7 +107,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Badge.Behavior)]
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
 
         /// <summary>
         /// Max value to show when content is integer type.
@@ -121,28 +121,28 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Badge.Behavior)]
-        public object Content { get; set; }
+        public object? Content { get; set; }
 
         /// <summary>
         /// Badge class names, separated by space.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Badge.Appearance)]
-        public string BadgeClass { get; set; }
+        public string? BadgeClass { get; set; }
 
         /// <summary>
         /// Child content of component, the content that the badge will apply to.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Badge.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// Button click event if set.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        private string _content;
+        private string? _content;
 
         internal Task HandleBadgeClick(MouseEventArgs e)
         {
