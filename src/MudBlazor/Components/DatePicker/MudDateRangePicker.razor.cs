@@ -265,7 +265,7 @@ namespace MudBlazor
 
         protected internal override async void Submit()
         {
-            if (ReadOnly)
+            if (GetReadOnlyState())
                 return;
             if (_firstDate == null || _secondDate == null)
                 return;

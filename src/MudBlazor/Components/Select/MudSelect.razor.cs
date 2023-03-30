@@ -670,7 +670,7 @@ namespace MudBlazor
 
         public async Task ToggleMenu()
         {
-            if (Disabled || ReadOnly)
+            if (GetDisabledState() || GetReadOnlyState())
                 return;
             if (_isOpen)
                 await CloseMenu(true);
@@ -680,7 +680,7 @@ namespace MudBlazor
 
         public async Task OpenMenu()
         {
-            if (Disabled || ReadOnly)
+            if (GetDisabledState() || GetReadOnlyState())
                 return;
             _isOpen = true;
             UpdateIcon();
@@ -862,7 +862,7 @@ namespace MudBlazor
 
         internal async void HandleKeyDown(KeyboardEventArgs obj)
         {
-            if (Disabled || ReadOnly)
+            if (GetDisabledState() || GetReadOnlyState())
                 return;
             var key = obj.Key.ToLowerInvariant();
             if (_isOpen && key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))

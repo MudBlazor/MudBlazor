@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudPicker<T> : MudFormComponent<T, string>, IReadOnlyDisabledFormComponent
+    public partial class MudPicker<T> : MudFormComponent<T, string>
     {
         protected IKeyInterceptor _keyInterceptor;
 
@@ -31,7 +31,7 @@ namespace MudBlazor
                 .AddClass($"mud-elevation-{_pickerElevation}", PickerVariant == PickerVariant.Static)
                 .AddClass($"mud-picker-input-button", !Editable && PickerVariant != PickerVariant.Static)
                 .AddClass($"mud-picker-input-text", Editable && PickerVariant != PickerVariant.Static)
-                .AddClass($"mud-disabled", Disabled && PickerVariant != PickerVariant.Static)
+                .AddClass($"mud-disabled", GetDisabledState() && PickerVariant != PickerVariant.Static)
                 .AddClass(Class)
                 .Build();
 
@@ -130,13 +130,6 @@ namespace MudBlazor
         public bool Square { get; set; }
 
         /// <summary>
-        /// If true, no date or time can be defined.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool ReadOnly { get; set; }
-
-        /// <summary>
         /// If true, border-radius is set to theme default when in Static Mode.
         /// </summary>
         [Parameter]
@@ -177,6 +170,17 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
+        [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
+        protected bool GetDisabledState() => Disabled || ParentDisabled;
+
+        /// <summary>
+        /// If true, no date or time can be defined.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool ReadOnly { get; set; }
+        [CascadingParameter(Name = "ParentReadOnly")] private bool ParentReadOnly { get; set; }
+        protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         /// <summary>
         /// If true, the picker will be editable.
@@ -474,7 +478,7 @@ namespace MudBlazor
 
         protected internal void ToggleState()
         {
-            if (Disabled)
+            if (GetDisabledState() || GetReadOnlyState())
                 return;
             if (IsOpen)
             {
@@ -522,7 +526,7 @@ namespace MudBlazor
 
         protected internal virtual void HandleKeyDown(KeyboardEventArgs obj)
         {
-            if (Disabled || ReadOnly)
+            if (GetDisabledState() || GetReadOnlyState())
                 return;
             switch (obj.Key)
             {

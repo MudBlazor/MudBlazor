@@ -25,8 +25,8 @@
                 @attributes="UserAttributes"
                 type="@InputTypeString"                  
                 placeholder="@Placeholder" 
-                disabled=@Disabled 
-                readonly="@ReadOnly" 
+                disabled=@GetDisabledState() 
+                readonly="@GetReadOnlyState()" 
                 inputmode="@InputMode.ToString()"
 			    @oninput="OnInput" 
                 @onchange="OnChange" 
@@ -60,8 +60,8 @@
                 @oninput="OnInput" 
                 @onchange="OnChange"
                 placeholder="@Placeholder" 
-                disabled=@Disabled 
-                readonly="@ReadOnly" 
+                disabled=@GetDisabledState()
+                readonly="@GetReadOnlyState()"
                 @onblur="@OnBlurred" 
                 inputmode="@InputMode.ToString()" 
                 pattern="@Pattern"
@@ -79,7 +79,7 @@
          />
 	     @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
       
-         @if (Disabled) {
+         @if (GetDisabledState()) {
              @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.
                            In Disabled state the tabindex attribute must NOT be set at all or else it will get focus on click
              *@
@@ -103,7 +103,7 @@
         }
     }
 
-	@if (_showClearable && !Disabled)
+	@if (_showClearable && !GetDisabledState())
     {
         <MudIconButton Class="@ClearButtonClassname"
                     Color="@Color.Default" 
@@ -136,10 +136,10 @@
 	@if (!HideSpinButtons)
 	{
 	    <div class="mud-input-numeric-spin">
-            <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1">
+            <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(GetDisabledState() || GetReadOnlyState())" tabindex="-1">
                 <MudIcon aria-label="Increment" Icon="@NumericUpIcon" Size="@GetButtonSize()" />
             </MudButton>
-            <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1">
+            <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(GetDisabledState() || GetReadOnlyState())" tabindex="-1">
                 <MudIcon aria-label="Decrement" Icon="@NumericDownIcon" Size="@GetButtonSize()" />
             </MudButton>
 	    </div>

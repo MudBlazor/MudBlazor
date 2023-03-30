@@ -65,29 +65,15 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
-        public bool? ReadOnly { get; set; }
-        private bool _readOnly;
-        /// <summary>
-        /// If true, this form or one of its parents has a non-null ReadOnly parameter
-        /// </summary>
-        private bool ShouldSetReadOnly => ReadOnly != null || ParentMudForm?.ShouldSetReadOnly == true;
-        /// <summary>
-        /// If true, this form or one of its parents is ReadOnly
-        /// </summary>
-        internal bool IsReadOnly => ReadOnly == true || ParentMudForm?.IsReadOnly == true;
+        public bool Disabled { get; set; }
+        [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
+        protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
-        public bool? Disabled { get; set; }
-        private bool _disabled;
-        /// <summary>
-        /// If true, this form or one of its parents has a non-null Disabled parameter
-        /// </summary>
-        private bool ShouldSetDisabled => Disabled != null || ParentMudForm?.ShouldSetDisabled == true;
-        /// <summary>
-        /// If true, this form or one of its parents is Disabled
-        /// </summary>
-        internal bool IsDisabled => Disabled == true || ParentMudForm?.IsDisabled == true;
+        public bool ReadOnly { get; set; }
+        [CascadingParameter(Name = "ParentReadOnly")] private bool ParentReadOnly { get; set; }
+        protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         /// <summary>
         /// Validation debounce delay in milliseconds. This can help improve rendering performance of forms with real-time validation of inputs
@@ -197,14 +183,6 @@ namespace MudBlazor
                 SetIsValid(false);
             _formControls.Add(formControl);
             SetDefaultControlValidation(formControl);
-
-            if (formControl is IReadOnlyDisabledFormComponent component) //automatically set the readonly and disabled state when adding new components
-            {
-                if (ShouldSetReadOnly)
-                    component.ReadOnly = IsReadOnly;
-                if (ShouldSetDisabled)
-                    component.Disabled = IsDisabled;
-            }
         }
 
         void IForm.Remove(IFormComponent formControl)
@@ -346,35 +324,6 @@ namespace MudBlazor
             {
                 formComponent.Validation = Validation;
             }
-        }
-
-        protected override void OnParametersSet()
-        {
-            if (ShouldSetReadOnly && _readOnly != IsReadOnly) //only run if the readonly state has changed
-            {
-                _readOnly = IsReadOnly;
-                foreach (var control in _formControls)
-                {
-                    if (control is IReadOnlyDisabledFormComponent readOnlyDisabledFormComponent)
-                    {
-                        readOnlyDisabledFormComponent.ReadOnly = _readOnly;
-                        readOnlyDisabledFormComponent.StateHasChanged();
-                    }
-                }
-            }
-            if (ShouldSetDisabled && _disabled != IsDisabled) //only run if the disabled state has changed
-            {
-                _disabled = IsDisabled;
-                foreach (var control in _formControls)
-                {
-                    if (control is IReadOnlyDisabledFormComponent readOnlyDisabledFormComponent)
-                    {
-                        readOnlyDisabledFormComponent.Disabled = _disabled;
-                        readOnlyDisabledFormComponent.StateHasChanged();
-                    }
-                }
-            }
-            base.OnParametersSet();
         }
 
         protected override void OnInitialized()

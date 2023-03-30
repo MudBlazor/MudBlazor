@@ -270,7 +270,7 @@ namespace MudBlazor
 
         protected async Task HandleKeydown(KeyboardEventArgs obj)
         {
-            if (Disabled || ReadOnly)
+            if (GetDisabledState() || GetReadOnlyState())
                 return;
             switch (obj.Key)
             {
@@ -286,7 +286,7 @@ namespace MudBlazor
 
         protected Task HandleKeyUp(KeyboardEventArgs obj)
         {
-            if (Disabled || ReadOnly)
+            if (GetDisabledState() || GetReadOnlyState())
                 return Task.CompletedTask;
             OnKeyUp.InvokeAsync(obj).AndForget();
             return Task.CompletedTask;
@@ -294,7 +294,7 @@ namespace MudBlazor
 
         protected async Task OnMouseWheel(WheelEventArgs obj)
         {
-            if (!obj.ShiftKey || Disabled || ReadOnly)
+            if (!obj.ShiftKey || GetDisabledState() || GetReadOnlyState())
                 return;
             if (obj.DeltaY < 0)
             {

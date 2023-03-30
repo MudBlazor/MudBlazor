@@ -1423,12 +1423,12 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(1);
             comp.FindAll(".mud-radio.mud-disabled").Count.Should().Be(2);
 
-            comp.FindComponent<MudTextField<string>>().Instance.Disabled.Should().BeTrue();
-            comp.FindComponent<MudNumericField<int>>().Instance.Disabled.Should().BeTrue();
-            comp.FindComponent<MudDatePicker>().Instance.Disabled.Should().BeTrue();
-            comp.FindComponent<MudSwitch<bool>>().Instance.Disabled.Should().BeTrue();
-            comp.FindComponent<MudCheckBox<bool>>().Instance.Disabled.Should().BeTrue();
-            comp.FindComponent<MudRadioGroup<string>>().Instance.Disabled.Should().BeTrue();
+            comp.FindComponent<MudTextField<string>>().Instance.Disabled.Should().BeFalse(); //the field Disabled/ReadOnly values should always be false
+            comp.FindComponent<MudNumericField<int>>().Instance.Disabled.Should().BeFalse();
+            comp.FindComponent<MudDatePicker>().Instance.Disabled.Should().BeFalse();
+            comp.FindComponent<MudSwitch<bool>>().Instance.Disabled.Should().BeFalse();
+            comp.FindComponent<MudCheckBox<bool>>().Instance.Disabled.Should().BeFalse();
+            comp.FindComponent<MudRadioGroup<string>>().Instance.Disabled.Should().BeFalse();
 
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.Disabled, false));
 
@@ -1436,13 +1436,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-switch.mud-disabled").Count.Should().Be(0);
             comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(0);
             comp.FindAll(".mud-radio.mud-disabled").Count.Should().Be(0);
-
-            comp.FindComponent<MudTextField<string>>().Instance.Disabled.Should().BeFalse();
-            comp.FindComponent<MudNumericField<int>>().Instance.Disabled.Should().BeFalse();
-            comp.FindComponent<MudDatePicker>().Instance.Disabled.Should().BeFalse();
-            comp.FindComponent<MudSwitch<bool>>().Instance.Disabled.Should().BeFalse();
-            comp.FindComponent<MudCheckBox<bool>>().Instance.Disabled.Should().BeFalse();
-            comp.FindComponent<MudRadioGroup<string>>().Instance.Disabled.Should().BeFalse();
         }
 
         /// <summaryReadonly
@@ -1470,25 +1463,18 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(1);
             comp.FindAll(".mud-radio.mud-readonly").Count.Should().Be(2);
 
-            comp.FindComponent<MudTextField<string>>().Instance.ReadOnly.Should().BeTrue();
-            comp.FindComponent<MudNumericField<int>>().Instance.ReadOnly.Should().BeTrue();
-            comp.FindComponent<MudDatePicker>().Instance.ReadOnly.Should().BeTrue();
-            comp.FindComponent<MudSwitch<bool>>().Instance.ReadOnly.Should().BeTrue();
-            comp.FindComponent<MudCheckBox<bool>>().Instance.ReadOnly.Should().BeTrue();
-            comp.FindComponent<MudRadioGroup<string>>().Instance.ReadOnly.Should().BeTrue();
-
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.ReadOnly, false));
-
-            comp.FindAll(".mud-switch.mud-readonly").Count.Should().Be(0);
-            comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(0);
-            comp.FindAll(".mud-radio.mud-readonly").Count.Should().Be(0);
-
             comp.FindComponent<MudTextField<string>>().Instance.ReadOnly.Should().BeFalse();
             comp.FindComponent<MudNumericField<int>>().Instance.ReadOnly.Should().BeFalse();
             comp.FindComponent<MudDatePicker>().Instance.ReadOnly.Should().BeFalse();
             comp.FindComponent<MudSwitch<bool>>().Instance.ReadOnly.Should().BeFalse();
             comp.FindComponent<MudCheckBox<bool>>().Instance.ReadOnly.Should().BeFalse();
             comp.FindComponent<MudRadioGroup<string>>().Instance.ReadOnly.Should().BeFalse();
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.ReadOnly, false));
+
+            comp.FindAll(".mud-switch.mud-readonly").Count.Should().Be(0);
+            comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(0);
+            comp.FindAll(".mud-radio.mud-readonly").Count.Should().Be(0);
         }
     }
 }

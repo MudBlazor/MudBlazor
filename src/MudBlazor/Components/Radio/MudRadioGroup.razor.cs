@@ -9,7 +9,7 @@ using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
-    public partial class MudRadioGroup<T> : MudFormComponent<T, T>, IMudRadioGroup, IReadOnlyDisabledFormComponent
+    public partial class MudRadioGroup<T> : MudFormComponent<T, T>, IMudRadioGroup
     {
         public MudRadioGroup() : base(new Converter<T, T>()) { }
 
@@ -62,6 +62,8 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
+        [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
+        internal bool GetDisabledState() => Disabled || ParentDisabled; //internal because the MudRadio reads this value directly
 
         /// <summary>
         /// If true, the input will be read-only.
@@ -69,6 +71,8 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
+        [CascadingParameter(Name = "ParentReadOnly")] private bool ParentReadOnly { get; set; }
+        internal bool GetReadOnlyState() => ReadOnly || ParentReadOnly; //internal because the MudRadio reads this value directly
 
         [Parameter]
         [Category(CategoryTypes.Radio.Data)]
