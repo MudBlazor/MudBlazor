@@ -688,6 +688,7 @@ namespace MudBlazor
 
                 _currentRenderFilteredItemsCache = Sort(items).ToList(); // To list to ensure evaluation only once per render
                 unchecked { FilteringRunCount++; }
+                GroupItems(noStateChange: true);
                 return _currentRenderFilteredItemsCache;
             }
         }
@@ -1225,12 +1226,12 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public void GroupItems()
+        public void GroupItems(bool noStateChange = false)
         {          
             if (GroupedColumn == null)
             {
                 _groups = new List<GroupDefinition<T>>();
-                if (_isFirstRendered)
+                if (_isFirstRendered && !noStateChange)
                     StateHasChanged();
                 return;
             }
@@ -1255,7 +1256,7 @@ namespace MudBlazor
             _groups = groupings.Select(x => new GroupDefinition<T>(x,
                 _groupExpansions.Contains(x.Key))).ToList();
 
-            if (_isFirstRendered || ServerData != null)
+            if ((_isFirstRendered || ServerData != null) && !noStateChange)
                 StateHasChanged();
         }
 
