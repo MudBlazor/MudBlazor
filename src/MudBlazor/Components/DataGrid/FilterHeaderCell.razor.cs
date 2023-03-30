@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -189,7 +190,7 @@ namespace MudBlazor
                 DataGrid.FilterDefinitions.Add(filterDefinition);
 
             DataGrid.GroupItems();
-            DataGrid.ExternalStateHasChanged();
+            ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
 
         private void ClearFilter()

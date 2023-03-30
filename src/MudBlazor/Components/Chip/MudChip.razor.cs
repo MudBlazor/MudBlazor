@@ -320,8 +320,6 @@ namespace MudBlazor
             return base.OnInitializedAsync();
         }
 
-        internal void ForceRerender() => StateHasChanged();
-
         //Exclude because we don't test to catching exception yet
         [ExcludeFromCodeCoverage]
         public void Dispose()

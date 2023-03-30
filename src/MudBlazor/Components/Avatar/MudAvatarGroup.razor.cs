@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -165,9 +166,9 @@ namespace MudBlazor
 
             if (_childrenNeedUpdates == true)
             {
-                foreach (var avatar in _avatars)
+                foreach (IMudStateHasChanged avatar in _avatars)
                 {
-                    avatar.ForceRedraw();
+                    avatar.StateHasChanged();
                 }
 
                 _childrenNeedUpdates = false;
