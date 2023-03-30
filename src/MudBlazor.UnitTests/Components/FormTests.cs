@@ -1402,7 +1402,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormDisabledTest()
         {
-            var comp = Context.RenderComponent<FormDisabledReadOnlyTest>();
+            var comp = Context.RenderComponent<FormReadOnlyDisabledTest>();
 
             comp.FindAll(".mud-input.mud-disabled").Count.Should().Be(0);
             comp.FindAll(".mud-switch.mud-disabled").Count.Should().Be(0);
@@ -1444,7 +1444,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ForReadonlyTest()
         {
-            var comp = Context.RenderComponent<FormDisabledReadOnlyTest>();
+            var comp = Context.RenderComponent<FormReadOnlyDisabledTest>();
 
             comp.FindAll(".mud-switch.mud-readonly").Count.Should().Be(0);
             comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(0);
@@ -1475,6 +1475,50 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-switch.mud-readonly").Count.Should().Be(0);
             comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(0);
             comp.FindAll(".mud-radio.mud-readonly").Count.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Ensures the child MudForm correctly inherits ReadOnly and applies it to its children
+        /// </summary>
+        [Test]
+        public async Task FormNestedReadOnlyTest()
+        {
+            var comp = Context.RenderComponent<FormNestedReadOnlyDisabledTest>();
+            comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(0);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.ReadOnly, true));
+            comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(1);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.NestedReadOnly, true));
+            comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(1);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.ReadOnly, true).Add(p => p.NestedReadOnly, true));
+            comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(1);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.ReadOnly, false).Add(p => p.NestedReadOnly, false));
+            comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Ensures the child MudForm correctly inherits Disabled and applies it to its children
+        /// </summary>
+        [Test]
+        public async Task FormNestedDisabledTest()
+        {
+            var comp = Context.RenderComponent<FormNestedReadOnlyDisabledTest>();
+            comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(0);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Disabled, true));
+            comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(1);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.NestedDisabled, true));
+            comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(1);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Disabled, true).Add(p => p.NestedDisabled, true));
+            comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(1);
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Disabled, false).Add(p => p.NestedDisabled, false));
+            comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(0);
         }
     }
 }
