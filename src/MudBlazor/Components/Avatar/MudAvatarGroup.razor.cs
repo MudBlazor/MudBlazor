@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     partial class MudAvatarGroup : MudComponentBase
     {
         private bool _childrenNeedUpdates = false;
@@ -124,14 +124,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Appearance)]
-        public string MaxAvatarClass { get; set; }
+        public string? MaxAvatarClass { get; set; }
 
         /// <summary>
         /// Child content of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         internal List<MudAvatar> _avatars = new();
 
@@ -154,10 +154,7 @@ namespace MudBlazor
 
         internal bool MaxGroupReached(MudAvatar avatar)
         {
-            if (_avatars.IndexOf(avatar) < Max)
-                return true;
-            else
-                return false;
+            return _avatars.IndexOf(avatar) < Max;
         }
 
         protected override void OnParametersSet()
