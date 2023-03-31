@@ -11,6 +11,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -2798,7 +2799,7 @@ namespace MudBlazor.UnitTests.Components
                 clickablePopover.Click();
 
                 //dataGrid.Instance._columns[0].Hide();
-                dataGrid.Instance.ExternalStateHasChanged();
+                ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(1);
             await comp.InvokeAsync(() =>
@@ -2823,7 +2824,7 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
 
                 //dataGrid.Instance._columns[0].Hide();
-                dataGrid.Instance.ExternalStateHasChanged();
+                ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
 
