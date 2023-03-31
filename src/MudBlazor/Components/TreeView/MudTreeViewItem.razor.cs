@@ -337,7 +337,7 @@ namespace MudBlazor
             if (HasChild && (MudTreeRoot?.ExpandOnClick ?? false))
             {
                 Expanded = !Expanded;
-                TryInvokeServerLoadFunc();
+                await TryInvokeServerLoadFunc();
                 await ExpandedChanged.InvokeAsync(Expanded);
             }
 
@@ -358,7 +358,7 @@ namespace MudBlazor
             if (HasChild && (MudTreeRoot?.ExpandOnDoubleClick ?? false))
             {
                 Expanded = !Expanded;
-                TryInvokeServerLoadFunc();
+                await TryInvokeServerLoadFunc();
                 await ExpandedChanged.InvokeAsync(Expanded);
             }
 
@@ -371,7 +371,7 @@ namespace MudBlazor
                 return Task.CompletedTask;
 
             Expanded = expanded;
-            TryInvokeServerLoadFunc();
+            await TryInvokeServerLoadFunc();
             return ExpandedChanged.InvokeAsync(expanded);
         }
 
@@ -445,7 +445,7 @@ namespace MudBlazor
             }
         }
 
-        internal async void TryInvokeServerLoadFunc()
+        internal async Task TryInvokeServerLoadFunc()
         {
             if (Expanded && (Items == null || Items.Count == 0) && _canExpand && MudTreeRoot?.ServerData != null)
             {
@@ -460,5 +460,6 @@ namespace MudBlazor
                 StateHasChanged();
             }
         }
+
     }
 }
