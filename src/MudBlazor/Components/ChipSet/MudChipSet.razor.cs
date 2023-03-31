@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -57,8 +58,8 @@ namespace MudBlazor
                     return;
                 _filter = value;
                 StateHasChanged();
-                foreach (var chip in _chips)
-                    chip.ForceRerender();
+                foreach (IMudStateHasChanged chip in _chips)
+                    chip.StateHasChanged();
             }
         }
 

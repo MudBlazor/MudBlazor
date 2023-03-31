@@ -657,7 +657,11 @@ namespace MudBlazor
         public IEnumerable<T> ServerItems => _server_data.Items;
         private GridData<T> _server_data = new GridData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
-        public uint FilteringRunCount { get; private set; }
+
+        /// <summary>
+        /// For unit testing the filtering cache mechanism.
+        /// </summary>
+        internal uint FilteringRunCount { get; private set; }
 
         // TODO: When adding one FilterDefinition, this is called once for each RenderedColumn...
         public IEnumerable<T> FilteredItems
@@ -684,6 +688,7 @@ namespace MudBlazor
 
                 _currentRenderFilteredItemsCache = Sort(items).ToList(); // To list to ensure evaluation only once per render
                 unchecked { FilteringRunCount++; }
+                GroupItems(noStateChange: true);
                 return _currentRenderFilteredItemsCache;
             }
         }
@@ -1216,17 +1221,12 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        internal void ExternalStateHasChanged()
-        {
-            StateHasChanged();
-        }
-
-        public void GroupItems()
+        public void GroupItems(bool noStateChange = false)
         {          
             if (GroupedColumn == null)
             {
                 _groups = new List<GroupDefinition<T>>();
-                if (_isFirstRendered)
+                if (_isFirstRendered && !noStateChange)
                     StateHasChanged();
                 return;
             }
@@ -1251,7 +1251,7 @@ namespace MudBlazor
             _groups = groupings.Select(x => new GroupDefinition<T>(x,
                 _groupExpansions.Contains(x.Key))).ToList();
 
-            if (_isFirstRendered || ServerData != null)
+            if ((_isFirstRendered || ServerData != null) && !noStateChange)
                 StateHasChanged();
         }
 

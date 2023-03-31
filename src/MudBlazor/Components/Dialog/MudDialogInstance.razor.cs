@@ -317,11 +317,6 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public void ForceRender()
-        {
-            StateHasChanged();
-        }
-
         /// <summary>
         /// Cancels all dialogs in dialog provider collection.
         /// </summary>

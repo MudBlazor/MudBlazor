@@ -1,13 +1,13 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     partial class MudAvatar : MudComponentBase, IDisposable
     {
-        [CascadingParameter] protected MudAvatarGroup AvatarGroup { get; set; }
+        [CascadingParameter] protected MudAvatarGroup? AvatarGroup { get; set; }
         protected string Classname =>
         new CssBuilder("mud-avatar")
           .AddClass($"mud-avatar-{Size.ToDescriptionString()}")
@@ -52,14 +52,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Obsolete("Add a MudImage as the ChildContent instead", false)]
-        public string Image { get; set; }
+        public string? Image { get; set; }
 
         /// <summary>
         /// If set (and Image is also set), will add an alt property to the img element
         /// </summary>
         [Parameter]
         [Obsolete("Add a MudImage as the ChildContent instead", false)]
-        public string Alt { get; set; }
+        public string? Alt { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -87,7 +87,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Avatar.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         protected override void OnInitialized()
         {
@@ -99,11 +99,6 @@ namespace MudBlazor
         public void Dispose()
         {
             AvatarGroup?.RemoveAvatar(this);
-        }
-
-        internal void ForceRedraw()
-        {
-            StateHasChanged();
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -344,21 +345,21 @@ namespace MudBlazor
         internal void ApplyFilter()
         {
             DataGrid.FilterDefinitions.Add(Column.FilterContext.FilterDefinition);
-            DataGrid.ExternalStateHasChanged();
+            ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
         }
 
         internal void ApplyFilter(FilterDefinition<T> filterDefinition)
         {
             DataGrid.FilterDefinitions.Add(filterDefinition);
-            DataGrid.ExternalStateHasChanged();
+            ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
         }
 
         internal void ApplyFilters(IEnumerable<FilterDefinition<T>> filterDefinitions)
         {
             DataGrid.FilterDefinitions.AddRange(filterDefinitions);
-            DataGrid.ExternalStateHasChanged();
+            ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
         }
 
@@ -378,7 +379,7 @@ namespace MudBlazor
         internal void ClearFilters(IEnumerable<FilterDefinition<T>> filterDefinitions)
         {
             DataGrid.FilterDefinitions.RemoveAll(x => filterDefinitions.Any(y => y.Id == x.Id));
-            DataGrid.ExternalStateHasChanged();
+            ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
         }
 
@@ -392,7 +393,7 @@ namespace MudBlazor
             if (Column != null)
             {
                 await Column.HideAsync();
-                DataGrid.ExternalStateHasChanged();
+                ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
         }
 

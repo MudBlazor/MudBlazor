@@ -11,8 +11,8 @@
             href="@Href" 
             target="@Target"
             rel="@(Target=="_blank"?"noopener":null)"
-            disabled="@Disabled"
-			title="@Title">
+            disabled="@GetDisabledState()"
+            title="@Title">
     @if (!String.IsNullOrEmpty(Icon))
     {
         <span class="mud-icon-button-label">

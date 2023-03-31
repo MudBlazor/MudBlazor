@@ -76,7 +76,7 @@ namespace MudBlazor
             Fragment = fragment;
             SetComponentBaseParameters(componentBase, @class, @style, showContent);
             // this basically calls StateHasChanged on the Popover
-            ElementReference?.ForceRender();
+            ElementReference?.StateHasChanged();
             _updater?.Invoke(); // <-- this doesn't do anything anymore except making unit tests happy 
         }
 

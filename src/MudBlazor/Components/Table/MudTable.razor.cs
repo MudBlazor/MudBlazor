@@ -354,9 +354,7 @@ namespace MudBlazor
         /// <summary>
         /// For unit testing the filtering cache mechanism.
         /// </summary>
-        public uint FilteringRunCount { get; private set; } = 0;
-
-
+        internal uint FilteringRunCount { get; private set; } = 0;
 
         public IEnumerable<T> FilteredItems
         {
@@ -590,6 +588,12 @@ namespace MudBlazor
 
             if (SelectedItemsChanged.HasDelegate)
                 SelectedItemsChanged.InvokeAsync(SelectedItems);
+        }
+
+        private string ClearFilterCache()
+        {
+            _currentRenderFilteredItemsCached = false; 
+            return ""; 
         }
     }
 }

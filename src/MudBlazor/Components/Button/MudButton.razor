@@ -11,7 +11,7 @@
             href="@Href" 
             target="@Target"
             rel="@(Target=="_blank"?"noopener":null)"
-            disabled="@Disabled">
+            disabled="@GetDisabledState()">
     <span class="mud-button-label">
         @if (!string.IsNullOrWhiteSpace(StartIcon))
         {
