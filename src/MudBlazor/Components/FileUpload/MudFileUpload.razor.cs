@@ -49,7 +49,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
         public EventCallback<T> FilesChanged { get; set; }
-
         /// <summary>
         /// Called when the internal files are changed
         /// </summary>
@@ -104,7 +103,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
         public int MaximumFileCount { get; set; } = 10;
-
         /// <summary>
         /// Disables the FileUpload
         /// </summary>
