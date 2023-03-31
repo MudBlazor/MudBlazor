@@ -18,9 +18,14 @@ namespace MudBlazor
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public RenderFragment ChildContent { get; set; }
 
+        [Obsolete("Use OnSwipeEnd instead.")]
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public Action<SwipeDirection> OnSwipe { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.SwipeArea.Behavior)]
+        public EventCallback<SwipeEventArgs> OnSwipeEnd { get; set; }
 
         /// <summary>
         /// Swipe threshold in pixels. If SwipeDelta is below Sensitivity then OnSwipe is not called.
@@ -81,7 +86,7 @@ namespace MudBlazor
             _yDown = arg.Touches[0].ClientY;
         }
 
-        internal void OnTouchEnd(TouchEventArgs arg)
+        internal async void OnTouchEnd(TouchEventArgs arg)
         {
             if (_xDown == null || _yDown == null)
                 return;
@@ -97,27 +102,45 @@ namespace MudBlazor
 
             if (Math.Abs(xDiff) > Math.Abs(yDiff))
             {
+                _swipeDelta = xDiff;
                 if (xDiff > 0)
                 {
-                    InvokeAsync(() => OnSwipe(SwipeDirection.RightToLeft));
+                    await OnSwipeEnd.InvokeAsync(new SwipeEventArgs() { Sender = this, SwipeDelta = _swipeDelta, TouchEventArgs = arg, SwipeDirection = SwipeDirection.RightToLeft });
+                    if (OnSwipe != null)
+                    {
+                        await InvokeAsync(() => OnSwipe(SwipeDirection.RightToLeft));
+                    }
                 }
                 else
                 {
-                    InvokeAsync(() => OnSwipe(SwipeDirection.LeftToRight));
+                    await OnSwipeEnd.InvokeAsync(new SwipeEventArgs() { Sender = this, SwipeDelta = _swipeDelta, TouchEventArgs = arg, SwipeDirection = SwipeDirection.LeftToRight });
+                    if (OnSwipe != null)
+                    {
+                        await InvokeAsync(() => OnSwipe(SwipeDirection.LeftToRight));
+                    }
                 }
-                _swipeDelta = xDiff;
+                
             }
             else
             {
+                _swipeDelta = yDiff;
                 if (yDiff > 0)
                 {
-                    InvokeAsync(() => OnSwipe(SwipeDirection.BottomToTop));
+                    await OnSwipeEnd.InvokeAsync(new SwipeEventArgs() { Sender = this, SwipeDelta = _swipeDelta, TouchEventArgs = arg, SwipeDirection = SwipeDirection.BottomToTop });
+                    if (OnSwipe != null)
+                    {
+                        await InvokeAsync(() => OnSwipe(SwipeDirection.BottomToTop));
+                    }
                 }
                 else
                 {
-                    InvokeAsync(() => OnSwipe(SwipeDirection.TopToBottom));
+                    await OnSwipeEnd.InvokeAsync(new SwipeEventArgs() { Sender = this, SwipeDelta = _swipeDelta, TouchEventArgs = arg, SwipeDirection = SwipeDirection.TopToBottom });
+                    if (OnSwipe != null)
+                    {
+                        await InvokeAsync(() => OnSwipe(SwipeDirection.TopToBottom));
+                    }
                 }
-                _swipeDelta = yDiff;
+                
             }
             _xDown = _yDown = null;
         }
@@ -125,11 +148,20 @@ namespace MudBlazor
         /// <summary>
         /// The last successful swipe difference in pixels since the last OnSwipe invocation
         /// </summary>
+        [Obsolete("Use OnSwipeEnd to get SwipeDelta")]
         public double? GetSwipeDelta() => _swipeDelta;
 
         internal void OnTouchCancel(TouchEventArgs arg)
         {
             _xDown = _yDown = null;
         }
+    }
+
+    public class SwipeEventArgs
+    {
+        public TouchEventArgs TouchEventArgs { get; set; }
+        public double? SwipeDelta { get; set; }
+        public MudSwipeArea Sender { get; set; }
+        public SwipeDirection SwipeDirection { get; set; }
     }
 }
