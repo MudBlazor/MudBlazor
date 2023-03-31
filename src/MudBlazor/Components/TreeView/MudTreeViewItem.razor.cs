@@ -378,13 +378,13 @@ namespace MudBlazor
         /// <summary>
         /// Clear the tree items, and try to reload from server.
         /// </summary>
-        public void Reload()
+        public async Task ReloadAsync()
         {
             if (Items != null)
             {
                 Items.Clear();
             }
-            TryInvokeServerLoadFunc();
+            await TryInvokeServerLoadFunc();
 
             if (Parent != null)
             {
