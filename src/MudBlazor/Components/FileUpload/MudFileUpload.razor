@@ -5,10 +5,13 @@
 
 <MudInputControl Class="@Classname" Style="@Style" Error="HasErrors" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
-        <InputFile OnChange="OnChange" id="@_id" class="@InputClass" style="@InputStyle" hidden="@(Hidden ? "" : null)" multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)" accept="@Accept" @attributes="UserAttributes" />
+        <InputFile OnChange="OnChange" id="@_id" class="@InputClass" style="@InputStyle" hidden="@(Hidden ? "" : null)" multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)" 
+            accept="@Accept" disabled="@(GetDisabledState())" @attributes="UserAttributes" />
         @if (ButtonTemplate != null)
         {
-            @ButtonTemplate(_id)
+            <CascadingValue Name="ParentDisabled" Value="GetDisabledState()">
+                @ButtonTemplate(_id)
+            </CascadingValue>
         }
         @if (SelectedTemplate != null)
         {

@@ -11,8 +11,8 @@
             href="@Href"
             target="@Target"
             rel="@(Target=="_blank"?"noopener":null)"
-            disabled="@Disabled"
-			title="@Title">
+            disabled="@GetDisabledState()"
+            title="@Title">
     <span class="mud-fab-label">
         @if (!string.IsNullOrWhiteSpace(StartIcon))
         {

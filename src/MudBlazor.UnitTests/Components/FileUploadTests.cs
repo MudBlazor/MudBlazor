@@ -240,5 +240,21 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.Files.Count.Should().Be(11); //if no error occurs, we have successfully uploaded more than 10 files
         }
+
+        /// <summary>
+        /// Makes sure the file upload is disabled
+        /// </summary>
+        [Test]
+        public void FileUploadDisabledTest()
+        {
+            var comp = Context.RenderComponent<FileUploadDisabledTest>();
+            comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("input").HasAttribute("disabled").Should().BeFalse();
+            comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("label").HasAttribute("disabled").Should().BeFalse();
+
+            comp.SetParametersAndRender(parameters => parameters.Add(x => x.Disabled, true)); //The input and child button should be disabled when file upload is disabled
+
+            comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("input").HasAttribute("disabled").Should().BeTrue();
+            comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("button").HasAttribute("disabled").Should().BeTrue(); //we need to test for a button as the MudButton replaces disabled labels with buttons
+        }
     }
 }
