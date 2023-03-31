@@ -109,8 +109,10 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
         public bool Disabled { get; set; }
-        [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
-        [CascadingParameter(Name = "ParentReadOnly")] private bool ParentReadOnly { get; set; }
+        [CascadingParameter(Name = "ParentDisabled")] 
+        private bool ParentDisabled { get; set; }
+        [CascadingParameter(Name = "ParentReadOnly")] 
+        private bool ParentReadOnly { get; set; }
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
 
         private async Task OnChange(InputFileChangeEventArgs args)
