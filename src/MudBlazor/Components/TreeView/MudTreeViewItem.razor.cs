@@ -364,15 +364,13 @@ namespace MudBlazor
 
             await OnDoubleClick.InvokeAsync(ev);
         }
-
-        protected internal Task OnItemExpanded(bool expanded)
+        protected internal async Task OnItemExpanded(bool expanded)
         {
-            if (Expanded == expanded)
-                return Task.CompletedTask;
-
-            Expanded = expanded;
-            await TryInvokeServerLoadFunc();
-            return ExpandedChanged.InvokeAsync(expanded);
+            if (Expanded != expanded) {
+                Expanded = expanded;
+                await TryInvokeServerLoadFunc();
+                await ExpandedChanged.InvokeAsync(expanded);
+            }
         }
 
         /// <summary>
