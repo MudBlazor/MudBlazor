@@ -105,8 +105,19 @@ namespace MudBlazor
         [Category(CategoryTypes.FileUpload.Behavior)]
         public int MaximumFileCount { get; set; } = 10;
 
+        /// <summary>
+        /// Disables the FileUpload
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public bool Disabled { get; set; }
+        [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
+        [CascadingParameter(Name = "ParentReadOnly")] private bool ParentReadOnly { get; set; }
+        protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
+
         private async Task OnChange(InputFileChangeEventArgs args)
         {
+            if (GetDisabledState()) return;
             if (typeof(T) == typeof(IReadOnlyList<IBrowserFile>))
             {
                 _value = (T)args.GetMultipleFiles(MaximumFileCount);

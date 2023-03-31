@@ -1,9 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Docs.Examples;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -234,6 +237,25 @@ namespace MudBlazor.UnitTests.Components
             button6Span.ClassName.Contains("mud-button-icon-size-small").Should().BeTrue();
             var button6Svg = button6Span.Children[0];
             button6Svg.ClassName.Contains("mud-icon-size-small").Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Ensures buttons inherit their disabled state
+        /// </summary>
+        [Test]
+        public void ButtonsNestedDisabledTest()
+        {
+            var comp = Context.RenderComponent<ButtonsNestedDisabledTest>();
+
+            comp.FindComponent<MudButton>().Find("button").HasAttribute("disabled").Should().BeFalse();
+            comp.FindComponent<MudFab>().Find("button").HasAttribute("disabled").Should().BeFalse();
+            comp.FindComponent<MudIconButton>().Find("button").HasAttribute("disabled").Should().BeFalse();
+
+            comp.SetParametersAndRender(parameters => parameters.Add(x => x.Disabled, true)); //buttons should be disabled when the cascading value is disabled
+
+            comp.FindComponent<MudButton>().Find("button").HasAttribute("disabled").Should().BeTrue();
+            comp.FindComponent<MudFab>().Find("button").HasAttribute("disabled").Should().BeTrue();
+            comp.FindComponent<MudIconButton>().Find("button").HasAttribute("disabled").Should().BeTrue();
         }
     }
 }

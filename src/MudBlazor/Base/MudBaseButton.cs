@@ -63,6 +63,9 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public bool Disabled { get; set; }
+        [CascadingParameter(Name = "ParentDisabled")]
+        private bool ParentDisabled { get; set; }
+        protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         /// <summary>
         /// If true, no drop-shadow will be used.
@@ -99,7 +102,7 @@ namespace MudBlazor
 
         protected virtual async Task OnClickHandler(MouseEventArgs ev)
         {
-            if (Disabled)
+            if (GetDisabledState())
                 return;
             await OnClick.InvokeAsync(ev);
             if (Command?.CanExecute(CommandParameter) ?? false)
@@ -123,7 +126,7 @@ namespace MudBlazor
         //Set the default value for HtmlTag, Link and Target 
         private void SetDefaultValues()
         {
-            if (Disabled)
+            if (GetDisabledState())
             {
                 HtmlTag = "button";
                 Href = null;
