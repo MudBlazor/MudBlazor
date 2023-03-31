@@ -1221,11 +1221,6 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        internal void ExternalStateHasChanged()
-        {
-            StateHasChanged();
-        }
-
         public void GroupItems(bool noStateChange = false)
         {          
             if (GroupedColumn == null)

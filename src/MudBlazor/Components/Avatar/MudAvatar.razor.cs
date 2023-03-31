@@ -100,10 +100,5 @@ namespace MudBlazor
         {
             AvatarGroup?.RemoveAvatar(this);
         }
-
-        internal void ForceRedraw()
-        {
-            StateHasChanged();
-        }
     }
 }

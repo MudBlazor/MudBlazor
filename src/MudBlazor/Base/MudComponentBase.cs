@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
-    public abstract class MudComponentBase : ComponentBase
+    public abstract class MudComponentBase : ComponentBase, IMudStateHasChanged
     {
         [Inject]
         private ILoggerFactory LoggerFactory { get; set; }
@@ -45,5 +46,8 @@ namespace MudBlazor
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
         /// </summary>
         public string FieldId => (UserAttributes?.ContainsKey("id") == true ? UserAttributes["id"].ToString() : $"mudinput-{Guid.NewGuid()}");
+
+        /// <inheritdoc />
+        void IMudStateHasChanged.StateHasChanged() => StateHasChanged();
     }
 }
