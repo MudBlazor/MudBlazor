@@ -1396,6 +1396,75 @@ namespace MudBlazor.UnitTests.Components
             dateComps[1].Instance.Validation.Should().BeNull(); //Validation is not set
         }
 
+        /// <summaryReadonly
+        /// Ensures that all child components are Readonly when the Form is Readonly
+        /// </summary>
+        [Test]
+        public async Task FormReadonlyTest()
+        {
+            var comp = Context.RenderComponent<FormReadOnlyDisabledTest>();
+
+            var textField = comp.FindComponents<MudTextField<string>>()[0];
+            var maskedTextField = comp.FindComponents<MudTextField<string>>()[1];
+            var checkBox = comp.FindComponent<MudCheckBox<bool>>();
+            var radioGroup = comp.FindComponent<MudRadioGroup<string>>();
+            var switch_ = comp.FindComponent<MudSwitch<bool>>();
+            var select = comp.FindComponent<MudSelect<string>>(); //at present, we can't test if select is readonly based on attribute or classname. A future PR should enable this.
+            var colorPicker = comp.FindComponent<MudColorPicker>();
+            var datePicker = comp.FindComponent<MudDatePicker>();
+            var dateRangePicker = comp.FindComponent<MudDateRangePicker>();
+            var timePicker = comp.FindComponent<MudTimePicker>();
+            var autocomplete = comp.FindComponent<MudAutocomplete<string>>();
+            var numericField = comp.FindComponent<MudNumericField<int>>();
+            var fileUpload = comp.FindComponent<MudFileUpload<IBrowserFile>>();
+
+            //form readonly = false, comp readonly = false
+            textField.Find("input").HasAttribute("readonly").Should().BeFalse();
+            maskedTextField.Find("input").HasAttribute("readonly").Should().BeFalse();
+            checkBox.Find("label").ClassList.Should().NotContain("mud-readonly");
+            radioGroup.Find("label").ClassList.Should().NotContain("mud-readonly");
+            switch_.Find("label").ClassList.Should().NotContain("mud-readonly");
+            autocomplete.Find("input").HasAttribute("readonly").Should().BeFalse();
+            numericField.Find("input").HasAttribute("readonly").Should().BeFalse();
+            fileUpload.Find("input").HasAttribute("disabled").Should().BeFalse(); //readonly = disabled in the calse of fileUpload
+
+            //form readonly = true, comp readonly = false
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FormReadOnly, true).Add(p => p.CompReadOnly, false));
+
+            textField.Find("input").HasAttribute("readonly").Should().BeTrue();
+            maskedTextField.Find("input").HasAttribute("readonly").Should().BeTrue();
+            checkBox.Find("label").ClassList.Should().Contain("mud-readonly");
+            radioGroup.Find("label").ClassList.Should().Contain("mud-readonly");
+            switch_.Find("label").ClassList.Should().Contain("mud-readonly");
+            autocomplete.Find("input").HasAttribute("readonly").Should().BeTrue();
+            numericField.Find("input").HasAttribute("readonly").Should().BeTrue();
+            fileUpload.Find("input").HasAttribute("disabled").Should().BeTrue();
+
+            //form readonly = false, comp readonly = true
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FormReadOnly, false).Add(p => p.CompReadOnly, true));
+
+            textField.Find("input").HasAttribute("readonly").Should().BeTrue();
+            maskedTextField.Find("input").HasAttribute("readonly").Should().BeTrue();
+            checkBox.Find("label").ClassList.Should().Contain("mud-readonly");
+            radioGroup.Find("label").ClassList.Should().Contain("mud-readonly");
+            switch_.Find("label").ClassList.Should().Contain("mud-readonly");
+            autocomplete.Find("input").HasAttribute("readonly").Should().BeTrue();
+            numericField.Find("input").HasAttribute("readonly").Should().BeTrue();
+            fileUpload.Find("input").HasAttribute("disabled").Should().BeFalse(); //the file upload can't be readonly
+
+            //form readonly = false, comp readonly = false
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FormReadOnly, false).Add(p => p.CompReadOnly, false));
+
+            textField.Find("input").HasAttribute("readonly").Should().BeFalse();
+            maskedTextField.Find("input").HasAttribute("readonly").Should().BeFalse();
+            checkBox.Find("label").ClassList.Should().NotContain("mud-readonly");
+            radioGroup.Find("label").ClassList.Should().NotContain("mud-readonly");
+            switch_.Find("label").ClassList.Should().NotContain("mud-readonly");
+            autocomplete.Find("input").HasAttribute("readonly").Should().BeFalse();
+            numericField.Find("input").HasAttribute("readonly").Should().BeFalse();
+            fileUpload.Find("input").HasAttribute("disabled").Should().BeFalse();
+        }
+
         /// <summary>
         /// Ensures that all child components are Disabled when the Form is Disabled
         /// </summary>
@@ -1404,77 +1473,85 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormReadOnlyDisabledTest>();
 
-            comp.FindAll(".mud-input.mud-disabled").Count.Should().Be(0);
-            comp.FindAll(".mud-switch.mud-disabled").Count.Should().Be(0);
-            comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(0);
-            comp.FindAll(".mud-radio.mud-disabled").Count.Should().Be(0);
+            var textField = comp.FindComponents<MudTextField<string>>()[0];
+            var maskedTextField = comp.FindComponents<MudTextField<string>>()[1];
+            var checkBox = comp.FindComponent<MudCheckBox<bool>>();
+            var radioGroup = comp.FindComponent<MudRadioGroup<string>>();
+            var switch_ = comp.FindComponent<MudSwitch<bool>>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            var colorPicker = comp.FindComponent<MudColorPicker>();
+            var datePicker = comp.FindComponent<MudDatePicker>();
+            var dateRangePicker = comp.FindComponent<MudDateRangePicker>();
+            var timePicker = comp.FindComponent<MudTimePicker>();
+            var autocomplete = comp.FindComponent<MudAutocomplete<string>>();
+            var numericField = comp.FindComponent<MudNumericField<int>>();
+            var fileUpload = comp.FindComponent<MudFileUpload<IBrowserFile>>();
 
-            comp.FindComponent<MudTextField<string>>().Instance.Disabled.Should().BeFalse();
-            comp.FindComponent<MudNumericField<int>>().Instance.Disabled.Should().BeFalse();
-            comp.FindComponent<MudDatePicker>().Instance.Disabled.Should().BeFalse();
-            comp.FindComponent<MudSwitch<bool>>().Instance.Disabled.Should().BeFalse();
-            comp.FindComponent<MudCheckBox<bool>>().Instance.Disabled.Should().BeFalse();
-            comp.FindComponent<MudRadioGroup<string>>().Instance.Disabled.Should().BeFalse();
+            //form disabled = false, comp disabled = false
+            textField.Find("input").HasAttribute("disabled").Should().BeFalse();
+            maskedTextField.Find("input").HasAttribute("disabled").Should().BeFalse();
+            checkBox.Find("input").HasAttribute("disabled").Should().BeFalse();
+            radioGroup.Find("input").HasAttribute("disabled").Should().BeFalse();
+            switch_.Find("input").HasAttribute("disabled").Should().BeFalse();
+            select.Find("input").HasAttribute("disabled").Should().BeFalse();
+            colorPicker.Find("input").HasAttribute("disabled").Should().BeFalse();
+            datePicker.Find("input").HasAttribute("disabled").Should().BeFalse();
+            dateRangePicker.Find("input").HasAttribute("disabled").Should().BeFalse();
+            timePicker.Find("input").HasAttribute("disabled").Should().BeFalse();
+            autocomplete.Find("input").HasAttribute("disabled").Should().BeFalse();
+            numericField.Find("input").HasAttribute("disabled").Should().BeFalse();
+            fileUpload.Find("input").HasAttribute("disabled").Should().BeFalse();
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Disabled, true));
+            //form disabled = true, comp disabled = false
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FormDisabled, true).Add(p => p.CompDisabled, false));
 
-            comp.FindAll(".mud-input.mud-disabled").Count.Should().Be(3);
-            comp.FindAll(".mud-switch.mud-disabled").Count.Should().Be(1);
-            comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(1);
-            comp.FindAll(".mud-radio.mud-disabled").Count.Should().Be(2);
+            textField.Find("input").HasAttribute("disabled").Should().BeTrue();
+            maskedTextField.Find("input").HasAttribute("disabled").Should().BeTrue();
+            checkBox.Find("input").HasAttribute("disabled").Should().BeTrue();
+            radioGroup.Find("input").HasAttribute("disabled").Should().BeTrue();
+            switch_.Find("input").HasAttribute("disabled").Should().BeTrue();
+            select.Find("input").HasAttribute("disabled").Should().BeTrue();
+            colorPicker.Find("input").HasAttribute("disabled").Should().BeTrue();
+            datePicker.Find("input").HasAttribute("disabled").Should().BeTrue();
+            dateRangePicker.Find("input").HasAttribute("disabled").Should().BeTrue();
+            timePicker.Find("input").HasAttribute("disabled").Should().BeTrue();
+            autocomplete.Find("input").HasAttribute("disabled").Should().BeTrue();
+            numericField.Find("input").HasAttribute("disabled").Should().BeTrue();
+            fileUpload.Find("input").HasAttribute("disabled").Should().BeTrue();
 
-            comp.FindComponent<MudTextField<string>>().Instance.Disabled.Should().BeFalse(); //the field Disabled/ReadOnly values should always be false
-            comp.FindComponent<MudNumericField<int>>().Instance.Disabled.Should().BeFalse();
-            comp.FindComponent<MudDatePicker>().Instance.Disabled.Should().BeFalse();
-            comp.FindComponent<MudSwitch<bool>>().Instance.Disabled.Should().BeFalse();
-            comp.FindComponent<MudCheckBox<bool>>().Instance.Disabled.Should().BeFalse();
-            comp.FindComponent<MudRadioGroup<string>>().Instance.Disabled.Should().BeFalse();
+            //form disabled = false, comp disabled = true
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FormDisabled, false).Add(p => p.CompDisabled, true));
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Disabled, false));
+            textField.Find("input").HasAttribute("disabled").Should().BeTrue();
+            maskedTextField.Find("input").HasAttribute("disabled").Should().BeTrue();
+            checkBox.Find("input").HasAttribute("disabled").Should().BeTrue();
+            radioGroup.Find("input").HasAttribute("disabled").Should().BeTrue();
+            switch_.Find("input").HasAttribute("disabled").Should().BeTrue();
+            select.Find("input").HasAttribute("disabled").Should().BeTrue();
+            colorPicker.Find("input").HasAttribute("disabled").Should().BeTrue();
+            datePicker.Find("input").HasAttribute("disabled").Should().BeTrue();
+            dateRangePicker.Find("input").HasAttribute("disabled").Should().BeTrue();
+            timePicker.Find("input").HasAttribute("disabled").Should().BeTrue();
+            autocomplete.Find("input").HasAttribute("disabled").Should().BeTrue();
+            numericField.Find("input").HasAttribute("disabled").Should().BeTrue();
+            fileUpload.Find("input").HasAttribute("disabled").Should().BeTrue();
 
-            comp.FindAll(".mud-input.mud-disabled").Count.Should().Be(0);
-            comp.FindAll(".mud-switch.mud-disabled").Count.Should().Be(0);
-            comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(0);
-            comp.FindAll(".mud-radio.mud-disabled").Count.Should().Be(0);
-        }
+            //form disabled = false, comp disabled = false
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FormDisabled, false).Add(p => p.CompDisabled, false));
 
-        /// <summaryReadonly
-        /// Ensures that all child components are Readonly when the Form is Readonly
-        /// </summary>
-        [Test]
-        public async Task ForReadonlyTest()
-        {
-            var comp = Context.RenderComponent<FormReadOnlyDisabledTest>();
-
-            comp.FindAll(".mud-switch.mud-readonly").Count.Should().Be(0);
-            comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(0);
-            comp.FindAll(".mud-radio.mud-readonly").Count.Should().Be(0);
-
-            comp.FindComponent<MudTextField<string>>().Instance.ReadOnly.Should().BeFalse();
-            comp.FindComponent<MudNumericField<int>>().Instance.ReadOnly.Should().BeFalse();
-            comp.FindComponent<MudDatePicker>().Instance.ReadOnly.Should().BeFalse();
-            comp.FindComponent<MudSwitch<bool>>().Instance.ReadOnly.Should().BeFalse();
-            comp.FindComponent<MudCheckBox<bool>>().Instance.ReadOnly.Should().BeFalse();
-            comp.FindComponent<MudRadioGroup<string>>().Instance.ReadOnly.Should().BeFalse();
-
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.ReadOnly, true));
-
-            comp.FindAll(".mud-switch.mud-readonly").Count.Should().Be(1);
-            comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(1);
-            comp.FindAll(".mud-radio.mud-readonly").Count.Should().Be(2);
-
-            comp.FindComponent<MudTextField<string>>().Instance.ReadOnly.Should().BeFalse();
-            comp.FindComponent<MudNumericField<int>>().Instance.ReadOnly.Should().BeFalse();
-            comp.FindComponent<MudDatePicker>().Instance.ReadOnly.Should().BeFalse();
-            comp.FindComponent<MudSwitch<bool>>().Instance.ReadOnly.Should().BeFalse();
-            comp.FindComponent<MudCheckBox<bool>>().Instance.ReadOnly.Should().BeFalse();
-            comp.FindComponent<MudRadioGroup<string>>().Instance.ReadOnly.Should().BeFalse();
-
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.ReadOnly, false));
-
-            comp.FindAll(".mud-switch.mud-readonly").Count.Should().Be(0);
-            comp.FindAll(".mud-checkbox.mud-readonly").Count.Should().Be(0);
-            comp.FindAll(".mud-radio.mud-readonly").Count.Should().Be(0);
+            textField.Find("input").HasAttribute("disabled").Should().BeFalse();
+            maskedTextField.Find("input").HasAttribute("disabled").Should().BeFalse();
+            checkBox.Find("input").HasAttribute("disabled").Should().BeFalse();
+            radioGroup.Find("input").HasAttribute("disabled").Should().BeFalse();
+            switch_.Find("input").HasAttribute("disabled").Should().BeFalse();
+            select.Find("input").HasAttribute("disabled").Should().BeFalse();
+            colorPicker.Find("input").HasAttribute("disabled").Should().BeFalse();
+            datePicker.Find("input").HasAttribute("disabled").Should().BeFalse();
+            dateRangePicker.Find("input").HasAttribute("disabled").Should().BeFalse();
+            timePicker.Find("input").HasAttribute("disabled").Should().BeFalse();
+            autocomplete.Find("input").HasAttribute("disabled").Should().BeFalse();
+            numericField.Find("input").HasAttribute("disabled").Should().BeFalse();
+            fileUpload.Find("input").HasAttribute("disabled").Should().BeFalse();
         }
 
         /// <summary>
