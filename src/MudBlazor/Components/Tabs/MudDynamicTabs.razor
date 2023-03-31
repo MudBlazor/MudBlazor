@@ -19,50 +19,40 @@
     /// </summary>
     public RenderFragment Render => base.BuildRenderTree;
 
-    // ReSharper disable InconsistentNaming
-    // ReSharper disable UnusedParameter.Local
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "__builder parameter is needed, because it's doing some magic and this parameter also shouldn't be renamed.")]
-    private RenderFragment<MudTabPanel> MudTabPanelPanelHeader => context => __builder =>
-    // ReSharper restore InconsistentNaming
-    // ReSharper restore UnusedParameter.Local
-    {
-        @if (context.ShowCloseIcon)
-        {
-            if (!string.IsNullOrEmpty(CloseIconToolTip))
+    private RenderFragment<MudTabPanel> MudTabPanelPanelHeader => context =>
+        @<MudRender>
+            @if (context.ShowCloseIcon)
             {
-                <MudTooltip Text="@CloseIconToolTip">
+                if (!string.IsNullOrEmpty(CloseIconToolTip))
+                {
+                    <MudTooltip Text="@CloseIconToolTip">
+                        <MudIconButton Icon="@CloseTabIcon"
+                                       Class="@CloseIconClass"
+                                       Style="@CloseIconStyle"
+                                       OnClick="() => CloseTab.InvokeAsync(context)"/>
+                    </MudTooltip>
+                }
+                else
+                {
                     <MudIconButton Icon="@CloseTabIcon"
                                    Class="@CloseIconClass"
                                    Style="@CloseIconStyle"
                                    OnClick="() => CloseTab.InvokeAsync(context)"/>
+                }
+            }
+        </MudRender>;
+
+    private RenderFragment<MudTabs> MudTabsHeader => _ =>
+        @<MudRender>
+            @if (!string.IsNullOrEmpty(AddIconToolTip))
+            {
+                <MudTooltip Text="@AddIconToolTip">
+                    <MudIconButton Icon="@AddTabIcon" Class="@AddIconClass" Style="@AddIconStyle" OnClick="@AddTab"/>
                 </MudTooltip>
             }
             else
             {
-                <MudIconButton Icon="@CloseTabIcon"
-                               Class="@CloseIconClass"
-                               Style="@CloseIconStyle"
-                               OnClick="() => CloseTab.InvokeAsync(context)"/>
-            }
-        }
-    };
-
-    // ReSharper disable InconsistentNaming
-    // ReSharper disable UnusedParameter.Local
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "__builder parameter is needed, because it's doing some magic and this parameter also shouldn't be renamed.")]
-    private RenderFragment<MudTabs> MudTabsHeader => context => __builder =>
-    // ReSharper restore InconsistentNaming
-    // ReSharper restore UnusedParameter.Local
-    {
-        @if (!string.IsNullOrEmpty(AddIconToolTip))
-        {
-            <MudTooltip Text="@AddIconToolTip">
                 <MudIconButton Icon="@AddTabIcon" Class="@AddIconClass" Style="@AddIconStyle" OnClick="@AddTab"/>
-            </MudTooltip>
-        }
-        else
-        {
-            <MudIconButton Icon="@AddTabIcon" Class="@AddIconClass" Style="@AddIconStyle" OnClick="@AddTab"/>
-        }
-    };
+            }
+        </MudRender>;
 }
