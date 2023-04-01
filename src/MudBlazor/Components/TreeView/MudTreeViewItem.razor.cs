@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
@@ -390,7 +391,7 @@ namespace MudBlazor
             }
             else if (MudTreeRoot != null)
             {
-                MudTreeRoot.CallStateHasChanged();
+                ((IMudStateHasChanged)MudTreeRoot).StateHasChanged();
             }
         }
 
