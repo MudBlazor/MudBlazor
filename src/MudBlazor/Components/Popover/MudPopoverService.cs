@@ -6,13 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
-using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -60,7 +58,7 @@ namespace MudBlazor
             Tag = componentBase.Tag;
             UserAttributes = componentBase.UserAttributes;
             ShowContent = showContent;
-            if (showContent == true)
+            if (showContent)
             {
                 ActivationDate = DateTime.Now;
             }
@@ -70,6 +68,7 @@ namespace MudBlazor
             }
         }
 
+        [Obsolete($"Use {nameof(UpdateFragmentAsync)} instead. This method will be removed in v7.")]
         public void UpdateFragment(RenderFragment fragment,
             MudComponentBase componentBase, string @class, string style, bool showContent)
         {
@@ -78,6 +77,28 @@ namespace MudBlazor
             // this basically calls StateHasChanged on the Popover
             ElementReference?.StateHasChanged();
             _updater?.Invoke(); // <-- this doesn't do anything anymore except making unit tests happy 
+        }
+
+        public async Task UpdateFragmentAsync(RenderFragment fragment,
+            MudComponentBase componentBase, string @class, string style, bool showContent)
+        {
+            await _semaphore.WaitAsync();
+            try
+            {
+                if (_detached)
+                {
+                    return;
+                }
+
+                Fragment = fragment;
+                SetComponentBaseParameters(componentBase, @class, @style, showContent);
+                ElementReference?.StateHasChanged();
+                _updater.Invoke(); // <-- this doesn't do anything anymore except making unit tests happy
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         public async Task Initialize()
@@ -93,7 +114,7 @@ namespace MudBlazor
                     return;
                 }
 
-                IsConnected = await _runtime.InvokeVoidAsyncWithErrorHandling("mudPopover.connect", Id); ;
+                IsConnected = await _runtime.InvokeVoidAsyncWithErrorHandling("mudPopover.connect", Id);
             }
             finally
             {
@@ -143,12 +164,12 @@ namespace MudBlazor
 
         public async Task InitializeIfNeeded()
         {
-            if (_isInitialized == true) { return; }
+            if (_isInitialized) { return; }
 
             try
             {
                 await _semaphoreSlim.WaitAsync();
-                if (_isInitialized == true) { return; }
+                if (_isInitialized) { return; }
 
                 await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.initialize", _options.ContainerClass, _options.FlipMargin);
                 _isInitialized = true;
