@@ -211,6 +211,11 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div").Count.Should().Be(32);
             comp.FindAll("button").Count.Should().Be(12);
 
+            // Test updating the treeview root.
+            comp.Instance.SimulateUpdateRoot = true;
+			treeView.SetParam("Items", await comp.Instance.LoadServerData(null));
+            comp.FindAll("p.mud-typography")[1].InnerHtml.MarkupMatches("This is item 2");
+
             // Test reloading the treeview item.
             comp.FindAll("button.mud-treeview-item-arrow-expand")[2].Click();
             comp.FindAll("p.mud-typography")[3].InnerHtml.MarkupMatches("This is item four");
