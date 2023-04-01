@@ -3,13 +3,14 @@
 @inject MudBlazor.ISnackbar Snackbar
 
 <DocsPage>
-    <DocsPageHeader Title="Snackbar" />
+    <DocsPageHeader Title="Snackbar" SubTitle="A Snackbar (also called Toast) is an Alert that pops up dynamically to notify the user about an important message." />
     <DocsPageContent>
 
         <DocsPageSection>
             <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
             <MudText>The Snackbar is dependant on <CodeInline Class="docs-code-tertiary">ISnackbar</CodeInline> service and <CodeInline>MudSnackbarProvider</CodeInline>.</MudText>
             <MudText>Check the <MudLink Href="/getting-started/installation">Installation</MudLink> page for instructions regarding default setup.</MudText>
+            <MudAlert Severity="Severity.Info" Class="mt-3">To statically embed an important message in a page see <MudLink Href="/components/alert">Alert</MudLink></MudAlert>
         </DocsPageSection>
 
         <DocsPageSection>
