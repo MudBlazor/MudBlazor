@@ -34,6 +34,7 @@ namespace MudBlazor.Docs.Services
             // Add search texts here which users might search and direct them to the correct component or page
             RegisterPage("Backdrop", subtitle: $"Go to Overlay", componentType: typeof(MudOverlay));
             RegisterPage("Box", subtitle: $"Go to Paper", componentType: typeof(MudPaper));
+            RegisterPage("ComboBox", subtitle: $"Go to Select", componentType: typeof(MudSelect<T>));
             RegisterPage("Drag & Drop", subtitle: $"Go to DropZone", componentType: typeof(MudDropZone<T>));
             RegisterPage("Dropdown", subtitle: $"Go to Select", componentType: typeof(MudSelect<T>));
             RegisterPage("Harmonica", subtitle: $"Go to ExpansionPanels", componentType: typeof(MudExpansionPanels));
