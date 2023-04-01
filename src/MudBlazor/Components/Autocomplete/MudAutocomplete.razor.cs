@@ -372,7 +372,7 @@ namespace MudBlazor
         /// </summary>
         public async Task ToggleMenu()
         {
-            if ((Disabled || ReadOnly) && !IsOpen)
+            if ((GetDisabledState() || GetReadOnlyState()) && !IsOpen)
                 return;
             await ChangeMenu(!IsOpen);
         }

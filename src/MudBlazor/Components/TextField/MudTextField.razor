@@ -13,7 +13,7 @@
                      Error="@HasErrors"
                      ErrorText="@GetErrorText()"
                      ErrorId="@ErrorId"
-                     Disabled="@Disabled"
+                     Disabled="@GetDisabledState()"
                      Margin="@Margin"
                      Required="@Required"
                      ForId="@FieldId">
@@ -32,9 +32,9 @@
                               Value="@Text"
                               ValueChanged="(s) => SetTextAsync(s)"
                               Placeholder="@Placeholder"
-                              Disabled=@Disabled
+                              Disabled=@GetDisabledState()
                               DisableUnderLine="@DisableUnderLine"
-                              ReadOnly="@ReadOnly"
+                              ReadOnly="@GetReadOnlyState()"
                               MaxLength="@MaxLength"
                               Adornment="@Adornment"
                               AdornmentText="@AdornmentText"
@@ -73,9 +73,9 @@
                              Value="@Text"
                              ValueChanged="OnMaskedValueChanged"
                              Placeholder="@Placeholder"
-                             Disabled=@Disabled
+                            Disabled=@GetDisabledState()
                              DisableUnderLine="@DisableUnderLine"
-                             ReadOnly="@ReadOnly"
+                             ReadOnly="@GetReadOnlyState()"
                              MaxLength="@MaxLength"
                              Adornment="@Adornment"
                              AdornmentText="@AdornmentText"

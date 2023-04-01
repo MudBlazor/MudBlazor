@@ -148,7 +148,7 @@ namespace MudBlazor
 
         protected internal override async void Submit()
         {
-            if (ReadOnly)
+            if (GetReadOnlyState())
                 return;
             if (_selectedDate == null)
                 return;
@@ -199,7 +199,7 @@ namespace MudBlazor
         //To be completed on next PR
         protected internal override void HandleKeyDown(KeyboardEventArgs obj)
         {
-            if (Disabled || ReadOnly)
+            if (GetDisabledState() || GetReadOnlyState())
                 return;
             base.HandleKeyDown(obj);
             switch (obj.Key)

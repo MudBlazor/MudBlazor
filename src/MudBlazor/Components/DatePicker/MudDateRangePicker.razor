@@ -7,11 +7,11 @@
 
     protected override RenderFragment InputContent=> 
         @<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" Error="@Error" 
-                          ErrorText="@ErrorText" Disabled="@Disabled" Margin="@Margin" Required="@Required"
+                          ErrorText="@ErrorText" Disabled="@GetDisabledState()" Margin="@Margin" Required="@Required"
                           @onclick="() => { if (!Editable) ToggleState(); }" ForId="@FieldId">
                <InputContent>
                    <MudRangeInput @ref="_rangeInput" @attributes="UserAttributes" InputType="@InputType.Text" Class="@PickerInputClass" Style="@Style" Variant="@Variant" ReadOnly="@(!Editable)"
-                                   @bind-Value="@RangeText" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize" OnAdornmentClick="ToggleState"
+                                   @bind-Value="@RangeText" Disabled="@GetDisabledState()" Adornment="@Adornment" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize" OnAdornmentClick="ToggleState"
                                    Required="@Required" RequiredError="@RequiredError" Error="@Error" ErrorText="@ErrorText" Margin="@Margin" AdornmentAriaLabel="@AdornmentAriaLabel"/>
                </InputContent>
            </MudInputControl>;

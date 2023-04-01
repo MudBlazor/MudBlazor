@@ -194,7 +194,7 @@ namespace MudBlazor
 
         protected internal override void Submit()
         {
-            if (ReadOnly)
+            if (GetReadOnlyState())
                 return;
             Time = TimeIntermediate;
         }
@@ -522,7 +522,7 @@ namespace MudBlazor
 
         protected internal override void HandleKeyDown(KeyboardEventArgs obj)
         {
-            if (Disabled || ReadOnly)
+            if (GetDisabledState() || GetReadOnlyState())
                 return;
             base.HandleKeyDown(obj);
             switch (obj.Key)

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
@@ -9,11 +10,13 @@ namespace MudBlazor
         public MudBooleanInput() : base(new BoolConverter<T>()) { }
 
         /// <summary>
-        /// If true, the input will be disabled.
+        /// If true, the input element will be disabled.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
+        [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
+        protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         /// <summary>
         /// If true, the input will be read-only.
@@ -21,6 +24,8 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
+        [CascadingParameter(Name = "ParentReadOnly")] private bool ParentReadOnly { get; set; }
+        protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         /// <summary>
         /// The state of the component
@@ -60,7 +65,7 @@ namespace MudBlazor
 
         protected async Task SetCheckedAsync(T value)
         {
-            if (Disabled)
+            if (GetDisabledState())
                 return;
             if (!EqualityComparer<T>.Default.Equals(Checked, value))
             {
@@ -87,5 +92,6 @@ namespace MudBlazor
         {
             return (BoolValue == true);
         }
+
     }
 }
