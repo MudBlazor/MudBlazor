@@ -132,12 +132,4 @@ namespace MudBlazor
             _xDown = _yDown = null;
         }
     }
-
-    public class SwipeEventArgs
-    {
-        public TouchEventArgs TouchEventArgs { get; set; }
-        public double? SwipeDelta { get; set; }
-        public MudSwipeArea Sender { get; set; }
-        public SwipeDirection SwipeDirection { get; set; }
-    }
 }
