@@ -24,7 +24,7 @@ namespace MudBlazor.Docs.Services
             try
             {
                 var result = await _http.GetFromJsonAsync<NugetRespons>($"https://azuresearch-usnc.nuget.org/query?q=packageid:{packageName}&take=1");
-                return result.data.FirstOrDefault();
+                return result.Data.FirstOrDefault();
             }
             catch (Exception e)
             {
