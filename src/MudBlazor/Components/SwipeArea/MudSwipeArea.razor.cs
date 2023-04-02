@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -124,6 +125,7 @@ namespace MudBlazor
         /// <summary>
         /// The last successful swipe difference in pixels since the last OnSwipe invocation
         /// </summary>
+        [ExcludeFromCodeCoverage]
         [Obsolete("Use OnSwipeEnd to get SwipeDelta")]
         public double? GetSwipeDelta() => _swipeDelta;
 
