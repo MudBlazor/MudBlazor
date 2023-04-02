@@ -80,13 +80,13 @@ namespace MudBlazor
             }
         }
 
-        private void OnTouchStart(TouchEventArgs arg)
+        internal void OnTouchStart(TouchEventArgs arg)
         {
             _xDown = arg.Touches[0].ClientX;
             _yDown = arg.Touches[0].ClientY;
         }
 
-        internal async void OnTouchEnd(TouchEventArgs arg)
+        internal async Task OnTouchEnd(TouchEventArgs arg)
         {
             if (_xDown == null || _yDown == null)
                 return;
@@ -100,47 +100,23 @@ namespace MudBlazor
                 return;
             }
 
+            SwipeDirection swipeDirection = Math.Abs(xDiff) > Math.Abs(yDiff) ?
+                xDiff > 0 ? SwipeDirection.RightToLeft : SwipeDirection.LeftToRight :
+                yDiff > 0 ? SwipeDirection.BottomToTop : SwipeDirection.TopToBottom;
+
             if (Math.Abs(xDiff) > Math.Abs(yDiff))
             {
                 _swipeDelta = xDiff;
-                if (xDiff > 0)
-                {
-                    await OnSwipeEnd.InvokeAsync(new SwipeEventArgs() { Sender = this, SwipeDelta = _swipeDelta, TouchEventArgs = arg, SwipeDirection = SwipeDirection.RightToLeft });
-                    if (OnSwipe != null)
-                    {
-                        await InvokeAsync(() => OnSwipe(SwipeDirection.RightToLeft));
-                    }
-                }
-                else
-                {
-                    await OnSwipeEnd.InvokeAsync(new SwipeEventArgs() { Sender = this, SwipeDelta = _swipeDelta, TouchEventArgs = arg, SwipeDirection = SwipeDirection.LeftToRight });
-                    if (OnSwipe != null)
-                    {
-                        await InvokeAsync(() => OnSwipe(SwipeDirection.LeftToRight));
-                    }
-                }
-                
             }
             else
             {
                 _swipeDelta = yDiff;
-                if (yDiff > 0)
-                {
-                    await OnSwipeEnd.InvokeAsync(new SwipeEventArgs() { Sender = this, SwipeDelta = _swipeDelta, TouchEventArgs = arg, SwipeDirection = SwipeDirection.BottomToTop });
-                    if (OnSwipe != null)
-                    {
-                        await InvokeAsync(() => OnSwipe(SwipeDirection.BottomToTop));
-                    }
-                }
-                else
-                {
-                    await OnSwipeEnd.InvokeAsync(new SwipeEventArgs() { Sender = this, SwipeDelta = _swipeDelta, TouchEventArgs = arg, SwipeDirection = SwipeDirection.TopToBottom });
-                    if (OnSwipe != null)
-                    {
-                        await InvokeAsync(() => OnSwipe(SwipeDirection.TopToBottom));
-                    }
-                }
-                
+            }
+
+            await OnSwipeEnd.InvokeAsync(new SwipeEventArgs() { Sender = this, SwipeDelta = _swipeDelta, TouchEventArgs = arg, SwipeDirection = swipeDirection });
+            if (OnSwipe != null)
+            {
+                await InvokeAsync(() => OnSwipe(swipeDirection));
             }
             _xDown = _yDown = null;
         }

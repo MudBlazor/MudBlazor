@@ -28,6 +28,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task SwipeTest_2()
+        {
+            var comp = Context.RenderComponent<SwipeAreaOnSwipeEndTest>();
+            var swipe = comp.FindComponent<MudSwipeArea>();
+
+            var initialTouchPoints = new TouchPoint[]
+            {
+                new TouchPoint() {ClientX = 0, ClientY = 0},
+            };
+            var touchPoints = new TouchPoint[]
+            {
+                new TouchPoint() {ClientX = 150, ClientY = 200},
+                new TouchPoint() {ClientX = 100, ClientY = 50},
+            };
+
+            await comp.InvokeAsync(() => swipe.Instance.OnTouchStart(new TouchEventArgs() { Touches = initialTouchPoints }));
+            await comp.InvokeAsync(() => swipe.Instance.OnTouchEnd(new TouchEventArgs() { ChangedTouches = touchPoints }));
+
+            comp.WaitForAssertion(() => comp.Instance._swipeDirection.Should().Be(SwipeDirection.TopToBottom));
+            comp.WaitForAssertion(() => comp.Instance._swipeDelta.Should().Be(-200));
+        }
+
+        [Test]
         public void SwipeTest_PreventDefault_SetTrue()
         {
             var listenerIds = new int[] { 1, 2, 3 };
