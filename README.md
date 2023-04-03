@@ -21,7 +21,7 @@
 
 MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure. It is perfect for .NET developers who want to rapidly build web applications without having to struggle with CSS and Javascript. MudBlazor, being written entirely in C#, empowers you to adapt, fix or extend the framework. There are plenty of examples in the documentation, which makes understanding and learning MudBlazor very easy.
 
-## Documentation & Demo
+## Documentation & Demoo
 - [MudBlazor.com](https://mudblazor.com)
 - [Try.MudBlazor.com](https://try.mudblazor.com/)
 
