@@ -114,7 +114,7 @@ namespace MudBlazor
                 _swipeDelta = yDiff;
             }
 
-            await OnSwipeEnd.InvokeAsync(new SwipeEventArgs() { Sender = this, SwipeDelta = _swipeDelta, TouchEventArgs = arg, SwipeDirection = swipeDirection });
+            await OnSwipeEnd.InvokeAsync(new SwipeEventArgs(arg, swipeDirection, _swipeDelta, this));
             if (OnSwipe != null)
             {
                 await InvokeAsync(() => OnSwipe(swipeDirection));

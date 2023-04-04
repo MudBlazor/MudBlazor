@@ -8,9 +8,17 @@ namespace MudBlazor
 {
     public class SwipeEventArgs
     {
-        public TouchEventArgs TouchEventArgs { get; set; }
-        public double? SwipeDelta { get; set; }
-        public MudSwipeArea Sender { get; set; }
-        public SwipeDirection SwipeDirection { get; set; }
+        public TouchEventArgs TouchEventArgs { get; private set; }
+        public double? SwipeDelta { get; private set; }
+        public MudSwipeArea Sender { get; private set; }
+        public SwipeDirection SwipeDirection { get; private set; }
+
+        public SwipeEventArgs(TouchEventArgs touchEventArgs, SwipeDirection swipeDirection, double? swipeDelta, MudSwipeArea sender)
+        {
+            TouchEventArgs = touchEventArgs;
+            SwipeDirection = swipeDirection;
+            SwipeDelta = swipeDelta;
+            Sender = sender;
+        }
     }
 }
