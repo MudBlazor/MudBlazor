@@ -124,7 +124,7 @@
                         {
                             if (GroupedColumn != null)
                             {
-                                foreach (var g in _groups)
+                                foreach (var g in _currentPageGroups)
                                 {
                                     <tr class="mud-table-row">
                                         @{ var groupClass = new CssBuilder(GroupClass).AddClass(GroupClassFunc?.Invoke(g)).Build(); }
