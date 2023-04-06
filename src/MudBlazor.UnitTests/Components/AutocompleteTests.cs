@@ -21,7 +21,6 @@ using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitial
 using static Bunit.ComponentParameterFactory;
 using Microsoft.AspNetCore.Components;
 using System.Threading;
-using Castle.Components.DictionaryAdapter.Xml;
 
 namespace MudBlazor.UnitTests.Components
 {
