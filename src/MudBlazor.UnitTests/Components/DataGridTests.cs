@@ -3382,6 +3382,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridGroupExpandAllCollapseAllTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupExpandAllCollapseAllTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandAllCollapseAllTest.Element>>();
+
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
+            comp.Instance.ExpandAllGroups();
+            comp.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(14);
+            comp.Instance.NavigateToPage(1);
+            comp.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(18);
+            comp.Instance.CollapseAllGroups();
+            comp.Instance.NavigateToPage(0);
+            comp.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
+            comp.Instance.RefreshList();
+            comp.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
+        }
+
+        [Test]
         public async Task DataGridPropertyColumnFormatTest()
         {
             var comp = Context.RenderComponent<DataGridFormatTest>();
