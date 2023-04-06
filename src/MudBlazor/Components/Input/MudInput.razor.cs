@@ -150,28 +150,10 @@ namespace MudBlazor
 
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
-        private bool _showClearable;
-
-        private void UpdateClearable(object value)
-        {
-            var showClearable = Clearable && ((value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (value is not string && value is not null));
-            if (_showClearable != showClearable)
-                _showClearable = showClearable;
-        }
-
-        protected override async Task UpdateTextPropertyAsync(bool updateValue)
-        {
-            await base.UpdateTextPropertyAsync(updateValue);
-            if (Clearable)
-                UpdateClearable(Text);
-        }
-
-        protected override async Task UpdateValuePropertyAsync(bool updateText)
-        {
-            await base.UpdateValuePropertyAsync(updateText);
-            if (Clearable)
-                UpdateClearable(Value);
-        }
+        /// <summary>
+        /// If true, Clearable is true and there is a non null value (non-string for string values)
+        /// </summary>
+        private bool GetClearable() => Clearable && ((Value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (Value is not string && Value is not null));
 
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
         {
