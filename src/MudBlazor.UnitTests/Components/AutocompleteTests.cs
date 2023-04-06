@@ -215,7 +215,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task AutocompleteReadOnlyShouldNotBeClearable()
+        public async Task AutocompleteReadOnlyShouldNotHaveClearButton()
         {
             var comp = Context.RenderComponent<MudAutocomplete<string>>();
             comp.SetParametersAndRender(p => p
@@ -224,7 +224,7 @@ namespace MudBlazor.UnitTests.Components
             .Add(x => x.ReadOnly, false));
             comp.FindAll("button").Count.Should().Be(1);
 
-            comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true));
+            comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
             comp.FindAll("button").Count.Should().Be(0);
         }
 
