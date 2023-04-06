@@ -21,6 +21,7 @@ using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitial
 using static Bunit.ComponentParameterFactory;
 using Microsoft.AspNetCore.Components;
 using System.Threading;
+using Castle.Components.DictionaryAdapter.Xml;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -212,6 +213,20 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTest5>();
             comp.FindAll("div.mud-input-adornment")[0].Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task AutocompleteReadOnlyShouldNotBeClearable()
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>();
+            comp.SetParametersAndRender(p => p
+            .Add(x => x.Text, "some value")
+            .Add(x => x.Clearable, true)
+            .Add(x => x.ReadOnly, false));
+            comp.FindAll("button").Count.Should().Be(1);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true));
+            comp.FindAll("button").Count.Should().Be(0);
         }
 
         /// <summary>
