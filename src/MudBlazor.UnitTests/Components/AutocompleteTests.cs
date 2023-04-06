@@ -214,6 +214,20 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
         }
 
+        [Test]
+        public async Task AutocompleteReadOnlyShouldNotHaveClearButton()
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>();
+            comp.SetParametersAndRender(p => p
+            .Add(x => x.Text, "some value")
+            .Add(x => x.Clearable, true)
+            .Add(x => x.ReadOnly, false));
+            comp.FindAll("button").Count.Should().Be(1);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
+            comp.FindAll("button").Count.Should().Be(0);
+        }
+
         /// <summary>
         /// MoreItemsTemplate should render when there are more items than the MaxItems limit
         /// </summary>
