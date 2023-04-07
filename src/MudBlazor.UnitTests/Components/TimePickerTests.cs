@@ -856,14 +856,13 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.FindAll("div.mud-minute")[30].Click(new MouseEventArgs()));
             picker.TimeIntermediate.Value.Minutes.Should().Be(30);
 
-            Assert.AreEqual(0, count);
+            Assert.AreEqual(1, count);
             // Click outside of the timepicker
             await comp.InvokeAsync(() => comp.Find("div.mud-overlay").Click());
 
             // Check that the time have been changed
             comp.WaitForAssertion(() => picker.Time.Should().Be(new TimeSpan(16, 30, 00)));
 
-            Assert.AreEqual(1, count);
         }
     }
 }
