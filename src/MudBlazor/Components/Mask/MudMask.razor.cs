@@ -223,7 +223,15 @@ namespace MudBlazor
             finally
             {
                 // call user callback
-                await OnKeyDown.InvokeAsync(e);
+                _updating = true;
+                try
+                {
+                    await OnKeyDown.InvokeAsync(e);
+                } finally
+                {
+                    _updating = false;
+                }
+
             }
         }
 
