@@ -14,4 +14,3 @@ public class DiscordInvite
     [JsonPropertyName("approximate_presence_count")]
     public int ApproximatePresenceCount { get; set; }
 }
-
