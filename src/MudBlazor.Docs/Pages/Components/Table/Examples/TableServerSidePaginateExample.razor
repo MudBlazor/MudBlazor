@@ -4,7 +4,6 @@
 @inject HttpClient httpClient
 
 <MudTable ServerData="@(new Func<TableState, Task<TableData<Element>>>(ServerReload))"
-          HideToolBarContent="hideToolBarContent"
           Dense="true" Hover="true" @ref="table">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
@@ -37,16 +36,12 @@
     </PagerContent>
 </MudTable>
 
-<MudSwitch @bind-Checked="@hideToolBarContent" Color="Color.Primary">Hide Tool BarContent</MudSwitch>
-
 @code {
     private IEnumerable<Element> pagedData;
     private MudTable<Element> table;
 
     private int totalItems;
     private string searchString = null;
-
-    private bool hideToolBarContent;
 
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server

@@ -87,13 +87,6 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Set true for hide ToolBarContent
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Table.Appearance)]
-        public bool HideToolBarContent { get; set; }
-
-        /// <summary>
         /// Set true to see rows hover on mouse-over.
         /// </summary>
         [Parameter]

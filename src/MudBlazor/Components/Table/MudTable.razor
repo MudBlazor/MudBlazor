@@ -11,7 +11,7 @@
 @if (Items != null || ServerData != null)
 {
     <CascadingValue Value="TableContext" IsFixed="true">
-        @if (ToolBarContent != null && !HideToolBarContent)
+        @if (ToolBarContent != null)
         {
             <MudToolBar Class="mud-table-toolbar">
                 @ToolBarContent
