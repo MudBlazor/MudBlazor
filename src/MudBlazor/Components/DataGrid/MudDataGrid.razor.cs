@@ -28,7 +28,8 @@ namespace MudBlazor
         private IEnumerable<T> _items;
         private T _selectedItem;
         internal HashSet<object> _groupExpansions = new HashSet<object>();
-        private List<GroupDefinition<T>> _groups = new List<GroupDefinition<T>>();
+        private List<GroupDefinition<T>> _currentPageGroups = new List<GroupDefinition<T>>();
+        private List<GroupDefinition<T>> _allGroups = new List<GroupDefinition<T>>();
         internal HashSet<T> _openHierarchies = new HashSet<T>();
         private PropertyInfo[] _properties = typeof(T).GetProperties();
 
@@ -583,7 +584,8 @@ namespace MudBlazor
 
                     if (!_groupable)
                     {
-                        _groups.Clear();
+                        _currentPageGroups.Clear();
+                        _allGroups.Clear();
                         _groupExpansions.Clear();
 
                         foreach (var column in RenderedColumns)
@@ -1225,20 +1227,22 @@ namespace MudBlazor
         {          
             if (GroupedColumn == null)
             {
-                _groups = new List<GroupDefinition<T>>();
+                _currentPageGroups = new List<GroupDefinition<T>>();
+                _allGroups = new List<GroupDefinition<T>>();
                 if (_isFirstRendered && !noStateChange)
                     StateHasChanged();
                 return;
             }
 
-            var groupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
+            var currentPageGroupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
+            var allGroupings = FilteredItems.GroupBy(GroupedColumn.groupBy);
 
             if (_groupExpansions.Count == 0)
             {
                 if (GroupExpanded)
                 {
                     // We need to initially expand all groups.
-                    foreach (var group in groupings)
+                    foreach (var group in allGroupings)
                     {
                         _groupExpansions.Add(group.Key);
                     }
@@ -1248,8 +1252,11 @@ namespace MudBlazor
             }
 
             // construct the groups
-            _groups = groupings.Select(x => new GroupDefinition<T>(x,
+            _currentPageGroups = currentPageGroupings.Select(x => new GroupDefinition<T>(x,
                 _groupExpansions.Contains(x.Key))).ToList();
+
+            _allGroups = allGroupings.Select(x => new GroupDefinition<T>(x,
+                _groupExpansions.Contains(x.Key))).ToList();                
 
             if ((_isFirstRendered || ServerData != null) && !noStateChange)
                 StateHasChanged();
@@ -1282,7 +1289,7 @@ namespace MudBlazor
 
         public void ExpandAllGroups()
         {
-            foreach (var group in _groups)
+            foreach (var group in _allGroups)
             {
                 group.IsExpanded = true;
                 _groupExpansions.Add(group.Grouping.Key);
@@ -1293,7 +1300,7 @@ namespace MudBlazor
         {
             _groupExpansions.Clear();
 
-            foreach (var group in _groups)
+            foreach (var group in _allGroups)
                 group.IsExpanded = false;
         }
 
