@@ -472,7 +472,11 @@ namespace MudBlazor
                     h = value + 12;
             }
             _timeSet.Hour = h;
-            UpdateTime();
+
+            if(_currentView == OpenTo.Hours)
+            {
+                UpdateTime();
+            }
 
             if (TimeEditMode == TimeEditMode.Normal)
             {
@@ -499,15 +503,11 @@ namespace MudBlazor
         /// <summary>
         /// On click for the minute "sticks", sets the minute.
         /// </summary>
-        private async Task OnMouseClickMinute(int value)
+        private void OnMouseClickMinute(int value)
         {
             _timeSet.Minute = value;
             UpdateTime();
-            if (PickerVariant != PickerVariant.Static)
-            {
-                await Task.Delay(ClosingDelay);
-                Close(false);
-            }
+            SubmitAndClose();
         }
 
         protected async void SubmitAndClose()
