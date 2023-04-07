@@ -499,11 +499,15 @@ namespace MudBlazor
         /// <summary>
         /// On click for the minute "sticks", sets the minute.
         /// </summary>
-        private void OnMouseClickMinute(int value)
+        private async Task OnMouseClickMinute(int value)
         {
             _timeSet.Minute = value;
             UpdateTime();
-            SubmitAndClose();
+            if (PickerVariant != PickerVariant.Static)
+            {
+                await Task.Delay(ClosingDelay);
+                Close(false);
+            }
         }
 
         protected async void SubmitAndClose()
