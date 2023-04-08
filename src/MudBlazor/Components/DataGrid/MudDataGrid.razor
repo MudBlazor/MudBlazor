@@ -388,7 +388,7 @@
             @{
                 var filter = new Filter<T>(this, filterDefinition, column);
             }
-            @if (column == null)
+            @if (column is null)
             {
                 <MudItem xs="1" Class="d-flex">
                     <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilter" Size="@Size.Small" Style="align-self: flex-end"></MudIconButton>
