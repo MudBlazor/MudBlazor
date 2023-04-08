@@ -30,7 +30,7 @@ namespace MudBlazor
             _filterDefinition = filterDefinition;
             _column = column;
 
-            var fieldType = _filterDefinition.FiledType;
+            var fieldType = _filterDefinition.FieldType;
 
             if (fieldType.IsString)
                 _valueString = _filterDefinition.Value?.ToString();

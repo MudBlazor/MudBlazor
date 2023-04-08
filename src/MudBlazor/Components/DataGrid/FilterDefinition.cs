@@ -25,7 +25,7 @@ namespace MudBlazor
         public object? Value { get; set; }
         public Func<T, bool>? FilterFunction { get; set; }
 
-        public FieldType FiledType => FieldType.Identify(Column?.PropertyType);
+        public FieldType FieldType => FieldType.Identify(Column?.PropertyType);
 
         internal Type dataType
         {
@@ -68,7 +68,7 @@ namespace MudBlazor
 
         public Expression<Func<T, bool>> GenerateFilterExpression()
         {
-            var fieldType = FiledType;
+            var fieldType = FieldType;
 
             if (PropertyExpression is null)
             {
