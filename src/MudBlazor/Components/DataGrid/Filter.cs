@@ -21,10 +21,6 @@ namespace MudBlazor
         internal DateTime? _valueDate;
         internal TimeSpan? _valueTime;
 
-        internal bool IsNumber => TypeIdentifier.IsNumber(_filterDefinition.dataType);
-
-        internal bool IsEnum => TypeIdentifier.IsEnum(_filterDefinition.dataType);
-
         internal Column<T>? FilterColumn =>
             _column ?? (_dataGrid.RenderedColumns?.FirstOrDefault(c => c.PropertyName == _filterDefinition.Column?.PropertyName));
 
@@ -34,7 +30,7 @@ namespace MudBlazor
             _filterDefinition = filterDefinition;
             _column = column;
 
-            var fieldType = FieldType.Identify(_filterDefinition.dataType);
+            var fieldType = _filterDefinition.FieldType;
 
             if (fieldType.IsString)
                 _valueString = _filterDefinition.Value?.ToString();
