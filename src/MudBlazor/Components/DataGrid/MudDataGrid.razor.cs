@@ -587,6 +587,7 @@ namespace MudBlazor
                         _currentPageGroups.Clear();
                         _allGroups.Clear();
                         _groupExpansions.Clear();
+                        _groupExpansions.Add("__initial__");
 
                         foreach (var column in RenderedColumns)
                             column.RemoveGrouping();
@@ -742,6 +743,7 @@ namespace MudBlazor
             {
                 await InvokeServerLoadFunc();
                 GroupItems();
+                _groupExpansions.Add("__initial__");                
                 if (ServerData == null)
                     StateHasChanged();
                 _isFirstRendered = true;
@@ -1235,20 +1237,16 @@ namespace MudBlazor
             }
 
             var currentPageGroupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
+            
+            // Maybe group Items to keep groups expanded after clearing a filter?
             var allGroupings = FilteredItems.GroupBy(GroupedColumn.groupBy);
 
-            if (_groupExpansions.Count == 0)
+            if (_groupExpansions.Count == 0 && GroupExpanded)
             {
-                if (GroupExpanded)
+                foreach (var group in allGroupings)
                 {
-                    // We need to initially expand all groups.
-                    foreach (var group in allGroupings)
-                    {
-                        _groupExpansions.Add(group.Key);
-                    }
+                    _groupExpansions.Add(group.Key);
                 }
-
-                _groupExpansions.Add("__initial__");
             }
 
             // construct the groups
@@ -1299,6 +1297,7 @@ namespace MudBlazor
         public void CollapseAllGroups()
         {
             _groupExpansions.Clear();
+            _groupExpansions.Add("__initial__");
 
             foreach (var group in _allGroups)
                 group.IsExpanded = false;

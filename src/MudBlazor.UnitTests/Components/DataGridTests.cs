@@ -3351,15 +3351,15 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridGroupExpandedTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
 
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            comp.Instance.ExpandAllGroups();
-            dataGrid.Render();
-            // after all groups are expanded
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
+            comp.Instance.CollapseAllGroups();
+            dataGrid.Render();
+            // after all groups are collapsed
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
             await comp.InvokeAsync(() =>
                 comp.Instance.AddFruit());
             // datagrid should be expanded with the new category
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(8);
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
         }
 
         [Test]
