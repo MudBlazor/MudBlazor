@@ -80,6 +80,13 @@ namespace MudBlazor
         [Parameter] public bool? ShowColumnOptions { get; set; }
 
         [Parameter]
+        public IComparer<object> Comparer
+        {
+            get => _comparer;
+            set => _comparer = value;
+        }
+
+        [Parameter]
         public Func<T, object> SortBy
         {
             get
@@ -91,7 +98,6 @@ namespace MudBlazor
                 _sortBy = value;
             }
         }
-
         [Parameter] public SortDirection InitialDirection { get; set; } = SortDirection.None;
         [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
 
@@ -243,6 +249,7 @@ namespace MudBlazor
         internal int SortIndex { get; set; } = -1;
         internal HeaderCell<T> HeaderCell { get; set; }
 
+        private IComparer<object> _comparer = null;
         private Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
         internal HeaderContext<T> headerContext;
