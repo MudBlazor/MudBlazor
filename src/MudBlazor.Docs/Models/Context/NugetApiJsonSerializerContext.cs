@@ -4,10 +4,10 @@
 
 using System.Text.Json.Serialization;
 
-namespace MudBlazor.Docs.Models;
-
-public class GitHubRepository
+namespace MudBlazor.Docs.Models.Context
 {
-    [JsonPropertyName("stargazers_count")]
-    public int StargazersCount { get; set; }
+    [JsonSerializable(typeof(NugetResponse))]
+    public partial class NugetApiJsonSerializerContext : JsonSerializerContext
+    {
+    }
 }
