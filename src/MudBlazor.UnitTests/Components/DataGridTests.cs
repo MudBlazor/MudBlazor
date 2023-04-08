@@ -2557,7 +2557,7 @@ namespace MudBlazor.UnitTests.Components
             filterDefinition3.Column.dataType.Should().Be(typeof(Severity?));
             await comp.InvokeAsync(() => internalFilter.NumberValueChanged(35));
             filterDefinition3.Value.Should().Be(35);
-            internalFilter.IsEnum.Should().Be(true);
+            filterDefinition3.FiledType.IsEnum.Should().Be(true);
             // test internal filter class for bool data type.
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition4, null);
             filterDefinition4.Column.dataType.Should().Be(typeof(bool?));
