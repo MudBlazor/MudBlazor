@@ -125,6 +125,80 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridSortableTemplateColumnTest()
+        {
+            var comp = Context.RenderComponent<DataGridSortableTemplateColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTemplateColumnTest.Item>>();
+
+            // Count the number of rows including header.
+            var rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(9, because: "1 header row + 7 data rows + 1 footer row");
+
+            var cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(7, because: "We have 7 data rows with one column");
+
+            // Check the values of rows without sorting
+            cells[0].TextContent.Should().Be("B");
+            cells[1].TextContent.Should().Be("A");
+            cells[2].TextContent.Should().Be("A");
+            cells[3].TextContent.Should().Be("C");
+            cells[4].TextContent.Should().Be("A");
+            cells[5].TextContent.Should().Be("C");
+            cells[6].TextContent.Should().Be("C");
+
+            // property name is the hash code of the template column
+            var templatePropertyName = dataGrid.Instance.RenderedColumns.FirstOrDefault().PropertyName;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(templatePropertyName, SortDirection.Ascending, x => { return x.Name; }));
+            cells = dataGrid.FindAll("td");
+
+            // Check the values of rows - should be sorted ascending by Name.
+            cells[0].TextContent.Should().Be("A");
+            cells[1].TextContent.Should().Be("A");
+            cells[2].TextContent.Should().Be("A");
+            cells[3].TextContent.Should().Be("B");
+            cells[4].TextContent.Should().Be("C");
+            cells[5].TextContent.Should().Be("C");
+            cells[6].TextContent.Should().Be("C");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(templatePropertyName, SortDirection.Descending, x => { return x.Name; }));
+            cells = dataGrid.FindAll("td");
+
+            // Check the values of rows - should be sorted descending by Name.
+            cells[0].TextContent.Should().Be("C");
+            cells[1].TextContent.Should().Be("C");
+            cells[2].TextContent.Should().Be("C");
+            cells[3].TextContent.Should().Be("B");
+            cells[4].TextContent.Should().Be("A");
+            cells[5].TextContent.Should().Be("A");
+            cells[6].TextContent.Should().Be("A");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync(templatePropertyName));
+            cells = dataGrid.FindAll("td");
+
+            // Back to original order without sorting
+            cells[0].TextContent.Should().Be("B");
+            cells[1].TextContent.Should().Be("A");
+            cells[2].TextContent.Should().Be("A");
+            cells[3].TextContent.Should().Be("C");
+            cells[4].TextContent.Should().Be("A");
+            cells[5].TextContent.Should().Be("C");
+            cells[6].TextContent.Should().Be("C");
+
+            // sort through the sort icon
+            dataGrid.Find(".column-options button").Click();
+            cells = dataGrid.FindAll("td");
+            // Check the values of rows - should be sorted ascending by Name.
+            cells[0].TextContent.Should().Be("A");
+            cells[1].TextContent.Should().Be("A");
+            cells[2].TextContent.Should().Be("A");
+            cells[3].TextContent.Should().Be("B");
+            cells[4].TextContent.Should().Be("C");
+            cells[5].TextContent.Should().Be("C");
+            cells[6].TextContent.Should().Be("C");
+        }
+
+        [Test]
         public async Task DataGridFilterableTest()
         {
             var comp = Context.RenderComponent<DataGridFilterableTest>();

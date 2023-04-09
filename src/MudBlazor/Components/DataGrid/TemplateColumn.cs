@@ -11,6 +11,9 @@ namespace MudBlazor
         protected internal override object? CellContent(T item)
             => null;
 
+        public override string? PropertyName
+            => this.GetHashCode().ToString();
+
         protected internal override object? PropertyFunc(T item)
             => null;
 
