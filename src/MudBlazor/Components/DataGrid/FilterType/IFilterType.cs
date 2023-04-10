@@ -9,15 +9,15 @@ namespace MudBlazor;
 /// <summary>
 /// TODO: document
 /// </summary>
-public interface IFilterType<T>
+public interface IFilterType
 {
     /// <summary>
     /// TODO: document
     /// </summary>
-    bool CanBeMapped(FilterDefinition<T> filterDefinition);
+    bool CanBeMapped<T>(FilterDefinition<T> filterDefinition);
 
     /// <summary>
     /// TODO: document
     /// </summary>
-    RenderFragment<(FilterDefinition<T> filterDefinition, Filter<T> filter)> RenderFilterFragment { get; }
+    RenderFragment RenderFilterFragment<T>(FilterDefinition<T> filterDefinition, Filter<T> filter);
 }

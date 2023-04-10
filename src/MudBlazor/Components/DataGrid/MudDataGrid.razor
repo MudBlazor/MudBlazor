@@ -3,6 +3,7 @@
 @typeparam T
 @using MudBlazor.Utilities
 @using MudBlazor.Extensions
+@using Microsoft.AspNetCore.Components.Rendering
 
 @{
     _currentRenderFilteredItemsCache = null;
@@ -416,7 +417,7 @@
                     {
                         if (filterType.CanBeMapped(filterDefinition))
                         {
-                            @filterType.RenderFilterFragment((filterDefinition, filter));
+                            @filterType.RenderFilterFragment(filterDefinition, filter)
                         }
                     }
                 </MudItem>
@@ -437,9 +438,8 @@
                     {
                         if (filterType.CanBeMapped(filterDefinition))
                         {
-                        @filterType.RenderFilterFragment((filterDefinition, filter))
-                        ;
-                    }
+                            @filterType.RenderFilterFragment(filterDefinition, filter)
+                        }
                     }
                 </MudItem>
             }

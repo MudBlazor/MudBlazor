@@ -1,7 +1,6 @@
 ﻿@namespace MudBlazor
-@typeparam T
-@inherits ComponentBase
-@implements IFilterType<T>
+inherits MudComponentBase
+@implements IFilterType
 
 @Render
 
@@ -14,22 +13,22 @@
     public RenderFragment Render => base.BuildRenderTree;
 
     /// <inheritdoc />
-    public bool CanBeMapped(FilterDefinition<T> filterDefinition)
+    public bool CanBeMapped<T>(FilterDefinition<T> filterDefinition)
     {
         return filterDefinition.FieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty");
     }
 
     /// <inheritdoc />
-    public RenderFragment<(FilterDefinition<T> filterDefinition, Filter<T> filter)> RenderFilterFragment => context =>
+    public RenderFragment RenderFilterFragment<T>(FilterDefinition<T> filterDefinition, Filter<T> filter) =>
         @<MudNumericField T="double?"
-                          Value="@context.filter._valueNumber"
-                          ValueChanged="@context.filter.NumberValueChanged"
+                          Value="@filter._valueNumber"
+                          ValueChanged="@filter.NumberValueChanged"
                           FullWidth="true"
                           Label="Value"
                           Placeholder="Filter value"
                           Margin="@Margin.Dense"
                           Immediate="true"
                           Class="filter-input"
-                          Culture="@context.filter.FilterColumn?.Culture"/>;
+                          Culture="@filter.FilterColumn?.Culture"/>;
 
 }

@@ -1,8 +1,7 @@
 ﻿@namespace MudBlazor
-@typeparam T
 @using MudBlazor.Extensions
-@inherits ComponentBase
-@implements IFilterType<T>
+inherits MudComponentBase
+@implements IFilterType
 
 @Render
 
@@ -15,23 +14,23 @@
     public RenderFragment Render => base.BuildRenderTree;
 
     /// <inheritdoc />
-    public bool CanBeMapped(FilterDefinition<T> filterDefinition)
+    public bool CanBeMapped<T>(FilterDefinition<T> filterDefinition)
     {
         return filterDefinition.FieldType.IsEnum;
     }
 
     /// <inheritdoc />
-    public RenderFragment<(FilterDefinition<T> filterDefinition, Filter<T> filter)> RenderFilterFragment => context =>
+    public RenderFragment RenderFilterFragment<T>(FilterDefinition<T> filterDefinition, Filter<T> filter) =>
         @<MudSelect T="Enum"
-                    Value="@context.filter._valueEnum"
-                    ValueChanged="@context.filter.EnumValueChanged"
+                    Value="@filter._valueEnum"
+                    ValueChanged="@filter.EnumValueChanged"
                     FullWidth="true"
                     Dense="true"
                     Margin="@Margin.Dense"
                     Class="filter-input">
             <MudSelectItem T="Enum"
                            Value="@(null)"/>
-        @foreach (var item in EnumExtensions.GetSafeEnumValues(context.filterDefinition.dataType))
+        @foreach (var item in EnumExtensions.GetSafeEnumValues(filterDefinition.dataType))
             {
                 <MudSelectItem T="Enum" Value="@(item)">@item</MudSelectItem>
             }

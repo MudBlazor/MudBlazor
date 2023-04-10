@@ -7,25 +7,25 @@ using System.Collections.Generic;
 namespace MudBlazor;
 
 #nullable enable
-public class FilterTypeMapper<T>
+public class FilterTypeMapper
 {
-    private readonly List<IFilterType<T>> _filters = new()
+    private readonly List<IFilterType> _filters = new()
     {
-        new BooleanFilterType<T>(),
-        new DateTimeFilterType<T>(),
-        new EnumFilterType<T>(),
-        new GuidFilterType<T>(),
-        new NumberFilterType<T>(),
-        new StringFilterType<T>()
+        new BooleanFilterType(),
+        new DateTimeFilterType(),
+        new EnumFilterType(),
+        new GuidFilterType(),
+        new NumberFilterType(),
+        new StringFilterType()
     };
 
-    public IReadOnlyList<IFilterType<T>> Filters => _filters;
+    public IReadOnlyList<IFilterType> Filters => _filters;
 
-    public void AddFilterType(IFilterType<T> filterType) => _filters.Add(filterType);
+    public void AddFilterType(IFilterType filterType) => _filters.Add(filterType);
 
-    public void RemoveFilterType(IFilterType<T> filterType) => _filters.Remove(filterType);
+    public void RemoveFilterType(IFilterType filterType) => _filters.Remove(filterType);
 
     public void RemoveAll() => _filters.Clear();
 
-    public static FilterTypeMapper<T> Default = new();
+    public static FilterTypeMapper Default = new();
 }

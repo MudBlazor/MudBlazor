@@ -1,7 +1,6 @@
 ﻿@namespace MudBlazor
-@typeparam T
-@inherits ComponentBase
-@implements IFilterType<T>
+inherits MudComponentBase
+@implements IFilterType
 
 @Render
 
@@ -14,23 +13,23 @@
     public RenderFragment Render => base.BuildRenderTree;
 
     /// <inheritdoc />
-    public bool CanBeMapped(FilterDefinition<T> filterDefinition)
+    public bool CanBeMapped<T>(FilterDefinition<T> filterDefinition)
     {
         return filterDefinition.FieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty");
     }
 
     /// <inheritdoc />
-    public RenderFragment<(FilterDefinition<T> filterDefinition, Filter<T> filter)> RenderFilterFragment => context =>
+    public RenderFragment RenderFilterFragment<T>(FilterDefinition<T> filterDefinition, Filter<T> filter) =>
         @<MudGrid Spacing="0">
             <MudItem xs="7">
-                <MudDatePicker Date="@context.filter._valueDate"
-                               DateChanged="@context.filter.DateValueChanged"
+                <MudDatePicker Date="@filter._valueDate"
+                               DateChanged="@filter.DateValueChanged"
                                Margin="@Margin.Dense"
                                Class="filter-input-date"/>
             </MudItem>
             <MudItem xs="5">
-                <MudTimePicker Time="@context.filter._valueTime"
-                               TimeChanged="@context.filter.TimeValueChanged"
+                <MudTimePicker Time="@filter._valueTime"
+                               TimeChanged="@filter.TimeValueChanged"
                                Margin="@Margin.Dense"
                                Class="filter-input-time"/>
             </MudItem>

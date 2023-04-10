@@ -628,7 +628,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool ShowMenuIcon { get; set; } = false;
 
-        [Parameter] public FilterTypeMapper<T> FilterTypeMapper { get; set; } = FilterTypeMapper<T>.Default;
+        [Parameter] public FilterTypeMapper FilterTypeMapper { get; set; } = FilterTypeMapper.Default;
 
         #endregion
 
