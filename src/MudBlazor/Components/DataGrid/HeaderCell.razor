@@ -113,8 +113,8 @@ else if (Column != null && !Column.Hidden)
                             @DataGrid.Filter(Column.FilterContext.FilterDefinition, Column)
                         </MudItem>
                         <MudItem xs="12" Class="d-flex justify-end">
-                            <MudButton Class="clear-filter-button" OnClick="@ClearFilter">Clear</MudButton>
-                            <MudButton Class="apply-filter-button" Color="@Color.Primary" OnClick="@ApplyFilter">Filter</MudButton>
+                            <MudButton Class="clear-filter-button" OnClick="@ClearFilterAsync">Clear</MudButton>
+                            <MudButton Class="apply-filter-button" Color="@Color.Primary" OnClick="@ApplyFilterAsync">Filter</MudButton>
                         </MudItem>
                     </MudGrid>
                 }

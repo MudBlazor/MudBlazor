@@ -40,27 +40,10 @@ namespace MudBlazor
             _dataGrid = dataGrid;
             Actions = new FilterActions
             {
-                ApplyFilterAsync = x =>
-                {
-                    //Use Task.CompletedTask but later ApplyFilter should return Task
-                    HeaderCell?.ApplyFilter(x);
-                    return Task.CompletedTask;
-                },
-                ApplyFiltersAsync = x =>
-                {
-                    HeaderCell?.ApplyFilters(x);
-                    return Task.CompletedTask;
-                },
-                ClearFilterAsync = x =>
-                {
-                    HeaderCell?.ClearFilter(x);
-                    return Task.CompletedTask;
-                },
-                ClearFiltersAsync = x =>
-                {
-                    HeaderCell?.ClearFilters(x);
-                    return Task.CompletedTask;
-                },
+                ApplyFilterAsync = (HeaderCell is not null) ? async x => await HeaderCell.ApplyFilterAsync(x) : async _ => await Task.CompletedTask,
+                ApplyFiltersAsync = (HeaderCell is not null) ? async x => await HeaderCell.ApplyFiltersAsync(x) : async _ => await Task.CompletedTask,
+                ClearFilterAsync = (HeaderCell is not null) ? async x => await HeaderCell.ClearFilterAsync(x) : async _ => await Task.CompletedTask,
+                ClearFiltersAsync = (HeaderCell is not null) ? async x => await HeaderCell.ClearFiltersAsync(x) : async _ => await Task.CompletedTask,
             };
         }
 
