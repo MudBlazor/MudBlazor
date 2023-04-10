@@ -33,14 +33,13 @@
         Value = true
     };
 
-    private void ApplyFilter(bool value, FilterContext<Model> context)
+    private async Task ApplyFilterAsync(bool value, FilterContext<Model> context)
     {
         _filterHired = value;
 
         if (_filterHired)
-            context.Actions.ApplyFilter(_filterDefinition);
+            await context.Actions.ApplyFilterAsync(_filterDefinition);
         else
-            context.Actions.ClearFilter(_filterDefinition);
+            await context.Actions.ClearFilterAsync(_filterDefinition);
     }
-
 }

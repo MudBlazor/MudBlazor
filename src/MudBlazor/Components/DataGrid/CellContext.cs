@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -33,19 +34,19 @@ namespace MudBlazor
             Item = item;
             Actions = new CellActions
             {
-                SetSelectedItem = async (x) => await dataGrid.SetSelectedItemAsync(x, item),
-                StartEditingItem = async () => await dataGrid.SetEditingItemAsync(item),
-                CancelEditingItem = async () => await dataGrid.CancelEditingItemAsync(),
-                ToggleHierarchyVisibilityForItem = async () => await dataGrid.ToggleHierarchyVisibilityAsync(item),
+                SetSelectedItemAsync = x => dataGrid.SetSelectedItemAsync(x, item),
+                StartEditingItemAsync = () => dataGrid.SetEditingItemAsync(item),
+                CancelEditingItemAsync = () => dataGrid.CancelEditingItemAsync(),
+                ToggleHierarchyVisibilityForItemAsync = () => dataGrid.ToggleHierarchyVisibilityAsync(item),
             };
         }
 
         public class CellActions
         {
-            public Action<bool>? SetSelectedItem { get; internal set; }
-            public Action? StartEditingItem { get; internal set; }
-            public Action? CancelEditingItem { get; internal set; }
-            public Action? ToggleHierarchyVisibilityForItem { get; internal set; }
+            public Func<bool, Task> SetSelectedItemAsync { get; init; } = null!;
+            public Func<Task> StartEditingItemAsync { get; init; } = null!;
+            public Func<Task> CancelEditingItemAsync { get; init; } = null!;
+            public Func<Task> ToggleHierarchyVisibilityForItemAsync { get; init; } = null!;
         }
     }
 }

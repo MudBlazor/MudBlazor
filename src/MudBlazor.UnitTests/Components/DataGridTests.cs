@@ -2988,10 +2988,10 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("tbody tr").Count.Should().Be(4);
 
             comp.Instance.FilterHired = true;
-            await comp.InvokeAsync(() =>
+            await comp.InvokeAsync(async () =>
             {
                 var filterContext = dataGrid.Instance.RenderedColumns[3].FilterContext;
-                comp.Instance.ApplyFilter(filterContext);
+                await comp.Instance.ApplyFilterAsync(filterContext);
             });
 
             dataGrid.FindAll("tbody tr").Count.Should().Be(1);
@@ -3055,12 +3055,12 @@ namespace MudBlazor.UnitTests.Components
             var cell = new Cell<DataGridCellContextTest.Model>(dataGrid.Instance, column, item);
 
             cell._cellContext.IsSelected.Should().Be(false);
-            cell._cellContext.Actions.SetSelectedItem(true);
+            await cell._cellContext.Actions.SetSelectedItemAsync(true);
             cell._cellContext.IsSelected.Should().Be(true);
 
-            cell._cellContext.Actions.ToggleHierarchyVisibilityForItem();
+            await cell._cellContext.Actions.ToggleHierarchyVisibilityForItemAsync();
             cell._cellContext.OpenHierarchies.Should().Contain(item);
-            cell._cellContext.Actions.ToggleHierarchyVisibilityForItem();
+            await cell._cellContext.Actions.ToggleHierarchyVisibilityForItemAsync();
             cell._cellContext.OpenHierarchies.Should().NotContain(item);
         }
 
