@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -39,19 +40,36 @@ namespace MudBlazor
             _dataGrid = dataGrid;
             Actions = new FilterActions
             {
-                ApplyFilter = x => HeaderCell?.ApplyFilter(x),
-                ApplyFilters = x => HeaderCell?.ApplyFilters(x),
-                ClearFilter = x => HeaderCell?.ClearFilter(x),
-                ClearFilters = x => HeaderCell?.ClearFilters(x),
+                ApplyFilterAsync = x =>
+                {
+                    //Use Task.CompletedTask but later ApplyFilter should return Task
+                    HeaderCell?.ApplyFilter(x);
+                    return Task.CompletedTask;
+                },
+                ApplyFiltersAsync = x =>
+                {
+                    HeaderCell?.ApplyFilters(x);
+                    return Task.CompletedTask;
+                },
+                ClearFilterAsync = x =>
+                {
+                    HeaderCell?.ClearFilter(x);
+                    return Task.CompletedTask;
+                },
+                ClearFiltersAsync = x =>
+                {
+                    HeaderCell?.ClearFilters(x);
+                    return Task.CompletedTask;
+                },
             };
         }
 
         public class FilterActions
         {
-            public Action<FilterDefinition<T>>? ApplyFilter { get; internal set; }
-            public Action<IEnumerable<FilterDefinition<T>>>? ApplyFilters { get; internal set; }
-            public Action<FilterDefinition<T>>? ClearFilter { get; internal set; }
-            public Action<IEnumerable<FilterDefinition<T>>>? ClearFilters { get; internal set; }
+            public Func<FilterDefinition<T>, Task> ApplyFilterAsync { get; init; } = null!;
+            public Func<IEnumerable<FilterDefinition<T>>, Task> ApplyFiltersAsync { get; init; } = null!;
+            public Func<FilterDefinition<T>, Task> ClearFilterAsync { get; init; } = null!;
+            public Func<IEnumerable<FilterDefinition<T>>, Task> ClearFiltersAsync { get; init; } = null!;
         }
     }
 }

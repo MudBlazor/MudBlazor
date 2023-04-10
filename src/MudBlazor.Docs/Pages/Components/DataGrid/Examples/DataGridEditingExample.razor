@@ -22,7 +22,7 @@
         <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
         <TemplateColumn Hidden="@(_isCellEditMode || _readOnly || _editTriggerRowClick)" CellClass="d-flex justify-end">
             <CellTemplate>
-                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItem" />
+                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
             </CellTemplate>
         </TemplateColumn>
     </Columns>

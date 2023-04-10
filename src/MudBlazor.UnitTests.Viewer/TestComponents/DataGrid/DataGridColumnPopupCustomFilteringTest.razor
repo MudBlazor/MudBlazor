@@ -10,7 +10,7 @@
             <FilterTemplate>
                 <MudStack>
                     <MudSwitch T="bool" Color="@Color.Primary" @bind-Checked="FilterHired" Label="Show Hired"></MudSwitch>
-                    <MudButton Class="align-self-end" Color="@Color.Primary" OnClick="@(() => ApplyFilter(context))">@(FilterHired ? "Filter" : "Remove Filter")</MudButton>
+                    <MudButton Class="align-self-end" Color="@Color.Primary" OnClick="@(() => ApplyFilterAsync(context))">@(FilterHired ? "Filter" : "Remove Filter")</MudButton>
                 </MudStack>
             </FilterTemplate>
         </PropertyColumn>
@@ -47,11 +47,11 @@
         }
     }
 
-    public void ApplyFilter(FilterContext<Model> context)
+    public async Task ApplyFilterAsync(FilterContext<Model> context)
     {
         if (FilterHired)
-            context.Actions.ApplyFilter(_filterDefinition);
+           await context.Actions.ApplyFilterAsync(_filterDefinition);
         else
-            context.Actions.ClearFilter(_filterDefinition);
+           await context.Actions.ClearFilterAsync(_filterDefinition);
     }
 }

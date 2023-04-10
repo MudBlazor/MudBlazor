@@ -8,7 +8,7 @@
         <label class="ma-n3">
             <MudIconButton
             Icon="@(context.OpenHierarchies.Contains(context.Item) ?  OpenIcon : ClosedIcon)" 
-            OnClick="context.Actions.ToggleHierarchyVisibilityForItem"
+            OnClick="context.Actions.ToggleHierarchyVisibilityForItemAsync"
             Size="@IconSize"
             Disabled="ButtonDisabledFunc.Invoke(context.Item)"/>
         </label>

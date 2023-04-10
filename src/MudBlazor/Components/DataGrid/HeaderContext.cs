@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -42,14 +43,14 @@ namespace MudBlazor
             _dataGrid = dataGrid;
             Actions = new HeaderActions
             {
-                SetSelectAll = async (x) => await _dataGrid.SetSelectAllAsync(x),
+                SetSelectAllAsync = x => _dataGrid.SetSelectAllAsync(x),
             };
 
         }
 
         public class HeaderActions
         {
-            public Action<bool>? SetSelectAll { get; internal set; }
+            public Func<bool, Task> SetSelectAllAsync { get; init; } = null!;
         }
     }
 }

@@ -22,8 +22,8 @@
                            }
                        </MudStack>
                        <MudStack Row="true">
-                            <MudButton OnClick="@(() => ClearFilter(context))">Clear</MudButton>
-                            <MudButton Color="@Color.Primary" OnClick="@(() => ApplyFilter(context))">Filter</MudButton>
+                            <MudButton OnClick="@(() => ClearFilterAsync(context))">Clear</MudButton>
+                            <MudButton Color="@Color.Primary" OnClick="@(() => ApplyFilterAsync(context))">Filter</MudButton>
                        </MudStack>
                    </MudStack>
 	            </MudPopover>
@@ -65,7 +65,7 @@
         _filterOpen = true;
     }
 
-    void SelectedChanged(bool value, Element item)
+    private void SelectedChanged(bool value, Element item)
     {
         if (value)
             _selectedItems.Add(item);
@@ -78,24 +78,24 @@
             _selectAll = false;
     }
 
-    void ClearFilter(FilterContext<Element> context)
+    private async Task ClearFilterAsync(FilterContext<Element> context)
     {
         _selectedItems = Elements.ToHashSet();
         _filterItems = Elements.ToHashSet();
         _icon = Icons.Material.Outlined.FilterAlt;
-        context.Actions.ClearFilter(_filterDefinition);
+        await context.Actions.ClearFilterAsync(_filterDefinition);
         _filterOpen = false;
     }
 
-    void ApplyFilter(FilterContext<Element> context)
+    private async Task ApplyFilterAsync(FilterContext<Element> context)
     {
         _filterItems = _selectedItems.ToHashSet();
         _icon = _filterItems.Count == Elements.Count() ? Icons.Material.Outlined.FilterAlt : Icons.Material.Filled.FilterAlt;
-        context.Actions.ApplyFilter(_filterDefinition);
+        await context.Actions.ApplyFilterAsync(_filterDefinition);
         _filterOpen = false;
     }
 
-    void SelectAll(bool value)
+    private void SelectAll(bool value)
     {
         _selectAll = value;
 
