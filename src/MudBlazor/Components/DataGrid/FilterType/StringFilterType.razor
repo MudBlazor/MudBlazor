@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor
+@typeparam T
+@inherits ComponentBase
+@implements IFilterType<T>
+
+@Render
+
+@code {
+#nullable enable
+
+    /// <summary>
+    /// Renders the component to the supplied <see cref="BuildRenderTree"/>.
+    /// </summary>
+    public RenderFragment Render => base.BuildRenderTree;
+
+    /// <inheritdoc />
+    public bool CanBeMapped(FilterDefinition<T> filterDefinition)
+    {
+        return filterDefinition.FieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty");
+    }
+
+
+    /// <inheritdoc />
+    public RenderFragment<(FilterDefinition<T> filterDefinition, Filter<T> filter)> RenderFilterFragment => context =>
+        @<MudTextField T="string"
+                       Value="@context.filter._valueString"
+                       ValueChanged="@context.filter.StringValueChanged"
+                       FullWidth="true"
+                       Label="Value"
+                       Placeholder="Filter value"
+                       Margin="@Margin.Dense"
+                       Immediate="true"
+                       Class="filter-input"/>;
+
+}

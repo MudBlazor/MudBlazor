@@ -1,0 +1,36 @@
+﻿@namespace MudBlazor
+@typeparam T
+@inherits ComponentBase
+@implements IFilterType<T>
+
+@Render
+
+@code {
+#nullable enable
+    /// <summary>
+    /// Renders the component to the supplied <see cref="BuildRenderTree"/>.
+    /// </summary>
+    public RenderFragment Render => base.BuildRenderTree;
+
+    /// <inheritdoc />
+    public bool CanBeMapped(FilterDefinition<T> filterDefinition)
+    {
+        return filterDefinition.FieldType.IsBoolean;
+    }
+
+    /// <inheritdoc />
+    public RenderFragment<(FilterDefinition<T> filterDefinition, Filter<T> filter)> RenderFilterFragment => context =>
+        @<MudSelect T="bool?" 
+                    Value="@context.filter._valueBool"
+                    ValueChanged="@context.filter.BoolValueChanged"
+                    FullWidth="true"
+                    Dense="true"
+                    Margin="@Margin.Dense" 
+                    Class="filter-input">
+            <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
+            <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
+            <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
+        </MudSelect>;
+
+}
+

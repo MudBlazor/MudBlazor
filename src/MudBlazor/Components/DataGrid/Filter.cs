@@ -8,7 +8,7 @@ using System.Linq;
 namespace MudBlazor
 {
 #nullable enable
-    internal class Filter<T>
+    public class Filter<T>
     {
         private readonly MudDataGrid<T> _dataGrid;
         private readonly FilterDefinition<T> _filterDefinition;
