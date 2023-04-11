@@ -1,8 +1,7 @@
 @namespace MudBlazor.UnitTests.TestComponents
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDataGrid Items="@_items" Filterable="true" ServerData="ServerDataFunc"
-    FilterMode="DataGridFilterMode.ColumnFilterMenu">
+<MudDataGrid T="Model" Filterable="true" ServerData="ServerDataFunc" FilterMode="DataGridFilterMode.ColumnFilterMenu">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" Filterable="false" />
