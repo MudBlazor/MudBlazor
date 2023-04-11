@@ -692,15 +692,22 @@ namespace MudBlazor
             return $"{_componentId}_item{index}";
         }
 
-        internal Task OnEnterKey()
+        internal async Task OnEnterKey()
         {
             if (IsOpen == false)
-                return Task.CompletedTask;
-            if (_items == null || _items.Length == 0)
-                return Task.CompletedTask;
-            if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
-                return SelectOption(_items[_selectedListItemIndex]);
-            return Task.CompletedTask;
+                return;
+            try
+            {
+                if (_items == null || _items.Length == 0)
+                    return;
+                if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
+                    await SelectOption(_items[_selectedListItemIndex]);
+            }
+            finally
+            {
+                if (IsOpen)
+                    IsOpen = false;
+            }
         }
 
         private Task OnInputBlurred(FocusEventArgs args)
