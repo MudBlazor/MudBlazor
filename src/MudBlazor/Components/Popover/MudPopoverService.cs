@@ -143,7 +143,7 @@ namespace MudBlazor
 
     }
 
-    public class MudPopoverService : IMudPopoverService, IAsyncDisposable
+    public class MudPopoverService : IMudPopoverService
     {
         private Dictionary<Guid, MudPopoverHandler> _handlers = new();
         private bool _isInitialized = false;
@@ -210,15 +210,6 @@ namespace MudBlazor
             if (success)
                 return value;
             return 0;
-        }
-
-        //TO DO add js test
-        [ExcludeFromCodeCoverage]
-        public async ValueTask DisposeAsync()
-        {
-            if (_isInitialized == false) { return; }
-
-            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.dispose");
         }
     }
 }

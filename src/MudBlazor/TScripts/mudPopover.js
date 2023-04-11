@@ -452,27 +452,6 @@ class MudPopover {
         }
     }
 
-    disconnect(id) {
-        if (this.map[id]) {
-
-            const item = this.map[id]
-            item.mutationObserver.disconnect();
-            item.resizeObserver.disconnect();
-            item.contentNodeObserver.disconnect();
-
-            delete this.map[id];
-        }
-    }
-
-    dispose() {
-        for (var i in this.map) {
-            disconnect(i);
-        }
-
-        this.contentObserver.disconnect();
-        this.contentObserver = null;
-    }
-
     getAllObservedContainers() {
         const result = [];
         for (var i in this.map) {
