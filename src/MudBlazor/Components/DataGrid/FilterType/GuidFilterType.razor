@@ -1,33 +1,25 @@
 ﻿@namespace MudBlazor
-inherits MudComponentBase
-@implements IFilterType
+@typeparam T
+@inherits FilterTypeBase<T>
 
-@Render
+@if (CanBeMapped())
+{
+    <MudTextField T="string"
+                  Value="@Filter._valueString"
+                  ValueChanged="@Filter.StringValueChanged"
+                  FullWidth="true"
+                  Label="Value"
+                  Placeholder="Filter value"
+                  Margin="@Margin.Dense"
+                  Immediate="true"
+                  Class="filter-input"/>
+}
 
 @code {
 #nullable enable
 
-    /// <summary>
-    /// Renders the component to the supplied <see cref="BuildRenderTree"/>.
-    /// </summary>
-    public RenderFragment Render => base.BuildRenderTree;
-
-    /// <inheritdoc />
-    public bool CanBeMapped<T>(FilterDefinition<T> filterDefinition)
+    public override bool CanBeMapped()
     {
-        return filterDefinition.FieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty");
+        return FilterDefinition.FieldType.IsDateTime && !(FilterDefinition.Operator ?? "").EndsWith("empty");
     }
-
-    /// <inheritdoc />
-    public RenderFragment RenderFilterFragment<T>(FilterDefinition<T> filterDefinition, Filter<T> filter) =>
-        @<MudTextField T="string"
-                       Value="@filter._valueString"
-                       ValueChanged="@filter.StringValueChanged"
-                       FullWidth="true"
-                       Label="Value"
-                       Placeholder="Filter value"
-                       Margin="@Margin.Dense"
-                       Immediate="true"
-                       Class="filter-input"/>;
-
 }

@@ -1,38 +1,31 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Extensions
-inherits MudComponentBase
-@implements IFilterType
+@typeparam T
+@inherits FilterTypeBase<T>
 
-@Render
+@if (CanBeMapped())
+{
+    <MudSelect T="Enum"
+               Value="@Filter._valueEnum"
+               ValueChanged="@Filter.EnumValueChanged"
+               FullWidth="true"
+               Dense="true"
+               Margin="@Margin.Dense"
+               Class="filter-input">
+        <MudSelectItem T="Enum"
+                       Value="@(null)"/>
+        @foreach (var item in EnumExtensions.GetSafeEnumValues(FilterDefinition.dataType))
+        {
+            <MudSelectItem T="Enum" Value="@(item)">@item</MudSelectItem>
+        }
+    </MudSelect>
+}
 
 @code {
 #nullable enable
 
-    /// <summary>
-    /// Renders the component to the supplied <see cref="BuildRenderTree"/>.
-    /// </summary>
-    public RenderFragment Render => base.BuildRenderTree;
-
-    /// <inheritdoc />
-    public bool CanBeMapped<T>(FilterDefinition<T> filterDefinition)
+    public override bool CanBeMapped()
     {
-        return filterDefinition.FieldType.IsEnum;
+        return FilterDefinition.FieldType.IsEnum;
     }
-
-    /// <inheritdoc />
-    public RenderFragment RenderFilterFragment<T>(FilterDefinition<T> filterDefinition, Filter<T> filter) =>
-        @<MudSelect T="Enum"
-                    Value="@filter._valueEnum"
-                    ValueChanged="@filter.EnumValueChanged"
-                    FullWidth="true"
-                    Dense="true"
-                    Margin="@Margin.Dense"
-                    Class="filter-input">
-            <MudSelectItem T="Enum"
-                           Value="@(null)"/>
-        @foreach (var item in EnumExtensions.GetSafeEnumValues(filterDefinition.dataType))
-            {
-                <MudSelectItem T="Enum" Value="@(item)">@item</MudSelectItem>
-            }
-        </MudSelect>;
 }

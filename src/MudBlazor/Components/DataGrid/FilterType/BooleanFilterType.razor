@@ -1,35 +1,28 @@
 ﻿@namespace MudBlazor
-@inherits MudComponentBase
-@implements IFilterType
+@typeparam T
+@inherits FilterTypeBase<T>
 
-@Render
+@if (CanBeMapped())
+{
+    <MudSelect T="bool?" 
+               Value="@Filter._valueBool"
+               ValueChanged="@Filter.BoolValueChanged"
+               FullWidth="true"
+               Dense="true"
+               Margin="@Margin.Dense" 
+               Class="filter-input">
+        <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
+        <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
+        <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
+    </MudSelect>
+}
 
 @code {
 #nullable enable
-    /// <summary>
-    /// Renders the component to the supplied <see cref="BuildRenderTree"/>.
-    /// </summary>
-    public RenderFragment Render => base.BuildRenderTree;
 
-    /// <inheritdoc />
-    public bool CanBeMapped<T>(FilterDefinition<T> filterDefinition)
+    public override bool CanBeMapped()
     {
-        return filterDefinition.FieldType.IsBoolean;
+        return FilterDefinition.FieldType.IsBoolean;
     }
-
-    /// <inheritdoc />
-    public RenderFragment RenderFilterFragment<T>(FilterDefinition<T> filterDefinition, Filter<T> filter) =>
-        @<MudSelect T="bool?" 
-                    Value="@filter._valueBool"
-                    ValueChanged="@filter.BoolValueChanged"
-                    FullWidth="true"
-                    Dense="true"
-                    Margin="@Margin.Dense" 
-                    Class="filter-input">
-            <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
-            <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
-            <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
-        </MudSelect>;
-
 }
 

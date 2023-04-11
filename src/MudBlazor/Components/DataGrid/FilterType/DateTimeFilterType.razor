@@ -1,38 +1,30 @@
 ﻿@namespace MudBlazor
-inherits MudComponentBase
-@implements IFilterType
+@typeparam T
+@inherits FilterTypeBase<T>
 
-@Render
+@if (CanBeMapped())
+{
+    <MudGrid Spacing="0">
+        <MudItem xs="7">
+            <MudDatePicker Date="@Filter._valueDate"
+                           DateChanged="@Filter.DateValueChanged"
+                           Margin="@Margin.Dense"
+                           Class="filter-input-date"/>
+        </MudItem>
+        <MudItem xs="5">
+            <MudTimePicker Time="@Filter._valueTime"
+                           TimeChanged="@Filter.TimeValueChanged"
+                           Margin="@Margin.Dense"
+                           Class="filter-input-time"/>
+        </MudItem>
+    </MudGrid>
+}
 
 @code {
 #nullable enable
 
-    /// <summary>
-    /// Renders the component to the supplied <see cref="BuildRenderTree"/>.
-    /// </summary>
-    public RenderFragment Render => base.BuildRenderTree;
-
-    /// <inheritdoc />
-    public bool CanBeMapped<T>(FilterDefinition<T> filterDefinition)
+    public override bool CanBeMapped()
     {
-        return filterDefinition.FieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty");
+        return FilterDefinition.FieldType.IsDateTime && !(FilterDefinition.Operator ?? "").EndsWith("empty");
     }
-
-    /// <inheritdoc />
-    public RenderFragment RenderFilterFragment<T>(FilterDefinition<T> filterDefinition, Filter<T> filter) =>
-        @<MudGrid Spacing="0">
-            <MudItem xs="7">
-                <MudDatePicker Date="@filter._valueDate"
-                               DateChanged="@filter.DateValueChanged"
-                               Margin="@Margin.Dense"
-                               Class="filter-input-date"/>
-            </MudItem>
-            <MudItem xs="5">
-                <MudTimePicker Time="@filter._valueTime"
-                               TimeChanged="@filter.TimeValueChanged"
-                               Margin="@Margin.Dense"
-                               Class="filter-input-time"/>
-            </MudItem>
-        </MudGrid>;
-
 }
