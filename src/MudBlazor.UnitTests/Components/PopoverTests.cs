@@ -603,13 +603,6 @@ namespace MudBlazor.UnitTests.Components
                It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 0)), Times.Once());
         }
 
-        [Test]
-        public async Task MudPopoverService_OnlyDisposeIfConnected()
-        {
-            var service = new MudPopoverService(Mock.Of<IJSRuntime>(MockBehavior.Strict));
-            //await service.DisposeAsync();
-        }
-
         [Test(Description = "Remove in v7")]
         public void MudPopoverService_RegisterAndUseHandler()
         {
