@@ -14,11 +14,11 @@
             <MudStack Row="true">
                 @if (dataType == typeof(string) && !(_operator ?? "").EndsWith("empty"))
                 {
-                    <MudTextField T="string" Value="@_valueString" ValueChanged="@StringValueChangedAsync" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(DataGrid.ServerData is null ? 0 : 1000.0)" />
+                    <MudTextField T="string" Value="@_valueString" ValueChanged="@StringValueChangedAsync" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(DataGrid.ServerData is null ? 0 : 500.0)" />
                 }
                 else if (isNumber && !(_operator ?? "").EndsWith("empty"))
                 {
-                    <MudNumericField T="double?" Culture="@Column.Culture" Value="@_valueNumber" ValueChanged="@NumberValueChangedAsync" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(DataGrid.ServerData is null ? 0 : 1000.0)" />
+                    <MudNumericField T="double?" Culture="@Column.Culture" Value="@_valueNumber" ValueChanged="@NumberValueChangedAsync" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(DataGrid.ServerData is null ? 0 : 500.0)" />
                 }
                 else if (isEnum)
                 {
