@@ -216,8 +216,7 @@ namespace MudBlazor
 
         internal async Task ClearFilterAsync(FilterDefinition<T> filterDefinition)
         {
-            DataGrid.RemoveFilter(filterDefinition.Id);
-            if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
+            await DataGrid.RemoveFilterAsync(filterDefinition.Id);
         }
 
         #endregion

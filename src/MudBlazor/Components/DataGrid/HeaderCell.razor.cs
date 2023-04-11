@@ -368,18 +368,16 @@ namespace MudBlazor
 
         internal async Task ClearFilterAsync()
         {
-            DataGrid.RemoveFilter(Column.FilterContext.FilterDefinition.Id);
             Column.FilterContext.FilterDefinition.Value = null;
-            if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
-            else ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            await DataGrid.RemoveFilterAsync(Column.FilterContext.FilterDefinition.Id);
+            if (DataGrid.ServerData is null) ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
         }
 
         internal async Task ClearFilterAsync(FilterDefinition<T> filterDefinition)
         {
-            DataGrid.RemoveFilter(filterDefinition.Id);
-            if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
-            else ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            await DataGrid.RemoveFilterAsync(filterDefinition.Id);
+            if (DataGrid.ServerData is null) ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
         }
 

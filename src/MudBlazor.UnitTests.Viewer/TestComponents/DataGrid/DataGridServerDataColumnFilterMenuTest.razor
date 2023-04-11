@@ -1,7 +1,7 @@
 @namespace MudBlazor.UnitTests.TestComponents
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDataGrid @ref="_grid" Items="@_items" Filterable="true" ServerData="ServerDataFunc"
+<MudDataGrid Items="@_items" Filterable="true" ServerData="ServerDataFunc"
     FilterMode="DataGridFilterMode.ColumnFilterMenu">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
@@ -16,10 +16,8 @@
 @code {
     public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
     private int _serverCallCount;
-    private MudDataGrid<Model> _grid;
-    private FilterDefinition<Model> _nameFilter;
 
-    private IEnumerable<Model> _items = new List<Model>()
+    private readonly IEnumerable<Model> _items = new List<Model>()
     {
         new Model("Sam", 56, Severity.Normal, false, null), 
         new Model("Alicia", 54, Severity.Info, null, null), 
@@ -32,10 +30,10 @@
         _serverCallCount++;
         StateHasChanged();
         await Task.CompletedTask;
-        _nameFilter = _grid.FilterDefinitions.FirstOrDefault();
+        var filterFunctions = gridState.FilterDefinitions.Select(x => x.GenerateFilterFunction());
         return new GridData<Model>
         {
-            Items = _items.Where(_nameFilter?.GenerateFilterFunction() ?? (_ => true)),
+            Items = _items.Where(p => filterFunctions.All(f => f(p))),
             TotalItems = _items.Count()
         };
     }

@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -48,9 +49,9 @@ namespace MudBlazor
             }
         }
 
-        internal void RemoveFilter()
+        internal async Task RemoveFilterAsync()
         {
-            _dataGrid.RemoveFilter(_filterDefinition.Id);
+            await _dataGrid.RemoveFilterAsync(_filterDefinition.Id);
         }
 
         internal void FieldChanged(Column<T> column)

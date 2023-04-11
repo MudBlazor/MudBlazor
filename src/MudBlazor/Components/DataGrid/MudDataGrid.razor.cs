@@ -870,12 +870,14 @@ namespace MudBlazor
         {
             FilterDefinitions.Add(definition);
             _filtersMenuVisible = true;
-            StateHasChanged();
+            InvokeServerLoadFunc().AndForget();
+            if (ServerData is null) StateHasChanged();
         }
 
-        internal void RemoveFilter(Guid id)
+        internal async Task RemoveFilterAsync(Guid id)
         {
             FilterDefinitions.RemoveAll(x => x.Id == id);
+            await InvokeServerLoadFunc();
             GroupItems();
         }
 

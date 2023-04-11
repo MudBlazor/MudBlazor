@@ -3144,7 +3144,7 @@ namespace MudBlazor.UnitTests.Components
             callCountText.Markup.Should().Contain("Server call count: 2");
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
 
-            comp.Find("th > div > button.mud-button-root").Click();
+            comp.Find("th > div > button.mud-button-root").Click(); // Clear filter button
             callCountText.Markup.Should().Contain("Server call count: 3");
             dataGrid.Render();
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
