@@ -17,20 +17,10 @@ public class FilterTypeMapper
         typeof(EnumFilterType<>),
         typeof(GuidFilterType<>),
         typeof(NumberFilterType<>),
-        typeof(StringFilterType<>),
+        typeof(StringFilterType<>)
     };
 
-    //public IReadOnlyList<IFilterType> Filters => new List<IFilterType>()
-    //{
-    //    new BooleanFilterType(),
-    //    new DateTimeFilterType(),
-    //    new EnumFilterType(),
-    //    new GuidFilterType(),
-    //    new NumberFilterType(),
-    //    new StringFilterType()
-    //};
-
-    public IEnumerable<Type> Create<T>()
+    public virtual IEnumerable<Type> Create<T>()
     {
         foreach (var filterType in _filterTypes)
         {
@@ -39,11 +29,17 @@ public class FilterTypeMapper
         }
     }
 
-    //public void AddFilterType(IFilterType filterType) => _filters.Add(filterType);
+    public void AddFilterType<T>() where T : FilterTypeBase<T>
+    {
+        _filterTypes.Add(typeof(T).GetGenericTypeDefinition());
+    }
 
-    //public void RemoveFilterType(IFilterType filterType) => _filters.Remove(filterType);
+    public void RemoveFilterType<T>() where T : FilterTypeBase<T>
+    {
+        _filterTypes.Remove(typeof(T).GetGenericTypeDefinition());
+    }
 
-    //public void RemoveAll() => _filters.Clear();
+    public void RemoveAll() => _filterTypes.Clear();
 
     public static FilterTypeMapper Default = new();
 }
