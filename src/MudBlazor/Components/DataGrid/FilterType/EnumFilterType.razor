@@ -6,15 +6,15 @@
 @if (CanBeMapped())
 {
     <MudSelect T="Enum"
-               Value="@Filter._valueEnum"
-               ValueChanged="@Filter.EnumValueChanged"
+               Value="@FilterLazy.Value._valueEnum"
+               ValueChanged="@FilterLazy.Value.EnumValueChanged"
                FullWidth="true"
                Dense="true"
                Margin="@Margin.Dense"
                Class="filter-input">
         <MudSelectItem T="Enum"
                        Value="@(null)"/>
-        @foreach (var item in EnumExtensions.GetSafeEnumValues(FilterDefinition.dataType))
+        @foreach (var item in EnumExtensions.GetSafeEnumValues(FilterDefinitionLazy.Value.dataType))
         {
             <MudSelectItem T="Enum" Value="@(item)">@item</MudSelectItem>
         }
@@ -26,6 +26,6 @@
 
     public override bool CanBeMapped()
     {
-        return FilterDefinition.FieldType.IsEnum;
+        return FilterDefinitionLazy.Value.FieldType.IsEnum;
     }
 }

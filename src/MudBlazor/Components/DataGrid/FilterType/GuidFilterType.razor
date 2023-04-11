@@ -5,8 +5,8 @@
 @if (CanBeMapped())
 {
     <MudTextField T="string"
-                  Value="@Filter._valueString"
-                  ValueChanged="@Filter.StringValueChanged"
+                  Value="@FilterLazy.Value._valueString"
+                  ValueChanged="@FilterLazy.Value.StringValueChanged"
                   FullWidth="true"
                   Label="Value"
                   Placeholder="Filter value"
@@ -20,6 +20,6 @@
 
     public override bool CanBeMapped()
     {
-        return FilterDefinition.FieldType.IsDateTime && !(FilterDefinition.Operator ?? "").EndsWith("empty");
+        return FilterDefinitionLazy.Value.FieldType.IsDateTime && !(FilterDefinitionLazy.Value.Operator ?? "").EndsWith("empty");
     }
 }
