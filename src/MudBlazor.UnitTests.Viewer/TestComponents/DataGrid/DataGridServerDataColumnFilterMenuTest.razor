@@ -32,7 +32,7 @@
         var filterFunctions = gridState.FilterDefinitions.Select(x => x.GenerateFilterFunction());
         return new GridData<Model>
         {
-            Items = _items.Where(p => filterFunctions.All(f => f(p))),
+            Items = _items.Where(p => filterFunctions.All(f => f(p))).ToList(),
             TotalItems = _items.Count()
         };
     }
