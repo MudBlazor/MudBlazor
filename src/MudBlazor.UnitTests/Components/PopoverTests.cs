@@ -657,30 +657,6 @@ namespace MudBlazor.UnitTests.Components
             mock.Verify();
         }
 
-        [Test]
-        public async Task MudPopoverService_DisposeAsync_ThrowsExceptionIfNotTaskCancelException()
-        {
-            var mock = new Mock<IJSRuntime>();
-
-            mock.Setup(x =>
-           x.InvokeAsync<IJSVoidResult>(
-               "mudPopover.initialize",
-               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 0))).ReturnsAsync(Mock.Of<IJSVoidResult>).Verifiable();
-
-            mock.Setup(x =>
-            x.InvokeAsync<IJSVoidResult>(
-            "mudPopover.dispose",
-            It.Is<object[]>(x => x.Length == 0))).ThrowsAsync(new InvalidOperationException()).Verifiable();
-
-            var service = new MudPopoverService(mock.Object);
-            await service.InitializeIfNeeded();
-
-            //any other exception (despite TaskCancelException, should result in an exception
-            Assert.ThrowsAsync<InvalidOperationException>(async () => await service.DisposeAsync());
-
-            mock.Verify();
-        }
-
         [Test(Description = "Remove in v7")]
         public void MudPopoverService_RegisterAndUseHandler()
         {

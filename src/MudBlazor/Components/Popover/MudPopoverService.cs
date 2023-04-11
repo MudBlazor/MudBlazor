@@ -214,11 +214,12 @@ namespace MudBlazor
 
         //TO DO add js test
         [ExcludeFromCodeCoverage]
-        public async ValueTask DisposeAsync()
+        public ValueTask DisposeAsync()
         {
-            if (_isInitialized == false) { return; }
+            if (_isInitialized == false) { return ValueTask.CompletedTask; }
 
-            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.dispose");
+            _ = _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.dispose");
+            return ValueTask.CompletedTask;
         }
     }
 }
