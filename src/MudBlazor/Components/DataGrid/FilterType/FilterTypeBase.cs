@@ -30,13 +30,13 @@ public abstract class FilterTypeBase<T> : ComponentBase
 
     private Filter<T> GetFilter()
     {
-        ArgumentNullException.ThrowIfNull(FilterInternal);
+        //ArgumentNullException.ThrowIfNull(FilterInternal);
         return FilterInternal;
     }
 
     private FilterDefinition<T> GetFilterDefinition()
     {
-        ArgumentNullException.ThrowIfNull(FilterDefinitionInternal);
+        //ArgumentNullException.ThrowIfNull(FilterDefinitionInternal);
         return FilterDefinitionInternal;
     }
 }
