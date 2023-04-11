@@ -6,8 +6,8 @@
 @if (CanBeMapped())
 {
     <MudSelect T="bool?" 
-               Value="@FilterLazy.Value._valueBool"
-               ValueChanged="@FilterLazy.Value.BoolValueChanged"
+               Value="@Filter._valueBool"
+               ValueChanged="@Filter.BoolValueChanged"
                FullWidth="true"
                Dense="true"
                Margin="@Margin.Dense" 
@@ -23,7 +23,7 @@
 
     public override bool CanBeMapped()
     {
-        return FilterDefinitionLazy.Value.FieldType.IsBoolean;
+        return FilterDefinition.FieldType.IsBoolean;
     }
 }
 

@@ -16,27 +16,24 @@ public abstract class FilterTypeBase<T> : ComponentBase
     [CascadingParameter(Name = "FilterDefinition")]
     private FilterDefinition<T> FilterDefinitionInternal { get; set; } = null!;
 
-    protected FilterTypeBase()
+
+    protected Filter<T> Filter
     {
-        FilterLazy = new Lazy<Filter<T>>(GetFilter);
-        FilterDefinitionLazy = new Lazy<FilterDefinition<T>>(GetFilterDefinition);
+        get
+        {
+            ArgumentNullException.ThrowIfNull(FilterInternal);
+            return FilterInternal;
+        }
     }
 
-    protected Lazy<Filter<T>> FilterLazy { get; }
-
-    protected Lazy<FilterDefinition<T>> FilterDefinitionLazy { get; }
+    protected FilterDefinition<T> FilterDefinition
+    {
+        get
+        {
+            ArgumentNullException.ThrowIfNull(FilterDefinitionInternal);
+            return FilterDefinitionInternal;
+        }
+    }
 
     public abstract bool CanBeMapped();
-
-    private Filter<T> GetFilter()
-    {
-        //ArgumentNullException.ThrowIfNull(FilterInternal);
-        return FilterInternal;
-    }
-
-    private FilterDefinition<T> GetFilterDefinition()
-    {
-        //ArgumentNullException.ThrowIfNull(FilterDefinitionInternal);
-        return FilterDefinitionInternal;
-    }
 }

@@ -6,15 +6,15 @@
 @if (CanBeMapped())
 {
     <MudNumericField T="double?"
-                 Value="@FilterLazy.Value._valueNumber"
-                 ValueChanged="@FilterLazy.Value.NumberValueChanged"
+                 Value="@Filter._valueNumber"
+                 ValueChanged="@Filter.NumberValueChanged"
                      FullWidth="true"
                      Label="Value"
                      Placeholder="Filter value"
                      Margin="@Margin.Dense"
                      Immediate="true"
                      Class="filter-input"
-                     Culture="@FilterLazy.Value.FilterColumn?.Culture"/>
+                     Culture="@Filter.FilterColumn?.Culture"/>
 }
 
 @code {
@@ -22,6 +22,6 @@
 
     public override bool CanBeMapped()
     {
-        return FilterDefinitionLazy.Value.FieldType.IsNumber && !(FilterDefinitionLazy.Value.Operator ?? "").EndsWith("empty");
+        return FilterDefinition.FieldType.IsNumber && !(FilterDefinition.Operator ?? "").EndsWith("empty");
     }
 }

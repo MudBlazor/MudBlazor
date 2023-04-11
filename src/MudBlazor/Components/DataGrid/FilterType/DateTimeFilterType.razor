@@ -7,14 +7,14 @@
 {
     <MudGrid Spacing="0">
         <MudItem xs="7">
-            <MudDatePicker Date="@FilterLazy.Value._valueDate"
-                           DateChanged="@FilterLazy.Value.DateValueChanged"
+            <MudDatePicker Date="@Filter._valueDate"
+                           DateChanged="@Filter.DateValueChanged"
                            Margin="@Margin.Dense"
                            Class="filter-input-date"/>
         </MudItem>
         <MudItem xs="5">
-            <MudTimePicker Time="@FilterLazy.Value._valueTime"
-                       TimeChanged="@FilterLazy.Value.TimeValueChanged"
+            <MudTimePicker Time="@Filter._valueTime"
+                       TimeChanged="@Filter.TimeValueChanged"
                            Margin="@Margin.Dense"
                            Class="filter-input-time"/>
         </MudItem>
@@ -26,6 +26,6 @@
 
     public override bool CanBeMapped()
     {
-        return FilterDefinitionLazy.Value.FieldType.IsDateTime && !(FilterDefinitionLazy.Value.Operator ?? "").EndsWith("empty");
+        return FilterDefinition.FieldType.IsDateTime && !(FilterDefinition.Operator ?? "").EndsWith("empty");
     }
 }
