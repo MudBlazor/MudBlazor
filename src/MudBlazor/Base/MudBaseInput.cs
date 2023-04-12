@@ -267,7 +267,7 @@ namespace MudBlazor
 
         protected bool _isFocused;
 
-        protected internal virtual void OnBlurred(FocusEventArgs obj)
+        protected internal virtual async Task OnBlurredAsync(FocusEventArgs obj)
         {
             if (ReadOnly)
                 return;
@@ -276,7 +276,7 @@ namespace MudBlazor
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;
-                BeginValidateAfter(OnBlur.InvokeAsync(obj));
+                await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
             }
         }
 

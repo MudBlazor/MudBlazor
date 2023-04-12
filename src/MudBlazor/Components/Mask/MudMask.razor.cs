@@ -352,9 +352,9 @@ namespace MudBlazor
             _isFocused = true;
         }
 
-        protected internal override void OnBlurred(FocusEventArgs obj)
+        protected internal override async Task OnBlurredAsync(FocusEventArgs obj)
         {
-            base.OnBlurred(obj);
+            await base.OnBlurredAsync(obj);
             _isFocused = false;
         }
 
