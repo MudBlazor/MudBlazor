@@ -1,0 +1,50 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="8" Class="d-flex align-center justify-center">
+        <MudPaper Width="300px">
+            <MudExperimental.MudList T="string" Clickable="true" MultiSelection="true" Style="max-height:400px; overflow-y: auto;" DisablePadding="_disablePadding">
+                <MudExperimental.MudListSubheader T="string" Sticky="_sticky" SecondaryBackground="_secondaryBackground">England</MudExperimental.MudListSubheader>
+                @foreach (string club in _englishClubs)
+                {
+                    <MudExperimental.MudListItem Value="@club" Text="@club" />
+                }
+
+                <MudExperimental.MudListSubheader T="string" Sticky="_sticky" SecondaryBackground="_secondaryBackground">Spain</MudExperimental.MudListSubheader>
+                @foreach (string club in _spanishClubs)
+                {
+                    <MudExperimental.MudListItem Value="@club" Text="@club" />
+                }
+
+                <MudExperimental.MudListSubheader T="string" Sticky="_sticky" SecondaryBackground="_secondaryBackground">Germany</MudExperimental.MudListSubheader>
+                @foreach (string club in _germanClubs)
+                {
+                    <MudExperimental.MudListItem Value="@club" Text="@club" />
+                }
+
+                <MudExperimental.MudListSubheader T="string" Sticky="_sticky" SecondaryBackground="_secondaryBackground">Turkey</MudExperimental.MudListSubheader>
+                @foreach (string club in _turkishClubs)
+                {
+                    <MudExperimental.MudListItem Value="@club" Text="@club" />
+                }
+            </MudExperimental.MudList>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" sm="4">
+        <MudCheckBox @bind-Checked="_sticky" Color="Color.Primary" Label="Sticky SubHeader" />
+        <MudCheckBox @bind-Checked="_secondaryBackground" Color="Color.Primary" Label="Secondary Background" />
+        <MudCheckBox @bind-Checked="_disablePadding" Color="Color.Primary" Label="Disable Padding" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    bool _sticky = true;
+    bool _secondaryBackground = true;
+    bool _disablePadding = true;
+
+    string[] _englishClubs = { "Arsenal", "Manchester City", "Liverpool", "Manchester United", "Chelsea" };
+    string[] _germanClubs = { "Bayern Munich", "Borussia Dortmund", "Schalke 04", "Bayern Leverkusen", "Stuttgart" };
+    string[] _spanishClubs = { "Barcelona", "Read Madrid", "Atletico Madrid", "Getafe", "Levante", "Sevilla", "Valencia", "Villareal" };
+    string[] _turkishClubs = { "Fenerbahçe", "Galatasaray", "Beşiktaş", "Trabzonspor", "Alanyaspor", "Antalyaspor", "Ankaragücü" };
+}

@@ -4,12 +4,12 @@
 
 <MudText Typo="Typo.subtitle1" Class="mt-1 mb-2 ml-2 d-flex d-md-none"><b>Docs</b></MudText>
 <MudNavLink Href="docs/overview" Class="docs-single-link">Overview</MudNavLink>
-<MudNavGroup Title="Components" Expanded="@(_section == "components")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+<MudNavGroup Title="Components" Expanded="@(_section == "components")" ExpandIcon="@Icons.Filled.ExpandMore">
     @foreach (var item in MenuService.Components)
     {
         if (item.IsNavGroup)
         {
-            <MudNavGroup Title="@item.Name" Expanded="@(IsSubGroupExpanded(item))" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+            <MudNavGroup Title="@item.Name" Expanded="@(IsSubGroupExpanded(item))" ExpandIcon="@Icons.Filled.ExpandMore">
                 @foreach (var subItem in item.GroupComponents)
                 {
                     string href = $"components/{subItem.Link}";
@@ -24,25 +24,45 @@
         }
     }
 </MudNavGroup>
-<MudNavGroup Title="API" Expanded="@(_section == "api")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+<MudNavGroup Title="API" Expanded="@(_section == "api")" ExpandIcon="@Icons.Filled.ExpandMore">
     @foreach (var item in MenuService.Api.OrderBy(x => x.Name))
     {
         <MudNavLink Href="@ApiLink.GetApiLinkFor(item.Type)">@item.Name</MudNavLink>
     }
 </MudNavGroup>
-<MudNavGroup Title="Features" Expanded="@(_section == "features")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+<MudNavGroup Title="Experimental" Expanded="@(_section == "experimental")" ExpandIcon="@Icons.Filled.ExpandMore">
+    @foreach (var item in MenuService.ExperimentalComponents)
+    {
+        if (item.IsNavGroup)
+        {
+            <MudNavGroup Title="@item.Name" Expanded="@(IsSubGroupExpanded(item))" ExpandIcon="@Icons.Filled.ExpandMore">
+                @foreach (var subItem in item.GroupComponents)
+                {
+                    string href = $"experimental/{subItem.Link}";
+                    <MudNavLink Href="@href">@subItem.Name</MudNavLink>
+                }
+            </MudNavGroup>
+        }
+        else
+        {
+            string href = $"experimental/{item.Link}";
+            <MudNavLink Href="@href">@item.Name</MudNavLink>
+        }
+    }
+</MudNavGroup>
+<MudNavGroup Title="Features" Expanded="@(_section == "features")" ExpandIcon="@Icons.Filled.ExpandMore">
     @foreach (var link in MenuService.Features)
     {
         <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
     }
 </MudNavGroup>
-<MudNavGroup Title="Customization" Expanded="@(_section == "customization")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+<MudNavGroup Title="Customization" Expanded="@(_section == "customization")" ExpandIcon="@Icons.Filled.ExpandMore">
     @foreach (var link in MenuService.Customization)
     {
         <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
     }
 </MudNavGroup>
-<MudNavGroup Title="CSS Utilities" Expanded="@(_section == "utilities")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+<MudNavGroup Title="CSS Utilities" Expanded="@(_section == "utilities")" ExpandIcon="@Icons.Filled.ExpandMore">
     @foreach (var title in MenuService.Utilities.GroupBy(x => x.Group).Select(x => x.Key))
     {
         <div class="docs-css-utility-header">

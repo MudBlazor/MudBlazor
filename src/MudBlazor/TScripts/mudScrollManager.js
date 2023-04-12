@@ -24,6 +24,13 @@ class MudScrollManager {
         }
     }
 
+    scrollToView(elementId) {
+        let element = document.getElementById(elementId);
+        if (element) {
+            element.scrollIntoView({ behavior: "auto", block: "nearest", inline: "nearest" });
+        }
+    }
+
     //scrolls to the selected element. Default is documentElement (i.e., html element)
     scrollTo(selector, left, top, behavior) {
         let element = document.querySelector(selector) || document.documentElement;
@@ -60,6 +67,14 @@ class MudScrollManager {
     unlockScroll(selector, lockclass) {
         let element = document.querySelector(selector) || document.body;
         element.classList.remove(lockclass);
+    }
+
+    scrollToMiddle(parentId, childId) {
+
+        let parent = document.getElementById(parentId);
+        let child = document.getElementById(childId);
+
+        parent.scrollTop = (child.offsetTop - parent.offsetHeight) + (parent.offsetHeight / 2) + (child.offsetHeight / 2);
     }
 };
 window.mudScrollManager = new MudScrollManager();

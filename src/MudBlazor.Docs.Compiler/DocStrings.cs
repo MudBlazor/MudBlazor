@@ -34,6 +34,10 @@ namespace MudBlazor.Docs.Compiler
                 var assembly = typeof(MudText).Assembly;
                 foreach (var type in assembly.GetTypes().OrderBy(t => GetSaveTypename(t)))
                 {
+                    if (type.Namespace != null && type.Namespace.Contains("Experimental"))
+                    {
+                        continue;
+                    }
                     foreach (var property in type.GetPropertyInfosWithAttribute<ParameterAttribute>())
                     {
                         var doc = property.GetDocumentation() ?? "";

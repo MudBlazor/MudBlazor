@@ -10,6 +10,7 @@ namespace MudBlazor.Docs.Services
     {
         //Menu sections
         IEnumerable<MudComponent> Components { get; }
+        IEnumerable<MudComponent> ExperimentalComponents { get; }
         IEnumerable<MudComponent> Api { get; }
         MudComponent GetParent(Type type);
         MudComponent GetComponent(Type type);
@@ -123,7 +124,12 @@ namespace MudBlazor.Docs.Services
             // this must be last!
             .GetComponentsSortedByName();
 
+        private readonly List<MudComponent> _experimentalComponents = new DocsComponents()
+            .AddItem("List", typeof(MudExperimental.MudList<T>), typeof(MudExperimental.MudListItem<T>), typeof(MudExperimental.MudListSubheader<T>))
+            .GetComponentsSortedByName();
+
         public IEnumerable<MudComponent> Components => _docsComponents;
+        public IEnumerable<MudComponent> ExperimentalComponents => _experimentalComponents;
 
         private Dictionary<Type, MudComponent> _parents = new();
         private Dictionary<Type, MudComponent> _componentLookup = new();
@@ -151,6 +157,29 @@ namespace MudBlazor.Docs.Services
         public MenuService()
         {
             foreach (var comp in Components)
+            {
+                if (comp.IsNavGroup)
+                {
+                    foreach (var groupComp in comp.GroupComponents)
+                    {
+                        _componentLookup.Add(groupComp.Type, groupComp);
+                        _parents.Add(groupComp.Type, comp);
+                    }
+                }
+                else
+                {
+                    _componentLookup.Add(comp.Type, comp);
+                    // top-level types refer to themself as parent ;)
+                    _parents.Add(comp.Type, comp);
+                    if (comp.ChildTypes != null)
+                    {
+                        foreach (var childType in comp.ChildTypes)
+                            _parents.Add(childType, comp);
+                    }
+                }
+            }
+
+            foreach (var comp in ExperimentalComponents)
             {
                 if (comp.IsNavGroup)
                 {
