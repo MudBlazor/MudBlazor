@@ -578,7 +578,7 @@ namespace MudBlazor
                         IsOpen = false;
                     break;
             }
-            base.InvokeKeyDown(args);
+            await base.InvokeKeyDownAsync(args);
         }
 
         internal virtual async Task OnInputKeyUp(KeyboardEventArgs args)
@@ -641,7 +641,7 @@ namespace MudBlazor
                     }
                     break;
             }
-            base.InvokeKeyUp(args);
+            await base.InvokeKeyUpAsync(args);
         }
 
         private ValueTask SelectNextItem(int increment)

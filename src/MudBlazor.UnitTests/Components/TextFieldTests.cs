@@ -836,8 +836,28 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task OnBlurErrorContentCaughtException()
         {
-            var comp = Context.RenderComponent<TextFieldOnBlurErrorContenCaughtException>();
+            var comp = Context.RenderComponent<TextFieldErrorContenCaughtException>();
             await comp.Find("input").BlurAsync(new FocusEventArgs());
+            var mudAlert = comp.FindComponent<MudAlert>();
+            var text = mudAlert.Find("div.mud-alert-message");
+            text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+        }
+
+        [Test]
+        public async Task OnKeyDownErrorContentCaughtException()
+        {
+            var comp = Context.RenderComponent<TextFieldErrorContenCaughtException>();
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Enter", Type = "keydown" });
+            var mudAlert = comp.FindComponent<MudAlert>();
+            var text = mudAlert.Find("div.mud-alert-message");
+            text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+        }
+
+        [Test]
+        public async Task OnKeyUpErrorContentCaughtException()
+        {
+            var comp = Context.RenderComponent<TextFieldErrorContenCaughtException>();
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter", Type = "keyup" });
             var mudAlert = comp.FindComponent<MudAlert>();
             var text = mudAlert.Find("div.mud-alert-message");
             text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
