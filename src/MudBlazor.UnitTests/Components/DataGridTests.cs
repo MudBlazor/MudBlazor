@@ -115,7 +115,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
-            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilterAsync());
             await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
 
             await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
@@ -216,7 +216,7 @@ namespace MudBlazor.UnitTests.Components
             // Add a FilterDefinition to filter where the Name = "C".
             await comp.InvokeAsync(() =>
             {
-                dataGrid.Instance.AddFilter(new FilterDefinition<DataGridFilterableTest.Item>
+                return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableTest.Item>
                 {
                     Column = dataGrid.Instance.RenderedColumns.First(),
                     Operator = FilterOperator.String.Equal,
@@ -249,7 +249,7 @@ namespace MudBlazor.UnitTests.Components
             // Add a FilterDefinition to filter where the Name = "C".
             await comp.InvokeAsync(() =>
             {
-                dataGrid.Instance.AddFilter(new FilterDefinition<DataGridFilterableServerDataTest.Item>
+                return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableServerDataTest.Item>
                 {
                     Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(),
                     Operator = FilterOperator.String.Equal,
@@ -2582,11 +2582,11 @@ namespace MudBlazor.UnitTests.Components
                 Value = DateTime.UtcNow.Date
             };
 
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(filterDefinition));
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(filterDefinition2));
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(filterDefinition3));
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(filterDefinition4));
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(filterDefinition5));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition2));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition3));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition4));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition5));
             await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
 
             // check the number of filters displayed in the filters panel
@@ -2606,7 +2606,7 @@ namespace MudBlazor.UnitTests.Components
 
             // add a filter via the AddFilter method
             //await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(Guid.NewGuid(), "Status"));
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(new FilterDefinition<DataGridFiltersTest.Model>
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Status")
             }));
@@ -3041,7 +3041,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() =>
             {
-                dataGrid.Instance.AddFilter(new FilterDefinition<DataGridColumnPopupFilteringTest.Model>
+                return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridColumnPopupFilteringTest.Model>
                 {
                     Column = dataGrid.Instance.RenderedColumns.First(),
                     Operator = FilterOperator.String.Contains,
@@ -3647,7 +3647,7 @@ namespace MudBlazor.UnitTests.Components
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 7);
-            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilterAsync());
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 8);
             await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 9);

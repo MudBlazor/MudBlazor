@@ -68,9 +68,9 @@
                                     <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">Add Filter</MudButton>
                                     @if (ServerData != null)
                                     {
-                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFilters" Color="@Color.Primary">Apply</MudButton>
+                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary">Apply</MudButton>
                                     }
-                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFilters" Color="@Color.Primary">Clear</MudButton>
+                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary">Clear</MudButton>
                                 }
                                 else
                                 {
