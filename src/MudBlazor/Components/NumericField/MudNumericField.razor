@@ -50,7 +50,7 @@
                           InputMode="@InputMode"
                           Pattern="@((Pattern ?? "[0-9]").TrimEnd('*')+"*")"
                           OnAdornmentClick="@OnAdornmentClick"
-                          OnBlur="@OnBlurred"
+                          OnBlur="@OnBlurredAsync"
                           OnKeyDown="@HandleKeydown"
                           OnKeyUp="@HandleKeyUp"
                           OnIncrement="@Increment"
