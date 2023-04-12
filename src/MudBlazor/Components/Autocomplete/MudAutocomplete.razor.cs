@@ -360,7 +360,7 @@ namespace MudBlazor
                 await SetTextAsync(optionText, false);
             _timer?.Dispose();
             IsOpen = false;
-            BeginValidate();
+            await BeginValidateAsync();
             if (!_isCleared)
                 _elementReference?.SetText(optionText);
             _elementReference?.FocusAsync().AndForget();

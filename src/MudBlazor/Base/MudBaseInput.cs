@@ -377,7 +377,7 @@ namespace MudBlazor
                 if (updateText)
                     await UpdateTextPropertyAsync(false);
                 await ValueChanged.InvokeAsync(Value);
-                BeginValidate();
+                await BeginValidateAsync();
                 FieldChanged(Value);
             }
         }

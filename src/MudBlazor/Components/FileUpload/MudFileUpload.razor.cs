@@ -129,7 +129,7 @@ namespace MudBlazor
             else return;
 
             await FilesChanged.InvokeAsync(_value);
-            BeginValidate();
+            await BeginValidateAsync();
             FieldChanged(_value);
             if (!Error || !SuppressOnChangeWhenInvalid) //only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
                 await OnFilesChanged.InvokeAsync(args);

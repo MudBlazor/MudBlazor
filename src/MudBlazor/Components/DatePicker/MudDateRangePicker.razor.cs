@@ -77,7 +77,7 @@ namespace MudBlazor
                 }
 
                 await DateRangeChanged.InvokeAsync(_dateRange);
-                BeginValidate();
+                await BeginValidateAsync();
                 FieldChanged(_value);
             }
         }
