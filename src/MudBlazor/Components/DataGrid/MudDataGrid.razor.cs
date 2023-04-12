@@ -855,23 +855,23 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        internal void ApplyFilters()
+        internal Task ApplyFiltersAsync()
         {
             _filtersMenuVisible = false;
-            InvokeServerLoadFunc().AndForget();
+            return InvokeServerLoadFunc();
         }
 
-        public void ClearFilters()
+        public Task ClearFiltersAsync()
         {
             FilterDefinitions.Clear();
-            InvokeServerLoadFunc().AndForget();
+            return InvokeServerLoadFunc();
         }
 
-        public void AddFilter(FilterDefinition<T> definition)
+        public async Task AddFilterAsync(FilterDefinition<T> definition)
         {
             FilterDefinitions.Add(definition);
             _filtersMenuVisible = true;
-            InvokeServerLoadFunc().AndForget();
+            await InvokeServerLoadFunc();
             if (ServerData is null) StateHasChanged();
         }
 
@@ -899,7 +899,7 @@ namespace MudBlazor
             var items = ServerData != null
                     ? ServerItems
                     : Items;
-                    
+
             if (value)
                 Selection = new HashSet<T>(items);
             else
@@ -1232,7 +1232,7 @@ namespace MudBlazor
         }
 
         public void GroupItems(bool noStateChange = false)
-        {          
+        {
             if (GroupedColumn == null)
             {
                 _currentPageGroups = new List<GroupDefinition<T>>();
@@ -1243,7 +1243,7 @@ namespace MudBlazor
             }
 
             var currentPageGroupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
-            
+
             // Maybe group Items to keep groups expanded after clearing a filter?
             var allGroupings = FilteredItems.GroupBy(GroupedColumn.groupBy);
 

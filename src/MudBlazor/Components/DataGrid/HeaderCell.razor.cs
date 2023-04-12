@@ -324,11 +324,11 @@ namespace MudBlazor
             MarkAsUnsorted();
         }
 
-        internal void AddFilter()
+        internal async Task AddFilterAsync()
         {
             if (DataGrid.FilterMode == DataGridFilterMode.Simple && Column != null)
             {
-                DataGrid.AddFilter(Column.FilterContext.FilterDefinition.Clone());
+                await DataGrid.AddFilterAsync(Column.FilterContext.FilterDefinition.Clone());
             }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
                 _filtersMenuVisible = true;
