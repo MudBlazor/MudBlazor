@@ -1,26 +1,26 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudButtonGroup : MudComponentBase
     {
         protected string Classname =>
-        new CssBuilder("mud-button-group-root")
-          .AddClass($"mud-button-group-override-styles", OverrideStyles)
-          .AddClass($"mud-button-group-{Variant.ToDescriptionString()}")
-          .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
-          .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
-          .AddClass($"mud-button-group-vertical", VerticalAlign)
-          .AddClass($"mud-button-group-horizontal", !VerticalAlign)
-          .AddClass($"mud-button-group-disable-elevation", DisableElevation)
-          .AddClass($"mud-button-group-rtl", RightToLeft)
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-button-group-root")
+                .AddClass($"mud-button-group-override-styles", OverrideStyles)
+                .AddClass($"mud-button-group-{Variant.ToDescriptionString()}")
+                .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
+                .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
+                .AddClass("mud-button-group-vertical", VerticalAlign)
+                .AddClass("mud-button-group-horizontal", !VerticalAlign)
+                .AddClass("mud-button-group-disable-elevation", DisableElevation)
+                .AddClass("mud-button-group-rtl", RightToLeft)
+                .AddClass(Class)
+                .Build();
 
-
-        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
 
         /// <summary>
         /// If true, the button group will override the styles of the individual buttons.
@@ -34,7 +34,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ButtonGroup.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// If true, the button group will be displayed vertically.
