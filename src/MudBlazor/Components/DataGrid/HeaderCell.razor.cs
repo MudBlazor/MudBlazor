@@ -342,44 +342,50 @@ namespace MudBlazor
                 _filtersMenuVisible = true;
         }
 
-        internal void ApplyFilter()
+        internal async Task ApplyFilterAsync()
         {
             DataGrid.FilterDefinitions.Add(Column.FilterContext.FilterDefinition);
-            ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
+            else ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
         }
 
-        internal void ApplyFilter(FilterDefinition<T> filterDefinition)
+        internal async Task ApplyFilterAsync(FilterDefinition<T> filterDefinition)
         {
             DataGrid.FilterDefinitions.Add(filterDefinition);
-            ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
+            else ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
         }
 
-        internal void ApplyFilters(IEnumerable<FilterDefinition<T>> filterDefinitions)
+        internal async Task ApplyFiltersAsync(IEnumerable<FilterDefinition<T>> filterDefinitions)
         {
             DataGrid.FilterDefinitions.AddRange(filterDefinitions);
-            ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
+            else ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
         }
 
-        internal void ClearFilter()
+        internal async Task ClearFilterAsync()
         {
-            DataGrid.RemoveFilter(Column.FilterContext.FilterDefinition.Id);
             Column.FilterContext.FilterDefinition.Value = null;
+            await DataGrid.RemoveFilterAsync(Column.FilterContext.FilterDefinition.Id);
+            if (DataGrid.ServerData is null) ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
         }
 
-        internal void ClearFilter(FilterDefinition<T> filterDefinition)
+        internal async Task ClearFilterAsync(FilterDefinition<T> filterDefinition)
         {
-            DataGrid.RemoveFilter(filterDefinition.Id);
+            await DataGrid.RemoveFilterAsync(filterDefinition.Id);
+            if (DataGrid.ServerData is null) ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
         }
 
-        internal void ClearFilters(IEnumerable<FilterDefinition<T>> filterDefinitions)
+        internal async Task ClearFiltersAsync(IEnumerable<FilterDefinition<T>> filterDefinitions)
         {
             DataGrid.FilterDefinitions.RemoveAll(x => filterDefinitions.Any(y => y.Id == x.Id));
-            ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            if (DataGrid.ServerData != null) await DataGrid.ReloadServerData();
+            else ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
         }
 

@@ -682,12 +682,13 @@ namespace MudBlazor
                     items = items.Where(QuickFilter);
                 }
 
-                foreach (var f in FilterDefinitions)
-                {
-                    f.DataGrid = this;
-                    var filterFunc = f.GenerateFilterFunction();
-                    items = items.Where(filterFunc);
-                }
+                if (ServerData is null)
+                    foreach (var f in FilterDefinitions)
+                    {
+                        f.DataGrid = this;
+                        var filterFunc = f.GenerateFilterFunction();
+                        items = items.Where(filterFunc);
+                    }
 
                 _currentRenderFilteredItemsCache = Sort(items).ToList(); // To list to ensure evaluation only once per render
                 unchecked { FilteringRunCount++; }
@@ -801,6 +802,7 @@ namespace MudBlazor
             };
 
             _server_data = await ServerData(state);
+            _currentRenderFilteredItemsCache = null;            
 
             if (CurrentPage * RowsPerPage > _server_data.TotalItems)
                 CurrentPage = 0;
@@ -862,18 +864,21 @@ namespace MudBlazor
         public void ClearFilters()
         {
             FilterDefinitions.Clear();
+            InvokeServerLoadFunc().AndForget();
         }
 
         public void AddFilter(FilterDefinition<T> definition)
         {
             FilterDefinitions.Add(definition);
             _filtersMenuVisible = true;
-            StateHasChanged();
+            InvokeServerLoadFunc().AndForget();
+            if (ServerData is null) StateHasChanged();
         }
 
-        internal void RemoveFilter(Guid id)
+        internal async Task RemoveFilterAsync(Guid id)
         {
             FilterDefinitions.RemoveAll(x => x.Id == id);
+            await InvokeServerLoadFunc();
             GroupItems();
         }
 

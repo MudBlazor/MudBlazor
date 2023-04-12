@@ -3108,6 +3108,49 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridServerDataColumnFilterMenuTest()
+        {
+            var comp = Context.RenderComponent<DataGridServerDataColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataColumnFilterMenuTest.Model>>();
+            var callCountText = comp.FindComponent<MudText>();
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+            callCountText.Markup.Should().Contain("Server call count: 1");
+
+            comp.Find(".filter-button").Click();
+            var input = comp.FindComponent<MudTextField<string>>();
+            await comp.InvokeAsync(async () => await input.Instance.ValueChanged.InvokeAsync("Sam"));
+            comp.Find(".apply-filter-button").Click();
+            callCountText.Markup.Should().Contain("Server call count: 2");
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
+
+            comp.Find(".filter-button").Click();
+            comp.Find(".clear-filter-button").Click();
+            callCountText.Markup.Should().Contain("Server call count: 3");
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+        }
+
+
+        [Test]
+        public async Task DataGridServerDataColumnFilterRowTest()
+        {
+            var comp = Context.RenderComponent<DataGridServerDataColumnFilterRowTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataColumnFilterRowTest.Model>>();
+            var callCountText = comp.FindComponent<MudText>();
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+            callCountText.Markup.Should().Contain("Server call count: 1");
+
+            var input = comp.FindComponent<MudTextField<string>>();
+            await comp.InvokeAsync(async () => await input.Instance.ValueChanged.InvokeAsync("Sam"));
+            callCountText.Markup.Should().Contain("Server call count: 2");
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
+
+            comp.Find("th > div > button.mud-button-root").Click(); // Clear filter button
+            callCountText.Markup.Should().Contain("Server call count: 3");
+            dataGrid.Render();
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+        }
+
+        [Test]
         public async Task DataGridStickyColumnsTest()
         {
             var comp = Context.RenderComponent<DataGridStickyColumnsTest>();

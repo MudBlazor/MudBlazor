@@ -391,7 +391,7 @@
             @if (column is null)
             {
                 <MudItem xs="1" Class="d-flex">
-                    <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilter" Size="@Size.Small" Style="align-self: flex-end"></MudIconButton>
+                    <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end"></MudIconButton>
                 </MudItem>
                 <MudItem xs="4">
                     <MudSelect T="Column<T>" Value="@filterDefinition.Column" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense"
