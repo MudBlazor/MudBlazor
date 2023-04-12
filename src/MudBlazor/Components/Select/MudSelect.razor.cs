@@ -588,7 +588,7 @@ namespace MudBlazor
                 }
 
                 UpdateSelectAllChecked();
-                BeginValidate();
+                await BeginValidateAsync();
             }
             else
             {
@@ -803,7 +803,7 @@ namespace MudBlazor
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
             _selectedValues.Clear();
-            BeginValidate();
+            await BeginValidateAsync();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
             await OnClearButtonClick.InvokeAsync(e);
@@ -985,7 +985,7 @@ namespace MudBlazor
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
             _selectedValues.Clear();
-            BeginValidate();
+            await BeginValidateAsync();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
         }
@@ -1024,7 +1024,7 @@ namespace MudBlazor
             }
             UpdateSelectAllChecked();
             _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
-            BeginValidate();
+            await BeginValidateAsync();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 SetValueAsync((T)(object)Text, updateText: false).AndForget();

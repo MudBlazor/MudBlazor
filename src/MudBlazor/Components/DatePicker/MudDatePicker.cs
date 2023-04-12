@@ -46,7 +46,7 @@ namespace MudBlazor
                     await SetTextAsync(Converter.Set(_value), false);
                 }
                 await DateChanged.InvokeAsync(_value);
-                BeginValidate();
+                await BeginValidateAsync();
                 FieldChanged(_value);
             }
         }
