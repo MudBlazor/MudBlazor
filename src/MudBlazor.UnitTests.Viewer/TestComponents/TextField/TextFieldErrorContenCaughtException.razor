@@ -2,7 +2,11 @@
 
 <ErrorBoundary>
     <ChildContent>
-        <MudTextField @bind-Value="Text" OnBlur="@HandleBlurAsync" OnKeyDown="@HandleKeyDownAsync" Variant="Variant.Outlined"
+        <MudTextField @bind-Value="Text"
+                      OnBlur="@HandleBlurAsync"
+                      OnKeyDown="@HandleKeyDownAsync"
+                      OnKeyUp="@HandleKeyUpAsync"
+                      Variant="Variant.Outlined"
                       Label="Type here and blur input to show wrong exception handling"/>
         <br/>
     </ChildContent>
@@ -26,4 +30,9 @@
         throw new Exception("Something went wrong...");
     }
 
+    private async Task HandleKeyUpAsync(KeyboardEventArgs arg)
+    {
+        await Task.Delay(100);
+        throw new Exception("Something went wrong...");
+    }
 }

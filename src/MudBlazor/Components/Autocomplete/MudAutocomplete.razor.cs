@@ -641,7 +641,7 @@ namespace MudBlazor
                     }
                     break;
             }
-            base.InvokeKeyUp(args);
+            await base.InvokeKeyUpAsync(args);
         }
 
         private ValueTask SelectNextItem(int increment)
