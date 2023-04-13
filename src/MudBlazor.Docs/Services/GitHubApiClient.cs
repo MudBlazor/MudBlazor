@@ -48,7 +48,7 @@ namespace MudBlazor.Docs.Services
         {
             try
             {
-                var result = await _http.GetFromJsonAsync<GitHubReleases[]>("https://api.github.com:443/repos/MudBlazor/MudBlazor/releases?per_page=100", _jsonSerializerOptions);
+                var result = await _http.GetFromJsonAsync<GitHubReleases[]>("repos/MudBlazor/MudBlazor/releases?per_page=100", _jsonSerializerOptions);
                 return result ?? Array.Empty<GitHubReleases>();
             }
             catch (Exception e)
@@ -62,7 +62,7 @@ namespace MudBlazor.Docs.Services
         {
             try
             {
-                var result = await _http.GetFromJsonAsync<GitHubRepository>($"https://api.github.com:443/repos/{owner}/{repo}", _jsonSerializerOptions);
+                var result = await _http.GetFromJsonAsync<GitHubRepository>($"repos/{owner}/{repo}", _jsonSerializerOptions);
                 return result;
             }
             catch (Exception e)
@@ -76,7 +76,7 @@ namespace MudBlazor.Docs.Services
         {
             try
             {
-                var result = await _http.GetAsync($"https://api.github.com:443/repos/{owner}/{repo}/contributors?per_page=1&anon=true");
+                var result = await _http.GetAsync($"repos/{owner}/{repo}/contributors?per_page=1&anon=true");
                 var value = result.Headers.GetValues("Link").FirstOrDefault();
                 value = value?.Substring(value.LastIndexOf("page=", StringComparison.Ordinal) + 5);
                 value = value?.Substring(0, value.LastIndexOf(">;", StringComparison.Ordinal));
