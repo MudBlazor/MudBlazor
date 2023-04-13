@@ -14,14 +14,17 @@ using MudBlazor.Docs.Models.Context;
 namespace MudBlazor.Docs.Services
 {
 #nullable enable
-    public class NugetApiClient
+    public class NugetApiClient : IDisposable
     {
         private readonly HttpClient _http;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public NugetApiClient(HttpClient http)
+        public NugetApiClient()
         {
-            _http = http;
+            _http = new HttpClient
+            {
+                BaseAddress = new Uri("https://azuresearch-usnc.nuget.org/")
+            };
             _jsonSerializerOptions = new JsonSerializerOptions();
             _jsonSerializerOptions.AddContext<NugetApiJsonSerializerContext>();
         }
@@ -30,7 +33,7 @@ namespace MudBlazor.Docs.Services
         {
             try
             {
-                var result = await _http.GetFromJsonAsync<NugetResponse>($"https://azuresearch-usnc.nuget.org/query?q=packageid:{packageName}&take=1", _jsonSerializerOptions);
+                var result = await _http.GetFromJsonAsync<NugetResponse>($"query?q=packageid:{packageName}&take=1", _jsonSerializerOptions);
                 return result?.Data.FirstOrDefault();
             }
             catch (Exception e)
@@ -38,6 +41,11 @@ namespace MudBlazor.Docs.Services
                 Console.WriteLine(e.Message);
                 return null;
             }
+        }
+
+        public void Dispose()
+        {
+            _http.Dispose();
         }
     }
 }

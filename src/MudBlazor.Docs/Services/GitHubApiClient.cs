@@ -14,15 +14,18 @@ using MudBlazor.Docs.Models.Context;
 namespace MudBlazor.Docs.Services
 {
 #nullable enable
-    public class GitHubApiClient
+    public class GitHubApiClient : IDisposable
     {
         private readonly HttpClient _http;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public GitHubApiClient(HttpClient http)
+        public GitHubApiClient()
         {
-            _http = http;
-            http.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Mobile Safari/537.36");
+            _http = new HttpClient
+            {
+                BaseAddress = new Uri("https://api.github.com:443/")
+            };
+            _http.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Mobile Safari/537.36");
             _jsonSerializerOptions = new JsonSerializerOptions();
             _jsonSerializerOptions.AddContext<GithubApiJsonSerializerContext>();
         }
@@ -31,7 +34,7 @@ namespace MudBlazor.Docs.Services
         {
             try
             {
-                var result = await _http.GetFromJsonAsync<GithubContributors[]>("https://api.github.com:443/repos/MudBlazor/MudBlazor/contributors?per_page=100", _jsonSerializerOptions);
+                var result = await _http.GetFromJsonAsync<GithubContributors[]>("repos/MudBlazor/MudBlazor/contributors?per_page=100", _jsonSerializerOptions);
                 return result ?? Array.Empty<GithubContributors>();
             }
             catch (Exception e)
@@ -85,6 +88,11 @@ namespace MudBlazor.Docs.Services
                 Console.WriteLine(e.Message);
                 return 0;
             }
+        }
+
+        public void Dispose()
+        {
+            _http.Dispose();
         }
     }
 }
