@@ -12,6 +12,7 @@ using MudBlazor.Docs.Models.Context;
 
 namespace MudBlazor.Docs.Services
 {
+#nullable enable
     public class DiscordApiClient
     {
         private readonly HttpClient _http;
@@ -24,7 +25,7 @@ namespace MudBlazor.Docs.Services
             _jsonSerializerOptions.AddContext<DiscordApiJsonSerializerContext>();
         }
 
-        public async Task<DiscordInvite> GetDiscordInviteAsync()
+        public async Task<DiscordInvite?> GetDiscordInviteAsync()
         {
             try
             {

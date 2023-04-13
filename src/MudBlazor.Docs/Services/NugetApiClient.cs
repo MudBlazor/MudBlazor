@@ -13,6 +13,7 @@ using MudBlazor.Docs.Models.Context;
 
 namespace MudBlazor.Docs.Services
 {
+#nullable enable
     public class NugetApiClient
     {
         private readonly HttpClient _http;
@@ -25,12 +26,12 @@ namespace MudBlazor.Docs.Services
             _jsonSerializerOptions.AddContext<NugetApiJsonSerializerContext>();
         }
 
-        public async Task<NugetPackage> GetPackageAsync(string packageName)
+        public async Task<NugetPackage?> GetPackageAsync(string packageName)
         {
             try
             {
                 var result = await _http.GetFromJsonAsync<NugetResponse>($"https://azuresearch-usnc.nuget.org/query?q=packageid:{packageName}&take=1", _jsonSerializerOptions);
-                return result.Data.FirstOrDefault();
+                return result?.Data.FirstOrDefault();
             }
             catch (Exception e)
             {

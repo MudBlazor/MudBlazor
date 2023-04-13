@@ -13,6 +13,7 @@ using MudBlazor.Docs.Models.Context;
 
 namespace MudBlazor.Docs.Services
 {
+#nullable enable
     public class GitHubApiClient
     {
         private readonly HttpClient _http;
@@ -31,7 +32,7 @@ namespace MudBlazor.Docs.Services
             try
             {
                 var result = await _http.GetFromJsonAsync<GithubContributors[]>("https://api.github.com:443/repos/MudBlazor/MudBlazor/contributors?per_page=100", _jsonSerializerOptions);
-                return result;
+                return result ?? Array.Empty<GithubContributors>();
             }
             catch (Exception e)
             {
@@ -45,7 +46,7 @@ namespace MudBlazor.Docs.Services
             try
             {
                 var result = await _http.GetFromJsonAsync<GitHubReleases[]>("https://api.github.com:443/repos/MudBlazor/MudBlazor/releases?per_page=100", _jsonSerializerOptions);
-                return result;
+                return result ?? Array.Empty<GitHubReleases>();
             }
             catch (Exception e)
             {
@@ -54,7 +55,7 @@ namespace MudBlazor.Docs.Services
             }
         }
 
-        public async Task<GitHubRepository> GetRepositoryAsync(string owner, string repo)
+        public async Task<GitHubRepository?> GetRepositoryAsync(string owner, string repo)
         {
             try
             {
