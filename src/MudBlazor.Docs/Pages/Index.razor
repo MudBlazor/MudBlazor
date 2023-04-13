@@ -1,8 +1,8 @@
 ﻿@page "/"
 @layout LandingLayout
-@inject DiscordApiClient _discordApiClient;
-@inject NugetApiClient _nugetApiClient;
-@inject GitHubApiClient _gitHubApiClient;
+@inject DiscordApiClient DiscordApiClient;
+@inject NugetApiClient NugetApiClient;
+@inject GitHubApiClient GitHubApiClient;
 @using MudBlazor.Docs.Components.LandingPage
 @using MudBlazor.Docs.Extensions
 
@@ -375,10 +375,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _discordInvite = await _discordApiClient.GetDiscordInviteAsync();
-        _nugetPackage = await _nugetApiClient.GetPackageAsync("mudblazor");
-        _gitHubRepo = await _gitHubApiClient.GetRepositoryAsync("MudBlazor", "MudBlazor");
-        _gitHubTotalContributors = await _gitHubApiClient.GetContributorsCountAsync("MudBlazor", "MudBlazor");
+        _discordInvite = await DiscordApiClient.GetDiscordInviteAsync();
+        _nugetPackage = await NugetApiClient.GetPackageAsync("mudblazor");
+        _gitHubRepo = await GitHubApiClient.GetRepositoryAsync("MudBlazor", "MudBlazor");
+        _gitHubTotalContributors = await GitHubApiClient.GetContributorsCountAsync("MudBlazor", "MudBlazor");
     }
 
     private void ToggleTestimonials()
