@@ -12,23 +12,27 @@ using MudBlazor.Docs.Models.Context;
 
 namespace MudBlazor.Docs.Services
 {
-    public class DiscordApiClient
+#nullable enable
+    public class DiscordApiClient : IDisposable
     {
         private readonly HttpClient _http;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public DiscordApiClient(HttpClient http)
+        public DiscordApiClient()
         {
-            _http = http;
+            _http = new HttpClient
+            {
+                BaseAddress = new Uri("https://discord.com/")
+            };
             _jsonSerializerOptions = new JsonSerializerOptions();
             _jsonSerializerOptions.AddContext<DiscordApiJsonSerializerContext>();
         }
 
-        public async Task<DiscordInvite> GetDiscordInviteAsync()
+        public async Task<DiscordInvite?> GetDiscordInviteAsync()
         {
             try
             {
-                var result = await _http.GetFromJsonAsync<DiscordInvite>("https://discord.com/api/v10/invites/mudblazor?with_counts=true", _jsonSerializerOptions);
+                var result = await _http.GetFromJsonAsync<DiscordInvite>("api/v10/invites/mudblazor?with_counts=true", _jsonSerializerOptions);
                 return result;
             }
             catch (Exception e)
@@ -36,6 +40,11 @@ namespace MudBlazor.Docs.Services
                 Console.WriteLine(e.Message);
                 return null;
             }
+        }
+
+        public void Dispose()
+        {
+            _http.Dispose();
         }
     }
 }
