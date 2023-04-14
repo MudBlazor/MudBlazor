@@ -27,10 +27,10 @@ namespace MudBlazor
         /// <summary>
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
         /// </summary>
-        [Parameter] 
-        [Category(CategoryTypes.Menu.ClickAction)] 
-        public string Href { get; set; }        
-        
+        [Parameter]
+        [Category(CategoryTypes.Menu.ClickAction)]
+        public string Href { get; set; }
+
         /// <summary>
         /// Icon to be used for this menu entry
         /// </summary>
