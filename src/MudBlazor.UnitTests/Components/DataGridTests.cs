@@ -3555,6 +3555,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() =>
                 comp.Instance.AddFruit());
             // datagrid should be expanded with the new category
+            dataGrid.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
         }
 
