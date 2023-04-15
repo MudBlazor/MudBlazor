@@ -79,7 +79,7 @@ namespace MudBlazor
             {
                 if (_selectedItem == value)
                     return;
-                _ = SetSelectedValueAsync(_selectedItem?.Value, force: true);
+                SetSelectedValueAsync(_selectedItem?.Value, force: true).AndForget();
             }
         }
 
@@ -99,7 +99,7 @@ namespace MudBlazor
             get => _selectedValue;
             set
             {
-                _ = SetSelectedValueAsync(value, force: true);
+                SetSelectedValueAsync(value, force: true).AndForget();
             }
         }
 
