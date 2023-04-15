@@ -3560,6 +3560,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridGroupExpandedAsyncTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupExpandedAsyncTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedAsyncTest.Fruit>>();
+
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
+            comp.Instance.CollapseAllGroups();
+            dataGrid.Render();
+            // after all groups are collapsed
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
+            await comp.InvokeAsync(() =>
+                comp.Instance.AddFruit());
+            // datagrid should be expanded with the new category
+            dataGrid.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+        }
+
+        [Test]
         public async Task DataGridGroupCollapseAllTest()
         {
             var comp = Context.RenderComponent<DataGridGroupCollapseAllTest>();
