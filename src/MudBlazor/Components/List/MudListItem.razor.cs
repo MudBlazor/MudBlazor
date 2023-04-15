@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -220,6 +221,45 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
+        {
+            if (Disabled)
+                return;
+            if (!_onClickHandlerPreventDefault)
+            {
+                if (NestedList != null)
+                {
+                    Expanded = !Expanded;
+                }
+                else if (Href != null)
+                {
+                    if (MudList is not null)
+                    {
+                        await MudList.SetSelectedValueAsync(Value);
+                    }
+                    await OnClick.InvokeAsync(eventArgs);
+                    UriHelper.NavigateTo(Href, ForceLoad);
+                }
+                else
+                {
+                    if (MudList is not null)
+                    {
+                        await MudList.SetSelectedValueAsync(Value);
+                    }
+                    await OnClick.InvokeAsync(eventArgs);
+                    if (Command?.CanExecute(CommandParameter) ?? false)
+                    {
+                        Command.Execute(CommandParameter);
+                    }
+                }
+            }
+            else
+            {
+                await OnClick.InvokeAsync(eventArgs);
+            }
+        }
+
+        [Obsolete($"Use {nameof(OnClickHandlerAsync)} instead. This will be removed in v7")]
         protected void OnClickHandler(MouseEventArgs ev)
         {
             if (Disabled)
@@ -232,13 +272,13 @@ namespace MudBlazor
                 }
                 else if (Href != null)
                 {
-                    MudList?.SetSelectedValue(this.Value);
+                    MudList?.SetSelectedValueAsync(this.Value);
                     OnClick.InvokeAsync(ev);
                     UriHelper.NavigateTo(Href, ForceLoad);
                 }
                 else
                 {
-                    MudList?.SetSelectedValue(this.Value);
+                    MudList?.SetSelectedValueAsync(this.Value);
                     OnClick.InvokeAsync(ev);
                     if (Command?.CanExecute(CommandParameter) ?? false)
                     {
@@ -252,12 +292,12 @@ namespace MudBlazor
             }
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
             _expanded = InitiallyExpanded;
             if (MudList != null)
             {
-                MudList.Register(this);
+                await MudList.RegisterAsync(this);
                 OnListParametersChanged();
                 MudList.ParametersChanged += OnListParametersChanged;
             }
