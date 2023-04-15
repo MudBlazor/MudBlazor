@@ -27,12 +27,15 @@
     MudDataGrid<Fruit> dataGrid;
     public record Fruit(string Name, int Count, string Category);
 
-    List<Fruit> Fruits { get; set; } = new()
+    List<Fruit> Fruits { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
     {
-        new Fruit("Apple", 2, "Pome"),
-        new Fruit("Pear", 4, "Pome"),
-        new Fruit("Orange", 4, "Citrus")
-    };
+        await Task.Delay(100); // Simulate async data loading
+        Fruits.Add(new("Apple", 2, "Pome"));
+        Fruits.Add(new("Pear", 4, "Pome"));
+        Fruits.Add(new("Orange", 4, "Citrus"));
+    }
     
     Func<Fruit, object> _groupBy = x => 
     {

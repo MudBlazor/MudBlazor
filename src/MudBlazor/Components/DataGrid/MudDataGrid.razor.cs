@@ -743,8 +743,6 @@ namespace MudBlazor
             if (firstRender)
             {
                 await InvokeServerLoadFunc();
-                GroupItems();
-                _groupExpansions.Add("__initial__");                
                 if (ServerData == null)
                     StateHasChanged();
                 _isFirstRendered = true;
@@ -1247,8 +1245,9 @@ namespace MudBlazor
             // Maybe group Items to keep groups expanded after clearing a filter?
             var allGroupings = FilteredItems.GroupBy(GroupedColumn.groupBy);
 
-            if (_groupExpansions.Count == 0 && GroupExpanded)
+            if (_items.Count() > 0 && _groupExpansions.Count == 0 && GroupExpanded)
             {
+                _groupExpansions.Add("__initial__");
                 foreach (var group in allGroupings)
                 {
                     _groupExpansions.Add(group.Key);
