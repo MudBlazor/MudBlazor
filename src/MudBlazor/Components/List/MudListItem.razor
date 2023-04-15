@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div tabindex="0" @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandler" @onclick:stopPropagation="true" style="@Style">
+<div tabindex="0" @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandlerAsync" @onclick:stopPropagation="true" style="@Style">
     @if (!string.IsNullOrWhiteSpace(Avatar))
     {
         <div class="mud-list-item-avatar">
