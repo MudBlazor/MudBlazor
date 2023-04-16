@@ -588,7 +588,7 @@ namespace MudBlazor
                 }
 
                 UpdateSelectAllChecked();
-                BeginValidate();
+                await BeginValidateAsync();
             }
             else
             {
@@ -670,7 +670,7 @@ namespace MudBlazor
 
         public async Task ToggleMenu()
         {
-            if (Disabled || ReadOnly)
+            if (GetDisabledState() || GetReadOnlyState())
                 return;
             if (_isOpen)
                 await CloseMenu(true);
@@ -680,7 +680,7 @@ namespace MudBlazor
 
         public async Task OpenMenu()
         {
-            if (Disabled || ReadOnly)
+            if (GetDisabledState() || GetReadOnlyState())
                 return;
             _isOpen = true;
             UpdateIcon();
@@ -710,7 +710,7 @@ namespace MudBlazor
             {
                 StateHasChanged();
                 await OnBlur.InvokeAsync(new FocusEventArgs());
-                _elementReference.FocusAsync().AndForget(TaskOption.Safe);
+                _elementReference.FocusAsync().AndForget(ignoreExceptions:true);
                 StateHasChanged();
             }
 
@@ -803,7 +803,7 @@ namespace MudBlazor
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
             _selectedValues.Clear();
-            BeginValidate();
+            await BeginValidateAsync();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
             await OnClearButtonClick.InvokeAsync(e);
@@ -862,7 +862,7 @@ namespace MudBlazor
 
         internal async void HandleKeyDown(KeyboardEventArgs obj)
         {
-            if (Disabled || ReadOnly)
+            if (GetDisabledState() || GetReadOnlyState())
                 return;
             var key = obj.Key.ToLowerInvariant();
             if (_isOpen && key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
@@ -985,7 +985,7 @@ namespace MudBlazor
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
             _selectedValues.Clear();
-            BeginValidate();
+            await BeginValidateAsync();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
         }
@@ -1024,7 +1024,7 @@ namespace MudBlazor
             }
             UpdateSelectAllChecked();
             _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
-            BeginValidate();
+            await BeginValidateAsync();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 SetValueAsync((T)(object)Text, updateText: false).AndForget();
@@ -1050,7 +1050,7 @@ namespace MudBlazor
             {
                 // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
                 // otherwise we can't receive key strokes any longer
-                _elementReference.FocusAsync().AndForget(TaskOption.Safe);
+                _elementReference.FocusAsync().AndForget(ignoreExceptions:true);
             }
             base.OnBlur.InvokeAsync(obj);
         }

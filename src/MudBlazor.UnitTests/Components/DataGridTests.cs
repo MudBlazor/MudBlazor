@@ -10,9 +10,12 @@ using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
+using static MudBlazor.Docs.Examples.TableRelationalExample;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -112,13 +115,87 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
-            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilterAsync());
             await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
 
             await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
             dataGrid.Render();
             // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
             dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task DataGridSortableTemplateColumnTest()
+        {
+            var comp = Context.RenderComponent<DataGridSortableTemplateColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTemplateColumnTest.Item>>();
+
+            // Count the number of rows including header.
+            var rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(9, because: "1 header row + 7 data rows + 1 footer row");
+
+            var cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(7, because: "We have 7 data rows with one column");
+
+            // Check the values of rows without sorting
+            cells[0].TextContent.Should().Be("B");
+            cells[1].TextContent.Should().Be("A");
+            cells[2].TextContent.Should().Be("A");
+            cells[3].TextContent.Should().Be("C");
+            cells[4].TextContent.Should().Be("A");
+            cells[5].TextContent.Should().Be("C");
+            cells[6].TextContent.Should().Be("C");
+
+            // property name is the hash code of the template column
+            var templatePropertyName = dataGrid.Instance.RenderedColumns.FirstOrDefault().PropertyName;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(templatePropertyName, SortDirection.Ascending, x => { return x.Name; }));
+            cells = dataGrid.FindAll("td");
+
+            // Check the values of rows - should be sorted ascending by Name.
+            cells[0].TextContent.Should().Be("A");
+            cells[1].TextContent.Should().Be("A");
+            cells[2].TextContent.Should().Be("A");
+            cells[3].TextContent.Should().Be("B");
+            cells[4].TextContent.Should().Be("C");
+            cells[5].TextContent.Should().Be("C");
+            cells[6].TextContent.Should().Be("C");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(templatePropertyName, SortDirection.Descending, x => { return x.Name; }));
+            cells = dataGrid.FindAll("td");
+
+            // Check the values of rows - should be sorted descending by Name.
+            cells[0].TextContent.Should().Be("C");
+            cells[1].TextContent.Should().Be("C");
+            cells[2].TextContent.Should().Be("C");
+            cells[3].TextContent.Should().Be("B");
+            cells[4].TextContent.Should().Be("A");
+            cells[5].TextContent.Should().Be("A");
+            cells[6].TextContent.Should().Be("A");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync(templatePropertyName));
+            cells = dataGrid.FindAll("td");
+
+            // Back to original order without sorting
+            cells[0].TextContent.Should().Be("B");
+            cells[1].TextContent.Should().Be("A");
+            cells[2].TextContent.Should().Be("A");
+            cells[3].TextContent.Should().Be("C");
+            cells[4].TextContent.Should().Be("A");
+            cells[5].TextContent.Should().Be("C");
+            cells[6].TextContent.Should().Be("C");
+
+            // sort through the sort icon
+            dataGrid.Find(".column-options button").Click();
+            cells = dataGrid.FindAll("td");
+            // Check the values of rows - should be sorted ascending by Name.
+            cells[0].TextContent.Should().Be("A");
+            cells[1].TextContent.Should().Be("A");
+            cells[2].TextContent.Should().Be("A");
+            cells[3].TextContent.Should().Be("B");
+            cells[4].TextContent.Should().Be("C");
+            cells[5].TextContent.Should().Be("C");
+            cells[6].TextContent.Should().Be("C");
         }
 
         [Test]
@@ -139,7 +216,7 @@ namespace MudBlazor.UnitTests.Components
             // Add a FilterDefinition to filter where the Name = "C".
             await comp.InvokeAsync(() =>
             {
-                dataGrid.Instance.AddFilter(new FilterDefinition<DataGridFilterableTest.Item>
+                return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableTest.Item>
                 {
                     Column = dataGrid.Instance.RenderedColumns.First(),
                     Operator = FilterOperator.String.Equal,
@@ -172,7 +249,7 @@ namespace MudBlazor.UnitTests.Components
             // Add a FilterDefinition to filter where the Name = "C".
             await comp.InvokeAsync(() =>
             {
-                dataGrid.Instance.AddFilter(new FilterDefinition<DataGridFilterableServerDataTest.Item>
+                return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableServerDataTest.Item>
                 {
                     Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(),
                     Operator = FilterOperator.String.Equal,
@@ -2505,11 +2582,11 @@ namespace MudBlazor.UnitTests.Components
                 Value = DateTime.UtcNow.Date
             };
 
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(filterDefinition));
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(filterDefinition2));
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(filterDefinition3));
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(filterDefinition4));
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(filterDefinition5));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition2));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition3));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition4));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition5));
             await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
 
             // check the number of filters displayed in the filters panel
@@ -2529,7 +2606,7 @@ namespace MudBlazor.UnitTests.Components
 
             // add a filter via the AddFilter method
             //await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(Guid.NewGuid(), "Status"));
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(new FilterDefinition<DataGridFiltersTest.Model>
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Status")
             }));
@@ -2556,7 +2633,7 @@ namespace MudBlazor.UnitTests.Components
             filterDefinition3.Column.dataType.Should().Be(typeof(Severity?));
             await comp.InvokeAsync(() => internalFilter.NumberValueChanged(35));
             filterDefinition3.Value.Should().Be(35);
-            internalFilter.IsEnum.Should().Be(true);
+            filterDefinition3.FieldType.IsEnum.Should().Be(true);
             // test internal filter class for bool data type.
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition4, null);
             filterDefinition4.Column.dataType.Should().Be(typeof(bool?));
@@ -2798,7 +2875,7 @@ namespace MudBlazor.UnitTests.Components
                 clickablePopover.Click();
 
                 //dataGrid.Instance._columns[0].Hide();
-                dataGrid.Instance.ExternalStateHasChanged();
+                ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(1);
             await comp.InvokeAsync(() =>
@@ -2823,7 +2900,7 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
 
                 //dataGrid.Instance._columns[0].Hide();
-                dataGrid.Instance.ExternalStateHasChanged();
+                ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
 
@@ -2964,7 +3041,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() =>
             {
-                dataGrid.Instance.AddFilter(new FilterDefinition<DataGridColumnPopupFilteringTest.Model>
+                return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridColumnPopupFilteringTest.Model>
                 {
                     Column = dataGrid.Instance.RenderedColumns.First(),
                     Operator = FilterOperator.String.Contains,
@@ -2985,10 +3062,10 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("tbody tr").Count.Should().Be(4);
 
             comp.Instance.FilterHired = true;
-            await comp.InvokeAsync(() =>
+            await comp.InvokeAsync(async () =>
             {
                 var filterContext = dataGrid.Instance.RenderedColumns[3].FilterContext;
-                comp.Instance.ApplyFilter(filterContext);
+                await comp.Instance.ApplyFilterAsync(filterContext);
             });
 
             dataGrid.FindAll("tbody tr").Count.Should().Be(1);
@@ -3031,6 +3108,49 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridServerDataColumnFilterMenuTest()
+        {
+            var comp = Context.RenderComponent<DataGridServerDataColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataColumnFilterMenuTest.Model>>();
+            var callCountText = comp.FindComponent<MudText>();
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+            callCountText.Markup.Should().Contain("Server call count: 1");
+
+            comp.Find(".filter-button").Click();
+            var input = comp.FindComponent<MudTextField<string>>();
+            await comp.InvokeAsync(async () => await input.Instance.ValueChanged.InvokeAsync("Sam"));
+            comp.Find(".apply-filter-button").Click();
+            callCountText.Markup.Should().Contain("Server call count: 2");
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
+
+            comp.Find(".filter-button").Click();
+            comp.Find(".clear-filter-button").Click();
+            callCountText.Markup.Should().Contain("Server call count: 3");
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+        }
+
+
+        [Test]
+        public async Task DataGridServerDataColumnFilterRowTest()
+        {
+            var comp = Context.RenderComponent<DataGridServerDataColumnFilterRowTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataColumnFilterRowTest.Model>>();
+            var callCountText = comp.FindComponent<MudText>();
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+            callCountText.Markup.Should().Contain("Server call count: 1");
+
+            var input = comp.FindComponent<MudTextField<string>>();
+            await comp.InvokeAsync(async () => await input.Instance.ValueChanged.InvokeAsync("Sam"));
+            callCountText.Markup.Should().Contain("Server call count: 2");
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
+
+            comp.Find("th > div > button.mud-button-root").Click(); // Clear filter button
+            callCountText.Markup.Should().Contain("Server call count: 3");
+            dataGrid.Render();
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+        }
+
+        [Test]
         public async Task DataGridStickyColumnsTest()
         {
             var comp = Context.RenderComponent<DataGridStickyColumnsTest>();
@@ -3052,12 +3172,12 @@ namespace MudBlazor.UnitTests.Components
             var cell = new Cell<DataGridCellContextTest.Model>(dataGrid.Instance, column, item);
 
             cell._cellContext.IsSelected.Should().Be(false);
-            cell._cellContext.Actions.SetSelectedItem(true);
+            await cell._cellContext.Actions.SetSelectedItemAsync(true);
             cell._cellContext.IsSelected.Should().Be(true);
 
-            cell._cellContext.Actions.ToggleHierarchyVisibilityForItem();
+            await cell._cellContext.Actions.ToggleHierarchyVisibilityForItemAsync();
             cell._cellContext.OpenHierarchies.Should().Contain(item);
-            cell._cellContext.Actions.ToggleHierarchyVisibilityForItem();
+            await cell._cellContext.Actions.ToggleHierarchyVisibilityForItemAsync();
             cell._cellContext.OpenHierarchies.Should().NotContain(item);
         }
 
@@ -3345,20 +3465,134 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridCustomSortTest()
+        {
+            var comp = Context.RenderComponent<DataGridCustomSortableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCustomSortableTest.Item>>();
+            dataGrid.Instance.SortMode = SortMode.Single;
+            dataGrid.Instance.SortMode.Should().Be(SortMode.Single);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value, new MudBlazor.Utilities.NaturalComparer()));
+            dataGrid.FindAll("th .sortable-column-header")[1].TextContent.Trim().Should().Be("Value");
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(true);
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Descending, x => x.Value, new MudBlazor.Utilities.NaturalComparer()));
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Descending);
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-desc").Should().Be(true);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value));
+            dataGrid.FindAll("th .sortable-column-header")[1].TextContent.Trim().Should().Be("Value");
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(true);
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name, new MudBlazor.Utilities.NaturalComparer()));
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Ascending);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(true);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => x.Name, new MudBlazor.Utilities.NaturalComparer()));
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Descending);
+            dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-desc").Should().Be(true);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
+
+            dataGrid.Instance.SortMode = SortMode.Multiple;
+            dataGrid.Instance.SortMode.Should().Be(SortMode.Multiple);
+
+            //Assign a comparer to a column
+            var column = dataGrid.FindComponent<Column<DataGridCustomSortableTest.Item>>();
+            await comp.InvokeAsync(() => column.Instance.Comparer = new MudBlazor.Utilities.NaturalComparer());
+            //Clear sorting
+            await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
+            //Sort by clicking on the header cell
+            dataGrid.Find(".column-options button").Click();
+            var cells = dataGrid.FindAll("td");
+
+            // Check the values of rows - should not be sorted and should be in the original order.
+            cells[0].TextContent.Should().Be("0");
+            cells[3].TextContent.Should().Be("1");
+            cells[6].TextContent.Should().Be("1_2");
+            cells[9].TextContent.Should().Be("1_10");
+            cells[12].TextContent.Should().Be("1_11");
+            cells[15].TextContent.Should().Be("2");
+            cells[18].TextContent.Should().Be("10");
+
+            //Multi click second column
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridCustomSortableTest.Item>>()[1];
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { CtrlKey = true, Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Ascending);
+
+            //Multi click second column a second time to change it to descending
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { CtrlKey = true, Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Descending);
+
+            //remove first column from sort
+            headerCell = dataGrid.FindComponents<HeaderCell<DataGridCustomSortableTest.Item>>()[0];
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { AltKey = true, Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.None);
+        }
+
+        [Test]
         public async Task DataGridGroupExpandedTest()
         {
             var comp = Context.RenderComponent<DataGridGroupExpandedTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
 
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            comp.Instance.ExpandAllGroups();
-            dataGrid.Render();
-            // after all groups are expanded
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
+            comp.Instance.CollapseAllGroups();
+            dataGrid.Render();
+            // after all groups are collapsed
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
             await comp.InvokeAsync(() =>
                 comp.Instance.AddFruit());
             // datagrid should be expanded with the new category
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(8);
+            dataGrid.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+        }
+
+        [Test]
+        public async Task DataGridGroupExpandedAsyncTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupExpandedAsyncTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedAsyncTest.Fruit>>();
+
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
+            comp.Instance.CollapseAllGroups();
+            dataGrid.Render();
+            // after all groups are collapsed
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
+            await comp.InvokeAsync(() =>
+                comp.Instance.AddFruit());
+            // datagrid should be expanded with the new category
+            dataGrid.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+        }
+
+        [Test]
+        public async Task DataGridGroupExpandedServerDataTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupExpandedServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedServerDataTest.Fruit>>();
+
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
+            comp.Instance.CollapseAllGroups();
+            dataGrid.Render();
+            // after all groups are collapsed
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
+            await comp.InvokeAsync(() =>
+                comp.Instance.AddFruit());
+            // datagrid should be expanded with the new category
+            dataGrid.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
         }
 
         [Test]
@@ -3378,6 +3612,28 @@ namespace MudBlazor.UnitTests.Components
             comp.Render();
             // after all groups are expanded
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+        }
+
+        [Test]
+        public async Task DataGridGroupExpandAllCollapseAllTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupExpandAllCollapseAllTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandAllCollapseAllTest.Element>>();
+
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
+            comp.Instance.ExpandAllGroups();
+            comp.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(14);
+            comp.Instance.NavigateToPage(1);
+            comp.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(18);
+            comp.Instance.CollapseAllGroups();
+            comp.Instance.NavigateToPage(0);
+            comp.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
+            comp.Instance.RefreshList();
+            comp.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
         }
 
         [Test]
@@ -3428,7 +3684,7 @@ namespace MudBlazor.UnitTests.Components
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 7);
-            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilterAsync());
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 8);
             await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 9);

@@ -31,7 +31,7 @@ namespace MudBlazor
                 .AddClass("mud-shrink",
                     when: () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start ||
                                 !string.IsNullOrWhiteSpace(Placeholder))
-                .AddClass("mud-disabled", Disabled)
+                .AddClass("mud-disabled", GetDisabledState())
                 .AddClass("mud-input-error", HasErrors)
                 .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
                 .AddClass(Class)
@@ -194,7 +194,7 @@ namespace MudBlazor
         {
             try
             {
-                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || ReadOnly)
+                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || GetReadOnlyState())
                         return;
                 switch (e.Key)
                 {
@@ -336,7 +336,7 @@ namespace MudBlazor
 
         internal async void OnPaste(string text)
         {
-            if (text == null || ReadOnly)
+            if (text == null || GetReadOnlyState())
                 return;
             Mask.Insert(text);
             await Update();
@@ -352,9 +352,9 @@ namespace MudBlazor
             _isFocused = true;
         }
 
-        protected internal override void OnBlurred(FocusEventArgs obj)
+        protected internal override async Task OnBlurredAsync(FocusEventArgs obj)
         {
-            base.OnBlurred(obj);
+            await base.OnBlurredAsync(obj);
             _isFocused = false;
         }
 
@@ -413,7 +413,7 @@ namespace MudBlazor
 
         private async void OnCut(ClipboardEventArgs obj)
         {
-            if (ReadOnly)
+            if (GetReadOnlyState())
                 return;
             
             if (_selection!=null)

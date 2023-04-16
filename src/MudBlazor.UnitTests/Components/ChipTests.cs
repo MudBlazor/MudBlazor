@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -63,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ChipLinkTest>();
             var chip = comp.FindComponent<MudChip>();
 
-            await comp.InvokeAsync(() => chip.Instance.ForceRerender());
+            await comp.InvokeAsync(() => ((IMudStateHasChanged)chip.Instance).StateHasChanged());
             await comp.InvokeAsync(() => chip.Instance.OnClickHandler(new MouseEventArgs()));
 
             comp.WaitForAssertion(() => comp.Find("#chip-click-test-expected-value").InnerHtml.Should().Be(""));

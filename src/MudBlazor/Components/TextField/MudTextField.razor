@@ -13,7 +13,7 @@
                      Error="@HasErrors"
                      ErrorText="@GetErrorText()"
                      ErrorId="@ErrorId"
-                     Disabled="@Disabled"
+                     Disabled="@GetDisabledState()"
                      Margin="@Margin"
                      Required="@Required"
                      ForId="@FieldId">
@@ -32,9 +32,9 @@
                               Value="@Text"
                               ValueChanged="(s) => SetTextAsync(s)"
                               Placeholder="@Placeholder"
-                              Disabled=@Disabled
+                              Disabled=@GetDisabledState()
                               DisableUnderLine="@DisableUnderLine"
-                              ReadOnly="@ReadOnly"
+                              ReadOnly="@GetReadOnlyState()"
                               MaxLength="@MaxLength"
                               Adornment="@Adornment"
                               AdornmentText="@AdornmentText"
@@ -47,11 +47,11 @@
                               ErrorId="@ErrorId"
                               Immediate="@Immediate"
                               Margin="@Margin"
-                              OnBlur="@OnBlurred"
-                              OnKeyDown="@InvokeKeyDown"
+                              OnBlur="@OnBlurredAsync"
+                              OnKeyDown="@InvokeKeyDownAsync"
                               OnInternalInputChanged="OnChange"
                               OnKeyPress="@InvokeKeyPress"
-                              OnKeyUp="@InvokeKeyUp"
+                              OnKeyUp="@InvokeKeyUpAsync"
                               KeyDownPreventDefault="KeyDownPreventDefault"
                               KeyPressPreventDefault="KeyPressPreventDefault"
                               KeyUpPreventDefault="KeyUpPreventDefault"
@@ -73,9 +73,9 @@
                              Value="@Text"
                              ValueChanged="OnMaskedValueChanged"
                              Placeholder="@Placeholder"
-                             Disabled=@Disabled
+                            Disabled=@GetDisabledState()
                              DisableUnderLine="@DisableUnderLine"
-                             ReadOnly="@ReadOnly"
+                             ReadOnly="@GetReadOnlyState()"
                              MaxLength="@MaxLength"
                              Adornment="@Adornment"
                              AdornmentText="@AdornmentText"
@@ -85,7 +85,7 @@
                              OnAdornmentClick="@OnAdornmentClick"
                              Error="@Error"
                              Immediate="@Immediate"
-                             Margin="@Margin" OnBlur="@OnBlurred"
+                             Margin="@Margin" OnBlur="@OnBlurredAsync"
                              Clearable="@Clearable"
                              OnClearButtonClick="@OnClearButtonClick"/>
                 }

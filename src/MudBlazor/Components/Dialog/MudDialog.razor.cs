@@ -5,6 +5,7 @@
 using System;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -171,20 +172,12 @@ namespace MudBlazor
                 else if (_reference != null)
                 {
                     if (IsVisible)
-                        (_reference.Dialog as MudDialog)?.ForceUpdate(); // forward render update to instance
+                        (_reference.Dialog as IMudStateHasChanged)?.StateHasChanged(); // forward render update to instance
                     else
                         Close(); // if we still have reference but it's not visible call Close
                 }
             }
             base.OnAfterRender(firstRender);
-        }
-
-        /// <summary>
-        /// Used for forwarding state changes from inlined dialog to its instance
-        /// </summary>
-        internal void ForceUpdate()
-        {
-            StateHasChanged();
         }
 
         /// <summary>

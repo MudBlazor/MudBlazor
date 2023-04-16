@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -21,10 +22,6 @@ namespace MudBlazor
         internal DateTime? _valueDate;
         internal TimeSpan? _valueTime;
 
-        internal bool IsNumber => TypeIdentifier.IsNumber(_filterDefinition.dataType);
-
-        internal bool IsEnum => TypeIdentifier.IsEnum(_filterDefinition.dataType);
-
         internal Column<T>? FilterColumn =>
             _column ?? (_dataGrid.RenderedColumns?.FirstOrDefault(c => c.PropertyName == _filterDefinition.Column?.PropertyName));
 
@@ -34,7 +31,7 @@ namespace MudBlazor
             _filterDefinition = filterDefinition;
             _column = column;
 
-            var fieldType = FieldType.Identify(_filterDefinition.dataType);
+            var fieldType = _filterDefinition.FieldType;
 
             if (fieldType.IsString)
                 _valueString = _filterDefinition.Value?.ToString();
@@ -52,9 +49,9 @@ namespace MudBlazor
             }
         }
 
-        internal void RemoveFilter()
+        internal async Task RemoveFilterAsync()
         {
-            _dataGrid.RemoveFilter(_filterDefinition.Id);
+            await _dataGrid.RemoveFilterAsync(_filterDefinition.Id);
         }
 
         internal void FieldChanged(Column<T> column)

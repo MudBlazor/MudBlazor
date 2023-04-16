@@ -614,7 +614,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam("Value", "321");
             comp.WaitForAssertion(() => maskField.Text.Should().Be("321 ___"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be("321"));
-            await comp.InvokeAsync(() => maskField.OnBlurred(new FocusEventArgs()));
+            await comp.InvokeAsync(() => maskField.OnBlurredAsync(new FocusEventArgs()));
 
             comp.SetParam("Clearable", true);
             maskField.Clearable.Should().Be(true);

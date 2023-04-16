@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
 using Microsoft.AspNetCore.Components.Routing;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor.Docs.Components
 {
@@ -138,7 +139,7 @@ namespace MudBlazor.Docs.Components
                     }
                 }
 
-                _contentNavigation.Update();
+                ((IMudStateHasChanged)_contentNavigation).StateHasChanged();
                 
                 if (_anchor != null)
                 {

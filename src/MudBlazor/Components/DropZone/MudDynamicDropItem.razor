@@ -6,7 +6,7 @@
      id="@($"mud-drop-item-{_id}")"
      index="@Index"
      @attributes="UserAttributes"
-     draggable="@(Disabled == false ? "true" : "false")"
+     draggable="@(!Disabled ? "true" : "false")"
      @ondragstart="DragStarted"
      @ontouchstart="TouchStarted"
      @ontouchend="TouchEnded"
@@ -15,7 +15,7 @@
      @ondragenter="HandleDragEnter"
      @ondragleave="HandleDragLeave">
 
-    @if (HideContent == false)
+    @if (!HideContent)
     {
         @ChildContent
     }

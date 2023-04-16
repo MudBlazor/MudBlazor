@@ -9,7 +9,7 @@
             <span class="@SpanClassname">
                 <span tabindex="0" class="@SwitchClassname">
                     <span class="mud-switch-button">
-                        <input tabindex="-1" @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(Disabled.ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@Disabled" @onclick:preventDefault="@ReadOnly"/>
+                        <input tabindex="-1" @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(GetDisabledState().ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()"/>
                         <span class="@ThumbClassname">
                             @if (!string.IsNullOrEmpty(ThumbIcon))
                             {

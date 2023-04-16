@@ -1,6 +1,10 @@
 ﻿@page "/"
 @layout LandingLayout
+@inject DiscordApiClient DiscordApiClient;
+@inject NugetApiClient NugetApiClient;
+@inject GitHubApiClient GitHubApiClient;
 @using MudBlazor.Docs.Components.LandingPage
+@using MudBlazor.Docs.Extensions
 
 <LandingSection SectionClass="top-section" BackgroundClass="sweet">
     <ChildContent>
@@ -286,16 +290,16 @@
         </MudItem>
         <MudItem xs="6" sm="3">
             <div class="global-scale-item">
-                <MudText Typo="Typo.h3" Color="Color.Primary">84K</MudText>
+                    <MudText Typo="Typo.h3" Color="Color.Primary">@NumericExtensions.RoundedToString(_nugetPackage?.TotalDownloads)</MudText>
                 <div class="d-flex align-center">
                     <MudIcon Icon="@lpDownloads"/>
-                    <MudText Typo="Typo.body1" Class="ml-4">Monthly Downloads</MudText>
+                    <MudText Typo="Typo.body1" Class="ml-4">Total Downloads</MudText>
                 </div>
             </div>
         </MudItem>
         <MudItem xs="6" sm="3">
             <div class="global-scale-item">
-                <MudText Typo="Typo.h3" Color="Color.Primary">4.3K+</MudText>
+                    <MudText Typo="Typo.h3" Color="Color.Primary">@NumericExtensions.RoundedToString(_gitHubRepo?.StargazersCount)</MudText>
                 <div class="d-flex align-center">
                     <MudIcon Icon="@lpGitHub"/>
                     <MudText Typo="Typo.body1" Class="ml-4">GitHub Stars</MudText>
@@ -304,7 +308,7 @@
         </MudItem>
         <MudItem xs="6" sm="3">
             <div class="global-scale-item">
-                <MudText Typo="Typo.h3" Color="Color.Primary">212</MudText>
+                <MudText Typo="Typo.h3" Color="Color.Primary">@_gitHubTotalContributors</MudText>
                 <div class="d-flex align-center">
                     <MudIcon Icon="@lpContributors"/>
                     <MudText Typo="Typo.body1" Class="ml-4">Contributors</MudText>
@@ -313,7 +317,7 @@
         </MudItem>
         <MudItem xs="6" sm="3">
             <div class="global-scale-item">
-                <MudText Typo="Typo.h3" Color="Color.Primary">3,098</MudText>
+                    <MudText Typo="Typo.h3" Color="Color.Primary">@NumericExtensions.RoundedToString(_discordInvite?.ApproximateMemberCount)</MudText>
                 <div class="d-flex align-center">
                     <MudIcon Icon="@lpDiscord"/>
                     <MudText Typo="Typo.body1" Class="ml-4">Discord Members</MudText>
@@ -354,6 +358,7 @@
 </LandingSection>
 
 @code {
+#nullable enable
     private string lpIconCode = "<path d=\"M8.52 21C8.2 21 7.92 20.8806 7.68 20.6417L0.36 13.356C-0.12 12.8782 -0.12 12.1218 0.36 11.6838L7.68 4.35831C8.16 3.88056 8.92 3.88056 9.36 4.35831C9.84 4.83607 9.84 5.59251 9.36 6.03044L2.88 12.4801L9.36 18.9297C9.84 19.4075 9.84 20.1639 9.36 20.6019C9.16 20.8806 8.84 21 8.52 21Z\" fill=\"#5E5BF0\"/><path d=\"M15.48 21C15.16 21 14.88 20.8806 14.64 20.6417C14.16 20.1639 14.16 19.4075 14.64 18.9696L21.12 12.5199L14.6 6.03044C14.12 5.55269 14.12 4.79625 14.6 4.35831C15.08 3.88056 15.84 3.88056 16.28 4.35831L23.6 11.6838C24.08 12.1616 24.08 12.918 23.6 13.356L16.32 20.6417C16.08 20.8806 15.76 21 15.48 21Z\" fill=\"#66EDE5\"/>";
     private string lpIconTemplates = "<g clip-path=\"url(#clip0_95_632)\"><path d=\"M12.0182 22C11.8723 22 11.7264 21.9642 11.6169 21.9283L1.6932 18.0215C1.29187 17.8423 1 17.448 1 17.0179V6.98208C1 6.37276 1.4743 5.90681 2.09453 5.90681C2.71476 5.90681 3.18905 6.37276 3.18905 6.98208V16.2652L12.0182 19.7419L20.8474 16.2652V6.98208C20.8474 6.37276 21.3217 5.90681 21.942 5.90681C22.5622 5.90681 23.0365 6.37276 23.0365 6.98208V17.0179C23.0365 17.448 22.7811 17.8423 22.3433 18.0215L12.4196 21.9283C12.2736 21.9642 12.1642 22 12.0182 22Z\" fill=\"#5E5BF0\"/><path d=\"M17.199 9.99283C17.0531 9.99283 16.9436 9.95699 16.7977 9.92115L6.8375 6.01434C6.29024 5.79928 5.99836 5.15412 6.21727 4.61649C6.47266 4.07885 7.09289 3.79211 7.64015 4.00717L17.5639 7.91398C18.1111 8.12903 18.403 8.77419 18.1841 9.31183C18.0382 9.74194 17.6368 9.99283 17.199 9.99283Z\" fill=\"#66EDE5\"/><path d=\"M12.0182 12.0009C11.8723 12.0009 11.7264 11.9651 11.6169 11.9292L1.6932 7.98656C1.25539 7.84319 1 7.44893 1 6.98298C1 6.51703 1.25539 6.1586 1.6932 5.97939L11.5804 2.07258C11.8358 1.96505 12.1277 1.96505 12.3831 2.07258L22.3068 5.97939C22.7081 6.1586 23 6.55287 23 6.98298C23 7.41308 22.7446 7.80735 22.3068 7.98656L12.4196 11.8934C12.2736 11.9651 12.1277 12.0009 12.0182 12.0009ZM5.01327 6.98298L11.9818 9.74283L18.9502 6.98298L12.0182 4.22312L5.01327 6.98298Z\" fill=\"#5E5BF0\"/><path d=\"M12.0182 22C11.398 22 10.9237 21.5341 10.9237 20.9247V10.8889C10.9237 10.2796 11.398 9.81362 12.0182 9.81362C12.6385 9.81362 13.1128 10.2796 13.1128 10.8889V20.9247C13.1128 21.5341 12.602 22 12.0182 22Z\" fill=\"#5E5BF0\"/></g><defs><clipPath id=\"clip0_95_632\"><rect width=\"22\" height=\"20\" fill=\"white\" transform=\"translate(1 2)\"/></clipPath></defs>";
     private string lpIconTemplatesFilled = "<g clip-path=\"url(#clip0_137_279)\"><path d=\"M18.2935 7.55172L21.9784 6.17241C22.1609 6.10345 22.1609 5.86207 21.9784 5.7931L12.0912 2C12.0182 2 11.9817 2 11.9088 2L8.18738 3.37931C8.00496 3.44828 8.00496 3.68966 8.18738 3.75862L18.1476 7.55172C18.1841 7.58621 18.257 7.58621 18.2935 7.55172Z\" fill=\"#66EDE5\"/><path d=\"M6.10778 4.20653L1.98506 5.79273C1.80264 5.8617 1.80264 6.10308 1.98506 6.17204L11.9088 9.93066C11.9453 9.96515 12.0182 9.96515 12.0912 9.93066L16.2504 8.34446C16.4328 8.27549 16.4328 8.03411 16.2504 7.96515L6.2902 4.20653C6.25372 4.17204 6.18075 4.17204 6.10778 4.20653Z\" fill=\"#66EDE5\"/><path d=\"M11.325 10.8274L1.32831 7.0343C1.14589 6.96533 0.999954 7.06878 0.999954 7.24119V16.5171V16.9653C0.999954 17.0688 1.07292 17.1377 1.14589 17.1722L11.1426 20.9653C11.2885 21.0343 11.4344 20.9309 11.4344 20.7584V11.0343C11.4709 10.9308 11.398 10.8619 11.325 10.8274Z\" fill=\"#5E5BF0\"/><path d=\"M12.5655 11.0343V20.793C12.5655 20.9309 12.7114 21.0343 12.8574 20.9998L22.8905 17.1723C22.9635 17.1378 23.0365 17.0688 23.0365 16.9654V7.20674C23.0365 7.06881 22.8905 6.96536 22.7446 6.99985L12.7479 10.793C12.602 10.8619 12.5655 10.9309 12.5655 11.0343Z\" fill=\"#5E5BF0\"/></g><defs><clipPath id=\"clip0_137_279\"><rect width=\"22\" height=\"19\" fill=\"white\" transform=\"translate(0.999954 2)\"/></clipPath></defs>";
@@ -363,6 +368,18 @@
     private string lpDiscord = "<path d=\"M9.37,4.77C9.18,3.57,8.09,3.9,7,4.19A8.39,8.39,0,0,0,4.24,5.53c-1,.72-1.78,3.75-2.12,5.26a19.35,19.35,0,0,0-.66,5.37c.08.69,1.12,1.46,2.62,2.21A6,6,0,0,0,7,19c.47-.14,1-1.4,1.17-1.82\" style=\"fill:none;stroke:#5e5bf0;stroke-miterlimit:10;stroke-width:1.5px\"/><path d=\"M14.31,4.77c.19-1.2,1.28-.87,2.4-.58a6.79,6.79,0,0,1,2.73,1.34c.89.82,1.79,3.75,2.12,5.26a19.35,19.35,0,0,1,.66,5.37c-.08.69-1.12,1.46-2.62,2.21a6,6,0,0,1-2.91.59c-.48-.14-1-1.4-1.17-1.82\" style=\"fill:none;stroke:#5e5bf0;stroke-miterlimit:10;stroke-width:1.5px\"/><ellipse cx=\"8.82\" cy=\"12.31\" rx=\"1.72\" ry=\"2.01\" style=\"fill:none;stroke:#66ede5;stroke-miterlimit:10;stroke-width:1.2px\"/><ellipse cx=\"15.04\" cy=\"12.22\" rx=\"1.72\" ry=\"2.01\" style=\"fill:none;stroke:#66ede5;stroke-miterlimit:10;stroke-width:1.2px\"/><path d=\"M4.35,15.05a.8.8,0,0,1,1.1-.15,11.93,11.93,0,0,0,12.65,0,.8.8,0,0,1,1.1.15.78.78,0,0,1-.31,1.11,13.39,13.39,0,0,1-14.23,0A.79.79,0,0,1,4.35,15.05Z\" style=\"fill:#5e5bf0\"/><path d=\"M5.24,7.3a.78.78,0,0,1,.32-1.11,12.06,12.06,0,0,1,12.65,0,.78.78,0,0,1,.33,1.11.83.83,0,0,1-1.11.16,10.55,10.55,0,0,0-11.09,0A.83.83,0,0,1,5.24,7.3Z\" style=\"fill:#5e5bf0\"/>";
 
     private bool _showTestimonials { get; set; }
+    private int _gitHubTotalContributors { get; set; }
+    private DiscordInvite? _discordInvite { get; set; } = new();
+    private NugetPackage? _nugetPackage { get; set; } = new();
+    private GitHubRepository? _gitHubRepo { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _discordInvite = await DiscordApiClient.GetDiscordInviteAsync();
+        _nugetPackage = await NugetApiClient.GetPackageAsync("mudblazor");
+        _gitHubRepo = await GitHubApiClient.GetRepositoryAsync("MudBlazor", "MudBlazor");
+        _gitHubTotalContributors = await GitHubApiClient.GetContributorsCountAsync("MudBlazor", "MudBlazor");
+    }
 
     private void ToggleTestimonials()
     {

@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudAppBar : MudComponentBase
     {
+#nullable enable
         protected string Classname =>
             new CssBuilder("mud-appbar")
                 .AddClass($"mud-appbar-dense", Dense)
@@ -68,13 +68,13 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AppBar.Appearance)]
-        public string ToolBarClass { get; set; }
+        public string? ToolBarClass { get; set; }
 
         /// <summary>
         /// Child content of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AppBar.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<aside @onmouseenter="OnMouseEnter" @onmouseleave="OnMouseLeave" @attributes="UserAttributes" class="@Classname" style="@Stylename">
+<aside @onmouseenter="EventUtil.AsNonRenderingEventHandler(OnMouseEnter)" @onmouseleave="EventUtil.AsNonRenderingEventHandler(OnMouseLeave)" @attributes="UserAttributes" class="@Classname" style="@Stylename">
     <div @ref="_contentRef" class="mud-drawer-content">
         <CascadingValue Value="this" IsFixed="true">
             @ChildContent

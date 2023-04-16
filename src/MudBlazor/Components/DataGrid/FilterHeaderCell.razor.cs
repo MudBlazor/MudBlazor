@@ -4,7 +4,9 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -98,46 +100,46 @@ namespace MudBlazor
 
         #region Events
 
-        private void ChangeOperator(string o)
+        private async Task ChangeOperatorAsync(string o)
         {
             _operator = o;
             Column.FilterContext.FilterDefinition.Operator = _operator;
-            ApplyFilter(Column.FilterContext.FilterDefinition);
+            await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
 
-        internal void StringValueChanged(string value)
+        internal async Task StringValueChangedAsync(string value)
         {
             _valueString = value;
             Column.FilterContext.FilterDefinition.Operator = _operator;
             Column.FilterContext.FilterDefinition.Value = value;
-            ApplyFilter(Column.FilterContext.FilterDefinition);
+            await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
 
-        internal void NumberValueChanged(double? value)
+        internal async Task NumberValueChangedAsync(double? value)
         {
             _valueNumber = value;
             Column.FilterContext.FilterDefinition.Operator = _operator;
             Column.FilterContext.FilterDefinition.Value = value;
-            ApplyFilter(Column.FilterContext.FilterDefinition);
+            await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
 
-        internal void EnumValueChanged(Enum value)
+        internal async Task EnumValueChangedAsync(Enum value)
         {
             _valueEnum = value;
             Column.FilterContext.FilterDefinition.Operator = _operator;
             Column.FilterContext.FilterDefinition.Value = value;
-            ApplyFilter(Column.FilterContext.FilterDefinition);
+            await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
 
-        internal void BoolValueChanged(bool? value)
+        internal async Task BoolValueChangedAsync(bool? value)
         {
             _valueBool = value;
             Column.FilterContext.FilterDefinition.Operator = _operator;
             Column.FilterContext.FilterDefinition.Value = value;
-            ApplyFilter(Column.FilterContext.FilterDefinition);
+            await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
 
-        internal void DateValueChanged(DateTime? value)
+        internal async Task DateValueChangedAsync(DateTime? value)
         {
             _valueDate = value;
 
@@ -153,17 +155,17 @@ namespace MudBlazor
 
                 Column.FilterContext.FilterDefinition.Operator = _operator;
                 Column.FilterContext.FilterDefinition.Value = date;
-                ApplyFilter(Column.FilterContext.FilterDefinition);
+                await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
             else
             {
                 Column.FilterContext.FilterDefinition.Operator = _operator;
                 Column.FilterContext.FilterDefinition.Value = value;
-                ApplyFilter(Column.FilterContext.FilterDefinition);
+                await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
         }
 
-        internal void TimeValueChanged(TimeSpan? value)
+        internal async Task TimeValueChangedAsync(TimeSpan? value)
         {
             _valueTime = value;
 
@@ -179,22 +181,23 @@ namespace MudBlazor
 
                 Column.FilterContext.FilterDefinition.Operator = _operator;
                 Column.FilterContext.FilterDefinition.Value = date;
-                ApplyFilter(Column.FilterContext.FilterDefinition);
+                await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
         }
 
-        internal void ApplyFilter(FilterDefinition<T> filterDefinition)
+        internal async Task ApplyFilterAsync(FilterDefinition<T> filterDefinition)
         {
             if (!DataGrid.FilterDefinitions.Any(x => x.Id == filterDefinition.Id))
                 DataGrid.FilterDefinitions.Add(filterDefinition);
+            if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
 
             DataGrid.GroupItems();
-            DataGrid.ExternalStateHasChanged();
+            ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
 
-        private void ClearFilter()
+        private async Task ClearFilterAsync()
         {
-            ClearFilter(Column.FilterContext.FilterDefinition);
+            await ClearFilterAsync(Column.FilterContext.FilterDefinition);
 
             if (dataType == typeof(string))
                 _valueString = null;
@@ -211,9 +214,9 @@ namespace MudBlazor
             }
         }
 
-        internal void ClearFilter(FilterDefinition<T> filterDefinition)
+        internal async Task ClearFilterAsync(FilterDefinition<T> filterDefinition)
         {
-            DataGrid.RemoveFilter(filterDefinition.Id);
+            await DataGrid.RemoveFilterAsync(filterDefinition.Id);
         }
 
         #endregion

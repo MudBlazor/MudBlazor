@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
@@ -63,7 +64,7 @@ namespace MudBlazor
             _mouseUpSubscriptionId = await _eventListener.SubscribeGlobal<MouseEventArgs>(EventMouseUp, 0, OnApplicationMouseUp);
 
             _dataGrid.IsResizing = true;
-            _dataGrid.ExternalStateHasChanged();
+            ((IMudStateHasChanged)_dataGrid).StateHasChanged();
             return true;
         }
 
@@ -77,7 +78,7 @@ namespace MudBlazor
             var requiresUpdate = _mouseMoveSubscriptionId != default || _mouseUpSubscriptionId != default;
 
             _dataGrid.IsResizing = false;
-            _dataGrid.ExternalStateHasChanged();
+            ((IMudStateHasChanged)_dataGrid).StateHasChanged();
             await UnsubscribeApplicationEvents();
 
             if (requiresUpdate)

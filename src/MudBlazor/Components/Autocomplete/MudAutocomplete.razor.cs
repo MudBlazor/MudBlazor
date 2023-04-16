@@ -360,7 +360,7 @@ namespace MudBlazor
                 await SetTextAsync(optionText, false);
             _timer?.Dispose();
             IsOpen = false;
-            BeginValidate();
+            await BeginValidateAsync();
             if (!_isCleared)
                 _elementReference?.SetText(optionText);
             _elementReference?.FocusAsync().AndForget();
@@ -372,7 +372,7 @@ namespace MudBlazor
         /// </summary>
         public async Task ToggleMenu()
         {
-            if ((Disabled || ReadOnly) && !IsOpen)
+            if ((GetDisabledState() || GetReadOnlyState()) && !IsOpen)
                 return;
             await ChangeMenu(!IsOpen);
         }
@@ -578,7 +578,7 @@ namespace MudBlazor
                         IsOpen = false;
                     break;
             }
-            base.InvokeKeyDown(args);
+            await base.InvokeKeyDownAsync(args);
         }
 
         internal virtual async Task OnInputKeyUp(KeyboardEventArgs args)
@@ -641,7 +641,7 @@ namespace MudBlazor
                     }
                     break;
             }
-            base.InvokeKeyUp(args);
+            await base.InvokeKeyUpAsync(args);
         }
 
         private ValueTask SelectNextItem(int increment)
@@ -692,15 +692,22 @@ namespace MudBlazor
             return $"{_componentId}_item{index}";
         }
 
-        internal Task OnEnterKey()
+        internal async Task OnEnterKey()
         {
             if (IsOpen == false)
-                return Task.CompletedTask;
-            if (_items == null || _items.Length == 0)
-                return Task.CompletedTask;
-            if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
-                return SelectOption(_items[_selectedListItemIndex]);
-            return Task.CompletedTask;
+                return;
+            try
+            {
+                if (_items == null || _items.Length == 0)
+                    return;
+                if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
+                    await SelectOption(_items[_selectedListItemIndex]);
+            }
+            finally
+            {
+                if (IsOpen)
+                    IsOpen = false;
+            }
         }
 
         private Task OnInputBlurred(FocusEventArgs args)
