@@ -1,7 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px" Elevation="0">
-    <MudTreeView Items="TreeItems" MultiSelection="true" @bind-ActivatedValue="ActivatedValue" @bind-SelectedValues="SelectedValues">
+    <MudTreeView Items="TreeItems" MultiSelection="true" @bind-ActivatedValue="ActivatedValue" @bind-SelectedValues="SelectedValues" 
+        VisibleItemsExtendText="give me more!" VisibleItemsIncrement=2 VisibleItemsLimit=2 EnableShowAllItemsButton=true>
         <ItemTemplate>
             <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems" Value="@context"
                              Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
@@ -53,7 +54,11 @@
                 new TreeItemData("Social", Icons.Material.Filled.Group, 90),
                 new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
                 new TreeItemData("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
-                new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733)
+                new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733),
+                new TreeItemData("Social 2", Icons.Material.Filled.Group, 90),
+                new TreeItemData("Updates 2", Icons.Material.Filled.Info, 2294),
+                new TreeItemData("Forums 2", Icons.Material.Filled.QuestionAnswer, 3566),
+                new TreeItemData("Promotions 2", Icons.Material.Filled.LocalOffer, 733)
             }
         });
         TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label));
