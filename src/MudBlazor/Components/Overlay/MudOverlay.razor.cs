@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudOverlay : MudComponentBase, IDisposable
+    public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     {
         private bool _visible;
 
@@ -85,14 +85,14 @@ namespace MudBlazor
         public string LockScrollClass { get; set; } = "scroll-locked";
 
         /// <summary>
-        /// If true applys the themes dark overlay color.
+        /// If true applies the themes dark overlay color.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
         public bool DarkBackground { get; set; }
 
         /// <summary>
-        /// If true applys the themes light overlay color.
+        /// If true applies the themes light overlay color.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
@@ -144,34 +144,33 @@ namespace MudBlazor
         }
 
         //if not visible or CSS `position:absolute`, don't lock scroll
-        protected override void OnAfterRender(bool firstTime)
+        protected override async Task OnAfterRenderAsync(bool firstTime)
         {
             if (!LockScroll || Absolute)
                 return;
 
             if (Visible)
-                BlockScroll();
+                await BlockScrollAsync();
             else
-                UnblockScroll();
-
+                await UnblockScrollAsync();
         }
 
         //locks the scroll attaching a CSS class to the specified element, in this case the body
-        private void BlockScroll()
+        private ValueTask BlockScrollAsync()
         {
-            ScrollManager.LockScrollAsync("body", LockScrollClass);
+            return ScrollManager.LockScrollAsync("body", LockScrollClass);
         }
 
         //removes the CSS class that prevented scrolling
-        private void UnblockScroll()
+        private ValueTask UnblockScrollAsync()
         {
-            ScrollManager.UnlockScrollAsync("body", LockScrollClass);
+            return ScrollManager.UnlockScrollAsync("body", LockScrollClass);
         }
 
         //When disposing the overlay, remove the class that prevented scrolling
-        public void Dispose()
+        public ValueTask DisposeAsync()
         {
-            UnblockScroll();
+            return UnblockScrollAsync();
         }
     }
 }
