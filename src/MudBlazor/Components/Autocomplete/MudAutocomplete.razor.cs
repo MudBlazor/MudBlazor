@@ -509,7 +509,7 @@ namespace MudBlazor
             _enabledItemIndices = enabledItems.Select(tuple => tuple.idx).ToList();
             if (searchingWhileSelected) //compute the index of the currently select value, if it exists
             {
-                _selectedListItemIndex = enabledItems.Select(x => x.item).ToList().IndexOf(Value);
+                _selectedListItemIndex = Array.IndexOf(_items, Value);
             }
             else
             {
