@@ -1086,8 +1086,8 @@ namespace MudBlazor.UnitTests.Components
             panels.Should().HaveCount(2);
 
             // index 0 : html text "Hello <span>World</span>!"
-            panels[0].InnerHtml.Contains("Hello <span>World</span>!").Should().BeTrue();
-            panels[0].TextContent.Contains("Hello World!").Should().BeTrue();
+            panels[0].InnerHtml.Should().Be("Hello &lt;span&gt;World&lt;/span&gt;!");
+            panels[0].TextContent.Should().Be("Hello <span>World</span>!");
 
             // index 1 : simple text without html "Hello World!"
             panels[1].InnerHtml.Contains("Hello World!").Should().BeTrue();
