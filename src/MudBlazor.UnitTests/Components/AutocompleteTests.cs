@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -588,7 +587,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Reset it
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
-            await comp.InvokeAsync(() => autocomplete.Reset());
+            await comp.InvokeAsync(() => autocomplete.ResetAsync());
             comp.Markup.Should().NotContain("mud-popover-open");
             autocomplete.Value.Should().Be(null);
             autocomplete.Text.Should().Be("");
@@ -601,7 +600,7 @@ namespace MudBlazor.UnitTests.Components
             items.First().Markup.Should().Contain("California");
 
             // Reseting it should close popover and set Text and Value to null again
-            await comp.InvokeAsync(() => autocomplete.Reset());
+            await comp.InvokeAsync(() => autocomplete.ResetAsync());
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             autocomplete.Value.Should().Be(null);
             autocomplete.Text.Should().Be("");
@@ -935,7 +934,7 @@ namespace MudBlazor.UnitTests.Components
             // Test show
             comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
             comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().Contain("Loading..."));
-            
+
             // Test hide
             comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
             comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().NotContain("Loading..."));
@@ -980,7 +979,8 @@ namespace MudBlazor.UnitTests.Components
 
             var first = new TaskCompletionSource<IEnumerable<string>>();
 
-            autocompletecomp.SetParam(p => p.SearchFuncWithCancel, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) => {
+            autocompletecomp.SetParam(p => p.SearchFuncWithCancel, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
+            {
                 cancelToken = cancellationToken;
                 // Return task that never completes.
                 return first.Task;
@@ -995,10 +995,10 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => Assert.IsFalse(cancelToken?.IsCancellationRequested));
 
             // Arrange second call
-            
+
             var second = new TaskCompletionSource<IEnumerable<string>>();
 
-            autocompletecomp.SetParam(p => p.SearchFuncWithCancel, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) => 
+            autocompletecomp.SetParam(p => p.SearchFuncWithCancel, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
             {
                 return second.Task;
             }));
@@ -1068,7 +1068,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteStrictFalseTest>();
             var autocompletecomp = comp.FindComponents<MudAutocomplete<AutocompleteStrictFalseTest.State>>()[index];
             var autocomplete = autocompletecomp.Instance;
-            
+
             //search for and select California
             autocompletecomp.Find("input").Input("Calif");
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
@@ -1126,7 +1126,7 @@ namespace MudBlazor.UnitTests.Components
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             var result = new List<string>();
             //create eventCallback
-            var customEvent = new EventCallbackFactory().Create<KeyboardEventArgs>("A",() => result.Add("keyevent thrown"));
+            var customEvent = new EventCallbackFactory().Create<KeyboardEventArgs>("A", () => result.Add("keyevent thrown"));
 
             //set eventCallback
             //SetCallback also possible

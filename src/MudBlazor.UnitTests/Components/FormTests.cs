@@ -133,7 +133,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().Be(true);
 
             //reset should set touched to false
-            await comp.InvokeAsync(() => form.Reset());
+            await comp.InvokeAsync(() => form.ResetAsync());
             form.IsTouched.Should().Be(false);
 
             // clear value to null
@@ -171,7 +171,7 @@ namespace MudBlazor.UnitTests.Components
             nestedForm.IsTouched.Should().Be(false);
 
             //reset should set touched to false
-            await comp.InvokeAsync(() => form.Reset());
+            await comp.InvokeAsync(() => form.ResetAsync());
             form.IsTouched.Should().Be(false);
             nestedForm.IsTouched.Should().Be(false);
 
@@ -212,7 +212,7 @@ namespace MudBlazor.UnitTests.Components
             nestedForm.IsTouched.Should().Be(true);
 
             //reset should set touched to false
-            await comp.InvokeAsync(() => form.Reset());
+            await comp.InvokeAsync(() => form.ResetAsync());
             form.IsTouched.Should().Be(false);
             nestedForm.IsTouched.Should().Be(false);
 
@@ -324,7 +324,7 @@ namespace MudBlazor.UnitTests.Components
             textFieldcomp.Find("input").Change("Some value");
             form.IsValid.Should().Be(true);
             // calling Reset() should reset the textField's value
-            await comp.InvokeAsync(() => form.Reset());
+            await comp.InvokeAsync(() => form.ResetAsync());
             textField.Value.Should().Be(null);
             textField.Text.Should().Be(null);
             form.IsValid.Should().Be(false); // because we did reset validation state as a side-effect.
@@ -1149,7 +1149,7 @@ namespace MudBlazor.UnitTests.Components
             textField.Value.Should().Be("asdf");
             textField.Text.Should().Be("asdf");
             // call reset directly
-            await comp.InvokeAsync(() => form.Instance.Reset());
+            await comp.InvokeAsync(() => form.Instance.ResetAsync());
             textField.Value.Should().BeNullOrEmpty();
             textField.Text.Should().BeNullOrEmpty();
             // input some text
@@ -1178,7 +1178,7 @@ namespace MudBlazor.UnitTests.Components
             numericField.Value.Should().Be(10);
             numericField.Text.Should().Be("10");
             // call reset directly
-            await comp.InvokeAsync(() => form.Reset());
+            await comp.InvokeAsync(() => form.ResetAsync());
             numericField.Value.Should().BeNull();
             numericField.Text.Should().BeNullOrEmpty();
             // input some text
@@ -1211,7 +1211,7 @@ namespace MudBlazor.UnitTests.Components
             datePicker.Date.Should().Be(testDate);
             datePicker.Text.Should().Be(testDateString);
             // call reset directly
-            await comp.InvokeAsync(() => form.Reset());
+            await comp.InvokeAsync(() => form.ResetAsync());
             datePicker.Date.Should().BeNull();
             datePicker.Text.Should().BeNullOrEmpty();
 
@@ -1248,7 +1248,7 @@ namespace MudBlazor.UnitTests.Components
             numericFieldComp.Find("input").Input("1");
             form.IsValid.Should().Be(true);
 
-            await comp.InvokeAsync(() => form.Reset());
+            await comp.InvokeAsync(() => form.ResetAsync());
             form.IsValid.Should().Be(false); // required fields
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -514,11 +515,20 @@ namespace MudBlazor
                 base.OnParametersSet();
         }
 
+        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
+        [ExcludeFromCodeCoverage]
         protected override void ResetValue()
         {
             SetTextAsync(null, updateValue: true).AndForget();
             this._isDirty = false;
             base.ResetValue();
+        }
+
+        protected override async Task ResetValueAsync()
+        {
+            await SetTextAsync(null, updateValue: true);
+            this._isDirty = false;
+            await base.ResetValueAsync();
         }
     }
 }
