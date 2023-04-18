@@ -7,9 +7,9 @@ namespace MudBlazor
 #nullable enable
     public class Converter<T, U>
     {
-        public Func<T, U>? SetFunc { get; set; }
+        public Func<T?, U?>? SetFunc { get; set; }
 
-        public Func<U, T>? GetFunc { get; set; }
+        public Func<U?, T?>? GetFunc { get; set; }
 
         /// <summary>
         /// The culture info being used for decimal points, date and time format, etc.
@@ -28,7 +28,7 @@ namespace MudBlazor
 
         public string? GetErrorMessage { get; set; }
 
-        public U? Set(T value)
+        public U? Set(T? value)
         {
             SetError = false;
             SetErrorMessage = null;
@@ -46,7 +46,7 @@ namespace MudBlazor
             return default(U);
         }
 
-        public T? Get(U value)
+        public T? Get(U? value)
         {
             GetError = false;
             GetErrorMessage = null;

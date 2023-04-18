@@ -521,7 +521,7 @@ namespace MudBlazor
         /// <summary>
         /// Notify the Form that a field has changed if SubscribeToParentForm is true
         /// </summary>
-        protected void FieldChanged(object newValue)
+        protected void FieldChanged(object? newValue)
         {
             if (SubscribeToParentForm)
                 Form?.FieldChanged(this, newValue);
