@@ -11,7 +11,25 @@
 else if (Column != null && !Column.Hidden)
 {
     <th @ref=@_headerElement scope="col" class="@_classname" style="@_style" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
+        <MudDropZone T="Column<T>" Class="border-2" Style="border-color: transparent" Identifier="@(Column.PropertyName ?? $"mud-header-cell-{_id}")">
+
+        </MudDropZone>
+        @if (resizable)
+        {
+            <div @onmousedown=OnResizerMouseDown @onmouseover=OnResizerMouseOver @onmouseleave=OnResizerMouseLeave
+                 class="@_resizerClass" style="@_resizerStyle" />
+        }
+    </th>
+}
+
+@code{
+
+    internal RenderFragment TableHeader()
+    {
+        return
+        @<text>
         <span class="column-header">
+            <MudIcon Icon="@Icons.Material.Filled.DragIndicator" Size="@Size.Small"></MudIcon>
             @if (sortable)
             {
                 <span class="@_sortHeaderClass" @onclick="SortChangedAsync">
@@ -92,12 +110,6 @@ else if (Column != null && !Column.Hidden)
                 }
             </span>
         </span>
-        @if (resizable)
-        {
-            <div @onmousedown=OnResizerMouseDown @onmouseover=OnResizerMouseOver @onmouseleave=OnResizerMouseLeave
-                class="@_resizerClass" style="@_resizerStyle" />
-        }
-
         @if (filterable && DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
         {
             <MudOverlay Visible="@_filtersMenuVisible" OnClick="@(() => _filtersMenuVisible = false)" />
@@ -120,5 +132,6 @@ else if (Column != null && !Column.Hidden)
                 }
             </MudPopover>
         }
-    </th>
+        </text>;
+    }
 }

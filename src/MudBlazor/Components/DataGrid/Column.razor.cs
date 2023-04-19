@@ -120,6 +120,9 @@ namespace MudBlazor
 
         [Parameter] public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
 
+        public string Identifier { get; set; }
+        
+
         private CultureInfo _culture;
         /// <summary>
         /// The culture used to represent this column and by the filtering input field.

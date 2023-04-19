@@ -32,7 +32,7 @@ namespace MudBlazor
         private List<GroupDefinition<T>> _allGroups = new List<GroupDefinition<T>>();
         internal HashSet<T> _openHierarchies = new HashSet<T>();
         private PropertyInfo[] _properties = typeof(T).GetProperties();
-
+        private MudDropContainer<Column<T>> DropContainer;
         protected string _classname =>
             new CssBuilder("mud-table")
                .AddClass("mud-data-grid")
@@ -109,6 +109,48 @@ namespace MudBlazor
 
                 return (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
             }
+        }
+
+        internal bool RenderedColumnsItemsSelector(Column<T> item, string dropZone)
+        {
+            if (item.PropertyName == dropZone)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
+        {
+            TItem tmp = list[indexA];
+            list[indexA] = list[indexB];
+            list[indexB] = tmp;
+        }
+
+        private Task ItemUpdatedAsync(MudItemDropInfo<Column<T>> dropItem)
+        {
+            dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
+
+            var dragAndDropSource = RenderedColumns.Where(rc => rc.PropertyName == dropItem.Item.PropertyName).SingleOrDefault();
+            var dragAndDropDestination = RenderedColumns.Where(rc => rc.PropertyName == dropItem.DropzoneIdentifier).SingleOrDefault();
+            if (dragAndDropSource != null && dragAndDropDestination != null)
+            {
+                var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
+                var dragAndDropDestinationIndex = RenderedColumns.IndexOf(dragAndDropDestination);
+
+                Swap<Column<T>>(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
+
+                // swap source / destination
+                var dest = dragAndDropDestination.HeaderCell.Width;
+                var src = dragAndDropSource.HeaderCell.Width;
+
+                dragAndDropSource.HeaderCell._width = dest;
+                dragAndDropDestination.HeaderCell._width = src;
+
+                StateHasChanged();
+            }
+            return Task.CompletedTask;
+            
         }
 
         public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
@@ -1229,6 +1271,17 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        internal void ExternalStateHasChanged()
+        {
+            StateHasChanged();
+        }
+
+        internal void DropContainerHasChanged()
+        {
+            DropContainer?.Refresh();
+        }
+
+        
         public void GroupItems(bool noStateChange = false)
         {
             if (GroupedColumn == null)

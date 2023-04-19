@@ -29,7 +29,7 @@ namespace MudBlazor
             get
             {
                 
-                if (_dataGrid.Selection != null && Items != null)
+                if (_dataGrid.Selection != null && Items != null && Items.Count() > 0)
                 {
                     return _dataGrid.Selection.Count == Items.Count();
                 }
