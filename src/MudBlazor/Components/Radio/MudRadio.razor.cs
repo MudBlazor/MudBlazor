@@ -172,6 +172,7 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
+        [Obsolete($"Use {nameof(HandleKeyDownAsync)} instead. This method will be removed in v7")]
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {
             if (IsDisabled || (MudRadioGroup?.GetReadOnlyState() ?? false))
@@ -185,6 +186,27 @@ namespace MudBlazor
                     break;
                 case "Backspace":
                     MudRadioGroup.Reset();
+                    break;
+            }
+        }
+
+        protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
+        {
+            if (IsDisabled || (MudRadioGroup?.GetReadOnlyState() ?? false))
+                return;
+            switch (keyboardEventArgs.Key)
+            {
+                case "Enter":
+                case "NumpadEnter":
+                case " ":
+                    Select();
+                    break;
+                case "Backspace":
+                    if (MudRadioGroup is not null)
+                    {
+                        await MudRadioGroup.ResetAsync();
+                    }
+
                     break;
             }
         }

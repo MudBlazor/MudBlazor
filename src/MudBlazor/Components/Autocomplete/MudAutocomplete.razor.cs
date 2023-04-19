@@ -13,7 +13,8 @@ namespace MudBlazor
 {
     public partial class MudAutocomplete<T> : MudBaseInput<T>, IDisposable
     {
-        [Inject] IScrollManager ScrollManager { get; set; }
+        [Inject]
+        private IScrollManager ScrollManager { get; set; }
 
         private bool _dense;
 
@@ -314,7 +315,8 @@ namespace MudBlazor
         /// <summary>
         /// An event triggered when the state of IsOpen has changed
         /// </summary>
-        [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+        [Parameter]
+        public EventCallback<bool> IsOpenChanged { get; set; }
 
         /// <summary>
         /// If true, the currently selected item from the drop-down (if it is open) is selected.
@@ -333,7 +335,8 @@ namespace MudBlazor
         /// <summary>
         /// Button click event for clear button. Called after text and value has been cleared.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
 
@@ -388,7 +391,7 @@ namespace MudBlazor
             else
             {
                 _timer?.Dispose();
-                RestoreScrollPosition();
+                await RestoreScrollPositionAsync();
                 await CoerceTextToValue();
                 IsOpen = false;
                 StateHasChanged();
@@ -545,11 +548,11 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        protected override async void ResetValue()
-        {
-            await Clear();
-        }
+        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
+        [ExcludeFromCodeCoverage]
+        protected override async void ResetValue() => await Clear();
 
+        protected override Task ResetValueAsync() => Clear();
 
         private string GetItemString(T item)
         {
@@ -637,7 +640,7 @@ namespace MudBlazor
                 case "Backspace":
                     if (args.CtrlKey == true && args.ShiftKey == true)
                     {
-                        Reset();
+                        await ResetAsync();
                     }
                     break;
             }
@@ -657,7 +660,6 @@ namespace MudBlazor
         /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
         /// </summary>
         private readonly string _componentId = Guid.NewGuid().ToString();
-
 
         /// <summary>
         /// Scroll to a specific item index in the Autocomplete list of items.
@@ -681,10 +683,10 @@ namespace MudBlazor
         }
 
         //This restores the scroll position after closing the menu and element being 0
-        private void RestoreScrollPosition()
+        private ValueTask RestoreScrollPositionAsync()
         {
-            if (_selectedListItemIndex != 0) return;
-            ScrollManager.ScrollToListItemAsync(GetListItemId(0));
+            if (_selectedListItemIndex != 0) return ValueTask.CompletedTask;
+            return ScrollManager.ScrollToListItemAsync(GetListItemId(0));
         }
 
         private string GetListItemId(in int index)
@@ -805,6 +807,5 @@ namespace MudBlazor
         {
             await SelectOption(item);
         }
-
     }
 }
