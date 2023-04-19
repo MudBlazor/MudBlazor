@@ -78,8 +78,8 @@ namespace MudBlazor
             {
                 switch (arg)
                 {
-                    case bool booValue:
-                        return booValue;
+                    case bool boolValue:
+                        return boolValue;
                     case int intValue:
                         return intValue > 0;
                     case string stringValue when string.IsNullOrWhiteSpace(stringValue):
