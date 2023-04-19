@@ -1179,5 +1179,31 @@ namespace MudBlazor.UnitTests.Components
             var selectedItem = listItems.Single(x => x.Markup.Contains(selectedItemSelector));
             selectedItem.Markup.Should().Contain(selectedItemString);
         }
+
+        /// <summary>
+        /// https://github.com/MudBlazor/MudBlazor/issues/6475
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Reset_Value_ShouldBe_Empty()
+        {
+            var component = Context.RenderComponent<AutocompleteResetTest>();
+            var autocompleteComponent = component.FindComponent<MudAutocomplete<string>>();
+
+            // get the instance
+            var autocompleteInstance = autocompleteComponent.Instance;
+
+            // click to open the popup
+            autocompleteComponent.Find(TagNames.Input).Click();
+
+            // ensure popup is open
+            component.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue("Input has been focused and should open the popup"));
+
+            // get the matching states
+            var matchingStates = component.FindComponents<MudListItem>().ToArray();
+
+            // try clicking 'Test'
+            matchingStates.Single(s => s.Markup.Contains("Test")).Find("div.mud-list-item").Click();
+            component.WaitForAssertion(() => autocompleteInstance.Text.Should().Be(string.Empty));
+        }
     }
 }
