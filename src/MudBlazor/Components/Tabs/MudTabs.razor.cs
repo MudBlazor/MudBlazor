@@ -45,6 +45,13 @@ namespace MudBlazor
         public bool KeepPanelsAlive { get; set; } = false;
 
         /// <summary>
+        /// If true, no panel is initially active.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
+        public bool NoInitialActivePanel { get; set; } = false;
+
+        /// <summary>
         /// If true, sets the border-radius to theme default.
         /// </summary>
         [Parameter]
@@ -275,14 +282,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
-        
+
         /// <summary>
         /// Fired when a panel gets activated. Returned Task will be awaited.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public Func<TabInteractionEventArgs, Task> OnPreviewInteraction { get; set; }
-        
+
         /// <summary>
         /// Can be used in derived class to add a class to the main container. If not overwritten return an empty string
         /// </summary>
@@ -312,6 +319,9 @@ namespace MudBlazor
             {
                 _resizeObserver = _resizeObserverFactory.Create();
             }
+
+            if (NoInitialActivePanel)
+                _activePanelIndex = -1;
 
             Rerender();
         }
@@ -353,7 +363,7 @@ namespace MudBlazor
         internal void AddPanel(MudTabPanel tabPanel)
         {
             _panels.Add(tabPanel);
-            if (_panels.Count == 1)
+            if (_panels.Count == 1 && !NoInitialActivePanel)
                 ActivePanel = tabPanel;
             StateHasChanged();
         }
@@ -428,7 +438,7 @@ namespace MudBlazor
                     await OnPreviewInteraction.Invoke(previewArgs);
 
                 if (previewArgs.Cancel) return;
-                
+
                 ActivePanelIndex = previewArgs.PanelIndex;
                 await ActivePanel?.OnClick.InvokeAsync(ev);
 
@@ -671,7 +681,7 @@ namespace MudBlazor
         {
             var x = 0D;
             var count = 0;
-            
+
             var toolbarContentSize = GetRelevantSize(_tabsContentSize);
 
             foreach (var panel in _panels)

@@ -43,7 +43,7 @@
                                 }
                             }
                         }
-                        @if (!HideSlider)
+                        @if (!HideSlider && ActivePanel is not null)
                         {
                             <div class="@SliderClass" style="@SliderStyle"></div>
                         }

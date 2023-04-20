@@ -48,6 +48,7 @@ namespace MudBlazor
         /// Sets the location of the table pager.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
         public TablePagerPosition PagerPosition { get; set; } = TablePagerPosition.Bottom;
 
         /// <summary>

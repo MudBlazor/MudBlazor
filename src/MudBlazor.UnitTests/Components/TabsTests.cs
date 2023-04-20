@@ -27,6 +27,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task NoInitialyActiveTab()
+        {
+            var comp = Context.RenderComponent<NoInitialyActiveTab>();
+            comp.Instance.TabsComponent.ActivePanelIndex.Should().BeNegative();
+            comp.Instance.TabsComponent.ActivePanel.Should().BeNull();
+            comp.FindAll("mud-tab-slider").Should().BeEmpty();
+            comp.FindAll("mud-tab-active").Should().BeEmpty();
+        }
+
+        [Test]
         public async Task AddingAndRemovingTabPanels()
         {
             var comp = Context.RenderComponent<TabsAddingRemovingTabsTest>();
@@ -1153,7 +1163,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TabsWithPrePanelContent>(p => p.Add(x => x.SelectedIndex, 0));
 
-            var content =  comp.Find(".pre-panel-content-custom");
+            var content = comp.Find(".pre-panel-content-custom");
 
             content.TextContent.Should().Be("Selected: Tab One");
 
@@ -1181,7 +1191,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SetPanelActive(2);
             comp.Instance.ActivePanel.Should().NotBe(2);
         }
-        
+
         #region Helper
 
         private static double GetSliderValue(IRenderedComponent<ScrollableTabsTest> comp, string attribute = "left")
