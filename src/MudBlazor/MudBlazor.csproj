@@ -4,7 +4,7 @@
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
   </PropertyGroup>
 
-  <PropertyGroup>
+  <PropertyGroup>    
     <version>6.2.2.1</version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>Nuget.png</PackageIcon>
@@ -13,8 +13,7 @@
     <Copyright>Copyright 2022 MudBlazor</Copyright>
     <PackageTags>Blazor, MudBlazor, Material, Material Design, Components, Blazor Components, Blazor Library</PackageTags>
     <Description>MudBlazor fork by mblichowski</Description>
-    <PackageId>$(AssemblyName)</PackageId>
-    <AssemblyName>$(MSBuildProjectName)-extended</AssemblyName>
+    <PackageId>$(AssemblyName)-extended</PackageId>
     <PackageProjectUrl>http://mudblazor.com/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mblichowski/MudBlazor-extended</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
