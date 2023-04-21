@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTabs @ref=TabsComponent ToggleActivePanel=true>
+    <MudTabPanel Text="Tab1">
+        <MudText>Tab1 content</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Tab2">
+        <MudText>Tab2 content</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Tab3">
+        <MudText>Tab3 content</MudText>
+    </MudTabPanel>
+</MudTabs>
+
+@code
+{
+    public MudTabs TabsComponent { get; set; }
+}

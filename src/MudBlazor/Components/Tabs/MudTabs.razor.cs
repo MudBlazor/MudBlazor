@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Interop;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
@@ -50,6 +49,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public bool NoInitialActivePanel { get; set; } = false;
+
+        /// <summary>
+        /// If true, active panel is being toggled on header click.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
+        public bool ToggleActivePanel { get; set; } = false;
 
         /// <summary>
         /// If true, sets the border-radius to theme default.
@@ -432,20 +438,28 @@ namespace MudBlazor
             if (!panel.Disabled || ignoreDisabledState)
             {
                 var index = _panels.IndexOf(panel);
-                var previewArgs = new TabInteractionEventArgs { PanelIndex = index, InteractionType = TabInteractionType.Activate };
 
-                if (OnPreviewInteraction != null)
-                    await OnPreviewInteraction.Invoke(previewArgs);
+                if (ToggleActivePanel && ActivePanelIndex == index)
+                {
+                    ActivePanelIndex = -1;
+                }
+                else
+                {
+                    var previewArgs = new TabInteractionEventArgs { PanelIndex = index, InteractionType = TabInteractionType.Activate };
+                    if (OnPreviewInteraction != null)
+                        await OnPreviewInteraction.Invoke(previewArgs);
 
-                if (previewArgs.Cancel) return;
+                    if (previewArgs.Cancel) return;
 
-                ActivePanelIndex = previewArgs.PanelIndex;
-                await ActivePanel?.OnClick.InvokeAsync(ev);
+                    ActivePanelIndex = previewArgs.PanelIndex;
+                    await ActivePanel?.OnClick.InvokeAsync(ev);
 
-                CenterScrollPositionAroundSelectedItem();
-                SetSliderState();
-                SetScrollButtonVisibility();
-                SetScrollabilityStates();
+                    CenterScrollPositionAroundSelectedItem();
+                    SetSliderState();
+                    SetScrollButtonVisibility();
+                    SetScrollabilityStates();
+                }
+
                 StateHasChanged();
             }
         }
@@ -483,8 +497,8 @@ namespace MudBlazor
 
         protected string WrapperScrollStyle =>
         new StyleBuilder()
-            .AddStyle("transform", $"translateX({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position is Position.Top or Position.Bottom)
-            .AddStyle("transform", $"translateY({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
+            .AddStyle("transform", $"translateX({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position is Position.Top or Position.Bottom)
+            .AddStyle("transform", $"translateY({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
             .Build();
 
         protected string PanelsClassnames =>

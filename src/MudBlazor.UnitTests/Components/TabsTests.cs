@@ -37,6 +37,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ActiveTabToggling()
+        {
+            var comp = Context.RenderComponent<ActiveTabToggling>();
+            comp.Instance.TabsComponent.ActivePanelIndex.Should().Be(0);
+
+            var activeTab = comp.Find("div.mud-tab.mud-tab-active");
+            activeTab.Should().NotBeNull();
+            activeTab.Click();
+
+            comp.Instance.TabsComponent.ActivePanelIndex.Should().BeNegative();
+            comp.Instance.TabsComponent.ActivePanel.Should().BeNull();
+            comp.FindAll("mud-tab-slider").Should().BeEmpty();
+            comp.FindAll("mud-tab-active").Should().BeEmpty();
+        }
+
+        [Test]
         public async Task AddingAndRemovingTabPanels()
         {
             var comp = Context.RenderComponent<TabsAddingRemovingTabsTest>();
