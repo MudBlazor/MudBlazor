@@ -309,6 +309,9 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            if (NoInitialActivePanel)
+                _activePanelIndex = -1;
+
             _resizeObserver = _resizeObserverFactory.Create();
             base.OnInitialized();
         }
@@ -319,9 +322,6 @@ namespace MudBlazor
             {
                 _resizeObserver = _resizeObserverFactory.Create();
             }
-
-            if (NoInitialActivePanel)
-                _activePanelIndex = -1;
 
             Rerender();
         }

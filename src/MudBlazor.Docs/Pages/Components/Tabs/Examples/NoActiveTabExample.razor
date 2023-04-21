@@ -1,7 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTabs NoInitialActivePanel=true>
-    <MudTabPanel Text="One" />
-    <MudTabPanel Text="Two" />
-    <MudTabPanel Text="Three" />
+<MudNumericField T=int @bind-Value=_index Label="Selected panel index" />
+
+<MudTabs @bind-ActivePanelIndex=_index NoInitialActivePanel=true>
+    <MudTabPanel Text="One">Tab 1</MudTabPanel>
+    <MudTabPanel Text="Two">Tab 2</MudTabPanel>
+    <MudTabPanel Text="Three">Tab 3</MudTabPanel>
 </MudTabs>
+
+@code{
+    private int _index = -1;
+}
