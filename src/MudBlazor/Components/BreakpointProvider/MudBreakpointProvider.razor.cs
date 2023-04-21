@@ -3,34 +3,34 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Services;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudBreakpointProvider : IAsyncDisposable
     {
         private Guid _breakPointListenerSubscriptionId;
 
         public Breakpoint Breakpoint { get; private set; } = Breakpoint.Always;
 
-        [Parameter] public EventCallback<Breakpoint> OnBreakpointChanged { get; set; }
+        [Parameter]
+        public EventCallback<Breakpoint> OnBreakpointChanged { get; set; }
 
-        [Inject] public IBreakpointService Service { get; set; }
+        [Inject]
+        public IBreakpointService Service { get; set; } = null!;
 
         [Parameter]
         [Category(CategoryTypes.BreakpointProvider.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
 
-            if (firstRender == true)
+            if (firstRender)
             {
                 var attachResult = await Service.Subscribe(SetBreakpointCallback);
                 _breakPointListenerSubscriptionId = attachResult.SubscriptionId;
