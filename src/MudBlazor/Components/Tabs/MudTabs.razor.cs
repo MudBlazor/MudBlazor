@@ -44,6 +44,13 @@ namespace MudBlazor
         public bool KeepPanelsAlive { get; set; } = false;
 
         /// <summary>
+        /// Override default tab header tooltip placement.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public Placement? ToolTipPosition { get; set; }
+
+        /// <summary>
         /// If true, no panel is initially active.
         /// </summary>
         [Parameter]
@@ -568,7 +575,9 @@ namespace MudBlazor
 
         private Placement GetTooltipPlacement()
         {
-            if (Position == Position.Right)
+            if (ToolTipPosition is not null)
+                return ToolTipPosition.Value;
+            else if (Position == Position.Right)
                 return Placement.Left;
             else if (Position == Position.Left)
                 return Placement.Right;
