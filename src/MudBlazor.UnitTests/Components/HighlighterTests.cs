@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using System.Linq;
 using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
@@ -17,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldSplitUsingHighlightedTextParameterTest()
         {
             var highlightedText = "item";
-            var result = GetFragments(TEXT, highlightedText, null, out var regex).ToArray();
+            var result = GetFragments(TEXT, highlightedText, Enumerable.Empty<string>(), out var regex).ToArray();
             result.Should().HaveCount(2);
             result.Should().BeEquivalentTo(new List<string> { "This is the first ", "item" });
             regex.Should().Be("((?:item))");
@@ -67,7 +68,7 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldUseUntilNextBoundaryTest()
         {
             var highlightedText = "it";
-            var result = GetFragments(TEXT, highlightedText, null, out var regex, false, true).ToArray();
+            var result = GetFragments(TEXT, highlightedText, Enumerable.Empty<string>(), out var regex, false, true).ToArray();
             result.Should().HaveCount(2);
             result.Should().BeEquivalentTo(new List<string> { "This is the first ", "item" });
             regex.Should().Be("((?:it.*?\\b))");
@@ -77,7 +78,7 @@ namespace MudBlazor.UnitTests.Components
         public void ShouldBeCaseSensitiveTest()
         {
             var highlightedText = "It";
-            var result = GetFragments(TEXT, highlightedText, null, out var regex, true, false).ToArray();
+            var result = GetFragments(TEXT, highlightedText, Enumerable.Empty<string>(), out var regex, true, false).ToArray();
             result.Should().HaveCount(1);
             result.Should().BeEquivalentTo(new List<string> { TEXT });
             regex.Should().Be("((?:It))");
@@ -88,7 +89,7 @@ namespace MudBlazor.UnitTests.Components
         {
             //regex characters are properly escaped in GetFragments
             var highlightedText = ".";
-            var result = GetFragments(TEXT, highlightedText, null, out var regex, true, false).ToArray();
+            var result = GetFragments(TEXT, highlightedText, Enumerable.Empty<string>(), out var regex, true, false).ToArray();
             result.Should().HaveCount(1);
             result.Should().BeEquivalentTo(new List<string> { TEXT });
             regex.Should().Be("((?:\\.))");
