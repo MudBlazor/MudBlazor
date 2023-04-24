@@ -32,7 +32,7 @@ namespace MudBlazor
 
             if (firstRender)
             {
-                var attachResult = await Service.Subscribe(SetBreakpointCallback);
+                var attachResult = await Service.SubscribeAsync(SetBreakpointCallback);
                 _breakPointListenerSubscriptionId = attachResult.SubscriptionId;
                 Breakpoint = attachResult.Breakpoint;
                 await OnBreakpointChanged.InvokeAsync(Breakpoint);
@@ -50,6 +50,6 @@ namespace MudBlazor
             }).AndForget();
         }
 
-        public async ValueTask DisposeAsync() => await Service.Unsubscribe(_breakPointListenerSubscriptionId);
+        public async ValueTask DisposeAsync() => await Service.UnsubscribeAsync(_breakPointListenerSubscriptionId);
     }
 }

@@ -69,7 +69,7 @@ namespace MudBlazor.UnitTests.Services
         {
             SetupJsMockForSubscription(expectedOptions, setBreakpoint);
 
-            var subscriptionResult = await _service.Subscribe((Breakpoint size) => { }, expectedOptions);
+            var subscriptionResult = await _service.SubscribeAsync((Breakpoint size) => { }, expectedOptions);
 
             subscriptionResult.Should().NotBeNull();
             subscriptionResult.SubscriptionId.Should().NotBe(Guid.Empty);
@@ -141,7 +141,7 @@ namespace MudBlazor.UnitTests.Services
 
             SetupJsMockForSubscription(customResizeOptioons, true);
 
-            var subscriptionResult = await _service.Subscribe((Breakpoint size) => { }, customResizeOptioons);
+            var subscriptionResult = await _service.SubscribeAsync((Breakpoint size) => { }, customResizeOptioons);
 
             subscriptionResult.Should().NotBeNull();
             subscriptionResult.SubscriptionId.Should().NotBe(Guid.Empty);
@@ -156,7 +156,7 @@ namespace MudBlazor.UnitTests.Services
             var customResizeOptioons = new ResizeOptions();
 
             SetupJsMockForSubscription(customResizeOptioons, true);
-            var subscriptionResult = await _service.Subscribe((Breakpoint size) => { }, null);
+            var subscriptionResult = await _service.SubscribeAsync((Breakpoint size) => { }, null);
 
             subscriptionResult.Should().NotBeNull();
             subscriptionResult.SubscriptionId.Should().NotBe(Guid.Empty);
@@ -168,8 +168,8 @@ namespace MudBlazor.UnitTests.Services
         [Test]
         public void Subscribe_Failed_NullCallback()
         {
-            Assert.ThrowsAsync<ArgumentNullException>(() => _service.Subscribe(null));
-            Assert.ThrowsAsync<ArgumentNullException>(() => _service.Subscribe(null, new ResizeOptions()));
+            Assert.ThrowsAsync<ArgumentNullException>(() => _service.SubscribeAsync(null));
+            Assert.ThrowsAsync<ArgumentNullException>(() => _service.SubscribeAsync(null, new ResizeOptions()));
         }
 
         [Test]
@@ -189,9 +189,9 @@ namespace MudBlazor.UnitTests.Services
             };
 
             SetupJsMockForSubscription(customResizeOptioons, true, feedbackCaller);
-            var subscriptionId = await _service.Subscribe((Breakpoint size) => { }, null);
+            var subscriptionId = await _service.SubscribeAsync((Breakpoint size) => { }, null);
 
-            var result = await _service.Unsubscribe(subscriptionId.SubscriptionId);
+            var result = await _service.UnsubscribeAsync(subscriptionId.SubscriptionId);
 
             result.Should().BeTrue();
 
@@ -228,9 +228,9 @@ namespace MudBlazor.UnitTests.Services
                 };
 
                 SetupJsMockForSubscription(customResizeOptioons, true, feedbackCaller);
-                var subscritionResult = await _service.Subscribe((Breakpoint size) => { }, null);
+                var subscritionResult = await _service.SubscribeAsync((Breakpoint size) => { }, null);
 
-                var result = await _service.Unsubscribe(subscritionResult.SubscriptionId);
+                var result = await _service.UnsubscribeAsync(subscritionResult.SubscriptionId);
 
                 result.Should().BeTrue();
 
@@ -261,7 +261,7 @@ namespace MudBlazor.UnitTests.Services
 
             for (int i = 0; i < 10; i++)
             {
-                var subscritionResult = await _service.Subscribe((Breakpoint size) => { });
+                var subscritionResult = await _service.SubscribeAsync((Breakpoint size) => { });
                 subscriptionIds.Add(subscritionResult.SubscriptionId);
             }
 
@@ -307,7 +307,7 @@ namespace MudBlazor.UnitTests.Services
                 var index = i % 4;
                 var option = options[index];
 
-                var subscritionResult = await _service.Subscribe((Breakpoint size) => { }, option);
+                var subscritionResult = await _service.SubscribeAsync((Breakpoint size) => { }, option);
                 subscriptionIds[option].Add(subscritionResult.SubscriptionId);
             }
 
@@ -332,7 +332,7 @@ namespace MudBlazor.UnitTests.Services
         [Test]
         public async Task Unsubscribe_Failed_NoActiveSubscription()
         {
-            var result = await _service.Unsubscribe(Guid.NewGuid());
+            var result = await _service.UnsubscribeAsync(Guid.NewGuid());
 
             result.Should().BeFalse();
         }
@@ -343,9 +343,9 @@ namespace MudBlazor.UnitTests.Services
             var customResizeOptioons = new ResizeOptions();
 
             SetupJsMockForSubscription(customResizeOptioons, true);
-            var subscriptionId = await _service.Subscribe((Breakpoint size) => { }, null);
+            var subscriptionId = await _service.SubscribeAsync((Breakpoint size) => { }, null);
 
-            var result = await _service.Unsubscribe(Guid.NewGuid());
+            var result = await _service.UnsubscribeAsync(Guid.NewGuid());
 
             result.Should().BeFalse();
         }
@@ -389,7 +389,7 @@ namespace MudBlazor.UnitTests.Services
                 var index = i % 4;
                 var option = options[index];
 
-                await _service.Subscribe((Breakpoint size) => { }, option);
+                await _service.SubscribeAsync((Breakpoint size) => { }, option);
             }
 
             Func<IEnumerable<Guid>, bool> idChecker = (ids) =>
@@ -424,7 +424,7 @@ namespace MudBlazor.UnitTests.Services
             public async Task Subscribe(BreakpointService service,
                 ResizeOptions options)
             {
-                var result = await service.Subscribe((x) => ActualSize = x, options);
+                var result = await service.SubscribeAsync((x) => ActualSize = x, options);
                 SubscriptionId = result.SubscriptionId;
             }
         }
@@ -497,13 +497,13 @@ namespace MudBlazor.UnitTests.Services
             var customResizeOptioons = new ResizeOptions();
 
             SetupJsMockForSubscription(customResizeOptioons, true);
-            var firstSubscribeResult = await _service.Subscribe((Breakpoint size) => { }, customResizeOptioons);
+            var firstSubscribeResult = await _service.SubscribeAsync((Breakpoint size) => { }, customResizeOptioons);
 
             firstSubscribeResult.Breakpoint.Should().Be(Breakpoint.Md);
 
             _service.RaiseOnResized(new BrowserWindowSize { }, Breakpoint.Xl, Guid.NewGuid());
 
-            var secondSubscribeResult = await _service.Subscribe((Breakpoint size) => { }, customResizeOptioons);
+            var secondSubscribeResult = await _service.SubscribeAsync((Breakpoint size) => { }, customResizeOptioons);
             secondSubscribeResult.Breakpoint.Should().Be(Breakpoint.Xl);
 
             _browserWindowSizeProvider.Verify(x => x.GetBrowserWindowSize(), Times.Once());

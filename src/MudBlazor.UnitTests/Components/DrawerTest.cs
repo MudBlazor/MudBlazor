@@ -26,7 +26,7 @@ namespace MudBlazor.UnitTests.Components
             _breakpointListenerServiceMock = new Mock<IBreakpointService>();
 
             _breakpointListenerServiceMock
-                .Setup(x => x.Subscribe(It.IsAny<Action<Breakpoint>>()))
+                .Setup(x => x.SubscribeAsync(It.IsAny<Action<Breakpoint>>()))
                 .ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
                 .Callback<Action<Breakpoint>>(x => _breakpointUpdateCallback = x)
                 .Verifiable();

@@ -30,7 +30,7 @@
 	{
 		if (firstRender)
 		{
-			var subscriptionResult = await BreakpointListener.Subscribe((breakpoint) =>
+			var subscriptionResult = await BreakpointListener.SubscribeAsync((breakpoint) =>
 			{
 				_breakpointHistory.Add(breakpoint);
 				InvokeAsync(StateHasChanged);
@@ -48,5 +48,5 @@
 		await base.OnAfterRenderAsync(firstRender);
 	}
 
-	public async ValueTask DisposeAsync() => await BreakpointListener.Unsubscribe(_subscriptionId);
+	public async ValueTask DisposeAsync() => await BreakpointListener.UnsubscribeAsync(_subscriptionId);
 }
