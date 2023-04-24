@@ -213,7 +213,7 @@ namespace MudBlazor
                 var isSelected = _selectedValues.Contains(chip.Value);
                 chip.IsSelected = isSelected;
             }
-            return NotifySelection();
+            return NotifySelectionAsync();
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace MudBlazor
             if (chip.IsSelected)
             {
                 _selectedValues.Remove(chip.Value);
-                return NotifySelection();
+                return NotifySelectionAsync();
             }
             return Task.CompletedTask;
         }
@@ -258,7 +258,7 @@ namespace MudBlazor
                     _selectedValues.Add(chip.Value);
                 else
                     _selectedValues.Remove(chip.Value);
-                await NotifySelection();
+                await NotifySelectionAsync();
             }
         }
 
@@ -282,7 +282,7 @@ namespace MudBlazor
                     chip.IsSelected = !wasSelected;
             }
             UpdateSelectedValues();
-            return NotifySelection();
+            return NotifySelectionAsync();
         }
 
         private void UpdateSelectedValues()
@@ -292,7 +292,7 @@ namespace MudBlazor
 
         private object[] _lastSelectedValues = null;
 
-        private async Task NotifySelection()
+        private async Task NotifySelectionAsync()
         {
             if (_disposed)
                 return;
@@ -340,7 +340,7 @@ namespace MudBlazor
                 if (anySelected)
                 {
                     UpdateSelectedValues();
-                    await NotifySelection();
+                    await NotifySelectionAsync();
                 }
             }
         }
