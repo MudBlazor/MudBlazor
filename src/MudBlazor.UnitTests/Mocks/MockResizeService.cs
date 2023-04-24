@@ -71,9 +71,20 @@ namespace MudBlazor.UnitTests.Mocks
 
         public async Task<Breakpoint> GetBreakpoint() => GetBreakpointInternal();
 
-        public Task<Guid> Subscribe(Action<BrowserWindowSize> callback) => Task.FromResult(new Guid());
-        public Task<Guid> Subscribe(Action<BrowserWindowSize> callback, ResizeOptions options) => Task.FromResult(new Guid());
-        public Task<bool> Unsubscribe(Guid subscriptionId) => Task.FromResult(true);
+        [Obsolete($"Use {nameof(SubscribeAsync)} instead. This will be removed in v7.")]
+        public Task<Guid> Subscribe(Action<BrowserWindowSize> callback) => SubscribeAsync(callback);
+
+        public Task<Guid> SubscribeAsync(Action<BrowserWindowSize> callback) => Task.FromResult(new Guid());
+
+        [Obsolete($"Use {nameof(SubscribeAsync)} instead. This will be removed in v7.")]
+        public Task<Guid> Subscribe(Action<BrowserWindowSize> callback, ResizeOptions options) => SubscribeAsync(callback, options);
+
+        public Task<Guid> SubscribeAsync(Action<BrowserWindowSize> callback, ResizeOptions options) => Task.FromResult(new Guid());
+
+        [Obsolete($"Use {nameof(UnsubscribeAsync)} instead. This will be removed in v7.")]
+        public Task<bool> Unsubscribe(Guid subscriptionId) => UnsubscribeAsync(subscriptionId);
+
+        public Task<bool> UnsubscribeAsync(Guid subscriptionId) => Task.FromResult(true);
 
         private Breakpoint GetBreakpointInternal()
         {

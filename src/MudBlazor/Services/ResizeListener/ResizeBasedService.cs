@@ -30,7 +30,10 @@ namespace MudBlazor.Services
             JsRuntime = jsRuntime;
         }
 
-        public async Task<bool> Unsubscribe(Guid subscriptionId)
+        [Obsolete($"Use {nameof(UnsubscribeAsync)} instead. This will be removed in v7")]
+        public Task<bool> Unsubscribe(Guid subscriptionId) => UnsubscribeAsync(subscriptionId);
+
+        public async Task<bool> UnsubscribeAsync(Guid subscriptionId)
         {
             if (DotNetRef is null)
             {

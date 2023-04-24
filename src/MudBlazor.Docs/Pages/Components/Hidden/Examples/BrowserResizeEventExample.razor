@@ -28,7 +28,7 @@
     {
         if (firstRender)
         {
-			_subscriptionId = await ResizeService.Subscribe((size) =>
+			_subscriptionId = await ResizeService.SubscribeAsync((size) =>
 			{
 				width = size.Width;
 				height = size.Height;
@@ -48,5 +48,5 @@
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    public async ValueTask DisposeAsync() => await ResizeService.Unsubscribe(_subscriptionId);
+    public async ValueTask DisposeAsync() => await ResizeService.UnsubscribeAsync(_subscriptionId);
 }

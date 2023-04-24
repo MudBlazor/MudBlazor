@@ -97,7 +97,7 @@ namespace MudBlazor
             {
                 if (CurrentBreakpointFromProvider == Breakpoint.None)
                 {
-                    var attachResult = await BreakpointService.Subscribe((x) =>
+                    var attachResult = await BreakpointService.SubscribeAsync((x) =>
                     {
                         Update(x);
                         InvokeAsync(StateHasChanged);
@@ -115,6 +115,6 @@ namespace MudBlazor
             }
         }
 
-        public async ValueTask DisposeAsync() => await BreakpointService.Unsubscribe(_breakpointServiceSubscriptionId);
+        public async ValueTask DisposeAsync() => await BreakpointService.UnsubscribeAsync(_breakpointServiceSubscriptionId);
     }
 }

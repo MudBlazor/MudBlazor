@@ -73,6 +73,7 @@ namespace MudBlazor.Services
             [Breakpoint.Xs] = 0,
         };
 
+        /// <inheritdoc />
         public async Task<Breakpoint> GetBreakpoint()
         {
             // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
@@ -91,6 +92,7 @@ namespace MudBlazor.Services
             return Breakpoint.Xs;
         }
 
+        /// <inheritdoc />
         public async Task<bool> IsMediaSize(Breakpoint breakpoint)
         {
             if (breakpoint == Breakpoint.None)
@@ -102,6 +104,7 @@ namespace MudBlazor.Services
             return IsMediaSize(breakpoint, await GetBreakpoint());
         }
 
+        /// <inheritdoc />
         public bool IsMediaSize(Breakpoint breakpoint, Breakpoint reference)
         {
             return breakpoint switch
@@ -125,9 +128,19 @@ namespace MudBlazor.Services
             };
         }
 
-        public Task<BreakpointServiceSubscribeResult> Subscribe(Action<Breakpoint> callback) => Subscribe(callback, _options);
+        /// <inheritdoc />
+        [Obsolete($"Use {nameof(SubscribeAsync)} instead. This will be removed in v7.")]
+        public Task<BreakpointServiceSubscribeResult> Subscribe(Action<Breakpoint> callback) => SubscribeAsync(callback, _options);
 
-        public async Task<BreakpointServiceSubscribeResult> Subscribe(Action<Breakpoint> callback, ResizeOptions? options)
+        /// <inheritdoc />
+        public Task<BreakpointServiceSubscribeResult> SubscribeAsync(Action<Breakpoint> callback) => SubscribeAsync(callback, _options);
+
+        /// <inheritdoc />
+        [Obsolete($"Use {nameof(SubscribeAsync)} instead. This will be removed in v7.")]
+        public Task<BreakpointServiceSubscribeResult> Subscribe(Action<Breakpoint> callback, ResizeOptions? options) => SubscribeAsync(callback, options);
+
+        /// <inheritdoc />
+        public async Task<BreakpointServiceSubscribeResult> SubscribeAsync(Action<Breakpoint> callback, ResizeOptions? options)
         {
             if (callback is null)
             {
@@ -225,7 +238,15 @@ namespace MudBlazor.Services
         /// </summary>
         /// <param name="callback">The method (callback) that is invoke as soon as the size of the window has changed</param>
         /// <returns>Returning an object containing the current breakpoint and a subscription id, that should be used for unsubscribe</returns>
+        [Obsolete($"Use {nameof(SubscribeAsync)} instead. This will be removed in v7.")]
         Task<BreakpointServiceSubscribeResult> Subscribe(Action<Breakpoint> callback);
+
+        /// <summary>
+        /// Subscribe to size changes of the browser window with default options
+        /// </summary>
+        /// <param name="callback">The method (callback) that is invoke as soon as the size of the window has changed</param>
+        /// <returns>Returning an object containing the current breakpoint and a subscription id, that should be used for unsubscribe</returns>
+        Task<BreakpointServiceSubscribeResult> SubscribeAsync(Action<Breakpoint> callback);
 
         /// <summary>
         /// Subscribe to size changes of the browser window using the provided options
@@ -233,13 +254,30 @@ namespace MudBlazor.Services
         /// <param name="callback">The method (callback) that is invoke as soon as the size of the window has changed</param>
         /// <param name="options">The options used to subscribe to changes</param>
         /// <returns>Returning an object containing the current breakpoint and a subscription id, that should be used for unsubscribe</returns>
+        [Obsolete($"Use {nameof(SubscribeAsync)} instead. This will be removed in v7.")]
         Task<BreakpointServiceSubscribeResult> Subscribe(Action<Breakpoint> callback, ResizeOptions? options);
+
+        /// <summary>
+        /// Subscribe to size changes of the browser window using the provided options
+        /// </summary>
+        /// <param name="callback">The method (callback) that is invoke as soon as the size of the window has changed</param>
+        /// <param name="options">The options used to subscribe to changes</param>
+        /// <returns>Returning an object containing the current breakpoint and a subscription id, that should be used for unsubscribe</returns>
+        Task<BreakpointServiceSubscribeResult> SubscribeAsync(Action<Breakpoint> callback, ResizeOptions? options);
 
         /// <summary>
         /// Used for cancel the subscription to the resize event.
         /// </summary>
         /// <param name="subscriptionId">The subscription id (return of subscribe) to cancel</param>
         /// <returns>True if the subscription could be cancel, false otherwise</returns>
+        [Obsolete($"Use {nameof(UnsubscribeAsync)} instead. This will be removed in v7.")]
         Task<bool> Unsubscribe(Guid subscriptionId);
+
+        /// <summary>
+        /// Used for cancel the subscription to the resize event.
+        /// </summary>
+        /// <param name="subscriptionId">The subscription id (return of subscribe) to cancel</param>
+        /// <returns>True if the subscription could be cancel, false otherwise</returns>
+        Task<bool> UnsubscribeAsync(Guid subscriptionId);
     }
 }

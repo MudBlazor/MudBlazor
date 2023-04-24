@@ -80,7 +80,7 @@ namespace MudBlazor.UnitTests.Services
         {
             SetupJsMockForSubscription(expectedOptions);
 
-            var subscriptionId = await _service.Subscribe((BrowserWindowSize size) => { });
+            var subscriptionId = await _service.SubscribeAsync((BrowserWindowSize size) => { });
 
             subscriptionId.Should().NotBe(Guid.Empty);
 
@@ -118,7 +118,7 @@ namespace MudBlazor.UnitTests.Services
 
             SetupJsMockForSubscription(customResizeOptioons);
 
-            var subscriptionId = await _service.Subscribe((BrowserWindowSize size) => { }, customResizeOptioons);
+            var subscriptionId = await _service.SubscribeAsync((BrowserWindowSize size) => { }, customResizeOptioons);
 
             subscriptionId.Should().NotBe(Guid.Empty);
             _jsruntimeMock.Verify();
@@ -130,7 +130,7 @@ namespace MudBlazor.UnitTests.Services
             var customResizeOptioons = new ResizeOptions();
 
             SetupJsMockForSubscription(customResizeOptioons);
-            var subscriptionId = await _service.Subscribe((BrowserWindowSize size) => { }, null);
+            var subscriptionId = await _service.SubscribeAsync((BrowserWindowSize size) => { }, null);
 
             subscriptionId.Should().NotBe(Guid.Empty);
             _jsruntimeMock.Verify();
@@ -139,8 +139,8 @@ namespace MudBlazor.UnitTests.Services
         [Test]
         public void Subscribe_Failed_NullCallback()
         {
-            Assert.ThrowsAsync<ArgumentNullException>(() => _service.Subscribe(null));
-            Assert.ThrowsAsync<ArgumentNullException>(() => _service.Subscribe(null, new ResizeOptions()));
+            Assert.ThrowsAsync<ArgumentNullException>(() => _service.SubscribeAsync(null!));
+            Assert.ThrowsAsync<ArgumentNullException>(() => _service.SubscribeAsync(null!, new ResizeOptions()));
 
         }
 
@@ -161,9 +161,9 @@ namespace MudBlazor.UnitTests.Services
             };
 
             SetupJsMockForSubscription(customResizeOptioons, feedbackCaller);
-            var subscriptionId = await _service.Subscribe((BrowserWindowSize size) => { }, null);
+            var subscriptionId = await _service.SubscribeAsync((BrowserWindowSize size) => { }, null);
 
-            var result = await _service.Unsubscribe(subscriptionId);
+            var result = await _service.UnsubscribeAsync(subscriptionId);
 
             result.Should().BeTrue();
 
@@ -199,9 +199,9 @@ namespace MudBlazor.UnitTests.Services
                 };
 
                 SetupJsMockForSubscription(customResizeOptioons, feedbackCaller);
-                var subscriptionId = await _service.Subscribe((BrowserWindowSize size) => { }, null);
+                var subscriptionId = await _service.SubscribeAsync((BrowserWindowSize size) => { }, null);
 
-                var result = await _service.Unsubscribe(subscriptionId);
+                var result = await _service.UnsubscribeAsync(subscriptionId);
 
                 result.Should().BeTrue();
 
@@ -232,7 +232,7 @@ namespace MudBlazor.UnitTests.Services
 
             for (int i = 0; i < 10; i++)
             {
-                var subscriptionId = await _service.Subscribe((BrowserWindowSize size) => { });
+                var subscriptionId = await _service.SubscribeAsync((BrowserWindowSize size) => { });
                 subscriptionIds.Add(subscriptionId);
             }
 
@@ -278,7 +278,7 @@ namespace MudBlazor.UnitTests.Services
                 var index = i % 4;
                 var option = options[index];
 
-                var subscriptionId = await _service.Subscribe((BrowserWindowSize size) => { }, option);
+                var subscriptionId = await _service.SubscribeAsync((BrowserWindowSize size) => { }, option);
                 subscriptionIds[option].Add(subscriptionId);
             }
 
@@ -303,7 +303,7 @@ namespace MudBlazor.UnitTests.Services
         [Test]
         public async Task Unsubscribe_Failed_NoActiveSubscription()
         {
-            var result = await _service.Unsubscribe(Guid.NewGuid());
+            var result = await _service.UnsubscribeAsync(Guid.NewGuid());
 
             result.Should().BeFalse();
 
@@ -315,9 +315,9 @@ namespace MudBlazor.UnitTests.Services
             var customResizeOptioons = new ResizeOptions();
 
             SetupJsMockForSubscription(customResizeOptioons);
-            var subscriptionId = await _service.Subscribe((BrowserWindowSize size) => { }, null);
+            var subscriptionId = await _service.SubscribeAsync((BrowserWindowSize size) => { }, null);
 
-            var result = await _service.Unsubscribe(Guid.NewGuid());
+            var result = await _service.UnsubscribeAsync(Guid.NewGuid());
 
             result.Should().BeFalse();
         }
@@ -362,7 +362,7 @@ namespace MudBlazor.UnitTests.Services
                 var index = i % 4;
                 var option = options[index];
 
-                await _service.Subscribe((BrowserWindowSize size) => { }, option);
+                await _service.SubscribeAsync((BrowserWindowSize size) => { }, option);
             }
 
             Func<IEnumerable<Guid>, bool> idChecker = (ids) =>
@@ -398,7 +398,7 @@ namespace MudBlazor.UnitTests.Services
             public async Task Subscribe(ResizeService service,
                 ResizeOptions options)
             {
-                SubscriptionId = await service.Subscribe((x) => ActualSize = x, options);
+                SubscriptionId = await service.SubscribeAsync((x) => ActualSize = x, options);
             }
         }
 
@@ -488,7 +488,7 @@ namespace MudBlazor.UnitTests.Services
 
             for (int i = 0; i < 40; i++)
             {
-                var subscriptionId = await _service.Subscribe((BrowserWindowSize size) => { });
+                var subscriptionId = await _service.SubscribeAsync((BrowserWindowSize size) => { });
                 subscriptionIds.Add(subscriptionId);
             }
 
@@ -503,7 +503,7 @@ namespace MudBlazor.UnitTests.Services
                 var temp = i;
                 var task = Task.Run(async () =>
                 {
-                    _ = await _service.Unsubscribe(subscriptionIds.ElementAt(temp));
+                    _ = await _service.UnsubscribeAsync(subscriptionIds.ElementAt(temp));
                 });
 
                 tasksToExecute[i] = task;
