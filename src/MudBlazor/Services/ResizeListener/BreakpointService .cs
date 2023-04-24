@@ -50,11 +50,6 @@ namespace MudBlazor.Services
             _windowSize = browserWindowSize;
             _breakpoint = breakpoint;
 
-            if (!Listeners.ContainsKey(optionId))
-            {
-                return;
-            }
-
             if (Listeners.TryGetValue(optionId, out var listenerInfo))
             {
                 listenerInfo.InvokeCallbacks(breakpoint);
@@ -152,14 +147,14 @@ namespace MudBlazor.Services
                 await Semaphore.WaitAsync();
 
                 //We capture both key and value, because someone might unsubscribe at meantime
-                //This way we do not need to check if key exist
+                //This way we do not need to check if key exist and do look up the dictionary again later
                 var existingOptionKeyValuePair = Listeners.FirstOrDefault(x => x.Value.Option == options);
 
                 //better way than existingOptionKeyValuePair.Equals(default) to avoid boxing
                 //we use ValueTuple to compare if KeyValuePair struct is default
                 if ((existingOptionKeyValuePair.Key, existingOptionKeyValuePair.Value) == default)
                 {
-                    return await CreateSubscription(callback, options);
+                    return await CreateSubscriptionAsync(callback, options);
                 }
 
                 var subscriptionId = existingOptionKeyValuePair.Value.AddSubscription(callback);
@@ -171,7 +166,7 @@ namespace MudBlazor.Services
             }
         }
 
-        private async Task<BreakpointServiceSubscribeResult> CreateSubscription(Action<Breakpoint> callback, ResizeOptions options)
+        private async Task<BreakpointServiceSubscribeResult> CreateSubscriptionAsync(Action<Breakpoint> callback, ResizeOptions options)
         {
             var subscriptionInfo = new BreakpointServiceSubscriptionInfo(options);
             var subscriptionId = subscriptionInfo.AddSubscription(callback);

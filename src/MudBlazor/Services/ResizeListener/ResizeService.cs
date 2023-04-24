@@ -47,11 +47,6 @@ namespace MudBlazor.Services
         [JSInvokable]
         public void RaiseOnResized(BrowserWindowSize browserWindowSize, Breakpoint _, Guid optionId)
         {
-            if (!Listeners.ContainsKey(optionId))
-            {
-                return;
-            }
-
             if (Listeners.TryGetValue(optionId, out var listenerInfo))
             {
                 listenerInfo.InvokeCallbacks(browserWindowSize);
@@ -83,21 +78,21 @@ namespace MudBlazor.Services
             DotNetRef ??= DotNetObjectReference.Create(this);
 
             //We capture both key and value, because someone might unsubscribe at meantime
-            //This way we do not need to check if key exist
+            //This way we do not need to check if key exist and do look up the dictionary again later
             var existingOptionKeyValuePair = Listeners.FirstOrDefault(x => x.Value.Option == options);
 
             //better way than existingOptionKeyValuePair.Equals(default) to avoid boxing
             //we use ValueTuple to compare if KeyValuePair struct is default
             if ((existingOptionKeyValuePair.Key, existingOptionKeyValuePair.Value) == default)
             {
-                return await CreateSubscription(callback, options);
+                return await CreateSubscriptionAsync(callback, options);
             }
 
             var subscriptionId = existingOptionKeyValuePair.Value.AddSubscription(callback);
             return subscriptionId;
         }
 
-        private async Task<Guid> CreateSubscription(Action<BrowserWindowSize> callback, ResizeOptions options)
+        private async Task<Guid> CreateSubscriptionAsync(Action<BrowserWindowSize> callback, ResizeOptions options)
         {
             var subscriptionInfo = new ResizeServiceSubscriptionInfo(options);
             var subscriptionId = subscriptionInfo.AddSubscription(callback);
