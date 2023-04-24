@@ -11,9 +11,16 @@
 else if (Column != null && !Column.Hidden)
 {
     <th @ref=@_headerElement scope="col" class="@_classname" style="@_style" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
-        <MudDropZone T="Column<T>" Class="border-2" Style="border-color: transparent" Identifier="@(Column.PropertyName ?? $"mud-header-cell-{_id}")">
+        @if (DataGrid.DragAndDropEnabled)
+        {
+            <MudDropZone CanDrop="@((item) => (Column.DragAndDropEnabled ?? true))" ItemIsDisabled="@((item) => !item.DragAndDropEnabled ?? false)" T="Column<T>" Class="border-2" Style="border-color: transparent" Identifier="@(Column.PropertyName ?? $"mud-header-cell-{_id}")">
 
-        </MudDropZone>
+            </MudDropZone>
+        }
+        else
+        {
+            @TableHeader()
+        }
         @if (resizable)
         {
             <div @onmousedown=OnResizerMouseDown @onmouseover=OnResizerMouseOver @onmouseleave=OnResizerMouseLeave
@@ -29,7 +36,10 @@ else if (Column != null && !Column.Hidden)
         return
         @<text>
         <span class="column-header">
-            <MudIcon Icon="@Icons.Material.Filled.DragIndicator" Size="@Size.Small"></MudIcon>
+            @if ((Column.DragAndDropEnabled ?? true) && !string.IsNullOrWhiteSpace(DataGrid.DragIndicatorIcon))
+            {
+                <MudIcon Icon="@DataGrid.DragIndicatorIcon" Size="@DataGrid.DragIndicatorSize"></MudIcon>
+            }
             @if (sortable)
             {
                 <span class="@_sortHeaderClass" @onclick="SortChangedAsync">

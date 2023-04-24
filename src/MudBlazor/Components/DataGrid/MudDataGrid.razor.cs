@@ -229,6 +229,21 @@ namespace MudBlazor
         #region Parameters
 
         /// <summary>
+        /// Controls whether columns in the DataGrid can be drag and dropped. This is overridable by each column.
+        /// </summary>
+        [Parameter] public bool DragAndDropEnabled { get; set; } = false;
+
+        /// <summary>
+        /// Optional - custom drag indicator in header
+        /// </summary>
+        [Parameter] public string DragIndicatorIcon { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Controls DragIndicatorIcon size.
+        /// </summary>
+        [Parameter] public Size DragIndicatorSize { get; set; } = Size.Small;
+
+        /// <summary>
         /// Controls whether data in the DataGrid can be sorted. This is overridable by each column.
         /// </summary>
         [Parameter] public SortMode SortMode { get; set; } = SortMode.Multiple;
@@ -1268,11 +1283,6 @@ namespace MudBlazor
         public void HideColumnsPanel()
         {
             _columnsPanelVisible = false;
-            StateHasChanged();
-        }
-
-        internal void ExternalStateHasChanged()
-        {
             StateHasChanged();
         }
 

@@ -20,7 +20,7 @@ namespace MudBlazor
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
         [CascadingParameter(Name = "IsOnlyHeader")] public bool IsOnlyHeader { get; set; } = false;
 
-        [CascadingParameter] public Column<T> Column { get; set; }
+        [Parameter] public Column<T> Column { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private SortDirection _initialDirection;
@@ -75,16 +75,7 @@ namespace MudBlazor
 
         private ElementReference _headerElement;
 
-        private double? __width;
-        internal double? _width
-        {
-            get => __width;
-            set
-            {
-                __width = value;
-            }
-        }
-
+        internal double? _width;
         public double? Width
         {
             get => _width;

@@ -3712,8 +3712,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridDragAndDropTest()
         {
-            var comp = Context.RenderComponent<DataGridFiltersTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+            var comp = Context.RenderComponent<DataGridDragAndDropTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest.Model>>();
             dataGrid.Instance.DropContainerHasChanged();
 
             var headerValues = dataGrid.FindAll(".sortable-column-header");
@@ -3731,10 +3731,10 @@ namespace MudBlazor.UnitTests.Components
             var zone = dataGrid.FindAll(".mud-drop-zone");
             zone.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
 
-            var firstDropZone = zone[0];
+            var firstDropZone = zone[1];
             var firstDropItem = firstDropZone.Children[0];
 
-            var secondDropZone = zone[1];
+            var secondDropZone = zone[2];
             var secondDropItem = secondDropZone.Children[0];
 
             await firstDropItem.DragStartAsync(new DragEventArgs());
@@ -3743,9 +3743,9 @@ namespace MudBlazor.UnitTests.Components
             var newHeaderValues = dataGrid.FindAll(".sortable-column-header");
             newHeaderValues.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
 
-            newHeaderValues[0].InnerHtml.Should().Be("Age");
-            newHeaderValues[1].InnerHtml.Should().Be("Name");
-            newHeaderValues[2].InnerHtml.Should().Be("Status");
+            newHeaderValues[0].InnerHtml.Should().Be("Name");
+            newHeaderValues[1].InnerHtml.Should().Be("Status");
+            newHeaderValues[2].InnerHtml.Should().Be("Age");
             newHeaderValues[3].InnerHtml.Should().Be("Hired");
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
 

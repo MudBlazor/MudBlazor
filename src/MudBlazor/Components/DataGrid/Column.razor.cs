@@ -58,7 +58,7 @@ namespace MudBlazor
         [Parameter] public bool? Sortable { get; set; }
 
         [Parameter] public bool? Resizable { get; set; }
-
+        [Parameter] public bool? DragAndDropEnabled { get; set; }
         /// <summary>
         /// Determines whether this columns data can be filtered. This overrides the Filterable parameter on the DataGrid.
         /// </summary>

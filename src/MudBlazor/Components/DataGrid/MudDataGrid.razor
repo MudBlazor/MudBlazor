@@ -50,12 +50,10 @@
                             @Header
                         </CascadingValue>
                         <tr class="mud-table-row">
-                            @foreach (var column in RenderedColumns)
-                            {
-                                        <CascadingValue IsFixed="true" Value="column">
-                                            <HeaderCell SortDirection="@(GetColumnSortDirection(column.PropertyName))" T="T" />
-                                        </CascadingValue>
-                            }
+                        @foreach (var column in RenderedColumns)
+                        {
+                            <HeaderCell SortDirection="@(GetColumnSortDirection(column.PropertyName))" T="T" Column="@column"></HeaderCell>
+                        }
                         </tr>
                         @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
                         {
