@@ -1,0 +1,88 @@
+﻿@namespace MudBlazor
+
+<style>
+    .mud-select {
+        display: flex;
+        flex-grow: 1;
+        position: relative;
+    }
+
+        .mud-select.mud-autocomplete {
+            display: block;
+        }
+
+            .mud-select.mud-autocomplete .mud-select-input {
+                cursor: text;
+            }
+
+            .mud-select.mud-autocomplete .mud-input-adornment {
+                cursor: pointer;
+            }
+
+        .mud-select.mud-autocomplete--with-progress .mud-select-input input {
+            padding-right: 3.5rem !important;
+        }
+
+        .mud-select.mud-autocomplete--with-progress .mud-input-adorned-end input {
+            padding-right: 4.5rem !important;
+        }
+
+        .mud-select.mud-autocomplete--with-progress .mud-select-input .mud-icon-button {
+            display: none !important;
+        }
+
+        .mud-select.mud-autocomplete--with-progress .progress-indicator-circular {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            padding-right: 1rem;
+        }
+
+        .mud-select.mud-autocomplete--with-progress .progress-indicator-circular--with-adornment {
+            padding-right: 3rem;
+        }
+
+        .mud-select.mud-autocomplete--with-progress .mud-progress-linear {
+            position: absolute;
+            bottom: -1px;
+            height: 2px;
+        }
+
+        .mud-select .mud-select-input {
+            cursor: pointer;
+        }
+
+            .mud-select .mud-select-input .mud-input-slot {
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .mud-select .mud-select-input .mud-input-adornment-end {
+                margin-left: 0;
+            }
+
+            .mud-select .mud-select-input:disabled {
+                cursor: default;
+            }
+
+        .mud-select .mud-disabled .mud-select-input {
+            cursor: default;
+        }
+
+        .mud-select > .mud-form-helpertext {
+            margin-top: -21px;
+        }
+
+    .mud-select-all {
+        margin-top: 10px;
+        border-bottom: 1px solid lightgrey;
+        padding-bottom: 18px;
+    }
+</style>
