@@ -12,6 +12,7 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor.Services
 {
+#nullable enable
     public abstract class ResizeBasedService<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] TSelf, TInfo, TAction, TTaskOption> : IAsyncDisposable
         where TSelf : class
         where TInfo : SubscriptionInfo<TAction, TTaskOption>
@@ -22,7 +23,7 @@ namespace MudBlazor.Services
 
         protected IJSRuntime JsRuntime { get; init; }
 
-        protected DotNetObjectReference<TSelf> DotNetRef { get; set; }
+        protected DotNetObjectReference<TSelf>? DotNetRef { get; set; }
 
         public ResizeBasedService(IJSRuntime jsRuntime)
         {
@@ -37,7 +38,7 @@ namespace MudBlazor.Services
             }
 
             var info = Listeners.FirstOrDefault(x => x.Value.ContainsSubscription(subscriptionId));
-            if (info.Value is null)
+            if ((info.Key, info.Value) == default)
             {
                 return false;
             }
@@ -49,9 +50,12 @@ namespace MudBlazor.Services
                 var isLastSubscriber = info.Value.RemoveSubscription(subscriptionId);
                 if (isLastSubscriber)
                 {
-                    Listeners.Remove(info.Key);
+                    if (Listeners.ContainsKey(info.Key))
+                    {
+                        Listeners.Remove(info.Key);
 
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.cancelListener", info.Key);
+                        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.cancelListener", info.Key);
+                    }
                 }
 
                 if (Listeners.Count == 0)
