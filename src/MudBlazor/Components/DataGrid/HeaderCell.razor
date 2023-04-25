@@ -35,7 +35,7 @@ else if (Column != null && !Column.Hidden)
     {
         return
         @<text>
-        <span class="column-header" style="align-items:center;justify-content:space-between;">
+        <span class="column-header">
             @if ((Column.DragAndDropEnabled ?? true) && !string.IsNullOrWhiteSpace(DataGrid.DragIndicatorIcon))
             {
                 <MudIcon Icon="@DataGrid.DragIndicatorIcon" Size="@DataGrid.DragIndicatorSize"></MudIcon>

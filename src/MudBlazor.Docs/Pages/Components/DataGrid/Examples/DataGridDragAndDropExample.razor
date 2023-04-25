@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid T="Element" Items="@Elements" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" DragAndDropEnabled="true" DragIndicatorIcon="@_dragIndicatorIcon">
+<MudDataGrid T="Element" Items="@Elements" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" DragAndDropEnabled="@_dragAndDropEnabled" DragIndicatorIcon="@_dragIndicatorIcon">
     <Columns>
         <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" DragAndDropEnabled="false"/>
         <PropertyColumn Property="x => x.Sign">
@@ -39,8 +39,12 @@
     </PagerContent>
 </MudDataGrid>
 
-<div class="d-flex flex-wrap mt-4">
-    <div class="d-flex justify-start align-center">
+<div class="d-flex flex-column mt-4">
+    <div class="d-flex flex-wrap justify-start align-center">
+        <p class="mud-typography mud-typography-body1 mud-inherit-text mr-2">DragAndDrop Disabled</p>
+        <MudSwitch @bind-Checked="@dragAndDropEnabled">DragAndDrop Enabled</MudSwitch>
+    </div>
+    <div class="d-flex flex-wrap justify-start align-center">
         <p class="mud-typography mud-typography-body1 mud-inherit-text mr-2">DragIndicator Disabled</p>
         <MudSwitch @bind-Checked="@isDragIndicatorIconVisible">DragIndicator Enabled</MudSwitch>
     </div>
@@ -56,6 +60,19 @@
 
     string _dragIndicatorIcon = Icons.Material.Filled.DragIndicator;
 
+    bool _dragAndDropEnabled = true;
+    bool dragAndDropEnabled
+    {
+        get => _dragAndDropEnabled;
+        set
+        {
+            _dragAndDropEnabled = value;
+            if(!_dragAndDropEnabled)
+            {
+                isDragIndicatorIconVisible = false;
+            }
+        }
+    }
 
     bool _isDragIndicatorIconVisible = true;
     bool isDragIndicatorIconVisible
