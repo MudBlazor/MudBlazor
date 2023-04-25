@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid T="Element" Items="@Elements" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" DragAndDropEnabled="true">
+<MudDataGrid T="Element" Items="@Elements" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" DragAndDropEnabled="true" DragIndicatorIcon="@_dragIndicatorIcon">
     <Columns>
         <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" DragAndDropEnabled="false"/>
         <PropertyColumn Property="x => x.Sign">
@@ -39,6 +39,13 @@
     </PagerContent>
 </MudDataGrid>
 
+<div class="d-flex flex-wrap mt-4">
+    <div class="d-flex justify-start align-center">
+        <p class="mud-typography mud-typography-body1 mud-inherit-text mr-2">DragIndicator Disabled</p>
+        <MudSwitch @bind-Checked="@isDragIndicatorIconVisible">DragIndicator Enabled</MudSwitch>
+    </div>
+</div>
+
 @code {
     IEnumerable<Element> Elements = new List<Element>();
     HashSet<Element> _selectedItems = new();
@@ -46,6 +53,28 @@
     FilterDefinition<Element> _filterDefinition;
     bool _selectAll = true;
     string _icon = Icons.Material.Outlined.FilterAlt;
+
+    string _dragIndicatorIcon = Icons.Material.Filled.DragIndicator;
+
+
+    bool _isDragIndicatorIconVisible = true;
+    bool isDragIndicatorIconVisible
+    {
+        get => _isDragIndicatorIconVisible;
+        set
+        {
+            _isDragIndicatorIconVisible = value;
+            if(_isDragIndicatorIconVisible)
+            {
+                _dragIndicatorIcon = Icons.Material.Filled.DragIndicator;
+            }
+            else
+            {
+                _dragIndicatorIcon = string.Empty;
+            }
+        }
+    }
+
 
     bool _filterOpen = false;
 
