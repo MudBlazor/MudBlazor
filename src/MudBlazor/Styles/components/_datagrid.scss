@@ -5,6 +5,18 @@
         position: relative;
     }
 
+    .drag-drop-candrop {
+        color: var(--mud-palette-success);
+    }
+
+    .drag-drop-nodrop {
+        color: var(--mud-palette-error);
+    }
+
+    .drag-icon-options {
+        margin-right: -20px
+    }
+
     .mud-table-cell {
         &.edit-mode-cell {
             //padding: 0 !important;
@@ -58,6 +70,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding-right: 20px;
 
             .sortable-column-header {
                 width: 100%;

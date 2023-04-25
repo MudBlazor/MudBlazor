@@ -244,6 +244,23 @@ namespace MudBlazor
         [Parameter] public Size DragIndicatorSize { get; set; } = Size.Small;
 
         /// <summary>
+        /// Optional - specify can drop css class
+        /// </summary>
+        [Parameter] public string CanDropClass { get; set; } = "drag-drop-candrop";
+
+        /// <summary>
+        /// Optional - specify no drop css class
+        /// </summary>
+        [Parameter] public string NoDropClass { get; set; } = "drag-drop-nodrop";
+
+        /// <summary>
+        /// Optional - specify drag start css behavior
+        /// </summary>
+        [Parameter] public bool ApplyDropClassesOnDragStarted { get; set; } = false;
+
+
+
+        /// <summary>
         /// Controls whether data in the DataGrid can be sorted. This is overridable by each column.
         /// </summary>
         [Parameter] public SortMode SortMode { get; set; } = SortMode.Multiple;

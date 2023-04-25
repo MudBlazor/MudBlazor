@@ -72,6 +72,7 @@
     <ReadLinesFromFile File="%(jsFilesToCombine.FullPath)">
       <Output TaskParameter="Lines" ItemName="jsLines" />
     </ReadLinesFromFile>
+    <Delete Files="./TScripts/combined/MudBlazor.js" />
     <WriteLinesToFile File="./TScripts/combined/MudBlazor.js" Lines="@(jsLines)" Overwrite="true" />
   </Target>
 

@@ -3,8 +3,9 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid T="Element" Items="@Elements" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" DragAndDropEnabled="@_dragAndDropEnabled" DragIndicatorIcon="@_dragIndicatorIcon">
+<MudDataGrid T="Element" ColumnResizeMode="ResizeMode.Container" Items="@Elements" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" DragAndDropEnabled="@_dragAndDropEnabled" DragIndicatorIcon="@_dragIndicatorIcon" Dense="_dense" ApplyDropClassesOnDragStarted="@_applyDropClassesOnDragStarted">
     <Columns>
+        <SelectColumn T="Element"/>
         <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" DragAndDropEnabled="false"/>
         <PropertyColumn Property="x => x.Sign">
             <FilterTemplate>
@@ -48,6 +49,14 @@
         <p class="mud-typography mud-typography-body1 mud-inherit-text mr-2">DragIndicator Disabled</p>
         <MudSwitch @bind-Checked="@isDragIndicatorIconVisible">DragIndicator Enabled</MudSwitch>
     </div>
+    <div class="d-flex flex-wrap justify-start align-center">
+        <p class="mud-typography mud-typography-body1 mud-inherit-text mr-2">Dense Disabled</p>
+        <MudSwitch @bind-Checked="@_dense">Dense Enabled</MudSwitch>
+    </div>
+    <div class="d-flex flex-wrap justify-start align-center">
+        <p class="mud-typography mud-typography-body1 mud-inherit-text mr-2">ApplyDropClassesOnDragStarted Disabled</p>
+        <MudSwitch @bind-Checked="@_applyDropClassesOnDragStarted">ApplyDropClassesOnDragStarted Enabled</MudSwitch>
+    </div>
 </div>
 
 @code {
@@ -56,6 +65,9 @@
     HashSet<Element> _filterItems = new();
     FilterDefinition<Element> _filterDefinition;
     bool _selectAll = true;
+    bool _dense = false;
+    bool _applyDropClassesOnDragStarted = false;
+
     string _icon = Icons.Material.Outlined.FilterAlt;
 
     string _dragIndicatorIcon = Icons.Material.Filled.DragIndicator;
