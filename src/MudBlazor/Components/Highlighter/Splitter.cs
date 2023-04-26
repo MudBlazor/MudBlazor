@@ -26,7 +26,7 @@ namespace MudBlazor.Components.Highlighter
         /// <returns></returns>
         public static Memory<string> GetFragments(string? text,
                                                        string? highlightedText,
-                                                       IEnumerable<string> highlightedTexts,
+                                                       IEnumerable<string>? highlightedTexts,
                                                        out string regex,
                                                        bool caseSensitive = false,
                                                        bool untilNextBoundary = false)
@@ -49,18 +49,21 @@ namespace MudBlazor.Components.Highlighter
                 AppendPattern(highlightedText);
             }
 
-            foreach (var substring in highlightedTexts)
+            if (highlightedTexts is not null)
             {
-                if (string.IsNullOrEmpty(substring))
-                    continue;
-
-                //split pattern if we already added an string to search.
-                if (hasAtLeastOnePattern)
+                foreach (var substring in highlightedTexts)
                 {
-                    builder.Append(")|(?:");
-                }
+                    if (string.IsNullOrEmpty(substring))
+                        continue;
 
-                AppendPattern(substring);
+                    //split pattern if we already added an string to search.
+                    if (hasAtLeastOnePattern)
+                    {
+                        builder.Append(")|(?:");
+                    }
+
+                    AppendPattern(substring);
+                }
             }
 
             if (hasAtLeastOnePattern)
