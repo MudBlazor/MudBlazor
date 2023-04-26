@@ -87,6 +87,12 @@
                             @NoItemsTemplate
                         </div>
                     }
+                    @if (EndItemsTemplate != null)
+                    {
+                        <div class="pa-1">
+                            @EndItemsTemplate
+                        </div>
+                    }
                 </MudPopover>
             </InputContent>
         </MudInputControl>

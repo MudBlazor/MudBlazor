@@ -264,6 +264,13 @@ namespace MudBlazor
         public RenderFragment NoItemsTemplate { get; set; }
 
         /// <summary>
+        /// Optional presentation template for when you need to section to always show in the drop down
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment EndItemsTemplate { get; set; }
+
+        /// <summary>
         /// Optional template for progress indicator
         /// </summary>
         [Parameter]
