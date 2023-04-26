@@ -66,7 +66,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-right: 20px;
+            padding-right: 26px;
 
             .sortable-column-header {
                 width: 100%;
@@ -117,7 +117,7 @@
             }
 
             .drag-icon-options {
-                margin-right: -20px;
+                margin-right: -26px;
                 transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
                 opacity: 0;
                 cursor: grab;

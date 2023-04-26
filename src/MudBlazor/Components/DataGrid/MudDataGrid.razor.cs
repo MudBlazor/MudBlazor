@@ -236,7 +236,7 @@ namespace MudBlazor
         /// <summary>
         /// Optional - custom drag indicator in header
         /// </summary>
-        [Parameter] public string DragIndicatorIcon { get; set; } = string.Empty;
+        [Parameter] public string DragIndicatorIcon { get; set; } = Icons.Material.Filled.DragIndicator;
 
         /// <summary>
         /// Controls DragIndicatorIcon size.
