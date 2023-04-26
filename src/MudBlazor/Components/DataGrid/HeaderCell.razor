@@ -116,7 +116,7 @@ else if (Column != null && !Column.Hidden)
                 }
                 @if ((Column.DragAndDropEnabled ?? true) && !string.IsNullOrWhiteSpace(DataGrid.DragIndicatorIcon))
                 {
-                    <MudIcon Icon="@DataGrid.DragIndicatorIcon" Size="@DataGrid.DragIndicatorSize" Class="drag-icon-options"></MudIcon>
+                    <MudIconButton Icon="@DataGrid.DragIndicatorIcon" Size="@DataGrid.DragIndicatorSize" Class="drag-icon-options"></MudIconButton>
                 }
             </span>
         </span>
