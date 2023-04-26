@@ -43,11 +43,7 @@
 <div class="d-flex flex-column mt-4">
     <div class="d-flex flex-wrap justify-start align-center">
         <p class="mud-typography mud-typography-body1 mud-inherit-text mr-2">DragAndDrop Disabled</p>
-        <MudSwitch @bind-Checked="@dragAndDropEnabled">DragAndDrop Enabled</MudSwitch>
-    </div>
-    <div class="d-flex flex-wrap justify-start align-center">
-        <p class="mud-typography mud-typography-body1 mud-inherit-text mr-2">DragIndicator Disabled</p>
-        <MudSwitch @bind-Checked="@isDragIndicatorIconVisible">DragIndicator Enabled</MudSwitch>
+        <MudSwitch @bind-Checked="@_dragAndDropEnabled">DragAndDrop Enabled</MudSwitch>
     </div>
     <div class="d-flex flex-wrap justify-start align-center">
         <p class="mud-typography mud-typography-body1 mud-inherit-text mr-2">Dense Disabled</p>
@@ -73,37 +69,6 @@
     string _dragIndicatorIcon = Icons.Material.Filled.DragIndicator;
 
     bool _dragAndDropEnabled = true;
-    bool dragAndDropEnabled
-    {
-        get => _dragAndDropEnabled;
-        set
-        {
-            _dragAndDropEnabled = value;
-            if(!_dragAndDropEnabled)
-            {
-                isDragIndicatorIconVisible = false;
-            }
-        }
-    }
-
-    bool _isDragIndicatorIconVisible = true;
-    bool isDragIndicatorIconVisible
-    {
-        get => _isDragIndicatorIconVisible;
-        set
-        {
-            _isDragIndicatorIconVisible = value;
-            if(_isDragIndicatorIconVisible)
-            {
-                _dragIndicatorIcon = Icons.Material.Filled.DragIndicator;
-            }
-            else
-            {
-                _dragIndicatorIcon = string.Empty;
-            }
-        }
-    }
-
 
     bool _filterOpen = false;
 

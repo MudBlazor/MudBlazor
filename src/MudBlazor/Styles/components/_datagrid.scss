@@ -13,6 +13,12 @@
         color: var(--mud-palette-error);
     }
 
+    .drag-icon-options {
+        transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        opacity: 0;
+        cursor: grab;
+    }
+
     .mud-table-cell {
         &.edit-mode-cell {
             //padding: 0 !important;
@@ -66,7 +72,6 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-right: 26px;
 
             .sortable-column-header {
                 width: 100%;
@@ -114,13 +119,6 @@
 
             .mud-sort-index {
                 transform: scale(0.9) translate(-2px, -2px);
-            }
-
-            .drag-icon-options {
-                margin-right: -26px;
-                transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-                opacity: 0;
-                cursor: grab;
             }
 
             .column-options .mud-menu .mud-icon-button-label {
