@@ -2,7 +2,7 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-    <div class="mud-expand-panel-header" @onclick="ToggleExpansion">
+    <div class="@HeaderClassname" @onclick="ToggleExpansion">
         <div class="mud-expand-panel-text">
             @if (TitleContent != null)
             {
