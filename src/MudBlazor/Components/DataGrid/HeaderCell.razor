@@ -11,7 +11,7 @@
 else if (Column != null && !Column.Hidden)
 {
     <th @ref=@_headerElement scope="col" class="@_classname" style="@_style" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
-        @if (DataGrid.DragAndDropEnabled)
+        @if (DataGrid.DragDropColumnReordering)
         {
             <MudDropZone CanDrop="@((item) => (Column.DragAndDropEnabled ?? true))" ItemIsDisabled="@((item) => !item.DragAndDropEnabled ?? false)" T="Column<T>" Identifier="@(Column.PropertyName ?? $"mud-header-cell-{_id}")">
 
@@ -114,7 +114,7 @@ else if (Column != null && !Column.Hidden)
                         }
                     </MudMenu>
                 }
-                @if (DataGrid.DragAndDropEnabled && (Column.DragAndDropEnabled ?? true))
+                @if (DataGrid.DragDropColumnReordering && (Column.DragAndDropEnabled ?? true))
                 {
                     <MudIconButton Icon="@DataGrid.DragIndicatorIcon" Size="@DataGrid.DragIndicatorSize" Class="drag-icon-options"></MudIconButton>
                 }

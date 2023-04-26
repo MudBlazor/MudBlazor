@@ -5,11 +5,11 @@
         position: relative;
     }
 
-    .drag-drop-candrop {
+    .drop-allowed {
         color: var(--mud-palette-success);
     }
 
-    .drag-drop-nodrop {
+    .drop-not-allowed {
         color: var(--mud-palette-error);
     }
 

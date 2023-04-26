@@ -36,7 +36,7 @@
                 }
             }
             <div @ref=_gridElement class="@_tableClass" style="@_tableStyle">
-                <MudDropContainer @ref="DropContainer" T="Column<T>" Items="@RenderedColumns" ItemsSelector="(item, dropzone) => RenderedColumnsItemsSelector(item, dropzone)" ItemDropped="ItemUpdatedAsync" CanDropClass="@CanDropClass" NoDropClass="@NoDropClass" ApplyDropClassesOnDragStarted="@ApplyDropClassesOnDragStarted">
+                <MudDropContainer @ref="_dropContainer" T="Column<T>" Items="@RenderedColumns" ItemsSelector="(item, dropzone) => RenderedColumnsItemsSelector(item, dropzone)" ItemDropped="ItemUpdatedAsync" CanDropClass="@DropAllowedClass" NoDropClass="@DropNotAllowedClass" ApplyDropClassesOnDragStarted="@ApplyDropClassesOnDragStarted">
                     <ChildContent>
                 <table class="mud-table-root">
                     @if (ColGroup != null)

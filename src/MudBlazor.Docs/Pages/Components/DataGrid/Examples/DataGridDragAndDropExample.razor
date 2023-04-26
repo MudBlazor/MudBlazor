@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid T="Element" ColumnResizeMode="ResizeMode.Container" Items="@Elements" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" DragAndDropEnabled="@_dragAndDropEnabled" DragIndicatorIcon="@_dragIndicatorIcon" Dense="_dense" ApplyDropClassesOnDragStarted="@_applyDropClassesOnDragStarted">
+<MudDataGrid T="Element" ColumnResizeMode="ResizeMode.Container" Items="@Elements" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" DragDropColumnReordering="@_dragAndDropEnabled" DragIndicatorIcon="@_dragIndicatorIcon" Dense="_dense" ApplyDropClassesOnDragStarted="@_applyDropClassesOnDragStarted">
     <Columns>
         <SelectColumn T="Element"/>
         <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" DragAndDropEnabled="false"/>

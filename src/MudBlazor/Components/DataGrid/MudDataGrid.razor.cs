@@ -32,7 +32,7 @@ namespace MudBlazor
         private List<GroupDefinition<T>> _allGroups = new List<GroupDefinition<T>>();
         internal HashSet<T> _openHierarchies = new HashSet<T>();
         private PropertyInfo[] _properties = typeof(T).GetProperties();
-        private MudDropContainer<Column<T>> DropContainer;
+        private MudDropContainer<Column<T>> _dropContainer;
         protected string _classname =>
             new CssBuilder("mud-table")
                .AddClass("mud-data-grid")
@@ -111,14 +111,7 @@ namespace MudBlazor
             }
         }
 
-        internal bool RenderedColumnsItemsSelector(Column<T> item, string dropZone)
-        {
-            if (item.PropertyName == dropZone)
-            {
-                return true;
-            }
-            return false;
-        }
+        internal static bool RenderedColumnsItemsSelector(Column<T> item, string dropZone) => item?.PropertyName == dropZone;
 
         private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
         {
@@ -144,8 +137,8 @@ namespace MudBlazor
                 var dest = dragAndDropDestination.HeaderCell.Width;
                 var src = dragAndDropSource.HeaderCell.Width;
 
-                dragAndDropSource.HeaderCell._width = dest;
-                dragAndDropDestination.HeaderCell._width = src;
+                dragAndDropSource.HeaderCell.Width = dest;
+                dragAndDropDestination.HeaderCell.Width = src;
 
                 StateHasChanged();
             }
@@ -229,32 +222,32 @@ namespace MudBlazor
         #region Parameters
 
         /// <summary>
-        /// Controls whether columns in the DataGrid can be drag and dropped. This is overridable by each column.
+        /// If true, the columns in the DataGrid can be reordered via drag and drop. This is overridable by each column.
         /// </summary>
-        [Parameter] public bool DragAndDropEnabled { get; set; } = false;
+        [Parameter] public bool DragDropColumnReordering { get; set; } = false;
 
         /// <summary>
-        /// Optional - custom drag indicator in header
+        /// Custom drag indicator icon in the header which shows up on mouse over. 
         /// </summary>
         [Parameter] public string DragIndicatorIcon { get; set; } = Icons.Material.Filled.DragIndicator;
 
         /// <summary>
-        /// Controls DragIndicatorIcon size.
+        /// Size of the DragIndicatorIcon.
         /// </summary>
         [Parameter] public Size DragIndicatorSize { get; set; } = Size.Small;
 
         /// <summary>
-        /// Optional - specify can drop css class
+        /// Css class that is applied to column headers while dragging to indicate that the dragged column can be dropped on a column. 
         /// </summary>
-        [Parameter] public string CanDropClass { get; set; } = "drag-drop-candrop";
+        [Parameter] public string DropAllowedClass { get; set; } = "drop-allowed";
 
         /// <summary>
-        /// Optional - specify no drop css class
+        /// Css class that is applied to column headers while dragging to indicate that the dragged column can not be dropped on a column. 
         /// </summary>
-        [Parameter] public string NoDropClass { get; set; } = "drag-drop-nodrop";
+        [Parameter] public string DropNotAllowedClass { get; set; } = "drop-not-allowed";
 
         /// <summary>
-        /// Optional - specify drag start css behavior
+        /// If true, apply drop css classes to all other columns when the user starts dragging a column header.
         /// </summary>
         [Parameter] public bool ApplyDropClassesOnDragStarted { get; set; } = false;
 
@@ -1305,7 +1298,7 @@ namespace MudBlazor
 
         internal void DropContainerHasChanged()
         {
-            DropContainer?.Refresh();
+            _dropContainer?.Refresh();
         }
 
         
