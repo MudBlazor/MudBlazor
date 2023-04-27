@@ -117,7 +117,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
 
         /// <summary>
-        /// Define the dialog title as a renderfragment (overrides Title)
+        /// Define the element that will receive the focus when the dialog is opened
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
