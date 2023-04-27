@@ -2,10 +2,10 @@
 
 <MudDataGrid Items="@_items" Filterable="true">
     <Columns>
-        <HierarchyColumn T="Model" ButtonDisabledFunc="@(x => x.Name == "Alicia")"/>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Status)" />
+        <HierarchyColumn ButtonDisabledFunc="@(x => x.Name == "Alicia")" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Status" />
     </Columns>
     <ChildRowContent>
         <tr>

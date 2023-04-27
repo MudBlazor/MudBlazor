@@ -44,7 +44,7 @@ else if (Column != null && !Column.Hidden)
                         <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync"></MudIconButton>
                     }
                     else
-                    {
+                    {                        
                         <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync"></MudIconButton>
                         if(DataGrid.SortMode == SortMode.Multiple)
                         {
@@ -61,7 +61,7 @@ else if (Column != null && !Column.Hidden)
                     }
                     else if (showFilterIcon)
                     {
-                        <MudIconButton Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" OnClick="@AddFilter"></MudIconButton>
+                        <MudIconButton Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" OnClick="@AddFilterAsync"></MudIconButton>
                     }
                 }
 
@@ -71,7 +71,7 @@ else if (Column != null && !Column.Hidden)
                         <MudMenuItem Disabled="@(_initialDirection == SortDirection.None)" OnClick="@RemoveSortAsync">Unsort</MudMenuItem>
                         @if (filterable && DataGrid.FilterMode != DataGridFilterMode.ColumnFilterRow)
                         {
-                            <MudMenuItem OnClick="@AddFilter">Filter</MudMenuItem>
+                            <MudMenuItem OnClick="@AddFilterAsync">Filter</MudMenuItem>
                         }
                         @if (hideable)
                         {
@@ -104,17 +104,17 @@ else if (Column != null && !Column.Hidden)
             <MudPopover Open="@_filtersMenuVisible" AnchorOrigin="@Origin.BottomRight" TransformOrigin="@Origin.TopRight" Class="pa-4 column-filter-popup">
                 @if (Column.FilterTemplate != null)
                 {
-                    @Column.FilterTemplate(Column.filterContext) 
+                    @Column.FilterTemplate(Column.FilterContext) 
                 }
                 else
                 {
                     <MudGrid>
                         <MudItem xs="12">
-                            @DataGrid.Filter(Column.filterContext.FilterDefinition, Column)
+                            @DataGrid.Filter(Column.FilterContext.FilterDefinition, Column)
                         </MudItem>
                         <MudItem xs="12" Class="d-flex justify-end">
-                            <MudButton Class="clear-filter-button" OnClick="@ClearFilter">Clear</MudButton>
-                            <MudButton Class="apply-filter-button" Color="@Color.Primary" OnClick="@ApplyFilter">Filter</MudButton>
+                            <MudButton Class="clear-filter-button" OnClick="@ClearFilterAsync">Clear</MudButton>
+                            <MudButton Class="apply-filter-button" Color="@Color.Primary" OnClick="@ApplyFilterAsync">Filter</MudButton>
                         </MudItem>
                     </MudGrid>
                 }

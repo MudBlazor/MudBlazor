@@ -14,18 +14,20 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-radio")
-            .AddClass($"mud-disabled", Disabled)
+            .AddClass($"mud-disabled", IsDisabled)
+            .AddClass($"mud-readonly", MudRadioGroup?.GetReadOnlyState())
             .AddClass($"mud-radio-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
             .AddClass(Class)
             .Build();
 
         protected string ButtonClassname =>
         new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-ripple mud-ripple-radio", !DisableRipple && !Disabled)
+            .AddClass($"mud-ripple mud-ripple-radio", !DisableRipple && !Disabled && !(MudRadioGroup?.GetDisabledState() ?? false) && !(MudRadioGroup?.GetReadOnlyState() ?? false))
             .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", UnCheckedColor == null || (UnCheckedColor != null && Checked == true))
             .AddClass($"mud-{UnCheckedColor?.ToDescriptionString()}-text hover:mud-{UnCheckedColor?.ToDescriptionString()}-hover", UnCheckedColor != null && Checked == false)
             .AddClass($"mud-radio-dense", Dense)
-            .AddClass($"mud-disabled", Disabled)
+            .AddClass($"mud-disabled", IsDisabled)
+            .AddClass($"mud-readonly", MudRadioGroup?.GetReadOnlyState())
             .AddClass($"mud-checked", Checked)
             .AddClass("mud-error-text", MudRadioGroup?.HasErrors)
             .Build();
@@ -136,6 +138,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Radio.Behavior)]
         public bool Disabled { get; set; }
+        private bool IsDisabled => Disabled || (MudRadioGroup?.GetDisabledState() ?? false);
 
         /// <summary>
         /// Child content of component.
@@ -162,15 +165,17 @@ namespace MudBlazor
 
         internal Task OnClick()
         {
+            if (IsDisabled || (MudRadioGroup?.GetReadOnlyState() ?? false)) return Task.CompletedTask;
             if (MudRadioGroup != null)
                 return MudRadioGroup.SetSelectedRadioAsync(this);
 
             return Task.CompletedTask;
         }
 
+        [Obsolete($"Use {nameof(HandleKeyDownAsync)} instead. This method will be removed in v7")]
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {
-            if (Disabled)
+            if (IsDisabled || (MudRadioGroup?.GetReadOnlyState() ?? false))
                 return;
             switch (obj.Key)
             {
@@ -181,6 +186,27 @@ namespace MudBlazor
                     break;
                 case "Backspace":
                     MudRadioGroup.Reset();
+                    break;
+            }
+        }
+
+        protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
+        {
+            if (IsDisabled || (MudRadioGroup?.GetReadOnlyState() ?? false))
+                return;
+            switch (keyboardEventArgs.Key)
+            {
+                case "Enter":
+                case "NumpadEnter":
+                case " ":
+                    Select();
+                    break;
+                case "Backspace":
+                    if (MudRadioGroup is not null)
+                    {
+                        await MudRadioGroup.ResetAsync();
+                    }
+
                     break;
             }
         }
@@ -223,6 +249,5 @@ namespace MudBlazor
             }
             await base.OnAfterRenderAsync(firstRender);
         }
-
     }
 }

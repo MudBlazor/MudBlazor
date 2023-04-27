@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
@@ -90,7 +91,7 @@ namespace MudBlazor.UnitTests.Components
             handler.ShowContent.Should().BeTrue();
         }
 
-        [Test]
+        [Test(Description = "Remove in v7")]
         public void MudPopoverHandler_UpdateFragment()
         {
             RenderFragment initialRenderFragement = (tree) => { };
@@ -125,6 +126,145 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task MudPopoverHandler_UpdateFragmentAsync()
+        {
+            var mock = Mock.Of<IJSRuntime>();
+
+            var updateCounter = 0;
+
+            RenderFragment initialRenderFragment = _ => { };
+
+            RenderFragment newRenderFragment = _ => { };
+
+            void Updater() => updateCounter++;
+
+            var handler = new MudPopoverHandler(initialRenderFragment, mock, Updater);
+
+            var comp = Context.RenderComponent<MudBadge>(p =>
+            {
+                p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
+                p.Add(x => x.Tag, "my tag");
+
+            });
+
+            await handler.UpdateFragmentAsync(newRenderFragment, comp.Instance, "my-extra-class", "my-extra-style:2px", true);
+
+            handler.Id.Should().NotBe(default(Guid));
+            handler.UserAttributes.Should().BeEquivalentTo(new Dictionary<string, object> { { "myprop1", "myValue1" } });
+            handler.Class.Should().Be("my-extra-class");
+            handler.Style.Should().Be("my-extra-style:2px");
+            handler.Tag.Should().Be("my tag");
+            handler.Fragment.Should().BeSameAs(newRenderFragment);
+            handler.IsConnected.Should().BeFalse();
+            handler.ShowContent.Should().BeTrue();
+
+            updateCounter.Should().Be(1);
+        }
+
+        [Test]
+        public async Task MudPopoverHandler_DetachAndUpdateFragmentAsync()
+        {
+            var mock = Mock.Of<IJSRuntime>();
+
+            var updateCounter = 0;
+
+            RenderFragment initialRenderFragment = _ => { };
+
+            RenderFragment newRenderFragment = _ => { };
+
+            void Updater() => updateCounter++;
+
+            var handler = new MudPopoverHandler(initialRenderFragment, mock, Updater);
+
+            var comp = Context.RenderComponent<MudBadge>(p =>
+            {
+                p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
+                p.Add(x => x.Tag, "my tag");
+
+            });
+
+            await handler.Detach();
+            await handler.UpdateFragmentAsync(newRenderFragment, comp.Instance, "my-new-extra-class", "my-new-extra-style:2px", true);
+
+            updateCounter.Should().Be(0);
+        }
+
+        [Test]
+        public async Task MudPopoverHandler_DetachAndUpdateFragmentConcurrent_UpdateFragmentDoesNotRunInTheSameTimeAsDetach()
+        {
+            var connectTcs = new TaskCompletionSource<IJSVoidResult>();
+
+            var mock = new Mock<IJSRuntime>();
+            var handler = new MudPopoverHandler((tree) => { }, mock.Object, () => { });
+
+            mock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.connect", It.Is<object[]>(y => y.Length == 1 && (Guid)y[0] == handler.Id)))
+                .ReturnsAsync(Mock.Of<IJSVoidResult>())
+                .Verifiable();
+
+            mock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.disconnect", It.Is<object[]>(y => y.Length == 1 && (Guid)y[0] == handler.Id)))
+                .Returns(new ValueTask<IJSVoidResult>(connectTcs.Task))
+                .Verifiable();
+
+
+            var comp = Context.RenderComponent<MudBadge>(p =>
+            {
+                p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
+                p.Add(x => x.Tag, "my tag");
+
+            });
+
+            RenderFragment newRenderFragement = (tree) => { };
+            await handler.Initialize();
+
+            _ = handler.Detach();
+            var task2 = handler.UpdateFragmentAsync(newRenderFragement, comp.Instance, "my-new-extra-class", "my-new-extra-style:2px", true);
+
+            var completedTask = await Task.WhenAny(Task.Delay(50), task2);
+
+            completedTask.Should().NotBe(task2);
+
+            mock.Verify();
+            mock.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public async Task MudPopoverHandler_DetachAndUpdateFragmentConcurrent_UpdateFragmentAsyncShouldRunAfterDetach()
+        {
+            var connectTcs = new TaskCompletionSource<IJSVoidResult>();
+
+            var mock = new Mock<IJSRuntime>();
+            var handler = new MudPopoverHandler(_ => { }, mock.Object, () => { });
+
+            mock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.connect", It.Is<object[]>(y => y.Length == 1 && (Guid)y[0] == handler.Id)))
+                .ReturnsAsync(Mock.Of<IJSVoidResult>())
+                .Verifiable();
+
+            mock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.disconnect", It.Is<object[]>(y => y.Length == 1 && (Guid)y[0] == handler.Id)))
+                .Returns(new ValueTask<IJSVoidResult>(connectTcs.Task))
+                .Verifiable();
+
+
+            var comp = Context.RenderComponent<MudBadge>(p =>
+            {
+                p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
+                p.Add(x => x.Tag, "my tag");
+
+            });
+
+            RenderFragment newRenderFragement = (tree) => { };
+            await handler.Initialize();
+
+            var task1 = handler.Detach();
+            var task2 = handler.UpdateFragmentAsync(newRenderFragement, comp.Instance, "my-new-extra-class", "my-new-extra-style:2px", true);
+            connectTcs.SetResult(Mock.Of<IJSVoidResult>());
+
+            await Task.WhenAll(task1, task2);
+
+            mock.Verify();
+            mock.VerifyNoOtherCalls();
+        }
+
+        [Test(Description = "Remove in v7")]
         public void MudPopoverHandler_UpdaterInvokationTest()
         {
             RenderFragment initialRenderFragement = (tree) => { };
@@ -151,6 +291,42 @@ namespace MudBlazor.UnitTests.Components
             updateCounter.Should().Be(4);
 
             handler.UpdateFragment(newRenderFragement, comp.Instance, "my-new-extra-class", "my-new-extra-style:2px", true);
+
+            updateCounter.Should().Be(5);
+
+            handler.Class.Should().Be("my-new-extra-class");
+            handler.Style.Should().Be("my-new-extra-style:2px");
+        }
+
+        [Test]
+        public async Task MudPopoverHandler_UpdaterInvocationAsync()
+        {
+            var mock = Mock.Of<IJSRuntime>();
+
+            var updateCounter = 0;
+
+            RenderFragment initialRenderFragment = _ => { };
+
+            RenderFragment newRenderFragment = _ => { };
+
+            void Updater() => updateCounter++;
+
+            var handler = new MudPopoverHandler(initialRenderFragment, mock, Updater);
+
+            var comp = Context.RenderComponent<MudBadge>(p =>
+            {
+                p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
+                p.Add(x => x.Tag, "my tag");
+
+            });
+
+            for (int i = 0; i < 4; i++)
+            {
+               await handler.UpdateFragmentAsync(newRenderFragment, comp.Instance, "my-extra-class", "my-extra-style:2px", i % 2 == 0);
+            }
+            updateCounter.Should().Be(4);
+
+            await handler.UpdateFragmentAsync(newRenderFragment, comp.Instance, "my-new-extra-class", "my-new-extra-style:2px", true);
 
             updateCounter.Should().Be(5);
 
@@ -319,7 +495,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudPopoverService_Constructor_NoJsInterop()
         {
-            Assert.Throws<ArgumentNullException>(() => new MudPopoverService(null));
+            Assert.Throws<ArgumentNullException>(() => _ = new MudPopoverService(null));
         }
 
         [Test]
@@ -481,31 +657,7 @@ namespace MudBlazor.UnitTests.Components
             mock.Verify();
         }
 
-        [Test]
-        public async Task MudPopoverService_DisposeAsync_ThrowsExceptionIfNotTaskCancelException()
-        {
-            var mock = new Mock<IJSRuntime>();
-
-            mock.Setup(x =>
-           x.InvokeAsync<IJSVoidResult>(
-               "mudPopover.initialize",
-               It.Is<object[]>(x => x.Length == 2 && (string)x[0] == "mudblazor-main-content" && (int)x[1] == 0))).ReturnsAsync(Mock.Of<IJSVoidResult>).Verifiable();
-
-            mock.Setup(x =>
-            x.InvokeAsync<IJSVoidResult>(
-            "mudPopover.dispose",
-            It.Is<object[]>(x => x.Length == 0))).ThrowsAsync(new InvalidOperationException()).Verifiable();
-
-            var service = new MudPopoverService(mock.Object);
-            await service.InitializeIfNeeded();
-
-            //any other exception (despite TaskCancelException, should result in an exception
-            Assert.ThrowsAsync<InvalidOperationException>(async () => await service.DisposeAsync());
-
-            mock.Verify();
-        }
-
-        [Test]
+        [Test(Description = "Remove in v7")]
         public void MudPopoverService_RegisterAndUseHandler()
         {
             var service = new MudPopoverService(Mock.Of<IJSRuntime>(MockBehavior.Strict));
@@ -533,6 +685,38 @@ namespace MudBlazor.UnitTests.Components
 
             });
             handler.UpdateFragment(changedFragment, comp.Instance, "my-class", "my-style", true);
+            // counter doesn't change because UpdateFragment now only re-renders the updated fragment, without raising the FragmentsChanged event
+            fragmentChangedCounter.Should().Be(1);
+        }
+
+        [Test]
+        public async Task MudPopoverService_RegisterAndUseHandlerAsync()
+        {
+            var service = new MudPopoverService(Mock.Of<IJSRuntime>(MockBehavior.Strict));
+
+            int fragmentChangedCounter = 0;
+
+            service.FragmentsChanged += (_, _) =>
+            {
+                fragmentChangedCounter++;
+            };
+
+            RenderFragment fragment = _ => { };
+
+            RenderFragment changedFragment = _ => { };
+
+            var handler = service.Register(fragment);
+
+            handler.Should().NotBeNull();
+            fragmentChangedCounter.Should().Be(1);
+
+            var comp = Context.RenderComponent<MudBadge>(p =>
+            {
+                p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
+                p.Add(x => x.Tag, "my tag");
+
+            });
+            await handler.UpdateFragmentAsync(changedFragment, comp.Instance, "my-class", "my-style", true);
             // counter doesn't change because UpdateFragment now only re-renders the updated fragment, without raising the FragmentsChanged event
             fragmentChangedCounter.Should().Be(1);
         }

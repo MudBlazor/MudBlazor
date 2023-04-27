@@ -3,17 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MudBlazor
 {
+#nullable enable
     public static class ExpressionExtensions
     {
         public static string GetFullPathOfMember<T>(this Expression<Func<T>> property)

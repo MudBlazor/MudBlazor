@@ -17,9 +17,9 @@ namespace MudBlazor
 
         protected string LabelClassname =>
         new CssBuilder("mud-checkbox")
-            .AddClass($"mud-disabled", Disabled)
-            .AddClass($"mud-readonly", ReadOnly)
-            .AddClass(LabelPosition == LabelPosition.End ? "mud-ltr" : "mud-rtl", true)
+            .AddClass($"mud-disabled", GetDisabledState())
+            .AddClass($"mud-readonly", GetReadOnlyState())
+            .AddClass("flex-row-reverse", LabelPosition == LabelPosition.Start)
         .Build();
 
         protected string CheckBoxClassname =>
@@ -27,9 +27,9 @@ namespace MudBlazor
             .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", UnCheckedColor == null || (UnCheckedColor != null && BoolValue == true))
             .AddClass($"mud-{UnCheckedColor?.ToDescriptionString()}-text hover:mud-{UnCheckedColor?.ToDescriptionString()}-hover", UnCheckedColor != null && BoolValue == false)
             .AddClass($"mud-checkbox-dense", Dense)
-            .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple && !ReadOnly && !Disabled)
-            .AddClass($"mud-disabled", Disabled)
-            .AddClass($"mud-readonly", ReadOnly)
+            .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple && !GetReadOnlyState() && !GetDisabledState())
+            .AddClass($"mud-disabled", GetDisabledState())
+            .AddClass($"mud-readonly", GetReadOnlyState())
         .Build();
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace MudBlazor
 
         protected void HandleKeyDown(KeyboardEventArgs obj)
         {
-            if (Disabled || ReadOnly || !KeyboardEnabled)
+            if (GetDisabledState() || GetReadOnlyState() || !KeyboardEnabled)
                 return;
             switch (obj.Key)
             {

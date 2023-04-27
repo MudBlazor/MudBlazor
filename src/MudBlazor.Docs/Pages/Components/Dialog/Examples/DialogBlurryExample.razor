@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IDialogService DialogService
+
+
+<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+    Open Simple Dialog
+</MudButton>
+
+<style>
+    .my-custom-class {
+        backdrop-filter: blur(10px);
+    }
+</style>
+
+@code {
+
+    private void OpenDialog()
+    {
+        var options = new DialogOptions { ClassBackground = "my-custom-class" };
+        DialogService.Show<DialogBlurryExample_Dialog>("Simple Dialog", options);
+    }
+}

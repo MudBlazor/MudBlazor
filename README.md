@@ -35,10 +35,13 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
  - Stability! We strive for a complete test coverage.
  - Releasing often so developers can get their PRs and fixes in a timely fashion.
 
-## Prerequisites
-- Supported .NET versions
-  - [.NET 7.0](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) for versions greater than v6.1.0
-  - [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0) for v6.x.x
+## Prerequisities
+| MudBlazor | .NET | Support |
+| :--- | :---: | :---: |
+| 1.x.x - 2.0.x | .NET 3.1 | Ended 03/2021 |
+| 5.x.x | .NET 5 | Ended 01/2022 |
+| 6.0.x | [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0) | :heavy_check_mark: |
+| 6.1.x | [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0) & [.NET 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) | :heavy_check_mark: |
 
 ## Stats
 ![Alt](https://repobeats.axiom.co/api/embed/db53a44092e88fc34a4c0f37db12773b6787ec7e.svg "Repobeats analytics image")

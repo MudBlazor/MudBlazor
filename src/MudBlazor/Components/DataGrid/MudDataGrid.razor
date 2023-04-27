@@ -2,6 +2,11 @@
 @inherits MudComponentBase
 @typeparam T
 @using MudBlazor.Utilities
+@using MudBlazor.Extensions
+
+@{
+    _currentRenderFilteredItemsCache = null;
+}
 
 <CascadingValue IsFixed="true" Value="this">@Columns</CascadingValue>
 
@@ -15,7 +20,7 @@
                     @ToolBarContent
                     @if (ShowMenuIcon)
                     {
-                        @ToolbarMenu(this)   
+                        @ToolbarMenu(this)
                     }
                 </MudToolBar>
             }
@@ -25,10 +30,10 @@
                 {
                     @*Add the default toolbar.*@
                     <MudToolBar Class="mud-table-toolbar">
-                    <MudSpacer />
-                    @ToolbarMenu(this) 
+                        <MudSpacer />
+                        @ToolbarMenu(this)
                     </MudToolBar>
-                 }
+                }
             }
             <div @ref=_gridElement class="@_tableClass" style="@_tableStyle">
                 <table class="mud-table-root">
@@ -45,7 +50,7 @@
                         <tr class="mud-table-row">
                             @foreach (var column in RenderedColumns)
                             {
-                                <HeaderCell SortDirection="@(GetColumnSortDirection(column.Field))" T="T" Column="@column"></HeaderCell>
+                                <HeaderCell SortDirection="@(GetColumnSortDirection(column.PropertyName))" T="T" Column="@column"></HeaderCell>
                             }
                         </tr>
                         @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
@@ -53,7 +58,7 @@
                             <MudOverlay Visible="true" OnClick="@(() => _filtersMenuVisible = false)"></MudOverlay>
                             <MudPaper Class="pa-2 filters-panel" Style="position:absolute;width:auto;min-width:700px;z-index:var(--mud-zindex-drawer)" Elevation="4">
                                 @if (FilterTemplate == null)
-                                { 
+                                {
                                     <MudGrid Spacing="0">
                                         @foreach (var f in FilterDefinitions)
                                         {
@@ -63,25 +68,25 @@
                                     <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">Add Filter</MudButton>
                                     @if (ServerData != null)
                                     {
-                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFilters" Color="@Color.Primary">Apply</MudButton>
+                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary">Apply</MudButton>
                                     }
-                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFilters" Color="@Color.Primary">Clear</MudButton>
+                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary">Clear</MudButton>
                                 }
                                 else
                                 {
-                                    @FilterTemplate(FilterDefinitions)
+                                    @FilterTemplate(this)
                                 }
                             </MudPaper>
                         }
                         @if (_columnsPanelVisible)
                         {
-                            <MudOverlay  Visible="true" OnClick="@(() => _columnsPanelVisible = false)"></MudOverlay>
+                            <MudOverlay Visible="true" OnClick="@(() => _columnsPanelVisible = false)"></MudOverlay>
                             <MudPaper Class="pa-2 columns-panel" Style="position:absolute;max-width:450px;z-index:var(--mud-zindex-drawer)" Elevation="4">
                                 <MudGrid Spacing="0">
                                     @foreach (var column in RenderedColumns)
                                     {
                                         <MudItem xs="12">
-                                            <MudSwitch T="bool" Disabled="@(!(column.Hideable ?? false))" Checked="@column.Hidden" CheckedChanged="@column.ToggleAsync" Converter="_oppositeBoolConverter" Color="Color.Primary" Label="@(column.Title ?? @column.Field)" />
+                                            <MudSwitch T="bool" Disabled="@(!(column.Hideable ?? false))" Checked="@column.Hidden" CheckedChanged="@column.ToggleAsync" Converter="_oppositeBoolConverter" Color="Color.Primary" Label="@column.Title" />
                                         </MudItem>
                                     }
                                     <MudItem xs="6">
@@ -91,7 +96,7 @@
                                         <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary">Show All</MudButton>
                                     </MudItem>
                                 </MudGrid>
-                                
+
                             </MudPaper>
                         }
                         @if (Filterable && FilterMode == DataGridFilterMode.ColumnFilterRow)
@@ -119,21 +124,20 @@
                         {
                             if (GroupedColumn != null)
                             {
-                                foreach (var g in _groups)
+                                foreach (var g in _currentPageGroups)
                                 {
                                     <tr class="mud-table-row">
                                         @{ var groupClass = new CssBuilder(GroupClass).AddClass(GroupClassFunc?.Invoke(g)).Build(); }
                                         @{ var groupStyle = new StyleBuilder().AddStyle(GroupStyle).AddStyle(GroupStyleFunc?.Invoke(g)).Build(); }
 
                                         <td class="mud-table-cell @groupClass" colspan="1000" style="background-color:var(--mud-palette-background-grey);@groupStyle">
-                                            <MudIconButton 
-                                                Class="mud-table-row-expander" 
-                                                Icon="@(g.IsExpanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)" 
-                                                OnClick="@(() => ToggleGroupExpansion(g))" />
+                                            <MudIconButton Class="mud-table-row-expander"
+                                           Icon="@(g.IsExpanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
+                                           OnClick="@(() => ToggleGroupExpansion(g))" />
 
                                             @if (GroupedColumn.GroupTemplate == null)
                                             {
-                                                <span style="font-weight:bold">@GroupedColumn.computedTitle: @g.Grouping.Key</span>
+                                                <span style="font-weight:bold">@GroupedColumn.Title: @g.Grouping.Key</span>
                                             }
                                             else
                                             {
@@ -149,17 +153,17 @@
                                             @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                             @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                             @{ var tmpRowIndex = rowIndex; }
-                                            <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">  
+                                            <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">
                                                 <CascadingValue Value="@Validator" IsFixed="true">
-                                                @foreach (var column in RenderedColumns)
-                                                {
-                                                    if (!column.Hidden)
+                                                    @foreach (var column in RenderedColumns)
                                                     {
-                                                        @Cell(column, item)
+                                                        if (!column.Hidden)
+                                                        {
+                                                            @Cell(column, item)
+                                                        }
                                                     }
-                                                }                                     
                                                 </CascadingValue>
-                                            </tr>                                   
+                                            </tr>
                                             @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
                                             {
                                                 <tr class="mud-table-row">
@@ -167,7 +171,7 @@
                                                         @ChildRowContent(new CellContext<T>(this, item))
                                                     </td>
                                                 </tr>
-                                            }                                       
+                                            }
                                             @{ rowIndex++; }
                                         </MudVirtualize>
                                         @*Group Footer*@
@@ -184,17 +188,17 @@
                                     @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var tmpRowIndex = rowIndex; }
-                                    <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">  
+                                    <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))">
                                         <CascadingValue Value="@Validator" IsFixed="true">
-                                        @foreach (var column in RenderedColumns)
-                                        {
-                                            if (!column.Hidden)
+                                            @foreach (var column in RenderedColumns)
                                             {
-                                                @Cell(column, item)
+                                                if (!column.Hidden)
+                                                {
+                                                    @Cell(column, item)
+                                                }
                                             }
-                                        }                                       
                                         </CascadingValue>
-                                    </tr>                                   
+                                    </tr>
                                     @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
                                     {
                                         <tr class="mud-table-row">
@@ -202,17 +206,17 @@
                                                 @ChildRowContent(new CellContext<T>(this, item))
                                             </td>
                                         </tr>
-                                    }                                        
+                                    }
                                     @{ rowIndex++; }
                                 </MudVirtualize>
                             }
                         }
-                        else if(Loading ? LoadingContent != null : NoRecordsContent != null)
+                        else if (Loading ? LoadingContent != null : NoRecordsContent != null)
                         {
                             <tr>
                                 <th colspan="1000" class="mud-table-empty-row">
                                     <div Class="my-3">
-                                        @if(Loading)
+                                        @if (Loading)
                                         {
                                             @LoadingContent
                                         }
@@ -240,273 +244,281 @@
             }
         }
     </div>
-    <MudDialog @bind-IsVisible="isEditFormOpen" Options="EditDialogOptions">
-        <TitleContent>
-            <MudText Typo="Typo.h6">
-                Edit
-            </MudText>
-        </TitleContent>
-        <DialogContent>
-            <MudForm FieldChanged="FormFieldChanged">
-                @foreach (var column in RenderedColumns)
-                {
-                    var cell = new Cell<T>(this, column, _editingItem);
+    <CascadingValue Value="true" IsFixed Name="IsNested">
+        <MudDialog @bind-IsVisible="isEditFormOpen">
+            <DialogContent>
+                <MudForm FieldChanged="FormFieldChanged">
+                    @foreach (var column in RenderedColumns)
+                    {
+                        var cell = new Cell<T>(this, column, _editingItem);
 
-                    if (column.EditTemplate != null)
-                    {
-                        @column.EditTemplate(cell.cellContext)
-                    }
-                    else
-                    {
-                        if (column.dataType == typeof(string))
+                        if (column.EditTemplate != null)
                         {
-                            <MudTextField T="string" Label="@column.computedTitle" Value="@cell.valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
-                                Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                            @column.EditTemplate(cell._cellContext)
                         }
-                        else if (column.isNumber)
+                        else
                         {
-                            <MudNumericField T="double?" Label="@column.computedTitle" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
-                                Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                            var propertyType = column.PropertyType;
+
+                            if (propertyType == typeof(string))
+                            {
+                                <MudTextField T="string" Label="@column.Title" Value="@cell._valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
+                                  Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                            }
+                            else if (TypeIdentifier.IsNumber(propertyType))
+                            {
+                                <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
+                                     Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                            }
                         }
                     }
-                }
-            </MudForm>
-        </DialogContent>
-        <DialogActions>
-            <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@CancelEditingItemAsync" Class="px-10">Cancel</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10">Save</MudButton>
-        </DialogActions>
-    </MudDialog>
+                </MudForm>
+            </DialogContent>
+            <DialogActions>
+                <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@CancelEditingItemAsync" Class="px-10">Cancel</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10">Save</MudButton>
+            </DialogActions>
+        </MudDialog>
+    </CascadingValue>
 </CascadingValue>
 
 @code {
-    internal RenderFragment ToolbarMenu(MudDataGrid<T> __this)
-    {
-        return
-        @<text>
-        <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true">
-            <MudMenuItem OnClick="@__this.ShowColumnsPanel">Columns</MudMenuItem>
-            @if (__this.Groupable)
-            {
-                <MudMenuItem OnClick="@__this.ExpandAllGroups">Expand All Groups</MudMenuItem>
-                <MudMenuItem OnClick="@__this.CollapseAllGroups">Collapse All Groups</MudMenuItem>
-            }
-            @if(__this.ServerData != null)
-            {
-                <MudMenuItem OnClick="@__this.InvokeServerLoadFunc">Refresh Data</MudMenuItem>
-            }
-        </MudMenu>
-        </text>;
-    }
 
-    internal RenderFragment FooterCells(IEnumerable<T> currentItems)
-    {
-        return
+    internal RenderFragment ToolbarMenu(MudDataGrid<T> dataGrid) =>
         @<text>
-        @if (currentItems != null)
-        {
-            foreach (var column in RenderedColumns)
-            {
-                if (!column.Hidden)
+            <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true">
+            <MudMenuItem OnClick="@dataGrid.ShowColumnsPanel">Columns</MudMenuItem>
+                @if (dataGrid.Groupable)
                 {
-                    if (column.AggregateDefinition != null || column.FooterTemplate != null || hasFooter)
+                    <MudMenuItem OnClick="@dataGrid.ExpandAllGroups">Expand All Groups</MudMenuItem>
+                    <MudMenuItem OnClick="@dataGrid.CollapseAllGroups">Collapse All Groups</MudMenuItem>
+                }
+                @if (dataGrid.ServerData is not null)
+                {
+                    <MudMenuItem OnClick="@dataGrid.InvokeServerLoadFunc">Refresh Data</MudMenuItem>
+                }
+            </MudMenu>
+         </text>;
+
+    internal RenderFragment FooterCells(IEnumerable<T> currentItems) =>
+        @<text>
+            @if (currentItems is not null)
+            {
+                foreach (var column in RenderedColumns)
+                {
+                    if (!column.Hidden)
                     {
-                        <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
+                        if (column.AggregateDefinition is not null || column.FooterTemplate is not null || hasFooter)
+                        {
+                            <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
+                        }
                     }
                 }
             }
-        }
-        </text>;
-    }
+         </text>;
+    
 
-    internal RenderFragment Cell(Column<T> column, T item)
-    {
-        return
+    internal RenderFragment Cell(Column<T> column, T item) =>
         @<text>
-        @{
-            var cell = new Cell<T>(this, column, item);
-        }
-        <td data-label="@column.computedTitle" class="@cell.computedClass" style="@cell.computedStyle">
-            @if (column.IsEditable && !ReadOnly && DataGridEditMode.Cell == EditMode)
-            {
-                if (column.EditTemplate != null)
+            @{
+                var cell = new Cell<T>(this, column, item);
+            }
+            <td data-label="@column.Title" class="@cell.computedClass" style="@cell.computedStyle">
+                @if (column.IsEditable && !ReadOnly && EditMode == DataGridEditMode.Cell)
                 {
-                    @column.EditTemplate(cell.cellContext)
+                    if (column.EditTemplate is not null)
+                    {
+                        @column.EditTemplate(cell._cellContext)
+                    }
+                    else
+                    {
+                        if (column.PropertyType == typeof(string))
+                        {
+                            <MudTextField T="string"
+                                          Value="@cell._valueString"
+                                          ValueChanged="@cell.StringValueChangedAsync"
+                                          Margin="@Margin.Dense" Style="margin-top:0"
+                                          Required="true"
+                                          Variant="@Variant.Text" />
+                        }
+                        else if (column.isNumber)
+                        {
+                            <MudNumericField T="double?"
+                                             Value="@cell._valueNumber"
+                                             ValueChanged="@cell.NumberValueChangedAsync"
+                                             Margin="@Margin.Dense" Style="margin-top:0"
+                                             Required="true" Variant="@Variant.Text" Culture="@column.Culture" />
+                        }
+                    }
                 }
                 else
                 {
-                    if (column.dataType == typeof(string))
+                    if (column.CellTemplate is not null)
                     {
-                        <MudTextField T="string" Value="@cell.valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense" Style="margin-top:0"
-                            Required="true" Variant="@Variant.Text" />
+                        @column.CellTemplate(cell._cellContext)
                     }
-                    else if (column.isNumber)
+                    else if (column.Culture is not null && column.isNumber)
                     {
-                        <MudNumericField T="double?" Value="@cell.valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense" Style="margin-top:0"
-                            Required="true" Variant="@Variant.Text" Culture="@column.Culture" />
+                        if (column.ContentFormat is not null)
+                        {
+                            @(((IFormattable)cell._valueNumber)?.ToString(column.ContentFormat, column.Culture))
+                        }
+                        else
+                        {
+                            @cell._valueNumber?.ToString(column.Culture)
+                        }
+                    }
+                    else
+                    {
+                        if (column.ContentFormat is not null)
+                        {
+                            @(((IFormattable)cell.ComputedValue)?.ToString(column.ContentFormat, column.Culture))
+                        }
+                        else
+                        {
+                            @cell.ComputedValue
+                        }
                     }
                 }
+            </td>
+         </text>;
+
+    internal RenderFragment Filter(FilterDefinition<T> filterDefinition, Column<T> column) =>
+        @<text>
+            @{
+                var filter = new Filter<T>(this, filterDefinition, column);
+            }
+            @if (column is null)
+            {
+                <MudItem xs="1" Class="d-flex">
+                    <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end"></MudIconButton>
+                </MudItem>
+                <MudItem xs="4">
+                    <MudSelect T="Column<T>" Value="@filterDefinition.Column" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense"
+                               Class="filter-field">
+                        @foreach (var renderColumn in RenderedColumns ?? Enumerable.Empty<Column<T>>())
+                        {
+                            <MudSelectItem T="Column<T>" Value="@renderColumn">@renderColumn.Title</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="3">
+                    <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Label="Operator" Dense="true" Margin="@Margin.Dense"
+                               Class="filter-operator">
+                        @foreach (var fieldOperator in FilterOperator.GetOperatorByDataType(filterDefinition.dataType))
+                        {
+                            <MudSelectItem Value="@fieldOperator">@fieldOperator</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="4">
+                    @if (filterDefinition.FieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
+                    {
+                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
+                                      Immediate="true" Class="filter-input"/>
+                    }
+                    else if (filterDefinition.FieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
+                    {
+                        <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
+                                         Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture"/>
+                    }
+                    else if (filterDefinition.FieldType.IsEnum)
+                    {
+                        <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                                   Class="filter-input">
+                            <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
+                            @foreach (var item in EnumExtensions.GetSafeEnumValues(filterDefinition.dataType))
+                            {
+                                <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                    else if (filterDefinition.FieldType.IsBoolean)
+                    {
+                        <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                                   Class="filter-input">
+                            <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
+                            <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
+                            <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
+                        </MudSelect>
+                    }
+                    else if (filterDefinition.FieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
+                    {
+                        <MudGrid Spacing="0">
+                            <MudItem xs="7">
+                                <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Margin="@Margin.Dense" Class="filter-input-date"/>
+                            </MudItem>
+                            <MudItem xs="5">
+                                <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Margin="@Margin.Dense" Class="filter-input-time"/>
+                            </MudItem>
+                        </MudGrid>
+                    }
+                    else if (filterDefinition.FieldType.IsGuid)
+                    {
+                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
+                                      Immediate="true" Class="filter-input"/>
+                    }
+                </MudItem>
             }
             else
             {
-                if (column.CellTemplate != null)
-                {
-                    @column.CellTemplate(cell.cellContext)
-                }
-                else if (column.Culture != null && column.isNumber)
-                {
-                    @cell.valueNumber?.ToString(column.Culture)
-                }
-                else
-                {
-                    @cell.ComputedValue
-                }
+                <MudItem xs="12">
+                    <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                               Class="filter-operator">
+                        @foreach (var o in FilterOperator.GetOperatorByDataType(filterDefinition.dataType))
+                        {
+                            <MudSelectItem Value="@o">@o</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12">
+                    @if (filterDefinition.FieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
+                    {
+                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense"
+                                      Immediate="true" Class="filter-input"/>
+                    }
+                    else if (filterDefinition.FieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
+                    {
+                        <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense"
+                                         Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture"/>
+                    }
+                    else if (filterDefinition.FieldType.IsEnum)
+                    {
+                        <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                                   Class="filter-input">
+                            <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
+                            @foreach (var item in Enum.GetValues(filterDefinition.dataType))
+                            {
+                                <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                    else if (filterDefinition.FieldType.IsBoolean)
+                    {
+                        <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                                   Class="filter-input">
+                            <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
+                            <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
+                            <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
+                        </MudSelect>
+                    }
+                    else if (filterDefinition.FieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
+                    {
+                        <MudGrid Spacing="0">
+                            <MudItem xs="7">
+                                <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Margin="@Margin.Dense" Class="filter-input-date"/>
+                            </MudItem>
+                            <MudItem xs="5">
+                                <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Margin="@Margin.Dense" Class="filter-input-time"/>
+                            </MudItem>
+                        </MudGrid>
+                    }
+                    else if (filterDefinition.FieldType.IsGuid)
+                    {
+                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
+                                      Immediate="true" Class="filter-input"/>
+                    }
+                </MudItem>
             }
-        </td>
-        </text>
-    ;
-    }
-
-    internal RenderFragment Filter(FilterDefinition<T> f, Column<T> column)
-    {
-        return
-        @<text>
-        @{
-            var filter = new Filter<T>(this, f, column);
-        }
-        @if (column == null)
-        {
-            <MudItem xs="1" Class="d-flex">
-                <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilter" Size="@Size.Small" Style="align-self:flex-end"></MudIconButton>
-            </MudItem>
-            <MudItem xs="4">
-                <MudSelect T="string" Value="@f.Field" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense"
-                    Class="filter-field">
-                    @foreach (var column in RenderedColumns ?? Enumerable.Empty<Column<T>>())
-                    {
-                        <MudSelectItem Value="@column.Field">@column.computedTitle</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-            <MudItem xs="3">
-                <MudSelect @bind-Value="f.Operator" FullWidth="true" Label="Operator" Dense="true" Margin="@Margin.Dense"
-                    Class="filter-operator">
-                    @foreach (var o in FilterOperator.GetOperatorByDataType(filter.dataType))
-                    {
-                        <MudSelectItem Value="@o">@o</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-            <MudItem xs="4">
-                @if (filter.dataType == typeof(string) && !(f.Operator ?? "").EndsWith("empty"))
-                {
-                    <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense" 
-                        Immediate="true" Class="filter-input" />
-                }
-                else if (filter.isNumber && !(f.Operator ?? "").EndsWith("empty"))
-                {
-                    <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense" 
-                    Immediate="true" Class="filter-input" Culture="@filter.filterColumn?.Culture" />
-                }
-                else if (filter.isEnum)
-                {
-                    <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
-                        Class="filter-input">
-                        <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
-                        @foreach (var item in Enum.GetValues(filter.dataType))
-                        {
-                            <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
-                        }
-                    </MudSelect>
-                }
-                else if (filter.dataType == typeof(bool))
-                {
-                    <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
-                        Class="filter-input">
-                        <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
-                        <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
-                        <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
-                    </MudSelect>
-                }
-                else if (filter.dataType == typeof(DateTime) && !(f.Operator ?? "").EndsWith("empty"))
-                {
-                    <MudGrid Spacing="0">
-                        <MudItem xs="7">
-                            <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Margin="@Margin.Dense" Class="filter-input-date" />
-                        </MudItem>
-                        <MudItem xs="5">
-                            <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Margin="@Margin.Dense" Class="filter-input-time" />
-                        </MudItem>
-                    </MudGrid>
-                }
-                else if (filter.dataType == typeof(Guid))
-                {
-                    <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense" 
-                        Immediate="true" Class="filter-input" />
-                }
-            </MudItem>
-        }
-        else 
-        {
-            <MudItem xs="12">
-                <MudSelect @bind-Value="f.Operator" FullWidth="true" Dense="true" Margin="@Margin.Dense"
-                    Class="filter-operator">
-                    @foreach (var o in FilterOperator.GetOperatorByDataType(filter.dataType))
-                    {
-                        <MudSelectItem Value="@o">@o</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-            <MudItem xs="12">
-                @if (filter.dataType == typeof(string) && !(f.Operator ?? "").EndsWith("empty"))
-                {
-                    <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense" 
-                    Immediate="true" Class="filter-input" />
-                }
-                else if (filter.isNumber && !(f.Operator ?? "").EndsWith("empty"))
-                {
-                    <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense" 
-                        Immediate="true" Class="filter-input" Culture="@filter.filterColumn?.Culture" />
-                }
-                else if (filter.isEnum)
-                {
-                    <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
-                        Class="filter-input">
-                        <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
-                        @foreach (var item in Enum.GetValues(filter.dataType))
-                        {
-                            <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
-                        }
-                    </MudSelect>
-                }
-                else if (filter.dataType == typeof(bool))
-                {
-                    <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
-                        Class="filter-input">
-                        <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
-                        <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
-                        <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
-                    </MudSelect>
-                }
-                else if (filter.dataType == typeof(DateTime) && !(f.Operator ?? "").EndsWith("empty"))
-                {
-                    <MudGrid Spacing="0">
-                        <MudItem xs="7">
-                            <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Margin="@Margin.Dense" Class="filter-input-date" />
-                        </MudItem>
-                        <MudItem xs="5">
-                            <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Margin="@Margin.Dense" Class="filter-input-time" />
-                        </MudItem>
-                    </MudGrid>
-                }
-                else if (filter.dataType == typeof(Guid))
-                {
-                    <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense" 
-                        Immediate="true" Class="filter-input" />
-                }
-            </MudItem>
-        }
-        </text>
-    ;
-    }
+         </text>;
 }

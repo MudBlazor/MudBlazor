@@ -1,25 +1,27 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDataGrid Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterMenu">
+<MudDataGrid @ref="grid" Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterMenu">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Status)" />
-        <Column T="Model" Field="@nameof(Model.Hired)">
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Status" />
+        <PropertyColumn Property="x => x.Hired">
             <FilterTemplate>
                 <MudStack>
                     <MudSwitch T="bool" Color="@Color.Primary" @bind-Checked="FilterHired" Label="Show Hired"></MudSwitch>
-                    <MudButton Class="align-self-end" Color="@Color.Primary" OnClick="@(() => ApplyFilter(context))">@(FilterHired ? "Filter" : "Remove Filter")</MudButton>
+                    <MudButton Class="align-self-end" Color="@Color.Primary" OnClick="@(() => ApplyFilterAsync(context))">@(FilterHired ? "Filter" : "Remove Filter")</MudButton>
                 </MudStack>
             </FilterTemplate>
-        </Column>
-        <Column T="Model" Field="@nameof(Model.HiredOn)" />
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.HiredOn" />
     </Columns>
 </MudDataGrid>
 
-@code {
+    @code {
     public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
+
+    MudDataGrid<Model> grid;
 
     private IEnumerable<Model> _items = new List<Model>()
     {
@@ -30,18 +32,26 @@
     };
 
     public bool FilterHired;
-    FilterDefinition<Model> _filterDefinition = new FilterDefinition<Model>
-    {
-        Field = nameof(Model.Hired),
-        Operator = FilterOperator.Boolean.Is,
-        Value = true
-    };
+    FilterDefinition<Model> _filterDefinition = new();
 
-    public void ApplyFilter(FilterContext<Model> context)
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _filterDefinition = new FilterDefinition<Model>
+            {
+                Column = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Hired"),
+                Operator = FilterOperator.Boolean.Is,
+                Value = true
+            };
+        }
+    }
+
+    public async Task ApplyFilterAsync(FilterContext<Model> context)
     {
         if (FilterHired)
-            context.Actions.ApplyFilter(_filterDefinition);
+           await context.Actions.ApplyFilterAsync(_filterDefinition);
         else
-            context.Actions.ClearFilter(_filterDefinition);
+           await context.Actions.ClearFilterAsync(_filterDefinition);
     }
 }

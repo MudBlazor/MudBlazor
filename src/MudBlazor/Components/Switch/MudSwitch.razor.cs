@@ -13,11 +13,15 @@ namespace MudBlazor
     public partial class MudSwitch<T> : MudBooleanInput<T>
     {
         protected string Classname =>
-        new CssBuilder("mud-switch")
-            .AddClass($"mud-disabled", Disabled)
-            .AddClass($"mud-readonly", ReadOnly)
-            .AddClass(LabelPosition == LabelPosition.End ? "mud-ltr" : "mud-rtl", true)
+        new CssBuilder("mud-input-control-boolean-input")
             .AddClass(Class)
+            .Build();
+        
+        protected string LabelClassname =>
+        new CssBuilder("mud-switch")
+            .AddClass("mud-disabled", GetDisabledState())
+            .AddClass("mud-readonly", GetReadOnlyState())
+            .AddClass(LabelPosition == LabelPosition.End ? "" : "flex-row-reverse", true)
         .Build();
 
         protected string SwitchLabelClassname =>
@@ -25,11 +29,11 @@ namespace MudBlazor
         .Build();
         protected string SwitchClassname =>
         new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
-            .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple && !ReadOnly && !Disabled)
+            .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple && !GetReadOnlyState() && !GetDisabledState())
             .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", BoolValue == true)
             .AddClass($"mud-{UnCheckedColor.ToDescriptionString()}-text hover:mud-{UnCheckedColor.ToDescriptionString()}-hover", BoolValue == false)
-            .AddClass($"mud-switch-disabled", Disabled)
-            .AddClass($"mud-readonly", ReadOnly)
+            .AddClass($"mud-switch-disabled", GetDisabledState())
+            .AddClass($"mud-readonly", GetReadOnlyState())
             .AddClass($"mud-checked", BoolValue)
             .AddClass($"mud-switch-base-{Size.ToDescriptionString()}")
         .Build();
@@ -111,7 +115,7 @@ namespace MudBlazor
 
         protected internal void HandleKeyDown(KeyboardEventArgs obj)
         {
-            if (Disabled || ReadOnly)
+            if (GetDisabledState() || GetReadOnlyState())
                 return;
             switch (obj.Key)
             {

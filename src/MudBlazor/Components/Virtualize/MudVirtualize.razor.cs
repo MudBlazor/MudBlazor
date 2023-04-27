@@ -7,24 +7,26 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudVirtualize<T> : ComponentBase
     {
         /// <summary>
         /// Set false to turn off virtualization
         /// </summary>
-        [Parameter] public bool IsEnabled { get; set; }
+        [Parameter]
+        public bool IsEnabled { get; set; }
 
         /// <summary>
         /// Gets or sets the item template for the list.
         /// </summary>
         [Parameter]
-        public RenderFragment<T> ChildContent { get; set; }
+        public RenderFragment<T>? ChildContent { get; set; }
 
         /// <summary>
         /// Gets or sets the fixed item source.
         /// </summary>
         [Parameter]
-        public ICollection<T> Items { get; set; }
+        public ICollection<T>? Items { get; set; }
 
         /// <summary>
         /// Gets or sets a value that determines how many additional items will be rendered

@@ -6,9 +6,9 @@
 @if (IsEnabled)
 {
     <Virtualize Items="@Items" Context="item" OverscanCount=@OverscanCount>
-        @if (@ChildContent != null)
+        @if (ChildContent is not null)
         {
-            @ChildContent(item);
+            @ChildContent(item)
         }
     </Virtualize>
 }
@@ -16,7 +16,9 @@ else
 {
     @foreach (var item in Items ?? Array.Empty<T>())
     {
-        @ChildContent(item);
+        if (ChildContent is not null)
+        {
+            @ChildContent(item)
+        }
     }
 }
-

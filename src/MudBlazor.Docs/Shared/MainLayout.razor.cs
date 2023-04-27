@@ -26,6 +26,7 @@ namespace MudBlazor.Docs.Shared
             if (firstRender)
             {
                 await ApplyUserPreferences();
+                await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
                 StateHasChanged();
             }
         }
@@ -34,6 +35,11 @@ namespace MudBlazor.Docs.Shared
         {
             var defaultDarkMode = await _mudThemeProvider.GetSystemPreference();
             await LayoutService.ApplyUserPreferences(defaultDarkMode);
+        }
+
+        private async Task OnSystemPreferenceChanged(bool newValue)
+        {
+            await LayoutService.OnSystemPreferenceChanged(newValue);
         }
 
         public void Dispose()

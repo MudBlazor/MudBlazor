@@ -495,7 +495,7 @@ namespace MudBlazor.UnitTests.Components
             TestFailingModel model = new TestFailingModel2();
             var comp = Context.RenderComponent<MudTextField<string>>(
                 ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => (model as TestFailingModel2).Foo))
-                //ComponentParameter.CreateParameter("ForModel", typeof(TestFailingModel2)) // Explicitly set the `For` class
+            //ComponentParameter.CreateParameter("ForModel", typeof(TestFailingModel2)) // Explicitly set the `For` class
             );
             await comp.InvokeAsync(() => comp.Instance.Validate());
             comp.Instance.Error.Should().BeTrue();
@@ -751,7 +751,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // reset (must reset dirty state)
-            await comp.InvokeAsync(() => comp.Instance.Reset());
+            await comp.InvokeAsync(() => comp.Instance.ResetAsync());
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
 
             // user does not change input value but changes focus
@@ -790,7 +790,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // reset
-            await comp.InvokeAsync(() => comp.Instance.Reset());
+            await comp.InvokeAsync(() => comp.Instance.ResetAsync());
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
 
             // user does not change input value but changes focus
@@ -814,6 +814,53 @@ namespace MudBlazor.UnitTests.Components
 
             var comp2 = Context.RenderComponent<MudTextField<string>>(x => x.Add(f => f.For, () => value.String).Add(l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
+        }
+
+        /// <summary>
+        /// ReadOnly TextFields should not validate when blurred
+        /// </summary>
+        [Test]
+        public async Task ReadOnlyTextFieldShouldNotValidate()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+            .Add(p => p.ReadOnly, true)
+            .Add(p => p.Required, true));
+
+            comp.Find("input").Blur();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+        }
+
+        /// <summary>
+        /// https://github.com/MudBlazor/MudBlazor/issues/6322
+        /// </summary>
+        [Test]
+        public async Task OnBlurErrorContentCaughtException()
+        {
+            var comp = Context.RenderComponent<TextFieldErrorContenCaughtException>();
+            await comp.Find("input").BlurAsync(new FocusEventArgs());
+            var mudAlert = comp.FindComponent<MudAlert>();
+            var text = mudAlert.Find("div.mud-alert-message");
+            text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+        }
+
+        [Test]
+        public async Task OnKeyDownErrorContentCaughtException()
+        {
+            var comp = Context.RenderComponent<TextFieldErrorContenCaughtException>();
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Enter", Type = "keydown" });
+            var mudAlert = comp.FindComponent<MudAlert>();
+            var text = mudAlert.Find("div.mud-alert-message");
+            text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+        }
+
+        [Test]
+        public async Task OnKeyUpErrorContentCaughtException()
+        {
+            var comp = Context.RenderComponent<TextFieldErrorContenCaughtException>();
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter", Type = "keyup" });
+            var mudAlert = comp.FindComponent<MudAlert>();
+            var text = mudAlert.Find("div.mud-alert-message");
+            text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
         }
     }
 }

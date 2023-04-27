@@ -116,10 +116,10 @@
             }
             else
             {
-                @foreach (var contributor in _githubContributors.OrderByDescending(x => x.contributions))
+                @foreach (var contributor in _githubContributors.OrderByDescending(x => x.Contributions))
                 {
                     <MudItem xs="12" md="6">
-                        <MudContributor Firstname="@contributor.login" AvatarLink="@contributor.avatar_url" GithubLink="@contributor.html_url" />
+                        <MudContributor Firstname="@contributor.Login" AvatarLink="@contributor.AvatarUrl" GithubLink="@contributor.HtmlUrl" />
                     </MudItem>
                 }
             }
@@ -139,12 +139,12 @@
         StateHasChanged();
     }
 
-    private int GetColumnWith(TeamMember memember, TeamMember[] list)
+    private int GetColumnWith(TeamMember member, TeamMember[] list)
     {
-        var lastMemeber = list.LastOrDefault();
+        var lastMember = list.LastOrDefault();
         var count = list.Length;
 
-        if(lastMemeber == memember && count%2 != 0)
+        if (lastMember == member && count % 2 != 0)
         {
             return 12;
         }
@@ -154,20 +154,20 @@
         }
     }
 
-    private TeamMember[] _coreTeam = new TeamMember[]
+    private readonly TeamMember[] _coreTeam = new TeamMember[]
     {
         new TeamMember { Name = "András Tangl", From = "Szombathely, Hungary", Github = "tungi52", Avatar = "https://avatars.githubusercontent.com/u/22996720?v=4", LinkedIn = "https://www.linkedin.com/in/andr%C3%A1s-tangl-683a20215/"},
         new TeamMember { Name = "Mike Surcouf", From = "Jersey, Channel Islands", Github = "mikes-gh", Avatar = "https://avatars.githubusercontent.com/u/16208742?v=4", LinkedIn = null},
         new TeamMember { Name = "Benjamin Kappel", From = "Mexico", Github = "just-the-benno", Avatar = "https://avatars.githubusercontent.com/u/51370361?v=4", LinkedIn = "https://www.linkedin.com/in/benjamin-kappel-558428168/"},
-        new TeamMember { Name = "Jonas B", From = "Germany", Github = "JonBunator", Avatar = "https://avatars.githubusercontent.com/u/62108893?v=4", LinkedIn = null}
+        new TeamMember { Name = "Jonas B", From = "Germany", Github = "JonBunator", Avatar = "https://avatars.githubusercontent.com/u/62108893?v=4", LinkedIn = null},
+        new TeamMember { Name = "Riley Nielsen", From = "Minnesota, United States", Github = "Mr-Technician", Avatar = "https://avatars.githubusercontent.com/u/26885142?v=4", LinkedIn = "https://www.linkedin.com/in/riley-nielsen-a57399223/"}
     };
 
-    private TeamMember[] _contributors = new TeamMember[]
+    private readonly TeamMember[] _contributors = new TeamMember[]
     {
         new TeamMember { Name = "Henrique Clausing", From = "Minas Gerais, Brazil", Github = "HClausing", Avatar = "https://avatars.githubusercontent.com/u/15158923?v=4", LinkedIn = "https://www.linkedin.com/in/henrique-clausing-cunha-45085944/"},
         new TeamMember { Name = "Porkopek", From = "Fundão, Portugal", Github = "porkopek", Avatar = "https://avatars.githubusercontent.com/u/13745954?v=4", LinkedIn = null},
         new TeamMember { Name = "Mehmet Can Karagöz", From = "Alanya, Turkey", Github = "mckaragoz", Avatar = "https://avatars.githubusercontent.com/u/78308169?v=4", LinkedIn = null},
-        new TeamMember { Name = "Riley Nielsen", From = "Minnesota, United States", Github = "Mr-Technician", Avatar = "https://avatars.githubusercontent.com/u/26885142?v=4", LinkedIn = "https://www.linkedin.com/in/riley-nielsen-a57399223/"}
+        new TeamMember { Name = "Artyom Melnikov", From = "Tallinn, Harjumaa, Estonia", Github = "ScarletKuro", Avatar = "https://avatars.githubusercontent.com/u/19953225?v=4", LinkedIn = "https://www.linkedin.com/in/artyommelnikov/"}
     };
-
 }

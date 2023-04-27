@@ -17,7 +17,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
+    [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<T> : MudComponentBase
     {
         private int _currentPage = 0;
@@ -28,7 +28,8 @@ namespace MudBlazor
         private IEnumerable<T> _items;
         private T _selectedItem;
         internal HashSet<object> _groupExpansions = new HashSet<object>();
-        private List<GroupDefinition<T>> _groups = new List<GroupDefinition<T>>();
+        private List<GroupDefinition<T>> _currentPageGroups = new List<GroupDefinition<T>>();
+        private List<GroupDefinition<T>> _allGroups = new List<GroupDefinition<T>>();
         internal HashSet<T> _openHierarchies = new HashSet<T>();
         private PropertyInfo[] _properties = typeof(T).GetProperties();
 
@@ -275,7 +276,7 @@ namespace MudBlazor
 
         [Parameter] public DataGridFilterCaseSensitivity FilterCaseSensitivity { get; set; }
 
-        [Parameter] public RenderFragment<List<FilterDefinition<T>>> FilterTemplate { get; set; }
+        [Parameter] public RenderFragment<MudDataGrid<T>> FilterTemplate { get; set; }
 
         /// <summary>
         /// The list of FilterDefinitions that have been added to the data grid. FilterDefinitions are managed by the data
@@ -374,6 +375,7 @@ namespace MudBlazor
                 {
                     (_items as INotifyCollectionChanged).CollectionChanged += (s, e) =>
                     {
+                        _currentRenderFilteredItemsCache = null;
                         if (Groupable)
                             GroupItems();
                     };
@@ -582,8 +584,10 @@ namespace MudBlazor
 
                     if (!_groupable)
                     {
-                        _groups.Clear();
+                        _currentPageGroups.Clear();
+                        _allGroups.Clear();
                         _groupExpansions.Clear();
+                        _groupExpansions.Add("__initial__");
 
                         foreach (var column in RenderedColumns)
                             column.RemoveGrouping();
@@ -653,12 +657,21 @@ namespace MudBlazor
 
         public HashSet<T> Selection { get; set; } = new HashSet<T>();
         public bool HasPager { get; set; }
+        public IEnumerable<T> ServerItems => _server_data.Items;
         private GridData<T> _server_data = new GridData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
+        private IEnumerable<T> _currentRenderFilteredItemsCache = null;
 
+        /// <summary>
+        /// For unit testing the filtering cache mechanism.
+        /// </summary>
+        internal uint FilteringRunCount { get; private set; }
+
+        // TODO: When adding one FilterDefinition, this is called once for each RenderedColumn...
         public IEnumerable<T> FilteredItems
         {
             get
             {
+                if (_currentRenderFilteredItemsCache != null) return _currentRenderFilteredItemsCache;
                 var items = ServerData != null
                     ? _server_data.Items
                     : Items;
@@ -669,14 +682,18 @@ namespace MudBlazor
                     items = items.Where(QuickFilter);
                 }
 
-                foreach (var f in FilterDefinitions)
-                {
-                    f.DataGrid = this;
-                    var filterFunc = f.GenerateFilterFunction();
-                    items = items.Where(filterFunc);
-                }
+                if (ServerData is null)
+                    foreach (var f in FilterDefinitions)
+                    {
+                        f.DataGrid = this;
+                        var filterFunc = f.GenerateFilterFunction();
+                        items = items.Where(filterFunc);
+                    }
 
-                return Sort(items);
+                _currentRenderFilteredItemsCache = Sort(items).ToList(); // To list to ensure evaluation only once per render
+                unchecked { FilteringRunCount++; }
+                GroupItems(noStateChange: true);
+                return _currentRenderFilteredItemsCache;
             }
         }
 
@@ -726,7 +743,6 @@ namespace MudBlazor
             if (firstRender)
             {
                 await InvokeServerLoadFunc();
-                GroupItems();
                 if (ServerData == null)
                     StateHasChanged();
                 _isFirstRendered = true;
@@ -784,6 +800,7 @@ namespace MudBlazor
             };
 
             _server_data = await ServerData(state);
+            _currentRenderFilteredItemsCache = null;            
 
             if (CurrentPage * RowsPerPage > _server_data.TotalItems)
                 CurrentPage = 0;
@@ -820,50 +837,46 @@ namespace MudBlazor
         /// <summary>
         /// Called by the DataGrid when the "Add Filter" button is pressed.
         /// </summary>
-        internal void AddFilter()
+        public void AddFilter()
         {
             var column = RenderedColumns.FirstOrDefault(x => x.filterable);
             FilterDefinitions.Add(new FilterDefinition<T>
             {
                 Id = Guid.NewGuid(),
                 DataGrid = this,
-                Field = column?.Field,
+                //Field = column?.PropertyName,
                 Title = column?.Title,
-                FieldType = column?.FieldType
+                //FieldType = column?.PropertyType,
+                PropertyExpression = column?.PropertyExpression,
             });
             _filtersMenuVisible = true;
             StateHasChanged();
         }
 
-        internal void ApplyFilters()
+        internal Task ApplyFiltersAsync()
         {
             _filtersMenuVisible = false;
-            InvokeServerLoadFunc().AndForget();
+            return InvokeServerLoadFunc();
         }
 
-        internal void ClearFilters()
+        public Task ClearFiltersAsync()
         {
             FilterDefinitions.Clear();
+            return InvokeServerLoadFunc();
         }
 
-        internal void AddFilter(Guid id, string field)
+        public async Task AddFilterAsync(FilterDefinition<T> definition)
         {
-            var column = RenderedColumns.FirstOrDefault(x => x.Field == field && x.filterable);
-            FilterDefinitions.Add(new FilterDefinition<T>
-            {
-                Id = id,
-                DataGrid = this,
-                Field = field,
-                Title = column?.Title,
-                FieldType = column?.FieldType,
-            });
+            FilterDefinitions.Add(definition);
             _filtersMenuVisible = true;
-            StateHasChanged();
+            await InvokeServerLoadFunc();
+            if (ServerData is null) StateHasChanged();
         }
 
-        internal void RemoveFilter(Guid id)
+        internal async Task RemoveFilterAsync(Guid id)
         {
             FilterDefinitions.RemoveAll(x => x.Id == id);
+            await InvokeServerLoadFunc();
             GroupItems();
         }
 
@@ -881,8 +894,12 @@ namespace MudBlazor
 
         internal async Task SetSelectAllAsync(bool value)
         {
+            var items = ServerData != null
+                    ? ServerItems
+                    : Items;
+
             if (value)
-                Selection = new HashSet<T>(Items);
+                Selection = new HashSet<T>(items);
             else
                 Selection.Clear();
 
@@ -905,11 +922,11 @@ namespace MudBlazor
             foreach (var sortDefinition in SortDefinitions.Values.Where(sd => null != sd.SortFunc).OrderBy(sd => sd.Index))
             {
                 if (null == orderedEnumerable)
-                    orderedEnumerable = sortDefinition.Descending ? items.OrderByDescending(item => sortDefinition.SortFunc(item))
-                        : items.OrderBy(item => sortDefinition.SortFunc(item));
+                    orderedEnumerable = sortDefinition.Descending ? items.OrderByDescending(item => sortDefinition.SortFunc(item), sortDefinition.Comparer)
+                        : items.OrderBy(item => sortDefinition.SortFunc(item), sortDefinition.Comparer);
                 else
-                    orderedEnumerable = sortDefinition.Descending ? orderedEnumerable.ThenByDescending(item => sortDefinition.SortFunc(item))
-                        : orderedEnumerable.ThenBy(item => sortDefinition.SortFunc(item));
+                    orderedEnumerable = sortDefinition.Descending ? orderedEnumerable.ThenByDescending(item => sortDefinition.SortFunc(item), sortDefinition.Comparer)
+                        : orderedEnumerable.ThenBy(item => sortDefinition.SortFunc(item), sortDefinition.Comparer);
             }
 
             return orderedEnumerable ?? items;
@@ -960,12 +977,7 @@ namespace MudBlazor
 
         internal async Task OnRowClickedAsync(MouseEventArgs args, T item, int rowIndex)
         {
-            await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>
-            {
-                MouseEventArgs = args,
-                Item = item,
-                RowIndex = rowIndex
-            });
+            await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
 
             if (EditMode != DataGridEditMode.Cell && EditTrigger == DataGridEditTrigger.OnRowClick)
                 await SetEditingItemAsync(item);
@@ -1035,12 +1047,13 @@ namespace MudBlazor
         /// <param name="field">The field.</param>
         /// <param name="direction">The direction.</param>
         /// <param name="sortFunc">The sort function.</param>
-        public async Task SetSortAsync(string field, SortDirection direction, Func<T, object> sortFunc)
+        /// <param name="comparer">The comparer to allow custom compare</param>
+        public async Task SetSortAsync(string field, SortDirection direction, Func<T, object> sortFunc, IComparer<object> comparer = null)
         {
             var removedSortDefinitions = new HashSet<string>(SortDefinitions.Keys);
             SortDefinitions.Clear();
 
-            var newDefinition = new SortDefinition<T>(field, direction == SortDirection.Descending, 0, sortFunc);
+            var newDefinition = new SortDefinition<T>(field, direction == SortDirection.Descending, 0, sortFunc, comparer);
             SortDefinitions[field] = newDefinition;
 
             // In case sort is just updated make sure to not mark the field as removed
@@ -1049,21 +1062,21 @@ namespace MudBlazor
             await InvokeSortUpdates(SortDefinitions, removedSortDefinitions);
         }
 
-        public async Task ExtendSortAsync(string field, SortDirection direction, Func<T, object> sortFunc)
+        public async Task ExtendSortAsync(string field, SortDirection direction, Func<T, object> sortFunc, IComparer<object> comparer = null)
         {
             // If SortMode is not multiple, use the default set approach and don't extend.
             if (SortMode != SortMode.Multiple)
             {
-                await SetSortAsync(field, direction, sortFunc);
+                await SetSortAsync(field, direction, sortFunc, comparer);
                 return;
             }
 
             // in case it already exists, just update the current entry
             if (SortDefinitions.TryGetValue(field, out var sortDefinition))
-                SortDefinitions[field] = sortDefinition with { Descending = direction == SortDirection.Descending, SortFunc = sortFunc };
+                SortDefinitions[field] = sortDefinition with { Descending = direction == SortDirection.Descending, SortFunc = sortFunc, Comparer = comparer };
             else
             {
-                var newDefinition = new SortDefinition<T>(field, direction == SortDirection.Descending, SortDefinitions.Count, sortFunc);
+                var newDefinition = new SortDefinition<T>(field, direction == SortDirection.Descending, SortDefinitions.Count, sortFunc, comparer);
                 SortDefinitions[field] = newDefinition;
             }
 
@@ -1216,42 +1229,39 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        internal void ExternalStateHasChanged()
-        {
-            StateHasChanged();
-        }
-
-        public void GroupItems()
+        public void GroupItems(bool noStateChange = false)
         {
             if (GroupedColumn == null)
             {
-                _groups = new List<GroupDefinition<T>>();
-                if (_isFirstRendered)
+                _currentPageGroups = new List<GroupDefinition<T>>();
+                _allGroups = new List<GroupDefinition<T>>();
+                if (_isFirstRendered && !noStateChange)
                     StateHasChanged();
                 return;
             }
 
-            var groupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
+            var currentPageGroupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
 
-            if (_groupExpansions.Count == 0)
+            // Maybe group Items to keep groups expanded after clearing a filter?
+            var allGroupings = FilteredItems.GroupBy(GroupedColumn.groupBy);
+
+            if (GetFilteredItemsCount() > 0 && _groupExpansions.Count == 0 && GroupExpanded)
             {
-                if (GroupExpanded)
-                {
-                    // We need to initially expand all groups.
-                    foreach (var group in groupings)
-                    {
-                        _groupExpansions.Add(group.Key);
-                    }
-                }
-
                 _groupExpansions.Add("__initial__");
+                foreach (var group in allGroupings)
+                {
+                    _groupExpansions.Add(group.Key);
+                }
             }
 
             // construct the groups
-            _groups = groupings.Select(x => new GroupDefinition<T>(x,
+            _currentPageGroups = currentPageGroupings.Select(x => new GroupDefinition<T>(x,
                 _groupExpansions.Contains(x.Key))).ToList();
 
-            if (_isFirstRendered || ServerData != null)
+            _allGroups = allGroupings.Select(x => new GroupDefinition<T>(x,
+                _groupExpansions.Contains(x.Key))).ToList();                
+
+            if ((_isFirstRendered || ServerData != null) && !noStateChange)
                 StateHasChanged();
         }
 
@@ -1259,7 +1269,7 @@ namespace MudBlazor
         {
             foreach (var c in RenderedColumns)
             {
-                if (c.Field != column.Field)
+                if (c.PropertyName != column.PropertyName)
                     c.RemoveGrouping();
             }
 
@@ -1282,7 +1292,7 @@ namespace MudBlazor
 
         public void ExpandAllGroups()
         {
-            foreach (var group in _groups)
+            foreach (var group in _allGroups)
             {
                 group.IsExpanded = true;
                 _groupExpansions.Add(group.Grouping.Key);
@@ -1292,8 +1302,9 @@ namespace MudBlazor
         public void CollapseAllGroups()
         {
             _groupExpansions.Clear();
+            _groupExpansions.Add("__initial__");
 
-            foreach (var group in _groups)
+            foreach (var group in _allGroups)
                 group.IsExpanded = false;
         }
 
@@ -1325,12 +1336,7 @@ namespace MudBlazor
         {
             get
             {
-                if (null == _resizeService)
-                {
-                    _resizeService = new DataGridColumnResizeService<T>(this, EventListener);
-                }
-
-                return _resizeService;
+                return _resizeService ??= new DataGridColumnResizeService<T>(this, EventListener);
             }
         }
 

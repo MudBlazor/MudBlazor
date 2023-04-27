@@ -5,8 +5,8 @@
 
 <MudDataGrid T="Element" Items="@Elements" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow">
     <Columns>
-        <Column T="Element" Field="Number" Title="Nr" Filterable="false" />
-        <Column T="Element" Field="Sign">
+        <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" />
+        <PropertyColumn Property="x => x.Sign">
             <FilterTemplate>
                 <MudIconButton OnClick="@OpenFilter" Icon="@_icon" Size="@Size.Small" />
                 <MudOverlay Visible="@_filterOpen" OnClick="@(() => _filterOpen = false)" />
@@ -22,17 +22,17 @@
                            }
                        </MudStack>
                        <MudStack Row="true">
-                            <MudButton OnClick="@(() => ClearFilter(context))">Clear</MudButton>
-                            <MudButton Color="@Color.Primary" OnClick="@(() => ApplyFilter(context))">Filter</MudButton>
+                            <MudButton OnClick="@(() => ClearFilterAsync(context))">Clear</MudButton>
+                            <MudButton Color="@Color.Primary" OnClick="@(() => ApplyFilterAsync(context))">Filter</MudButton>
                        </MudStack>
                    </MudStack>
 	            </MudPopover>
             </FilterTemplate>
-        </Column>
-        <Column T="Element" Field="Name" />
-        <Column T="Element" Field="Position" />
-        <Column T="Element" Field="Molar" Title="Molar mass" />
-        <Column T="Element" Field="Group" Title="Category" />
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Position" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <PropertyColumn Property="x => x.Group" Title="Category" />
     </Columns>
     <PagerContent>
         <MudDataGridPager T="Element" />
@@ -65,7 +65,7 @@
         _filterOpen = true;
     }
 
-    void SelectedChanged(bool value, Element item)
+    private void SelectedChanged(bool value, Element item)
     {
         if (value)
             _selectedItems.Add(item);
@@ -78,24 +78,24 @@
             _selectAll = false;
     }
 
-    void ClearFilter(FilterContext<Element> context)
+    private async Task ClearFilterAsync(FilterContext<Element> context)
     {
         _selectedItems = Elements.ToHashSet();
         _filterItems = Elements.ToHashSet();
         _icon = Icons.Material.Outlined.FilterAlt;
-        context.Actions.ClearFilter(_filterDefinition);
+        await context.Actions.ClearFilterAsync(_filterDefinition);
         _filterOpen = false;
     }
 
-    void ApplyFilter(FilterContext<Element> context)
+    private async Task ApplyFilterAsync(FilterContext<Element> context)
     {
         _filterItems = _selectedItems.ToHashSet();
         _icon = _filterItems.Count == Elements.Count() ? Icons.Material.Outlined.FilterAlt : Icons.Material.Filled.FilterAlt;
-        context.Actions.ApplyFilter(_filterDefinition);
+        await context.Actions.ApplyFilterAsync(_filterDefinition);
         _filterOpen = false;
     }
 
-    void SelectAll(bool value)
+    private void SelectAll(bool value)
     {
         _selectAll = value;
 

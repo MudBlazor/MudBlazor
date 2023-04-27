@@ -1,24 +1,19 @@
 @namespace MudBlazor.UnitTests.TestComponents
-@using System.Collections.ObjectModel
-<MudDataGrid @ref="dataGrid"
-             Items="@Fruits"
-             Sortable="true"
-             Filterable="true"
-             Hideable="true"
-             Groupable="true"
-             GroupExpanded="false">
+
+<MudDataGrid @ref="dataGrid" Items="@Fruits" Filterable="true" Hideable="true" Groupable="true"
+    GroupExpanded="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Fruits</MudText>
         <MudSpacer />
     </ToolBarContent>
     <Columns>
-        <Column T="Fruit" Field="Name" Title="Name" Filterable="false" Groupable="false" />
-        <Column T="Fruit" Field="Count" />
-        <Column T="Fruit" Field="Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
+        <PropertyColumn Property="x => x.Name" Title="Name" Filterable="false" Groupable="false" />
+        <PropertyColumn Property="x => x.Count" />
+        <PropertyColumn Property="x => x.Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
             <GroupTemplate>
                 <span style="font-weight:bold">Category: @context.Grouping.Key</span>
             </GroupTemplate>
-        </Column>
+        </PropertyColumn>
     </Columns>
 </MudDataGrid>
 
@@ -32,13 +27,12 @@
     MudDataGrid<Fruit> dataGrid;
     public record Fruit(string Name, int Count, string Category);
 
-    ObservableCollection<Fruit> Fruits { get; set; } =
-        new ObservableCollection<Fruit>()
-        {
-            new Fruit("Apple", 2, "Pome"),
-            new Fruit("Pear", 4, "Pome"),
-            new Fruit("Orange", 4, "Citrus")
-        };
+    List<Fruit> Fruits { get; set; } = new()
+    {
+        new Fruit("Apple", 2, "Pome"),
+        new Fruit("Pear", 4, "Pome"),
+        new Fruit("Orange", 4, "Citrus")
+    };
     
     Func<Fruit, object> _groupBy = x => 
     {

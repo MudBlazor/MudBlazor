@@ -4,48 +4,49 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
+#nullable enable
     public class CellContext<T>
     {
-        internal HashSet<T> selection;
-        internal HashSet<T> openHierarchies;
+        private readonly HashSet<T> _selection;
+
+        internal HashSet<T> OpenHierarchies { get; }
+
         public T Item { get; set; }
-        public CellActions Actions { get; internal set; }
+
+        public CellActions Actions { get; }
+
         public bool IsSelected
         {
             get
             {
-                if (selection != null)
-                {
-                    return selection.Contains(Item);
-                }
-
-                return false;
+                return _selection.Contains(Item);
             }
         }
 
         public CellContext(MudDataGrid<T> dataGrid, T item)
         {
-            selection = dataGrid.Selection;
-            openHierarchies = dataGrid._openHierarchies;
+            _selection = dataGrid.Selection;
+            OpenHierarchies = dataGrid._openHierarchies;
             Item = item;
-            Actions = new CellContext<T>.CellActions
+            Actions = new CellActions
             {
-                SetSelectedItem = async (x) => await dataGrid.SetSelectedItemAsync(x, item),
-                StartEditingItem = async () => await dataGrid.SetEditingItemAsync(item),
-                CancelEditingItem = async () => await dataGrid.CancelEditingItemAsync(),
-                ToggleHierarchyVisibilityForItem = async () => await dataGrid.ToggleHierarchyVisibilityAsync(item),
+                SetSelectedItemAsync = x => dataGrid.SetSelectedItemAsync(x, item),
+                StartEditingItemAsync = () => dataGrid.SetEditingItemAsync(item),
+                CancelEditingItemAsync = () => dataGrid.CancelEditingItemAsync(),
+                ToggleHierarchyVisibilityForItemAsync = () => dataGrid.ToggleHierarchyVisibilityAsync(item),
             };
         }
 
         public class CellActions
         {
-            public Action<bool> SetSelectedItem { get; internal set; }
-            public Action StartEditingItem { get; internal set; }
-            public Action CancelEditingItem { get; internal set; }
-            public Action ToggleHierarchyVisibilityForItem { get; internal set; }
+            public Func<bool, Task> SetSelectedItemAsync { get; init; } = null!;
+            public Func<Task> StartEditingItemAsync { get; init; } = null!;
+            public Func<Task> CancelEditingItemAsync { get; init; } = null!;
+            public Func<Task> ToggleHierarchyVisibilityForItemAsync { get; init; } = null!;
         }
     }
 }

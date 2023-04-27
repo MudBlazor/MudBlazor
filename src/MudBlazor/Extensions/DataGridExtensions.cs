@@ -7,32 +7,41 @@ using System.Linq;
 
 namespace MudBlazor
 {
+#nullable enable
     public static class DataGridExtensions
     {
         public static IEnumerable<T> OrderBySortDefinitions<T>(this IEnumerable<T> source, GridState<T> state)
-            => OrderBySortDefinitions(source, state?.SortDefinitions);
+            => OrderBySortDefinitions(source, state.SortDefinitions);
 
         public static IEnumerable<T> OrderBySortDefinitions<T>(this IEnumerable<T> source, ICollection<SortDefinition<T>> sortDefinitions)
         {
-            if (null == source || !source.Any())
-                return source;
+            //avoid multiple enumeration
+            var sourceArray = source as T[] ?? source.ToArray();
 
-            if (null == sortDefinitions || 0 == sortDefinitions.Count)
-                return source;
+            if (sourceArray.Length == 0)
+                return sourceArray;
 
-            IOrderedEnumerable<T> orderedEnumerable = null;
+            if (sortDefinitions.Count == 0)
+                return sourceArray;
+
+            IOrderedEnumerable<T>? orderedEnumerable = null;
 
             foreach (var sortDefinition in sortDefinitions)
             {
-                if (null == orderedEnumerable)
-                    orderedEnumerable = sortDefinition.Descending ? source.OrderByDescending(sortDefinition.SortFunc)
-                        : source.OrderBy(sortDefinition.SortFunc);
+                if (orderedEnumerable is null)
+                    orderedEnumerable = sortDefinition.Descending ? sourceArray.OrderByDescending(sortDefinition.SortFunc)
+                        : sourceArray.OrderBy(sortDefinition.SortFunc);
                 else
                     orderedEnumerable = sortDefinition.Descending ? orderedEnumerable.ThenByDescending(sortDefinition.SortFunc)
                         : orderedEnumerable.ThenBy(sortDefinition.SortFunc);
             }
 
             return orderedEnumerable ?? source;
+        }
+
+        public static Column<T>? GetColumnByPropertyName<T>(this MudDataGrid<T> dataGrid, string propertyName)
+        {
+            return dataGrid.RenderedColumns.FirstOrDefault(x => x.PropertyName == propertyName);
         }
     }
 }

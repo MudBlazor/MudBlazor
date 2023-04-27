@@ -7,10 +7,10 @@
     StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommittedItemChanges"
     Bordered="true" Dense="true" EditTrigger="@(_editTriggerRowClick ? DataGridEditTrigger.OnRowClick : DataGridEditTrigger.Manual)">
     <Columns>
-        <Column T="Element" Field="Number" Title="Nr" IsEditable="false" />
-        <Column T="Element" Field="Sign" />
-        <Column T="Element" Field="Name" />
-        <Column T="Element" Field="Position">
+        <PropertyColumn Property="x => x.Number" Title="Nr" IsEditable="false" />
+        <PropertyColumn Property="x => x.Sign" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Position">
             <EditTemplate>
                 <MudSelect @bind-Value="context.Item.Position" Required RequiredError="You must select a Position!!!" Margin="@Margin.Dense">
                     <MudSelectItem Value="0">zero</MudSelectItem>
@@ -18,13 +18,13 @@
                     <MudSelectItem Value="17">seventeen</MudSelectItem>
                 </MudSelect>
             </EditTemplate>
-        </Column>
-        <Column T="Element" Field="Molar" Title="Molar mass" />
-        <Column T="Element" Hidden="@(_isCellEditMode || _readOnly || _editTriggerRowClick)" CellClass="d-flex justify-end">
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <TemplateColumn Hidden="@(_isCellEditMode || _readOnly || _editTriggerRowClick)" CellClass="d-flex justify-end">
             <CellTemplate>
-                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItem" />
+                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
             </CellTemplate>
-        </Column>
+        </TemplateColumn>
     </Columns>
 </MudDataGrid>
 

@@ -87,7 +87,7 @@
             }
             else if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
             {
-                @((MarkupString)panel.Text)
+                @panel.Text
             }
             else if (String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
             {
@@ -96,7 +96,7 @@
             else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
             {
                 <MudIcon Icon="@panel.Icon" Color="@IconColor" Class="mud-tab-icon-text" />
-                @((MarkupString)panel.Text)
+                @panel.Text
             }
             @if (panel.BadgeData != null || panel.BadgeDot)
             {

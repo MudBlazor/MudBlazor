@@ -5,10 +5,10 @@
 <MudGrid>
     <MudItem xs="12" sm="7">
         <MudPaper Class="pa-4">
-            <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                    <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!"/>
+            <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" ReadOnly="false">
+                <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!" ReadOnly="true" />
                     <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
-                                  Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})"/>
+                              Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" ReadOnly="true" />
                     <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="pwField1"
                                   InputType="InputType.Password"
                                   Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
@@ -30,7 +30,7 @@
         </MudPaper>
         <MudPaper Class="pa-4 mt-4">
             <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" OnClick="@(()=>form.Validate())">Validate</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.Reset())" Class="mx-2">Reset</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>form.ResetAsync())" Class="mx-2">Reset</MudButton>
             <MudButton Variant="Variant.Filled" DisableElevation="true" OnClick="@(()=>form.ResetValidation())">Reset Validation</MudButton>
         </MudPaper>
     </MudItem>

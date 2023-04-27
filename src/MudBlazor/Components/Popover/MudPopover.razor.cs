@@ -3,14 +3,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudPopover : MudComponentBase, IAsyncDisposable
     {
-        [Inject] public IMudPopoverService Service { get; set; }
+        private bool _afterFirstRender;
+
+        [Inject] 
+        public IMudPopoverService Service { get; set; }
 
         protected string PopoverClass =>
            new CssBuilder("mud-popover")
@@ -45,7 +47,8 @@ namespace MudBlazor
             };
         }
 
-        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")] 
+        public bool RightToLeft { get; set; }
 
         /// <summary>
         /// Sets the maxheight the popover can have when open.
@@ -108,7 +111,8 @@ namespace MudBlazor
         /// </summary>
         /// 
         [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
-        [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
+        [Parameter] 
+        public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// Set the anchor point on the element of the popover.
@@ -171,9 +175,9 @@ namespace MudBlazor
             base.OnInitialized();
         }
 
-        protected override void OnParametersSet()
+        protected override async Task OnParametersSetAsync()
         {
-            base.OnParametersSet();
+            await base.OnParametersSetAsync();
 
             // henon: this change by PR #3776 caused problems on BSS (#4303)
             //// Only update the fragment if the popover is currently shown or will show
@@ -181,15 +185,20 @@ namespace MudBlazor
             //if (!_handler.ShowContent && !Open)
             //    return;
 
-            _handler.UpdateFragment(ChildContent, this, PopoverClass, PopoverStyles, Open);
+            if (_afterFirstRender)
+            {
+                await _handler.UpdateFragmentAsync(ChildContent, this, PopoverClass, PopoverStyles, Open);
+            }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender == true)
+            if (firstRender)
             {
                 await _handler.Initialize();
                 await Service.InitializeIfNeeded();
+                await _handler.UpdateFragmentAsync(ChildContent, this, PopoverClass, PopoverStyles, Open);
+                _afterFirstRender = true;
             }
 
             await base.OnAfterRenderAsync(firstRender);

@@ -2,6 +2,11 @@
 @inherits MudTableBase
 @using MudBlazor.Utilities
 @typeparam T
+
+
+
+@(ClearFilterCache()) @*Clear filtered items cache for this render*@
+
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
 @if (Items != null || ServerData != null)
 {
@@ -197,7 +202,7 @@
          RenderFragment<T> child() => item =>
              @<text>
              @{
-                var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).AddClass(customClass, ! string.IsNullOrEmpty("mud-table-row-group-indented-1")).Build();
+                var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).AddClass(customClass, !string.IsNullOrEmpty(customClass)).Build();
                 var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
              } 
              <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="IsEditable" IsExpandable="isExpandable"

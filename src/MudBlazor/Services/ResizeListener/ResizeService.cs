@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +7,7 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor.Services
 {
+#nullable enable
     /// <summary>
     /// This service listens to browser resize events and allows you to react to a changing window size in Blazor
     /// </summary>
@@ -25,16 +25,14 @@ namespace MudBlazor.Services
         /// <param name="browserWindowSizeProvider"></param>
         /// <param name="options"></param>
         [DynamicDependency(nameof(RaiseOnResized))]
-        public ResizeService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null) :
+        public ResizeService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions>? options = null) :
             base(jsRuntime)
         {
-            this._options = options?.Value ?? new ResizeOptions();
-            this._browserWindowSizeProvider = browserWindowSizeProvider;
+            _options = options?.Value ?? new ResizeOptions();
+            _browserWindowSizeProvider = browserWindowSizeProvider;
         }
 
-        /// <summary>
-        /// Get the current BrowserWindowSize, this includes the Height and Width of the document.
-        /// </summary>
+        /// <inheritdoc />
         public ValueTask<BrowserWindowSize> GetBrowserWindowSize() =>
             _browserWindowSizeProvider.GetBrowserWindowSize();
 
@@ -47,26 +45,25 @@ namespace MudBlazor.Services
         [JSInvokable]
         public void RaiseOnResized(BrowserWindowSize browserWindowSize, Breakpoint _, Guid optionId)
         {
-            if (Listeners.ContainsKey(optionId) == false) { return; }
-
-            var listenerInfo = Listeners[optionId];
-            listenerInfo.InvokeCallbacks(browserWindowSize);
+            if (Listeners.TryGetValue(optionId, out var listenerInfo))
+            {
+                listenerInfo.InvokeCallbacks(browserWindowSize);
+            }
         }
 
-        /// <summary>
-        /// Subscribe to size changes of the browser window. Default ResizeOptions will be used
-        /// </summary>
-        /// <param name="callback">The method (callbacK) that is invoke as soon as the size of the window has changed</param>
-        /// <returns>The subscription id. This id is needed for unscribe </returns>
-        public async Task<Guid> Subscribe(Action<BrowserWindowSize> callback) => await Subscribe(callback, _options);
+        /// <inheritdoc />
+        [Obsolete($"Use {nameof(SubscribeAsync)} instead. This will be removed in v7.")]
+        public Task<Guid> Subscribe(Action<BrowserWindowSize> callback) => SubscribeAsync(callback, _options);
 
-        /// <summary>
-        /// Subscribe to size changes of the browser window using the provided options
-        /// </summary>
-        /// <param name="callback">The method (callbacK) that is invoke as soon as the size of the window has changed</param>
-        /// <param name="options"></param>
-        /// <returns>The subscription id. This id is needed for unscribe</returns>
-        public async Task<Guid> Subscribe(Action<BrowserWindowSize> callback, ResizeOptions options)
+        /// <inheritdoc />
+        public Task<Guid> SubscribeAsync(Action<BrowserWindowSize> callback) => SubscribeAsync(callback, _options);
+
+        /// <inheritdoc />
+        [Obsolete($"Use {nameof(SubscribeAsync)} instead. This will be removed in v7.")]
+        public Task<Guid> Subscribe(Action<BrowserWindowSize> callback, ResizeOptions? options) => SubscribeAsync(callback, options);
+
+        /// <inheritdoc />
+        public async Task<Guid> SubscribeAsync(Action<BrowserWindowSize> callback, ResizeOptions? options)
         {
             if (callback is null)
             {
@@ -75,32 +72,34 @@ namespace MudBlazor.Services
 
             options ??= _options;
 
-            if (DotNetRef == null)
+            DotNetRef ??= DotNetObjectReference.Create(this);
+
+            //We capture both key and value, because someone might unsubscribe at meantime
+            //This way we do not need to check if key exist and do look up the dictionary again later
+            var existingOptionKeyValuePair = Listeners.FirstOrDefault(x => x.Value.Option == options);
+
+            //better way than existingOptionKeyValuePair.Equals(default) to avoid boxing
+            //we use ValueTuple to compare if KeyValuePair struct is default
+            if ((existingOptionKeyValuePair.Key, existingOptionKeyValuePair.Value) == default)
             {
-                DotNetRef = DotNetObjectReference.Create(this);
+                return await CreateSubscriptionAsync(callback, options);
             }
 
-            var existingOptionId = Listeners.Where(x => x.Value.Option == options).Select(x => x.Key).FirstOrDefault();
+            var subscriptionId = existingOptionKeyValuePair.Value.AddSubscription(callback);
+            return subscriptionId;
+        }
 
-            if (existingOptionId == default)
-            {
-                var subscriptionInfo = new ResizeServiceSubscriptionInfo(options);
-                var subscriptionId = subscriptionInfo.AddSubscription(callback);
-                var listenerId = Guid.NewGuid();
+        private async Task<Guid> CreateSubscriptionAsync(Action<BrowserWindowSize> callback, ResizeOptions options)
+        {
+            var subscriptionInfo = new ResizeServiceSubscriptionInfo(options);
+            var subscriptionId = subscriptionInfo.AddSubscription(callback);
+            var listenerId = Guid.NewGuid();
 
-                Listeners.Add(listenerId, subscriptionInfo);
+            Listeners.TryAdd(listenerId, subscriptionInfo);
 
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling($"mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
+            await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.listenForResize", DotNetRef, options, listenerId);
 
-                return subscriptionId;
-            }
-            else
-            {
-                var entry = Listeners[existingOptionId];
-                var subscriptionId = entry.AddSubscription(callback);
-
-                return subscriptionId;
-            }
+            return subscriptionId;
         }
     }
 
@@ -115,23 +114,48 @@ namespace MudBlazor.Services
         /// <summary>
         /// Subscribe to size changes of the browser window. Default ResizeOptions will be used
         /// </summary>
-        /// <param name="callback">The method (callbacK) that is invoke as soon as the size of the window has changed</param>
-        /// <returns>The subscription id. This id is needed for unscribe </returns>
+        /// <param name="callback">The method (callback) that is invoke as soon as the size of the window has changed</param>
+        /// <returns>The subscription id. This id is needed for unsubscribe</returns>
+        [Obsolete($"Use {nameof(SubscribeAsync)} instead. This will be removed in v7.")]
         Task<Guid> Subscribe(Action<BrowserWindowSize> callback);
+
+        /// <summary>
+        /// Subscribe to size changes of the browser window. Default ResizeOptions will be used
+        /// </summary>
+        /// <param name="callback">The method (callback) that is invoke as soon as the size of the window has changed</param>
+        /// <returns>The subscription id. This id is needed for unsubscribe</returns>
+        Task<Guid> SubscribeAsync(Action<BrowserWindowSize> callback);
 
         /// <summary>
         /// Subscribe to size changes of the browser window using the provided options
         /// </summary>
-        /// <param name="callback">The method (callbacK) that is invoke as soon as the size of the window has changed</param>
+        /// <param name="callback">The method (callback) that is invoke as soon as the size of the window has changed</param>
         /// <param name="options">The options used to subscribe to changes</param>
-        /// <returns>The subscription id. This id is needed for unscribe</returns>
-        Task<Guid> Subscribe(Action<BrowserWindowSize> callback, ResizeOptions options);
+        /// <returns>The subscription id. This id is needed for unsubscribe</returns>
+        [Obsolete($"Use {nameof(SubscribeAsync)} instead. This will be removed in v7.")]
+        Task<Guid> Subscribe(Action<BrowserWindowSize> callback, ResizeOptions? options);
+
+        /// <summary>
+        /// Subscribe to size changes of the browser window using the provided options
+        /// </summary>
+        /// <param name="callback">The method (callback) that is invoke as soon as the size of the window has changed</param>
+        /// <param name="options">The options used to subscribe to changes</param>
+        /// <returns>The subscription id. This id is needed for unsubscribe</returns>
+        Task<Guid> SubscribeAsync(Action<BrowserWindowSize> callback, ResizeOptions? options);
 
         /// <summary>
         /// Used for cancel the subscription to the resize event.
         /// </summary>
         /// <param name="subscriptionId">The subscription id (return of subscribe) to cancel</param>
         /// <returns>True if the subscription could be cancel, false otherwise</returns>
+        [Obsolete($"Use {nameof(UnsubscribeAsync)} instead. This will be removed in v7.")]
         Task<bool> Unsubscribe(Guid subscriptionId);
+
+        /// <summary>
+        /// Used for cancel the subscription to the resize event.
+        /// </summary>
+        /// <param name="subscriptionId">The subscription id (return of subscribe) to cancel</param>
+        /// <returns>True if the subscription could be cancel, false otherwise</returns>
+        Task<bool> UnsubscribeAsync(Guid subscriptionId);
     }
 }

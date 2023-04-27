@@ -21,8 +21,8 @@
              HelperText="@HelperText" 
              HelperTextOnFocus="@HelperTextOnFocus" 
              Variant="@Variant" 
-             ReadOnly="@(!Editable || ReadOnly)" 
-             Disabled="@Disabled"
+             ReadOnly="@(!Editable || GetReadOnlyState())" 
+             Disabled="@GetDisabledState()"
              OnAdornmentClick="ToggleState" 
              Adornment="@Adornment"
              AdornmentIcon="@AdornmentIcon" 
@@ -34,7 +34,7 @@
              RequiredError="@RequiredError" 
              Error="@Error" 
              ErrorText="@ErrorText"
-             Clearable="@(ReadOnly ? false : Clearable)"
+             Clearable="@(GetReadOnlyState() ? false : Clearable)"
              OnClearButtonClick="@(() => Clear())"
              @onclick="@(() => { if (!Editable) ToggleState(); })" 
              @onkeydown="HandleKeyDown" 
@@ -53,7 +53,7 @@
 					}
                 </CascadingValue>
             }
-            @if (IsOpen && PickerVariant == PickerVariant.Inline)
+            @if (PickerVariant == PickerVariant.Inline)
             {
 				<MudPopover Open="IsOpen" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" OverflowBehavior="OverflowBehavior.FlipOnOpen" Paper="false">
 				   <div @ref="_pickerInlineRef" class="@PickerInlineClass">

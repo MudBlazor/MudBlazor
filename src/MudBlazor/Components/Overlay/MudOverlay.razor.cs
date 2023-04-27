@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -6,7 +7,8 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudOverlay : MudComponentBase, IDisposable
+#nullable enable
+    public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     {
         private bool _visible;
 
@@ -24,18 +26,19 @@ namespace MudBlazor
 
         protected string Styles =>
             new StyleBuilder()
-            .AddStyle("z-index", $"{ZIndex}", ZIndex != 5)
-            .AddStyle(Style)
-            .Build();
+                .AddStyle("z-index", $"{ZIndex}", ZIndex != 5)
+                .AddStyle(Style)
+                .Build();
 
-        [Inject] public IScrollManager ScrollManager { get; set; }
+        [Inject]
+        public IScrollManager ScrollManager { get; set; } = null!;
 
         /// <summary>
         /// Child content of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// Fires when Visible changes
@@ -82,14 +85,14 @@ namespace MudBlazor
         public string LockScrollClass { get; set; } = "scroll-locked";
 
         /// <summary>
-        /// If true applys the themes dark overlay color.
+        /// If true applies the themes dark overlay color.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
         public bool DarkBackground { get; set; }
 
         /// <summary>
-        /// If true applys the themes light overlay color.
+        /// If true applies the themes light overlay color.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
@@ -114,25 +117,26 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Overlay.ClickAction)]
-        public object CommandParameter { get; set; }
+        public object? CommandParameter { get; set; }
 
         /// <summary>
         /// Command executed when the user clicks on an element.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Overlay.ClickAction)]
-        public ICommand Command { get; set; }
+        public ICommand? Command { get; set; }
 
         /// <summary>
         /// Fired when the overlay is clicked
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
-        protected internal void OnClickHandler(MouseEventArgs ev)
+
+        protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (AutoClose)
                 Visible = false;
-            OnClick.InvokeAsync(ev);
+            await OnClick.InvokeAsync(ev);
             if (Command?.CanExecute(CommandParameter) ?? false)
             {
                 Command.Execute(CommandParameter);
@@ -140,35 +144,33 @@ namespace MudBlazor
         }
 
         //if not visible or CSS `position:absolute`, don't lock scroll
-        protected override void OnAfterRender(bool firstTime)
+        protected override async Task OnAfterRenderAsync(bool firstTime)
         {
             if (!LockScroll || Absolute)
                 return;
 
             if (Visible)
-                BlockScroll();
+                await BlockScrollAsync();
             else
-                UnblockScroll();
-
+                await UnblockScrollAsync();
         }
 
         //locks the scroll attaching a CSS class to the specified element, in this case the body
-        void BlockScroll()
+        private ValueTask BlockScrollAsync()
         {
-            ScrollManager.LockScrollAsync("body", LockScrollClass);
+            return ScrollManager.LockScrollAsync("body", LockScrollClass);
         }
 
         //removes the CSS class that prevented scrolling
-        void UnblockScroll()
+        private ValueTask UnblockScrollAsync()
         {
-            ScrollManager.UnlockScrollAsync("body", LockScrollClass);
+            return ScrollManager.UnlockScrollAsync("body", LockScrollClass);
         }
 
         //When disposing the overlay, remove the class that prevented scrolling
-        public void Dispose()
+        public ValueTask DisposeAsync()
         {
-            UnblockScroll();
+            return UnblockScrollAsync();
         }
-
     }
 }

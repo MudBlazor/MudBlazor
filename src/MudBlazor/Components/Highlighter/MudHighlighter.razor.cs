@@ -4,36 +4,38 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using static MudBlazor.Components.Highlighter.Splitter;
 
 namespace MudBlazor;
 
+#nullable enable
 public partial class MudHighlighter : MudComponentBase
 {
     private Memory<string> _fragments;
-    private string _regex;
+    private string? _regex;
 
     /// <summary>
     /// The whole text in which a fragment will be highlighted
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Highlighter.Behavior)]
-    public string Text { get; set; }
+    public string? Text { get; set; }
 
     /// <summary>
     /// The fragment of text to be highlighted
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Highlighter.Behavior)]
-    public string HighlightedText { get; set; }
+    public string? HighlightedText { get; set; }
 
     /// <summary>
     /// The fragments of text to be highlighted
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Highlighter.Behavior)]
-    public IEnumerable<string> HighlightedTexts { get; set; }
+    public IEnumerable<string> HighlightedTexts { get; set; } = Enumerable.Empty<string>();
 
     /// <summary>
     /// Whether or not the highlighted text is case sensitive

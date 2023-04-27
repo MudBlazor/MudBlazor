@@ -4,20 +4,22 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    [RequiresUnreferencedCode(CodeMessage.SerializationUnreferencedCodeMessage)]
-    public partial class Column<T> : MudComponentBase
+    public abstract partial class Column<T> : MudComponentBase
     {
+        private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
+
+        internal readonly Guid uid = Guid.NewGuid();
+
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
 
         //[CascadingParameter(Name = "HeaderCell")] public HeaderCell<T> HeaderCell { get; set; }
@@ -30,14 +32,13 @@ namespace MudBlazor
         /// <summary>
         /// Specifies the name of the object's property bound to the column
         /// </summary>
-        [Parameter] public string Field { get; set; }
+        //[Parameter] public string Field { get; set; }
 
-        [Parameter] public Type FieldType { get; set; }
+        //[Parameter] public Type FieldType { get; set; }
         [Parameter] public string Title { get; set; }
         [Parameter] public bool HideSmall { get; set; }
         [Parameter] public int FooterColSpan { get; set; } = 1;
         [Parameter] public int HeaderColSpan { get; set; } = 1;
-        [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public RenderFragment<HeaderContext<T>> HeaderTemplate { get; set; }
         [Parameter] public RenderFragment<CellContext<T>> CellTemplate { get; set; }
         [Parameter] public RenderFragment<FooterContext<T>> FooterTemplate { get; set; }
@@ -79,6 +80,13 @@ namespace MudBlazor
         [Parameter] public bool? ShowColumnOptions { get; set; }
 
         [Parameter]
+        public IComparer<object> Comparer
+        {
+            get => _comparer;
+            set => _comparer = value;
+        }
+
+        [Parameter]
         public Func<T, object> SortBy
         {
             get
@@ -90,7 +98,6 @@ namespace MudBlazor
                 _sortBy = value;
             }
         }
-
         [Parameter] public SortDirection InitialDirection { get; set; } = SortDirection.None;
         [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
 
@@ -183,17 +190,7 @@ namespace MudBlazor
         {
             get
             {
-                if (FieldType != null)
-                    return FieldType;
-
-                if (Field == null)
-                    return typeof(object);
-
-                if (typeof(T) == typeof(IDictionary<string, object>) && FieldType == null)
-                    throw new ArgumentNullException(nameof(FieldType));
-
-                var t = typeof(T).GetProperty(Field).PropertyType;
-                return Nullable.GetUnderlyingType(t) ?? t;
+                return PropertyType;
             }
         }
 
@@ -207,11 +204,11 @@ namespace MudBlazor
                 {
                     // We need to get the actual type here so we need to look at actual data.
                     // get the first item where we have a non-null value in the field to be filtered.
-                    var first = DataGrid.Items.FirstOrDefault(x => ((IDictionary<string, object>)x)[Field] != null);
+                    var first = DataGrid.Items.FirstOrDefault(x => ((IDictionary<string, object>)x)[PropertyName] != null);
 
                     if (first != null)
                     {
-                        return ((IDictionary<string, object>)first)[Field].GetType();
+                        return ((IDictionary<string, object>)first)[PropertyName].GetType();
                     }
                     else
                     {
@@ -227,15 +224,7 @@ namespace MudBlazor
         {
             get
             {
-                return FilterOperator.NumericTypes.Contains(dataType);
-            }
-        }
-
-        internal string computedTitle
-        {
-            get
-            {
-                return Title ?? Field;
+                return TypeIdentifier.IsNumber(PropertyType);
             }
         }
 
@@ -260,20 +249,43 @@ namespace MudBlazor
         internal int SortIndex { get; set; } = -1;
         internal HeaderCell<T> HeaderCell { get; set; }
 
+        private IComparer<object> _comparer = null;
         private Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
         internal HeaderContext<T> headerContext;
-        internal FilterContext<T> filterContext;
+        private FilterContext<T> filterContext;
         internal FooterContext<T> footerContext;
 
-        [UnconditionalSuppressMessage("Trimming", "IL2046: 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.", Justification = "Suppressing because we annotating the whole component with RequiresUnreferencedCodeAttribute for information that generic type must be preserved.")]
+        public FilterContext<T> FilterContext
+        {
+            get
+            {
+                // Make sure that when we access filterContext properties, they have been defined...
+                if (filterContext.FilterDefinition == null)
+                {
+                    var operators = FilterOperator.GetOperatorByDataType(PropertyType);
+                    filterContext.FilterDefinition = new FilterDefinition<T>()
+                    {
+                        DataGrid = DataGrid,
+                        //Field = PropertyName,
+                        //FieldType = PropertyType,
+                        Title = Title,
+                        Operator = operators.FirstOrDefault(),
+                        PropertyExpression = PropertyExpression,
+                        Column = this,
+                    };
+                }
+
+                return filterContext;
+            }
+        }
+
         protected override void OnInitialized()
         {
             if (!Hideable.HasValue)
                 Hideable = DataGrid?.Hideable;
 
             groupBy = GroupBy;
-            CompileGroupBy();
 
             if (groupable && Grouping)
                 grouping = Grouping;
@@ -285,19 +297,22 @@ namespace MudBlazor
             headerContext = new HeaderContext<T>(DataGrid);
 
             // Add the FilterContext
-            if (filterable)
-            {
-                filterContext = new FilterContext<T>(DataGrid);
-                var operators = FilterOperator.GetOperatorByDataType(dataType);
-                filterContext.FilterDefinition = new FilterDefinition<T>()
-                {
-                    DataGrid = this.DataGrid,
-                    Field = Field,
-                    FieldType = FieldType,
-                    Title = Title,
-                    Operator = operators.FirstOrDefault()
-                };
-            }
+            //if (filterable)
+            //{
+            //    filterContext = new FilterContext<T>(DataGrid);
+            //    var operators = FilterOperator.GetOperatorByDataType(dataType);
+            //    filterContext.FilterDefinition = new FilterDefinition<T>()
+            //    {
+            //        DataGrid = this.DataGrid,
+            //        Field = PropertyName,
+            //        FieldType = dataType,
+            //        Title = Title,
+            //        Operator = operators.FirstOrDefault()
+            //    };
+            //}
+
+            // Add the FilterContext
+            filterContext = new FilterContext<T>(DataGrid);
 
             // Add the FooterContext
             footerContext = new FooterContext<T>(DataGrid);
@@ -307,41 +322,12 @@ namespace MudBlazor
         {
             if (null == _sortBy)
             {
-                var type = typeof(T);
-
-                // set the default SortBy
-                if (type == typeof(IDictionary<string, object>))
+                if (this is TemplateColumn<T>)
                 {
-                    if (FieldType == null)
-                        throw new ArgumentNullException(nameof(FieldType));
-
-                    var innerType = innerDataType;
-
-                    if (innerType == typeof(JsonElement))
-                    {
-                        _sortBy = x =>
-                        {
-                            var json = (JsonElement)(x as IDictionary<string, object>)[Field];
-
-                            if (FieldType == typeof(string))
-                                return json.GetString();
-                            else if (isNumber)
-                                return json.GetDouble();
-                            else
-                                return json.GetRawText();
-                        };
-                    }
-                    else
-                    {
-                        _sortBy = x => Convert.ChangeType((x as IDictionary<string, object>)[Field], FieldType);
-                    }
+                    _sortBy = x => true;
                 }
                 else
-                {
-                    var parameter = Expression.Parameter(type, "x");
-                    var field = Expression.Convert(Expression.Property(parameter, type.GetProperty(Field)), typeof(object));
-                    _sortBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
-                }
+                    _sortBy = x => PropertyFunc(x);
             }
 
             return _sortBy;
@@ -349,20 +335,17 @@ namespace MudBlazor
 
         internal void CompileGroupBy()
         {
-            if (groupBy == null && !string.IsNullOrWhiteSpace(Field))
+            if (groupBy == null && !string.IsNullOrWhiteSpace(PropertyName))
             {
                 var type = typeof(T);
-
                 // set the default GroupBy
                 if (type == typeof(IDictionary<string, object>))
                 {
-                    groupBy = x => (x as IDictionary<string, object>)[Field];
+                    groupBy = x => (x as IDictionary<string, object>)[PropertyName];
                 }
                 else
                 {
-                    var parameter = Expression.Parameter(type, "x");
-                    var field = Expression.Convert(Expression.Property(parameter, type.GetProperty(Field)), typeof(object));
-                    groupBy = Expression.Lambda<Func<T, object>>(field, parameter).Compile();
+                    groupBy = x => PropertyFunc(x);
                 }
             }
         }
@@ -401,7 +384,37 @@ namespace MudBlazor
         {
             Hidden = !Hidden;
             await HiddenChanged.InvokeAsync(Hidden);
-            DataGrid.ExternalStateHasChanged();
+            ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
+
+
+        #region Abstract Members
+
+#nullable enable
+        protected internal virtual LambdaExpression? PropertyExpression { get; }
+#nullable disable
+
+        protected internal virtual Func<T, bool> GetFilterExpression()
+        {
+            return x => true;
+        }
+
+        public virtual string PropertyName { get; }
+
+#nullable enable
+        protected internal virtual string? ContentFormat { get; }
+#nullable disable
+
+        protected internal abstract object CellContent(T item);
+
+        protected internal abstract object PropertyFunc(T item);
+
+        protected internal virtual Type PropertyType { get; }
+
+        protected internal virtual string FullPropertyName { get; }
+
+        protected internal abstract void SetProperty(object item, object value);
+
+        #endregion
     }
 }

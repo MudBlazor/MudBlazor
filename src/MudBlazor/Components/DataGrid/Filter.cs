@@ -3,81 +3,45 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MudBlazor
 {
+#nullable enable
     internal class Filter<T>
     {
         private readonly MudDataGrid<T> _dataGrid;
         private readonly FilterDefinition<T> _filterDefinition;
-        private readonly Column<T> _column;
+        private readonly Column<T>? _column;
 
-        internal string _valueString;
+        internal string? _valueString;
         internal double? _valueNumber;
-        internal Enum _valueEnum = null;
+        internal Enum? _valueEnum;
         internal bool? _valueBool;
         internal DateTime? _valueDate;
         internal TimeSpan? _valueTime;
 
-        internal Type dataType
-        {
-            get
-            {
-                if (_column != null)
-                    return _column.dataType;
+        internal Column<T>? FilterColumn =>
+            _column ?? (_dataGrid.RenderedColumns?.FirstOrDefault(c => c.PropertyName == _filterDefinition.Column?.PropertyName));
 
-                if (_filterDefinition.FieldType != null)
-                    return _filterDefinition.FieldType;
-
-                if (_filterDefinition.Field == null)
-                    return typeof(object);
-
-                if (typeof(T) == typeof(IDictionary<string, object>) && _filterDefinition.FieldType == null)
-                    throw new ArgumentNullException(nameof(_filterDefinition.FieldType));
-
-                var t = typeof(T).GetProperty(_filterDefinition.Field).PropertyType;
-                return Nullable.GetUnderlyingType(t) ?? t;
-            }
-        }
-        internal bool isNumber
-        {
-            get
-            {
-                return FilterOperator.IsNumber(dataType);
-            }
-        }
-        internal bool isEnum
-        {
-            get
-            {
-                return FilterOperator.IsEnum(dataType);
-            }
-        }
-
-        internal Column<T> filterColumn =>
-            _column != null
-                ? _column
-                : _dataGrid.RenderedColumns?.FirstOrDefault(c => c.Field == _filterDefinition.Field);
-
-        public Filter(MudDataGrid<T> dataGrid, FilterDefinition<T> filterDefinition, Column<T> column)
+        public Filter(MudDataGrid<T> dataGrid, FilterDefinition<T> filterDefinition, Column<T>? column)
         {
             _dataGrid = dataGrid;
             _filterDefinition = filterDefinition;
             _column = column;
 
-            if (dataType == typeof(string))
-                _valueString = _filterDefinition.Value == null ? null : _filterDefinition.Value.ToString();
-            else if (isNumber)
+            var fieldType = _filterDefinition.FieldType;
+
+            if (fieldType.IsString)
+                _valueString = _filterDefinition.Value?.ToString();
+            else if (fieldType.IsNumber)
                 _valueNumber = _filterDefinition.Value == null ? null : Convert.ToDouble(_filterDefinition.Value);
-            else if (isEnum)
-                _valueEnum = _filterDefinition.Value == null ? null : (Enum)_filterDefinition.Value;
-            else if (dataType == typeof(bool))
+            else if (fieldType.IsEnum)
+                _valueEnum = (Enum?)_filterDefinition.Value;
+            else if (fieldType.IsBoolean)
                 _valueBool = _filterDefinition.Value == null ? null : Convert.ToBoolean(_filterDefinition.Value);
-            else if (dataType == typeof(DateTime) || dataType == typeof(DateTime?))
+            else if (fieldType.IsDateTime)
             {
                 var dateTime = Convert.ToDateTime(_filterDefinition.Value);
                 _valueDate = _filterDefinition.Value == null ? null : dateTime;
@@ -85,15 +49,18 @@ namespace MudBlazor
             }
         }
 
-        internal void RemoveFilter()
+        internal async Task RemoveFilterAsync()
         {
-            _dataGrid.RemoveFilter(_filterDefinition.Id);
+            await _dataGrid.RemoveFilterAsync(_filterDefinition.Id);
         }
 
-        internal void FieldChanged(string field)
+        internal void FieldChanged(Column<T> column)
         {
-            _filterDefinition.Field = field;
-            var operators = FilterOperator.GetOperatorByDataType(dataType);
+            _filterDefinition.Column = column;
+            //_filterDefinition.Field = column.PropertyName;
+            //_filterDefinition.FieldType = column.PropertyType;
+            _filterDefinition.PropertyExpression = column.PropertyExpression;
+            var operators = FilterOperator.GetOperatorByDataType(column.PropertyType);
             _filterDefinition.Operator = operators.FirstOrDefault();
             _filterDefinition.Value = null;
         }
@@ -130,20 +97,20 @@ namespace MudBlazor
         {
             _valueDate = value;
 
-            if (value != null)
+            if (value is not null)
             {
                 var date = value.Value.Date;
 
                 // get the time component and add it to the date.
-                if (_valueTime != null)
+                if (_valueTime is not null)
                 {
-                    date.Add(_valueTime.Value);
+                    date = date.Add(_valueTime.Value);
                 }
 
                 _filterDefinition.Value = date;
             }
             else
-                _filterDefinition.Value = value;
+                _filterDefinition.Value = null;
 
             _dataGrid.GroupItems();
         }
@@ -152,13 +119,12 @@ namespace MudBlazor
         {
             _valueTime = value;
 
-            if (_valueDate != null)
+            if (_valueDate is not null)
             {
                 var date = _valueDate.Value.Date;
 
-
                 // get the time component and add it to the date.
-                if (_valueTime != null)
+                if (_valueTime is not null)
                 {
                     date = date.Add(_valueTime.Value);
                 }
@@ -168,6 +134,5 @@ namespace MudBlazor
 
             _dataGrid.GroupItems();
         }
-
     }
 }
