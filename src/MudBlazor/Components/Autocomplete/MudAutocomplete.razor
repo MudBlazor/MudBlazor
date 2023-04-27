@@ -38,10 +38,10 @@
                 }
 
                 <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
-                    @if (ListStartTemplate != null)
+                    @if (BeforeItemsTemplate != null)
                     {
                         <div class="pa-1">
-                            @ListStartTemplate
+                            @BeforeItemsTemplate
                         </div>
                     }
                     @if (ProgressIndicatorInPopoverTemplate != null && IsLoading)
@@ -93,10 +93,10 @@
                             @NoItemsTemplate
                         </div>
                     }
-                    @if (ListEndTemplate != null)
+                    @if (AfterItemsTemplate != null)
                     {
                         <div class="pa-1">
-                            @ListEndTemplate
+                            @AfterItemsTemplate
                         </div>
                     }
                 </MudPopover>

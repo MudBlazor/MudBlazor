@@ -2,9 +2,9 @@
 <MudPopoverProvider></MudPopoverProvider>
 
 <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" MaxItems="10">
-    <ListStartTemplate>
+    <BeforeItemsTemplate>
         <MudText>StartList_Content</MudText>
-    </ListStartTemplate>
+    </BeforeItemsTemplate>
 </MudAutocomplete>
 
 @code {

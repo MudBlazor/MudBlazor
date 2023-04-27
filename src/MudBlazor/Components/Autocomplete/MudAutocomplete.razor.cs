@@ -269,14 +269,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public RenderFragment ListStartTemplate { get; set; }
+        public RenderFragment BeforeItemsTemplate { get; set; }
 
         /// <summary>
         /// Optional presentation template for when you need to section to always show at the end in the drop down
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public RenderFragment ListEndTemplate { get; set; }
+        public RenderFragment AfterItemsTemplate { get; set; }
 
         /// <summary>
         /// Optional template for progress indicator
