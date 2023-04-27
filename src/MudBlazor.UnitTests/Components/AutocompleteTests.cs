@@ -1213,7 +1213,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Should_LoadListStartWhenSet()
         {
-            var comp = Context.RenderComponent<AutocompleteListEndRendersTest>();
+            var comp = Context.RenderComponent<AutocompleteListStartRendersTest>();
 
             var inputControl = comp.Find("div.mud-input-control");
             inputControl.Click();
