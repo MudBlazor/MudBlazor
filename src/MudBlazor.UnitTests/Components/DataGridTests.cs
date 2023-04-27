@@ -120,6 +120,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
             dataGrid.Render();
+            dataGrid.Instance.DropContainerHasChanged();
             // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
             dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
         }
@@ -620,7 +621,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
             dataGrid.Render();
-
+            dataGrid.Instance.DropContainerHasChanged();
             // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
             dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
         }
@@ -3096,14 +3097,17 @@ namespace MudBlazor.UnitTests.Components
             var parameters = new List<ComponentParameter>();
             parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.Filterable), false));
             dataGrid.SetParametersAndRender(parameters.ToArray());
+            dataGrid.Instance.DropContainerHasChanged();
             dataGrid.FindAll(".filter-button").Should().BeEmpty();
             parameters.Clear();
             parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.Filterable), true));
             dataGrid.SetParametersAndRender(parameters.ToArray());
+            dataGrid.Instance.DropContainerHasChanged();
             dataGrid.FindAll(".filter-button").Should().NotBeEmpty();
             parameters.Clear();
             parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.ShowFilterIcons), false));
             dataGrid.SetParametersAndRender(parameters.ToArray());
+            dataGrid.Instance.DropContainerHasChanged();
             dataGrid.FindAll(".filter-button").Should().BeEmpty();
         }
 
@@ -3445,6 +3449,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value));
+            dataGrid.Instance.DropContainerHasChanged();
             dataGrid.FindAll("th .sortable-column-header")[1].TextContent.Trim().Should().Be("Value");
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(true);
@@ -3452,12 +3457,14 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Descending, x => x.Value));
+            dataGrid.Instance.DropContainerHasChanged();
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Descending);
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-desc").Should().Be(true);
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Value));
+            dataGrid.Instance.DropContainerHasChanged();
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Ascending);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(true);
@@ -3473,6 +3480,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.SortMode.Should().Be(SortMode.Single);
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value, new MudBlazor.Utilities.NaturalComparer()));
+            dataGrid.Instance.DropContainerHasChanged();
             dataGrid.FindAll("th .sortable-column-header")[1].TextContent.Trim().Should().Be("Value");
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(true);
@@ -3480,12 +3488,14 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Descending, x => x.Value, new MudBlazor.Utilities.NaturalComparer()));
+            dataGrid.Instance.DropContainerHasChanged();
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Descending);
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-desc").Should().Be(true);
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value));
+            dataGrid.Instance.DropContainerHasChanged();
             dataGrid.FindAll("th .sortable-column-header")[1].TextContent.Trim().Should().Be("Value");
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(true);
@@ -3493,12 +3503,14 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name, new MudBlazor.Utilities.NaturalComparer()));
+            dataGrid.Instance.DropContainerHasChanged();
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Ascending);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(true);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => x.Name, new MudBlazor.Utilities.NaturalComparer()));
+            dataGrid.Instance.DropContainerHasChanged();
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Descending);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-desc").Should().Be(true);
@@ -3693,7 +3705,51 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Render();
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 10);
             // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
+            dataGrid.Instance.DropContainerHasChanged();
             dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
         }
+
+        [Test]
+        public async Task DataGridDragAndDropTest()
+        {
+            var comp = Context.RenderComponent<DataGridDragAndDropTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var headerValues = dataGrid.FindAll(".sortable-column-header");
+            headerValues.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
+
+            headerValues[0].InnerHtml.Should().Be("Name");
+            headerValues[1].InnerHtml.Should().Be("Age");
+            headerValues[2].InnerHtml.Should().Be("Status");
+            headerValues[3].InnerHtml.Should().Be("Hired");
+            headerValues[4].InnerHtml.Should().Be("HiredOn");
+
+            var container = dataGrid.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(1);
+
+            var zone = dataGrid.FindAll(".mud-drop-zone");
+            zone.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
+
+            var firstDropZone = zone[1];
+            var firstDropItem = firstDropZone.Children[0];
+
+            var secondDropZone = zone[2];
+            var secondDropItem = secondDropZone.Children[0];
+
+            await firstDropItem.DragStartAsync(new DragEventArgs());
+            await secondDropItem.DropAsync(new DragEventArgs());
+
+            var newHeaderValues = dataGrid.FindAll(".sortable-column-header");
+            newHeaderValues.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
+
+            newHeaderValues[0].InnerHtml.Should().Be("Name");
+            newHeaderValues[1].InnerHtml.Should().Be("Status");
+            newHeaderValues[2].InnerHtml.Should().Be("Age");
+            newHeaderValues[3].InnerHtml.Should().Be("Hired");
+            newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
+
+        }
+    
     }
 }

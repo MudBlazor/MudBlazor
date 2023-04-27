@@ -16,6 +16,7 @@ namespace MudBlazor
 {
     public partial class HeaderCell<T> : MudComponentBase, IDisposable
     {
+        private Guid _id = Guid.NewGuid();
         [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
         [CascadingParameter(Name = "IsOnlyHeader")] public bool IsOnlyHeader { get; set; } = false;
 
@@ -44,7 +45,7 @@ namespace MudBlazor
         private string _style =>
             new StyleBuilder()
                 .AddStyle(Column?.HeaderStyle)
-                .AddStyle("width", _width?.ToPx(), when: _width.HasValue)
+                .AddStyle("width", Width?.ToPx(), when: Width.HasValue)
                 .AddStyle(Style)
             .Build();
 
@@ -74,7 +75,9 @@ namespace MudBlazor
 
         private ElementReference _headerElement;
 
-        private double? _width;
+
+        public double? Width { get; internal set; }
+
         private double? _resizerHeight;
         private bool _isResizing;
         private bool _filtersMenuVisible;
@@ -182,6 +185,20 @@ namespace MudBlazor
         }
 
         #endregion
+        protected override async Task OnParametersSetAsync()
+        {
+            if (Column != null)
+            {
+                Column.HeaderCell = this;
+
+                if (Column.filterable)
+                {
+                    Column.FilterContext.HeaderCell = this;
+                }
+
+            }
+            await base.OnParametersSetAsync();
+        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -198,16 +215,6 @@ namespace MudBlazor
                 DataGrid.SortChangedEvent += OnGridSortChanged;
                 DataGrid.SelectedAllItemsChangedEvent += OnSelectedAllItemsChanged;
                 DataGrid.SelectedItemsChangedEvent += OnSelectedItemsChanged;
-            }
-
-            if (null != Column)
-            {
-                Column.HeaderCell = this;
-
-                if (Column.filterable)
-                {
-                    Column.FilterContext.HeaderCell = this;
-                }
             }
         }
 
@@ -253,7 +260,7 @@ namespace MudBlazor
 
             if (args.Detail > 1) // Double click clears the width, hence setting it to minimum size.
             {
-                _width = null;
+                Width = null;
                 return;
             }
 
@@ -277,7 +284,7 @@ namespace MudBlazor
             if (targetWidth > 0)
             {
                 _resizerHeight = gridHeight;
-                _width = targetWidth;
+                Width = targetWidth;
                 await InvokeAsync(StateHasChanged);
             }
 
@@ -312,6 +319,8 @@ namespace MudBlazor
                 _ => SortDirection.Ascending
             };
 
+            DataGrid.DropContainerHasChanged();
+
             if (args.CtrlKey && DataGrid.SortMode == SortMode.Multiple)
                 await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, _initialDirection, Column.GetLocalSortFunc(), Column.Comparer));
             else
@@ -322,6 +331,7 @@ namespace MudBlazor
         {
             await InvokeAsync(() => DataGrid.RemoveSortAsync(Column.PropertyName));
             MarkAsUnsorted();
+            DataGrid.DropContainerHasChanged();
         }
 
         internal async Task AddFilterAsync()
@@ -331,7 +341,10 @@ namespace MudBlazor
                 await DataGrid.AddFilterAsync(Column.FilterContext.FilterDefinition.Clone());
             }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
+            {
                 _filtersMenuVisible = true;
+                DataGrid.DropContainerHasChanged();
+            }
         }
 
         internal void OpenFilters()
@@ -339,7 +352,10 @@ namespace MudBlazor
             if (DataGrid.FilterMode == DataGridFilterMode.Simple)
                 DataGrid.OpenFilters();
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
+            {
                 _filtersMenuVisible = true;
+                DataGrid.DropContainerHasChanged();
+            }
         }
 
         internal async Task ApplyFilterAsync()
@@ -348,6 +364,7 @@ namespace MudBlazor
             if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
             else ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
+            DataGrid.DropContainerHasChanged();
         }
 
         internal async Task ApplyFilterAsync(FilterDefinition<T> filterDefinition)
@@ -356,6 +373,7 @@ namespace MudBlazor
             if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
             else ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
+            DataGrid.DropContainerHasChanged();
         }
 
         internal async Task ApplyFiltersAsync(IEnumerable<FilterDefinition<T>> filterDefinitions)
@@ -364,6 +382,7 @@ namespace MudBlazor
             if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
             else ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
+            DataGrid.DropContainerHasChanged();
         }
 
         internal async Task ClearFilterAsync()
@@ -372,6 +391,7 @@ namespace MudBlazor
             await DataGrid.RemoveFilterAsync(Column.FilterContext.FilterDefinition.Id);
             if (DataGrid.ServerData is null) ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
+            DataGrid.DropContainerHasChanged();
         }
 
         internal async Task ClearFilterAsync(FilterDefinition<T> filterDefinition)
@@ -379,6 +399,7 @@ namespace MudBlazor
             await DataGrid.RemoveFilterAsync(filterDefinition.Id);
             if (DataGrid.ServerData is null) ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
+            DataGrid.DropContainerHasChanged();
         }
 
         internal async Task ClearFiltersAsync(IEnumerable<FilterDefinition<T>> filterDefinitions)
@@ -387,6 +408,7 @@ namespace MudBlazor
             if (DataGrid.ServerData != null) await DataGrid.ReloadServerData();
             else ((IMudStateHasChanged)DataGrid).StateHasChanged();
             _filtersMenuVisible = false;
+            DataGrid.DropContainerHasChanged();
         }
 
         private async Task CheckedChangedAsync(bool value)

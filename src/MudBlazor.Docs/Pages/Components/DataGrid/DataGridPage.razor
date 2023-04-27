@@ -297,5 +297,19 @@
                 <DataGridColumnCultureExample />
             </SectionContent>
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Column Reordering">
+                <Description>
+                    To enable Column Reordering via Drag and Drop, set the <CodeInline>DragDropColumnReordering</CodeInline> parameter to true. Columns can override this parameter with their <CodeInline>DragAndDropEnabled</CodeInline> parameter if necessary.
+                    In the example all but two fixed columns can be reordered by dragging their header onto another column header to swap places. On mouse-over the draggable columns show their <CodeInline>DragIndicatorIcon</CodeInline> and when dragging 
+                    a header over another column header, it will signal its ability to swap places by changing its text color. The drag-over effect can be customized by setting parameters <CodeInline>DropAllowedClass</CodeInline> and <CodeInline>DropNotAllowedClass</CodeInline> 
+                    to your own CSS classes.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridColumReorderingExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridColumReorderingExample />
+            </SectionContent>
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
