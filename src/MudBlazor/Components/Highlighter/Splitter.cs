@@ -6,11 +6,12 @@ using System.Threading;
 
 namespace MudBlazor.Components.Highlighter
 {
+#nullable enable
     public static class Splitter
     {
         private const string NextBoundary = ".*?\\b";
 
-        private static StringBuilder s_stringBuilderCached;
+        private static StringBuilder? s_stringBuilderCached;
 
         /// <summary>
         /// Splits the text into fragments, according to the
@@ -23,16 +24,16 @@ namespace MudBlazor.Components.Highlighter
         /// <param name="caseSensitive">Whether it's case sensitive or not</param>
         /// <param name="untilNextBoundary">If true, splits until the next regex boundary</param>
         /// <returns></returns>
-        public static Memory<string> GetFragments(string text,
-                                                       string highlightedText,
-                                                       IEnumerable<string> highlightedTexts,
+        public static Memory<string> GetFragments(string? text,
+                                                       string? highlightedText,
+                                                       IEnumerable<string>? highlightedTexts,
                                                        out string regex,
                                                        bool caseSensitive = false,
                                                        bool untilNextBoundary = false)
         {
             if (string.IsNullOrEmpty(text))
             {
-                regex = "";
+                regex = string.Empty;
                 return Memory<string>.Empty;
             }
 
@@ -76,8 +77,8 @@ namespace MudBlazor.Components.Highlighter
                 s_stringBuilderCached = builder;
 
                 //all patterns were empty or null.
-                regex = "";
-                return new string[] { text };
+                regex = string.Empty;
+                return new[] { text };
             }
 
             regex = builder.ToString();
