@@ -38,10 +38,16 @@
                 }
 
                 <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
-                    @if(ProgressIndicatorInPopoverTemplate != null && IsLoading)
+                    @if (ListStartTemplate != null)
+                    {
+                        <div class="pa-1">
+                            @ListStartTemplate
+                        </div>
+                    }
+                    @if (ProgressIndicatorInPopoverTemplate != null && IsLoading)
                     {
                         @ProgressIndicatorInPopoverTemplate
-                    } 
+                    }
                     else if (_items != null && _items.Length != 0)
                     {
                         <MudList Class="@ListClass" Clickable="true" Dense="@Dense">
@@ -51,7 +57,7 @@
                                 bool isSelected = index == _selectedListItemIndex;
                                 bool isDisabled = !_enabledItemIndices.Contains(index);
                                 var captureIndex = index;
-                                <MudListItem @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async() => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@(isSelected ? "mud-selected-item mud-primary-text mud-primary-hover" : "")">
+                                <MudListItem @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@(isSelected ? "mud-selected-item mud-primary-text mud-primary-hover" : "")">
                                     @if (ItemTemplate == null)
                                     {
                                         @GetItemString(item)
@@ -87,10 +93,10 @@
                             @NoItemsTemplate
                         </div>
                     }
-                    @if (EndItemsTemplate != null)
+                    @if (ListEndTemplate != null)
                     {
                         <div class="pa-1">
-                            @EndItemsTemplate
+                            @ListEndTemplate
                         </div>
                     }
                 </MudPopover>

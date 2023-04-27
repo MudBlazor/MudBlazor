@@ -1205,5 +1205,41 @@ namespace MudBlazor.UnitTests.Components
             matchingStates.Single(s => s.Markup.Contains("Test")).Find("div.mud-list-item").Click();
             component.WaitForAssertion(() => autocompleteInstance.Text.Should().Be(string.Empty));
         }
+
+        [Test]
+        public async Task Autocomplete_Should_LoadListEndWhenSet()
+        {
+            // Arrange
+            RenderFragment fragment = builder =>
+            {
+                builder.AddContent(0, "EndList_Content");
+            };
+
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+
+            autocompletecomp.SetParam(x => x.ListEndTemplate, fragment);
+
+            // Test show
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().Contain("EndList_Content"));
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_LoadListStartWhenSet()
+        {
+            // Arrange
+            RenderFragment fragment = builder =>
+            {
+                builder.AddContent(0, "StartList_Content");
+            };
+
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+
+            autocompletecomp.SetParam(x => x.ListStartTemplate, fragment);
+
+            // Test show
+            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().Contain("StartList_Content"));
+        }
     }
 }
