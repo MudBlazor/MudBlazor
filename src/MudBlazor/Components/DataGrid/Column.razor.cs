@@ -58,6 +58,11 @@ namespace MudBlazor
         [Parameter] public bool? Sortable { get; set; }
 
         [Parameter] public bool? Resizable { get; set; }
+
+        /// <summary>
+        /// If set this will override the DragDropColumnReordering parameter of MudDataGrid which applies to all columns.
+        /// Set true to enable reordering for this column. Set false to disable it. 
+        /// </summary>
         [Parameter] public bool? DragAndDropEnabled { get; set; }
         /// <summary>
         /// Determines whether this columns data can be filtered. This overrides the Filterable parameter on the DataGrid.
