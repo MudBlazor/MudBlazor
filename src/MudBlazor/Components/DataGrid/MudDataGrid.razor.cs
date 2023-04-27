@@ -247,7 +247,8 @@ namespace MudBlazor
         [Parameter] public string DropNotAllowedClass { get; set; } = "drop-not-allowed";
 
         /// <summary>
-        /// If true, apply drop css classes to all other columns when the user starts dragging a column header.
+        /// When false the drop classes are only applied when dragging a column over another column
+        /// When true the drop classes are applied to all column headers and does not require dragging a column over another column.
         /// </summary>
         [Parameter] public bool ApplyDropClassesOnDragStarted { get; set; } = false;
 
