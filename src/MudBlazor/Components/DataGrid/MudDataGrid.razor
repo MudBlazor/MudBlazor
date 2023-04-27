@@ -256,7 +256,7 @@
     <CascadingValue Value="true" IsFixed Name="IsNested">
         <MudDialog Options="EditDialogOptions" @bind-IsVisible="isEditFormOpen">
             <DialogContent>
-                <MudForm FieldChanged="FormFieldChanged">
+                <MudForm @ref="_editForm" FieldChanged="FormFieldChanged">
                     @foreach (var column in RenderedColumns)
                     {
                         var cell = new Cell<T>(this, column, _editingItem);
