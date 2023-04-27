@@ -1206,40 +1206,37 @@ namespace MudBlazor.UnitTests.Components
             component.WaitForAssertion(() => autocompleteInstance.Text.Should().Be(string.Empty));
         }
 
-        [Test]
-        public async Task Autocomplete_Should_LoadListEndWhenSet()
-        {
-            // Arrange
-            RenderFragment fragment = builder =>
-            {
-                builder.AddContent(0, "EndList_Content");
-            };
 
-            var comp = Context.RenderComponent<AutocompleteTest1>();
-            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
-
-            autocompletecomp.SetParam(x => x.ListEndTemplate, fragment);
-
-            // Test show
-            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().Contain("EndList_Content"));
-        }
-
+        /// <summary>
+        /// ListEndTemplate should render when there are no items
+        /// </summary>
         [Test]
         public async Task Autocomplete_Should_LoadListStartWhenSet()
         {
-            // Arrange
-            RenderFragment fragment = builder =>
-            {
-                builder.AddContent(0, "StartList_Content");
-            };
+            var comp = Context.RenderComponent<AutocompleteListEndRendersTest>();
 
-            var comp = Context.RenderComponent<AutocompleteTest1>();
-            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var inputControl = comp.Find("div.mud-input-control");
+            inputControl.Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            autocompletecomp.SetParam(x => x.ListStartTemplate, fragment);
+            var mudText = comp.FindAll("p.mud-typography");
+            mudText[mudText.Count - 1].InnerHtml.Should().Contain("StartList_Content"); //ensure the text is shown
+        }
 
-            // Test show
-            comp.WaitForAssertion(() => comp.Find("div.mud-autocomplete").Children.ToMarkup().Should().Contain("StartList_Content"));
+        /// <summary>
+        /// ListEndTemplate should render when there are no items
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_LoadListEndWhenSet()
+        {
+            var comp = Context.RenderComponent<AutocompleteListEndRendersTest>();
+
+            var inputControl = comp.Find("div.mud-input-control");
+            inputControl.Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            var mudText = comp.FindAll("p.mud-typography");
+            mudText[mudText.Count - 1].InnerHtml.Should().Contain("EndList_Content"); //ensure the text is shown
         }
     }
 }
