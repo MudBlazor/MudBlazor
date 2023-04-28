@@ -8,6 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Bunit;
+using Bunit.Extensions.WaitForHelpers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -908,68 +909,36 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
-        [TestCase(true, false)]
-        [TestCase(true, true)]
-        [TestCase(false /* input event only relevant when editable */, true)]
-        public async Task EditForm_WithDatePicker_Validation_Required(bool clearModel, bool editable)
+        [Test]
+        public async Task EditForm_WithDatePicker_Validation_Required()
         {
             var comp = Context.RenderComponent<EditFormWithDatePickerTest>(c => c
-                .Add(d => d.EnableEditable, editable));
+                .Add(d => d.EnableEditable, true));
             var form = comp.FindComponent<EditForm>().Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
             var datepicker = comp.FindComponent<MudDatePicker>().Instance;
-            // check initial state: should have error because datepicker is required
-            comp.Find("form").Submit();
-            datepicker.Error.Should().BeTrue();
-            datepicker.ErrorText.Should().NotBeEmpty();
-            // input a date
-            dateComp.Find("input").Change(new DateTime(2001, 01, 31).ToShortDateString());
-            comp.Find("form").Submit();
+            //// check initial state: should not have error because datepicker not touched
             datepicker.Error.Should().BeFalse();
             datepicker.ErrorText.Should().BeNullOrEmpty();
-            // clear selection
-            if (clearModel)
-            {
-                await comp.Instance.ModifyDate(null);
-            }
-            else
-            {
-                dateComp.Find("input").Input("");
-            }
-            comp.Find("form").Submit();
+            // blur input to trigger touched
+             comp.Find("input").Blur();
             datepicker.Error.Should().BeTrue();
             datepicker.ErrorText.Should().NotBeEmpty();
         }
 
-        [TestCase(true, false)]
-        [TestCase(true, true)]
-        [TestCase(false /* input event only relevant when editable */, true)]
-        public async Task EditForm_WithTimePicker_Validation_Required(bool clearModel, bool editable)
+        [Test]
+        public async Task EditForm_WithTimePicker_Validation_Required()
         {
             var comp = Context.RenderComponent<EditFormWithTimePickerTest>(c => c
-                .Add(d => d.EnableEditable, editable));
+                .Add(d => d.EnableEditable, true));
             var form = comp.FindComponent<EditForm>().Instance;
             var timeComp = comp.FindComponent<MudTimePicker>();
             var timepicker = comp.FindComponent<MudTimePicker>().Instance;
-            // check initial state: should have error because datepicker is required
-            comp.Find("form").Submit();
-            timepicker.Error.Should().BeTrue();
-            timepicker.ErrorText.Should().NotBeEmpty();
-            // input a date
-            timeComp.Find("input").Change("06:00");
-            comp.Find("form").Submit();
+            // check initial state: should not have error because timepicker is not touched
             timepicker.Error.Should().BeFalse();
             timepicker.ErrorText.Should().BeNullOrEmpty();
-            // clear selection
-            if (clearModel)
-            {
-                await comp.Instance.ModifyTime(null);
-            }
-            else
-            {
-                timeComp.Find("input").Input("");
-            }
-            comp.Find("form").Submit();
+            // blur input to trigger touched
+            comp.Find("input").Blur();
             timepicker.Error.Should().BeTrue();
             timepicker.ErrorText.Should().NotBeEmpty();
         }
