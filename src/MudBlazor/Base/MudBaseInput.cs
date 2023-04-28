@@ -448,7 +448,7 @@ namespace MudBlazor
 
         protected override Task ValidateValue()
         {
-            if (SubscribeToParentForm || IsInputForPicker)
+            if (SubscribeToParentForm)
                 return base.ValidateValue();
 
             return Task.CompletedTask;

@@ -568,7 +568,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true, false)]
         [TestCase(true, true)]
         [TestCase(false /* input event only relevant when editable */, true)]
-        public async Task FormWithDatePickerTest(bool useSetParamForClear, bool editable)
+        public async Task FormWithDatePickerTest(bool clearUsingParameter, bool editable)
         {
             var comp = Context.RenderComponent<FormWithDatePickerTest>(c => c
                 .Add(d => d.EnableEditable, editable));
@@ -586,7 +586,7 @@ namespace MudBlazor.UnitTests.Components
             datepicker.Error.Should().BeFalse();
             datepicker.ErrorText.Should().BeNullOrEmpty();
             // clear selection
-            if (useSetParamForClear)
+            if (clearUsingParameter)
             {
                 comp.SetParam(x => x.Date, null);
             }
@@ -633,7 +633,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true, true)]
         [TestCase(true, false)]
         [TestCase(false, true)]
-        public async Task Form_Should_Validate_DateRangePicker_When_DateRangeSelectedViaInputs(bool useSetParamForClear, bool editable)
+        public async Task Form_Should_Validate_DateRangePicker_When_DateRangeSelectedViaInputs(bool clearUsingParameter, bool editable)
         {
             var comp = Context.RenderComponent<FormWithDateRangePickerTest>(c => c
                 .Add(d => d.EnableEditable, editable));
@@ -654,7 +654,7 @@ namespace MudBlazor.UnitTests.Components
             dateRangePicker.Error.Should().BeFalse();
             dateRangePicker.ErrorText.Should().BeNullOrEmpty();
             // clear selection
-            if (useSetParamForClear)
+            if (clearUsingParameter)
             {
                 comp.SetParam(x => x.DateRange, null);
             }
@@ -711,7 +711,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true, false)]
         [TestCase(true, true)]
         [TestCase(false /* input event only relevant when editable */, true)]
-        public async Task FormWithTimePickerTest(bool useSetParamForClear, bool editable)
+        public async Task FormWithTimePickerTest(bool clearUsingParameter, bool editable)
         {
             var comp = Context.RenderComponent<FormWithTimePickerTest>(c => c
                 .Add(d => d.EnableEditable, editable));
@@ -729,7 +729,7 @@ namespace MudBlazor.UnitTests.Components
             timePicker.Error.Should().BeFalse();
             timePicker.ErrorText.Should().BeNullOrEmpty();
             // clear selection
-            if (useSetParamForClear)
+            if (clearUsingParameter)
             {
                 comp.SetParam(x => x.Time, null);
             }
@@ -906,6 +906,72 @@ namespace MudBlazor.UnitTests.Components
             {
                 vc.Should().NotBeNull();
             }
+        }
+
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        [TestCase(false /* input event only relevant when editable */, true)]
+        public async Task EditForm_WithDatePicker_Validation_Required(bool clearModel, bool editable)
+        {
+            var comp = Context.RenderComponent<EditFormWithDatePickerTest>(c => c
+                .Add(d => d.EnableEditable, editable));
+            var form = comp.FindComponent<EditForm>().Instance;
+            var dateComp = comp.FindComponent<MudDatePicker>();
+            var datepicker = comp.FindComponent<MudDatePicker>().Instance;
+            // check initial state: should have error because datepicker is required
+            comp.Find("form").Submit();
+            datepicker.Error.Should().BeTrue();
+            datepicker.ErrorText.Should().NotBeEmpty();
+            // input a date
+            dateComp.Find("input").Change(new DateTime(2001, 01, 31).ToShortDateString());
+            comp.Find("form").Submit();
+            datepicker.Error.Should().BeFalse();
+            datepicker.ErrorText.Should().BeNullOrEmpty();
+            // clear selection
+            if (clearModel)
+            {
+                await comp.Instance.ModifyDate(null);
+            }
+            else
+            {
+                dateComp.Find("input").Input("");
+            }
+            comp.Find("form").Submit();
+            datepicker.Error.Should().BeTrue();
+            datepicker.ErrorText.Should().NotBeEmpty();
+        }
+
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        [TestCase(false /* input event only relevant when editable */, true)]
+        public async Task EditForm_WithTimePicker_Validation_Required(bool clearModel, bool editable)
+        {
+            var comp = Context.RenderComponent<EditFormWithTimePickerTest>(c => c
+                .Add(d => d.EnableEditable, editable));
+            var form = comp.FindComponent<EditForm>().Instance;
+            var timeComp = comp.FindComponent<MudTimePicker>();
+            var timepicker = comp.FindComponent<MudTimePicker>().Instance;
+            // check initial state: should have error because datepicker is required
+            comp.Find("form").Submit();
+            timepicker.Error.Should().BeTrue();
+            timepicker.ErrorText.Should().NotBeEmpty();
+            // input a date
+            timeComp.Find("input").Change("06:00");
+            comp.Find("form").Submit();
+            timepicker.Error.Should().BeFalse();
+            timepicker.ErrorText.Should().BeNullOrEmpty();
+            // clear selection
+            if (clearModel)
+            {
+                await comp.Instance.ModifyTime(null);
+            }
+            else
+            {
+                timeComp.Find("input").Input("");
+            }
+            comp.Find("form").Submit();
+            timepicker.Error.Should().BeTrue();
+            timepicker.ErrorText.Should().NotBeEmpty();
         }
 
         /// <summary>

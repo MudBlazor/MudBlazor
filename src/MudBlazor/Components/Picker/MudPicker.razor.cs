@@ -539,6 +539,11 @@ namespace MudBlazor
             PickerClosed.InvokeAsync(this);
         }
 
+        protected virtual async Task OnInternalInputBlurred(FocusEventArgs args)
+        {
+            await BeginValidateAsync();
+        }
+
         protected internal virtual void HandleKeyDown(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
