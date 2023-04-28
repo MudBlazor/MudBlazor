@@ -565,10 +565,13 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// DatePicker should be validated like every other form component
         /// </summary>
-        [Test]
-        public async Task FormWithDatePickerTest()
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        [TestCase(false /* input event only relevant when editable */, true)]
+        public async Task FormWithDatePickerTest(bool useSetParamForClear, bool editable)
         {
-            var comp = Context.RenderComponent<FormWithDatePickerTest>();
+            var comp = Context.RenderComponent<FormWithDatePickerTest>(c => c
+                .Add(d => d.EnableEditable, editable));
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
             var datepicker = comp.FindComponent<MudDatePicker>().Instance;
@@ -583,7 +586,14 @@ namespace MudBlazor.UnitTests.Components
             datepicker.Error.Should().BeFalse();
             datepicker.ErrorText.Should().BeNullOrEmpty();
             // clear selection
-            comp.SetParam(x => x.Date, null);
+            if (useSetParamForClear)
+            {
+                comp.SetParam(x => x.Date, null);
+            }
+            else
+            {
+                dateComp.Find("input").Input("");
+            }
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
@@ -620,10 +630,13 @@ namespace MudBlazor.UnitTests.Components
         /// DateRangePicker should be validated like every other form component when the dateRange
         /// is changed via inputs
         /// </summary>
-        [Test]
-        public async Task Form_Should_Validate_DateRangePicker_When_DateRangeSelectedViaInputs()
+        [TestCase(true, true)]
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        public async Task Form_Should_Validate_DateRangePicker_When_DateRangeSelectedViaInputs(bool useSetParamForClear, bool editable)
         {
-            var comp = Context.RenderComponent<FormWithDateRangePickerTest>();
+            var comp = Context.RenderComponent<FormWithDateRangePickerTest>(c => c
+                .Add(d => d.EnableEditable, editable));
             var form = comp.FindComponent<MudForm>().Instance;
             var dateRangeComp = comp.FindComponent<MudDateRangePicker>();
             var dateRangePicker = comp.FindComponent<MudDateRangePicker>().Instance;
@@ -641,7 +654,15 @@ namespace MudBlazor.UnitTests.Components
             dateRangePicker.Error.Should().BeFalse();
             dateRangePicker.ErrorText.Should().BeNullOrEmpty();
             // clear selection
-            comp.SetParam(x => x.DateRange, null);
+            if (useSetParamForClear)
+            {
+                comp.SetParam(x => x.DateRange, null);
+            }
+            else
+            {
+                await comp.InvokeAsync(() => dateRangeComp.FindAll("input")[0].Change(""));
+                await comp.InvokeAsync(() => dateRangeComp.FindAll("input")[1].Change(""));
+            }
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
@@ -687,10 +708,13 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// TimePicker should be validated like every other form component
         /// </summary>
-        [Test]
-        public async Task FormWithTimePickerTest()
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        [TestCase(false /* input event only relevant when editable */, true)]
+        public async Task FormWithTimePickerTest(bool useSetParamForClear, bool editable)
         {
-            var comp = Context.RenderComponent<FormWithTimePickerTest>();
+            var comp = Context.RenderComponent<FormWithTimePickerTest>(c => c
+                .Add(d => d.EnableEditable, editable));
             var form = comp.FindComponent<MudForm>().Instance;
             var timePickerComp = comp.FindComponent<MudTimePicker>();
             var timePicker = comp.FindComponent<MudTimePicker>().Instance;
@@ -705,7 +729,14 @@ namespace MudBlazor.UnitTests.Components
             timePicker.Error.Should().BeFalse();
             timePicker.ErrorText.Should().BeNullOrEmpty();
             // clear selection
-            comp.SetParam(x => x.Time, null);
+            if (useSetParamForClear)
+            {
+                comp.SetParam(x => x.Time, null);
+            }
+            else
+            {
+                timePickerComp.Find("input").Input("");
+            }
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");

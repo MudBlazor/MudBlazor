@@ -17,6 +17,12 @@ namespace MudBlazor
         protected MudBaseInput() : base(new DefaultConverter<T>()) { }
 
         /// <summary>
+        /// If true, the input element is used in context of a <see cref="MudPicker{T}"/> component 
+        /// and will enable validation even if <see cref="MudFormComponent{T, U}.SubscribeToParentForm"/> is false.
+        /// </summary>
+        internal bool IsInputForPicker { get; set; }
+
+        /// <summary>
         /// If true, the input element will be disabled.
         /// </summary>
         [Parameter]
@@ -442,7 +448,7 @@ namespace MudBlazor
 
         protected override Task ValidateValue()
         {
-            if (SubscribeToParentForm)
+            if (SubscribeToParentForm || IsInputForPicker)
                 return base.ValidateValue();
 
             return Task.CompletedTask;

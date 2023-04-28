@@ -3,13 +3,20 @@
 <MudPopoverProvider></MudPopoverProvider>
 
 <MudForm ValidationDelay="0">
-    <MudDateRangePicker Required="true" @bind-DateRange="DateRange">
+    <MudDateRangePicker Required="true" @bind-DateRange="DateRange" Editable="@EnableEditable">
     </MudDateRangePicker>
 </MudForm>
+
+<MudButton OnClick="ToggleEditable">Toggle editable? @EnableEditable</MudButton>
 
 @code {
     public static string __description__ = "Form should validate date range picker's date range.";
 
     [Parameter]
     public DateRange? DateRange { get; set; }
+
+    [Parameter]
+    public bool EnableEditable { get; set; }
+
+    private void ToggleEditable() => EnableEditable = !EnableEditable;
 }

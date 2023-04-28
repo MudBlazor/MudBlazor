@@ -35,7 +35,7 @@ namespace MudBlazor
 
         protected Task OnInput(ChangeEventArgs args)
         {
-            if (!Immediate)
+            if (!Immediate && IsInputForPicker && !string.IsNullOrEmpty(args?.Value as string))
                 return Task.CompletedTask;
             _isFocused = true;
             return SetTextAsync(args?.Value as string);

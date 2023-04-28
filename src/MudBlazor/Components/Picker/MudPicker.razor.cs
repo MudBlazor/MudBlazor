@@ -482,6 +482,10 @@ namespace MudBlazor
             if (firstRender == true)
             {
                 await EnsureKeyInterceptor();
+                if (_inputReference is not null)
+                {
+                    _inputReference.IsInputForPicker = true;
+                }
             }
 
             await base.OnAfterRenderAsync(firstRender);
