@@ -332,7 +332,7 @@ namespace MudBlazor
 
         protected async Task OnItemClicked(MouseEventArgs ev)
         {
-            if (MudTreeRoot?.IsSelectable ?? false)
+            if ((MudTreeRoot?.IsSelectable ?? false) && !Disabled)
             {
                 await MudTreeRoot.UpdateSelected(this, !_isSelected);
             }
@@ -355,7 +355,7 @@ namespace MudBlazor
 
         protected async Task OnItemDoubleClicked(MouseEventArgs ev)
         {
-            if (MudTreeRoot?.IsSelectable ?? false)
+            if ((MudTreeRoot?.IsSelectable ?? false) && !Disabled)
             {
                 await MudTreeRoot.UpdateSelected(this, !_isSelected);
             }
@@ -367,11 +367,16 @@ namespace MudBlazor
                 await ExpandedChanged.InvokeAsync(Expanded);
             }
 
-            await OnDoubleClick.InvokeAsync(ev);
+            if (!Disabled)
+            {
+                await OnDoubleClick.InvokeAsync(ev);
+            }
         }
+
         protected internal async Task OnItemExpanded(bool expanded)
         {
-            if (Expanded != expanded) {
+            if (Expanded != expanded)
+            {
                 Expanded = expanded;
                 await TryInvokeServerLoadFunc();
                 await ExpandedChanged.InvokeAsync(expanded);
