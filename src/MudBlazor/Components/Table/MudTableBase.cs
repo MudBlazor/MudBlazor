@@ -16,7 +16,7 @@ namespace MudBlazor
         internal bool IsEditing => _editingItem != null;
 
         private int _currentPage = 0;
-        private int? _rowsPerPage;
+        internal int? _rowsPerPage;
         private bool _isFirstRendered = false;
 
         protected string Classname =>
