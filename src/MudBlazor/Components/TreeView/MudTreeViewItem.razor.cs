@@ -1,3 +1,4 @@
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -163,6 +164,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.ClickAction)]
+        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
         public ICommand Command { get; set; }
 
         /// <summary>
@@ -343,10 +345,12 @@ namespace MudBlazor
             }
 
             await OnClick.InvokeAsync(ev);
+#pragma warning disable CS0618
             if (Command?.CanExecute(Value) ?? false)
             {
                 Command.Execute(Value);
             }
+#pragma warning restore CS0618
         }
 
         protected async Task OnItemDoubleClicked(MouseEventArgs ev)

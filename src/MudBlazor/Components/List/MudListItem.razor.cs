@@ -191,6 +191,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.ClickAction)]
+        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
         public ICommand Command { get; set; }
 
         /// <summary>
@@ -247,10 +248,12 @@ namespace MudBlazor
                         await MudList.SetSelectedValueAsync(Value);
                     }
                     await OnClick.InvokeAsync(eventArgs);
+#pragma warning disable CS0618
                     if (Command?.CanExecute(CommandParameter) ?? false)
                     {
                         Command.Execute(CommandParameter);
                     }
+#pragma warning restore CS0618
                 }
             }
             else
