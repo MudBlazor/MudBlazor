@@ -166,6 +166,24 @@ namespace MudBlazor
         {
             await SetTextAsync(s);
         }
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (firstRender == true)
+            {
+                if (InputReference is not null)
+                {
+                    InputReference.OverrideReadOnlyOnBlur = true;
+                }
+
+                if (_maskReference is not null)
+                {
+                    _maskReference.OverrideReadOnlyOnBlur = true;
+                }
+            }
+
+            base.OnAfterRender(firstRender);
+        }
     }
 
     [Obsolete("MudTextFieldString is no longer available.", true)]

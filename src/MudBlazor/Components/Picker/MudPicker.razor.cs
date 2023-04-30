@@ -482,6 +482,10 @@ namespace MudBlazor
             if (firstRender == true)
             {
                 await EnsureKeyInterceptor();
+                if (_inputReference is not null)
+                {
+                    _inputReference.OverrideReadOnlyOnBlur = true;
+                }
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -537,6 +541,7 @@ namespace MudBlazor
 
         protected virtual async Task OnInternalInputBlurred(FocusEventArgs args)
         {
+            Touched = _inputReference?.Touched ?? Touched;
             await BeginValidateAsync();
         }
 
