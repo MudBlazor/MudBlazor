@@ -344,13 +344,16 @@ namespace MudBlazor
                 await ExpandedChanged.InvokeAsync(Expanded);
             }
 
-            await OnClick.InvokeAsync(ev);
-#pragma warning disable CS0618
-            if (Command?.CanExecute(Value) ?? false)
+            if (!Disabled)
             {
-                Command.Execute(Value);
-            }
+                await OnClick.InvokeAsync(ev);
+#pragma warning disable CS0618
+                if (Command?.CanExecute(Value) ?? false)
+                {
+                    Command.Execute(Value);
+                }
 #pragma warning restore CS0618
+            }
         }
 
         protected async Task OnItemDoubleClicked(MouseEventArgs ev)
