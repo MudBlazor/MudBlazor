@@ -641,6 +641,8 @@ namespace MudBlazor
                     }
                     break;
             }
+
+            StateHasChanged();
         }
 
         protected void ChangeMinute(int val)
