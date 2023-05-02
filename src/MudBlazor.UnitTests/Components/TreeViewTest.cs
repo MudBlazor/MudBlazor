@@ -22,6 +22,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DisabledTreeViewTest>(new ComponentParameter[] { Parameter(nameof(MudTreeView<string>.Disabled), true) });
             comp.Find("div.mud-treeview-item-content").Click();
             comp.Instance.SelectedValue.Should().BeNull();
+
+            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            comp.Instance.SelectedValue.Should().BeNull();
         }
 
         [Test]
@@ -29,6 +32,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DisabledTreeViewTest>(new ComponentParameter[] { Parameter(nameof(MudTreeView<string>.Disabled), false) });
             comp.Find("div.mud-treeview-item-content").Click();
+            comp.Instance.SelectedValue.Should().NotBeNull();
+
+            // To reset
+            comp.Find("div.mud-treeview-item-content").Click();
+            comp.Instance.SelectedValue.Should().BeNull();
+
+            comp.Find("div.mud-treeview-item-content").DoubleClick();
             comp.Instance.SelectedValue.Should().NotBeNull();
         }
 
