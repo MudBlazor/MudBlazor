@@ -332,7 +332,12 @@ namespace MudBlazor
 
         protected async Task OnItemClicked(MouseEventArgs ev)
         {
-            if ((MudTreeRoot?.IsSelectable ?? false) && !Disabled)
+            if (Disabled)
+            {
+                return;
+            }
+
+            if (MudTreeRoot?.IsSelectable ?? false)
             {
                 await MudTreeRoot.UpdateSelected(this, !_isSelected);
             }
@@ -344,21 +349,23 @@ namespace MudBlazor
                 await ExpandedChanged.InvokeAsync(Expanded);
             }
 
-            if (!Disabled)
-            {
-                await OnClick.InvokeAsync(ev);
+            await OnClick.InvokeAsync(ev);
 #pragma warning disable CS0618
-                if (Command?.CanExecute(Value) ?? false)
-                {
-                    Command.Execute(Value);
-                }
-#pragma warning restore CS0618
+            if (Command?.CanExecute(Value) ?? false)
+            {
+                Command.Execute(Value);
             }
+#pragma warning restore CS0618
         }
 
         protected async Task OnItemDoubleClicked(MouseEventArgs ev)
         {
-            if ((MudTreeRoot?.IsSelectable ?? false) && !Disabled)
+            if (Disabled)
+            {
+                return;
+            }
+
+            if (MudTreeRoot?.IsSelectable ?? false)
             {
                 await MudTreeRoot.UpdateSelected(this, !_isSelected);
             }
@@ -370,10 +377,7 @@ namespace MudBlazor
                 await ExpandedChanged.InvokeAsync(Expanded);
             }
 
-            if (!Disabled)
-            {
-                await OnDoubleClick.InvokeAsync(ev);
-            }
+            await OnDoubleClick.InvokeAsync(ev);
         }
 
         protected internal async Task OnItemExpanded(bool expanded)
