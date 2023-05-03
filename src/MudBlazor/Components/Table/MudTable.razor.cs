@@ -590,6 +590,18 @@ namespace MudBlazor
                 SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
+        public void ToggleExpandGroups(bool expand)
+        {
+            if (_groupBy is not null)
+            {
+                _groupBy.IsInitiallyExpanded = expand;
+
+                // The set encapsulates a method, it needs to be called twice for it to function correctly.
+                _groupBy.Expandable = false;
+                _groupBy.Expandable = true;
+            }
+        }
+
         private string ClearFilterCache()
         {
             _currentRenderFilteredItemsCached = false; 
