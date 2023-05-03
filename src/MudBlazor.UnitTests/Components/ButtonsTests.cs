@@ -69,32 +69,63 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// MudButton should have rel="nofollow" if Nofollow is set to true
+        /// MudButton should render with value of Rel property
         /// </summary>
         [Test]
-        public void MudButtonShouldRenderNofollowIfSet()
+        public void MudButtonShouldRenderRelIfSet()
         {
             var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
-            var nofollow = Parameter(nameof(MudButton.Nofollow), true);
-            var comp = Context.RenderComponent<MudButton>(link, nofollow);
+            var rel = Parameter(nameof(MudButton.Rel), "nofollow");
+            var comp = Context.RenderComponent<MudButton>(link, rel);
             comp.Markup
                 .Should()
                 .Contain("rel=\"nofollow\"");
         }
 
         /// <summary>
-        /// MudButton should have rel="noopener nofollow" if Target is _blank and Nofollow is set to true
+        /// MudButton should have rel="nofollow" if Rel is set to "nofollow", even if Target is _blank
         /// </summary>
         [Test]
-        public void MudButtonShouldRenderNofollowAndNoOpenerIfSet()
+        public void MudButtonShouldHaveNoopenerOverridenByRel()
         {
             var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
-            var nofollow = Parameter(nameof(MudButton.Nofollow), true);
+            // setting target to _blank by default sets rel to noopener
             var target = Parameter(nameof(MudButton.Target), "_blank");
-            var comp = Context.RenderComponent<MudButton>(link, nofollow, target);
+            var rel = Parameter(nameof(MudButton.Rel), "nofollow");
+            var comp = Context.RenderComponent<MudButton>(link, target, rel);
             comp.Markup
                 .Should()
-                .Contain("rel=\"noopener nofollow\"");
+                .Contain("rel=\"nofollow\"");
+        }
+
+        /// <summary>
+        /// MudButton should have rel="" Rel is explicitly set to empty, even if Target is _blank
+        /// </summary>
+        [Test]
+        public void MudButtonShouldHaveHaveNoRelWhenSetToEmpty()
+        {
+            var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
+            var rel = Parameter(nameof(MudButton.Rel), "");
+            var target = Parameter(nameof(MudButton.Target), "_blank");
+            var comp = Context.RenderComponent<MudButton>(link, rel, target);
+            comp.Markup
+                .Should()
+                .Contain("rel=\"\"");
+        }
+
+        /// <summary>
+        /// MudButton should not render rel if it's null and target is not _blank
+        /// </summary>
+        [Test]
+        public void MudButtonShouldNotRenderRelIfNullAndTargetNotBlank()
+        {
+            var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
+            var rel = Parameter(nameof(MudButton.Rel), null);
+            var target = Parameter(nameof(MudButton.Target), "_notblank");
+            var comp = Context.RenderComponent<MudButton>(link, rel, target);
+            comp.Markup
+                .Should()
+                .NotContain("rel=");
         }
 
         /// <summary>
@@ -143,32 +174,64 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// MudIconButton should have rel="nofollow" if Nofollow is set to true
+        /// MudIconButton should render with value of Rel property
         /// </summary>
         [Test]
-        public void MudIconButtonShouldRenderNofollowIfSet()
+        public void MudIconButtonShouldRenderRelIfSet()
         {
             var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
-            var nofollow = Parameter(nameof(MudIconButton.Nofollow), true);
-            var comp = Context.RenderComponent<MudIconButton>(link, nofollow);
+            var rel = Parameter(nameof(MudIconButton.Rel), "nofollow");
+            var comp = Context.RenderComponent<MudIconButton>(link, rel);
             comp.Markup
                 .Should()
                 .Contain("rel=\"nofollow\"");
         }
 
         /// <summary>
-        /// MudIconButton should have rel="noopener nofollow" if Target is _blank and Nofollow is set to true
+        /// MudIconButton should have rel="nofollow" if Rel is set to "nofollow", even if Target is _blank
         /// </summary>
         [Test]
-        public void MudIconButtonShouldRenderNofollowAndNoOpenerIfSet()
+        public void MudIconButtonShouldHaveNoopenerOverridenByRel()
         {
             var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
-            var nofollow = Parameter(nameof(MudIconButton.Nofollow), true);
+            // setting target to _blank by default sets rel to noopener
             var target = Parameter(nameof(MudIconButton.Target), "_blank");
-            var comp = Context.RenderComponent<MudIconButton>(link, nofollow, target);
+            var rel = Parameter(nameof(MudIconButton.Rel), "nofollow");
+            var comp = Context.RenderComponent<MudIconButton>(link, target, rel);
             comp.Markup
                 .Should()
-                .Contain("rel=\"noopener nofollow\"");
+                .Contain("rel=\"nofollow\"");
+        }
+
+        /// <summary>
+        /// MudButton should have rel="" Rel is explicitly set to empty, even if Target is _blank
+        /// </summary>
+        [Test]
+        public void MudIconButtonShouldHaveHaveNoRelWhenSetToEmpty()
+        {
+            var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
+            // setting target to _blank by default sets rel to noopener
+            var target = Parameter(nameof(MudIconButton.Target), "_blank");
+            var rel = Parameter(nameof(MudIconButton.Rel), "");
+            var comp = Context.RenderComponent<MudIconButton>(link, rel, target);
+            comp.Markup
+                .Should()
+                .Contain("rel=\"\"");
+        }
+
+        /// <summary>
+        /// MudIconButton should not render rel if it's null and target is not _blank
+        /// </summary>
+        [Test]
+        public void MudIconButtonShouldNotRenderRelIfNullAndTargetNotBlank()
+        {
+            var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
+            var rel = Parameter(nameof(MudIconButton.Rel), null);
+            var target = Parameter(nameof(MudIconButton.Target), "_notblank");
+            var comp = Context.RenderComponent<MudIconButton>(link, rel, target);
+            comp.Markup
+                .Should()
+                .NotContain("rel=");
         }
 
         /// <summary>
@@ -228,32 +291,64 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// MudFab should have rel="nofollow" if Nofollow is set to true
+        /// MudFab should render with value of Rel property
         /// </summary>
         [Test]
-        public void MudFabShouldRenderNofollowIfSet()
+        public void MudFabShouldRenderRelIfSet()
         {
             var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
-            var nofollow = Parameter(nameof(MudFab.Nofollow), true);
-            var comp = Context.RenderComponent<MudFab>(link, nofollow);
+            var rel = Parameter(nameof(MudFab.Rel), "nofollow");
+            var comp = Context.RenderComponent<MudFab>(link, rel);
             comp.Markup
                 .Should()
                 .Contain("rel=\"nofollow\"");
         }
 
         /// <summary>
-        /// MudFab should have rel="noopener nofollow" if Target is _blank and Nofollow is set to true
+        /// MudFab should have rel="nofollow" if Rel is set to "nofollow", even if Target is _blank
         /// </summary>
         [Test]
-        public void MudFabShouldRenderNofollowAndNoOpenerIfSet()
+        public void MudFabShouldHaveNoopenerOverridenByRel()
         {
             var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
-            var nofollow = Parameter(nameof(MudFab.Nofollow), true);
+            // setting target to _blank by default sets rel to noopener
             var target = Parameter(nameof(MudFab.Target), "_blank");
-            var comp = Context.RenderComponent<MudFab>(link, nofollow, target);
+            var rel = Parameter(nameof(MudFab.Rel), "nofollow");
+            var comp = Context.RenderComponent<MudFab>(link, target, rel);
             comp.Markup
                 .Should()
-                .Contain("rel=\"noopener nofollow\"");
+                .Contain("rel=\"nofollow\"");
+        }
+
+        /// <summary>
+        /// MudFab should have rel="" Rel is explicitly set to empty, even if Target is _blank
+        /// </summary>
+        [Test]
+        public void MudFabShouldHaveHaveNoRelWhenSetToEmpty()
+        {
+            var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
+            // setting target to _blank by default sets rel to noopener
+            var target = Parameter(nameof(MudFab.Target), "_blank");
+            var rel = Parameter(nameof(MudFab.Rel), "");
+            var comp = Context.RenderComponent<MudFab>(link, target, rel);
+            comp.Markup
+                .Should()
+                .Contain("rel=\"\"");
+        }
+
+        /// <summary>
+        /// MudFab should not render rel if it's null and target is not _blank
+        /// </summary>
+        [Test]
+        public void MudFabShouldNotRenderRelIfNullAndTargetNotBlank()
+        {
+            var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
+            var rel = Parameter(nameof(MudFab.Rel), null);
+            var target = Parameter(nameof(MudFab.Target), "_notblank");
+            var comp = Context.RenderComponent<MudFab>(link, rel, target);
+            comp.Markup
+                .Should()
+                .NotContain("rel=");
         }
 
         /// <summary>
