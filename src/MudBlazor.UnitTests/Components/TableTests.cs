@@ -1781,11 +1781,34 @@ namespace MudBlazor.UnitTests.Components
             tr.Length.Should().Be(5); // 1 table header + 4 group headers
         }
 
+        [Test]
+        public void ToggleExpandAllGroupsTest()
+        {
+            var comp = Context.RenderComponent<TableGroupingTest>();
+            var table = comp.Instance.tableInstance;
+            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null) { GroupName = "Category", IsInitiallyExpanded = false, Expandable = true };
+            comp.Render();
+
+            // Header only since we have IsInitiallyExpanded = false
+            table.Context.GroupRows.Count.Should().Be(4);
+            comp.FindAll("tr").ToArray().Length.Should().Be(5); // 1 table header + 4 group headers
+
+            // Expand all groups
+            table.ToggleExpandGroups(true);
+            comp.Render();
+            comp.FindAll("tr").ToArray().Length.Should().Be(18); // 1 table header + 4 group headers + 9 item rows + 4 group footers
+
+            // Collapse all groups
+            table.ToggleExpandGroups(false);
+            comp.Render();
+            comp.FindAll("tr").ToArray().Length.Should().Be(5); // 1 table header + 4 group headers
+        }
+
         /// <summary>
         /// Tests the correct output when filter does not return any matching elements
         /// </summary>
         /// <returns>The awaitable <see cref="Task"/></returns>
-        [Test]
+
         public async Task TablePagerInfoTextTest()
         {
             // create the component
