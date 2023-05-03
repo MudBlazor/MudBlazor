@@ -541,8 +541,11 @@ namespace MudBlazor
 
         protected virtual async Task OnInternalInputBlurred(FocusEventArgs args)
         {
-            Touched = _inputReference?.Touched ?? Touched;
-            await BeginValidateAsync();
+            if (!ReadOnly)
+            {
+                Touched = _inputReference?.Touched ?? Touched;
+                await BeginValidateAsync();
+            }
         }
 
         protected internal virtual void HandleKeyDown(KeyboardEventArgs obj)

@@ -1057,8 +1057,13 @@ namespace MudBlazor
                 // otherwise we can't receive key strokes any longer
                 _elementReference.FocusAsync().AndForget(ignoreExceptions:true);
             }
-            Touched = _elementReference.Touched;
-            await BeginValidateAsync();
+            
+            if (!ReadOnly)
+            {
+                Touched = _elementReference.Touched;
+                await BeginValidateAsync();
+            }
+
             await OnBlur.InvokeAsync(obj);
         }
 

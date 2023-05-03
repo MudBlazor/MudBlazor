@@ -1467,11 +1467,13 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures that Required option is respected when control touched.
         /// (RadioGroup, ColorPicker (never null), Switch (never null), Autocomplete, NumericField(never null) and FileUpload controls not included)
         /// </summary>
-        [Test]
-        public async Task FormRequiredComponentTest()
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task FormRequiredComponentTest(bool isReadOnly)
         {
             var comp = Context.RenderComponent<FormRequiredControlTest>(c => c
-                .Add(x => x.Required, false));
+                .Add(x => x.Required, false)
+                .Add(x => x.ReadOnly, isReadOnly));
 
             var textField = comp.FindComponents<MudTextField<string>>()[0];
             var maskedTextField = comp.FindComponents<MudTextField<string>>()[1];
@@ -1507,20 +1509,22 @@ namespace MudBlazor.UnitTests.Components
             dateRangePicker.FindAll("input")[0].Blur();
             timePicker.Find("input").Blur();
 
+            bool expectedError = isReadOnly ? false : true;
+            var expectedErrorText = isReadOnly ? null : "Required";
             using (new AssertionScope())
             {
-                textField.Instance.Error.Should().BeTrue();
-                textField.Instance.ErrorText.Should().BeEquivalentTo("Required");
-                maskedTextField.Instance.Error.Should().BeTrue();
-                maskedTextField.Instance.ErrorText.Should().BeEquivalentTo("Required");
-                select.Instance.Error.Should().BeTrue();
-                select.Instance.ErrorText.Should().BeEquivalentTo("Required");
-                datePicker.Instance.Error.Should().BeTrue();
-                datePicker.Instance.ErrorText.Should().BeEquivalentTo("Required");
-                dateRangePicker.Instance.Error.Should().BeTrue();
-                dateRangePicker.Instance.ErrorText.Should().BeEquivalentTo("Required");
-                timePicker.Instance.Error.Should().BeTrue();
-                timePicker.Instance.ErrorText.Should().BeEquivalentTo("Required");
+                textField.Instance.Error.Should().Be(expectedError);
+                textField.Instance.ErrorText.Should().BeEquivalentTo(expectedErrorText);
+                maskedTextField.Instance.Error.Should().Be(expectedError);
+                maskedTextField.Instance.ErrorText.Should().BeEquivalentTo(expectedErrorText);
+                select.Instance.Error.Should().Be(expectedError);
+                select.Instance.ErrorText.Should().BeEquivalentTo(expectedErrorText);
+                datePicker.Instance.Error.Should().Be(expectedError);
+                datePicker.Instance.ErrorText.Should().BeEquivalentTo(expectedErrorText);
+                dateRangePicker.Instance.Error.Should().Be(expectedError);
+                dateRangePicker.Instance.ErrorText.Should().BeEquivalentTo(expectedErrorText);
+                timePicker.Instance.Error.Should().Be(expectedError);
+                timePicker.Instance.ErrorText.Should().BeEquivalentTo(expectedErrorText);
             }
         }
 

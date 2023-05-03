@@ -169,8 +169,11 @@ namespace MudBlazor
 
         protected override async Task OnInternalInputBlurred(FocusEventArgs args)
         {
-            Touched = _rangeInput?.Touched ?? Touched;
-            await BeginValidateAsync();
+            if (!ReadOnly)
+            {
+                Touched = _rangeInput?.Touched ?? Touched;
+                await BeginValidateAsync();
+            }
         }
 
         protected override void OnAfterRender(bool firstRender)
