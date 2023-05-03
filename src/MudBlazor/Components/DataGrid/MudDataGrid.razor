@@ -36,6 +36,8 @@
                 }
             }
             <div @ref=_gridElement class="@_tableClass" style="@_tableStyle">
+                <MudDropContainer @ref="_dropContainer" T="Column<T>" Items="@RenderedColumns" ItemsSelector="(item, dropzone) => RenderedColumnsItemsSelector(item, dropzone)" ItemDropped="ItemUpdatedAsync" CanDropClass="@DropAllowedClass" NoDropClass="@DropNotAllowedClass" ApplyDropClassesOnDragStarted="@ApplyDropClassesOnDragStarted">
+                    <ChildContent>
                 <table class="mud-table-root">
                     @if (ColGroup != null)
                     {
@@ -48,10 +50,10 @@
                             @Header
                         </CascadingValue>
                         <tr class="mud-table-row">
-                            @foreach (var column in RenderedColumns)
-                            {
-                                <HeaderCell SortDirection="@(GetColumnSortDirection(column.PropertyName))" T="T" Column="@column"></HeaderCell>
-                            }
+                        @foreach (var column in RenderedColumns)
+                        {
+                            <HeaderCell SortDirection="@(GetColumnSortDirection(column.PropertyName))" T="T" Column="@column"></HeaderCell>
+                        }
                         </tr>
                         @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
                         {
@@ -235,6 +237,11 @@
                         </tr>
                     </tfoot>
                 </table>
+                    </ChildContent>
+                    <ItemRenderer>
+                        @context.HeaderCell.TableHeader()
+                    </ItemRenderer>
+                </MudDropContainer>
             </div>
             @if (PagerContent != null)
             {
