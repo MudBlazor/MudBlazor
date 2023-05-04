@@ -38,18 +38,18 @@
                 }
 
                 <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
-                    @if (BeforeItemsTemplate != null)
-                    {
-                        <div class="pa-1">
-                            @BeforeItemsTemplate
-                        </div>
-                    }
                     @if (ProgressIndicatorInPopoverTemplate != null && IsLoading)
                     {
                         @ProgressIndicatorInPopoverTemplate
                     }
                     else if (_items != null && _items.Length != 0)
                     {
+                        @if (BeforeItemsTemplate != null && IsLoading is false)
+                        {
+                            <div class="pa-1">
+                                @BeforeItemsTemplate
+                            </div>
+                        }
                         <MudList Class="@ListClass" Clickable="true" Dense="@Dense">
                             @for (var index = 0; index < _items.Length; index++)
                             {
@@ -89,11 +89,17 @@
                     }
                     else if (NoItemsTemplate != null)
                     {
+                        @if (BeforeItemsTemplate != null && IsLoading is false)
+                        {
+                            <div class="pa-1">
+                                @BeforeItemsTemplate
+                            </div>
+                        }
                         <div class="pa-1">
                             @NoItemsTemplate
                         </div>
                     }
-                    @if (AfterItemsTemplate != null)
+                    @if (AfterItemsTemplate != null && IsLoading is false)
                     {
                         <div class="pa-1">
                             @AfterItemsTemplate

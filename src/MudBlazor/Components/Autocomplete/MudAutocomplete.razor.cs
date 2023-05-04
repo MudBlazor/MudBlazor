@@ -265,14 +265,14 @@ namespace MudBlazor
 
 
         /// <summary>
-        /// Optional presentation template for when you need to section to always show at the start in the drop down
+        /// Optional presentation template that is always shown at the top of the list
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment BeforeItemsTemplate { get; set; }
 
         /// <summary>
-        /// Optional presentation template for when you need to section to always show at the end in the drop down
+        /// Optional presentation template that is always shown at the bottom of the list
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
