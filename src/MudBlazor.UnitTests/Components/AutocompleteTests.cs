@@ -1219,8 +1219,16 @@ namespace MudBlazor.UnitTests.Components
             inputControl.Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            var mudText = comp.FindAll("p.mud-typography");
-            mudText[mudText.Count - 1].InnerHtml.Should().Contain("StartList_Content"); //ensure the text is shown
+            var mudTextCollection = comp.FindAll("p.mud-typography");
+            IElement beforeListTextElement = null;
+            foreach (var element in mudTextCollection)
+            {
+                if (!element.ClassList.Contains("beforeitems-txt")) continue;
+
+                beforeListTextElement = element;
+                break;
+            }
+            beforeListTextElement!.InnerHtml.Should().Contain("StartList_Content"); //ensure the text is shown
         }
 
         /// <summary>
