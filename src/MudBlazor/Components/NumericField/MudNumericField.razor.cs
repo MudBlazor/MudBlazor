@@ -174,11 +174,6 @@ namespace MudBlazor
         public bool Clearable { get; set; } = false;
 
         /// <summary>
-        /// Button click event for clear button. Called after text and value has been cleared.
-        /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
-
-        /// <summary>
         /// Decrements or increments depending on factor
         /// </summary>
         /// <param name="factor">Multiplication factor (1 or -1) will be applied to the step</param>
