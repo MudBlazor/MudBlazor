@@ -271,6 +271,12 @@ namespace MudBlazor
         public EventCallback<string> TextChanged { get; set; }
 
         /// <summary>
+        /// Fired when the text input is clicked.
+        /// </summary>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnInputTextClick { get; set; }
+
+        /// <summary>
         /// The currently selected string value (two-way bindable)
         /// </summary>
         [Parameter]

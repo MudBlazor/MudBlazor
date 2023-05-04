@@ -36,8 +36,7 @@
              ErrorText="@ErrorText"
              Clearable="@(GetReadOnlyState() ? false : Clearable)"
              OnClearButtonClick="@(() => Clear())"
-             @onclick="@(() => { if (!Editable) ToggleState(); })" 
-             />;
+                  @onclick="@(async (x) => { if (!Editable) ToggleState(); if (OnInputTextClick.HasDelegate) await OnInputTextClick.InvokeAsync(x);})" />;
 
     protected virtual RenderFragment PickerContent => null;
 
