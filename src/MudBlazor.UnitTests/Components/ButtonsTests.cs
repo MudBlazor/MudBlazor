@@ -77,9 +77,11 @@ namespace MudBlazor.UnitTests.Components
             var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
             var rel = Parameter(nameof(MudButton.Rel), "nofollow");
             var comp = Context.RenderComponent<MudButton>(link, rel);
-            comp.Markup
+            comp
+                .Find("a")
+                .GetAttribute("rel")
                 .Should()
-                .Contain("rel=\"nofollow\"");
+                .Be("nofollow");
         }
 
         /// <summary>
@@ -93,9 +95,11 @@ namespace MudBlazor.UnitTests.Components
             var target = Parameter(nameof(MudButton.Target), "_blank");
             var rel = Parameter(nameof(MudButton.Rel), "nofollow");
             var comp = Context.RenderComponent<MudButton>(link, target, rel);
-            comp.Markup
+            comp
+                .Find("a")
+                .GetAttribute("rel")
                 .Should()
-                .Contain("rel=\"nofollow\"");
+                .Be("nofollow");
         }
 
         /// <summary>
@@ -108,9 +112,11 @@ namespace MudBlazor.UnitTests.Components
             var rel = Parameter(nameof(MudButton.Rel), "");
             var target = Parameter(nameof(MudButton.Target), "_blank");
             var comp = Context.RenderComponent<MudButton>(link, rel, target);
-            comp.Markup
+            comp
+                .Find("a")
+                .GetAttribute("rel")
                 .Should()
-                .Contain("rel=\"\"");
+                .Be("");
         }
 
         /// <summary>
@@ -123,9 +129,11 @@ namespace MudBlazor.UnitTests.Components
             var rel = Parameter(nameof(MudButton.Rel), null);
             var target = Parameter(nameof(MudButton.Target), "_notblank");
             var comp = Context.RenderComponent<MudButton>(link, rel, target);
-            comp.Markup
+            comp
+                .Find("a")
+                .HasAttribute("rel")
                 .Should()
-                .NotContain("rel=");
+                .BeFalse();
         }
 
         /// <summary>
@@ -182,9 +190,11 @@ namespace MudBlazor.UnitTests.Components
             var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
             var rel = Parameter(nameof(MudIconButton.Rel), "nofollow");
             var comp = Context.RenderComponent<MudIconButton>(link, rel);
-            comp.Markup
+            comp
+                .Find("a")
+                .GetAttribute("rel")
                 .Should()
-                .Contain("rel=\"nofollow\"");
+                .Be("nofollow");
         }
 
         /// <summary>
@@ -198,9 +208,11 @@ namespace MudBlazor.UnitTests.Components
             var target = Parameter(nameof(MudIconButton.Target), "_blank");
             var rel = Parameter(nameof(MudIconButton.Rel), "nofollow");
             var comp = Context.RenderComponent<MudIconButton>(link, target, rel);
-            comp.Markup
+            comp
+                .Find("a")
+                .GetAttribute("rel")
                 .Should()
-                .Contain("rel=\"nofollow\"");
+                .Be("nofollow");
         }
 
         /// <summary>
@@ -214,9 +226,11 @@ namespace MudBlazor.UnitTests.Components
             var target = Parameter(nameof(MudIconButton.Target), "_blank");
             var rel = Parameter(nameof(MudIconButton.Rel), "");
             var comp = Context.RenderComponent<MudIconButton>(link, rel, target);
-            comp.Markup
+            comp
+                .Find("a")
+                .GetAttribute("rel")
                 .Should()
-                .Contain("rel=\"\"");
+                .Be("");
         }
 
         /// <summary>
@@ -229,9 +243,11 @@ namespace MudBlazor.UnitTests.Components
             var rel = Parameter(nameof(MudIconButton.Rel), null);
             var target = Parameter(nameof(MudIconButton.Target), "_notblank");
             var comp = Context.RenderComponent<MudIconButton>(link, rel, target);
-            comp.Markup
+            comp
+                .Find("a")
+                .HasAttribute("rel")
                 .Should()
-                .NotContain("rel=");
+                .BeFalse();
         }
 
         /// <summary>
@@ -299,9 +315,11 @@ namespace MudBlazor.UnitTests.Components
             var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
             var rel = Parameter(nameof(MudFab.Rel), "nofollow");
             var comp = Context.RenderComponent<MudFab>(link, rel);
-            comp.Markup
+            comp
+                .Find("a")
+                .GetAttribute("rel")
                 .Should()
-                .Contain("rel=\"nofollow\"");
+                .Be("nofollow");
         }
 
         /// <summary>
@@ -315,9 +333,11 @@ namespace MudBlazor.UnitTests.Components
             var target = Parameter(nameof(MudFab.Target), "_blank");
             var rel = Parameter(nameof(MudFab.Rel), "nofollow");
             var comp = Context.RenderComponent<MudFab>(link, target, rel);
-            comp.Markup
+            comp
+                .Find("a")
+                .GetAttribute("rel")
                 .Should()
-                .Contain("rel=\"nofollow\"");
+                .Be("nofollow");
         }
 
         /// <summary>
@@ -331,9 +351,11 @@ namespace MudBlazor.UnitTests.Components
             var target = Parameter(nameof(MudFab.Target), "_blank");
             var rel = Parameter(nameof(MudFab.Rel), "");
             var comp = Context.RenderComponent<MudFab>(link, target, rel);
-            comp.Markup
+            comp
+                .Find("a")
+                .GetAttribute("rel")
                 .Should()
-                .Contain("rel=\"\"");
+                .Be("");
         }
 
         /// <summary>
@@ -346,9 +368,11 @@ namespace MudBlazor.UnitTests.Components
             var rel = Parameter(nameof(MudFab.Rel), null);
             var target = Parameter(nameof(MudFab.Target), "_notblank");
             var comp = Context.RenderComponent<MudFab>(link, rel, target);
-            comp.Markup
+            comp
+                .Find("a")
+                .HasAttribute("rel")
                 .Should()
-                .NotContain("rel=");
+                .BeFalse();
         }
 
         /// <summary>
