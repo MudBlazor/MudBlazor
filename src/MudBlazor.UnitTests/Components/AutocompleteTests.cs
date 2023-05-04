@@ -1215,20 +1215,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<AutocompleteListStartRendersTest>();
 
+
             var inputControl = comp.Find("div.mud-input-control");
             inputControl.Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            var mudTextCollection = comp.FindAll("p.mud-typography");
-            IElement beforeListTextElement = null;
-            foreach (var element in mudTextCollection)
-            {
-                if (!element.ClassList.Contains("beforeitems-txt")) continue;
-
-                beforeListTextElement = element;
-                break;
-            }
-            beforeListTextElement!.InnerHtml.Should().Contain("StartList_Content"); //ensure the text is shown
+            var mudText = comp.FindAll("p.mud-typography");
+            mudText[mudText.Count - 1].InnerHtml.Should().Contain("StartList_Content"); //ensure the text is shown
         }
 
         /// <summary>

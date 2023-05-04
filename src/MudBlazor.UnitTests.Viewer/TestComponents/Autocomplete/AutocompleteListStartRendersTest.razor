@@ -32,9 +32,7 @@
 
     private async Task<IEnumerable<string>> Search1(string value)
     {
-    // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5);
-
+        await Task.CompletedTask;
         return states.Where(x => x.Contains("some string", StringComparison.InvariantCultureIgnoreCase));
     }
 }

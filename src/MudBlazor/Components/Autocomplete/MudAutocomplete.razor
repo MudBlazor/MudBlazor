@@ -44,7 +44,7 @@
                     }
                     else if (_items != null && _items.Length != 0)
                     {
-                        @if (BeforeItemsTemplate != null && IsLoading is false)
+                        @if (BeforeItemsTemplate != null)
                         {
                             <div class="pa-1">
                                 @BeforeItemsTemplate
@@ -89,7 +89,7 @@
                     }
                     else if (NoItemsTemplate != null)
                     {
-                        @if (BeforeItemsTemplate != null && IsLoading is false)
+                        @if (BeforeItemsTemplate != null)
                         {
                             <div class="pa-1">
                                 @BeforeItemsTemplate
@@ -97,6 +97,12 @@
                         }
                         <div class="pa-1">
                             @NoItemsTemplate
+                        </div>
+                    }
+                    else if (BeforeItemsTemplate != null && IsLoading is false)
+                    {
+                        <div class="pa-1">
+                            @BeforeItemsTemplate
                         </div>
                     }
                     @if (AfterItemsTemplate != null && IsLoading is false)
