@@ -3,7 +3,7 @@
 
 <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" MaxItems="10">
     <BeforeItemsTemplate>
-        <MudText class="beforeitems-txt">StartList_Content</MudText>
+        <MudText>StartList_Content</MudText>
     </BeforeItemsTemplate>
 </MudAutocomplete>
 
@@ -32,7 +32,8 @@
 
     private async Task<IEnumerable<string>> Search1(string value)
     {
-        await Task.CompletedTask;
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5);
         return states.Where(x => x.Contains("some string", StringComparison.InvariantCultureIgnoreCase));
     }
 }
