@@ -30,7 +30,7 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The size of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]
