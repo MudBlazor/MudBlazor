@@ -332,6 +332,13 @@ namespace MudBlazor
 
         protected async Task OnItemClicked(MouseEventArgs ev)
         {
+            if (HasChild && (MudTreeRoot?.ExpandOnClick ?? false))
+            {
+                Expanded = !Expanded;
+                await TryInvokeServerLoadFunc();
+                await ExpandedChanged.InvokeAsync(Expanded);
+            }
+
             if (Disabled)
             {
                 return;
@@ -340,13 +347,6 @@ namespace MudBlazor
             if (MudTreeRoot?.IsSelectable ?? false)
             {
                 await MudTreeRoot.UpdateSelected(this, !_isSelected);
-            }
-
-            if (HasChild && (MudTreeRoot?.ExpandOnClick ?? false))
-            {
-                Expanded = !Expanded;
-                await TryInvokeServerLoadFunc();
-                await ExpandedChanged.InvokeAsync(Expanded);
             }
 
             await OnClick.InvokeAsync(ev);
@@ -360,6 +360,13 @@ namespace MudBlazor
 
         protected async Task OnItemDoubleClicked(MouseEventArgs ev)
         {
+            if (HasChild && (MudTreeRoot?.ExpandOnDoubleClick ?? false))
+            {
+                Expanded = !Expanded;
+                await TryInvokeServerLoadFunc();
+                await ExpandedChanged.InvokeAsync(Expanded);
+            }
+
             if (Disabled)
             {
                 return;
@@ -370,20 +377,12 @@ namespace MudBlazor
                 await MudTreeRoot.UpdateSelected(this, !_isSelected);
             }
 
-            if (HasChild && (MudTreeRoot?.ExpandOnDoubleClick ?? false))
-            {
-                Expanded = !Expanded;
-                await TryInvokeServerLoadFunc();
-                await ExpandedChanged.InvokeAsync(Expanded);
-            }
-
             await OnDoubleClick.InvokeAsync(ev);
         }
 
         protected internal async Task OnItemExpanded(bool expanded)
         {
-            if (Expanded != expanded)
-            {
+            if (Expanded != expanded) {
                 Expanded = expanded;
                 await TryInvokeServerLoadFunc();
                 await ExpandedChanged.InvokeAsync(expanded);
