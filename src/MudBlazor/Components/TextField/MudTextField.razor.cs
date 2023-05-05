@@ -171,14 +171,17 @@ namespace MudBlazor
         {
             if (firstRender == true)
             {
-                if (InputReference is not null)
+                if (OverrideReadOnlyOnBlur)
                 {
-                    InputReference.OverrideReadOnlyOnBlur = true;
-                }
+                    if (InputReference is not null)
+                    {
+                        InputReference.OverrideReadOnlyOnBlur = true;
+                    }
 
-                if (_maskReference is not null)
-                {
-                    _maskReference.OverrideReadOnlyOnBlur = true;
+                    if (_maskReference is not null)
+                    {
+                        _maskReference.OverrideReadOnlyOnBlur = true;
+                    }
                 }
             }
 
