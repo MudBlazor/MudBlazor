@@ -556,6 +556,11 @@ namespace MudBlazor
                 return;
             }
 
+            if (CoerceValue && Immediate)
+            {
+                await CoerceValueToText();
+            }
+
             StateHasChanged();
         }
 
