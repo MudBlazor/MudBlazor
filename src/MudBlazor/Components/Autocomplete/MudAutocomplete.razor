@@ -38,12 +38,18 @@
                 }
 
                 <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
-                    @if(ProgressIndicatorInPopoverTemplate != null && IsLoading)
+                    @if (ProgressIndicatorInPopoverTemplate != null && IsLoading)
                     {
                         @ProgressIndicatorInPopoverTemplate
-                    } 
+                    }
                     else if (_items != null && _items.Length != 0)
                     {
+                        @if (BeforeItemsTemplate != null)
+                        {
+                            <div class="pa-1">
+                                @BeforeItemsTemplate
+                            </div>
+                        }
                         <MudList Class="@ListClass" Clickable="true" Dense="@Dense">
                             @for (var index = 0; index < _items.Length; index++)
                             {
@@ -51,7 +57,7 @@
                                 bool isSelected = index == _selectedListItemIndex;
                                 bool isDisabled = !_enabledItemIndices.Contains(index);
                                 var captureIndex = index;
-                                <MudListItem @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async() => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@(isSelected ? "mud-selected-item mud-primary-text mud-primary-hover" : "")">
+                                <MudListItem @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@(isSelected ? "mud-selected-item mud-primary-text mud-primary-hover" : "")">
                                     @if (ItemTemplate == null)
                                     {
                                         @GetItemString(item)
@@ -83,8 +89,26 @@
                     }
                     else if (NoItemsTemplate != null)
                     {
+                        @if (BeforeItemsTemplate != null)
+                        {
+                            <div class="pa-1">
+                                @BeforeItemsTemplate
+                            </div>
+                        }
                         <div class="pa-1">
                             @NoItemsTemplate
+                        </div>
+                    }
+                    else if (BeforeItemsTemplate != null && IsLoading is false)
+                    {
+                        <div class="pa-1">
+                            @BeforeItemsTemplate
+                        </div>
+                    }
+                    @if (AfterItemsTemplate != null && IsLoading is false)
+                    {
+                        <div class="pa-1">
+                            @AfterItemsTemplate
                         </div>
                     }
                 </MudPopover>

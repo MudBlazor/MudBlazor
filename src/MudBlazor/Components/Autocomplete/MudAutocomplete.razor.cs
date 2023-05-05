@@ -263,6 +263,21 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment NoItemsTemplate { get; set; }
 
+
+        /// <summary>
+        /// Optional presentation template that is always shown at the top of the list
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment BeforeItemsTemplate { get; set; }
+
+        /// <summary>
+        /// Optional presentation template that is always shown at the bottom of the list
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment AfterItemsTemplate { get; set; }
+
         /// <summary>
         /// Optional template for progress indicator
         /// </summary>
