@@ -556,7 +556,7 @@ namespace MudBlazor
                 return;
             }
 
-            if (CoerceValue && Immediate)
+            if (CoerceValue)
             {
                 await CoerceValueToText();
             }
