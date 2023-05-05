@@ -9,12 +9,39 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
     public class TreeViewTest : BunitTest
     {
+        [Test]
+        public void TreeView_ClickWhileDisabled_DoesNotChangeSelection()
+        {
+            var comp = Context.RenderComponent<DisabledTreeViewTest>(new ComponentParameter[] { Parameter(nameof(MudTreeView<string>.Disabled), true) });
+            comp.Find("div.mud-treeview-item-content").Click();
+            comp.Instance.SelectedValue.Should().BeNull();
+
+            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            comp.Instance.SelectedValue.Should().BeNull();
+        }
+
+        [Test]
+        public void TreeView_ClickWhileActive_DoesChangeSelection()
+        {
+            var comp = Context.RenderComponent<DisabledTreeViewTest>(new ComponentParameter[] { Parameter(nameof(MudTreeView<string>.Disabled), false) });
+            comp.Find("div.mud-treeview-item-content").Click();
+            comp.Instance.SelectedValue.Should().NotBeNull();
+
+            // To reset
+            comp.Find("div.mud-treeview-item-content").Click();
+            comp.Instance.SelectedValue.Should().BeNull();
+
+            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            comp.Instance.SelectedValue.Should().NotBeNull();
+        }
+
         [Test]
         public void Collapsed_ClickOnArrowButton_CheckClose()
         {
