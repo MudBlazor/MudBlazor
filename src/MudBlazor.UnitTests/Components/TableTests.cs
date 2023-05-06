@@ -1808,7 +1808,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the correct output when filter does not return any matching elements
         /// </summary>
         /// <returns>The awaitable <see cref="Task"/></returns>
-
+        [Test]
         public async Task TablePagerInfoTextTest()
         {
             // create the component
