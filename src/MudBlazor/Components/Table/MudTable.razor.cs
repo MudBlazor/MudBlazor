@@ -74,6 +74,9 @@ namespace MudBlazor
         /// </summary>
         protected override void OnInitialized()
         {
+            if (HasServerData)
+                Loading = true;
+
             if (Columns == null && RowTemplate == null && RowEditingTemplate == null)
             {
                 string[] quickcolumnslist = null;
