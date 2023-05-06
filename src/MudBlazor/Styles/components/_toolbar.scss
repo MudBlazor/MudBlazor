@@ -4,7 +4,8 @@
     display: flex;
     position: relative;
     align-items: center;
-    height: 56px;
+    min-height: 56px;
+    flex-wrap: wrap;
 }
 
 .mud-toolbar-gutters {
@@ -14,13 +15,13 @@
 
 @media (min-width:$breakpoint-xs) and (orientation: landscape) {
     .mud-toolbar {
-        height: 48px;
+        min-height: 48px;
     }
 }
 
 @media (min-width:$breakpoint-sm) {
     .mud-toolbar {
-        height: 64px;
+        min-height: 64px;
     }
 
     .mud-toolbar-gutters {
@@ -30,5 +31,5 @@
 }
 
 .mud-toolbar-dense {
-    height: 48px;
+    min-height: 48px;
 }
