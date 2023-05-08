@@ -483,14 +483,13 @@ namespace MudBlazor
             }
         }
 
-        private async Task ClickAsync(MouseEventArgs args)
+        private async Task OnClick(MouseEventArgs args)
         {
             if (!Editable)
                 ToggleState();
 
             if (OnInputTextClick.HasDelegate)
                 await OnInputTextClick.InvokeAsync(args);
-
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
