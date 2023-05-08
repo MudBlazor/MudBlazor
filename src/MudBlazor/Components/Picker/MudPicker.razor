@@ -36,7 +36,7 @@
              ErrorText="@ErrorText"
              Clearable="@(GetReadOnlyState() ? false : Clearable)"
              OnClearButtonClick="@(() => Clear())"
-                  @onclick="Click" />;
+                  @onclick="ClickAsync" />;
 
     protected virtual RenderFragment PickerContent => null;
 

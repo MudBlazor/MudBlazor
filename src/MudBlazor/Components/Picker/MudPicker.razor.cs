@@ -483,7 +483,7 @@ namespace MudBlazor
             }
         }
 
-        private async Task Click(MouseEventArgs args)
+        private async Task ClickAsync(MouseEventArgs args)
         {
             if (!Editable)
                 ToggleState();
