@@ -1205,5 +1205,39 @@ namespace MudBlazor.UnitTests.Components
             matchingStates.Single(s => s.Markup.Contains("Test")).Find("div.mud-list-item").Click();
             component.WaitForAssertion(() => autocompleteInstance.Text.Should().Be(string.Empty));
         }
+
+
+        /// <summary>
+        /// ListEndTemplate should render when there are no items
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_LoadListStartWhenSet()
+        {
+            var comp = Context.RenderComponent<AutocompleteListStartRendersTest>();
+
+
+            var inputControl = comp.Find("div.mud-input-control");
+            inputControl.Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            var mudText = comp.FindAll("p.mud-typography");
+            mudText[mudText.Count - 1].InnerHtml.Should().Contain("StartList_Content"); //ensure the text is shown
+        }
+
+        /// <summary>
+        /// ListEndTemplate should render when there are no items
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_LoadListEndWhenSet()
+        {
+            var comp = Context.RenderComponent<AutocompleteListEndRendersTest>();
+
+            var inputControl = comp.Find("div.mud-input-control");
+            inputControl.Click();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            var mudText = comp.FindAll("p.mud-typography");
+            mudText[mudText.Count - 1].InnerHtml.Should().Contain("EndList_Content"); //ensure the text is shown
+        }
     }
 }

@@ -24,10 +24,28 @@
             </NoItemsTemplate>
         </MudAutocomplete>
     </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value3"
+                         SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")">
+            <BeforeItemsTemplate>
+                <MudText Color="Color.Primary" Class="px-4 py-1">Always Shows Before List</MudText>
+            </BeforeItemsTemplate>
+        </MudAutocomplete>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value4"
+                         SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")">
+            <AfterItemsTemplate>
+                <div class="pa-2">
+                    <MudButton Color="Color.Primary">Add Item(does nothing)</MudButton>
+                </div>
+            </AfterItemsTemplate>
+        </MudAutocomplete>
+    </MudItem>
 </MudGrid>
 
 @code {
-    private Element value1, value2;
+    private Element value1, value2, value3, value4;
 
     private async Task<IEnumerable<Element>> Search(string value)
     {

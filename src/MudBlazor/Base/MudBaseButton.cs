@@ -59,6 +59,13 @@ namespace MudBlazor
         public string Target { get; set; }
 
         /// <summary>
+        /// The value of rel attribute for web crawlers. Overrides "noopener" set by <see cref="Target"/> attribute.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public string Rel { get; set; }
+
+        /// <summary>
         /// If true, the button will be disabled.
         /// </summary>
         [Parameter]
@@ -149,5 +156,12 @@ namespace MudBlazor
         protected ElementReference _elementReference;
 
         public ValueTask FocusAsync() => _elementReference.FocusAsync();
+
+        protected string GetRel()
+        {
+            if (Rel == null && Target == "_blank")
+                return "noopener";
+            return Rel;
+        }
     }
 }
