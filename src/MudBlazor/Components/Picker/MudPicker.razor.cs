@@ -274,7 +274,7 @@ namespace MudBlazor
         /// Fired when the text input is clicked.
         /// </summary>
         [Parameter]
-        public EventCallback<MouseEventArgs> OnInputTextClick { get; set; }
+        public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         /// <summary>
         /// The currently selected string value (two-way bindable)
@@ -483,13 +483,13 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnClick(MouseEventArgs args)
+        private async Task OnClickAsync(MouseEventArgs args)
         {
             if (!Editable)
                 ToggleState();
 
-            if (OnInputTextClick.HasDelegate)
-                await OnInputTextClick.InvokeAsync(args);
+            if (OnClick.HasDelegate)
+                await OnClick.InvokeAsync(args);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
