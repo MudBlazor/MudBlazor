@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor
+@typeparam T
+@inherits FilterTypeBase<T>
+@attribute [ExcludeComponentFromApiDocs]
+
+@if (CanBeMapped())
+{
+    <MudTextField T="string"
+                  Value="@Filter._valueString"
+                  ValueChanged="@Filter.StringValueChanged"
+                  FullWidth="true"
+                  Label="Value"
+                  Placeholder="Filter value"
+                  Margin="@Margin.Dense"
+                  Immediate="true"
+                  Class="filter-input"/>
+}
+
+@code {
+#nullable enable
+
+    public override bool CanBeMapped()
+    {
+        return FilterDefinition.FieldType.IsString && !(FilterDefinition.Operator ?? "").EndsWith("empty");
+    }
+}

@@ -17,6 +17,10 @@ namespace MudBlazor
 
         public bool IsDateTime { get; init; }
 
+        public bool IsDateOnly { get; init; }
+
+        public bool IsTimeOnly { get; init; }
+
         public bool IsBoolean { get; init; }
 
         public bool IsGuid { get; init; }
@@ -29,6 +33,8 @@ namespace MudBlazor
                 IsNumber = TypeIdentifier.IsNumber(type),
                 IsEnum = TypeIdentifier.IsEnum(type),
                 IsDateTime = TypeIdentifier.IsDateTime(type),
+                IsDateOnly = TypeIdentifier.IsDateOnly(type),
+                IsTimeOnly = TypeIdentifier.IsTimeOnly(type),
                 IsBoolean = TypeIdentifier.IsBoolean(type),
                 IsGuid = TypeIdentifier.IsGuid(type)
             };

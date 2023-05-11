@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace MudBlazor
 {
 #nullable enable
-    internal class Filter<T>
+    public class Filter<T>
     {
         private readonly MudDataGrid<T> _dataGrid;
         private readonly FilterDefinition<T> _filterDefinition;

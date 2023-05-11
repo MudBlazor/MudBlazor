@@ -108,7 +108,7 @@ namespace MudBlazor
                     Boolean.Is,
                 };
             }
-            if (fieldType.IsDateTime)
+            if (fieldType.IsDateTime || fieldType.IsDateOnly || fieldType.IsTimeOnly)
             {
                 return new[]
                 {

@@ -696,6 +696,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool ShowMenuIcon { get; set; } = false;
 
+        [Parameter] public FilterTypeMapper FilterTypeMapper { get; set; } = new();
+
         #endregion
 
         #region Properties

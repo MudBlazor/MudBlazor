@@ -79,6 +79,30 @@ namespace MudBlazor
             return underlyingType is not null && underlyingType == typeof(DateTime);
         }
 
+        public static bool IsDateOnly(Type? type)
+        {
+            if (type is null)
+                return false;
+
+            if (type == typeof(DateOnly))
+                return true;
+
+            var underlyingType = Nullable.GetUnderlyingType(type);
+            return underlyingType is not null && underlyingType == typeof(DateOnly);
+        }
+
+        public static bool IsTimeOnly(Type? type)
+        {
+            if (type is null)
+                return false;
+
+            if (type == typeof(TimeOnly))
+                return true;
+
+            var underlyingType = Nullable.GetUnderlyingType(type);
+            return underlyingType is not null && underlyingType == typeof(TimeOnly);
+        }
+
         public static bool IsBoolean(Type? type)
         {
             if (type is null)

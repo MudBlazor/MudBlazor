@@ -105,6 +105,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="MudBlazor.UnitTests" />
+    <InternalsVisibleTo Include="MudBlazor.Docs.Compiler" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,6 +3,7 @@
 @typeparam T
 @using MudBlazor.Utilities
 @using MudBlazor.Extensions
+@using Microsoft.AspNetCore.Components.Rendering
 
 @{
     _currentRenderFilteredItemsCache = null;
@@ -419,52 +420,14 @@
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="4">
-                    @if (filterDefinition.FieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
-                    {
-                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
-                                      Immediate="true" Class="filter-input"/>
-                    }
-                    else if (filterDefinition.FieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
-                    {
-                        <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
-                                         Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture"/>
-                    }
-                    else if (filterDefinition.FieldType.IsEnum)
-                    {
-                        <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
-                                   Class="filter-input">
-                            <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
-                            @foreach (var item in EnumExtensions.GetSafeEnumValues(filterDefinition.dataType))
+                    <CascadingValue Name="Filter" Value="filter">
+                        <CascadingValue Name="FilterDefinition" Value="filterDefinition">
+                            @foreach (var filterType in FilterTypeMapper.Create<T>())
                             {
-                                <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
+                                <DynamicComponent Type="@filterType" />
                             }
-                        </MudSelect>
-                    }
-                    else if (filterDefinition.FieldType.IsBoolean)
-                    {
-                        <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
-                                   Class="filter-input">
-                            <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
-                            <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
-                            <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
-                        </MudSelect>
-                    }
-                    else if (filterDefinition.FieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
-                    {
-                        <MudGrid Spacing="0">
-                            <MudItem xs="7">
-                                <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Margin="@Margin.Dense" Class="filter-input-date"/>
-                            </MudItem>
-                            <MudItem xs="5">
-                                <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Margin="@Margin.Dense" Class="filter-input-time"/>
-                            </MudItem>
-                        </MudGrid>
-                    }
-                    else if (filterDefinition.FieldType.IsGuid)
-                    {
-                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
-                                      Immediate="true" Class="filter-input"/>
-                    }
+                        </CascadingValue>
+                    </CascadingValue>
                 </MudItem>
             }
             else
@@ -479,53 +442,15 @@
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12">
-                    @if (filterDefinition.FieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
-                    {
-                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense"
-                                      Immediate="true" Class="filter-input"/>
-                    }
-                    else if (filterDefinition.FieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
-                    {
-                        <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense"
-                                         Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture"/>
-                    }
-                    else if (filterDefinition.FieldType.IsEnum)
-                    {
-                        <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
-                                   Class="filter-input">
-                            <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
-                            @foreach (var item in Enum.GetValues(filterDefinition.dataType))
+                    <CascadingValue Name="Filter" Value="filter">
+                        <CascadingValue Name="FilterDefinition" Value="filterDefinition">
+                            @foreach (var filterType in FilterTypeMapper.Create<T>())
                             {
-                                <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
+                                <DynamicComponent Type="@filterType"/>
                             }
-                        </MudSelect>
-                    }
-                    else if (filterDefinition.FieldType.IsBoolean)
-                    {
-                        <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
-                                   Class="filter-input">
-                            <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
-                            <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
-                            <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
-                        </MudSelect>
-                    }
-                    else if (filterDefinition.FieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
-                    {
-                        <MudGrid Spacing="0">
-                            <MudItem xs="7">
-                                <MudDatePicker Date="@filter._valueDate" DateChanged="@filter.DateValueChanged" Margin="@Margin.Dense" Class="filter-input-date"/>
-                            </MudItem>
-                            <MudItem xs="5">
-                                <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Margin="@Margin.Dense" Class="filter-input-time"/>
-                            </MudItem>
-                        </MudGrid>
-                    }
-                    else if (filterDefinition.FieldType.IsGuid)
-                    {
-                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
-                                      Immediate="true" Class="filter-input"/>
-                    }
+                        </CascadingValue>
+                    </CascadingValue>
                 </MudItem>
             }
-         </text>;
+            </text>;
 }

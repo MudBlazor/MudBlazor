@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor
+@typeparam T
+@inherits FilterTypeBase<T>
+@attribute [ExcludeComponentFromApiDocs]
+
+@if (CanBeMapped())
+{
+    <MudSelect T="bool?" 
+               Value="@Filter._valueBool"
+               ValueChanged="@Filter.BoolValueChanged"
+               FullWidth="true"
+               Dense="true"
+               Margin="@Margin.Dense" 
+               Class="filter-input">
+        <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
+        <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
+        <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
+    </MudSelect>
+}
+
+@code {
+#nullable enable
+
+    public override bool CanBeMapped()
+    {
+        return FilterDefinition.FieldType.IsBoolean;
+    }
+}
+

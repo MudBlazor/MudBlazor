@@ -1,0 +1,27 @@
+﻿@namespace MudBlazor
+@typeparam T
+@inherits FilterTypeBase<T>
+@attribute [ExcludeComponentFromApiDocs]
+
+@if (CanBeMapped())
+{
+    <MudNumericField T="double?"
+                 Value="@Filter._valueNumber"
+                 ValueChanged="@Filter.NumberValueChanged"
+                     FullWidth="true"
+                     Label="Value"
+                     Placeholder="Filter value"
+                     Margin="@Margin.Dense"
+                     Immediate="true"
+                     Class="filter-input"
+                     Culture="@Filter.FilterColumn?.Culture"/>
+}
+
+@code {
+#nullable enable
+
+    public override bool CanBeMapped()
+    {
+        return FilterDefinition.FieldType.IsNumber && !(FilterDefinition.Operator ?? "").EndsWith("empty");
+    }
+}
