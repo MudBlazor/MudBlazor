@@ -202,7 +202,7 @@ namespace MudBlazor
             if (reorderIsAllowed)
             {
                 index = GetTransactionIndex() + 1;
-                if (capturedTransaction.SourceZoneIdentifier == capturedTransaction.CurrentZone && IsItemMovedDownwards())
+                if (capturedTransaction.SourceZoneIdentifier == capturedTransaction.CurrentZone && index > capturedTransaction.SourceIndex)
                 {
                     index -= 1;
                 }
