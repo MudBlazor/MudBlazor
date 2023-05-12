@@ -5,10 +5,10 @@
 <MudGrid>
     <MudItem xs="12" sm="7">
         <MudPaper Class="pa-4">
-            <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" ReadOnly="false">
-                <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!" ReadOnly="true" />
+            <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!" />
                     <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
-                              Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" ReadOnly="true" />
+                              Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" />
                     <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="pwField1"
                                   InputType="InputType.Password"
                                   Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
