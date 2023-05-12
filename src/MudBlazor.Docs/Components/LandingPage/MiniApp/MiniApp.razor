@@ -42,7 +42,7 @@
     </div>
     <div class="@ContentClassNames">
         <MudToolBar DisableGutters="true" Class="mud-text-secondary">
-            <MudIconButton OnClick="@(() => ToggleMiniDrawer())" Icon="@Icons.Material.Rounded.MenuOpen" Color="Color.Inherit"/>
+            <MudIconButton OnClick="@(() => ToggleMiniDrawer())" Icon="@GetIcon()" Color="Color.Inherit"/>
             <MudIconButton Icon="@Icons.Material.Outlined.Search" Color="Color.Inherit"/>
             <MudSpacer/>
             <MudIconButton Class="mud-text-secondary" Icon="@Icons.Material.Outlined.Notifications"/>
@@ -313,6 +313,8 @@
             overlayVisible = false;
         }
     }
+
+    private string GetIcon() => miniDrawerOpen ? Icons.Material.Rounded.MenuOpen : Icons.Material.Rounded.Menu;
 
     protected string MiniDrawerClassNames =>
         new CssBuilder("mini-drawer py-8 flex-grow-0 flex-shrink-0")
