@@ -1,0 +1,75 @@
+@namespace MudBlazor
+@using MudBlazor.Utilities
+@inherits MudComponentBase
+
+<CascadingValue Value="this" IsFixed="true">
+    <div @attributes="UserAttributes" class="@Classname" style="@Styles">
+        @ChildContent
+    </div>
+</CascadingValue>
+
+@code {
+    protected string Classname =>
+        new CssBuilder("mud-gridv2")
+            .AddClass(Class)
+            .Build();
+
+    protected string Styles =>
+        new StyleBuilder().AddStyle(Style)
+            .AddStyle("grid-template-columns", TemplateColumns, !string.IsNullOrEmpty(TemplateColumns))
+            .AddStyle("grid-template-rows", TemplateRows,!string.IsNullOrEmpty(TemplateRows))
+            .AddStyle("grid-template-areas", TemplateAreas,!string.IsNullOrEmpty(TemplateAreas))
+            .AddStyle("grid-column-gap", ColumnGap, string.IsNullOrEmpty(Gap) && !string.IsNullOrEmpty(ColumnGap))
+            .AddStyle("grid-row-gap", RowGap, string.IsNullOrEmpty(Gap) && !string.IsNullOrEmpty(RowGap))
+            .AddStyle("grid-gap", Gap,!string.IsNullOrEmpty(Gap))
+            .AddStyle("justify-items", JustifyItems.ToDescriptionString())
+            .AddStyle("align-items", AlignItems.ToDescriptionString())
+            .AddStyle("justify-content", JustifyContent.ToDescriptionString())
+            .AddStyle("align-content", AlignContent.ToDescriptionString())
+            .Build();
+    
+    [Parameter]
+    [Category(CategoryTypes.Grid.Behavior)]
+    public string TemplateColumns { get; set; }
+    
+    [Parameter]
+    [Category(CategoryTypes.Grid.Behavior)]
+    public string TemplateRows { get; set; }
+    
+    [Parameter]
+    [Category(CategoryTypes.Grid.Behavior)]
+    public string TemplateAreas { get; set; }
+        
+    [Parameter]
+    [Category(CategoryTypes.Grid.Behavior)]
+    public string ColumnGap { get; set; }
+    
+    [Parameter]
+    [Category(CategoryTypes.Grid.Behavior)]
+    public string RowGap { get; set; }
+        
+    [Parameter]
+    [Category(CategoryTypes.Grid.Behavior)]
+    public string Gap { get; set; }
+    
+    [Parameter]
+    [Category(CategoryTypes.Grid.Behavior)]
+    public Justify JustifyItems { get; set; }
+        
+    [Parameter]
+    [Category(CategoryTypes.Grid.Behavior)]
+    public Align AlignItems { get; set; }
+    
+    [Parameter]
+    [Category(CategoryTypes.Grid.Behavior)]
+    public Justify JustifyContent { get; set; }
+    
+    [Parameter]
+    [Category(CategoryTypes.Grid.Behavior)]
+    public Align AlignContent { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Grid.Behavior)]
+    public RenderFragment ChildContent { get; set; }
+
+}

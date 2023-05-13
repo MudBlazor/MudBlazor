@@ -1,0 +1,71 @@
+@namespace MudBlazor
+@using MudBlazor.Utilities
+@using MudBlazor.Extensions
+@inherits MudComponentBase
+
+<div @attributes="UserAttributes" class="@Classname" style="@Styles">
+    @ChildContent
+</div>
+
+@code { 
+    protected string Classname =>
+        new CssBuilder("mud-gridv2-item")
+            .AddClass(Class)
+            .Build();
+    
+    protected string Styles =>
+        new StyleBuilder().AddStyle(Style)
+            .AddStyle("grid-column-start", ColumnStart, string.IsNullOrEmpty(Column) && !string.IsNullOrEmpty(ColumnStart))
+            .AddStyle("grid-column-end", ColumnEnd,string.IsNullOrEmpty(Column) && !string.IsNullOrEmpty(ColumnEnd))
+            .AddStyle("grid-column", Column, !string.IsNullOrEmpty(Column))
+            .AddStyle("grid-row-start", RowStart,string.IsNullOrEmpty(Row) && !string.IsNullOrEmpty(RowStart))
+            .AddStyle("grid-row-end", RowEnd,string.IsNullOrEmpty(Row) && !string.IsNullOrEmpty(RowEnd))
+            .AddStyle("grid-row", Row, !string.IsNullOrEmpty(Row))
+            .AddStyle("grid-area", Area, !string.IsNullOrEmpty(Area))
+            .AddStyle("justify-self", JustifySelf.ToDescriptionString())
+            .AddStyle("align-self", AlignSelf.ToDescriptionString())
+            .Build();
+
+    [CascadingParameter]
+    private MudGrid Parent { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public string ColumnStart { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public string ColumnEnd { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public string Column { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public string RowStart { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public string RowEnd { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public string Row { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public string Area { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public Justify JustifySelf { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public Align AlignSelf { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public RenderFragment ChildContent { get; set; }
+}
