@@ -15,7 +15,7 @@
             .Build();
 
     protected string Styles =>
-        new StyleBuilder().AddStyle(Style)
+        new StyleBuilder()
             .AddStyle("grid-template-columns", TemplateColumns, !string.IsNullOrEmpty(TemplateColumns))
             .AddStyle("grid-template-rows", TemplateRows,!string.IsNullOrEmpty(TemplateRows))
             .AddStyle("grid-template-areas", TemplateAreas,!string.IsNullOrEmpty(TemplateAreas))
@@ -26,6 +26,7 @@
             .AddStyle("align-items", AlignItems.ToDescriptionString())
             .AddStyle("justify-content", JustifyContent.ToDescriptionString())
             .AddStyle("align-content", AlignContent.ToDescriptionString())
+            .AddStyle(Style)
             .Build();
     
     [Parameter]

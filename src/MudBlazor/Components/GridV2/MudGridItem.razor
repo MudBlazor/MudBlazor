@@ -24,6 +24,7 @@
             .AddStyle("grid-area", Area, !string.IsNullOrEmpty(Area))
             .AddStyle("justify-self", JustifySelf.ToDescriptionString())
             .AddStyle("align-self", AlignSelf.ToDescriptionString())
+            .AddStyle(Style)
             .Build();
 
     [CascadingParameter]
