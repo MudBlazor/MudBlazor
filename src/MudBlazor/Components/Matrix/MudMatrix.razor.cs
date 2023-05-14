@@ -11,7 +11,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudGridV2 : MudComponentBase
+    public partial class MudMatrix : MudComponentBase
     {
         protected string Classname =>
             new CssBuilder("mud-gridv2")

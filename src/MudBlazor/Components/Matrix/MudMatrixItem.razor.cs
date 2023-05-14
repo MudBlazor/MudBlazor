@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudGridItem : MudComponentBase
+    public partial class MudMatrixItem : MudComponentBase
     {
         protected string Classname =>
             new CssBuilder("mud-gridv2-item")
@@ -31,7 +31,7 @@ namespace MudBlazor
                 .AddStyle(Style)
                 .Build();
 
-        [CascadingParameter] private MudGridV2 Parent { get; set; }
+        [CascadingParameter] private MudMatrix Parent { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.Item.Behavior)]

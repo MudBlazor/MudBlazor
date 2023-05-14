@@ -9,7 +9,7 @@ namespace MudBlazor
     /// The top level properties are default, but can be overridden by the xs, sm, md, lg, xl, xx breakpoint properties
     /// Passing this object to the Configuration property of a MudGridItem will apply these properties to the grid by its Id
     /// </summary>
-    public class GridItemConfiguration
+    public class MatrixItemConfiguration
     {
         [Category(CategoryTypes.Item.Behavior)]
         [StyleAttribute("grid-column-start")]
@@ -59,11 +59,11 @@ namespace MudBlazor
         [Category(CategoryTypes.Item.Behavior)]
         public int RowSpan { get; set; }
         
-        public GridItemConfiguration xs { get; set; }
-        public GridItemConfiguration sm { get; set; }
-        public GridItemConfiguration md { get; set; }
-        public GridItemConfiguration lg { get; set; }
-        public GridItemConfiguration xl { get; set; }
-        public GridItemConfiguration xx { get; set; }
+        public MatrixItemConfiguration xs { get; set; }
+        public MatrixItemConfiguration sm { get; set; }
+        public MatrixItemConfiguration md { get; set; }
+        public MatrixItemConfiguration lg { get; set; }
+        public MatrixItemConfiguration xl { get; set; }
+        public MatrixItemConfiguration xx { get; set; }
     }
 }

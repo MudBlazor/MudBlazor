@@ -15,7 +15,7 @@ namespace MudBlazor
     /// The top level properties are default, but can be overridden by the xs, sm, md, lg, xl, xx breakpoint properties
     /// Passing this object to the Configuration property of a MudCSSGrid will apply these properties to the grid by its Id
     /// </summary>
-    public class GridConfiguration
+    public class MatrixConfiguration
     {
         private List<string> Grids = new List<string>();
 
@@ -71,20 +71,20 @@ namespace MudBlazor
         [Category(CategoryTypes.Grid.Behavior)]
         public int RowCount { get; set; }
 
-        public GridConfiguration xs { get; set; }
-        public GridConfiguration sm { get; set; }
-        public GridConfiguration md { get; set; }
-        public GridConfiguration lg { get; set; }
-        public GridConfiguration xl { get; set; }
-        public GridConfiguration xx { get; set; }
+        public MatrixConfiguration xs { get; set; }
+        public MatrixConfiguration sm { get; set; }
+        public MatrixConfiguration md { get; set; }
+        public MatrixConfiguration lg { get; set; }
+        public MatrixConfiguration xl { get; set; }
+        public MatrixConfiguration xx { get; set; }
 
-        public GridItemConfiguration GlobalGridItemConfiguration { get; set; }
-        public GridItemConfiguration XsGridItemConfiguration { get; set; }
-        public GridItemConfiguration SmGridItemConfiguration { get; set; }
-        public GridItemConfiguration MdGridItemConfiguration { get; set; }
-        public GridItemConfiguration LgGridItemConfiguration { get; set; }
-        public GridItemConfiguration XlGridItemConfiguration { get; set; }
-        public GridItemConfiguration XxGridItemConfiguration { get; set; }
+        public MatrixItemConfiguration GlobalMatrixItemConfiguration { get; set; }
+        public MatrixItemConfiguration XsMatrixItemConfiguration { get; set; }
+        public MatrixItemConfiguration SmMatrixItemConfiguration { get; set; }
+        public MatrixItemConfiguration MdMatrixItemConfiguration { get; set; }
+        public MatrixItemConfiguration LgMatrixItemConfiguration { get; set; }
+        public MatrixItemConfiguration XlMatrixItemConfiguration { get; set; }
+        public MatrixItemConfiguration XxMatrixItemConfiguration { get; set; }
 
         public void AddGrid(string gridId) => Grids.Add('#' + gridId);
         public bool RemoveGrid(string gridId) => Grids.Remove('#' + gridId);
@@ -98,12 +98,12 @@ namespace MudBlazor
             foreach (PropertyInfo prop in this.GetType().GetProperties())
             {
                 Console.WriteLine(prop);
-                if (prop.GetValue(this, null) is GridConfiguration childConfiguration)
+                if (prop.GetValue(this, null) is MatrixConfiguration childConfiguration)
                 {
                     builder.Append(childConfiguration.BuildConfiguration());
                     continue;
                 }
-                if (prop.GetValue(this, null) is GridItemConfiguration childConfiguration2)
+                if (prop.GetValue(this, null) is MatrixItemConfiguration childConfiguration2)
                 {
                     //builder.Append(childConfiguration2.BuildConfiguration());
                     continue;
