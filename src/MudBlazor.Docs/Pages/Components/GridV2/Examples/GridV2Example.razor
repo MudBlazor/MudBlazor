@@ -9,3 +9,20 @@
     <MudGridItem>D</MudGridItem>
     <MudGridItem>E</MudGridItem>
 </MudGridV2>
+
+@code{
+
+    GridConfiguration _configuration =
+    new GridConfiguration
+    {
+        Gap = "3px",
+        TemplateRows = "template content"
+    };
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _configuration.AddGrid(Guid.NewGuid().ToString());
+        Console.WriteLine(_configuration.BuildConfiguration());
+    }
+}
