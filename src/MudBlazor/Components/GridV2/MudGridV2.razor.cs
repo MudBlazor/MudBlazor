@@ -100,25 +100,5 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Grid.Behavior)]
         public RenderFragment ChildContent { get; set; }
-
-        [Inject] private IJSRuntime _ijsRuntime { get; set; }
-        private GridCSSGenerator _cssGenerator;
-        private ElementReference styleDiv;
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                // _cssGenerator = new GridCSSGenerator(_ijsRuntime, Guid.NewGuid().ToString());
-                // await _cssGenerator.Ready();
-                // _cssGenerator.AddOrUpdateClass("grid-test", "display: none;");
-                // _cssGenerator.AddOrUpdateClass("grid-test2", "display: block;");
-                // _cssGenerator.AddOrUpdateClass("grid-test3", "display: inline;");
-                // await _cssGenerator.Apply();
-                // _cssGenerator.RemoveClass("grid-test2");
-                // await _cssGenerator.Apply();
-            }
-            await base.OnAfterRenderAsync(firstRender);
-        }
     }
 }
