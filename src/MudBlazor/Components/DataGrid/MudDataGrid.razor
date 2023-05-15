@@ -122,7 +122,7 @@
                         }
 
                         @{var resolvedPageItems = CurrentPageItems.ToList();}
-                        @if (resolvedPageItems != null && resolvedPageItems.Count > 0)
+                        @if (resolvedPageItems is { Count: > 0 })
                         {
                             if (GroupedColumn != null)
                             {
@@ -390,7 +390,7 @@
             </td>
          </text>;
 
-    internal RenderFragment Filter(FilterDefinition<T> filterDefinition, Column<T> column) =>
+    internal RenderFragment Filter(IFilterDefinition<T> filterDefinition, Column<T> column) =>
         @<text>
             @{
                 var filter = new Filter<T>(this, filterDefinition, column);
@@ -412,7 +412,7 @@
                 <MudItem xs="3">
                     <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Label="Operator" Dense="true" Margin="@Margin.Dense"
                                Class="filter-operator">
-                        @foreach (var fieldOperator in FilterOperator.GetOperatorByDataType(filterDefinition.dataType))
+                        @foreach (var fieldOperator in FilterOperator.GetOperatorByDataType(filterDefinition.FieldType))
                         {
                             <MudSelectItem Value="@fieldOperator">@fieldOperator</MudSelectItem>
                         }
@@ -434,7 +434,7 @@
                         <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                                    Class="filter-input">
                             <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
-                            @foreach (var item in EnumExtensions.GetSafeEnumValues(filterDefinition.dataType))
+                            @foreach (var item in EnumExtensions.GetSafeEnumValues(filterDefinition.FieldType.InnerType))
                             {
                                 <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
                             }
@@ -472,7 +472,7 @@
                 <MudItem xs="12">
                     <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                                Class="filter-operator">
-                        @foreach (var o in FilterOperator.GetOperatorByDataType(filterDefinition.dataType))
+                        @foreach (var o in FilterOperator.GetOperatorByDataType(filterDefinition.FieldType))
                         {
                             <MudSelectItem Value="@o">@o</MudSelectItem>
                         }
@@ -494,8 +494,8 @@
                         <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                                    Class="filter-input">
                             <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
-                            @foreach (var item in Enum.GetValues(filterDefinition.dataType))
-                            {
+                        @foreach (var item in EnumExtensions.GetSafeEnumValues(filterDefinition.FieldType.InnerType))
+                        {
                                 <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
                             }
                         </MudSelect>

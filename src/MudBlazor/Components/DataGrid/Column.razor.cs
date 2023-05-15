@@ -279,7 +279,6 @@ namespace MudBlazor
                         //FieldType = PropertyType,
                         Title = Title,
                         Operator = operators.FirstOrDefault(),
-                        PropertyExpression = PropertyExpression,
                         Column = this,
                     };
                 }
