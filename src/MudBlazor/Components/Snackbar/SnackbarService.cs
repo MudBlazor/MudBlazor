@@ -183,27 +183,6 @@ namespace MudBlazor
             OnSnackbarsUpdated?.Invoke();
         }
 
-        public void RemoveByKey(string key)
-        {
-            SnackBarLock.EnterWriteLock();
-            try
-            {
-                var snackBars = SnackBarList.Where(item => item.SnackbarMessage.Key == key);
-                foreach (var snackBar in snackBars)
-                {
-                    snackBar.OnClose -= Remove;
-                    snackBar.Dispose();
-                    SnackBarList.Remove(snackBar);
-                }
-            }
-            finally
-            {
-                SnackBarLock.ExitWriteLock();
-            }
-
-            OnSnackbarsUpdated?.Invoke();
-        }
-
         private bool ResolvePreventDuplicates(SnackbarOptions options)
         {
             return options.DuplicatesBehavior == SnackbarDuplicatesBehavior.Prevent
