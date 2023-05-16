@@ -351,7 +351,7 @@ namespace MudBlazor
         /// grid automatically when using the built in filter UI. You can also programmatically manage these definitions
         /// through this collection.
         /// </summary>
-        [Parameter] public List<FilterDefinition<T>> FilterDefinitions { get; set; } = new List<FilterDefinition<T>>();
+        [Parameter] public List<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
 
         /// <summary>
         /// The list of SortDefinitions that have been added to the data grid. SortDefinitions are managed by the data
@@ -751,12 +751,16 @@ namespace MudBlazor
                 }
 
                 if (ServerData is null)
-                    foreach (var f in FilterDefinitions)
+                {
+                    foreach (var filterDefinition in FilterDefinitions)
                     {
-                        f.DataGrid = this;
-                        var filterFunc = f.GenerateFilterFunction();
+                        var filterFunc = filterDefinition.GenerateFilterFunction(new FilterOptions
+                        {
+                            FilterCaseSensitivity = FilterCaseSensitivity
+                        });
                         items = items.Where(filterFunc);
                     }
+                }
 
                 _currentRenderFilteredItemsCache = Sort(items).ToList(); // To list to ensure evaluation only once per render
                 unchecked { FilteringRunCount++; }
@@ -868,7 +872,7 @@ namespace MudBlazor
             };
 
             _server_data = await ServerData(state);
-            _currentRenderFilteredItemsCache = null;            
+            _currentRenderFilteredItemsCache = null;
 
             if (CurrentPage * RowsPerPage > _server_data.TotalItems)
                 CurrentPage = 0;
@@ -912,10 +916,8 @@ namespace MudBlazor
             {
                 Id = Guid.NewGuid(),
                 DataGrid = this,
-                //Field = column?.PropertyName,
                 Title = column?.Title,
-                //FieldType = column?.PropertyType,
-                PropertyExpression = column?.PropertyExpression,
+                Column = column,
             });
             _filtersMenuVisible = true;
             StateHasChanged();
@@ -933,7 +935,7 @@ namespace MudBlazor
             return InvokeServerLoadFunc();
         }
 
-        public async Task AddFilterAsync(FilterDefinition<T> definition)
+        public async Task AddFilterAsync(IFilterDefinition<T> definition)
         {
             FilterDefinitions.Add(definition);
             _filtersMenuVisible = true;

@@ -9,6 +9,8 @@ namespace MudBlazor
 #nullable enable
     public class FieldType
     {
+        public Type? InnerType { get; init; }
+
         public bool IsString { get; init; }
 
         public bool IsNumber { get; init; }
@@ -25,6 +27,7 @@ namespace MudBlazor
         {
             var filedType = new FieldType
             {
+                InnerType = type,
                 IsString = TypeIdentifier.IsString(type),
                 IsNumber = TypeIdentifier.IsNumber(type),
                 IsEnum = TypeIdentifier.IsEnum(type),
