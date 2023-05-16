@@ -25,5 +25,7 @@ namespace MudBlazor
         void Clear();
 
         void Remove(Snackbar snackbar);
+
+        void RemoveByKey(string key);
     }
 }
