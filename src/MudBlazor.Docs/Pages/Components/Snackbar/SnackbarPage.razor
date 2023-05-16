@@ -170,13 +170,23 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Programmatically remove">
+            <SectionHeader Title="Programmatically remove" />
+            <SectionHeader>
                 <Description>
                     Using the injected ISnackbar, you can use the <CodeInline>.Remove</CodeInline> method to remove a Snackbar programmatically.
                 </Description>
             </SectionHeader>
             <SectionContent Code="SnackbarRemoveExample" ShowCode="false">
                 <SnackbarRemoveExample />
+            </SectionContent>
+            <SectionHeader>
+                <Description>
+                    Alternatively, you can use the <CodeInline>.RemoveByKey</CodeInline> method to remove the Snackbars by key programmatically.
+                    It will remove all the Snackbars with the specified key, including those that are not displayed due to <CodeInline>MaxDisplayedSnackbars</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="SnackbarRemoveByKeyExample" ShowCode="false">
+                <SnackbarRemoveByKeyExample/>
             </SectionContent>
         </DocsPageSection>
 
