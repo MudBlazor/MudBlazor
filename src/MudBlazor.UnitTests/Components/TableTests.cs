@@ -328,6 +328,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// page size option initial value test. Initial value should not be 10 since PageSizeOption is set to be new int[]{8, 16, 32}
+        /// </summary>
+        [Test]
+        public async Task TablePageSizeOptions()
+        {
+            var comp = Context.RenderComponent<TablePageSizeOptionsTest>();
+            // print the generated html      
+            // select elements needed for the test
+            var pager = comp.FindComponent<MudSelect<int>>().Instance;
+            pager.Value.Should().Be(8);
+        }
+
+        /// <summary>
         /// page size select tests
         /// </summary>
         [Test]

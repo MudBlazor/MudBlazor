@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
@@ -125,6 +126,8 @@ namespace MudBlazor
             {
                 Context.HasPager = true;
                 Context.PagerStateHasChanged = StateHasChanged;
+                var size = Table._rowsPerPage ?? PageSizeOptions.FirstOrDefault();
+                SetRowsPerPage(size);
             }
         }
 
