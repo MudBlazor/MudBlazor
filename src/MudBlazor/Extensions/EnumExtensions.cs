@@ -29,8 +29,11 @@ namespace MudBlazor.Extensions
         /// Original <see cref="Enum.GetValues"/> works only with non-nullable enums and will throw exception.
         /// </summary>
         /// <returns>An array that contains the values of constant in type</returns>
-        internal static IEnumerable<Enum> GetSafeEnumValues(Type type)
+        internal static IEnumerable<Enum> GetSafeEnumValues(Type? type)
         {
+            if (type is null)
+                return Enumerable.Empty<Enum>();
+
             if (type.IsEnum)
                 return Enum.GetValues(type).Cast<Enum>();
 
