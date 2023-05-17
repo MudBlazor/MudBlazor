@@ -1,0 +1,46 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+@inject IJSRuntime JS
+
+@* https://github.com/MudBlazor/MudBlazor/issues/6517 *@
+
+<MudStack Row="true">
+    <button type="button" @onclick="ScrollBottom">Scroll bottom</button>
+    <MudText id="scroll_on_top_scroll_event_rised" Typo="Typo.subtitle1" Align="Align.Center">@scrolled</MudText>
+    <MudText id="scroll_on_top_click_event_rised" Typo="Typo.subtitle1" Align="Align.Center">@clicked</MudText>
+</MudStack>
+<div id="unique_id_scroll_section" class="ma-0" style="height:300px;overflow: auto;">
+    <MudPaper Elevation="0" Height="1500px" Class="d-flex flex-column justify-space-between py-6">
+        <MudText id="scroll_on_top_text_must_be_in_view" Typo="Typo.h3" Align="Align.Center">@text</MudText>
+        <MudText Typo="Typo.h3" Align="Align.Center">Middle text</MudText>
+        <MudText id="scroll_to_top_bottom_text" Typo="Typo.h3" Align="Align.Center">Bottom text</MudText>
+        <MudScrollToTop Selector="#unique_id_scroll_section" OnClick="@Click" OnScroll="@Scroll">
+            <MudFab Color="@Color.Primary" StartIcon="@Icons.Material.Filled.ArrowCircleUp"/>
+        </MudScrollToTop>
+    </MudPaper>
+</div>
+
+
+@code {
+    public static string __description__ = "Scroll down. MudScrollToTop element must appear. After clicking fab button view must scroll to the top and first line of text must change.";
+   
+    string text = "Scroll and click fab, this text must change afterwards.";
+    string clicked = "false";
+    string scrolled = "false";
+
+    void Click()
+    {
+        text = @"Text changed. All is OK.";
+        clicked = "true";
+    }
+
+    void Scroll()
+    {
+        scrolled = "true";
+    }
+
+    async Task ScrollBottom()
+    {
+        await JS.InvokeVoidAsync("mudScrollManager.scrollIntoView", "h3[id='scroll_to_top_bottom_text']", "smooth");
+    }
+}
