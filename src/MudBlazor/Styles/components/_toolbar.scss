@@ -39,6 +39,7 @@
     min-height: var(--mud-internal-toolbar-height);
     flex-wrap: wrap;
     &.mud-toolbar-appbar {
-        min-height: min(var(--mud-appbar-height), var(--mud-internal-toolbar-height));
+        //This might need to be uppercased to be ignored by sass.
+        min-height: Min(var(--mud-appbar-height), var(--mud-internal-toolbar-height));
     }
 }
