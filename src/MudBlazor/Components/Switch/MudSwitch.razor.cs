@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudSwitch<T> : MudBooleanInput<T>
+    public partial class MudSwitch<T>
     {
         protected string Classname =>
         new CssBuilder("mud-input-control-boolean-input")
