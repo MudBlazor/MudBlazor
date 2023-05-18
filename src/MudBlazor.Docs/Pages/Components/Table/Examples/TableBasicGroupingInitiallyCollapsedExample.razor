@@ -51,8 +51,8 @@
     </GroupFooterTemplate>
 </MudTable>
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="@((args) => _tableRef?.ToggleExpandGroups(expand: true))">Expand all groups</MudButton>
-<MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-3 ml-3" OnClick="@((args) => _tableRef?.ToggleExpandGroups(expand: false))">Collapse all groups</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="@((args) => _tableRef?.ExpandAllGroups())">Expand all groups</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-3 ml-3" OnClick="@((args) => _tableRef?.CollapseAllGroups())">Collapse all groups</MudButton>
 
 @code {
     private MudTable<Element> _tableRef;

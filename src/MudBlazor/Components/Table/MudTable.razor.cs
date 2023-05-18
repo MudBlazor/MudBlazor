@@ -590,7 +590,17 @@ namespace MudBlazor
                 SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
-        public void ToggleExpandGroups(bool expand)
+        public void ExpandAllGroups()
+        {
+            ToggleExpandGroups(expand: true);
+        }
+
+        public void CollapseAllGroups()
+        {
+            ToggleExpandGroups(expand: false);
+        }
+
+        private void ToggleExpandGroups(bool expand)
         {
             if (_groupBy is not null)
             {

@@ -1782,7 +1782,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ToggleExpandAllGroupsTest()
+        public void ExpandAndCollapsAllGroupsTest()
         {
             var comp = Context.RenderComponent<TableGroupingTest>();
             var table = comp.Instance.tableInstance;
@@ -1794,12 +1794,12 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").ToArray().Length.Should().Be(5); // 1 table header + 4 group headers
 
             // Expand all groups
-            table.ToggleExpandGroups(true);
+            table.ExpandAllGroups();
             comp.Render();
             comp.FindAll("tr").ToArray().Length.Should().Be(18); // 1 table header + 4 group headers + 9 item rows + 4 group footers
 
             // Collapse all groups
-            table.ToggleExpandGroups(false);
+            table.CollapseAllGroups();
             comp.Render();
             comp.FindAll("tr").ToArray().Length.Should().Be(5); // 1 table header + 4 group headers
         }
