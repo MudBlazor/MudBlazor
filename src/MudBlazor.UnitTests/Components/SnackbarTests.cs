@@ -259,5 +259,29 @@ namespace MudBlazor.UnitTests.Components
             _provider.Find("#mud-snackbar-container").InnerHtml.Trim().Should().NotBeEmpty();
             _provider.Find("div.mud-snackbar-content-message").TrimmedText().Should().Be("Boom, big reveal. Im a pickle!");
         }
+
+        [Test]
+        public async Task TestSnackBarRemoveByKey()
+        {
+            const string TestText = "Boom, big reveal. Im a pickle!";
+            const string Key = "c8916cd2-dcbb-41b5-9125-cceafa4354ba";
+
+            var config = (SnackbarOptions options) =>
+            {
+                options.VisibleStateDuration = int.MaxValue;
+                options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow;
+            };
+
+            await _provider.InvokeAsync(() => _service.Add(TestText, Severity.Normal, config, Key));
+            await _provider.InvokeAsync(() => _service.Add(TestText, Severity.Normal, config, Key));
+            //Without key to make sure it doesn't gets removed.
+            await _provider.InvokeAsync(() => _service.Add(TestText, Severity.Normal, config));
+
+            Assert.AreEqual(3, _service.ShownSnackbars.Count());
+
+            await _provider.InvokeAsync(() => _service.RemoveByKey(Key));
+
+            Assert.AreEqual(1, _service.ShownSnackbars.Count());
+        }
     }
 }
