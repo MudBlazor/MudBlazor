@@ -1,6 +1,6 @@
 @namespace MudBlazor.UnitTests.TestComponents
 
-@inject IJSRuntime JS
+@inject IScrollManager ScrollManager
 
 @* https://github.com/MudBlazor/MudBlazor/issues/6517 *@
 
@@ -41,6 +41,6 @@
 
     async Task ScrollBottom()
     {
-        await JS.InvokeVoidAsync("mudScrollManager.scrollIntoView", "h3[id='scroll_to_top_bottom_text']", "smooth");
+        await ScrollManager.ScrollIntoViewAsync("h3[id='scroll_to_top_bottom_text']", ScrollBehavior.Smooth);
     }
 }
