@@ -16,8 +16,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ScrollToTopTest>();
 
-            comp.Find("h6[id='scroll_on_top_click_event_rised']").Should().NotBeNull();
-            comp.Find("h6[id='scroll_on_top_click_event_rised']").TextContent.Should().Be("false", because: "Not clicked yet");
+            comp.Find("h6[id='scroll_on_top_click_event_raised']").Should().NotBeNull();
+            comp.Find("h6[id='scroll_on_top_click_event_raised']").TextContent.Should().Be("false", because: "Not clicked yet");
 
             // scrollBottomButton click check
             comp.Find("button").Click();
@@ -29,8 +29,8 @@ namespace MudBlazor.UnitTests.Components
             var scrollToInvocation = Context.JSInterop.VerifyInvoke("mudScrollManager.scrollTo");
             scrollToInvocation.Arguments.Count.Should().Be(4);
 
-            // checks that click on MudScrollToTop rised an event
-            comp.Find("h6[id='scroll_on_top_click_event_rised']").TextContent.Should().Be("true", because: "Clicked");
+            // checks that click on MudScrollToTop raised an event
+            comp.Find("h6[id='scroll_on_top_click_event_raised']").TextContent.Should().Be("true", because: "Clicked");
         }
     }
 }

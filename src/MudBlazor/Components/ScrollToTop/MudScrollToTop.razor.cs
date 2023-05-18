@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
@@ -118,9 +119,9 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Scrolls to top when clicked
+        /// Scrolls to top when clicked and invokes OnClick
         /// </summary>
-        private async void OnElementClick(MouseEventArgs args)
+        private async Task OnButtonClick(MouseEventArgs args)
         {
             await ScrollManager.ScrollToTopAsync(_scrollListener.Selector, ScrollBehavior);
             await OnClick.InvokeAsync(args);
