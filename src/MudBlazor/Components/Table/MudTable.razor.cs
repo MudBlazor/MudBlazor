@@ -595,10 +595,7 @@ namespace MudBlazor
             if (_groupBy is not null)
             {
                 _groupBy.IsInitiallyExpanded = expand;
-
-                // The set encapsulates a method, it needs to be called twice for it to function correctly.
-                _groupBy.Expandable = false;
-                _groupBy.Expandable = true;
+                Context?.GroupRows.Where(gr => gr.GroupDefinition == _groupBy).ToList().ForEach(gr => gr.IsExpanded = _groupBy.IsInitiallyExpanded);
             }
         }
 
