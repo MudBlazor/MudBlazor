@@ -2,6 +2,7 @@ using MudBlazor.UnitTests.TestComponents;
 using Bunit;
 using NUnit.Framework;
 using FluentAssertions;
+using System;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -16,8 +17,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ScrollToTopTest>();
 
-            comp.Find("h6[id='scroll_on_top_click_event_raised']").Should().NotBeNull();
-            comp.Find("h6[id='scroll_on_top_click_event_raised']").TextContent.Should().Be("false", because: "Not clicked yet");
+            comp.Instance.Clicked.Should().BeFalse(because: "Not clicked yet");
 
             // scrollBottomButton click check
             comp.Find("button").Click();
@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Components
             scrollToInvocation.Arguments.Count.Should().Be(4);
 
             // checks that click on MudScrollToTop raised an event
-            comp.Find("h6[id='scroll_on_top_click_event_raised']").TextContent.Should().Be("true", because: "Clicked");
+            comp.Instance.Clicked.Should().BeTrue(because: "Clicked");
         }
     }
 }
