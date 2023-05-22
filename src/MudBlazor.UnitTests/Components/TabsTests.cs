@@ -176,12 +176,13 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void TabToolbarClassPropagated()
+        public void TabHeaderClassPropagated()
         {
             var comp = Context.RenderComponent<MudTabs>();
-            comp.SetParametersAndRender(x => x.Add(y => y.TabToolbarClass, "testA testB"));
+            
+            comp.SetParametersAndRender(builder => builder.Add(tabs => tabs.TabHeaderClass, "testA testB"));
 
-            comp.Find(".mud-tabs-toolbar.testA.testB").Should().NotBeNull();
+            comp.Find(".mud-tabs-toolbar").ClassList.Should().Contain(new[] { "testA", "testB" });
         }
 
         [Test]
