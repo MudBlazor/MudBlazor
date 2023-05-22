@@ -369,19 +369,33 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.FindAll("td input")[0].GetAttribute("value").Trim().Should().Be("John");
             dataGrid.FindAll("td input")[1].GetAttribute("value").Trim().Should().Be("45");
-            dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("CPA");
             dataGrid.FindAll("td input")[3].GetAttribute("value").Trim().Should().Be("23");
-            dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("Steve");
-            dataGrid.FindAll("td input")[5].GetAttribute("value").Trim().Should().Be("32");
+            dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td input")[5].GetAttribute("value").Trim().Should().Be("23");
+            dataGrid.FindAll("td input")[6].GetAttribute("value").Trim().Should().Be("Product Manager");
+            dataGrid.FindAll("td input")[7].GetAttribute("value").Trim().Should().Be("1");
+            dataGrid.FindAll("td input")[8].GetAttribute("value").Trim().Should().Be("Steve");
+            dataGrid.FindAll("td input")[9].GetAttribute("value").Trim().Should().Be("32");
+            dataGrid.FindAll("td input")[10].GetAttribute("value").Trim().Should().Be("Developer");
+            dataGrid.FindAll("td input")[11].GetAttribute("value").Trim().Should().Be("9");
             dataGrid.FindAll(".mud-table-body tr td input")[0].Change("Jonathan");
             dataGrid.FindAll(".mud-table-body tr td input")[1].Change(52d);
+            dataGrid.FindAll(".mud-table-body tr td input")[2].Change("HR");
+            dataGrid.FindAll(".mud-table-body tr td input")[3].Change(21);
             dataGrid.FindAll(".mud-table-body tr td input")[0].GetAttribute("value").Trim().Should().Be("Jonathan");
             dataGrid.FindAll(".mud-table-body tr td input")[1].GetAttribute("value").Trim().Should().Be("52");
+            dataGrid.FindAll(".mud-table-body tr td input")[2].GetAttribute("value").Trim().Should().Be("HR");
+            dataGrid.FindAll(".mud-table-body tr td input")[3].GetAttribute("value").Trim().Should().Be("21");
 
             var name = dataGrid.Instance.Items.First().Name;
             var age = dataGrid.Instance.Items.First().Age;
+            var position = dataGrid.Instance.Items.First().EmployeeInfo.Position;
+            var yearsEmployed = dataGrid.Instance.Items.First().EmployeeInfo.YearsEmployed;
             name.Should().Be("Jonathan");
             age.Should().Be(52);
+            position.Should().Be("HR");
+            yearsEmployed.Should().Be(21);
         }
 
         [Test]
@@ -392,19 +406,33 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.FindAll("td input")[0].GetAttribute("value").Trim().Should().Be("John");
             dataGrid.FindAll("td input")[1].GetAttribute("value").Trim().Should().Be("45");
-            dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("CPA");
             dataGrid.FindAll("td input")[3].GetAttribute("value").Trim().Should().Be("23");
-            dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("Steve");
-            Assert.IsNull(dataGrid.FindAll("td input")[5].GetAttribute("value"));
+            dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("Johanna");
+            dataGrid.FindAll("td input")[5].GetAttribute("value").Trim().Should().Be("23");
+            dataGrid.FindAll("td input")[6].GetAttribute("value").Trim().Should().Be("Product Manager");
+            dataGrid.FindAll("td input")[8].GetAttribute("value").Trim().Should().Be("Steve");
+            dataGrid.FindAll("td input")[10].GetAttribute("value").Trim().Should().Be("Developer");
+            dataGrid.FindAll("td input")[11].GetAttribute("value").Trim().Should().Be("9");
+            Assert.IsNull(dataGrid.FindAll("td input")[7].GetAttribute("value"));
+            Assert.IsNull(dataGrid.FindAll("td input")[9].GetAttribute("value"));
             dataGrid.FindAll(".mud-table-body tr td input")[0].Change("Jonathan");
             dataGrid.FindAll(".mud-table-body tr td input")[1].Change(52);
+            dataGrid.FindAll(".mud-table-body tr td input")[6].Change("HR");
+            dataGrid.FindAll(".mud-table-body tr td input")[7].Change(1);
             dataGrid.FindAll(".mud-table-body tr td input")[0].GetAttribute("value").Trim().Should().Be("Jonathan");
             dataGrid.FindAll(".mud-table-body tr td input")[1].GetAttribute("value").Trim().Should().Be("52");
+            dataGrid.FindAll(".mud-table-body tr td input")[6].GetAttribute("value").Trim().Should().Be("HR");
+            dataGrid.FindAll(".mud-table-body tr td input")[7].GetAttribute("value").Trim().Should().Be("1");
 
             var name = dataGrid.Instance.Items.First().Name;
             var age = dataGrid.Instance.Items.First().Age;
+            var position = dataGrid.Instance.Items.Skip(1).First().EmployeeInfo.Position;
+            var yearsEmployed = dataGrid.Instance.Items.Skip(1).First().EmployeeInfo.YearsEmployed;
             name.Should().Be("Jonathan");
             age.Should().Be(52);
+            position.Should().Be("HR");
+            yearsEmployed.Should().Be(1);
         }
 
         [Test]

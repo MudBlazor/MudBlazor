@@ -4,16 +4,20 @@
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.EmployeeInfo.Position" />
+        <PropertyColumn Property="x => x.EmployeeInfo.YearsEmployed" />
     </Columns>
 </MudDataGrid>
 
 @code {
     private IEnumerable<Model> _items = new List<Model>()
     {
-        new Model("John", 45), 
-        new Model("Johanna", 23), 
-        new Model("Steve", 32)
+        new Model("John", 45, new("CPA", 23)),
+        new Model("Johanna", 23, new("Product Manager", 1)),
+        new Model("Steve", 32, new("Developer", 9))
     };
 
-    public record Model(string Name, int Age);
+    public record Model(string Name, int Age, ChildModel EmployeeInfo);
+
+    public record ChildModel(string Position, int YearsEmployed);
 }
