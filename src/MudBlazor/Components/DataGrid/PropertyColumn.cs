@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq.Expressions;
+using System.Reflection;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
@@ -45,11 +46,15 @@ namespace MudBlazor
 
                 Title ??= _propertyName;
 
-                var propertyParam = Property.Parameters[0];
-                var valueParam = Expression.Parameter(typeof(TProperty), propertyParam.Name + "Value");
-                var assignExpression = Expression.Assign(Property.Body, valueParam);
-                var assignLambda = Expression.Lambda<Action<T, TProperty>>(assignExpression, propertyParam, valueParam);
-                _assignValueAction = assignLambda.Compile();
+                // If the property is a field or a property with a setter, we can assign values to it.
+                if (memberExpression.Member is FieldInfo or PropertyInfo { CanWrite: true })
+                {
+                    var propertyParam = Property.Parameters[0];
+                    var valueParam = Expression.Parameter(typeof(TProperty), propertyParam.Name + "Value");
+                    var assignExpression = Expression.Assign(Property.Body, valueParam);
+                    var assignLambda = Expression.Lambda<Action<T, TProperty>>(assignExpression, propertyParam, valueParam);
+                    _assignValueAction = assignLambda.Compile();
+                }
             }
             else
             {
