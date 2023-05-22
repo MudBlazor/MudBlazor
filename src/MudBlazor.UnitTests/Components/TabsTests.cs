@@ -174,6 +174,17 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br>Panel 1<br></p>");
         }
 
+
+        [Test]
+        public void TabHeaderClassPropagated()
+        {
+            var comp = Context.RenderComponent<MudTabs>();
+            
+            comp.SetParametersAndRender(builder => builder.Add(tabs => tabs.TabHeaderClass, "testA testB"));
+
+            comp.Find(".mud-tabs-toolbar").ClassList.Should().Contain(new[] { "testA", "testB" });
+        }
+
         [Test]
         public void ScrollToItem_NoScrollingNeeded()
         {

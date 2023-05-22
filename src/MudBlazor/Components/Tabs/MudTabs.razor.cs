@@ -52,14 +52,14 @@ namespace MudBlazor
         public bool Rounded { get; set; }
 
         /// <summary>
-        /// If true, sets a border between the content and the toolbar depending on the position.
+        /// If true, sets a border between the content and the tabHeader depending on the position.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool Border { get; set; }
 
         /// <summary>
-        /// If true, toolbar will be outlined.
+        /// If true, tabHeader will be outlined.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -157,7 +157,7 @@ namespace MudBlazor
         public int Elevation { set; get; } = 0;
 
         /// <summary>
-        /// If true, will apply elevation, rounded, outlined effects to the whole tab component instead of just toolbar.
+        /// If true, will apply elevation, rounded, outlined effects to the whole tab component instead of just tabHeader.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -185,7 +185,7 @@ namespace MudBlazor
         public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// This fragment is placed between toolbar and panels. 
+        /// This fragment is placed between tabHeader and panels. 
         /// It can be used to display additional content like an address line in a browser.
         /// The active tab will be the content of this RenderFragement
         /// </summary>
@@ -199,6 +199,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string TabPanelClass { get; set; }
+
+        /// <summary>
+        /// Custom class/classes for TabHeader
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public string TabHeaderClass { get; set; }
 
         /// <summary>
         /// Custom class/classes for Selected Content Panel
@@ -463,6 +470,7 @@ namespace MudBlazor
             .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border)
             .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
             .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0)
+            .AddClass(TabHeaderClass)
             .Build();
 
         protected string WrapperClassnames =>
