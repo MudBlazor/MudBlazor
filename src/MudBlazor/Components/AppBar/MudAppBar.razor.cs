@@ -68,7 +68,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AppBar.Behavior)]
-        public bool Wrapping { get; set; } = true;
+        public bool WrapContent { get; set; } = true;
 
         /// <summary>
         /// User class names, separated by spaces for the nested toolbar.

@@ -34,7 +34,7 @@
     --mud-internal-toolbar-height: 48px;
 }
 
-.mud-toolbar.mud-toolbar-wrapping {
+.mud-toolbar.mud-toolbar-wrap-content {
     height: auto;
     min-height: var(--mud-internal-toolbar-height);
     flex-wrap: wrap;
