@@ -13,6 +13,7 @@
     new CssBuilder("mud-toolbar")
       .AddClass($"mud-toolbar-dense", Dense)
       .AddClass($"mud-toolbar-gutters", !DisableGutters)
+      .AddClass($"mud-toolbar-wrap-content", WrapContent)
       .AddClass(Class)
     .Build();
 
@@ -36,4 +37,11 @@
     [Parameter] 
     [Category(CategoryTypes.ToolBar.Behavior)]
     public RenderFragment ChildContent { get; set; }
+    
+    /// <summary>
+    /// If true, ToolBar is allowed to wrap.
+    /// </summary>
+    [Parameter] 
+    [Category(CategoryTypes.ToolBar.Behavior)]
+    public bool WrapContent { get; set; }
 }
