@@ -48,26 +48,7 @@
                             <MudTimePicker Time="@_valueTime" TimeChanged="@TimeValueChangedAsync" Margin="@Margin.Dense" />
                         </MudItem>
                     </MudGrid>
-                }
-                else if (dataType == typeof(bool))
-                {
-                    <MudSelect T="bool?" Value="@_valueBool" ValueChanged="@BoolValueChangedAsync" FullWidth="true" Dense="true" Margin="@Margin.Dense">
-                        <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
-                        <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
-                        <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
-                    </MudSelect>
-                }
-                else if (dataType == typeof(DateTime) && !(_operator ?? "").EndsWith("empty"))
-                {
-                    <MudGrid Spacing="0">
-                        <MudItem xs="7">
-                            <MudDatePicker Date="@_valueDate" DateChanged="@DateValueChangedAsync" Margin="@Margin.Dense" />
-                        </MudItem>
-                        <MudItem xs="5">
-                            <MudTimePicker Time="@_valueTime" TimeChanged="@TimeValueChangedAsync" Margin="@Margin.Dense" />
-                        </MudItem>
-                    </MudGrid>
-                }
+                }                
                 <MudMenu Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" Dense="true">
                     @foreach (var o in operators)
                     {
