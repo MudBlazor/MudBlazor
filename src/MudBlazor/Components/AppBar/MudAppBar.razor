@@ -3,7 +3,7 @@
 @if (Bottom)
 {
 <footer @attributes="UserAttributes" class="@Classname" style="@Style">
-    <MudToolBar Dense="@Dense" DisableGutters="@DisableGutters" Class="@ToolBarClassname">
+    <MudToolBar Dense="@Dense" DisableGutters="@DisableGutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
         @ChildContent
     </MudToolBar>
 </footer>
@@ -11,7 +11,7 @@
 else
 {
 <header @attributes="UserAttributes" class="@Classname" style="@Style">
-    <MudToolBar Dense="@Dense" DisableGutters="@DisableGutters" Class="@ToolBarClassname">
+    <MudToolBar Dense="@Dense" DisableGutters="@DisableGutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
         @ChildContent
     </MudToolBar>
 </header>
