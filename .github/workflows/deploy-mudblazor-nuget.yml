@@ -52,7 +52,7 @@ jobs:
       with:
         dotnet-version: |
           6.0.x
-          7.0.x
+          7.0.203
     - name: Pack nuget package
       run: dotnet pack -c Release --output nupkgs /p:PackageVersion=${{ needs.get-version.outputs.VERSION }} /p:AssemblyVersion=${{ needs.get-version.outputs.VERSION }} /p:Version=${{ needs.get-version.outputs.VERSION }}
       working-directory: ./src/MudBlazor
