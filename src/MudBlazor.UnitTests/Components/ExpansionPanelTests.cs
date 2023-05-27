@@ -16,7 +16,7 @@ namespace MudBlazor.UnitTests.Components
         public void Init()
         {
             AssertionOptions.FormattingOptions.MaxDepth = 100;
-            AssertionOptions.FormattingOptions.MaxLines = 500;
+            AssertionOptions.FormattingOptions.MaxLines = 5000;
         }
 
         [OneTimeTearDown]
