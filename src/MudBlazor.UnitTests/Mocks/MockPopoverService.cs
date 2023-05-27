@@ -8,7 +8,7 @@ using Moq;
 namespace MudBlazor.UnitTests.Mocks
 {
     /// <summary>
-    /// Mock for scroll spy
+    /// Mock for popover
     /// </summary>
     public class MockPopoverService : IMudPopoverService
     {

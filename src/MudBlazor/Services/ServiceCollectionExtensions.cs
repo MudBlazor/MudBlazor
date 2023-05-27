@@ -185,6 +185,7 @@ namespace MudBlazor.Services
         {
             services.Configure(options);
             services.TryAddScoped<IMudPopoverService, MudPopoverService>();
+            services.TryAddScoped<IPopoverService, PopoverService>();
             return services;
         }
 

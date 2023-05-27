@@ -759,16 +759,19 @@ namespace MudBlazor.UnitTests.Components
         {
             var handlerId = Guid.NewGuid();
             var mock = new Mock<IJSRuntime>();
+            mock.Setup(jsRuntime =>
+                    jsRuntime.InvokeAsync<IJSVoidResult>(
+                        "mudPopover.connect",
+                        It.Is<object[]>(x => x.Length == 1 && (Guid)x[0] == handlerId)))
+                .ReturnsAsync(Mock.Of<IJSVoidResult>)
+                .Verifiable();
 
-            mock.Setup(x =>
-           x.InvokeAsync<IJSVoidResult>(
-               "mudPopover.connect",
-               It.Is<object[]>(x => x.Length == 1 && (Guid)x[0] == handlerId))).ReturnsAsync(Mock.Of<IJSVoidResult>).Verifiable();
-
-            mock.Setup(x =>
-            x.InvokeAsync<IJSVoidResult>(
-           "mudPopover.disconnect",
-           It.Is<object[]>(x => x.Length == 1 && (Guid)x[0] == handlerId))).ReturnsAsync(Mock.Of<IJSVoidResult>).Verifiable();
+            mock.Setup(jsRuntime =>
+                    jsRuntime.InvokeAsync<IJSVoidResult>(
+                        "mudPopover.disconnect",
+                        It.Is<object[]>(x => x.Length == 1 && (Guid)x[0] == handlerId)))
+                .ReturnsAsync(Mock.Of<IJSVoidResult>)
+                .Verifiable();
 
 
             var service = new MudPopoverService(mock.Object);
@@ -784,7 +787,7 @@ namespace MudBlazor.UnitTests.Components
 
             int fragmentChangedCounter = 0;
 
-            service.FragmentsChanged += (e, args) =>
+            service.FragmentsChanged += (_, _) =>
             {
                 fragmentChangedCounter++;
             };
