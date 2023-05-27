@@ -16,12 +16,14 @@ namespace MudBlazor.UnitTests.Components
         public void Init()
         {
             AssertionOptions.FormattingOptions.MaxDepth = 100;
+            AssertionOptions.FormattingOptions.MaxLines = 500;
         }
 
         [OneTimeTearDown]
         public void Cleanup()
         {
             AssertionOptions.FormattingOptions.MaxDepth = 5;
+            AssertionOptions.FormattingOptions.MaxLines = 100;
         }
 
         /// <summary>
