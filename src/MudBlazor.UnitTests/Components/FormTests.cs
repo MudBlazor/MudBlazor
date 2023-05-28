@@ -561,6 +561,84 @@ namespace MudBlazor.UnitTests.Components
             radioGroup.Error.Should().BeTrue();
             radioGroup.ErrorText.Should().Be("Required");
         }
+        
+        /// <summary>
+        /// ColorPicker should be validated like every other form component when color is changed via inputs
+        /// </summary>
+        [Test]
+        public async Task Form_Should_Validate_ColorPicker_When_ColorSelectedViaInputs()
+        {
+            var comp = Context.RenderComponent<FormWithColorPickerTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var colorPickerComp = comp.FindComponent<MudColorPicker>();
+            var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
+            var forbiddenColor = colorPicker.Value;
+            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor?, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
+            // should not be valid since the default color is invalid
+            form.IsTouched.Should().BeFalse();
+            form.IsValid.Should().BeFalse();
+            colorPicker.Error.Should().BeFalse();
+            colorPicker.ErrorText.Should().BeNullOrEmpty();
+            // input a valid color
+            await comp.InvokeAsync(() => colorPickerComp.FindAll("input")[0].Change("#111111"));
+            form.IsTouched.Should().BeTrue();
+            form.IsValid.Should().BeTrue();
+            form.Errors.Length.Should().Be(0);
+            colorPicker.Error.Should().BeFalse();
+            colorPicker.ErrorText.Should().BeNullOrEmpty();
+            // reset to forbidden color
+            comp.SetParam(x => x.ColorValue, forbiddenColor);
+            form.IsValid.Should().Be(false);
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be($"{forbiddenColor.Value} is not allowed");
+            colorPicker.Error.Should().BeTrue();
+            colorPicker.ErrorText.Should().Be($"{forbiddenColor.Value} is not allowed");
+        }
+
+        /// <summary>
+        /// ColorPicker should be validated like every other form component when color is selected using picker
+        /// </summary>
+        [Test]
+        public async Task Form_Should_ValidateColorPickerTest_When_ColorSelectedViaPicker()
+        {
+            var comp = Context.RenderComponent<FormWithColorPickerTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var colorPickerComp = comp.FindComponent<MudColorPicker>();
+            var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
+            var forbiddenColor = colorPicker.Palette.First();
+            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor?, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
+            // initial form state
+            form.IsTouched.Should().BeFalse();
+            form.IsValid.Should().BeFalse();
+            
+            await comp.InvokeAsync(() => comp.Find("input").Click());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            // open color collection view
+            await comp.InvokeAsync(() => comp.Find("div.mud-picker-color-dot-current").Click());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(1));
+            
+            // set valid color
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").Skip(1).First().Click());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(0));
+            form.IsTouched.Should().BeTrue();
+            form.IsValid.Should().BeTrue();
+            form.Errors.Length.Should().Be(0);
+            colorPicker.Error.Should().BeFalse();
+            colorPicker.ErrorText.Should().BeNullOrEmpty();
+            
+            await comp.InvokeAsync(() => comp.Find("div.mud-picker-color-dot-current").Click());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(1));
+            
+            // set invalid color
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").First().Click());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(0));
+            form.IsTouched.Should().BeTrue();
+            form.IsValid.Should().BeFalse();
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be($"{forbiddenColor.Value} is not allowed");
+            colorPicker.Error.Should().BeTrue();
+            colorPicker.ErrorText.Should().Be($"{forbiddenColor.Value} is not allowed");
+        }
 
         /// <summary>
         /// DatePicker should be validated like every other form component
