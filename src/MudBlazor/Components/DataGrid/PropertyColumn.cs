@@ -47,7 +47,7 @@ namespace MudBlazor
             }
             else
             {
-                _propertyName = _fullPropertyName = Property.Body.ToString();
+                _propertyName = _fullPropertyName = Title ?? Property.Body.ToString();
             }
 
             CompileGroupBy();
