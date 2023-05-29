@@ -593,6 +593,25 @@ namespace MudBlazor
                 SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
+        public void ExpandAllGroups()
+        {
+            ToggleExpandGroups(expand: true);
+        }
+
+        public void CollapseAllGroups()
+        {
+            ToggleExpandGroups(expand: false);
+        }
+
+        private void ToggleExpandGroups(bool expand)
+        {
+            if (_groupBy is not null)
+            {
+                _groupBy.IsInitiallyExpanded = expand;
+                Context?.GroupRows.Where(gr => gr.GroupDefinition == _groupBy).ToList().ForEach(gr => gr.IsExpanded = _groupBy.IsInitiallyExpanded);
+            }
+        }
+
         private string ClearFilterCache()
         {
             _currentRenderFilteredItemsCached = false; 

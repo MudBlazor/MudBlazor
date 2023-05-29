@@ -74,7 +74,7 @@ namespace MudBlazor
 
         private bool _expandable = false;
         /// <summary>
-        /// Gets or Sets is group header can Expand and Collapse its children.
+        /// Gets or Sets if group header can Expand and Collapse its children.
         /// </summary>
         public bool Expandable
         {
