@@ -51,7 +51,7 @@ namespace MudBlazor
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
-        /// If set to false, clicking the button will keep the menu open
+        /// If set to false, clicking the menu item will keep the menu open
         /// </summary>
         [Parameter] 
         [Category(CategoryTypes.Menu.ClickAction)] 
