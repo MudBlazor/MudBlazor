@@ -271,6 +271,12 @@ namespace MudBlazor
         public EventCallback<string> TextChanged { get; set; }
 
         /// <summary>
+        /// Fired when the text input is clicked.
+        /// </summary>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+        /// <summary>
         /// The currently selected string value (two-way bindable)
         /// </summary>
         [Parameter]
@@ -392,10 +398,21 @@ namespace MudBlazor
             }
         }
 
+        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
+        [ExcludeFromCodeCoverage]
         protected override void ResetValue()
         {
             _inputReference?.Reset();
             base.ResetValue();
+        }
+
+        protected override async Task ResetValueAsync()
+        {
+            if (_inputReference is not null)
+            {
+                await _inputReference.ResetAsync();
+            }
+            await base.ResetValueAsync();
         }
 
         protected internal MudTextField<string> _inputReference;
@@ -464,6 +481,15 @@ namespace MudBlazor
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
             }
+        }
+
+        private async Task OnClickAsync(MouseEventArgs args)
+        {
+            if (!Editable)
+                ToggleState();
+
+            if (OnClick.HasDelegate)
+                await OnClick.InvokeAsync(args);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -560,6 +586,8 @@ namespace MudBlazor
 
             }
         }
+
+
 
     }
 }

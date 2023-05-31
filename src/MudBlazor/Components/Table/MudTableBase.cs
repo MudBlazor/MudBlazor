@@ -16,7 +16,7 @@ namespace MudBlazor
         internal bool IsEditing => _editingItem != null;
 
         private int _currentPage = 0;
-        private int? _rowsPerPage;
+        internal int? _rowsPerPage;
         private bool _isFirstRendered = false;
 
         protected string Classname =>
@@ -322,6 +322,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
+        [Obsolete($"Use {nameof(OnCommitEditClick)} instead. This will be removed in v7.")]
         public ICommand CommitEditCommand { get; set; }
 
         /// <summary>
@@ -329,6 +330,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
+        [Obsolete("This will be removed in v7.")]
         public object CommitEditCommandParameter { get; set; }
 
         /// <summary>
@@ -522,6 +524,7 @@ namespace MudBlazor
         internal async Task OnCommitEditHandler(MouseEventArgs ev, object item)
         {
             await OnCommitEditClick.InvokeAsync(ev);
+#pragma warning disable CS0618
             if (CommitEditCommand?.CanExecute(CommitEditCommandParameter) ?? false)
             {
                 var parameter = CommitEditCommandParameter;
@@ -529,6 +532,7 @@ namespace MudBlazor
                     parameter = item;
                 CommitEditCommand.Execute(parameter);
             }
+#pragma warning restore CS0618
         }
 
         internal Task OnPreviewEditHandler(object item)

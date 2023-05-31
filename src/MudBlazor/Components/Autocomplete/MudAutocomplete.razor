@@ -14,7 +14,7 @@
                           Value="@Text" DisableUnderLine="@DisableUnderLine"
                           Disabled="@GetDisabledState()" ReadOnly="@GetReadOnlyState()" Error="@Error"
                           OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
-                          Clearable="@(GetReadOnlyState() ? false : Clearable)" OnClearButtonClick="@OnClearButtonClick"
+                          Clearable="@(!GetReadOnlyState() && Clearable)" OnClearButtonClick="@OnClearButtonClick"
                           @attributes="UserAttributes"
                           TextChanged="OnTextChanged" OnBlur="OnInputBlurred"
                           OnKeyDown="@this.OnInputKeyDown"
@@ -38,28 +38,35 @@
                 }
 
                 <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
-                    @if(ProgressIndicatorInPopoverTemplate != null && IsLoading)
+                    @if (ProgressIndicatorInPopoverTemplate != null && IsLoading)
                     {
                         @ProgressIndicatorInPopoverTemplate
-                    } 
+                    }
                     else if (_items != null && _items.Length != 0)
                     {
+                        @if (BeforeItemsTemplate != null)
+                        {
+                            <div class="pa-1">
+                                @BeforeItemsTemplate
+                            </div>
+                        }
                         <MudList Class="@ListClass" Clickable="true" Dense="@Dense">
                             @for (var index = 0; index < _items.Length; index++)
                             {
                                 var item = _items[index];
-                                bool is_selected = index == _selectedListItemIndex;
-                                bool is_disabled = !_enabledItemIndices.Contains(index);
-                                <MudListItem @key="@item" id="@GetListItemId(index)" Disabled="@(is_disabled)" OnClick="@(async() => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@(is_selected ? "mud-selected-item mud-primary-text mud-primary-hover" : "")">
+                                bool isSelected = index == _selectedListItemIndex;
+                                bool isDisabled = !_enabledItemIndices.Contains(index);
+                                var captureIndex = index;
+                                <MudListItem @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@(isSelected ? "mud-selected-item mud-primary-text mud-primary-hover" : "")">
                                     @if (ItemTemplate == null)
                                     {
                                         @GetItemString(item)
                                     }
-                                    else if (is_disabled && ItemDisabledTemplate != null)
+                                    else if (isDisabled && ItemDisabledTemplate != null)
                                     {
                                         @ItemDisabledTemplate(item)
                                     }
-                                    else if (is_selected)
+                                    else if (isSelected)
                                     {
                                         @if (ItemSelectedTemplate == null)
                                             @ItemTemplate(item)
@@ -82,8 +89,26 @@
                     }
                     else if (NoItemsTemplate != null)
                     {
+                        @if (BeforeItemsTemplate != null)
+                        {
+                            <div class="pa-1">
+                                @BeforeItemsTemplate
+                            </div>
+                        }
                         <div class="pa-1">
                             @NoItemsTemplate
+                        </div>
+                    }
+                    else if (BeforeItemsTemplate != null && IsLoading is false)
+                    {
+                        <div class="pa-1">
+                            @BeforeItemsTemplate
+                        </div>
+                    }
+                    @if (AfterItemsTemplate != null && IsLoading is false)
+                    {
+                        <div class="pa-1">
+                            @AfterItemsTemplate
                         </div>
                     }
                 </MudPopover>

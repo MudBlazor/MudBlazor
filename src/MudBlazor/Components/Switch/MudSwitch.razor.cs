@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudSwitch<T> : MudBooleanInput<T>
+    public partial class MudSwitch<T>
     {
         protected string Classname =>
         new CssBuilder("mud-input-control-boolean-input")
@@ -21,7 +21,7 @@ namespace MudBlazor
         new CssBuilder("mud-switch")
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass("mud-readonly", GetReadOnlyState())
-            .AddClass(LabelPosition == LabelPosition.End ? "mud-ltr" : "mud-rtl", true)
+            .AddClass(LabelPosition == LabelPosition.End ? "" : "flex-row-reverse", true)
         .Build();
 
         protected string SwitchLabelClassname =>

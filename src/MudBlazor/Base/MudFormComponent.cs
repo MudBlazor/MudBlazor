@@ -521,7 +521,7 @@ namespace MudBlazor
         /// <summary>
         /// Notify the Form that a field has changed if SubscribeToParentForm is true
         /// </summary>
-        protected void FieldChanged(object newValue)
+        protected void FieldChanged(object? newValue)
         {
             if (SubscribeToParentForm)
                 Form?.FieldChanged(this, newValue);
@@ -530,18 +530,40 @@ namespace MudBlazor
         /// <summary>
         /// Reset the value and the validation.
         /// </summary>
+        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
+        [ExcludeFromCodeCoverage]
         public void Reset()
         {
             ResetValue();
             ResetValidation();
         }
 
+        /// <summary>
+        /// Reset the value and the validation.
+        /// </summary>
+        public async Task ResetAsync()
+        {
+            await ResetValueAsync();
+            ResetValidation();
+        }
+
+        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
+        [ExcludeFromCodeCoverage]
         protected virtual void ResetValue()
         {
             /* to be overridden */
             _value = default;
             Touched = false;
             StateHasChanged();
+        }
+
+        protected virtual Task ResetValueAsync()
+        {
+            /* to be overridden */
+            _value = default;
+            Touched = false;
+            StateHasChanged();
+            return Task.CompletedTask;
         }
 
         /// <summary>

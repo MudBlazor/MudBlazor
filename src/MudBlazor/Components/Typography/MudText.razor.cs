@@ -1,20 +1,20 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudText : MudComponentBase
     {
         protected string Classname =>
-        new CssBuilder("mud-typography")
-          .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
-          .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default && Color != Color.Inherit)
-          .AddClass("mud-typography-gutterbottom", GutterBottom)
-          .AddClass($"mud-typography-align-{ConvertAlign(Align).ToDescriptionString()}", Align != Align.Inherit)
-          .AddClass("mud-typography-display-inline", Inline)
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-typography")
+                .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
+                .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default && Color != Color.Inherit)
+                .AddClass("mud-typography-gutterbottom", GutterBottom)
+                .AddClass($"mud-typography-align-{ConvertAlign(Align).ToDescriptionString()}", Align != Align.Inherit)
+                .AddClass("mud-typography-display-inline", Inline)
+                .AddClass(Class)
+                .Build();
 
         private Align ConvertAlign(Align align)
         {
@@ -26,7 +26,8 @@ namespace MudBlazor
             };
         }
 
-        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
 
         /// <summary>
         /// Applies the theme typography styles.
@@ -61,7 +62,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Text.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// If true, Sets display inline

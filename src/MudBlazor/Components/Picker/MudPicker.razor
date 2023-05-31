@@ -36,9 +36,7 @@
              ErrorText="@ErrorText"
              Clearable="@(GetReadOnlyState() ? false : Clearable)"
              OnClearButtonClick="@(() => Clear())"
-             @onclick="@(() => { if (!Editable) ToggleState(); })" 
-             @onkeydown="HandleKeyDown" 
-             />;
+             @onclick="OnClickAsync" />;
 
     protected virtual RenderFragment PickerContent => null;
 

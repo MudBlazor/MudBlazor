@@ -74,6 +74,9 @@ namespace MudBlazor
         /// </summary>
         protected override void OnInitialized()
         {
+            if (HasServerData)
+                Loading = true;
+
             if (Columns == null && RowTemplate == null && RowEditingTemplate == null)
             {
                 string[] quickcolumnslist = null;
@@ -588,6 +591,25 @@ namespace MudBlazor
 
             if (SelectedItemsChanged.HasDelegate)
                 SelectedItemsChanged.InvokeAsync(SelectedItems);
+        }
+
+        public void ExpandAllGroups()
+        {
+            ToggleExpandGroups(expand: true);
+        }
+
+        public void CollapseAllGroups()
+        {
+            ToggleExpandGroups(expand: false);
+        }
+
+        private void ToggleExpandGroups(bool expand)
+        {
+            if (_groupBy is not null)
+            {
+                _groupBy.IsInitiallyExpanded = expand;
+                Context?.GroupRows.Where(gr => gr.GroupDefinition == _groupBy).ToList().ForEach(gr => gr.IsExpanded = _groupBy.IsInitiallyExpanded);
+            }
         }
 
         private string ClearFilterCache()

@@ -47,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
             var openButton = comp.Find(".mud-input-adornment button");
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Date Range Picker");
         }
-        
+
         [Test]
         public void DateRangePickerLabelFor()
         {
@@ -55,7 +55,7 @@ namespace MudBlazor.UnitTests.Components
             var label = comp.Find(".mud-input-label");
             label.Attributes.GetNamedItem("for")?.Value.Should().Be("dateRangeLabelTest");
         }
-        
+
         [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public void RenderDateRangePicker_10000_Times_CheckPerformance()
@@ -549,7 +549,7 @@ namespace MudBlazor.UnitTests.Components
 
             // set a value
             await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Text = RangeConverter<DateTime>.Join(startDate.ToShortDateString(), endDate.ToShortDateString()));
-            
+
             // asert new values have been applied
             dateRangePickerInstance.DateRange.Start.Should().Be(startDate);
             dateRangePickerInstance.DateRange.End.Should().Be(endDate);
@@ -621,6 +621,21 @@ namespace MudBlazor.UnitTests.Components
                   new DateTime(DateTime.Now.Year, DateTime.Now.Month, 11)));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
+        }
+
+        [Test]
+        public void CurrentDate_ShouldBeMarked()
+        {
+            var currentDate = DateTime.Now.Date;
+            var comp = OpenPicker();
+
+            // Check that only one date is marked
+            comp.FindAll("button.mud-current").Count.Should().Be(1);
+
+            // Check that the marked date is the current date
+            comp.Find("button.mud-current").Click();
+            comp.Find("button.mud-range-start-selected").Click();
+            comp.Instance.DateRange.Should().Be(new DateRange(currentDate, currentDate));
         }
     }
 }

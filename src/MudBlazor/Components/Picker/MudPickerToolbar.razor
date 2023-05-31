@@ -13,7 +13,7 @@
     protected string Classnames =>
     new CssBuilder("mud-picker-toolbar")
       .AddClass($"mud-theme-{Color.ToDescriptionString()}")
-      .AddClass("mud-picker-toolbar-landscape", Orientation == Orientation.Landscape)
+      .AddClass("mud-picker-toolbar-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
       .AddClass(Class)
     .Build();
 
@@ -21,6 +21,7 @@
     [Parameter] public string Style { get; set; }
     [Parameter] public bool DisableToolbar { get; set; }
     [Parameter] public Orientation Orientation { get; set; }
+    [Parameter] public PickerVariant PickerVariant { get; set; }
     [Parameter] public Color Color { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
 }

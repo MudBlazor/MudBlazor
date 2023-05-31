@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -141,6 +142,8 @@ namespace MudBlazor
                 _selectedRadio = null;
         }
 
+        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
+        [ExcludeFromCodeCoverage]
         protected override void ResetValue()
         {
             if (_selectedRadio != null)
@@ -150,6 +153,17 @@ namespace MudBlazor
             }
 
             base.ResetValue();
+        }
+
+        protected override Task ResetValueAsync()
+        {
+            if (_selectedRadio != null)
+            {
+                _selectedRadio.SetChecked(false);
+                _selectedRadio = null;
+            }
+
+            return base.ResetValueAsync();
         }
 
         private static T GetOptionOrDefault(MudRadio<T> radio)

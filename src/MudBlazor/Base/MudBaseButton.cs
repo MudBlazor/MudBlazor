@@ -59,6 +59,13 @@ namespace MudBlazor
         public string Target { get; set; }
 
         /// <summary>
+        /// The value of rel attribute for web crawlers. Overrides "noopener" set by <see cref="Target"/> attribute.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public string Rel { get; set; }
+
+        /// <summary>
         /// If true, the button will be disabled.
         /// </summary>
         [Parameter]
@@ -87,6 +94,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
+        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
         public ICommand Command { get; set; }
 
         /// <summary>
@@ -94,6 +102,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
+        [Obsolete("This will be removed in v7.")]
         public object CommandParameter { get; set; }
 
         /// <summary>
@@ -106,10 +115,12 @@ namespace MudBlazor
             if (GetDisabledState())
                 return;
             await OnClick.InvokeAsync(ev);
+#pragma warning disable CS0618
             if (Command?.CanExecute(CommandParameter) ?? false)
             {
                 Command.Execute(CommandParameter);
             }
+#pragma warning restore CS0618
             Activateable?.Activate(this, ev);
         }
 
@@ -145,5 +156,12 @@ namespace MudBlazor
         protected ElementReference _elementReference;
 
         public ValueTask FocusAsync() => _elementReference.FocusAsync();
+
+        protected string GetRel()
+        {
+            if (Rel == null && Target == "_blank")
+                return "noopener";
+            return Rel;
+        }
     }
 }

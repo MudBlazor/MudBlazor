@@ -273,11 +273,11 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(1));
 
 
-            await comp.InvokeAsync(() => chipSet.Instance.OnChipDeleted((MudChip)chip.Instance.Value));
+            await comp.InvokeAsync(() => chipSet.Instance.OnChipDeletedAsync((MudChip)chip.Instance.Value));
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
 
             await comp.InvokeAsync(() => chipSet.Instance.SelectedChip = null);
-            await comp.InvokeAsync(() => chipSet.Instance.SetSelectedValues(null));
+            await comp.InvokeAsync(() => chipSet.Instance.SetSelectedValuesAsync(null));
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
         }
     }

@@ -10,30 +10,38 @@
 @code {
 
     protected string Classname =>
-    new CssBuilder("mud-toolbar")
-      .AddClass($"mud-toolbar-dense", Dense)
-      .AddClass($"mud-toolbar-gutters", !DisableGutters)
-      .AddClass(Class)
-    .Build();
+        new CssBuilder("mud-toolbar")
+            .AddClass("mud-toolbar-dense", Dense)
+            .AddClass("mud-toolbar-gutters", !DisableGutters)
+            .AddClass("mud-toolbar-wrap-content", WrapContent)
+            .AddClass(Class)
+            .Build();
 
     /// <summary>
     /// If true, compact padding will be used.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.ToolBar.Appearance)]
     public bool Dense { get; set; }
 
     /// <summary>
     /// If true, disables gutter padding.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.ToolBar.Appearance)]
     public bool DisableGutters { get; set; }
 
     /// <summary>
     /// Child content of component.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.ToolBar.Behavior)]
     public RenderFragment ChildContent { get; set; }
+    
+    /// <summary>
+    /// If true, ToolBar is allowed to wrap.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.ToolBar.Behavior)]
+    public bool WrapContent { get; set; }
 }

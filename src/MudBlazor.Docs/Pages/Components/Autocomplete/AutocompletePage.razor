@@ -51,7 +51,10 @@
         <DocsPageSection>
             <SectionHeader Title="Presentation Extras">
                 <Description>
-                    You can also define a <CodeInline Tag="true">MoreItemsTemplate</CodeInline> or a <CodeInline Tag="true">NoItemsTemplate</CodeInline> for special scenarios.
+                    You can also define a <CodeInline Tag="true">MoreItemsTemplate</CodeInline> to handle the case where the search returns more
+                    items than the list is configured to show and a <CodeInline Tag="true">NoItemsTemplate</CodeInline> that presents some default content
+                    if the search returns no results. For your own custom content that always shows at the top or the bottom of the list define the
+                    <CodeInline Tag="true">BeforeItemsTemplate</CodeInline> and the <CodeInline Tag="true">AfterItemsTemplate</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="AutocompletePresentationExtrasExample">

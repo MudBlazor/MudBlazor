@@ -17,21 +17,9 @@ namespace MudBlazor
 
         internal HeaderCell<T>? HeaderCell { get; set; }
 
-        public IEnumerable<T> Items
-        {
-            get
-            {
-                return _dataGrid.Items;
-            }
-        }
+        public IEnumerable<T> Items => _dataGrid.Items;
 
-        public List<FilterDefinition<T>> FilterDefinitions
-        {
-            get
-            {
-                return _dataGrid.FilterDefinitions;
-            }
-        }
+        public List<IFilterDefinition<T>> FilterDefinitions => _dataGrid.FilterDefinitions;
 
         public FilterActions Actions { get; }
 

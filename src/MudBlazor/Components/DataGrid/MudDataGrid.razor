@@ -36,6 +36,8 @@
                 }
             }
             <div @ref=_gridElement class="@_tableClass" style="@_tableStyle">
+                <MudDropContainer @ref="_dropContainer" T="Column<T>" Items="@RenderedColumns" ItemsSelector="(item, dropzone) => RenderedColumnsItemsSelector(item, dropzone)" ItemDropped="ItemUpdatedAsync" CanDropClass="@DropAllowedClass" NoDropClass="@DropNotAllowedClass" ApplyDropClassesOnDragStarted="@ApplyDropClassesOnDragStarted">
+                    <ChildContent>
                 <table class="mud-table-root">
                     @if (ColGroup != null)
                     {
@@ -48,10 +50,10 @@
                             @Header
                         </CascadingValue>
                         <tr class="mud-table-row">
-                            @foreach (var column in RenderedColumns)
-                            {
-                                <HeaderCell SortDirection="@(GetColumnSortDirection(column.PropertyName))" T="T" Column="@column"></HeaderCell>
-                            }
+                        @foreach (var column in RenderedColumns)
+                        {
+                            <HeaderCell SortDirection="@(GetColumnSortDirection(column.PropertyName))" T="T" Column="@column"></HeaderCell>
+                        }
                         </tr>
                         @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
                         {
@@ -120,7 +122,7 @@
                         }
 
                         @{var resolvedPageItems = CurrentPageItems.ToList();}
-                        @if (resolvedPageItems != null && resolvedPageItems.Count > 0)
+                        @if (resolvedPageItems is { Count: > 0 })
                         {
                             if (GroupedColumn != null)
                             {
@@ -235,6 +237,11 @@
                         </tr>
                     </tfoot>
                 </table>
+                    </ChildContent>
+                    <ItemRenderer>
+                        @context.HeaderCell.TableHeader()
+                    </ItemRenderer>
+                </MudDropContainer>
             </div>
             @if (PagerContent != null)
             {
@@ -383,10 +390,11 @@
             </td>
          </text>;
 
-    internal RenderFragment Filter(FilterDefinition<T> filterDefinition, Column<T> column) =>
+    internal RenderFragment Filter(IFilterDefinition<T> filterDefinition, Column<T> column) =>
         @<text>
             @{
                 var filter = new Filter<T>(this, filterDefinition, column);
+                var fieldType = filterDefinition.FieldType;
             }
             @if (column is null)
             {
@@ -396,8 +404,8 @@
                 <MudItem xs="4">
                     <MudSelect T="Column<T>" Value="@filterDefinition.Column" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense"
                                Class="filter-field">
-                        @foreach (var renderColumn in RenderedColumns ?? Enumerable.Empty<Column<T>>())
-                        {
+                    @foreach (var renderColumn in RenderedColumns.Where(x => x.Filterable != false) ?? Enumerable.Empty<Column<T>>())
+                    {
                             <MudSelectItem T="Column<T>" Value="@renderColumn">@renderColumn.Title</MudSelectItem>
                         }
                     </MudSelect>
@@ -405,35 +413,35 @@
                 <MudItem xs="3">
                     <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Label="Operator" Dense="true" Margin="@Margin.Dense"
                                Class="filter-operator">
-                        @foreach (var fieldOperator in FilterOperator.GetOperatorByDataType(filterDefinition.dataType))
+                        @foreach (var fieldOperator in FilterOperator.GetOperatorByDataType(fieldType))
                         {
                             <MudSelectItem Value="@fieldOperator">@fieldOperator</MudSelectItem>
                         }
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="4">
-                    @if (filterDefinition.FieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
+                    @if (fieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                     {
                         <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
                                       Immediate="true" Class="filter-input"/>
                     }
-                    else if (filterDefinition.FieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
+                    else if (fieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                     {
                         <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
                                          Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture"/>
                     }
-                    else if (filterDefinition.FieldType.IsEnum)
+                    else if (fieldType.IsEnum)
                     {
                         <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                                    Class="filter-input">
                             <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
-                            @foreach (var item in EnumExtensions.GetSafeEnumValues(filterDefinition.dataType))
+                            @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
                             {
                                 <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
                             }
                         </MudSelect>
                     }
-                    else if (filterDefinition.FieldType.IsBoolean)
+                    else if (fieldType.IsBoolean)
                     {
                         <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                                    Class="filter-input">
@@ -442,7 +450,7 @@
                             <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
                         </MudSelect>
                     }
-                    else if (filterDefinition.FieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
+                    else if (fieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                     {
                         <MudGrid Spacing="0">
                             <MudItem xs="7">
@@ -453,7 +461,7 @@
                             </MudItem>
                         </MudGrid>
                     }
-                    else if (filterDefinition.FieldType.IsGuid)
+                    else if (fieldType.IsGuid)
                     {
                         <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
                                       Immediate="true" Class="filter-input"/>
@@ -465,35 +473,35 @@
                 <MudItem xs="12">
                     <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                                Class="filter-operator">
-                        @foreach (var o in FilterOperator.GetOperatorByDataType(filterDefinition.dataType))
+                        @foreach (var o in FilterOperator.GetOperatorByDataType(fieldType))
                         {
                             <MudSelectItem Value="@o">@o</MudSelectItem>
                         }
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12">
-                    @if (filterDefinition.FieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
+                    @if (fieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                     {
                         <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense"
                                       Immediate="true" Class="filter-input"/>
                     }
-                    else if (filterDefinition.FieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
+                    else if (fieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                     {
                         <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense"
                                          Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture"/>
                     }
-                    else if (filterDefinition.FieldType.IsEnum)
+                    else if (fieldType.IsEnum)
                     {
                         <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                                    Class="filter-input">
                             <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
-                            @foreach (var item in Enum.GetValues(filterDefinition.dataType))
+                            @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
                             {
                                 <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
                             }
                         </MudSelect>
                     }
-                    else if (filterDefinition.FieldType.IsBoolean)
+                    else if (fieldType.IsBoolean)
                     {
                         <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                                    Class="filter-input">
@@ -502,7 +510,7 @@
                             <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
                         </MudSelect>
                     }
-                    else if (filterDefinition.FieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
+                    else if (fieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                     {
                         <MudGrid Spacing="0">
                             <MudItem xs="7">
@@ -513,7 +521,7 @@
                             </MudItem>
                         </MudGrid>
                     }
-                    else if (filterDefinition.FieldType.IsGuid)
+                    else if (fieldType.IsGuid)
                     {
                         <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
                                       Immediate="true" Class="filter-input"/>

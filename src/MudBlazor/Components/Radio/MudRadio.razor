@@ -2,7 +2,7 @@
 @typeparam T
 @inherits MudComponentBase
 
-<label class="@Classname" style="@Style" id="@_elementId" @onkeydown="@HandleKeyDown">
+<label class="@Classname" style="@Style" id="@_elementId" @onkeydown="@HandleKeyDownAsync">
     <span tabindex="0" class="@ButtonClassname">
         <span class="mud-radio-button">
             <input tabindex="-1" @attributes="UserAttributes" aria-checked="@(Checked.ToString().ToLower())" aria-disabled="@(IsDisabled.ToString().ToLower())" role="radio" type="radio" class="mud-radio-input" name="@MudRadioGroup?.Name" disabled="@IsDisabled" @onclick="OnClick" />

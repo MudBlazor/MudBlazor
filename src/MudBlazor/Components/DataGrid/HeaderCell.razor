@@ -11,6 +11,30 @@
 else if (Column != null && !Column.Hidden)
 {
     <th @ref=@_headerElement scope="col" class="@_classname" style="@_style" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
+        @if (DataGrid.DragDropColumnReordering)
+        {
+            <MudDropZone CanDrop="@((item) => (Column.DragAndDropEnabled ?? true))" ItemIsDisabled="@((item) => !item.DragAndDropEnabled ?? false)" T="Column<T>" Identifier="@(Column.PropertyName ?? $"mud-header-cell-{_id}")">
+
+            </MudDropZone>
+        }
+        else
+        {
+            @TableHeader()
+        }
+        @if (resizable)
+        {
+            <div @onmousedown=OnResizerMouseDown @onmouseover=OnResizerMouseOver @onmouseleave=OnResizerMouseLeave
+                 class="@_resizerClass" style="@_resizerStyle" />
+        }
+    </th>
+}
+
+@code{
+
+    internal RenderFragment TableHeader()
+    {
+        return
+        @<text>
         <span class="column-header">
             @if (sortable)
             {
@@ -90,14 +114,12 @@ else if (Column != null && !Column.Hidden)
                         }
                     </MudMenu>
                 }
+                @if (DataGrid.DragDropColumnReordering && (Column.DragAndDropEnabled ?? true))
+                {
+                    <MudIconButton Icon="@DataGrid.DragIndicatorIcon" Size="@DataGrid.DragIndicatorSize" Class="drag-icon-options"></MudIconButton>
+                }
             </span>
         </span>
-        @if (resizable)
-        {
-            <div @onmousedown=OnResizerMouseDown @onmouseover=OnResizerMouseOver @onmouseleave=OnResizerMouseLeave
-                class="@_resizerClass" style="@_resizerStyle" />
-        }
-
         @if (filterable && DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
         {
             <MudOverlay Visible="@_filtersMenuVisible" OnClick="@(() => _filtersMenuVisible = false)" />
@@ -120,5 +142,6 @@ else if (Column != null && !Column.Hidden)
                 }
             </MudPopover>
         }
-    </th>
+        </text>;
+    }
 }

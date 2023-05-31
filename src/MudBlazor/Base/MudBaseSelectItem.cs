@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -47,6 +48,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.ClickAction)]
+        [Obsolete("This will be removed in v7.")]
         public object CommandParameter { get; set; }
 
         /// <summary>
@@ -54,6 +56,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.ClickAction)]
+        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
         public ICommand Command { get; set; }
 
         [Inject] private NavigationManager UriHelper { get; set; }
@@ -72,10 +75,12 @@ namespace MudBlazor
             else
             {
                 await OnClick.InvokeAsync(ev);
+#pragma warning disable CS0618
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
                     Command.Execute(CommandParameter);
                 }
+#pragma warning restore CS0618
             }
         }
     }

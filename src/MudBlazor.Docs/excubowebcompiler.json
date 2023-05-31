@@ -42,8 +42,7 @@
     "Sass": {
       "IndentType": "Space",
       "IndentWidth": 2,
-      "OutputStyle": "Nested",
-      "Precision": 5,
+      "OutputStyle": "Expanded",
       "RelativeUrls": true,
       "LineFeed": "Lf",
       "SourceMap": false

@@ -200,6 +200,17 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br>Panel 1<br></p>");
         }
 
+
+        [Test]
+        public void TabHeaderClassPropagated()
+        {
+            var comp = Context.RenderComponent<MudTabs>();
+            
+            comp.SetParametersAndRender(builder => builder.Add(tabs => tabs.TabHeaderClass, "testA testB"));
+
+            comp.Find(".mud-tabs-toolbar").ClassList.Should().Contain(new[] { "testA", "testB" });
+        }
+
         [Test]
         public void ScrollToItem_NoScrollingNeeded()
         {
@@ -1112,8 +1123,8 @@ namespace MudBlazor.UnitTests.Components
             panels.Should().HaveCount(2);
 
             // index 0 : html text "Hello <span>World</span>!"
-            panels[0].InnerHtml.Contains("Hello <span>World</span>!").Should().BeTrue();
-            panels[0].TextContent.Contains("Hello World!").Should().BeTrue();
+            panels[0].InnerHtml.Should().Be("Hello &lt;span&gt;World&lt;/span&gt;!");
+            panels[0].TextContent.Should().Be("Hello <span>World</span>!");
 
             // index 1 : simple text without html "Hello World!"
             panels[1].InnerHtml.Contains("Hello World!").Should().BeTrue();

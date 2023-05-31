@@ -32,7 +32,7 @@ namespace MudBlazor
         private List<GroupDefinition<T>> _allGroups = new List<GroupDefinition<T>>();
         internal HashSet<T> _openHierarchies = new HashSet<T>();
         private PropertyInfo[] _properties = typeof(T).GetProperties();
-
+        private MudDropContainer<Column<T>> _dropContainer;
         protected string _classname =>
             new CssBuilder("mud-table")
                .AddClass("mud-data-grid")
@@ -111,6 +111,41 @@ namespace MudBlazor
             }
         }
 
+        internal static bool RenderedColumnsItemsSelector(Column<T> item, string dropZone) => item?.PropertyName == dropZone;
+
+        private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
+        {
+            TItem tmp = list[indexA];
+            list[indexA] = list[indexB];
+            list[indexB] = tmp;
+        }
+
+        private Task ItemUpdatedAsync(MudItemDropInfo<Column<T>> dropItem)
+        {
+            dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
+
+            var dragAndDropSource = RenderedColumns.Where(rc => rc.PropertyName == dropItem.Item.PropertyName).SingleOrDefault();
+            var dragAndDropDestination = RenderedColumns.Where(rc => rc.PropertyName == dropItem.DropzoneIdentifier).SingleOrDefault();
+            if (dragAndDropSource != null && dragAndDropDestination != null)
+            {
+                var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
+                var dragAndDropDestinationIndex = RenderedColumns.IndexOf(dragAndDropDestination);
+
+                Swap<Column<T>>(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
+
+                // swap source / destination
+                var dest = dragAndDropDestination.HeaderCell.Width;
+                var src = dragAndDropSource.HeaderCell.Width;
+
+                dragAndDropSource.HeaderCell.Width = dest;
+                dragAndDropDestination.HeaderCell.Width = src;
+
+                StateHasChanged();
+            }
+            return Task.CompletedTask;
+            
+        }
+
         public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
         internal T _editingItem;
 
@@ -185,6 +220,39 @@ namespace MudBlazor
         #endregion
 
         #region Parameters
+
+        /// <summary>
+        /// If true, the columns in the DataGrid can be reordered via drag and drop. This is overridable by each column.
+        /// </summary>
+        [Parameter] public bool DragDropColumnReordering { get; set; } = false;
+
+        /// <summary>
+        /// Custom drag indicator icon in the header which shows up on mouse over. 
+        /// </summary>
+        [Parameter] public string DragIndicatorIcon { get; set; } = Icons.Material.Filled.DragIndicator;
+
+        /// <summary>
+        /// Size of the DragIndicatorIcon.
+        /// </summary>
+        [Parameter] public Size DragIndicatorSize { get; set; } = Size.Small;
+
+        /// <summary>
+        /// Css class that is applied to column headers while dragging to indicate that the dragged column can be dropped on a column. 
+        /// </summary>
+        [Parameter] public string DropAllowedClass { get; set; } = "drop-allowed";
+
+        /// <summary>
+        /// Css class that is applied to column headers while dragging to indicate that the dragged column can not be dropped on a column. 
+        /// </summary>
+        [Parameter] public string DropNotAllowedClass { get; set; } = "drop-not-allowed";
+
+        /// <summary>
+        /// When false the drop classes are only applied when dragging a column over another column
+        /// When true the drop classes are applied to all column headers and does not require dragging a column over another column.
+        /// </summary>
+        [Parameter] public bool ApplyDropClassesOnDragStarted { get; set; } = false;
+
+
 
         /// <summary>
         /// Controls whether data in the DataGrid can be sorted. This is overridable by each column.
@@ -283,7 +351,7 @@ namespace MudBlazor
         /// grid automatically when using the built in filter UI. You can also programmatically manage these definitions
         /// through this collection.
         /// </summary>
-        [Parameter] public List<FilterDefinition<T>> FilterDefinitions { get; set; } = new List<FilterDefinition<T>>();
+        [Parameter] public List<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
 
         /// <summary>
         /// The list of SortDefinitions that have been added to the data grid. SortDefinitions are managed by the data
@@ -683,12 +751,16 @@ namespace MudBlazor
                 }
 
                 if (ServerData is null)
-                    foreach (var f in FilterDefinitions)
+                {
+                    foreach (var filterDefinition in FilterDefinitions)
                     {
-                        f.DataGrid = this;
-                        var filterFunc = f.GenerateFilterFunction();
+                        var filterFunc = filterDefinition.GenerateFilterFunction(new FilterOptions
+                        {
+                            FilterCaseSensitivity = FilterCaseSensitivity
+                        });
                         items = items.Where(filterFunc);
                     }
+                }
 
                 _currentRenderFilteredItemsCache = Sort(items).ToList(); // To list to ensure evaluation only once per render
                 unchecked { FilteringRunCount++; }
@@ -800,7 +872,7 @@ namespace MudBlazor
             };
 
             _server_data = await ServerData(state);
-            _currentRenderFilteredItemsCache = null;            
+            _currentRenderFilteredItemsCache = null;
 
             if (CurrentPage * RowsPerPage > _server_data.TotalItems)
                 CurrentPage = 0;
@@ -844,10 +916,8 @@ namespace MudBlazor
             {
                 Id = Guid.NewGuid(),
                 DataGrid = this,
-                //Field = column?.PropertyName,
                 Title = column?.Title,
-                //FieldType = column?.PropertyType,
-                PropertyExpression = column?.PropertyExpression,
+                Column = column,
             });
             _filtersMenuVisible = true;
             StateHasChanged();
@@ -865,7 +935,7 @@ namespace MudBlazor
             return InvokeServerLoadFunc();
         }
 
-        public async Task AddFilterAsync(FilterDefinition<T> definition)
+        public async Task AddFilterAsync(IFilterDefinition<T> definition)
         {
             FilterDefinitions.Add(definition);
             _filtersMenuVisible = true;
@@ -1229,6 +1299,12 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        internal void DropContainerHasChanged()
+        {
+            _dropContainer?.Refresh();
+        }
+
+        
         public void GroupItems(bool noStateChange = false)
         {
             if (GroupedColumn == null)

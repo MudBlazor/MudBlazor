@@ -63,7 +63,7 @@ namespace MudBlazor.Services
 
             if (BreakpointDefinitions is null)
                 return other.BreakpointDefinitions is null;
-            if (other.BreakpointDefinitions is null) 
+            if (other.BreakpointDefinitions is null)
                 return false;
             if (BreakpointDefinitions.Count != other.BreakpointDefinitions.Count)
                 return false;

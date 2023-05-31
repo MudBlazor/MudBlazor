@@ -751,7 +751,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // reset (must reset dirty state)
-            await comp.InvokeAsync(() => comp.Instance.Reset());
+            await comp.InvokeAsync(() => comp.Instance.ResetAsync());
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
 
             // user does not change input value but changes focus
@@ -790,7 +790,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // reset
-            await comp.InvokeAsync(() => comp.Instance.Reset());
+            await comp.InvokeAsync(() => comp.Instance.ResetAsync());
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
 
             // user does not change input value but changes focus

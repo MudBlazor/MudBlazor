@@ -472,7 +472,11 @@ namespace MudBlazor
                     h = value + 12;
             }
             _timeSet.Hour = h;
-            UpdateTime();
+
+            if(_currentView == OpenTo.Hours)
+            {
+                UpdateTime();
+            }
 
             if (TimeEditMode == TimeEditMode.Normal)
             {
@@ -641,6 +645,8 @@ namespace MudBlazor
                     }
                     break;
             }
+
+            StateHasChanged();
         }
 
         protected void ChangeMinute(int val)

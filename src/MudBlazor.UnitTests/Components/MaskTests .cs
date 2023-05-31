@@ -683,7 +683,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => textField.Text.Should().Be("(123) 456-7890"));
             comp.WaitForAssertion(() => textField.Value.Should().Be("(123) 456-7890"));
 
-            await comp.InvokeAsync(() => form.Reset());
+            await comp.InvokeAsync(() => form.ResetAsync());
             comp.WaitForAssertion(() => mask.Mask.ToString().Should().Be("|"));
             comp.WaitForAssertion(() => textField.Text.Should().BeNullOrEmpty());
             comp.WaitForAssertion(() => textField.Value.Should().BeNullOrEmpty());
@@ -699,7 +699,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => textField.Value.Should().Be("(123) "));
 
             //ctrl+backspace
-            await comp.InvokeAsync(() => form.Reset());
+            await comp.InvokeAsync(() => form.ResetAsync());
             await comp.InvokeAsync(() => mask.OnPaste("1234567890"));
             comp.WaitForAssertion(() => mask.Mask.ToString().Should().Be("(123) 456-7890|"));
             comp.WaitForAssertion(() => textField.Text.Should().Be("(123) 456-7890"));

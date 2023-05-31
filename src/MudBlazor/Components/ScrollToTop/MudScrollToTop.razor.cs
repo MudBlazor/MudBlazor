@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -72,6 +74,7 @@ namespace MudBlazor
         /// Called when scroll event is fired
         /// </summary>
         [Parameter] public EventCallback<ScrollEventArgs> OnScroll { get; set; }
+        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         protected override void OnAfterRender(bool firstRender)
         {
@@ -116,11 +119,12 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Scrolls to top when clicked
+        /// Scrolls to top when clicked and invokes OnClick
         /// </summary>
-        private void OnClick()
+        private async Task OnButtonClick(MouseEventArgs args)
         {
-            ScrollManager.ScrollToTopAsync(_scrollListener.Selector, ScrollBehavior);
+            await ScrollManager.ScrollToTopAsync(_scrollListener.Selector, ScrollBehavior);
+            await OnClick.InvokeAsync(args);
         }
 
         /// <summary>

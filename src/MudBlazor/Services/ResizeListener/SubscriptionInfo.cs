@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 namespace MudBlazor.Services
 {
+#nullable enable
     public class SubscriptionInfo<TAction,TOption>
     {
         private readonly Dictionary<Guid, Action<TAction>> _subscriptions;
@@ -21,7 +22,7 @@ namespace MudBlazor.Services
         public Guid AddSubscription(Action<TAction> action)
         {
             var id = Guid.NewGuid();
-            _subscriptions.Add(id, action);
+            _subscriptions.TryAdd(id, action);
 
             return id;
         }
@@ -30,7 +31,10 @@ namespace MudBlazor.Services
 
         public bool RemoveSubscription(Guid listenerId)
         {
-            _subscriptions.Remove(listenerId);
+            if (_subscriptions.ContainsKey(listenerId))
+            {
+                _subscriptions.Remove(listenerId);
+            }
             return _subscriptions.Count == 0;
         }
 
