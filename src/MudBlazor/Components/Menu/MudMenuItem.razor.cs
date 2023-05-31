@@ -51,11 +51,11 @@ namespace MudBlazor
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
-        /// If set to true, clicking the button will close the menu, otherwise, the menu stays open
+        /// If set to false, clicking the button will keep the menu open
         /// </summary>
         [Parameter] 
         [Category(CategoryTypes.Menu.ClickAction)] 
-        public bool CloseMenuOnClick { get; set; } = true;
+        public bool AutoClose { get; set; } = true;
 
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Target { get; set; }
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public bool ForceLoad { get; set; }
@@ -77,7 +77,7 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            if (CloseMenuOnClick) MudMenu.CloseMenu();
+            if (AutoClose) MudMenu.CloseMenu();
 
             if (Href != null)
             {
@@ -102,7 +102,7 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            MudMenu.CloseMenu();
+            if (AutoClose) MudMenu.CloseMenu();
 
             if (Href != null)
             {
