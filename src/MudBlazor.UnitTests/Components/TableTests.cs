@@ -878,6 +878,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Setting items delayed should work well and update pager also
+        /// </summary>
+        [Test]
+        public async Task TablePagerHidingTest()
+        {
+            var comp = Context.RenderComponent<TablePagerHidingTest>();
+            comp.Instance.HideWhenSinglePage = false;
+            comp.Instance.ClearItems();
+            GetPagerComponentsCount(comp).Should().BePositive(because: "pager component(s) must be visible when we dont hide them, even when no items are present.");
+
+            comp.Instance.HideWhenSinglePage = true;
+            comp.Render();
+            GetPagerComponentsCount(comp).Should().Be(0, because: "no pager components should be visible when we want to hide it and no items are present.");
+            comp.Instance.AddItems(count: comp.Instance.ItemsPerPage);
+            comp.Render();
+            GetPagerComponentsCount(comp).Should().Be(0, because: "pager components should be hidden when we want to hide it and item count equals items per page.");
+
+            comp.Instance.AddItems(count: 1);
+            comp.Render();
+            GetPagerComponentsCount(comp).Should().BePositive(because: "pager components should be visible when we want to hide it and item count exceeds items per page.");
+
+            static int GetPagerComponentsCount(IRenderedComponent<TablePagerHidingTest> component) => component.FindAll("div.mud-table-pagination-toolbar").Count;
+        }
+
+        /// <summary>
         /// Even without a MudTablePager the table should call ServerReload to get the items on start.
         /// </summary>
         [Test]

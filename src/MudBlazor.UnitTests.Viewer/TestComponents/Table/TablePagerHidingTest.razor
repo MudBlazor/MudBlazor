@@ -1,0 +1,37 @@
+﻿﻿@using System.ComponentModel
+@using System.Runtime.CompilerServices
+
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTable T=Item Items=_items PagerPosition=TablePagerPosition.TopAndBottom>
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Name</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Nr</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager HideWhenSinglePage=HideWhenSinglePage PageSizeOptions="new int[] { ItemsPerPage }" />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private class Item
+    {
+        public string Nr { get; set; }
+        public string Name { get; set; }
+    }
+
+    private List<Item> _items = new List<Item>();
+
+    public bool HideWhenSinglePage { get; set; }
+    public int ItemsPerPage => 3;
+    public void ClearItems() => _items.Clear();
+    public void AddItems(int count)
+    {
+        for (int i = 0; i<count; i++)
+            _items.Add(new Item { Nr = "nr", Name = "name" });
+    }
+}

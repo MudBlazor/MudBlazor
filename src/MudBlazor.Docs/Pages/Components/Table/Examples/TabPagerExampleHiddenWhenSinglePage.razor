@@ -1,0 +1,52 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTable T=Item Items=_items PagerPosition=TablePagerPosition.TopAndBottom>
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Name</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Nr</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager HideWhenSinglePage=_hideWhenSinglePage PageSizeOptions="new int[] { 1, 2, 5, int.MaxValue }" InfoFormat=@($"Left {_infoFormat}") HorizontalAlignment=HorizontalAlignment.Left />
+    </PagerContent>
+</MudTable>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudSwitch @bind-Checked=_hideWhenSinglePage Color=Color.Tertiary>Hide pager when total items count is less than items per page</MudSwitch>
+    <MudButton OnClick=AddItem>Add item</MudButton>
+    <MudButton OnClick=RemoveItem>Remove item</MudButton>
+</div>
+
+@code {
+    private class Item
+    {
+        public string Nr { get; set; }
+        public string Name { get; set; }
+    }
+
+    private bool _hideWhenSinglePage;
+    private string _infoFormat = "{first_item}-{last_item} of {all_items}";
+    private Random _random = new Random();
+    private List<Item> _items = new List<Item>();
+
+    protected override void OnInitialized()
+    {
+        for (int i = 0; i < 5; i++)
+            AddItem();
+    }
+
+    private void AddItem()
+    {
+        _items.Add(new Item { Nr = _random.Next(1000).ToString(), Name = $"Name {DateTime.Now.Ticks}" });
+        StateHasChanged();
+    }
+
+    private void RemoveItem()
+    {
+        _items.RemoveAt(0);
+        StateHasChanged();
+    }
+}

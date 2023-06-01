@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -26,6 +26,8 @@ namespace MudBlazor
             new CssBuilder(!OverrideDefaultActionsClass ? "mud-table-pagination-actions" : "")
             .AddClass(ActionsClass)
             .Build();
+
+        [Parameter] public bool HideWhenSinglePage { get; set; }
 
         [Parameter] public string ActionsClass { get; set; }
 
