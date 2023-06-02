@@ -36,7 +36,6 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     /// <summary>
     /// Initializes a new instance of the <see cref="ObserverManager{TIdentity,TObserver}"/> class. 
     /// </summary>
-    /// <param name="log">The log.</param>
     public ObserverManager(ILogger log)
     {
         _log = log ?? throw new ArgumentNullException(nameof(log));
