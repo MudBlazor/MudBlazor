@@ -108,7 +108,7 @@ namespace MudBlazor
 
         //TODO: For backward compatibility with old service. Should be removed in v7
 #pragma warning disable CS0618
-        private IEnumerable<IMudPopoverState> GetActivePopovers()
+        private IEnumerable<IMudPopoverHolder> GetActivePopovers()
         {
             return PopoverService.ActivePopovers.Concat(Service.Handlers);
         }
@@ -118,7 +118,7 @@ namespace MudBlazor
         Guid IPopoverObserver.Id { get; } = Guid.NewGuid();
 
         /// <inheritdoc />
-        Task IPopoverObserver.PopoverCollectionUpdatedNotification(IEnumerable<IMudPopoverState> states)
+        Task IPopoverObserver.PopoverCollectionUpdatedNotification(IEnumerable<IMudPopoverHolder> holders)
         {
             return InvokeAsync(StateHasChanged);
         }

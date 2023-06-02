@@ -15,12 +15,13 @@ internal class PopoverObserverMock : IPopoverObserver
 
     public List<Guid> PopoverNotifications { get; } = new();
 
-    public Task PopoverCollectionUpdatedNotification(IEnumerable<IMudPopoverState> states)
+    public Task PopoverCollectionUpdatedNotification(IEnumerable<IMudPopoverHolder> holders)
     {
-        foreach (var state in states)
+        foreach (var holder in holders)
         {
-            PopoverNotifications.Add(state.Id);
+            PopoverNotifications.Add(holder.Id);
         }
+
         return Task.CompletedTask;
     }
 }

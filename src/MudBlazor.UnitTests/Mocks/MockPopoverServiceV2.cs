@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Mocks
     {
         public PopoverOptions PopoverOptions { get; } = new();
 
-        public IEnumerable<IMudPopoverState> ActivePopovers { get; } = Enumerable.Empty<IMudPopoverState>();
+        public IEnumerable<IMudPopoverHolder> ActivePopovers { get; } = Enumerable.Empty<IMudPopoverHolder>();
 
         public bool IsInitialized => false;
 

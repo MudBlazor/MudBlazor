@@ -23,10 +23,10 @@ public interface IPopoverObserver
     /// Notifies the observer of a popover collection update in <see cref="IPopoverService.ActivePopovers"/>.
     /// This notification is triggered only when <see cref="IPopoverService.CreatePopoverAsync"/> or <see cref="IPopoverService.DestroyPopoverAsync"/> is called.
     /// </summary>
-    /// <param name="states">Collection of the updated state of the popover.</param>
+    /// <param name="holders">Collection of the updated holder of the popover.</param>
     /// <remarks>
     /// Please note that this notification will not be triggered when <see cref="IPopoverService.UpdatePopoverAsync"/> is called, but this might change in future.
-    /// Currently, the <paramref name="states"/> collection always contains one item. However, in the future, the behavior might change, and a list of updated states could be sent if the decision is made to update by batches.
+    /// Currently, the <paramref name="holders"/> collection always contains one item. However, in the future, the behavior might change, and a list of updated states could be sent if the decision is made to update by batches.
     /// </remarks>
-    public Task PopoverCollectionUpdatedNotification(IEnumerable<IMudPopoverState> states);
+    public Task PopoverCollectionUpdatedNotification(IEnumerable<IMudPopoverHolder> holders);
 }

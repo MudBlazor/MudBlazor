@@ -22,7 +22,7 @@ public interface IPopoverService : IAsyncDisposable
     /// <summary>
     /// Gets the collection of active popovers that were created via <see cref="CreatePopoverAsync"/>. Disappears from collection after calling <see cref="DestroyPopoverAsync"/>.
     /// </summary>
-    IEnumerable<IMudPopoverState> ActivePopovers { get; }
+    IEnumerable<IMudPopoverHolder> ActivePopovers { get; }
 
     /// <summary>
     /// Gets a value indicating whether the <see cref="IPopoverService"/> is initialized.

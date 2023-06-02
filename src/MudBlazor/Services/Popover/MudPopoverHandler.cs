@@ -12,7 +12,7 @@ using MudBlazor.Interop;
 
 namespace MudBlazor;
 
-public class MudPopoverHandler : IMudPopoverState
+public class MudPopoverHandler : IMudPopoverHolder
 {
     private readonly SemaphoreSlim _semaphore = new(1, 1);
     private readonly PopoverJsInterop _popoverJsInterop;

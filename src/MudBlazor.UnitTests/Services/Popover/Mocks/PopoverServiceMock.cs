@@ -25,7 +25,7 @@ internal class PopoverServiceMock : PopoverService
         _popoverTimerMock = popoverTimerMock ?? new PopoverTimerEmpty();
     }
 
-    public override async Task OnBatchTimerElapsedAsync(IReadOnlyCollection<MudPopoverState> items, CancellationToken cancellationToken)
+    public override async Task OnBatchTimerElapsedAsync(IReadOnlyCollection<MudPopoverHolder> items, CancellationToken cancellationToken)
     {
         await _popoverTimerMock.OnBatchTimerElapsedBeforeAsync(items, cancellationToken).ConfigureAwait(false);
         await base.OnBatchTimerElapsedAsync(items, cancellationToken).ConfigureAwait(false);
@@ -34,15 +34,15 @@ internal class PopoverServiceMock : PopoverService
 
     internal interface IPopoverTimerMock
     {
-        Task OnBatchTimerElapsedBeforeAsync(IReadOnlyCollection<MudPopoverState> items, CancellationToken cancellationToken);
+        Task OnBatchTimerElapsedBeforeAsync(IReadOnlyCollection<MudPopoverHolder> items, CancellationToken cancellationToken);
 
-        Task OnBatchTimerElapsedAfterAsync(IReadOnlyCollection<MudPopoverState> items, CancellationToken cancellationToken);
+        Task OnBatchTimerElapsedAfterAsync(IReadOnlyCollection<MudPopoverHolder> items, CancellationToken cancellationToken);
     }
 
     internal class PopoverTimerEmpty : IPopoverTimerMock
     {
-        public Task OnBatchTimerElapsedBeforeAsync(IReadOnlyCollection<MudPopoverState> items, CancellationToken cancellationToken) => Task.CompletedTask;
+        public Task OnBatchTimerElapsedBeforeAsync(IReadOnlyCollection<MudPopoverHolder> items, CancellationToken cancellationToken) => Task.CompletedTask;
 
-        public Task OnBatchTimerElapsedAfterAsync(IReadOnlyCollection<MudPopoverState> items, CancellationToken cancellationToken) => Task.CompletedTask;
+        public Task OnBatchTimerElapsedAfterAsync(IReadOnlyCollection<MudPopoverHolder> items, CancellationToken cancellationToken) => Task.CompletedTask;
     }
 }

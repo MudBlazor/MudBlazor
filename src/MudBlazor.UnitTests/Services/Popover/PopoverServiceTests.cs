@@ -349,7 +349,7 @@ public class PopoverServiceTests
 
         popoverTimerMock
             .Setup(h => h.OnBatchTimerElapsedAfterAsync(
-                It.IsAny<IReadOnlyCollection<MudPopoverState>>(),
+                It.IsAny<IReadOnlyCollection<MudPopoverHolder>>(),
                 It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
             .Callback(signalEvent.Set);
@@ -398,7 +398,7 @@ public class PopoverServiceTests
 
         popoverTimerMock
             .Setup(h => h.OnBatchTimerElapsedAfterAsync(
-                It.IsAny<IReadOnlyCollection<MudPopoverState>>(),
+                It.IsAny<IReadOnlyCollection<MudPopoverHolder>>(),
                 It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
             .Callback(signalEvent.Set);
@@ -417,7 +417,7 @@ public class PopoverServiceTests
         Assert.IsEmpty(service.ActivePopovers);
         popoverTimerMock.Verify(
             h => h.OnBatchTimerElapsedAfterAsync(
-                It.Is<IReadOnlyCollection<MudPopoverState>>(items => items.Count == 2),
+                It.Is<IReadOnlyCollection<MudPopoverHolder>>(items => items.Count == 2),
                 It.IsAny<CancellationToken>()),
             Times.AtLeastOnce,
             "The periodic handler method was not called.");

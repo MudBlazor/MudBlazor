@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor;
 
 #nullable enable
-public interface IMudPopoverState
+public interface IMudPopoverHolder
 {
     /// <summary>
     /// Gets the unique identifier of the popover.
