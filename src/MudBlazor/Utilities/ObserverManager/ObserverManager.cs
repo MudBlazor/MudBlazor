@@ -27,14 +27,7 @@ namespace MudBlazor.Utilities.ObserverManager;
 /// </remarks>
 internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> where TIdentity : notnull
 {
-    /// <summary>
-    /// The observers.
-    /// </summary>
     private readonly Dictionary<TIdentity, ObserverEntry> _observers = new();
-
-    /// <summary>
-    /// The log.
-    /// </summary>
     private readonly ILogger _log;
 
     /// <summary>
