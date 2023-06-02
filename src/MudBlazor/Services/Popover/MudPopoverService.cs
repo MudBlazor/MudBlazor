@@ -16,6 +16,7 @@ using MudBlazor.Interop;
 namespace MudBlazor
 {
 #nullable enable
+    [Obsolete($"Please use {nameof(PopoverService)}. This will be removed in v7.")]
     public class MudPopoverService : IMudPopoverService, IAsyncDisposable
     {
         private readonly Dictionary<Guid, MudPopoverHandler> _handlers = new();

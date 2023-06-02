@@ -9,6 +9,7 @@ namespace MudBlazor
     public partial class MudPopover : PopoverBase
     {
         [Inject]
+        [Obsolete($"Replaced by {nameof(PopoverService)}. Will be removed in v7.")]
         public IMudPopoverService Service { get; set; } = null!;
 
         protected internal override string PopoverClass =>

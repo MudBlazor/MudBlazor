@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor;
 
 #nullable enable
+[Obsolete($"Please use {nameof(IPopoverService)}. This will be removed in v7.")]
 public interface IMudPopoverService
 {
     MudPopoverHandler Register(RenderFragment fragment);
