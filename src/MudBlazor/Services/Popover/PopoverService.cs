@@ -53,13 +53,13 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverSt
     }
 
     /// <inheritdoc />
-    public void SubscribeOnPopoverUpdate(IPopoverObserver observer)
+    public void Subscribe(IPopoverObserver observer)
     {
         _observerManager.Subscribe(observer.Id, observer);
     }
 
     /// <inheritdoc />
-    public void UnsubscribeOnSubscribeOnPopoverUpdate(IPopoverObserver observer)
+    public void Unsubscribe(IPopoverObserver observer)
     {
         _observerManager.Unsubscribe(observer.Id);
     }

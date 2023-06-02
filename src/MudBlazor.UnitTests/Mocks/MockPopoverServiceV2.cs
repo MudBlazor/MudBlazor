@@ -19,11 +19,11 @@ namespace MudBlazor.UnitTests.Mocks
 
         public bool IsInitialized => false;
 
-        public void SubscribeOnPopoverUpdate(IPopoverObserver observer)
+        public void Subscribe(IPopoverObserver observer)
         {
         }
 
-        public void UnsubscribeOnSubscribeOnPopoverUpdate(IPopoverObserver observer)
+        public void Unsubscribe(IPopoverObserver observer)
         {
         }
 

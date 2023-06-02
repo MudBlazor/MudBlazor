@@ -123,7 +123,7 @@ public class PopoverServiceTests
         var popover = new PopoverMock();
         var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
         var observer = new PopoverObserverMock();
-        service.SubscribeOnPopoverUpdate(observer);
+        service.Subscribe(observer);
 
         // Act
         await service.CreatePopoverAsync(popover);
@@ -143,7 +143,7 @@ public class PopoverServiceTests
         var popover = new PopoverMock();
         var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
         var observer = new PopoverObserverMock();
-        service.SubscribeOnPopoverUpdate(observer);
+        service.Subscribe(observer);
 
         // Act
         var result = await service.UpdatePopoverAsync(popover);
@@ -160,7 +160,7 @@ public class PopoverServiceTests
         var popover = new PopoverMock();
         var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
         var observer = new PopoverObserverMock();
-        service.SubscribeOnPopoverUpdate(observer);
+        service.Subscribe(observer);
 
         // Act
         var result = await service.DestroyPopoverAsync(popover);
@@ -177,7 +177,7 @@ public class PopoverServiceTests
         var popover = new PopoverMock();
         var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
         var observer = new PopoverObserverMock();
-        service.SubscribeOnPopoverUpdate(observer);
+        service.Subscribe(observer);
 
         // Act
         await service.CreatePopoverAsync(popover);
@@ -230,7 +230,7 @@ public class PopoverServiceTests
         var popover = new PopoverMock();
         var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
         var observer = new PopoverObserverMock();
-        service.SubscribeOnPopoverUpdate(observer);
+        service.Subscribe(observer);
 
         // Act
         await service.CreatePopoverAsync(popover);
@@ -270,7 +270,7 @@ public class PopoverServiceTests
         var popover = new PopoverMock();
         var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
         var observer = new PopoverObserverMock();
-        service.SubscribeOnPopoverUpdate(observer);
+        service.Subscribe(observer);
 
         // Act
         await service.CreatePopoverAsync(popover);
@@ -345,7 +345,7 @@ public class PopoverServiceTests
         var signalEvent = new ManualResetEventSlim(false);
         var service = new PopoverServiceMock(NullLogger<PopoverService>.Instance, jsRuntimeMock.Object, popoverTimerMock.Object);
         var observer = new PopoverObserverMock();
-        service.SubscribeOnPopoverUpdate(observer);
+        service.Subscribe(observer);
 
         popoverTimerMock
             .Setup(h => h.OnBatchTimerElapsedAfterAsync(
@@ -394,7 +394,7 @@ public class PopoverServiceTests
         var signalEvent = new ManualResetEventSlim(false);
         var service = new PopoverServiceMock(NullLogger<PopoverService>.Instance, jsRuntimeMock, popoverTimerMock.Object);
         var observer = new PopoverObserverMock();
-        service.SubscribeOnPopoverUpdate(observer);
+        service.Subscribe(observer);
 
         popoverTimerMock
             .Setup(h => h.OnBatchTimerElapsedAfterAsync(

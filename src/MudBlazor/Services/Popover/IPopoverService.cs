@@ -36,13 +36,13 @@ public interface IPopoverService : IAsyncDisposable
     /// Subscribes an observer to receive popover update notifications.
     /// </summary>
     /// <param name="observer">The observer to subscribe.</param>
-    void SubscribeOnPopoverUpdate(IPopoverObserver observer);
+    void Subscribe(IPopoverObserver observer);
 
     /// <summary>
     /// Unsubscribes an observer from receiving popover update notifications.
     /// </summary>
     /// <param name="observer">The observer to unsubscribe.</param>
-    void UnsubscribeOnSubscribeOnPopoverUpdate(IPopoverObserver observer);
+    void Unsubscribe(IPopoverObserver observer);
 
     /// <summary>
     /// Creates a popover.

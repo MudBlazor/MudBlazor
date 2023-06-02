@@ -35,7 +35,7 @@ namespace MudBlazor
             //TODO: For backward compatibility with old service. Should be removed in v7
             Service.FragmentsChanged -= Service_FragmentsChanged;
 #pragma warning restore CS0618
-            PopoverService.UnsubscribeOnSubscribeOnPopoverUpdate(this);
+            PopoverService.Unsubscribe(this);
         }
 
         protected override void OnInitialized()
@@ -49,7 +49,7 @@ namespace MudBlazor
             //TODO: For backward compatibility with old service. Should be removed in v7
             Service.FragmentsChanged += Service_FragmentsChanged;
 #pragma warning restore CS0618
-            PopoverService.SubscribeOnPopoverUpdate(this);
+            PopoverService.Subscribe(this);
             _isConnectedToService = true;
         }
 
@@ -63,7 +63,7 @@ namespace MudBlazor
                 //TODO: For backward compatibility with old service. Should be removed in v7 with the _isConnectedToService
                 Service.FragmentsChanged -= Service_FragmentsChanged;
 #pragma warning restore CS0618
-                PopoverService.UnsubscribeOnSubscribeOnPopoverUpdate(this);
+                PopoverService.Unsubscribe(this);
                 _isConnectedToService = false;
 
                 return;
@@ -83,7 +83,7 @@ namespace MudBlazor
             //The reason is because If an observer throws an exception during the PopoverCollectionUpdatedNotification, indicating a malfunction, it will be automatically unsubscribed.
             if (IsEnabled)
             {
-                PopoverService.SubscribeOnPopoverUpdate(this);
+                PopoverService.Subscribe(this);
             }
 
         }
