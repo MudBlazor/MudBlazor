@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudPopover : PopoverBase
+    public partial class MudPopover : MudPopoverBase
     {
         [Inject]
         [Obsolete($"Replaced by {nameof(PopoverService)}. Will be removed in v7.")]

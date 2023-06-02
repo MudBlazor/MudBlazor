@@ -11,7 +11,7 @@ using Microsoft.JSInterop;
 namespace MudBlazor;
 
 #nullable enable
-public abstract class PopoverBase : MudComponentBase, IPopover, IAsyncDisposable
+public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposable
 {
     private bool _afterFirstRender;
 
