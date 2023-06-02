@@ -15,7 +15,7 @@ namespace MudBlazor.Utilities.Background.Batch;
 /// Represents a batch periodic queue for managing items of type <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">The type of items in the queue.</typeparam>
-internal class BatchPeriodicQueue<T> : BackgroundTaskBase
+internal class BatchPeriodicQueue<T> : BackgroundWorkerBase
 {
     private readonly ConcurrentQueue<T> _items;
     private readonly PeriodicTimer _periodicTimer;

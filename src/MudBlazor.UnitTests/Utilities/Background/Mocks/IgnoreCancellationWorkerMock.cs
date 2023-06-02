@@ -8,7 +8,7 @@ using MudBlazor.Utilities.Background;
 
 namespace MudBlazor.UnitTests.Utilities.Background.Mocks;
 
-internal class IgnoreCancellationTaskMock : BackgroundTaskBase
+internal class IgnoreCancellationWorkerMock : BackgroundWorkerBase
 {
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {

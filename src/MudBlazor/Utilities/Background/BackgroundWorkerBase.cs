@@ -10,9 +10,14 @@ namespace MudBlazor.Utilities.Background;
 
 #nullable enable
 /// <summary>
-/// Base class for implementing a long running .
+/// Base class for implementing a long-running background worker.
 /// </summary>
-internal abstract class BackgroundTaskBase : IAsyncDisposable
+/// <remarks>
+/// This class provides a base implementation for executing asynchronous operations continuously or periodically
+/// in a background worker. It simplifies the implementation of scenarios where you need to execute asynchronous
+/// operations in the background. It also provides built-in support for graceful shutdown.
+/// </remarks>
+internal abstract class BackgroundWorkerBase : IAsyncDisposable
 {
     private Task? _executeTask;
     private CancellationTokenSource? _stoppingCts;

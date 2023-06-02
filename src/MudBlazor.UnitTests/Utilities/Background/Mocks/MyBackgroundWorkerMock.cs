@@ -8,11 +8,11 @@ using MudBlazor.Utilities.Background;
 
 namespace MudBlazor.UnitTests.Utilities.Background.Mocks;
 
-internal class MyBackgroundTaskMock : BackgroundTaskBase
+internal class MyBackgroundWorkerMock : BackgroundWorkerBase
 {
     private readonly Task _task;
 
-    public MyBackgroundTaskMock(Task task)
+    public MyBackgroundWorkerMock(Task task)
     {
         _task = task;
     }

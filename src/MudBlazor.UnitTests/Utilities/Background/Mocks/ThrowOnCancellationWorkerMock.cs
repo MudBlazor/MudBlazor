@@ -9,7 +9,7 @@ using MudBlazor.Utilities.Background;
 
 namespace MudBlazor.UnitTests.Utilities.Background.Mocks;
 
-internal class ThrowOnCancellationTaskMock : BackgroundTaskBase
+internal class ThrowOnCancellationWorkerMock : BackgroundWorkerBase
 {
     public int TokenCalls { get; set; }
 

@@ -8,7 +8,7 @@ using MudBlazor.Utilities.Background;
 
 namespace MudBlazor.UnitTests.Utilities.Background.Mocks;
 
-internal class WaitForCancelledTokenTaskMock : BackgroundTaskBase
+internal class WaitForCancelledTokenWorkerMock : BackgroundWorkerBase
 {
     public Task ExecutingTask { get; private set; }
 
