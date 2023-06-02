@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor;
 
 #nullable enable
+/// <summary>
+/// This interface serves as a container for the values of an <see cref="IPopover"/> and is used by the <see cref="MudPopoverProvider"/> to render the popover.
+/// </summary>
 public interface IMudPopoverHolder
 {
     /// <summary>
@@ -19,11 +22,19 @@ public interface IMudPopoverHolder
     /// <summary>
     /// Gets a value indicating whether the popover is connected.
     /// </summary>
+    /// <remarks>
+    /// This property is used to determine the connection state of the popover on the JavaScript side. It indicates whether
+    /// the popover is connected and actively rendered in the DOM.
+    /// </remarks>
     bool IsConnected { get; }
 
     /// <summary>
     /// Gets a value indicating whether the popover is detached.
     /// </summary>
+    /// <remarks>
+    /// This property is used to determine the detachment state of the popover on the JavaScript side. It indicates whether
+    /// the popover is detached from its parent component, allowing it to be rendered outside the normal component hierarchy.
+    /// </remarks>
     bool IsDetached { get; }
 
     /// <summary>
