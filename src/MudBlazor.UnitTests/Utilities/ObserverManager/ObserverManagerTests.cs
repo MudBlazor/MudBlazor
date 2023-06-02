@@ -101,59 +101,6 @@ public class ObserverManagerTests
     }
 
     [Test]
-    public void Notify_CallsNotificationForEachObserver()
-    {
-        // Arrange
-        var observer1 = "Observer1";
-        var observer2 = "Observer2";
-        var notificationCalledCount = 0;
-
-        _observerManager.Subscribe(1, observer1);
-        _observerManager.Subscribe(2, observer2);
-
-        // Act
-        void Notification(string _)
-        {
-            notificationCalledCount++;
-        }
-
-        _observerManager.Notify(Notification);
-
-        // Assert
-        Assert.AreEqual(2, notificationCalledCount);
-    }
-
-    [Test]
-    public void Notify_RemovesDefunctObservers()
-    {
-        // Arrange
-        var observer1 = "Observer1";
-        var observer2 = "Observer2";
-        var observer3 = "Observer3";
-
-        _observerManager.Subscribe(1, observer1);
-        _observerManager.Subscribe(2, observer2);
-        _observerManager.Subscribe(3, observer3);
-
-        // Act
-        void Notification(string observer)
-        {
-            if (observer == observer2)
-            {
-                throw new Exception("Notification failed");
-            }
-        }
-
-        _observerManager.Notify(Notification);
-
-        // Assert
-        Assert.AreEqual(2, _observerManager.Count);
-        Assert.IsTrue(_observerManager.Observers.ContainsKey(1));
-        Assert.IsTrue(_observerManager.Observers.ContainsKey(3));
-        Assert.IsFalse(_observerManager.Observers.ContainsKey(2));
-    }
-
-    [Test]
     public async Task NotifyAsync_RemovesDefunctObservers()
     {
         // Arrange
@@ -322,36 +269,6 @@ public class ObserverManagerTests
 
         // Act
         await observerManager.NotifyAsync(NotificationAsync, Predicate);
-
-        // Assert
-        loggerMock
-            .VerifyLogging($"Adding entry for {DefunctObserverId}/{DefunctObserver}. 1 total observers after add.")
-            .VerifyLogging($"Removing defunct entry for {DefunctObserverId}. 0 total observers after remove.");
-    }
-
-    [Test]
-    public void Notify_DefunctObserver_LogsDebugInformation()
-    {
-        // Arrange
-        var loggerMock = new Mock<ILogger>();
-        loggerMock.Setup(x => x.IsEnabled(LogLevel.Debug)).Returns(true);
-
-        var observerManager = new ObserverManager<int, string>(loggerMock.Object);
-
-        const int DefunctObserverId = 1;
-        const string DefunctObserver = "DefunctObserver";
-
-        observerManager.Subscribe(DefunctObserverId, DefunctObserver);
-
-        bool Predicate(string observer) => observer == DefunctObserver;
-
-        void Notification(string observer)
-        {
-            throw new Exception("Simulated exception");
-        }
-
-        // Act
-        observerManager.Notify(Notification, Predicate);
 
         // Assert
         loggerMock

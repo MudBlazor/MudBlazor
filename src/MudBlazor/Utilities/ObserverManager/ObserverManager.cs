@@ -153,52 +153,6 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     }
 
     /// <summary>
-    /// Notifies all observers which match the provided <paramref name="predicate"/>.
-    /// </summary>
-    /// <param name="notification">
-    /// The notification delegate to call on each observer.
-    /// </param>
-    /// <param name="predicate">
-    /// The predicate used to select observers to notify.
-    /// </param>
-    public void Notify(Action<TObserver> notification, Func<TObserver, bool>? predicate = null)
-    {
-        var defunct = default(List<TIdentity>);
-        foreach (var observer in _observers)
-        {
-            // Skip observers which don't match the provided predicate.
-            if (predicate != null && !predicate(observer.Value.Observer))
-            {
-                continue;
-            }
-
-            try
-            {
-                notification(observer.Value.Observer);
-            }
-            catch (Exception)
-            {
-                // Failing observers are considered defunct and will be removed..
-                defunct ??= new List<TIdentity>();
-                defunct.Add(observer.Key);
-            }
-        }
-
-        // Remove defunct observers.
-        if (defunct != default(List<TIdentity>))
-        {
-            foreach (var observer in defunct)
-            {
-                _observers.Remove(observer, out _);
-                if (_log.IsEnabled(LogLevel.Debug))
-                {
-                    _log.LogDebug("Removing defunct entry for {Id}. {Count} total observers after remove.", observer, _observers.Count);
-                }
-            }
-        }
-    }
-
-    /// <summary>
     /// Returns an enumerator that iterates through the collection.
     /// </summary>
     /// <returns>
