@@ -11,6 +11,13 @@ using Microsoft.JSInterop;
 namespace MudBlazor;
 
 #nullable enable
+/// <summary>
+/// Base class for implementing Popover component.
+/// </summary>
+/// <remarks>
+/// This class provides a base implementation for a Popover component. It implements the <see cref="IPopover"/> interface
+/// and utilizes the <see cref="IPopoverService"/> to handle the creation, updating, and destruction of the popover.
+/// </remarks>
 public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposable
 {
     private bool _afterFirstRender;
