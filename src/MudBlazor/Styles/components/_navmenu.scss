@@ -228,6 +228,14 @@
     }
 }
 
+.mud-drawer-mini {
+    .mud-nav-link {
+        line-height: 1;
+        display: flex;
+        align-items: center;
+    }
+}
+
 .mud-drawer--closed.mud-drawer-mini {
     & > .mud-drawer-content > .mud-navmenu {
         & .mud-nav-link .mud-icon-root:first-child + .mud-nav-link-text {
@@ -270,4 +278,5 @@
             }
         }
     }
+
 }
