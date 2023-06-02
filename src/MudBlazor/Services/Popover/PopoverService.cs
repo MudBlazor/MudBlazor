@@ -139,7 +139,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverSt
     }
 
     /// <inheritdoc />
-    public async ValueTask<int> CountProvidersAsync()
+    public async ValueTask<int> GetProviderCountAsync()
     {
         await InitializeServiceIfNeededAsync().ConfigureAwait(false);
 

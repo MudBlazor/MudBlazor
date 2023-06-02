@@ -68,5 +68,5 @@ public interface IPopoverService : IAsyncDisposable
     /// Counts the number of popover providers.
     /// </summary>
     /// <returns>The task result contains the count of popover providers.</returns>
-    ValueTask<int> CountProvidersAsync();
+    ValueTask<int> GetProviderCountAsync();
 }

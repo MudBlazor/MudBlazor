@@ -109,7 +109,7 @@ public class PopoverServiceTests
         Assert.IsFalse(service.IsInitialized);
 
         // Act
-        await service.CountProvidersAsync();
+        await service.GetProviderCountAsync();
 
         // Assert
         Assert.IsTrue(service.IsInitialized);

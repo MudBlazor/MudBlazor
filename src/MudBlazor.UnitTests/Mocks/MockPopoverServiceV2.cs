@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Mocks
 
         public Task<bool> DestroyPopoverAsync(IPopover mudPopover) => Task.FromResult(true);
 
-        public ValueTask<int> CountProvidersAsync() => ValueTask.FromResult(0);
+        public ValueTask<int> GetProviderCountAsync() => ValueTask.FromResult(0);
 
         public ValueTask DisposeAsync() => ValueTask.CompletedTask;
     }

@@ -92,7 +92,7 @@ namespace MudBlazor
         {
             if (firstRender && IsEnabled && PopoverService.PopoverOptions.ThrowOnDuplicateProvider)
             {
-                if (await PopoverService.CountProvidersAsync() > 1)
+                if (await PopoverService.GetProviderCountAsync() > 1)
                 {
                     throw new InvalidOperationException("Duplicate MudPopoverProvider detected. Please ensure there is only one provider, or disable this warning with PopoverOptions.ThrowOnDuplicateProvider.");
                 }
