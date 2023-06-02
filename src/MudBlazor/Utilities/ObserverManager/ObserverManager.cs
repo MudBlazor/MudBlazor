@@ -21,6 +21,10 @@ namespace MudBlazor.Utilities.ObserverManager;
 /// <typeparam name="TObserver">
 /// The observer type.
 /// </typeparam>
+/// <remarks>
+/// This class maintains a collection of observers and provides functionality to add, remove, and notify observers.
+/// It also supports removing defunct observers that have failed during the notification process.
+/// </remarks>
 internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> where TIdentity : notnull
 {
     /// <summary>
