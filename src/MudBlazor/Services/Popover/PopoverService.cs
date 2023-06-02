@@ -86,38 +86,40 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverSt
         //Adding it in an if clause doesn't provide significant benefits.
         //Instead, we prioritize ensuring that the service is ready for use, as its initialization is a one-time operation.
         await InitializeServiceIfNeededAsync().ConfigureAwait(false);
-        if (_states.TryGetValue(popover.Id, out var state))
+        if (!_states.TryGetValue(popover.Id, out var state))
         {
-            //Do not put after the semaphore as it can cause deadlock
-            await InitializePopoverIfNeededAsync(state).ConfigureAwait(false);
+            return false;
+        }
 
-            if (state.IsDetached)
-            {
-                return false;
-            }
+        //Do not put after the semaphore as it can cause deadlock
+        await InitializePopoverIfNeededAsync(state).ConfigureAwait(false);
 
-            try
-            {
+        if (state.IsDetached)
+        {
+            return false;
+        }
 
-                await _semaphore.WaitAsync().ConfigureAwait(false);
+        try
+        {
 
-                state
-                    .SetFragment(popover.ChildContent)
-                    .SetComponentBaseParameters(popover.PopoverClass, popover.PopoverStyles, popover.Open, popover.Tag, popover.UserAttributes);
+            await _semaphore.WaitAsync().ConfigureAwait(false);
 
-                //This basically calls StateHasChanged on the popover.
-                //To be honest, there's no real need for us to update each popover individually through MudRendered as we currently do.
-                //Instead, we can consider invoking PopoverCollectionUpdatedNotification (or make new function).
-                //This function would trigger a StateHasChanged on the entire MudPopoverProvider, effectively updating all the underlying popovers at once.
-                //By performing these updates in batches, we can minimize the number of re-renders to a minimum.
-                state.ElementReference?.StateHasChanged();
+            state
+                .SetFragment(popover.ChildContent)
+                .SetComponentBaseParameters(popover.PopoverClass, popover.PopoverStyles, popover.Open, popover.Tag, popover.UserAttributes);
 
-                return true;
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
+            //This basically calls StateHasChanged on the popover.
+            //To be honest, there's no real need for us to update each popover individually through MudRendered as we currently do.
+            //Instead, we can consider invoking PopoverCollectionUpdatedNotification (or make new function).
+            //This function would trigger a StateHasChanged on the entire MudPopoverProvider, effectively updating all the underlying popovers at once.
+            //By performing these updates in batches, we can minimize the number of re-renders to a minimum.
+            state.ElementReference?.StateHasChanged();
+
+            return true;
+        }
+        finally
+        {
+            _semaphore.Release();
         }
 
         return false;
