@@ -69,7 +69,7 @@ namespace MudBlazor
         public string NoText { get; set; }
 
         /// <summary>
-        /// Define the no button as a render fragment (overrides CancelText).
+        /// Define the no button as a render fragment (overrides NoText).
         /// Must be a MudButton
         /// </summary>
         [Parameter]
@@ -84,7 +84,7 @@ namespace MudBlazor
         public string YesText { get; set; } = "OK";
 
         /// <summary>
-        /// Define the cancel button as a render fragment (overrides CancelText).
+        /// Define the yes button as a render fragment (overrides YesText).
         /// Must be a MudButton
         /// </summary>
         [Parameter]
