@@ -15,10 +15,16 @@ namespace MudBlazor
     /// <typeparam name="TProperty">The type of the value being displayed in the column's cells.</typeparam>
     public partial class PropertyColumn<T, TProperty> : Column<T>
     {
+        /// <summary>
+        /// Specifies the lambda expression that selects a specific property of an instance of type T used for this column
+        /// </summary>
         [Parameter]
         [EditorRequired]
         public Expression<Func<T, TProperty>> Property { get; set; } = Expression.Lambda<Func<T, TProperty>>(Expression.Default(typeof(TProperty)), Expression.Parameter(typeof(T)));
 
+        /// <summary>
+        /// Format string passed to TProperty.ToString(string, culture) method.
+        /// </summary>
         [Parameter] public string? Format { get; set; }
 
         private Expression<Func<T, TProperty>>? _lastAssignedProperty;
