@@ -1,0 +1,25 @@
+﻿@page "/class/{className}"
+@using MudBlazor.Docs.Extensions
+
+
+@if (ComponentType == null)
+{
+    <MudProgressCircular Indeterminate="true"></MudProgressCircular>
+}
+else
+{
+    <DocsClass Type="@ComponentType"></DocsClass>
+}
+
+
+@code {
+    [Parameter] public string className { get; set; }
+
+    public Type ComponentType { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        ComponentType = ApiLink.GetTypeFromClassLink(className);
+        StateHasChanged();
+    }
+}

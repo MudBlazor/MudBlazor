@@ -53,8 +53,8 @@ else
                     @foreach (var childType in _component.ChildTypes)
                     {
                         <li>
-                            <MudLink Href="@($"api/{childType.Name.Replace("`1", "").ToLowerInvariant().Replace("mud","")}")" Class="ms-1">
-                                - <CodeInline>@($"<{childType.Name.Replace("`1", "")}>")</CodeInline>
+                            <MudLink Href="@(ApiLink.GetApiLinkFor(childType))" Class="ms-1">
+                                - <CodeInline>@($"<{new string(childType.Name.TakeWhile(c => c != '`').ToArray())}>")</CodeInline>
                             </MudLink>
                         </li>
                     }
@@ -99,12 +99,14 @@ else
     private string _componentPage;
     private bool _isApiPage;
     private string _apiLink;
+    private bool _isClassPage;
     private string _componentTypeName;
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
         _isApiPage = NavigationManager.Uri.ToString().Contains("/api/");
+        _isClassPage = NavigationManager.Uri.ToString().Contains("/class/");
         _componentName = NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
         _componentType = ApiLink.GetTypeFromComponentLink(_componentName);
         _component = MenuService.GetComponent(_componentType);

@@ -10,7 +10,7 @@
 
 
 <DocsPage>
-    <DocsPageHeader ComponentLink="@ApiLink.GetComponentLinkFor(Type)" Title="@($"{Type.GetTypeDisplayName()} API")" />
+    <DocsPageHeader ComponentLink="@ApiLink.GetClassLinkFor(Type)" Title="@($"{TypeNameHelper.GetTypeDisplayName(Type, includeGenericParameterNames: true)} Class")" />
     <DocsPageContent>
 
         @{
@@ -99,7 +99,7 @@
                         </HeaderContent>
                         <RowTemplate>
                             <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
-                            <MudTd Class="docs-content-api-cell" DataLabel="Type">@context.Type.GetTypeDisplayName()</MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Type">@TypeNameHelper.GetTypeDisplayName(context.Type, includeGenericParameterNames: true)</MudTd>
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                         </RowTemplate>
                     </MudTable>
@@ -126,14 +126,14 @@
                             {
                                 foreach (var parameterInfo in context.Parameters)
                                 {
-                                    <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{parameterInfo.ParameterType.GetTypeDisplayName()} {parameterInfo.Name}{AnalyseMethodDocumentation(context.Documentation, "param", parameterInfo.Name)}")</div>
+                                        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{TypeNameHelper.GetTypeDisplayName(parameterInfo.ParameterType, includeGenericParameterNames: true)} {parameterInfo.Name}{AnalyseMethodDocumentation(context.Documentation, "param", parameterInfo.Name)}")</div>
                                 }
                             }
                             </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Return">
                             @if (@context.Return != null && context.Return.ParameterType.GetTypeDisplayName() != "void")
                             {
-                                <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{context.Return.ParameterType.GetTypeDisplayName()}{AnalyseMethodDocumentation(context.Documentation, "returns")}")</div>
+                                    <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{TypeNameHelper.GetTypeDisplayName(context.Return.ParameterType, includeGenericParameterNames: true)}{AnalyseMethodDocumentation(context.Documentation, "returns")}")</div>
                             }
                             </MudTd>
                             <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(AnalyseMethodDocumentation(context.Documentation, "summary")))</MudTd>
@@ -228,7 +228,7 @@
     {
         string saveTypename = DocStrings.GetSaveTypename(Type);
 
-        foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>()
+        foreach (var info in Type.GetProperties()
                                  .OrderBy(x => _propertiesGrouping switch {
                                      Grouping.Categories => x.GetCustomAttribute<CategoryAttribute>()?.Order ?? int.MaxValue - 1,
                                      Grouping.Inheritance => -NumberOfAncestorClasses(BaseDefinitionClass(x)),
@@ -260,7 +260,7 @@
         && !x.Namespace.StartsWith("MudBlazor.Docs", StringComparison.OrdinalIgnoreCase) && !x.IsEnum && x != Type && !x.IsInterface && !Type.IsSubclassOf(x) && !x.IsGenericParameter).Distinct();
     }
 
-  
+    
 
     private string AnalyseMethodDocumentation(string documentation, string occurrence, string parameter = "")
     {

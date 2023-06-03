@@ -17,7 +17,7 @@
 }
 else
 {
-    @Type.GetTypeDisplayName()
+    @TypeNameHelper.GetTypeDisplayName(Type, fullName: false ,includeGenericParameterNames: true)
 }
 
 @code {
