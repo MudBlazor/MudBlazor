@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MudBlazor.Charts;
+using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Services
@@ -59,8 +60,8 @@ namespace MudBlazor.Docs.Services
             .AddItem("Paper", typeof(MudPaper))
             .AddItem("Rating", typeof(MudRating), typeof(MudRatingItem))
             .AddItem("Skeleton", typeof(MudSkeleton))
-            .AddItem("Table", typeof(MudTable<T>))
-            .AddItem("Data Grid", typeof(MudDataGrid<T>))
+            .AddItem("Table", typeof(MudTable<T>), typeof(MudTh), typeof(MudTHeadRow), typeof(MudTFootRow), typeof(MudTd), typeof(MudTableSortLabel<T>), typeof(MudTablePager))
+            .AddItem("Data Grid", typeof(MudDataGrid<T>), typeof(PropertyColumn<T,TProperty>), typeof(TemplateColumn<T>), typeof(SelectColumn<T>), typeof(MudDataGridPager<T>))
             .AddItem("Simple Table", typeof(MudSimpleTable))
             .AddItem("Tooltip", typeof(MudTooltip))
             .AddItem("Typography", typeof(MudText))
