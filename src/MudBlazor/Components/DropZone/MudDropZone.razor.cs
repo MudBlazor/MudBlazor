@@ -112,6 +112,13 @@ namespace MudBlazor
         [Category(CategoryTypes.DropZone.DraggingClass)]
         public string? ItemDraggingClass { get; set; }
 
+        /// <summary>
+        /// An additional class that is always applied to an drop item
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.DraggingClass)]
+        public string? ItemClass { get; set; }
+
         [Parameter]
         [Category(CategoryTypes.DropZone.Behavior)]
         public bool AllowReorder { get; set; }
@@ -165,6 +172,9 @@ namespace MudBlazor
             return Container?.ItemDraggingClass ?? string.Empty;
         }
 
+        private string? GetItemClass()
+            => string.IsNullOrEmpty(ItemClass) ? Container?.ItemClass : ItemClass;
+
         private bool GetApplyDropClassesOnDragStarted() => (ApplyDropClassesOnDragStarted ?? Container?.ApplyDropClassesOnDragStarted) ?? false;
 
         private bool GetItemDisabledStatus(T item)
@@ -192,6 +202,11 @@ namespace MudBlazor
             new CssBuilder("border-2 mud-border-primary border-dashed mud-chip-text mud-chip-color-primary pa-4 mud-dropitem-placeholder")
                 .AddClass("d-none", !AllowReorder || (Container?.TransactionInProgress() == false || Container?.GetTransactionCurrentZoneIdentiifer() != Identifier))
                 .Build();
+
+        protected string PreviewStartItemClassname =>
+            new CssBuilder("mud-drop-item-preview-start")
+               .AddClass(GetItemClass())
+               .Build();
 
         #endregion
 

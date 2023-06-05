@@ -214,6 +214,20 @@ namespace MudBlazor
         [Category(CategoryTypes.Tabs.Appearance)]
         public string PanelClass { get; set; }
 
+        /// <summary>
+        /// Custom class/classes for the wrapper around the tab headers
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public string HeaderWrapperClass { get; set; }
+
+        /// <summary>
+        /// Custom css for the wrapper around the tab headers
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public string HeaderWrapperStyle { get; set; }
+
         public MudTabPanel ActivePanel { get; private set; }
 
         /// <summary>
@@ -424,7 +438,7 @@ namespace MudBlazor
                 ActivatePanel(panel, null, ignoreDisabledState);
         }
 
-        private async void ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool ignoreDisabledState = false)
+        internal async void ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool ignoreDisabledState = false)
         {
             if (!panel.Disabled || ignoreDisabledState)
             {
@@ -435,9 +449,9 @@ namespace MudBlazor
                     await OnPreviewInteraction.Invoke(previewArgs);
 
                 if (previewArgs.Cancel) return;
-                
+
                 ActivePanelIndex = previewArgs.PanelIndex;
-                await ActivePanel?.OnClick.InvokeAsync(ev);
+                await ActivePanel.OnClick.InvokeAsync(ev);
 
                 CenterScrollPositionAroundSelectedItem();
                 SetSliderState();
@@ -477,12 +491,14 @@ namespace MudBlazor
             new CssBuilder("mud-tabs-toolbar-wrapper")
             .AddClass($"mud-tabs-centered", Centered)
             .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+            .AddClass(HeaderWrapperClass)
             .Build();
 
         protected string WrapperScrollStyle =>
         new StyleBuilder()
             .AddStyle("transform", $"translateX({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position is Position.Top or Position.Bottom)
             .AddStyle("transform", $"translateY({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
+            .AddStyle(HeaderWrapperStyle)
             .Build();
 
         protected string PanelsClassnames =>
@@ -535,41 +551,6 @@ namespace MudBlazor
                 Position.End => RightToLeft ? Position.Left : Position.Right,
                 _ => position
             };
-        }
-
-        string GetTabClass(MudTabPanel panel)
-        {
-            var tabClass = new CssBuilder("mud-tab")
-              .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
-              .AddClass($"mud-disabled", panel.Disabled)
-              .AddClass($"mud-ripple", !DisableRipple)
-              .AddClass(TabPanelClass)
-              .AddClass(panel.Class)
-              .Build();
-
-            return tabClass;
-        }
-
-        private Placement GetTooltipPlacement()
-        {
-            if (Position == Position.Right)
-                return Placement.Left;
-            else if (Position == Position.Left)
-                return Placement.Right;
-            else if (Position == Position.Bottom)
-                return Placement.Top;
-            else
-                return Placement.Bottom;
-        }
-
-        string GetTabStyle(MudTabPanel panel)
-        {
-            var tabStyle = new StyleBuilder()
-            .AddStyle("min-width", MinimumTabWidth)
-            .AddStyle(panel.Style)
-            .Build();
-
-            return tabStyle;
         }
 
         #endregion

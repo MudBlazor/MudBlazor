@@ -1,0 +1,88 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDropContainer T="TabView" Items="_tabs" ItemsSelector="(t, id) => t.Zone == id" ItemDropped="i => i.Item!.Zone = i.DropzoneIdentifier"
+                  Class="d-flex flex-wrap flex-grow-1" @ref="_dropContainer">
+    <ChildContent>
+        <MudDynamicTabs AddTab="@(() => AddTabCallback("1"))" CloseTab="@CloseTabCallback"
+                        AddIconToolTip="Click to add a new tab" CloseIconToolTip="Close tab. All data will be lost"
+                        Class="rounded mud-background-gray pa-6 ma-8 flex-grow-1" MinimumTabWidth="20px"
+                        HeaderWrapperStyle="height: 100%; width: auto"
+                        PanelClass="px-4 py-6" Elevation="4" Rounded ApplyEffectsToContainer>
+            <MudDropZone T="TabView" Identifier="1" Class="flex-grow-1" ItemClass="d-inline-block" />
+        </MudDynamicTabs>
+        <MudDynamicTabs AddTab="@(() => AddTabCallback("2"))" CloseTab="@CloseTabCallback"
+                        AddIconToolTip="Click to add a new tab" CloseIconToolTip="Close tab. All data will be lost"
+                        Class="rounded mud-background-gray pa-6 ma-8 flex-grow-1" MinimumTabWidth="20px"
+                        HeaderWrapperStyle="height: 100%; width: auto"
+                        PanelClass="px-4 py-6" Elevation="4" Rounded ApplyEffectsToContainer>
+            <MudDropZone T="TabView" Identifier="2" Class="flex-grow-1" ItemClass="d-inline-block" />
+        </MudDynamicTabs>
+    </ChildContent>
+    <ItemRenderer Context="tab">
+        <MudTabPanel ID="@tab.Id" Text="@tab.Label" ShowCloseIcon="@tab.ShowCloseIcon">@tab.Content</MudTabPanel>
+    </ItemRenderer>
+</MudDropContainer>
+
+<MudButton OnClick="@RestoreTabs">Restore</MudButton>
+
+@code {
+
+    public class TabView
+    {
+        public string Label { get; set; }
+        public string Content { get; set; }
+        public Guid Id { get; set; }
+        public bool ShowCloseIcon { get; set; } = true;
+        public string Zone { get; set; }
+    }
+    
+    bool _stateHasChanged;
+    bool _showCloseIcon = false;
+    private int _dynamicTabIndex = 1;
+    private MudDropContainer<TabView> _dropContainer;
+    private readonly List<TabView> _tabs = new();
+
+    void RestoreTabs()
+    {
+        _tabs.Clear();
+        _tabs.Add(new TabView { Id = Guid.NewGuid(), Label = "Tab A", Content = "Tab A content", Zone = "1" });
+        _tabs.Add(new TabView { Id = Guid.NewGuid(), Label = "Tab B", Content = "Tab B content", Zone = "1" });
+        _tabs.Add(new TabView { Id = Guid.NewGuid(), Label = "Tab C", Content = "Tab C content", Zone = "2" });
+        _stateHasChanged = true;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        RestoreTabs();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (_stateHasChanged)
+        {
+            _stateHasChanged = false;
+            StateHasChanged();
+        }
+    }
+
+    public void AddTab(Guid id, string zoneIdentifier)
+    {
+        _tabs.Add(new TabView { Id = id, Label = $"Dynamic tab {_dynamicTabIndex++}", Content = $"Tab ID: {id}", Zone = zoneIdentifier });
+        _dropContainer.Refresh();
+    }
+
+    public void RemoveTab(Guid id)
+    {
+        var tabView = _tabs.SingleOrDefault((t) => Equals(t.Id, id));
+        if (tabView is not null)
+        {
+            _tabs.Remove(tabView);
+            _dropContainer.Refresh();
+        }
+    }
+
+    void AddTabCallback(string zoneIdentifier) => AddTab(Guid.NewGuid(), zoneIdentifier);
+    void CloseTabCallback(MudTabPanel panel) => RemoveTab((Guid)panel.ID);
+}

@@ -117,6 +117,13 @@ namespace MudBlazor
         [Category(CategoryTypes.DropZone.DraggingClass)]
         public string? ItemDraggingClass { get; set; }
 
+        /// <summary>
+        /// An additional class that is always applied to an drop item
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.DraggingClass)]
+        public string? ItemClass { get; set; }
+
         public event EventHandler<MudDragAndDropItemTransaction<T>>? TransactionStarted;
         public event EventHandler<MudDragAndDropIndexChangedEventArgs>? TransactionIndexChanged;
 

@@ -1,19 +1,19 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@using MudBlazor.Utilities
 @implements IAsyncDisposable
 
-@if (Parent?.KeepPanelsAlive == true)
+@if (TabContent == null && TabWrapperContent == null)
 {
-    <div @attributes="UserAttributes" class="@Class" style="display:@(Parent?.ActivePanel == this ? "contents" : "none");@Style">
-        @ChildContent
-    </div>
+    <MudTooltip Placement="@GetTooltipPlacement()" Text="@ToolTip">
+        @_renderTabHeader
+    </MudTooltip>
 }
 else
 {
-    @if (Parent?.ActivePanel == this)
-    {
-        @ChildContent
-    }
+    <div class="d-inline-block" style="width: fit-content;">
+        @(TabWrapperContent?.Invoke(_renderTabHeader) ?? _renderTabHeader)
+    </div>
 }
 
 @code {
@@ -24,6 +24,7 @@ else
 
     public ElementReference PanelRef;
 
+    private RenderFragment _renderTabHeader;
 
     /// <summary>
     /// Text will be displayed in the TabPanel as TabTitle. Text is no longer rendered
@@ -128,12 +129,87 @@ else
 
     protected override void OnInitialized()
     {
-        // NOTE: we must not throw here because we need the component to be able to live for the API docs to be able to infer default values
-        //if (Parent == null)
-        //    throw new ArgumentNullException(nameof(Parent), "TabPanel must exist within a Tabs component");
         base.OnInitialized();
 
-        Parent?.AddPanel(this);
+        if (Parent is null)
+            // NOTE: we must not throw here because we need the component to be able to live for the API docs to be able to infer default values
+            return;
+
+        Parent.AddPanel(this);
+        _renderTabHeader =
+            @<div @ref="PanelRef" @attributes="UserAttributes" class="@GetTabClass()" style="@GetTabStyle()" @onclick="@(e => Parent.ActivatePanel(this, e, false))">
+                @if (Parent.TabPanelHeaderPosition == TabHeaderPosition.Before && Parent.TabPanelHeader != null)
+                {
+                    <div class="mud-tabs-panel-header mud-tabs-panel-header-before">
+                        @Parent.TabPanelHeader(this)
+                    </div>
+                }
+                @if (TabContent != null)
+                {
+                    @TabContent
+                }
+                else if (!String.IsNullOrEmpty(Text) && String.IsNullOrEmpty(Icon))
+                {
+                    @Text
+                }
+                else if (String.IsNullOrEmpty(Text) && !String.IsNullOrEmpty(Icon))
+                {
+                    <MudIcon Icon="@Icon" Color="@Parent.IconColor" />
+                }
+                else if (!String.IsNullOrEmpty(Text) && !String.IsNullOrEmpty(Icon))
+                {
+                    <MudIcon Icon="@Icon" Color="@Parent.IconColor" Class="mud-tab-icon-text" />
+                    @Text
+                }
+                @if (BadgeData != null || BadgeDot)
+                {
+                    <MudBadge Dot="@BadgeDot" Content="@BadgeData" Color="@BadgeColor" Class="mud-tab-badge" />
+                }
+                @if (Parent.TabPanelHeaderPosition == TabHeaderPosition.After && Parent.TabPanelHeader != null)
+                {
+                    <div class="mud-tabs-panel-header mud-tabs-panel-header-after">
+                        @Parent.TabPanelHeader(this)
+                    </div>
+                }
+            </div>;
+    }
+
+    private Placement GetTooltipPlacement()
+        => Parent?.Position switch
+        {
+            Position.Right  => Placement.Left,
+            Position.Left   => Placement.Right,
+            Position.Bottom => Placement.Top,
+            Position.Top    => Placement.Bottom,
+            Position.Center => Placement.Bottom,
+            Position.Start  => Placement.End,
+            Position.End    => Placement.Start,
+            // For the API docs, we need to accept not having a parent
+            null            => Placement.Bottom,
+            _               => throw new ArgumentOutOfRangeException()
+        };
+
+    private string GetTabClass()
+    {
+        var tabClass = new CssBuilder("mud-tab")
+            .AddClass("mud-tab-active", when: () => this == Parent.ActivePanel)
+            .AddClass("mud-disabled", Disabled)
+            .AddClass("mud-ripple", !Parent.DisableRipple)
+            .AddClass(Parent.TabPanelClass)
+            .AddClass(Class)
+            .Build();
+
+        return tabClass;
+    }
+
+    private string GetTabStyle()
+    {
+        var tabStyle = new StyleBuilder()
+            .AddStyle("min-width", Parent.MinimumTabWidth)
+            .AddStyle(Style)
+            .Build();
+
+        return tabStyle;
     }
 
     public async ValueTask DisposeAsync()
