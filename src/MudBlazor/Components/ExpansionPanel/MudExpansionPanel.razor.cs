@@ -4,29 +4,30 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
-        private bool _nextPanelExpanded;
         private bool _isExpanded;
         private bool _collapseIsExpanded;
 
-        [CascadingParameter] private MudExpansionPanels Parent { get; set; }
+        [CascadingParameter]
+        private MudExpansionPanels? Parent { get; set; }
 
         protected string Classname =>
-        new CssBuilder("mud-expand-panel")
-            .AddClass("mud-panel-expanded", IsExpanded)
-            .AddClass("mud-panel-next-expanded", NextPanelExpanded)
-            .AddClass("mud-disabled", Disabled)
-            .AddClass($"mud-elevation-{Parent?.Elevation.ToString()}")
-            .AddClass($"mud-expand-panel-border", Parent?.DisableBorders != true)
-            .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-expand-panel")
+                .AddClass("mud-panel-expanded", IsExpanded)
+                .AddClass("mud-panel-next-expanded", NextPanelExpanded)
+                .AddClass("mud-disabled", Disabled)
+                .AddClass($"mud-elevation-{Parent?.Elevation.ToString()}")
+                .AddClass($"mud-expand-panel-border", Parent?.DisableBorders != true)
+                .AddClass(Class)
+                .Build();
 
         protected string PanelContentClassname =>
-        new CssBuilder("mud-expand-panel-content")
-            .AddClass("mud-expand-panel-gutters", DisableGutters || Parent?.DisableGutters == true)
-            .AddClass("mud-expand-panel-dense", Dense || Parent?.Dense == true)
-        .Build();
+            new CssBuilder("mud-expand-panel-content")
+                .AddClass("mud-expand-panel-gutters", DisableGutters || Parent?.DisableGutters == true)
+                .AddClass("mud-expand-panel-dense", Dense || Parent?.Dense == true)
+                .Build();
 
         /// <summary>
         /// Explicitly sets the height for the Collapse element to override the css default.
@@ -40,14 +41,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
-        public RenderFragment TitleContent { get; set; }
+        public RenderFragment? TitleContent { get; set; }
 
         /// <summary>
         /// The text to be displayed in the expansion panel.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
-        public string Text { get; set; }
+        public string? Text { get; set; }
 
         /// <summary>
         /// If true, expand icon will not show
@@ -82,7 +83,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<bool> IsExpandedChanged { get; set; }
 
-        internal event Action<MudExpansionPanel> NotifyIsExpandedChanged;
+        internal event Action<MudExpansionPanel>? NotifyIsExpandedChanged;
         /// <summary>
         /// Expansion state of the panel (two-way bindable)
         /// </summary>
@@ -103,7 +104,7 @@ namespace MudBlazor
                     if (_collapseIsExpanded != _isExpanded)
                     {
                         _collapseIsExpanded = _isExpanded;
-                        InvokeAsync(() => StateHasChanged());
+                        InvokeAsync(StateHasChanged);
                     }
                 });
             }
@@ -129,19 +130,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
-        public bool NextPanelExpanded
-        {
-            get => _nextPanelExpanded;
-            set
-            {
-                if (_nextPanelExpanded == value)
-                    return;
-                _nextPanelExpanded = value;
-                //InvokeAsync(StateHasChanged);
-            }
-        }
+        public bool NextPanelExpanded { get; set; }
 
         public void ToggleExpansion()
         {
@@ -153,9 +144,9 @@ namespace MudBlazor
             IsExpanded = !IsExpanded;
         }
 
-        public void Expand(bool update_parent = true)
+        public void Expand(bool updateParent = true)
         {
-            if (update_parent)
+            if (updateParent)
                 IsExpanded = true;
             else
             {
@@ -165,9 +156,9 @@ namespace MudBlazor
             }
         }
 
-        public void Collapse(bool update_parent = true)
+        public void Collapse(bool updateParent = true)
         {
-            if (update_parent)
+            if (updateParent)
                 IsExpanded = false;
             else
             {

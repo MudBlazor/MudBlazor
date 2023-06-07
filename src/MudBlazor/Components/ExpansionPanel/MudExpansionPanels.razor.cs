@@ -7,13 +7,14 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudExpansionPanels : MudComponentBase
     {
         protected string Classname =>
-        new CssBuilder("mud-expansion-panels")
-            .AddClass($"mud-expansion-panels-square", Square)
-            .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-expansion-panels")
+                .AddClass($"mud-expansion-panels-square", Square)
+                .AddClass(Class)
+                .Build();
 
         /// <summary>
         /// If true, border-radius is set to 0.
@@ -62,15 +63,15 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         private List<MudExpansionPanel> _panels = new();
 
         internal void AddPanel(MudExpansionPanel panel)
         {
-            if (MultiExpansion == false && _panels.Any(p => p.IsExpanded))
+            if (!MultiExpansion && _panels.Any(p => p.IsExpanded))
             {
-                panel.Collapse(update_parent: false);
+                panel.Collapse(updateParent: false);
             }
 
             panel.NotifyIsExpandedChanged += UpdatePanelsOnPanelsChanged;
@@ -90,7 +91,7 @@ namespace MudBlazor
 
         internal void UpdatePanelsOnPanelsChanged(MudExpansionPanel panel)
         {
-            if(MultiExpansion == false && panel.IsExpanded)
+            if(!MultiExpansion && panel.IsExpanded)
             {
                 CollapseAllExcept(panel);
                 return;
@@ -101,11 +102,14 @@ namespace MudBlazor
 
         public void UpdateAll()
         {
-            MudExpansionPanel last = null;
+            MudExpansionPanel? last = null;
             foreach (var panel in _panels)
             {
-                if (last != null)
+                if (last is not null)
+                {
                     last.NextPanelExpanded = panel.IsExpanded;
+                }
+
                 last = panel;
             }
             StateHasChanged();
@@ -124,13 +128,16 @@ namespace MudBlazor
         /// <param name="panel">The panel not to collapse.</param>
         public void CollapseAllExcept(MudExpansionPanel panel)
         {
-            foreach (var p in _panels)
+            foreach (var expansionPanel in _panels)
             {
-                if (p == panel)
+                if (expansionPanel == panel)
+                {
                     continue;
-                p.Collapse(update_parent: false);
+                }
+
+                expansionPanel.Collapse(updateParent: false);
             }
-            this.InvokeAsync(UpdateAll);
+            InvokeAsync(UpdateAll);
         }
 
         /// <summary>
@@ -138,11 +145,11 @@ namespace MudBlazor
         /// </summary>
         public void CollapseAll()
         {
-            foreach (var p in _panels)
+            foreach (var expansionPanel in _panels)
             {
-                p.Collapse(update_parent: false);
+                expansionPanel.Collapse(updateParent: false);
             }
-            this.InvokeAsync(UpdateAll);
+            InvokeAsync(UpdateAll);
         }
 
         /// <summary>
@@ -150,11 +157,11 @@ namespace MudBlazor
         /// </summary>
         public void ExpandAll()
         {
-            foreach (var p in _panels)
+            foreach (var expansionPanel in _panels)
             {
-                p.Expand(update_parent: false);
+                expansionPanel.Expand(updateParent: false);
             }
-            this.InvokeAsync(UpdateAll);
+            InvokeAsync(UpdateAll);
         }
     }
 }
