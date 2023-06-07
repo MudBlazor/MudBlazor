@@ -35,7 +35,11 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IEventListener, MockEventListener>();
             ctx.Services.AddTransient<IKeyInterceptorFactory, MockKeyInterceptorServiceFactory>();
             ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
+#pragma warning disable CS0618
+            //TODO: Remove in v7
             ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
+#pragma warning restore CS0618
+            ctx.Services.AddSingleton<IPopoverService, MockPopoverServiceV2>();
             ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>

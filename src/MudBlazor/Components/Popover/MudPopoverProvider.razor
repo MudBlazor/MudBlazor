@@ -3,11 +3,11 @@
 @if (IsEnabled)
 {
     <div class="mud-popover-provider">
-	    @foreach (var handler in Service.Handlers)
+	    @foreach (var handler in GetActivePopovers())
 	    {
             <MudRender @ref="handler.ElementReference" @key="handler.Id">
 		        <div id="@($"popovercontent-{handler.Id}")" data-ticks="@(handler.ActivationDate?.Ticks ?? 0)" @attributes="@handler.UserAttributes" class="@handler.Class" style="@handler.Style">
-			        @if (handler.ShowContent == true)
+			        @if (handler.ShowContent)
 			        {
 				        @handler.Fragment
 			        }

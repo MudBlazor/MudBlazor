@@ -105,6 +105,8 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="MudBlazor.UnitTests" />
+    <!--We need to make internal types to be visible for mocking-->
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
   <ItemGroup>

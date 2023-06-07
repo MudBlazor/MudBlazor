@@ -1,41 +1,39 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudPopover : MudComponentBase, IAsyncDisposable
+#nullable enable
+    public partial class MudPopover : MudPopoverBase
     {
-        private bool _afterFirstRender;
+        [Inject]
+        [Obsolete($"Replaced by {nameof(PopoverService)}. Will be removed in v7.")]
+        public IMudPopoverService Service { get; set; } = null!;
 
-        [Inject] 
-        public IMudPopoverService Service { get; set; }
+        protected internal override string PopoverClass =>
+            new CssBuilder("mud-popover")
+                .AddClass($"mud-popover-fixed", Fixed)
+                .AddClass($"mud-popover-open", Open)
+                .AddClass($"mud-popover-{TransformOrigin.ToDescriptionString()}")
+                .AddClass($"mud-popover-anchor-{AnchorOrigin.ToDescriptionString()}")
+                .AddClass($"mud-popover-overflow-{OverflowBehavior.ToDescriptionString()}")
+                .AddClass($"mud-popover-relative-width", RelativeWidth)
+                .AddClass($"mud-paper", Paper)
+                .AddClass($"mud-paper-square", Paper && Square)
+                .AddClass($"mud-elevation-{Elevation}", Paper)
+                .AddClass($"overflow-y-auto", MaxHeight != null)
+                .AddClass(Class)
+                .Build();
 
-        protected string PopoverClass =>
-           new CssBuilder("mud-popover")
-            .AddClass($"mud-popover-fixed", Fixed)
-            .AddClass($"mud-popover-open", Open)
-            .AddClass($"mud-popover-{TransformOrigin.ToDescriptionString()}")
-            .AddClass($"mud-popover-anchor-{AnchorOrigin.ToDescriptionString()}")
-            .AddClass($"mud-popover-overflow-{OverflowBehavior.ToDescriptionString()}")
-            .AddClass($"mud-popover-relative-width", RelativeWidth)
-            .AddClass($"mud-paper", Paper)
-            .AddClass($"mud-paper-square", Paper && Square)
-            .AddClass($"mud-elevation-{Elevation}", Paper)
-            .AddClass($"overflow-y-auto", MaxHeight != null)
-            .AddClass(Class)
-           .Build();
-
-        protected string PopoverStyles =>
+        protected internal override string PopoverStyles =>
             new StyleBuilder()
-            .AddStyle("transition-duration", $"{Duration}ms")
-            .AddStyle("transition-delay", $"{Delay}ms")
-            .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
-            .AddStyle(Style)
-            .Build();
+                .AddStyle("transition-duration", $"{Duration}ms")
+                .AddStyle("transition-delay", $"{Delay}ms")
+                .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
+                .AddStyle(Style)
+                .Build();
 
         internal Direction ConvertDirection(Direction direction)
         {
@@ -77,13 +75,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public bool Square { get; set; }
-
-        /// <summary>
-        /// If true, the popover is visible.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Popover.Behavior)]
-        public bool Open { get; set; }
 
         /// <summary>
         /// If true the popover will be fixed position instead of absolute.
@@ -158,61 +149,5 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public bool RelativeWidth { get; set; } = false;
-
-        /// <summary>
-        /// Child content of the component.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Popover.Behavior)]
-        public RenderFragment ChildContent { get; set; }
-
-        private MudPopoverHandler _handler;
-
-        protected override void OnInitialized()
-        {
-            _handler = Service.Register(ChildContent ?? new RenderFragment((x) => { }));
-            _handler.SetComponentBaseParameters(this, PopoverClass, PopoverStyles, Open);
-            base.OnInitialized();
-        }
-
-        protected override async Task OnParametersSetAsync()
-        {
-            await base.OnParametersSetAsync();
-
-            // henon: this change by PR #3776 caused problems on BSS (#4303)
-            //// Only update the fragment if the popover is currently shown or will show
-            //// This prevents unnecessary renders and popover handle locking
-            //if (!_handler.ShowContent && !Open)
-            //    return;
-
-            if (_afterFirstRender)
-            {
-                await _handler.UpdateFragmentAsync(ChildContent, this, PopoverClass, PopoverStyles, Open);
-            }
-        }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                await _handler.Initialize();
-                await Service.InitializeIfNeeded();
-                await _handler.UpdateFragmentAsync(ChildContent, this, PopoverClass, PopoverStyles, Open);
-                _afterFirstRender = true;
-            }
-
-            await base.OnAfterRenderAsync(firstRender);
-        }
-
-        [ExcludeFromCodeCoverage]
-        public async ValueTask DisposeAsync()
-        {
-            try
-            {
-                await Service.Unregister(_handler);
-            }
-            catch (JSDisconnectedException) { }
-            catch (TaskCanceledException) { }
-        }
     }
 }
