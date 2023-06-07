@@ -69,7 +69,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     {
         ArgumentNullException.ThrowIfNull(popover);
 
-        await InitializeServiceIfNeededAsync().ConfigureAwait(false);
+        await InitializeServiceIfNeededAsync();
         var holder = new MudPopoverHolder(popover.Id)
             .SetFragment(popover.ChildContent)
             .SetClass(popover.PopoverClass)
@@ -79,7 +79,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             .SetUserAttributes(popover.UserAttributes);
 
         _holders.TryAdd(holder.Id, holder);
-        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotification(new[] { holder })).ConfigureAwait(false);
+        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotification(new[] { holder }));
     }
 
     /// <inheritdoc />
@@ -90,14 +90,14 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         //We initialize the service regardless of whether the popover exists or not.
         //Adding it in an if clause doesn't provide significant benefits.
         //Instead, we prioritize ensuring that the service is ready for use, as its initialization is a one-time operation.
-        await InitializeServiceIfNeededAsync().ConfigureAwait(false);
+        await InitializeServiceIfNeededAsync();
         if (!_holders.TryGetValue(popover.Id, out var holder))
         {
             return false;
         }
 
         //Do not put after the semaphore as it can cause deadlock
-        await InitializePopoverIfNeededAsync(holder).ConfigureAwait(false);
+        await InitializePopoverIfNeededAsync(holder);
 
         if (holder.IsDetached)
         {
@@ -107,7 +107,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         try
         {
 
-            await _semaphore.WaitAsync().ConfigureAwait(false);
+            await _semaphore.WaitAsync();
 
             holder
                 .SetFragment(popover.ChildContent)
@@ -140,17 +140,17 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         //We initialize the service regardless of whether the popover exists or not.
         //Adding it in an if clause doesn't provide significant benefits.
         //Instead, we prioritize ensuring that the service is ready for use, as its initialization is a one-time operation.
-        await InitializeServiceIfNeededAsync().ConfigureAwait(false);
+        await InitializeServiceIfNeededAsync();
 
-        return await DestroyPopoverByIdAsync(popover.Id).ConfigureAwait(false);
+        return await DestroyPopoverByIdAsync(popover.Id);
     }
 
     /// <inheritdoc />
     public async ValueTask<int> GetProviderCountAsync()
     {
-        await InitializeServiceIfNeededAsync().ConfigureAwait(false);
+        await InitializeServiceIfNeededAsync();
 
-        var (success, value) = await _popoverJsInterop.CountProviders().ConfigureAwait(false);
+        var (success, value) = await _popoverJsInterop.CountProviders();
 
         return success ? value : 0;
     }
@@ -166,11 +166,11 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         //Queue all lefts overs.
         foreach (var holderKeyValuePair in _holders)
         {
-            await DestroyPopoverByIdAsync(holderKeyValuePair.Key).ConfigureAwait(false);
+            await DestroyPopoverByIdAsync(holderKeyValuePair.Key);
         }
 
         //Cleanup and call the OnBatchTimerElapsedAsync with everything what's left.
-        await _batchExecutor.DisposeAsync().ConfigureAwait(false);
+        await _batchExecutor.DisposeAsync();
 
         _ = _popoverJsInterop.Dispose();
     }
@@ -199,7 +199,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         // Perhaps we could consider adding a state indicating that the object is queued for detaching instead.
         holder.IsDetached = true;
 
-        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotification(new[] { holder })).ConfigureAwait(false);
+        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotification(new[] { holder }));
 
         return true;
     }
@@ -214,7 +214,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
         try
         {
-            await _semaphore.WaitAsync().ConfigureAwait(false);
+            await _semaphore.WaitAsync();
             foreach (var holder in holders)
             {
                 try
@@ -222,7 +222,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
                     holder.IsDetached = true;
                     if (holder.IsConnected)
                     {
-                        await _popoverJsInterop.Disconnect(holder.Id).ConfigureAwait(false);
+                        await _popoverJsInterop.Disconnect(holder.Id);
                     }
                 }
                 finally
@@ -247,7 +247,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
         try
         {
-            await _semaphore.WaitAsync().ConfigureAwait(false);
+            await _semaphore.WaitAsync();
 
             if (holder.IsConnected || holder.IsDetached)
             {
@@ -258,7 +258,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
                 return;
             }
 
-            holder.IsConnected = await _popoverJsInterop.Connect(holder.Id).ConfigureAwait(false);
+            holder.IsConnected = await _popoverJsInterop.Connect(holder.Id);
         }
         finally
         {
@@ -275,7 +275,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
         try
         {
-            await _semaphore.WaitAsync().ConfigureAwait(false);
+            await _semaphore.WaitAsync();
             if (IsInitialized)
             {
                 //It is not redundant to include a check before and after the semaphore.
@@ -285,9 +285,9 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
                 return;
             }
 
-            await _popoverJsInterop.Initialize(PopoverOptions.ContainerClass, PopoverOptions.FlipMargin).ConfigureAwait(false);
+            await _popoverJsInterop.Initialize(PopoverOptions.ContainerClass, PopoverOptions.FlipMargin);
             //Starts in background
-            await _batchExecutor.StartAsync().ConfigureAwait(false);
+            await _batchExecutor.StartAsync();
             IsInitialized = true;
         }
         finally

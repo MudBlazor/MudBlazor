@@ -56,15 +56,15 @@ internal class BatchPeriodicQueue<T> : BackgroundWorkerBase
         if (_tickOnDispose)
         {
             //If there is anything left over in the list we trigger so the handler could do something with this for example cleanup
-            await OnBatchTimerElapsedAsync().ConfigureAwait(false);
+            await OnBatchTimerElapsedAsync();
         }
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (await _periodicTimer.WaitForNextTickAsync(stoppingToken).ConfigureAwait(false))
+        while (await _periodicTimer.WaitForNextTickAsync(stoppingToken))
         {
-            await OnBatchTimerElapsedAsync(stoppingToken).ConfigureAwait(false);
+            await OnBatchTimerElapsedAsync(stoppingToken);
         }
     }
 

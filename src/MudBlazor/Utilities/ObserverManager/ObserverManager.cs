@@ -124,7 +124,7 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
 
             try
             {
-                await notification(observer.Value.Observer).ConfigureAwait(false);
+                await notification(observer.Value.Observer);
             }
             catch (Exception)
             {
