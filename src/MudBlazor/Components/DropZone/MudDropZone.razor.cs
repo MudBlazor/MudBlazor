@@ -135,7 +135,7 @@ namespace MudBlazor
 
         private T[] GetItems()
         {
-            var predicate = ItemsSelector ?? (item => Container?.ItemsSelector != null && Container.ItemsSelector(item, Identifier));
+            var predicate = ItemsSelector ?? (item => Container?.ItemsSelector is not null && Container.ItemsSelector(item, Identifier));
 
             var items = Container?.Items.Where(predicate).OrderBy(GetItemIndex).ToArray() ?? Array.Empty<T>();
             return items;
