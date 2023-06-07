@@ -10,6 +10,8 @@ namespace MudBlazor
 #nullable enable
     public partial class MudExpansionPanels : MudComponentBase
     {
+        private List<MudExpansionPanel> _panels = new();
+
         protected string Classname =>
             new CssBuilder("mud-expansion-panels")
                 .AddClass($"mud-expansion-panels-square", Square)
@@ -38,14 +40,14 @@ namespace MudBlazor
         public int Elevation { set; get; } = 1;
 
         /// <summary>
-        /// If true, removes vertical padding from all panels' childcontent.
+        /// If true, removes vertical padding from all panels' <see cref="ChildContent"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, the left and right padding is removed from all panels' childcontent.
+        /// If true, the left and right padding is removed from all panels' <see cref="ChildContent"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
@@ -64,8 +66,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public RenderFragment? ChildContent { get; set; }
-
-        private List<MudExpansionPanel> _panels = new();
 
         internal void AddPanel(MudExpansionPanel panel)
         {

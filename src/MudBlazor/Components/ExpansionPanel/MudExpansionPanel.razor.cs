@@ -65,14 +65,14 @@ namespace MudBlazor
         public string Icon { get; set; } = Icons.Material.Filled.ExpandMore;
 
         /// <summary>
-        /// If true, removes vertical padding from childcontent.
+        /// If true, removes vertical padding from <see cref="ChildContent"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, the left and right padding is removed from childcontent.
+        /// If true, the left and right padding is removed from <see cref="ChildContent"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
@@ -81,7 +81,8 @@ namespace MudBlazor
         /// <summary>
         /// Raised when IsExpanded changes.
         /// </summary>
-        [Parameter] public EventCallback<bool> IsExpandedChanged { get; set; }
+        [Parameter]
+        public EventCallback<bool> IsExpandedChanged { get; set; }
 
         internal event Action<MudExpansionPanel>? NotifyIsExpandedChanged;
         /// <summary>
@@ -170,7 +171,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            // NOTE: we can't throw here because we need to be able to instanciate the type for the API Docs to infer default values
+            // NOTE: we can't throw here because we need to be able to instantiate the type for the API Docs to infer default values
             //if (Parent == null)
             //    throw new ArgumentNullException(nameof(Parent), "ExpansionPanel must exist within a ExpansionPanels component");
             base.OnInitialized();
