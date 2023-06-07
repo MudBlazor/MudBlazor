@@ -16,15 +16,15 @@ namespace MudBlazor
     /// The container of a drag and drop zones
     /// </summary>
     /// <typeparam name="T">Type of items</typeparam>
-    public partial class MudDropContainer<T> : MudComponentBase
+    public partial class MudDropContainer<T> : MudComponentBase where T : notnull
     {
         private MudDragAndDropItemTransaction<T>? _transaction;
         private Dictionary<string, MudDropZone<T>> _mudDropZones = new();
 
         protected string Classname =>
-        new CssBuilder("mud-drop-container")
-            .AddClass(Class)
-            .Build();
+            new CssBuilder("mud-drop-container")
+                .AddClass(Class)
+                .Build();
 
         /// <summary>
         /// Child content of component. This should include the drop zones
@@ -138,8 +138,8 @@ namespace MudBlazor
             }
 
             var capturedTransaction = _transaction;
-            return capturedTransaction.Item;
 
+            return capturedTransaction.Item;
         }
 
         public bool TransactionInProgress() => _transaction is not null;
@@ -263,10 +263,12 @@ namespace MudBlazor
         {
             return _mudDropZones.TryAdd(dropZone.Identifier, dropZone);
         }
+
         internal void RemoveDropZone(string identifier)
         {
             _mudDropZones.Remove(identifier);
         }
+
         internal MudDropZone<T>? GetDropZone(string identifier)
         {
             return _mudDropZones.TryGetValue(identifier, out var dropZone) ? dropZone : null;

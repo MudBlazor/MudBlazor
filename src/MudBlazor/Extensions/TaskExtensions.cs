@@ -32,7 +32,7 @@ namespace MudBlazor
         }
 
         [Obsolete("Use the bool parameter version. This will be removed in v7.")]
-        public static async void AndForget(this ValueTask task, TaskOption option) => AndForget(task);
+        public static void AndForget(this ValueTask task, TaskOption option) => AndForget(task);
 
         /// <summary>
         /// ValueTask will be awaited and exceptions will be forwarded to MudBlazorGlobal.UnhandledExceptionHandler.
@@ -51,7 +51,7 @@ namespace MudBlazor
         }
 
         [Obsolete("Use the bool parameter version. This will be removed in v7.")]
-        public static async void AndForget<T>(this ValueTask<T> task, TaskOption option) => AndForget(task, option);
+        public static void AndForget<T>(this ValueTask<T> task, TaskOption option) => AndForget(task);
 
         /// <summary>
         /// ValueTask(bool) will be awaited and exceptions will be forwarded to MudBlazorGlobal.UnhandledExceptionHandler.

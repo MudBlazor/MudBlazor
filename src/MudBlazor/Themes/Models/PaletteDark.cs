@@ -2,7 +2,9 @@
 
 namespace MudBlazor
 {
+#pragma warning disable CS0618
     public class PaletteDark : Palette
+#pragma warning restore CS0618
     {
         public override MudColor Black { get; set; } = "#27272f";
         public override MudColor Primary { get; set; } = "#776be7";

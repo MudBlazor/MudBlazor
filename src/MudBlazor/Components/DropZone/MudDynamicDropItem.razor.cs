@@ -12,7 +12,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
-public partial class MudDynamicDropItem<T> : MudComponentBase
+public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
 {
     private bool _dragOperationIsInProgress = false;
     private Guid _id = Guid.NewGuid();
@@ -21,7 +21,8 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     private double _onTouchLastX;
     private double _onTouchLastY;
 
-    [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
 
     [CascadingParameter]
     protected MudDropContainer<T>? Container { get; set; }
@@ -271,9 +272,9 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     #endregion
 
     protected string Classname =>
-    new CssBuilder("mud-drop-item")
-        .AddClass(DraggingClass, _dragOperationIsInProgress)
-        .AddClass(DisabledClass, Disabled)
-        .AddClass(Class)
-        .Build();
+        new CssBuilder("mud-drop-item")
+            .AddClass(DraggingClass, _dragOperationIsInProgress)
+            .AddClass(DisabledClass, Disabled)
+            .AddClass(Class)
+            .Build();
 }

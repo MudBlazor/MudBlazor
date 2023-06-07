@@ -13,7 +13,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudDropZone<T> : MudComponentBase, IDisposable
+    public partial class MudDropZone<T> : MudComponentBase, IDisposable where T : notnull
     {
         private bool _containerIsInitialized = false;
         private bool _canDrop = false;
@@ -23,7 +23,8 @@ namespace MudBlazor
 
         private Dictionary<T, int> _indices = new();
 
-        [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
 
         [CascadingParameter]
         protected MudDropContainer<T>? Container { get; set; }
@@ -127,17 +128,14 @@ namespace MudBlazor
 
         private int GetItemIndex(T item)
         {
-            if (!_indices.ContainsKey(item))
-            {
-                _indices.Add(item, _indices.Count);
-            }
+            _indices.TryAdd(item, _indices.Count);
 
             return _indices[item];
         }
 
         private T[] GetItems()
         {
-            var predicate = ItemsSelector ?? (item => Container is not null && Container.ItemsSelector is not null && Container.ItemsSelector(item, Identifier));
+            var predicate = ItemsSelector ?? (item => Container?.ItemsSelector != null && Container.ItemsSelector(item, Identifier));
 
             var items = Container?.Items.Where(predicate).OrderBy(GetItemIndex).ToArray() ?? Array.Empty<T>();
             return items;
@@ -214,7 +212,7 @@ namespace MudBlazor
                     result = CanDrop(item);
                 }
             }
-            else if (Container.CanDrop != null)
+            else if (Container.CanDrop is not null)
             {
                 if (item is not null)
                 {
@@ -242,7 +240,7 @@ namespace MudBlazor
 
             if (e.Success)
             {
-                if (e.OriginatedDropzoneIdentifier== Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
+                if (e.OriginatedDropzoneIdentifier == Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
                 {
                     if (e.Item is not null)
                     {
@@ -382,6 +380,7 @@ namespace MudBlazor
         }
 
         private void FinishedDragOperation() => _dragInProgress = false;
+
         private void DragOperationStarted() => _dragInProgress = true;
 
         #endregion
