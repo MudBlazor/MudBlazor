@@ -51,6 +51,16 @@ public partial class MudHighlighter : MudComponentBase
     [Category(CategoryTypes.Highlighter.Behavior)]
     public bool UntilNextBoundary { get; set; }
 
+    /// <summary>
+    /// If true, renders the text using <see cref="MarkupString"/>
+    /// </summary>
+    /// <remarks>
+    /// Prevent using user-provided input as that's not very secure.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Highlighter.Appearance)]
+    public bool Markup { get; set; }
+
     //TODO
     //Accept regex highlightings
     // [Parameter] public bool IsRegex { get; set; }
