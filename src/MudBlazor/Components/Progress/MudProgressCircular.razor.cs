@@ -64,7 +64,7 @@ namespace MudBlazor
             get => _value;
             set
             {
-                if (_value != value)
+                if (!NumericConverter<double>.AreEqual(_value, value))
                 {
                     _value = value;
                     _svgValue = ToSvgValue(_value);
