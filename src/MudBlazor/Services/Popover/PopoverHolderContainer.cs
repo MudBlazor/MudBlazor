@@ -20,6 +20,10 @@ public class PopoverHolderContainer
     /// <summary>
     /// Gets the collection of popover holders in the container.
     /// </summary>
+    /// <remarks>
+    /// Currently, the collection always contains one item.
+    /// However, in the future, the behavior might change, and a list of updated states could be sent if the decision is made to update by batches.
+    /// </remarks>
     public IReadOnlyCollection<IMudPopoverHolder> Holders { get; }
 
     /// <summary>
