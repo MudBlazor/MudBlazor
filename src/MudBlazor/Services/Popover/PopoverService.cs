@@ -116,7 +116,6 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
                 .SetTag(popover.Tag)
                 .SetUserAttributes(popover.UserAttributes);
 
-            //This basically calls StateHasChanged on the popover.
             await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Update, new[] { holder })));
 
             return true;
