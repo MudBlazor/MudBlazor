@@ -118,9 +118,29 @@ namespace MudBlazor
         Guid IPopoverObserver.Id { get; } = Guid.NewGuid();
 
         /// <inheritdoc />
-        Task IPopoverObserver.PopoverCollectionUpdatedNotification(IEnumerable<IMudPopoverHolder> holders)
+        async Task IPopoverObserver.PopoverCollectionUpdatedNotificationAsync(PopoverHolderContainer container)
         {
-            return InvokeAsync(StateHasChanged);
+            switch (container.Operation)
+            {
+                //Update popover individually
+                case PopoverHolderOperation.Update:
+                    {
+                        foreach (var holder in container.Holders)
+                        {
+                            if (holder.ElementReference is not null)
+                            {
+                                await InvokeAsync(holder.ElementReference.StateHasChanged);
+                            }
+                        }
+
+                        break;
+                    }
+                //Update whole MudPopoverProvider
+                case PopoverHolderOperation.Create:
+                case PopoverHolderOperation.Remove:
+                    await InvokeAsync(StateHasChanged);
+                    break;
+            }
         }
     }
 }

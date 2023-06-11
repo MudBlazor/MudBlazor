@@ -15,9 +15,9 @@ internal class PopoverObserverMock : IPopoverObserver
 
     public List<Guid> PopoverNotifications { get; } = new();
 
-    public Task PopoverCollectionUpdatedNotification(IEnumerable<IMudPopoverHolder> holders)
+    public Task PopoverCollectionUpdatedNotificationAsync(PopoverHolderContainer container)
     {
-        foreach (var holder in holders)
+        foreach (var holder in container.Holders)
         {
             PopoverNotifications.Add(holder.Id);
         }

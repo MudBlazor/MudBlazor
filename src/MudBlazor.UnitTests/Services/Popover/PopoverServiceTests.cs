@@ -218,7 +218,7 @@ public class PopoverServiceTests
         Assert.AreEqual(newRenderFragment, updatedState.Fragment);
 
         //Assert
-        Assert.AreEqual(1, observer.PopoverNotifications.Count); //only one notification from CreatePopoverAsync
+        Assert.AreEqual(2, observer.PopoverNotifications.Count);
         Assert.Contains(popover.Id, observer.PopoverNotifications);
     }
 
@@ -258,7 +258,7 @@ public class PopoverServiceTests
         Assert.IsEmpty(updatedState.Style);
         Assert.IsNull(updatedState.Tag);
         Assert.IsEmpty(updatedState.UserAttributes);
-        Assert.AreEqual(2, observer.PopoverNotifications.Count); //only one notification from CreatePopoverAsync
+        Assert.AreEqual(2, observer.PopoverNotifications.Count);
         Assert.Contains(popover.Id, observer.PopoverNotifications);
     }
 
