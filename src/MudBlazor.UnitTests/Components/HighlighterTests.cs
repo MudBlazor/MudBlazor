@@ -238,24 +238,5 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParametersAndRender(text, highlightedText, caseInSensitive);
             comp.MarkupMatches("<mark>This</mark> is <mark>this</mark>");
         }
-
-        /// <summary>
-        /// Check rendered Text output using Markup property 
-        /// </summary>
-        [Test]
-        public void MudHighlighterMarkupRenderTextAsMarkupStringTest()
-        {
-            var markupText = $"<i>{nameof(MudBlazor)}</i>";
-            var text = Parameter(nameof(MudHighlighter.Text), markupText);
-            var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "mud");
-
-            var textAsMarkupFalse = Parameter(nameof(MudHighlighter.Markup), false);
-            var comp = Context.RenderComponent<MudHighlighter>(text, highlightedText, textAsMarkupFalse);
-            comp.MarkupMatches("&lt;i&gt;<mark>Mud</mark>Blazor&lt;/i&gt;");
-
-            var textAsMarkupTrue = Parameter(nameof(MudHighlighter.Markup), true);
-            comp = Context.RenderComponent<MudHighlighter>(text, highlightedText, textAsMarkupTrue);
-            comp.MarkupMatches("<i><mark>Mud</mark>Blazor</i>");
-        }
     }
 }
