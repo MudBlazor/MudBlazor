@@ -8,7 +8,7 @@
 						 Error="@Error" ErrorText="@ErrorText" ErrorId="@ErrorId" Disabled="@GetDisabledState()" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
 			<InputContent>
                 <MudInput @ref="_elementReference" InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
-                          Class="mud-select-input" Margin="@Margin" Placeholder="@Placeholder"
+                          Class="@LabelClass" Margin="@Margin" Placeholder="@Placeholder"
                           Variant="@Variant"
                           TextUpdateSuppression="false"
                           Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine"

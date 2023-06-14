@@ -20,6 +20,7 @@ namespace MudBlazor
         private HashSet<T> _selectedValues = new HashSet<T>();
         private IEqualityComparer<T> _comparer;
         private bool _dense;
+        private string _labelClass;
         private string multiSelectionText;
         private bool? _selectAllChecked;
         private IKeyInterceptor _keyInterceptor;
@@ -77,7 +78,7 @@ namespace MudBlazor
             await ScrollToItemAsync(item);
         }
         private ValueTask ScrollToItemAsync(MudSelectItem<T> item)
-            =>item != null? ScrollManager.ScrollToListItemAsync(item.ItemId): ValueTask.CompletedTask;
+            => item != null ? ScrollManager.ScrollToListItemAsync(item.ItemId) : ValueTask.CompletedTask;
         private async Task SelectFirstItem(string startChar = null)
         {
             if (_items == null || _items.Count == 0)
@@ -179,6 +180,13 @@ namespace MudBlazor
             get { return _dense; }
             set { _dense = value; }
         }
+
+        /// <summary>
+        /// The Select Label Class
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string LabelClass { get => $"mud-select-input {_labelClass}".Trim(); set => _labelClass = value; }
 
         /// <summary>
         /// The Open Select Icon
@@ -710,7 +718,7 @@ namespace MudBlazor
             {
                 StateHasChanged();
                 await OnBlur.InvokeAsync(new FocusEventArgs());
-                _elementReference.FocusAsync().AndForget(ignoreExceptions:true);
+                _elementReference.FocusAsync().AndForget(ignoreExceptions: true);
                 StateHasChanged();
             }
 
@@ -762,7 +770,7 @@ namespace MudBlazor
                     },
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
-                _keyInterceptor.KeyUp += HandleKeyUp;    
+                _keyInterceptor.KeyUp += HandleKeyUp;
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -1050,7 +1058,7 @@ namespace MudBlazor
             {
                 // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
                 // otherwise we can't receive key strokes any longer
-                _elementReference.FocusAsync().AndForget(ignoreExceptions:true);
+                _elementReference.FocusAsync().AndForget(ignoreExceptions: true);
             }
             base.OnBlur.InvokeAsync(obj);
         }
