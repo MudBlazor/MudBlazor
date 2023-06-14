@@ -958,7 +958,13 @@ namespace MudBlazor
                 SelectedItem = item;
             }
             else
+            {
                 Selection.Remove(item);
+                if (item.Equals(SelectedItem))
+                {
+                    SelectedItem = Selection.LastOrDefault();
+                }
+            }
 
             await InvokeAsync(() => SelectedItemsChangedEvent.Invoke(SelectedItems));
             await SelectedItemsChanged.InvokeAsync(SelectedItems);
