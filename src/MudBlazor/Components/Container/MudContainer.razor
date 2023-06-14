@@ -1,10 +1,9 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Extensions;
 @using MudBlazor.Utilities
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@Classname" style="@Style">
-    @ChildContent
-</div>
+@RenderParent()
 
 @code {
 
@@ -18,14 +17,14 @@
     /// <summary>
     /// Set the max-width to match the min-width of the current breakpoint. This is useful if you'd prefer to design for a fixed set of sizes instead of trying to accommodate a fully fluid viewport. It's fluid by default.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.Container.Behavior)]
     public bool Fixed { get; set; } = false;
 
     /// <summary>
     /// Determine the max-width of the container. The container width grows with the size of the screen. Set to false to disable maxWidth.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.Container.Behavior)]
     public MaxWidth MaxWidth { get; set; } = MaxWidth.Large;
 
@@ -33,6 +32,62 @@
     /// Child content of component.
     /// </summary>
     [Parameter]
-[   Category(CategoryTypes.Container.Behavior)]
+    [Category(CategoryTypes.Container.Behavior)]
     public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public Dictionary<string, DirectiveAttribute[]> EventsConfig { get; set; } = new();
+
+    private Dictionary<string, object> _UserAttributes = new();
+
+
+    private RenderFragment RenderParent()
+    {
+        RenderFragment parent = builder =>
+        {
+            builder.OpenElement(1, "div");
+            _UserAttributes = UserAttributes ?? new Dictionary<string, object>();
+            if (!_UserAttributes.ContainsKey("class"))
+            {
+                _UserAttributes.Add("class", Classname);
+            }
+            else
+            {
+                _UserAttributes["class"] = Classname;
+            }
+
+            if (!_UserAttributes.ContainsKey("style"))
+            {
+                _UserAttributes.Add("style", Style);
+            }
+            else
+            {
+                _UserAttributes["style"] = Style;
+            }
+
+            foreach (var (k, v) in _UserAttributes)
+            {
+                builder.AddAttribute(1, k, v);
+            }
+
+            foreach (var config in EventsConfig)
+            {
+                foreach (var eventDirective in config.Value)
+                {
+                    if (eventDirective == DirectiveAttribute.preventDefault)
+                    {
+                        builder.AddEventPreventDefaultAttribute(1, config.Key, true);
+                    }
+                    else if (eventDirective == DirectiveAttribute.stopPropagation)
+                    {
+                        builder.AddEventStopPropagationAttribute(1, config.Key, true);
+                    }
+                }
+            }
+            builder.AddContent(1, ChildContent);
+            builder.CloseElement();
+        };
+
+        return parent;
+    }
 }
