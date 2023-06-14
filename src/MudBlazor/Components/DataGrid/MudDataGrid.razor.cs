@@ -953,7 +953,10 @@ namespace MudBlazor
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
             if (value)
+            {
                 Selection.Add(item);
+                SelectedItem = item;
+            }
             else
                 Selection.Remove(item);
 
