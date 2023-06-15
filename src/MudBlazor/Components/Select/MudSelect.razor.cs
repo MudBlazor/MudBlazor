@@ -762,7 +762,7 @@ namespace MudBlazor
                     },
                 });
                 _keyInterceptor.KeyDown += HandleKeyDown;
-                _keyInterceptor.KeyUp += HandleKeyUp;    
+                _keyInterceptor.KeyUp += HandleKeyUp;
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -1044,15 +1044,19 @@ namespace MudBlazor
             _shadowLookup.Remove(item.Value);
         }
 
-        internal void OnLostFocus(FocusEventArgs obj)
+        private async Task OnFocusOutAsync(FocusEventArgs focusEventArgs)
         {
             if (_isOpen)
             {
                 // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
                 // otherwise we can't receive key strokes any longer
-                _elementReference.FocusAsync().AndForget(ignoreExceptions:true);
+                await FocusAsync();
             }
-            base.OnBlur.InvokeAsync(obj);
+        }
+
+        internal Task OnBlurAsync(FocusEventArgs obj)
+        {
+            return base.OnBlur.InvokeAsync(obj);
         }
 
         protected override void Dispose(bool disposing)
