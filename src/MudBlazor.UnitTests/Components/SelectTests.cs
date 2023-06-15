@@ -79,7 +79,7 @@ namespace MudBlazor.UnitTests.Components
             //Check user on blur implementation works
             var @switch = comp.FindComponent<MudSwitch<bool>>();
             @switch.Instance.Checked = true;
-            await comp.InvokeAsync(() => select.Instance.OnLostFocus(new FocusEventArgs()));
+            await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
             comp.WaitForAssertion(() => @switch.Instance.Checked.Should().Be(false));
         }
 
@@ -991,6 +991,24 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.Instance.OnKeyUp.InvokeAsync(new KeyboardEventArgs() { Key = "Tab" }));
             comp.Render(); // <-- this is necessary for reliable passing of the test
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+        }
+
+        [Test]
+        public async Task SelectTest_KeyboardNavigation_MultiSelect_Focus()
+        {
+            var comp = Context.RenderComponent<MultiSelectTest6>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            var mudSelectElement = comp.Find(".mud-select");
+            comp.Find("div.mud-input-control").Click();
+            select.Instance._isOpen.Should().BeTrue();
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[0].Click();
+            items[2].Click();
+            //emulate focus out
+            mudSelectElement.FocusOut();
+            comp.WaitForAssertion(() => select.Instance.Text.Should().Be("Alaska, Alabama, American Samoa"));
+            //check if we received focus event from the MudSelect.OnFocusOutAsync
+            Context.JSInterop.VerifyFocusAsyncInvoke();
         }
 
         [Test]
