@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -180,6 +181,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FileUpload_ValidationTest()
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
             InputFileContent[] fileContent = { InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt"), InputFileContent.CreateFromText("A Balrog, servant of Morgoth", "upload2.txt") };
 
             var comp = Context.RenderComponent<FileUploadFormValidationTest>();
