@@ -617,7 +617,7 @@ namespace MudBlazor
                     if (SelectValueOnTab)
                         await OnEnterKey();
                     else
-                        IsOpen = false;
+                        await ToggleMenu();
                     break;
             }
             await base.InvokeKeyDownAsync(args);
@@ -666,15 +666,6 @@ namespace MudBlazor
                     break;
                 case "Escape":
                     await ChangeMenu(open: false);
-                    break;
-                case "Tab":
-                    await Task.Delay(1);
-                    if (!IsOpen)
-                        return;
-                    if (SelectValueOnTab)
-                        await OnEnterKey();
-                    else
-                        await ToggleMenu();
                     break;
                 case "Backspace":
                     if (args.CtrlKey == true && args.ShiftKey == true)

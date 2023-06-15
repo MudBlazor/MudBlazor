@@ -1262,5 +1262,39 @@ namespace MudBlazor.UnitTests.Components
             var mudText = comp.FindAll("p.mud-typography");
             mudText[mudText.Count - 1].InnerHtml.Should().Contain("EndList_Content"); //ensure the text is shown
         }
+
+        /// <summary>
+        /// Test for <seealso cref="https://github.com/MudBlazor/MudBlazor/issues/7018"/>
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_UpdateText_WhenTabIsPressed()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            // select elements needed for the test
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            // NOTE: We need to catch Tab in Keydown because a tab will move focus to the next element 
+            autocompletecomp.Find("input").Input("Calif");
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+            autocomplete.Value.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Alabama");
+
+            // reset
+            await comp.InvokeAsync(() => autocomplete.ResetAsync());
+
+            // now test with CoerceText = false
+            // Text should not be updated
+            autocomplete.CoerceText = false;
+            autocompletecomp.Find("input").Input("Calif");
+            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+            autocomplete.Value.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Calif");
+        }
     }
 }
