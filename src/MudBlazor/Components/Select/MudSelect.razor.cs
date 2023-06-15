@@ -862,7 +862,6 @@ namespace MudBlazor
 
         internal async void HandleKeyDown(KeyboardEventArgs obj)
         {
-            Console.WriteLine("Trigger");
             if (GetDisabledState() || GetReadOnlyState())
                 return;
             var key = obj.Key.ToLowerInvariant();
