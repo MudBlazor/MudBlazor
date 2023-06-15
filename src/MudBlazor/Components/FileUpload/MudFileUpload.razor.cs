@@ -120,7 +120,17 @@ namespace MudBlazor
             if (GetDisabledState()) return;
             if (typeof(T) == typeof(IReadOnlyList<IBrowserFile>))
             {
-                _value = (T)args.GetMultipleFiles(MaximumFileCount);
+                List<IBrowserFile> newFiles = args.GetMultipleFiles(MaximumFileCount).ToList();
+                IReadOnlyList<IBrowserFile> oldFiles = _value as IReadOnlyList<IBrowserFile>;
+                if(oldFiles != null)
+                {
+                    var allFiles = oldFiles.Concat(newFiles).ToList();
+                    _value = (T)(object)allFiles.AsReadOnly();
+                }
+                else
+                {
+                    _value = (T)(object)newFiles.AsReadOnly();
+                }
             }
             else if (typeof(T) == typeof(IBrowserFile))
             {
@@ -128,7 +138,7 @@ namespace MudBlazor
             }
             else return;
 
-            await FilesChanged.InvokeAsync(_value);
+            await FilesChanged.InvokeAsync(Files);
             await BeginValidateAsync();
             FieldChanged(_value);
             if (!Error || !SuppressOnChangeWhenInvalid) //only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
