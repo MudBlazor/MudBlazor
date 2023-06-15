@@ -741,6 +741,11 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                if (_elementReference is not null)
+                {
+                    _elementReference.OverrideReadOnlyOnBlur = true;
+                }
+
                 _keyInterceptor = KeyInterceptorFactory.Create();
 
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
@@ -1044,7 +1049,7 @@ namespace MudBlazor
             _shadowLookup.Remove(item.Value);
         }
 
-        internal void OnLostFocus(FocusEventArgs obj)
+        internal async Task OnLostFocus(FocusEventArgs obj)
         {
             if (_isOpen)
             {
@@ -1052,7 +1057,14 @@ namespace MudBlazor
                 // otherwise we can't receive key strokes any longer
                 _elementReference.FocusAsync().AndForget(ignoreExceptions:true);
             }
-            base.OnBlur.InvokeAsync(obj);
+            
+            if (!ReadOnly)
+            {
+                Touched = _elementReference.Touched;
+                await BeginValidateAsync();
+            }
+
+            await OnBlur.InvokeAsync(obj);
         }
 
         protected override void Dispose(bool disposing)

@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.ComponentModel.DataAnnotations;
+
+<EditForm Model="@model">
+    <DataAnnotationsValidator />
+    <MudDatePicker @bind-Date="model.Date" For="@(() => model.Date)" Editable="@EnableEditable" />
+    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled">Submit</MudButton>
+</EditForm>
+
+<MudButton OnClick="ToggleEditable">Toggle editable? @EnableEditable</MudButton>
+@code {
+    public static string __description__ = "Form should validate date picker's date.";
+
+    private readonly Test model = new Test();
+
+    private class Test
+    {
+        [Required]
+        public DateTime? Date { get; set; }
+    }
+
+    [Parameter]
+    public bool EnableEditable { get; set; }
+
+    public async Task ModifyDate(DateTime? date)
+    {
+        model.Date = date;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void ToggleEditable() => EnableEditable = !EnableEditable;
+}

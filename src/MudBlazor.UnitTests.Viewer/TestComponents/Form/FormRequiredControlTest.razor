@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<div style="max-width: 400px;">
+    <MudCard>
+        <MudCardContent>
+            <MudForm>
+                <MudTextField T="string" Label="TextField" Required="Required" ReadOnly="ReadOnly" />
+                <MudTextField T="string" Label="TextFieldMask" Mask="@(new DateMask(" yyyy-MM-dd"))" Required="Required" ReadOnly="ReadOnly" />
+                <MudSelect T="string" Label="Select string" Required="Required" ReadOnly="ReadOnly"></MudSelect>
+                <MudDatePicker Label="DatePicker" Required="Required" Editable="false" ReadOnly="ReadOnly" />
+                <MudDateRangePicker Label="DateRangePicker" Required="Required" Editable="false" ReadOnly="ReadOnly" />
+                <MudTimePicker Label="TimePicker" Required="Required" Editable="false" ReadOnly="ReadOnly" />
+            </MudForm>
+        </MudCardContent>
+        <MudCardActions>
+            <MudCheckBox @bind-Checked="Required">Comp Required</MudCheckBox>
+            <MudCheckBox @bind-Checked="ReadOnly">Comp ReadOnly</MudCheckBox>
+        </MudCardActions>
+    </MudCard>
+</div>
+@code
+{
+    public static string __description__ = "All components should respect required parameter when touched";
+    [Parameter]
+    public bool Required { get; set; }
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+}

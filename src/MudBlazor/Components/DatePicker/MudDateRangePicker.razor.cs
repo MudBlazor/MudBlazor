@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -164,6 +165,27 @@ namespace MudBlazor
         private DateRange ParseDateRangeValue(string start, string end)
         {
             return DateRange.TryParse(start, end, Converter, out var dateRange) ? dateRange : null;
+        }
+
+        protected override async Task OnInternalInputBlurred(FocusEventArgs args)
+        {
+            if (!ReadOnly)
+            {
+                Touched = _rangeInput?.Touched ?? Touched;
+                await BeginValidateAsync();
+            }
+        }
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (firstRender)
+            {
+                if (_rangeInput is not null)
+                {
+                    _rangeInput.OverrideReadOnlyOnBlur = true;
+                }
+            }
+            base.OnAfterRender(firstRender);
         }
 
         protected override void OnPickerClosed()
