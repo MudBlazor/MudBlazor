@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
+using MudBlazor.Examples.Data.Models;
 using MudBlazor.UnitTests.Services.Popover.Mocks;
 using NUnit.Framework;
 
@@ -150,6 +151,7 @@ public class PopoverServiceTests
 
         // Assert
         Assert.IsFalse(result);
+        Assert.IsEmpty(observer.PopoverNotifications);
     }
 
     [Test]
@@ -167,6 +169,7 @@ public class PopoverServiceTests
 
         // Assert
         Assert.IsFalse(result);
+        Assert.IsEmpty(observer.PopoverNotifications);
     }
 
     [Test]
@@ -218,7 +221,8 @@ public class PopoverServiceTests
         Assert.AreEqual(newRenderFragment, updatedState.Fragment);
 
         //Assert
-        Assert.AreEqual(1, observer.PopoverNotifications.Count); //only one notification from CreatePopoverAsync
+        //two notifications from CreatePopoverAsync and UpdatePopoverAsync
+        Assert.AreEqual(2, observer.PopoverNotifications.Count);
         Assert.Contains(popover.Id, observer.PopoverNotifications);
     }
 
@@ -258,7 +262,8 @@ public class PopoverServiceTests
         Assert.IsEmpty(updatedState.Style);
         Assert.IsNull(updatedState.Tag);
         Assert.IsEmpty(updatedState.UserAttributes);
-        Assert.AreEqual(2, observer.PopoverNotifications.Count); //only one notification from CreatePopoverAsync
+        //two notifications from CreatePopoverAsync and DestroyPopover, UpdatePopoverAsync shouldn't fire notification since destroyed
+        Assert.AreEqual(2, observer.PopoverNotifications.Count);
         Assert.Contains(popover.Id, observer.PopoverNotifications);
     }
 
@@ -279,8 +284,41 @@ public class PopoverServiceTests
         // Assert
         Assert.True(isDestroyed);
         Assert.IsEmpty(service.ActivePopovers);
-        Assert.AreEqual(2, observer.PopoverNotifications.Count); //two notifications from CreatePopoverAsync and DestroyPopover
+        //two notifications from CreatePopoverAsync and DestroyPopover
+        Assert.AreEqual(2, observer.PopoverNotifications.Count);
         Assert.Contains(popover.Id, observer.PopoverNotifications);
+    }
+
+    [Test]
+    public async Task CreatePopoverAsync_UpdatePopoverAsync_DestroyPopoverAsync_ShouldNotifyContainerWithCorrespondingOperation()
+    {
+        //Arrange
+        var containerNotificationList = new List<PopoverHolderContainer>();
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var popover = new PopoverMock();
+        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var observerMock = new Mock<IPopoverObserver>();
+        service.Subscribe(observerMock.Object);
+
+        observerMock
+            .Setup(h => h.PopoverCollectionUpdatedNotificationAsync(
+                It.IsAny<PopoverHolderContainer>()))
+            .Returns(Task.CompletedTask)
+            .Callback<PopoverHolderContainer>(containerNotificationList.Add);
+
+        // Act
+        await service.CreatePopoverAsync(popover);
+        await service.UpdatePopoverAsync(popover);
+        await service.DestroyPopoverAsync(popover);
+
+        // Assert
+        var firstNotification = containerNotificationList.ElementAt(0);
+        var secondNotification = containerNotificationList.ElementAt(1);
+        var thirdNotification = containerNotificationList.ElementAt(2);
+        Assert.AreEqual(3, containerNotificationList.Count);
+        Assert.AreEqual(PopoverHolderOperation.Create, firstNotification.Operation);
+        Assert.AreEqual(PopoverHolderOperation.Update, secondNotification.Operation);
+        Assert.AreEqual(PopoverHolderOperation.Remove, thirdNotification.Operation);
     }
 
     [Test]

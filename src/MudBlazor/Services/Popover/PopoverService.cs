@@ -79,7 +79,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             .SetUserAttributes(popover.UserAttributes);
 
         _holders.TryAdd(holder.Id, holder);
-        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotification(new[] { holder }));
+        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Create, new[] { holder })));
     }
 
     /// <inheritdoc />
@@ -106,7 +106,6 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
         try
         {
-
             await _semaphore.WaitAsync();
 
             holder
@@ -117,12 +116,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
                 .SetTag(popover.Tag)
                 .SetUserAttributes(popover.UserAttributes);
 
-            //This basically calls StateHasChanged on the popover.
-            //To be honest, there's no real need for us to update each popover individually through MudRendered as we currently do.
-            //Instead, we can consider invoking PopoverCollectionUpdatedNotification (or make new function).
-            //This function would trigger a StateHasChanged on the entire MudPopoverProvider, effectively updating all the underlying popovers at once.
-            //By performing these updates in batches, we can minimize the number of re-renders to a minimum.
-            holder.ElementReference?.StateHasChanged();
+            await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Update, new[] { holder })));
 
             return true;
         }
@@ -199,7 +193,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         // Perhaps we could consider adding a state indicating that the object is queued for detaching instead.
         holder.IsDetached = true;
 
-        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotification(new[] { holder }));
+        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Remove, new[] { holder })));
 
         return true;
     }
