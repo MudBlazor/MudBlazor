@@ -1,19 +1,14 @@
 ﻿// Copyright (c) 2019 - Blazored
 // Copyright (c) 2023 - Adaptations by Simon Schulze
 
-#nullable enable
-
 using System;
 using System.Linq.Expressions;
 
 namespace MudBlazor;
 
+#nullable enable
 public class DialogParameters<T> : DialogParameters
 {
-	public DialogParameters() : base()
-	{
-	}
-
     public void Add<TParam>(Expression<Func<T, TParam>> propertyExpression, TParam value)
     {
         ArgumentNullException.ThrowIfNull(propertyExpression);
@@ -21,6 +16,7 @@ public class DialogParameters<T> : DialogParameters
         {
             throw new ArgumentException($"Argument '{nameof(propertyExpression)}' must be a '{nameof(MemberExpression)}'");
         }
+
         Add(memberExpression.Member.Name, value);
     }
 
@@ -31,6 +27,7 @@ public class DialogParameters<T> : DialogParameters
         {
             throw new ArgumentException($"Argument '{nameof(propertyExpression)}' must be a '{nameof(MemberExpression)}'");
         }
+
         return Get<TParam>(memberExpression.Member.Name);
     }
 
@@ -41,6 +38,7 @@ public class DialogParameters<T> : DialogParameters
         {
             throw new ArgumentException($"Argument '{nameof(propertyExpression)}' must be a '{nameof(MemberExpression)}'");
         }
+
         return TryGet<TParam>(memberExpression.Member.Name);
     }
 }
