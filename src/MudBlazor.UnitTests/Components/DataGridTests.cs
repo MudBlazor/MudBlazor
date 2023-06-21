@@ -2542,6 +2542,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task FilterDefinitionReplaceWithCustom()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+            dataGrid.Instance.SetDefaultFilterDefinition<CustomFilterDefinitionMock<DataGridFiltersTest.Model>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
+
+            // add a filter via the AddFilter method
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
+
+            // check the number of filters displayed in the filters panel
+            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
+
+            var filterDefinitionInstance = dataGrid.Instance.FilterDefinitions.FirstOrDefault();
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            filterDefinitionInstance.Should().NotBeNull();
+            filterDefinitionInstance.Should().BeOfType<CustomFilterDefinitionMock<DataGridFiltersTest.Model>>();
+        }
+
+        [Test]
         public async Task DataGridFiltersTest()
         {
             var comp = Context.RenderComponent<DataGridFiltersTest>();

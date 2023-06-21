@@ -13,7 +13,7 @@ namespace MudBlazor
     {
         private readonly MudDataGrid<T> _dataGrid;
 
-        internal FilterDefinition<T>? FilterDefinition { get; set; }
+        internal IFilterDefinition<T>? FilterDefinition { get; set; }
 
         internal HeaderCell<T>? HeaderCell { get; set; }
 
@@ -37,10 +37,10 @@ namespace MudBlazor
 
         public class FilterActions
         {
-            public Func<FilterDefinition<T>, Task> ApplyFilterAsync { get; init; } = null!;
-            public Func<IEnumerable<FilterDefinition<T>>, Task> ApplyFiltersAsync { get; init; } = null!;
-            public Func<FilterDefinition<T>, Task> ClearFilterAsync { get; init; } = null!;
-            public Func<IEnumerable<FilterDefinition<T>>, Task> ClearFiltersAsync { get; init; } = null!;
+            public Func<IFilterDefinition<T>, Task> ApplyFilterAsync { get; init; } = null!;
+            public Func<IEnumerable<IFilterDefinition<T>>, Task> ApplyFiltersAsync { get; init; } = null!;
+            public Func<IFilterDefinition<T>, Task> ClearFilterAsync { get; init; } = null!;
+            public Func<IEnumerable<IFilterDefinition<T>>, Task> ClearFiltersAsync { get; init; } = null!;
         }
     }
 }

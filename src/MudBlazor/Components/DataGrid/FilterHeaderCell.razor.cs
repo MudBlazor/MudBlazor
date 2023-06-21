@@ -185,7 +185,7 @@ namespace MudBlazor
             }
         }
 
-        internal async Task ApplyFilterAsync(FilterDefinition<T> filterDefinition)
+        internal async Task ApplyFilterAsync(IFilterDefinition<T> filterDefinition)
         {
             if (!DataGrid.FilterDefinitions.Any(x => x.Id == filterDefinition.Id))
                 DataGrid.FilterDefinitions.Add(filterDefinition);
@@ -214,7 +214,7 @@ namespace MudBlazor
             }
         }
 
-        internal async Task ClearFilterAsync(FilterDefinition<T> filterDefinition)
+        internal async Task ClearFilterAsync(IFilterDefinition<T> filterDefinition)
         {
             await DataGrid.RemoveFilterAsync(filterDefinition.Id);
         }
