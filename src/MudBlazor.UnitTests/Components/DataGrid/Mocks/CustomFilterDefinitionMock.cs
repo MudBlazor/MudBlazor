@@ -19,8 +19,6 @@ public class CustomFilterDefinitionMock<TType> : IFilterDefinition<TType>
 
     public object? Value { get; set; }
 
-    public Func<TType, bool>? FilterFunction { get; set; }
-
     public Func<TType, bool> GenerateFilterFunction(FilterOptions? filterOptions = null)
     {
         return _ => true;
@@ -34,8 +32,7 @@ public class CustomFilterDefinitionMock<TType> : IFilterDefinition<TType>
             Column = Column,
             Title = Title,
             Operator = Operator,
-            Value = Value,
-            FilterFunction = FilterFunction,
+            Value = Value
         };
     }
 }

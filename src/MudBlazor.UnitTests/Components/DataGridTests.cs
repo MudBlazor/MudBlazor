@@ -2546,11 +2546,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridFiltersTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
-            var filterDefinition = new CustomFilterDefinitionMock<DataGridFiltersTest.Model>()
-            {
-                FilterFunction = model => model.Age == 56
-            };
-            dataGrid.Instance.SetDefaultFilterDefinition(() => filterDefinition);
+            dataGrid.Instance.SetDefaultFilterDefinition<CustomFilterDefinitionMock<DataGridFiltersTest.Model>>();
 
             await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
 
