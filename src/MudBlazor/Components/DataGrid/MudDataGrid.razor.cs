@@ -20,6 +20,7 @@ namespace MudBlazor
     [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<T> : MudComponentBase
     {
+        private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
         private int _currentPage = 0;
         internal int? _rowsPerPage;
         private bool _isFirstRendered = false;
@@ -906,16 +907,13 @@ namespace MudBlazor
             }
         }
 
-
-        private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
-
         internal IFilterDefinition<T> CreateFilterDefinitionInstance()
         {
             return _defaultFilterDefinitionFactory();
         }
 
         /// <summary>
-        /// Sets the default <see cref="IFilterDefinition{T}"/> that <see cref="AddFilter"/> and <see cref="Column{T}.FilterContext"/> are going to use.
+        /// Specifies the default <see cref="IFilterDefinition{T}"/> to be used by <see cref="AddFilter"/> and <see cref="Column{T}.FilterContext"/>.
         /// </summary>
         public void SetDefaultFilterDefinition<TFilterDefinition>() where TFilterDefinition : IFilterDefinition<T>, new()
         {
@@ -923,7 +921,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Sets the default <see cref="IFilterDefinition{T}"/> that <see cref="AddFilter"/> and <see cref="Column{T}.FilterContext"/> are going to use.
+        /// Specifies the default <see cref="IFilterDefinition{T}"/> to be used by <see cref="AddFilter"/> and <see cref="Column{T}.FilterContext"/>.
         /// </summary>
         /// <param name="factory">The factory function to create the default filter definition.</param>
         public void SetDefaultFilterDefinition(Func<IFilterDefinition<T>> factory)
