@@ -439,9 +439,9 @@ namespace MudBlazor
                 }
 
                 // Setup ObservableCollection functionality.
-                if (_items is INotifyCollectionChanged)
+                if (_items is INotifyCollectionChanged changed)
                 {
-                    (_items as INotifyCollectionChanged).CollectionChanged += (s, e) =>
+                    changed.CollectionChanged += (s, e) =>
                     {
                         _currentRenderFilteredItemsCache = null;
                         if (Groupable)
@@ -906,19 +906,42 @@ namespace MudBlazor
             }
         }
 
+
+        private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
+
+        internal IFilterDefinition<T> CreateFilterDefinitionInstance()
+        {
+            return _defaultFilterDefinitionFactory();
+        }
+
+        /// <summary>
+        /// Sets the default <see cref="IFilterDefinition{T}"/> that <see cref="AddFilter"/> and <see cref="Column{T}.FilterContext"/> are going to use.
+        /// </summary>
+        public void SetDefaultFilterDefinition<TFilterDefinition>() where TFilterDefinition : IFilterDefinition<T>, new()
+        {
+            SetDefaultFilterDefinition(() => new TFilterDefinition());
+        }
+
+        /// <summary>
+        /// Sets the default <see cref="IFilterDefinition{T}"/> that <see cref="AddFilter"/> and <see cref="Column{T}.FilterContext"/> are going to use.
+        /// </summary>
+        /// <param name="factory">The factory function to create the default filter definition.</param>
+        public void SetDefaultFilterDefinition(Func<IFilterDefinition<T>> factory)
+        {
+            _defaultFilterDefinitionFactory = factory;
+        }
+
         /// <summary>
         /// Called by the DataGrid when the "Add Filter" button is pressed.
         /// </summary>
         public void AddFilter()
         {
             var column = RenderedColumns.FirstOrDefault(x => x.filterable);
-            FilterDefinitions.Add(new FilterDefinition<T>
-            {
-                Id = Guid.NewGuid(),
-                DataGrid = this,
-                Title = column?.Title,
-                Column = column,
-            });
+            var filterDefinition = CreateFilterDefinitionInstance();
+            filterDefinition.Id = Guid.NewGuid();
+            filterDefinition.Title = column?.Title;
+            filterDefinition.Column = column;
+            FilterDefinitions.Add(filterDefinition);
             _filtersMenuVisible = true;
             StateHasChanged();
         }
@@ -989,7 +1012,7 @@ namespace MudBlazor
 
             IOrderedEnumerable<T> orderedEnumerable = null;
 
-            foreach (var sortDefinition in SortDefinitions.Values.Where(sd => null != sd.SortFunc).OrderBy(sd => sd.Index))
+            foreach (var sortDefinition in SortDefinitions.Values.Where(sd => sd.SortFunc != null).OrderBy(sd => sd.Index))
             {
                 if (null == orderedEnumerable)
                     orderedEnumerable = sortDefinition.Descending ? items.OrderByDescending(item => sortDefinition.SortFunc(item), sortDefinition.Comparer)

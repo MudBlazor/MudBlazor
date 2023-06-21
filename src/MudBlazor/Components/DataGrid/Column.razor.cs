@@ -272,15 +272,11 @@ namespace MudBlazor
                 if (filterContext.FilterDefinition == null)
                 {
                     var operators = FilterOperator.GetOperatorByDataType(PropertyType);
-                    filterContext.FilterDefinition = new FilterDefinition<T>()
-                    {
-                        DataGrid = DataGrid,
-                        //Field = PropertyName,
-                        //FieldType = PropertyType,
-                        Title = Title,
-                        Operator = operators.FirstOrDefault(),
-                        Column = this,
-                    };
+                    var filterDefinition = DataGrid.CreateFilterDefinitionInstance();
+                    filterDefinition.Title = Title;
+                    filterDefinition.Operator = operators.FirstOrDefault();
+                    filterDefinition.Column = this;
+                    filterContext.FilterDefinition = filterDefinition;
                 }
 
                 return filterContext;
