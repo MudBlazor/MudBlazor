@@ -3198,6 +3198,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridStickyColumnsResizerTest()
+        {
+            var comp = Context.RenderComponent<DataGridStickyColumnsResizerTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridStickyColumnsResizerTest.Model>>();
+
+            var header = dataGrid.Find(".mud-table-toolbar");
+            header.GetAttribute("style").Should().Contain("position:sticky");
+            header.GetAttribute("style").Should().Contain("left:0px");
+
+            var footer = dataGrid.Find(".mud-table-pagination");
+            footer.GetAttribute("style").Should().Contain("position:sticky");
+            footer.GetAttribute("style").Should().Contain("left:0px");
+
+            var body = dataGrid.Find(".mud-table-container");
+            body.GetAttribute("style").Should().Contain("width:max-content");
+            body.GetAttribute("style").Should().Contain("overflow:clip");
+
+            dataGrid.Find("th").ClassList.Should().Contain("sticky-left");
+            dataGrid.FindAll("th").Last().ClassList.Should().Contain("sticky-right");
+        }
+
+        [Test]
         public async Task DataGridCellContextTest()
         {
             var comp = Context.RenderComponent<DataGridCellContextTest>();
