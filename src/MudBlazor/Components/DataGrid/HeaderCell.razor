@@ -2,6 +2,8 @@
 @inherits MudComponentBase
 @typeparam T
 
+@inject InternalMudLocalizer Localizer
+
 @if (IsOnlyHeader)
 {
     <th scope="col" class="mud-table cell @_classname" style="" @attributes="@UserAttributes">
@@ -92,24 +94,24 @@ else if (Column != null && !Column.Hidden)
                 @if (showColumnOptions)
                 {
                     <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true">
-                        <MudMenuItem Disabled="@(_initialDirection == SortDirection.None)" OnClick="@RemoveSortAsync">Unsort</MudMenuItem>
+                        <MudMenuItem Disabled="@(_initialDirection == SortDirection.None)" OnClick="@RemoveSortAsync">@Localizer["MudDataGrid.Unsort"]</MudMenuItem>
                         @if (filterable && DataGrid.FilterMode != DataGridFilterMode.ColumnFilterRow)
                         {
-                            <MudMenuItem OnClick="@AddFilterAsync">Filter</MudMenuItem>
+                            <MudMenuItem OnClick="@AddFilterAsync">@Localizer["MudDataGrid.Filter"]</MudMenuItem>
                         }
                         @if (hideable)
                         {
-                            <MudMenuItem OnClick="@HideColumnAsync">Hide</MudMenuItem>
+                            <MudMenuItem OnClick="@HideColumnAsync">@Localizer["MudDataGrid.Hide"]</MudMenuItem>
                         }
                         @if (groupable)
                         {
                             if (Column?.grouping ?? false)
                             {
-                                <MudMenuItem OnClick="@UngroupColumn">Ungroup</MudMenuItem>
+                                <MudMenuItem OnClick="@UngroupColumn">@Localizer["MudDataGrid.Ungroup"]</MudMenuItem>
                             }
                             else
                             {
-                                <MudMenuItem OnClick="@GroupColumn">Group</MudMenuItem>
+                                <MudMenuItem OnClick="@GroupColumn">@Localizer["MudDataGrid.Group"]</MudMenuItem>
                             }
                         }
                     </MudMenu>
@@ -135,8 +137,8 @@ else if (Column != null && !Column.Hidden)
                             @DataGrid.Filter(Column.FilterContext.FilterDefinition, Column)
                         </MudItem>
                         <MudItem xs="12" Class="d-flex justify-end">
-                            <MudButton Class="clear-filter-button" OnClick="@ClearFilterAsync">Clear</MudButton>
-                            <MudButton Class="apply-filter-button" Color="@Color.Primary" OnClick="@ApplyFilterAsync">Filter</MudButton>
+                            <MudButton Class="clear-filter-button" OnClick="@ClearFilterAsync">@Localizer["MudDataGrid.Clear"]</MudButton>
+                            <MudButton Class="apply-filter-button" Color="@Color.Primary" OnClick="@ApplyFilterAsync">@Localizer["MudDataGrid.Filter"]</MudButton>
                         </MudItem>
                     </MudGrid>
                 }

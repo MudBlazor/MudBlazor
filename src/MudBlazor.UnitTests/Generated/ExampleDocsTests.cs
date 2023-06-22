@@ -41,6 +41,7 @@ namespace MudBlazor.UnitTests.Components
 #pragma warning restore CS0618
             ctx.Services.AddSingleton<IPopoverService, MockPopoverServiceV2>();
             ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
+            ctx.Services.AddTransient<InternalMudLocalizer>();
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>
                 new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });
