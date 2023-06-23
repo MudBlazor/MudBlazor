@@ -388,6 +388,23 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Test]
+    public void AddMudLocalization_ShouldRegisterServices()
+    {
+        // Arrange
+        var services = new ServiceCollection()
+            .AddLogging()
+            .AddSingleton<IJSRuntime, MockJsRuntime>();
+
+        // Act
+        services.AddMudLocalization();
+        var serviceProvider = services.BuildServiceProvider();
+        var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
+
+        // Assert
+        Assert.IsNotNull(mudLocalizer);
+    }
+
+    [Test]
     public void AddMudServices_ShouldRegisterAllServices()
     {
         // Arrange
@@ -424,6 +441,7 @@ public class ServiceCollectionExtensionsTests
         var jsApiService = serviceProvider.GetService<IJsApiService>();
         var eventListener = serviceProvider.GetService<IEventListener>();
         var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
+        var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
 
         // Assert
         Assert.IsNotNull(dialogService);
@@ -448,6 +466,7 @@ public class ServiceCollectionExtensionsTests
         Assert.IsNotNull(jsApiService);
         Assert.IsNotNull(eventListener);
         Assert.IsNotNull(eventListenerFactory);
+        Assert.IsNotNull(mudLocalizer);
     }
 
     [Test]
@@ -522,6 +541,7 @@ public class ServiceCollectionExtensionsTests
         var jsApiService = serviceProvider.GetService<IJsApiService>();
         var eventListener = serviceProvider.GetService<IEventListener>();
         var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
+        var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
         var snackBarOptions = serviceProvider.GetRequiredService<IOptions<SnackbarConfiguration>>();
         var resizeOptions = serviceProvider.GetRequiredService<IOptions<ResizeOptions>>();
         var resizeObserverOptions = serviceProvider.GetRequiredService<IOptions<ResizeObserverOptions>>();
@@ -554,6 +574,7 @@ public class ServiceCollectionExtensionsTests
         Assert.IsNotNull(jsApiService);
         Assert.IsNotNull(eventListener);
         Assert.IsNotNull(eventListenerFactory);
+        Assert.IsNotNull(mudLocalizer);
 
         // We can't check reference here, instead we need to check each value
         Assert.AreEqual(expectedOptions!.PopoverOptions.QueueDelay, actualPopoverOptions.QueueDelay);

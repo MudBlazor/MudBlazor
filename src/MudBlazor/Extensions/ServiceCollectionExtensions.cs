@@ -403,7 +403,8 @@ namespace MudBlazor.Services
                 .AddMudBlazorJsApi()
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService()
-                .AddMudEventManager();
+                .AddMudEventManager()
+                .AddMudLocalization();
         }
 
         /// <summary>
