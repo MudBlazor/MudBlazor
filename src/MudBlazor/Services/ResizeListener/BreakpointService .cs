@@ -143,7 +143,7 @@ namespace MudBlazor.Services
             //Always wrap in new instance of ResizeOptions and clone values no matter what
             //Because the options can come from the _options(IOptions<ResizeOptions>) - these are the options that user sets when adding BreakpointService in DI
             //Only user is allowed to modify these settings, service should not touch that reference and change it or we get nasty bugs
-            //If we don't always wrap then we would need to write tedious code like if null then wrap, then check the references of options and _options are same and make logic when can't we modify and when we can etc.
+            //If we don't always wrap then we would need to write tedious code like if null then wrap, then check the references of options and _options are same and make logic when we can't modify and when we can etc.
             options = new ResizeOptions
             {
                 BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(options),

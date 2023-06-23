@@ -10,7 +10,7 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// Shares breakpoint definition between <see cref="BreakpointService"/> and <see cref="ResizeListenerService"/>.
+/// Shares breakpoint definitions between <see cref="BreakpointService"/> and <see cref="ResizeListenerService"/>.
 /// </summary>
 /// <remarks>
 /// This class is not really needed when <see cref="ResizeListenerService"/> will be removed, for now it's for consistency.
