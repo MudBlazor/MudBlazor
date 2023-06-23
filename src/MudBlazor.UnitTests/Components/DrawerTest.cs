@@ -208,8 +208,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ResponsiveClosed_ResizeMultiple_CheckStates()
         {
-            var srv = Context.Services.GetService<IResizeListenerService>() as MockResizeListenerService;
-
             var comp = Context.RenderComponent<DrawerResponsiveTest>(Parameter(nameof(DrawerResponsiveTest.PreserveOpenState), true));
 
             await comp.InvokeAsync(() => _breakpointUpdateCallback(Breakpoint.Lg));

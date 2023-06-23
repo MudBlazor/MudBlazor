@@ -70,22 +70,22 @@ namespace MudBlazor.UnitTests.Services
         {
             var option1 = new ResizeOptions
             {
-                BreakpointDefinitions = new Dictionary<string, int>
+                BreakpointDefinitions = new Dictionary<Breakpoint, int>
                 {
-                    { "someKey", 12 },
-                    { "someKey2", 24 },
-                    { "someKey3", 36 },
+                    { Breakpoint.Xl, 12 },
+                    { Breakpoint.Lg, 24 },
+                    { Breakpoint.Md, 36 },
 
                 }
             };
 
             var option2 = new ResizeOptions
             {
-                BreakpointDefinitions = new Dictionary<string, int>
+                BreakpointDefinitions = new Dictionary<Breakpoint, int>
                 {
-                    { "someKey", 12 },
-                    { "someKey2", 24 },
-                    { "someKey3", 36 },
+                    { Breakpoint.Xl, 12 },
+                    { Breakpoint.Lg, 24 },
+                    { Breakpoint.Md, 36 },
                 }
             };
 
@@ -156,9 +156,9 @@ namespace MudBlazor.UnitTests.Services
 
             var option2 = new ResizeOptions
             {
-                BreakpointDefinitions = new Dictionary<string, int>
+                BreakpointDefinitions = new Dictionary<Breakpoint, int>
                 {
-                    { "someKey", 12 },
+                    { Breakpoint.Xl, 12 },
                 }
             };
 
@@ -171,18 +171,18 @@ namespace MudBlazor.UnitTests.Services
         {
             var option1 = new ResizeOptions
             {
-                BreakpointDefinitions = new Dictionary<string, int>
+                BreakpointDefinitions = new Dictionary<Breakpoint, int>
                 {
-                    { "someKey", 12 },
-                    { "someKey2", 24 },
+                    { Breakpoint.Xl, 12 },
+                    { Breakpoint.Lg, 24 },
                 }
             };
 
             var option2 = new ResizeOptions
             {
-                BreakpointDefinitions = new Dictionary<string, int>
+                BreakpointDefinitions = new Dictionary<Breakpoint, int>
                 {
-                    { "someKey", 12 },
+                    { Breakpoint.Xl, 12 },
                 }
             };
 
@@ -195,17 +195,17 @@ namespace MudBlazor.UnitTests.Services
         {
             var option1 = new ResizeOptions
             {
-                BreakpointDefinitions = new Dictionary<string, int>
+                BreakpointDefinitions = new Dictionary<Breakpoint, int>
                 {
-                    { "someKey", 12 },
+                    { Breakpoint.Xl, 12 },
                 }
             };
 
             var option2 = new ResizeOptions
             {
-                BreakpointDefinitions = new Dictionary<string, int>
+                BreakpointDefinitions = new Dictionary<Breakpoint, int>
                 {
-                    { "someKey1", 12 },
+                    { Breakpoint.Lg, 12 },
                 }
             };
 
@@ -218,17 +218,17 @@ namespace MudBlazor.UnitTests.Services
         {
             var option1 = new ResizeOptions
             {
-                BreakpointDefinitions = new Dictionary<string, int>
+                BreakpointDefinitions = new Dictionary<Breakpoint, int>
                 {
-                    { "someKey", 12 },
+                    { Breakpoint.Xl, 12 },
                 }
             };
 
             var option2 = new ResizeOptions
             {
-                BreakpointDefinitions = new Dictionary<string, int>
+                BreakpointDefinitions = new Dictionary<Breakpoint, int>
                 {
-                    { "someKey", 23 },
+                    { Breakpoint.Xl, 23 },
                 }
             };
 

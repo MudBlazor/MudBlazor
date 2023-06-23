@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -64,30 +63,22 @@ namespace MudBlazor.Services
         public async ValueTask<bool> MatchMedia(string mediaQuery) =>
             await _jsRuntime.InvokeAsync<bool>("mudResizeListener.matchMedia", mediaQuery);
 
-        public static Dictionary<Breakpoint, int> DefaultBreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
-        {
-            [Breakpoint.Xl] = 1920,
-            [Breakpoint.Lg] = 1280,
-            [Breakpoint.Md] = 960,
-            [Breakpoint.Sm] = 600,
-            [Breakpoint.Xs] = 0,
-        };
-
         /// <inheritdoc />
         public async Task<Breakpoint> GetBreakpoint()
         {
+            var defaultBreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(_options);
             // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
             if (_windowSize == null)
                 _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
             if (_windowSize == null)
                 return Breakpoint.Xs;
-            if (_windowSize.Width >= DefaultBreakpointDefinitions[Breakpoint.Xl])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Xl])
                 return Breakpoint.Xl;
-            if (_windowSize.Width >= DefaultBreakpointDefinitions[Breakpoint.Lg])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Lg])
                 return Breakpoint.Lg;
-            if (_windowSize.Width >= DefaultBreakpointDefinitions[Breakpoint.Md])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Md])
                 return Breakpoint.Md;
-            if (_windowSize.Width >= DefaultBreakpointDefinitions[Breakpoint.Sm])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Sm])
                 return Breakpoint.Sm;
             return Breakpoint.Xs;
         }
@@ -148,10 +139,19 @@ namespace MudBlazor.Services
             }
 
             options ??= _options;
-            if (options.BreakpointDefinitions == null || options.BreakpointDefinitions.Count == 0)
+
+            //Always wrap in new instance of ResizeOptions and clone values no matter what
+            //Because the options can come from the _options(IOptions<ResizeOptions>) - these are the options that user sets when adding BreakpointService in DI
+            //Only user is allowed to modify these settings, service should not touch that reference and change it or we get nasty bugs
+            //If we don't always wrap then we would need to write tedious code like if null then wrap, then check the references of options and _options are same and make logic when can't we modify and when we can etc.
+            options = new ResizeOptions
             {
-                options.BreakpointDefinitions = DefaultBreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
-            }
+                BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(options),
+                EnableLogging = options.EnableLogging,
+                NotifyOnBreakpointOnly = options.NotifyOnBreakpointOnly,
+                ReportRate = options.ReportRate,
+                SuppressInitEvent = options.SuppressInitEvent
+            };
 
             DotNetRef ??= DotNetObjectReference.Create(this);
 
