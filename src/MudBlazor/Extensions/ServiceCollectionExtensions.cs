@@ -312,7 +312,6 @@ namespace MudBlazor.Services
             return services;
         }
 
-
         /// <summary>
         /// Adds ScrollSpy as a transient instance.
         /// </summary>
