@@ -14,13 +14,12 @@ namespace MudBlazor
     /// </summary>
     internal sealed class InternalMudLocalizer
     {
-        private IStringLocalizer _localizer;
-        private MudLocalizer? _mudLocalizer;
-        
+        private readonly IStringLocalizer _localizer;
+        private readonly MudLocalizer? _mudLocalizer;
+
         public InternalMudLocalizer(ILoggerFactory loggerFactory, MudLocalizer? mudLocalizer = null)
         {
-            var factory = new ResourceManagerStringLocalizerFactory(Options.Create(new LocalizationOptions()),
-                loggerFactory);
+            var factory = new ResourceManagerStringLocalizerFactory(Options.Create(new LocalizationOptions()), loggerFactory);
             _localizer = factory.Create(typeof(LanguageResource));
             _mudLocalizer = mudLocalizer;
         }
