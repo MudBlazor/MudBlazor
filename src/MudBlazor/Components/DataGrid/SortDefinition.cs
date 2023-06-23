@@ -8,5 +8,5 @@ using System.Collections.Generic;
 namespace MudBlazor
 {
 #nullable enable
-    public sealed record SortDefinition<T>(string SortBy, bool Descending, int Index, Func<T, object> SortFunc, IComparer<object> Comparer = null);
+    public sealed record SortDefinition<T>(string SortBy, bool Descending, int Index, Func<T, object> SortFunc, IComparer<object>? Comparer = null);
 }
