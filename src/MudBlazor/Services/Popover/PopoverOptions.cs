@@ -28,7 +28,7 @@ namespace MudBlazor
         /// Gets the delay for batch popovers detachment.
         /// The default value is <c>0.5 seconds</c>.
         /// </summary>
-        public TimeSpan QueueDelay { get; } = TimeSpan.FromSeconds(0.5);
+        public TimeSpan QueueDelay { get; set; } = TimeSpan.FromSeconds(0.5);
 
         /// <summary>
         /// Gets or sets a value indicating whether to throw an exception when a duplicate <see cref="MudPopoverProvider"/> is encountered.

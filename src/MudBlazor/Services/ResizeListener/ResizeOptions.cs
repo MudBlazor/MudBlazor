@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace MudBlazor.Services
 {
+#nullable enable
     public class ResizeOptions : IEquatable<ResizeOptions>
     {
         /// <summary>
@@ -29,27 +31,25 @@ namespace MudBlazor.Services
         /// <summary>
         /// Breakpoint definitions.
         /// </summary>
-        public Dictionary<string, int> BreakpointDefinitions { get; set; } = new();
+        public Dictionary<string, int>? BreakpointDefinitions { get; set; } = new();
 
-        public static bool operator ==(ResizeOptions l, ResizeOptions r)
+        public static bool operator ==(ResizeOptions? l, ResizeOptions? r)
         {
-            if (l is null && r is null)
+            if (ReferenceEquals(l, r))
                 return true;
-            if (l is null && r is not null)
+            if (ReferenceEquals(l, null))
                 return false;
+            if (ReferenceEquals(r, null))
+                return false;
+
             return l.Equals(r);
         }
 
         public static bool operator !=(ResizeOptions l, ResizeOptions r) => !(l == r);
 
-        public override bool Equals(object obj)
-        {
-            if (obj is not ResizeOptions) { return false; }
+        public override bool Equals(object? obj) => obj is ResizeOptions options && Equals(options);
 
-            return Equals((ResizeOptions)obj);
-        }
-
-        public bool Equals(ResizeOptions other)
+        public bool Equals(ResizeOptions? other)
         {
             if (other is null)
                 return false;
@@ -60,7 +60,6 @@ namespace MudBlazor.Services
             {
                 return false;
             }
-
             if (BreakpointDefinitions is null)
                 return other.BreakpointDefinitions is null;
             if (other.BreakpointDefinitions is null)
@@ -78,6 +77,7 @@ namespace MudBlazor.Services
             return true;
         }
 
-        public override int GetHashCode() => ReportRate;
+
+        public override int GetHashCode() => RuntimeHelpers.GetHashCode(this);
     }
 }
