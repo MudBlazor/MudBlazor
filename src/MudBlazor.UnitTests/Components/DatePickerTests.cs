@@ -765,14 +765,15 @@ namespace MudBlazor.UnitTests.Components
         public void AdditionalDateClassesFunc_ClassIsAdded()
         {
             Func<DateTime, string> additionalDateClassesFunc = date => "__addedtestclass__";
-            var comp = Context.RenderComponent<MudDatePicker>(
-                Parameter(nameof(MudDatePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
+            
+            var comp = OpenPicker(Parameter(nameof(MudDatePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
 
-            var daysCount = comp.FindAll("button.mud-picker-calendar-day").Select(button =>
-                ((IHtmlBaseElement)button)).Count();
+            var daysCount = comp.FindAll("button.mud-picker-calendar-day")
+                                .Select(button => (IHtmlButtonElement)button)
+                                .Count();
 
-            comp.FindAll("button.mud-picker-calendar-day").Select(button =>
-                ((IHtmlBaseElement)button).ClassName.Contains("__addedtestclass__"))
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(button => ((IHtmlButtonElement)button).ClassName.Contains("__addedtestclass__"))
                 .Should().HaveCount(daysCount);
         }
 

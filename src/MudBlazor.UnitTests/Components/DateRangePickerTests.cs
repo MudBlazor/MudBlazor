@@ -452,7 +452,23 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
                 .Should().OnlyContain(disabled => disabled == false);
         }
+        
+        [Test]
+        public void AdditionalDateClassesFunc_ClassIsAdded()
+        {
+            Func<DateTime, string> additionalDateClassesFunc = date => "__addedtestclass__";
+            
+            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
 
+            var daysCount = comp.FindAll("button.mud-picker-calendar-day")
+                                .Select(button => (IHtmlButtonElement)button)
+                                .Count();
+
+            comp.FindAll("button.mud-day")
+                .Where(button => ((IHtmlButtonElement)button).ClassName.Contains("__addedtestclass__"))
+                .Should().HaveCount(daysCount);
+        }
+        
         [Test]
         public void SetRangeTextFunc_NullInputNoError()
         {
