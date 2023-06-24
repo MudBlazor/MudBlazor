@@ -177,14 +177,12 @@ namespace MudBlazor
                     SetBoolValueAsync(true);
                     break;
                 case "Backspace":
+                    if (TriState)
                     {
-                        if (TriState)
-                        {
-                            SetBoolValueAsync(null);
-                        }
-
-                        break;
+                        SetBoolValueAsync(null);
                     }
+
+                    break;
                 case " ":
                     switch (BoolValue)
                     {
