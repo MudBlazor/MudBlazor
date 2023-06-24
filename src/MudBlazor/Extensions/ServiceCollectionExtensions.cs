@@ -347,6 +347,17 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        /// Adds the services required for translations.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        public static IServiceCollection AddMudLocalization(this IServiceCollection services)
+        {
+            services.TryAddTransient<InternalMudLocalizer>();
+
+            return services;
+        }
+
+        /// <summary>
         /// Adds common services required by MudBlazor components
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -368,7 +379,8 @@ namespace MudBlazor.Services
                 .AddMudBlazorJsApi()
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService(configuration.PopoverOptions)
-                .AddMudEventManager();
+                .AddMudEventManager()
+                .AddMudLocalization();
         }
 
         /// <summary>
@@ -391,7 +403,8 @@ namespace MudBlazor.Services
                 .AddMudBlazorJsApi()
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService()
-                .AddMudEventManager();
+                .AddMudEventManager()
+                .AddMudLocalization();
         }
 
         /// <summary>
@@ -456,7 +469,8 @@ namespace MudBlazor.Services
                     popoverOptions.ThrowOnDuplicateProvider = options.PopoverOptions.ThrowOnDuplicateProvider;
                 })
                 .AddMudBlazorScrollSpy()
-                .AddMudEventManager();
+                .AddMudEventManager()
+                .AddMudLocalization();
         }
     }
 }
