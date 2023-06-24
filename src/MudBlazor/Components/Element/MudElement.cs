@@ -24,6 +24,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Element.Misc)]
         public string HtmlTag { get; set; } = "span";
+
         /// <summary>
         /// The ElementReference to bind to.
         /// Use like @bind-Ref="myRef"
