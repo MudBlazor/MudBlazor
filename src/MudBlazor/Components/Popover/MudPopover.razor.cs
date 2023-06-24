@@ -45,7 +45,7 @@ namespace MudBlazor
             };
         }
 
-        [CascadingParameter(Name = "RightToLeft")] 
+        [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace MudBlazor
         /// </summary>
         /// 
         [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
-        [Parameter] 
+        [Parameter]
         public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>

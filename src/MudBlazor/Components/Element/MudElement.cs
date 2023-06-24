@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// Primitive component which allows rendering any HTML element we want
     /// through the HtmlTag property
@@ -15,7 +16,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Element.Misc)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// The HTML element that will be rendered in the root by the component
@@ -31,7 +32,8 @@ namespace MudBlazor
         [Category(CategoryTypes.Element.Misc)]
         public ElementReference? Ref { get; set; }
 
-        [Parameter] public EventCallback<ElementReference> RefChanged { get; set; }
+        [Parameter]
+        public EventCallback<ElementReference> RefChanged { get; set; }
 
         /// <summary>
         /// Calling StateHasChanged to refresh the component's state
