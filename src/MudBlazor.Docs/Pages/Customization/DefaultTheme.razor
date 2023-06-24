@@ -212,7 +212,9 @@
 
     private void LoadPalette()
     {
+#pragma warning disable CS0618
         foreach (var value in typeof(Palette).GetProperties())
+#pragma warning restore CS0618
         {
             var newprop = new ApiDefaultTheme()
             {

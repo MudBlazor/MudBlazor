@@ -4,7 +4,9 @@
 
 namespace MudBlazor;
 
+#pragma warning disable CS0618
 public class PaletteLight : Palette
+#pragma warning restore CS0618
 {
     // everything is inherited from Palette so people will know about it.
 }

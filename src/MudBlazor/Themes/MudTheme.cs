@@ -2,9 +2,10 @@
 {
     public class MudTheme
     {
-        //public Breakpoints Breakpoints { get; set; }
+#pragma warning disable CS0618
         public Palette Palette { get; set; }
         public Palette PaletteDark { get; set; }
+#pragma warning restore CS0618
         public Shadow Shadows { get; set; }
         public Typography Typography { get; set; }
         public LayoutProperties LayoutProperties { get; set; }
