@@ -5,16 +5,19 @@ using MudBlazor.Services;
 
 namespace MudBlazor
 {
-
+#nullable enable
     public partial class MudHidden : MudComponentBase, IAsyncDisposable
     {
-        private Breakpoint _currentBreakpoint = Breakpoint.None;
+        private bool _isHidden = true;
         private bool _serviceIsReady = false;
         private Guid _breakpointServiceSubscriptionId;
+        private Breakpoint _currentBreakpoint = Breakpoint.None;
 
-        [Inject] public IBreakpointService BreakpointService { get; set; }
+        [Inject]
+        public IBreakpointService BreakpointService { get; set; } = null!;
 
-        [CascadingParameter] public Breakpoint CurrentBreakpointFromProvider { get; set; } = Breakpoint.None;
+        [CascadingParameter]
+        public Breakpoint CurrentBreakpointFromProvider { get; set; } = Breakpoint.None;
 
         /// <summary>
         /// The screen size(s) depending on which the ChildContent should not be rendered (or should be, if Invert is true)
@@ -30,8 +33,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Hidden.Behavior)]
         public bool Invert { get; set; }
 
-        private bool _isHidden = true;
-
         /// <summary>
         /// True if the component is not visible (two-way bindable)
         /// </summary>
@@ -46,7 +47,6 @@ namespace MudBlazor
                 {
                     _isHidden = value;
                     IsHiddenChanged.InvokeAsync(_isHidden);
-
                 }
             }
         }
@@ -54,14 +54,15 @@ namespace MudBlazor
         /// <summary>
         /// Fires when the breakpoint changes visibility of the component
         /// </summary>
-        [Parameter] public EventCallback<bool> IsHiddenChanged { get; set; }
+        [Parameter]
+        public EventCallback<bool> IsHiddenChanged { get; set; }
 
         /// <summary>
         /// Child content of component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         protected void Update(Breakpoint currentBreakpoint)
         {
@@ -69,14 +70,20 @@ namespace MudBlazor
             {
                 currentBreakpoint = CurrentBreakpointFromProvider;
             }
-            else if (_serviceIsReady == false) { return; }
+            else if (!_serviceIsReady)
+            {
+                return;
+            }
 
-            if (currentBreakpoint == Breakpoint.None) { return; }
+            if (currentBreakpoint == Breakpoint.None)
+            {
+                return;
+            }
 
             _currentBreakpoint = currentBreakpoint;
 
             var hidden = BreakpointService.IsMediaSize(Breakpoint, currentBreakpoint);
-            if (Invert == true)
+            if (Invert)
             {
                 hidden = !hidden;
             }
@@ -93,7 +100,7 @@ namespace MudBlazor
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
-            if (firstRender == true)
+            if (firstRender)
             {
                 if (CurrentBreakpointFromProvider == Breakpoint.None)
                 {
