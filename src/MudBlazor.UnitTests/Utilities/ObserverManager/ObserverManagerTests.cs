@@ -259,7 +259,7 @@ public class ObserverManagerTests
 
         observerManager.Subscribe(DefunctObserverId, DefunctObserver);
 
-        bool Predicate(string observer) => observer == DefunctObserver;
+        bool Predicate(int id, string observer) => observer == DefunctObserver;
 
         async Task NotificationAsync(string observer)
         {

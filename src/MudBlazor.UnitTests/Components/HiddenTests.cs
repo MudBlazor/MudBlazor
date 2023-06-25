@@ -1,11 +1,9 @@
-﻿
-#pragma warning disable CS1998 // async without await
-
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
@@ -13,6 +11,7 @@ using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
+#nullable enable
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
@@ -25,19 +24,30 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true, true, false)]
         public void Content_Visible(bool mediaResult, bool invert, bool isHidden)
         {
-            var listenerMock = new Mock<IBreakpointService>();
-            listenerMock.Setup(x => x.SubscribeAsync(It.IsAny<Action<Breakpoint>>())).ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md)).Verifiable();
-            listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Md)).Returns(mediaResult).Verifiable();
-
-            Context.Services.AddSingleton(sp => listenerMock.Object);
-
-            var comp = Context.RenderComponent<SimpleMudHiddenTest>(p =>
+            BrowserWindowSize GetBrowserSize()
             {
-                p.Add(x => x.Breakpoint, Breakpoint.Lg);
-                p.Add(x => x.Invert, invert);
+                return mediaResult
+                    ? new BrowserWindowSize { Height = 720, Width = 1280 } //Lg
+                    : new BrowserWindowSize { Height = 1080, Width = 1920 }; //Xl
+            }
+
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+
+            jsRuntimeMock
+                .Setup(expression => expression.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()))
+                .ReturnsAsync(GetBrowserSize())
+                .Verifiable();
+
+            Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
+
+            var comp = Context.RenderComponent<SimpleMudHiddenTest>(parameterBuilder =>
+            {
+                parameterBuilder.Add(parameter => parameter.Breakpoint, Breakpoint.Lg);
+                parameterBuilder.Add(parameter => parameter.Invert, invert);
             });
 
-            if (isHidden == true)
+            if (isHidden)
             {
                 Assert.Throws<ElementNotFoundException>(() => comp.Find("p"));
             }
@@ -46,54 +56,64 @@ namespace MudBlazor.UnitTests.Components
                 comp.Find("p").TextContent.Should().Be("MudHidden content");
             }
 
-            listenerMock.Verify();
+            jsRuntimeMock.Verify();
         }
 
         [Test]
-        public void SizeChanged()
+        public async Task SizeChanged()
         {
-            Action<Breakpoint> callback = null;
+            BrowserWindowSize GetBrowserSize()
+            {
+                return new BrowserWindowSize { Height = 1080, Width = 1920 }; //Xl
+            }
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
 
-            var listenerMock = new Mock<IBreakpointService>();
-            listenerMock.Setup(x => x.SubscribeAsync(It.IsAny<Action<Breakpoint>>()))
-                .ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
-                .Callback<Action<Breakpoint>>(x => callback = x)
+            jsRuntimeMock
+                .Setup(expression => expression.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()))
+                .ReturnsAsync(GetBrowserSize())
                 .Verifiable();
 
-            listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Md)).Returns(false).Verifiable();
-            listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Xs)).Returns(true).Verifiable();
-            listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Xl)).Returns(false).Verifiable();
+            Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
 
-            Context.Services.AddSingleton(sp => listenerMock.Object);
-
-            var comp = Context.RenderComponent<SimpleMudHiddenTest>(p =>
+            var component = Context.RenderComponent<SimpleMudHiddenTest>(parameterBuilder =>
             {
-                p.Add(x => x.Breakpoint, Breakpoint.Lg);
-                p.Add(x => x.Invert, false);
+                parameterBuilder.Add(parameter => parameter.Breakpoint, Breakpoint.Lg);
+                parameterBuilder.Add(parameter => parameter.Invert, false);
             });
+            var mudHiddenComponent = component.FindComponent<MudHidden>();
 
-            comp.Find("p").TextContent.Should().Be("MudHidden content");
+            component.Find("p").TextContent.Should().Be("MudHidden content");
+            var subscription = browserViewportService.GetInternalSubscription(mudHiddenComponent.Instance)!;
 
-            comp.InvokeAsync(() => callback.Invoke(Breakpoint.Xs));
+            await component.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 720, Width = 1280 }, Breakpoint.Lg, subscription.JavaScriptListenerId));
 
-            Assert.Throws<ElementNotFoundException>(() => comp.Find("p"));
+            Assert.Throws<ElementNotFoundException>(() => component.Find("p"));
 
-            comp.InvokeAsync(() => callback.Invoke(Breakpoint.Xl));
-            comp.Find("p").TextContent.Should().Be("MudHidden content");
+            await component.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 1080, Width = 1920 }, Breakpoint.Xl, subscription.JavaScriptListenerId));
+            component.Find("p").TextContent.Should().Be("MudHidden content");
 
-            comp.Instance.HiddenChangedHistory.Should().HaveCount(3).And.BeEquivalentTo(new[] { false, true, false });
+            component.Instance.HiddenChangedHistory.Should().HaveCount(3).And.BeEquivalentTo(new[] { false, true, false });
 
-            listenerMock.Verify();
+            jsRuntimeMock.Verify();
         }
 
         [Test]
         public void InvertChangedAfterInitializing()
         {
-            var listenerMock = new Mock<IBreakpointService>();
-            listenerMock.Setup(x => x.SubscribeAsync(It.IsAny<Action<Breakpoint>>())).ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md)).Verifiable();
-            listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Md)).Returns(false).Verifiable();
+            BrowserWindowSize GetBrowserSize()
+            {
+                return new BrowserWindowSize { Height = 640, Width = 960 }; //Md
+            }
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
 
-            Context.Services.AddSingleton(sp => listenerMock.Object);
+            jsRuntimeMock
+                .Setup(expression => expression.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()))
+                .ReturnsAsync(GetBrowserSize())
+                .Verifiable();
+
+            Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
 
             var comp = Context.RenderComponent<SimpleMudHiddenTest>(p =>
             {
@@ -107,179 +127,185 @@ namespace MudBlazor.UnitTests.Components
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find("p"));
 
-            listenerMock.Verify(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Md), Times.Exactly(4));
-            listenerMock.Verify();
+            jsRuntimeMock.Verify();
         }
 
         [Test]
         public void ReferenceBreakpointChangedAfterInitializing()
         {
-            var listenerMock = new Mock<IBreakpointService>();
-            listenerMock.Setup(x => x.SubscribeAsync(It.IsAny<Action<Breakpoint>>())).ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md)).Verifiable();
-            listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Md)).Returns(false).Verifiable();
-            listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Xs, Breakpoint.Md)).Returns(true).Verifiable();
-
-            Context.Services.AddSingleton(sp => listenerMock.Object);
-
-            var comp = Context.RenderComponent<SimpleMudHiddenTest>(p =>
+            BrowserWindowSize GetBrowserSize()
             {
-                p.Add(x => x.Breakpoint, Breakpoint.Lg);
-                p.Add(x => x.Invert, false);
+                return new BrowserWindowSize { Height = 640, Width = 960 }; //Md
+            }
+
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+
+            jsRuntimeMock
+                .Setup(expression => expression.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()))
+                .ReturnsAsync(GetBrowserSize())
+                .Verifiable();
+
+            Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
+
+            var component = Context.RenderComponent<SimpleMudHiddenTest>(parameterBuilder =>
+            {
+                parameterBuilder.Add(parameter => parameter.Breakpoint, Breakpoint.Lg);
+                parameterBuilder.Add(parameter => parameter.Invert, false);
             });
 
-            comp.Find("p").TextContent.Should().Be("MudHidden content");
+            component.Find("p").TextContent.Should().Be("MudHidden content");
 
-            comp.SetParametersAndRender(p => p.Add(x => x.Breakpoint, Breakpoint.Xs));
+            component.SetParametersAndRender(parameter => parameter.Add(x => x.Breakpoint, Breakpoint.Md));
 
-            Assert.Throws<ElementNotFoundException>(() => comp.Find("p"));
+            Assert.Throws<ElementNotFoundException>(() => component.Find("p"));
 
-            listenerMock.Verify(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Md), Times.Exactly(2));
-            listenerMock.Verify(x => x.IsMediaSize(Breakpoint.Xs, Breakpoint.Md), Times.Exactly(2));
-            listenerMock.Verify();
+            jsRuntimeMock.Verify();
         }
 
         [Test]
-        public void SizeChangedToNone()
+        public async Task SizeChangedToNone()
         {
-            Action<Breakpoint> callback = null;
+            BrowserWindowSize GetBrowserSize()
+            {
+                return new BrowserWindowSize { Height = 640, Width = 960 }; //Md
+            }
 
-            var listenerMock = new Mock<IBreakpointService>();
-            listenerMock.Setup(x => x.SubscribeAsync(It.IsAny<Action<Breakpoint>>()))
-                .ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
-                .Callback<Action<Breakpoint>>(x => callback = x)
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+
+            jsRuntimeMock
+                .Setup(expression => expression.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()))
+                .ReturnsAsync(GetBrowserSize())
                 .Verifiable();
 
-            listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Md)).Returns(false).Verifiable();
+            Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
 
-            Context.Services.AddSingleton(sp => listenerMock.Object);
-
-            var comp = Context.RenderComponent<SimpleMudHiddenTest>(p =>
+            var component = Context.RenderComponent<SimpleMudHiddenTest>(parameterBuilder =>
             {
-                p.Add(x => x.Breakpoint, Breakpoint.Lg);
-                p.Add(x => x.Invert, false);
+                parameterBuilder.Add(parameter => parameter.Breakpoint, Breakpoint.Lg);
+                parameterBuilder.Add(parameter => parameter.Invert, false);
             });
 
-            comp.Find("p").TextContent.Should().Be("MudHidden content");
+            component.Find("p").TextContent.Should().Be("MudHidden content");
 
-            comp.InvokeAsync(() => callback.Invoke(Breakpoint.None));
-            comp.Find("p").TextContent.Should().Be("MudHidden content");
+            await component.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize(), Breakpoint.None, Guid.Empty));
+            component.Find("p").TextContent.Should().Be("MudHidden content");
 
-            comp.Instance.HiddenChangedHistory.Should().ContainSingle().And.BeEquivalentTo(new[] { false });
+            component.Instance.HiddenChangedHistory.Should().ContainSingle().And.BeEquivalentTo(new[] { false });
 
-            listenerMock.Verify();
+            jsRuntimeMock.Verify();
         }
 
         [Test]
         public void WithinMudBreakpointProvider()
         {
-            var listenerMock = new Mock<IBreakpointService>();
-            listenerMock.Setup(x => x.SubscribeAsync(It.IsAny<Action<Breakpoint>>()))
-                .ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
-                .Verifiable();
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
 
-            listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Md)).Returns(false).Verifiable();
+            Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
 
-            Context.Services.AddSingleton(sp => listenerMock.Object);
-
-            var comp = Context.RenderComponent<BreakpointProviderWithMudHiddenTest>(p =>
+            var component = Context.RenderComponent<BreakpointProviderWithMudHiddenTest>(parameterBuilder =>
             {
-                p.Add(x => x.Breakpoint, Breakpoint.Lg);
+                parameterBuilder.Add(parameter => parameter.Breakpoint, Breakpoint.Lg);
             });
 
-            var items = comp.FindAll("p");
+            var items = component.FindAll("p");
 
             items.Should().HaveCount(4);
 
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
                 var item = items[i];
                 item.TextContent.Should().Be($"MudHidden content {i + 1}");
             }
 
-            listenerMock.Verify(x => x.SubscribeAsync(It.IsAny<Action<Breakpoint>>()), Times.Once());
-            listenerMock.Verify(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Md), Times.Exactly(8));
-            listenerMock.Verify();
+            jsRuntimeMock.Verify();
         }
 
         [Test]
-        public void WithinMudBreakpointProvider_UpdateBreakpointValue()
+        public async Task WithinMudBreakpointProvider_UpdateBreakpointValue()
         {
-            Action<Breakpoint> callback = null;
+            BrowserWindowSize GetBrowserSize()
+            {
+                return new BrowserWindowSize { Height = 640, Width = 960 }; //Md
+            }
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
 
-            var listenerMock = new Mock<IBreakpointService>();
-            listenerMock.Setup(x => x.SubscribeAsync(It.IsAny<Action<Breakpoint>>()))
-                .ReturnsAsync(new BreakpointServiceSubscribeResult(Guid.NewGuid(), Breakpoint.Md))
-                .Callback<Action<Breakpoint>>(x => callback = x)
+            jsRuntimeMock
+                .Setup(expression => expression.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()))
+                .ReturnsAsync(GetBrowserSize())
+                .Verifiable();
+            jsRuntimeMock
+                .Setup(expression => expression.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()))
+                .ReturnsAsync(Mock.Of<IJSVoidResult>())
                 .Verifiable();
 
-            listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Md)).Returns(false).Verifiable();
-            listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Xs)).Returns(true).Verifiable();
-            listenerMock.Setup(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Sm)).Returns(false).Verifiable();
-            Context.Services.AddSingleton(sp => listenerMock.Object);
+            Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
 
-            var comp = Context.RenderComponent<BreakpointProviderWithMudHiddenTest>(p =>
+            var component = Context.RenderComponent<BreakpointProviderWithMudHiddenTest>(parameterBuilder =>
             {
-                p.Add(x => x.Breakpoint, Breakpoint.Lg);
+                parameterBuilder.Add(parameter => parameter.Breakpoint, Breakpoint.Lg);
             });
 
-            var items = comp.FindAll("p");
+            var items = component.FindAll("p");
 
             items.Should().HaveCount(4);
 
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
                 var item = items[i];
                 item.TextContent.Should().Be($"MudHidden content {i + 1}");
             }
 
-            comp.InvokeAsync(() => callback(Breakpoint.Xs));
-            items = comp.FindAll("p");
+            var mudBreakpointProviderComponent = component.FindComponent<MudBreakpointProvider>();
+            var subscription = browserViewportService.GetInternalSubscription(mudBreakpointProviderComponent.Instance)!;
+
+            await component.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 720, Width = 1280 }, Breakpoint.Lg, subscription.JavaScriptListenerId));
+            items = component.FindAll("p");
             items.Should().BeEmpty();
 
-            comp.InvokeAsync(() => callback(Breakpoint.Sm));
-            items = comp.FindAll("p");
+            await component.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 400, Width = 600 }, Breakpoint.Sm, subscription.JavaScriptListenerId));
+            items = component.FindAll("p");
 
             items.Should().HaveCount(4);
 
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
                 var item = items[i];
                 item.TextContent.Should().Be($"MudHidden content {i + 1}");
             }
 
-            comp.Instance.BreakpointChangedHistory.Should().HaveCount(3).And.BeEquivalentTo(new[] { Breakpoint.Md, Breakpoint.Xs, Breakpoint.Sm });
+            component.Instance.BreakpointChangedHistory.Should().HaveCount(3).And.BeEquivalentTo(new[] { Breakpoint.Md, Breakpoint.Lg, Breakpoint.Sm });
 
-            listenerMock.Verify(x => x.SubscribeAsync(It.IsAny<Action<Breakpoint>>()), Times.Once());
-            listenerMock.Verify(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Md), Times.Exactly(8));
-            listenerMock.Verify(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Xs), Times.Exactly(16));
-            listenerMock.Verify(x => x.IsMediaSize(Breakpoint.Lg, Breakpoint.Sm), Times.Exactly(16));
-
-            listenerMock.Verify();
+            jsRuntimeMock.Verify();
         }
 
         [Test]
         public void TestSemaphore_RenderInParallel()
         {
-            Mock<IBrowserWindowSizeProvider> sizeMock = new Mock<IBrowserWindowSizeProvider>(MockBehavior.Strict);
-            sizeMock.Setup(x => x.GetBrowserWindowSize()).ReturnsAsync(new BrowserWindowSize { Width = 1920 });
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
 
-            Mock<IJSRuntime> _jsruntimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
-
-            _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()))
+            jsRuntimeMock
+                .Setup(expression => expression.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()))
+                .ReturnsAsync(new BrowserWindowSize { Height = 1080, Width = 1920 });
+            jsRuntimeMock
+                .Setup(expression => expression.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()))
                 .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200)).Verifiable();
-            _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListeners", It.IsAny<object[]>()))
-    .ReturnsAsync(Mock.Of<IJSVoidResult>);
+            jsRuntimeMock
+                .Setup(expression => expression.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListeners", It.IsAny<object[]>()))
+                .ReturnsAsync(Mock.Of<IJSVoidResult>);
 
-            BreakpointService service = new BreakpointService(_jsruntimeMock.Object, sizeMock.Object);
+            Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
 
-            Context.Services.AddSingleton<IBreakpointService, BreakpointService>(sp => service);
+            var component = Context.RenderComponent<RenderMultipleHiddenInParallel>();
 
-            var comp = Context.RenderComponent<RenderMultipleHiddenInParallel>();
-
-            comp.WaitForAssertion(() => comp.FindAll(".xl").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            comp.WaitForAssertion(() => comp.FindAll(".lg-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            comp.WaitForAssertion(() => comp.FindAll(".md-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            comp.WaitForAssertion(() => comp.FindAll(".sm-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            component.WaitForAssertion(() => component.FindAll(".xl").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            component.WaitForAssertion(() => component.FindAll(".lg-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            component.WaitForAssertion(() => component.FindAll(".md-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            component.WaitForAssertion(() => component.FindAll(".sm-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
         }
     }
 }

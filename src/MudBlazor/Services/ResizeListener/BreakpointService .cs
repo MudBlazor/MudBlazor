@@ -188,7 +188,6 @@ namespace MudBlazor.Services
                 if (_breakpoint == Breakpoint.None)
                 {
                     _breakpoint = await GetBreakpoint();
-
                 }
             }
 
