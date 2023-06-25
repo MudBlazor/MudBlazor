@@ -1681,8 +1681,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task FormWithChildFormTest()
         {
             var comp = Context.RenderComponent<FormWithChildForm>();
-            // var parentForm = comp.FindComponent<MudForm>().Instance;
-            // var parentTextField = comp.Find(".parent-text-field");
             var childFormSwitch = comp.Find(".mud-switch-input");
             var parentForm = comp.FindComponent<MudForm>().Instance;
             var parentTextFieldCmp = comp.FindComponent<MudTextField<string>>();
