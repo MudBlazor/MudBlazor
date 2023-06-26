@@ -6,6 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudTooltip : MudComponentBase
     {
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
@@ -91,14 +92,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// Tooltip content. May contain any valid html
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Behavior)]
-        public RenderFragment TooltipContent { get; set; }
+        public RenderFragment? TooltipContent { get; set; }
 
         /// <summary>
         /// Determines if this component should be inline with it's surrounding (default) or if it should behave like a block element.
@@ -112,12 +113,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public string RootStyle { get; set; }
+        public string? RootStyle { get; set; }
 
         /// Classes applied directly to root component of the tooltip
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public string RootClass { get; set; }
+        public string? RootClass { get; set; }
 
         /// <summary>
         /// Determines on which events the tooltip will act
