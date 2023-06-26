@@ -5,12 +5,7 @@
 
 @foreach (var fragment in _fragments.Span)
 {
-   if (!string.IsNullOrWhiteSpace(_regex)
-       && Regex.IsMatch(fragment,
-           _regex,
-           CaseSensitive
-               ? RegexOptions.None
-               : RegexOptions.IgnoreCase))
+    if (IsMatch(fragment))
    {
       <mark class="@Class" style="@Style" @attributes="@UserAttributes"> @fragment </mark>
    }
