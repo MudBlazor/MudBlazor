@@ -5,14 +5,12 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
     public partial class MudTimelineItem : MudComponentBase, IDisposable
-
     {
         protected string Classnames =>
             new CssBuilder("mud-timeline-item")
@@ -21,18 +19,19 @@ namespace MudBlazor
                 .Build();
 
         protected string DotClassnames =>
-        new CssBuilder("mud-timeline-item-dot")
-          .AddClass($"mud-timeline-dot-size-{Size.ToDescriptionString()}")
-          .AddClass($"mud-elevation-{Elevation.ToString()}")
-        .Build();
+            new CssBuilder("mud-timeline-item-dot")
+                .AddClass($"mud-timeline-dot-size-{Size.ToDescriptionString()}")
+                .AddClass($"mud-elevation-{Elevation}")
+                .Build();
 
         protected string DotInnerClassnames =>
-        new CssBuilder("mud-timeline-item-dot-inner")
-          .AddClass($"mud-timeline-dot-fill", Variant == Variant.Filled)
-          .AddClass($"mud-timeline-dot-{Color.ToDescriptionString()}")
-        .Build();
+            new CssBuilder("mud-timeline-item-dot-inner")
+                .AddClass($"mud-timeline-dot-fill", Variant == Variant.Filled)
+                .AddClass($"mud-timeline-dot-{Color.ToDescriptionString()}")
+                .Build();
 
-        [CascadingParameter] protected internal MudBaseItemsControl<MudTimelineItem>? Parent { get; set; }
+        [CascadingParameter]
+        protected internal MudBaseItemsControl<MudTimelineItem>? Parent { get; set; }
 
         /// <summary>
         /// Dot Icon
@@ -121,6 +120,7 @@ namespace MudBlazor
         protected override Task OnInitializedAsync()
         {
             Parent?.Items.Add(this);
+
             return Task.CompletedTask;
         }
 
@@ -134,7 +134,5 @@ namespace MudBlazor
         {
             Parent?.Items.Remove(this);
         }
-
-
     }
 }
