@@ -9,6 +9,7 @@
                          HighlightedText="@highlightedText"
                          UntilNextBoundary="@untilNextBoundary"
                          CaseSensitive="@caseSensitive"
+                         Markup="@markup"
                          Class="@(untilNextBoundary ? "pa-1 mud-elevation-2 mud-theme-primary":"")" />
         </MudText>
     }
@@ -16,16 +17,17 @@
 </MudPaper>
 <MudSwitch @bind-Checked="@untilNextBoundary" Label="UntilNextBoundary" Color="Color.Primary" />
 <MudSwitch @bind-Checked="@caseSensitive" Label="CaseSensitive" Color="Color.Primary" />
-
+<MudSwitch @bind-Checked="@markup" Label="Markup" Color="Color.Primary" />
 
 @code{
-    string highlightedText = "Mud";
-    bool untilNextBoundary;
-    bool caseSensitive;
-    IEnumerable<string> paragraphs = new List<string>
+   string highlightedText = "mud";
+   bool untilNextBoundary;
+   bool caseSensitive;
+   bool markup;
+   IEnumerable<string> paragraphs = new List<string>
     {
-        "MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure.",
-        "MudLists are easily customizable and scrollable lists. Make them suit your needs with avatars, icons, or something like checkboxes.",
-        "Use mud-* classes to customize your MudBlazor components."
+        $"<i>MudBlazor</i> is an ambitious <span style='color:{Colors.Purple.Default}'>Material Design</span> component framework for Blazor with an <span style='color:{Colors.Green.Default}'>emphasis</span> on <em>ease of use and clear structure</em>.",
+        $"MudLists are easily <span style='color:{Colors.Orange.Default}'>customizable</span> and <span style='color:{Colors.Red.Default}'>scrollable</span> lists. Make them suit your needs with <i>avatars</i>, <i>icons</i>, or something like <i>checkboxes</i>.",
+        $"Use <b>mud</b>-* classes to <span style='color:{Colors.Blue.Default}'>customize your MudBlazor components</span>."
     };
 }
