@@ -104,7 +104,9 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorResizeListener(this IServiceCollection services)
         {
+#pragma warning disable CS0618
             services.TryAddScoped<IResizeListenerService, ResizeListenerService>();
+#pragma warning restore CS0618
             services.TryAddScoped<IBrowserWindowSizeProvider, BrowserWindowSizeProvider>();
             services.TryAddScoped<IResizeService, ResizeService>();
             services.TryAddScoped<IBreakpointService, BreakpointService>();
@@ -309,7 +311,6 @@ namespace MudBlazor.Services
 
             return services;
         }
-
 
         /// <summary>
         /// Adds ScrollSpy as a transient instance.

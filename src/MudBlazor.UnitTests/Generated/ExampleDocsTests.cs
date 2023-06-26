@@ -23,7 +23,9 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             ctx.Services.AddSingleton<IDialogService>(new DialogService());
             ctx.Services.AddSingleton<ISnackbar, SnackbarService>();
+#pragma warning disable CS0618
             ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+#pragma warning restore CS0618
             ctx.Services.AddSingleton<IResizeService>(new MockResizeService());
             ctx.Services.AddSingleton<IBreakpointService>(new MockBreakpointService());
             ctx.Services.AddTransient<IScrollManager, MockScrollManager>();

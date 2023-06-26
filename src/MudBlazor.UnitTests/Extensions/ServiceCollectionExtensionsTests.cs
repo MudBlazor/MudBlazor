@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -87,7 +88,9 @@ public class ServiceCollectionExtensionsTests
         // Act
         services.AddMudBlazorResizeListener();
         var serviceProvider = services.BuildServiceProvider();
+#pragma warning disable CS0618
         var resizeListenerService = serviceProvider.GetService<IResizeListenerService>();
+#pragma warning restore CS0618
         var browserWindowSizeProvider = serviceProvider.GetService<IBrowserWindowSizeProvider>();
         var resizeService = serviceProvider.GetService<IResizeService>();
         var breakpointService = serviceProvider.GetService<IBreakpointService>();
@@ -110,6 +113,10 @@ public class ServiceCollectionExtensionsTests
         // Act
         services.AddMudBlazorResizeListener(options =>
         {
+            options.BreakpointDefinitions = new Dictionary<Breakpoint, int>
+            {
+                { Breakpoint.Lg, 500 }
+            };
             options.EnableLogging = true;
             options.NotifyOnBreakpointOnly = false;
             options.ReportRate = 100;
@@ -117,7 +124,9 @@ public class ServiceCollectionExtensionsTests
             expectedOptions = options;
         });
         var serviceProvider = services.BuildServiceProvider();
+#pragma warning disable CS0618
         var resizeListenerService = serviceProvider.GetService<IResizeListenerService>();
+#pragma warning restore CS0618
         var resizeService = serviceProvider.GetService<IResizeService>();
         var options = serviceProvider.GetRequiredService<IOptions<ResizeOptions>>();
         var actualOptions = options.Value;
@@ -418,7 +427,9 @@ public class ServiceCollectionExtensionsTests
         var serviceProvider = services.BuildServiceProvider();
         var dialogService = serviceProvider.GetService<IDialogService>();
         var snackBarService = serviceProvider.GetService<ISnackbar>();
+#pragma warning disable CS0618
         var resizeListenerService = serviceProvider.GetService<IResizeListenerService>();
+#pragma warning restore CS0618
         var browserWindowSizeProvider = serviceProvider.GetService<IBrowserWindowSizeProvider>();
         var resizeService = serviceProvider.GetService<IResizeService>();
         var breakpointService = serviceProvider.GetService<IBreakpointService>();
@@ -498,6 +509,10 @@ public class ServiceCollectionExtensionsTests
             options.SnackbarConfiguration.SnackbarVariant = Variant.Outlined;
 
             // ResizeOptions
+            options.ResizeOptions.BreakpointDefinitions = new Dictionary<Breakpoint, int>
+            {
+                { Breakpoint.Lg, 500 }
+            };
             options.ResizeOptions.EnableLogging = true;
             options.ResizeOptions.NotifyOnBreakpointOnly = false;
             options.ResizeOptions.ReportRate = 100;
@@ -518,7 +533,9 @@ public class ServiceCollectionExtensionsTests
         var serviceProvider = services.BuildServiceProvider();
         var dialogService = serviceProvider.GetService<IDialogService>();
         var snackBarService = serviceProvider.GetService<ISnackbar>();
+#pragma warning disable CS0618
         var resizeListenerService = serviceProvider.GetService<IResizeListenerService>();
+#pragma warning restore CS0618
         var browserWindowSizeProvider = serviceProvider.GetService<IBrowserWindowSizeProvider>();
         var resizeService = serviceProvider.GetService<IResizeService>();
         var breakpointService = serviceProvider.GetService<IBreakpointService>();
@@ -585,8 +602,7 @@ public class ServiceCollectionExtensionsTests
         Assert.AreEqual(expectedOptions.ResizeObserverOptions.EnableLogging, actualResizeObserverOptions.EnableLogging);
         Assert.AreEqual(expectedOptions.ResizeObserverOptions.ReportRate, actualResizeObserverOptions.ReportRate);
 
-        //BreakpointDefinitions -- doesn't work as the ResizeListenerService modifying the collection and doesn't care about the set values, this sounds like an unintentional mistake
-        //Assert.AreEqual(expectedOptions.ResizeOptions.BreakpointDefinitions, actualResizeOptions.BreakpointDefinitions);
+        Assert.AreEqual(expectedOptions.ResizeOptions.BreakpointDefinitions, actualResizeOptions.BreakpointDefinitions);
         Assert.AreEqual(expectedOptions.ResizeOptions.EnableLogging, actualResizeOptions.EnableLogging);
         Assert.AreEqual(expectedOptions.ResizeOptions.NotifyOnBreakpointOnly, actualResizeOptions.NotifyOnBreakpointOnly);
         Assert.AreEqual(expectedOptions.ResizeOptions.ReportRate, actualResizeOptions.ReportRate);

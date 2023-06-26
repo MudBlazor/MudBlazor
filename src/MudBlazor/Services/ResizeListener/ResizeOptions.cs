@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace MudBlazor.Services
 {
@@ -31,7 +30,7 @@ namespace MudBlazor.Services
         /// <summary>
         /// Breakpoint definitions.
         /// </summary>
-        public Dictionary<string, int>? BreakpointDefinitions { get; set; } = new();
+        public Dictionary<Breakpoint, int>? BreakpointDefinitions { get; set; } = new();
 
         public static bool operator ==(ResizeOptions? l, ResizeOptions? r)
         {
@@ -47,8 +46,10 @@ namespace MudBlazor.Services
 
         public static bool operator !=(ResizeOptions l, ResizeOptions r) => !(l == r);
 
+        /// <inheritdoc />
         public override bool Equals(object? obj) => obj is ResizeOptions options && Equals(options);
 
+        /// <inheritdoc />
         public bool Equals(ResizeOptions? other)
         {
             if (other is null)
@@ -77,7 +78,27 @@ namespace MudBlazor.Services
             return true;
         }
 
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            // ReSharper disable NonReadonlyMemberInGetHashCode
+            hashCode.Add(ReportRate);
+            hashCode.Add(EnableLogging);
+            hashCode.Add(SuppressInitEvent);
+            hashCode.Add(NotifyOnBreakpointOnly);
+            hashCode.Add(ReportRate);
+            if (BreakpointDefinitions is not null)
+            {
+                foreach (var pair in BreakpointDefinitions)
+                {
+                    hashCode.Add(pair.Key);
+                    hashCode.Add(pair.Value);
+                }
+            }
+            // ReSharper restore NonReadonlyMemberInGetHashCode
 
-        public override int GetHashCode() => RuntimeHelpers.GetHashCode(this);
+            return hashCode.ToHashCode();
+        }
     }
 }
