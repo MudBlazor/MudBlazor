@@ -15,9 +15,9 @@
 
         @{
             // save as lists to speed up displaying the page
-            var properties = getProperties().ToList();
-            var methods = getMethods().ToList();
-            var eventCallbacks = getEventCallbacks().ToList();
+            var properties = GetProperties().ToList();
+            var methods = GetMethods().ToList();
+            var eventCallbacks = GetEventCallbacks().ToList();
             var mudBlazorTypes = GetReferencedMudBlazorTypes().ToList();
         }
 
@@ -180,7 +180,7 @@
     };
     [Parameter] public Type Type { get; set; }
 
-    private IEnumerable<ApiProperty> getEventCallbacks()
+    private IEnumerable<ApiProperty> GetEventCallbacks()
     {
         string saveTypename = DocStrings.GetSaveTypename(Type);
 
@@ -201,7 +201,7 @@
         }
     }
 
-    private IEnumerable<ApiMethod> getMethods()
+    private IEnumerable<ApiMethod> GetMethods()
     {
         string saveTypename = DocStrings.GetSaveTypename(Type);
 
@@ -224,7 +224,7 @@
         }
     }
 
-    private IEnumerable<ApiProperty> getProperties()
+    private IEnumerable<ApiProperty> GetProperties()
     {
         string saveTypename = DocStrings.GetSaveTypename(Type);
 
