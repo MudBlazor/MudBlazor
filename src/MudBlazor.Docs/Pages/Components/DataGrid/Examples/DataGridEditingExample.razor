@@ -20,6 +20,18 @@
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <PropertyColumn Property="x => x.IsMetal">
+            <CellTemplate>
+                @if (context.Item.IsMetal == true)
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.Done" />
+                }
+                else
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.Clear" />
+                }
+            </CellTemplate>
+        </PropertyColumn>
         <TemplateColumn Hidden="@(_isCellEditMode || _readOnly || _editTriggerRowClick)" CellClass="d-flex justify-end">
             <CellTemplate>
                 <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />

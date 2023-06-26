@@ -14,6 +14,7 @@ namespace MudBlazor.Examples.Data.Models
         public string Sign { get; set; }
         public double Molar { get; set; }
         public IList<int> Electrons { get; set; }
+        public bool IsMetal { get; set; }
 
         /// <summary>
         /// Overriding Equals is essential for use with Select and Table because they use HashSets internally

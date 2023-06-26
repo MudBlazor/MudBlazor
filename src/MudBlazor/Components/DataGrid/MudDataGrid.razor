@@ -277,6 +277,11 @@
                                 <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
                                      Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
                             }
+                            else if (propertyType == typeof(bool))
+                            {
+                                <MudCheckBox T="bool" Label="@column.Title" Checked="@cell._valueBoolean" CheckedChanged="@cell.BoolValueChangedAsync"
+                                  Color="Color.Primary" Disabled="@(!column.IsEditable || ReadOnly)" />
+                            }
                         }
                     }
                 </MudForm>
@@ -355,6 +360,13 @@
                                              ValueChanged="@cell.NumberValueChangedAsync"
                                              Margin="@Margin.Dense" Style="margin-top:0"
                                              Required="true" Variant="@Variant.Text" Culture="@column.Culture" />
+                        }
+                        else if (column.PropertyType == typeof(bool))
+                        {
+                        <MudCheckBox T="bool"
+                                     Checked="@cell._valueBoolean"
+                                     CheckedChanged="@cell.BoolValueChangedAsync"
+                                     Color="Color.Primary" />
                         }
                     }
                 }

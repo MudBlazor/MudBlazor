@@ -17,6 +17,7 @@ namespace MudBlazor
         internal T _item;
         internal string? _valueString;
         internal double? _valueNumber;
+        internal bool _valueBoolean;
         internal bool _isEditing;
         internal CellContext<T> _cellContext;
 
@@ -87,6 +88,15 @@ namespace MudBlazor
                 await _dataGrid.CommitItemChangesAsync(_item);
         }
 
+        public async Task BoolValueChangedAsync(bool value)
+        {
+            _column.SetProperty(_item, value);
+
+            // If the edit mode is Cell, we update immediately.
+            if (_dataGrid.EditMode == DataGridEditMode.Cell)
+                await _dataGrid.CommitItemChangesAsync(_item);
+        }
+
         private void OnStartedEditingItem()
         {
             if (ComputedValue is null)
@@ -104,6 +114,10 @@ namespace MudBlazor
                 {
                     _valueNumber = element.GetDouble();
                 }
+                else if (_column.dataType == typeof(bool))
+                {
+                    _valueBoolean = element.GetBoolean();
+                }
             }
             else
             {
@@ -114,6 +128,10 @@ namespace MudBlazor
                 else if (_column.isNumber)
                 {
                     _valueNumber = Convert.ToDouble(ComputedValue);
+                }
+                else if (_column.dataType == typeof(bool))
+                {
+                    _valueBoolean = (bool)ComputedValue;
                 }
             }
         }
