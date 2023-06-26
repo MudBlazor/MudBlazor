@@ -67,5 +67,5 @@ public partial class MudHighlighter : MudComponentBase
         _fragments = GetFragments(Text, HighlightedText, HighlightedTexts, out _regex, CaseSensitive, UntilNextBoundary);
     }
 
-    static RenderFragment ToRendeFragment(string markupContent) => builder => { builder.AddMarkupContent(0, markupContent); };
+    static RenderFragment ToRenderFragment(string markupContent) => builder => { builder.AddMarkupContent(0, markupContent); };
 }
