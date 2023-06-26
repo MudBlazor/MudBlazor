@@ -9,13 +9,14 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public class BaseMudThemeProvider : ComponentBase, IDisposable
     {
         /// <summary>
         /// The theme used by the application.
         /// </summary>
         [Parameter]
-        public MudTheme Theme { get; set; }
+        public MudTheme? Theme { get; set; }
 
         /// <summary>
         ///  If true, will not apply MudBlazor styled scrollbar and use browser default. 
@@ -23,7 +24,7 @@ namespace MudBlazor
         [Parameter]
         public bool DefaultScrollbar { get; set; }
 
-        private event Func<bool, Task> _darkLightModeChanged;
+        private event Func<bool, Task>? _darkLightModeChanged;
 
         #region Dark mode handling
 
@@ -34,7 +35,7 @@ namespace MudBlazor
         }
 
         private readonly DotNetObjectReference<BaseMudThemeProvider> _dotNetRef;
-        [Inject] private IJSRuntime JsRuntime { get; set; }
+        [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
 
         /// <summary>
         /// Returns the dark mode preference of the user. True if dark mode is preferred.
@@ -99,6 +100,7 @@ namespace MudBlazor
 
         protected string BuildTheme()
         {
+            Theme ??= new MudTheme();
             var theme = new StringBuilder();
             theme.AppendLine("<style>");
             theme.Append(Theme.PseudoCss.Scope);
