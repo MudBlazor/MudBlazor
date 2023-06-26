@@ -234,8 +234,10 @@ namespace MudBlazor
 
                 return Origin.CenterRight;
             }
-
-            return Origin.BottomCenter;
+            else
+            {
+                return Origin.BottomCenter;
+            }
         }
     }
 }
