@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
+using MudBlazor.Extensions;
 
 namespace MudBlazor.Services
 {
@@ -138,20 +139,12 @@ namespace MudBlazor.Services
                 throw new ArgumentNullException(nameof(callback));
             }
 
-            options ??= _options;
-
-            //Always wrap in new instance of ResizeOptions and clone values no matter what
-            //Because the options can come from the _options(IOptions<ResizeOptions>) - these are the options that user sets when adding BreakpointService in DI
-            //Only user is allowed to modify these settings, service should not touch that reference and change it or we get nasty bugs
-            //If we don't always wrap then we would need to write tedious code like if null then wrap, then check the references of options and _options are same and make logic when we can't modify and when we can etc.
-            options = new ResizeOptions
-            {
-                BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(options),
-                EnableLogging = options.EnableLogging,
-                NotifyOnBreakpointOnly = options.NotifyOnBreakpointOnly,
-                ReportRate = options.ReportRate,
-                SuppressInitEvent = options.SuppressInitEvent
-            };
+            // Always clone the ResizeOptions, regardless of the circumstances.
+            // This is necessary because the options may originate from the _options (IOptions<ResizeOptions>) - these are the user-defined options when adding BreakpointService in the DI container.
+            // Only the user should be allowed to modify these settings, and the service should not directly modify the reference to prevent potential bugs.
+            var optionsClone = (options ?? _options).Clone();
+            //Safe to modify now
+            optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone);
 
             DotNetRef ??= DotNetObjectReference.Create(this);
 
@@ -161,13 +154,13 @@ namespace MudBlazor.Services
 
                 //We capture both key and value, because someone might unsubscribe at meantime
                 //This way we do not need to check if key exist and do look up the dictionary again later
-                var existingOptionKeyValuePair = Listeners.FirstOrDefault(x => x.Value.Option == options);
+                var existingOptionKeyValuePair = Listeners.FirstOrDefault(x => x.Value.Option == optionsClone);
 
                 //better way than existingOptionKeyValuePair.Equals(default) to avoid boxing
                 //we use ValueTuple to compare if KeyValuePair struct is default
                 if ((existingOptionKeyValuePair.Key, existingOptionKeyValuePair.Value) == default)
                 {
-                    return await CreateSubscriptionAsync(callback, options);
+                    return await CreateSubscriptionAsync(callback, optionsClone);
                 }
 
                 var subscriptionId = existingOptionKeyValuePair.Value.AddSubscription(callback);
