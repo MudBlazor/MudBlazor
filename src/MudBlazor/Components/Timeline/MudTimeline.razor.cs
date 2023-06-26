@@ -8,6 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudTimeline : MudBaseItemsControl<MudTimelineItem>
     {
         [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
