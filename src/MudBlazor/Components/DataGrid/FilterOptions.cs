@@ -8,6 +8,8 @@ namespace MudBlazor
     public class FilterOptions
     {
         public DataGridFilterCaseSensitivity FilterCaseSensitivity { get; set; } = DataGridFilterCaseSensitivity.Default;
+        
+        public DataGridFilterStringComparison FilterStringComparison { get; set; } = DataGridFilterStringComparison.Default;
 
         public static FilterOptions Default { get; } = new();
     }
