@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -1674,6 +1675,38 @@ namespace MudBlazor.UnitTests.Components
 
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.Disabled, false).Add(p => p.NestedDisabled, false));
             comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task FormWithChildFormTest()
+        {
+            var comp = Context.RenderComponent<FormWithChildForm>();
+            var childFormSwitch = comp.Find(".mud-switch-input");
+            var parentForm = comp.FindComponent<MudForm>().Instance;
+            var parentTextFieldCmp = comp.FindComponent<MudTextField<string>>();
+            var parentTextField = parentTextFieldCmp.Instance;
+            // check initial state: form should not be valid, but text field does not display an error initially!
+            parentForm.IsValid.Should().Be(false);
+            parentTextField.Error.Should().BeFalse();
+            parentTextField.ErrorText.Should().BeNullOrEmpty();
+            parentTextFieldCmp.Find("input").Change("Marilyn Manson");
+            parentForm.IsValid.Should().Be(true);
+            parentForm.Errors.Length.Should().Be(0);
+            parentTextField.Error.Should().BeFalse();
+            parentTextField.ErrorText.Should().BeNullOrEmpty();
+            // display the child form
+            childFormSwitch.Change(true);
+            var forms = comp.FindComponents<MudForm>();
+            forms.Count.Should().Be(2);
+            var childForm = forms[1];
+            childForm.Instance.IsValid.Should().BeFalse();
+            parentForm.IsValid.Should().Be(false);
+            
+            // remove the child form
+            childFormSwitch.Change(false);
+            forms = comp.FindComponents<MudForm>();
+            forms.Count.Should().Be(1);
+            parentForm.IsValid.Should().BeTrue();
         }
     }
 }
