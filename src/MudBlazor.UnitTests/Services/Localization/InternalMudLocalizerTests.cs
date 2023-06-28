@@ -7,7 +7,7 @@ using Moq;
 using MudBlazor.Resources;
 using NUnit.Framework;
 
-namespace MudBlazor.UnitTests.Services
+namespace MudBlazor.UnitTests.Services.Localization
 {
     [TestFixture]
     public class InternalMudLocalizerTests
@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Services
         private Mock<MudLocalizer> _mudLocalizer;
         private InternalMudLocalizer _internalMudLocalizer;
         private InternalMudLocalizer _internalMudLocalizerWithoutMudLocalizer;
-        
+
         [SetUp]
         public void SetUp()
         {
@@ -53,7 +53,7 @@ namespace MudBlazor.UnitTests.Services
             _internalMudLocalizerWithoutMudLocalizer["MudDataGrid.is not empty"].Should().BeOfType(typeof(LocalizedString)).And.BeEquivalentTo(new LocalizedString("MudDataGrid.is not empty", "is not empty", false, typeof(LanguageResource).FullName));
 
             Thread.CurrentThread.CurrentUICulture = new CultureInfo("de-DE");
-            
+
             _internalMudLocalizerWithoutMudLocalizer["MudDataGrid.contains"].Should().BeOfType(typeof(LocalizedString)).And.BeEquivalentTo(new LocalizedString("MudDataGrid.contains", "contains", false, typeof(LanguageResource).FullName));
             _internalMudLocalizerWithoutMudLocalizer["MudDataGrid.is empty"].Should().BeOfType(typeof(LocalizedString)).And.BeEquivalentTo(new LocalizedString("MudDataGrid.is empty", "is empty", false, typeof(LanguageResource).FullName));
             _internalMudLocalizerWithoutMudLocalizer["MudDataGrid.is not empty"].Should().BeOfType(typeof(LocalizedString)).And.BeEquivalentTo(new LocalizedString("MudDataGrid.is not empty", "is not empty", false, typeof(LanguageResource).FullName));
