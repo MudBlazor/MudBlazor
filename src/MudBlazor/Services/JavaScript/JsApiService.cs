@@ -10,7 +10,7 @@ namespace MudBlazor;
 /// </summary>
 public class JsApiService : IJsApiService
 {
-    private readonly MudWindowJsInterop _mudWindowJsInterop;
+    private readonly CommonJsInterop _commonJsInterop;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JsApiService"/> class with the specified JS runtime.
@@ -18,23 +18,23 @@ public class JsApiService : IJsApiService
     /// <param name="jsRuntime">The JS runtime used for interop with JavaScript.</param>
     public JsApiService(IJSRuntime jsRuntime)
     {
-        _mudWindowJsInterop = new MudWindowJsInterop(jsRuntime);
+        _commonJsInterop = new CommonJsInterop(jsRuntime);
     }
 
     /// <inheritdoc />
-    public ValueTask CopyToClipboardAsync(string text) => _mudWindowJsInterop.CopyToClipboard(text);
+    public ValueTask CopyToClipboardAsync(string text) => _commonJsInterop.CopyToClipboard(text);
 
     /// <inheritdoc />
-    public ValueTask Open(string link, string target)
+    public ValueTask Open(string url, string target)
     {
         if (target == "_blank")
         {
-            return OpenInNewTabAsync(link);
+            return OpenInNewTabAsync(url);
         }
 
-        return _mudWindowJsInterop.Open(link, target);
+        return _commonJsInterop.Open(url, target);
     }
 
     /// <inheritdoc />
-    public ValueTask OpenInNewTabAsync(string url) => _mudWindowJsInterop.Open(url);
+    public ValueTask OpenInNewTabAsync(string url) => _commonJsInterop.Open(url);
 }
