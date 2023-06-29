@@ -584,6 +584,40 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DisableCalendarMonthButtonsWhenFixDayOutOfRange()
+        {
+            var comp = OpenPicker(new[]
+            {
+                Parameter(nameof(MudDatePicker.OpenTo), OpenTo.Month),
+                Parameter(nameof(MudDatePicker.FixDay), 31)
+            });
+
+            comp
+                .FindAll("button.mud-picker-month")
+                .Select(button => ((IHtmlButtonElement)button).IsDisabled)
+                .Should()
+                .BeEquivalentTo(
+                    // Only months with 31 days not disabled
+                    new[]
+                    {
+                        false,
+                        true,
+                        false,
+                        true,
+                        false,
+                        true,
+                        false,
+                        false,
+                        true,
+                        false,
+                        true,
+                        false
+                    },
+                    options => options.WithStrictOrdering()
+                );
+        }
+
+        [Test]
         public void IsDateDisabledFunc_DoesNotHaveEffectOnMonthsIfDayNotFixed()
         {
             Func<DateTime, bool> isDisabledFunc = date => true;
