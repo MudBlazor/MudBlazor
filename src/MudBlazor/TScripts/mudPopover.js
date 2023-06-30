@@ -334,21 +334,23 @@ class MudPopover {
                     const parent = target.parentElement;
                     const tickValues = [];
                     let max = -1;
-                    for (let i = 0; i < parent.children.length; i++) {
-                        const childNode = parent.children[i];
-                        const tickValue = parseInt(childNode.getAttribute('data-ticks'));
-                        if (tickValue == 0) {
-                            continue;
-                        }
+                    if (parent) {
+                        for (let i = 0; i < parent.children.length; i++) {
+                            const childNode = parent.children[i];
+                            const tickValue = parseInt(childNode.getAttribute('data-ticks'));
+                            if (tickValue == 0) {
+                                continue;
+                            }
 
-                        if (tickValues.indexOf(tickValue) >= 0) {
-                            continue;
-                        }
+                            if (tickValues.indexOf(tickValue) >= 0) {
+                                continue;
+                            }
 
-                        tickValues.push(tickValue);
+                            tickValues.push(tickValue);
 
-                        if (tickValue > max) {
-                            max = tickValue;
+                            if (tickValue > max) {
+                                max = tickValue;
+                            }
                         }
                     }
 
