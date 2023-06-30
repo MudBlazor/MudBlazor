@@ -653,5 +653,22 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("button.mud-range-start-selected").Click();
             comp.Instance.DateRange.Should().Be(new DateRange(currentDate, currentDate));
         }
+
+        [Test]
+        public async Task DateRangePicker_Should_Clear()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>();
+            // select elements needed for the test
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.DateRange.Should().Be(null);
+            comp.SetParam(p => p.Clearable, true);
+            comp.SetParam(p => p.DateRange, new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29)));
+            picker.DateRange.Should().Be(new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29)));
+
+            comp.Find("button").Click(); //clear the input
+
+            picker.DateRange.Should().Be(new DateRange(null, null));
+        }
     }
 }
