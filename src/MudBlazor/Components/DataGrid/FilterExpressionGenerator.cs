@@ -9,7 +9,7 @@ namespace MudBlazor;
 #nullable enable
 public static class FilterExpressionGenerator
 {
-    public static Expression<Func<T, bool>> GenerateFilterExpression<T>(this IFilterDefinition<T> filter, FilterOptions? filterOptions)
+    public static Expression<Func<T, bool>> GenerateExpression<T>(IFilterDefinition<T> filter, FilterOptions? filterOptions)
     {
         filterOptions ??= FilterOptions.Default; //Default if null
         var propertyExpression = filter.Column?.PropertyExpression;

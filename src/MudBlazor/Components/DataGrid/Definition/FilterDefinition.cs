@@ -60,7 +60,7 @@ namespace MudBlazor
                 return _cachedFilterFunction;
             }
 
-            var filterExpression = this.GenerateFilterExpression(filterOptions);
+            var filterExpression = FilterExpressionGenerator.GenerateExpression(this, filterOptions);
             var function = filterExpression.Compile();
             _cachedExpressionHashCode = hash;
             _cachedFilterFunction = function;
@@ -69,13 +69,17 @@ namespace MudBlazor
         }
 
         //Backward compatibility, in v7 should be removed and only public visible method should be GenerateFilterFunction
+        [Obsolete($"Will be removed in v7. Use {nameof(FilterExpressionGenerator.GenerateExpression)} instead.")]
         public Expression<Func<T, bool>> GenerateFilterExpression()
         {
             //There should be no dependency of DataGrid, because it makes testing hard and it's not worth to have such a heavy dependency just to extract case sensitivity
-            return this.GenerateFilterExpression(new FilterOptions
+            var filterOptions = new FilterOptions
             {
                 FilterCaseSensitivity = DataGrid?.FilterCaseSensitivity ?? DataGridFilterCaseSensitivity.Default,
-            });
+            };
+            var expression = FilterExpressionGenerator.GenerateExpression(this, filterOptions);
+
+            return expression;
         }
 
         //Backward compatibility, in v7 should be removed
