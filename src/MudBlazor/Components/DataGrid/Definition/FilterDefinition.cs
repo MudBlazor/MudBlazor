@@ -75,7 +75,6 @@ namespace MudBlazor
             return this.GenerateFilterExpression(new FilterOptions
             {
                 FilterCaseSensitivity = DataGrid?.FilterCaseSensitivity ?? DataGridFilterCaseSensitivity.Default,
-                FilterStringComparison = DataGrid?.FilterStringComparison ?? DataGridFilterStringComparison.Default
             });
         }
 

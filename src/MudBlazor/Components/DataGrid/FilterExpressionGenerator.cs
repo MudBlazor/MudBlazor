@@ -1,10 +1,12 @@
-// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 using System;
 using System.Linq.Expressions;
 
 namespace MudBlazor;
+
+#nullable enable
 public static class FilterExpressionGenerator
 {
     public static Expression<Func<T, bool>> GenerateFilterExpression<T>(this IFilterDefinition<T> filter, FilterOptions? filterOptions)
@@ -18,6 +20,7 @@ public static class FilterExpressionGenerator
         }
 
         var fieldType = filter.FieldType;
+
         if (fieldType.IsString)
         {
             var value = filter.Value?.ToString();
@@ -25,46 +28,46 @@ public static class FilterExpressionGenerator
             if (value is null && filter.Operator != FilterOperator.String.Empty && filter.Operator != FilterOperator.String.NotEmpty)
                 return x => true;
 
-            if (filterOptions.FilterStringComparison == DataGridFilterStringComparison.Ignore)
+            if (filterOptions.FilterCaseSensitivity == DataGridFilterCaseSensitivity.Ignore)
             {
                 return filter.Operator switch
                 {
                     FilterOperator.String.Contains =>
-                        propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => value != null && x != null && x.Contains(value))),
+                        propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && value != null && x.Contains(value))),
                     FilterOperator.String.NotContains =>
-                        propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => value != null && x != null && !x.Contains(value))),
+                        propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && value != null && !x.Contains(value))),
                     FilterOperator.String.Equal =>
-                        propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => x != null && x.Equals(value))),
+                        propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && x.Equals(value))),
                     FilterOperator.String.NotEqual =>
-                        propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => x != null && !x.Equals(value))),
+                        propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && !x.Equals(value))),
                     FilterOperator.String.StartsWith =>
-                        propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => value != null && x != null && x.StartsWith(value))),
+                        propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && value != null && x.StartsWith(value))),
                     FilterOperator.String.EndsWith =>
-                        propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => value != null && x != null && x.EndsWith(value))),
-                    FilterOperator.String.Empty => propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => string.IsNullOrWhiteSpace(x))),
-                    FilterOperator.String.NotEmpty => propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => !string.IsNullOrWhiteSpace(x))),
+                        propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && value != null && x.EndsWith(value))),
+                    FilterOperator.String.Empty => propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => string.IsNullOrWhiteSpace(x))),
+                    FilterOperator.String.NotEmpty => propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => !string.IsNullOrWhiteSpace(x))),
                     _ => x => true
                 };
             }
-            
+
             var stringComparer = filterOptions.FilterCaseSensitivity == DataGridFilterCaseSensitivity.Default ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
             return filter.Operator switch
             {
                 FilterOperator.String.Contains =>
-                    propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => value != null && x != null && x.Contains(value, stringComparer))),
+                    propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && value != null && x.Contains(value, stringComparer))),
                 FilterOperator.String.NotContains =>
-                    propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => value != null && x != null && !x.Contains(value, stringComparer))),
+                    propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && value != null && !x.Contains(value, stringComparer))),
                 FilterOperator.String.Equal =>
-                    propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => x != null && x.Equals(value, stringComparer))),
+                    propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && x.Equals(value, stringComparer))),
                 FilterOperator.String.NotEqual =>
-                    propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => x != null && !x.Equals(value, stringComparer))),
+                    propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && !x.Equals(value, stringComparer))),
                 FilterOperator.String.StartsWith =>
-                    propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => value != null && x != null && x.StartsWith(value, stringComparer))),
+                    propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && value != null && x.StartsWith(value, stringComparer))),
                 FilterOperator.String.EndsWith =>
-                    propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => value != null && x != null && x.EndsWith(value, stringComparer))),
-                FilterOperator.String.Empty => propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => string.IsNullOrWhiteSpace(x))),
-                FilterOperator.String.NotEmpty => propertyExpression.Modify<T>((Expression<Func<string, bool>>)(x => !string.IsNullOrWhiteSpace(x))),
+                    propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && value != null && x.EndsWith(value, stringComparer))),
+                FilterOperator.String.Empty => propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => string.IsNullOrWhiteSpace(x))),
+                FilterOperator.String.NotEmpty => propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => !string.IsNullOrWhiteSpace(x))),
                 _ => x => true
             };
         }
