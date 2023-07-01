@@ -230,14 +230,6 @@ namespace MudBlazor
         [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
         [Parameter] public ButtonType ButtonType { get; set; }
 
-        [ExcludeFromCodeCoverage]
-        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
-        [Parameter] public ICommand Command { get; set; }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
-        [Parameter] public object CommandParameter { get; set; }
-
         #endregion
 
         /// <summary>

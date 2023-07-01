@@ -113,22 +113,6 @@ namespace MudBlazor
         public int ZIndex { get; set; } = 5;
 
         /// <summary>
-        /// Command parameter.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.ClickAction)]
-        [Obsolete($"This will be removed in v7.")]
-        public object? CommandParameter { get; set; }
-
-        /// <summary>
-        /// Command executed when the user clicks on an element.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.ClickAction)]
-        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
-        public ICommand? Command { get; set; }
-
-        /// <summary>
         /// Fired when the overlay is clicked
         /// </summary>
         [Parameter]
@@ -139,12 +123,6 @@ namespace MudBlazor
             if (AutoClose)
                 Visible = false;
             await OnClick.InvokeAsync(ev);
-#pragma warning disable CS0618
-            if (Command?.CanExecute(CommandParameter) ?? false)
-            {
-                Command.Execute(CommandParameter);
-            }
-#pragma warning restore CS0618
         }
 
         //if not visible or CSS `position:absolute`, don't lock scroll

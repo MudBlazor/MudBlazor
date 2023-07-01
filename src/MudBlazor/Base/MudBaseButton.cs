@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
@@ -91,22 +90,6 @@ namespace MudBlazor
         public bool DisableRipple { get; set; }
 
         /// <summary>
-        /// Command executed when the user clicks on an element.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Button.ClickAction)]
-        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
-        public ICommand? Command { get; set; }
-
-        /// <summary>
-        /// Command parameter.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Button.ClickAction)]
-        [Obsolete("This will be removed in v7.")]
-        public object? CommandParameter { get; set; }
-
-        /// <summary>
         /// Button click event.
         /// </summary>
         [Parameter]
@@ -119,12 +102,6 @@ namespace MudBlazor
             if (GetDisabledState())
                 return;
             await OnClick.InvokeAsync(ev);
-#pragma warning disable CS0618
-            if (Command?.CanExecute(CommandParameter) ?? false)
-            {
-                Command.Execute(CommandParameter);
-            }
-#pragma warning restore CS0618
             Activateable?.Activate(this, ev);
         }
 

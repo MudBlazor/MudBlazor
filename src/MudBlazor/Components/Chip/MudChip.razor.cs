@@ -219,22 +219,6 @@ namespace MudBlazor
         public bool? Default { get; set; }
 
         /// <summary>
-        /// Command executed when the user clicks on an element.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Chip.ClickAction)]
-        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
-        public ICommand Command { get; set; }
-
-        /// <summary>
-        /// Command parameter.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Chip.ClickAction)]
-        [Obsolete("This will be removed in v7.")]
-        public object CommandParameter { get; set; }
-
-        /// <summary>
         /// Chip click event, if set the chip focus, hover and click effects are applied.
         /// </summary>
         [Parameter]
@@ -302,12 +286,6 @@ namespace MudBlazor
             else
             {
                 await OnClick.InvokeAsync(ev);
-#pragma warning disable CS0618
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }
-#pragma warning restore CS0618
             }
         }
 

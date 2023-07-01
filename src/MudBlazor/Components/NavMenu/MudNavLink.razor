@@ -3,7 +3,7 @@
 @using Microsoft.AspNetCore.Components.Routing
 
 <div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
-    @if (!OnClick.HasDelegate && Command == null)
+    @if (!OnClick.HasDelegate)
     { 
         <NavLink @onclick="@HandleNavigation" 
                  class="@LinkClassname" 
