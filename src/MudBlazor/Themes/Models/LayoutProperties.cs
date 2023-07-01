@@ -42,11 +42,13 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets the height of the drawer at the top.
         /// </summary>
+        [Obsolete("DrawerHeightTop is not used.", true)]
         public string DrawerHeightTop { get; set; } = "320px";
 
         /// <summary>
         /// Gets or sets the height of the drawer at the bottom.
         /// </summary>
+        [Obsolete("DrawerHeightBottom is not used.", true)]
         public string DrawerHeightBottom { get; set; } = "320px";
 
         /// <summary>
