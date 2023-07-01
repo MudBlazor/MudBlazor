@@ -44,7 +44,7 @@
         NotifyOnBreakpointOnly = false
     };
 
-    Task IBrowserViewportObserver.BrowserViewportChangeNotificationAsync(BrowserViewportEventArgs browserViewportEventArgs)
+    Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
     {
         _width = browserViewportEventArgs.BrowserWindowSize.Width;
         _height = browserViewportEventArgs.BrowserWindowSize.Height;

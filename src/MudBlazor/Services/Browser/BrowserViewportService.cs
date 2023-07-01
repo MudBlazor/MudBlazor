@@ -78,7 +78,7 @@ internal class BrowserViewportService : IBrowserViewportService
         // Without this predicate, notifications from unrelated JavaScript listeners would be received, potentially causing duplicate or unwanted notifications for the observer.
         // This is due to the fact that BrowserViewportService instance is shared across all JavaScript listeners
         return _observerManager
-            .NotifyAsync(observer => observer.BrowserViewportChangeNotificationAsync(
+            .NotifyAsync(observer => observer.NotifyBrowserViewportChangeAsync(
                     new BrowserViewportEventArgs(
                         javaScriptListenerId,
                         browserWindowSize,
@@ -118,7 +118,7 @@ internal class BrowserViewportService : IBrowserViewportService
                     var latestWindowSize = await GetCurrentBrowserWindowSizeAsync();
                     var latestBreakpoint = await GetCurrentBreakpointAsync();
                     // Notify only current subscription
-                    await observer.BrowserViewportChangeNotificationAsync(new BrowserViewportEventArgs(subscription.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
+                    await observer.NotifyBrowserViewportChangeAsync(new BrowserViewportEventArgs(subscription.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
                 }
             }
         }
@@ -171,7 +171,7 @@ internal class BrowserViewportService : IBrowserViewportService
     }
 
     /// <inheritdoc />
-    public async Task<bool> IsMatchMediaAsync(string mediaQuery)
+    public async Task<bool> IsMediaQueryMatchAsync(string mediaQuery)
     {
         return await _resizeListenerInterop.MatchMedia(mediaQuery);
     }

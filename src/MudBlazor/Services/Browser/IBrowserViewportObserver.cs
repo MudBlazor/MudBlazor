@@ -34,5 +34,5 @@ public interface IBrowserViewportObserver
     /// </summary>
     /// <param name="browserViewportEventArgs">The event arguments containing information about the <see cref="BrowserWindowSize"/> and <see cref="Breakpoint"/> change.</param>
     /// <returns>A task representing the asynchronous notification operation.</returns>
-    Task BrowserViewportChangeNotificationAsync(BrowserViewportEventArgs browserViewportEventArgs);
+    Task NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs);
 }

@@ -28,7 +28,7 @@ public interface IBrowserViewportService : IAsyncDisposable
     /// <param name="observer">The observer to subscribe.</param>
     /// <param name="fireImmediately">Indicates whether the event will fire immediately with the current <see cref="BrowserWindowSize"/> and <see cref="Breakpoint"/> information without waiting for changes.
     /// When set to <c>true</c>, the event will be fired immediately. When set to <c>false</c>, it will wait for the service to observe any changes before firing the event.
-    /// The event <see cref="IBrowserViewportObserver.BrowserViewportChangeNotificationAsync"/> won't fire if such <see cref="IBrowserViewportObserver.Id"/> already exist, for example when you re-subscribe.
+    /// The event <see cref="IBrowserViewportObserver.NotifyBrowserViewportChangeAsync"/> won't fire if such <see cref="IBrowserViewportObserver.Id"/> already exist, for example when you re-subscribe.
     /// </param>
     /// <returns>A task representing the asynchronous operation.</returns>
     Task SubscribeAsync(IBrowserViewportObserver observer, bool fireImmediately = true);
@@ -80,7 +80,7 @@ public interface IBrowserViewportService : IAsyncDisposable
     /// </summary>
     /// <param name="mediaQuery">A string specifying the media query.</param>
     /// <returns>A task representing a boolean value that is <c>true</c> if the document currently matches the media query; otherwise, it's <c>false</c>.</returns>
-    Task<bool> IsMatchMediaAsync(string mediaQuery);
+    Task<bool> IsMediaQueryMatchAsync(string mediaQuery);
 
     /// <summary>
     /// Check if the current breakpoint fits within the current window size

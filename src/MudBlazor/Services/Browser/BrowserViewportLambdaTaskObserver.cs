@@ -27,7 +27,7 @@ internal class BrowserViewportLambdaTaskObserver : IBrowserViewportObserver
     }
 
     /// <inheritdoc />
-    public Task BrowserViewportChangeNotificationAsync(BrowserViewportEventArgs browserViewportEventArgs)
+    public Task NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
     {
         return _lambda(browserViewportEventArgs);
     }

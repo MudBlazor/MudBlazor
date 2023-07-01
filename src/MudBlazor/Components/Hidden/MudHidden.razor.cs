@@ -98,7 +98,7 @@ namespace MudBlazor
 
         Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
 
-        async Task IBrowserViewportObserver.BrowserViewportChangeNotificationAsync(BrowserViewportEventArgs browserViewportEventArgs)
+        async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
         {
             await UpdateAsync(browserViewportEventArgs.Breakpoint);
             await InvokeAsync(StateHasChanged);

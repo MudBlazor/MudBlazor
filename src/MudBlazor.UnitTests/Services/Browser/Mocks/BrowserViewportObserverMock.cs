@@ -27,7 +27,7 @@ internal class BrowserViewportObserverMock : IBrowserViewportObserver
         ResizeOptions = resizeOptions;
     }
 
-    public Task BrowserViewportChangeNotificationAsync(BrowserViewportEventArgs browserViewportEventArgs)
+    public Task NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
     {
         Notifications.Add(browserViewportEventArgs);
 

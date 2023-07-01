@@ -23,7 +23,7 @@ public class MockBrowserViewportService : IBrowserViewportService
 
     public Task UnsubscribeAsync(Guid id) => Task.CompletedTask;
 
-    public Task<bool> IsMatchMediaAsync(string mediaQuery) => Task.FromResult(false);
+    public Task<bool> IsMediaQueryMatchAsync(string mediaQuery) => Task.FromResult(false);
 
     public Task<bool> IsBreakpointWithinWindowSizeAsync(Breakpoint breakpoint) => Task.FromResult(false);
 

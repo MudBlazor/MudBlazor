@@ -501,7 +501,7 @@ public class BrowserViewportServiceTests
     }
 
     [Test]
-    public async Task IsMatchMediaAsync_MatchesMediaQuery()
+    public async Task IsMediaQueryMatchAsync_MatchesMediaQuery()
     {
         // Arrange
         var jsRuntimeMock = new Mock<IJSRuntime>();
@@ -516,8 +516,8 @@ public class BrowserViewportServiceTests
             });
 
         // Act
-        var result1 = await service.IsMatchMediaAsync("(max-width: 700px)");
-        var result2 = await service.IsMatchMediaAsync("random");
+        var result1 = await service.IsMediaQueryMatchAsync("(max-width: 700px)");
+        var result2 = await service.IsMediaQueryMatchAsync("random");
 
         // Assert
         Assert.True(result1);

@@ -402,7 +402,7 @@ namespace MudBlazor
             NotifyOnBreakpointOnly = false
         };
 
-        async Task IBrowserViewportObserver.BrowserViewportChangeNotificationAsync(BrowserViewportEventArgs browserViewportEventArgs)
+        async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
         {
             if (browserViewportEventArgs.IsImmediate)
             {
