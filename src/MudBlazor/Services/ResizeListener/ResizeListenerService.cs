@@ -10,7 +10,7 @@ namespace MudBlazor.Services
     /// <summary>
     /// This service listens to browser resize events and allows you to react to a changing window size in Blazor
     /// </summary>
-    [Obsolete($"Use {nameof(BreakpointService)} instead. This will be removed in v7.")]
+    [Obsolete($"Use {nameof(IBrowserViewportService)} instead. This will be removed in v7.")]
     public class ResizeListenerService : IResizeListenerService, IDisposable
     {
         private readonly IJSRuntime _jsRuntime;
@@ -205,7 +205,7 @@ namespace MudBlazor.Services
         }
     }
 
-    [Obsolete($"Use {nameof(IBreakpointService)} instead. This will be removed in v7.")]
+    [Obsolete($"Use {nameof(IBrowserViewportService)} instead. This will be removed in v7.")]
     public interface IResizeListenerService : IDisposable
     {
         event EventHandler<BrowserWindowSize>? OnResized;

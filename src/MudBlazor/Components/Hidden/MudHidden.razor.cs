@@ -14,6 +14,7 @@ namespace MudBlazor
         private Breakpoint _currentBreakpoint = Breakpoint.None;
 
         [Inject]
+        [Obsolete]
         public IBreakpointService BreakpointService { get; set; } = null!;
 
         [Inject]

@@ -59,7 +59,9 @@ namespace MudBlazor
             .AddStyle(Style)
         .Build();
 
-        [Inject] public IBreakpointService Breakpointistener { get; set; }
+        [Inject]
+        [Obsolete]
+        public IBreakpointService Breakpointistener { get; set; }
 
         [Inject]
         protected IBrowserViewportService BrowserViewportService { get; set; }

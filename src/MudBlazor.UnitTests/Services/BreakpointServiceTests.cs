@@ -17,6 +17,7 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Services
 {
     [TestFixture]
+    [Obsolete]
     public class BreakpointServiceTests
     {
         private Mock<IBrowserWindowSizeProvider> _browserWindowSizeProvider;

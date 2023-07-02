@@ -83,19 +83,22 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection()
+            .AddLogging()
             .AddSingleton<IJSRuntime, MockJsRuntime>();
 
         // Act
         services.AddMudBlazorResizeListener();
         var serviceProvider = services.BuildServiceProvider();
+        var browserViewportService = serviceProvider.GetService<IBrowserViewportService>();
 #pragma warning disable CS0618
         var resizeListenerService = serviceProvider.GetService<IResizeListenerService>();
-#pragma warning restore CS0618
+        var breakpointService = serviceProvider.GetService<IBreakpointService>();
         var browserWindowSizeProvider = serviceProvider.GetService<IBrowserWindowSizeProvider>();
         var resizeService = serviceProvider.GetService<IResizeService>();
-        var breakpointService = serviceProvider.GetService<IBreakpointService>();
+#pragma warning restore CS0618
 
         // Assert
+        Assert.IsNotNull(browserViewportService);
         Assert.IsNotNull(resizeListenerService);
         Assert.IsNotNull(browserWindowSizeProvider);
         Assert.IsNotNull(resizeService);
@@ -107,6 +110,7 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection()
+            .AddLogging()
             .AddSingleton<IJSRuntime, MockJsRuntime>();
         ResizeOptions? expectedOptions = null;
 
@@ -124,15 +128,21 @@ public class ServiceCollectionExtensionsTests
             expectedOptions = options;
         });
         var serviceProvider = services.BuildServiceProvider();
+        var browserViewportService = serviceProvider.GetService<IBrowserViewportService>();
 #pragma warning disable CS0618
         var resizeListenerService = serviceProvider.GetService<IResizeListenerService>();
-#pragma warning restore CS0618
+        var breakpointService = serviceProvider.GetService<IBreakpointService>();
+        var browserWindowSizeProvider = serviceProvider.GetService<IBrowserWindowSizeProvider>();
         var resizeService = serviceProvider.GetService<IResizeService>();
+#pragma warning restore CS0618
         var options = serviceProvider.GetRequiredService<IOptions<ResizeOptions>>();
         var actualOptions = options.Value;
 
         // Assert
+        Assert.IsNotNull(browserViewportService);
         Assert.IsNotNull(resizeListenerService);
+        Assert.IsNotNull(browserWindowSizeProvider);
+        Assert.IsNotNull(breakpointService);
         Assert.IsNotNull(resizeService);
         Assert.IsNotNull(expectedOptions);
         Assert.AreSame(expectedOptions, actualOptions);
@@ -429,11 +439,11 @@ public class ServiceCollectionExtensionsTests
         var snackBarService = serviceProvider.GetService<ISnackbar>();
 #pragma warning disable CS0618
         var resizeListenerService = serviceProvider.GetService<IResizeListenerService>();
-#pragma warning restore CS0618
+        var breakpointService = serviceProvider.GetService<IBreakpointService>();
         var browserWindowSizeProvider = serviceProvider.GetService<IBrowserWindowSizeProvider>();
         var resizeService = serviceProvider.GetService<IResizeService>();
-        var breakpointService = serviceProvider.GetService<IBreakpointService>();
-
+#pragma warning restore CS0618
+        var browserViewportService = serviceProvider.GetService<IBrowserViewportService>();
         var resizeObserver = serviceProvider.GetService<IResizeObserver>();
         var resizeObserverFactory = serviceProvider.GetService<IResizeObserverFactory>();
         var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
@@ -458,6 +468,7 @@ public class ServiceCollectionExtensionsTests
         Assert.IsNotNull(dialogService);
         Assert.IsNotNull(snackBarService);
         Assert.IsNotNull(resizeListenerService);
+        Assert.IsNotNull(browserViewportService);
         Assert.IsNotNull(browserWindowSizeProvider);
         Assert.IsNotNull(resizeService);
         Assert.IsNotNull(breakpointService);
@@ -534,12 +545,12 @@ public class ServiceCollectionExtensionsTests
         var dialogService = serviceProvider.GetService<IDialogService>();
         var snackBarService = serviceProvider.GetService<ISnackbar>();
 #pragma warning disable CS0618
+        var breakpointService = serviceProvider.GetService<IBreakpointService>();
         var resizeListenerService = serviceProvider.GetService<IResizeListenerService>();
-#pragma warning restore CS0618
         var browserWindowSizeProvider = serviceProvider.GetService<IBrowserWindowSizeProvider>();
         var resizeService = serviceProvider.GetService<IResizeService>();
-        var breakpointService = serviceProvider.GetService<IBreakpointService>();
-
+#pragma warning restore CS0618
+        var browserViewportService = serviceProvider.GetService<IBrowserViewportService>();
         var resizeObserver = serviceProvider.GetService<IResizeObserver>();
         var resizeObserverFactory = serviceProvider.GetService<IResizeObserverFactory>();
         var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
@@ -572,6 +583,7 @@ public class ServiceCollectionExtensionsTests
         Assert.IsNotNull(dialogService);
         Assert.IsNotNull(snackBarService);
         Assert.IsNotNull(resizeListenerService);
+        Assert.IsNotNull(browserViewportService);
         Assert.IsNotNull(browserWindowSizeProvider);
         Assert.IsNotNull(resizeService);
         Assert.IsNotNull(breakpointService);

@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using MudBlazor.Services;
 
 namespace MudBlazor
 {
+    [Obsolete("This will be removed in v7.")]
     public interface IBrowserWindowSizeProvider
     {
         ValueTask<BrowserWindowSize> GetBrowserWindowSize();
@@ -12,6 +14,7 @@ namespace MudBlazor
     /// <summary>
     /// This provider calls the JS method resizeListener.getBrowserWindowSize to get the browser window size
     /// </summary>
+    [Obsolete("This will be removed in v7.")]
     public class BrowserWindowSizeProvider : IBrowserWindowSizeProvider
     {
         private readonly IJSRuntime _jsRuntime;

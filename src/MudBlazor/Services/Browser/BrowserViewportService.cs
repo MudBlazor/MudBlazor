@@ -96,7 +96,7 @@ internal class BrowserViewportService : IBrowserViewportService
             await _semaphore.WaitAsync();
 
             // Always clone the ResizeOptions, regardless of the circumstances.
-            // This is necessary because the options may originate from the "ResizeOptions" variable (IOptions<ResizeOptions>) - these are the user-defined options when adding BreakpointService in the DI container.
+            // This is necessary because the options may originate from the "ResizeOptions" variable (IOptions<ResizeOptions>) - these are the user-defined options when adding this service in the DI container.
             // Only the user should be allowed to modify these settings, and the service should not directly modify the reference to prevent potential bugs.
             var optionsClone = (observer.ResizeOptions ?? ResizeOptions).Clone();
             // Safe to modify now
@@ -304,7 +304,7 @@ internal class BrowserViewportService : IBrowserViewportService
 
     private async Task<BrowserViewportSubscription> CreateJavaScriptListener(ResizeOptions clonedOptions, Guid observerId)
     {
-        // We check if we have and observer with equals options or same observer id
+        // We check if we have an observer with equals options or same observer id
         var javaScriptListenerId = _observerManager
             .Observers
             .Where(x => clonedOptions.Equals(x.Key.Options ?? clonedOptions) || x.Key.ObserverId == observerId)

@@ -21,8 +21,6 @@ namespace MudBlazor
 
         private string _elementId = "picker" + Guid.NewGuid().ToString().Substring(0, 8);
 
-        [Inject] private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
-
         protected string PickerClass =>
             new CssBuilder("mud-picker")
                 .AddClass($"mud-picker-inline", PickerVariant != PickerVariant.Static)

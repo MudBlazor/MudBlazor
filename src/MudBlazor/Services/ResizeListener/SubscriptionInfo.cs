@@ -8,6 +8,7 @@ using System.Collections.Generic;
 namespace MudBlazor.Services
 {
 #nullable enable
+    [Obsolete("This will be removed in v7.")]
     public class SubscriptionInfo<TAction,TOption>
     {
         private readonly Dictionary<Guid, Action<TAction>> _subscriptions;
