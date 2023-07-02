@@ -5,7 +5,7 @@ using MudBlazor.Services;
 namespace MudBlazor.UnitTests.Mocks
 {
 #pragma warning disable CS1998 // Justification - Implementing IResizeListenerService
-    [Obsolete("Replaced by BreakpointService. Remove in v7.")]
+    [Obsolete("Replaced by IBrowserViewportService. Remove in v7.")]
     public class MockResizeListenerService : IResizeListenerService
     {
         private int _width, _height;

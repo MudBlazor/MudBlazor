@@ -24,11 +24,13 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IDialogService>(new DialogService());
             ctx.Services.AddSingleton<ISnackbar, SnackbarService>();
 #pragma warning disable CS0618
+            //TODO: Remove in v7
             ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+            ctx.Services.AddSingleton<IBreakpointService>(new MockBreakpointService());
+            ctx.Services.AddSingleton<IResizeService>(new MockResizeService());
+            ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
 #pragma warning restore CS0618
             ctx.Services.AddSingleton<IBrowserViewportService>(new MockBrowserViewportService());
-            ctx.Services.AddSingleton<IResizeService>(new MockResizeService());
-            ctx.Services.AddSingleton<IBreakpointService>(new MockBreakpointService());
             ctx.Services.AddTransient<IScrollManager, MockScrollManager>();
             ctx.Services.AddTransient<IScrollListenerFactory, MockScrollListenerFactory>();
             ctx.Services.AddTransient<IJsApiService, MockJsApiServices>();
@@ -36,7 +38,6 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IScrollSpyFactory, MockScrollSpyFactory>();
             ctx.Services.AddTransient<IEventListenerFactory, MockEventListenerFactory>();
             ctx.Services.AddTransient<IEventListener, MockEventListener>();
-            ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             ctx.Services.AddSingleton<IDocsNavigationService, DocsNavigationService>();
             ctx.Services.AddSingleton<IMenuService, MenuService>();
 #pragma warning disable CS0618

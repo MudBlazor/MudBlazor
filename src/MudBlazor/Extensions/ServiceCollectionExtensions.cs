@@ -106,10 +106,10 @@ namespace MudBlazor.Services
         {
 #pragma warning disable CS0618
             services.TryAddScoped<IResizeListenerService, ResizeListenerService>();
-#pragma warning restore CS0618
-            services.TryAddScoped<IBrowserWindowSizeProvider, BrowserWindowSizeProvider>();
             services.TryAddScoped<IResizeService, ResizeService>();
             services.TryAddScoped<IBreakpointService, BreakpointService>();
+            services.TryAddScoped<IBrowserWindowSizeProvider, BrowserWindowSizeProvider>();
+#pragma warning restore CS0618
             services.TryAddScoped<IBrowserViewportService, BrowserViewportService>();
 
             return services;

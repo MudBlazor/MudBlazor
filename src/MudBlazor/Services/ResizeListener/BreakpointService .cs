@@ -13,6 +13,7 @@ using MudBlazor.Extensions;
 namespace MudBlazor.Services
 {
 #nullable enable
+    [Obsolete($"Use {nameof(IBrowserViewportService)} instead. This will be removed in v7.")]
     public class BreakpointService :
         ResizeBasedService<BreakpointService, BreakpointServiceSubscriptionInfo, Breakpoint, ResizeOptions>,
         IBreakpointService
@@ -202,6 +203,7 @@ namespace MudBlazor.Services
     /// <param name="Breakpoint">The current breakpoint of the window</param>
     public record BreakpointServiceSubscribeResult(Guid SubscriptionId, Breakpoint Breakpoint);
 
+    [Obsolete($"Use {nameof(IBrowserViewportService)} instead. This will be removed in v7.")]
     public interface IBreakpointService : IAsyncDisposable
     {
         /// <summary>
