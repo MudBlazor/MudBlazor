@@ -26,6 +26,7 @@ namespace MudBlazor.UnitTests.Components
 #pragma warning disable CS0618
             ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
 #pragma warning restore CS0618
+            ctx.Services.AddSingleton<IBrowserViewportService>(new MockBrowserViewportService());
             ctx.Services.AddSingleton<IResizeService>(new MockResizeService());
             ctx.Services.AddSingleton<IBreakpointService>(new MockBreakpointService());
             ctx.Services.AddTransient<IScrollManager, MockScrollManager>();

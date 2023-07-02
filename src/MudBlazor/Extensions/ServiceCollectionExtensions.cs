@@ -110,6 +110,7 @@ namespace MudBlazor.Services
             services.TryAddScoped<IBrowserWindowSizeProvider, BrowserWindowSizeProvider>();
             services.TryAddScoped<IResizeService, ResizeService>();
             services.TryAddScoped<IBreakpointService, BreakpointService>();
+            services.TryAddScoped<IBrowserViewportService, BrowserViewportService>();
 
             return services;
         }

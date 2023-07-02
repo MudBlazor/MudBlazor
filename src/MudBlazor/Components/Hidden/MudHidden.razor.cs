@@ -6,7 +6,7 @@ using MudBlazor.Services;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudHidden : MudComponentBase, IAsyncDisposable
+    public partial class MudHidden : MudComponentBase, IBrowserViewportObserver, IAsyncDisposable
     {
         private bool _isHidden = true;
         private bool _serviceIsReady = false;
@@ -15,6 +15,9 @@ namespace MudBlazor
 
         [Inject]
         public IBreakpointService BreakpointService { get; set; } = null!;
+
+        [Inject]
+        protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
 
         [CascadingParameter]
         public Breakpoint CurrentBreakpointFromProvider { get; set; } = Breakpoint.None;
@@ -64,15 +67,55 @@ namespace MudBlazor
         [Category(CategoryTypes.Hidden.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
-        protected void Update(Breakpoint currentBreakpoint)
+        protected override async Task OnParametersSetAsync()
+        {
+            await base.OnParametersSetAsync();
+            await UpdateAsync(_currentBreakpoint);
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+
+            if (firstRender)
+            {
+                if (CurrentBreakpointFromProvider == Breakpoint.None)
+                {
+                    _serviceIsReady = true;
+                    await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+                }
+                else
+                {
+                    _serviceIsReady = true;
+                }
+            }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await BrowserViewportService.UnsubscribeAsync(this);
+        }
+
+        Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
+
+        async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+        {
+            await UpdateAsync(browserViewportEventArgs.Breakpoint);
+            await InvokeAsync(StateHasChanged);
+        }
+
+        protected async Task UpdateAsync(Breakpoint currentBreakpoint)
         {
             if (CurrentBreakpointFromProvider != Breakpoint.None)
             {
                 currentBreakpoint = CurrentBreakpointFromProvider;
             }
-            else if (!_serviceIsReady)
+            else
             {
-                return;
+                if (!_serviceIsReady)
+                {
+                    return;
+                }
             }
 
             if (currentBreakpoint == Breakpoint.None)
@@ -82,7 +125,7 @@ namespace MudBlazor
 
             _currentBreakpoint = currentBreakpoint;
 
-            var hidden = BreakpointService.IsMediaSize(Breakpoint, currentBreakpoint);
+            var hidden = await BrowserViewportService.IsBreakpointWithinReferenceSizeAsync(Breakpoint, currentBreakpoint);
             if (Invert)
             {
                 hidden = !hidden;
@@ -90,38 +133,5 @@ namespace MudBlazor
 
             IsHidden = hidden;
         }
-
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-            Update(_currentBreakpoint);
-        }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            await base.OnAfterRenderAsync(firstRender);
-            if (firstRender)
-            {
-                if (CurrentBreakpointFromProvider == Breakpoint.None)
-                {
-                    var attachResult = await BreakpointService.SubscribeAsync((x) =>
-                    {
-                        Update(x);
-                        InvokeAsync(StateHasChanged);
-                    });
-
-                    _serviceIsReady = true;
-                    _breakpointServiceSubscriptionId = attachResult.SubscriptionId;
-                    Update(attachResult.Breakpoint);
-                    StateHasChanged();
-                }
-                else
-                {
-                    _serviceIsReady = true;
-                }
-            }
-        }
-
-        public async ValueTask DisposeAsync() => await BreakpointService.UnsubscribeAsync(_breakpointServiceSubscriptionId);
     }
 }

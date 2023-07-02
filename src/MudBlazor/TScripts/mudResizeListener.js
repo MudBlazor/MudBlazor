@@ -92,7 +92,9 @@ class MudResizeListener {
     }
 
     getBreakpoint(width) {
-        if (width >= this.options.breakpointDefinitions["Xl"])
+        if (width >= this.options.breakpointDefinitions["Xxl"])
+            return 5;
+        else if (width >= this.options.breakpointDefinitions["Xl"])
             return 4;
         else if (width >= this.options.breakpointDefinitions["Lg"])
             return 3;

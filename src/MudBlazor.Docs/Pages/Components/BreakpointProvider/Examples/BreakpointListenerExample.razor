@@ -1,52 +1,61 @@
 ﻿@using MudBlazor.Services
 @namespace MudBlazor.Docs.Examples
+@implements IBrowserViewportObserver
 @implements IAsyncDisposable
 
-
 <MudCard Class="pa-5">
-	<MudText>Size started with @_start</MudText>
-	@if (_breakpointHistory.Count > 0)
-	{
-		<MudText>And continued with: </MudText>
-		<MudList Dense="_breakpointHistory.Count > 10">
-			@foreach (var item in _breakpointHistory)
-			{
-				<MudListItem Text="@item.ToString()"></MudListItem>
-			}
-		</MudList>
-	}
+    <MudText>Size started with @_start</MudText>
+    @if (_breakpointHistory.Count > 0)
+    {
+        <MudText>And continued with: </MudText>
+        <MudList Dense="_breakpointHistory.Count > 10">
+            @foreach (var item in _breakpointHistory)
+            {
+                <MudListItem Text="@item.ToString()"></MudListItem>
+            }
+        </MudList>
+    }
 </MudCard>
 
 @code
 {
-	[Inject] IBreakpointService BreakpointListener { get; set; }
+    [Inject]
+    private IBrowserViewportService BrowserViewportService { get; set; }
 
-	private List<Breakpoint> _breakpointHistory = new();
+    private List<Breakpoint> _breakpointHistory = new();
+    private Breakpoint _start;
 
-	private Guid _subscriptionId;
-	private Breakpoint _start;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+        }
 
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (firstRender)
-		{
-			var subscriptionResult = await BreakpointListener.SubscribeAsync((breakpoint) =>
-			{
-				_breakpointHistory.Add(breakpoint);
-				InvokeAsync(StateHasChanged);
-			}, new ResizeOptions
-			{
-				ReportRate = 250,
-				NotifyOnBreakpointOnly = true,
-			});
+        await base.OnAfterRenderAsync(firstRender);
+    }
 
-			_start = subscriptionResult.Breakpoint;
-			_subscriptionId = subscriptionResult.SubscriptionId;
-			StateHasChanged();
-		}
+    public async ValueTask DisposeAsync() => await BrowserViewportService.UnsubscribeAsync(this);
 
-		await base.OnAfterRenderAsync(firstRender);
-	}
+    Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
 
-	public async ValueTask DisposeAsync() => await BreakpointListener.UnsubscribeAsync(_subscriptionId);
+    ResizeOptions IBrowserViewportObserver.ResizeOptions { get; } = new()
+    {
+        ReportRate = 250,
+        NotifyOnBreakpointOnly = true
+    };
+
+    Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+    {
+        if (browserViewportEventArgs.IsImmediate)
+        {
+            _start = browserViewportEventArgs.Breakpoint;
+        }
+        else
+        {
+            _breakpointHistory.Add(browserViewportEventArgs.Breakpoint);
+        }
+
+        return InvokeAsync(StateHasChanged);
+    }
 }
