@@ -4,23 +4,19 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
+#nullable enable
     public abstract class MudBaseItemsControl<TChildComponent> : MudComponentBase
             where TChildComponent : MudComponentBase
-
     {
+        private int _selectedIndexField = -1;
+
         /// <summary>
         /// Collection of T
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Data)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
-        /// <summary>
-        /// Items - will be ignored when ItemsSource is not null
-        /// </summary>
-        public List<TChildComponent> Items { get; } = new List<TChildComponent>();
-
-        private int _selectedIndexField = -1;
         /// <summary>
         /// Selected Item's index
         /// </summary>
@@ -49,12 +45,17 @@ namespace MudBlazor
         /// <summary>
         /// Gets the Selected TChildComponent
         /// </summary>
-        public TChildComponent LastContainer { get; private set; } = null;
+        public TChildComponent? LastContainer { get; private set; } = null;
+
+        /// <summary>
+        /// Items - will be ignored when ItemsSource is not null
+        /// </summary>
+        public List<TChildComponent> Items { get; } = new List<TChildComponent>();
 
         /// <summary>
         /// Gets the Selected TChildComponent
         /// </summary>
-        public TChildComponent SelectedContainer
+        public TChildComponent? SelectedContainer
         {
             get => SelectedIndex >= 0 && Items.Count > SelectedIndex ? Items[SelectedIndex] : null;
         }
@@ -64,9 +65,11 @@ namespace MudBlazor
             if (firstRender)
             {
                 if (Items.Count > 0 && SelectedIndex < 0)
+                {
                     MoveTo(0);
-
+                }
             }
+
             return base.OnAfterRenderAsync(firstRender);
         }
 
@@ -80,9 +83,13 @@ namespace MudBlazor
             _moveNext = false;
 
             if (SelectedIndex > 0)
+            {
                 SelectedIndex--;
+            }
             else
+            {
                 SelectedIndex = Items.Count - 1;
+            }
         }
 
         /// <summary>
@@ -93,9 +100,13 @@ namespace MudBlazor
             _moveNext = true;
 
             if (SelectedIndex < (Items.Count - 1))
+            {
                 SelectedIndex++;
+            }
             else
+            {
                 SelectedIndex = 0;
+            }
         }
 
         /// <summary>
