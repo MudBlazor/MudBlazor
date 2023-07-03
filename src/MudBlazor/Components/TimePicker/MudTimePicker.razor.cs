@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
@@ -312,7 +313,7 @@ namespace MudBlazor
 
         private string GetClockPointerColor()
         {
-            if (MouseDown)
+            if (pointerDown)
                 return $"mud-picker-time-clock-pointer mud-{Color.ToDescriptionString()}";
             else
                 return $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-{Color.ToDescriptionString()}";
@@ -417,28 +418,33 @@ namespace MudBlazor
             _timeSet.Minute = TimeIntermediate.Value.Minutes;
         }
 
-        public bool MouseDown { get; set; }
+        void ReleasePointer()
+        {
+            jsRuntime.InvokeVoidAsync("releasePointer").AndForget();
+        }
+
+        public bool pointerDown { get; set; }
 
         /// <summary>
-        /// Sets Mouse Down bool to true if mouse is inside the clock mask.
+        /// Sets pointerDown bool to true if pointer is inside the clock mask.
         /// </summary>
-        private void OnMouseDown(MouseEventArgs e)
+        private void OnPointerDown(PointerEventArgs e)
         {
-            MouseDown = true;
+            pointerDown = true;
         }
 
         /// <summary>
-        /// Sets Mouse Down bool to false if mouse is inside the clock mask.
+        /// Sets pointer Down bool to false if mouse is inside the clock mask.
         /// </summary>
-        private void OnMouseUp(MouseEventArgs e)
+        private void OnPointerUp(PointerEventArgs e)
         {
-            if (MouseDown && _currentView == OpenTo.Minutes && _timeSet.Minute != _initialMinute || _currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.OnlyHours)
+            if (pointerDown && _currentView == OpenTo.Minutes && _timeSet.Minute != _initialMinute || _currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.OnlyHours)
             {
-                MouseDown = false;
+                pointerDown = false;
                 SubmitAndClose();
             }
 
-            MouseDown = false;
+            pointerDown = false;
 
             if (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.Normal)
             {
@@ -447,11 +453,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If MouseDown is true enables "dragging" effect on the clock pin/stick.
+        /// If pointerDown is true enables "dragging" effect on the clock pin/stick.
         /// </summary>
-        private void OnMouseOverHour(int value)
+        private void OnOverHour(int value)
         {
-            if (MouseDown)
+            if (pointerDown)
             {
                 _timeSet.Hour = value;
                 UpdateTime();
@@ -461,7 +467,7 @@ namespace MudBlazor
         /// <summary>
         /// On click for the hour "sticks", sets the hour.
         /// </summary>
-        private void OnMouseClickHour(int value)
+        private void OnClickHour(int value)
         {
             var h = value;
             if (AmPm)
@@ -471,6 +477,7 @@ namespace MudBlazor
                 else if (IsPm && value < 12)
                     h = value + 12;
             }
+
             _timeSet.Hour = h;
 
             if(_currentView == OpenTo.Hours)
@@ -489,11 +496,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// On mouse over for the minutes "sticks", sets the minute.
+        /// On pointer over for the minutes "sticks", sets the minute.
         /// </summary>
-        private void OnMouseOverMinute(int value)
+        private void OnOverMinute(int value)
         {
-            if (MouseDown)
+            if (pointerDown)
             {
                 _timeSet.Minute = value;
                 UpdateTime();
@@ -503,7 +510,7 @@ namespace MudBlazor
         /// <summary>
         /// On click for the minute "sticks", sets the minute.
         /// </summary>
-        private void OnMouseClickMinute(int value)
+        private void OnClickMinute(int value)
         {
             _timeSet.Minute = value;
             UpdateTime();
