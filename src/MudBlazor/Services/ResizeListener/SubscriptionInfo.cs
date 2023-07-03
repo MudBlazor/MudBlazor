@@ -48,6 +48,7 @@ namespace MudBlazor.Services
         }
     }
 
+    [Obsolete("This will be removed in v7.")]
     public class ResizeServiceSubscriptionInfo : SubscriptionInfo<BrowserWindowSize,ResizeOptions>
     {
         public ResizeServiceSubscriptionInfo(ResizeOptions options) : base(options)
@@ -55,6 +56,7 @@ namespace MudBlazor.Services
         }
     }
 
+    [Obsolete("This will be removed in v7.")]
     public class BreakpointServiceSubscriptionInfo : SubscriptionInfo<Breakpoint, ResizeOptions>
     {
         public BreakpointServiceSubscriptionInfo(ResizeOptions options) : base(options)
