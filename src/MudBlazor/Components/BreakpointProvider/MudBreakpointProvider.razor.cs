@@ -23,6 +23,7 @@ namespace MudBlazor
         protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
 
         [Inject]
+        [Obsolete]
         public IBreakpointService Service { get; set; } = null!;
 
         [Parameter]
