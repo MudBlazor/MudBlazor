@@ -418,9 +418,9 @@ namespace MudBlazor
             _timeSet.Minute = TimeIntermediate.Value.Minutes;
         }
 
-        void ReleasePointer()
+        async Task ReleasePointer()
         {
-            jsRuntime.InvokeVoidAsync("releasePointer").AndForget();
+            await jsRuntime.InvokeVoidAsync("releasePointer");
         }
 
         public bool pointerDown { get; set; }
