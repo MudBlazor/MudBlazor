@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 namespace MudBlazor
 {
+#nullable enable
     [Obsolete("This will be removed in v7.")]
     public enum TaskOption
     {
