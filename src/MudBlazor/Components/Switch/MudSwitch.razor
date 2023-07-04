@@ -2,7 +2,6 @@
 @inherits MudBooleanInput<T>
 @typeparam T
 
-
 <MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
         <label class="@LabelClassname" style="@Style" @onkeydown="@HandleKeyDown" id="@_elementId">
@@ -20,7 +19,7 @@
                 </span>
                 <span class="@TrackClassname"></span>
             </span>
-            @if (!String.IsNullOrEmpty(Label))
+            @if (!string.IsNullOrEmpty(Label))
             {
                 <MudText Class="@SwitchLabelClassname" Color="HasErrors ? Color.Error : Color.Inherit">
                     @Label
@@ -35,11 +34,3 @@
         </label>
     </InputContent>
 </MudInputControl>
-
-@code
-{
-    [Parameter]
-    [Category(CategoryTypes.FormComponent.Behavior)]
-    public RenderFragment ChildContent { get; set; }
-}
-

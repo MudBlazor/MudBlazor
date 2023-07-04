@@ -20,5 +20,16 @@ namespace MudBlazor.UnitTests.Components
 
             mudToolBar.ClassList.Should().Contain("mud-toolbar-wrap-content");
         }
+
+        /// <summary>
+        /// ToolBar's WrapContent should be false by default
+        /// </summary>
+        [Test]
+        public void ToolBar_WrapContent_ShouldBeFalseByDefault()
+        {
+            var comp = Context.RenderComponent<MudToolBar>();
+            comp.Instance.WrapContent.Should().Be(false);
+        }
+
     }
 }

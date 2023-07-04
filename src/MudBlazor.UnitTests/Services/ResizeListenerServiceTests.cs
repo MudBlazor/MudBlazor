@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using MudBlazor.Services;
@@ -7,6 +8,7 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Services
 {
     [TestFixture]
+    [Obsolete]
     public class ResizeListenerServiceTests
     {
         private Mock<IBrowserWindowSizeProvider> _browserWindowSizeProvider;

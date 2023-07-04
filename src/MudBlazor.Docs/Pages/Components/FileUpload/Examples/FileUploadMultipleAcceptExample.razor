@@ -24,6 +24,19 @@
     </ButtonTemplate>
 </MudFileUpload>
 
+
+<MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFiles2" MaximumFileCount="100">
+    <ButtonTemplate>
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   for="@context">
+            Only image files
+        </MudButton>
+    </ButtonTemplate>
+</MudFileUpload>
+
 @if (files != null)
 {
     <MudList>

@@ -12,29 +12,24 @@ namespace MudBlazor.Services
 {
     public class ResizeObserver : IResizeObserver, IDisposable, IAsyncDisposable
     {
-        private Boolean _isDisposed = false;
+        private bool _isDisposed = false;
 
-        private readonly DotNetObjectReference<ResizeObserver> _dotNetRef;
         private readonly IJSRuntime _jsRuntime;
-
+        private readonly Guid _id = Guid.NewGuid();
+        private readonly ResizeObserverOptions _options;
+        private readonly DotNetObjectReference<ResizeObserver> _dotNetRef;
         private readonly Dictionary<Guid, ElementReference> _cachedValueIds = new();
         private readonly Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();
 
-        private Guid _id = Guid.NewGuid();
-        private ResizeObserverOptions _options;
 
         [DynamicDependency(nameof(OnSizeChanged))]
         [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(SizeChangeUpdateInfo))]
         [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(BoundingClientRect))]
-        public ResizeObserver(IJSRuntime jsRuntime, ResizeObserverOptions options)
+        public ResizeObserver(IJSRuntime jsRuntime, IOptions<ResizeObserverOptions> options = null)
         {
             _dotNetRef = DotNetObjectReference.Create(this);
             _jsRuntime = jsRuntime;
-            _options = options;
-        }
-
-        public ResizeObserver(IJSRuntime jsRuntime, IOptions<ResizeObserverOptions> options = null) : this(jsRuntime, options?.Value ?? new ResizeObserverOptions())
-        {
+            _options = options?.Value ?? new ResizeObserverOptions();
         }
 
         public async Task<BoundingClientRect> Observe(ElementReference element) => (await Observe(new[] { element })).FirstOrDefault();

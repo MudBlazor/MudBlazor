@@ -47,7 +47,10 @@ namespace MudBlazor.Docs.Compiler
                             || type == typeof(Utilities.CssBuilder) || type == typeof(TableContext) || GetSaveTypename(type).StartsWith("EventUtil_"))
                         continue;
 
-                    foreach (var method in type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy))
+                    // Check if base class has same name as derived class and use only declared to prevent double generation of methods
+                    var declaredOnly = type.BaseType is not null && GetSaveTypename(type.BaseType) == GetSaveTypename(type);
+
+                    foreach (var method in type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy | (declaredOnly ? BindingFlags.DeclaredOnly : BindingFlags.Default)))
                     {
                         if (!hiddenMethods.Any(x => x.Contains(method.Name)) && !method.Name.StartsWith("get_") && !method.Name.StartsWith("set_"))
                         {

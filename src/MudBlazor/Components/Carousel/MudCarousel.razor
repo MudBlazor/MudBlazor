@@ -1,6 +1,5 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseBindableItemsControl<MudCarouselItem, TData>
-@implements IAsyncDisposable
 @typeparam TData
 
 <section @attributes="UserAttributes" aria-roledescription="carousel" class="@Classname" style="@Style">
@@ -8,16 +7,19 @@
 
         <MudSwipeArea OnSwipe="OnSwipe" Class="mud-carousel-swipe">
             @*Selected Content*@
-            @if (ItemsSource == null)
+            @if (ItemsSource is null)
             {
                 @ChildContent
             }
             else
             {
-                foreach (TData item in ItemsSource)
+                foreach (var item in ItemsSource)
                 {
                     <MudCarouselItem>
-                        @ItemTemplate(item)
+                        @if (ItemTemplate is not null)
+                        {
+                            @ItemTemplate(item)
+                        }
                     </MudCarouselItem>
                 }
             }
@@ -28,7 +30,7 @@
             @*Left Arrow*@
             @if (ShowArrows)
             {
-                @if (PreviousButtonTemplate == null)
+                @if (PreviousButtonTemplate is null)
                 {
                     <MudIconButton tabindex="1" aria-label="Go to previous" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@PreviousIcon" OnClick="Previous" Color="Color.Inherit" />
                 }
@@ -48,9 +50,9 @@
                         @for (int i = 0; i < Items.Count; i++)
                         {
                             int current = i;
-                            if (BulletTemplate == null)
+                            if (BulletTemplate is null)
                             {
-                                <MudIconButton tabindex="@(i+3)" aria-label="@(i+1)" Class="@BulletsButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@(current == SelectedIndex ? CheckedIcon : UncheckedIcon)" OnClick="(() => MoveTo(current))" Color="Color.Inherit" />
+                                <MudIconButton tabindex="@(current+3)" aria-label="@(current+1)" Class="@BulletsButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@(current == SelectedIndex ? CheckedIcon : UncheckedIcon)" OnClick="(() => MoveTo(current))" Color="Color.Inherit" />
                             }
                             else
                             {
@@ -66,7 +68,7 @@
             @*Right Arrow*@
             @if (ShowArrows)
             {
-                @if (NextButtonTemplate == null)
+                @if (NextButtonTemplate is null)
                 {
                     <MudIconButton tabindex="2" aria-label="Go to next" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@NextIcon" OnClick="Next" Color="Color.Inherit" />
                 }

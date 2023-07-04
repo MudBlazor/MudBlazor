@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.Extensions.Options;
 using MudBlazor.Components.Snackbar;
 using MudBlazor.Components.Snackbar.InternalComponents;
 
@@ -23,12 +24,10 @@ namespace MudBlazor
         private ReaderWriterLockSlim SnackBarLock { get; }
         private IList<Snackbar> SnackBarList { get; }
 
-        public SnackbarService(NavigationManager navigationManager, SnackbarConfiguration configuration = null)
+        public SnackbarService(NavigationManager navigationManager, IOptions<SnackbarConfiguration> configuration = null)
         {
             _navigationManager = navigationManager;
-            configuration ??= new SnackbarConfiguration();
-
-            Configuration = configuration;
+            Configuration = configuration?.Value ?? new SnackbarConfiguration();
             Configuration.OnUpdate += ConfigurationUpdated;
             navigationManager.LocationChanged += NavigationManager_LocationChanged;
 

@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudSlider<T> : MudComponentBase
     {
         protected string Classname =>
@@ -17,17 +16,17 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
-        protected string _value;
-        protected string _min = "0";
-        protected string _max = "100";
-        protected string _step = "1";
+        protected string? _value;
+        protected string? _min = "0";
+        protected string? _max = "100";
+        protected string? _step = "1";
 
         /// <summary>
         /// The minimum allowed value of the slider. Should not be equal to max.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Slider.Validation)]
-        public T Min
+        public T? Min
         {
             get => Converter.Get(_min);
             set => _min = Converter.Set(value);
@@ -39,7 +38,7 @@ namespace MudBlazor
         /// 
         [Parameter]
         [Category(CategoryTypes.Slider.Validation)]
-        public T Max
+        public T? Max
         {
             get => Converter.Get(_max);
             set => _max = Converter.Set(value);
@@ -51,7 +50,7 @@ namespace MudBlazor
         /// 
         [Parameter]
         [Category(CategoryTypes.Slider.Validation)]
-        public T Step
+        public T? Step
         {
             get => Converter.Get(_step);
             set => _step = Converter.Set(value);
@@ -70,7 +69,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Slider.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.Slider.Behavior)]
@@ -80,14 +79,17 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.Slider.Data)]
-        public T Value
+        public T? Value
         {
             get => Converter.Get(_value);
             set
             {
                 var d = Converter.Set(value);
                 if (_value == d)
+                {
                     return;
+                }
+
                 _value = d;
                 ValueChanged.InvokeAsync(value);
             }
@@ -100,13 +102,16 @@ namespace MudBlazor
         [Category(CategoryTypes.Slider.Appearance)]
         public Color Color { get; set; } = Color.Primary;
 
-        protected string Text
+        protected string? Text
         {
             get => _value;
             set
             {
                 if (_value == value)
+                {
                     return;
+                }
+
                 _value = value;
                 ValueChanged.InvokeAsync(Value);
             }
@@ -139,7 +144,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Slider.Appearance)]
-        public string[] TickMarkLabels { get; set; }
+        public string[]? TickMarkLabels { get; set; }
 
         /// <summary>
         /// Labels for tick marks, will attempt to map the labels to each step in index order.

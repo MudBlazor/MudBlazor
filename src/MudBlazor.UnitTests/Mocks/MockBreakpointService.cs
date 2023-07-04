@@ -5,6 +5,7 @@ using MudBlazor.Services;
 namespace MudBlazor.UnitTests.Mocks
 {
 #pragma warning disable CS1998 // Justification - Implementing IResizeListenerService
+    [Obsolete("Replaced by IBrowserViewportService. Remove in v7.")]
     public class MockBreakpointService : IBreakpointService
     {
         private int _width, _height;
@@ -94,13 +95,13 @@ namespace MudBlazor.UnitTests.Mocks
 
         private Breakpoint GetBreakpointInternal()
         {
-            if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Xl])
+            if (_width >= BreakpointGlobalOptions.DefaultBreakpointDefinitions[Breakpoint.Xl])
                 return Breakpoint.Xl;
-            else if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Lg])
+            else if (_width >= BreakpointGlobalOptions.DefaultBreakpointDefinitions[Breakpoint.Lg])
                 return Breakpoint.Lg;
-            else if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Md])
+            else if (_width >= BreakpointGlobalOptions.DefaultBreakpointDefinitions[Breakpoint.Md])
                 return Breakpoint.Md;
-            else if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Sm])
+            else if (_width >= BreakpointGlobalOptions.DefaultBreakpointDefinitions[Breakpoint.Sm])
                 return Breakpoint.Sm;
             else
                 return Breakpoint.Xs;

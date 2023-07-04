@@ -401,6 +401,10 @@ namespace MudBlazor
             {
                 return month.EndOfMonth(Culture) < MinDate || month > MaxDate;
             }
+            if (DateTime.DaysInMonth(month.Year, month.Month) < FixDay!.Value)
+            {
+                return true;
+            }
             var day = new DateTime(month.Year, month.Month, FixDay!.Value);
             return day < MinDate || day > MaxDate || IsDateDisabledFunc(day);
         }

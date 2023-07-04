@@ -10,11 +10,11 @@
                 <input tabindex="-1" @attributes="UserAttributes" type="checkbox" class="mud-checkbox-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" />
                 <MudIcon Icon="@GetIcon()" Color="HasErrors ? Color.Error : Color.Inherit" Size="@Size" />
             </span>
-            @if (!String.IsNullOrEmpty(Label))
+            @if (!string.IsNullOrEmpty(Label))
             {
                 <MudText Color="HasErrors ? Color.Error : Color.Inherit">@Label</MudText>
             }
-            @if (ChildContent != null)
+            @if (ChildContent is not null)
             {
                 <MudText Color="HasErrors ? Color.Error : Color.Inherit">
                     @ChildContent

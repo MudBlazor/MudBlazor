@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
@@ -12,6 +10,7 @@ namespace MudBlazor.Services
     /// <summary>
     /// This service listens to browser resize events and allows you to react to a changing window size in Blazor
     /// </summary>
+    [Obsolete($"Use {nameof(IBrowserViewportService)} instead. This will be removed in v7.")]
     public class ResizeListenerService : IResizeListenerService, IDisposable
     {
         private readonly IJSRuntime _jsRuntime;
@@ -33,7 +32,6 @@ namespace MudBlazor.Services
         {
             _dotNetRef = DotNetObjectReference.Create(this);
             _options = options?.Value ?? new ResizeOptions();
-            _options.BreakpointDefinitions = BreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
             _jsRuntime = jsRuntime;
             _browserWindowSizeProvider = browserWindowSizeProvider;
         }
@@ -129,32 +127,23 @@ namespace MudBlazor.Services
             _onBreakpointChanged?.Invoke(this, breakpoint);
         }
 
-        public static Dictionary<Breakpoint, int> BreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
-        {
-            [Breakpoint.Xxl] = 2560,
-            [Breakpoint.Xl] = 1920,
-            [Breakpoint.Lg] = 1280,
-            [Breakpoint.Md] = 960,
-            [Breakpoint.Sm] = 600,
-            [Breakpoint.Xs] = 0,
-        };
-
         public async Task<Breakpoint> GetBreakpoint()
         {
+            var defaultBreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(_options);
             // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
             if (_onResized == null || _windowSize == null)
                 _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
             if (_windowSize == null)
                 return Breakpoint.Xs;
-            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Xxl])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Xxl])
                 return Breakpoint.Xxl;
-            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Xl])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Xl])
                 return Breakpoint.Xl;
-            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Lg])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Lg])
                 return Breakpoint.Lg;
-            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Md])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Md])
                 return Breakpoint.Md;
-            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Sm])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Sm])
                 return Breakpoint.Sm;
             return Breakpoint.Xs;
         }
@@ -216,7 +205,7 @@ namespace MudBlazor.Services
         }
     }
 
-
+    [Obsolete($"Use {nameof(IBrowserViewportService)} instead. This will be removed in v7.")]
     public interface IResizeListenerService : IDisposable
     {
         event EventHandler<BrowserWindowSize>? OnResized;

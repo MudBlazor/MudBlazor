@@ -4,14 +4,20 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudBreadcrumbs : MudComponentBase
     {
+        private string Classname => new CssBuilder("mud-breadcrumbs")
+            .AddClass("mud-typography-body1")
+            .AddClass(Class)
+            .Build();
+
         /// <summary>
         /// A list of breadcrumb items/links.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Breadcrumbs.Behavior)]
-        public List<BreadcrumbItem> Items { get; set; }
+        public List<BreadcrumbItem>? Items { get; set; }
 
         /// <summary>
         /// Specifies the separator between the items.
@@ -25,14 +31,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Breadcrumbs.Appearance)]
-        public RenderFragment SeparatorTemplate { get; set; }
+        public RenderFragment? SeparatorTemplate { get; set; }
 
         /// <summary>
         /// Specifies a RenderFragment to use as the items' contents.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Breadcrumbs.Behavior)]
-        public RenderFragment<BreadcrumbItem> ItemTemplate { get; set; }
+        public RenderFragment<BreadcrumbItem>? ItemTemplate { get; set; }
 
         /// <summary>
         /// Controls when (and if) the breadcrumbs will automatically collapse.
@@ -60,7 +66,9 @@ namespace MudBlazor
         internal void Expand()
         {
             if (!Collapsed)
+            {
                 return;
+            }
 
             Collapsed = false;
             StateHasChanged();

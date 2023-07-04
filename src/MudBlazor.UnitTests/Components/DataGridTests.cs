@@ -2542,6 +2542,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task FilterDefinitionReplaceWithCustom()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+            dataGrid.Instance.SetDefaultFilterDefinition<CustomFilterDefinitionMock<DataGridFiltersTest.Model>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
+
+            // add a filter via the AddFilter method
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
+
+            // check the number of filters displayed in the filters panel
+            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
+
+            var filterDefinitionInstance = dataGrid.Instance.FilterDefinitions.FirstOrDefault();
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            filterDefinitionInstance.Should().NotBeNull();
+            filterDefinitionInstance.Should().BeOfType<CustomFilterDefinitionMock<DataGridFiltersTest.Model>>();
+        }
+
+        [Test]
         public async Task DataGridFiltersTest()
         {
             var comp = Context.RenderComponent<DataGridFiltersTest>();
@@ -3055,6 +3076,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridFilterableFalseTest()
+        {
+            var comp = Context.RenderComponent<DataGridFilterableFalseTest>();
+
+            comp.Find(".filter-button").Click();
+            comp.FindAll(".filters-panel").Count.Should().Be(1);
+
+            comp.FindAll("div.mud-input-control")[0].Click();
+            comp.FindAll("div.mud-list-item").Count.Should().Be(3);
+        }
+
+        [Test]
         public async Task DataGridColumnPopupCustomFilteringTest()
         {
             var comp = Context.RenderComponent<DataGridColumnPopupCustomFilteringTest>();
@@ -3159,6 +3192,28 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridStickyColumnsTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridStickyColumnsTest.Model>>();
+
+            dataGrid.Find("th").ClassList.Should().Contain("sticky-left");
+            dataGrid.FindAll("th").Last().ClassList.Should().Contain("sticky-right");
+        }
+
+        [Test]
+        public async Task DataGridStickyColumnsResizerTest()
+        {
+            var comp = Context.RenderComponent<DataGridStickyColumnsResizerTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridStickyColumnsResizerTest.Model>>();
+
+            var header = dataGrid.Find(".mud-table-toolbar");
+            header.GetAttribute("style").Should().Contain("position:sticky");
+            header.GetAttribute("style").Should().Contain("left:0px");
+
+            var footer = dataGrid.Find(".mud-table-pagination");
+            footer.GetAttribute("style").Should().Contain("position:sticky");
+            footer.GetAttribute("style").Should().Contain("left:0px");
+
+            var body = dataGrid.Find(".mud-table-container");
+            body.GetAttribute("style").Should().Contain("width:max-content");
+            body.GetAttribute("style").Should().Contain("overflow:clip");
 
             dataGrid.Find("th").ClassList.Should().Contain("sticky-left");
             dataGrid.FindAll("th").Last().ClassList.Should().Contain("sticky-right");

@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -560,6 +561,84 @@ namespace MudBlazor.UnitTests.Components
             form.Errors[0].Should().Be("Required");
             radioGroup.Error.Should().BeTrue();
             radioGroup.ErrorText.Should().Be("Required");
+        }
+        
+        /// <summary>
+        /// ColorPicker should be validated like every other form component when color is changed via inputs
+        /// </summary>
+        [Test]
+        public async Task Form_Should_Validate_ColorPicker_When_ColorSelectedViaInputs()
+        {
+            var comp = Context.RenderComponent<FormWithColorPickerTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var colorPickerComp = comp.FindComponent<MudColorPicker>();
+            var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
+            var forbiddenColor = colorPicker.Value;
+            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor?, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
+            // should not be valid since the default color is invalid
+            form.IsTouched.Should().BeFalse();
+            form.IsValid.Should().BeFalse();
+            colorPicker.Error.Should().BeFalse();
+            colorPicker.ErrorText.Should().BeNullOrEmpty();
+            // input a valid color
+            await comp.InvokeAsync(() => colorPickerComp.FindAll("input")[0].Change("#111111"));
+            form.IsTouched.Should().BeTrue();
+            form.IsValid.Should().BeTrue();
+            form.Errors.Length.Should().Be(0);
+            colorPicker.Error.Should().BeFalse();
+            colorPicker.ErrorText.Should().BeNullOrEmpty();
+            // reset to forbidden color
+            comp.SetParam(x => x.ColorValue, forbiddenColor);
+            form.IsValid.Should().Be(false);
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be($"{forbiddenColor.Value} is not allowed");
+            colorPicker.Error.Should().BeTrue();
+            colorPicker.ErrorText.Should().Be($"{forbiddenColor.Value} is not allowed");
+        }
+
+        /// <summary>
+        /// ColorPicker should be validated like every other form component when color is selected using picker
+        /// </summary>
+        [Test]
+        public async Task Form_Should_ValidateColorPickerTest_When_ColorSelectedViaPicker()
+        {
+            var comp = Context.RenderComponent<FormWithColorPickerTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var colorPickerComp = comp.FindComponent<MudColorPicker>();
+            var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
+            var forbiddenColor = colorPicker.Palette.First();
+            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor?, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
+            // initial form state
+            form.IsTouched.Should().BeFalse();
+            form.IsValid.Should().BeFalse();
+            
+            await comp.InvokeAsync(() => comp.Find("input").Click());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            // open color collection view
+            await comp.InvokeAsync(() => comp.Find("div.mud-picker-color-dot-current").Click());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(1));
+            
+            // set valid color
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").Skip(1).First().Click());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(0));
+            form.IsTouched.Should().BeTrue();
+            form.IsValid.Should().BeTrue();
+            form.Errors.Length.Should().Be(0);
+            colorPicker.Error.Should().BeFalse();
+            colorPicker.ErrorText.Should().BeNullOrEmpty();
+            
+            await comp.InvokeAsync(() => comp.Find("div.mud-picker-color-dot-current").Click());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(1));
+            
+            // set invalid color
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").First().Click());
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(0));
+            form.IsTouched.Should().BeTrue();
+            form.IsValid.Should().BeFalse();
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be($"{forbiddenColor.Value} is not allowed");
+            colorPicker.Error.Should().BeTrue();
+            colorPicker.ErrorText.Should().Be($"{forbiddenColor.Value} is not allowed");
         }
 
         /// <summary>
@@ -1596,6 +1675,38 @@ namespace MudBlazor.UnitTests.Components
 
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.Disabled, false).Add(p => p.NestedDisabled, false));
             comp.FindAll(".mud-checkbox.mud-disabled").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task FormWithChildFormTest()
+        {
+            var comp = Context.RenderComponent<FormWithChildForm>();
+            var childFormSwitch = comp.Find(".mud-switch-input");
+            var parentForm = comp.FindComponent<MudForm>().Instance;
+            var parentTextFieldCmp = comp.FindComponent<MudTextField<string>>();
+            var parentTextField = parentTextFieldCmp.Instance;
+            // check initial state: form should not be valid, but text field does not display an error initially!
+            parentForm.IsValid.Should().Be(false);
+            parentTextField.Error.Should().BeFalse();
+            parentTextField.ErrorText.Should().BeNullOrEmpty();
+            parentTextFieldCmp.Find("input").Change("Marilyn Manson");
+            parentForm.IsValid.Should().Be(true);
+            parentForm.Errors.Length.Should().Be(0);
+            parentTextField.Error.Should().BeFalse();
+            parentTextField.ErrorText.Should().BeNullOrEmpty();
+            // display the child form
+            childFormSwitch.Change(true);
+            var forms = comp.FindComponents<MudForm>();
+            forms.Count.Should().Be(2);
+            var childForm = forms[1];
+            childForm.Instance.IsValid.Should().BeFalse();
+            parentForm.IsValid.Should().Be(false);
+            
+            // remove the child form
+            childFormSwitch.Change(false);
+            forms = comp.FindComponents<MudForm>();
+            forms.Count.Should().Be(1);
+            parentForm.IsValid.Should().BeTrue();
         }
     }
 }

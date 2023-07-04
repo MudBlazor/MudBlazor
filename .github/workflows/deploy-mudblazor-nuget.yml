@@ -52,10 +52,13 @@ jobs:
       with:
         dotnet-version: |
           6.0.x
-          7.0.203
+          7.0.x
     - name: Pack nuget package
       run: dotnet pack -c Release --output nupkgs /p:PackageVersion=${{ needs.get-version.outputs.VERSION }} /p:AssemblyVersion=${{ needs.get-version.outputs.VERSION }} /p:Version=${{ needs.get-version.outputs.VERSION }}
       working-directory: ./src/MudBlazor
     - name: Publish nuget package
-      run: dotnet nuget push nupkgs/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json
+      run: dotnet nuget push nupkgs/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+      working-directory: ./src/MudBlazor
+    - name: Push nuget generated package symbols
+      run: dotnet nuget push nupkgs/*.snupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
       working-directory: ./src/MudBlazor

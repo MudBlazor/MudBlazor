@@ -358,6 +358,11 @@ namespace MudBlazor
         public void Dispose()
         {
             _timer?.Dispose();
+            if (ParentMudForm != null)
+            {
+                ParentMudForm.ChildForms.Remove(this);
+                ParentMudForm.EvaluateForm(); // Need this to refresh the form state
+            }
         }
     }
 }
