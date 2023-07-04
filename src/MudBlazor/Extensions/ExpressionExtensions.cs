@@ -16,7 +16,7 @@ namespace MudBlazor
             var resultingString = string.Empty;
             var p = property.Body as MemberExpression;
 
-            while (p != null)
+            while (p is not null)
             {
                 if (p.Expression is MemberExpression)
                 {
@@ -34,6 +34,7 @@ namespace MudBlazor
         {
             var memberExpression = (MemberExpression)expression.Body;
             var propertyInfo = memberExpression.Expression?.Type.GetProperty(memberExpression.Member.Name);
+
             return propertyInfo?.GetCustomAttributes(typeof(LabelAttribute), true).Cast<LabelAttribute>().FirstOrDefault()?.Name ?? string.Empty;
         }
     }
