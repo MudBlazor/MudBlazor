@@ -3,8 +3,16 @@
 // See the LICENSE file in the project root for more information.
 
 class MudWindow {
+
     copyToClipboard (text) {
         navigator.clipboard.writeText(text);
+    }
+
+    getInnerTextById(id) {
+        let element = document.getElementById(id)
+        if (!element)
+            return null;
+        return element.innerText;
     }
 
     changeCssById (id, css) {
