@@ -2,13 +2,16 @@
 @using FluentValidation
 
 <MudForm Model="_model" Validation="@_validator.ValidateValue" FieldChanged="@FieldChanged">
-    <MudTextField T="string" @bind-Value="@_model.Value" For="() => _model.Value" Immediate="true" DebounceInterval="500" Required="true" RequiredError="Enter a star"></MudTextField>
+    <MudTextField T="string" @bind-Value="@_model.Value" For="() => _model.Value" Immediate="true" DebounceInterval="@DebounceInterval" Required="true" RequiredError="Enter a star"></MudTextField>
 </MudForm>
 
 <MudText>RenderCount: @_renderCount</MudText>
 
 @code {
     public static string __description__ = "User validation should not be swallowed when new text is added during async validation.";
+
+    public int DebounceInterval = 500;
+    public int AsyncTaskDelay = 2000;
 
     private Model _model = new();
 
@@ -27,7 +30,7 @@
         return;
     }
     
-    private class Model
+    public class Model
     {
         public string Value { get; set; }
     }
