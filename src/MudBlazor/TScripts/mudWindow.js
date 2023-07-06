@@ -8,13 +8,6 @@ class MudWindow {
         navigator.clipboard.writeText(text);
     }
 
-    getInnerTextById(id) {
-        let element = document.getElementById(id)
-        if (!element)
-            return null;
-        return element.innerText;
-    }
-
     changeCssById (id, css) {
         var element = document.getElementById(id);
         if (element) {

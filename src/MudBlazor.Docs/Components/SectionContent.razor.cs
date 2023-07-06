@@ -12,12 +12,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
+using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Components;
 
 public partial class SectionContent
 {
     [Inject] protected IJsApiService JsApiService { get; set; }
+    [Inject] protected IDocsJsApiService DocsJsApiService { get; set; }
 
     protected string Classname =>
         new CssBuilder("docs-section-content")
@@ -103,7 +105,7 @@ public partial class SectionContent
     {
         var code = Snippets.GetCode(Code);
         if (code == null)
-            code=await JsApiService.GetInnerTextByIdAsync(_snippetId);
+            code=await DocsJsApiService.GetInnerTextByIdAsync(_snippetId);
         await JsApiService.CopyToClipboardAsync(code ?? $"Snippet '{Code}' not found!");
     }
 

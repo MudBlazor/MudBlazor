@@ -6,7 +6,6 @@ namespace MudBlazor
     public interface IJsApiService
     {
         ValueTask CopyToClipboardAsync(string text);
-        ValueTask<string> GetInnerTextByIdAsync(string id);
         ValueTask OpenInNewTabAsync(string url);
         ValueTask Open(string link, string target);
     }
@@ -22,11 +21,6 @@ namespace MudBlazor
 
         public ValueTask CopyToClipboardAsync(string text) =>
             _jsRuntime.InvokeVoidAsync("mudWindow.copyToClipboard", text);
-
-        public ValueTask<string> GetInnerTextByIdAsync(string id)
-        {
-            return _jsRuntime.InvokeAsync<string>($"mudWindow.getInnerTextById", id);
-        }
 
         public ValueTask Open(string link, string target)
         {
