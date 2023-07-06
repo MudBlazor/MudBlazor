@@ -2,10 +2,8 @@
 
 namespace MudBlazor.UnitTests.Mocks
 {
-    /// <summary>
-    /// Mock for scroll listener
-    /// </summary>
-    public class MockJsApiServices : IJsApiService
+
+    public class MockJsApiService : IJsApiService
     {
         public ValueTask CopyToClipboardAsync(string text) => ValueTask.CompletedTask;
 
