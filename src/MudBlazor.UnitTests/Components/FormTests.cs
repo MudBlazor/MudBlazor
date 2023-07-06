@@ -366,6 +366,35 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Validate that text typed during async validation of a component won't swallow user input on re-render.
+        /// </summary>
+        [Test]
+        public async Task FormAsyncValidationWithFieldChangedSubscriberTest()
+        {
+            var comp = Context.RenderComponent<FormAsyncValidationWithFieldChangedSubscriberTest>();
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            var input = comp.Find("input");
+            input.Input(new ChangeEventArgs { Value = "test" });
+            // trigger validation
+            await Task.Delay(comp.Instance.DebounceInterval);
+            // imitate "typing in progress" by extending the debounce interval until the async validation terminates
+            var elapsedTime = 0;
+            var currentText = "test";
+            while (elapsedTime < comp.Instance.AsyncTaskDelay)
+            {
+                var delay = comp.Instance.DebounceInterval / 2;
+                currentText += "a";
+                input.Input(new ChangeEventArgs { Value = currentText });
+                await Task.Delay(delay);
+                elapsedTime += delay;
+            }
+            // after the final debounce, the value should be updated without swallowing any user input 
+            await Task.Delay(comp.Instance.DebounceInterval);
+            textField.Value.Should().Be(currentText);
+            textField.Text.Should().Be(currentText);
+        }
+        
+        /// <summary>
         /// After changing any of the textfields with a For expression the corresponding chip should show a change message after the textfield blurred.
         /// </summary>
         /// <returns></returns>
