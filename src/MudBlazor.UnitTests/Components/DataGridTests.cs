@@ -456,7 +456,8 @@ namespace MudBlazor.UnitTests.Components
 
             //open edit dialog
             dataGrid.FindAll("tbody tr")[1].Click();
-
+            //No close button
+            comp.FindAll("button[aria-label=\"close\"]").Should().BeEmpty();
             //edit data
             comp.FindAll("div input")[0].Change("Galadriel");
             comp.FindAll("div input")[1].Change(1);
@@ -3804,6 +3805,23 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
 
         }
-    
+        [Test]
+        public void DataGridEditFormDialogIsCustomizableTest()
+        {
+            var comp = Context.RenderComponent<DataGridEditFormCustomizedDialogTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditFormCustomizedDialogTest.Model>>();
+
+            //open edit dialog
+            dataGrid.FindAll("tbody tr")[1].Click();
+            //check if dialog is open
+            comp.FindAll("div.mud-dialog-container").Should().NotBeEmpty();
+            //find button with arialabel close in dialog
+            var closeButton = comp.Find("button[aria-label=\"close\"]");
+            closeButton.Should().NotBeNull();
+            //click close button
+            comp.Find("button[aria-label=\"close\"]").Click();
+            //check if dialog is closed
+            comp.FindAll("div.mud-dialog-container").Should().BeEmpty();
+        }
     }
 }
