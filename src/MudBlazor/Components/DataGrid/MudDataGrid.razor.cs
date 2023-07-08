@@ -988,7 +988,7 @@ namespace MudBlazor
                 Selection.Remove(item);
                 if (item.Equals(SelectedItem))
                 {
-                    SelectedItem = Selection.LastOrDefault();
+                    SelectedItem = default;
                 }
             }
 
