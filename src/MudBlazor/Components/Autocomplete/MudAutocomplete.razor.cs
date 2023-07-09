@@ -342,6 +342,12 @@ namespace MudBlazor
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         /// <summary>
+        /// Event when value has been changed
+        /// </summary>
+        [Parameter]
+        public EventCallback<T> OnValueChanged { get; set; }
+
+        /// <summary>
         /// Returns the open state of the drop-down.
         /// </summary>
         public bool IsOpen
@@ -386,6 +392,7 @@ namespace MudBlazor
                 if (!_isCleared)
                     _elementReference?.SetText(optionText);
                 _elementReference?.FocusAsync().AndForget();
+                await OnValueChanged.InvokeAsync(value);
                 StateHasChanged();
             }
             finally
