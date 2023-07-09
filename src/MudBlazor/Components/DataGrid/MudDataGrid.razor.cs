@@ -979,9 +979,18 @@ namespace MudBlazor
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
             if (value)
+            {
                 Selection.Add(item);
+                SelectedItem = item;
+            }
             else
+            {
                 Selection.Remove(item);
+                if (item.Equals(SelectedItem))
+                {
+                    SelectedItem = default;
+                }
+            }
 
             await InvokeAsync(() => SelectedItemsChangedEvent.Invoke(SelectedItems));
             await SelectedItemsChanged.InvokeAsync(SelectedItems);

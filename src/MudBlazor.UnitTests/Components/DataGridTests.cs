@@ -266,6 +266,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridSingleSelectionTest()
+        {
+            var comp = Context.RenderComponent<DataGridSingleSelectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSingleSelectionTest.Item>>();
+
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
+            // select first item programmatically
+            var firstItem = dataGrid.Instance.Items.ElementAt(0);
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.Instance.SelectedItem.Should().Be(firstItem);
+
+            // select second item programmatically (still should be only one item selected)
+            var secondItem = dataGrid.Instance.Items.ElementAt(1);
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(true, secondItem));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.Instance.SelectedItem.Should().Be(secondItem);
+
+            // deselect an item programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, secondItem));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.SelectedItem.Should().BeNull();
+
+            // nothing should happen as the "select all" shouldn't do anything in single selection mode
+            dataGrid.FindAll("input")[0].Change(true);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+        }
+
+        [Test]
         public async Task DataGridMultiSelectionTest()
         {
             var comp = Context.RenderComponent<DataGridMultiSelectionTest>();
@@ -494,7 +524,8 @@ namespace MudBlazor.UnitTests.Components
 
             //open edit dialog
             dataGrid.FindAll("tbody tr")[1].Click();
-
+            //No close button
+            comp.FindAll("button[aria-label=\"close\"]").Should().BeEmpty();
             //edit data
             comp.FindAll("div input")[0].Change("Galadriel");
             comp.FindAll("div input")[1].Change(1);
@@ -3842,6 +3873,23 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
 
         }
-    
+        [Test]
+        public void DataGridEditFormDialogIsCustomizableTest()
+        {
+            var comp = Context.RenderComponent<DataGridEditFormCustomizedDialogTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditFormCustomizedDialogTest.Model>>();
+
+            //open edit dialog
+            dataGrid.FindAll("tbody tr")[1].Click();
+            //check if dialog is open
+            comp.FindAll("div.mud-dialog-container").Should().NotBeEmpty();
+            //find button with arialabel close in dialog
+            var closeButton = comp.Find("button[aria-label=\"close\"]");
+            closeButton.Should().NotBeNull();
+            //click close button
+            comp.Find("button[aria-label=\"close\"]").Click();
+            //check if dialog is closed
+            comp.FindAll("div.mud-dialog-container").Should().BeEmpty();
+        }
     }
 }

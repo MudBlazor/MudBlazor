@@ -254,7 +254,7 @@
         }
     </div>
     <CascadingValue Value="true" IsFixed Name="IsNested">
-        <MudDialog @bind-IsVisible="isEditFormOpen">
+        <MudDialog Options="EditDialogOptions" @bind-IsVisible="isEditFormOpen">
             <DialogContent>
                 <MudForm FieldChanged="FormFieldChanged">
                     @foreach (var column in RenderedColumns)
