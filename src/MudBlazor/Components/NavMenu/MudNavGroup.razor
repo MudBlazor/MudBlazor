@@ -1,9 +1,9 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class=@Classname disabled="@Disabled" style="@Style">
-    <button @onclick="ExpandedToggle" tabindex="0" class="@ButtonClassname">
-        @if (!String.IsNullOrEmpty(Icon))
+<div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
+    <button @onclick="ExpandedToggleAsync" tabindex="0" class="@ButtonClassname">
+        @if (!string.IsNullOrEmpty(Icon))
         {
             <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
         }
