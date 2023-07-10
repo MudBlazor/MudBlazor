@@ -149,7 +149,7 @@ namespace MudBlazor
                 StateHasChanged();
             }
             return Task.CompletedTask;
-            
+
         }
 
         public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
@@ -1085,12 +1085,13 @@ namespace MudBlazor
         {
             await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
 
-            if (EditMode != DataGridEditMode.Cell)
+            if (EditMode == DataGridEditMode.Form)
             {
                 if (EditTrigger == DataGridEditTrigger.OnRowClick)
                     await SetEditingItemAsync(item);
 
-                await SetSelectedItemAsync(item);
+                if (EditTrigger == DataGridEditTrigger.Manual)
+                    await SetSelectedItemAsync(item);
             }
         }
 
@@ -1343,7 +1344,7 @@ namespace MudBlazor
             _dropContainer?.Refresh();
         }
 
-        
+
         public void GroupItems(bool noStateChange = false)
         {
             if (GroupedColumn == null)
@@ -1374,7 +1375,7 @@ namespace MudBlazor
                 _groupExpansions.Contains(x.Key))).ToList();
 
             _allGroups = allGroupings.Select(x => new GroupDefinition<T>(x,
-                _groupExpansions.Contains(x.Key))).ToList();                
+                _groupExpansions.Contains(x.Key))).ToList();
 
             if ((_isFirstRendered || ServerData != null) && !noStateChange)
                 StateHasChanged();

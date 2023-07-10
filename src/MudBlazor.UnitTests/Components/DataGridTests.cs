@@ -621,7 +621,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Make sure that the callbacks have been fired.
             comp.Instance.RowClicked.Should().Be(true);
-            comp.Instance.SelectedItemChanged.Should().Be(true);
+            comp.Instance.SelectedItemChanged.Should().Be(false);
             comp.Instance.CommittedItemChanges.Should().Be(true);
             comp.Instance.CanceledEditingItem.Should().Be(false);
 
