@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudProgressCircular : MudComponentBase
     {
         private const int _magicNumber = 126; // weird, but required for the SVG to work
@@ -64,7 +64,7 @@ namespace MudBlazor
             get => _value;
             set
             {
-                if (_value != value)
+                if (!NumericConverter<double>.AreEqual(_value, value))
                 {
                     _value = value;
                     _svgValue = ToSvgValue(_value);
@@ -73,11 +73,11 @@ namespace MudBlazor
             }
         }
 
-        private int ToSvgValue(double in_value)
+        private int ToSvgValue(double value)
         {
-            var value = Math.Min(Math.Max(Min, in_value), Max);
+            var minValue = Math.Min(Math.Max(Min, value), Max);
             // calculate fraction, which is a value between 0 and 1
-            var fraction = (value - Min) / (Max - Min);
+            var fraction = (minValue - Min) / (Max - Min);
             // now project into the range of the SVG value (126 .. 0)
             return (int)Math.Round(_magicNumber - _magicNumber * fraction);
         }
@@ -96,13 +96,14 @@ namespace MudBlazor
 
         [ExcludeFromCodeCoverage]
         [Obsolete("Use Min instead.", true)]
-        [Parameter] public double Minimum { get => Min; set => Min = value; }
+        [Parameter]
+        public double Minimum { get => Min; set => Min = value; }
 
         [ExcludeFromCodeCoverage]
         [Obsolete("Use Max instead.", true)]
-        [Parameter] public double Maximum { get => Max; set => Max = value; }
+        [Parameter]
+        public double Maximum { get => Max; set => Max = value; }
 
         #endregion
-
     }
 }

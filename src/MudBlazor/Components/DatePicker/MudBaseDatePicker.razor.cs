@@ -119,7 +119,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<DateTime?> PickerMonthChanged { get; set; }
 
         /// <summary>
-        /// Milliseconds to wait before closing the picker. This helps the user see that the date was selected before the popover disappears.
+        /// Sets the amount of time in milliseconds to wait before closing the picker. This helps the user see that the date was selected before the popover disappears.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -162,6 +162,13 @@ namespace MudBlazor
         public string TitleDateFormat { get; set; } = "ddd, dd MMM";
 
         /// <summary>
+        /// If AutoClose is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool AutoClose { get; set; }
+
+        /// <summary>
         /// Function to determine whether a date is disabled
         /// </summary>
         [Parameter]
@@ -175,6 +182,13 @@ namespace MudBlazor
             }
         }
         private Func<DateTime, bool> _isDateDisabledFunc = _ => false;
+
+        /// <summary>
+        /// Function to conditionally apply new classes to specific days
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
 
         /// <summary>
         /// Custom previous icon.
@@ -377,6 +391,25 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Check if month is disabled
+        /// </summary>
+        /// <param name="month">Month given with first day of the month</param>
+        /// <returns>True if month should be disabled, false otherwise</returns>
+        private bool IsMonthDisabled(DateTime month)
+        {
+            if (!FixDay.HasValue)
+            {
+                return month.EndOfMonth(Culture) < MinDate || month > MaxDate;
+            }
+            if (DateTime.DaysInMonth(month.Year, month.Month) < FixDay!.Value)
+            {
+                return true;
+            }
+            var day = new DateTime(month.Year, month.Month, FixDay!.Value);
+            return day < MinDate || day > MaxDate || IsDateDisabledFunc(day);
+        }
+
+        /// <summary>
         /// return Mo, Tu, We, Th, Fr, Sa, Su in the right culture
         /// </summary>
         /// <returns></returns>
@@ -533,7 +566,7 @@ namespace MudBlazor
 
         private string GetMonthClasses(DateTime month)
         {
-            if (GetMonthStart(0) == month)
+            if (GetMonthStart(0) == month && !IsMonthDisabled(month))
                 return $"mud-picker-month-selected mud-{Color.ToDescriptionString()}-text";
             return null;
         }
@@ -544,9 +577,6 @@ namespace MudBlazor
                 return Typo.h5;
             return Typo.subtitle1;
         }
-
-        
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -555,6 +585,8 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            await base.OnAfterRenderAsync(firstRender);
+
             if (firstRender)
             {
                 _picker_month ??= GetCalendarStartOfMonth();
@@ -568,7 +600,6 @@ namespace MudBlazor
 
             if (_scrollToYearAfterRender)
                 ScrollToYear();
-            await base.OnAfterRenderAsync(firstRender);
         }
 
         protected abstract DateTime GetCalendarStartOfMonth();

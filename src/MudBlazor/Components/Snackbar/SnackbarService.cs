@@ -3,10 +3,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.Extensions.Options;
+using MudBlazor.Components.Snackbar;
+using MudBlazor.Components.Snackbar.InternalComponents;
 
 namespace MudBlazor
 {
@@ -20,12 +24,10 @@ namespace MudBlazor
         private ReaderWriterLockSlim SnackBarLock { get; }
         private IList<Snackbar> SnackBarList { get; }
 
-        public SnackbarService(NavigationManager navigationManager, SnackbarConfiguration configuration = null)
+        public SnackbarService(NavigationManager navigationManager, IOptions<SnackbarConfiguration> configuration = null)
         {
             _navigationManager = navigationManager;
-            configuration ??= new SnackbarConfiguration();
-
-            Configuration = configuration;
+            Configuration = configuration?.Value ?? new SnackbarConfiguration();
             Configuration.OnUpdate += ConfigurationUpdated;
             navigationManager.LocationChanged += NavigationManager_LocationChanged;
 
@@ -49,18 +51,8 @@ namespace MudBlazor
             }
         }
 
-        [Obsolete("Use Add instead.", true)]
-        public Snackbar AddNew(Severity severity, string message, Action<SnackbarOptions> configure)
+        private Snackbar Add(SnackbarMessage message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null)
         {
-            return Add(message, severity, configure);
-        }
-
-        public Snackbar Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null)
-        {
-            if (message.IsEmpty()) return null;
-
-            message = message.Trimmed();
-
             var options = new SnackbarOptions(severity, Configuration);
             configure?.Invoke(options);
 
@@ -69,7 +61,7 @@ namespace MudBlazor
             SnackBarLock.EnterWriteLock();
             try
             {
-                if (Configuration.PreventDuplicates && SnackbarAlreadyPresent(snackbar)) return null;
+                if (ResolvePreventDuplicates(options) && SnackbarAlreadyPresent(snackbar)) return null;
                 snackbar.OnClose += Remove;
                 SnackBarList.Add(snackbar);
             }
@@ -81,6 +73,78 @@ namespace MudBlazor
             OnSnackbarsUpdated?.Invoke();
 
             return snackbar;
+        }
+
+        /// <summary>
+        /// Displays a snackbar containing a custom component specified by T.
+        /// </summary>
+        /// <typeparam name="T">The type of the custom component that specifies the content of the snackbar.</typeparam>
+        /// <param name="componentParameters">Any additional parameters needed by the custom component to display the message.</param>
+        /// <param name="severity">The severity of the snackbar. Dictates the color and default icon of the notification.</param>
+        /// <param name="configure">Additional configuration for the snackbar.</param>
+        /// <param name="key">If a key is provided, this message will not be shown while any other message with the same key is being shown.</param>
+        /// <returns>The snackbar created by the parameters.</returns>
+        public Snackbar Add<T>(Dictionary<string, object> componentParameters = null, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "") where T : IComponent
+        {
+            var type = typeof(T);
+            var message = new SnackbarMessage(type, componentParameters, key);
+
+            return Add(message, severity, configure);
+        }
+
+        /// <summary>
+        /// Displays a snackbar containing the RenderFragment.
+        /// </summary>
+        /// <param name="message">The RenderFragment which specifies the content of the snackbar.</param>
+        /// <param name="severity">The severity of the snackbar. Dictates the color and default icon of the notification.</param>
+        /// <param name="configure">Additional configuration for the snackbar.</param>
+        /// <param name="key">If a key is provided, this message will not be shown while any other message with the same key is being shown.</param>
+        /// <returns>The snackbar created by the parameters.</returns>
+        public Snackbar Add(RenderFragment message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "")
+        {
+            if (message == null) return null;
+
+            var componentParams = new Dictionary<string, object>()
+            {
+                { "Message", message as object }
+            };
+
+            return Add
+            (
+                new SnackbarMessage(typeof(SnackbarMessageRenderFragment), componentParams, key),
+                severity,
+                configure
+            );
+        }
+
+        /// <summary>
+        /// Displays a snackbar containing the text.
+        /// </summary>
+        /// <param name="message">The string which specifies the content of the snackbar.</param>
+        /// <param name="severity">The severity of the snackbar. Dictates the color and default icon of the notification.</param>
+        /// <param name="configure">Additional configuration for the snackbar.</param>
+        /// <param name="key">If no key is passed, defaults to the content of the message. This message will not be shown while any other message with the same key is being shown.</param>
+        /// <returns>The snackbar created by the parameters.</returns>
+        public Snackbar Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "")
+        {
+            if (message.IsEmpty()) return null;
+            message = message.Trimmed();
+
+            var componentParams = new Dictionary<string, object>() { { "Message", new MarkupString(message) } };
+
+            return Add
+            (
+                new SnackbarMessage(typeof(SnackbarMessageText), componentParams, string.IsNullOrEmpty(key) ? message : key) { Text = message },
+                severity,
+                configure
+            );
+        }
+
+        [Obsolete("Use Add instead.", true)]
+        [ExcludeFromCodeCoverage]
+        public Snackbar AddNew(Severity severity, string message, Action<SnackbarOptions> configure)
+        {
+            return Add(message, severity, configure);
         }
 
         public void Clear()
@@ -100,8 +164,8 @@ namespace MudBlazor
 
         public void Remove(Snackbar snackbar)
         {
-            snackbar.Dispose();
             snackbar.OnClose -= Remove;
+            snackbar.Dispose();
 
             SnackBarLock.EnterWriteLock();
             try
@@ -118,12 +182,36 @@ namespace MudBlazor
             OnSnackbarsUpdated?.Invoke();
         }
 
+        public void RemoveByKey(string key)
+        {
+            SnackBarLock.EnterWriteLock();
+            try
+            {
+                var snackbars = SnackBarList.Where(snackbar => snackbar.SnackbarMessage.Key == key).ToArray();
+                foreach (var snackbar in snackbars)
+                {
+                    snackbar.OnClose -= Remove;
+                    snackbar.Dispose();
+                    SnackBarList.Remove(snackbar);
+                }
+            }
+            finally
+            {
+                SnackBarLock.ExitWriteLock();
+            }
+
+            OnSnackbarsUpdated?.Invoke();
+        }
+
+        private bool ResolvePreventDuplicates(SnackbarOptions options)
+        {
+            return options.DuplicatesBehavior == SnackbarDuplicatesBehavior.Prevent
+                    || (options.DuplicatesBehavior == SnackbarDuplicatesBehavior.GlobalDefault && Configuration.PreventDuplicates);
+        }
+
         private bool SnackbarAlreadyPresent(Snackbar newSnackbar)
         {
-            return SnackBarList.Any(snackbar =>
-                newSnackbar.Message.Equals(snackbar.Message) &&
-                newSnackbar.Severity.Equals(snackbar.Severity)
-            );
+            return !string.IsNullOrEmpty(newSnackbar.SnackbarMessage.Key) && SnackBarList.Any(snackbar => newSnackbar.SnackbarMessage.Key == snackbar.SnackbarMessage.Key);
         }
 
         private void ConfigurationUpdated()

@@ -1,19 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <ResolveStaticWebAssetsInputsDependsOn>
-      IncludeGeneratedStaticFiles;
-      $(ResolveStaticWebAssetsInputsDependsOn)
-    </ResolveStaticWebAssetsInputsDependsOn>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <Version>6.0.11</Version>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Nuget.png</PackageIcon>
     <Company>MudBlazor</Company>
     <Authors>Garderoben, Henon and Contributors</Authors>
@@ -23,6 +15,13 @@
     <PackageProjectUrl>http://mudblazor.com/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MudBlazor/MudBlazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -58,9 +57,16 @@
     <Delete Files="@(FilesToClean)" />
   </Target>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.6.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.6.*" />
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.16" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.16" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.5" />
   </ItemGroup>
 
   <Target Name="ToolRestore">
@@ -85,12 +91,15 @@
     <Exec Command="dotnet webcompiler ./TScripts/combined/MudBlazor.js -c excubowebcompiler.json" StandardOutputImportance="high" StandardErrorImportance="high" />
   </Target>
 
-  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler">
-    <Error Condition="!Exists('wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
-    <Error Condition="!Exists('wwwroot/MudBlazor.min.js')" Text="Missing MudBlazor.min.js in wwwroot" />
+  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler" BeforeTargets="BeforeBuild">
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)/wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)/wwwroot/MudBlazor.min.js')" Text="Missing MudBlazor.min.js in wwwroot" />
     <ItemGroup>
-      <Content Include="wwwroot/MudBlazor.min.css" Condition="!Exists('wwwroot/MudBlazor.min.css')" />
-      <Content Include="wwwroot/MudBlazor.min.js" Condition="!Exists('wwwroot/MudBlazor.min.js')" />
+      <!--Include without duplication-->
+      <_NewCompiledCssFiles Include="wwwroot\MudBlazor.min.css" Exclude="@(Content)" />
+      <_NewCompiledJsFiles Include="wwwroot\MudBlazor.min.js" Exclude="@(Content)" />
+      <Content Include="@(_NewCompiledCssFiles)" />
+      <Content Include="@(_NewCompiledJsFiles)" />
     </ItemGroup>
   </Target>
 
@@ -98,17 +107,15 @@
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
     <Content Remove="excubowebcompiler.json" />
-    <Content Remove="**/*/DoNotRemove.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TScripts\combined\" />
-    <Folder Include="wwwroot\" />
+    <Content Remove="wwwroot/DoNotRemove.txt" />
+    <!--macOS hidden file (causes problems with dotnet pack)-->
+    <Content Remove="**/*/.DS_Store" />
   </ItemGroup>
 
   <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>MudBlazor.UnitTests</_Parameter1>
-    </AssemblyAttribute>
+    <InternalsVisibleTo Include="MudBlazor.UnitTests" />
+    <!--We need to make internal types to be visible for mocking-->
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -117,6 +124,36 @@
     dotnet watch webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json
     -->
     <Watch Include="**/*.scss" />
+  </ItemGroup>
+  
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\LanguageResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LanguageResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\LanguageResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LanguageResource.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

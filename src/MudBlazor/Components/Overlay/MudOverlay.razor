@@ -3,12 +3,12 @@
 
 @if (Visible)
 {
-    <div @attributes="UserAttributes" class="@Classname" style="@Styles" @onclick="OnClickHandler" @onclick:stopPropagation="true">
+    <div @attributes="UserAttributes" class="@Classname" style="@Styles" @onclick="OnClickHandlerAsync" @onclick:stopPropagation="true">
         @if(LightBackground || DarkBackground)
         {
             <div class="@ScrimClassname"></div>
         }
-        @if(ChildContent != null)
+        @if(ChildContent is not null)
         {
             <div class="mud-overlay-content">
                 @ChildContent

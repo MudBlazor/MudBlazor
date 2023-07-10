@@ -126,7 +126,7 @@ namespace MudBlazor
         /// If true, instead of positioning the menu at the left upper corner, position at the exact cursor location.
         /// This makes sense for larger activators
         /// </summary>
-        [Obsolete("Use PositionAtCursor instead.",true)]
+        [Obsolete("Use PositionAtCursor instead.", true)]
         [Parameter]
         public bool PositionAtCurser
         {
@@ -314,7 +314,7 @@ namespace MudBlazor
             ToggleMenu(args);
         }
 
-        public void MouseEnter(EventArgs args)
+        public void MouseEnter(MouseEventArgs args)
         {
             _isMouseOver = true;
 

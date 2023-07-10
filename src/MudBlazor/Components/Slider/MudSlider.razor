@@ -19,7 +19,7 @@
 				<div class="mud-slider-filled" style="@($"width:{width}%;")"></div>
 			</div>
 		}
-		@if (TickMarks == true)
+		@if (TickMarks)
 		{
 			<div class="mud-slider-inner-container">
 				<div class="mud-slider-tickmarks">
@@ -39,11 +39,11 @@
 			</div>
 		}
 		<input class="mud-slider-input" aria-valuenow="@Value" aria-valuemin="@_min" aria-valuemax="@_max" role="slider" @attributes="UserAttributes" type="range" min="@_min" max="@_max" step="@_step" disabled="@Disabled"
-			   @bind-value="@Text" @bind-value:event="@((Immediate == true ? "oninput" : "onchange"))" />
+			   @bind-value="@Text" @bind-value:event="@(Immediate ? "oninput" : "onchange")" />
         @if (ValueLabel)
         {
             <div class="mud-slider-value-label" style="@($"left:{width}%;")">
-                @Value.ToString()
+                @Value?.ToString()
             </div>
         }
 	</div>

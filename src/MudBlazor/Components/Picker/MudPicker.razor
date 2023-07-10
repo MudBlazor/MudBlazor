@@ -21,8 +21,8 @@
              HelperText="@HelperText" 
              HelperTextOnFocus="@HelperTextOnFocus" 
              Variant="@Variant" 
-             ReadOnly="@(!Editable || ReadOnly)" 
-             Disabled="@Disabled"
+             ReadOnly="@(!Editable || GetReadOnlyState())" 
+             Disabled="@GetDisabledState()"
              OnAdornmentClick="ToggleState" 
              Adornment="@Adornment"
              AdornmentIcon="@AdornmentIcon" 
@@ -33,10 +33,10 @@
              Required="@Required" 
              RequiredError="@RequiredError" 
              Error="@Error" 
-             ErrorText="@ErrorText" 
-             @onclick="@(() => { if (!Editable) ToggleState(); })" 
-             @onkeydown="HandleKeyDown" 
-             />;
+             ErrorText="@ErrorText"
+             Clearable="@(GetReadOnlyState() ? false : Clearable)"
+             OnClearButtonClick="@(() => Clear())"
+             @onclick="OnClickAsync" />;
 
     protected virtual RenderFragment PickerContent => null;
 
@@ -45,15 +45,15 @@
         <div class="@PickerClass" id="@_elementId">
             @if (PickerVariant != PickerVariant.Static)
             {
-                <CascadingValue Name="Standalone" Value="false" IsFixed="true">
+                <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
 					@if(InputContent != null) {    
 						@InputContent
 					}
                 </CascadingValue>
             }
-            @if (IsOpen && PickerVariant == PickerVariant.Inline)
+            @if (PickerVariant == PickerVariant.Inline)
             {
-				<MudPopover Open="IsOpen" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" OverflowBehavior="OverflowBehavior.FilpOnOpen" Paper="false">
+				<MudPopover Open="IsOpen" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" OverflowBehavior="OverflowBehavior.FlipOnOpen" Paper="false">
 				   <div @ref="_pickerInlineRef" class="@PickerInlineClass">
 					   <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
 						   <div class="@PickerContainerClass">

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -76,6 +76,13 @@ namespace MudBlazor
         public bool ExpandOnClick { get; set; }
 
         /// <summary>
+        /// If true, double clicking anywhere on the item will expand it, if it has childs.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.ClickAction)]
+        public bool ExpandOnDoubleClick { get; set; }
+
+        /// <summary>
         /// Hover effect for item's on mouse-over.
         /// </summary>
         [Parameter]
@@ -102,23 +109,23 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Setting a height will allow to scroll the treeview. If not set, it will try to grow in height. 
-        /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px. 
+        /// Setting a height will allow to scroll the treeview. If not set, it will try to grow in height.
+        /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public string Height { get; set; }
 
         /// <summary>
-        /// Setting a maximum height will allow to scroll the treeview. If not set, it will try to grow in height. 
-        /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px. 
+        /// Setting a maximum height will allow to scroll the treeview. If not set, it will try to grow in height.
+        /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public string MaxHeight { get; set; }
 
         /// <summary>
-        /// Setting a width the treeview. You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px. 
+        /// Setting a width the treeview. You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
@@ -235,6 +242,12 @@ namespace MudBlazor
             return SelectedValuesChanged.InvokeAsync(new HashSet<T>(_selectedValues.Select(i => i.Value)));
         }
 
+        public async Task Select(MudTreeViewItem<T> item, bool isSelected = true)
+        {
+            await UpdateSelected(item, isSelected);
+        }
+
         internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
+
     }
 }

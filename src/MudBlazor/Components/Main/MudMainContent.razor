@@ -7,13 +7,13 @@
 </div>
 
 @code {
-
+#nullable enable
     protected string Classname =>
-    new CssBuilder("mud-main-content")
-        .AddClass(Class)
-     .Build();
+        new CssBuilder("mud-main-content")
+            .AddClass(Class)
+            .Build();
 
     [Parameter]
     [Category(CategoryTypes.MainContent.Behavior)]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 }

@@ -54,6 +54,8 @@ namespace MudBlazor
                     return;
                 }
 
+                Touched = true;
+
                 _dateRange = range;
                 _value = range?.End;
 
@@ -75,7 +77,8 @@ namespace MudBlazor
                 }
 
                 await DateRangeChanged.InvokeAsync(_dateRange);
-                BeginValidate();
+                await BeginValidateAsync();
+                FieldChanged(_value);
             }
         }
 
@@ -172,6 +175,7 @@ namespace MudBlazor
         protected override string GetDayClasses(int month, DateTime day)
         {
             var b = new CssBuilder("mud-day");
+            b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
             if (day < GetMonthStart(month) || day > GetMonthEnd(month))
             {
                 return b.AddClass("mud-hidden").Build();
@@ -183,6 +187,7 @@ namespace MudBlazor
                 return b
                     .AddClass("mud-range")
                     .AddClass("mud-range-between")
+                    .AddClass($"mud-current mud-{Color.ToDescriptionString()}-text mud-button-outlined mud-button-outlined-{Color.ToDescriptionString()}", day == DateTime.Today)
                     .Build();
             }
 
@@ -213,18 +218,17 @@ namespace MudBlazor
             }
             else if (_firstDate != null && day > _firstDate)
             {
-                return b.AddClass("mud-range")
-                    .AddClass("mud-range-selection", _secondDate == null)
+                return b.AddClass("mud-range", _secondDate == null && day != DateTime.Today)
+                    .AddClass("mud-range-selection")
                     .AddClass($"mud-range-selection-{Color.ToDescriptionString()}", _firstDate != null)
+                    .AddClass($"mud-current mud-{Color.ToDescriptionString()}-text mud-button-outlined mud-button-outlined-{Color.ToDescriptionString()}", day == DateTime.Today)
                     .Build();
             }
 
             if (day == DateTime.Today)
             {
                 return b.AddClass("mud-current")
-                    .AddClass("mud-range", _firstDate != null && day > _firstDate)
-                    .AddClass("mud-range-selection", _firstDate != null && day > _firstDate)
-                    .AddClass($"mud-range-selection-{Color.ToDescriptionString()}", _firstDate != null && day > _firstDate)
+                    .AddClass($"mud-button-outlined mud-button-outlined-{Color.ToDescriptionString()}")
                     .AddClass($"mud-{Color.ToDescriptionString()}-text")
                     .Build();
             }
@@ -242,7 +246,7 @@ namespace MudBlazor
             }
 
             _secondDate = dateTime;
-            if (PickerActions == null)
+            if (PickerActions == null || AutoClose)
             {
                 Submit();
 
@@ -262,7 +266,7 @@ namespace MudBlazor
 
         protected internal override async void Submit()
         {
-            if (ReadOnly)
+            if (GetReadOnlyState())
                 return;
             if (_firstDate == null || _secondDate == null)
                 return;

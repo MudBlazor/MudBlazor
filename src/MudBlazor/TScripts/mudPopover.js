@@ -142,11 +142,12 @@ window.mudpopoverHelper = {
         if (popoverNode && popoverNode.parentNode) {
             const id = popoverNode.id.substr(8);
             const popoverContentNode = document.getElementById('popovercontent-' + id);
-            if (popoverContentNode.classList.contains('mud-popover-open') == false) {
+
+            if (!popoverContentNode) {
                 return;
             }
 
-            if (!popoverContentNode) {
+            if (popoverContentNode.classList.contains('mud-popover-open') == false) {
                 return;
             }
 
@@ -299,6 +300,10 @@ window.mudpopoverHelper = {
         const id = target.id.substr(15);
         const popoverNode = document.getElementById('popover-' + id);
         window.mudpopoverHelper.placePopover(popoverNode);
+    },
+
+    countProviders: function () {
+        return document.querySelectorAll(".mud-popover-provider").length;
     }
 }
 
@@ -329,21 +334,23 @@ class MudPopover {
                     const parent = target.parentElement;
                     const tickValues = [];
                     let max = -1;
-                    for (let i = 0; i < parent.children.length; i++) {
-                        const childNode = parent.children[i];
-                        const tickValue = parseInt(childNode.getAttribute('data-ticks'));
-                        if (tickValue == 0) {
-                            continue;
-                        }
+                    if (parent) {
+                        for (let i = 0; i < parent.children.length; i++) {
+                            const childNode = parent.children[i];
+                            const tickValue = parseInt(childNode.getAttribute('data-ticks'));
+                            if (tickValue == 0) {
+                                continue;
+                            }
 
-                        if (tickValues.indexOf(tickValue) >= 0) {
-                            continue;
-                        }
+                            if (tickValues.indexOf(tickValue) >= 0) {
+                                continue;
+                            }
 
-                        tickValues.push(tickValue);
+                            tickValues.push(tickValue);
 
-                        if (tickValue > max) {
-                            max = tickValue;
+                            if (tickValue > max) {
+                                max = tickValue;
+                            }
                         }
                     }
 
@@ -371,7 +378,7 @@ class MudPopover {
         }
     }
 
-    initilize(containerClass, flipMargin) {
+    initialize(containerClass, flipMargin) {
         const mainContent = document.getElementsByClassName(containerClass);
         if (mainContent.length == 0) {
             return;
@@ -399,7 +406,7 @@ class MudPopover {
     }
 
     connect(id) {
-        this.initilize(this.mainContainerClass);
+        this.initialize(this.mainContainerClass);
 
         const popoverNode = document.getElementById('popover-' + id);
         const popoverContentNode = document.getElementById('popovercontent-' + id);

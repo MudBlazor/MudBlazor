@@ -5,37 +5,52 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
+#nullable enable
     public class HeaderContext<T>
     {
-        internal MudDataGrid<T> dataGrid;
+        private readonly MudDataGrid<T> _dataGrid;
+
         public IEnumerable<T> Items
         {
             get
             {
-                return dataGrid.Items;
+                return (_dataGrid.ServerData == null) ? _dataGrid.FilteredItems : _dataGrid.ServerItems;
             }
         }
-        public HeaderActions Actions { get; internal set; }
+
+        public HeaderActions Actions { get; }
+
         public bool IsAllSelected
         {
             get
             {
                 
-                if (dataGrid.Selection != null && Items != null)
+                if (_dataGrid.Selection != null && (Items?.Any() ?? false))
                 {
-                    return dataGrid.Selection.Count == Items.Count();
+                    return _dataGrid.Selection.Count == Items.Count();
                 }
 
                 return false;
             }
         }
 
+        public HeaderContext(MudDataGrid<T> dataGrid)
+        {
+            _dataGrid = dataGrid;
+            Actions = new HeaderActions
+            {
+                SetSelectAllAsync = x => _dataGrid.SetSelectAllAsync(x),
+            };
+
+        }
+
         public class HeaderActions
         {
-            public Action<bool> SetSelectAll { get; internal set; }
+            public Func<bool, Task> SetSelectAllAsync { get; init; } = null!;
         }
     }
 }

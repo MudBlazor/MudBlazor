@@ -1,7 +1,9 @@
 ﻿
 <MudPaper Elevation="4" Class="pa-4">
     <div class="d-flex flex-row">
-        <MudAvatar Image="@Memeber.Avatar" Size="Size.Large" Class="mud-elevation-4" />
+        <MudAvatar Size="Size.Large" Class="mud-elevation-4">
+            <MudImage Src="@Memeber.Avatar" />
+        </MudAvatar>
         <div class="d-flex flex-column flex-grow-1 px-5 my-2">
             <MudText Typo="Typo.body1" Style="font-weight:500;">@Memeber.Name</MudText>
             <MudText Typo="Typo.body2">@Memeber.Github</MudText>
@@ -10,11 +12,11 @@
             @if(Memeber.LinkedIn != null)
             {
                 <MudTooltip Text="LinkedIn" Placement="Placement.Top" Class="d-flex">
-                    <MudIconButton Icon="@Icons.Custom.Brands.LinkedIn" Link="@Memeber.LinkedIn" Color="Color.Primary" Target="_blank" Edge="Edge.End" />
+                    <MudIconButton Icon="@Icons.Custom.Brands.LinkedIn" Href="@Memeber.LinkedIn" Color="Color.Primary" Target="_blank" Edge="Edge.End" />
                 </MudTooltip>
             }
             <MudTooltip Text="GitHub" Placement="Placement.Top" Class="d-flex">
-                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Link="@("https://github.com/"+Memeber.Github)" Color="Color.Dark" Target="_blank" />
+                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="@("https://github.com/"+Memeber.Github)" Color="Color.Dark" Target="_blank" />
             </MudTooltip>
         </div>
     </div>

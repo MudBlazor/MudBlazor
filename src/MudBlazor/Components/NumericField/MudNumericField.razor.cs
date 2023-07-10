@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -17,6 +18,7 @@ namespace MudBlazor
     public partial class MudNumericField<T> : MudDebouncedInput<T>
     {
         private IKeyInterceptor _keyInterceptor;
+        private Comparer _comparer = new(CultureInfo.InvariantCulture);
 
         public MudNumericField() : base()
         {
@@ -124,6 +126,12 @@ namespace MudBlazor
         }
 
         [ExcludeFromCodeCoverage]
+        public override ValueTask BlurAsync()
+        {
+            return _elementReference.BlurAsync();
+        }
+
+        [ExcludeFromCodeCoverage]
         public override ValueTask SelectAsync()
         {
             return _elementReference.SelectAsync();
@@ -135,16 +143,16 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        protected override Task SetValueAsync(T value, bool updateText = true)
+        protected override Task SetValueAsync(T value, bool updateText = true, bool force = false)
         {
             bool valueChanged;
             (value, valueChanged) = ConstrainBoundaries(value);
             return base.SetValueAsync(value, valueChanged || updateText);
         }
 
-        protected internal override async void OnBlurred(FocusEventArgs obj)
+        protected internal override async Task OnBlurredAsync(FocusEventArgs obj)
         {
-            base.OnBlurred(obj);
+            await base.OnBlurredAsync(obj);
             await UpdateValuePropertyAsync(true); //Required to set the value after a blur before the debounce period has elapsed
             await UpdateTextPropertyAsync(false); //Required to update the string formatting after a blur before the debouce period has elapsed
         }
@@ -171,16 +179,44 @@ namespace MudBlazor
         /// <param name="factor">Multiplication factor (1 or -1) will be applied to the step</param>
         private async Task Change(double factor = 1)
         {
-            var value = Num.To<T>(Num.From(Value) + Num.From(Step) * factor);
-            await SetValueAsync(ConstrainBoundaries(value).value);
-            _elementReference.SetText(Text).AndForget();
+            try
+            {
+                var nextValue = GetNextValue(factor);
+
+                // validate that the data type is a value type before we compare them
+                if (typeof(T).IsValueType)
+                {
+                    if (factor > 0 && _comparer.Compare(nextValue, Value) < 0)
+                        nextValue = Max;
+                    else if (factor < 0 && (_comparer.Compare(nextValue, Value) > 0 || nextValue is null))
+                        nextValue = Min;
+                }
+
+                await SetValueAsync(ConstrainBoundaries(nextValue).value);
+                _elementReference.SetText(Text).AndForget();
+            }
+            catch (OverflowException)
+            {
+                // if next value overflows the primitive type, lets set it to Min or Max depending if factor is positive or negative
+                await SetValueAsync(factor > 0 ? Max : Min, true);
+            }
+        }
+
+        private T GetNextValue(double factor)
+        {
+            if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
+                return (T)(object)Convert.ToDecimal(FromDecimal(Value) + FromDecimal(Step) * (decimal)factor);
+            if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
+                return (T)(object)Convert.ToInt64(FromInt64(Value) + FromInt64(Step) * factor);
+            if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
+                return (T)(object)Convert.ToUInt64(FromUInt64(Value) + FromUInt64(Step) * factor);
+            return Num.To<T>(Num.From(Value) + Num.From(Step) * factor);
         }
 
         /// <summary>
         /// Adds a Step to the Value
         /// </summary>
         public Task Increment() => Change(factor: 1);
-
 
         /// <summary>
         /// Substracts a Step from the Value
@@ -190,25 +226,26 @@ namespace MudBlazor
         /// <summary>
         /// Checks if the value respects the boundaries set for this instance.
         /// </summary>
-        /// <param name="v">Value to check.</param>
+        /// <param name="value">Value to check.</param>
         /// <returns>Returns a valid value and if it has been changed.</returns>
-        protected (T value, bool changed) ConstrainBoundaries(T v)
+        protected (T value, bool changed) ConstrainBoundaries(T value)
         {
-            var value = Num.From(v);
-            var max = Num.From(Max);
-            var min = Num.From(Min);
-            //check if Max/Min has value, if not use MaxValue/MinValue for that data type
-            if (value > max)
-                return (Max, true);
-            else if (value < min)
-                return (Min, true);
-            //return T default (null) when there is no value
-            else if (v == null)
-            {
-                return (default(T), true);
-            }
+            if (value == null)
+                return (default(T), false);
 
-            return (Num.To<T>(value), false);
+            // validate that the data type is a value type before we compare them
+            if (typeof(T).IsValueType)
+            {
+                // check if value is bigger than defined MAX, if so take the defined MAX value instead
+                if (_comparer.Compare(value, Max) > 0)
+                    return (Max, true);
+
+                // check if value is lower than defined MIN, if so take the defined MIN value instead
+                if (_comparer.Compare(value, Min) < 0)
+                    return (Min, true);
+            };
+
+            return (value, false);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -233,7 +270,7 @@ namespace MudBlazor
 
         protected async Task HandleKeydown(KeyboardEventArgs obj)
         {
-            if (Disabled || ReadOnly)
+            if (GetDisabledState() || GetReadOnlyState())
                 return;
             switch (obj.Key)
             {
@@ -249,7 +286,7 @@ namespace MudBlazor
 
         protected Task HandleKeyUp(KeyboardEventArgs obj)
         {
-            if (Disabled || ReadOnly)
+            if (GetDisabledState() || GetReadOnlyState())
                 return Task.CompletedTask;
             OnKeyUp.InvokeAsync(obj).AndForget();
             return Task.CompletedTask;
@@ -257,7 +294,7 @@ namespace MudBlazor
 
         protected async Task OnMouseWheel(WheelEventArgs obj)
         {
-            if (!obj.ShiftKey || Disabled || ReadOnly)
+            if (!obj.ShiftKey || GetDisabledState() || GetReadOnlyState())
                 return;
             if (obj.DeltaY < 0)
             {
@@ -383,6 +420,13 @@ namespace MudBlazor
             else
                 return null;
         }
+
+        private decimal FromDecimal(T v)
+            => Convert.ToDecimal((decimal?)(object)v);
+        private long FromInt64(T v)
+            => Convert.ToInt64((long?)(object)v);
+        private ulong FromUInt64(T v)
+            => Convert.ToUInt64((ulong?)(object)v);
 
         protected override void Dispose(bool disposing)
         {

@@ -1,7 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseInput<string>
 @using MudBlazor.Internal
-@using MudBlazor.Extensions
 
 <div id="@_elementId" class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
@@ -21,23 +20,23 @@
            type="@InputType.ToDescriptionString()"
            value="@Text"
            placeholder="@Placeholder"
-           disabled=@Disabled
-           readonly="@ReadOnly"
-           @onblur="@OnBlurred"
+           disabled=@GetDisabledState()
+           readonly="@GetReadOnlyState()"
+           @onblur="@OnBlurredAsync"
            @onfocus="OnFocused"
            @oncut="OnCut"
            @oncopy="OnCopy"
            inputmode="@InputMode.ToString()"
            />
 
-    @if (Disabled)
+    @if (GetDisabledState())
     {
          @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.
                        In Disabled state the tabindex attribute must NOT be set at all or else it will get focus on click
          *@
         <div class="@InputClassname"
              style="@("display:" + (InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
-             @onblur="@OnBlurred" @ref="@_elementReference1">
+             @onblur="@OnBlurredAsync" @ref="@_elementReference1">
             @ChildContent
         </div>
     }
@@ -47,13 +46,13 @@
         <div class="@InputClassname"
              style="@("display:" + (InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
              tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)"
-             @onblur="@OnBlurred" @ref="@_elementReference1">
+             @onblur="@OnBlurredAsync" @ref="@_elementReference1">
             @ChildContent
         </div>
     }
 
 
-    @if (_showClearable && !Disabled)
+    @if (_showClearable && !GetDisabledState())
     {
         <MudIconButton Class="@ClearButtonClassname"
                        Color="@Color.Default"

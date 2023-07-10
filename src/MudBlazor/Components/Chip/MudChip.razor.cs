@@ -4,30 +4,35 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudChip : MudComponentBase, IDisposable
+    public partial class MudChip : MudComponentBase, IAsyncDisposable
     {
         private bool _isSelected;
-        [Inject] public NavigationManager UriHelper { get; set; }
 
-        [Inject] public IJsApiService JsApiService { get; set; }
+        [Inject]
+        public NavigationManager UriHelper { get; set; }
+
+        [Inject]
+        public IJsApiService JsApiService { get; set; }
 
         protected string Classname =>
-        new CssBuilder("mud-chip")
-          .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
-          .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
-          .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
-          .AddClass("mud-clickable", !ChipSet?.ReadOnly ?? OnClick.HasDelegate)
-          .AddClass("mud-ripple", !ChipSet?.ReadOnly ?? OnClick.HasDelegate && !DisableRipple)
-          .AddClass("mud-chip-label", Label)
-          .AddClass("mud-disabled", Disabled)
-          .AddClass("mud-chip-selected", IsSelected)
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-chip")
+                .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
+                .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
+                .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
+                .AddClass("mud-clickable", IsClickable)
+                .AddClass("mud-ripple", IsClickable && !DisableRipple)
+                .AddClass("mud-chip-label", Label)
+                .AddClass("mud-disabled", Disabled)
+                .AddClass("mud-chip-selected", IsSelected)
+                .AddClass(Class)
+                .Build();
+
+        private bool IsClickable =>
+            !ChipSet?.ReadOnly ?? (OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
 
         //Cannot test the get variant (last line)
         [ExcludeFromCodeCoverage]
@@ -48,17 +53,17 @@ namespace MudBlazor
             {
                 return SelectedColor;
             }
-            else if(IsSelected && SelectedColor == Color.Inherit)
+
+            if (IsSelected && SelectedColor == Color.Inherit)
             {
                 return Color;
             }
-            else
-            {
-                return Color;
-            }
+
+            return Color;
         }
 
-        [CascadingParameter] MudChipSet ChipSet { get; set; }
+        [CascadingParameter]
+        private MudChipSet ChipSet { get; set; }
 
         /// <summary>
         /// The color of the component.
@@ -207,7 +212,7 @@ namespace MudBlazor
         public bool ForceLoad { get; set; }
 
         /// <summary>
-        /// If true, this chip is selected by default if used in a ChipSet. 
+        /// If true, this chip is selected by default if used in a ChipSet.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chip.Behavior)]
@@ -218,6 +223,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chip.ClickAction)]
+        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
         public ICommand Command { get; set; }
 
         /// <summary>
@@ -225,17 +231,20 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chip.ClickAction)]
+        [Obsolete("This will be removed in v7.")]
         public object CommandParameter { get; set; }
 
         /// <summary>
         /// Chip click event, if set the chip focus, hover and click effects are applied.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         /// <summary>
         /// Chip delete event, if set the delete icon will be visible.
         /// </summary>
-        [Parameter] public EventCallback<MudChip> OnClose { get; set; }
+        [Parameter]
+        public EventCallback<MudChip> OnClose { get; set; }
 
         /// <summary>
         /// Set by MudChipSet
@@ -280,7 +289,7 @@ namespace MudBlazor
             }
             if (ChipSet != null)
             {
-                _ = ChipSet.OnChipClicked(this);
+                await ChipSet.OnChipClickedAsync(this);
             }
             if (Href != null)
             {
@@ -293,10 +302,12 @@ namespace MudBlazor
             else
             {
                 await OnClick.InvokeAsync(ev);
+#pragma warning disable CS0618
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
                     Command.Execute(CommandParameter);
                 }
+#pragma warning restore CS0618
             }
         }
 
@@ -307,31 +318,38 @@ namespace MudBlazor
                 return;
             }
             await OnClose.InvokeAsync(this);
-            ChipSet?.OnChipDeleted(this);
+            if (ChipSet is not null)
+            {
+                await ChipSet.OnChipDeletedAsync(this);
+            }
+
             StateHasChanged();
         }
 
-        protected override Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {
-            ChipSet?.Add(this);
-            return base.OnInitializedAsync();
+            if (ChipSet is not null)
+            {
+                await ChipSet.AddAsync(this);
+            }
+            await base.OnInitializedAsync();
         }
-
-        internal void ForceRerender() => StateHasChanged();
 
         //Exclude because we don't test to catching exception yet
         [ExcludeFromCodeCoverage]
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
             try
             {
-                ChipSet?.Remove(this);
+                if (ChipSet is not null)
+                {
+                    await ChipSet.RemoveAsync(this);
+                }
             }
             catch (Exception)
             {
                 /* ignore! */
             }
         }
-
     }
 }

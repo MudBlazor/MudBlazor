@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 
 namespace MudBlazor
 {
+#nullable enable
+    [Obsolete("This will be removed in v7.")]
     public enum TaskOption
     {
         None,
@@ -11,18 +13,13 @@ namespace MudBlazor
 
     public static class TaskExtensions
     {
-        /// <summary>
-        /// Task will be awaited and exceptions will be managed by the Blazor framework.
-        /// </summary>
-        public static async void AndForget(this Task task)
-        {
-            await task;
-        }
+        [Obsolete("Use the bool parameter version. This will be removed in v7.")]
+        public static void AndForget(this Task task, TaskOption option) => AndForget(task);
 
         /// <summary>
-        /// Task will be awaited and exceptions will be logged to console (TaskOption.Safe) or managed by the Blazor framework (TaskOption.None).
+        /// Task will be awaited and exceptions will be forwarded to MudBlazorGlobal.UnhandledExceptionHandler.
         /// </summary>
-        public static async void AndForget(this Task task, TaskOption option)
+        public static async void AndForget(this Task task, bool ignoreExceptions = false)
         {
             try
             {
@@ -30,25 +27,18 @@ namespace MudBlazor
             }
             catch (Exception ex)
             {
-                if (option != TaskOption.Safe)
-                    throw;
-
-                Console.WriteLine(ex);
+                if (!ignoreExceptions)
+                    MudGlobal.UnhandledExceptionHandler?.Invoke(ex);
             }
         }
 
-        /// <summary>
-        /// ValueTask will be awaited and exceptions will be managed by the Blazor framework.
-        /// </summary>
-        public static async void AndForget(this ValueTask task)
-        {
-            await task;
-        }
+        [Obsolete("Use the bool parameter version. This will be removed in v7.")]
+        public static async void AndForget(this ValueTask task, TaskOption option) => AndForget(task);
 
         /// <summary>
-        /// ValueTask will be awaited and exceptions will be logged to console (TaskOption.Safe) or managed by the Blazor framework (TaskOption.None).
+        /// ValueTask will be awaited and exceptions will be forwarded to MudBlazorGlobal.UnhandledExceptionHandler.
         /// </summary>
-        public static async void AndForget(this ValueTask task, TaskOption option)
+        public static async void AndForget(this ValueTask task, bool ignoreExceptions = false)
         {
             try
             {
@@ -56,10 +46,27 @@ namespace MudBlazor
             }
             catch (Exception ex)
             {
-                if (option != TaskOption.Safe)
-                    throw;
+                if (!ignoreExceptions)
+                    MudGlobal.UnhandledExceptionHandler?.Invoke(ex);
+            }
+        }
 
-                Console.WriteLine(ex);
+        [Obsolete("Use the bool parameter version. This will be removed in v7.")]
+        public static async void AndForget<T>(this ValueTask<T> task, TaskOption option) => AndForget(task, option);
+
+        /// <summary>
+        /// ValueTask(bool) will be awaited and exceptions will be forwarded to MudBlazorGlobal.UnhandledExceptionHandler.
+        /// </summary>
+        public static async void AndForget<T>(this ValueTask<T> task, bool ignoreExceptions = false)
+        {
+            try
+            {
+                await task;
+            }
+            catch (Exception ex)
+            {
+                if (!ignoreExceptions)
+                    MudGlobal.UnhandledExceptionHandler?.Invoke(ex);
             }
         }
     }

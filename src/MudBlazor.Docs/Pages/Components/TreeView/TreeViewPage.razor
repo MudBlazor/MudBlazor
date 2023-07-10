@@ -43,6 +43,16 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Expand on double click">
+                <Description>With <CodeInline>ExpandOnDoubleClick</CodeInline>, similar to ExpandOnClick, double clicking on the whole item row will expand/collapse the sub trees.
+                Additionally, <CodeInline>OnDoubleClick</CodeInline> callback can be assigned to set a custom double click behaviour. </Description>
+            </SectionHeader>
+            <SectionContent Code="TreeViewExpandOnDoubleClickExample" ShowCode="false">
+                <TreeViewExpandOnDoubleClickExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Icons">
                 <Description>The icons and the color of the icon can be changed individualy per item.</Description>
             </SectionHeader>
@@ -98,7 +108,9 @@
 
         <DocsPageSection>
             <SectionHeader Title="Server Side Data">
-                <Description>Data can be loaded on demand with the use of <CodeInline>ServerData</CodeInline> prop, the loading icon and its color can be changed with <CodeInline>LoadingIcon</CodeInline> and <CodeInline>LoadingIconColor</CodeInline> prop.</Description>
+                <Description>Data can be loaded on demand with the use of <CodeInline>ServerData</CodeInline> prop, the loading icon and its color can be changed with <CodeInline>LoadingIcon</CodeInline> and <CodeInline>LoadingIconColor</CodeInline> prop.
+                    It can also be disabled for certain items with the <CodeInline>CanExpand</CodeInline> property.
+                    </Description>
             </SectionHeader>
             <SectionContent Code="TreeViewServerExample" ShowCode="false">
                 <TreeViewServerExample />
@@ -114,6 +126,18 @@
             </SectionHeader>
             <SectionContent Code="TreeViewCustomExample" ShowCode="false">
                 <TreeViewCustomExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom body content">
+                <Description>
+                    Use the <CodeInline>Body Content</CodeInline> instead of the <CodeInline>Content</CodeInline> render fragment,
+                    when you want your custom tree items, but still use the build-in icons and expansion buttons.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Code="TreeViewBodyContentExample">
+                <TreeViewBodyContentExample />
             </SectionContent>
         </DocsPageSection>
 

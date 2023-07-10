@@ -1,0 +1,55 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid T="Model" Items="@_items" ShowMenuIcon="true" ColumnResizeMode="ResizeMode.Container" HorizontalScrollbar="true" Bordered="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Column1" StickyLeft="true" />
+        <PropertyColumn Property="x => x.Column2" />
+        <PropertyColumn Property="x => x.Column3" />
+        <PropertyColumn Property="x => x.Column4" />
+        <PropertyColumn Property="x => x.Column5" />
+        <PropertyColumn Property="x => x.Column6" />
+        <PropertyColumn Property="x => x.Column7" />
+        <PropertyColumn Property="x => x.Column8" />
+        <PropertyColumn Property="x => x.Column9" />
+        <PropertyColumn Property="x => x.Column10" />
+        <PropertyColumn Property="x => x.Column11" />
+        <PropertyColumn Property="x => x.Column12" />
+        <PropertyColumn Property="x => x.Column13" />
+        <PropertyColumn Property="x => x.Column14" />
+        <PropertyColumn Property="x => x.Column15" />
+        <PropertyColumn Property="x => x.Column16" />
+        <PropertyColumn Property="x => x.Column17" />
+        <PropertyColumn Property="x => x.Column18" />
+        <PropertyColumn Property="x => x.Column19" />
+        <PropertyColumn Property="x => x.Column20" />
+        <PropertyColumn Property="x => x.Column21" />
+        <PropertyColumn Property="x => x.Column22" />
+        <PropertyColumn Property="x => x.Column23" />
+        <PropertyColumn Property="x => x.Column24" StickyRight="true" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Model" PageSizeOptions=@(new int[] {5, 10, 20}) />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12",
+            "Column13", "Column14", "Column15", "Column16", "Column17", "Column18", "Column19", "Column20", "Column21", "Column22", "Column23", "Column24"), 
+        new Model("Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12",
+            "Column13", "Column14", "Column15", "Column16", "Column17", "Column18", "Column19", "Column20", "Column21", "Column22", "Column23", "Column24"), 
+        new Model("Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12",
+            "Column13", "Column14", "Column15", "Column16", "Column17", "Column18", "Column19", "Column20", "Column21", "Column22", "Column23", "Column24"), 
+        new Model("Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12",
+            "Column13", "Column14", "Column15", "Column16", "Column17", "Column18", "Column19", "Column20", "Column21", "Column22", "Column23", "Column24"), 
+        new Model("Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12",
+            "Column13", "Column14", "Column15", "Column16", "Column17", "Column18", "Column19", "Column20", "Column21", "Column22", "Column23", "Column24"), 
+        new Model("Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12",
+            "Column13", "Column14", "Column15", "Column16", "Column17", "Column18", "Column19", "Column20", "Column21", "Column22", "Column23", "Column24"), 
+    };
+
+    public record Model(string Column1, string Column2, string Column3, string Column4, string Column5, string Column6, string Column7, 
+        string Column8, string Column9, string Column10, string Column11, string Column12, string Column13, string Column14, string Column15, 
+        string Column16, string Column17, string Column18, string Column19, string Column20, string Column21, string Column22, string Column23, string Column24);
+}

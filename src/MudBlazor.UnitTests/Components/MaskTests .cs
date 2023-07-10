@@ -12,6 +12,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Mask;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -579,26 +580,26 @@ namespace MudBlazor.UnitTests.Components
             var maskField = comp.Instance;
             var impl = maskField.Mask;
             comp.WaitForAssertion(() => maskField.GetInputType().Should().Be(InputType.Text));
-            
+
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(2));
             comp.WaitForAssertion(() => impl.CaretPos.Should().Be(2));
 
             comp.SetParam("Mask", new PatternMask("*00 000") { Placeholder = '_', CleanDelimiters = true });
 
             await comp.InvokeAsync(() => maskField.OnCopy());
-            await comp.InvokeAsync(() => maskField.FocusAsync());
+            await comp.InvokeAsync(async () => await maskField.FocusAsync());
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
             comp.WaitForAssertion(() => maskField.Text.Should().Be("1__ ___"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be("1"));
-            
-            await comp.InvokeAsync(() => maskField.SelectAsync());
+
+            await comp.InvokeAsync(async () => await maskField.SelectAsync());
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(0));
-            await comp.InvokeAsync(() => maskField.SelectRangeAsync(0, 7));
+            await comp.InvokeAsync(async () => await maskField.SelectRangeAsync(0, 7));
             await comp.InvokeAsync(() => maskField.OnSelect(0, 7));
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "2" }));
             comp.WaitForAssertion(() => maskField.Text.Should().Be("2__ ___"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be("2"));
-            
+
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(0));
             await comp.InvokeAsync(() => maskField.OnFocused(new FocusEventArgs()));
             comp.SetParam("Text", "123");
@@ -613,7 +614,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam("Value", "321");
             comp.WaitForAssertion(() => maskField.Text.Should().Be("321 ___"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be("321"));
-            await comp.InvokeAsync(() => maskField.OnBlurred(new FocusEventArgs()));
+            await comp.InvokeAsync(() => maskField.OnBlurredAsync(new FocusEventArgs()));
 
             comp.SetParam("Clearable", true);
             maskField.Clearable.Should().Be(true);
@@ -621,7 +622,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam("Mask", null);
             comp.WaitForAssertion(() => maskField.Mask.Should().NotBeNull());
             comp.SetParam("Mask", new PatternMask("*00 000") { CleanDelimiters = true });
-            
+
             // selection is not cleared by caret on edge of selection
             await comp.InvokeAsync(() => maskField.OnSelect(0, 1));
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(0));
@@ -629,7 +630,7 @@ namespace MudBlazor.UnitTests.Components
             // only if caret is moved outside
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(2));
             comp.WaitForAssertion(() => maskField.Mask.Selection.Should().BeNull());
-            
+
             // pasting null doesn't do anything
             await comp.InvokeAsync(() => maskField.OnPaste("123"));
             comp.WaitForAssertion(() => maskField.Mask.ToString().Should().Be("123 |"));
@@ -682,14 +683,14 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => textField.Text.Should().Be("(123) 456-7890"));
             comp.WaitForAssertion(() => textField.Value.Should().Be("(123) 456-7890"));
 
-            await comp.InvokeAsync(() => form.Reset());
+            await comp.InvokeAsync(() => form.ResetAsync());
             comp.WaitForAssertion(() => mask.Mask.ToString().Should().Be("|"));
             comp.WaitForAssertion(() => textField.Text.Should().BeNullOrEmpty());
             comp.WaitForAssertion(() => textField.Value.Should().BeNullOrEmpty());
 
-            await comp.InvokeAsync(() => textField.FocusAsync());
-            await comp.InvokeAsync(() => textField.SelectAsync());
-            await comp.InvokeAsync(() => textField.SelectRangeAsync(0, 1));
+            await comp.InvokeAsync(async () => await textField.FocusAsync());
+            await comp.InvokeAsync(async () => await textField.SelectAsync());
+            await comp.InvokeAsync(async () => await textField.SelectRangeAsync(0, 1));
             await comp.InvokeAsync(() => textField.Clear());
             comp.WaitForAssertion(() => textField.Value.Should().Be(null));
 
@@ -698,12 +699,62 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => textField.Value.Should().Be("(123) "));
 
             //ctrl+backspace
-            await comp.InvokeAsync(() => form.Reset());
+            await comp.InvokeAsync(() => form.ResetAsync());
             await comp.InvokeAsync(() => mask.OnPaste("1234567890"));
             comp.WaitForAssertion(() => mask.Mask.ToString().Should().Be("(123) 456-7890|"));
             comp.WaitForAssertion(() => textField.Text.Should().Be("(123) 456-7890"));
             comp.WaitForAssertion(() => textField.Value.Should().Be("(123) 456-7890"));
             await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace", CtrlKey = true }));
+            comp.WaitForAssertion(() => textField.Value.Should().Be(""));
+        }
+
+        /// <summary>
+        /// A readonly masked text should not react to any edit/delete event
+        /// </summary>
+        [Test]
+        public async Task MaskTest_Readonly()
+        {
+            var comp = Context.RenderComponent<ReadonlyMaskedTextFieldTest>();
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            var mask = comp.FindComponent<MudMask>().Instance;
+            var maskInput = comp.Find("input");
+            var originalValue = textField.Text;
+
+            originalValue.Should().Be("1234 1234 1234 1234");
+
+            // paste
+            await comp.InvokeAsync(() => {
+                mask.OnSelect(0, mask.Text.Length);
+                mask.OnPaste("1234567890");
+            });
+            comp.WaitForAssertion(() => textField.Value.Should().Be(originalValue));
+            // backspace
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => textField.Value.Should().Be(originalValue));
+            // cut
+            await comp.InvokeAsync(() =>
+            {
+                mask.OnSelect(0, mask.Text.Length);
+                maskInput.CutAsync(new ClipboardEventArgs { Type = "cut" });
+            });
+            comp.WaitForAssertion(() => textField.Value.Should().Be(originalValue));
+
+            comp.SetParam(p => p.ReadOnly, false);
+            // paste
+            await comp.InvokeAsync(async () => {
+                mask.OnSelect(0, mask.Text.Length);
+                mask.OnPaste("2222 2222 2222 2222");
+            });
+            comp.WaitForAssertion(() => textField.Value.Should().Be("2222 2222 2222 2222"));
+            // backspace
+            await comp.InvokeAsync(() => mask.HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
+            comp.WaitForAssertion(() => textField.Value.Should().Be("2222 2222 2222 222"));
+            // cut
+            await comp.InvokeAsync(() =>
+            {
+                mask.OnSelect(0, textField.Value.Length);
+                maskInput.Cut(new ClipboardEventArgs { Type = "cut" });
+            });
             comp.WaitForAssertion(() => textField.Value.Should().Be(""));
         }
     }

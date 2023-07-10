@@ -1,9 +1,13 @@
 ﻿@page "/components/alert"
 
 <DocsPage>
-    <DocsPageHeader Title="Alert" SubTitle="An alert is used to notify the user about an important message without interrupting the ongoing task." />
+    <DocsPageHeader Title="Alert" SubTitle="An alert is used to display an important message which is statically embedded in the page content." />
     <DocsPageContent>
-    
+        <DocsPageSection>
+            <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
+            <MudText>To notify the user with dynamic alerts which overlay the page check out <MudLink Href="/components/snackbar">Snackbar</MudLink>.</MudText>
+        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Simple alerts">
                 <Description>
@@ -85,11 +89,6 @@
             <SectionContent Code="AlertCloseExample" ShowCode="false">
                 <AlertCloseExample />
             </SectionContent>
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Snackbar Alerts">
-                <Description>You can use the <MudLink Href="/components/snackbar">Snackbar</MudLink> to display Alerts.</Description>
-            </SectionHeader>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

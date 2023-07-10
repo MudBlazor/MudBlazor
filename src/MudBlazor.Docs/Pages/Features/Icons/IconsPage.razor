@@ -41,7 +41,7 @@
                 </MudItem>
             </MudGrid>
             
-            <div class="relative" style="height:34000px;">
+            <div class="relative">
                 <div class="absolute" style="top:0px;width:100%;">
                     <div @ref="killZone" style="@GetKillZoneStyle(false)"></div>
                 </div>
@@ -76,7 +76,7 @@
         <MudPaper Class="mud-iconcode pa-2" Elevation="0">
             @IconCodeOutput
             <div class="d-flex justify-end">
-                <MudIconButton OnClick="CopyTextToClipboard" Icon="@Icons.Filled.ContentCopy" Size="Size.Small" Class="pa-1 mb-n1 mr-n1" />
+                <MudIconButton OnClick="CopyTextToClipboard" Icon="@Icons.Material.Filled.ContentCopy" Size="Size.Small" Class="pa-1 mb-n1 mr-n1" />
             </div>
         </MudPaper>
         <MudText Typo="Typo.subtitle2">Icon Preview</MudText>

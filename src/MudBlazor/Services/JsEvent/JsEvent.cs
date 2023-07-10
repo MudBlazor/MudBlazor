@@ -57,13 +57,7 @@ namespace MudBlazor.Services
             if (_isObserving || _isDisposed)
                 return;
             _elementId = elementId;
-            try
-            {
-                await _jsRuntime.InvokeVoidAsync("mudJsEvent.connect", _dotNetRef, elementId, options);
-                _isObserving = true;
-            }
-            catch (JSDisconnectedException) { }
-            catch (TaskCanceledException) { }
+            _isObserving = await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudJsEvent.connect", _dotNetRef, elementId, options); ;
         }
 
         /// <summary>
@@ -115,7 +109,7 @@ namespace MudBlazor.Services
                 return;
             try
             {
-                foreach(var eventName in _subscribedEvents)
+                foreach (var eventName in _subscribedEvents)
                     await _jsRuntime.InvokeVoidAsync($"mudJsEvent.unsubscribe", _elementId, eventName);
             }
             catch (Exception) {  /*ignore*/ }

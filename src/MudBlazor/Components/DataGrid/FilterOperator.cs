@@ -3,24 +3,22 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
 
 namespace MudBlazor
 {
+#nullable enable
     public static class FilterOperator
     {
         public static class String
         {
             public const string Contains = "contains";
+            public const string NotContains = "not contains";
             public const string Equal = "equals";
+            public const string NotEqual = "not equals";
             public const string StartsWith = "starts with";
             public const string EndsWith = "ends with";
             public const string Empty = "is empty";
             public const string NotEmpty = "is not empty";
-
-            internal static string[] Values = GetFields(typeof(String));
         }
 
         public static class Number
@@ -33,23 +31,17 @@ namespace MudBlazor
             public const string LessThanOrEqual = "<=";
             public const string Empty = "is empty";
             public const string NotEmpty = "is not empty";
-
-            internal static string[] Values = GetFields(typeof(Number));
         }
 
         public static class Enum
         {
             public const string Is = "is";
             public const string IsNot = "is not";
-
-            internal static string[] Values = GetFields(typeof(Enum));
         }
 
         public static class Boolean
         {
             public const string Is = "is";
-
-            internal static string[] Values = GetFields(typeof(Boolean));
         }
 
         public static class DateTime
@@ -62,107 +54,89 @@ namespace MudBlazor
             public const string OnOrBefore = "is on or before";
             public const string Empty = "is empty";
             public const string NotEmpty = "is not empty";
+        }
 
-            internal static string[] Values = GetFields(typeof(DateTime));
+        public static class Guid
+        {
+            public const string Equal = "equals";
+            public const string NotEqual = "not equals";
         }
 
         internal static string[] GetOperatorByDataType(Type type)
         {
-            if (type == typeof(string))
+            var fieldType = FieldType.Identify(type);
+            return GetOperatorByDataType(fieldType);
+        }
+
+        internal static string[] GetOperatorByDataType(FieldType fieldType)
+        {
+            if (fieldType.IsString)
             {
-                return String.Values;
+                return new[]
+                {
+                    String.Contains,
+                    String.NotContains,
+                    String.Equal,
+                    String.NotEqual,
+                    String.StartsWith,
+                    String.EndsWith,
+                    String.Empty,
+                    String.NotEmpty,
+                };
             }
-            if (IsNumber(type))
+            if (fieldType.IsNumber)
             {
-                return Number.Values;
+                return new[]
+                {
+                    Number.Equal,
+                    Number.NotEqual,
+                    Number.GreaterThan,
+                    Number.GreaterThanOrEqual,
+                    Number.LessThan,
+                    Number.LessThanOrEqual,
+                    Number.Empty,
+                    Number.NotEmpty,
+                };
             }
-            if (IsEnum(type))
+            if (fieldType.IsEnum)
             {
-                return Enum.Values;
+                return new[] {
+                    Enum.Is,
+                    Enum.IsNot,
+                };
             }
-            if (type == typeof(bool))
+            if (fieldType.IsBoolean)
             {
-                return Boolean.Values;
+                return new[]
+                {
+                    Boolean.Is,
+                };
             }
-            if (type == typeof(System.DateTime))
+            if (fieldType.IsDateTime)
             {
-                return DateTime.Values;
+                return new[]
+                {
+                    DateTime.Is,
+                    DateTime.IsNot,
+                    DateTime.After,
+                    DateTime.OnOrAfter,
+                    DateTime.Before,
+                    DateTime.OnOrBefore,
+                    DateTime.Empty,
+                    DateTime.NotEmpty,
+                };
+            }
+            if (fieldType.IsGuid)
+            {
+                return new[]
+                {
+                    Guid.Equal,
+                    Guid.NotEqual,
+                };
             }
 
             // default
-            return new string[] { };
-        }
-
-        internal static string[] GetFields(Type type)
-        {
-            List<string> fields = new List<string>();
-
-            foreach (var field in type.GetFields().Where(fi => fi.IsLiteral))
-            {
-                fields.Add((string)field.GetValue(null));
-            }
-
-            return fields.ToArray();
-        }
-
-        internal static readonly HashSet<Type> NumericTypes = new HashSet<Type>
-        {
-            typeof(int),
-            typeof(double),
-            typeof(decimal),
-            typeof(long),
-            typeof(short),
-            typeof(sbyte),
-            typeof(byte),
-            typeof(ulong),
-            typeof(ushort),
-            typeof(uint),
-            typeof(float),
-            typeof(BigInteger),
-            typeof(int?),
-            typeof(double?),
-            typeof(decimal?),
-            typeof(long?),
-            typeof(short?),
-            typeof(sbyte?),
-            typeof(byte?),
-            typeof(ulong?),
-            typeof(ushort?),
-            typeof(uint?),
-            typeof(float?),
-            typeof(BigInteger?),
-        };
-
-        internal static bool IsNumber(Type type)
-        {
-            return NumericTypes.Contains(type);
-        }
-
-        internal static bool IsEnum(Type type)
-        {
-            if (type.IsEnum)
-                return true;
-
-            Type u = Nullable.GetUnderlyingType(type);
-            return (u != null) && u.IsEnum;
-        }
-
-        internal static bool IsDateTime(Type type)
-        {
-            if (type == typeof(System.DateTime))
-                return true;
-
-            Type u = Nullable.GetUnderlyingType(type);
-            return (u != null) && u == typeof(System.DateTime);
-        }
-
-        internal static bool IsBoolean(Type type)
-        {
-            if (type == typeof(System.Boolean))
-                return true;
-
-            Type u = Nullable.GetUnderlyingType(type);
-            return (u != null) && u == typeof(System.Boolean);
+            return Array.Empty<string>();
         }
     }
 }

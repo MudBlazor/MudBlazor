@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -7,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTableGroupRow<T> : MudComponentBase
+    public partial class MudTableGroupRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudComponentBase
     {
         protected string HeaderClassname => new CssBuilder("mud-table-row")
                                 .AddClass(HeaderClass)
@@ -33,7 +34,7 @@ namespace MudBlazor
         /// <summary>
         /// Inner Items List for the Group
         /// </summary>
-        [Parameter] public IGrouping<object, T> Items 
+        [Parameter] public IGrouping<object, T> Items
         {
             get => _items;
             set
@@ -79,8 +80,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnRowClick { get; set; }
 
-        private bool _checked;
-        public bool IsChecked
+        private bool? _checked = false;
+        public bool? IsChecked
         {
             get => _checked;
             set
@@ -89,7 +90,7 @@ namespace MudBlazor
                 {
                     _checked = value;
                     if (IsCheckable)
-                        Table.OnGroupHeaderCheckboxClicked(value, Items.ToList());
+                        Table.OnGroupHeaderCheckboxClicked(_checked.HasValue && _checked.Value, Items.ToList());
                 }
             }
         }
@@ -120,15 +121,18 @@ namespace MudBlazor
             ((TableContext<T>)Context)?.GroupRows.Remove(this);
         }
 
-        public void SetChecked(bool b, bool notify)
+        public void SetChecked(bool? checkedState, bool notify)
         {
-            if (notify)
-                IsChecked = b;
-            else
+            if (_checked != checkedState)
             {
-                _checked = b;
-                if (IsCheckable)
-                    InvokeAsync(StateHasChanged);
+                if (notify)
+                    IsChecked = checkedState;
+                else
+                {
+                    _checked = checkedState;
+                    if (IsCheckable)
+                        InvokeAsync(StateHasChanged);
+                }
             }
         }
 

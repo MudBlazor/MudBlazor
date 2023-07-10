@@ -3,11 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace MudBlazor
 {
-    public class TableGroupDefinition<T>
+    public class TableGroupDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T>
     {
         public TableGroupDefinition()
         {
@@ -73,7 +74,7 @@ namespace MudBlazor
 
         private bool _expandable = false;
         /// <summary>
-        /// Gets or Sets is group header can Expand and Collapse its children.
+        /// Gets or Sets if group header can Expand and Collapse its children.
         /// </summary>
         public bool Expandable
         {

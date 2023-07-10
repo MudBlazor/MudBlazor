@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
@@ -21,6 +23,25 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        private string GetInputClass() =>
+        new CssBuilder("mud-radio-group")
+            .AddClass(InputClass)
+            .Build();
+
+        /// <summary>
+        /// User class names for the input, separated by space
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public string InputClass { get; set; }
+
+        /// <summary>
+        /// User style definitions for the input
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public string InputStyle { get; set; }
+
         [Parameter]
         [Category(CategoryTypes.Radio.Behavior)]
         public RenderFragment ChildContent { get; set; }
@@ -35,6 +56,24 @@ namespace MudBlazor
             if (itemT != typeof(T))
                 throw new GenericTypeMismatchException("MudRadioGroup", "MudRadio", typeof(T), itemT);
         }
+
+        /// <summary>
+        /// If true, the input will be disabled.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Disabled { get; set; }
+        [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
+        internal bool GetDisabledState() => Disabled || ParentDisabled; //internal because the MudRadio reads this value directly
+
+        /// <summary>
+        /// If true, the input will be read-only.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool ReadOnly { get; set; }
+        [CascadingParameter(Name = "ParentReadOnly")] private bool ParentReadOnly { get; set; }
+        internal bool GetReadOnlyState() => ReadOnly || ParentReadOnly; //internal because the MudRadio reads this value directly
 
         [Parameter]
         [Category(CategoryTypes.Radio.Data)]
@@ -55,7 +94,7 @@ namespace MudBlazor
 
                 await SelectedOptionChanged.InvokeAsync(_value);
 
-                BeginValidate();
+                await BeginValidateAsync();
                 FieldChanged(_value);
             }
         }
@@ -103,6 +142,8 @@ namespace MudBlazor
                 _selectedRadio = null;
         }
 
+        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
+        [ExcludeFromCodeCoverage]
         protected override void ResetValue()
         {
             if (_selectedRadio != null)
@@ -112,6 +153,17 @@ namespace MudBlazor
             }
 
             base.ResetValue();
+        }
+
+        protected override Task ResetValueAsync()
+        {
+            if (_selectedRadio != null)
+            {
+                _selectedRadio.SetChecked(false);
+                _selectedRadio = null;
+            }
+
+            return base.ResetValueAsync();
         }
 
         private static T GetOptionOrDefault(MudRadio<T> radio)

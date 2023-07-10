@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
 using Microsoft.AspNetCore.Components.Routing;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor.Docs.Components
 {
@@ -22,7 +23,7 @@ namespace MudBlazor.Docs.Components
         private MudPageContentNavigation _contentNavigation;
         private NavigationFooterLink _previous;
         private NavigationFooterLink _next;
-        private NavigationSection? _section = null;
+        private NavigationSection _section;
         private Stopwatch _stopwatch = Stopwatch.StartNew();
         private string _anchor = null;
         private bool _displayView;
@@ -138,7 +139,7 @@ namespace MudBlazor.Docs.Components
                     }
                 }
 
-                _contentNavigation.Update();
+                ((IMudStateHasChanged)_contentNavigation).StateHasChanged();
                 
                 if (_anchor != null)
                 {

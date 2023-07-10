@@ -1,0 +1,38 @@
+@namespace MudBlazor.UnitTests.TestComponents
+@using System.Globalization
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudDataGrid Items="@_items"
+    Filterable="true"
+    ReadOnly="@false"
+    EditMode="@DataGridEditMode.Cell"
+    EditTrigger=@DataGridEditTrigger.OnRowClick
+    FilterMode="@DataGridFilterMode.ColumnFilterRow">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Amount" Culture="@CultureInfo.InvariantCulture" />
+        <PropertyColumn Property="x => x.Total" Culture="@(new CultureInfo("es-ES"))"/>
+        <PropertyColumn Property="x => x.Distance" Culture="@_customCulture" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private CultureInfo _customCulture = new CultureInfo("es")
+    {
+        NumberFormat = new NumberFormatInfo
+        {
+            NumberDecimalSeparator = "#",
+        }
+    };
+
+    private IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("Sam", 56, 3.5, 5.2, 2.1), 
+        new Model("Alicia", 54, 3.6, 4.8, 2.2), 
+        new Model("Ira", 27, 3.9, 6.2, 2.3),
+        new Model("John", 32, 4.2, 3.2, 2.4)
+    };
+
+    public record Model(string Name, int? Age, double? Amount, double? Total, double? Distance);
+}

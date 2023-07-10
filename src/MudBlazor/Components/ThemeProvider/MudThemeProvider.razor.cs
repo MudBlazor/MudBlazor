@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,40 +9,36 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public class BaseMudThemeProvider : ComponentBase
+#nullable enable
+    public class BaseMudThemeProvider : ComponentBase, IDisposable
     {
+        // private const string Breakpoint = "mud-breakpoint";
+        private const string Palette = "mud-palette";
+        private const string Elevation = "mud-elevation";
+        private const string Typography = "mud-typography";
+        private const string LayoutProperties = "mud";
+        private const string Zindex = "mud-zindex";
+
+        private readonly DotNetObjectReference<BaseMudThemeProvider> _dotNetRef;
+
+        private event Func<bool, Task>? _darkLightModeChanged;
+
+        internal bool _isDarkMode;
+
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
+
         /// <summary>
         /// The theme used by the application.
         /// </summary>
         [Parameter]
-        public MudTheme Theme { get; set; }
+        public MudTheme? Theme { get; set; }
 
         /// <summary>
         ///  If true, will not apply MudBlazor styled scrollbar and use browser default. 
         /// </summary>
         [Parameter]
         public bool DefaultScrollbar { get; set; }
-
-        #region Dark mode handeling
-
-        public BaseMudThemeProvider()
-        {
-            _dotNetRef = DotNetObjectReference.Create(this);
-        }
-
-        private readonly DotNetObjectReference<BaseMudThemeProvider> _dotNetRef;
-        [Inject] private IJSRuntime JsRuntime { get; set; }
-
-        /// <summary>
-        /// Returns the dark mode preference of the user. True if dark mode is preferred.
-        /// </summary>
-        /// <returns></returns>
-        public async Task<bool> GetSystemPreference()
-        {
-            return await JsRuntime.InvokeAsync<bool>("darkModeChange", _dotNetRef);
-        }
-
-        internal bool _isDarkMode;
 
         /// <summary>
         /// The active palette of the theme.
@@ -66,13 +63,38 @@ namespace MudBlazor
         /// Invoked when the dark mode changes.
         /// </summary>
         [Parameter]
-        public EventCallback<bool> IsDarkModeChanged
+        public EventCallback<bool> IsDarkModeChanged { get; set; }
+
+        [DynamicDependency(nameof(SystemPreferenceChanged))]
+        public BaseMudThemeProvider()
         {
-            get;
-            set;
+            _dotNetRef = DotNetObjectReference.Create(this);
         }
 
-        #endregion
+        /// <summary>
+        /// Returns the dark mode preference of the user. True if dark mode is preferred.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> GetSystemPreference()
+        {
+            return await JsRuntime.InvokeAsync<bool>("darkModeChange", _dotNetRef);
+        }
+
+        public async Task WatchSystemPreference(Func<bool, Task> functionOnChange)
+        {
+            _darkLightModeChanged += functionOnChange;
+            await JsRuntime.InvokeVoidAsync("watchDarkThemeMedia", _dotNetRef);
+        }
+
+        [JSInvokable]
+        public async Task SystemPreferenceChanged(bool isDarkMode)
+        {
+            var task = _darkLightModeChanged?.Invoke(isDarkMode);
+            if (task is not null)
+            {
+                await task;
+            }
+        }
 
         protected override void OnInitialized()
         {
@@ -81,13 +103,15 @@ namespace MudBlazor
 
         protected string BuildTheme()
         {
+            Theme ??= new MudTheme();
             var theme = new StringBuilder();
             theme.AppendLine("<style>");
-            theme.Append(":root");
+            theme.Append(Theme.PseudoCss.Scope);
             theme.AppendLine("{");
             GenerateTheme(theme);
             theme.AppendLine("}");
             theme.AppendLine("</style>");
+
             return theme.ToString();
         }
 
@@ -102,20 +126,19 @@ namespace MudBlazor
             //Firefox
             scrollbar.AppendLine("html, body * {scrollbar-color: #c4c4c4 transparent;scrollbar-width: thin;}");
             scrollbar.AppendLine("</style>");
+
             return scrollbar.ToString();
         }
 
-        // private const string Breakpoint = "mud-breakpoint";
-        private const string Palette = "mud-palette";
-        private const string Elevation = "mud-elevation";
-        private const string Typography = "mud-typography";
-        private const string LayoutProperties = "mud";
-        private const string Zindex = "mud-zindex";
-
         protected virtual void GenerateTheme(StringBuilder theme)
         {
+            if (Theme is null)
+            {
+                return;
+            }
+
             var palette = _isDarkMode == false ? Theme.Palette : Theme.PaletteDark;
-            
+
             //Palette
             theme.AppendLine($"--{Palette}-black: {palette.Black};");
             theme.AppendLine($"--{Palette}-white: {palette.White};");
@@ -282,7 +305,7 @@ namespace MudBlazor
             theme.AppendLine($"--{Typography}-default-text-transform: {Theme.Typography.Default.TextTransform};");
 
             theme.AppendLine(
-                $"--{Typography}-h1-family: '{string.Join("','", (Theme.Typography.H1.FontFamily == null ? Theme.Typography.Default.FontFamily : Theme.Typography.H1.FontFamily))}';");
+                $"--{Typography}-h1-family: '{string.Join("','", Theme.Typography.H1.FontFamily ?? Theme.Typography.Default.FontFamily)}';");
             theme.AppendLine($"--{Typography}-h1-size: {Theme.Typography.H1.FontSize};");
             theme.AppendLine($"--{Typography}-h1-weight: {Theme.Typography.H1.FontWeight};");
             theme.AppendLine(
@@ -291,7 +314,7 @@ namespace MudBlazor
             theme.AppendLine($"--{Typography}-h1-text-transform: {Theme.Typography.H1.TextTransform};");
 
             theme.AppendLine(
-                $"--{Typography}-h2-family: '{string.Join("','", (Theme.Typography.H2.FontFamily == null ? Theme.Typography.Default.FontFamily : Theme.Typography.H2.FontFamily))}';");
+                $"--{Typography}-h2-family: '{string.Join("','", Theme.Typography.H2.FontFamily ?? Theme.Typography.Default.FontFamily)}';");
             theme.AppendLine($"--{Typography}-h2-size: {Theme.Typography.H2.FontSize};");
             theme.AppendLine($"--{Typography}-h2-weight: {Theme.Typography.H2.FontWeight};");
             theme.AppendLine(
@@ -300,7 +323,7 @@ namespace MudBlazor
             theme.AppendLine($"--{Typography}-h2-text-transform: {Theme.Typography.H2.TextTransform};");
 
             theme.AppendLine(
-                $"--{Typography}-h3-family: '{string.Join("','", (Theme.Typography.H3.FontFamily == null ? Theme.Typography.Default.FontFamily : Theme.Typography.H3.FontFamily))}';");
+                $"--{Typography}-h3-family: '{string.Join("','", Theme.Typography.H3.FontFamily ?? Theme.Typography.Default.FontFamily)}';");
             theme.AppendLine($"--{Typography}-h3-size: {Theme.Typography.H3.FontSize};");
             theme.AppendLine($"--{Typography}-h3-weight: {Theme.Typography.H3.FontWeight};");
             theme.AppendLine(
@@ -309,7 +332,7 @@ namespace MudBlazor
             theme.AppendLine($"--{Typography}-h3-text-transform: {Theme.Typography.H3.TextTransform};");
 
             theme.AppendLine(
-                $"--{Typography}-h4-family: '{string.Join("','", (Theme.Typography.H4.FontFamily == null ? Theme.Typography.Default.FontFamily : Theme.Typography.H4.FontFamily))}';");
+                $"--{Typography}-h4-family: '{string.Join("','", Theme.Typography.H4.FontFamily ?? Theme.Typography.Default.FontFamily)}';");
             theme.AppendLine($"--{Typography}-h4-size: {Theme.Typography.H4.FontSize};");
             theme.AppendLine($"--{Typography}-h4-weight: {Theme.Typography.H4.FontWeight};");
             theme.AppendLine(
@@ -318,7 +341,7 @@ namespace MudBlazor
             theme.AppendLine($"--{Typography}-h4-text-transform: {Theme.Typography.H4.TextTransform};");
 
             theme.AppendLine(
-                $"--{Typography}-h5-family: '{string.Join("','", (Theme.Typography.H5.FontFamily == null ? Theme.Typography.Default.FontFamily : Theme.Typography.H5.FontFamily))}';");
+                $"--{Typography}-h5-family: '{string.Join("','", Theme.Typography.H5.FontFamily ?? Theme.Typography.Default.FontFamily)}';");
             theme.AppendLine($"--{Typography}-h5-size: {Theme.Typography.H5.FontSize};");
             theme.AppendLine($"--{Typography}-h5-weight: {Theme.Typography.H5.FontWeight};");
             theme.AppendLine(
@@ -327,7 +350,7 @@ namespace MudBlazor
             theme.AppendLine($"--{Typography}-h5-text-transform: {Theme.Typography.H5.TextTransform};");
 
             theme.AppendLine(
-                $"--{Typography}-h6-family: '{string.Join("','", (Theme.Typography.H6.FontFamily == null ? Theme.Typography.Default.FontFamily : Theme.Typography.H6.FontFamily))}';");
+                $"--{Typography}-h6-family: '{string.Join("','", Theme.Typography.H6.FontFamily ?? Theme.Typography.Default.FontFamily)}';");
             theme.AppendLine($"--{Typography}-h6-size: {Theme.Typography.H6.FontSize};");
             theme.AppendLine($"--{Typography}-h6-weight: {Theme.Typography.H6.FontWeight};");
             theme.AppendLine(
@@ -336,7 +359,7 @@ namespace MudBlazor
             theme.AppendLine($"--{Typography}-h6-text-transform: {Theme.Typography.H6.TextTransform};");
 
             theme.AppendLine(
-                $"--{Typography}-subtitle1-family: '{string.Join("','", (Theme.Typography.Subtitle1.FontFamily == null ? Theme.Typography.Default.FontFamily : Theme.Typography.Subtitle1.FontFamily))}';");
+                $"--{Typography}-subtitle1-family: '{string.Join("','", Theme.Typography.Subtitle1.FontFamily ?? Theme.Typography.Default.FontFamily)}';");
             theme.AppendLine($"--{Typography}-subtitle1-size: {Theme.Typography.Subtitle1.FontSize};");
             theme.AppendLine($"--{Typography}-subtitle1-weight: {Theme.Typography.Subtitle1.FontWeight};");
             theme.AppendLine(
@@ -345,7 +368,7 @@ namespace MudBlazor
             theme.AppendLine($"--{Typography}-subtitle1-text-transform: {Theme.Typography.Subtitle1.TextTransform};");
 
             theme.AppendLine(
-                $"--{Typography}-subtitle2-family: '{string.Join("','", (Theme.Typography.Subtitle2.FontFamily == null ? Theme.Typography.Default.FontFamily : Theme.Typography.Subtitle2.FontFamily))}';");
+                $"--{Typography}-subtitle2-family: '{string.Join("','", Theme.Typography.Subtitle2.FontFamily ?? Theme.Typography.Default.FontFamily)}';");
             theme.AppendLine($"--{Typography}-subtitle2-size: {Theme.Typography.Subtitle2.FontSize};");
             theme.AppendLine($"--{Typography}-subtitle2-weight: {Theme.Typography.Subtitle2.FontWeight};");
             theme.AppendLine(
@@ -354,7 +377,7 @@ namespace MudBlazor
             theme.AppendLine($"--{Typography}-subtitle2-text-transform: {Theme.Typography.Subtitle2.TextTransform};");
 
             theme.AppendLine(
-                $"--{Typography}-body1-family: '{string.Join("','", (Theme.Typography.Body1.FontFamily == null ? Theme.Typography.Default.FontFamily : Theme.Typography.Body1.FontFamily))}';");
+                $"--{Typography}-body1-family: '{string.Join("','", Theme.Typography.Body1.FontFamily ?? Theme.Typography.Default.FontFamily)}';");
             theme.AppendLine($"--{Typography}-body1-size: {Theme.Typography.Body1.FontSize};");
             theme.AppendLine($"--{Typography}-body1-weight: {Theme.Typography.Body1.FontWeight};");
             theme.AppendLine(
@@ -363,7 +386,7 @@ namespace MudBlazor
             theme.AppendLine($"--{Typography}-body1-text-transform: {Theme.Typography.Body1.TextTransform};");
 
             theme.AppendLine(
-                $"--{Typography}-body2-family: '{string.Join("','", (Theme.Typography.Body2.FontFamily == null ? Theme.Typography.Default.FontFamily : Theme.Typography.Body2.FontFamily))}';");
+                $"--{Typography}-body2-family: '{string.Join("','", Theme.Typography.Body2.FontFamily ?? Theme.Typography.Default.FontFamily)}';");
             theme.AppendLine($"--{Typography}-body2-size: {Theme.Typography.Body2.FontSize};");
             theme.AppendLine($"--{Typography}-body2-weight: {Theme.Typography.Body2.FontWeight};");
             theme.AppendLine(
@@ -372,7 +395,7 @@ namespace MudBlazor
             theme.AppendLine($"--{Typography}-body2-text-transform: {Theme.Typography.Body2.TextTransform};");
 
             theme.AppendLine(
-                $"--{Typography}-button-family: '{string.Join("','", (Theme.Typography.Button.FontFamily == null ? Theme.Typography.Default.FontFamily : Theme.Typography.Button.FontFamily))}';");
+                $"--{Typography}-button-family: '{string.Join("','", Theme.Typography.Button.FontFamily ?? Theme.Typography.Default.FontFamily)}';");
             theme.AppendLine($"--{Typography}-button-size: {Theme.Typography.Button.FontSize};");
             theme.AppendLine($"--{Typography}-button-weight: {Theme.Typography.Button.FontWeight};");
             theme.AppendLine(
@@ -381,7 +404,7 @@ namespace MudBlazor
             theme.AppendLine($"--{Typography}-button-text-transform: {Theme.Typography.Button.TextTransform};");
 
             theme.AppendLine(
-                $"--{Typography}-caption-family: '{string.Join("','", (Theme.Typography.Caption.FontFamily == null ? Theme.Typography.Default.FontFamily : Theme.Typography.Caption.FontFamily))}';");
+                $"--{Typography}-caption-family: '{string.Join("','", Theme.Typography.Caption.FontFamily ?? Theme.Typography.Default.FontFamily)}';");
             theme.AppendLine($"--{Typography}-caption-size: {Theme.Typography.Caption.FontSize};");
             theme.AppendLine($"--{Typography}-caption-weight: {Theme.Typography.Caption.FontWeight};");
             theme.AppendLine(
@@ -390,14 +413,13 @@ namespace MudBlazor
             theme.AppendLine($"--{Typography}-caption-text-transform: {Theme.Typography.Caption.TextTransform};");
 
             theme.AppendLine(
-                $"--{Typography}-overline-family: '{string.Join("','", (Theme.Typography.Overline.FontFamily == null ? Theme.Typography.Default.FontFamily : Theme.Typography.Overline.FontFamily))}';");
+                $"--{Typography}-overline-family: '{string.Join("','", Theme.Typography.Overline.FontFamily ?? Theme.Typography.Default.FontFamily)}';");
             theme.AppendLine($"--{Typography}-overline-size: {Theme.Typography.Overline.FontSize};");
             theme.AppendLine($"--{Typography}-overline-weight: {Theme.Typography.Overline.FontWeight};");
             theme.AppendLine(
                 $"--{Typography}-overline-lineheight: {Theme.Typography.Overline.LineHeight.ToString(CultureInfo.InvariantCulture)};");
             theme.AppendLine($"--{Typography}-overline-letterspacing: {Theme.Typography.Overline.LetterSpacing};");
             theme.AppendLine($"--{Typography}-overline-text-transform: {Theme.Typography.Overline.TextTransform};");
-
 
             //Z-Index
             theme.AppendLine($"--{Zindex}-drawer: {Theme.ZIndex.Drawer};");
@@ -406,6 +428,11 @@ namespace MudBlazor
             theme.AppendLine($"--{Zindex}-popover: {Theme.ZIndex.Popover};");
             theme.AppendLine($"--{Zindex}-snackbar: {Theme.ZIndex.Snackbar};");
             theme.AppendLine($"--{Zindex}-tooltip: {Theme.ZIndex.Tooltip};");
+        }
+
+        public void Dispose()
+        {
+            _darkLightModeChanged = null;
         }
     }
 }

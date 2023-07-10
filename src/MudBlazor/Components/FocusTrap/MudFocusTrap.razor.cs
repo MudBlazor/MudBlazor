@@ -157,7 +157,7 @@ namespace MudBlazor
         public void Dispose()
         {
             if (!_disabled)
-                RestoreFocusAsync().AndForget(TaskOption.Safe);
+                RestoreFocusAsync().AndForget(ignoreExceptions:true);
         }
     }
 }

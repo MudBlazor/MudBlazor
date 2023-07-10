@@ -38,7 +38,7 @@
         <DocsPageSection>
             <SectionHeader Title="Using Simple Fluent Validation">
                 <Description>
-                    This example shows how to make use of the powerful <MudLink Href="https://docs.fluentvalidation.net/en/latest/index.html">FluentValidation</MudLink> validators with MudForm. Basically, we call the validator in our 
+                    This example shows how to make use of the powerful <MudLink Href="https://docs.fluentvalidation.net/en/latest/index.html">FluentValidation</MudLink> validators with MudForm. Basically, we call the validator in our
                     validation function and simply return the error messages.
                 </Description>
             </SectionHeader>
@@ -47,16 +47,53 @@
             </SectionContent>
         </DocsPageSection>
 
-		<DocsPageSection>
-			<SectionHeader Title="Using Fluent Validation">
-				<Description>
-					This example shows how to make use of the powerful <MudLink Href="https://docs.fluentvalidation.net/en/latest/index.html">FluentValidation</MudLink> validators with MudForm. This approach utilizes a standard AbstractValidator which can be shared with the <MudLink Href="https://docs.fluentvalidation.net/en/latest/aspnet.html">ASP.NET API Controllers</MudLink>.
-				</Description>
-			</SectionHeader>
-			<SectionContent DarkenBackground="true" ShowCode="false" Code="FluentValidationComplexExample">
+        <DocsPageSection>
+            <SectionHeader Title="Using Fluent Validation">
+                <Description>
+                    This example shows how to make use of the powerful <MudLink Href="https://docs.fluentvalidation.net/en/latest/index.html">FluentValidation</MudLink> validators with MudForm. This approach utilizes a standard AbstractValidator which can be shared with the <MudLink Href="https://docs.fluentvalidation.net/en/latest/aspnet.html">ASP.NET API Controllers</MudLink>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="FluentValidationComplexExample">
                 <FluentValidationComplexExample />
             </SectionContent>
-		</DocsPageSection>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Validate only on user interaction">
+                <Description>
+                    Normally input fields are validated when leaving the input field. This behavior can be changed with the flag <CodeInline>OnlyValidateIfDirty</CodeInline> If this flag is set to <CodeInline>true</CodeInline>, the input field will only be validated if the user has changed the initial value.
+                    <br /><br />
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        Note: The <CodeInline>OnlyValidateIfDirty</CodeInline> setting should not be changed dynamically
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="ValidateIfDirtyExample">
+                <ValidateIfDirtyExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Automatically set Labels">
+                <Description>
+                    A form field <CodeInline>Label</CodeInline> can be set automatically by adding a <CodeInline>[Label]</CodeInline> attribute to the relevant property on the model class. The <CodeInline>For</CodeInline> property must also be set. An automatic label can be overriden by setting the <CodeInline>Label</CodeInline> property manually on the component.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="LabelAttributeExample">
+                <LabelAttributeExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="ReadOnly and Disabled Forms">
+                <Description>
+                    Settings <CodeInline>ReadOnly</CodeInline> or <CodeInline>Disabled</CodeInline> to true on a MudForm will automatically set all children inputs as ReadOnly or Disabled. The state will also be applied to child MudForms.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="FormReadonlyDisabledExample">
+                <FormReadonlyDisabledExample />
+            </SectionContent>
+        </DocsPageSection>
 
     </DocsPageContent>
 </DocsPage>

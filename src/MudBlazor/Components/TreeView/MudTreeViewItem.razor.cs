@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
@@ -12,12 +14,14 @@ namespace MudBlazor
     {
         private string _text;
         private bool _disabled;
+        private bool _canExpand = true;
         private bool _isChecked, _isSelected, _isServerLoaded;
         private Converter<T> _converter = new DefaultConverter<T>();
         private readonly List<MudTreeViewItem<T>> _childItems = new();
 
         protected string Classname =>
         new CssBuilder("mud-treeview-item")
+            .AddClass("mud-treeview-select-none", MudTreeRoot?.ExpandOnDoubleClick == true)
           .AddClass(Class)
         .Build();
 
@@ -120,6 +124,17 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// If false, TreeViewItem will not be able to expand.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public bool CanExpand
+        {
+            get => _canExpand;
+            set => _canExpand = value;
+        }
+
+        /// <summary>
         /// Child content of component used to create sub levels.
         /// </summary>
         [Parameter]
@@ -133,6 +148,13 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Behavior)]
         public RenderFragment Content { get; set; }
 
+        /// <summary>
+        /// Content of the item body, if used replaced the text, end text and end icon rendering.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public RenderFragment<MudTreeViewItem<T>> BodyContent { get; set; }
+
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public HashSet<T> Items { get; set; }
@@ -142,6 +164,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.ClickAction)]
+        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
         public ICommand Command { get; set; }
 
         /// <summary>
@@ -255,11 +278,16 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        /// <summary>
+        /// Tree item double click event.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnDoubleClick { get; set; }
+
         public bool Loading { get; set; }
 
         bool HasChild => ChildContent != null ||
-            (MudTreeRoot != null && Items != null && Items.Count != 0) ||
-            (MudTreeRoot?.ServerData != null && !_isServerLoaded && (Items == null || Items.Count == 0));
+             (MudTreeRoot != null && Items != null && Items.Count != 0) ||
+             (MudTreeRoot?.ServerData != null && _canExpand && !_isServerLoaded && (Items == null || Items.Count == 0));
 
         protected bool IsChecked
         {
@@ -304,33 +332,82 @@ namespace MudBlazor
 
         protected async Task OnItemClicked(MouseEventArgs ev)
         {
+            if (HasChild && (MudTreeRoot?.ExpandOnClick ?? false))
+            {
+                Expanded = !Expanded;
+                await TryInvokeServerLoadFunc();
+                await ExpandedChanged.InvokeAsync(Expanded);
+            }
+
+            if (Disabled)
+            {
+                return;
+            }
+
             if (MudTreeRoot?.IsSelectable ?? false)
             {
                 await MudTreeRoot.UpdateSelected(this, !_isSelected);
             }
 
-            if (HasChild && (MudTreeRoot?.ExpandOnClick ?? false))
-            {
-                Expanded = !Expanded;
-                TryInvokeServerLoadFunc();
-                await ExpandedChanged.InvokeAsync(Expanded);
-            }
-
             await OnClick.InvokeAsync(ev);
+#pragma warning disable CS0618
             if (Command?.CanExecute(Value) ?? false)
             {
                 Command.Execute(Value);
             }
+#pragma warning restore CS0618
         }
 
-        protected internal Task OnItemExpanded(bool expanded)
+        protected async Task OnItemDoubleClicked(MouseEventArgs ev)
         {
-            if (Expanded == expanded)
-                return Task.CompletedTask;
+            if (HasChild && (MudTreeRoot?.ExpandOnDoubleClick ?? false))
+            {
+                Expanded = !Expanded;
+                await TryInvokeServerLoadFunc();
+                await ExpandedChanged.InvokeAsync(Expanded);
+            }
 
-            Expanded = expanded;
-            TryInvokeServerLoadFunc();
-            return ExpandedChanged.InvokeAsync(expanded);
+            if (Disabled)
+            {
+                return;
+            }
+
+            if (MudTreeRoot?.IsSelectable ?? false)
+            {
+                await MudTreeRoot.UpdateSelected(this, !_isSelected);
+            }
+
+            await OnDoubleClick.InvokeAsync(ev);
+        }
+
+        protected internal async Task OnItemExpanded(bool expanded)
+        {
+            if (Expanded != expanded) {
+                Expanded = expanded;
+                await TryInvokeServerLoadFunc();
+                await ExpandedChanged.InvokeAsync(expanded);
+            }
+        }
+
+        /// <summary>
+        /// Clear the tree items, and try to reload from server.
+        /// </summary>
+        public async Task ReloadAsync()
+        {
+            if (Items != null)
+            {
+                Items.Clear();
+            }
+            await TryInvokeServerLoadFunc();
+
+            if (Parent != null)
+            {
+                Parent.StateHasChanged();
+            }
+            else if (MudTreeRoot != null)
+            {
+                ((IMudStateHasChanged)MudTreeRoot).StateHasChanged();
+            }
         }
 
         internal Task Select(bool value)
@@ -382,9 +459,9 @@ namespace MudBlazor
             }
         }
 
-        internal async void TryInvokeServerLoadFunc()
+        internal async Task TryInvokeServerLoadFunc()
         {
-            if (Expanded && (Items == null || Items.Count == 0) && MudTreeRoot?.ServerData != null)
+            if (Expanded && (Items == null || Items.Count == 0) && _canExpand && MudTreeRoot?.ServerData != null)
             {
                 Loading = true;
                 StateHasChanged();
@@ -397,5 +474,6 @@ namespace MudBlazor
                 StateHasChanged();
             }
         }
+
     }
 }

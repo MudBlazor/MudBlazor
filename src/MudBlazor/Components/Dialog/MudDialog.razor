@@ -8,7 +8,9 @@
     <MudFocusTrap DefaultFocus="DefaultFocus">
 
         <div @attributes="UserAttributes" class="@ContentClass" style="@ContentStyle">
-            @DialogContent
+            <CascadingValue Value="true" IsFixed Name="IsNested">
+                @DialogContent
+            </CascadingValue>
         </div>
 
         @if (DialogActions != null)

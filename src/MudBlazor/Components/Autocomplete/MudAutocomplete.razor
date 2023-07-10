@@ -2,19 +2,19 @@
 @inherits MudBaseInput<T>
 @typeparam T
 
-<CascadingValue Name="Standalone" Value="false" IsFixed="true">
-    <div class="mud-select mud-autocomplete">
+<CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
+    <div class="@AutocompleteClassname">
         <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
-                         Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
+                         Error="@Error" ErrorText="@ErrorText" Disabled="@GetDisabledState()" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
             <InputContent>
                 <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
                           Class="mud-select-input" Margin="@Margin"
                           Variant="@Variant"
                           TextUpdateSuppression="@TextUpdateSuppression"
                           Value="@Text" DisableUnderLine="@DisableUnderLine"
-                          Disabled="@Disabled" ReadOnly="@ReadOnly" Error="@Error"
+                          Disabled="@GetDisabledState()" ReadOnly="@GetReadOnlyState()" Error="@Error"
                           OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
-                          Clearable="@Clearable" OnClearButtonClick="@OnClearButtonClick"
+                          Clearable="@(!GetReadOnlyState() && Clearable)" OnClearButtonClick="@OnClearButtonClick"
                           @attributes="UserAttributes"
                           TextChanged="OnTextChanged" OnBlur="OnInputBlurred"
                           OnKeyDown="@this.OnInputKeyDown"
@@ -22,31 +22,56 @@
                           Placeholder="@Placeholder" Immediate="true"
                           InputMode="@InputMode" Pattern="@Pattern"
                           T="string" />
-                <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
-                    @if (_items != null && _items.Length != 0)
+
+                @if (ShowProgressIndicator && IsLoading)
+                {
+                    @if (ProgressIndicatorTemplate != null)
                     {
-                        <MudList Clickable="true" Dense="@Dense">
+                        @ProgressIndicatorTemplate
+                    }
+                    else
+                    {
+                        <div class="@CircularProgressClassname">
+                            <MudProgressCircular Color="ProgressIndicatorColor" Indeterminate="true" Size="Size.Small"/>
+                        </div>
+                    }
+                }
+
+                <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
+                    @if (ProgressIndicatorInPopoverTemplate != null && IsLoading)
+                    {
+                        @ProgressIndicatorInPopoverTemplate
+                    }
+                    else if (_items != null && _items.Length != 0)
+                    {
+                        @if (BeforeItemsTemplate != null)
+                        {
+                            <div class="pa-1">
+                                @BeforeItemsTemplate
+                            </div>
+                        }
+                        <MudList Class="@ListClass" Clickable="true" Dense="@Dense">
                             @for (var index = 0; index < _items.Length; index++)
                             {
                                 var item = _items[index];
-                                bool is_selected = index == _selectedListItemIndex;
-                                bool is_disabled = !_enabledItemIndices.Contains(index);
-                                <MudListItem @key="@item" id="@GetListItemId(index)" Disabled="@(is_disabled)" OnClick="@(async() => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@(is_selected ? "mud-selected-item mud-primary-text mud-primary-hover" : "")">
+                                bool isSelected = index == _selectedListItemIndex;
+                                bool isDisabled = !_enabledItemIndices.Contains(index);
+                                var captureIndex = index;
+                                <MudListItem @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@(isSelected ? "mud-selected-item mud-primary-text mud-primary-hover" : "")">
                                     @if (ItemTemplate == null)
                                     {
                                         @GetItemString(item)
                                     }
-                                    else if (is_disabled && ItemDisabledTemplate != null)
+                                    else if (isDisabled && ItemDisabledTemplate != null)
                                     {
                                         @ItemDisabledTemplate(item)
                                     }
-                                    else if (is_selected)
+                                    else if (isSelected)
                                     {
                                         @if (ItemSelectedTemplate == null)
                                             @ItemTemplate(item)
                                         else
                                             @ItemSelectedTemplate(item)
-
                                     }
                                     else
                                     {
@@ -64,8 +89,26 @@
                     }
                     else if (NoItemsTemplate != null)
                     {
+                        @if (BeforeItemsTemplate != null)
+                        {
+                            <div class="pa-1">
+                                @BeforeItemsTemplate
+                            </div>
+                        }
                         <div class="pa-1">
                             @NoItemsTemplate
+                        </div>
+                    }
+                    else if (BeforeItemsTemplate != null && IsLoading is false)
+                    {
+                        <div class="pa-1">
+                            @BeforeItemsTemplate
+                        </div>
+                    }
+                    @if (AfterItemsTemplate != null && IsLoading is false)
+                    {
+                        <div class="pa-1">
+                            @AfterItemsTemplate
                         </div>
                     }
                 </MudPopover>

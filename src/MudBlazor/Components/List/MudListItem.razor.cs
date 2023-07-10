@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -11,7 +12,7 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-list-item")
-          .AddClass("mud-list-item-dense", Dense || MudList?.Dense == true)
+          .AddClass("mud-list-item-dense", (Dense ?? MudList?.Dense) ?? false)
           .AddClass("mud-list-item-gutters", !DisableGutters && !(MudList?.DisableGutters == true))
           .AddClass("mud-list-item-clickable", MudList?.Clickable)
           .AddClass("mud-ripple", MudList?.Clickable == true && !DisableRipple && !Disabled)
@@ -139,7 +140,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool Dense { get; set; }
+        public bool? Dense { get; set; }
 
         /// <summary>
         /// If true, the left and right padding is removed.
@@ -190,6 +191,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.ClickAction)]
+        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
         public ICommand Command { get; set; }
 
         /// <summary>
@@ -220,6 +222,47 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
+        {
+            if (Disabled)
+                return;
+            if (!_onClickHandlerPreventDefault)
+            {
+                if (NestedList != null)
+                {
+                    Expanded = !Expanded;
+                }
+                else if (Href != null)
+                {
+                    if (MudList is not null)
+                    {
+                        await MudList.SetSelectedValueAsync(Value);
+                    }
+                    await OnClick.InvokeAsync(eventArgs);
+                    UriHelper.NavigateTo(Href, ForceLoad);
+                }
+                else
+                {
+                    if (MudList is not null)
+                    {
+                        await MudList.SetSelectedValueAsync(Value);
+                    }
+                    await OnClick.InvokeAsync(eventArgs);
+#pragma warning disable CS0618
+                    if (Command?.CanExecute(CommandParameter) ?? false)
+                    {
+                        Command.Execute(CommandParameter);
+                    }
+#pragma warning restore CS0618
+                }
+            }
+            else
+            {
+                await OnClick.InvokeAsync(eventArgs);
+            }
+        }
+
+        [Obsolete($"Use {nameof(OnClickHandlerAsync)} instead. This will be removed in v7")]
         protected void OnClickHandler(MouseEventArgs ev)
         {
             if (Disabled)
@@ -232,13 +275,13 @@ namespace MudBlazor
                 }
                 else if (Href != null)
                 {
-                    MudList?.SetSelectedValue(this.Value);
+                    MudList?.SetSelectedValueAsync(this.Value);
                     OnClick.InvokeAsync(ev);
                     UriHelper.NavigateTo(Href, ForceLoad);
                 }
                 else
                 {
-                    MudList?.SetSelectedValue(this.Value);
+                    MudList?.SetSelectedValueAsync(this.Value);
                     OnClick.InvokeAsync(ev);
                     if (Command?.CanExecute(CommandParameter) ?? false)
                     {
@@ -252,12 +295,12 @@ namespace MudBlazor
             }
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
             _expanded = InitiallyExpanded;
             if (MudList != null)
             {
-                MudList.Register(this);
+                await MudList.RegisterAsync(this);
                 OnListParametersChanged();
                 MudList.ParametersChanged += OnListParametersChanged;
             }
@@ -266,11 +309,11 @@ namespace MudBlazor
         private Typo _textTypo;
         private void OnListParametersChanged()
         {
-            if (Dense || MudList?.Dense == true)
+            if ((Dense ?? MudList?.Dense) ?? false)
             {
                 _textTypo = Typo.body2;
             }
-            else if (!Dense || !MudList?.Dense == true)
+            else if (!((Dense ?? MudList?.Dense) ?? false))
             {
                 _textTypo = Typo.body1;
             }

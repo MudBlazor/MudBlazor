@@ -58,12 +58,16 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Change Icon By Programmatically">
-                <Description>The icon parameter of the other components are determined as strings. 
-                So changing the icon is as easy as assigning a new string.</Description>
+            <SectionHeader Title="Custom Icons">
+                <Description>
+                    The icon parameter of <CodeInline Tag="true">MudIcon</CodeInline>, <CodeInline Tag="true">MudButton</CodeInline> and other components are just SVG strings. 
+                    So changing an icon programmatically is as easy as assigning a new string.<br />
+                    Also, if the icon you need is not available in <MudLink Href="/features/icons">MudBlazor's icon library</MudLink> you can just assign your own SVG. 
+                    The cube icon in this example is <CodeInline>cube-outline</CodeInline> from <MudLink Color="Color.Secondary" Href="https://materialdesignicons.com" Style="white-space:nowrap;">Material Design Icons</MudLink>.
+                </Description>
             </SectionHeader>
-            <SectionContent Code="ChangeIconByProgrammaticallyExample">
-                <ChangeIconByProgrammaticallyExample />
+            <SectionContent Code="ChangeIconProgrammaticallyExample">
+                <ChangeIconProgrammaticallyExample />
             </SectionContent>
         </DocsPageSection>
 

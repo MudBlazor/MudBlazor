@@ -4,7 +4,7 @@
 
 @using System.Globalization;
 
-<CascadingValue Name="Standalone" Value="@Standalone" IsFixed="true">
+<CascadingValue Name="SubscribeToParentForm" Value="@SubscribeToParentForm" IsFixed="true">
     <MudInputControl id="@_elementId"
                      Label="@Label"
                      Variant="@Variant"
@@ -14,13 +14,13 @@
                      Class="@Classname"
                      Error="@HasErrors"
                      ErrorText="@GetErrorText()"
-                     Disabled="@Disabled"
+                     Disabled="@GetDisabledState()"
                      Margin="@Margin"
                      Required="@Required"
                      CounterText="@GetCounterText()"
                      ForId="@FieldId">
         <InputContent>
-            <CascadingValue Name="Standalone" Value="false" IsFixed="true">
+            <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 <MudInput T="string"
                           @ref="@_elementReference"
                           @attributes="@UserAttributes"
@@ -31,9 +31,9 @@
                           Value="@Text"
                           ValueChanged="@OnInputValueChanged"
                           Placeholder="@Placeholder"
-                          Disabled="@Disabled"
+                          Disabled="@GetDisabledState()"
                           DisableUnderLine="@DisableUnderLine"
-                          ReadOnly="@ReadOnly"
+                          ReadOnly="@GetReadOnlyState()"
                           Adornment="@Adornment"
                           AdornmentText="@AdornmentText"
                           AdornmentIcon="@AdornmentIcon"
@@ -50,7 +50,7 @@
                           InputMode="@InputMode"
                           Pattern="@((Pattern ?? "[0-9]").TrimEnd('*')+"*")"
                           OnAdornmentClick="@OnAdornmentClick"
-                          OnBlur="@OnBlurred"
+                          OnBlur="@OnBlurredAsync"
                           OnKeyDown="@HandleKeydown"
                           OnKeyUp="@HandleKeyUp"
                           OnIncrement="@Increment"
