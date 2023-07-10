@@ -1001,7 +1001,7 @@ namespace MudBlazor
         {
             var items = ServerData != null
                     ? ServerItems
-                    : Items;
+                    : FilteredItems;
 
             if (value)
                 Selection = new HashSet<T>(items);
@@ -1011,6 +1011,7 @@ namespace MudBlazor
             SelectedItemsChangedEvent?.Invoke(SelectedItems);
             SelectedAllItemsChangedEvent?.Invoke(value);
             await SelectedItemsChanged.InvokeAsync(SelectedItems);
+
             StateHasChanged();
         }
 

@@ -303,15 +303,15 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
             dataGrid.FindAll("input")[0].Change(true);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(4);
 
             // deselect an item programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, dataGrid.Instance.SelectedItems.First()));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
 
             // select an item programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(dataGrid.Instance.Items.First()));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(4);
 
             // deselect all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
@@ -319,11 +319,49 @@ namespace MudBlazor.UnitTests.Components
 
             // select all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(true));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(4);
 
             // deselect from the footer
             dataGrid.Find("tfoot input").Change(false);
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task DataGridSelectAllWithFilterTest()
+        {
+            var comp = Context.RenderComponent<DataGridMultiSelectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultiSelectionTest.Item>>();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4, because: "all four rows shown by default");
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0, because: "no selected items by default");
+
+            var twoBFilter = new FilterDefinition<DataGridMultiSelectionTest.Item>
+            {
+                Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(c => c.PropertyName == "Name"),
+                Operator = FilterOperator.String.Equal,
+                Value = "B"
+            };
+
+            // Add a FilterDefinition to filter where the Name == "B".
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(twoBFilter));
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(2, because: "two 'B' rows shown per the filter"); 
+
+            // select-all
+            dataGrid.FindAll("input[type=checkbox]")[0].Change(true);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(2, because: "only the two 'B' rows that are visible should get selected"); 
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ClearFiltersAsync());
+            dataGrid.Render();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4, because: "all rows should be shown when filter disapplied"); 
+            dataGrid.Instance.SelectedItems.Count.Should().Be(2, because: "selection should not have changed when filter disapplied");
+            dataGrid.FindAll("input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
+            dataGrid.FindAll("tfoot input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(twoBFilter));
+            dataGrid.FindAll("input[type=checkbox]")[0].IsChecked().Should().BeTrue(because: "select all checkbox should reflect 'all selected' state");
+            dataGrid.FindAll("tfoot input[type=checkbox]")[0].IsChecked().Should().BeTrue(because: "select all checkbox should reflect 'all selected' state");
         }
 
         [Test]
