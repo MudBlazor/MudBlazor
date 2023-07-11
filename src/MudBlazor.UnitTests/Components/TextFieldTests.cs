@@ -862,5 +862,37 @@ namespace MudBlazor.UnitTests.Components
             var text = mudAlert.Find("div.mud-alert-message");
             text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
         }
+        
+        /// <summary>
+        /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text.
+        /// </summary>
+        [Test]
+        public async Task DebouncedTextFieldRerenderTest()
+        {
+            var comp = Context.RenderComponent<DebouncedTextFieldRerenderTest>();
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            var input = comp.Find("input");
+            var delayedRerenderButton = comp.Find("button");
+            input.Input(new ChangeEventArgs { Value = "test" });
+            // trigger first value change
+            await Task.Delay(comp.Instance.DebounceInterval);
+            // trigger delayed re-render
+            delayedRerenderButton.Click();
+            // imitate "typing in progress" by extending the debounce interval until component re-renders
+            var elapsedTime = 0;
+            var currentText = "test";
+            while (elapsedTime < comp.Instance.RerenderDelay)
+            {
+                var delay = comp.Instance.DebounceInterval / 2;
+                currentText += "a";
+                input.Input(new ChangeEventArgs { Value = currentText });
+                await Task.Delay(delay);
+                elapsedTime += delay;
+            }
+            // after the final debounce, the value should be updated without swallowing any user input 
+            await Task.Delay(comp.Instance.DebounceInterval);
+            textField.Value.Should().Be(currentText);
+            textField.Text.Should().Be(currentText);
+        }
     }
 }
