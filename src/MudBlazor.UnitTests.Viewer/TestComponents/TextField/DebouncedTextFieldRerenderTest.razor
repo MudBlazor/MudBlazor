@@ -1,5 +1,5 @@
 ﻿<MudTextField T="string"
-              @bind-Value="@_text"
+              @bind-Value="@Value"
               Immediate="@true"
               DebounceInterval="@DebounceInterval"
               Required="@true"
@@ -16,16 +16,18 @@
 </MudText>
 
 <MudText>
-    Value: @_text
+    Value: @Value
 </MudText>
  
 @code {
     public static string __description__ = "Test user input retention on component refresh before debounce.";
 
+    [Parameter]
+    public string Value { get; set; }
+
     public int DebounceInterval = 500;
     public int RerenderDelay = 2000;
-    
-    private string _text;
+
     private int _renderCount;
     
     protected override void OnAfterRender(bool firstRender)

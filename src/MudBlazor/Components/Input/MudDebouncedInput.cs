@@ -53,7 +53,7 @@ namespace MudBlazor
         {
             var suppressTextUpdate = !updateValue
                                      && DebounceInterval > 0
-                                     && _timer != null
+                                     && _timer is { Enabled: true } 
                                      && (!Value?.Equals(Converter.Get(Text)) ?? false);
             
             return suppressTextUpdate

@@ -894,5 +894,15 @@ namespace MudBlazor.UnitTests.Components
             textField.Value.Should().Be(currentText);
             textField.Text.Should().Be(currentText);
         }
+        
+        [Test]
+        public async Task DebouncedTextField_Should_RenderDefaultValueTextOnFirstRender()
+        {
+            var defaultValue = "test";
+            var comp = Context.RenderComponent<DebouncedTextFieldRerenderTest>(
+                Parameter(nameof(MudTextField<string>.Value), defaultValue));
+            var textfield = comp.FindComponent<MudTextField<string>>().Instance;
+            textfield.Text.Should().Be(defaultValue);
+        }
     }
 }
