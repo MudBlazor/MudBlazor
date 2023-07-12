@@ -371,23 +371,27 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void ErrorCheckingTest()
         {
-            //format exception
+            // datetime format exception
             var dt1 = new DefaultConverter<DateTime>();
             dt1.Get("12/34/56").Should().Be(default);
             var dtn1 = new DefaultConverter<DateTime?>();
             dtn1.Get("12/34/56").Should().Be(null);
 
-            // format exception
+            // timespan format exception
             var tm1 = new DefaultConverter<TimeSpan>();
             tm1.Get("12:o1").Should().Be(default);
+            tm1.GetErrorMessage.Should().Be("Not a valid time span");
             var tmn1 = new DefaultConverter<TimeSpan?>();
             tmn1.Get("12:o1").Should().Be(null);
+            tmn1.GetErrorMessage.Should().Be("Not a valid time span");
 
-            // overflow
+            // timespan overflow exception
             var tm2 = new DefaultConverter<TimeSpan>();
             tm2.Get("25:00").Should().Be(default);
-            var tm2n = new DefaultConverter<TimeSpan?>();
-            tm2n.Get("25:00").Should().Be(null);
+            tm2.GetErrorMessage.Should().Be("Not a valid time span");
+            var tmn2 = new DefaultConverter<TimeSpan?>();
+            tmn2.Get("25:00").Should().Be(null);
+            tmn2.GetErrorMessage.Should().Be("Not a valid time span");
 
             // not a valid number
             var c1 = new DefaultConverter<sbyte>();
