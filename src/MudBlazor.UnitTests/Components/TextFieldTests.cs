@@ -904,5 +904,40 @@ namespace MudBlazor.UnitTests.Components
             var textfield = comp.FindComponent<MudTextField<string>>().Instance;
             textfield.Text.Should().Be(defaultValue);
         }
+        
+        /// <summary>
+        /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text while changing format.
+        /// </summary>
+        [Test]
+        public async Task DebouncedTextFieldFormatChangeRerenderTest()
+        {
+            var comp = Context.RenderComponent<DebouncedTextFieldFormatChangeRerenderTest>();
+            var textField = comp.FindComponent<MudTextField<DateTime>>().Instance;
+            var input = comp.Find("input");
+            var delayedFormatChangeButton = comp.Find("button");
+            DateTime expectedFinalDateTime = default;
+            // ensure text is updated on initialize 
+            textField.Text.Should().Be(comp.Instance.Date.Date.ToString(comp.Instance.Format));
+            // trigger the format change
+            delayedFormatChangeButton.Click();
+            // imitate "typing in progress" by extending the debounce interval until component re-renders
+            var elapsedTime = 0;
+            var currentText = comp.Instance.Date.Date.ToString(comp.Instance.Format);
+            while (elapsedTime < comp.Instance.RerenderDelay)
+            {
+                var delay = comp.Instance.DebounceInterval / 2;
+                currentText += "a";
+                input.Input(new ChangeEventArgs { Value = currentText });
+                await Task.Delay(delay);
+                elapsedTime += delay;
+            }
+            // after the format change delay has elapsed, the uncommitted text is retained (with the old Format)
+            textField.Text.Should().Be(currentText);
+            // once debounce occurs, both value and text are reset because they define an invalid DateTime,
+            // now with the new Format
+            await Task.Delay(comp.Instance.DebounceInterval);
+            textField.Value.Should().Be(expectedFinalDateTime);
+            textField.Text.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format));
+        }
     }
 }
