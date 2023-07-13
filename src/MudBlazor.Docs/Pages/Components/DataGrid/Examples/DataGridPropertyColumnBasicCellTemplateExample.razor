@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.Docs.Examples
+@inject ISnackbar Snackbar
+
+<MudDataGrid T="DataModel" Items="Models">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Checked">
+            <CellTemplate>
+                <MudCheckBox Checked="context.Item.Checked" CheckedChanged="@((bool e) => Change(context.Item, e))" />
+            </CellTemplate>
+        </PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+
+    public class DataModel
+    {
+        public bool Checked { get; set; }
+        public string Name { get; set; }
+    }
+
+    List<DataModel> Models = new()
+    {
+        new DataModel(){Checked = false, Name = "Item 1"},
+        new DataModel(){Checked = false, Name = "Item 2"}
+    };
+
+    void Change(DataModel dataModel, bool value)
+    {
+        Snackbar.Add($"This is {dataModel.Name} ! and it changed from {dataModel.Checked.ToString()} to {value.ToString()}");
+        dataModel.Checked = value;
+    }
+
+}

@@ -1,0 +1,74 @@
+﻿@using System.Linq
+@namespace MudBlazor.Docs.Examples
+
+<MudDataGrid T="string" Items="Products">
+    <Columns>
+        <PropertyColumn Property="x => x" Title="Store Products" />
+        @foreach(var store in Stores)
+        {
+            <TemplateColumn Title="@store.Key" Filterable="false" Sortable="false">
+                <CellTemplate>
+                    @{
+                        if (!store.Value.TryGetValue(context.Item, out string value))
+                        {
+                            value = "";
+                        }
+                    }
+                    <MudText>@value</MudText>
+                </CellTemplate>
+            </TemplateColumn>
+        }
+    </Columns>
+</MudDataGrid>
+
+@code {
+
+    IEnumerable<string> Products = Enumerable.Empty<string>();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Products = Stores.SelectMany(x => x.Value.Keys).Distinct();
+    }
+
+    Dictionary<string, Dictionary<string, string>> Stores = new()
+    {
+        { "Store1",  new Dictionary<string, string>()
+            {
+                {"Brakes", "43"},
+                {"Motor Oil", "12"},
+                {"Tires", "19"},
+                {"Batteries", "98"},
+                {"Engine Coolant", "46"}
+            } 
+        },
+        { "Store2",  new Dictionary<string, string>()
+            {
+                {"Brakes", "94"},
+                {"Motor Oil", "3"},
+                {"Tires", "63"},
+                {"Batteries", "27"},
+                {"Engine Coolant", "89"},
+                {"Windshield Wipers", "23"}
+            }
+        },
+        { "Store3",  new Dictionary<string, string>()
+            {
+                {"Motor Oil", "890"},
+                {"Tires", "347"},
+                {"Batteries", "872"},
+                {"Engine Coolant", "121"},
+                {"Windshield Wipers", "863"},
+                {"Scented fir", "4659"}
+            }
+        },
+        { "Store4",  new Dictionary<string, string>()
+            {
+                {"Motor Oil", "6432"},
+                {"Tires", "876"},
+                {"Batteries", "24"}
+            }
+        },
+
+    };
+}

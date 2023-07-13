@@ -36,6 +36,41 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="PropertyColum with CellTemplate">
+                <Description>
+                    You can use <CodeInline>&lt;CellTemplate></CodeInline> to change how a property is displayed or to make it a component to which you can assign methods to their <CodeInline>EventCallback</CodeInline> Properties
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridPropertyColumnBasicCellTemplateExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridPropertyColumnBasicCellTemplateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Advanced CellTemplate usage">
+                <Description>
+                    In this example, we will explore how we can use <ApiHref Type="typeof(MudDataGrid<T>)"/> to display data that is both driven by columns and rows.
+                    <br><br>
+                    Let's say you want to display stocks from different stores that do not have exactly the same product lists. (e.g. one of them is selling scented fir while the others not)
+                    Since the product list they offer may change at any time or whenever a store manager decides to add items, a single class object with a property for each possible item
+                    is not feasible and would require refactoring every time a new product hits the shelves. So you just decide to have each store send their product list.         
+                    <br><br>
+                    We define <CodeInline>Items</CodeInline> to be a list of distinct products gathered from product lists we recieved from each store.
+                    The first <CodeInline>Column</CodeInline> represents this list we defined and will act as our RowHeader. From there, we know that the <CodeInline>context</CodeInline> 
+                    object from <CodeInline>CellTemplate</CodeInline> will correspond to our previously defined RowHeader value.
+                    <br><br>
+                    Then, we can add one column per store and leverage <CodeInline>CellTemplate</CodeInline> <CodeInline>context</CodeInline> object to find relevant stock quanties
+                    that correspond to products from the RowHeader <CodeInline>Column</CodeInline>.
+                    <br><br>
+                    Since store columns are defined with <CodeInline>TemplateColumn</CodeInline>, Sorting and filtering is not infered.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridAdvancedCellTemplateExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridAdvancedCellTemplateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Advanced Data Grid">
                 <Description>
                     In a more advanced scenario, the data grid offers sorting, filtering, pagination and selection. There are two ways to filter the data 

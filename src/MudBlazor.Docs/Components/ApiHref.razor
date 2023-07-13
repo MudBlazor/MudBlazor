@@ -1,0 +1,10 @@
+﻿<MudLink Href="@ApiLink.GetApiLinkFor(Type)">
+    <CodeInline>@($"<{DocStrings.GetSaveTypename(Type)}>")</CodeInline>
+</MudLink>
+
+    @code {
+
+    [Parameter, EditorRequired]
+    public Type Type { get; set; }
+
+}
