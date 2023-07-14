@@ -15,6 +15,8 @@ namespace MudBlazor
     /// <typeparam name="TProperty">The type of the value being displayed in the column's cells.</typeparam>
     public partial class PropertyColumn<T, TProperty> : Column<T>
     {
+        private readonly Guid _id = Guid.NewGuid();
+
         private string? _propertyName;
         private Func<T, object?>? _cellContentFunc;
         private Func<T, TProperty>? _compiledPropertyFunc;
@@ -47,7 +49,7 @@ namespace MudBlazor
             {
                 // Most likely this is a dynamic expression that people use as workaround https://try.mudblazor.com/snippet/cYGxuTmhyqAQeCVM
                 // We can't assign any meaningful name at all, therefore we should assign an unique ID like we do for TemplateColumn
-                _propertyName = Guid.NewGuid().ToString();
+                _propertyName = _id.ToString();
             }
             Title ??= property.GetLastMemberName();
 
