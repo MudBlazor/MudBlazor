@@ -394,8 +394,33 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Find("tfoot input").Change(false);
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
         }
-
+        
         [Test]
+        public async Task DataGridEditableSelectionTest()
+        {
+            var comp = Context.RenderComponent<DataGridEditableWithSelectColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditableWithSelectColumnTest.Item>>();
+            
+            // test that all rows, header and footer have cell with a checkbox
+            dataGrid.FindAll("input.mud-checkbox-input").Count().Should().Be(dataGrid.Instance.Items.Count()+2);
+
+            //test that changing header sets all items selected
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.FindAll("input.mud-checkbox-input")[0].Change(true);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(dataGrid.Instance.Items.Count());
+            //test that changing footer unselects all items
+            dataGrid.FindAll("input.mud-checkbox-input")[^1].Change(false);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            //test that changing value in each row selects an item in grid
+            for (int i = 1; i < dataGrid.Instance.Items.Count(); i++)
+            {
+                dataGrid.FindAll("input.mud-checkbox-input")[i].Change(true);
+                dataGrid.Instance.SelectedItems.Count.Should().Be(i);
+            }
+
+
+        }
+
         public async Task DataGridPaginationTest()
         {
             var comp = Context.RenderComponent<DataGridPaginationTest>();
