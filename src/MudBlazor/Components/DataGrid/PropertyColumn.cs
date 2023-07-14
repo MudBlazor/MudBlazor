@@ -27,6 +27,7 @@ namespace MudBlazor
         private string? _fullPropertyName;
         private Func<T, TProperty> _compiledPropertyFunc;
         private Expression<Func<T, TProperty>> _compiledPropertyFuncFor;
+        private Action<T, TProperty> _assignValueAction;
 
         protected override void OnParametersSet()
         {
@@ -44,6 +45,16 @@ namespace MudBlazor
                 _propertyName = memberExpression.Member.Name;
 
                 Title ??= _propertyName;
+
+                // If the member is a field or a property with a setter, we can assign values to it.
+                if (memberExpression.Member is FieldInfo or PropertyInfo { CanWrite: true })
+                {
+                    var propertyParam = Property.Parameters[0];
+                    var valueParam = Expression.Parameter(typeof(TProperty), propertyParam.Name + "Value");
+                    var assignExpression = Expression.Assign(Property.Body, valueParam);
+                    var assignLambda = Expression.Lambda<Action<T, TProperty>>(assignExpression, propertyParam, valueParam);
+                    _assignValueAction = assignLambda.Compile();
+                }
             }
             else
             {
@@ -85,10 +96,10 @@ namespace MudBlazor
 
         protected internal override void SetProperty(object item, object value)
         {
-            if (Property.Body is MemberExpression { Member: PropertyInfo propertyInfo })
+            if (Property.Body is MemberExpression)
             {
-                var actualType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? PropertyType;
-                propertyInfo.SetValue(item, Convert.ChangeType(value, actualType), null);
+                var actualType = Nullable.GetUnderlyingType(typeof(TProperty)) ?? typeof(TProperty);
+                _assignValueAction?.Invoke((T)item, (TProperty)Convert.ChangeType(value, actualType));
             }
         }
     }
