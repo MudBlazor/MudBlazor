@@ -75,8 +75,8 @@ namespace MudBlazor
                 _compiledPropertyFunc = Property.Compile();
                 _compiledPropertyFuncFor = Property;
             }
-            return _compiledPropertyFunc(item);
 
+            return _compiledPropertyFunc(item);
         }
 
         protected internal override Type PropertyType
