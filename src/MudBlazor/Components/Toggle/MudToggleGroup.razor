@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+<CascadingValue Value="this" IsFixed="true">
+    <MudStack Class="@Class" Style="@Style" Row="!Vertical" Spacing="@Spacing">
+        @ChildContent
+    </MudStack>
+</CascadingValue>
+

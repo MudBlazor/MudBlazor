@@ -1,0 +1,48 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack Class="mud-width-full">
+    <MudStack>
+        <MudText>Single Selection</MudText>
+        <MudText>Value: @_value1</MudText>
+        <MudToggleGroup T="string" @bind-Value="_value1" Color="Color.Primary">
+            <MudToggleItem T="string" Value="@("Item One")" Text="Item One" />
+            <MudToggleItem T="string" Value="@("Item Two")" Text="Item Two" />
+            <MudToggleItem T="string" Value="@("Item Three")" Text="Item Three" />
+        </MudToggleGroup>
+    </MudStack>
+
+    <MudDivider />
+
+    <MudStack>
+        <MudText>Multi Selection</MudText>
+        <MudText>Values: @string.Join(", ", _value2 ?? new List<int?>())</MudText>
+        <MudToggleGroup T="int?" @bind-SelectedValues="_value2" Color="Color.Primary" MultiSelection="true">
+            <MudToggleItem T="int?" Value="1" Text="Item One" />
+            <MudToggleItem T="int?" Value="2" Text="Item Two" />
+            <MudToggleItem T="int?" Value="3" Text="Item Three" />
+        </MudToggleGroup>
+    </MudStack>
+
+    <MudDivider />
+
+    <MudStack>
+        <MudText>Toggle Selection</MudText>
+        <MudText>Value: @_value3</MudText>
+        <MudToggleGroup T="string" @bind-Value="_value3" Color="Color.Primary" ToggleSelection="true">
+            <MudToggleItem T="string" Value="@("Item One")" Text="Item One" />
+            <MudToggleItem T="string" Value="@("Item Two")" Text="Item Two" />
+            <MudToggleItem T="string" Value="@("Item Three")" Text="Item Three" />
+        </MudToggleGroup>
+    </MudStack>
+</MudStack>
+
+
+
+
+
+
+@code {
+    string _value1;
+    IEnumerable<int?> _value2;
+    string _value3;
+}

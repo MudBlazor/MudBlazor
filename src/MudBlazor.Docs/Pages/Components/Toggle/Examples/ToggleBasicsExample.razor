@@ -1,0 +1,55 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack>
+    <MudText>Text Based</MudText>
+    <MudToggleGroup T="string" Color="Color.Primary">
+        <MudToggleItem T="string" Text="Item One" />
+        <MudToggleItem T="string" Text="Item Two" />
+        <MudToggleItem T="string" Text="Item Three" />
+    </MudToggleGroup>
+
+    <MudToggleGroup T="string" Color="Color.Primary" Dense="true">
+        <MudToggleItem T="string" Text="Dense Item 1" />
+        <MudToggleItem T="string" Text="Dense Item 2" />
+        <MudToggleItem T="string" Text="Dense Item 3" />
+    </MudToggleGroup>
+
+    <MudToggleGroup T="string" Color="Color.Primary" Rounded="true">
+        <MudToggleItem T="string" Text="Rounded Item 1" />
+        <MudToggleItem T="string" Text="Rounded Item 2" />
+        <MudToggleItem T="string" Text="Rounded Item 3" />
+    </MudToggleGroup>
+
+    <MudToggleGroup T="string" Color="Color.Primary" ShowSelectedIcon="false">
+        <MudToggleItem T="string" Text="No-Tickmark Item 1" />
+        <MudToggleItem T="string" Text="No-Tickmark Item 2" />
+        <MudToggleItem T="string" Text="No-Tickmark Item 3" />
+    </MudToggleGroup>
+
+    <MudText Class="mt-4">Icon Based</MudText>
+    <div class="d-flex justify-space-between">
+        <div>
+            <MudToggleGroup T="string" Color="Color.Primary">
+                <MudToggleItem T="string" Icon="@Icons.Material.Filled.FormatAlignLeft" />
+                <MudToggleItem T="string" Icon="@Icons.Material.Filled.FormatAlignCenter" />
+                <MudToggleItem T="string" Icon="@Icons.Material.Filled.FormatAlignRight" />
+                <MudToggleItem T="string" Icon="@Icons.Material.Filled.FormatAlignJustify" />
+            </MudToggleGroup>
+
+            <MudToggleGroup T="string" Color="Color.Primary" Rounded="true">
+                <MudToggleItem T="string" Icon="@Icons.Material.Filled.FormatAlignLeft" />
+                <MudToggleItem T="string" Icon="@Icons.Material.Filled.FormatAlignCenter" />
+                <MudToggleItem T="string" Icon="@Icons.Material.Filled.FormatAlignRight" />
+                <MudToggleItem T="string" Icon="@Icons.Material.Filled.FormatAlignJustify" />
+            </MudToggleGroup>
+        </div>
+        
+
+        <MudToggleGroup T="string" Color="Color.Primary" Vertical="true">
+            <MudToggleItem T="string" Icon="@Icons.Material.Filled.FormatAlignLeft" />
+            <MudToggleItem T="string" Icon="@Icons.Material.Filled.FormatAlignCenter" />
+            <MudToggleItem T="string" Icon="@Icons.Material.Filled.FormatAlignRight" />
+            <MudToggleItem T="string" Icon="@Icons.Material.Filled.FormatAlignJustify" />
+        </MudToggleGroup>
+    </div>
+</MudStack>
