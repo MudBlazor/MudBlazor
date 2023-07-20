@@ -399,11 +399,10 @@ namespace MudBlazor
 
         private void SetMask(IMask other)
         {
-            if (_mask == null || other == null || _mask?.GetType() != other?.GetType())
+            if (other == null)
             {
-                _mask = other;
-                if (_mask == null)
-                    _mask = new PatternMask("null ********"); // warn the user that the mask parameter is missing
+                // warn the user that the mask parameter is missing
+                _mask = new PatternMask("null ********");
                 return;
             }
 
