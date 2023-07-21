@@ -396,7 +396,7 @@ namespace MudBlazor
             Mask.Selection = null;
             Mask.CaretPos = pos;
         }
-
+        
         private void SetMask(IMask other)
         {
             if (other == null)
@@ -405,9 +405,18 @@ namespace MudBlazor
                 _mask = new PatternMask("null ********");
                 return;
             }
-
-            // set new mask properties without loosing state
-            _mask.UpdateFrom(other);
+            
+            if (_mask.GetType() == other.GetType())
+            {
+                // update mask while retaining current state
+                _mask.UpdateFrom(other);
+                return;
+            }
+           
+            // swap masks while retaining text
+            // note: this is required for `BaseMask` instances other than `PatternMask` to work as expected
+            other.SetText(Text);
+            _mask = other;
         }
 
         private async void OnCut(ClipboardEventArgs obj)
