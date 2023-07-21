@@ -6,14 +6,14 @@
     {
         <div class="mud-list-item-avatar">
             <MudAvatar Class="@AvatarClass">
-                <MudIcon Icon="@Avatar" Color="@IconColor" Size="@IconSize" />
+                <MudIcon Icon="@Avatar" Color="@(Disabled ? Color.Default : IconColor)" Size="@IconSize" />
             </MudAvatar>
         </div>
     }
     else if (!string.IsNullOrWhiteSpace(Icon))
     {
         <div class="mud-list-item-icon">
-            <MudIcon Icon="@Icon" Color="@IconColor" Size="@IconSize" />
+            <MudIcon Icon="@Icon" Color="@(Disabled ? Color.Dark : IconColor)" Size="@IconSize" />
         </div>
     }
     <div class="mud-list-item-text @(Inset? "mud-list-item-text-inset" : "")">
