@@ -158,5 +158,33 @@ namespace MudBlazor.UnitTests.Components
             //Checks if the innerHtml of the added text element matches the text parameter
             comp.Find("text.text-ref").InnerHtml.Should().Be(text);
         }
+
+        [Test]
+        [TestCase(ChartType.Line)]
+        [TestCase(ChartType.Bar)]
+        public void TestLineYAxisMaxValue(ChartType chartType)
+        {
+            var comp = Context.RenderComponent<MaxYAxisChartTest>(parameters => parameters
+                .Add(p => p.ChartType, chartType));
+
+            // By default chart has two horizontal lines at 0 and 20
+            var horizontalLines = comp.FindAll("svg .mud-charts-yaxis text");
+            horizontalLines.Count.Should().Be(2);
+            horizontalLines[0].TextContent.TrimEnd().Should().Be("0");
+            horizontalLines[1].TextContent.TrimEnd().Should().Be("20");
+
+            // we set YAxisMaxValue to 2, YAxisTicks = 20 (default value)
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Options, new ChartOptions
+                {
+                    YAxisMaxValue = 2,
+                    YAxisFormat = "0.##"
+                }));
+            horizontalLines = comp.FindAll("svg .mud-charts-yaxis text");
+            horizontalLines.Count.Should().Be(21);
+            horizontalLines[0].TextContent.TrimEnd().Should().Be("0");
+            horizontalLines[1].TextContent.TrimEnd().Should().Be("0.1");
+            horizontalLines[20].TextContent.TrimEnd().Should().Be("2");
+        }
     }
 }
