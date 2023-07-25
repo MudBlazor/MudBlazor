@@ -1098,6 +1098,10 @@ namespace MudBlazor
                 if (EditTrigger == DataGridEditTrigger.Manual)
                     await SetSelectedItemAsync(item);
             }
+            else if (ReadOnly)
+            {
+                await SetSelectedItemAsync(item);
+            }
         }
 
         /// <summary>

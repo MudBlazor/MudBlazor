@@ -345,16 +345,16 @@ namespace MudBlazor.UnitTests.Components
             // Add a FilterDefinition to filter where the Name == "B".
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(twoBFilter));
 
-            dataGrid.FindAll("tbody tr").Count.Should().Be(2, because: "two 'B' rows shown per the filter"); 
+            dataGrid.FindAll("tbody tr").Count.Should().Be(2, because: "two 'B' rows shown per the filter");
 
             // select-all
             dataGrid.FindAll("input[type=checkbox]")[0].Change(true);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(2, because: "only the two 'B' rows that are visible should get selected"); 
+            dataGrid.Instance.SelectedItems.Count.Should().Be(2, because: "only the two 'B' rows that are visible should get selected");
 
             await comp.InvokeAsync(() => dataGrid.Instance.ClearFiltersAsync());
             dataGrid.Render();
 
-            dataGrid.FindAll("tbody tr").Count.Should().Be(4, because: "all rows should be shown when filter disapplied"); 
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4, because: "all rows should be shown when filter disapplied");
             dataGrid.Instance.SelectedItems.Count.Should().Be(2, because: "selection should not have changed when filter disapplied");
             dataGrid.FindAll("input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
             dataGrid.FindAll("tfoot input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
@@ -394,15 +394,56 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Find("tfoot input").Change(false);
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
         }
-        
+
+        [Test]
+        public async Task DataGridMultiSelectionRowClickTest()
+        {
+            var comp = Context.RenderComponent<DataGridEditableWithSelectColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditableWithSelectColumnTest.Item>>();
+            var rows = dataGrid.FindAll(".mud-table-body tr.mud-table-row");
+
+            // Cell mode, shouldn't trigger checkbox
+            dataGrid.Instance.EditMode = DataGridEditMode.Cell;
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
+            ClickAllRows(dataGrid);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
+            // Form mode with Row click trigger, shouldn't trigger checkbox
+            dataGrid.Instance.EditMode = DataGridEditMode.Form;
+            dataGrid.Instance.EditTrigger = DataGridEditTrigger.OnRowClick;
+
+            ClickAllRows(dataGrid);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
+            // Form mode with Manual trigger. Should trigger checkbox
+            dataGrid.Instance.EditTrigger = DataGridEditTrigger.Manual;
+            ClickAllRows(dataGrid);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(dataGrid.Instance.Items.Count());
+
+            // ReadOnly mode, should trigger checkbox on click
+            dataGrid.Instance.EditMode = DataGridEditMode.Cell;
+            dataGrid.Instance.ReadOnly = true;
+            ClickAllRows(dataGrid);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+        }
+
+        private static void ClickAllRows(IRenderedComponent<MudDataGrid<DataGridEditableWithSelectColumnTest.Item>> dataGrid)
+        {
+            for(var i = 0; i < dataGrid.Instance.Items.Count(); i++)
+            {
+                dataGrid.FindAll(".mud-table-body tr.mud-table-row")[i].Click();
+            }
+        }
+
         [Test]
         public async Task DataGridEditableSelectionTest()
         {
             var comp = Context.RenderComponent<DataGridEditableWithSelectColumnTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditableWithSelectColumnTest.Item>>();
-            
+
             // test that all rows, header and footer have cell with a checkbox
-            dataGrid.FindAll("input.mud-checkbox-input").Count().Should().Be(dataGrid.Instance.Items.Count()+2);
+            dataGrid.FindAll("input.mud-checkbox-input").Count().Should().Be(dataGrid.Instance.Items.Count() + 2);
 
             //test that changing header sets all items selected
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
@@ -417,8 +458,6 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.FindAll("input.mud-checkbox-input")[i].Change(true);
                 dataGrid.Instance.SelectedItems.Count.Should().Be(i);
             }
-
-
         }
 
         public async Task DataGridPaginationTest()
@@ -2842,7 +2881,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridHeaderTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHeaderTemplateTest.Model>>();
-            
+
             dataGrid.Find("thead th").TextContent.Trim().Should().Be("test");
 
             dataGrid.Find("span.column-header").FirstChild.NodeName.Should().Be("svg");
@@ -3211,7 +3250,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 comp.Instance.FilterHiredToggled(true, dataGrid.Instance);
             });
-            
+
             dataGrid.Render();
             dataGrid.FindAll("tbody tr").Count.Should().Be(1);
         }
@@ -3839,7 +3878,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
 
             var initialFilterCount = dataGrid.Instance.FilteringRunCount;
-            
+
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 1);
 
