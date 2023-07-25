@@ -5,12 +5,25 @@
 
 @if (IsEnabled)
 {
-    <Virtualize Items="@Items" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize">
-        @if (ChildContent is not null)
-        {
-            @ChildContent(item)
-        }
-    </Virtualize>
+    @if(ItemsProvider != null)
+    {
+        <Virtualize @ref="@VirtualizeContainer" ItemsProvider="@ItemsProvider"  Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize">
+            @if (ChildContent is not null)
+            {
+                @ChildContent(item)
+            }
+            </Virtualize>
+    }
+    else
+    {
+        <Virtualize @ref="@VirtualizeContainer" Items="@Items" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize">
+            @if (ChildContent is not null)
+            {
+                @ChildContent(item)
+            }
+            </Virtualize>
+    }
+    
 }
 else
 {

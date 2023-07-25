@@ -13,6 +13,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
+using MudBlazor.Components.DataGrid;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -463,6 +465,12 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// A callback that supplies data for the rid.
+        ///
+        /// You should supply either <see cref="Items"/> or <see cref="ItemsProvider"/>, but not both.
+        /// </summary>
+        [Parameter] public GridItemsProvider<T> ItemsProvider { get; set; }
+        /// <summary>
         /// Show a loading animation, if true.
         /// </summary>
         [Parameter] public bool Loading { get; set; }
@@ -737,6 +745,9 @@ namespace MudBlazor
         public HashSet<T> Selection { get; set; } = new HashSet<T>();
         public bool HasPager { get; set; }
         public IEnumerable<T> ServerItems => _server_data.Items;
+
+        public ItemsProviderDelegate<T>? VirtualItemsProvider { get; set; }
+
         private GridData<T> _server_data = new GridData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
 
@@ -843,7 +854,7 @@ namespace MudBlazor
         {
             var sortModeBefore = SortMode;
             await base.SetParametersAsync(parameters);
-
+            ItemProviderInitialize(); 
             if (parameters.TryGetValue(nameof(SortMode), out SortMode sortMode) && sortMode != sortModeBefore)
                 await ClearCurrentSortings();
         }
@@ -1220,8 +1231,29 @@ namespace MudBlazor
             if (_isFirstRendered)
             {
                 await InvokeServerLoadFunc();
+                RefreshVirtualContainer = true;
                 if (ServerData == null)
                     StateHasChanged();
+            }
+        }
+
+        private void ItemProviderInitialize()
+        {
+            if (ItemsProvider != null)
+            {
+                Items = new List<T>();
+                VirtualItemsProvider = async request =>
+                {
+
+                    var state = new GridState<T>
+                    {
+                        SortDefinitions = SortDefinitions.Values.OrderBy(sd => sd.Index).ToList(),
+                        FilterDefinitions = FilterDefinitions.ToList()
+                    };
+
+                    return await ItemsProvider(new GridItemsProviderRequest<T>(request.StartIndex, request.Count, state, request.CancellationToken));
+                };
+
             }
         }
 
@@ -1456,6 +1488,7 @@ namespace MudBlazor
                 return _resizeService ??= new DataGridColumnResizeService<T>(this, EventListener);
             }
         }
+        internal bool RefreshVirtualContainer { get ; set; }
 
         internal async Task<bool> StartResizeColumn(HeaderCell<T> headerCell, double clientX)
             => await ResizeService.StartResizeColumn(headerCell, clientX, RenderedColumns, ColumnResizeMode);
