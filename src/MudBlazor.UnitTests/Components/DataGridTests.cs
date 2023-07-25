@@ -400,7 +400,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridEditableWithSelectColumnTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditableWithSelectColumnTest.Item>>();
-            var rows = dataGrid.FindAll(".mud-table-body tr.mud-table-row");
 
             // Cell mode, shouldn't trigger checkbox
             dataGrid.Instance.EditMode = DataGridEditMode.Cell;

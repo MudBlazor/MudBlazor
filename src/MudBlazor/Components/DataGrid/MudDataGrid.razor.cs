@@ -1090,15 +1090,11 @@ namespace MudBlazor
         {
             await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
 
-            if (EditMode == DataGridEditMode.Form)
+            if (EditMode == DataGridEditMode.Form && EditTrigger == DataGridEditTrigger.OnRowClick)
             {
-                if (EditTrigger == DataGridEditTrigger.OnRowClick)
-                    await SetEditingItemAsync(item);
-
-                if (EditTrigger == DataGridEditTrigger.Manual)
-                    await SetSelectedItemAsync(item);
+                await SetEditingItemAsync(item);
             }
-            else if (ReadOnly)
+            else if (ReadOnly || EditMode == DataGridEditMode.Form && EditTrigger == DataGridEditTrigger.Manual)
             {
                 await SetSelectedItemAsync(item);
             }

@@ -295,21 +295,17 @@
 
     internal RenderFragment ToolbarMenu(MudDataGrid<T> dataGrid) =>
         @<text>
-            @if(dataGrid.ShowColumnOptions)
-            {
-                <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true">
-                    <MudMenuItem OnClick="@dataGrid.ShowColumnsPanel">@Localizer["MudDataGrid.Columns"]</MudMenuItem>
-                    @if(dataGrid.Groupable)
-                    {
-                        <MudMenuItem OnClick="@dataGrid.ExpandAllGroups">@Localizer["MudDataGrid.ExpandAllGroups"]</MudMenuItem>
-                        <MudMenuItem OnClick="@dataGrid.CollapseAllGroups">@Localizer["MudDataGrid.CollapseAllGroups"]</MudMenuItem>
-                    }
-                    @if(dataGrid.ServerData is not null)
-                    {
-                        <MudMenuItem OnClick="@dataGrid.InvokeServerLoadFunc">@Localizer["MudDataGrid.RefreshData"]</MudMenuItem>
-                    }
-                </MudMenu>
-            }
+            <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true">
+                <MudMenuItem OnClick="@dataGrid.ShowColumnsPanel">@Localizer["MudDataGrid.Columns"]</MudMenuItem>
+                @if(dataGrid.Groupable)
+                {
+                    <MudMenuItem OnClick="@dataGrid.ExpandAllGroups">@Localizer["MudDataGrid.ExpandAllGroups"]</MudMenuItem>
+                    <MudMenuItem OnClick="@dataGrid.CollapseAllGroups">@Localizer["MudDataGrid.CollapseAllGroups"]</MudMenuItem>
+                }
+                @if(dataGrid.ServerData is not null)
+                {
+                    <MudMenuItem OnClick="@dataGrid.InvokeServerLoadFunc">@Localizer["MudDataGrid.RefreshData"]</MudMenuItem>
+                }</MudMenu>
          </text>;
 
     internal RenderFragment FooterCells(IEnumerable<T> currentItems) =>
