@@ -78,7 +78,10 @@ namespace MudBlazor
 
         private async Task RefreshAsync()
         {
-            await VirtualizeContainer.RefreshDataAsync();
+            if (VirtualizeContainer != null)
+            {
+                await VirtualizeContainer.RefreshDataAsync();
+            }
         }
     }
 }

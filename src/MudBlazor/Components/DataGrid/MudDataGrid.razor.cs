@@ -1231,7 +1231,8 @@ namespace MudBlazor
             if (_isFirstRendered)
             {
                 await InvokeServerLoadFunc();
-                RefreshVirtualContainer = true;
+                if (Virtualize)
+                    RefreshVirtualContainer = true;
                 if (ServerData == null)
                     StateHasChanged();
             }
