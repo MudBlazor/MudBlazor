@@ -23,6 +23,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
                 // ReSharper disable once PropertyCanBeMadeInitOnly.Local
                 // ReSharper disable once UnusedAutoPropertyAccessor.Local
                 public string SubMember1 { get; set; } = string.Empty;
+
+                public int this[int index] => index;
             }
 
             // ReSharper disable MemberCanBeMadeStatic.Local
@@ -213,6 +215,18 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeTrue();
         }
 
+        [Test(Description = "VisitIndex")]
+        public void ExpressionHasherTests_Get_Same_HashCode_Test14()
+        {
+            Expression<Func<ExpressionTestClass, int>> exp1 = x => x.Nested1[0];
+            Expression<Func<ExpressionTestClass, int>> exp2 = x => x.Nested1[0];
+
+            var h1 = ExpressionHasher.GetHashCode(exp1);
+            var h2 = ExpressionHasher.GetHashCode(exp2);
+
+            h1.Equals(h2).Should().BeTrue();
+        }
+
         [Test]
         public void ExpressionHasherTests_Get_Null_HashCode_Test()
         {
@@ -364,6 +378,19 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
         {
             Expression<Func<ExpressionTestClass>> exp1 = () => new ExpressionTestClass { Children = { new ExpressionTestClass() } };
             Expression<Func<ExpressionTestClass>> exp2 = () => new ExpressionTestClass { Children = { new ExpressionTestClass(), new ExpressionTestClass() } };
+
+            var h1 = ExpressionHasher.GetHashCode(exp1);
+            var h2 = ExpressionHasher.GetHashCode(exp2);
+
+            h1.Equals(h2).Should().BeFalse();
+        }
+
+
+        [Test(Description = "VisitIndex")]
+        public void ExpressionHasherTests_Get_NotSame_HashCode_Test14()
+        {
+            Expression<Func<ExpressionTestClass, int>> exp1 = x => x.Nested1[0];
+            Expression<Func<ExpressionTestClass, int>> exp2 = x => x.Nested1[1];
 
             var h1 = ExpressionHasher.GetHashCode(exp1);
             var h2 = ExpressionHasher.GetHashCode(exp2);

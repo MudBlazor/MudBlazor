@@ -293,7 +293,7 @@ namespace MudBlazor
             if (groupable && Grouping)
                 grouping = Grouping;
 
-            if (null != DataGrid)
+            if (DataGrid != null)
                 DataGrid.AddColumn(this);
 
             // Add the HeaderContext
@@ -323,14 +323,14 @@ namespace MudBlazor
 
         internal Func<T, object> GetLocalSortFunc()
         {
-            if (null == _sortBy)
+            if (_sortBy == null)
             {
                 if (this is TemplateColumn<T>)
                 {
                     _sortBy = x => true;
                 }
                 else
-                    _sortBy = x => PropertyFunc(x);
+                    _sortBy = PropertyFunc;
             }
 
             return _sortBy;
@@ -344,11 +344,11 @@ namespace MudBlazor
                 // set the default GroupBy
                 if (type == typeof(IDictionary<string, object>))
                 {
-                    groupBy = x => (x as IDictionary<string, object>)[PropertyName];
+                    groupBy = x => (x as IDictionary<string, object>)?[PropertyName];
                 }
                 else
                 {
-                    groupBy = x => PropertyFunc(x);
+                    groupBy = PropertyFunc;
                 }
             }
         }
@@ -413,8 +413,6 @@ namespace MudBlazor
         protected internal abstract object PropertyFunc(T item);
 
         protected internal virtual Type PropertyType { get; }
-
-        protected internal virtual string FullPropertyName { get; }
 
         protected internal abstract void SetProperty(object item, object value);
 

@@ -296,16 +296,16 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SimpleTimePickerTest>((Parameter("TimeEditMode", TimeEditMode.OnlyHours)));
             var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
-            
+
             // click to to open picker
             comp.Find("input").Click();
-            
+
             // should be open
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
-            
+
             // click on 13 hour
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[0].Click();
-            
+
             // should be closed
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
@@ -314,7 +314,7 @@ namespace MudBlazor.UnitTests.Components
 
             // click to to open picker
             comp.Find("input").Click();
-            
+
             // should be open
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
 
@@ -328,7 +328,7 @@ namespace MudBlazor.UnitTests.Components
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(14);
 
         }
-        
+
         [Test]
         public void ChangeToMinutes_FromHours_CheckHoursHidden()
         {
@@ -386,16 +386,37 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudTimePicker>();
             var picker = comp.Instance;
+
             // valid time
             comp.Find("input").Change("23:02");
             picker.TimeIntermediate.Should().Be(new TimeSpan(23, 2, 0));
+            picker.ConversionError.Should().BeFalse();
+            picker.ConversionErrorMessage.Should().BeNull();
             // empty string equals null TimeSpan?
             comp.Find("input").Change("");
             picker.TimeIntermediate.Should().BeNull();
-            picker.Error.Should().BeFalse();
-            // invalid time
+            picker.ConversionError.Should().BeFalse();
+            picker.ConversionErrorMessage.Should().BeNull();
+            // invalid time (format, AmPm)
+            comp.Find("input").Change("09:o6 AM");
+            picker.TimeIntermediate.Should().BeNull();
+            picker.ConversionError.Should().BeTrue();
+            picker.ConversionErrorMessage.Should().Be("Not a valid time span");
+            // invalid time (overflow, AmPm)
+            comp.Find("input").Change("13:45 AM");
+            picker.TimeIntermediate.Should().BeNull();
+            picker.ConversionError.Should().BeTrue();
+            picker.ConversionErrorMessage.Should().Be("Not a valid time span");
+            // invalid time (format)
+            comp.Find("input").Change("2o:32");
+            picker.TimeIntermediate.Should().BeNull();
+            picker.ConversionError.Should().BeTrue();
+            picker.ConversionErrorMessage.Should().Be("Not a valid time span");
+            // invalid time (overflow)
             comp.Find("input").Change("25:06");
             picker.TimeIntermediate.Should().BeNull();
+            picker.ConversionError.Should().BeTrue();
+            picker.ConversionErrorMessage.Should().Be("Not a valid time span");
         }
 
         [Test]
@@ -632,7 +653,7 @@ namespace MudBlazor.UnitTests.Components
             // Select 16 hours
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].Click();
             picker.TimeIntermediate.Value.Hours.Should().Be(16);
-            
+
             // Select 30 minutes
             comp.FindAll("div.mud-minute")[30].Click();
             picker.TimeIntermediate.Value.Minutes.Should().Be(30);

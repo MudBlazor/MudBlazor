@@ -28,7 +28,7 @@
 	</MudDropContainer>
 </div>
 @code {
-	private MudDropContainer<DropItem> _container;
+    private MudDropContainer<DropItem> _container;
 
 	private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
 	{
@@ -36,11 +36,11 @@
 
 		var indexOffset = dropItem.DropzoneIdentifier switch
 		{
-			"2"  => _serverData.Count(x => x.Selector == "1"),
-			_ => 0,
+			"2"  => _dropzoneItems.Count(x => x.Selector == "1"),
+			_ => 0
 		};
 
-		_serverData.UpdateOrder(dropItem, item => item.Order, indexOffset);
+		_dropzoneItems.UpdateOrder(dropItem, item => item.Order, indexOffset);
 	}
 
 	private List<DropItem> _dropzoneItems = new();
@@ -70,18 +70,26 @@
 
 	private void LoadServerData()
 	{
-		List<DropItem> newdata = new List<DropItem>();
-
-		foreach (var item in _serverData.OrderBy(x => x.Order))
-		{
-			newdata.Add(item);
-		}
-
-		_dropzoneItems = newdata;
+	    _dropzoneItems = _serverData
+	        .OrderBy(x => x.Order)
+	        .Select(item => new DropItem
+	        {
+	            Order = item.Order,
+	            Name = item.Name,
+	            Selector = item.Selector
+	        })
+	        .ToList();
 		RefreshContainer();
 	}
 
-	private void SaveData() => _serverData = _dropzoneItems;
+	private void SaveData()
+	    => _serverData = _dropzoneItems
+	        .OrderBy(x => x.Order)
+	        .Select(item => new DropItem
+	        {
+	            Order = item.Order, Name = item.Name, Selector = item.Selector
+	        })
+	        .ToList();
 
 	private void Reset()
 	{
@@ -97,16 +105,16 @@
 				new DropItem() { Order = 6, Name = "Item 7", Selector = "2" },
 				new DropItem() { Order = 7, Name = "Item 8", Selector = "2" },
 				new DropItem() { Order = 8, Name = "Item 9", Selector = "2" },
-				new DropItem() { Order = 9, Name = "Item 10", Selector = "2" },
+				new DropItem() { Order = 9, Name = "Item 10", Selector = "2" }
 			};
 
 		RefreshContainer();
 	}
-
-	public class DropItem
-	{
-		public string Name { get; init; }
-		public string Selector { get; set; }
-		public int Order { get; set; }
-	}
+    
+    public class DropItem
+    {
+        public string Name { get; init; }
+        public string Selector { get; set; }
+        public int Order { get; set; }
+    }
 }
