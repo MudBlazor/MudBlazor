@@ -982,6 +982,11 @@ namespace MudBlazor
             FilterDefinitions.Add(definition);
             _filtersMenuVisible = true;
             await InvokeServerLoadFunc();
+            if (Virtualize)
+            {
+                ItemProviderInitialize();
+                RefreshVirtualContainer = true;
+            }
             if (ServerData is null) StateHasChanged();
         }
 

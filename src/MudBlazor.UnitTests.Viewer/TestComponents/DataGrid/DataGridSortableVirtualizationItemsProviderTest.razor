@@ -1,0 +1,72 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using MudBlazor.Components.DataGrid
+@using Microsoft.AspNetCore.Components.Web.Virtualization;
+
+<MudDataGrid ItemsProvider="itemsProvider" Virtualize="true" Sortable="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Value" />
+        <PropertyColumn Property="x => x.Misc" SortBy="@(item => item.Misc.Length)" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = @"Test in-browser-sorting of DataGrid. Hold <Ctrl> key when clicking header to extend to multi sort. Hold <Alt> key to unsort a sorted column.
+Note that the 'Misc' column is being sorted by length and not by the content itself.";
+
+    GridItemsProvider<Item> itemsProvider;
+    private IEnumerable<Item> _items = new List<Item>()
+    {
+        new Item("B", 42, "555"), 
+        new Item("A", 73, "7"), 
+        new Item("A", 11, "4444"), 
+        new Item("C", 33, "33333"),
+        new Item("A", 99, "66"), 
+        new Item("C", 44, "1111111"),
+        new Item("C", 55, "222222")
+    };
+
+    public class Item
+    {
+        public string Name { get; set; }
+        public int Value { get; set; }
+        public string Misc { get; set; }
+
+        public Item(string name, int value, String misc)
+        {
+            Name = name;
+            Value = value;
+            Misc = misc;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        
+        itemsProvider = async request =>
+       {
+           var result = _items;
+
+           foreach (var s in request.SortDefinitions.OrderBy(o => o.Index))
+           {
+               if (s.Descending)
+               {
+                   result = result.OrderByDescending(s.SortFunc).ToList();
+               }
+               else
+               {
+                   result = result.OrderBy(s.SortFunc).ToList();
+               }
+           }
+
+           result = result.Skip(request.StartIndex).ToList();
+
+           if (request.Count.HasValue)
+           {
+               result = result.Take(request.Count.Value);
+           };
+
+           return new ItemsProviderResult<Item>(result, _items.ToList().Count);
+       };
+    }
+}

@@ -28,25 +28,25 @@
 
         itemsProvider = async request =>
        {
-           var result = _items.Skip(request.StartIndex); ;
+           var result = _items;
            
-           foreach (var s in request.SortDefinitions.OrderBy(o => o.Index))
+           foreach (var s in request.SortDefinitions.OrderBy(o=>o.Index))
            {
                if (s.Descending)
                {
-                  result = result.OrderByDescending(o=>o.Column1).ToList();
+                  result = result.OrderByDescending(s.SortFunc).ToList();
                }
                else
                {
-                  result = result.OrderBy(o=>o.Column1).ToList();
+                  result = result.OrderBy(s.SortFunc).ToList();
                }
            }
 
-           result = result.Skip(request.StartIndex);
+           result = result.Skip(request.StartIndex).ToList();
 
            if (request.Count.HasValue)
            {
-               result = result.Take(request.Count.Value);
+               result = result.Take(request.Count.Value).ToList();
            };
            
            return new ItemsProviderResult<Model>(result, _items.Count);

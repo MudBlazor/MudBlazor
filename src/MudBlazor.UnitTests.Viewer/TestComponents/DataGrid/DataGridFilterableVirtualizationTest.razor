@@ -1,0 +1,52 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using MudBlazor.Components.DataGrid
+@using Microsoft.AspNetCore.Components.Web.Virtualization;
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudDataGrid ItemsProvider="itemsProvider" Virtualize="true" Filterable="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Item> _items = new List<Item>()
+    {
+        new Item("B"), 
+        new Item("A"), 
+        new Item("C"),
+        new Item("C")
+    };
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+
+    GridItemsProvider<Item> itemsProvider;
+
+    protected override void OnInitialized()
+    {
+
+        itemsProvider = async request =>
+       {
+           var result = _items;
+           var filterFunctions = request.FilterDefinitions.Select(x => x.GenerateFilterFunction());
+           result = result.Where(x => filterFunctions.All(f => f(x)));
+           result = result.Skip(request.StartIndex).ToList();
+
+           if (request.Count.HasValue)
+           {
+               result = result.Take(request.Count.Value);
+           };
+
+           return new ItemsProviderResult<Item>(result, _items.ToList().Count);
+       };
+    }
+}
