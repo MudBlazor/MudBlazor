@@ -10,18 +10,20 @@ namespace MudBlazor
     public partial class MudInput<T> : MudBaseInput<T>
     {
         protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder));
+            () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || HasStartAdornment || !string.IsNullOrWhiteSpace(Placeholder));
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
-        protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
+        protected string AdornmentStartClassname => MudInputCssHelper.GetAdornmentStartClassname(this);
+
+        protected string AdornmentEndClassname => MudInputCssHelper.GetAdornmentStartClassname(this);
 
         protected string ClearButtonClassname =>
                     new CssBuilder()
-                    .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
-                    .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons == true)
-                    .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
-                    .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons == true)
+                    .AddClass("me-n1", HasEndAdornment && HideSpinButtons == false)
+                    .AddClass("mud-icon-button-edge-end", HasEndAdornment && HideSpinButtons == true)
+                    .AddClass("me-6", !HasEndAdornment && HideSpinButtons == false)
+                    .AddClass("mud-icon-button-edge-margin-end", !HasEndAdornment && HideSpinButtons == true)
                     .Build();
 
         /// <summary>

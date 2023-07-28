@@ -4,16 +4,16 @@
 @using MudBlazor.Internal
 
 <div class="@Classname" style="@Style">
-	@if (Adornment == Adornment.Start)
+	@if (HasStartAdornment)
 	{
-	    <MudInputAdornment Class="@AdornmentClassname" 
-                Icon="@AdornmentIcon" 
-                Color="@AdornmentColor" 
+	    <MudInputAdornment Class="@AdornmentStartClassname" 
+                Icon="@AdornmentStartIcon" 
+                Color="@AdornmentStartColor" 
                 Size="@IconSize" 
-                Text="@AdornmentText" 
+                Text="@AdornmentStartText" 
                 Edge="@Edge.Start" 
-                AdornmentClick="@OnAdornmentClick" 
-                AriaLabel="@AdornmentAriaLabel"
+                AdornmentClick="@OnAdornmentStartClick" 
+                AriaLabel="@AdornmentStartAriaLabel"
         />
 	}
 
@@ -115,16 +115,16 @@
                 />
 	}
 
-	@if (Adornment == Adornment.End)
+	@if (HasEndAdornment)
 	{
-	    <MudInputAdornment Class="@AdornmentClassname" 
-                Icon="@AdornmentIcon" 
-                Color="@AdornmentColor" 
+	    <MudInputAdornment Class="@AdornmentEndClassname" 
+                Icon="@AdornmentEndIcon" 
+                Color="@AdornmentEndColor" 
                 Size="@IconSize" 
-                Text="@AdornmentText" 
+                Text="@AdornmentEndText" 
                 Edge="@Edge.End" 
-                AdornmentClick="@OnAdornmentClick" 
-                AriaLabel="@AdornmentAriaLabel"
+                AdornmentClick="@OnAdornmentEndClick" 
+                AriaLabel="@AdornmentEndAriaLabel"
         />
 	}
 

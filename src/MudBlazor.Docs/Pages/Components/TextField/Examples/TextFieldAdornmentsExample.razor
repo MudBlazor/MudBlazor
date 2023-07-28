@@ -1,19 +1,19 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <div class="d-flex">
-    <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
-    <MudTextField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Text" Adornment="Adornment.End" AdornmentText="Kg" Class="mx-8" />
-    <MudTextField @bind-Value="Password" Label="Password" Variant="Variant.Text" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" />
+    <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Text" AdornmentStartIcon="@Icons.Material.Filled.AttachMoney" AdornmentEndText=".00" />
+    <MudTextField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Text" AdornmentEndText="Kg" Class="mx-8" />
+    <MudTextField @bind-Value="Password" Label="Password" Variant="Variant.Text" InputType="@PasswordInput" AdornmentEndIcon="@PasswordInputIcon" OnAdornmentEndClick="ButtonTestclick" AdornmentEndAriaLabel="Show Password" />
 </div>
 <div class="d-flex">
-    <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Filled" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
-    <MudTextField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Filled" Adornment="Adornment.End" AdornmentText="Kg" Class="mx-8" />
-    <MudTextField  @bind-Value="Password" Label="Password"  Variant="Variant.Filled" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" />
+    <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Filled" AdornmentStartIcon="@Icons.Material.Filled.AttachMoney" AdornmentEndText=".00" />
+    <MudTextField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Filled" AdornmentEndText="Kg" Class="mx-8" />
+    <MudTextField  @bind-Value="Password" Label="Password"  Variant="Variant.Filled" InputType="@PasswordInput" AdornmentEndIcon="@PasswordInputIcon" OnAdornmentEndClick="ButtonTestclick" AdornmentEndAriaLabel="Show Password" />
 </div>
 <div class="d-flex">
-    <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
-    <MudTextField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentText="Kg" Class="mx-8" />
-    <MudTextField  @bind-Value="Password" Label="Password" Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" />
+    <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Outlined" AdornmentStartIcon="@Icons.Material.Filled.AttachMoney" AdornmentEndText=".00" />
+    <MudTextField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentEndText="Kg" Class="mx-8" />
+    <MudTextField  @bind-Value="Password" Label="Password" Variant="Variant.Outlined" InputType="@PasswordInput" AdornmentEndIcon="@PasswordInputIcon" OnAdornmentEndClick="ButtonTestclick" AdornmentEndAriaLabel="Show Password" />
 </div>
 
 @code {

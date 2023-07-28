@@ -6,16 +6,16 @@
                  Class="@InputControlClassname" Error="@Error" ErrorText="@ErrorText" Style="@Style" @attributes="UserAttributes" ForId="@FieldId">
     <InputContent>
         <div class="@Classname">
-            @if (Adornment == Adornment.Start)
+            @if (HasStartAdornment)
             {
-                <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" Color="@AdornmentColor" />
+                <MudInputAdornment Class="@AdornmentStartClassname" Icon="@AdornmentStartIcon" Size="@IconSize" Text="@AdornmentStartText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentStartClick" Color="@AdornmentStartColor" />
             }
             <div class="@InnerClassname">
                 @ChildContent
             </div>
-            @if (Adornment == Adornment.End)
+            @if (HasEndAdornment)
             {
-                <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick"  Color="@AdornmentColor" />
+                <MudInputAdornment Class="@AdornmentEndClassname" Icon="@AdornmentEndIcon" Size="@IconSize" Text="@AdornmentEndText" Edge="@Edge.End" AdornmentClick="@OnAdornmentEndClick"  Color="@AdornmentEndColor" />
             }
             @if (Variant == Variant.Outlined)
             {

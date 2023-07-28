@@ -53,7 +53,7 @@ namespace MudBlazor
 
         protected string CircularProgressClassname =>
             new CssBuilder("progress-indicator-circular")
-            .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
+            .AddClass("progress-indicator-circular--with-adornment", HasEndAdornment)
             .Build();
 
         /// <summary>
@@ -361,11 +361,10 @@ namespace MudBlazor
 
         private bool IsLoading => _currentSearchTask is { IsCompleted: false };
 
-        private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
+        private string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentEndIcon) ? AdornmentEndIcon : _isOpen ? CloseIcon : OpenIcon;
 
         public MudAutocomplete()
         {
-            Adornment = Adornment.End;
             IconSize = Size.Medium;
         }
 

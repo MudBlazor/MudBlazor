@@ -3,15 +3,15 @@
 @using MudBlazor.Internal
 
 <div id="@_elementId" class="@Classname" style="@Style">
-    @if (Adornment == Adornment.Start)
+    @if (HasStartAdornment)
     {
-        <MudInputAdornment Class="@AdornmentClassname"
-                           Icon="@AdornmentIcon"
-                           Color="@AdornmentColor"
+        <MudInputAdornment Class="@AdornmentStartClassname"
+                           Icon="@AdornmentStartIcon"
+                           Color="@AdornmentStartColor"
                            Size="@IconSize"
-                           Text="@AdornmentText"
+                           Text="@AdornmentStartText"
                            Edge="@Edge.Start"
-                           AdornmentClick="@OnAdornmentClick"/>
+                           AdornmentClick="@OnAdornmentStartClick"/>
     }
 
     <input class="@InputClassname"
@@ -61,15 +61,15 @@
                        OnClick="@HandleClearButton"/>
     }
 
-    @if (Adornment == Adornment.End)
+    @if (HasEndAdornment)
     {
-        <MudInputAdornment Class="@AdornmentClassname"
-                           Icon="@AdornmentIcon"
-                           Color="@AdornmentColor"
+        <MudInputAdornment Class="@AdornmentEndClassname"
+                           Icon="@AdornmentEndIcon"
+                           Color="@AdornmentEndColor"
                            Size="@IconSize"
-                           Text="@AdornmentText"
+                           Text="@AdornmentEndText"
                            Edge="@Edge.End"
-                           AdornmentClick="@OnAdornmentClick"/>
+                           AdornmentClick="@OnAdornmentEndClick"/>
     }
 
     @if (Variant == Variant.Outlined)

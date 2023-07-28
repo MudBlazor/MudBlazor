@@ -1,0 +1,55 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+
+<MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Text" AdornmentStartIcon="@Icons.Material.Filled.AttachMoney" AdornmentEndIcon="@Icons.Material.Filled.Refresh" />
+
+<MudTextField @bind-Value="Domain" Label="Domain" Variant="Variant.Text" AdornmentStartText="https://" AdornmentEndText=".com" />
+
+<MudTextField @bind-Value="Buttons" Label="Buttons" Variant="Variant.Text" 
+              AdornmentStartIcon="@_startInputIcon" OnAdornmentStartClick="StartButtonTestClick" AdornmentStartAriaLabel="Toggle Icon"
+              AdornmentEndIcon="@_endInputIcon" OnAdornmentEndClick="EndButtonTestClick" AdornmentEndAriaLabel="Show Password" />
+
+@code
+{
+    public static string __description__ = "Test adornments on MudTextField";
+
+    public string Amount { get; set; } = "";
+    
+    public string Domain { get; set; } = "";
+
+    public string Buttons { get; set; } = "";
+
+    bool _isShowStart;
+    string _startInputIcon = Icons.Material.Filled.Check;
+    
+    bool _isShowEnd;
+    string _endInputIcon = Icons.Material.Filled.VisibilityOff;
+    
+
+    void StartButtonTestClick()
+    {
+        @if (_isShowStart)
+        {
+            _isShowStart = false;
+            _startInputIcon = Icons.Material.Filled.Clear;
+        }
+        else {
+            _isShowStart = true;
+            _startInputIcon = Icons.Material.Filled.Check;
+        }
+    }
+
+    void EndButtonTestClick()
+    {
+        @if (_isShowEnd)
+        {
+            _isShowEnd = false;
+            _endInputIcon = Icons.Material.Filled.VisibilityOff;
+        }
+        else
+        {
+            _isShowEnd = true;
+            _endInputIcon = Icons.Material.Filled.Visibility;
+        }
+    }
+}

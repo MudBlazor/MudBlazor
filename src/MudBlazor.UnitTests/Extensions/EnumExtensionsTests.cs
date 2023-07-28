@@ -10,8 +10,8 @@ namespace MudBlazor.UnitTests.Extensions
     public class EnumExtensionsTests
     {
         [Test]
-        [TestCase(typeof(Adornment), new[] { "None", "Start", "End" })]
-        [TestCase(typeof(Adornment?), new[] { "None", "Start", "End" })]
+        [TestCase(typeof(Size), new[] { "Small", "Medium", "Large" })]
+        [TestCase(typeof(Size?), new[] { "Small", "Medium", "Large" })]
         [TestCase(typeof(string), new string[0])]
         public void GetSafeEnumValues_Test(Type type, string[] expectedNames)
         {
@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Extensions
         [Test]
         public void ToDescriptionStringNew()
         {
-            Adornment.Start.ToDescriptionString().Should().Be("start");
+            Size.Large.ToDescriptionString().Should().Be("large");
             Align.Inherit.ToDescriptionString().Should().Be("inherit");
             Breakpoint.Sm.ToDescriptionString().Should().Be("sm");
         }
@@ -34,7 +34,7 @@ namespace MudBlazor.UnitTests.Extensions
         public void ToDescriptionStringOld()
         {
             DummyEnumEmpty? dummyNullEnum = 0;
-            MudBlazor.Extensions.EnumExtensions.ToDescriptionString(Adornment.Start).Should().Be("start");
+            MudBlazor.Extensions.EnumExtensions.ToDescriptionString(Size.Medium).Should().Be("medium");
             MudBlazor.Extensions.EnumExtensions.ToDescriptionString(Align.Inherit).Should().Be("inherit");
             MudBlazor.Extensions.EnumExtensions.ToDescriptionString(Breakpoint.Sm).Should().Be("sm");
             MudBlazor.Extensions.EnumExtensions.ToDescriptionString(dummyNullEnum).Should().Be("0");

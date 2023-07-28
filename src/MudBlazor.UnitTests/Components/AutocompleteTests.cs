@@ -850,8 +850,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Should_ChangeAdornmentIcon()
         {
-            var icon = Parameter(nameof(AutocompleteAdornmentChange.Icon), Icons.Material.Filled.Abc);
-            var comp = Context.RenderComponent<AutocompleteAdornmentChange>(icon);
+            var icon = Parameter(nameof(AutocompleteAdornmentChangeTest.Icon), Icons.Material.Filled.Abc);
+            var comp = Context.RenderComponent<AutocompleteAdornmentChangeTest>(icon);
             var instance = comp.Instance;
 
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
@@ -895,9 +895,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTest1>();
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             autocompletecomp.SetParam(x => x.ShowProgressIndicator, true);
-            autocompletecomp.SetParam(x => x.Adornment, null);
-            autocompletecomp.SetParam(x => x.Adornment, null);
-
+            
             comp.Markup.Should().NotContain("progress-indicator-circular");
             autocompletecomp.Find("input").Input("Calif");
 
@@ -918,9 +916,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteTest1>();
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             autocompletecomp.SetParam(x => x.ShowProgressIndicator, true);
-            autocompletecomp.SetParam(x => x.AdornmentIcon, Icons.Material.Filled.Info);
-            autocompletecomp.SetParam(x => x.Adornment, Adornment.End);
-
+            autocompletecomp.SetParam(x => x.AdornmentEndIcon, Icons.Material.Filled.Info);
+            
             comp.Markup.Should().NotContain("progress-indicator-circular");
             autocompletecomp.Find("input").Input("Calif");
 

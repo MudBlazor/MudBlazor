@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
@@ -16,7 +15,7 @@ namespace MudBlazor
         }
 
         protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(PlaceholderStart) || !string.IsNullOrWhiteSpace(PlaceholderEnd));
+            () => !string.IsNullOrEmpty(Text) || HasStartAdornment || !string.IsNullOrWhiteSpace(PlaceholderStart) || !string.IsNullOrWhiteSpace(PlaceholderEnd));
 
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
@@ -27,7 +26,9 @@ namespace MudBlazor
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
-        protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
+        protected string AdornmentStartClassname => MudInputCssHelper.GetAdornmentStartClassname(this);
+
+        protected string AdornmentEndClassname => MudInputCssHelper.GetAdornmentEndClassname(this);
 
         /// <summary>
         /// The short hint displayed in the start input before the user enters a value.

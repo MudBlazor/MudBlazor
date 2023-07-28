@@ -11,10 +11,11 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-input")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}")
-                .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
+                .AddClass("mud-input-adorned-start", HasStartAdornment)
+                .AddClass("mud-input-adorned-end", HasEndAdornment)
                 .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
                 .AddClass("mud-input-underline", when: () => DisableUnderLine == false && Variant != Variant.Outlined)
-                .AddClass("mud-shrink", when: () => !string.IsNullOrWhiteSpace(ChildContent?.ToString()) || Adornment == Adornment.Start)
+                .AddClass("mud-shrink", when: () => !string.IsNullOrWhiteSpace(ChildContent?.ToString()) || HasStartAdornment)
                 .AddClass("mud-disabled", Disabled)
                 .AddClass("mud-input-error", Error && !string.IsNullOrEmpty(ErrorText))
                 .Build();
@@ -24,15 +25,23 @@ namespace MudBlazor
                 .AddClass("mud-input-root")
                 .AddClass("mud-input-slot-nopadding", when: () => InnerPadding == false)
                 .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
-                .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
+                .AddClass("mud-input-adorned-start", HasStartAdornment)
+                .AddClass("mud-input-adorned-end", HasEndAdornment)
                 .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
                 .Build();
 
-        protected string AdornmentClassname =>
+        protected string AdornmentStartClassname =>
             new CssBuilder("mud-input-adornment")
-                .AddClass($"mud-input-adornment-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
-                .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
+                .AddClass("mud-input-adornment-start")
+                .AddClass("mud-text", !string.IsNullOrEmpty(AdornmentStartText) || !string.IsNullOrEmpty(AdornmentEndText))
+                .AddClass("mud-input-root-filled-shrink", Variant == Variant.Filled)
+                .Build();
+
+        protected string AdornmentEndClassname =>
+            new CssBuilder("mud-input-adornment")
+                .AddClass("mud-input-adornment-end")
+                .AddClass("mud-text", !string.IsNullOrEmpty(AdornmentStartText) || !string.IsNullOrEmpty(AdornmentEndText))
+                .AddClass("mud-input-root-filled-shrink", Variant == Variant.Filled)
                 .Build();
 
         protected string InputControlClassname =>
@@ -104,32 +113,66 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Icon that will be used if Adornment is set to Start or End.
+        /// Icon that will be used at the start if specified.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Behavior)]
-        public string? AdornmentIcon { get; set; }
+        public string? AdornmentStartIcon { get; set; }
 
         /// <summary>
-        /// Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
+        /// Text that will be used at the start if specified, the Text overrides Icon.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Behavior)]
-        public string? AdornmentText { get; set; }
-
+        public string? AdornmentStartText { get; set; }
+        
         /// <summary>
-        /// The Adornment if used. By default, it is set to None.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Field.Behavior)]
-        public Adornment Adornment { get; set; } = Adornment.None;
-
-        /// <summary>
-        /// The color of the adornment if used. It supports the theme colors.
+        /// The color of the start adornment if used. It supports the theme colors.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Color AdornmentColor { get; set; } = Color.Default;
+        public Color AdornmentStartColor { get; set; } = Color.Default;
+
+        /// <summary>
+        /// Button click event if set and start Adornment used.
+        /// </summary>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnAdornmentStartClick { get; set; }
+
+
+        /// <summary>
+        /// Icon that will be used at the end if specified.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Field.Behavior)]
+        public string? AdornmentEndIcon { get; set; }
+
+        /// <summary>
+        /// Text that will be used at the end if specified, the Text overrides Icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Field.Behavior)]
+        public string? AdornmentEndText { get; set; }
+
+        /// <summary>
+        /// The color of the end adornment if used. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color AdornmentEndColor { get; set; } = Color.Default;
+
+        /// <summary>
+        /// Button click event if set and end Adornment used.
+        /// </summary>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnAdornmentEndClick { get; set; }
+
+
+        public bool HasStartAdornment =>
+            !string.IsNullOrEmpty(AdornmentStartText) || !string.IsNullOrEmpty(AdornmentStartIcon);
+
+        public bool HasEndAdornment =>
+            !string.IsNullOrEmpty(AdornmentEndText) || !string.IsNullOrEmpty(AdornmentEndIcon);
 
         /// <summary>
         /// Sets the Icon Size.
@@ -137,13 +180,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Field.Appearance)]
         public Size IconSize { get; set; } = Size.Medium;
-
-        /// <summary>
-        /// Button click event if set and Adornment used.
-        /// </summary>
-        [Parameter]
-        public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
-
+        
         /// <summary>
         /// If true, the inner contents padding is removed.
         /// </summary>

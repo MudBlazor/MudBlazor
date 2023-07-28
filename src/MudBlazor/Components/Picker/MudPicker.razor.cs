@@ -233,13 +233,6 @@ namespace MudBlazor
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// Sets if the icon will be att start or end, set to false to disable.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public Adornment Adornment { get; set; } = Adornment.End;
-
-        /// <summary>
         /// What orientation to render in when in PickerVariant Static Mode.
         /// </summary>
         [Parameter]
