@@ -31,11 +31,13 @@
                 {
                     <div class="@PlaceholderClassname"></div>
                 }
-                <MudDynamicDropItem @key="_id" T="T"
-                        Item="default"
-                        ZoneIdentifier="@Identifier"
-                        Disabled="true" HideContent="false"
-                        Class="@PreviewStartItemClassname" />
+                if (Container?.TransactionInProgress() == true) {
+                    <MudDynamicDropItem @key="_id" T="T"
+                                        Item="default"
+                                        ZoneIdentifier="@Identifier"
+                                        Disabled="true" HideContent="false"
+                                        Class="@PreviewStartItemClassname"/>
+                }
             }
         }
         @foreach (var item in items)
