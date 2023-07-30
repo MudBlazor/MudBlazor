@@ -35,6 +35,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public void MudPopoverHandler_Constructor()
         {
             RenderFragment renderFragement = (tree) => { };
@@ -53,6 +54,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public void MudPopoverHandler_PreventNullValuesInConstructor()
         {
             RenderFragment renderFragement = (tree) => { };
@@ -65,6 +67,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public void MudPopoverHandler_SetComponentBaseParameters()
         {
             RenderFragment renderFragement = (tree) => { };
@@ -92,6 +95,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test(Description = "Remove in v7")]
+        [Obsolete]
         public void MudPopoverHandler_UpdateFragment()
         {
             RenderFragment initialRenderFragement = (tree) => { };
@@ -126,6 +130,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverHandler_UpdateFragmentAsync()
         {
             var mock = Mock.Of<IJSRuntime>();
@@ -162,6 +167,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverHandler_DetachAndUpdateFragmentAsync()
         {
             var mock = Mock.Of<IJSRuntime>();
@@ -190,6 +196,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverHandler_DetachAndUpdateFragmentConcurrent_UpdateFragmentDoesNotRunInTheSameTimeAsDetach()
         {
             var connectTcs = new TaskCompletionSource<IJSVoidResult>();
@@ -228,6 +235,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverHandler_DetachAndUpdateFragmentConcurrent_UpdateFragmentAsyncShouldRunAfterDetach()
         {
             var connectTcs = new TaskCompletionSource<IJSVoidResult>();
@@ -265,6 +273,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test(Description = "Remove in v7")]
+        [Obsolete]
         public void MudPopoverHandler_UpdaterInvokationTest()
         {
             RenderFragment initialRenderFragement = (tree) => { };
@@ -299,6 +308,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverHandler_UpdaterInvocationAsync()
         {
             var mock = Mock.Of<IJSRuntime>();
@@ -335,6 +345,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverHandler_InitializeAndDetach()
         {
             var handlerId = Guid.NewGuid();
@@ -367,6 +378,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverHandler_InitializeAndDetach_DetachThrowsTaskCanceledException()
         {
             var handlerId = Guid.NewGuid();
@@ -396,6 +408,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverHandler_InitializeAndDetach_DetachThrowsNotTaskCanceledException()
         {
             var handlerId = Guid.NewGuid();
@@ -427,6 +440,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverHandler_InitializeAndDetachConcurrent_DetachDoesNotRunAtSameTimeAsInitialize()
         {
             var connectTcs = new TaskCompletionSource<IJSVoidResult>();
@@ -450,6 +464,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverHandler_InitializeAndDetachConcurrent_DetachRunsAfterInitialize()
         {
             var connectTcs = new TaskCompletionSource<IJSVoidResult>();
@@ -477,6 +492,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverHandler_DetachCalledBeforeInitialize_NoInteropShouldOccur()
         {
             var mock = new Mock<IJSRuntime>();
@@ -493,12 +509,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public void MudPopoverService_Constructor_NoJsInterop()
         {
             Assert.Throws<ArgumentNullException>(() => _ = new MudPopoverService(null));
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverService_Constructor_NullOption()
         {
             var mock = new Mock<IJSRuntime>();
@@ -520,6 +538,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverService_Initialize_Catch_JSDisconnectedException()
         {
             var mock = new Mock<IJSRuntime>();
@@ -536,6 +555,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverService_Initialize_Catch_TaskCanceledException()
         {
             var mock = new Mock<IJSRuntime>();
@@ -552,6 +572,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverService_Constructor_OptionWithCustomClass()
         {
             var mock = new Mock<IJSRuntime>();
@@ -578,6 +599,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverService_CallInitializeOnlyOnce()
         {
             var mock = new Mock<IJSRuntime>();
@@ -604,6 +626,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverService_OnlyDisposeIfConnected()
         {
             var service = new MudPopoverService(Mock.Of<IJSRuntime>(MockBehavior.Strict));
@@ -611,6 +634,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverService_DisposeAsync()
         {
             var mock = new Mock<IJSRuntime>();
@@ -634,6 +658,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverService_DisposeAsync_WithTaskCancelException()
         {
             var mock = new Mock<IJSRuntime>();
@@ -658,6 +683,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test(Description = "Remove in v7")]
+        [Obsolete]
         public void MudPopoverService_RegisterAndUseHandler()
         {
             var service = new MudPopoverService(Mock.Of<IJSRuntime>(MockBehavior.Strict));
@@ -690,6 +716,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverService_RegisterAndUseHandlerAsync()
         {
             var service = new MudPopoverService(Mock.Of<IJSRuntime>(MockBehavior.Strict));
@@ -722,6 +749,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverService_Unregister_NullFragment()
         {
             var service = new MudPopoverService(Mock.Of<IJSRuntime>(MockBehavior.Strict));
@@ -731,6 +759,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverService_Unregister_HandlerNotFound()
         {
             var service = new MudPopoverService(Mock.Of<IJSRuntime>(MockBehavior.Strict));
@@ -742,6 +771,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverService_Unregister_NotConnected()
         {
             var service = new MudPopoverService(Mock.Of<IJSRuntime>(MockBehavior.Strict));
@@ -755,20 +785,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete]
         public async Task MudPopoverService_Unregister()
         {
             var handlerId = Guid.NewGuid();
             var mock = new Mock<IJSRuntime>();
+            mock.Setup(jsRuntime =>
+                    jsRuntime.InvokeAsync<IJSVoidResult>(
+                        "mudPopover.connect",
+                        It.Is<object[]>(x => x.Length == 1 && (Guid)x[0] == handlerId)))
+                .ReturnsAsync(Mock.Of<IJSVoidResult>)
+                .Verifiable();
 
-            mock.Setup(x =>
-           x.InvokeAsync<IJSVoidResult>(
-               "mudPopover.connect",
-               It.Is<object[]>(x => x.Length == 1 && (Guid)x[0] == handlerId))).ReturnsAsync(Mock.Of<IJSVoidResult>).Verifiable();
-
-            mock.Setup(x =>
-            x.InvokeAsync<IJSVoidResult>(
-           "mudPopover.disconnect",
-           It.Is<object[]>(x => x.Length == 1 && (Guid)x[0] == handlerId))).ReturnsAsync(Mock.Of<IJSVoidResult>).Verifiable();
+            mock.Setup(jsRuntime =>
+                    jsRuntime.InvokeAsync<IJSVoidResult>(
+                        "mudPopover.disconnect",
+                        It.Is<object[]>(x => x.Length == 1 && (Guid)x[0] == handlerId)))
+                .ReturnsAsync(Mock.Of<IJSVoidResult>)
+                .Verifiable();
 
 
             var service = new MudPopoverService(mock.Object);
@@ -784,7 +818,7 @@ namespace MudBlazor.UnitTests.Components
 
             int fragmentChangedCounter = 0;
 
-            service.FragmentsChanged += (e, args) =>
+            service.FragmentsChanged += (_, _) =>
             {
                 fragmentChangedCounter++;
             };

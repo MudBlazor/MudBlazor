@@ -584,6 +584,40 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DisableCalendarMonthButtonsWhenFixDayOutOfRange()
+        {
+            var comp = OpenPicker(new[]
+            {
+                Parameter(nameof(MudDatePicker.OpenTo), OpenTo.Month),
+                Parameter(nameof(MudDatePicker.FixDay), 31)
+            });
+
+            comp
+                .FindAll("button.mud-picker-month")
+                .Select(button => ((IHtmlButtonElement)button).IsDisabled)
+                .Should()
+                .BeEquivalentTo(
+                    // Only months with 31 days not disabled
+                    new[]
+                    {
+                        false,
+                        true,
+                        false,
+                        true,
+                        false,
+                        true,
+                        false,
+                        false,
+                        true,
+                        false,
+                        true,
+                        false
+                    },
+                    options => options.WithStrictOrdering()
+                );
+        }
+
+        [Test]
         public void IsDateDisabledFunc_DoesNotHaveEffectOnMonthsIfDayNotFixed()
         {
             Func<DateTime, bool> isDisabledFunc = date => true;
@@ -765,14 +799,15 @@ namespace MudBlazor.UnitTests.Components
         public void AdditionalDateClassesFunc_ClassIsAdded()
         {
             Func<DateTime, string> additionalDateClassesFunc = date => "__addedtestclass__";
-            var comp = Context.RenderComponent<MudDatePicker>(
-                Parameter(nameof(MudDatePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
+            
+            var comp = OpenPicker(Parameter(nameof(MudDatePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
 
-            var daysCount = comp.FindAll("button.mud-picker-calendar-day").Select(button =>
-                ((IHtmlBaseElement)button)).Count();
+            var daysCount = comp.FindAll("button.mud-picker-calendar-day")
+                                .Select(button => (IHtmlButtonElement)button)
+                                .Count();
 
-            comp.FindAll("button.mud-picker-calendar-day").Select(button =>
-                ((IHtmlBaseElement)button).ClassName.Contains("__addedtestclass__"))
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(button => ((IHtmlButtonElement)button).ClassName.Contains("__addedtestclass__"))
                 .Should().HaveCount(daysCount);
         }
 

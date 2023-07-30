@@ -452,7 +452,23 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
                 .Should().OnlyContain(disabled => disabled == false);
         }
+        
+        [Test]
+        public void AdditionalDateClassesFunc_ClassIsAdded()
+        {
+            Func<DateTime, string> additionalDateClassesFunc = date => "__addedtestclass__";
+            
+            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
 
+            var daysCount = comp.FindAll("button.mud-picker-calendar-day")
+                                .Select(button => (IHtmlButtonElement)button)
+                                .Count();
+
+            comp.FindAll("button.mud-day")
+                .Where(button => ((IHtmlButtonElement)button).ClassName.Contains("__addedtestclass__"))
+                .Should().HaveCount(daysCount);
+        }
+        
         [Test]
         public void SetRangeTextFunc_NullInputNoError()
         {
@@ -636,6 +652,23 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("button.mud-current").Click();
             comp.Find("button.mud-range-start-selected").Click();
             comp.Instance.DateRange.Should().Be(new DateRange(currentDate, currentDate));
+        }
+
+        [Test]
+        public async Task DateRangePicker_Should_Clear()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>();
+            // select elements needed for the test
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.DateRange.Should().Be(null);
+            comp.SetParam(p => p.Clearable, true);
+            comp.SetParam(p => p.DateRange, new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29)));
+            picker.DateRange.Should().Be(new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29)));
+
+            comp.Find("button").Click(); //clear the input
+
+            picker.DateRange.Should().Be(new DateRange(null, null));
         }
     }
 }

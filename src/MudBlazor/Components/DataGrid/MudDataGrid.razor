@@ -4,6 +4,8 @@
 @using MudBlazor.Utilities
 @using MudBlazor.Extensions
 
+@inject InternalMudLocalizer Localizer
+
 @{
     _currentRenderFilteredItemsCache = null;
 }
@@ -16,7 +18,7 @@
         {
             @if (ToolBarContent != null)
             {
-                <MudToolBar Class="mud-table-toolbar">
+                <MudToolBar Class="mud-table-toolbar" Style="@_headerFooterStyle">
                     @ToolBarContent
                     @if (ShowMenuIcon)
                     {
@@ -29,7 +31,7 @@
                 @if (ShowMenuIcon)
                 {
                     @*Add the default toolbar.*@
-                    <MudToolBar Class="mud-table-toolbar">
+                    <MudToolBar Class="mud-table-toolbar" Style="@_headerFooterStyle">
                         <MudSpacer />
                         @ToolbarMenu(this)
                     </MudToolBar>
@@ -67,12 +69,12 @@
                                             @Filter(f, null)
                                         }
                                     </MudGrid>
-                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">Add Filter</MudButton>
+                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">@Localizer["MudDataGrid.AddFilter"]</MudButton>
                                     @if (ServerData != null)
                                     {
-                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary">Apply</MudButton>
+                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary">@Localizer["MudDataGrid.Apply"]</MudButton>
                                     }
-                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary">Clear</MudButton>
+                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary">@Localizer["MudDataGrid.Clear"]</MudButton>
                                 }
                                 else
                                 {
@@ -92,10 +94,10 @@
                                         </MudItem>
                                     }
                                     <MudItem xs="6">
-                                        <MudButton OnClick="@HideAllColumnsAsync" Color="@Color.Primary">Hide All</MudButton>
+                                        <MudButton OnClick="@HideAllColumnsAsync" Color="@Color.Primary">@Localizer["MudDataGrid.HideAll"]</MudButton>
                                     </MudItem>
                                     <MudItem xs="6" Class="d-flex justify-end">
-                                        <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary">Show All</MudButton>
+                                        <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary">@Localizer["MudDataGrid.ShowAll"]</MudButton>
                                     </MudItem>
                                 </MudGrid>
 
@@ -151,7 +153,7 @@
 
                                     @if (g.IsExpanded)
                                     {
-                                        <MudVirtualize IsEnabled="@Virtualize" Items="@g.Grouping.ToList()" OverscanCount=@OverscanCount Context="item">
+                                        <MudVirtualize IsEnabled="@Virtualize" Items="@g.Grouping.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
                                             @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                             @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                             @{ var tmpRowIndex = rowIndex; }
@@ -186,7 +188,7 @@
                             else
                             {
                                 var rowIndex = 0;
-                                <MudVirtualize IsEnabled="@Virtualize" Items="@resolvedPageItems" OverscanCount=@OverscanCount Context="item">
+                                <MudVirtualize IsEnabled="@Virtualize" Items="@resolvedPageItems" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
                                     @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var tmpRowIndex = rowIndex; }
@@ -245,14 +247,14 @@
             </div>
             @if (PagerContent != null)
             {
-                <div class="mud-table-pagination">
+                <div class="mud-table-pagination" style="@_headerFooterStyle">
                     @PagerContent
                 </div>
             }
         }
     </div>
     <CascadingValue Value="true" IsFixed Name="IsNested">
-        <MudDialog @bind-IsVisible="isEditFormOpen">
+        <MudDialog Options="EditDialogOptions" @bind-IsVisible="isEditFormOpen">
             <DialogContent>
                 <MudForm FieldChanged="FormFieldChanged">
                     @foreach (var column in RenderedColumns)
@@ -282,8 +284,8 @@
                 </MudForm>
             </DialogContent>
             <DialogActions>
-                <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@CancelEditingItemAsync" Class="px-10">Cancel</MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10">Save</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@CancelEditingItemAsync" Class="px-10">@Localizer["MudDataGrid.Cancel"]</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CommitItemChangesAsync" Class="px-10">@Localizer["MudDataGrid.Save"]</MudButton>
             </DialogActions>
         </MudDialog>
     </CascadingValue>
@@ -294,15 +296,15 @@
     internal RenderFragment ToolbarMenu(MudDataGrid<T> dataGrid) =>
         @<text>
             <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" AnchorOrigin="Origin.BottomCenter" Dense="true">
-            <MudMenuItem OnClick="@dataGrid.ShowColumnsPanel">Columns</MudMenuItem>
+            <MudMenuItem OnClick="@dataGrid.ShowColumnsPanel">@Localizer["MudDataGrid.Columns"]</MudMenuItem>
                 @if (dataGrid.Groupable)
                 {
-                    <MudMenuItem OnClick="@dataGrid.ExpandAllGroups">Expand All Groups</MudMenuItem>
-                    <MudMenuItem OnClick="@dataGrid.CollapseAllGroups">Collapse All Groups</MudMenuItem>
+                    <MudMenuItem OnClick="@dataGrid.ExpandAllGroups">@Localizer["MudDataGrid.ExpandAllGroups"]</MudMenuItem>
+                    <MudMenuItem OnClick="@dataGrid.CollapseAllGroups">@Localizer["MudDataGrid.CollapseAllGroups"]</MudMenuItem>
                 }
                 @if (dataGrid.ServerData is not null)
                 {
-                    <MudMenuItem OnClick="@dataGrid.InvokeServerLoadFunc">Refresh Data</MudMenuItem>
+                    <MudMenuItem OnClick="@dataGrid.InvokeServerLoadFunc">@Localizer["MudDataGrid.RefreshData"]</MudMenuItem>
                 }
             </MudMenu>
          </text>;
@@ -402,32 +404,32 @@
                     <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end"></MudIconButton>
                 </MudItem>
                 <MudItem xs="4">
-                    <MudSelect T="Column<T>" Value="@filterDefinition.Column" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="Column" Dense="true" Margin="@Margin.Dense"
+                    <MudSelect T="Column<T>" Value="@filterDefinition.Column" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="@Localizer["MudDataGrid.Column"]" Dense="true" Margin="@Margin.Dense"
                                Class="filter-field">
                     @foreach (var renderColumn in RenderedColumns.Where(x => x.Filterable != false) ?? Enumerable.Empty<Column<T>>())
-                    {
+                        {
                             <MudSelectItem T="Column<T>" Value="@renderColumn">@renderColumn.Title</MudSelectItem>
                         }
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="3">
-                    <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Label="Operator" Dense="true" Margin="@Margin.Dense"
+                    <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Label="@Localizer["MudDataGrid.Operator"]" Dense="true" Margin="@Margin.Dense"
                                Class="filter-operator">
                         @foreach (var fieldOperator in FilterOperator.GetOperatorByDataType(fieldType))
                         {
-                            <MudSelectItem Value="@fieldOperator">@fieldOperator</MudSelectItem>
+                            <MudSelectItem Value="@fieldOperator">@Localizer[$"MudDataGrid.{fieldOperator}"]</MudSelectItem>
                         }
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="4">
                     @if (fieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                     {
-                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
+                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="@Localizer["MudDataGrid.Value"]" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense"
                                       Immediate="true" Class="filter-input"/>
                     }
                     else if (fieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                     {
-                        <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
+                        <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Label="@Localizer["MudDataGrid.Value"]" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense"
                                          Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture"/>
                     }
                     else if (fieldType.IsEnum)
@@ -446,8 +448,8 @@
                         <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                                    Class="filter-input">
                             <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
-                            <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
-                            <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
+                            <MudSelectItem T="bool?" Value="@(true)">@Localizer["MudDataGrid.True"]</MudSelectItem>
+                            <MudSelectItem T="bool?" Value="@(false)">@Localizer["MudDataGrid.False"]</MudSelectItem>
                         </MudSelect>
                     }
                     else if (fieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
@@ -463,7 +465,7 @@
                     }
                     else if (fieldType.IsGuid)
                     {
-                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
+                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="@Localizer["MudDataGrid.Value"]" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense"
                                       Immediate="true" Class="filter-input"/>
                     }
                 </MudItem>
@@ -475,19 +477,19 @@
                                Class="filter-operator">
                         @foreach (var o in FilterOperator.GetOperatorByDataType(fieldType))
                         {
-                            <MudSelectItem Value="@o">@o</MudSelectItem>
+                            <MudSelectItem Value="@o">@Localizer[$"MudDataGrid.{o}"]</MudSelectItem>
                         }
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12">
                     @if (fieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                     {
-                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense"
+                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense"
                                       Immediate="true" Class="filter-input"/>
                     }
                     else if (fieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                     {
-                        <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Placeholder="Filter value" Margin="@Margin.Dense"
+                        <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense"
                                          Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture"/>
                     }
                     else if (fieldType.IsEnum)
@@ -506,8 +508,8 @@
                         <MudSelect T="bool?" Value="@filter._valueBool" ValueChanged="@filter.BoolValueChanged" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                                    Class="filter-input">
                             <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
-                            <MudSelectItem T="bool?" Value="@(true)">true</MudSelectItem>
-                            <MudSelectItem T="bool?" Value="@(false)">false</MudSelectItem>
+                            <MudSelectItem T="bool?" Value="@(true)">@Localizer["MudDataGrid.True"]</MudSelectItem>
+                            <MudSelectItem T="bool?" Value="@(false)">@Localizer["MudDataGrid.False"]</MudSelectItem>
                         </MudSelect>
                     }
                     else if (fieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
@@ -523,7 +525,7 @@
                     }
                     else if (fieldType.IsGuid)
                     {
-                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="Value" Placeholder="Filter value" Margin="@Margin.Dense"
+                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="@Localizer["MudDataGrid.Value"]" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense"
                                       Immediate="true" Class="filter-input"/>
                     }
                 </MudItem>

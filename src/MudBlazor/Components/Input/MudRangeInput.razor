@@ -22,6 +22,17 @@
     <input @ref="_elementReferenceEnd" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@TextEnd" @bind-value:event="@((Immediate ? "oninput" : "onchange"))" inputmode="@InputMode.ToString()" pattern="@Pattern"
            placeholder="@PlaceholderEnd" disabled=@GetDisabledState() readonly="@GetReadOnlyState()" @onblur="@OnBlurredAsync" @onkeydown="@InvokeKeyDownAsync" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUpAsync" />
 
+    @if (IsClearable() && !GetDisabledState())
+    {
+        <MudIconButton Class="@(Adornment is Adornment.Start ? "me-0" : "me-n4")" Style="z-index: 2"
+                       Color="@Color.Default"
+                       Icon="@Icons.Material.Filled.Clear"
+                       Size="@Size.Small"
+                       OnClick="@ClearButtonClickHandlerAsync"
+                       aria-label="Clear"
+                       tabindex="-1" />
+    }
+
     @if (Adornment == Adornment.End)
     {
         <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" AriaLabel="@AdornmentAriaLabel" />

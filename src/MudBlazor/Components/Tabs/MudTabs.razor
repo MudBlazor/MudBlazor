@@ -20,7 +20,7 @@
                 <div @ref="@_tabsContentSize" class="mud-tabs-toolbar-content">
                     <div class="@WrapperClassnames" style="@WrapperScrollStyle">
                         @ChildContent
-                        @if (!HideSlider) {
+                        @if (!HideSlider && IsSliderPositionDetermined) {
                             <div class="@SliderClass" style="@SliderStyle"></div>
                         }
                     </div>

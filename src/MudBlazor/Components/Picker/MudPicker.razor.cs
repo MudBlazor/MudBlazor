@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
@@ -20,8 +18,6 @@ namespace MudBlazor
         [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         private string _elementId = "picker" + Guid.NewGuid().ToString().Substring(0, 8);
-
-        [Inject] private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
 
         protected string PickerClass =>
             new CssBuilder("mud-picker")
@@ -172,6 +168,13 @@ namespace MudBlazor
         public bool Disabled { get; set; }
         [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
         protected bool GetDisabledState() => Disabled || ParentDisabled;
+
+        /// <summary>
+        /// If true, the input will not have an underline.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool DisableUnderLine { get; set; }
 
         /// <summary>
         /// If true, no date or time can be defined.

@@ -6,8 +6,12 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
+#nullable enable
     public abstract class MudBaseSelectItem : MudComponentBase
     {
+        [Inject]
+        private NavigationManager UriHelper { get; set; } = null!;
+
         /// <summary>
         /// If true, the input element will be disabled.
         /// </summary>
@@ -27,7 +31,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.ClickAction)]
-        public string Href { get; set; }
+        public string? Href { get; set; }
 
         /// <summary>
         /// If true, force browser to redirect outside component router-space.
@@ -41,7 +45,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// Command parameter.
@@ -49,7 +53,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.General.ClickAction)]
         [Obsolete("This will be removed in v7.")]
-        public object CommandParameter { get; set; }
+        public object? CommandParameter { get; set; }
 
         /// <summary>
         /// Command executed when the user clicks on an element.
@@ -57,9 +61,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.General.ClickAction)]
         [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
-        public ICommand Command { get; set; }
-
-        [Inject] private NavigationManager UriHelper { get; set; }
+        public ICommand? Command { get; set; }
 
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }

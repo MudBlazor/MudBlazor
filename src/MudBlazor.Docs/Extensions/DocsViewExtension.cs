@@ -32,6 +32,7 @@ namespace MudBlazor.Docs.Extensions
 #pragma warning restore 0618
             });
 
+            services.AddScoped<IDocsJsApiService, DocsJsApiService>();
             services.AddSingleton<DiscordApiClient>();
             services.AddSingleton<NugetApiClient>();
             services.AddSingleton<GitHubApiClient>();

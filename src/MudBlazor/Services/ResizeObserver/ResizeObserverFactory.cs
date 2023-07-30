@@ -15,8 +15,8 @@ namespace MudBlazor.Services
         }
 
         public IResizeObserver Create(ResizeObserverOptions options) =>
-            new ResizeObserver(_provider.GetRequiredService<IJSRuntime>(), options);
-         
+            new ResizeObserver(_provider.GetRequiredService<IJSRuntime>(), new OptionsWrapper<ResizeObserverOptions>(options));
+
         public IResizeObserver Create()
         {
             var options = _provider.GetService<IOptions<ResizeObserverOptions>>();

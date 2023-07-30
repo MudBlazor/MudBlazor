@@ -266,6 +266,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridSingleSelectionTest()
+        {
+            var comp = Context.RenderComponent<DataGridSingleSelectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSingleSelectionTest.Item>>();
+
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
+            // select first item programmatically
+            var firstItem = dataGrid.Instance.Items.ElementAt(0);
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.Instance.SelectedItem.Should().Be(firstItem);
+
+            // select second item programmatically (still should be only one item selected)
+            var secondItem = dataGrid.Instance.Items.ElementAt(1);
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(true, secondItem));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.Instance.SelectedItem.Should().Be(secondItem);
+
+            // deselect an item programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, secondItem));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.SelectedItem.Should().BeNull();
+
+            // nothing should happen as the "select all" shouldn't do anything in single selection mode
+            dataGrid.FindAll("input")[0].Change(true);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+        }
+
+        [Test]
         public async Task DataGridMultiSelectionTest()
         {
             var comp = Context.RenderComponent<DataGridMultiSelectionTest>();
@@ -273,15 +303,15 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
             dataGrid.FindAll("input")[0].Change(true);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(4);
 
             // deselect an item programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, dataGrid.Instance.SelectedItems.First()));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
 
             // select an item programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(dataGrid.Instance.Items.First()));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(4);
 
             // deselect all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
@@ -289,13 +319,51 @@ namespace MudBlazor.UnitTests.Components
 
             // select all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(true));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(3);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(4);
 
             // deselect from the footer
             dataGrid.Find("tfoot input").Change(false);
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
         }
-        
+
+        [Test]
+        public async Task DataGridSelectAllWithFilterTest()
+        {
+            var comp = Context.RenderComponent<DataGridMultiSelectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultiSelectionTest.Item>>();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4, because: "all four rows shown by default");
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0, because: "no selected items by default");
+
+            var twoBFilter = new FilterDefinition<DataGridMultiSelectionTest.Item>
+            {
+                Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(c => c.PropertyName == "Name"),
+                Operator = FilterOperator.String.Equal,
+                Value = "B"
+            };
+
+            // Add a FilterDefinition to filter where the Name == "B".
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(twoBFilter));
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(2, because: "two 'B' rows shown per the filter"); 
+
+            // select-all
+            dataGrid.FindAll("input[type=checkbox]")[0].Change(true);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(2, because: "only the two 'B' rows that are visible should get selected"); 
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ClearFiltersAsync());
+            dataGrid.Render();
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4, because: "all rows should be shown when filter disapplied"); 
+            dataGrid.Instance.SelectedItems.Count.Should().Be(2, because: "selection should not have changed when filter disapplied");
+            dataGrid.FindAll("input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
+            dataGrid.FindAll("tfoot input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(twoBFilter));
+            dataGrid.FindAll("input[type=checkbox]")[0].IsChecked().Should().BeTrue(because: "select all checkbox should reflect 'all selected' state");
+            dataGrid.FindAll("tfoot input[type=checkbox]")[0].IsChecked().Should().BeTrue(because: "select all checkbox should reflect 'all selected' state");
+        }
+
         [Test]
         public async Task DataGridServerMultiSelectionTest()
         {
@@ -326,8 +394,33 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Find("tfoot input").Change(false);
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
         }
-
+        
         [Test]
+        public async Task DataGridEditableSelectionTest()
+        {
+            var comp = Context.RenderComponent<DataGridEditableWithSelectColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditableWithSelectColumnTest.Item>>();
+            
+            // test that all rows, header and footer have cell with a checkbox
+            dataGrid.FindAll("input.mud-checkbox-input").Count().Should().Be(dataGrid.Instance.Items.Count()+2);
+
+            //test that changing header sets all items selected
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.FindAll("input.mud-checkbox-input")[0].Change(true);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(dataGrid.Instance.Items.Count());
+            //test that changing footer unselects all items
+            dataGrid.FindAll("input.mud-checkbox-input")[^1].Change(false);
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            //test that changing value in each row selects an item in grid
+            for (int i = 1; i < dataGrid.Instance.Items.Count(); i++)
+            {
+                dataGrid.FindAll("input.mud-checkbox-input")[i].Change(true);
+                dataGrid.Instance.SelectedItems.Count.Should().Be(i);
+            }
+
+
+        }
+
         public async Task DataGridPaginationTest()
         {
             var comp = Context.RenderComponent<DataGridPaginationTest>();
@@ -456,7 +549,8 @@ namespace MudBlazor.UnitTests.Components
 
             //open edit dialog
             dataGrid.FindAll("tbody tr")[1].Click();
-
+            //No close button
+            comp.FindAll("button[aria-label=\"close\"]").Should().BeEmpty();
             //edit data
             comp.FindAll("div input")[0].Change("Galadriel");
             comp.FindAll("div input")[1].Change(1);
@@ -2542,6 +2636,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task FilterDefinitionReplaceWithCustom()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+            dataGrid.Instance.SetDefaultFilterDefinition<CustomFilterDefinitionMock<DataGridFiltersTest.Model>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
+
+            // add a filter via the AddFilter method
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
+
+            // check the number of filters displayed in the filters panel
+            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
+
+            var filterDefinitionInstance = dataGrid.Instance.FilterDefinitions.FirstOrDefault();
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            filterDefinitionInstance.Should().NotBeNull();
+            filterDefinitionInstance.Should().BeOfType<CustomFilterDefinitionMock<DataGridFiltersTest.Model>>();
+        }
+
+        [Test]
         public async Task DataGridFiltersTest()
         {
             var comp = Context.RenderComponent<DataGridFiltersTest>();
@@ -3177,6 +3292,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridStickyColumnsResizerTest()
+        {
+            var comp = Context.RenderComponent<DataGridStickyColumnsResizerTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridStickyColumnsResizerTest.Model>>();
+
+            var header = dataGrid.Find(".mud-table-toolbar");
+            header.GetAttribute("style").Should().Contain("position:sticky");
+            header.GetAttribute("style").Should().Contain("left:0px");
+
+            var footer = dataGrid.Find(".mud-table-pagination");
+            footer.GetAttribute("style").Should().Contain("position:sticky");
+            footer.GetAttribute("style").Should().Contain("left:0px");
+
+            var body = dataGrid.Find(".mud-table-container");
+            body.GetAttribute("style").Should().Contain("width:max-content");
+            body.GetAttribute("style").Should().Contain("overflow:clip");
+
+            dataGrid.Find("th").ClassList.Should().Contain("sticky-left");
+            dataGrid.FindAll("th").Last().ClassList.Should().Contain("sticky-right");
+        }
+
+        [Test]
         public async Task DataGridCellContextTest()
         {
             var comp = Context.RenderComponent<DataGridCellContextTest>();
@@ -3484,6 +3621,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridParentAndChildSamePropertyNameSortTest()
+        {
+            var comp = Context.RenderComponent<DataGridChildPropertiesWithSameNameSortTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridChildPropertiesWithSameNameSortTest.Employee>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Manager.Name", SortDirection.Ascending, x => x.Manager.Name));
+            dataGrid.Instance.DropContainerHasChanged();
+            dataGrid.FindAll("th .sortable-column-header")[1].TextContent.Trim().Should().Be("Name");
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(true);
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
+            dataGrid.Instance.GetColumnSortDirection("Manager.Name").Should().Be(SortDirection.Ascending);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
+            dataGrid.Instance.DropContainerHasChanged();
+            dataGrid.FindAll("th .sortable-column-header")[0].TextContent.Trim().Should().Be("Name");
+            dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(true);
+            dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
+            dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Ascending);
+            dataGrid.Instance.GetColumnSortDirection("Manager.Name").Should().Be(SortDirection.None);
+        }
+
+        [Test]
         public async Task DataGridCustomSortTest()
         {
             var comp = Context.RenderComponent<DataGridCustomSortableTest>();
@@ -3593,12 +3753,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.CollapseAllGroups();
             dataGrid.Render();
             // after all groups are collapsed
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
             await comp.InvokeAsync(() =>
                 comp.Instance.AddFruit());
             // datagrid should be expanded with the new category
             dataGrid.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(3));
         }
 
         [Test]
@@ -3611,12 +3771,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.CollapseAllGroups();
             dataGrid.Render();
             // after all groups are collapsed
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            await comp.InvokeAsync(() =>
-                comp.Instance.AddFruit());
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
+            await comp.InvokeAsync(() => comp.Instance.AddFruit());
             // datagrid should be expanded with the new category
             dataGrid.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(3));
         }
 
         [Test]
@@ -3762,6 +3921,64 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
 
         }
-    
+        [Test]
+        public void DataGridEditFormDialogIsCustomizableTest()
+        {
+            var comp = Context.RenderComponent<DataGridEditFormCustomizedDialogTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditFormCustomizedDialogTest.Model>>();
+
+            //open edit dialog
+            dataGrid.FindAll("tbody tr")[1].Click();
+            //check if dialog is open
+            comp.FindAll("div.mud-dialog-container").Should().NotBeEmpty();
+            //find button with arialabel close in dialog
+            var closeButton = comp.Find("button[aria-label=\"close\"]");
+            closeButton.Should().NotBeNull();
+            //click close button
+            comp.Find("button[aria-label=\"close\"]").Click();
+            //check if dialog is closed
+            comp.FindAll("div.mud-dialog-container").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task DataGridDragAndDropWithDynamicColumnsTest()
+        {
+            var comp = Context.RenderComponent<DataGridDragAndDropWithDynamicColumnsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropWithDynamicColumnsTest.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var headerValues = dataGrid.FindAll(".sortable-column-header");
+            headerValues.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
+
+            headerValues[0].InnerHtml.Should().Be("Name");
+            headerValues[1].InnerHtml.Should().Be("Age");
+            headerValues[2].InnerHtml.Should().Be("Status");
+            headerValues[3].InnerHtml.Should().Be("Hired");
+            headerValues[4].InnerHtml.Should().Be("HiredOn");
+
+            var container = dataGrid.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(1);
+
+            var zone = dataGrid.FindAll(".mud-drop-zone");
+            zone.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
+
+            var firstDropZone = zone[1];
+            var firstDropItem = firstDropZone.Children[0];
+
+            var secondDropZone = zone[2];
+            var secondDropItem = secondDropZone.Children[0];
+
+            await firstDropItem.DragStartAsync(new DragEventArgs());
+            await secondDropItem.DropAsync(new DragEventArgs());
+
+            var newHeaderValues = dataGrid.FindAll(".sortable-column-header");
+            newHeaderValues.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
+
+            newHeaderValues[0].InnerHtml.Should().Be("Name");
+            newHeaderValues[1].InnerHtml.Should().Be("Status");
+            newHeaderValues[2].InnerHtml.Should().Be("Age");
+            newHeaderValues[3].InnerHtml.Should().Be("Hired");
+            newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
+        }
     }
 }

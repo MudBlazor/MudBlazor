@@ -4,7 +4,13 @@
 
 namespace MudBlazor;
 
+#nullable enable
+#pragma warning disable CS0618
+/// <summary>
+/// Represents a light color palette.
+/// </summary>
 public class PaletteLight : Palette
+#pragma warning restore CS0618
 {
     // everything is inherited from Palette so people will know about it.
 }

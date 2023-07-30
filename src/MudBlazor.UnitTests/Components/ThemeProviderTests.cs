@@ -303,7 +303,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.AreEqual(new MudColor(Colors.Shades.White), DefaultTheme.PaletteDark.White);
 
             //Light theme
+#pragma warning disable CS0618
             Assert.IsInstanceOf(typeof(Palette), DefaultTheme.Palette);
+#pragma warning restore CS0618
             Assert.AreEqual(new MudColor("#594AE2"), DefaultTheme.Palette.Primary);
             Assert.AreEqual(new MudColor(Colors.Red.Default), DefaultTheme.Palette.Error);
             Assert.AreEqual(new MudColor(Colors.Shades.White), DefaultTheme.Palette.White);

@@ -10,6 +10,11 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <!--We need to make internal types to be visible for mocking-->
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
 
   <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
   <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
@@ -29,19 +34,19 @@
   </Target>
 
   <ItemGroup>
-    <PackageReference Include="bunit" Version="1.20.8" />
+    <PackageReference Include="bunit" Version="1.21.9" />
     <PackageReference Include="coverlet.msbuild" Version="6.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="6.11.0" />
-    <PackageReference Include="FluentValidation" Version="11.5.2" />
+    <PackageReference Include="FluentValidation" Version="11.6.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.5.0" />
     <PackageReference Include="Moq" Version="4.18.4" />
     <PackageReference Include="nunit" Version="3.13.3" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
-    <PackageReference Include="ReportGenerator" Version="5.1.21" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
+    <PackageReference Include="ReportGenerator" Version="5.1.23" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
   </ItemGroup>
 

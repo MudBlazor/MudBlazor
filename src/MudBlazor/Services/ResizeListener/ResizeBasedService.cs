@@ -13,6 +13,7 @@ using Microsoft.JSInterop;
 namespace MudBlazor.Services
 {
 #nullable enable
+    [Obsolete($"Use {nameof(IBrowserViewportService)} instead. This will be removed in v7.")]
     public abstract class ResizeBasedService<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] TSelf, TInfo, TAction, TTaskOption> : IAsyncDisposable
         where TSelf : class
         where TInfo : SubscriptionInfo<TAction, TTaskOption>
