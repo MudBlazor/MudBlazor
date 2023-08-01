@@ -1,8 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
-@using MudBlazor.Components.DataGrid
 @using Microsoft.AspNetCore.Components.Web.Virtualization;
 
-<MudDataGrid ItemsProvider="itemsProvider" Virtualize="true" Sortable="true">
+<MudDataGrid T="Item" ItemsProvider="@itemsProvider" Virtualize="true" Sortable="true">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Value" />

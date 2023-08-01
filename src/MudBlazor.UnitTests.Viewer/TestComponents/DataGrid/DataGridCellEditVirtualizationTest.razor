@@ -1,7 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
-@using MudBlazor.Components.DataGrid
 @using Microsoft.AspNetCore.Components.Web.Virtualization;
-<MudDataGrid ItemsProvider="itemsProvider" Virtualize="true" ReadOnly="false" EditMode="@DataGridEditMode.Cell">
+<MudDataGrid T="Model" ItemsProvider="@itemsProvider" Virtualize="true" ReadOnly="false" EditMode="@DataGridEditMode.Cell">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />

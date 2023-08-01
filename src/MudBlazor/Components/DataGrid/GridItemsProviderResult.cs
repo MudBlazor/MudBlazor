@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 
-namespace MudBlazor.Components.DataGrid
+namespace MudBlazor
 {
     /// <summary>
     /// Holds data being supplied to a MudBlazor DataGrid/>.

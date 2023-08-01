@@ -4,12 +4,10 @@
 
 using System.Threading;
 
-namespace MudBlazor.Components.DataGrid
+namespace MudBlazor
 {
-
     public class GridItemsProviderRequest<T> : GridStateVirtualize<T>
     {
-
         internal GridItemsProviderRequest(
             int startIndex, int? count, GridState<T> gridState,
             CancellationToken cancellationToken) : base(gridState)
@@ -18,8 +16,5 @@ namespace MudBlazor.Components.DataGrid
             Count = count;
             CancellationToken = cancellationToken;
         }
-
-
     }
-
 }

@@ -1,10 +1,9 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
-@using MudBlazor.Components.DataGrid
 @using Microsoft.AspNetCore.Components.Web.Virtualization;
 
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDataGrid ItemsProvider="itemsProvider" Virtualize="true" Filterable="true">
+<MudDataGrid T="Item" ItemsProvider="@itemsProvider" Virtualize="true" Filterable="true">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
     </Columns>

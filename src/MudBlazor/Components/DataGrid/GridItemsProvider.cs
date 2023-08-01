@@ -5,7 +5,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 
-namespace MudBlazor.Components.DataGrid
+namespace MudBlazor
 {
     /// <summary>
     /// A callback that provides data for a MudBlazorGrid"/>.
