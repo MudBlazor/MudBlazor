@@ -87,7 +87,7 @@
                         @if (CurrentPageItems != null && CurrentPageItems.Count() > 0)
                         {
                             var rowIndex = 0;
-                            <MudVirtualize IsEnabled="@Virtualize" OverscanCount="@OverscanCount" Items="@CurrentPageItems?.ToList()" Context="item">
+                                <MudVirtualize IsEnabled="@Virtualize" Items="@CurrentPageItems?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="IsEditable"
@@ -195,8 +195,8 @@
 
          RenderFragment rootNode =
             @<text>
-                <MudVirtualize IsEnabled="@Virtualize" Items="@source?.ToList()" Context="item" ChildContent="@child()">              
-                </MudVirtualize>
+        <MudVirtualize IsEnabled="@Virtualize" Items="@source?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item" ChildContent="@child()">
+        </MudVirtualize>
             </text>;
 
          RenderFragment<T> child() => item =>

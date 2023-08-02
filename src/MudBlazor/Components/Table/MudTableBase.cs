@@ -448,6 +448,13 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Behavior)]
         public int OverscanCount { get; set; } = 3;
 
+        /// <summary>
+        /// Gets the size of each item in pixels. Defaults to 50px.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public float ItemSize { get; set; } = 50f;
+
         #region --> Obsolete Forwarders for Backwards-Compatiblilty
         /// <summary>
         /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />

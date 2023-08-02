@@ -5,8 +5,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
-using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -44,18 +42,35 @@ namespace MudBlazor
             {
                 return time.TimeOfDay;
             }
-            else
+
+            var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
+            if (m.Success)
             {
-                var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
-                if (m.Success)
+                if (DateTime.TryParseExact(value, format12Hours, CultureInfo.InvariantCulture, DateTimeStyles.None,
+                        out time))
                 {
-                    return DateTime.ParseExact(value, format12Hours, CultureInfo.InvariantCulture).TimeOfDay;
-                }
-                else
-                {
-                    return DateTime.ParseExact(value, format24Hours, CultureInfo.InvariantCulture).TimeOfDay;
+                    return time.TimeOfDay;
                 }
             }
+            else
+            {
+                if (DateTime.TryParseExact(value, format24Hours, CultureInfo.InvariantCulture, DateTimeStyles.None,
+                        out time))
+                {
+                    return time.TimeOfDay;
+                }
+            }
+
+            HandleParsingError();
+            return null;
+        }
+
+        private void HandleParsingError()
+        {
+            const string ParsingErrorMessage = "Not a valid time span";
+            Converter.GetError = true;
+            Converter.GetErrorMessage = ParsingErrorMessage;
+            Converter.OnError?.Invoke(ParsingErrorMessage);
         }
 
         private bool _amPm = false;
@@ -228,7 +243,7 @@ namespace MudBlazor
         private void UpdateTime()
         {
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
-            if((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
+            if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
                 Submit();
             }
@@ -473,7 +488,7 @@ namespace MudBlazor
             }
             _timeSet.Hour = h;
 
-            if(_currentView == OpenTo.Hours)
+            if (_currentView == OpenTo.Hours)
             {
                 UpdateTime();
             }
