@@ -3782,7 +3782,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task DataGridGroupCollapseAllTest()
         {
             var comp = Context.RenderComponent<DataGridGroupCollapseAllTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupCollapseAllTest.TestObject>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
             comp.Instance.ExpandAllGroups();
@@ -3801,7 +3800,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task DataGridGroupExpandAllCollapseAllTest()
         {
             var comp = Context.RenderComponent<DataGridGroupExpandAllCollapseAllTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandAllCollapseAllTest.Element>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
             comp.Instance.ExpandAllGroups();
@@ -3824,12 +3822,31 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridFormatTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormatTest.Employee>>();
-
+            
             comp.FindAll("tbody.mud-table-body td")[3].TextContent.Should().Be("$87,000.00");
             var column = (PropertyColumn<DataGridFormatTest.Employee, int>)dataGrid.Instance.GetColumnByPropertyName("Salary");
             await comp.InvokeAsync(() => column.Format = "C0");
             comp.Find(".mud-switch-input").Change(new ChangeEventArgs { Value = true });
             comp.FindAll("tbody.mud-table-body td")[3].TextContent.Should().Be("$87,000");
+        }
+        
+        [Test]
+        public async Task DataGridPropertyColumn_ShouldRenderFragment()
+        {
+            var component = Context.RenderComponent<DataGridCellFragmentTest>();
+
+            var rows = component.FindAll("tbody .mud-table-row");
+            component.FindAll("tbody .mud-table-row").Should().HaveCount(DataGridCellFragmentTest.Items.Length);
+            for (var i = 0; i < DataGridCellFragmentTest.Items.Length; i++)
+            {
+                var row = rows[i];
+                var cells = row.QuerySelectorAll("td");
+                cells.Should().HaveCount(2);
+                
+                var item = DataGridCellFragmentTest.Items[i];
+                cells[0].InnerHtml.Should().Be($"<span>{item.Name}</span>");
+                cells[1].InnerHtml.Should().Be($"{item.Age}");
+            }
         }
 
         [Test]
@@ -3851,7 +3868,7 @@ namespace MudBlazor.UnitTests.Components
 
 
             var column = dataGrid.FindComponent<Column<DataGridSortableTest.Item>>();
-            await comp.InvokeAsync(() => column.Instance.SortBy = x => { return x.Name; });
+            await comp.InvokeAsync(() => column.Instance.SortBy = x => x.Name);
             dataGrid.Render();
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 4);
 

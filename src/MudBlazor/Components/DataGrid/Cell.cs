@@ -5,6 +5,7 @@
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -89,32 +90,33 @@ namespace MudBlazor
 
         private void OnStartedEditingItem()
         {
-            if (ComputedValue is null)
+            switch (ComputedValue)
             {
-                return;
-            }
-
-            if (ComputedValue is JsonElement element)
-            {
-                if (_column.dataType == typeof(string))
-                {
+                case null: return;
+                case RenderFragment: return;
+                case JsonElement element when _column.dataType == typeof(string):
                     _valueString = element.GetString();
-                }
-                else if (_column.isNumber)
-                {
-                    _valueNumber = element.GetDouble();
-                }
-            }
-            else
-            {
-                if (_column.dataType == typeof(string))
-                {
-                    _valueString = (string)ComputedValue;
-                }
-                else if (_column.isNumber)
-                {
-                    _valueNumber = Convert.ToDouble(ComputedValue);
-                }
+                    return;
+                case JsonElement element:
+                    {
+                        if (_column.isNumber)
+                        {
+                            _valueNumber = element.GetDouble();
+                        }
+                        return;
+                    }
+                default:
+                    {
+                        if (_column.dataType == typeof(string))
+                        {
+                            _valueString = (string)ComputedValue;
+                        }
+                        else if (_column.isNumber)
+                        {
+                            _valueNumber = Convert.ToDouble(ComputedValue);
+                        }
+                        return;
+                    }
             }
         }
     }

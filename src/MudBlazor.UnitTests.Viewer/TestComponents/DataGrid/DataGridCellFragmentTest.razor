@@ -1,0 +1,8 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid T="TestModel" Items="@Items">
+    <Columns>
+        <CustomPropertyColumn Property="x => x.Name" />
+        <CustomPropertyColumn Property="x => x.Age" />
+    </Columns>
+</MudDataGrid>

@@ -207,24 +207,23 @@ namespace MudBlazor
         {
             get
             {
-                // Handle case where T is IDictionary.
-                if (typeof(T) == typeof(IDictionary<string, object>))
+                if (typeof(T) != typeof(IDictionary<string, object>))
                 {
-                    // We need to get the actual type here so we need to look at actual data.
-                    // get the first item where we have a non-null value in the field to be filtered.
-                    var first = DataGrid.Items.FirstOrDefault(x => ((IDictionary<string, object>)x)[PropertyName] != null);
-
-                    if (first != null)
-                    {
-                        return ((IDictionary<string, object>)first)[PropertyName].GetType();
-                    }
-                    else
-                    {
-                        return typeof(object);
-                    }
+                    return dataType;
                 }
 
-                return dataType;
+                // Handle case where T is IDictionary.
+                // We need to get the actual type here so we need to look at actual data.
+                // get the first item where we have a non-null value in the field to be filtered.
+                var first = DataGrid.Items.FirstOrDefault(x => ((IDictionary<string, object>)x)[PropertyName] != null);
+
+                if (first != null)
+                {
+                    return ((IDictionary<string, object>)first)[PropertyName].GetType();
+                }
+                    
+                return typeof(object);
+
             }
         }
 
@@ -293,8 +292,7 @@ namespace MudBlazor
             if (groupable && Grouping)
                 grouping = Grouping;
 
-            if (DataGrid != null)
-                DataGrid.AddColumn(this);
+            DataGrid?.AddColumn(this);
 
             // Add the HeaderContext
             headerContext = new HeaderContext<T>(DataGrid);
@@ -327,7 +325,7 @@ namespace MudBlazor
             {
                 if (this is TemplateColumn<T>)
                 {
-                    _sortBy = x => true;
+                    _sortBy = _ => true;
                 }
                 else
                     _sortBy = PropertyFunc;
