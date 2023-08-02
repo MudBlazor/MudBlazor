@@ -249,6 +249,17 @@ namespace MudBlazor
 
         public string PopoverStyle { get; set; }
 
+        /// <summary>
+        /// Gets a value indicating whether the menu is currently open or not.
+        /// </summary>
+        public bool IsOpen
+        {
+            get { return _isOpen; }
+        }
+
+        /// <summary>
+        /// Closes the menu.
+        /// </summary>
         public void CloseMenu()
         {
             _isOpen = false;
@@ -257,6 +268,12 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Opens the menu.
+        /// </summary>
+        /// <param name="args">The arguments of the calling mouse event. If
+        /// <see cref="PositionAtCursor"/> is true, the menu will be positioned using the
+        /// coordinates in this parameter.</param>
         public void OpenMenu(EventArgs args)
         {
             if (Disabled)
