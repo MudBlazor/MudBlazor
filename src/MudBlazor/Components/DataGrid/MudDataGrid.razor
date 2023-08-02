@@ -370,7 +370,7 @@
                     {
                         if (column.ContentFormat is not null)
                         {
-                            @(cell._valueNumber?.ToString(column.ContentFormat, column.Culture))
+                            @(((IFormattable)cell._valueNumber)?.ToString(column.ContentFormat, column.Culture))
                         }
                         else
                         {
@@ -382,10 +382,6 @@
                         if (column.ContentFormat is not null)
                         {
                             @(((IFormattable)cell.ComputedValue)?.ToString(column.ContentFormat, column.Culture))
-                        }
-                        else if (cell.ComputedValue is RenderFragment fragment)
-                        {
-                            @fragment
                         }
                         else
                         {
