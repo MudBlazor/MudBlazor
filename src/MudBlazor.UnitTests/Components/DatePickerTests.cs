@@ -213,6 +213,21 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be("13/01/2021");
         }
 
+        [Test]
+        public void Check_DateTime_MaxValue()
+        {
+            DateTime? date = DateTime.MaxValue;
+            try
+            {
+                OpenPicker(Parameter("Date", date));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                Assert.Fail("Should not throw exception on valid dates");
+            }
+
+        }
+
         public IRenderedComponent<SimpleMudDatePickerTest> OpenPicker(ComponentParameter parameter)
         {
             return OpenPicker(new ComponentParameter[] { parameter });
