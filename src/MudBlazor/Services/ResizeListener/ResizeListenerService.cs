@@ -1,18 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 
 namespace MudBlazor.Services
 {
+#nullable enable
     /// <summary>
     /// This service listens to browser resize events and allows you to react to a changing window size in Blazor
     /// </summary>
+    [Obsolete($"Use {nameof(IBrowserViewportService)} instead. This will be removed in v7.")]
     public class ResizeListenerService : IResizeListenerService, IDisposable
     {
+        private readonly IJSRuntime _jsRuntime;
+        private readonly IBrowserWindowSizeProvider _browserWindowSizeProvider;
+        private readonly ResizeOptions _options;
+        private readonly DotNetObjectReference<ResizeListenerService> _dotNetRef;
+        private BrowserWindowSize? _windowSize;
+        private EventHandler<BrowserWindowSize>? _onResized;
+        private EventHandler<Breakpoint>? _onBreakpointChanged;
+
         /// <summary>
         /// 
         /// </summary>
@@ -20,22 +28,13 @@ namespace MudBlazor.Services
         /// <param name="browserWindowSizeProvider"></param>
         /// <param name="options"></param>
         [DynamicDependency(nameof(RaiseOnResized))]
-        public ResizeListenerService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null)
+        public ResizeListenerService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions>? options = null)
         {
-            this._dotNetRef = DotNetObjectReference.Create(this);
-            this._options = options?.Value ?? new ResizeOptions();
-            this._options.BreakpointDefinitions = BreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
-            this._jsRuntime = jsRuntime;
-            this._browserWindowSizeProvider = browserWindowSizeProvider;
+            _dotNetRef = DotNetObjectReference.Create(this);
+            _options = options?.Value ?? new ResizeOptions();
+            _jsRuntime = jsRuntime;
+            _browserWindowSizeProvider = browserWindowSizeProvider;
         }
-
-        private readonly IJSRuntime _jsRuntime;
-        private readonly IBrowserWindowSizeProvider _browserWindowSizeProvider;
-        private readonly ResizeOptions _options;
-        private readonly DotNetObjectReference<ResizeListenerService> _dotNetRef;
-#nullable enable
-        private EventHandler<BrowserWindowSize>? _onResized;
-        private EventHandler<Breakpoint>? _onBreakpointChanged;
 
         /// <summary>
         /// Subscribe to the browsers resize() event.
@@ -72,13 +71,12 @@ namespace MudBlazor.Services
                 Cancel().ConfigureAwait(false);
             }
         }
-#nullable disable
 
         private async void Start()
         {
             if (_onResized == null || _onBreakpointChanged == null)
             {
-                await _jsRuntime.InvokeVoidAsyncWithErrorHandling($"mudResizeListener.listenForResize", _dotNetRef, _options);
+                await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListener.listenForResize", _dotNetRef, _options);
             }
         }
 
@@ -88,7 +86,7 @@ namespace MudBlazor.Services
             {
                 if (_onResized == null && _onBreakpointChanged == null)
                 {
-                    await _jsRuntime.InvokeVoidAsyncWithErrorHandling($"mudResizeListener.cancelListener");
+                    await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListener.cancelListener");
                 }
                 else if (_onResized == null && _onBreakpointChanged != null && !_options.NotifyOnBreakpointOnly)
                 {
@@ -108,7 +106,7 @@ namespace MudBlazor.Services
         /// <param name="mediaQuery"></param>
         /// <returns>Returns true if matched.</returns>
         public ValueTask<bool> MatchMedia(string mediaQuery) =>
-_jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
+            _jsRuntime.InvokeAsync<bool>("mudResizeListener.matchMedia", mediaQuery);
 
         /// <summary>
         /// Get the current BrowserWindowSize, this includes the Height and Width of the document.
@@ -129,37 +127,25 @@ _jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
             _onBreakpointChanged?.Invoke(this, breakpoint);
         }
 
-        private BrowserWindowSize _windowSize;
-
-        public static Dictionary<Breakpoint, int> BreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
-        {
-            [Breakpoint.Xxl] = 2560,
-            [Breakpoint.Xl] = 1920,
-            [Breakpoint.Lg] = 1280,
-            [Breakpoint.Md] = 960,
-            [Breakpoint.Sm] = 600,
-            [Breakpoint.Xs] = 0,
-        };
-
         public async Task<Breakpoint> GetBreakpoint()
         {
+            var defaultBreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(_options);
             // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
             if (_onResized == null || _windowSize == null)
                 _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
             if (_windowSize == null)
                 return Breakpoint.Xs;
-            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Xxl])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Xxl])
                 return Breakpoint.Xxl;
-            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Xl])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Xl])
                 return Breakpoint.Xl;
-            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Lg])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Lg])
                 return Breakpoint.Lg;
-            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Md])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Md])
                 return Breakpoint.Md;
-            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Sm])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Sm])
                 return Breakpoint.Sm;
-            else
-                return Breakpoint.Xs;
+            return Breakpoint.Xs;
         }
 
         public async Task<bool> IsMediaSize(Breakpoint breakpoint)
@@ -172,11 +158,9 @@ _jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
 
         public bool IsMediaSize(Breakpoint breakpoint, Breakpoint reference)
         {
-            if (breakpoint == Breakpoint.None)
-                return false;
-
             return breakpoint switch
             {
+                Breakpoint.None => false,
                 Breakpoint.Xs => reference == Breakpoint.Xs,
                 Breakpoint.Sm => reference == Breakpoint.Sm,
                 Breakpoint.Md => reference == Breakpoint.Md,
@@ -193,7 +177,7 @@ _jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
                 Breakpoint.MdAndUp => reference >= Breakpoint.Md,
                 Breakpoint.LgAndUp => reference >= Breakpoint.Lg,
                 Breakpoint.XlAndUp => reference >= Breakpoint.Xl,
-                _ => false,
+                _ => false
             };
         }
 
@@ -221,13 +205,11 @@ _jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
         }
     }
 
-
+    [Obsolete($"Use {nameof(IBrowserViewportService)} instead. This will be removed in v7.")]
     public interface IResizeListenerService : IDisposable
     {
-#nullable enable
         event EventHandler<BrowserWindowSize>? OnResized;
         event EventHandler<Breakpoint>? OnBreakpointChanged;
-#nullable disable
         ValueTask<BrowserWindowSize> GetBrowserWindowSize();
         Task<bool> IsMediaSize(Breakpoint breakpoint);
         bool IsMediaSize(Breakpoint breakpoint, Breakpoint reference);

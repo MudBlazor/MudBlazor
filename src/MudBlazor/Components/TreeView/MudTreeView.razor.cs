@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -109,23 +109,23 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Setting a height will allow to scroll the treeview. If not set, it will try to grow in height. 
-        /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px. 
+        /// Setting a height will allow to scroll the treeview. If not set, it will try to grow in height.
+        /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public string Height { get; set; }
 
         /// <summary>
-        /// Setting a maximum height will allow to scroll the treeview. If not set, it will try to grow in height. 
-        /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px. 
+        /// Setting a maximum height will allow to scroll the treeview. If not set, it will try to grow in height.
+        /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public string MaxHeight { get; set; }
 
         /// <summary>
-        /// Setting a width the treeview. You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px. 
+        /// Setting a width the treeview. You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
@@ -248,5 +248,6 @@ namespace MudBlazor
         }
 
         internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
+
     }
 }

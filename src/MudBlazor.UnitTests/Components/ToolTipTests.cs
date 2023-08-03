@@ -131,7 +131,7 @@ namespace MudBlazor.UnitTests.Components
 
             //content should be visible
             popoverContentNode.ClassList.Should().Contain("mud-tooltip");
-            popoverContentNode.ClassList.Should().Contain("d-block");
+            popoverContentNode.ClassList.Should().Contain("d-flex");
 
             comp.Find(".my-customer-paper").Children[0].TextContent.Should().Be("My content");
 
@@ -162,6 +162,19 @@ namespace MudBlazor.UnitTests.Components
 
             container.ClassList.Should().BeEquivalentTo(expectedClasses);
         }
+        
+        [Test]
+        public async Task InnerClass_ChildContentWrapper()
+        {
+            var comp = Context.RenderComponent<ToolTipPopoverClassPropertyTest>();
+
+            var button = comp.Find("button");
+            await button.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+
+            var wrapperDivNode = comp.Find("#my-tooltip-content").ParentElement;
+
+            wrapperDivNode.ClassList.Should().BeEquivalentTo(new[] { "d-block" });
+        }
 
         [Test]
         [TestCase(false, new[] { "mud-tooltip" })]
@@ -174,7 +187,7 @@ namespace MudBlazor.UnitTests.Components
             var button = comp.Find("button");
             await button.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
 
-            var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
+            var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement.ParentElement;
 
             popoverContentNode.ClassList.Should().Contain(expectedClasses);
         }
@@ -192,7 +205,7 @@ namespace MudBlazor.UnitTests.Components
             var button = comp.Find("button");
             await button.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
 
-            var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
+            var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement.ParentElement;
 
             popoverContentNode.ClassList.Should().Contain(expectedClasses);
         }
@@ -213,7 +226,7 @@ namespace MudBlazor.UnitTests.Components
             var button = comp.Find("button");
             await button.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
 
-            var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
+            var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement.ParentElement;
 
             popoverContentNode.ClassList.Should().Contain(expectedClasses);
         }
@@ -247,7 +260,7 @@ namespace MudBlazor.UnitTests.Components
             var button = comp.Find("button");
             await button.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
 
-            var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
+            var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement.ParentElement;
 
             popoverContentNode.ClassList.Should().Contain(expectedClasses);
         }

@@ -7,13 +7,13 @@
 </div>
 
 @code {
-
+#nullable enable
     protected string Classname =>
-    new CssBuilder("mud-container")
-      .AddClass($"mud-container-fixed", Fixed)
-      .AddClass($"mud-container-maxwidth-{MaxWidth.ToDescriptionString()}", !Fixed)
-      .AddClass(Class)
-    .Build();
+        new CssBuilder("mud-container")
+            .AddClass($"mud-container-fixed", Fixed)
+            .AddClass($"mud-container-maxwidth-{MaxWidth.ToDescriptionString()}", !Fixed)
+            .AddClass(Class)
+            .Build();
 
     /// <summary>
     /// Set the max-width to match the min-width of the current breakpoint. This is useful if you'd prefer to design for a fixed set of sizes instead of trying to accommodate a fully fluid viewport. It's fluid by default.
@@ -33,6 +33,6 @@
     /// Child content of component.
     /// </summary>
     [Parameter]
-[   Category(CategoryTypes.Container.Behavior)]
-    public RenderFragment ChildContent { get; set; }
+    [Category(CategoryTypes.Container.Behavior)]
+    public RenderFragment? ChildContent { get; set; }
 }

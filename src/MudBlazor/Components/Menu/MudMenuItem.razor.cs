@@ -27,10 +27,10 @@ namespace MudBlazor
         /// <summary>
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
         /// </summary>
-        [Parameter] 
-        [Category(CategoryTypes.Menu.ClickAction)] 
-        public string Href { get; set; }        
-        
+        [Parameter]
+        [Category(CategoryTypes.Menu.ClickAction)]
+        public string Href { get; set; }
+
         /// <summary>
         /// Icon to be used for this menu entry
         /// </summary>
@@ -50,10 +50,25 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Appearance)]
         public Size IconSize { get; set; } = Size.Medium;
 
+        /// <summary>
+        /// If set to false, clicking the menu item will keep the menu open
+        /// </summary>
+        [Parameter] 
+        [Category(CategoryTypes.Menu.ClickAction)] 
+        public bool AutoClose { get; set; } = true;
+
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Target { get; set; }
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public bool ForceLoad { get; set; }
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public ICommand Command { get; set; }
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public object CommandParameter { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Menu.ClickAction)]
+        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
+        public ICommand Command { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Menu.ClickAction)]
+        [Obsolete("This will be removed in v7.")]
+        public object CommandParameter { get; set; }
 
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
         [Parameter] public EventCallback<TouchEventArgs> OnTouch { get; set; }
@@ -62,7 +77,7 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            MudMenu.CloseMenu();
+            if (AutoClose) MudMenu.CloseMenu();
 
             if (Href != null)
             {
@@ -74,10 +89,12 @@ namespace MudBlazor
             else
             {
                 await OnClick.InvokeAsync(ev);
+#pragma warning disable CS0618
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
                     Command.Execute(CommandParameter);
                 }
+#pragma warning restore CS0618
             }
         }
 
@@ -85,7 +102,7 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            MudMenu.CloseMenu();
+            if (AutoClose) MudMenu.CloseMenu();
 
             if (Href != null)
             {
@@ -97,10 +114,12 @@ namespace MudBlazor
             else
             {
                 await OnTouch.InvokeAsync(ev);
+#pragma warning disable CS0618
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
                     Command.Execute(CommandParameter);
                 }
+#pragma warning restore CS0618
             }
         }
     }

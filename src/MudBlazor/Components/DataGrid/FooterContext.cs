@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -17,7 +18,7 @@ namespace MudBlazor
         {
             get
             {
-                return (_dataGrid.ServerData == null) ? _dataGrid.Items : _dataGrid.ServerItems;
+                return (_dataGrid.ServerData == null) ? _dataGrid.FilteredItems : _dataGrid.ServerItems;
             }
         }
 
@@ -28,7 +29,7 @@ namespace MudBlazor
             get
             {
                 
-                if (_dataGrid.Selection is not null && Items is not null)
+                if (_dataGrid.Selection is not null && (Items?.Any() ?? false))
                 {
                     return _dataGrid.Selection.Count == Items.Count();
                 }
@@ -42,13 +43,13 @@ namespace MudBlazor
             _dataGrid = dataGrid;
             Actions = new FooterActions
             {
-                SetSelectAll = async (x) => await _dataGrid.SetSelectAllAsync(x),
+                SetSelectAllAsync = x => _dataGrid.SetSelectAllAsync(x),
             };
         }
 
         public class FooterActions
         {
-            public Action<bool>? SetSelectAll { get; internal set; }
+            public Func<bool, Task> SetSelectAllAsync { get; init; } = null!;
         }
     }
 }

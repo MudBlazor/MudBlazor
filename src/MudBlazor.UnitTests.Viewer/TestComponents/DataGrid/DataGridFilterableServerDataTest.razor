@@ -19,9 +19,10 @@
     private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState)
     {
         await Task.CompletedTask;
+        var filterFunctions = gridState.FilterDefinitions.Select(x => x.GenerateFilterFunction());
         return new GridData<Item>
         {
-            Items = this._items,
+            Items = this._items.Where(x => filterFunctions.All(f => f(x))),
             TotalItems = this._items.Count()
         };
     }

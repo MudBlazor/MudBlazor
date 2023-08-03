@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -11,7 +12,7 @@ namespace MudBlazor
     internal class Filter<T>
     {
         private readonly MudDataGrid<T> _dataGrid;
-        private readonly FilterDefinition<T> _filterDefinition;
+        private readonly IFilterDefinition<T> _filterDefinition;
         private readonly Column<T>? _column;
 
         internal string? _valueString;
@@ -21,20 +22,16 @@ namespace MudBlazor
         internal DateTime? _valueDate;
         internal TimeSpan? _valueTime;
 
-        internal bool IsNumber => TypeIdentifier.IsNumber(_filterDefinition.dataType);
-
-        internal bool IsEnum => TypeIdentifier.IsEnum(_filterDefinition.dataType);
-
         internal Column<T>? FilterColumn =>
             _column ?? (_dataGrid.RenderedColumns?.FirstOrDefault(c => c.PropertyName == _filterDefinition.Column?.PropertyName));
 
-        public Filter(MudDataGrid<T> dataGrid, FilterDefinition<T> filterDefinition, Column<T>? column)
+        public Filter(MudDataGrid<T> dataGrid, IFilterDefinition<T> filterDefinition, Column<T>? column)
         {
             _dataGrid = dataGrid;
             _filterDefinition = filterDefinition;
             _column = column;
 
-            var fieldType = FieldType.Identify(_filterDefinition.dataType);
+            var fieldType = _filterDefinition.FieldType;
 
             if (fieldType.IsString)
                 _valueString = _filterDefinition.Value?.ToString();
@@ -52,17 +49,14 @@ namespace MudBlazor
             }
         }
 
-        internal void RemoveFilter()
+        internal async Task RemoveFilterAsync()
         {
-            _dataGrid.RemoveFilter(_filterDefinition.Id);
+            await _dataGrid.RemoveFilterAsync(_filterDefinition.Id);
         }
 
         internal void FieldChanged(Column<T> column)
         {
             _filterDefinition.Column = column;
-            //_filterDefinition.Field = column.PropertyName;
-            //_filterDefinition.FieldType = column.PropertyType;
-            _filterDefinition.PropertyExpression = column.PropertyExpression;
             var operators = FilterOperator.GetOperatorByDataType(column.PropertyType);
             _filterDefinition.Operator = operators.FirstOrDefault();
             _filterDefinition.Value = null;

@@ -11,6 +11,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
+#nullable enable
 public partial class MudDynamicDropItem<T> : MudComponentBase
 {
     private bool _dragOperationIsInProgress = false;
@@ -20,38 +21,38 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     private double _onTouchLastX;
     private double _onTouchLastY;
 
-    [Inject] private IJSRuntime JsRuntime { get; set; }
+    [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
 
     [CascadingParameter]
-    protected MudDropContainer<T> Container { get; set; }
+    protected MudDropContainer<T>? Container { get; set; }
 
     /// <summary>
     /// The zone identifier of the corresponding drop zone
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.DropZone.Behavior)]
-    public string ZoneIdentifier { get; set; }
+    public string? ZoneIdentifier { get; set; }
 
     /// <summary>
-    /// the data item that is represneted by this item
+    /// the data item that is represented by this item
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.DropZone.Behavior)]
-    public T Item { get; set; }
+    public T? Item { get; set; }
 
     /// <summary>
     /// Child content of component
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.DropZone.Appearance)]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     /// An additional class that is applied to this element when a drag operation is in progress
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.DropZone.DraggingClass)]
-    public string DraggingClass { get; set; }
+    public string? DraggingClass { get; set; }
 
     /// <summary>
     /// An event callback set fires, when a drag operation has been started
@@ -61,7 +62,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     public EventCallback<T> OnDragStarted { get; set; }
 
     /// <summary>
-    /// An event callback set fires, when a drag operation has been eneded. This included also a canceled transaction
+    /// An event callback set fires, when a drag operation has been ended. This included also a canceled transaction
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.DropZone.Behavior)]
@@ -79,7 +80,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.DropZone.Disabled)]
-    public string DisabledClass { get; set; }
+    public string? DisabledClass { get; set; }
 
     [Parameter]
     [Category(CategoryTypes.DropZone.Sorting)]
@@ -93,7 +94,10 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
 
     private async Task DragStarted()
     {
-        if (Container == null) { return; }
+        if (Container is null)
+        {
+            return;
+        }
 
         _dragOperationIsInProgress = true;
         Container.StartTransaction(Item, ZoneIdentifier ?? string.Empty, Index, OnDroppedSucceeded, OnDroppedCanceled);
@@ -102,7 +106,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
 
     private async Task TouchStarted(TouchEventArgs e)
     {
-        if (Index == -1) return; //the -1 item shoudn't be ever moved.
+        if (Index == -1) return; //the -1 item shouldn't be ever moved.
         if (Disabled) return; //disabled items shouldn't be moved.
 
         _onTouchStartX = e.ChangedTouches[0].ClientX;
@@ -110,11 +114,15 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         _onTouchLastX = _onTouchStartX;
         _onTouchLastY = _onTouchStartY;
 
-        if (Container == null) { return; }
+        if (Container is null)
+        {
+            return;
+        }
 
         _dragOperationIsInProgress = true;
         await JsRuntime.InvokeVoidAsync("mudDragAndDrop.makeDropZonesNotRelative");
-        Container.StartTransaction(Item, ZoneIdentifier ?? string.Empty, Index, OnDroppedSucceeded, OnDroppedCanceled);
+        Container.StartTransaction(Item, ZoneIdentifier ?? string.Empty, Index, OnDroppedSucceeded,
+            OnDroppedCanceled);
         await OnDragStarted.InvokeAsync();
     }
 
@@ -136,10 +144,13 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
 
     private async Task DragEnded(DragEventArgs e)
     {
-        if (_dragOperationIsInProgress == true)
+        if (_dragOperationIsInProgress)
         {
             _dragOperationIsInProgress = false;
-            await Container?.CancelTransaction();
+            if (Container is not null)
+            {
+                await Container.CancelTransaction();
+            }
         }
         else
         {
@@ -160,66 +171,86 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         //Send to JS to move DOM element
         await JsRuntime.InvokeVoidAsync("mudDragAndDrop.moveItemByDifference", _id.ToString(), x, y);
 
-        if (Container == null || Container.TransactionInProgress() == false) { return; }
-
-        if (int.TryParse(await JsRuntime.InvokeAsync<string>("mudDragAndDrop.getDropIndexOnPosition", _onTouchLastX, _onTouchLastY, _id), out var dropIndex))
+        if (Container is not null && Container.TransactionInProgress())
         {
-            Container.UpdateTransactionIndex(dropIndex);
+            var dropIndexOnPositionString = await JsRuntime.InvokeAsync<string>("mudDragAndDrop.getDropIndexOnPosition", _onTouchLastX, _onTouchLastY, _id);
+            if (int.TryParse(dropIndexOnPositionString, out var dropIndex))
+            {
+                Container.UpdateTransactionIndex(dropIndex);
+            }
         }
+
         //JS.InvokeVoidAsync("draggableTouch");
     }
 
     private async Task TouchEnded(TouchEventArgs e)
     {
-        if (Index == -1 || Disabled) return;
+        if (Index == -1 || Disabled)
+        {
+            return;
+        }
 
-        if (_dragOperationIsInProgress == true)
+        if (_dragOperationIsInProgress)
         {
             _onTouchLastX = e.ChangedTouches[0].ClientX;
             _onTouchLastY = e.ChangedTouches[0].ClientY;
-            var dropZoneIdentifier = await JsRuntime.InvokeAsync<string>("mudDragAndDrop.getDropZoneIdentifierOnPosition", _onTouchLastX, _onTouchLastY);
+            var dropZoneIdentifier =
+                await JsRuntime.InvokeAsync<string>("mudDragAndDrop.getDropZoneIdentifierOnPosition", _onTouchLastX,
+                    _onTouchLastY);
 
-            var (context, isValidZone) = ItemCanBeDropped(dropZoneIdentifier);
+            var (_, isValidZone) = ItemCanBeDropped(dropZoneIdentifier);
             if (isValidZone)
             {
-                Container.UpdateTransactionZone(dropZoneIdentifier);
-                var dropZone = Container.GetDropZone(dropZoneIdentifier);
-                await dropZone.HandleDrop();
+                Container?.UpdateTransactionZone(dropZoneIdentifier);
+                var dropZone = Container?.GetDropZone(dropZoneIdentifier);
+                if (dropZone is not null)
+                {
+                    await dropZone.HandleDrop();
+                }
             }
             else
             {
                 _dragOperationIsInProgress = false;
-                await Container?.CancelTransaction();
-                
+                if (Container is not null)
+                {
+                    await Container.CancelTransaction();
+                }
+
                 StateHasChanged();
             }
         }
         //await JsRuntime.InvokeVoidAsync("mudDragAndDrop.makeDropZonesRelative");
     }
+
     /// <summary>
     /// This allows us to know if an item can be dropped on a given drop zone.
     /// </summary>
     /// <param name="identifier"></param>
     /// <returns></returns>
-    private (T, bool) ItemCanBeDropped(string identifier)
+    private (T?, bool) ItemCanBeDropped(string identifier)
     {
-        var dropZone = Container.GetDropZone(identifier);
-        if (dropZone is null || Container is null || Container.TransactionInProgress() == false)
+        var dropZone = Container?.GetDropZone(identifier);
+        if (dropZone is null || Container is null || !Container.TransactionInProgress())
         {
-            return (default(T), false);
+            return (default, false);
         }
 
         var item = Container.GetTransactionItem();
-        
 
         var result = true;
-        if (dropZone.CanDrop != null)
+        if (dropZone.CanDrop is not null)
         {
-            result = dropZone.CanDrop(item);
+            if (item is not null)
+            {
+                result = dropZone.CanDrop(item);
+            }
         }
-        else if (Container.CanDrop != null)
+        else if (Container.CanDrop is not null)
         {
-            result = Container.CanDrop(item, identifier);
+            if (item is not null)
+            {
+                result = Container.CanDrop(item, identifier);
+            }
         }
 
         return (item, result);
@@ -227,9 +258,10 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
 
     private void HandleDragEnter()
     {
-        if (Container == null || Container.TransactionInProgress() == false) { return; }
-        
-        Container.UpdateTransactionIndex(Index);
+        if (Container is not null && Container.TransactionInProgress())
+        {
+            Container.UpdateTransactionIndex(Index);
+        }
     }
 
     private void HandleDragLeave()
@@ -240,9 +272,8 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
 
     protected string Classname =>
     new CssBuilder("mud-drop-item")
-        .AddClass(DraggingClass, _dragOperationIsInProgress == true)
-        .AddClass(DisabledClass, Disabled == true)
+        .AddClass(DraggingClass, _dragOperationIsInProgress)
+        .AddClass(DisabledClass, Disabled)
         .AddClass(Class)
         .Build();
-
 }

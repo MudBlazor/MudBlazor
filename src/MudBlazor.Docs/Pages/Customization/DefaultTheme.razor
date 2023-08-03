@@ -132,15 +132,18 @@
                                         @if (Row.CSSVariable.Contains("default-family"))
                                         {
                                             string fontFamily = "";
-                                            foreach (string font in mudTheme.Typography.Default.FontFamily)
+                                            if (mudTheme.Typography.Default.FontFamily is not null)
                                             {
-                                                if (fontFamily == "")
+                                                foreach (string font in mudTheme.Typography.Default.FontFamily)
                                                 {
-                                                    fontFamily += font;
-                                                }
-                                                else
-                                                {
-                                                    fontFamily = fontFamily + ", " + font;
+                                                    if (fontFamily == "")
+                                                    {
+                                                        fontFamily += font;
+                                                    }
+                                                    else
+                                                    {
+                                                        fontFamily = fontFamily + ", " + font;
+                                                    }
                                                 }
                                             }
                                             @fontFamily
@@ -212,7 +215,9 @@
 
     private void LoadPalette()
     {
+#pragma warning disable CS0618
         foreach (var value in typeof(Palette).GetProperties())
+#pragma warning restore CS0618
         {
             var newprop = new ApiDefaultTheme()
             {

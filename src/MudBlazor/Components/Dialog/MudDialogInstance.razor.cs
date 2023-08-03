@@ -174,6 +174,7 @@ namespace MudBlazor
             DisableBackdropClick = SetDisableBackdropClick();
             CloseOnEscapeKey = SetCloseOnEscapeKey();
             Class = Classname;
+            BackgroundClassname = new CssBuilder("mud-overlay-dialog").AddClass(Options.ClassBackground).Build();
         }
 
         private string SetPosition()
@@ -244,6 +245,8 @@ namespace MudBlazor
                 .AddClass("mud-dialog-rtl", RightToLeft)
                 .AddClass(_dialog?.Class)
             .Build();
+
+        protected string BackgroundClassname { get; set; } = "mud-overlay-dialog";
 
         private bool SetHideHeader()
         {
@@ -317,10 +320,10 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public void ForceRender()
-        {
-            StateHasChanged();
-        }
+        [Obsolete($"Use {nameof(StateHasChanged)}. This method will be removed in v7.")]
+        public void ForceRender() => StateHasChanged();
+
+        public new void StateHasChanged() => base.StateHasChanged();
 
         /// <summary>
         /// Cancels all dialogs in dialog provider collection.

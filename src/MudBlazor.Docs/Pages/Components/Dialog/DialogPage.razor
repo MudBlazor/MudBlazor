@@ -101,6 +101,15 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Blurry Dialog">
+                <Description>Dialog background can be changed via <CodeInline>ClassBackground</CodeInline> dialog option.</Description>
+            </SectionHeader>
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogBlurryExample"), new CodeFile("Dialog.razor", "DialogBlurryExample_Dialog")})">
+                <DialogBlurryExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Inlining Dialog">
                 <Description>
                     You can inline <CodeInline>MudDialog</CodeInline> directly in another component which, of course, makes most sense for small dialogs that are not re-used somewhere else.

@@ -23,14 +23,14 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudCollapse>(Parameter("MaxHeight", 1600));
 
             _ = comp.Instance._state = CollapseState.Exiting;
-            await comp.InvokeAsync(() => comp.Instance.AnimationEnd());
+            await comp.InvokeAsync(() => comp.Instance.AnimationEndAsync());
             comp.WaitForAssertion(() => comp.Instance._height.Should().Be(0));
 
             //MaxHeight acceptes minus value?
             _ = comp.Instance._state = CollapseState.Entering;
 #pragma warning disable BL0005
             await comp.InvokeAsync(() => comp.Instance.MaxHeight = -1);
-            await comp.InvokeAsync(() => comp.Instance.AnimationEnd());
+            await comp.InvokeAsync(() => comp.Instance.AnimationEndAsync());
             await comp.InvokeAsync(() => comp.Instance.UpdateHeight());
             comp.WaitForAssertion(() => comp.Instance._height.Should().Be(-1));
         }

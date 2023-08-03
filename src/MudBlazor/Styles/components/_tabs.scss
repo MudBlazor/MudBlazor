@@ -171,13 +171,13 @@
 
     &.mud-tab-slider-horizontal {
         height: 2px;
-        left: 0;
         bottom: 0;
         transition: left .3s cubic-bezier(.64,.09,.08,1);
         will-change: left;
 
         &.mud-tab-slider-horizontal-reverse {
-            top: 0px;
+            top: 0;
+            bottom: unset;
         }
     }
 

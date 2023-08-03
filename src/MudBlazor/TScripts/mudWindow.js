@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 class MudWindow {
+
     copyToClipboard (text) {
         navigator.clipboard.writeText(text);
     }

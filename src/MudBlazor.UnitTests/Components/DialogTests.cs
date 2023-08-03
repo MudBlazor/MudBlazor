@@ -856,6 +856,28 @@ namespace MudBlazor.UnitTests.Components
             Func<IDialogReference> createMock = Moq.Mock.Of<IDialogReference>;
             createMock.Should().NotThrow();
         }
+
+        [Test]
+        public async Task AsyncDialogParametersGenericShouldPassParameters()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+
+            var parameters = new DialogParameters<DialogWithParameters>
+            {
+                { x => x.TestValue, "test" },
+                { x => x.Color_Test, Color.Error }
+            };
+
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithParameters>(string.Empty, parameters));
+            dialogReference.Should().NotBe(null);
+
+            var textField = comp.FindComponent<MudInput<string>>().Instance;
+            textField.Text.Should().Be("test");
+        }
     }
 
     internal class CustomDialogService : DialogService

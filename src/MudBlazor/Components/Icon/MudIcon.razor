@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-@if (!string.IsNullOrEmpty(Icon) && Icon.Trim().StartsWith(("<")))
+@if (!string.IsNullOrEmpty(Icon) && Icon.Trim().StartsWith("<"))
 {
     <svg @attributes="UserAttributes" class="@Classname" style="@Style" focusable="false" viewBox="@ViewBox" aria-hidden="true">
         @if (Title != null)
@@ -9,7 +9,7 @@
             <title>@Title</title>
         }
 
-        @((MarkupString)@Icon)
+        @((MarkupString)Icon)
     </svg>
 }
 else

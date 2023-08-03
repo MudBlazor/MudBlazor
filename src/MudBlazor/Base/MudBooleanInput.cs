@@ -4,16 +4,22 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public class MudBooleanInput<T> : MudFormComponent<T, bool?>
+#nullable enable
+    public class MudBooleanInput<T> : MudFormComponent<T?, bool?>
     {
-        public MudBooleanInput() : base(new BoolConverter<T>()) { }
+        public MudBooleanInput() : base(new BoolConverter<T?>()) { }
 
         /// <summary>
-        /// If true, the input will be disabled.
+        /// If true, the input element will be disabled.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
+
+        [CascadingParameter(Name = "ParentDisabled")]
+        private bool ParentDisabled { get; set; }
+
+        protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         /// <summary>
         /// If true, the input will be read-only.
@@ -22,12 +28,17 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
 
+        [CascadingParameter(Name = "ParentReadOnly")]
+        private bool ParentReadOnly { get; set; }
+
+        protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
+
         /// <summary>
         /// The state of the component
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public T Checked
+        public T? Checked
         {
             get => _value;
             set => _value = value;
@@ -43,7 +54,8 @@ namespace MudBlazor
         /// <summary>
         /// Fired when Checked changes.
         /// </summary>
-        [Parameter] public EventCallback<T> CheckedChanged { get; set; }
+        [Parameter]
+        public EventCallback<T?> CheckedChanged { get; set; }
 
         protected bool? BoolValue => Converter.Set(Checked);
 
@@ -58,20 +70,20 @@ namespace MudBlazor
             return SetCheckedAsync(Converter.Get(value));
         }
 
-        protected async Task SetCheckedAsync(T value)
+        protected async Task SetCheckedAsync(T? value)
         {
-            if (Disabled)
+            if (GetDisabledState())
                 return;
             if (!EqualityComparer<T>.Default.Equals(Checked, value))
             {
                 Checked = value;
                 await CheckedChanged.InvokeAsync(value);
-                BeginValidate();
+                await BeginValidateAsync();
                 FieldChanged(Checked);
             }
         }
 
-        protected override bool SetConverter(Converter<T, bool?> value)
+        protected override bool SetConverter(Converter<T?, bool?> value)
         {
             var changed = base.SetConverter(value);
             if (changed)
@@ -83,7 +95,7 @@ namespace MudBlazor
         /// <summary>
         /// A value is required, so if not checked we return ERROR.
         /// </summary>
-        protected override bool HasValue(T value)
+        protected override bool HasValue(T? value)
         {
             return (BoolValue == true);
         }

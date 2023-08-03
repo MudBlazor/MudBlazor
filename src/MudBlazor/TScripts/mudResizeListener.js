@@ -11,6 +11,7 @@ class MudResizeListener {
         this.dotnet = undefined;
         this.breakpoint = -1;
         this.id = id;
+        this.handleResize = this.throttleResizeHandler.bind(this);
     }
 
     listenForResize(dotnetRef, options) {
@@ -18,12 +19,12 @@ class MudResizeListener {
             this.options = options;
             return;
         }
-        //this.logger("[MudBlazor] listenForResize:", { options, dotnetRef });
+
         this.options = options;
         this.dotnet = dotnetRef;
         this.logger = options.enableLogging ? console.log : (message) => { };
         this.logger(`[MudBlazor] Reporting resize events at rate of: ${(this.options || {}).reportRate || 100}ms`);
-        window.addEventListener("resize", this.throttleResizeHandler.bind(this), false);
+        window.addEventListener("resize", this.handleResize, false);
         if (!this.options.suppressInitEvent) {
             this.resizeHandler();
         }
@@ -32,7 +33,6 @@ class MudResizeListener {
 
     throttleResizeHandler() {
         clearTimeout(this.throttleResizeHandlerId);
-        //console.log("[MudBlazor] throttleResizeHandler ", {options:this.options});
         this.throttleResizeHandlerId = window.setTimeout(this.resizeHandler.bind(this), ((this.options || {}).reportRate || 100));
     }
 
@@ -46,7 +46,6 @@ class MudResizeListener {
         }
 
         try {
-            //console.log("[MudBlazor] RaiseOnResized invoked");
             if (this.id) {
                 this.dotnet.invokeMethodAsync('RaiseOnResized',
                     {
@@ -65,7 +64,6 @@ class MudResizeListener {
                     this.getBreakpoint(window.innerWidth));
             }
 
-            //this.logger("[MudBlazor] RaiseOnResized invoked");
         } catch (error) {
             this.logger("[MudBlazor] Error in resizeHandler:", { error });
         }
@@ -73,18 +71,15 @@ class MudResizeListener {
 
     cancelListener() {
         this.dotnet = undefined;
-        //console.log("[MudBlazor] cancelListener");
-        window.removeEventListener("resize", this.throttleResizeHandler);
+        window.removeEventListener("resize", this.handleResize);
     }
 
     matchMedia(query) {
         let m = window.matchMedia(query).matches;
-        //this.logger(`[MudBlazor] matchMedia "${query}": ${m}`);
         return m;
     }
 
     getBrowserWindowSize() {
-        //this.logger("[MudBlazor] getBrowserWindowSize");
         return {
             height: window.innerHeight,
             width: window.innerWidth
@@ -92,7 +87,9 @@ class MudResizeListener {
     }
 
     getBreakpoint(width) {
-        if (width >= this.options.breakpointDefinitions["Xl"])
+        if (width >= this.options.breakpointDefinitions["Xxl"])
+            return 5;
+        else if (width >= this.options.breakpointDefinitions["Xl"])
             return 4;
         else if (width >= this.options.breakpointDefinitions["Lg"])
             return 3;

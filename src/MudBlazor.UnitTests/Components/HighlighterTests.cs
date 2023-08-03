@@ -238,5 +238,28 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParametersAndRender(text, highlightedText, caseInSensitive);
             comp.MarkupMatches("<mark>This</mark> is <mark>this</mark>");
         }
+
+        /// <summary>
+        /// Check RenderFragment output using Markup property 
+        /// </summary>
+        [Test]
+        public void MudHighlighterMarkupRenderFragmentTest()
+        {
+            var searchFor = "mud";
+            var markupText = $"<i>MudBlazor</i>";
+            var rawOutput = "&lt;i&gt;<mark>Mud</mark>Blazor&lt;/i&gt;";
+            var formattedOutput = "<i><mark>Mud</mark>Blazor</i>";
+
+            var text = Parameter(nameof(MudHighlighter.Text), markupText);
+            var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), searchFor);
+
+            var textAsMarkupFalse = Parameter(nameof(MudHighlighter.Markup), false);
+            var comp = Context.RenderComponent<MudHighlighter>(text, highlightedText, textAsMarkupFalse);
+            comp.MarkupMatches(rawOutput);
+
+            var textAsMarkupTrue = Parameter(nameof(MudHighlighter.Markup), true);
+            comp = Context.RenderComponent<MudHighlighter>(text, highlightedText, textAsMarkupTrue);
+            comp.MarkupMatches(formattedOutput);
+        }
     }
 }

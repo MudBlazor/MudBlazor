@@ -1,0 +1,61 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack Row>
+    <MudCard>
+        <MudCardContent>
+            <MudText Align="Align.Center" Class="mb-n4">ReadOnly Form</MudText>
+            <MudForm ReadOnly="ReadOnly">
+                <MudTextField T="string" Label="Text" />
+                <MudNumericField T="int" Label="Number" />
+                <MudDatePicker Label="Date" />
+                <MudSwitch T="bool" Label="Switch" />
+                <MudCheckBox T="bool" Label="CheckBox" />
+                <MudRadioGroup T="string">
+                    <MudRadio Option="@("1")">1</MudRadio>
+                    <MudRadio Option="@("2")">2</MudRadio>
+                </MudRadioGroup>
+                <MudForm ReadOnly="NestedReadOnly">
+                    <MudText Align="Align.Center" Class="mb-n4 mt-2">Nested Form</MudText>
+                    <MudTextField T="string" Label="Nested Text" />
+                    <MudNumericField T="int" Label="Nested Number" />
+                </MudForm>
+            </MudForm>
+        </MudCardContent>
+        <MudCardActions>
+            <MudCheckBox @bind-Checked="ReadOnly">ReadOnly</MudCheckBox>
+            <MudCheckBox @bind-Checked="NestedReadOnly">Nested ReadOnly</MudCheckBox>
+        </MudCardActions>
+    </MudCard>
+    <MudCard>
+        <MudCardContent>
+            <MudText Align="Align.Center" Class="mb-n4">Disabled Form</MudText>
+            <MudForm Disabled="Disabled">
+                <MudTextField T="string" Label="Text" />
+                <MudNumericField T="int" Label="Number" />
+                <MudDatePicker Label="Date" />
+                <MudSwitch T="bool" Label="Switch" />
+                <MudCheckBox T="bool" Label="CheckBox" />
+                <MudRadioGroup T="string">
+                    <MudRadio Option="@("1")">1</MudRadio>
+                    <MudRadio Option="@("2")">2</MudRadio>
+                </MudRadioGroup>
+                <MudForm Disabled="NestedDisabled">
+                    <MudText Align="Align.Center" Class="mb-n4 mt-2">Nested Form</MudText>
+                    <MudTextField T="string" Label="Nested Text" />
+                    <MudNumericField T="int" Label="Nested Number" />
+                </MudForm>
+            </MudForm>
+        </MudCardContent>
+        <MudCardActions>
+            <MudCheckBox @bind-Checked="Disabled">Disabled</MudCheckBox>
+            <MudCheckBox @bind-Checked="NestedDisabled">Nested Disabled</MudCheckBox>
+        </MudCardActions>
+    </MudCard>
+</MudStack>
+
+@code {
+    bool ReadOnly = true;
+    bool NestedReadOnly;
+    bool Disabled = true;
+    bool NestedDisabled;
+}
