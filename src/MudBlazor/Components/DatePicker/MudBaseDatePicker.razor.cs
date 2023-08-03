@@ -10,6 +10,7 @@ namespace MudBlazor
 {
     public abstract partial class MudBaseDatePicker : MudPicker<DateTime?>
     {
+        private readonly string _mudPickerCalendarContentElementId;
         private bool _dateFormatTouched;
 
         protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>
@@ -19,9 +20,12 @@ namespace MudBlazor
         })
         {
             AdornmentAriaLabel = "Open Date Picker";
+            _mudPickerCalendarContentElementId = Guid.NewGuid().ToString();
         }
 
         [Inject] protected IScrollManager ScrollManager { get; set; }
+        
+        [Inject] protected IMudDatePickerService Service { get; set; }
 
         /// <summary>
         /// Max selectable date.
@@ -615,5 +619,10 @@ namespace MudBlazor
         /// <param name="year">Gregorian year</param>
         /// <returns>Year according to culture</returns>
         protected abstract int GetCalendarYear(int year);
+
+        private ValueTask HandleMouseoverOnPickerCalendarDayButton(int tempId)
+        {
+            return this.Service.HandleMouseoverOnPickerCalendarDayButton(_mudPickerCalendarContentElementId, tempId);
+        }
     }
 }
