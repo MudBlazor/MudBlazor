@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
+using MudBlazor.Interop;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
@@ -434,10 +435,10 @@ public class ServiceCollectionExtensionsTests
         // Act
         services.AddMudDatePicker();
         var serviceProvider = services.BuildServiceProvider();
-        var mudDatePickerService = serviceProvider.GetService<IMudDatePickerService>();
+        var datePickerInterop = serviceProvider.GetService<DatePickerInterop>();
 
         // Assert
-        Assert.IsNotNull(mudDatePickerService);
+        Assert.IsNotNull(datePickerInterop);
     }
 
     [Test]

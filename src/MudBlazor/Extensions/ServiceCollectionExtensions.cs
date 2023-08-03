@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
@@ -361,7 +362,7 @@ namespace MudBlazor.Services
 
         public static IServiceCollection AddMudDatePicker(this IServiceCollection services)
         {
-            services.TryAddTransient<IMudDatePickerService, MudDatePickerService>();
+            services.TryAddTransient<DatePickerInterop>();
 
             return services;
         }

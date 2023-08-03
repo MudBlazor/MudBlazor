@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
+using MudBlazor.Interop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -25,7 +26,7 @@ namespace MudBlazor
 
         [Inject] protected IScrollManager ScrollManager { get; set; }
         
-        [Inject] protected IMudDatePickerService Service { get; set; }
+        [Inject] private DatePickerInterop DatePickerInterop { get; set; }
 
         /// <summary>
         /// Max selectable date.
@@ -622,7 +623,7 @@ namespace MudBlazor
 
         private ValueTask HandleMouseoverOnPickerCalendarDayButton(int tempId)
         {
-            return this.Service.HandleMouseoverOnPickerCalendarDayButton(_mudPickerCalendarContentElementId, tempId);
+            return this.DatePickerInterop.HandleMouseoverOnPickerCalendarDayButton(_mudPickerCalendarContentElementId, tempId);
         }
     }
 }

@@ -4,6 +4,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Services;
+using MudBlazor.Interop;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
@@ -47,7 +48,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IPopoverService, MockPopoverServiceV2>();
             ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddTransient<InternalMudLocalizer>();
-            ctx.Services.AddTransient<IMudDatePickerService, MudDatePickerService>();
+            ctx.Services.AddTransient<DatePickerInterop>();
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>
                 new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });
