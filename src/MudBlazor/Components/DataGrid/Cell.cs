@@ -97,14 +97,9 @@ namespace MudBlazor
                 case JsonElement element when _column.dataType == typeof(string):
                     _valueString = element.GetString();
                     return;
-                case JsonElement element:
-                    {
-                        if (_column.isNumber)
-                        {
-                            _valueNumber = element.GetDouble();
-                        }
-                        return;
-                    }
+                case JsonElement element when _column.isNumber:
+                    _valueNumber = element.GetDouble();
+                    return;
                 default:
                     {
                         if (_column.dataType == typeof(string))

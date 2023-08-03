@@ -207,24 +207,26 @@ namespace MudBlazor
         {
             get
             {
-                if (typeof(T) != typeof(IDictionary<string, object>))
-                {
-                    return dataType;
-                }
-
                 // Handle case where T is IDictionary.
-                // We need to get the actual type here so we need to look at actual data.
-                // get the first item where we have a non-null value in the field to be filtered.
-                var first = DataGrid.Items.FirstOrDefault(x => ((IDictionary<string, object>)x)[PropertyName] != null);
-
-                if (first != null)
+                if (typeof(T) == typeof(IDictionary<string, object>))
                 {
-                    return ((IDictionary<string, object>)first)[PropertyName].GetType();
-                }
+                    // We need to get the actual type here so we need to look at actual data.
+                    // get the first item where we have a non-null value in the field to be filtered.
+                    var first = DataGrid.Items.FirstOrDefault(x => ((IDictionary<string, object>)x)[PropertyName] != null);
                     
-                return typeof(object);
-
+                    if (first != null)
+                    {
+                        return ((IDictionary<string, object>)first)[PropertyName].GetType();
+                    }
+                    else
+                    {
+                        return typeof(object);
+                    }
+                }
+                
+                return dataType;
             }
+
         }
 
         internal bool isNumber
@@ -291,8 +293,9 @@ namespace MudBlazor
 
             if (groupable && Grouping)
                 grouping = Grouping;
-
-            DataGrid?.AddColumn(this);
+            
+            if(DataGrid != null)
+                DataGrid.AddColumn(this);
 
             // Add the HeaderContext
             headerContext = new HeaderContext<T>(DataGrid);
