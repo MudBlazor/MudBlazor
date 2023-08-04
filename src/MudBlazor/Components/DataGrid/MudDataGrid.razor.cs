@@ -469,6 +469,7 @@ namespace MudBlazor
         /// You should supply either <see cref="Items"/> or <see cref="ItemsProvider"/>, but not both.
         /// </summary>
         [Parameter] public GridItemsProvider<T> ItemsProvider { get; set; }
+
         /// <summary>
         /// Show a loading animation, if true.
         /// </summary>

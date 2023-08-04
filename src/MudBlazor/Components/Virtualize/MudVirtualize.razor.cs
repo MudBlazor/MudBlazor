@@ -51,25 +51,31 @@ namespace MudBlazor
 
         private bool _refreshVirtualContainer;
         [Parameter]
-        public bool RefreshVirtualContainer 
-        {   get =>_refreshVirtualContainer; 
-            set {
+        public bool RefreshVirtualContainer
+        {
+            get => _refreshVirtualContainer;
+            set
+            {
                 if (value == _refreshVirtualContainer)
-                    return;
-                _refreshVirtualContainer = value;
-                if(_refreshVirtualContainer)
                 {
-                    InvokeAsync(RefreshAsync);
+                    return;
+                }
+
+                _refreshVirtualContainer = value;
+                if (_refreshVirtualContainer)
+                {
+                    _ = InvokeAsync(RefreshAsync);
                     _refreshVirtualContainer = false;
                 }
-                if(RefreshVirtualContainerChanged.HasDelegate)
+
+                if (RefreshVirtualContainerChanged.HasDelegate)
                 {
-                    RefreshVirtualContainerChanged.InvokeAsync(_refreshVirtualContainer);
+                    _ = RefreshVirtualContainerChanged.InvokeAsync(_refreshVirtualContainer);
                 }
-            } 
+            }
         }
 
-        
+
         [Parameter]
         public EventCallback<bool> RefreshVirtualContainerChanged { get; set; }
 

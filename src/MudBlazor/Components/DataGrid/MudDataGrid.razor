@@ -14,7 +14,7 @@
 
 <CascadingValue IsFixed="true" Value="this">
     <div @attributes="UserAttributes" class="@_classname" style="@_style">
-        @if (Items != null || ServerData != null || VirtualItemsProvider!=null )
+        @if (Items != null || ServerData != null || VirtualItemsProvider != null)
         {
             @if (ToolBarContent != null)
             {
@@ -124,7 +124,7 @@
                         }
 
                         @{var resolvedPageItems = CurrentPageItems.ToList();}
-                        @if (resolvedPageItems is { Count: > 0 } || VirtualItemsProvider!=null)
+                        @if (resolvedPageItems is { Count: > 0 } || VirtualItemsProvider != null)
                         {
                             if (GroupedColumn != null)
                             {
@@ -188,7 +188,7 @@
                             else
                             {
                                 var rowIndex = 0;
-                                        <MudVirtualize @bind-RefreshVirtualContainer="@RefreshVirtualContainer" IsEnabled="@Virtualize" ItemsProvider="@VirtualItemsProvider" Items="@resolvedPageItems" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
+                                <MudVirtualize @bind-RefreshVirtualContainer="@RefreshVirtualContainer" IsEnabled="@Virtualize" ItemsProvider="@VirtualItemsProvider" Items="@resolvedPageItems" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
                                     @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                     @{ var tmpRowIndex = rowIndex; }

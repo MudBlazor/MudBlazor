@@ -13,7 +13,6 @@ namespace MudBlazor
     {
         public GridState()
         {
-            
         }
 
         public GridState(GridState<T> gridState)
@@ -32,12 +31,12 @@ namespace MudBlazor
         public ICollection<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
     }
 
-    
+
     public class GridStateVirtualize<T> : GridState<T>
     {
-        public GridStateVirtualize(GridState<T> gridState):base(gridState)
+        public GridStateVirtualize(GridState<T> gridState) : base(gridState)
         {
-            
+
         }
         /// <summary>
         /// The zero-based index of the first item to be supplied.
