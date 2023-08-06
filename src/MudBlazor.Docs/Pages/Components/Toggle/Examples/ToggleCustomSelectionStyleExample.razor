@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack>
+    <MudToggleGroup T="string" Color="Color.Primary" SelectedClass="@_style">
+        <MudToggleItem T="string" Value="@("Item One")" Text="Item One" />
+        <MudToggleItem T="string" Value="@("Item Two")" Text="Item Two" />
+        <MudToggleItem T="string" Value="@("Item Three")" Text="Item Three" />
+    </MudToggleGroup>
+
+    <MudSelect T="string" @bind-Value="_style" Variant="Variant.Outlined">
+        <MudSelectItem T="string" Value="@("mud-theme-primary")" />
+        <MudSelectItem T="string" Value="@("mud-theme-secondary")" />
+        <MudSelectItem T="string" Value="@("custom-gradient")" />
+        <MudSelectItem T="string" Value="@("custom-striped")" />
+    </MudSelect>
+</MudStack>
+
+<style>
+    .custom-gradient {
+        background-image: linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12);
+        color: white !important;
+    }
+
+    .custom-striped {
+        background: repeating-linear-gradient( 45deg, #606dbc, #606dbc 10px, #465298 10px, #465298 20px );
+        color: white !important;
+    }
+</style>
+
+@code {
+    string _style = "mud-theme-primary";
+}

@@ -12,8 +12,8 @@ namespace MudBlazor
     public partial class MudToggleItem<T> : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-toggle-item")
-            .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", _selected && string.IsNullOrEmpty(SelectedClass))
-            .AddClass(SelectedClass, _selected && string.IsNullOrEmpty(SelectedClass) == false)
+            .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", _selected && string.IsNullOrEmpty(Parent?.SelectedClass))
+            .AddClass(Parent?.SelectedClass, _selected && string.IsNullOrEmpty(Parent?.SelectedClass) == false)
             .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
             .AddClass("mud-ripple", Parent?.DisableRipple == false)
             .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
@@ -30,14 +30,14 @@ namespace MudBlazor
             .Build();
 
         protected string TextClassname => new CssBuilder()
-            .AddClass("me-2", _selected == true && string.IsNullOrEmpty(Text) == false)
+            .AddClass("me-2", _selected == true && IsEmpty() == false && Parent?.ShowSelectedIcon == true)
             .AddClass(Parent?.TextClass)
             .Build();
 
         protected string Stylename => new StyleBuilder()
-            .AddStyle("min-width", $"{Parent?.GetItemWidth(this).ToInvariantString()}%", Parent?.Vertical == false && string.IsNullOrEmpty(Text) == false)
-            .AddStyle("width", "fit-content", Parent?.Vertical == true || string.IsNullOrEmpty(Text))
-            .AddStyle("height", "fit-content", Parent?.Vertical == true || string.IsNullOrEmpty(Text))
+            .AddStyle("min-width", $"{Parent?.GetItemWidth(this).ToInvariantString()}%", Parent?.Vertical == false && IsEmpty() == false)
+            .AddStyle("width", "fit-content", Parent?.Vertical == true || IsEmpty())
+            .AddStyle("height", "fit-content", Parent?.Vertical == true || IsEmpty())
             .AddStyle(Style)
             .Build();
 
@@ -53,9 +53,6 @@ namespace MudBlazor
         public RenderFragment ChildContent { get; set; }
 
         [Parameter]
-        public string SelectedClass { get; set; }
-
-        [Parameter]
         public string Icon { get; set; } = Icons.Material.Filled.Done;
 
         [Parameter]
@@ -65,6 +62,11 @@ namespace MudBlazor
         {
             base.OnInitialized();
             Parent.Register(this);
+        }
+
+        protected internal void ForceRender()
+        {
+            StateHasChanged();
         }
 
         public void SetSelected(bool selected)
@@ -79,5 +81,15 @@ namespace MudBlazor
         {
             await Parent.ToggleItem(this);
         }
+
+        private bool IsEmpty()
+        {
+            if (string.IsNullOrEmpty(Text) && Value == null)
+            {
+                return true;
+            }
+            return false;
+        }
+
     }
 }

@@ -27,6 +27,9 @@ namespace MudBlazor
         public EventCallback<IEnumerable<T>> SelectedValuesChanged { get; set; }
 
         [Parameter]
+        public string SelectedClass { get; set; }
+
+        [Parameter]
         public string TextClass { get; set; }
 
         [Parameter]
@@ -67,6 +70,60 @@ namespace MudBlazor
             }
 
             _items.Add(item);
+        }
+
+        T _oldValue;
+        IEnumerable<T> _oldValues;
+        Color _oldColor;
+        string _oldSelectedClass;
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            if (((_oldValue == null && Value != null) || (_oldValue != null && Value == null) || (_oldValue != null && Value.Equals(_oldValue)) == false) && MultiSelection == false)
+            {
+                DeselectAllItems();
+                if (Value != null)
+                {
+                    _items.FirstOrDefault(x => x.Value.Equals(Value))?.SetSelected(true);
+                }
+                _oldValue = Value;
+            }
+
+            if (((_oldValues == null && SelectedValues != null) || (_oldValues != null && SelectedValues.Equals(_oldValues)) == false) && MultiSelection == true)
+            {
+                DeselectAllItems();
+                if (SelectedValues != null)
+                {
+                    _items.Where(x => SelectedValues.Contains(x.Value)).ToList().ForEach(x => x.SetSelected(true));
+                }
+                _oldValues = SelectedValues;
+            }
+        }
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            base.OnAfterRender(firstRender);
+            if (firstRender)
+            {
+                if (Value != null && MultiSelection == false)
+                {
+                    _items.FirstOrDefault(x => x.Value.Equals(Value))?.SetSelected(true);
+                }
+
+                if (SelectedValues != null && MultiSelection == true)
+                {
+                    _items.Where(x => SelectedValues.Contains(x.Value)).ToList().ForEach(x => x.SetSelected(true));
+                }
+
+                StateHasChanged();
+            }
+
+            if (Color != _oldColor || SelectedClass != _oldSelectedClass)
+            {
+                _oldColor = Color;
+                _oldSelectedClass = SelectedClass;
+                ForceRender();
+            }
         }
 
         protected internal async Task ToggleItem(MudToggleItem<T> item)
@@ -122,6 +179,12 @@ namespace MudBlazor
         protected void DeselectAllItems()
         {
             _items.ForEach(x => x.SetSelected(false));
+        }
+
+        protected void ForceRender()
+        {
+            _items.ForEach(x => x.ForceRender());
+            StateHasChanged();
         }
 
         protected internal IEnumerable<MudToggleItem<T>> GetItems() => _items;

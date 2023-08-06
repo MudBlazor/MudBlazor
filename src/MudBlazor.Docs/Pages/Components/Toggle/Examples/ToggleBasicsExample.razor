@@ -3,9 +3,9 @@
 <MudStack>
     <MudText>Text Based</MudText>
     <MudToggleGroup T="string" Color="Color.Primary">
-        <MudToggleItem T="string" Text="Item One" />
-        <MudToggleItem T="string" Text="Item Two" />
-        <MudToggleItem T="string" Text="Item Three" />
+        <MudToggleItem T="string" Value="@("Item One")" Text="Item One" />
+        <MudToggleItem T="string" Value="@("Item Two")" Text="Item Two" />
+        <MudToggleItem T="string" Value="@("Item Three")" Text="Item Three" />
     </MudToggleGroup>
 
     <MudToggleGroup T="string" Color="Color.Primary" Dense="true">
@@ -20,10 +20,10 @@
         <MudToggleItem T="string" Text="Rounded Item 3" />
     </MudToggleGroup>
 
-    <MudToggleGroup T="string" Color="Color.Primary" ShowSelectedIcon="false">
-        <MudToggleItem T="string" Text="No-Tickmark Item 1" />
-        <MudToggleItem T="string" Text="No-Tickmark Item 2" />
-        <MudToggleItem T="string" Text="No-Tickmark Item 3" />
+    <MudToggleGroup T="int?" Color="Color.Primary" ShowSelectedIcon="false">
+        <MudToggleItem T="int?" Value="1" Text="No-Tickmark 1" />
+        <MudToggleItem T="int?" Value="2" Text="No-Tickmark 2" />
+        <MudToggleItem T="int?" Value="3" Text="No-Tickmark 3" />
     </MudToggleGroup>
 
     <MudText Class="mt-4">Icon Based</MudText>
@@ -53,3 +53,8 @@
         </MudToggleGroup>
     </div>
 </MudStack>
+
+@code {
+    string _value = "Item Two";
+    IEnumerable<string> _values = new List<string>() { "Item One", "Item Three" };
+}
