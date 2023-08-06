@@ -3,7 +3,7 @@
 @typeparam T
 
 <CascadingValue Value="this" IsFixed="true">
-    <MudStack Class="@Class" Style="@Style" Row="!Vertical" Spacing="@Spacing">
+    <MudStack @attributes="UserAttributes" Class="@Class" Style="@Style" Row="!Vertical" Spacing="@Spacing">
         @ChildContent
     </MudStack>
 </CascadingValue>

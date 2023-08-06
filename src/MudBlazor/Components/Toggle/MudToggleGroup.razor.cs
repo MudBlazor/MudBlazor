@@ -15,51 +15,67 @@ namespace MudBlazor
         List<MudToggleItem<T>> _items = new();
 
         [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
         public T Value { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
         public EventCallback<T> ValueChanged { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
         public IEnumerable<T> SelectedValues { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
         public EventCallback<IEnumerable<T>> SelectedValuesChanged { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
         public string SelectedClass { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
         public string TextClass { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
         public bool Vertical { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
         public bool Rounded { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
         public bool DisableRipple { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
         public bool Dense { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
         public bool MultiSelection { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
         public bool ToggleSelection { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
         public bool ShowSelectedIcon { get; set; } = true;
 
         [Parameter]
-        public Color Color { get; set; } = Color.Default;
+        [Category(CategoryTypes.List.Appearance)]
+        public Color Color { get; set; } = Color.Primary;
 
         [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
         public int Spacing { get; set; } = 0;
 
         [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
         public RenderFragment ChildContent { get; set; }
 
         protected internal void Register(MudToggleItem<T> item)

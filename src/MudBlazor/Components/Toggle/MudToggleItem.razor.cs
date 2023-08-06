@@ -47,21 +47,25 @@ namespace MudBlazor
         public MudToggleGroup<T> Parent { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
         public T Value { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
         public RenderFragment ChildContent { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
         public string Icon { get; set; } = Icons.Material.Filled.Done;
 
         [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
         public string Text { get; set; }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            Parent.Register(this);
+            Parent?.Register(this);
         }
 
         protected internal void ForceRender()
