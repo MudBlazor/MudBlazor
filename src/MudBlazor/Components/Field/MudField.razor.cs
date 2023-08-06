@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     //TODO Maybe can inherit from MudBaseInput?
     public partial class MudField : MudComponentBase
     {
@@ -45,7 +45,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Data)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         ///  Will adjust vertical spacing. 
@@ -66,14 +66,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Validation)]
-        public string ErrorText { get; set; }
+        public string? ErrorText { get; set; }
 
         /// <summary>
         /// The HelperText will be displayed below the text field.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Behavior)]
-        public string HelperText { get; set; }
+        public string? HelperText { get; set; }
 
         /// <summary>
         /// If true, the field will take up the full width of its container.
@@ -87,7 +87,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Behavior)]
-        public string Label { get; set; }
+        public string? Label { get; set; }
 
         /// <summary>
         /// Variant can be Text, Filled or Outlined.
@@ -108,14 +108,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Behavior)]
-        public string AdornmentIcon { get; set; }
+        public string? AdornmentIcon { get; set; }
 
         /// <summary>
         /// Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Behavior)]
-        public string AdornmentText { get; set; }
+        public string? AdornmentText { get; set; }
 
         /// <summary>
         /// The Adornment if used. By default, it is set to None.
@@ -141,7 +141,8 @@ namespace MudBlazor
         /// <summary>
         /// Button click event if set and Adornment used.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
 
         /// <summary>
         /// If true, the inner contents padding is removed.

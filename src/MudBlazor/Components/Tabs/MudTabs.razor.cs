@@ -25,8 +25,8 @@ namespace MudBlazor
         private bool _showScrollButtons;
         private bool _disableSliderAnimation;
         private ElementReference _tabsContentSize;
-        private double _size;
-        private double _position;
+        private double _sliderSize;
+        private double _sliderPosition;
         private double _toolbarContentSize;
         private double _allTabsSize;
         private double _scrollPosition;
@@ -52,14 +52,14 @@ namespace MudBlazor
         public bool Rounded { get; set; }
 
         /// <summary>
-        /// If true, sets a border between the content and the toolbar depending on the position.
+        /// If true, sets a border between the content and the tabHeader depending on the position.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool Border { get; set; }
 
         /// <summary>
-        /// If true, toolbar will be outlined.
+        /// If true, tabHeader will be outlined.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -157,7 +157,7 @@ namespace MudBlazor
         public int Elevation { set; get; } = 0;
 
         /// <summary>
-        /// If true, will apply elevation, rounded, outlined effects to the whole tab component instead of just toolbar.
+        /// If true, will apply elevation, rounded, outlined effects to the whole tab component instead of just tabHeader.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -185,7 +185,7 @@ namespace MudBlazor
         public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// This fragment is placed between toolbar and panels. 
+        /// This fragment is placed between tabHeader and panels. 
         /// It can be used to display additional content like an address line in a browser.
         /// The active tab will be the content of this RenderFragement
         /// </summary>
@@ -199,6 +199,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string TabPanelClass { get; set; }
+
+        /// <summary>
+        /// Custom class/classes for TabHeader
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public string TabHeaderClass { get; set; }
 
         /// <summary>
         /// Custom class/classes for Selected Content Panel
@@ -353,7 +360,7 @@ namespace MudBlazor
         internal void AddPanel(MudTabPanel tabPanel)
         {
             _panels.Add(tabPanel);
-            if (_panels.Count == 1)
+            if (_panels.Count == _activePanelIndex + 1 || _activePanelIndex == -1 && _panels.Count == 1)
                 ActivePanel = tabPanel;
             StateHasChanged();
         }
@@ -463,6 +470,7 @@ namespace MudBlazor
             .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border)
             .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
             .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0)
+            .AddClass(TabHeaderClass)
             .Build();
 
         protected string WrapperClassnames =>
@@ -499,19 +507,19 @@ namespace MudBlazor
 
         protected string SliderStyle => RightToLeft ?
             new StyleBuilder()
-            .AddStyle("width", _size.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("right", _position.ToPx(), Position is Position.Top or Position.Bottom)
+            .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
+            .AddStyle("right", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
             .AddStyle("transition", _disableSliderAnimation ? "none" : "right .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
             .AddStyle("transition", _disableSliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
-            .AddStyle("height", _size.ToPx(), IsVerticalTabs())
-            .AddStyle("top", _position.ToPx(), IsVerticalTabs())
+            .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
+            .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
             .Build() : new StyleBuilder()
-            .AddStyle("width", _size.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("left", _position.ToPx(), Position is Position.Top or Position.Bottom)
+            .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
+            .AddStyle("left", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
             .AddStyle("transition", _disableSliderAnimation ? "none" : "left .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
             .AddStyle("transition", _disableSliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
-            .AddStyle("height", _size.ToPx(), IsVerticalTabs())
-            .AddStyle("top", _position.ToPx(), IsVerticalTabs())
+            .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
+            .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
             .Build();
 
         private bool IsVerticalTabs()
@@ -590,9 +598,12 @@ namespace MudBlazor
         {
             if (ActivePanel == null) { return; }
 
-            _position = GetLengthOfPanelItems(ActivePanel);
-            _size = GetRelevantSize(ActivePanel.PanelRef);
+            _sliderPosition = GetLengthOfPanelItems(ActivePanel);
+            _sliderSize = GetRelevantSize(ActivePanel.PanelRef);
         }
+
+        private bool IsSliderPositionDetermined => _activePanelIndex > 0 && _sliderPosition > 0 ||
+                                                   _activePanelIndex <= 0;
 
         private void GetToolbarContentSize() => _toolbarContentSize = GetRelevantSize(_tabsContentSize);
 

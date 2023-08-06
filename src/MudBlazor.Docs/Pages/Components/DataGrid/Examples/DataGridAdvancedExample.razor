@@ -58,7 +58,7 @@
         else
             return x.Name;
     };
-    // quick filter - filter gobally across multiple columns with the same input
+    // quick filter - filter globally across multiple columns with the same input
     private Func<Element, bool> _quickFilter => x =>
     {
         if (string.IsNullOrWhiteSpace(_searchString))

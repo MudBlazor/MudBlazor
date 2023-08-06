@@ -327,6 +327,7 @@
     padding-right: 2px;
     padding-inline-end: 2px;
     padding-inline-start: unset;
+    flex-wrap: nowrap;
 
     & .mud-tablepager-left {
         flex-direction: row !important;
@@ -389,7 +390,6 @@
     position: relative;
 
     & .mud-table-loading-progress {
-        position: absolute;
         width: 100%;
     }
 }

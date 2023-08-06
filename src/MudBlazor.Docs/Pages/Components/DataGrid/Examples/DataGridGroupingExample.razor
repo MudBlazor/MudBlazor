@@ -49,19 +49,13 @@
     Func<Element, object> _groupBy = x => 
     {
         if (_customizeGroupBy)
-        {
-            if (_nonmetals.Contains(x.Sign))
-                return "Nonmetal";
-
-            return "Metal";
-        }
-
+            return _nonmetals.Contains(x.Sign) ? "Nonmetal":  "Metal";
         return x.Group;
     };
 
     private string GroupClassFunc(GroupDefinition<Element> item)
     {
-        return (string)item.Grouping.Key == "Nonmetal" || (string)item.Grouping.Key == "Other"
+        return item.Grouping.Key?.ToString() == "Nonmetal" || item.Grouping.Key?.ToString() == "Other"
                 ? "mud-theme-warning"
                 : string.Empty;
     }

@@ -427,7 +427,7 @@ namespace MudBlazor.UnitTests.Utilities
             MudColor color = new(r, g, b, a);
 
             color.Value.ToLowerInvariant().Should().Be(expectedValue);
-            color.ToString().ToLowerInvariant().Should().Be(expectedValue);
+            color.ToString(MudColorOutputFormats.HexA).ToLowerInvariant().Should().Be(expectedValue);
             ((string)color).ToLowerInvariant().Should().Be(expectedValue);
         }
 
@@ -615,7 +615,9 @@ namespace MudBlazor.UnitTests.Utilities
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
 
+#pragma warning disable CS0618 // Type or member is obsolete
             Palette palette = new PaletteLight();
+#pragma warning restore CS0618 // Type or member is obsolete
 
             palette.Should().NotBeNull();
         }

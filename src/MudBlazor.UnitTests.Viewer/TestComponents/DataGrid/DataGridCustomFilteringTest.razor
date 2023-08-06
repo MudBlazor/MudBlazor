@@ -27,13 +27,13 @@
 
     public bool FilterHired = false;
 
-    public void FilterHiredToggled(bool value, MudDataGrid<Model> dataGrid)
+    public async Task FilterHiredToggled(bool value, MudDataGrid<Model> dataGrid)
     {
         FilterHired = value;
 
         if (FilterHired)
         {
-            dataGrid.AddFilter(new FilterDefinition<Model>
+            await dataGrid.AddFilterAsync(new FilterDefinition<Model>
             {
                 Column = dataGrid.GetColumnByPropertyName<Model>("Hired"),
                 Operator = FilterOperator.Boolean.Is,
@@ -42,7 +42,7 @@
         }
         else
         {
-            dataGrid.ClearFilters();
+            await dataGrid.ClearFiltersAsync();
         }
     }
 }

@@ -4,7 +4,8 @@
     display: flex;
     position: relative;
     align-items: center;
-    height: 56px;
+    --mud-internal-toolbar-height: 56px;
+    height: var(--mud-internal-toolbar-height);
 }
 
 .mud-toolbar-gutters {
@@ -14,13 +15,13 @@
 
 @media (min-width:$breakpoint-xs) and (orientation: landscape) {
     .mud-toolbar {
-        height: 48px;
+        --mud-internal-toolbar-height: 48px;
     }
 }
 
 @media (min-width:$breakpoint-sm) {
     .mud-toolbar {
-        height: 64px;
+        --mud-internal-toolbar-height: 64px;
     }
 
     .mud-toolbar-gutters {
@@ -30,5 +31,15 @@
 }
 
 .mud-toolbar-dense {
-    height: 48px;
+    --mud-internal-toolbar-height: 48px;
+}
+
+.mud-toolbar.mud-toolbar-wrap-content {
+    height: auto;
+    min-height: var(--mud-internal-toolbar-height);
+    flex-wrap: wrap;
+    &.mud-toolbar-appbar {
+        //This might need to be uppercased to be ignored by sass.
+        min-height: Min(var(--mud-appbar-height), var(--mud-internal-toolbar-height));
+    }
 }

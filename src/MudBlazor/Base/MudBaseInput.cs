@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -11,7 +13,7 @@ namespace MudBlazor
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>
     {
         private bool _isDirty;
-        
+
         protected MudBaseInput() : base(new DefaultConverter<T>()) { }
 
         /// <summary>
@@ -20,6 +22,8 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
+        [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
+        protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         /// <summary>
         /// If true, the input will be read-only.
@@ -27,6 +31,8 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
+        [CascadingParameter(Name = "ParentReadOnly")] private bool ParentReadOnly { get; set; }
+        protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         /// <summary>
         /// If true, the input will take up the full width of its container.
@@ -262,7 +268,7 @@ namespace MudBlazor
 
         protected bool _isFocused;
 
-        protected internal virtual void OnBlurred(FocusEventArgs obj)
+        protected internal virtual async Task OnBlurredAsync(FocusEventArgs obj)
         {
             if (ReadOnly)
                 return;
@@ -271,7 +277,7 @@ namespace MudBlazor
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;
-                BeginValidateAfter(OnBlur.InvokeAsync(obj));
+                await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
             }
         }
 
@@ -280,10 +286,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
+        [Obsolete($"Use {nameof(InvokeKeyDownAsync)} instead, this will be removed in v7.")]
         protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
         {
             _isFocused = true;
             OnKeyDown.InvokeAsync(obj).AndForget();
+        }
+
+        protected virtual Task InvokeKeyDownAsync(KeyboardEventArgs obj)
+        {
+            _isFocused = true;
+            return OnKeyDown.InvokeAsync(obj);
         }
 
         /// <summary>
@@ -319,10 +332,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
+        [Obsolete($"Use {nameof(InvokeKeyUpAsync)} instead. This will be removed in v7")]
         protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
         {
             _isFocused = true;
             OnKeyUp.InvokeAsync(obj).AndForget();
+        }
+
+        protected virtual Task InvokeKeyUpAsync(KeyboardEventArgs obj)
+        {
+            _isFocused = true;
+            return OnKeyUp.InvokeAsync(obj);
         }
 
         /// <summary>
@@ -355,11 +375,11 @@ namespace MudBlazor
             {
                 _isDirty = true;
                 Value = value;
+                await ValueChanged.InvokeAsync(Value);
                 if (updateText)
                     await UpdateTextPropertyAsync(false);
-                await ValueChanged.InvokeAsync(Value);
-                BeginValidate();
                 FieldChanged(Value);
+                await BeginValidateAsync();
             }
         }
 
@@ -434,7 +454,7 @@ namespace MudBlazor
 
             // Because the way the Value setter is built, it won't cause an update if the incoming Value is
             // equal to the initial value. This is why we force an update to the Text property here.
-            if (typeof(T) != typeof(string)) 
+            if (typeof(T) != typeof(string))
                 await UpdateTextPropertyAsync(false);
 
             if (Label == null && For != null)
@@ -495,11 +515,20 @@ namespace MudBlazor
                 base.OnParametersSet();
         }
 
+        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
+        [ExcludeFromCodeCoverage]
         protected override void ResetValue()
         {
             SetTextAsync(null, updateValue: true).AndForget();
             this._isDirty = false;
             base.ResetValue();
+        }
+
+        protected override async Task ResetValueAsync()
+        {
+            await SetTextAsync(null, updateValue: true);
+            this._isDirty = false;
+            await base.ResetValueAsync();
         }
     }
 }

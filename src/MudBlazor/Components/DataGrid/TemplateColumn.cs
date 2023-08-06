@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+
 namespace MudBlazor
 {
 #nullable enable
@@ -10,6 +12,8 @@ namespace MudBlazor
     {
         protected internal override object? CellContent(T item)
             => null;
+
+        public override string PropertyName { get; } = Guid.NewGuid().ToString();
 
         protected internal override object? PropertyFunc(T item)
             => null;

@@ -9,7 +9,7 @@
 
     protected override RenderFragment PickerContent =>
     @<CascadingValue Value="@this" IsFixed="true">
-        <MudPickerToolbar Class="mud-picker-datepicker-toolbar" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
+        <MudPickerToolbar Class="mud-picker-datepicker-toolbar" DisableToolbar="@DisableToolbar" Orientation="@Orientation" PickerVariant="@PickerVariant" Color="@Color">
             <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year" OnClick="OnYearClick">@GetFormattedYearString()</MudButton>
             <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date" OnClick="OnFormattedDateClick">@GetTitleDateString()</MudButton>
         </MudPickerToolbar>

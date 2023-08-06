@@ -9,6 +9,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -59,6 +60,11 @@ namespace MudBlazor
         [Parameter] public bool? Resizable { get; set; }
 
         /// <summary>
+        /// If set this will override the DragDropColumnReordering parameter of MudDataGrid which applies to all columns.
+        /// Set true to enable reordering for this column. Set false to disable it. 
+        /// </summary>
+        [Parameter] public bool? DragAndDropEnabled { get; set; }
+        /// <summary>
         /// Determines whether this columns data can be filtered. This overrides the Filterable parameter on the DataGrid.
         /// </summary>
         [Parameter] public bool? Filterable { get; set; }
@@ -79,6 +85,13 @@ namespace MudBlazor
         [Parameter] public bool? ShowColumnOptions { get; set; }
 
         [Parameter]
+        public IComparer<object> Comparer
+        {
+            get => _comparer;
+            set => _comparer = value;
+        }
+
+        [Parameter]
         public Func<T, object> SortBy
         {
             get
@@ -90,7 +103,6 @@ namespace MudBlazor
                 _sortBy = value;
             }
         }
-
         [Parameter] public SortDirection InitialDirection { get; set; } = SortDirection.None;
         [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
 
@@ -112,6 +124,9 @@ namespace MudBlazor
         [Parameter] public bool StickyRight { get; set; }
 
         [Parameter] public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
+
+        public string Identifier { get; set; }
+        
 
         private CultureInfo _culture;
         /// <summary>
@@ -242,6 +257,7 @@ namespace MudBlazor
         internal int SortIndex { get; set; } = -1;
         internal HeaderCell<T> HeaderCell { get; set; }
 
+        private IComparer<object> _comparer = null;
         private Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
         internal HeaderContext<T> headerContext;
@@ -256,16 +272,11 @@ namespace MudBlazor
                 if (filterContext.FilterDefinition == null)
                 {
                     var operators = FilterOperator.GetOperatorByDataType(PropertyType);
-                    filterContext.FilterDefinition = new FilterDefinition<T>()
-                    {
-                        DataGrid = DataGrid,
-                        //Field = PropertyName,
-                        //FieldType = PropertyType,
-                        Title = Title,
-                        Operator = operators.FirstOrDefault(),
-                        PropertyExpression = PropertyExpression,
-                        Column = this,
-                    };
+                    var filterDefinition = DataGrid.CreateFilterDefinitionInstance();
+                    filterDefinition.Title = Title;
+                    filterDefinition.Operator = operators.FirstOrDefault();
+                    filterDefinition.Column = this;
+                    filterContext.FilterDefinition = filterDefinition;
                 }
 
                 return filterContext;
@@ -282,7 +293,7 @@ namespace MudBlazor
             if (groupable && Grouping)
                 grouping = Grouping;
 
-            if (null != DataGrid)
+            if (DataGrid != null)
                 DataGrid.AddColumn(this);
 
             // Add the HeaderContext
@@ -312,14 +323,14 @@ namespace MudBlazor
 
         internal Func<T, object> GetLocalSortFunc()
         {
-            if (null == _sortBy)
+            if (_sortBy == null)
             {
                 if (this is TemplateColumn<T>)
                 {
                     _sortBy = x => true;
                 }
                 else
-                    _sortBy = x => PropertyFunc(x);
+                    _sortBy = PropertyFunc;
             }
 
             return _sortBy;
@@ -333,11 +344,11 @@ namespace MudBlazor
                 // set the default GroupBy
                 if (type == typeof(IDictionary<string, object>))
                 {
-                    groupBy = x => (x as IDictionary<string, object>)[PropertyName];
+                    groupBy = x => (x as IDictionary<string, object>)?[PropertyName];
                 }
                 else
                 {
-                    groupBy = x => PropertyFunc(x);
+                    groupBy = PropertyFunc;
                 }
             }
         }
@@ -376,7 +387,7 @@ namespace MudBlazor
         {
             Hidden = !Hidden;
             await HiddenChanged.InvokeAsync(Hidden);
-            DataGrid.ExternalStateHasChanged();
+            ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
 
 
@@ -402,8 +413,6 @@ namespace MudBlazor
         protected internal abstract object PropertyFunc(T item);
 
         protected internal virtual Type PropertyType { get; }
-
-        protected internal virtual string FullPropertyName { get; }
 
         protected internal abstract void SetProperty(object item, object value);
 

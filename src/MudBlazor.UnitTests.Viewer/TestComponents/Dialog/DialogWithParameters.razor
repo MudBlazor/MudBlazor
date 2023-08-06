@@ -1,4 +1,5 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿@using MudBlazor.Interfaces
+@namespace MudBlazor.UnitTests.TestComponents
 
 <MudDialog>
     <DialogContent>
@@ -24,7 +25,7 @@
 
     private void OnTest()
     {
-        MudDialog.ForceRender();
+        ((IMudStateHasChanged)MudDialog).StateHasChanged();
         StateHasChanged();
     }
 }

@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudProgressLinear : MudComponentBase
     {
+        private double _min = 0.0;
+        private double _max = 100.0;
+        private double _value;
+        private double _bufferValue;
+
         protected string DivClassname =>
             new CssBuilder("mud-progress-linear")
                 .AddClass("mud-progress-linear-rounded", Rounded)
@@ -30,7 +35,7 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The size of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]
@@ -76,7 +81,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// The minimum allowed value of the linear progress. Should not be equal to max.
@@ -107,12 +112,6 @@ namespace MudBlazor
                 UpdatePercentages();
             }
         }
-
-        private double _min = 0.0;
-        private double _max = 100.0;
-
-        private double _value;
-        private double _bufferValue;
 
         /// <summary>
         /// The maximum allowed value of the linear progress. Should not be equal to min.
@@ -166,7 +165,7 @@ namespace MudBlazor
         public double GetBufferPercent() => GetPercentage(_bufferValue);
 
         private string GetStyleBarTransform(double input) =>
-            Vertical == true ? $"transform: translateY({(int)Math.Round(100 - input)}%);" : $"transform: translateX(-{(int)Math.Round(100 - input)}%);";
+            Vertical ? $"transform: translateY({(int)Math.Round(100 - input)}%);" : $"transform: translateX(-{(int)Math.Round(100 - input)}%);";
 
         public string GetStyledBar1Transform() => GetStyleBarTransform(ValuePercent);
         public string GetStyledBar2Transform() => GetStyleBarTransform(BufferPercent);

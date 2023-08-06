@@ -328,7 +328,7 @@ namespace MudBlazor.Utilities
 
         public static explicit operator string(MudColor color) => color == null ? string.Empty : color.Value;
 
-        public override string ToString() => ToString(MudColorOutputFormats.HexA);
+        public override string ToString() => ToString(MudColorOutputFormats.RGBA);
 
         public string ToString(MudColorOutputFormats format) => format switch
         {

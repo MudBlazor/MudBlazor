@@ -2,7 +2,7 @@
 @inherits MudComponentBase
 @using System.Globalization;
 
-<div @onanimationend="EventUtil.AsNonRenderingEventHandler(AnimationEnd)" @attributes="UserAttributes" class="@Classname" style="@Stylename">
+<div @onanimationend="EventUtil.AsNonRenderingEventHandler(AnimationEndAsync)" @attributes="UserAttributes" class="@Classname" style="@Stylename">
     <div @ref="_wrapper" class="mud-collapse-wrapper">
         <div class="mud-collapse-wrapper-inner">
             @ChildContent

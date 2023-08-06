@@ -751,7 +751,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // reset (must reset dirty state)
-            await comp.InvokeAsync(() => comp.Instance.Reset());
+            await comp.InvokeAsync(() => comp.Instance.ResetAsync());
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
 
             // user does not change input value but changes focus
@@ -790,7 +790,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // reset
-            await comp.InvokeAsync(() => comp.Instance.Reset());
+            await comp.InvokeAsync(() => comp.Instance.ResetAsync());
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
 
             // user does not change input value but changes focus
@@ -820,7 +820,7 @@ namespace MudBlazor.UnitTests.Components
         /// ReadOnly TextFields should not validate when blurred
         /// </summary>
         [Test]
-        public async Task ReadOnlyTextFieldShouldNotValdidate()
+        public async Task ReadOnlyTextFieldShouldNotValidate()
         {
             var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
             .Add(p => p.ReadOnly, true)
@@ -828,6 +828,116 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+        }
+
+        /// <summary>
+        /// https://github.com/MudBlazor/MudBlazor/issues/6322
+        /// </summary>
+        [Test]
+        public async Task OnBlurErrorContentCaughtException()
+        {
+            var comp = Context.RenderComponent<TextFieldErrorContenCaughtException>();
+            await comp.Find("input").BlurAsync(new FocusEventArgs());
+            var mudAlert = comp.FindComponent<MudAlert>();
+            var text = mudAlert.Find("div.mud-alert-message");
+            text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+        }
+
+        [Test]
+        public async Task OnKeyDownErrorContentCaughtException()
+        {
+            var comp = Context.RenderComponent<TextFieldErrorContenCaughtException>();
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Enter", Type = "keydown" });
+            var mudAlert = comp.FindComponent<MudAlert>();
+            var text = mudAlert.Find("div.mud-alert-message");
+            text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+        }
+
+        [Test]
+        public async Task OnKeyUpErrorContentCaughtException()
+        {
+            var comp = Context.RenderComponent<TextFieldErrorContenCaughtException>();
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter", Type = "keyup" });
+            var mudAlert = comp.FindComponent<MudAlert>();
+            var text = mudAlert.Find("div.mud-alert-message");
+            text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+        }
+        
+        /// <summary>
+        /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text.
+        /// </summary>
+        [Test]
+        public async Task DebouncedTextFieldRerenderTest()
+        {
+            var comp = Context.RenderComponent<DebouncedTextFieldRerenderTest>();
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            var input = comp.Find("input");
+            var delayedRerenderButton = comp.Find("button");
+            input.Input(new ChangeEventArgs { Value = "test" });
+            // trigger first value change
+            await Task.Delay(comp.Instance.DebounceInterval);
+            // trigger delayed re-render
+            delayedRerenderButton.Click();
+            // imitate "typing in progress" by extending the debounce interval until component re-renders
+            var elapsedTime = 0;
+            var currentText = "test";
+            while (elapsedTime < comp.Instance.RerenderDelay)
+            {
+                var delay = comp.Instance.DebounceInterval / 2;
+                currentText += "a";
+                input.Input(new ChangeEventArgs { Value = currentText });
+                await Task.Delay(delay);
+                elapsedTime += delay;
+            }
+            // after the final debounce, the value should be updated without swallowing any user input 
+            await Task.Delay(comp.Instance.DebounceInterval);
+            textField.Value.Should().Be(currentText);
+            textField.Text.Should().Be(currentText);
+        }
+        
+        [Test]
+        public async Task DebouncedTextField_Should_RenderDefaultValueTextOnFirstRender()
+        {
+            var defaultValue = "test";
+            var comp = Context.RenderComponent<DebouncedTextFieldRerenderTest>(
+                Parameter(nameof(MudTextField<string>.Value), defaultValue));
+            var textfield = comp.FindComponent<MudTextField<string>>().Instance;
+            textfield.Text.Should().Be(defaultValue);
+        }
+        
+        /// <summary>
+        /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text while changing format.
+        /// </summary>
+        [Test]
+        public async Task DebouncedTextFieldFormatChangeRerenderTest()
+        {
+            var comp = Context.RenderComponent<DebouncedTextFieldFormatChangeRerenderTest>();
+            var textField = comp.FindComponent<MudTextField<DateTime>>().Instance;
+            var input = comp.Find("input");
+            var delayedFormatChangeButton = comp.Find("button");
+            DateTime expectedFinalDateTime = default;
+            // ensure text is updated on initialize 
+            textField.Text.Should().Be(comp.Instance.Date.Date.ToString(comp.Instance.Format));
+            // trigger the format change
+            delayedFormatChangeButton.Click();
+            // imitate "typing in progress" by extending the debounce interval until component re-renders
+            var elapsedTime = 0;
+            var currentText = comp.Instance.Date.Date.ToString(comp.Instance.Format);
+            while (elapsedTime < comp.Instance.RerenderDelay)
+            {
+                var delay = comp.Instance.DebounceInterval / 2;
+                currentText += "a";
+                input.Input(new ChangeEventArgs { Value = currentText });
+                await Task.Delay(delay);
+                elapsedTime += delay;
+            }
+            // after the format change delay has elapsed, the uncommitted text is retained (with the old Format)
+            textField.Text.Should().Be(currentText);
+            // once debounce occurs, both value and text are reset because they define an invalid DateTime,
+            // now with the new Format
+            await Task.Delay(comp.Instance.DebounceInterval);
+            textField.Value.Should().Be(expectedFinalDateTime);
+            textField.Text.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format));
         }
     }
 }

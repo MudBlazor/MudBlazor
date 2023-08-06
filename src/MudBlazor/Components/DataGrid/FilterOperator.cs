@@ -65,7 +65,11 @@ namespace MudBlazor
         internal static string[] GetOperatorByDataType(Type type)
         {
             var fieldType = FieldType.Identify(type);
+            return GetOperatorByDataType(fieldType);
+        }
 
+        internal static string[] GetOperatorByDataType(FieldType fieldType)
+        {
             if (fieldType.IsString)
             {
                 return new[]

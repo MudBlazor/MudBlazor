@@ -7,15 +7,17 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudRTLProvider : MudComponentBase
     {
+        private bool _rtl;
+
         protected string Classname =>
             new CssBuilder("mud-rtl-provider")
                 .AddClass("mud-application-layout-rtl", RightToLeft)
                 .AddClass(Class)
                 .Build();
 
-        private bool _rtl;
         /// <summary>
         /// If true, changes the layout to RightToLeft.
         /// </summary>
@@ -36,6 +38,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.RTLProvider.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
     }
 }

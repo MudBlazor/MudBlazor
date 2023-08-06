@@ -13,15 +13,15 @@
 
     @ChildContent
 
-    @if (OnlyZone != true)
+    @if (!OnlyZone)
     {
         int index = 0;
         var transactionIndex = Container?.GetTransactionIndex() ?? -1;
         var items = GetItems();
 
-        @if (AllowReorder == true)
+        @if (AllowReorder)
         {
-            @if (items.Any() == false)
+            @if (!items.Any())
             {
                 <div class="@PlaceholderClassname"></div>
             }
@@ -54,12 +54,15 @@
                     var renderer = GetItemTemplate();
                 }
 
-                @renderer(item)
+                @if (renderer is not null)
+                {
+                    @renderer(item)
+                }
 
             </MudDynamicDropItem>
 
 
-            if (transactionIndex == indexCopy && IsOrign(indexCopy) == false)
+            if (transactionIndex == indexCopy && !IsOrigin(indexCopy))
             {
                 <div class="@PlaceholderClassname"></div>
             }

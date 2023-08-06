@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -39,7 +40,8 @@ namespace MudBlazor.UnitTests.Components
             var entries = logger.GetEntries();
             entries.Count.Should().Be(1);
             entries[0].Level.Should().Be(LogLevel.Warning);
-            entries[0].Message.Should().Be(string.Format("T must be of type {0} or {1}", typeof(IReadOnlyList<IBrowserFile>), typeof(IBrowserFile)));
+            entries[0].Message.Should().Be(string.Format("T must be of type {0} or {1}",
+                typeof(IReadOnlyList<IBrowserFile>), typeof(IBrowserFile)));
         }
 
         /// <summary>
@@ -49,8 +51,8 @@ namespace MudBlazor.UnitTests.Components
         public void FileUpload_CSSTest()
         {
             var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
-            .Add(x => x.Class, "outer-test")
-            .Add(x => x.InputClass, "inner-test"));
+                .Add(x => x.Class, "outer-test")
+                .Add(x => x.InputClass, "inner-test"));
 
             comp.Find(".mud-input-control.mud-file-upload.outer-test"); //find outer div
 
@@ -89,7 +91,7 @@ namespace MudBlazor.UnitTests.Components
         public void FileUpload_HiddenTest2()
         {
             var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters =>
-            parameters.Add(x => x.Hidden, false));
+                parameters.Add(x => x.Hidden, false));
 
             var input = comp.Find("input");
             input.HasAttribute("hidden").Should().BeFalse();
@@ -102,7 +104,7 @@ namespace MudBlazor.UnitTests.Components
         public void FileUpload_AcceptTest()
         {
             var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
-            .Add(x => x.Accept, ".png, .jpg"));
+                .Add(x => x.Accept, ".png, .jpg"));
 
             var input = comp.Find("input");
             input.GetAttribute("accept").Should().Be(".png, .jpg");
@@ -149,7 +151,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FileUpload_FileValueChangedTest()
         {
-            InputFileContent[] fileContent = { InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt"), InputFileContent.CreateFromText("A Balrog, servant of Morgoth", "upload2.txt") };
+            InputFileContent[] fileContent =
+            {
+                InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt"),
+                InputFileContent.CreateFromText("A Balrog, servant of Morgoth", "upload2.txt")
+            };
 
             var comp = Context.RenderComponent<FileUploadFormValidationTest>();
 
@@ -180,7 +186,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FileUpload_ValidationTest()
         {
-            InputFileContent[] fileContent = { InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt"), InputFileContent.CreateFromText("A Balrog, servant of Morgoth", "upload2.txt") };
+            InputFileContent[] fileContent =
+            {
+                InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt"),
+                InputFileContent.CreateFromText("A Balrog, servant of Morgoth", "upload2.txt")
+            };
+            
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture; //<<< rework this!
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
             var comp = Context.RenderComponent<FileUploadFormValidationTest>();
 
@@ -238,7 +251,51 @@ namespace MudBlazor.UnitTests.Components
             var multipleInput = multiple.FindComponent<InputFile>();
             multipleInput.UploadFiles(Files.ToArray()); //upload second files
 
-            comp.Instance.Files.Count.Should().Be(11); //if no error occurs, we have successfully uploaded more than 10 files
+            comp.Instance.Files.Count.Should()
+                .Be(11); //if no error occurs, we have successfully uploaded more than 10 files
+        }
+
+        /// <summary>
+        /// Makes sure the file upload is disabled
+        /// </summary>
+        [Test]
+        public void FileUploadDisabledTest()
+        {
+            var comp = Context.RenderComponent<FileUploadDisabledTest>();
+            comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("input").HasAttribute("disabled").Should().BeFalse();
+            comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("label").HasAttribute("disabled").Should().BeFalse();
+
+            comp.SetParametersAndRender(parameters =>
+                parameters.Add(x => x.Disabled,
+                    true)); //The input and child button should be disabled when file upload is disabled
+
+            comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("input").HasAttribute("disabled").Should().BeTrue();
+            comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("button").HasAttribute("disabled").Should()
+                .BeTrue(); //we need to test for a button as the MudButton replaces disabled labels with buttons
+        }
+
+        /// <summary>
+        /// Verifies files are appended correctly
+        /// </summary>
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void FileUploadAppendMultipleTest(bool appendMultiple)
+        {
+            var comp = Context.RenderComponent<FileUploadAppendMultipleTest>(p => 
+                p.Add(x => x.AppendMultipleFiles, appendMultiple));
+
+            var input = comp.FindComponent<InputFile>();
+            input.UploadFiles(GenerateFile(), GenerateFile(), GenerateFile()); //upload first file
+            comp.Instance.Files.Count.Should().Be(3);
+
+            input.UploadFiles(GenerateFile());
+            comp.Instance.Files.Count.Should().Be(appendMultiple ? 4 : 1);
+
+            InputFileContent GenerateFile()
+            {
+                return InputFileContent.CreateFromText("snakex64 is Canadian", $"{Guid.NewGuid()}.txt");
+            }
         }
     }
 }

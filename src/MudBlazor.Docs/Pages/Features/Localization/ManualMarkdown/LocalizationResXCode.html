@@ -1,0 +1,18 @@
+<div class="mud-codeblock">
+<div class="csharp"><pre>
+<span class="keyword">using</span> Microsoft.Extensions.Localization;
+<span class="keyword">using</span> MudBlazor;
+
+<span class="keyword">internal</span> <span class="keyword">class</span> ResXMudLocalizer : MudLocalizer
+{
+    <span class="keyword">private</span> IStringLocalizer <span class="localVar">_localization</span>;
+
+    <span class="keyword">public</span> ResXMudLocalizer(IStringLocalizer&lt;ResXLanguageResource&gt; localizer)
+    {
+        <span class="localVar">_localization</span> = localizer;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">override</span> LocalizedString <span class="keyword">this</span>[<span class="keyword">string</span> key] =&gt; <span class="localVar">_localization</span>[key];
+}
+</pre></div>
+</div>

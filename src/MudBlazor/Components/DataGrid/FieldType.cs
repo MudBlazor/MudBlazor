@@ -9,22 +9,25 @@ namespace MudBlazor
 #nullable enable
     public class FieldType
     {
-        public bool IsString { get; set; }
+        public Type? InnerType { get; init; }
 
-        public bool IsNumber { get; set; }
+        public bool IsString { get; init; }
 
-        public bool IsEnum { get; set; }
+        public bool IsNumber { get; init; }
 
-        public bool IsDateTime { get; set; }
+        public bool IsEnum { get; init; }
 
-        public bool IsBoolean { get; set; }
+        public bool IsDateTime { get; init; }
 
-        public bool IsGuid { get; set; }
+        public bool IsBoolean { get; init; }
+
+        public bool IsGuid { get; init; }
 
         public static FieldType Identify(Type? type)
         {
             var filedType = new FieldType
             {
+                InnerType = type,
                 IsString = TypeIdentifier.IsString(type),
                 IsNumber = TypeIdentifier.IsNumber(type),
                 IsEnum = TypeIdentifier.IsEnum(type),
