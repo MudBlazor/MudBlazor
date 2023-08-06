@@ -1139,8 +1139,14 @@ namespace MudBlazor
         /// Sets the rows displayed per page when the data grid has an attached data pager.
         /// </summary>
         /// <param name="size">The page size.</param>
+        public Task SetRowsPerPageAsync(int size) => SetRowsPerPageAsync(size, true);
+
+        /// <summary>
+        /// Sets the rows displayed per page when the data grid has an attached data pager.
+        /// </summary>
+        /// <param name="size">The page size.</param>
         /// <param name="resetPage">If <see langword="true"/>, resets <see cref="CurrentPage"/> to 0.</param>
-        public async Task SetRowsPerPageAsync(int size, bool resetPage = true)
+        public async Task SetRowsPerPageAsync(int size, bool resetPage)
         {
             if (_rowsPerPage == size)
                 return;
