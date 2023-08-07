@@ -86,13 +86,13 @@ namespace MudBlazor.UnitTests.Charts
             if (chartSeries.Count == 3 && chartSeries.Any(x => x.Data.Contains(40)))
             {
                 comp.Markup.Should()
-                    .Contain("d=\"M 30 325 L 30 205\"");
+                    .Contain("d=\"M 30 325 L 30 175\"");
             }
 
             if (chartSeries.Count == 3 && chartSeries.Any(x => x.Data.Contains(80)))
             {
                 comp.Markup.Should()
-                    .Contain("d=\"M 546.25 325 L 546.25 85\"");
+                    .Contain("d=\"M 546.25 325 L 546.25 25\"");
             }
 
             comp.SetParametersAndRender(parameters => parameters

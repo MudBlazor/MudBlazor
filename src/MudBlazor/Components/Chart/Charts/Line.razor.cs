@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts.SVG.Models;
 using MudBlazor.Components.Chart;
@@ -65,13 +66,13 @@ namespace MudBlazor.Charts
 
             var numVerticalLines = numValues - 1;
 
-            var numHorizontalLines = ((int)(maxY / gridYUnits)) + 1;
+            var numHorizontalLines = (int)Math.Ceiling(maxY / gridYUnits);
 
             // this is a safeguard against millions of gridlines which might arise with very high values
             while (numHorizontalLines > maxYTicks)
             {
                 gridYUnits *= 2;
-                numHorizontalLines = ((int)(maxY / gridYUnits)) + 1;
+                numHorizontalLines = (int)Math.Ceiling(maxY / gridYUnits);
             }
 
             var verticalStartSpace = 25.0;
