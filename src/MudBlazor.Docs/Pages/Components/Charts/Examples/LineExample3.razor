@@ -23,7 +23,8 @@
     protected override void OnInitialized()
     {
         options.InterpolationOption = InterpolationOption.NaturalSpline;
-        options.YAxisFormat = "c2";
+        options.YAxisFormat = new StandardNumericFormatStringsYAxisFormatter("c2");
+        options.YAxisLabelSpace = 75.0;
     }
 
     public void RandomizeData()
@@ -47,6 +48,4 @@
         options.InterpolationOption = interpolationOption;
         StateHasChanged();
     }
-
-
 }
