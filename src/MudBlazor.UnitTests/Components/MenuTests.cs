@@ -83,6 +83,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task IsOpen_CheckState()
+        {
+            var comp = Context.RenderComponent<MenuTest1>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+            menu.IsOpen.Should().BeFalse();
+
+            var args = new MouseEventArgs { OffsetX = 1.0, OffsetY = 1.0 };
+            await comp.InvokeAsync(() => menu.OpenMenu(args));
+            menu.IsOpen.Should().BeTrue();
+
+            await comp.InvokeAsync(() => menu.CloseMenu());
+            menu.IsOpen.Should().BeFalse();
+        }
+
+        [Test]
         public async Task MenuMouseLeave_CheckClosed()
         {
             var comp = Context.RenderComponent<MenuTestMouseOver>();
