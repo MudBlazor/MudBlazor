@@ -6,28 +6,30 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudFocusTrap : IDisposable
     {
+        private bool _shiftDown;
+        private bool _disabled;
+        private bool _initialized;
+        private bool _shouldRender = true;
+
         protected string Classname =>
             new CssBuilder("outline-none")
                 .AddClass(Class)
                 .Build();
-        
+
         protected ElementReference _firstBumper;
         protected ElementReference _lastBumper;
         protected ElementReference _fallback;
         protected ElementReference _root;
-
-        private bool _shiftDown;
-        private bool _disabled;
-        private bool _initialized;
 
         /// <summary>
         /// Child content of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FocusTrap.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// If true, the focus will no longer loop inside the component.
@@ -55,15 +57,21 @@ namespace MudBlazor
         [Category(CategoryTypes.FocusTrap.Behavior)]
         public DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
 
+        private string TrapTabIndex => Disabled ? "-1" : "0";
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
 
             if (firstRender)
+            {
                 await SaveFocusAsync();
+            }
 
             if (!_initialized)
+            {
                 await InitializeFocusAsync();
+            }
         }
 
         private Task OnBottomFocusAsync(FocusEventArgs args)
@@ -131,7 +139,9 @@ namespace MudBlazor
         {
             _shouldRender = false;
             if (args.Key == "Tab")
+            {
                 _shiftDown = args.ShiftKey;
+            }
         }
 
         private Task RestoreFocusAsync()
@@ -144,20 +154,24 @@ namespace MudBlazor
             return _root.MudSaveFocusAsync().AsTask();
         }
 
-        bool _shouldRender = true;
-
         protected override bool ShouldRender()
         {
             if (_shouldRender)
+            {
                 return true;
+            }
+
             _shouldRender = true; // auto-reset _shouldRender to true
+
             return false;
         }
 
         public void Dispose()
         {
             if (!_disabled)
+            {
                 RestoreFocusAsync().AndForget(ignoreExceptions:true);
+            }
         }
     }
 }
