@@ -2,8 +2,8 @@
 @inherits MudComponentBase
 @typeparam T
 
-<div @attributes="UserAttributes" class="@Classname" style="@Stylename" @onclick="HandleOnClick">
-    @if (ChildContent != null)
+<div @attributes="UserAttributes" class="@Classname" style="@Stylename" @onclick="HandleOnClickAsync">
+    @if (ChildContent is not null)
     {
         @ChildContent
     }

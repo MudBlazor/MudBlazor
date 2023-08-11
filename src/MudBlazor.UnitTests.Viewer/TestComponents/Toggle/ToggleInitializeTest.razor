@@ -16,8 +16,8 @@
 <MudButton OnClick="SetMultiValue">Set Multi Value</MudButton>
 
 @code {
-    string _value = "Item Two";
-    IEnumerable<string> _values = new List<string>() { "Item One", "Item Three" };
+    private string _value = "Item Two";
+    private IEnumerable<string> _values = new List<string> { "Item One", "Item Three" };
 
     private void SetSingleValue()
     {

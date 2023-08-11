@@ -9,50 +9,48 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+
+#nullable enable
     public partial class MudToggleItem<T> : MudComponentBase
     {
+        private bool _selected;
+
         protected string Classname => new CssBuilder("mud-toggle-item")
             .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", _selected && string.IsNullOrEmpty(Parent?.SelectedClass))
-            .AddClass(Parent?.SelectedClass, _selected && string.IsNullOrEmpty(Parent?.SelectedClass) == false)
+            .AddClass(Parent?.SelectedClass, _selected && !string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
             .AddClass("mud-ripple", Parent?.DisableRipple == false)
             .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
             .AddClass("border-r-2 border-b-2")
             .AddClass("border-l-2", Parent?.Vertical == true || Parent?.IsFirstItem(this) == true)
             .AddClass("border-t-2", Parent?.Vertical == false || Parent?.IsFirstItem(this) == true)
-            .AddClass("rounded-l-xl", Parent?.Rounded == true && Parent?.Vertical == false && Parent?.IsFirstItem(this) == true)
-            .AddClass("rounded-t-xl", Parent?.Rounded == true && Parent?.Vertical == true && Parent?.IsFirstItem(this) == true)
-            .AddClass("rounded-r-xl", Parent?.Rounded == true && Parent?.Vertical == false && Parent?.IsLastItem(this) == true)
-            .AddClass("rounded-b-xl", Parent?.Rounded == true && Parent?.Vertical == true && Parent?.IsLastItem(this) == true)
+            .AddClass("rounded-l-xl", Parent is { Rounded: true, Vertical: false } && Parent?.IsFirstItem(this) == true)
+            .AddClass("rounded-t-xl", Parent is { Rounded: true, Vertical: true } && Parent?.IsFirstItem(this) == true)
+            .AddClass("rounded-r-xl", Parent is { Rounded: true, Vertical: false } && Parent?.IsLastItem(this) == true)
+            .AddClass("rounded-b-xl", Parent is { Rounded: true, Vertical: true } && Parent?.IsLastItem(this) == true)
             .AddClass("mud-toggle-item-dense", Parent?.Dense == true)
             .AddClass("mud-toggle-item-vertical", Parent?.Vertical == true)
             .AddClass(Class)
             .Build();
 
         protected string TextClassname => new CssBuilder()
-            .AddClass("me-2", _selected == true && IsEmpty() == false && Parent?.ShowSelectedIcon == true)
+            .AddClass("me-2", _selected && !IsEmpty() && Parent?.ShowSelectedIcon == true)
             .AddClass(Parent?.TextClass)
             .Build();
 
         protected string Stylename => new StyleBuilder()
-            .AddStyle("min-width", $"{Parent?.GetItemWidth(this).ToInvariantString()}%", Parent?.Vertical == false && IsEmpty() == false)
+            .AddStyle("min-width", $"{Parent?.GetItemWidth(this).ToInvariantString()}%", Parent?.Vertical == false && !IsEmpty())
             .AddStyle("width", "fit-content", Parent?.Vertical == true || IsEmpty())
             .AddStyle("height", "fit-content", Parent?.Vertical == true || IsEmpty())
             .AddStyle(Style)
             .Build();
 
-        bool _selected;
-
         [CascadingParameter]
-        public MudToggleGroup<T> Parent { get; set; }
+        public MudToggleGroup<T>? Parent { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public T Value { get; set; }
-
-        [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
-        public RenderFragment ChildContent { get; set; }
+        public T? Value { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
@@ -60,17 +58,16 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string Text { get; set; }
+        public string? Text { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public RenderFragment? ChildContent { get; set; }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
             Parent?.Register(this);
-        }
-
-        protected internal void ForceRender()
-        {
-            StateHasChanged();
         }
 
         public void SetSelected(bool selected)
@@ -81,19 +78,17 @@ namespace MudBlazor
 
         protected internal bool IsSelected() => _selected;
 
-        protected async Task HandleOnClick()
+        protected async Task HandleOnClickAsync()
         {
-            await Parent.ToggleItem(this);
+            if (Parent is not null)
+            {
+                await Parent.ToggleItemAsync(this);
+            }
         }
 
         private bool IsEmpty()
         {
-            if (string.IsNullOrEmpty(Text) && Value == null)
-            {
-                return true;
-            }
-            return false;
+            return string.IsNullOrEmpty(Text) && Value is null;
         }
-
     }
 }
