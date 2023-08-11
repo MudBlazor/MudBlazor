@@ -2,12 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Linq;
-using System.Threading.Tasks;
 using AngleSharp.Common;
-using AngleSharp.Css.Dom;
-using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
@@ -84,7 +80,5 @@ namespace MudBlazor.UnitTests.Components
             toggleItem.Click();
             toggle.Instance.Value.Should().BeNull();
         }
-
-
     }
 }
