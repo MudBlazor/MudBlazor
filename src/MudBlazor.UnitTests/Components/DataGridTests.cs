@@ -3881,6 +3881,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridSelectOnRowClickTest()
+        {
+            var comp = Context.RenderComponent<DataGridMultiSelectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultiSelectionTest.Item>>();
+
+            // click on the first row
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
+            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+
+            var parameters = new List<ComponentParameter>();
+            parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.SelectOnRowClick), false));
+            dataGrid.SetParametersAndRender(parameters.ToArray());
+
+            // deselect all programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
+            // click on the first row
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+        }
+
+        [Test]
         public async Task DataGridDragAndDropTest()
         {
             var comp = Context.RenderComponent<DataGridDragAndDropTest>();

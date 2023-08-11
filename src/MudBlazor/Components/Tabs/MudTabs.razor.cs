@@ -350,7 +350,10 @@ namespace MudBlazor
                 return;
             _isDisposed = true;
             _resizeObserver.OnResized -= OnResized;
-            await _resizeObserver.DisposeAsync();
+            if (IsJSRuntimeAvailable)
+            {
+                await _resizeObserver.DisposeAsync();
+            }
         }
 
         #endregion

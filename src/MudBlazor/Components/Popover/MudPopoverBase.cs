@@ -85,7 +85,10 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
     {
         try
         {
-            await PopoverService.DestroyPopoverAsync(this);
+            if (IsJSRuntimeAvailable)
+            {
+                await PopoverService.DestroyPopoverAsync(this);
+            }
         }
         catch (JSDisconnectedException) { }
         catch (TaskCanceledException) { }

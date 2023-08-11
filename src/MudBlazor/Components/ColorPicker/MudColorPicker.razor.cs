@@ -590,7 +590,10 @@ namespace MudBlazor
         {
             if (_throttledEventManager == null) { return; }
 
-            await _throttledEventManager.DisposeAsync();
+            if (IsJSRuntimeAvailable)
+            {
+                await _throttledEventManager.DisposeAsync();
+            }
         }
 
         #endregion

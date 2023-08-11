@@ -94,7 +94,10 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
-            await BrowserViewportService.UnsubscribeAsync(this);
+            if (IsJSRuntimeAvailable)
+            {
+                await BrowserViewportService.UnsubscribeAsync(this);
+            }
         }
 
         Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();

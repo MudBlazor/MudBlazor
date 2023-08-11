@@ -67,7 +67,7 @@ namespace MudBlazor
         private ElementReference _elementReference1;
         private IJsEvent _jsEvent;
         private IKeyInterceptor _keyInterceptor;
-        
+
         [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         [Inject] private IJsEventFactory _jsEventFactory { get; set; }
@@ -396,7 +396,7 @@ namespace MudBlazor
             Mask.Selection = null;
             Mask.CaretPos = pos;
         }
-        
+
         private void SetMask(IMask other)
         {
             if (other == null)
@@ -405,14 +405,14 @@ namespace MudBlazor
                 _mask = new PatternMask("null ********");
                 return;
             }
-            
+
             if (_mask.GetType() == other.GetType())
             {
                 // update mask while retaining current state
                 _mask.UpdateFrom(other);
                 return;
             }
-           
+
             // swap masks while retaining text
             // note: this is required for `BaseMask` instances other than `PatternMask` to work as expected
             other.SetText(Text);
@@ -423,7 +423,7 @@ namespace MudBlazor
         {
             if (GetReadOnlyState())
                 return;
-            
+
             if (_selection!=null)
                 Mask.Delete();
             await Update();
@@ -435,15 +435,16 @@ namespace MudBlazor
 
             if (disposing == true)
             {
-                _jsEvent?.Dispose();
-
                 if (_keyInterceptor != null)
                 {
                     _keyInterceptor.KeyDown -= HandleKeyDownInternally;
-                    _keyInterceptor.Dispose();
                 }
 
-                _keyInterceptor?.Dispose();
+                if (IsJSRuntimeAvailable)
+                {
+                    _jsEvent?.Dispose();
+                    _keyInterceptor?.Dispose();
+                }
             }
         }
     }
