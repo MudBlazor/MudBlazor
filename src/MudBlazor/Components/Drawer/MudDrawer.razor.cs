@@ -298,7 +298,10 @@ namespace MudBlazor
                 {
                     DrawerContainer?.Remove(this);
 
-                    BrowserViewportService.UnsubscribeAsync(this).AndForget();
+                    if (IsJSRuntimeAvailable)
+                    {
+                        BrowserViewportService.UnsubscribeAsync(this).AndForget();
+                    }
                 }
             }
         }
