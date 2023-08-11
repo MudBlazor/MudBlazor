@@ -425,23 +425,6 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Test]
-    public void AddMudDatePicker_ShouldRegisterServices()
-    {
-        // Arrange
-        var services = new ServiceCollection()
-            .AddLogging()
-            .AddSingleton<IJSRuntime, MockJsRuntime>();
-
-        // Act
-        services.AddMudDatePicker();
-        var serviceProvider = services.BuildServiceProvider();
-        var datePickerInterop = serviceProvider.GetService<DatePickerInterop>();
-
-        // Assert
-        Assert.IsNotNull(datePickerInterop);
-    }
-
-    [Test]
     public void AddMudServices_ShouldRegisterAllServices()
     {
         // Arrange

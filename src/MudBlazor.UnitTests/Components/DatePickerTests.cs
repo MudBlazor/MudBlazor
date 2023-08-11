@@ -1131,13 +1131,15 @@ namespace MudBlazor.UnitTests.Components
 
             await button.MouseOverAsync(new());
 
-            Context.JSInterop.VerifyInvoke("mudDatePicker.handleMouseoverOnPickerCalendarDayButton", 1);
-            Context.JSInterop.Invocations["mudDatePicker.handleMouseoverOnPickerCalendarDayButton"].Single()
+            Context.JSInterop.VerifyInvoke("mudWindow.updateStyleProperty", 1);
+            Context.JSInterop.Invocations["mudWindow.updateStyleProperty"].Single()
                 .Arguments
                 .Should()
-                .HaveCount(2)
+                .HaveCount(3)
                 .And
-                .HaveElementAt(1, 5);
+                .HaveElementAt(1, "--selected-day")
+                .And
+                .HaveElementAt(2, 5);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace MudBlazor
 
         [Inject] protected IScrollManager ScrollManager { get; set; }
         
-        [Inject] private DatePickerInterop DatePickerInterop { get; set; }
+        [Inject] private IJsApiService JsApiService { get; set; }
 
         /// <summary>
         /// Max selectable date.
@@ -623,7 +623,7 @@ namespace MudBlazor
 
         private ValueTask HandleMouseoverOnPickerCalendarDayButton(int tempId)
         {
-            return this.DatePickerInterop.HandleMouseoverOnPickerCalendarDayButton(_mudPickerCalendarContentElementId, tempId);
+            return this.JsApiService.UpdateStyleProperty(_mudPickerCalendarContentElementId, "--selected-day", tempId);
         }
     }
 }

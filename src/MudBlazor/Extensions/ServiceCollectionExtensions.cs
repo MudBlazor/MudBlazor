@@ -360,13 +360,6 @@ namespace MudBlazor.Services
             return services;
         }
 
-        public static IServiceCollection AddMudDatePicker(this IServiceCollection services)
-        {
-            services.TryAddTransient<DatePickerInterop>();
-
-            return services;
-        }
-
         /// <summary>
         /// Adds common services required by MudBlazor components
         /// </summary>
@@ -390,8 +383,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService(configuration.PopoverOptions)
                 .AddMudEventManager()
-                .AddMudLocalization()
-                .AddMudDatePicker();
+                .AddMudLocalization();
         }
 
         /// <summary>
@@ -415,8 +407,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService()
                 .AddMudEventManager()
-                .AddMudLocalization()
-                .AddMudDatePicker();
+                .AddMudLocalization();
         }
 
         /// <summary>
@@ -482,8 +473,7 @@ namespace MudBlazor.Services
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()
-                .AddMudLocalization()
-                .AddMudDatePicker();
+                .AddMudLocalization();
         }
     }
 }
