@@ -56,22 +56,22 @@ namespace MudBlazor.Charts
             if (_series.SelectMany(series => series.Data).Any())
             {
                 var maxY = _series.SelectMany(series => series.Data).Max();
-                numHorizontalLines = (int)Math.Ceiling(maxY / gridYUnits);
+                numHorizontalLines = (int)Math.Ceiling(maxY / gridYUnits) + 1;
 
                 // this is a safeguard against millions of gridlines which might arise with very high values
                 int maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
                 while (numHorizontalLines > maxYTicks)
                 {
                     gridYUnits *= 2;
-                    numHorizontalLines = (int)Math.Ceiling(maxY / gridYUnits);
+                    numHorizontalLines = (int)Math.Ceiling(maxY / gridYUnits) + 1;
                 }    
 
                 numVerticalLines = _series.Max(series => series.Data.Length);  
             }
             else
             {
-                numHorizontalLines = 0;
-                numVerticalLines = 0;
+                numHorizontalLines = 1;
+                numVerticalLines = 1;
             }
         }
 
