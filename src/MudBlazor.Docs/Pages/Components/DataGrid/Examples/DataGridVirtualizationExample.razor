@@ -1,0 +1,25 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+
+<MudDataGrid Items="@_items" Virtualize="true" FixedHeader="true" Height="350px">
+    <Columns>
+        <PropertyColumn Property="x => x.Column1" />
+        <PropertyColumn Property="x => x.Column2" />
+        <PropertyColumn Property="x => x.Column3" />
+        <PropertyColumn Property="x => x.Column4" />
+        <PropertyColumn Property="x => x.Column5" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public record Model(string Column1, string Column2, string Column3, string Column4, string Column5);
+
+    private List<Model> _items = new List<Model>();
+
+    protected override void OnInitialized()
+    {
+        for (var i = 0; i < 20000; i++)
+            _items.Add(new Model($"Value_{i}", $"Value_{i}", $"Value_{i}", $"Value_{i}", $"Value_{i}"));
+    }
+}

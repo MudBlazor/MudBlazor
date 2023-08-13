@@ -1,6 +1,4 @@
-﻿@import '../abstracts/variables';
-
-.mud-icon-button {
+﻿.mud-icon-button {
     flex: 0 0 auto;
     padding: 12px;
     overflow: visible;
@@ -15,7 +13,7 @@
         border-radius: var(--mud-default-borderradius);
     }
 
-    &:hover {
+    &:hover, &:focus-visible {
         background-color: var(--mud-palette-action-default-hover);
     }
 
@@ -23,26 +21,19 @@
         color: var(--mud-palette-action-disabled);
         background-color: transparent;
     }
+
+    &.mud-readonly, .mud-readonly:hover {
+        cursor: default;
+    }
 }
 
 .mud-icon-button-color-inherit {
     color: inherit;
 
-    &:hover {
+    &:hover, &:focus-visible {
         background-color: var(--mud-palette-action-default-hover);
     }
 }
-
-@each $color in $mud-palette-colors {
-    .mud-icon-button-color-#{$color} {
-        color: var(--mud-palette-#{$color});
-
-        &:hover {
-            background-color: var(--mud-palette-#{$color}-hover);
-        }
-    }
-}
-
 
 .mud-icon-button-label {
     width: 100%;
@@ -60,6 +51,12 @@
 .mud-icon-button-edge-end {
     margin-right: -12px;
     margin-inline-end: -12px;
+    margin-inline-start: unset;
+}
+
+.mud-icon-button-edge-margin-end {
+    margin-right: 8px;
+    margin-inline-end: 8px;
     margin-inline-start: unset;
 }
 

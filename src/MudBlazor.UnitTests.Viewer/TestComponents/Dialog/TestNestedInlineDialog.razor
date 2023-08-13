@@ -1,0 +1,28 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudButton Variant="Variant.Filled" OnClick="()=>visible=true">Open</MudButton>
+
+<MudDialog @bind-IsVisible="visible">
+    <DialogContent>
+        <MudText>Scorpiany!</MudText>
+        <MudButton Variant="Variant.Filled" OnClick="()=>nestedVisible=true">Open Nested</MudButton>
+        <MudDialog @bind-IsVisible="nestedVisible">
+            <DialogContent>
+                <MudText Class="nested">Nested dialog!</MudText>
+            </DialogContent>
+            <DialogActions>
+                <MudButton Color="Color.Primary" OnClick="()=>nestedVisible=false">Close</MudButton>
+            </DialogActions>
+        </MudDialog>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="()=>visible=false">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    public static string __description__ = "Click on open will open the inlined dialog, and the nested dialog can be opened with a second click";
+
+    bool visible;
+    bool nestedVisible;
+}

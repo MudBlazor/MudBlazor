@@ -1,0 +1,58 @@
+﻿@namespace MudBlazor
+@using Microsoft.AspNetCore.Components.Rendering
+@using Microsoft.AspNetCore.Components.CompilerServices
+@inherits MudTabs
+
+@Render
+
+@code {
+
+    /// <inheritdoc />
+    protected override void OnInitialized()
+    {
+        Header = MudTabsHeader;
+        TabPanelHeader = MudTabPanelPanelHeader;
+    }
+
+    /// <summary>
+    /// Renders the component to the supplied <see cref="BuildRenderTree"/>.
+    /// </summary>
+    public RenderFragment Render => base.BuildRenderTree;
+
+    private RenderFragment<MudTabPanel> MudTabPanelPanelHeader => context =>
+        @<MudRender>
+            @if (context.ShowCloseIcon)
+            {
+                if (!string.IsNullOrEmpty(CloseIconToolTip))
+                {
+                    <MudTooltip Text="@CloseIconToolTip">
+                        <MudIconButton Icon="@CloseTabIcon"
+                                       Class="@CloseIconClass"
+                                       Style="@CloseIconStyle"
+                                       OnClick="() => CloseTab.InvokeAsync(context)"/>
+                    </MudTooltip>
+                }
+                else
+                {
+                    <MudIconButton Icon="@CloseTabIcon"
+                                   Class="@CloseIconClass"
+                                   Style="@CloseIconStyle"
+                                   OnClick="() => CloseTab.InvokeAsync(context)"/>
+                }
+            }
+        </MudRender>;
+
+    private RenderFragment<MudTabs> MudTabsHeader => _ =>
+        @<MudRender>
+            @if (!string.IsNullOrEmpty(AddIconToolTip))
+            {
+                <MudTooltip Text="@AddIconToolTip">
+                    <MudIconButton Icon="@AddTabIcon" Class="@AddIconClass" Style="@AddIconStyle" OnClick="@AddTab"/>
+                </MudTooltip>
+            }
+            else
+            {
+                <MudIconButton Icon="@AddTabIcon" Class="@AddIconClass" Style="@AddIconStyle" OnClick="@AddTab"/>
+            }
+        </MudRender>;
+}

@@ -6,6 +6,8 @@
     display: flex;
     padding: 16px;
     align-items: center;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
 
     & .mud-card-header-avatar {
         flex: 0 0 auto;
@@ -37,6 +39,13 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+}
+
+.mud-card-header + .mud-card-media {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
 }
 
 .mud-card-content {

@@ -1,7 +1,6 @@
 
 .mud-snackbar {
     display: flex;
-    flex-wrap: wrap;
     flex-grow: initial;
     padding: 6px 16px;
     align-items: center;
@@ -30,6 +29,7 @@
 
     .mud-snackbar-content-message {
         padding: 8px 0;
+        overflow-wrap: anywhere;
     }
 
     .mud-snackbar-content-action {
@@ -41,6 +41,7 @@
         margin-inline-start: auto;
         margin-inline-end: -8px;
         padding-inline-start: 16px;
+        padding-inline-end: unset;
 
         & > button {
             color: inherit;

@@ -4,13 +4,13 @@
     <MudDrawerContainer Class="mud-height-full">
         <MudDrawer @bind-Open="@open" Fixed="false" Elevation="1" Variant="@DrawerVariant.Mini" OpenMiniOnHover="true">
             <MudNavMenu>
-                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Store">Store</MudNavLink>
-                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.LibraryBooks">Library</MudNavLink>
-                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Group">Community</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Store">Store</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.LibraryBooks">Library</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Group">Community</MudNavLink>
             </MudNavMenu>
         </MudDrawer>
         <div class="d-flex justify-center align-center mud-height-full">
-            <MudButton OnClick="@TogglDrawer" Color="Color.Primary">Toggle</MudButton>
+            <MudButton OnClick="@ToggleDrawer" Color="Color.Primary">Toggle</MudButton>
         </div>
     </MudDrawerContainer>
 </MudPaper>
@@ -19,7 +19,7 @@
 { 
     bool open = false;
 
-    void TogglDrawer()
+    void ToggleDrawer()
     {
         open = !open;
     } 

@@ -12,12 +12,13 @@
         .mud-button {
             color: var(--mud-palette-text-primary);
         }
+
         .mud-button-root {
             background-color: inherit;
             box-shadow: none;
             border: none;
 
-            &:hover {
+            &:hover, &:focus-visible {
                 background-color: var(--mud-palette-action-default-hover);
             }
         }
@@ -25,12 +26,12 @@
 }
 .mud-button-group-horizontal {
     &:not(.mud-button-group-rtl) {
-        > .mud-button-root:not(:last-child), :not(:last-child) .mud-button-root {
+        > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
         }
 
-        > .mud-button-root:not(:first-child), :not(:first-child) .mud-button-root {
+        > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
             margin-left: -1px;
@@ -38,13 +39,13 @@
     }
 
     &.mud-button-group-rtl {
-        > .mud-button-root:not(:last-child), :not(:last-child) .mud-button-root {
+        > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
             margin-left: -1px;
         }
 
-        > .mud-button-root:not(:first-child), :not(:first-child) .mud-button-root {
+        > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
         }
@@ -57,12 +58,12 @@
         width: 100%;
     }
 
-    > .mud-button-root:not(:last-child), :not(:last-child) .mud-button-root {
+    > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
         border-bottom-right-radius: 0;
         border-bottom-left-radius: 0;
     }
 
-    > .mud-button-root:not(:first-child), :not(:first-child) .mud-button-root {
+    > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
         border-top-right-radius: 0;
         border-top-left-radius: 0;
         margin-top: -1px;
@@ -76,17 +77,23 @@
         }
 
         &.mud-button-group-horizontal {
-            &:not(.mud-button-group-rtl) .mud-button-root:not(:first-child) {
-                border-left: 1px solid var(--mud-palette-text-primary);
+            &:not(.mud-button-group-rtl) {
+                .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+                    border-left: 1px solid var(--mud-palette-text-primary);
+                }
             }
 
-            &.mud-button-group-rtl .mud-button-root:not(:first-child) {
-                border-right: 1px solid var(--mud-palette-text-primary);
+            &.mud-button-group-rtl {
+                .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+                    border-right: 1px solid var(--mud-palette-text-primary);
+                }
             }
         }
 
-        &.mud-button-group-vertical .mud-button-root:not(:last-child) {
-            border-bottom: 1px solid var(--mud-palette-text-primary);
+        &.mud-button-group-vertical {
+            .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
+                border-bottom: 1px solid var(--mud-palette-text-primary);
+            }
         }
 
         @each $color in $mud-palette-colors {
@@ -94,23 +101,29 @@
                 .mud-button-root {
                     color: var(--mud-palette-#{$color});
 
-                    &:hover {
+                    &:hover, &:focus-visible {
                         background-color: var(--mud-palette-#{$color}-hover);
                     }
                 }
 
                 &.mud-button-group-horizontal {
-                    &:not(.mud-button-group-rtl) .mud-button-root:not(:first-child) {
-                        border-left: 1px solid var(--mud-palette-#{$color});
+                    &:not(.mud-button-group-rtl) {
+                        .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+                            border-left: 1px solid var(--mud-palette-#{$color});
+                        }
                     }
 
-                    &.mud-button-group-rtl .mud-button-root:not(:first-child) {
-                        border-right: 1px solid var(--mud-palette-#{$color});
+                    &.mud-button-group-rtl {
+                        .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+                            border-right: 1px solid var(--mud-palette-#{$color});
+                        }
                     }
                 }
 
-                &.mud-button-group-vertical .mud-button-root:not(:last-child) {
-                    border-bottom: 1px solid var(--mud-palette-#{$color});
+                &.mud-button-group-vertical {
+                    .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
+                        border-bottom: 1px solid var(--mud-palette-#{$color});
+                    }
                 }
             }
         }
@@ -129,7 +142,7 @@
                 color: var(--mud-palette-#{$color});
                 border: 1px solid var(--mud-palette-#{$color});
 
-                &:hover {
+                &:hover, &:focus-visible {
                     background-color: var(--mud-palette-#{$color}-hover);
                 }
             }
@@ -143,7 +156,7 @@
     .mud-button-root {
         box-shadow: none;
 
-        &:hover {
+        &:hover, &:focus-visible {
             box-shadow: var(--mud-elevation-4);
         }
     }
@@ -155,42 +168,54 @@
         }
 
         &.mud-button-group-horizontal {
-            &:not(.mud-button-group-rtl) .mud-button-root:not(:first-child) {
-                border-left: 1px solid var(--mud-palette-divider);
+            &:not(.mud-button-group-rtl) {
+                .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+                    border-left: 1px solid var(--mud-palette-divider);
+                }
             }
 
-            &.mud-button-group-rtl .mud-button-root:not(:first-child) {
-                border-right: 1px solid var(--mud-palette-divider);
+            &.mud-button-group-rtl {
+                .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+                    border-right: 1px solid var(--mud-palette-divider);
+                }
             }
         }
 
-        &.mud-button-group-vertical .mud-button-root:not(:first-child) {
-            border-top: 1px solid var(--mud-palette-divider);
+        &.mud-button-group-vertical {
+            .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+                border-top: 1px solid var(--mud-palette-divider);
+            }
         }
 
         @each $color in $mud-palette-colors {
             &.mud-button-group-filled-#{$color} {
                 .mud-button-root {
                     background-color: var(--mud-palette-#{$color});
-                    color: var(--mud-palette-#{$color}-text);             
+                    color: var(--mud-palette-#{$color}-text);
 
-                    &:hover {
+                    &:hover, &:focus-visible {
                         background-color: var(--mud-palette-#{$color}-darken);
                     }
                 }
 
                 &.mud-button-group-horizontal {
-                    &:not(.mud-button-group-rtl) .mud-button-root:not(:first-child) {
-                        border-left: 1px solid var(--mud-palette-#{$color}-lighten);
+                    &:not(.mud-button-group-rtl) {
+                        .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+                            border-left: 1px solid var(--mud-palette-#{$color}-lighten);
+                        }
                     }
 
-                    &.mud-button-group-rtl .mud-button-root:not(:first-child) {
-                        border-right: 1px solid var(--mud-palette-#{$color}-lighten);
+                    &.mud-button-group-rtl {
+                        .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+                            border-right: 1px solid var(--mud-palette-#{$color}-lighten);
+                        }
                     }
                 }
 
-                &.mud-button-group-vertical .mud-button-root:not(:first-child) {
-                    border-top: 1px solid var(--mud-palette-#{$color}-lighten);
+                &.mud-button-group-vertical {
+                    .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+                        border-top: 1px solid var(--mud-palette-#{$color}-lighten);
+                    }
                 }
             }
         }
@@ -274,12 +299,6 @@
 }
 
 .mud-button-group-root {
-    @each $color in $mud-palette-colors {
-        .mud-button-root.mud-icon-button.mud-icon-button-color-#{$color} {
-            color: var(--mud-palette-#{$color});
-        }
-    }
-
     .mud-button-root.mud-icon-button {
         padding-right: 12px;
         padding-left: 12px;

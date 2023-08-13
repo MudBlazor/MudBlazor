@@ -1,0 +1,38 @@
+﻿@page "/mud/project/roadmap"
+@using System.Text.RegularExpressions
+
+<PageTitle>Roadmap - MudBlazor</PageTitle>
+
+<DocsPage DisplayFooter="true">
+    <DocsPageHeader Title="Roadmap" />
+    <DocsPageContent>
+        @if (string.IsNullOrEmpty(_roadMap))
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        }
+        else
+        {
+            <MudStack Spacing="2" Class="mud-typography mud-typography-body1">
+                @((MarkupString)GetBody(_roadMap))
+            </MudStack>
+        }
+    </DocsPageContent>
+</DocsPage>
+
+@code {
+    private string _roadMap;
+    [Inject] HttpClient HttpClient { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await HttpClient.GetAsync("https://raw.githubusercontent.com/MudBlazor/MudBlazor/dev/ROADMAP.md");
+        _roadMap = await response.Content.ReadAsStringAsync();
+    }
+
+    private string GetBody(string value)
+    {
+        value = Regex.Replace(value, @"(##\s)(?<title>.+)", "<h5 class=\"mud-typography mud-typography-h5 mt-3\"><b>${title}</b></h5><hr class=\"mud-divider mud-divider-fullwidth\">");
+        value = Regex.Replace(value, @"(#\s)(?<title>.+)", "<h4 class=\"mud-typography mud-typography-h4\"><b>${title}</b></h4><hr class=\"mud-divider mud-divider-fullwidth\">");
+        return value;
+    }
+}

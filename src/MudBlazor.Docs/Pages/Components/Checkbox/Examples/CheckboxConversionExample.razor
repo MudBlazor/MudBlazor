@@ -32,9 +32,9 @@
             try
             {
                 if (arg is bool)
-                    return (bool)(object)arg;
+                    return (bool)arg;
                 else if (arg is bool?)
-                    return (bool?)(object)arg;
+                    return (bool?)arg;
                 else
                 {
                     UpdateSetError("Unable to convert to bool? from type object");

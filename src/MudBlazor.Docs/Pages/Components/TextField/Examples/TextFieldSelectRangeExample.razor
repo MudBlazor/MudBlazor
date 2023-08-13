@@ -1,23 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudGrid>
-    <MudItem xs="12" sm="12" md="12">
-        <MudTextField @ref="multilineReference" T="string" Label="Multiline Select" Lines="3" Variant="Variant.Text" Text="@sampleText" />
-    </MudItem>
-    <MudItem xs="12" Class="d-flex justify-end">
-        <MudButton @onclick="() => multilineReference.SelectRangeAsync(5, 10)">
-            Select
-        </MudButton>
-    </MudItem>
-    <MudItem xs="12">
-        <MudTextField @ref="singleLineReference" T="string" Label="Single Select" Variant="Variant.Filled" Text="@sampleText" />
-    </MudItem>
-    <MudItem xs="12" Class="d-flex justify-end">
-        <MudButton @onclick="() => singleLineReference.SelectRangeAsync(5, 10)">
-            Select
-        </MudButton>
-    </MudItem>
-</MudGrid>
+<MudTextField @ref="multilineReference" T="string" Label="Multiline Select" Lines="3" Variant="Variant.Outlined" Text="@sampleText" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => multilineReference.SelectRangeAsync(5, 10))" />
+<MudTextField @ref="singleLineReference" T="string" Label="Single Select" Variant="Variant.Outlined" Text="@sampleText" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => singleLineReference.SelectRangeAsync(5, 10))" />
 
 @code
 {

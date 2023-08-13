@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor
+@typeparam T
+@typeparam ModelType
+@inherits MudBaseColumn
+@if (Visible)
+{
+    if (Mode == Rendermode.Header)
+    {
+        if (SortLabel != null)
+        {
+            <MudTh><MudTableSortLabel SortLabel="@SortLabel" T="ModelType">@HeaderText</MudTableSortLabel></MudTh>
+        }
+        else if (SortBy != null)
+        {
+            <MudTh><MudTableSortLabel SortBy="@SortBy">@HeaderText</MudTableSortLabel></MudTh>
+        }
+        else
+        {
+            <MudTh>@HeaderText</MudTh>
+        }
+    }
+    else if (Mode == Rendermode.Item || (ReadOnly && Mode == Rendermode.Edit))
+    {
+        <MudTd DataLabel="@HeaderText">@GetFormattedString(Value)</MudTd>
+    }
+    else if (Mode == Rendermode.Edit)
+    {
+        <MudTd DataLabel="@HeaderText"><MudTextField @bind-Value="InternalValue" /></MudTd>
+    }
+    else if (Mode == Rendermode.Footer)
+    {
+        @if (_footerValueAvailable)
+        {
+            <MudTd>
+                @GetFormattedString(FooterValue)
+            </MudTd>
+        }
+        else
+        {
+            <MudTd>
+                 @FooterText
+            </MudTd>
+        }
+    }
+}

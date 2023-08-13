@@ -1,8 +1,9 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudCheckBox ReadOnly="@ReadOnly" @bind-Checked="@Label_Checkbox1" Label="@(ReadOnly ? "ReadOnly Checkbox 1" : "EditMode Checkbox 1")"/>
-<MudCheckBox ReadOnly="@ReadOnly" @bind-Checked="@Label_Checkbox2" Label="@(ReadOnly ? "ReadOnly Checkbox 2" : "EditMode Checkbox 2")"/>
-
+<div>
+    <MudCheckBox ReadOnly="@ReadOnly" @bind-Checked="@Label_Checkbox1" Label="@(ReadOnly ? "ReadOnly Checkbox 1" : "EditMode Checkbox 1")"/>
+    <MudCheckBox ReadOnly="@ReadOnly" @bind-Checked="@Label_Checkbox2" Label="@(ReadOnly ? "ReadOnly Checkbox 2" : "EditMode Checkbox 2")"/>
+</div>
 <MudSelect  @bind-Value="@Label_Checkbox1" Label="Checkbox 1">
     <MudSelectItem Value="@(false)">False</MudSelectItem>
     <MudSelectItem Value="@(true)">True</MudSelectItem>

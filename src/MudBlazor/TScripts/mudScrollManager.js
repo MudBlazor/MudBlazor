@@ -1,15 +1,10 @@
-﻿class MudScrollManager {
-    //scrolls to an Id. Useful for navigation to fragments
-    scrollToFragment (elementId, behavior) {
-        let element = document.getElementById(elementId);
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
-        if (element) {
-            element.scrollIntoView({ behavior, block: 'center', inline: 'start' });
-        }
-    }
-
+class MudScrollManager { 
     //scrolls to year in MudDatePicker
-    scrollToYear (elementId, offset) {
+    scrollToYear(elementId, offset) {
         let element = document.getElementById(elementId);
 
         if (element) {
@@ -17,49 +12,41 @@
         }
     }
 
-    // scrolls down or up in a select input
-    //increment is 1 if moving dow and -1 if moving up
-    //onEdges is a boolean. If true, it waits to reach the bottom or the top
-    //of the container to scroll.   
-    scrollToListItem (elementId, increment, onEdges) {
+    // sets the scroll position of the elements container, 
+    // to the position of the element with the given element id
+    scrollToListItem(elementId) {
         let element = document.getElementById(elementId);
         if (element) {
-
-            //this is the scroll container
             let parent = element.parentElement;
-            //reset the scroll position when close the menu
-            if (increment == 0) {
-                parent.scrollTop = 0;
-                return;
-            }
-
-            //position of the elements relative to the screen, so we can compare
-            //one with the other
-            //e:element; p:parent of the element; For example:eBottom is the element bottom
-            let { bottom: eBottom, height: eHeight, top: eTop } = element.getBoundingClientRect();
-            let { bottom: pBottom, top: pTop } = parent.getBoundingClientRect();
-
-            if (
-                //if element reached bottom and direction is down
-                ((pBottom - eBottom <= 0) && increment > 0)
-                //or element reached top and direction is up
-                || ((eTop - pTop <= 0) && increment < 0)
-                // or scroll is not constrained to the Edges
-                || !onEdges
-            ) {
-                parent.scrollTop += eHeight * increment;
+            if (parent) {
+                parent.scrollTop = element.offsetTop;
             }
         }
     }
 
     //scrolls to the selected element. Default is documentElement (i.e., html element)
-    scrollTo (selector, left, top, behavior) {
+    scrollTo(selector, left, top, behavior) {
         let element = document.querySelector(selector) || document.documentElement;
         element.scrollTo({ left, top, behavior });
     }
 
+    //scrolls the provided selector into view
+    scrollIntoView(selector, behavior) {
+        let element = document.querySelector(selector) || document.documentElement;
+        if (element)
+            element.scrollIntoView({ behavior, block: 'center', inline: 'start' });
+    }
+
+    scrollToBottom(selector, behavior) {
+        let element = document.querySelector(selector);
+        if (element)
+            element.scrollTop = element.scrollHeight;
+        else
+            window.scrollTo(0, document.body.scrollHeight);
+    }
+
     //locks the scroll of the selected element. Default is body
-    lockScroll (selector, lockclass) {
+    lockScroll(selector, lockclass) {
         let element = document.querySelector(selector) || document.body;
 
         //if the body doesn't have a scroll bar, don't add the lock class
@@ -70,7 +57,7 @@
     }
 
     //unlocks the scroll. Default is body
-    unlockScroll (selector, lockclass) {
+    unlockScroll(selector, lockclass) {
         let element = document.querySelector(selector) || document.body;
         element.classList.remove(lockclass);
     }

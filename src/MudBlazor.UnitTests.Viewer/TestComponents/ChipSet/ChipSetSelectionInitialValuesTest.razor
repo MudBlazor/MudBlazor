@@ -1,0 +1,20 @@
+﻿<MudChipSet MultiSelection="true" Filter="true" Mandatory="false" @bind-SelectedChips="selectedChips" @bind-SelectedValues="selectedValues">
+    <MudChip Text="Chip1" Value="1" Default="true"></MudChip>
+    <MudChip Text="Chip2" Value="2"></MudChip>
+    <MudChip Text="Chip3" Value="3"></MudChip>
+    <MudChip Text="Chip4" Value="4" Default="false"></MudChip>
+</MudChipSet>
+
+
+<br />
+<p class="sel">
+    Selection: @(string.Join(", ", (selectedChips??new MudChip[0]).OrderBy(chip=> chip.Text).Select(chip=> chip.Text)))
+</p>
+
+
+@code {
+    public static string __description__ = "The initial selectedValues collection should be applied but will be overridden by Chip.Default";
+    MudChip[] selectedChips;
+    ICollection<object> selectedValues = new List<object>() { 3, 4 };
+
+}

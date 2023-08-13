@@ -1,6 +1,5 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
-@using MudBlazor.Extensions
 @inherits MudComponentBase
 
 <CascadingValue Value="this" IsFixed="true">
@@ -14,14 +13,20 @@
     protected string Classname =>
     new CssBuilder("mud-grid")
       .AddClass($"mud-grid-spacing-xs-{Spacing.ToString()}")
-      .AddClass($"mud-grid-justify-xs-{Justify.ToDescriptionString()}")
+      .AddClass($"justify-{Justify.ToDescriptionString()}")
       .AddClass(Class)
     .Build();
 
-    [Parameter] public int Spacing { set; get; } = 3;
-
-    [Parameter] public Justify Justify { get; set; } = Justify.FlexStart;
-
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    [Category(CategoryTypes.Grid.Behavior)]
+    public int Spacing { set; get; } = 3;
+    
+    [Parameter]
+    [Category(CategoryTypes.Grid.Behavior)]
+    public Justify Justify { get; set; } = Justify.FlexStart;
+    
+    [Parameter]
+    [Category(CategoryTypes.Grid.Behavior)]
+    public RenderFragment ChildContent { get; set; }
 
 }

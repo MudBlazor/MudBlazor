@@ -1,140 +1,250 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudChip : MudComponentBase, IDisposable
+    public partial class MudChip : MudComponentBase, IAsyncDisposable
     {
         private bool _isSelected;
-        [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
 
-        [Inject] public IJsApiService JsApiService { get; set; }
+        [Inject]
+        public NavigationManager UriHelper { get; set; }
+
+        [Inject]
+        public IJsApiService JsApiService { get; set; }
 
         protected string Classname =>
-        new CssBuilder("mud-chip")
-          .AddClass($"mud-chip-{Variant.ToDescriptionString()}")
-          .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
-          .AddClass($"mud-chip-color-{Color.ToDescriptionString()}")
-          .AddClass("mud-clickable", (OnClick.HasDelegate || ChipSet != null))
-          .AddClass($"mud-ripple", !DisableRipple && (OnClick.HasDelegate || ChipSet != null))
-          .AddClass("mud-chip-label", Label)
-          .AddClass("mud-disabled", Disabled)
-          .AddClass("mud-chip-selected", IsSelected)
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-chip")
+                .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
+                .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
+                .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
+                .AddClass("mud-clickable", IsClickable)
+                .AddClass("mud-ripple", IsClickable && !DisableRipple)
+                .AddClass("mud-chip-label", Label)
+                .AddClass("mud-disabled", Disabled)
+                .AddClass("mud-chip-selected", IsSelected)
+                .AddClass(Class)
+                .Build();
 
-        [CascadingParameter] MudChipSet ChipSet { get; set; }
+        private bool IsClickable =>
+            !ChipSet?.ReadOnly ?? (OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
+
+        //Cannot test the get variant (last line)
+        [ExcludeFromCodeCoverage]
+        private Variant GetVariant()
+        {
+            return Variant switch
+            {
+                Variant.Text => IsSelected ? Variant.Filled : Variant.Text,
+                Variant.Filled => IsSelected ? Variant.Text : Variant.Filled,
+                Variant.Outlined => Variant.Outlined,
+                _ => Variant
+            };
+        }
+
+        private Color GetColor()
+        {
+            if (IsSelected && SelectedColor != Color.Inherit)
+            {
+                return SelectedColor;
+            }
+
+            if (IsSelected && SelectedColor == Color.Inherit)
+            {
+                return Color;
+            }
+
+            return Color;
+        }
+
+        [CascadingParameter]
+        private MudChipSet ChipSet { get; set; }
 
         /// <summary>
         /// The color of the component.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter]
+        [Category(CategoryTypes.Chip.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The size of the button. small is equivalent to the dense button styling.
         /// </summary>
-        [Parameter] public Size Size { get; set; } = Size.Medium;
+        [Parameter]
+        [Category(CategoryTypes.Chip.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// The variant to use.
         /// </summary>
-        [Parameter] public Variant Variant { get; set; } = Variant.Filled;
+        [Parameter]
+        [Category(CategoryTypes.Chip.Appearance)]
+        public Variant Variant { get; set; } = Variant.Filled;
+
+        /// <summary>
+        /// The selected color to use when selected, only works together with ChipSet, Color.Inherit for default value.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Chip.Appearance)]
+        public Color SelectedColor { get; set; } = Color.Inherit;
 
         /// <summary>
         /// Avatar Icon, Overrides the regular Icon if set.
         /// </summary>
-        [Parameter] public string Avatar { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.Behavior)]
+        public string Avatar { get; set; }
 
         /// <summary>
         /// Avatar CSS Class, appends to Chips default avatar classes.
         /// </summary>
-        [Parameter] public string AvatarClass { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.Appearance)]
+        public string AvatarClass { get; set; }
 
         /// <summary>
-        /// Removes circle edges and applys theme default.
+        /// Removes circle edges and applies theme default.
         /// </summary>
-        [Parameter] public bool Label { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.Appearance)]
+        public bool Label { get; set; }
 
         /// <summary>
         /// If true, the chip will be displayed in disabled state and no events possible.
         /// </summary>
-        [Parameter] public bool Disabled { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// Sets the Icon to use.
         /// </summary>
-        [Parameter] public string Icon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.Behavior)]
+        public string Icon { get; set; }
+
+        /// <summary>
+        /// Custom checked icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Chip.Appearance)]
+        public string CheckedIcon { get; set; } = Icons.Material.Filled.Check;
 
         /// <summary>
         /// The color of the icon.
         /// </summary>
-        [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+        [Parameter]
+        [Category(CategoryTypes.Chip.Appearance)]
+        public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
         /// Overrides the default close icon, only shown if OnClose is set.
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.Appearance)]
+        public string CloseIcon { get; set; }
 
         /// <summary>
         /// If true, disables ripple effect, ripple effect is only applied to clickable chips.
         /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.Appearance)]
+        public bool DisableRipple { get; set; }
 
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.Behavior)]
+        public RenderFragment ChildContent { get; set; }
+
+        /// <summary>
+        /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where (Obsolete replaced by Href)
+        /// </summary>
+        [Obsolete("Use Href Instead.", false)]
+        [Parameter]
+        [Category(CategoryTypes.Chip.ClickAction)]
+        public string Link
+        {
+            get => Href;
+            set => Href = value;
+        }
 
         /// <summary>
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
         /// </summary>
-        [Parameter] public string Link { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.ClickAction)]
+        public string Href { get; set; }
 
         /// <summary>
-        /// The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// The target attribute specifies where to open the link, if Href is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
         /// </summary>
-        [Parameter] public string Target { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.ClickAction)]
+        public string Target { get; set; }
 
         /// <summary>
         /// A string you want to associate with the chip. If the ChildContent is not set this will be shown as chip text.
         /// </summary>
-        [Parameter] public string Text { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.Behavior)]
+        public string Text { get; set; }
+
+        /// <summary>
+        /// A value that should be managed in the SelectedValues collection.
+        /// Note: do not change the value during the chip's lifetime
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Chip.Behavior)]
+        public object Value { get; set; }
 
         /// <summary>
         /// If true, force browser to redirect outside component router-space.
         /// </summary>
-        [Parameter] public bool ForceLoad { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.ClickAction)]
+        public bool ForceLoad { get; set; }
 
         /// <summary>
-        /// If true, this chip is selected by default if used in a ChipSet. 
+        /// If true, this chip is selected by default if used in a ChipSet.
         /// </summary>
-        [Parameter] public bool Default { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.Behavior)]
+        public bool? Default { get; set; }
 
         /// <summary>
         /// Command executed when the user clicks on an element.
         /// </summary>
-        [Parameter] public ICommand Command { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.ClickAction)]
+        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
+        public ICommand Command { get; set; }
 
         /// <summary>
         /// Command parameter.
         /// </summary>
-        [Parameter] public object CommandParameter { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.Chip.ClickAction)]
+        [Obsolete("This will be removed in v7.")]
+        public object CommandParameter { get; set; }
 
         /// <summary>
         /// Chip click event, if set the chip focus, hover and click effects are applied.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         /// <summary>
         /// Chip delete event, if set the delete icon will be visible.
         /// </summary>
-        [Parameter] public EventCallback<MudChip> OnClose { get; set; }
+        [Parameter]
+        public EventCallback<MudChip> OnClose { get; set; }
 
         /// <summary>
         /// Set by MudChipSet
@@ -164,57 +274,82 @@ namespace MudBlazor
             }
         }
 
-        protected async Task OnClickHandler(MouseEventArgs ev)
+        protected override void OnInitialized()
         {
+            base.OnInitialized();
+            if (Value == null)
+                Value = this;
+        }
+
+        protected internal async Task OnClickHandler(MouseEventArgs ev)
+        {
+            if (ChipSet?.ReadOnly == true)
+            {
+                return;
+            }
             if (ChipSet != null)
             {
-                _ = ChipSet.OnChipClicked(this);
+                await ChipSet.OnChipClickedAsync(this);
             }
-            if (Link != null)
+            if (Href != null)
             {
                 // TODO: use MudElement to render <a> and this code can be removed. we know that it has potential problems on iOS
                 if (string.IsNullOrWhiteSpace(Target))
-                    UriHelper.NavigateTo(Link, ForceLoad);
+                    UriHelper.NavigateTo(Href, ForceLoad);
                 else
-                    await JsApiService.Open(Link, Target);
+                    await JsApiService.Open(Href, Target);
             }
             else
             {
                 await OnClick.InvokeAsync(ev);
+#pragma warning disable CS0618
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
                     Command.Execute(CommandParameter);
                 }
+#pragma warning restore CS0618
             }
         }
 
         protected async Task OnCloseHandler(MouseEventArgs ev)
         {
+            if (ChipSet?.ReadOnly == true)
+            {
+                return;
+            }
             await OnClose.InvokeAsync(this);
-            ChipSet?.OnChipDeleted(this);
+            if (ChipSet is not null)
+            {
+                await ChipSet.OnChipDeletedAsync(this);
+            }
+
             StateHasChanged();
         }
 
-        protected override Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {
-            ChipSet?.Add(this);
-            return base.OnInitializedAsync();
+            if (ChipSet is not null)
+            {
+                await ChipSet.AddAsync(this);
+            }
+            await base.OnInitializedAsync();
         }
 
-        internal void ForceRerender() => StateHasChanged();
-
-
-        public void Dispose()
+        //Exclude because we don't test to catching exception yet
+        [ExcludeFromCodeCoverage]
+        public async ValueTask DisposeAsync()
         {
             try
             {
-                ChipSet?.Remove(this);
+                if (ChipSet is not null)
+                {
+                    await ChipSet.RemoveAsync(this);
+                }
             }
             catch (Exception)
             {
                 /* ignore! */
             }
         }
-
     }
 }

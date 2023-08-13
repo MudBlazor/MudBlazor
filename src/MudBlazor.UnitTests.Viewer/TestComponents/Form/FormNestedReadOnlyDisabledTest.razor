@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudForm ReadOnly="ReadOnly" Disabled="Disabled">
+    <MudForm ReadOnly="NestedReadOnly" Disabled="NestedDisabled">
+        <MudCheckBox T="bool"></MudCheckBox>
+    </MudForm>
+</MudForm>
+
+@code {
+    [Parameter]
+    public bool ReadOnly { get; set; }
+    [Parameter]
+    public bool NestedReadOnly { get; set; }
+    [Parameter]
+    public bool Disabled { get; set; }
+    [Parameter]
+    public bool NestedDisabled { get; set; }
+}

@@ -1,59 +1,75 @@
-﻿@page "/components/Icons"
+﻿@page "/components/icons"
 @using System.Reflection
 
 <DocsPage>
     <DocsPageHeader Title="Icons" SubTitle="Guidance and suggestions for using icons with MudBlazor.">
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Icons that are loaded by default</Title>
+            <SectionHeader Title="Icons">
                 <Description>
-                    MudBlazor comes loaded with <MudLink Href="https://material.io/resources/icons/">Material Design icons</MudLink> as SVGs.<br />
-                    You can search the full list of icons under <MudLink Href="/features/icons">MudBlazor Icons</MudLink> in the menu.</Description>
+                    See the full list of all icons that comes preloaded here: <MudLink Href="/features/icons">MudBlazor Icons</MudLink>
+                </Description>
             </SectionHeader>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Usage</Title>
+            <SectionHeader Title="Usage">
                 <Description>The MudIcon component shows the specified icon with the chosen style. You can use the <CodeInline>Title</CodeInline> attribute to improve accessibility with screen readers and show a tooltip on mouse over.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="IconsUsageExample">
                 <IconsUsageExample />
             </SectionContent>
-            <SectionSource Code="IconsUsageExample" GitHubFolderName="Icons"  />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Color</Title>
+            <SectionHeader Title="Color">
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="IconsColorExample">
                 <IconsColorExample />
             </SectionContent>
-            <SectionSource Code="IconsColorExample" GitHubFolderName="Icons"  />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Size</Title>
+            <SectionHeader Title="Size">
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="IconsSizeExample">
                 <IconsSizeExample />
             </SectionContent>
-            <SectionSource Code="IconsSizeExample" GitHubFolderName="Icons"  />
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Font Icons</Title>
-                <Description>The MudIcon component will display any icon font that supports ligatures.<br/>For example, you can use <MudLink Color="Color.Secondary" Href="https://fontawesome.com/">Font Awesome</MudLink>.</Description>
+            <SectionHeader Title="Material Variants">
+                <Description>Material icons that comes loaded with MudBlazor by default is available in Filled, Outlined, Rounded, Sharp and TwoToned.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Code="IconsMaterialVariantsExample">
+                <IconsMaterialVariantsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Font Icons">
+                <Description>The MudIcon component will display any icon font that supports ligatures.<br />For example, you can use <MudLink Color="Color.Secondary" Href="https://fontawesome.com/">Font Awesome</MudLink>.</Description>
+            </SectionHeader>
+            <SectionContent Code="IconsFontAwesomeExample">
                 <IconsFontAwesomeExample />
             </SectionContent>
-            <SectionSource Code="IconsFontAwesomeExample" GitHubFolderName="Icons"  />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Icons">
+                <Description>
+                    The icon parameter of <CodeInline Tag="true">MudIcon</CodeInline>, <CodeInline Tag="true">MudButton</CodeInline> and other components are just SVG strings. 
+                    So changing an icon programmatically is as easy as assigning a new string.<br />
+                    Also, if the icon you need is not available in <MudLink Href="/features/icons">MudBlazor's icon library</MudLink> you can just assign your own SVG. 
+                    The cube icon in this example is <CodeInline>cube-outline</CodeInline> from <MudLink Color="Color.Secondary" Href="https://materialdesignicons.com" Style="white-space:nowrap;">Material Design Icons</MudLink>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="ChangeIconProgrammaticallyExample">
+                <ChangeIconProgrammaticallyExample />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

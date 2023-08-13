@@ -9,15 +9,16 @@
     <MudChip Text="Red wine"></MudChip>
 </MudChipSet>
 
-
-@if (selected != null && selected.Length>0)
-{
-    <MudText>You selected @string.Join(", ", selected.Select(chip=>chip.Text)).</MudText>
-}
-else
-{
-    <MudText>Nothing selected.</MudText>
-}
+<div class="d-flex justify-center">
+    @if (selected != null && selected.Length>0)
+    {
+        <MudText>You selected @string.Join(", ", selected.Select(chip=>chip.Text)).</MudText>
+    }
+    else
+    {
+        <MudText>Nothing selected.</MudText>
+    }
+</div>
 
 @code
 {

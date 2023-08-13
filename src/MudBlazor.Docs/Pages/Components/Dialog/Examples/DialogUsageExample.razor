@@ -12,6 +12,7 @@
 
     private void OpenDialog()
     {
-        DialogService.Show<DialogUsageExample_Dialog>("Simple Dialog");
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<DialogUsageExample_Dialog>("Simple Dialog", options);
     }
 }

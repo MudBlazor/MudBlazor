@@ -1,26 +1,26 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px">
-    <MudList Clickable="true" @bind-SelectedItem="selectedItem">
+    <MudList Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue">
         <MudListSubheader>
             Your drink:
             <MudChip Color="Color.Secondary">
-                @(selectedItem?.Text ?? "You are dry")
+                @(selectedItem?.Text ?? "You are dry") (@(selectedValue?.ToString() ?? "0"))
             </MudChip>
         </MudListSubheader>
-        <MudListItem Text="Sparkling Water" />
+        <MudListItem Text="Sparkling Water" Value="1"/>
         <MudListItem Text="Teas">
             <NestedList>
-                <MudListItem Text="Earl Grey" />
-                <MudListItem Text="Matcha" />
-                <MudListItem Text="Pu'er" />
+                <MudListItem Text="Earl Grey" Value="2" />
+                <MudListItem Text="Matcha"  Value="3"/>
+                <MudListItem Text="Pu'er"  Value="4"/>
             </NestedList>
         </MudListItem>
         <MudListItem Text="Coffees">
             <NestedList>
-                <MudListItem Text="Irish Coffee" />
-                <MudListItem Text="Double Espresso" />
-                <MudListItem Text="Cafe Latte" />
+                <MudListItem Text="Irish Coffee"  Value="5"/>
+                <MudListItem Text="Double Espresso"  Value="6"/>
+                <MudListItem Text="Cafe Latte"  Value="7"/>
             </NestedList>
         </MudListItem>
     </MudList>
@@ -30,4 +30,5 @@
 @code
 {
     MudListItem selectedItem;
+    object selectedValue = 1;
 }

@@ -1,9 +1,10 @@
-﻿<MudNumericField @bind-Value="_value"
+﻿<MudNumericField id="numericFieldLabelTest"
+                 @bind-Value="_value"
 				 Label="int 0, 10, 2"
 				 Variant="Variant.Text"
 				 Min="0"
 				 Max="10"
-				 Step="2" />
+                 Step="2" />
 <br/>
 <MudNumericField @bind-Value="_value2"
 				 Label="int 3, 10, 2"
@@ -38,7 +39,7 @@
 				 Variant="Variant.Filled"
 				 Margin="Margin.Dense"
 				 Max="9.9"
-				 Min="-5.0" 
+				 Min="-5.0"
 				 Immediate="true"/>
 <br/><br/>
 <MudNumericField @bind-Value="_nullable"
@@ -46,7 +47,7 @@
 				 Variant="Variant.Outlined"
 				 Margin="Margin.Dense"
 				 Max="10" />
-				 
+
 <br/>
 <MudNumericField T="double?"
 				 Label="double?"
@@ -54,9 +55,21 @@
 				 Margin="Margin.Dense" />
 <br/>
 <MudNumericField T="decimal?"
-				 Label="decimal?"
-				 Variant="Variant.Outlined"
-				 Margin="Margin.Dense" />
+                 Label="decimal?"
+                 Variant="Variant.Outlined"
+                 Margin="Margin.Dense" />
+<br/>
+<MudNumericField T="byte?"
+                 Label="byte?"
+                 Variant="Variant.Outlined"
+                 Margin="Margin.Dense" />
+ <br/>
+ <MudNumericField T="int?"
+                  Label="int? clearable with min/max"
+                  Variant="Variant.Outlined"
+                  Margin="Margin.Dense"
+                  Clearable="true"
+                  Min="1" Max="10" />
 
 @code {
 	public static string __description__ = "The textfield should be changed by up/down arrows";

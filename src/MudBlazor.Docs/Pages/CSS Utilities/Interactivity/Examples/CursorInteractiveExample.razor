@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="d-flex flex-wrap gap-4">
+    @foreach (var cursor in Cursors)
+    {
+        <MudPaper Class="@($"d-flex justify-center align-center {cursor}")" Width="128px" Height="64px">
+            @cursor
+        </MudPaper>
+    }
+</div>
+
+@code {
+    string[] Cursors = new[]
+    {
+        "cursor-all-scroll", "cursor-auto", "cursor-cell", "cursor-col-resize", "cursor-copy", "cursor-crosshair", "cursor-default", "cursor-grab", "cursor-grabbing", "cursor-help", "cursor-move", "cursor-no-drop", "cursor-none", "cursor-not-allowed", "cursor-n-resize", "cursor-pointer", "cursor-progress", "cursor-row-resize", "cursor-text", "cursor-url", "cursor-vertical-text", "cursor-wait", "cursor-w-resize", "cursor-zoom-in", "cursor-zoom-out"
+    };
+}

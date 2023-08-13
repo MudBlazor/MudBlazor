@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using MudBlazor.Interfaces;
 
@@ -20,7 +19,17 @@ namespace MudBlazor
         {
             get => _errors.ToArray();
         }
-        protected HashSet<string> _errors = new HashSet<string>();
+
+#nullable enable
+        public object? Model { get; set; }
+#nullable disable
+
+        protected HashSet<string> _errors = new();
+
+        void IForm.FieldChanged(IFormComponent formControl, object newValue)
+        {
+            //implement in future for table
+        }
 
         void IForm.Add(IFormComponent formControl)
         {
@@ -37,7 +46,7 @@ namespace MudBlazor
             //Validate(formControl);
         }
 
-        protected HashSet<IFormComponent> _formControls = new HashSet<IFormComponent>();
+        protected HashSet<IFormComponent> _formControls = new();
 
         public void Validate()
         {

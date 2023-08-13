@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -18,8 +18,9 @@ namespace MudBlazor
         {
             Converter.GetFunc = OnGet;
             Converter.SetFunc = OnSet;
-            (Converter as DefaultConverter<TimeSpan?>).Format = format24Hours;
+            ((DefaultConverter<TimeSpan?>)Converter).Format = format24Hours;
             AdornmentIcon = Icons.Material.Filled.AccessTime;
+            AdornmentAriaLabel = "Open Time Picker";
         }
 
         private string OnSet(TimeSpan? timespan)
@@ -29,27 +30,47 @@ namespace MudBlazor
 
             var time = DateTime.Today.Add(timespan.Value);
 
-            return time.ToString((Converter as DefaultConverter<TimeSpan?>).Format, Culture);
+            return time.ToString(((DefaultConverter<TimeSpan?>)Converter).Format, Culture);
         }
 
         private TimeSpan? OnGet(string value)
         {
-            if (DateTime.TryParseExact(value, (Converter as DefaultConverter<TimeSpan?>).Format, Culture, DateTimeStyles.None, out DateTime time))
+            if (string.IsNullOrEmpty(value))
+                return null;
+
+            if (DateTime.TryParseExact(value, ((DefaultConverter<TimeSpan?>)Converter).Format, Culture, DateTimeStyles.None, out var time))
             {
                 return time.TimeOfDay;
             }
-            else
+
+            var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
+            if (m.Success)
             {
-                var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
-                if (m.Success)
+                if (DateTime.TryParseExact(value, format12Hours, CultureInfo.InvariantCulture, DateTimeStyles.None,
+                        out time))
                 {
-                    return DateTime.ParseExact(value, format12Hours, CultureInfo.InvariantCulture).TimeOfDay;
-                }
-                else
-                {
-                    return DateTime.ParseExact(value, format24Hours, CultureInfo.InvariantCulture).TimeOfDay;
+                    return time.TimeOfDay;
                 }
             }
+            else
+            {
+                if (DateTime.TryParseExact(value, format24Hours, CultureInfo.InvariantCulture, DateTimeStyles.None,
+                        out time))
+                {
+                    return time.TimeOfDay;
+                }
+            }
+
+            HandleParsingError();
+            return null;
+        }
+
+        private void HandleParsingError()
+        {
+            const string ParsingErrorMessage = "Not a valid time span";
+            Converter.GetError = true;
+            Converter.GetErrorMessage = ParsingErrorMessage;
+            Converter.OnError?.Invoke(ParsingErrorMessage);
         }
 
         private bool _amPm = false;
@@ -61,22 +82,36 @@ namespace MudBlazor
         /// <summary>
         /// First view to show in the MudDatePicker.
         /// </summary>
-        [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Hours;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public OpenTo OpenTo { get; set; } = OpenTo.Hours;
 
         /// <summary>
         /// Choose the edition mode. By default, you can edit hours and minutes.
         /// </summary>
-        [Parameter] public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
+
+        /// <summary>
+        /// Sets the amount of time in milliseconds to wait before closing the picker. This helps the user see that the time was selected before the popover disappears.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int ClosingDelay { get; set; } = 200;
 
         /// <summary>
         /// If AutoClose is set to true and PickerActions are defined, the hour and the minutes can be defined without any action.
         /// </summary>
-        [Parameter] public bool AutoClose { get; set; }
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool AutoClose { get; set; }
 
         /// <summary>
         /// If true, sets 12 hour selection clock.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public bool AmPm
         {
             get => _amPm;
@@ -101,6 +136,7 @@ namespace MudBlazor
         /// String Format for selected time view
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
         public string TimeFormat
         {
             get => _timeFormat;
@@ -122,6 +158,7 @@ namespace MudBlazor
         /// The currently selected time (two-way bindable). If null, then nothing was selected.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
         public TimeSpan? Time
         {
             get => _value;
@@ -132,13 +169,15 @@ namespace MudBlazor
         {
             if (_value != time)
             {
+                Touched = true;
                 TimeIntermediate = time;
                 _value = time;
                 if (updateValue)
                     await SetTextAsync(Converter.Set(_value), false);
                 UpdateTimeSetFromTime();
                 await TimeChanged.InvokeAsync(_value);
-                BeginValidate();
+                await BeginValidateAsync();
+                FieldChanged(_value);
             }
         }
 
@@ -154,6 +193,8 @@ namespace MudBlazor
             return SetTimeAsync(Converter.Get(value), false);
         }
 
+        //The last line cannot be tested
+        [ExcludeFromCodeCoverage]
         protected override void OnPickerOpened()
         {
             base.OnPickerOpened();
@@ -166,18 +207,22 @@ namespace MudBlazor
             };
         }
 
-        protected override void Submit()
+        protected internal override void Submit()
         {
-            if (ReadOnly)
+            if (GetReadOnlyState())
                 return;
             Time = TimeIntermediate;
         }
 
-        public override void Clear(bool close = true)
+        public override async void Clear(bool close = true)
         {
-            Time = null;
             TimeIntermediate = null;
-            base.Clear();
+            await SetTimeAsync(null, true);
+
+            if (AutoClose == true)
+            {
+                Close(false);
+            }
         }
 
         private string GetHourString()
@@ -207,17 +252,20 @@ namespace MudBlazor
         private void OnHourClick()
         {
             _currentView = OpenTo.Hours;
+            FocusAsync().AndForget();
         }
 
         private void OnMinutesClick()
         {
             _currentView = OpenTo.Minutes;
+            FocusAsync().AndForget();
         }
 
         private void OnAmClicked()
         {
             _timeSet.Hour %= 12;  // "12:-- am" is "00:--" in 24h
             UpdateTime();
+            FocusAsync().AndForget();
         }
 
         private void OnPmClicked()
@@ -226,6 +274,7 @@ namespace MudBlazor
                 _timeSet.Hour += 12;
             _timeSet.Hour %= 24;
             UpdateTime();
+            FocusAsync().AndForget();
         }
 
         protected string ToolbarClass =>
@@ -357,8 +406,9 @@ namespace MudBlazor
             return $"{height}%;";
         }
 
-        private readonly SetTime _timeSet = new SetTime();
+        private readonly SetTime _timeSet = new();
         private int _initialHour;
+        private int _initialMinute;
 
         protected override void OnInitialized()
         {
@@ -366,6 +416,7 @@ namespace MudBlazor
             UpdateTimeSetFromTime();
             _currentView = OpenTo;
             _initialHour = _timeSet.Hour;
+            _initialMinute = _timeSet.Minute;
         }
 
 
@@ -396,7 +447,14 @@ namespace MudBlazor
         /// </summary>
         private void OnMouseUp(MouseEventArgs e)
         {
+            if (MouseDown && _currentView == OpenTo.Minutes && _timeSet.Minute != _initialMinute || _currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.OnlyHours)
+            {
+                MouseDown = false;
+                SubmitAndClose();
+            }
+
             MouseDown = false;
+
             if (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.Normal)
             {
                 _currentView = OpenTo.Minutes;
@@ -404,7 +462,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If MouseDown is true enabels "dragging" effect on the clock pin/stick.
+        /// If MouseDown is true enables "dragging" effect on the clock pin/stick.
         /// </summary>
         private void OnMouseOverHour(int value)
         {
@@ -416,7 +474,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// On click for the hour "sticks", sets the houre.
+        /// On click for the hour "sticks", sets the hour.
         /// </summary>
         private void OnMouseClickHour(int value)
         {
@@ -429,16 +487,24 @@ namespace MudBlazor
                     h = value + 12;
             }
             _timeSet.Hour = h;
-            UpdateTime();
+
+            if (_currentView == OpenTo.Hours)
+            {
+                UpdateTime();
+            }
 
             if (TimeEditMode == TimeEditMode.Normal)
             {
                 _currentView = OpenTo.Minutes;
             }
+            else if (TimeEditMode == TimeEditMode.OnlyHours)
+            {
+                SubmitAndClose();
+            }
         }
 
         /// <summary>
-        /// On click for the minutes "sticks", sets the minute.
+        /// On mouse over for the minutes "sticks", sets the minute.
         /// </summary>
         private void OnMouseOverMinute(int value)
         {
@@ -456,6 +522,174 @@ namespace MudBlazor
         {
             _timeSet.Minute = value;
             UpdateTime();
+            SubmitAndClose();
+        }
+
+        protected async void SubmitAndClose()
+        {
+            if (PickerActions == null || AutoClose)
+            {
+                Submit();
+
+                if (PickerVariant != PickerVariant.Static)
+                {
+                    await Task.Delay(ClosingDelay);
+                    Close(false);
+                }
+            }
+        }
+
+        protected internal override void HandleKeyDown(KeyboardEventArgs obj)
+        {
+            if (GetDisabledState() || GetReadOnlyState())
+                return;
+            base.HandleKeyDown(obj);
+            switch (obj.Key)
+            {
+                case "ArrowRight":
+                    if (IsOpen)
+                    {
+                        if (obj.CtrlKey == true)
+                        {
+                            ChangeHour(1);
+                        }
+                        else if (obj.ShiftKey == true)
+                        {
+                            if (_timeSet.Minute > 55)
+                            {
+                                ChangeHour(1);
+                            }
+                            ChangeMinute(5);
+                        }
+                        else
+                        {
+                            if (_timeSet.Minute == 59)
+                            {
+                                ChangeHour(1);
+                            }
+                            ChangeMinute(1);
+                        }
+                    }
+                    break;
+                case "ArrowLeft":
+                    if (IsOpen)
+                    {
+                        if (obj.CtrlKey == true)
+                        {
+                            ChangeHour(-1);
+                        }
+                        else if (obj.ShiftKey == true)
+                        {
+                            if (_timeSet.Minute < 5)
+                            {
+                                ChangeHour(-1);
+                            }
+                            ChangeMinute(-5);
+                        }
+                        else
+                        {
+                            if (_timeSet.Minute == 0)
+                            {
+                                ChangeHour(-1);
+                            }
+                            ChangeMinute(-1);
+                        }
+                    }
+                    break;
+                case "ArrowUp":
+                    if (IsOpen == false && Editable == false)
+                    {
+                        IsOpen = true;
+                    }
+                    else if (obj.AltKey == true)
+                    {
+                        IsOpen = false;
+                    }
+                    else if (obj.ShiftKey == true)
+                    {
+                        ChangeHour(5);
+                    }
+                    else
+                    {
+                        ChangeHour(1);
+                    }
+                    break;
+                case "ArrowDown":
+                    if (IsOpen == false && Editable == false)
+                    {
+                        IsOpen = true;
+                    }
+                    else if (obj.ShiftKey == true)
+                    {
+                        ChangeHour(-5);
+                    }
+                    else
+                    {
+                        ChangeHour(-1);
+                    }
+                    break;
+                case "Escape":
+                    ReturnTimeBackUp();
+                    break;
+                case "Enter":
+                case "NumpadEnter":
+                    if (!IsOpen)
+                    {
+                        Open();
+                    }
+                    else
+                    {
+                        Submit();
+                        Close();
+                        _inputReference?.SetText(Text);
+                    }
+                    break;
+                case " ":
+                    if (!Editable)
+                    {
+                        if (!IsOpen)
+                        {
+                            Open();
+                        }
+                        else
+                        {
+                            Submit();
+                            Close();
+                            _inputReference?.SetText(Text);
+                        }
+                    }
+                    break;
+            }
+
+            StateHasChanged();
+        }
+
+        protected void ChangeMinute(int val)
+        {
+            _currentView = OpenTo.Minutes;
+            _timeSet.Minute = (_timeSet.Minute + val + 60) % 60;
+            UpdateTime();
+        }
+
+        protected void ChangeHour(int val)
+        {
+            _currentView = OpenTo.Hours;
+            _timeSet.Hour = (_timeSet.Hour + val + 24) % 24;
+            UpdateTime();
+        }
+
+        protected void ReturnTimeBackUp()
+        {
+            if (Time == null)
+            {
+                TimeIntermediate = null;
+            }
+            else
+            {
+                _timeSet.Hour = Time.Value.Hours;
+                _timeSet.Minute = Time.Value.Minutes;
+                UpdateTime();
+            }
         }
 
         private class SetTime
@@ -465,6 +699,5 @@ namespace MudBlazor
             public int Minute { get; set; }
 
         }
-
     }
 }

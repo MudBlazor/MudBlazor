@@ -1,0 +1,41 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+@*<MudDataGrid ServerData="@(new Func<GridState<Model>, Task<GridData<Model>>>(ServerReload))" Groupable="true">
+    <Columns>
+        <Column T="Model" Field="@nameof(Model.Name)" />
+        <Column T="Model" Field="@nameof(Model.Age)" />
+        <Column T="Model" Field="@nameof(Model.Status)" Grouping="true" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Model" />
+    </PagerContent>
+</MudDataGrid>*@
+
+@code {
+    public record Model (string Name, int Age, Severity Status);
+    private int _totalItems = 100;
+    IEnumerable<Model> _data;
+
+    protected override void OnInitialized()
+    {
+        List<Model> data = new List<Model>();
+
+        // populate the data
+        for (var i = 0; i < 100; i++)
+        {
+            var severity = i % 2 == 0 ? Severity.Info : Severity.Warning;
+            data.Add(new Model($"Name {i}", i, severity));
+        }
+
+        _data = data;
+    }
+
+    private async Task<GridData<Model>> ServerReload(GridState<Model> state)
+    {
+        var data = _data.OrderBySortDefinitions(state);
+        data = data.Skip(state.Page * state.PageSize).Take(state.PageSize);
+
+        return await Task.FromResult(new GridData<Model>() { TotalItems = _totalItems, Items = data });
+    }
+
+}

@@ -1,5 +1,16 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
+<MudMenu FullWidth="true">
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary">I am a button</MudButton>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem>Profile</MudMenuItem>
+        <MudMenuItem>Theme</MudMenuItem>
+        <MudMenuItem>Usage</MudMenuItem>
+        <MudMenuItem>Sign Out</MudMenuItem>
+    </ChildContent>
+</MudMenu>
 
 <MudMenu FullWidth="true">
     <ActivatorContent>
@@ -13,9 +24,21 @@
     </ChildContent>
 </MudMenu>
 
+<MudMenu FullWidth="true" Disabled="true">
+    <ActivatorContent>
+        <MudChip Icon="@Icons.Material.Filled.Person" Disabled="true" Color="Color.Primary">Disabled</MudChip>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem>Profile</MudMenuItem>
+        <MudMenuItem>Theme</MudMenuItem>
+        <MudMenuItem>Usage</MudMenuItem>
+        <MudMenuItem>Sign Out</MudMenuItem>
+    </ChildContent>
+</MudMenu>
+
 <MudMenu>
     <ActivatorContent>
-        <MudAvatar Image="_content/MudBlazor.Docs/images/toiletvisit.png" />
+        <MudAvatar Image="images/toiletvisit.jpg" />
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem>Profile</MudMenuItem>

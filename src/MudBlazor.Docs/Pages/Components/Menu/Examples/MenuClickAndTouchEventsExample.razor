@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.Docs.Examples
+@inject ISnackbar Snackbar
+
+<MudMenu Label="Open Menu" Variant="Variant.Filled" Color="Color.Primary">
+    <MudMenuItem OnClick="OnClick">OnClick Only</MudMenuItem>
+    <MudMenuItem OnTouch="OnTouch">OnTouch Only</MudMenuItem>
+    <MudMenuItem OnClick="OnClick" OnTouch="OnTouch">Both OnClick and OnTouch</MudMenuItem>
+</MudMenu>
+
+@code {
+    private void OnClick(MouseEventArgs args) => Snackbar.Add("OnClick Invoked");
+    private void OnTouch(TouchEventArgs args) => Snackbar.Add("OnTouch Invoked");
+}

@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IDialogService DialogService
+
+
+<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+    Open Dialog
+</MudButton>
+
+
+@code {
+
+    private void OpenDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<DialogFocusExample_Dialog>("Last element focused", options);
+    }
+}

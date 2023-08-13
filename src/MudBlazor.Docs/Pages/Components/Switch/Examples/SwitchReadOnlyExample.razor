@@ -1,14 +1,17 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSwitch ReadOnly="@ReadOnly" @bind-Checked="@SwitchValue" Label="@(SwitchValue ? "On" : "Off")"/>
+<div class="d-flex flex-column align-center">
+    <MudSwitch ReadOnly="@ReadOnly" @bind-Checked="@SwitchValue" Color="Color.Primary" Class="mr-n2 mb-6"/>
+    <MudButton OnClick="@ToggleValue" Variant="Variant.Filled" DisableElevation="true">Toggle Value</MudButton>
+    <MudCheckBox @bind-Checked="@ReadOnly" Label="@(ReadOnly ? "readonly-mode" : "edit-mode")" />
+</div>
 
-<MudSelect  @bind-Value="@SwitchValue" Label="Change Switch value">
-    <MudSelectItem Value="@(false)">False</MudSelectItem>
-    <MudSelectItem Value="@(true)">True</MudSelectItem>
-</MudSelect>
-
-<MudSwitch @bind-Checked="@ReadOnly" Label="@(ReadOnly ? "ReadOnly Mode" : "Edit Mode")"/>
 @code {
     public bool SwitchValue { get; set; } = true;
     public bool ReadOnly { get; set; } = true;
+
+    void ToggleValue()
+    {
+        SwitchValue = !SwitchValue;
+    }
 }

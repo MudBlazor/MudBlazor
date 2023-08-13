@@ -2,15 +2,17 @@
 @import 'core/_carbon';
 @import 'core/_markdown';
 
-@import 'layout/_footer';
+@import 'layout/_mainlayout';
 
-@import 'pages/_home';
-@import 'pages/_credit';
-@import 'pages/_colors';
-@import 'pages/_spacing';
 @import 'pages/_wireframes';
+@import 'pages/_landingpage';
+@import 'pages/_releases';
+@import 'pages/_roadmap';
+@import 'pages/_overview';
+@import 'pages/_announcement';
 
 @import 'components/_docspage';
 @import 'components/_docssection';
 @import 'components/_icons';
 @import 'components/_mudblazorapp';
+@import 'components/_widthslider';

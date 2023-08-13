@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Status" />
+    </Columns>
+    <NoRecordsContent>
+        There are no records to view.
+    </NoRecordsContent>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Model> _items = new List<Model>();
+
+    public record Model (string Name, int Age, Severity Status);
+}

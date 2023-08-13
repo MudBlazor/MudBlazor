@@ -1,8 +1,9 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
 
 Value: @Selected
 <br />
-<MudSelect @bind-Value="@Selected">
+<MudSelect IsPreRendered @bind-Value="@Selected">
     @foreach (MyEnum item in Enum.GetValues(typeof(MyEnum)))
     {
         <MudSelectItem Value="@item">@item</MudSelectItem>

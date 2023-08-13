@@ -1,31 +1,27 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
+#nullable enable
     public abstract class MudBaseItemsControl<TChildComponent> : MudComponentBase
             where TChildComponent : MudComponentBase
-
     {
+        private int _selectedIndexField = -1;
+
         /// <summary>
         /// Collection of T
         /// </summary>
         [Parameter]
-        public RenderFragment ChildContent { get; set; }
+        [Category(CategoryTypes.General.Data)]
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Items - will be ignored when ItemsSource is not null
-        /// </summary>
-        public List<TChildComponent> Items { get; } = new List<TChildComponent>();
-
-        private TChildComponent _lastContainer = null;
-        private int _selectedIndexField = -1;
-        /// <summary>
-        /// Selected MudCarouselItem's index
+        /// Selected Item's index
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
         public int SelectedIndex
         {
             get => _selectedIndexField;
@@ -34,8 +30,10 @@ namespace MudBlazor
                 if (SelectedIndex == value)
                     return;
 
-                _lastContainer = _selectedIndexField >= 0 ? SelectedContainer : null;
+                _moveNext = value >= _selectedIndexField;
+                LastContainer = _selectedIndexField >= 0 ? SelectedContainer : null;
                 _selectedIndexField = value;
+                SelectionChanged();
                 StateHasChanged();
                 SelectedIndexChanged.InvokeAsync(value);
             }
@@ -47,17 +45,19 @@ namespace MudBlazor
         /// <summary>
         /// Gets the Selected TChildComponent
         /// </summary>
-        public TChildComponent LastContainer
-        {
-            get => _lastContainer;
-        }
+        public TChildComponent? LastContainer { get; private set; } = null;
+
+        /// <summary>
+        /// Items - will be ignored when ItemsSource is not null
+        /// </summary>
+        public List<TChildComponent> Items { get; } = new List<TChildComponent>();
 
         /// <summary>
         /// Gets the Selected TChildComponent
         /// </summary>
-        public TChildComponent SelectedContainer
+        public TChildComponent? SelectedContainer
         {
-            get => SelectedIndex >= 0 ? Items[SelectedIndex] : null;
+            get => SelectedIndex >= 0 && Items.Count > SelectedIndex ? Items[SelectedIndex] : null;
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
@@ -65,9 +65,11 @@ namespace MudBlazor
             if (firstRender)
             {
                 if (Items.Count > 0 && SelectedIndex < 0)
+                {
                     MoveTo(0);
-
+                }
             }
+
             return base.OnAfterRenderAsync(firstRender);
         }
 
@@ -81,9 +83,13 @@ namespace MudBlazor
             _moveNext = false;
 
             if (SelectedIndex > 0)
+            {
                 SelectedIndex--;
+            }
             else
+            {
                 SelectedIndex = Items.Count - 1;
+            }
         }
 
         /// <summary>
@@ -94,9 +100,13 @@ namespace MudBlazor
             _moveNext = true;
 
             if (SelectedIndex < (Items.Count - 1))
+            {
                 SelectedIndex++;
+            }
             else
+            {
                 SelectedIndex = 0;
+            }
         }
 
         /// <summary>
@@ -110,31 +120,9 @@ namespace MudBlazor
                 SelectedIndex = index;
             }
         }
-    }
 
-    public abstract class MudBaseBindableItemsControl<TChildComponent, TData> : MudBaseItemsControl<TChildComponent>
-        where TChildComponent : MudComponentBase
-    {
+        protected virtual void SelectionChanged() { }
 
-        /// <summary>
-        /// Items Collection - For databinding usage
-        /// </summary>
-        [Parameter]
-        public IEnumerable<TData> ItemsSource { get; set; }
-
-        /// <summary>
-        /// Template for each Item in ItemsSource collection
-        /// </summary>
-        [Parameter]
-        public RenderFragment<TData> ItemTemplate { get; set; }
-
-        /// <summary>
-        /// Gets the Selected Item from ItemsSource, or Selected TChildComponent, when it's null
-        /// </summary>
-        public object SelectedItem
-        {
-            get => ItemsSource == null ? Items[SelectedIndex] : ItemsSource.ElementAtOrDefault(SelectedIndex);
-        }
-
+        public virtual void AddItem(TChildComponent item) { }
     }
 }

@@ -11,6 +11,30 @@
         justify-content: center;
     }
 
+    &.mud-dialog-topcenter {
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 32px;
+    }
+
+    &.mud-dialog-bottomcenter {
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 32px;
+    }
+
+    &.mud-dialog-centerright {
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 32px;
+    }
+
+    &.mud-dialog-centerleft {
+        align-items: center;
+        justify-content: flex-start;
+        padding-left: 32px;
+    }
+
     &.mud-dialog-topleft .mud-dialog {
         position: absolute;
         top: 32px;
@@ -46,8 +70,16 @@
     -webkit-animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
     animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
     box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2), 0px 24px 38px 3px rgba(0,0,0,0.14), 0px 9px 46px 8px rgba(0,0,0,0.12);
-
+    max-height: calc(100vh - var(--mud-appbar-height));
+    overflow-y: auto;
+    
+    &.mud-dialog-rtl .mud-dialog-title .mud-button-close {
+        right: unset;
+        left: 8px;
+    }
+    
     & .mud-dialog-title {
+        z-index: +1;
         flex: 0 0 auto;
         margin: 0;
         padding: 16px 24px;        
@@ -57,8 +89,7 @@
         + * > .mud-dialog-content {
             border-radius: 0
         }
-
-        & .mud-button-root {
+        & .mud-button-close {
             top: 8px;
             right: 8px;
             position: absolute;
@@ -120,6 +151,10 @@
     max-width: 1920px;
 }
 
+.mud-dialog-width-xxl {
+    max-width: 2560px;
+}
+
 .mud-dialog-width-full {
     width: calc(100% - 64px);
 }
@@ -131,6 +166,7 @@
     max-width: 100%;
     max-height: none;
     border-radius: 0;
+    overflow-y: hidden;
 }
 
 @-webkit-keyframes mud-open-dialog-center {

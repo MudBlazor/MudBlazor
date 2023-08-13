@@ -9,8 +9,8 @@ namespace MudBlazor.Charts
     {
         [CascadingParameter] public MudChart MudChartParent { get; set; }
 
-        private List<SvgCircle> _circles = new List<SvgCircle>();
-        private List<SvgLegend> _legends = new List<SvgLegend>();
+        private List<SvgCircle> _circles = new();
+        private List<SvgLegend> _legends = new();
 
         protected string ParentWidth => MudChartParent?.Width;
         protected string ParentHeight => MudChartParent?.Height;
@@ -33,8 +33,8 @@ namespace MudBlazor.Charts
                 var circle = new SvgCircle()
                 {
                     Index = counter,
-                    CX = 20,
-                    CY = 20,
+                    CX = 21,
+                    CY = 21,
                     Radius = 100 / (2 * Math.PI),
                     StrokeDashArray = $"{ToS(percent)} {ToS(reversePercent)}",
                     StrokeDashOffset = offset

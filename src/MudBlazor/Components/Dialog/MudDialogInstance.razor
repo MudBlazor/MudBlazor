@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="mud-dialog-container @Position">
-    <MudOverlay Visible="true" OnClick="HandleBackgroundClick" Class="mud-overlay-dialog" DarkBackground="true" />
+<div @attributes="UserAttributes" id="@_elementId" class="mud-dialog-container @Position">
+    <MudOverlay Visible="true" OnClick="HandleBackgroundClickAsync" Class="@BackgroundClassname" DarkBackground="true" />
     <div id="_@Id.ToString("N")" role="dialog" class="@Classname" style="@Style">
         @if (!NoHeader)
         {
@@ -17,7 +17,7 @@
                 }
                 @if (CloseButton)
                 {
-                    <MudIconButton aria-label="close" Icon="@Icons.Material.Filled.Close" @onclick="Cancel"/>
+                    <MudIconButton aria-label="close" Icon="@CloseIcon" @onclick="Cancel" class="mud-button-close"/>
                 }
             </div>
          }

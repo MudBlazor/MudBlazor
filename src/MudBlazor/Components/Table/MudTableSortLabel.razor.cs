@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
@@ -6,7 +7,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTableSortLabel<T> : MudComponentBase
+    public partial class MudTableSortLabel<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-button-root mud-table-sort-label")
             .AddClass(Class).Build();
@@ -56,11 +57,7 @@ namespace MudBlazor
         private Task UpdateSortDirectionAsync(SortDirection sortDirection)
         {
             SortDirection = sortDirection;
-
-            if (SortBy != null || Table.HasServerData)
-                Context?.SetSortFunc(this);
-
-            return Table.InvokeServerLoadFunc();
+            return Context?.SetSortFunc(this);
         }
 
         [Parameter]

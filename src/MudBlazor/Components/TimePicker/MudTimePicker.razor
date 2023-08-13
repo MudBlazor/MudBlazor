@@ -8,7 +8,7 @@
 
     protected override RenderFragment PickerContent=> 
     @<CascadingValue Value="@this" IsFixed="true">
-        <MudPickerToolbar Class="@ToolbarClass" Style="@Style" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
+        <MudPickerToolbar Class="@ToolbarClass" Style="@Style" DisableToolbar="@DisableToolbar" Orientation="@Orientation" PickerVariant="@PickerVariant" Color="@Color">
             <div class="mud-timepicker-hourminute mud-ltr">
                 @if (TimeEditMode == TimeEditMode.Normal)
                 {
@@ -74,7 +74,7 @@
                                     var _i = i;
                                     <div class="mud-picker-stick" style="@($"transform: rotateZ({_i * 30}deg);")">
                                         <div class="mud-picker-stick-inner mud-hour" @onclick="(() => OnMouseClickHour(_i))" @onmouseover="(() => OnMouseOverHour(_i))" @onclick:stopPropagation="true"></div>
-                                        <div class="mud-picker-stick-outer mud-hour" @onclick="(() => OnMouseClickHour(_i + 12))" @onmouseover="(() => OnMouseOverHour(_i + 12))" @onclick:stopPropagation="true"></div>
+                                        <div class="mud-picker-stick-outer mud-hour" @onclick="(() => OnMouseClickHour((_i + 12) % 24))" @onmouseover="(() => OnMouseOverHour((_i + 12) % 24))" @onclick:stopPropagation="true"></div>
                                     </div>
                                 }
                             }

@@ -46,6 +46,12 @@
     }
 }
 
+@media (min-width:$breakpoint-xxl) {
+    .mud-container-fixed {
+      max-width: $breakpoint-xxl;
+    }
+}
+
 @media (min-width:$breakpoint-xs) {
     .mud-container-maxwidth-xs {
         max-width: 444px;
@@ -73,5 +79,11 @@
 @media (min-width:$breakpoint-xl) {
     .mud-container-maxwidth-xl {
         max-width: $breakpoint-xl;
+    }
+}
+
+@media (min-width:$breakpoint-xxl) {
+    .mud-container-maxwidth-xxl {
+        max-width: $breakpoint-xxl;
     }
 }

@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudForm @ref="form" ValidationDelay="0">
+    <MudTextField Label="Phone" T="string" Required Immediate @bind-Value="@phone" Mask="PhoneMask" />
+</MudForm>
+<br>
+<br>
+<span>Phone: @phone</span>
+<br>
+<br>
+<MudButton Class="reset" OnClick="@ResetFormAsync">Reset</MudButton>
+
+@code
+{ 
+    public static string __description__ = "Calling Form.Reset() should clear the masked text field.";
+    private MudForm form;
+    private string phone;
+
+    protected async Task ResetFormAsync()
+    {
+        await form.ResetAsync();
+        StateHasChanged();
+    }
+
+    public PatternMask PhoneMask = new PatternMask("(###) ###-####")
+    {
+        MaskChars = new[] { new MaskChar('#', @"[0-9]") }
+    }; 
+}

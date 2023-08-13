@@ -1,0 +1,36 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+
+<div>
+    @string.Join(",", _selectedItems.Select(x => x.Name))
+</div>
+
+@code {
+    private List<Item> _items = new List<Item>();
+
+    private HashSet<Item> _selectedItems = new();
+
+    protected override void OnInitialized()
+    {
+        var letters = "ABC";
+        foreach (var c in letters)
+        {
+            _items.Add(new Item(c.ToString()));
+        }
+    }
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+}

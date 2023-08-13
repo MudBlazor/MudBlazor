@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Extensions;
@@ -10,7 +12,7 @@ namespace MudBlazor.Docs.Services
     {
         NavigationFooterLink Next { get; }
         NavigationFooterLink Previous { get; }
-        NavigationSection? Section { get; }
+        NavigationSection Section { get; }
     }
 
 
@@ -36,12 +38,11 @@ namespace MudBlazor.Docs.Services
         /// </summary>
         public NavigationFooterLink Next => GetNavigationLink(NavigationOrder.Next);
 
-
-        /// TODO add "get-started" and remaining sections
+        
         /// <summary>
         /// The section of the menu: components or api
         /// </summary>
-        public NavigationSection? Section
+        public NavigationSection Section
         {
             get
             {
@@ -50,7 +51,10 @@ namespace MudBlazor.Docs.Services
                 {
                     "components" => NavigationSection.Components,
                     "api" => NavigationSection.Api,
-                    _ => null,
+                    "features" => NavigationSection.Features,
+                    "customization" => NavigationSection.Customization,
+                    "utilities" => NavigationSection.Utilities,
+                    _ => NavigationSection.Unspecified,
                 };
             }
         }
@@ -60,8 +64,6 @@ namespace MudBlazor.Docs.Services
         {
             _navigationManager = navigationManager;
             _menuService = menuService;
-
-
         }
 
         /// <summary>
@@ -71,10 +73,8 @@ namespace MudBlazor.Docs.Services
         /// <returns></returns>
         private NavigationFooterLink GetNavigationLink(NavigationOrder order)
         {
-            var orderedLinks =
-                Section == NavigationSection.Api
-                    ? GetOrderedMenuLinks(NavigationSection.Api)
-                    : GetOrderedMenuLinks(NavigationSection.Components);
+            List<NavigationFooterLink> orderedLinks = new List<NavigationFooterLink>();
+            orderedLinks = GetOrderedMenuLinks(GetCurrentSection());
 
             var index = orderedLinks.FindIndex(e => e.Link == CurrentLink);
             var increment =
@@ -99,34 +99,73 @@ namespace MudBlazor.Docs.Services
         /// </summary>
         /// <param name="section"> components or api </param>
         /// <returns></returns>
-        private List<NavigationFooterLink> GetOrderedMenuLinks(NavigationSection? section)
+        private List<NavigationFooterLink> GetOrderedMenuLinks(NavigationSection section)
         {
-            var menuElements =
-                section == NavigationSection.Components
-                    ? _menuService.Components
-                    : _menuService.Api;
-
-            var links = new List<NavigationFooterLink>();
-            foreach (var menuElement in menuElements)
+            if (section == NavigationSection.Api || section == NavigationSection.Components)
             {
-                if (menuElement.Link != null)
+                var menuElements = section == NavigationSection.Components ? _menuService.Components : _menuService.Api;
+                var links = new List<NavigationFooterLink>();
+                foreach (var menuElement in menuElements)
                 {
-                    var link =
-                        section ==
-                        NavigationSection.Api
-                            ? ApiLink.GetApiLinkFor(menuElement.Component).Split("/").Last()
+                    if (menuElement.Link != null)
+                    {
+                        var link = section == NavigationSection.Api
+                            ? ApiLink.GetApiLinkFor(menuElement.Type).Split("/").Last()
                             : menuElement.Link;
 
-                    var name = menuElement.Name;
+                        var name = menuElement.Name;
 
-                    links.Add(new NavigationFooterLink(name, link));
+                        links.Add(new NavigationFooterLink(name, link));
+                    }
+
+                    if (menuElement.GroupComponents != null)
+                    {
+                        links.AddRange(menuElement.GroupComponents.Select(i => new NavigationFooterLink(i.Name, i.Link))
+                            .OrderBy(i => i.Link));
+                    }
                 }
-                if (menuElement.GroupItems != null)
-                    links.AddRange(menuElement.GroupItems
-                        .Elements
-                        .Select(i => new NavigationFooterLink(i.Name, i.Link)).OrderBy(i => i.Link));
-            };
-            return links;
+
+                ;
+                return links;
+            }
+            else
+            {
+                var potentialLinks = section switch
+                {
+                    NavigationSection.Customization => _menuService.Customization,
+                    NavigationSection.Features => _menuService.Features,
+                    NavigationSection.Utilities => _menuService.Utilities,
+                    _ => Array.Empty<DocsLink>()
+                };
+
+                return potentialLinks.Select((x => new NavigationFooterLink(x.Title, x.Href.Split("/").Last())))
+                    .ToList();
+            }
+        }
+
+        private NavigationSection GetCurrentSection()
+        {
+            var thisSection = NavigationSection.Unspecified;
+            switch (Section)
+            {
+                case NavigationSection.Api:
+                    thisSection = NavigationSection.Api;
+                    break;
+                case NavigationSection.Components:
+                    thisSection = NavigationSection.Components;
+                    break;
+                case NavigationSection.Features:
+                    thisSection = NavigationSection.Features;
+                    break;
+                case NavigationSection.Customization:
+                    thisSection = NavigationSection.Customization;
+                    break;
+                case NavigationSection.Utilities:
+                    thisSection = NavigationSection.Utilities;
+                    break;
+            }
+
+            return thisSection;
         }
     }
 
@@ -134,6 +173,7 @@ namespace MudBlazor.Docs.Services
 
     public enum NavigationOrder { Previous, Next }
 
-    public enum NavigationSection { Api, Components }
+    public enum NavigationSection { Unspecified = 0, Api, Components, Features, Customization, Utilities }
+
     #endregion
 }

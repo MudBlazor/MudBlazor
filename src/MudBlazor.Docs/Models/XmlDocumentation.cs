@@ -22,7 +22,7 @@ namespace MudBlazor.Docs.Models
         /// <typeparam name="AttributeType">The type of the custom attribute.</typeparam>
         /// <param name="assembly">The assembly to iterate through the events of.</param>
         /// <returns>The IEnumerable of the events with the provided attribute type.</returns>
-        public static System.Collections.Generic.IEnumerable<EventInfo> GetEventInfosWithAttribute<AttributeType>(this Assembly assembly)
+        public static IEnumerable<EventInfo> GetEventInfosWithAttribute<AttributeType>(this Assembly assembly)
             where AttributeType : Attribute
         {
             foreach (var type in assembly.GetTypes())
@@ -45,7 +45,7 @@ namespace MudBlazor.Docs.Models
         /// <typeparam name="AttributeType">The type of the custom attribute.</typeparam>
         /// <param name="assembly">The assembly to iterate through the constructors of.</param>
         /// <returns>The IEnumerable of the constructors with the provided attribute type.</returns>
-        public static System.Collections.Generic.IEnumerable<ConstructorInfo> GetConstructorInfosWithAttribute<AttributeType>(this Assembly assembly)
+        public static IEnumerable<ConstructorInfo> GetConstructorInfosWithAttribute<AttributeType>(this Assembly assembly)
             where AttributeType : Attribute
         {
             foreach (var type in assembly.GetTypes())
@@ -67,7 +67,7 @@ namespace MudBlazor.Docs.Models
         /// <typeparam name="AttributeType">The type of the custom attribute.</typeparam>
         /// <param name="assembly">The assembly to iterate through the properties of.</param>
         /// <returns>The IEnumerable of the properties with the provided attribute type.</returns>
-        public static System.Collections.Generic.IEnumerable<PropertyInfo> GetPropertyInfosWithAttribute<AttributeType>(this Assembly assembly)
+        public static IEnumerable<PropertyInfo> GetPropertyInfosWithAttribute<AttributeType>(this Assembly assembly)
             where AttributeType : Attribute
         {
             foreach (var type in assembly.GetTypes())
@@ -86,7 +86,7 @@ namespace MudBlazor.Docs.Models
             }
         }
 
-        public static System.Collections.Generic.IEnumerable<PropertyInfo> GetPropertyInfosWithAttribute<AttributeType>(this Type type)
+        public static IEnumerable<PropertyInfo> GetPropertyInfosWithAttribute<AttributeType>(this Type type)
             where AttributeType : Attribute
         {
             foreach (var propertyInfo in type.GetProperties(
@@ -106,7 +106,7 @@ namespace MudBlazor.Docs.Models
         /// <typeparam name="AttributeType">The type of the custom attribute.</typeparam>
         /// <param name="assembly">The assembly to iterate through the fields of.</param>
         /// <returns>The IEnumerable of the fields with the provided attribute type.</returns>
-        public static System.Collections.Generic.IEnumerable<FieldInfo> GetFieldInfosWithAttribute<AttributeType>(this Assembly assembly)
+        public static IEnumerable<FieldInfo> GetFieldInfosWithAttribute<AttributeType>(this Assembly assembly)
             where AttributeType : Attribute
         {
             foreach (var type in assembly.GetTypes())
@@ -129,7 +129,7 @@ namespace MudBlazor.Docs.Models
         /// <typeparam name="AttributeType">The type of the custom attribute.</typeparam>
         /// <param name="assembly">The assembly to iterate through the methods of.</param>
         /// <returns>The IEnumerable of the methods with the provided attribute type.</returns>
-        public static System.Collections.Generic.IEnumerable<MethodInfo> GetMethodInfosWithAttribute<AttributeType>(this Assembly assembly)
+        public static IEnumerable<MethodInfo> GetMethodInfosWithAttribute<AttributeType>(this Assembly assembly)
             where AttributeType : Attribute
         {
             foreach (var type in assembly.GetTypes())
@@ -152,7 +152,7 @@ namespace MudBlazor.Docs.Models
         /// <typeparam name="AttributeType">The type of the custom attribute.</typeparam>
         /// <param name="assembly">The assembly to iterate through the types of.</param>
         /// <returns>The IEnumerable of the types with the provided attribute type.</returns>
-        public static System.Collections.Generic.IEnumerable<Type> GetTypesWithAttribute<AttributeType>(this Assembly assembly)
+        public static IEnumerable<Type> GetTypesWithAttribute<AttributeType>(this Assembly assembly)
             where AttributeType : Attribute
         {
             foreach (var type in assembly.GetTypes())
@@ -166,9 +166,9 @@ namespace MudBlazor.Docs.Models
 
         /// <summary>Gets all the types in an assembly that derive from a base.</summary>
         /// <typeparam name="Base">The base type to get the deriving types of.</typeparam>
-        /// <param name="assembly">The assmebly to perform the search on.</param>
+        /// <param name="assembly">The assembly to perform the search on.</param>
         /// <returns>The IEnumerable of the types that derive from the provided base.</returns>
-        public static System.Collections.Generic.IEnumerable<Type> GetDerivedTypes<Base>(this Assembly assembly)
+        public static IEnumerable<Type> GetDerivedTypes<Base>(this Assembly assembly)
         {
             var @base = typeof(Base);
             return assembly.GetTypes().Where(type =>
@@ -236,17 +236,28 @@ namespace MudBlazor.Docs.Models
 
         #region XML Code Documentation
 
-        public static System.Collections.Generic.HashSet<Assembly> LoadedAssemblies = new System.Collections.Generic.HashSet<Assembly>();
-        public static System.Collections.Generic.Dictionary<string, string> LoadedXmlDocumentation = new System.Collections.Generic.Dictionary<string, string>();
+        public static HashSet<Assembly> LoadedAssemblies = new();
+        public static Dictionary<string, string> LoadedXmlDocumentation = new();
 
         public static void LoadXmlDocumentation(Assembly assembly)
         {
+            string xmlFilePath;
+
             if (LoadedAssemblies.Contains(assembly))
             {
                 return;
             }
+
             var directoryPath = assembly.GetDirectoryPath();
-            var xmlFilePath = Path.Combine(directoryPath, assembly.GetName().Name + ".xml");
+            if (!string.IsNullOrEmpty(directoryPath))
+            {
+                xmlFilePath = Path.Combine(directoryPath, assembly.GetName().Name + ".xml");
+            }
+            else
+            {
+                xmlFilePath = assembly.GetName().Name + ".xml";
+            }
+
             if (File.Exists(xmlFilePath))
             {
                 using var streamReader = new StreamReader(xmlFilePath);
@@ -307,18 +318,18 @@ namespace MudBlazor.Docs.Models
         {
             LoadXmlDocumentation(methodInfo.DeclaringType.Assembly);
 
-            var typeGenericMap = new System.Collections.Generic.Dictionary<string, int>();
+            var typeGenericMap = new Dictionary<string, int>();
             var tempTypeGeneric = 0;
             Array.ForEach(methodInfo.DeclaringType.GetGenericArguments(), x => typeGenericMap[x.Name] = tempTypeGeneric++);
 
-            var methodGenericMap = new System.Collections.Generic.Dictionary<string, int>();
+            var methodGenericMap = new Dictionary<string, int>();
             var tempMethodGeneric = 0;
             Array.ForEach(methodInfo.GetGenericArguments(), x => methodGenericMap.Add(x.Name, tempMethodGeneric++));
 
             var parameterInfos = methodInfo.GetParameters();
 
             var memberTypePrefix = "M:";
-            var declarationTypeString = GetXmlDocumenationFormattedString(methodInfo.DeclaringType, false, typeGenericMap, methodGenericMap);
+            var declarationTypeString = GetXmlDocumentationFormattedString(methodInfo.DeclaringType, false, typeGenericMap, methodGenericMap);
             var memberNameString = methodInfo.Name;
             var methodGenericArgumentsString =
                 methodGenericMap.Count > 0 ?
@@ -326,7 +337,7 @@ namespace MudBlazor.Docs.Models
                 string.Empty;
             var parametersString =
                 parameterInfos.Length > 0 ?
-                "(" + string.Join(",", methodInfo.GetParameters().Select(x => GetXmlDocumenationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))) + ")" :
+                "(" + string.Join(",", methodInfo.GetParameters().Select(x => GetXmlDocumentationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))).Replace("MudBlazor.Docs.Models.T", "`0") + ")" :
                 string.Empty;
 
             var key =
@@ -337,10 +348,9 @@ namespace MudBlazor.Docs.Models
                 methodGenericArgumentsString +
                 parametersString;
 
-            if (methodInfo.Name == "op_Implicit" ||
-                methodInfo.Name == "op_Explicit")
+            if (methodInfo.Name is "op_Implicit" or "op_Explicit")
             {
-                key += "~" + GetXmlDocumenationFormattedString(methodInfo.ReturnType, true, typeGenericMap, methodGenericMap);
+                key += "~" + GetXmlDocumentationFormattedString(methodInfo.ReturnType, true, typeGenericMap, methodGenericMap);
             }
 
             LoadedXmlDocumentation.TryGetValue(key, out var documentation);
@@ -355,21 +365,21 @@ namespace MudBlazor.Docs.Models
         {
             LoadXmlDocumentation(constructorInfo.DeclaringType.Assembly);
 
-            var typeGenericMap = new System.Collections.Generic.Dictionary<string, int>();
+            var typeGenericMap = new Dictionary<string, int>();
             var tempTypeGeneric = 0;
             Array.ForEach(constructorInfo.DeclaringType.GetGenericArguments(), x => typeGenericMap[x.Name] = tempTypeGeneric++);
 
             // constructors don't support generic types so this will always be empty
-            var methodGenericMap = new System.Collections.Generic.Dictionary<string, int>();
+            var methodGenericMap = new Dictionary<string, int>();
 
             var parameterInfos = constructorInfo.GetParameters();
 
             var memberTypePrefix = "M:";
-            var declarationTypeString = GetXmlDocumenationFormattedString(constructorInfo.DeclaringType, false, typeGenericMap, methodGenericMap);
+            var declarationTypeString = GetXmlDocumentationFormattedString(constructorInfo.DeclaringType, false, typeGenericMap, methodGenericMap);
             var memberNameString = "#ctor";
             var parametersString =
                 parameterInfos.Length > 0 ?
-                "(" + string.Join(",", constructorInfo.GetParameters().Select(x => GetXmlDocumenationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))) + ")" :
+                "(" + string.Join(",", constructorInfo.GetParameters().Select(x => GetXmlDocumentationFormattedString(x.ParameterType, true, typeGenericMap, methodGenericMap))) + ")" :
                 string.Empty;
 
             var key =
@@ -383,11 +393,11 @@ namespace MudBlazor.Docs.Models
             return documentation;
         }
 
-        public static string GetXmlDocumenationFormattedString(
+        public static string GetXmlDocumentationFormattedString(
             Type type,
             bool isMethodParameter,
-            System.Collections.Generic.Dictionary<string, int> typeGenericMap,
-            System.Collections.Generic.Dictionary<string, int> methodGenericMap)
+            Dictionary<string, int> typeGenericMap,
+            Dictionary<string, int> methodGenericMap)
         {
             if (type.IsGenericParameter)
             {
@@ -397,7 +407,7 @@ namespace MudBlazor.Docs.Models
             }
             else if (type.HasElementType)
             {
-                var elementTypeString = GetXmlDocumenationFormattedString(
+                var elementTypeString = GetXmlDocumentationFormattedString(
                     type.GetElementType(),
                     isMethodParameter,
                     typeGenericMap,
@@ -424,7 +434,7 @@ namespace MudBlazor.Docs.Models
                     // Hopefully this will never hit. At the time of writing
                     // this code, type.HasElementType is only true if the type
                     // is a pointer, array, or by reference.
-                    throw new Exception(nameof(GetXmlDocumenationFormattedString) +
+                    throw new Exception(nameof(GetXmlDocumentationFormattedString) +
                         " encountered an unhandled element type. " +
                         "Please submit this issue to the Towel GitHub repository. " +
                         "https://github.com/ZacharyPatten/Towel/issues/new/choose");
@@ -433,7 +443,7 @@ namespace MudBlazor.Docs.Models
             else
             {
                 var prefaceString = type.IsNested
-                    ? GetXmlDocumenationFormattedString(
+                    ? GetXmlDocumentationFormattedString(
                         type.DeclaringType,
                         isMethodParameter,
                         typeGenericMap,
@@ -447,7 +457,7 @@ namespace MudBlazor.Docs.Models
                 var genericArgumentsString = type.IsGenericType && isMethodParameter
                     ? "{" + string.Join(",",
                         type.GetGenericArguments().Select(argument =>
-                            GetXmlDocumenationFormattedString(
+                            GetXmlDocumentationFormattedString(
                                 argument,
                                 isMethodParameter,
                                 typeGenericMap,
@@ -537,7 +547,7 @@ namespace MudBlazor.Docs.Models
             }
             else if (memberInfo.MemberType.HasFlag(MemberTypes.Custom))
             {
-                // This represents a cutom type that is not part of
+                // This represents a custom type that is not part of
                 // the standard .NET languages as far as I'm aware.
                 // This will never be supported so return null.
                 return null;
@@ -557,7 +567,7 @@ namespace MudBlazor.Docs.Models
 
         /// <summary>Gets the XML documentation for a parameter.</summary>
         /// <param name="parameterInfo">The parameter to get the XML documentation for.</param>
-        /// <returns>The XML documenation of the parameter.</returns>
+        /// <returns>The XML documentation of the parameter.</returns>
         public static string GetDocumentation(this ParameterInfo parameterInfo)
         {
             var memberDocumentation = parameterInfo.Member.GetDocumentation();

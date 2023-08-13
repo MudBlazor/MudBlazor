@@ -1,15 +1,28 @@
-﻿.mud-treeview {
+﻿@import '../abstracts/variables';
+
+.mud-treeview {
     margin: 0px;
     padding: 0px;
     list-style: none;
     overflow: auto;
 
-    &.mud-treeview-canactivate .mud-treeview-item-content {
-        cursor: pointer;
+    @each $color in $mud-palette-colors {
+        &.mud-treeview-selected-#{$color} {
+            .mud-treeview-item-content.mud-treeview-item-selected {
+                color: var(--mud-palette-#{$color});
+                background-color: var(--mud-palette-#{$color}-hover);
+            }
+        }
     }
 
-    &.mud-treeview-expand-on-click .mud-treeview-item-content {
-        cursor: pointer;
+    @each $color in $mud-palette-colors {
+        &.mud-treeview-checked-#{$color} {
+            .mud-treeview-item-checkbox {
+                .mud-button-root.mud-icon-button {
+                    color: var(--mud-palette-#{$color});
+                }
+            }
+        }
     }
 }
 
@@ -32,20 +45,23 @@
     align-items: center;
     -webkit-tap-highlight-color: transparent;
 
-    .mud-icon-button {
-        padding: 4px;
+    .mud-treeview-item-arrow, .mud-treeview-item-checkbox {
+        .mud-icon-button {
+            padding: 4px;
+        }
     }
 }
 
 .mud-treeview-item-content {
     width: 100%;
     display: flex;
-    padding: 4px;
+    padding: 4px 8px;
     align-items: center;
+    transition: background-color 150ms cubic-bezier(.4,0,.2,1) 0ms;
+}
 
-    &.mud-treeview-item-activated {
-        background-color: rgba(25, 118, 210, 0.08);
-    }
+.mud-treeview-hover .mud-treeview-item-content:hover {
+    background-color: var(--mud-palette-action-default-hover);
 }
 
 .mud-treeview-item-arrow {
@@ -53,15 +69,14 @@
     display: flex;
     flex-shrink: 0;
     margin: 0 4px;
+    min-height: 32px;
     justify-content: center;
 
     .mud-treeview-item-arrow-expand {
-        color: var(--mud-palette-drawer-icon);
         transition: .3s cubic-bezier(.25,.8,.5,1),visibility 0s;
 
         &.mud-transform {
             transform: rotate(90deg);
-            fill: var(--mud-palette-primary);
         }
     }
 
@@ -83,16 +98,7 @@
 .mud-treeview-item-label {
     flex-grow: 1;
     padding-left: 4px;
-    padding-inline-start: 4px;
-    padding-inline-end: unset;
-}
-
-.mud-treeview-canhover .mud-treeview-item-activated .mud-treeview-item-content:hover {
-    background-color: rgba(25, 118, 210, 0.12);
-}
-
-.mud-treeview-canhover .mud-treeview-item-content:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+    padding-right: 4px;
 }
 
 .mud-treeview-dense {
@@ -101,16 +107,20 @@
     }
 
     .mud-treeview-item-content {
-        padding: 1px;
+        padding: 1px 4px;
     }
 
-    .mud-treeview-item-arrow button {
-        padding: 0;
+    .mud-treeview-item-arrow {
+        min-height: unset;
     }
 
     .mud-icon-button {
         padding: 0;
     }
+}
+
+.mud-treeview-select-none {
+    user-select: none;
 }
 
 @keyframes rotation {

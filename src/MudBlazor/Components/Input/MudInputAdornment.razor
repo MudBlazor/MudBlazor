@@ -5,17 +5,17 @@
 <div class="@Class">
     @if (!string.IsNullOrWhiteSpace(Text))
     {
-        <MudText Color="@Color">@Text</MudText>
+        <MudText Color="@Color" tabindex="-1">@Text</MudText>
     }
     else if (!string.IsNullOrWhiteSpace(Icon))
     {
         @if (AdornmentClick.HasDelegate)
         {
-            <MudIconButton Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" Size="@Size" Color="@Color" />
+            <MudIconButton Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" Size="@Size" Color="@Color" aria-label="@(!string.IsNullOrEmpty(AriaLabel) ? AriaLabel : "Icon Button")" tabindex="-1"/>
         }
         else
         {
-            <MudIcon Icon="@Icon" Size="@Size" Color="@Color"/>
+            <MudIcon Icon="@Icon" Size="@Size" Color="@Color" aria-label="@(!string.IsNullOrEmpty(AriaLabel) ? AriaLabel : "Icon")" tabindex="-1"/>
         }
     }
 </div>
@@ -28,6 +28,7 @@
     [Parameter] public Edge Edge { get; set; }
     [Parameter] public Size Size { get; set; } = Size.Medium;
     [Parameter] public Color Color { get; set; } = Color.Default;
+    [Parameter] public string AriaLabel { get; set; }
 
     [Parameter] public EventCallback<MouseEventArgs> AdornmentClick { get; set; }
 }

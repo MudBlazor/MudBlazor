@@ -1,0 +1,69 @@
+@namespace MudBlazor.UnitTests.TestComponents
+@using System.Collections.ObjectModel
+
+<MudDataGrid @ref="dataGrid"
+	Items="@Fruits"
+	Filterable="true"
+	Hideable="true"
+	Groupable="true"
+	GroupExpanded="false">
+	<ToolBarContent>
+		<MudText Typo="Typo.h6">Fruits</MudText>
+		<MudSpacer />
+	</ToolBarContent>
+	<Columns>
+		<PropertyColumn Property="x => x.Name" Title="Name" Filterable="false" Groupable="false" />
+		<PropertyColumn Property="x => x.Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
+			<GroupTemplate>
+				<span style="font-weight:bold">Category: @context.Grouping.Key</span>
+			</GroupTemplate>
+		</PropertyColumn>
+	</Columns>
+</MudDataGrid>
+
+<div class="d-flex flex-wrap mt-4">
+	<MudButton Class="expand-all" OnClick="@ExpandAllGroups" Color="@Color.Primary">Expand All</MudButton>
+	<MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">Collapse All</MudButton>
+	<MudButton OnClick="@RefreshList" Color="@Color.Primary">Refresh</MudButton>
+</div>
+
+@code {
+	MudDataGrid<TestObject> dataGrid;
+	public record TestObject(string Name, string Category);
+
+	IEnumerable<TestObject> Fruits { get; set; } =
+		new List<TestObject>()
+			{
+			new TestObject("1", "1"),
+			new TestObject("1-1", "1"),
+			new TestObject("1-2", "1"),
+
+			new TestObject("2", "2"),
+			new TestObject("2-1", "2"),
+			new TestObject("2-2", "2"),
+
+			new TestObject("3", "3"),
+			new TestObject("3-1", "3"),
+			new TestObject("3-2", "3")
+					};
+
+	Func<TestObject, object> _groupBy = x =>
+	{
+		return x.Category;
+	};
+
+	public void RefreshList()
+	{
+		Fruits = Fruits.Select(x => new TestObject(x.Name, x.Category)).ToList();
+	}
+
+	public void ExpandAllGroups()
+	{
+		dataGrid?.ExpandAllGroups();
+	}
+
+	public void CollapseAllGroups()
+	{
+		dataGrid?.CollapseAllGroups();
+	}
+}

@@ -1,0 +1,18 @@
+﻿
+<CascadingValue Value="ProviderIsEnabled" Name="UsePopoverProvider">
+	<MudPopoverProvider />
+</CascadingValue>
+
+<div class="popoverparent">
+	<MudPopover Open="true">
+		<MudText id="my-content">Popover content</MudText>
+	</MudPopover>
+</div>
+
+
+@code {
+
+	[Parameter]
+	public bool ProviderIsEnabled { get; set; } = true;
+
+}

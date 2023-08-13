@@ -2,6 +2,11 @@
 
 @inject ISnackbar Snackbar
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="@(() => Snackbar.Add("<ul><li>Item 1</li><li>Item 2</li></ul>"))">
+<MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="@(() => Snackbar.Add($"<ul><li>Item {++count}</li><li>Item {++count}</li></ul>"))">
     Open Snackbar
 </MudButton>
+
+@code
+{
+    private int count = 0;
+}

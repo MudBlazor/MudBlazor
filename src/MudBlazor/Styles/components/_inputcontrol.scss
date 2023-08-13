@@ -24,6 +24,11 @@
         width: 100%;
     }
 
+    &.mud-input-control-boolean-input {
+        flex: none;
+        margin: 0;
+    }
+
     & > .mud-input-control-input-container {
         position: relative;
         display: flex;
@@ -92,6 +97,7 @@
                     padding-inline-end: 20px;
                 }
             }
+
             &.mud-input-text input {
                 padding-inline-start: 0;
 
@@ -139,38 +145,56 @@
     }
 }
 
+.mud-input-control-helper-container {
+    overflow: hidden;
+    margin-top: 3px;
+}
+
 .mud-input-helper-text {
     color: var(--mud-palette-text-secondary);
     margin: 0;
     font-size: 0.75rem;
-    margin-top: 3px;
     text-align: start;
     font-weight: 400;
     line-height: 1.66;
     letter-spacing: 0.03333em;
-}
 
-
-.mud-input-helper-text.mud-disabled {
-    color: var(--mud-palette-text-disabled);
-}
-
-.mud-input-helper-text.mud-input-error {
-    color: var(--mud-palette-error) !important;
-}
-
-.mud-input-helper-text-margin-dense {
-    margin-top: 4px;
-}
-
-.mud-input-helper-text-contained {
-    margin-left: 14px;
-    margin-right: 14px;
-}
-
-.mud-application-layout-rtl {
-    .mud-input-control.mud-input-number-control .mud-input-numeric-spin {
-        left: 0;
-        right: unset;
+    &.mud-input-helper-onfocus {
+        transform: translateY(-100%);
+        transition: color 200ms cubic-bezier(0,0,.2,1) 0ms,transform 200ms cubic-bezier(0,0,.2,1) 0ms;
     }
 }
+
+.mud-input-control {
+    &:focus-within, &.mud-input-error {
+        .mud-input-helper-text {
+            &.mud-input-helper-onfocus {
+                transform: translateY(0);
+            }
+        }
+    }
+}
+
+    .mud-input-helper-text.mud-disabled {
+        color: var(--mud-palette-text-disabled);
+    }
+
+    .mud-input-helper-text.mud-input-error {
+        color: var(--mud-palette-error) !important;
+    }
+
+    .mud-input-helper-text-margin-dense {
+        margin-top: 4px;
+    }
+
+    .mud-input-helper-text-contained {
+        margin-left: 14px;
+        margin-right: 14px;
+    }
+
+    .mud-application-layout-rtl {
+        .mud-input-control.mud-input-number-control .mud-input-numeric-spin {
+            left: 0;
+            right: unset;
+        }
+    }

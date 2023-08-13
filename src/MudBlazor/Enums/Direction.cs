@@ -11,6 +11,10 @@ namespace MudBlazor
         [Description("left")]
         Left,
         [Description("right")]
-        Right
+        Right,
+        [Description("start")]
+        Start,
+        [Description("end")]
+        End
     }
 }

@@ -124,7 +124,6 @@
 
 .mud-tab {
     width:100%;
-    min-width: 160px;
     display: inline-flex;
     padding: 6px 12px;
     min-height: 48px;
@@ -172,13 +171,13 @@
 
     &.mud-tab-slider-horizontal {
         height: 2px;
-        left: 0;
         bottom: 0;
         transition: left .3s cubic-bezier(.64,.09,.08,1);
         will-change: left;
 
         &.mud-tab-slider-horizontal-reverse {
-            top: 0px;
+            top: 0;
+            bottom: unset;
         }
     }
 
@@ -190,6 +189,7 @@
 
         &.mud-tab-slider-vertical-reverse {
             left: 0;
+            right: unset;
         }
     }
 }
@@ -249,3 +249,54 @@
         transform: translate(100%, 0);
     }
 }
+
+.mud-dynamic-tabs {
+    .mud-tabs-toolbar {
+        .mud-tab {
+            padding: 6px 14px;
+
+            .mud-icon-button {
+                padding: 4px;
+                margin-right: -4px;
+                margin-inline-end: -4px;
+                margin-inline-start: unset;
+            }
+
+            .mud-tabs-panel-header-before {
+                padding-right: 8px;
+                padding-inline-end: 8px;
+                padding-inline-start: unset;
+            }
+
+            .mud-tabs-panel-header-after {
+                padding-left: 8px;
+                padding-inline-start: 8px;
+                padding-inline-end: unset;
+            }
+        }
+    }
+}
+
+.mud-tabs-header {
+    &.mud-tabs-header-before {
+        display: inherit;
+    }
+
+    &.mud-tabs-header-after {
+        display: inherit;
+    }
+}
+
+.mud-tabs-panel-header {
+    display: flex;
+    flex: 1 1 auto;
+
+    &.mud-tabs-panel-header-before {
+        justify-content: flex-start;
+    }
+
+    &.mud-tabs-panel-header-after {
+        justify-content: flex-end;
+    }
+}
+

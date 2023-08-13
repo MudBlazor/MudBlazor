@@ -1,0 +1,39 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" CellStyleFunc="@_cellStyleFunc" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Item> _items = new List<Item>()
+    {
+        new Item("A"), 
+        new Item("B"), 
+        new Item("C")
+    };
+
+    // style the cells according to the element's physical classification and the molar mass.
+    private Func<Item, string> _cellStyleFunc => x =>
+    {
+        if (x.Name == "B")
+            return "background-color:#E5BDE5";
+
+        if (x.Name == "C")
+            return "font-weight:bold";
+
+        return "";
+    };
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+
+}

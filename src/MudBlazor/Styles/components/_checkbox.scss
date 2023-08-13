@@ -1,21 +1,22 @@
-﻿@import '../abstracts/variables';
-
-.mud-checkbox {
+﻿.mud-checkbox {
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     vertical-align: middle;
     -webkit-tap-highlight-color: transparent;
-    color: var(--mud-palette-text-primary);
 
-    &.mud-disabled, .mud-disabled:hover {
+    &.mud-disabled, .mud-disabled:hover, .mud-disabled:focus-visible {
         cursor: default;
-        background-color: transparent;
+        background-color: transparent !important;
 
         & * {
             cursor: default;
             color: var(--mud-palette-text-disabled);
         }
+    }
+
+    &.mud-readonly, .mud-readonly:hover {
+        cursor: default;
     }
 
     & .mud-checkbox-dense {
@@ -42,12 +43,3 @@
     cursor: pointer;
 }
 
-@each $color in $mud-palette-colors {
-    .mud-checkbox-#{$color} {
-        color: var(--mud-palette-#{$color});
-
-        &:hover {
-            background-color: var(--mud-palette-#{$color}-hover);
-        }
-    }
-}

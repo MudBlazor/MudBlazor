@@ -1,4 +1,8 @@
-﻿class MudElementReference {
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+class MudElementReference {
     constructor() {
         this.listenerId = 0;
         this.eventListeners = {};
@@ -8,6 +12,12 @@
         if (element)
         {
             element.focus();
+        }
+    }
+
+    blur(element) {
+        if (element) {
+            element.blur();
         }
     }
 
@@ -76,15 +86,17 @@
         }
     }
 
-    getBoundingClientRect (element) {
-        if (element)
-        {
-            return element.getBoundingClientRect();
-        }
-        else
-        {
-            return null;
-        }
+    getBoundingClientRect(element) {
+        if (!element) return;
+
+        var rect = JSON.parse(JSON.stringify(element.getBoundingClientRect()));
+
+        rect.scrollY = window.scrollY || document.documentElement.scrollTop;
+        rect.scrollX = window.scrollX || document.documentElement.scrollLeft;
+
+        rect.windowHeight = window.innerHeight;
+        rect.windowWidth = window.innerWidth;
+        return rect;
     }
 
     changeCss (element, css) {
@@ -94,29 +106,41 @@
         }
     }
 
-    changeCssVariable (element, name, newValue) {
-        if (element)
-        {
-            element.style.setProperty(name, newValue);
-        }
+    removeEventListener (element, event, eventId) {
+        element.removeEventListener(event, this.eventListeners[eventId]);
+        delete this.eventListeners[eventId];
     }
 
-    addEventListener (element, dotnet, event, callback, spec, stopPropagation) {
-        let listener = function (e) {
-            const args = Array.from(spec, x => serializeParameter(e, x));
-            dotnet.invokeMethodAsync(callback, ...args);
-            if (stopPropagation) {
-                e.stopPropagation();
-            }
-        };
-        element.addEventListener(event, listener);
+    addDefaultPreventingHandler(element, eventName) {
+        let listener = function(e) {
+            e.preventDefault();
+        }
+        element.addEventListener(eventName, listener, { passive: false });
         this.eventListeners[++this.listenerId] = listener;
         return this.listenerId;
     }
 
-    removeEventListener (element, event, eventId) {
-        element.removeEventListener(event, this.eventListeners[eventId]);
-        delete this.eventListeners[eventId];
+    removeDefaultPreventingHandler(element, eventName, listenerId) {
+        this.removeEventListener(element, eventName, listenerId);
+    }
+
+    addDefaultPreventingHandlers(element, eventNames) {
+        let listeners = [];
+
+        for (const eventName of eventNames) {
+            let listenerId = this.addDefaultPreventingHandler(element, eventName);
+            listeners.push(listenerId);
+        }
+
+        return listeners;
+    }
+
+    removeDefaultPreventingHandlers(element, eventNames, listenerIds) {
+        for (let index = 0; index < eventNames.length; ++index) {
+            const eventName = eventNames[index];
+            const listenerId = listenerIds[index];
+            this.removeDefaultPreventingHandler(element, eventName, listenerId);
+        }
     }
 };
 window.mudElementRef = new MudElementReference();

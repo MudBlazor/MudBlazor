@@ -15,9 +15,16 @@ namespace MudBlazor.Examples.Data.Models
         public double Molar { get; set; }
         public IList<int> Electrons { get; set; }
 
-        public override string ToString()
-        {
-            return $"{Sign} - {Name}";
-        }
+        /// <summary>
+        /// Overriding Equals is essential for use with Select and Table because they use HashSets internally
+        /// </summary>
+        public override bool Equals(object obj) => object.Equals(GetHashCode(), obj?.GetHashCode());
+
+        /// <summary>
+        /// Overriding GetHashCode is essential for use with Select and Table because they use HashSets internally
+        /// </summary>
+        public override int GetHashCode() => Name?.GetHashCode() ?? 0;
+
+        public override string ToString() => $"{Sign} - {Name}";
     }
 }

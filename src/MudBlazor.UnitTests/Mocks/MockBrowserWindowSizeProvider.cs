@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using MudBlazor;
 using MudBlazor.Services;
 
 namespace MudBlazor.UnitTests.Mocks
 {
+    [Obsolete("Replaced by IBrowserViewportService. Remove in v7.")]
     public class MockBrowserWindowSizeProvider : IBrowserWindowSizeProvider
     {
         public ValueTask<BrowserWindowSize> GetBrowserWindowSize()
