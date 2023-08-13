@@ -219,6 +219,6 @@ namespace MudBlazor
 
         protected internal bool IsLastItem(MudToggleItem<T> item) => item.Equals(_items.LastOrDefault());
 
-        protected internal double GetItemWidth(MudToggleItem<T> item) => 100 / (_items.Count == 0 ? 1 : _items.Count);
+        protected internal double GetItemWidth() => 100 / (_items.Count == 0 ? 1 : _items.Count);
     }
 }

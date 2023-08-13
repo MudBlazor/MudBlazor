@@ -39,7 +39,7 @@ namespace MudBlazor
             .Build();
 
         protected string Stylename => new StyleBuilder()
-            .AddStyle("min-width", $"{Parent?.GetItemWidth(this).ToInvariantString()}%", Parent?.Vertical == false && !IsEmpty())
+            .AddStyle("min-width", $"{Parent?.GetItemWidth().ToInvariantString()}%", Parent?.Vertical == false && !IsEmpty())
             .AddStyle("width", "fit-content", Parent?.Vertical == true || IsEmpty())
             .AddStyle("height", "fit-content", Parent?.Vertical == true || IsEmpty())
             .AddStyle(Style)
