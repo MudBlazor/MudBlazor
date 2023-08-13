@@ -115,16 +115,5 @@
     <Content Remove="compilerconfig.json" />
     <Content Remove="excubowebcompiler.json" />
   </ItemGroup>
-  <ItemGroup>
-    <None Remove="Pages\Components\Toggle\Code\AlertAlignmentExampleCode.html" />
-    <None Remove="Pages\Components\Toggle\Code\AlertCloseExampleCode.html" />
-    <None Remove="Pages\Components\Toggle\Code\AlertDenseExampleCode.html" />
-    <None Remove="Pages\Components\Toggle\Code\AlertElevationExampleCode.html" />
-    <None Remove="Pages\Components\Toggle\Code\AlertFilledExampleCode.html" />
-    <None Remove="Pages\Components\Toggle\Code\AlertNoIconExampleCode.html" />
-    <None Remove="Pages\Components\Toggle\Code\AlertOutlinedExampleCode.html" />
-    <None Remove="Pages\Components\Toggle\Code\AlertSimpleExampleCode.html" />
-    <None Remove="Pages\Components\Toggle\Code\AlertSquareExampleCode.html" />
-  </ItemGroup>
 
 </Project>
