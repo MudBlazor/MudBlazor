@@ -3,40 +3,45 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudToggleGroup<T> : MudComponentBase
     {
-        List<MudToggleItem<T>> _items = new();
+        private T? _oldValue;
+        private Color _oldColor;
+        private IEnumerable<T?>? _oldValues;
+        private string? _oldSelectedClass;
+        private List<MudToggleItem<T>> _items = new();
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public T Value { get; set; }
+        public T? Value { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public EventCallback<T> ValueChanged { get; set; }
+        public EventCallback<T?> ValueChanged { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public IEnumerable<T> SelectedValues { get; set; }
+        public IEnumerable<T?>? SelectedValues { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public EventCallback<IEnumerable<T>> SelectedValuesChanged { get; set; }
+        public EventCallback<IEnumerable<T?>> SelectedValuesChanged { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string SelectedClass { get; set; }
+        public string? SelectedClass { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string TextClass { get; set; }
+        public string? TextClass { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
@@ -76,7 +81,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         protected internal void Register(MudToggleItem<T> item)
         {
@@ -87,31 +92,35 @@ namespace MudBlazor
 
             _items.Add(item);
         }
-
-        T _oldValue;
-        IEnumerable<T> _oldValues;
-        Color _oldColor;
-        string _oldSelectedClass;
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            if (((_oldValue == null && Value != null) || (_oldValue != null && Value == null) || (_oldValue != null && Value.Equals(_oldValue)) == false) && MultiSelection == false)
+
+            // Handle single selection mode
+            if (((_oldValue is null && Value is not null) || (_oldValue is not null && Value is null) || (_oldValue is not null && !_oldValue.Equals(Value))) && !MultiSelection)
             {
                 DeselectAllItems();
-                if (Value != null)
+
+                if (Value is not null)
                 {
-                    _items.FirstOrDefault(x => x.Value.Equals(Value))?.SetSelected(true);
+                    var selectedItem = _items.FirstOrDefault(x => Value.Equals(x.Value));
+                    selectedItem?.SetSelected(true);
                 }
+
                 _oldValue = Value;
             }
 
-            if (((_oldValues == null && SelectedValues != null) || (_oldValues != null && SelectedValues.Equals(_oldValues)) == false) && MultiSelection == true)
+            // Handle multi-selection mode
+            if (((_oldValues is null && SelectedValues is not null) || (_oldValues is not null && !_oldValues.Equals(SelectedValues))) && MultiSelection)
             {
                 DeselectAllItems();
-                if (SelectedValues != null)
+
+                if (SelectedValues is not null)
                 {
-                    _items.Where(x => SelectedValues.Contains(x.Value)).ToList().ForEach(x => x.SetSelected(true));
+                    var selectedItems = _items.Where(x => SelectedValues.Contains(x.Value)).ToList();
+                    selectedItems.ForEach(x => x.SetSelected(true));
                 }
+
                 _oldValues = SelectedValues;
             }
         }
@@ -121,14 +130,18 @@ namespace MudBlazor
             base.OnAfterRender(firstRender);
             if (firstRender)
             {
-                if (Value != null && MultiSelection == false)
+                // Handle single selection mode
+                if (Value is not null && !MultiSelection)
                 {
-                    _items.FirstOrDefault(x => x.Value.Equals(Value))?.SetSelected(true);
+                    var selectedItem = _items.FirstOrDefault(x => Value.Equals(x.Value));
+                    selectedItem?.SetSelected(true);
                 }
 
-                if (SelectedValues != null && MultiSelection == true)
+                // Handle multi-selection mode
+                if (SelectedValues is not null && MultiSelection)
                 {
-                    _items.Where(x => SelectedValues.Contains(x.Value)).ToList().ForEach(x => x.SetSelected(true));
+                    var selectedItems = _items.Where(x => SelectedValues.Contains(x.Value)).ToList();
+                    selectedItems.ForEach(x => x.SetSelected(true));
                 }
 
                 StateHasChanged();
@@ -138,25 +151,27 @@ namespace MudBlazor
             {
                 _oldColor = Color;
                 _oldSelectedClass = SelectedClass;
-                ForceRender();
+                foreach (IMudStateHasChanged mudComponent in _items)
+                {
+                    mudComponent.StateHasChanged();
+                }
+
+                StateHasChanged();
             }
         }
 
-        protected internal async Task ToggleItem(MudToggleItem<T> item)
+        protected internal async Task ToggleItemAsync(MudToggleItem<T> item)
         {
-            if (MultiSelection == true)
+            if (MultiSelection)
             {
                 if (item.IsSelected())
                 {
-                    SelectedValues = SelectedValues.Where(x => x.Equals(item.Value) == false);
+                    SelectedValues = SelectedValues?.Where(x => !Equals(x, item.Value));
                     await SelectedValuesChanged.InvokeAsync(SelectedValues);
                 }
                 else
                 {
-                    if (SelectedValues == null)
-                    {
-                        SelectedValues = new HashSet<T>();
-                    }
+                    SelectedValues ??= new HashSet<T>();
                     SelectedValues = SelectedValues.Append(item.Value);
                     await SelectedValuesChanged.InvokeAsync(SelectedValues);
                 }
@@ -164,11 +179,10 @@ namespace MudBlazor
                 return;
             }
 
-            if (ToggleSelection == true)
+            if (ToggleSelection)
             {
-
                 var selected = item.IsSelected();
-                if (selected == false)
+                if (!selected)
                 {
                     DeselectAllItems();
                     item.SetSelected(true);
@@ -181,7 +195,6 @@ namespace MudBlazor
                     Value = default(T);
                     await ValueChanged.InvokeAsync(Value);
                 }
-
             }
             else
             {
@@ -194,19 +207,18 @@ namespace MudBlazor
 
         protected void DeselectAllItems()
         {
-            _items.ForEach(x => x.SetSelected(false));
-        }
-
-        protected void ForceRender()
-        {
-            _items.ForEach(x => x.ForceRender());
-            StateHasChanged();
+            foreach (var item in _items)
+            {
+                item.SetSelected(false);
+            }
         }
 
         protected internal IEnumerable<MudToggleItem<T>> GetItems() => _items;
-        protected internal bool IsFirstItem(MudToggleItem<T> item) => item.Equals(_items.FirstOrDefault());
-        protected internal bool IsLastItem(MudToggleItem<T> item) => item.Equals(_items.LastOrDefault());
-        protected internal double GetItemWidth(MudToggleItem<T> item) => 100 / (_items.Count() == 0 ? 1 : _items.Count());
 
+        protected internal bool IsFirstItem(MudToggleItem<T> item) => item.Equals(_items.FirstOrDefault());
+
+        protected internal bool IsLastItem(MudToggleItem<T> item) => item.Equals(_items.LastOrDefault());
+
+        protected internal double GetItemWidth(MudToggleItem<T> item) => 100 / (_items.Count == 0 ? 1 : _items.Count);
     }
 }
