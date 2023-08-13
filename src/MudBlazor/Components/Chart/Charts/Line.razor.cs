@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts.SVG.Models;
 using MudBlazor.Components.Chart;
