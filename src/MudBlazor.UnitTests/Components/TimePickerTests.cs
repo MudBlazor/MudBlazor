@@ -231,6 +231,58 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void MinuteSelectionStep_15_SelectTime_UsingClicks_CheckTime()
+        {
+            var comp = OpenPicker(Parameter(nameof(MudTimePicker.MinuteSelectionStep), 15));
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
+
+            // select 16 hours on outer dial
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].Click();
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(16);
+
+            // click 2 minutes on the dial result rounds down to 00
+            comp.FindAll("div.mud-minute")[2].Click();
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(00);
+            comp.FindAll("div.mud-time-picker-minute p.mud-theme-primary")[0].TextContent.Should().Be("00");
+            // click 18 minutes on the dial result rounds down to 15
+            comp.FindAll("div.mud-minute")[18].Click();
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(15);
+            comp.FindAll("div.mud-time-picker-minute p.mud-theme-primary")[0].TextContent.Should().Be("15");
+            // click 30 minutes on the dial result is 30
+            comp.FindAll("div.mud-minute")[30].Click();
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(30);
+            comp.FindAll("div.mud-time-picker-minute p.mud-theme-primary")[0].TextContent.Should().Be("30");
+            // click 43 minutes on the dial result rounds up to 45
+            comp.FindAll("div.mud-minute")[43].Click();
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(45);
+            comp.FindAll("div.mud-time-picker-minute p.mud-theme-primary")[0].TextContent.Should().Be("45");
+            // click 57 minutes on the dial result rounds 'up' to 00
+            comp.FindAll("div.mud-minute")[57].Click();
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(0);
+            comp.FindAll("div.mud-time-picker-minute p.mud-theme-primary")[0].TextContent.Should().Be("00");
+        }
+
+        /// <summary>
+        /// Check that using an invalid value of 0 is ignored
+        /// </summary>
+        [Test]
+        public void MinuteSelectionStep_0_SelectTime_UsingClicks_CheckTime()
+        {
+            var comp = Context.RenderComponent<MudTimePicker>(new ComponentParameter[] { Parameter(nameof(MudTimePicker.MinuteSelectionStep), 0), Parameter("TimeEditMode", TimeEditMode.OnlyMinutes), Parameter("PickerVariant", PickerVariant.Static), Parameter("OpenTo", OpenTo.Minutes) });
+            var picker = comp.Instance;
+
+            // Any minutes displayed
+            comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
+
+            // click every minute
+            for (var i = 0; i < 60; i++)
+            {
+                comp.FindAll("div.mud-minute")[i].Click();
+                picker.TimeIntermediate.Value.Minutes.Should().Be(i);
+            }
+        }
+
+        [Test]
         public void OpenToHours_CheckMinutesHidden()
         {
             var comp = OpenPicker(Parameter("OpenTo", OpenTo.Hours));
