@@ -72,7 +72,6 @@
     RenderFragment TestComponent() => builder =>
     {
         builder.OpenComponent(0, selectedType);
-        //builder.AddAttribute(1, "Title", "Some title");
         builder.CloseComponent();
     };
 
@@ -116,11 +115,8 @@
     private Task<IEnumerable<Type>> Search(string text)
     {
         if (string.IsNullOrWhiteSpace(text))
-        {
-            // the user just clicked the autocomplete open, show the most popular pages as search result according to our analytics data
-            // ordered by popularity
             return Task.FromResult<IEnumerable<Type>>(new Type[0]);
-        }
+
         return Task.FromResult<IEnumerable<Type>>(
             availableComponentTypes.Where(type => type.Name.Contains(text, StringComparison.OrdinalIgnoreCase))
         );
