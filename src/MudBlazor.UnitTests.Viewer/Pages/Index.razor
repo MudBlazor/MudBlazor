@@ -18,10 +18,10 @@
             <MudText Typo="Typo.h6">TestComponents</MudText>
         </MudDrawerHeader>
 		<MudNavMenu>
-            @foreach (var type in availableComponentTypes)
-            {
+			@foreach (var type in availableComponentTypes)
+			{
 				<MudNavLink OnClick="@(() => selectedType = type)" @key="type.Name">@type.Name</MudNavLink>
-            }
+			}
 		</MudNavMenu>
     </MudDrawer>
     <MudMainContent Class="mt-4">
@@ -58,7 +58,7 @@
     Type[] availableComponentTypes = new Type[0];
     MudAutocomplete<Type> autocomplete;
 
-    void DocsDrawerToggle()
+	void DocsDrawerToggle()
     {
         drawerOpen = !drawerOpen;
     }
@@ -121,9 +121,8 @@
             // ordered by popularity
             return Task.FromResult<IEnumerable<Type>>(new Type[0]);
         }
-        var lowerText = text.ToLowerInvariant();
         return Task.FromResult<IEnumerable<Type>>(
-            availableComponentTypes.Where(type => type.Name.ToLowerInvariant().StartsWith(lowerText))
+            availableComponentTypes.Where(type => type.Name.Contains(text, StringComparison.OrdinalIgnoreCase))
         );
     }
 
