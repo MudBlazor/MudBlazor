@@ -17,12 +17,12 @@
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">Test Components</MudText>
         </MudDrawerHeader>
-		<MudNavMenu>
-			@foreach (var type in availableComponentTypes)
-			{
-				<MudNavLink OnClick="@(() => selectedType = type)" @key="type.Name">@type.Name</MudNavLink>
-			}
-		</MudNavMenu>
+        <MudNavMenu>
+            @foreach (var type in availableComponentTypes)
+            {
+                <MudNavLink OnClick="@(() => selectedType = type)" @key="type.Name">@type.Name</MudNavLink>
+            }
+        </MudNavMenu>
     </MudDrawer>
     <MudMainContent Class="mt-4">
 
@@ -58,7 +58,7 @@
     Type[] availableComponentTypes = new Type[0];
     MudAutocomplete<Type> autocomplete;
 
-	void DocsDrawerToggle()
+    void DocsDrawerToggle()
     {
         drawerOpen = !drawerOpen;
     }
@@ -101,10 +101,10 @@
     {
         if (type == null)
             return "";
-		var field = type.GetField("__description__", BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField);
-		if (field == null || field.FieldType != typeof(string))
-			return "This test component does not have a description. Field \"public static string __description__\" not found in this component.";
-		return (string)field.GetValue(null);
+        var field = type.GetField("__description__", BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField);
+        if (field == null || field.FieldType != typeof(string))
+            return "This test component does not have a description. Field \"public static string __description__\" not found in this component.";
+        return (string)field.GetValue(null);
     }
 
     private Task<IEnumerable<Type>> Search(string text)
