@@ -17,7 +17,9 @@ class MudWindow {
 
     updateStyleProperty (elementId, propertyName, value) {
         const element = document.getElementById(elementId);
-        element.style.setProperty(propertyName, value);
+        if (element) {
+            element.style.setProperty(propertyName, value);
+        }
     }
 
     changeGlobalCssVariable (name, newValue) {
