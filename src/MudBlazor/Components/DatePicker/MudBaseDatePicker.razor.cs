@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
-using MudBlazor.Interop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
