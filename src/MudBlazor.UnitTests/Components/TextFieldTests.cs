@@ -728,6 +728,73 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task InputMode_DefaultValue_IsText()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+
+            comp.Instance.InputMode.Should().Be(InputMode.text);
+            comp
+                .Find("input")
+                .Attributes
+                .First(x => x.Name.Equals("inputmode", StringComparison.Ordinal))
+                .Value
+                .Should()
+                .Be("text");
+        }
+
+        [Test]
+        public async Task InputMode_DefaultValueWithMask_IsText()
+        {
+            var mask = new PatternMask("0000");
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                x => x.Add(x => x.Mask, mask));
+
+            comp.Instance.InputMode.Should().Be(InputMode.text);
+            comp
+                .Find("input")
+                .Attributes
+                .First(x => x.Name.Equals("inputmode", StringComparison.Ordinal))
+                .Value
+                .Should()
+                .Be("text");
+        }
+
+        [Test]
+        public async Task InputMode_ChangedValue_IsPropagated()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                x => x.Add(x => x.InputMode, InputMode.numeric));
+
+            comp.Instance.InputMode.Should().Be(InputMode.numeric);
+            comp
+                .Find("input")
+                .Attributes
+                .First(x => x.Name.Equals("inputmode", StringComparison.Ordinal))
+                .Value
+                .Should()
+                .Be("numeric");
+        }
+
+        [Test]
+        public async Task InputMode_ChangedValueWithMask_IsPropagated()
+        {
+            var mask = new PatternMask("0000");
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                x => x
+                .Add(x => x.InputMode, InputMode.numeric)
+                .Add(x => x.Mask, mask));
+
+            comp.Instance.InputMode.Should().Be(InputMode.numeric);
+            comp
+                .Find("input")
+                .Attributes
+                .First(x => x.Name.Equals("inputmode", StringComparison.Ordinal))
+                .Value
+                .Should()
+                .Be("numeric");
+        }
+
+        [Test]
         public async Task TextField_OnlyValidateIfDirty_Is_True_Should_OnlyHaveInputErrorWhenValueChanged()
         {
             var comp = Context.RenderComponent<MudTextField<int?>>(
