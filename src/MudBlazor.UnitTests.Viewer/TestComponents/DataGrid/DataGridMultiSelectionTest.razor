@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items="@_items" MultiSelection @bind-SelectedItems="_selectedItems" Bordered>
+<MudDataGrid Items="@_items" MultiSelection @bind-SelectedItems="_selectedItems" Filterable Bordered>
     <Columns>
         @*<TemplateColumn Title="Select Template Column" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
                         Filterable="false">
@@ -32,7 +32,7 @@
 
     protected override void OnInitialized()
     {
-        var letters = "ABC";
+        var letters = "ABBC";
         foreach (var c in letters)
         {
             _items.Add(new Item(c.ToString()));

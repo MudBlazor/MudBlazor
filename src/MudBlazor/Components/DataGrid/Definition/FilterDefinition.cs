@@ -60,7 +60,7 @@ namespace MudBlazor
                 return _cachedFilterFunction;
             }
 
-            var filterExpression = GenerateFilterExpression(propertyExpression, filterOptions);
+            var filterExpression = FilterExpressionGenerator.GenerateExpression(this, filterOptions);
             var function = filterExpression.Compile();
             _cachedExpressionHashCode = hash;
             _cachedFilterFunction = function;
@@ -69,128 +69,17 @@ namespace MudBlazor
         }
 
         //Backward compatibility, in v7 should be removed and only public visible method should be GenerateFilterFunction
+        [Obsolete($"Will be removed in v7. Use {nameof(FilterExpressionGenerator.GenerateExpression)} instead.")]
         public Expression<Func<T, bool>> GenerateFilterExpression()
         {
             //There should be no dependency of DataGrid, because it makes testing hard and it's not worth to have such a heavy dependency just to extract case sensitivity
-            return GenerateFilterExpression(Column?.PropertyExpression, new FilterOptions
+            var filterOptions = new FilterOptions
             {
-                FilterCaseSensitivity = DataGrid?.FilterCaseSensitivity ?? DataGridFilterCaseSensitivity.Default
-            });
-        }
+                FilterCaseSensitivity = DataGrid?.FilterCaseSensitivity ?? DataGridFilterCaseSensitivity.Default,
+            };
+            var expression = FilterExpressionGenerator.GenerateExpression(this, filterOptions);
 
-        //Maybe make is static or move totally different place?
-        private Expression<Func<T, bool>> GenerateFilterExpression(LambdaExpression? propertyExpression, FilterOptions? filterOptions)
-        {
-            filterOptions ??= FilterOptions.Default; //Default if null
-            var fieldType = FieldType;
-
-            if (propertyExpression is null)
-            {
-                return x => true;
-            }
-
-            if (fieldType.IsString)
-            {
-                var value = Value?.ToString();
-                var stringComparer = filterOptions.FilterCaseSensitivity == DataGridFilterCaseSensitivity.Default ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
-
-                if (value is null && Operator != FilterOperator.String.Empty && Operator != FilterOperator.String.NotEmpty)
-                    return x => true;
-
-                return Operator switch
-                {
-                    FilterOperator.String.Contains =>
-                        propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => value != null && x != null && x.Contains(value, stringComparer))),
-                    FilterOperator.String.NotContains =>
-                        propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => value != null && x != null && !x.Contains(value, stringComparer))),
-                    FilterOperator.String.Equal =>
-                        propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && x.Equals(value, stringComparer))),
-                    FilterOperator.String.NotEqual =>
-                        propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => x != null && !x.Equals(value, stringComparer))),
-                    FilterOperator.String.StartsWith =>
-                        propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => value != null && x != null && x.StartsWith(value, stringComparer))),
-                    FilterOperator.String.EndsWith =>
-                        propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => value != null && x != null && x.EndsWith(value, stringComparer))),
-                    FilterOperator.String.Empty => propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => string.IsNullOrWhiteSpace(x))),
-                    FilterOperator.String.NotEmpty => propertyExpression.Modify<T>((Expression<Func<string?, bool>>)(x => !string.IsNullOrWhiteSpace(x))),
-                    _ => x => true
-                };
-            }
-
-            if (fieldType.IsNumber)
-            {
-                if (Value is null && Operator != FilterOperator.Number.Empty && Operator != FilterOperator.Number.NotEmpty)
-                    return x => true;
-
-                return Operator switch
-                {
-                    FilterOperator.Number.Equal => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, Value),
-                    FilterOperator.Number.NotEqual => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, Value),
-                    FilterOperator.Number.GreaterThan => propertyExpression.GenerateBinary<T>(ExpressionType.GreaterThan, Value),
-                    FilterOperator.Number.GreaterThanOrEqual => propertyExpression.GenerateBinary<T>(ExpressionType.GreaterThanOrEqual, Value),
-                    FilterOperator.Number.LessThan => propertyExpression.GenerateBinary<T>(ExpressionType.LessThan, Value),
-                    FilterOperator.Number.LessThanOrEqual => propertyExpression.GenerateBinary<T>(ExpressionType.LessThanOrEqual, Value),
-                    FilterOperator.Number.Empty => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, null),
-                    FilterOperator.Number.NotEmpty => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, null),
-                    _ => x => true
-                };
-            }
-
-            if (fieldType.IsDateTime)
-            {
-                if (Value is null && Operator != FilterOperator.DateTime.Empty && Operator != FilterOperator.DateTime.NotEmpty)
-                    return x => true;
-
-                return Operator switch
-                {
-                    FilterOperator.DateTime.Is => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, Value),
-                    FilterOperator.DateTime.IsNot => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, Value),
-                    FilterOperator.DateTime.After => propertyExpression.GenerateBinary<T>(ExpressionType.GreaterThan, Value),
-                    FilterOperator.DateTime.OnOrAfter => propertyExpression.GenerateBinary<T>(ExpressionType.GreaterThanOrEqual, Value),
-                    FilterOperator.DateTime.Before => propertyExpression.GenerateBinary<T>(ExpressionType.LessThan, Value),
-                    FilterOperator.DateTime.OnOrBefore => propertyExpression.GenerateBinary<T>(ExpressionType.LessThanOrEqual, Value),
-                    FilterOperator.DateTime.Empty => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, null),
-                    FilterOperator.DateTime.NotEmpty => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, null),
-                    _ => x => true
-                };
-            }
-
-            if (fieldType.IsBoolean)
-            {
-                if (Value is null)
-                    return x => true;
-
-                return Operator switch
-                {
-                    FilterOperator.Boolean.Is => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, Value),
-                    _ => x => true
-                };
-            }
-
-            if (fieldType.IsEnum)
-            {
-                if (Value is null)
-                    return x => true;
-
-                return Operator switch
-                {
-                    FilterOperator.Enum.Is => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, Value),
-                    FilterOperator.Enum.IsNot => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, Value),
-                    _ => x => true
-                };
-            }
-
-            if (fieldType.IsGuid)
-            {
-                return Operator switch
-                {
-                    FilterOperator.Guid.Equal => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, Value),
-                    FilterOperator.Guid.NotEqual => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, Value),
-                    _ => x => true
-                };
-            }
-
-            return x => true;
+            return expression;
         }
 
         //Backward compatibility, in v7 should be removed

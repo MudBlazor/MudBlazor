@@ -13,6 +13,7 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services
 {
+    [Obsolete]
     [TestFixture]
     public class SubscriptionInfoTests
     {

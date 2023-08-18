@@ -10,7 +10,7 @@ using MudBlazor.Services;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudBreakpointProvider : IAsyncDisposable
+    public partial class MudBreakpointProvider : IBrowserViewportObserver, IAsyncDisposable
     {
         private Guid _breakPointListenerSubscriptionId;
 
@@ -20,6 +20,10 @@ namespace MudBlazor
         public EventCallback<Breakpoint> OnBreakpointChanged { get; set; }
 
         [Inject]
+        protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
+
+        [Inject]
+        [Obsolete]
         public IBreakpointService Service { get; set; } = null!;
 
         [Parameter]
@@ -32,24 +36,25 @@ namespace MudBlazor
 
             if (firstRender)
             {
-                var attachResult = await Service.SubscribeAsync(SetBreakpointCallback);
-                _breakPointListenerSubscriptionId = attachResult.SubscriptionId;
-                Breakpoint = attachResult.Breakpoint;
-                await OnBreakpointChanged.InvokeAsync(Breakpoint);
-                StateHasChanged();
+                await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
             }
         }
 
-        private void SetBreakpointCallback(Breakpoint breakpoint)
+        public async ValueTask DisposeAsync()
         {
-            InvokeAsync(() =>
+            if (IsJSRuntimeAvailable)
             {
-                Breakpoint = breakpoint;
-                OnBreakpointChanged.InvokeAsync(breakpoint);
-                StateHasChanged();
-            }).AndForget();
+                await BrowserViewportService.UnsubscribeAsync(this);
+            }
         }
 
-        public async ValueTask DisposeAsync() => await Service.UnsubscribeAsync(_breakPointListenerSubscriptionId);
+        Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
+
+        async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+        {
+            Breakpoint = browserViewportEventArgs.Breakpoint;
+            await OnBreakpointChanged.InvokeAsync(browserViewportEventArgs.Breakpoint);
+            await InvokeAsync(StateHasChanged);
+        }
     }
 }

@@ -20,6 +20,7 @@ namespace MudBlazor
     [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<T> : MudComponentBase
     {
+        private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
         private int _currentPage = 0;
         internal int? _rowsPerPage;
         private bool _isFirstRendered = false;
@@ -63,10 +64,10 @@ namespace MudBlazor
         protected string _tableStyle =>
             new StyleBuilder()
                 .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
-                .AddStyle("width", "max-content", when: (HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container) && !hasStickyColumns)
+                .AddStyle("width", "max-content", when: (HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container))
+                .AddStyle("overflow", "clip", when: (HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container) && hasStickyColumns)
                 .AddStyle("display", "block", when: HorizontalScrollbar)
             .Build();
-
         protected string _tableClass =>
             new CssBuilder("mud-table-container")
                 .AddClass("cursor-col-resize", when: IsResizing)
@@ -77,6 +78,11 @@ namespace MudBlazor
 
         protected string _footClassname => new CssBuilder("mud-table-foot")
             .AddClass(FooterClass).Build();
+        protected string _headerFooterStyle =>
+            new StyleBuilder()
+                .AddStyle("position", "sticky", when: hasStickyColumns)
+                .AddStyle("left", "0px", when: hasStickyColumns)
+            .Build();
 
         internal SortDirection GetColumnSortDirection(string columnName)
         {
@@ -375,6 +381,11 @@ namespace MudBlazor
         [Parameter] public int OverscanCount { get; set; } = 3;
 
         /// <summary>
+        /// Gets the size of each item in pixels. Defaults to 50px.
+        /// </summary>
+        [Parameter] public float ItemSize { get; set; } = 50f;
+
+        /// <summary>
         /// CSS class for the table rows. Note, many CSS settings are overridden by MudTd though
         /// </summary>
         [Parameter] public string RowClass { get; set; }
@@ -398,6 +409,11 @@ namespace MudBlazor
         /// Set to true to enable selection of multiple rows.
         /// </summary>
         [Parameter] public bool MultiSelection { get; set; }
+
+        /// <summary>
+        /// When true, row-click also toggles the checkbox state
+        /// </summary>
+        [Parameter] public bool SelectOnRowClick { get; set; } = true;
 
         /// <summary>
         /// When the grid is not read only, you can specify what type of editing mode to use.
@@ -439,9 +455,9 @@ namespace MudBlazor
                 }
 
                 // Setup ObservableCollection functionality.
-                if (_items is INotifyCollectionChanged)
+                if (_items is INotifyCollectionChanged changed)
                 {
-                    (_items as INotifyCollectionChanged).CollectionChanged += (s, e) =>
+                    changed.CollectionChanged += (s, e) =>
                     {
                         _currentRenderFilteredItemsCache = null;
                         if (Groupable)
@@ -906,19 +922,39 @@ namespace MudBlazor
             }
         }
 
+        internal IFilterDefinition<T> CreateFilterDefinitionInstance()
+        {
+            return _defaultFilterDefinitionFactory();
+        }
+
+        /// <summary>
+        /// Specifies the default <see cref="IFilterDefinition{T}"/> to be used by <see cref="AddFilter"/> and <see cref="Column{T}.FilterContext"/>.
+        /// </summary>
+        public void SetDefaultFilterDefinition<TFilterDefinition>() where TFilterDefinition : IFilterDefinition<T>, new()
+        {
+            SetDefaultFilterDefinition(() => new TFilterDefinition());
+        }
+
+        /// <summary>
+        /// Specifies the default <see cref="IFilterDefinition{T}"/> to be used by <see cref="AddFilter"/> and <see cref="Column{T}.FilterContext"/>.
+        /// </summary>
+        /// <param name="factory">The factory function to create the default filter definition.</param>
+        public void SetDefaultFilterDefinition(Func<IFilterDefinition<T>> factory)
+        {
+            _defaultFilterDefinitionFactory = factory;
+        }
+
         /// <summary>
         /// Called by the DataGrid when the "Add Filter" button is pressed.
         /// </summary>
         public void AddFilter()
         {
             var column = RenderedColumns.FirstOrDefault(x => x.filterable);
-            FilterDefinitions.Add(new FilterDefinition<T>
-            {
-                Id = Guid.NewGuid(),
-                DataGrid = this,
-                Title = column?.Title,
-                Column = column,
-            });
+            var filterDefinition = CreateFilterDefinitionInstance();
+            filterDefinition.Id = Guid.NewGuid();
+            filterDefinition.Title = column?.Title;
+            filterDefinition.Column = column;
+            FilterDefinitions.Add(filterDefinition);
             _filtersMenuVisible = true;
             StateHasChanged();
         }
@@ -953,9 +989,18 @@ namespace MudBlazor
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
             if (value)
+            {
                 Selection.Add(item);
+                SelectedItem = item;
+            }
             else
+            {
                 Selection.Remove(item);
+                if (item.Equals(SelectedItem))
+                {
+                    SelectedItem = default;
+                }
+            }
 
             await InvokeAsync(() => SelectedItemsChangedEvent.Invoke(SelectedItems));
             await SelectedItemsChanged.InvokeAsync(SelectedItems);
@@ -966,7 +1011,7 @@ namespace MudBlazor
         {
             var items = ServerData != null
                     ? ServerItems
-                    : Items;
+                    : FilteredItems;
 
             if (value)
                 Selection = new HashSet<T>(items);
@@ -976,6 +1021,7 @@ namespace MudBlazor
             SelectedItemsChangedEvent?.Invoke(SelectedItems);
             SelectedAllItemsChangedEvent?.Invoke(value);
             await SelectedItemsChanged.InvokeAsync(SelectedItems);
+
             StateHasChanged();
         }
 
@@ -989,7 +1035,7 @@ namespace MudBlazor
 
             IOrderedEnumerable<T> orderedEnumerable = null;
 
-            foreach (var sortDefinition in SortDefinitions.Values.Where(sd => null != sd.SortFunc).OrderBy(sd => sd.Index))
+            foreach (var sortDefinition in SortDefinitions.Values.Where(sd => sd.SortFunc != null).OrderBy(sd => sd.Index))
             {
                 if (null == orderedEnumerable)
                     orderedEnumerable = sortDefinition.Descending ? items.OrderByDescending(item => sortDefinition.SortFunc(item), sortDefinition.Comparer)
@@ -1097,14 +1143,24 @@ namespace MudBlazor
         /// <summary>
         /// Sets the rows displayed per page when the data grid has an attached data pager.
         /// </summary>
-        /// <param name="size"></param>
-        public async Task SetRowsPerPageAsync(int size)
+        /// <param name="size">The page size.</param>
+        public Task SetRowsPerPageAsync(int size) => SetRowsPerPageAsync(size, true);
+
+        /// <summary>
+        /// Sets the rows displayed per page when the data grid has an attached data pager.
+        /// </summary>
+        /// <param name="size">The page size.</param>
+        /// <param name="resetPage">If <see langword="true"/>, resets <see cref="CurrentPage"/> to 0.</param>
+        public async Task SetRowsPerPageAsync(int size, bool resetPage)
         {
             if (_rowsPerPage == size)
                 return;
 
             _rowsPerPage = size;
-            CurrentPage = 0;
+
+            if (resetPage)
+                CurrentPage = 0;
+
             StateHasChanged();
 
             if (_isFirstRendered)
@@ -1191,7 +1247,7 @@ namespace MudBlazor
         /// <returns></returns>
         public async Task SetSelectedItemAsync(T item)
         {
-            if (MultiSelection)
+            if (MultiSelection && SelectOnRowClick)
             {
                 if (Selection.Contains(item))
                 {

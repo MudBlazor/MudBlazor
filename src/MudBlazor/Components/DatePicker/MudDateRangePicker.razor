@@ -12,7 +12,8 @@
                <InputContent>
                    <MudRangeInput @ref="_rangeInput" @attributes="UserAttributes" InputType="@InputType.Text" Class="@PickerInputClass" Style="@Style" Variant="@Variant" ReadOnly="@(!Editable)"
                                    @bind-Value="@RangeText" Disabled="@GetDisabledState()" Adornment="@Adornment" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize" OnAdornmentClick="ToggleState"
-                                   Required="@Required" RequiredError="@RequiredError" Error="@Error" ErrorText="@ErrorText" Margin="@Margin" AdornmentAriaLabel="@AdornmentAriaLabel"/>
+                                   Required="@Required" RequiredError="@RequiredError" Error="@Error" ErrorText="@ErrorText" Margin="@Margin" AdornmentAriaLabel="@AdornmentAriaLabel"
+                                   Clearable="Clearable"/>
                </InputContent>
            </MudInputControl>;
     

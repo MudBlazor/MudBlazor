@@ -6,27 +6,29 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities.Expressions;
 
 namespace MudBlazor
 {
 #nullable enable
-
     /// <typeparam name="T">The type of data represented by each row in the data grid.</typeparam>
     /// <typeparam name="TProperty">The type of the value being displayed in the column's cells.</typeparam>
     public partial class PropertyColumn<T, TProperty> : Column<T>
     {
+        private readonly Guid _id = Guid.NewGuid();
+
+        private string? _propertyName;
+        private Func<T, object?>? _cellContentFunc;
+        private Func<T, TProperty>? _compiledPropertyFunc;
+        private Expression<Func<T, TProperty>>? _lastAssignedProperty;
+        private Expression<Func<T, TProperty>>? _compiledPropertyFuncFor;
+
         [Parameter]
         [EditorRequired]
         public Expression<Func<T, TProperty>> Property { get; set; } = Expression.Lambda<Func<T, TProperty>>(Expression.Default(typeof(TProperty)), Expression.Parameter(typeof(T)));
 
-        [Parameter] public string? Format { get; set; }
-
-        private Expression<Func<T, TProperty>>? _lastAssignedProperty;
-        private Func<T, object?>? _cellContentFunc;
-        private string? _propertyName;
-        private string? _fullPropertyName;
-        private Func<T, TProperty> _compiledPropertyFunc;
-        private Expression<Func<T, TProperty>> _compiledPropertyFuncFor;
+        [Parameter]
+        public string? Format { get; set; }
 
         protected override void OnParametersSet()
         {
@@ -35,20 +37,21 @@ namespace MudBlazor
             {
                 _lastAssignedProperty = Property;
                 var compiledPropertyExpression = Property.Compile();
-                _cellContentFunc = item => compiledPropertyExpression!(item);
+                _cellContentFunc = item => compiledPropertyExpression(item);
             }
 
-            if (Property.Body is MemberExpression memberExpression)
+            var property = PropertyPath.Visit(Property);
+            if (property.IsBodyMemberExpression)
             {
-                _fullPropertyName = Property.Body.ToString();
-                _propertyName = memberExpression.Member.Name;
-
-                Title ??= _propertyName;
+                _propertyName = property.GetPath();
             }
             else
             {
-                _propertyName = _fullPropertyName = Property.Body.ToString();
+                // Most likely this is a dynamic expression that people use as workaround https://try.mudblazor.com/snippet/cYGxuTmhyqAQeCVM
+                // We can't assign any meaningful name at all, therefore we should assign an unique ID like we do for TemplateColumn
+                _propertyName = _id.ToString();
             }
+            Title ??= property.GetLastMemberName();
 
             CompileGroupBy();
         }
@@ -65,7 +68,6 @@ namespace MudBlazor
         protected internal override object? CellContent(T item)
             => _cellContentFunc!(item);
 
-
         protected internal override object? PropertyFunc(T item)
         {
             if (_compiledPropertyFunc == null || _compiledPropertyFuncFor != Property)
@@ -73,15 +75,12 @@ namespace MudBlazor
                 _compiledPropertyFunc = Property.Compile();
                 _compiledPropertyFuncFor = Property;
             }
-            return _compiledPropertyFunc(item);
 
+            return _compiledPropertyFunc(item);
         }
 
         protected internal override Type PropertyType
             => typeof(TProperty);
-
-        protected internal override string? FullPropertyName
-            => _fullPropertyName;
 
         protected internal override void SetProperty(object item, object value)
         {

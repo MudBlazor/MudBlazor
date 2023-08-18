@@ -8,7 +8,7 @@
 </div>
 
 @code {
-
+#nullable enable
     protected string Classname =>
         new CssBuilder("mud-toolbar")
             .AddClass("mud-toolbar-dense", Dense)
@@ -36,7 +36,7 @@
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.ToolBar.Behavior)]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
     
     /// <summary>
     /// If true, ToolBar is allowed to wrap.

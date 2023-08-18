@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
@@ -18,10 +17,11 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Services
 {
     [TestFixture]
+    [Obsolete]
     public class BreakpointServiceTests
     {
         private Mock<IBrowserWindowSizeProvider> _browserWindowSizeProvider;
-        private Mock<IJSRuntime> _jsruntimeMock;
+        private Mock<IJSRuntime> _jsRuntimeMock;
         private BreakpointService _service;
 
         [SetUp]
@@ -29,37 +29,41 @@ namespace MudBlazor.UnitTests.Services
         {
             _browserWindowSizeProvider = new Mock<IBrowserWindowSizeProvider>();
             _browserWindowSizeProvider.Setup(x => x.GetBrowserWindowSize()).ReturnsAsync(new BrowserWindowSize { Width = 970, Height = 30 }).Verifiable();
-            _jsruntimeMock = new Mock<IJSRuntime>();
-            _service = new BreakpointService(_jsruntimeMock.Object, _browserWindowSizeProvider.Object);
+            _jsRuntimeMock = new Mock<IJSRuntime>();
+            _service = new BreakpointService(_jsRuntimeMock.Object, _browserWindowSizeProvider.Object);
         }
 
 
-        private record ListenForResizeCallbackInfo(
-            DotNetObjectReference<BreakpointService> DotnetRef, ResizeOptions options, Guid ListenerId);
-
+        private record ListenForResizeCallbackInfo(DotNetObjectReference<BreakpointService> DotnetRef, ResizeOptions Options, Guid ListenerId);
 
         private void SetupJsMockForSubscription(ResizeOptions expectedOptions, bool setBreakpoints, Action<ListenForResizeCallbackInfo> callbackInfo = null)
         {
-            if (setBreakpoints == true)
+            if (setBreakpoints)
             {
-                expectedOptions.BreakpointDefinitions = BreakpointService.DefaultBreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
+                expectedOptions.BreakpointDefinitions = BreakpointGlobalOptions.DefaultBreakpointDefinitions.ToDictionary(x => x.Key, x => x.Value);
             }
 
-            _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize",
-               It.Is<object[]>(z =>
-                   z[0] is DotNetObjectReference<BreakpointService> == true &&
-                   (ResizeOptions)z[1] == expectedOptions &&
-                   (Guid)z[2] != default
-               ))).ReturnsAsync(Mock.Of<IJSVoidResult>).Callback<string, object[]>((x, z) => callbackInfo?.Invoke(new ListenForResizeCallbackInfo(
-                    (DotNetObjectReference<BreakpointService>)z[0],
-                    (ResizeOptions)z[1], (Guid)z[2]
-                   ))).Verifiable();
-
+            _jsRuntimeMock
+                .Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize",
+                    It.Is<object[]>(args =>
+                        args[0] is DotNetObjectReference<BreakpointService> == true &&
+                        (ResizeOptions)args[1] == expectedOptions &&
+                        (Guid)args[2] != default
+                    )))
+                .ReturnsAsync(Mock.Of<IJSVoidResult>)
+                .Callback<string, object[]>((_, args) =>
+                {
+                    var dotnetReference = (DotNetObjectReference<BreakpointService>)args[0];
+                    var resizeOptions = (ResizeOptions)args[1];
+                    var listenerId = (Guid)args[2];
+                    callbackInfo?.Invoke(new ListenForResizeCallbackInfo(dotnetReference, resizeOptions, listenerId));
+                })
+                .Verifiable();
         }
 
         private void SetupJsMockForUnsubscription(Guid listenerId)
         {
-            _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener",
+            _jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener",
                It.Is<object[]>(z =>
                    (Guid)z[0] == listenerId
                ))).ReturnsAsync(Mock.Of<IJSVoidResult>).Verifiable();
@@ -75,7 +79,7 @@ namespace MudBlazor.UnitTests.Services
             subscriptionResult.SubscriptionId.Should().NotBe(Guid.Empty);
             subscriptionResult.Breakpoint.Should().Be(Breakpoint.Md);
 
-            _jsruntimeMock.Verify();
+            _jsRuntimeMock.Verify();
         }
 
         [Test]
@@ -94,17 +98,16 @@ namespace MudBlazor.UnitTests.Services
             option.BreakpointDefinitions.Should().NotBeNull();
 
             option.BreakpointDefinitions.Should().NotBeNull();
-            option.BreakpointDefinitions.Keys.Should().BeEquivalentTo(BreakpointService.DefaultBreakpointDefinitions.Keys.Select(x => x.ToString()).ToList());
-            option.BreakpointDefinitions.Values.Should().BeEquivalentTo(BreakpointService.DefaultBreakpointDefinitions.Values);
+            option.BreakpointDefinitions.Should().BeEquivalentTo(BreakpointGlobalOptions.DefaultBreakpointDefinitions);
         }
 
         [Test]
         public async Task Subscribe_WithDefaultOptions_DontSetBreakpoint()
         {
-            var breakpointDict = new Dictionary<string, int>
-                {
-                    { "something", 12 },
-                };
+            var breakpointDict = new Dictionary<Breakpoint, int>
+            {
+                { Breakpoint.Xl, 12 },
+            };
 
             var option = new ResizeOptions
             {
@@ -119,63 +122,63 @@ namespace MudBlazor.UnitTests.Services
         [Test]
         public async Task Subscribe_WithOptionsSetInConstructor()
         {
-            var customResizeOptioons = new ResizeOptions
+            var customResizeOptions = new ResizeOptions
             {
                 ReportRate = 120,
             };
 
             var optionGetter = new Mock<IOptions<ResizeOptions>>();
-            optionGetter.SetupGet(x => x.Value).Returns(customResizeOptioons);
+            optionGetter.SetupGet(x => x.Value).Returns(customResizeOptions);
 
-            _service = new BreakpointService(_jsruntimeMock.Object, _browserWindowSizeProvider.Object, optionGetter.Object);
-            await CheckSubscriptionOptions(customResizeOptioons, true);
+            _service = new BreakpointService(_jsRuntimeMock.Object, _browserWindowSizeProvider.Object, optionGetter.Object);
+            await CheckSubscriptionOptions(customResizeOptions, true);
         }
 
         [Test]
         public async Task Subscribe_WithPerCallOption()
         {
-            var customResizeOptioons = new ResizeOptions
+            var customResizeOptions = new ResizeOptions
             {
                 ReportRate = 130,
             };
 
-            SetupJsMockForSubscription(customResizeOptioons, true);
+            SetupJsMockForSubscription(customResizeOptions, true);
 
-            var subscriptionResult = await _service.SubscribeAsync((Breakpoint size) => { }, customResizeOptioons);
+            var subscriptionResult = await _service.SubscribeAsync((Breakpoint size) => { }, customResizeOptions);
 
             subscriptionResult.Should().NotBeNull();
             subscriptionResult.SubscriptionId.Should().NotBe(Guid.Empty);
             subscriptionResult.Breakpoint.Should().Be(Breakpoint.Md);
 
-            _jsruntimeMock.Verify();
+            _jsRuntimeMock.Verify();
         }
 
         [Test]
         public async Task Subscribe_WithPerCallOptionSetAsNull()
         {
-            var customResizeOptioons = new ResizeOptions();
+            var customResizeOptions = new ResizeOptions();
 
-            SetupJsMockForSubscription(customResizeOptioons, true);
+            SetupJsMockForSubscription(customResizeOptions, true);
             var subscriptionResult = await _service.SubscribeAsync((Breakpoint size) => { }, null);
 
             subscriptionResult.Should().NotBeNull();
             subscriptionResult.SubscriptionId.Should().NotBe(Guid.Empty);
             subscriptionResult.Breakpoint.Should().Be(Breakpoint.Md);
 
-            _jsruntimeMock.Verify();
+            _jsRuntimeMock.Verify();
         }
 
         [Test]
         public void Subscribe_Failed_NullCallback()
         {
-            Assert.ThrowsAsync<ArgumentNullException>(() => _service.SubscribeAsync(null));
-            Assert.ThrowsAsync<ArgumentNullException>(() => _service.SubscribeAsync(null, new ResizeOptions()));
+            Assert.ThrowsAsync<ArgumentNullException>(() => _service.SubscribeAsync(null!));
+            Assert.ThrowsAsync<ArgumentNullException>(() => _service.SubscribeAsync(null!, new ResizeOptions()));
         }
 
         [Test]
-        public async Task SubscribeAndUnsubcribe_SingleSubscription()
+        public async Task SubscribeAndUnsubscribe_SingleSubscription()
         {
-            var customResizeOptioons = new ResizeOptions();
+            var customResizeOptions = new ResizeOptions();
 
             Action<ListenForResizeCallbackInfo> feedbackCaller = (x) =>
             {
@@ -188,7 +191,7 @@ namespace MudBlazor.UnitTests.Services
 
             };
 
-            SetupJsMockForSubscription(customResizeOptioons, true, feedbackCaller);
+            SetupJsMockForSubscription(customResizeOptions, true, feedbackCaller);
             var subscriptionId = await _service.SubscribeAsync((Breakpoint size) => { }, null);
 
             var result = await _service.UnsubscribeAsync(subscriptionId.SubscriptionId);
@@ -196,14 +199,14 @@ namespace MudBlazor.UnitTests.Services
             result.Should().BeTrue();
 
             _browserWindowSizeProvider.Verify(x => x.GetBrowserWindowSize(), Times.Once());
-            _jsruntimeMock.Verify();
+            _jsRuntimeMock.Verify();
 
         }
 
         [Test]
-        public async Task SubscribeAndUnsubcribe_DisposeOfDotNet()
+        public async Task SubscribeAndUnsubscribe_DisposeOfDotNet()
         {
-            var customResizeOptioons = new ResizeOptions();
+            var customResizeOptions = new ResizeOptions();
 
             for (int i = 0; i < 4; i++)
             {
@@ -227,53 +230,53 @@ namespace MudBlazor.UnitTests.Services
 
                 };
 
-                SetupJsMockForSubscription(customResizeOptioons, true, feedbackCaller);
+                SetupJsMockForSubscription(customResizeOptions, true, feedbackCaller);
                 var subscritionResult = await _service.SubscribeAsync((Breakpoint size) => { }, null);
 
                 var result = await _service.UnsubscribeAsync(subscritionResult.SubscriptionId);
 
                 result.Should().BeTrue();
 
-                _jsruntimeMock.Verify();
+                _jsRuntimeMock.Verify();
             }
         }
 
         [Test]
-        public async Task SubscribeAndUnsubcribe_MultipleSubscription()
+        public async Task SubscribeAndUnsubscribe_MultipleSubscription()
         {
-            var customResizeOptioons = new ResizeOptions();
+            var customResizeOptions = new ResizeOptions();
 
             var feedbackCallerCount = 0;
 
-            Action<ListenForResizeCallbackInfo> feedbackCaller = (x) =>
+            void FeedbackCaller(ListenForResizeCallbackInfo callbackInfo)
             {
-                if (x.ListenerId == default)
+                if (callbackInfo.ListenerId == default)
                 {
                     throw new ArgumentException();
                 }
 
                 feedbackCallerCount++;
-            };
+            }
 
-            SetupJsMockForSubscription(customResizeOptioons, true, feedbackCaller);
+            SetupJsMockForSubscription(customResizeOptions, true, FeedbackCaller);
 
-            HashSet<Guid> subscriptionIds = new HashSet<Guid>();
+            var subscriptionIds = new HashSet<Guid>();
 
             for (int i = 0; i < 10; i++)
             {
-                var subscritionResult = await _service.SubscribeAsync((Breakpoint size) => { });
-                subscriptionIds.Add(subscritionResult.SubscriptionId);
+                var subscriptionResult = await _service.SubscribeAsync((Breakpoint size) => { });
+                subscriptionIds.Add(subscriptionResult.SubscriptionId);
             }
 
             feedbackCallerCount.Should().Be(1);
             subscriptionIds.Should().HaveCount(10);
 
-            _jsruntimeMock.Verify();
+            _jsRuntimeMock.Verify();
             _browserWindowSizeProvider.Verify(x => x.GetBrowserWindowSize(), Times.Once());
         }
 
         [Test]
-        public async Task SubscribeAndUnsubcribe_MultipleSubscription_WithMultipleOptions()
+        public async Task SubscribeAndUnsubscribe_MultipleSubscription_WithMultipleOptions()
         {
             List<ListenForResizeCallbackInfo> callerFeedbacks = new();
 
@@ -320,12 +323,12 @@ namespace MudBlazor.UnitTests.Services
             for (int i = 0; i < callerFeedbacks.Count; i++)
             {
                 var feedback = callerFeedbacks[i];
-                feedback.options.Should().Be(options[i]);
+                feedback.Options.Should().Be(options[i]);
             }
 
             callerFeedbacks.Select(x => x.ListenerId).ToHashSet().Should().HaveCount(4);
 
-            _jsruntimeMock.Verify();
+            _jsRuntimeMock.Verify();
             _browserWindowSizeProvider.Verify(x => x.GetBrowserWindowSize(), Times.Once());
         }
 
@@ -338,11 +341,11 @@ namespace MudBlazor.UnitTests.Services
         }
 
         [Test]
-        public async Task Unsubscribe_Failed_SubscriptioonIdNotFound()
+        public async Task Unsubscribe_Failed_SubscriptionIdNotFound()
         {
-            var customResizeOptioons = new ResizeOptions();
+            var customResizeOptions = new ResizeOptions();
 
-            SetupJsMockForSubscription(customResizeOptioons, true);
+            SetupJsMockForSubscription(customResizeOptions, true);
             var subscriptionId = await _service.SubscribeAsync((Breakpoint size) => { }, null);
 
             var result = await _service.UnsubscribeAsync(Guid.NewGuid());
@@ -405,7 +408,7 @@ namespace MudBlazor.UnitTests.Services
                  }
              };
 
-            _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListeners",
+            _jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListeners",
              It.Is<object[]>(z =>
                  z[0] is IEnumerable<Guid> &&
                  idChecker((IEnumerable<Guid>)z[0]) == true
@@ -413,7 +416,7 @@ namespace MudBlazor.UnitTests.Services
 
             await _service.DisposeAsync();
 
-            _jsruntimeMock.Verify();
+            _jsRuntimeMock.Verify();
         }
 
         private class FakeSubscriber
@@ -433,7 +436,7 @@ namespace MudBlazor.UnitTests.Services
         public async Task RaiseOnResized_MultipleSubscription_WithMultipleOptions()
         {
             Dictionary<ResizeOptions, Guid> listenerIds = new();
-            Action<ListenForResizeCallbackInfo> feedbackCaller = (x) => listenerIds.Add(x.options, x.ListenerId); ;
+            Action<ListenForResizeCallbackInfo> feedbackCaller = (x) => listenerIds.Add(x.Options, x.ListenerId);
 
             var options = new[]
             {
@@ -472,7 +475,7 @@ namespace MudBlazor.UnitTests.Services
                 item.Key.ActualSize.Should().Be(item.Value);
             }
 
-            _jsruntimeMock.Verify();
+            _jsRuntimeMock.Verify();
             _browserWindowSizeProvider.Verify(x => x.GetBrowserWindowSize(), Times.Once());
         }
 
@@ -483,7 +486,7 @@ namespace MudBlazor.UnitTests.Services
 
             SetupJsMockForSubscription(customResizeOptions, true);
 
-            FakeSubscriber subscriber = new FakeSubscriber();
+            var subscriber = new FakeSubscriber();
             await subscriber.Subscribe(_service, customResizeOptions);
 
             _service.RaiseOnResized(new BrowserWindowSize { }, Breakpoint.Xl, Guid.NewGuid());
@@ -494,20 +497,20 @@ namespace MudBlazor.UnitTests.Services
         [Test]
         public async Task Subscribe_ChangeHappens_SecondSubscriptionGetNewValue()
         {
-            var customResizeOptioons = new ResizeOptions();
+            var customResizeOptions = new ResizeOptions();
 
-            SetupJsMockForSubscription(customResizeOptioons, true);
-            var firstSubscribeResult = await _service.SubscribeAsync((Breakpoint size) => { }, customResizeOptioons);
+            SetupJsMockForSubscription(customResizeOptions, true);
+            var firstSubscribeResult = await _service.SubscribeAsync((Breakpoint size) => { }, customResizeOptions);
 
             firstSubscribeResult.Breakpoint.Should().Be(Breakpoint.Md);
 
             _service.RaiseOnResized(new BrowserWindowSize { }, Breakpoint.Xl, Guid.NewGuid());
 
-            var secondSubscribeResult = await _service.SubscribeAsync((Breakpoint size) => { }, customResizeOptioons);
+            var secondSubscribeResult = await _service.SubscribeAsync((Breakpoint size) => { }, customResizeOptions);
             secondSubscribeResult.Breakpoint.Should().Be(Breakpoint.Xl);
 
             _browserWindowSizeProvider.Verify(x => x.GetBrowserWindowSize(), Times.Once());
-            _jsruntimeMock.Verify();
+            _jsRuntimeMock.Verify();
 
         }
 
@@ -518,7 +521,7 @@ namespace MudBlazor.UnitTests.Services
         {
             var input = "some input, not relevant for test";
 
-            _jsruntimeMock.Setup(x => x.InvokeAsync<bool>("mudResizeListener.matchMedia",
+            _jsRuntimeMock.Setup(x => x.InvokeAsync<bool>("mudResizeListener.matchMedia",
             It.Is<object[]>(z =>
                 z[0] is string &&
                 (string)z[0] == input
@@ -532,11 +535,11 @@ namespace MudBlazor.UnitTests.Services
         [Test]
         public void DefaultBreakpointDefinitions()
         {
-            BreakpointService.DefaultBreakpointDefinitions.Keys.Should().BeEquivalentTo(new[] {
-                Breakpoint.Xl, Breakpoint.Lg, Breakpoint.Md, Breakpoint.Sm, Breakpoint.Xs });
+            BreakpointGlobalOptions.DefaultBreakpointDefinitions.Keys.Should().BeEquivalentTo(new[] {
+                Breakpoint.Xxl, Breakpoint.Xl, Breakpoint.Lg, Breakpoint.Md, Breakpoint.Sm, Breakpoint.Xs });
 
-            BreakpointService.DefaultBreakpointDefinitions.Values.Should().BeEquivalentTo(new[] {
-                1920, 1280, 960, 600, 0 });
+            BreakpointGlobalOptions.DefaultBreakpointDefinitions.Values.Should().BeEquivalentTo(new[] {
+                2560, 1920, 1280, 960, 600, 0 });
         }
 
         // 0 - 599
@@ -618,7 +621,6 @@ namespace MudBlazor.UnitTests.Services
         {
             var actual = await _service.IsMediaSize(Breakpoint.None);
             actual.Should().BeFalse();
-
         }
 
         [Test]
@@ -626,7 +628,6 @@ namespace MudBlazor.UnitTests.Services
         {
             var actual = await _service.IsMediaSize(Breakpoint.Always);
             actual.Should().BeTrue();
-
         }
     }
 }

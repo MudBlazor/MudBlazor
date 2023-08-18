@@ -43,7 +43,7 @@
                                 }
                             }
                         }
-                        @if (!HideSlider && ActivePanel is not null)
+                        @if (!HideSlider && ActivePanel is not null && IsSliderPositionDetermined)
                         {
                             <div class="@SliderClass" style="@SliderStyle"></div>
                         }
