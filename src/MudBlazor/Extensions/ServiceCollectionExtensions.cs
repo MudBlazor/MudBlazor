@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {

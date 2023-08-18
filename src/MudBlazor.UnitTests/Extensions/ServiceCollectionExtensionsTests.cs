@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
+using MudBlazor.Interop;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
