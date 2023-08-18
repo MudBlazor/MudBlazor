@@ -19,7 +19,7 @@ namespace MudBlazor
 
         public IEnumerable<T> Items => _dataGrid.Items;
 
-        public List<IFilterDefinition<T>> FilterDefinitions => _dataGrid.FilterDefinitions;
+        public IList<IFilterDefinition<T>> FilterDefinitions => _dataGrid.FilterDefinitions;
 
         public FilterActions Actions { get; }
 

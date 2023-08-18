@@ -357,7 +357,7 @@ namespace MudBlazor
         /// grid automatically when using the built in filter UI. You can also programmatically manage these definitions
         /// through this collection.
         /// </summary>
-        [Parameter] public List<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
+        [Parameter] public IList<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
 
         /// <summary>
         /// The list of SortDefinitions that have been added to the data grid. SortDefinitions are managed by the data
@@ -981,7 +981,7 @@ namespace MudBlazor
 
         internal async Task RemoveFilterAsync(Guid id)
         {
-            FilterDefinitions.RemoveAll(x => x.Id == id);
+            FilterDefinitions.RemoveAll(x => x.Id == id);            
             await InvokeServerLoadFunc();
             GroupItems();
         }
