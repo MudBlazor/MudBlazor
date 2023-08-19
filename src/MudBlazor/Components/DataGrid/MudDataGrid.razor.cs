@@ -981,7 +981,7 @@ namespace MudBlazor
 
         internal async Task RemoveFilterAsync(Guid id)
         {
-            FilterDefinitions.RemoveAll(x => x.Id == id);            
+            FilterDefinitions.RemoveAll(x => x.Id == id);
             await InvokeServerLoadFunc();
             GroupItems();
         }
