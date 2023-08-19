@@ -38,7 +38,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public bool ClickPropagation { get; set; } = true;
+        public bool ClickPropagation { get; set; } = false;
 
         /// <summary>
         /// Calling StateHasChanged to refresh the component's state
