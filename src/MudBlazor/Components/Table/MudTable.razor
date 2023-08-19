@@ -64,7 +64,7 @@
                         @if (Loading)
                         {
                             <MudTHeadRow>
-                                <th colspan="1000" class="@(CurrentPageItems.Any() || LoadingContent != null ? "mud-table-loading" : "")">
+                                <th colspan="1000" class="@(CurrentPageItems.Any() || LoadingContent is not null ? "mud-table-loading" : "")">
                                     <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
                                 </th>
                             </MudTHeadRow>
@@ -75,7 +75,7 @@
                 {
                     <thead class="@HeadClassname">
                         <MudTHeadRow>
-                            <th colspan="1000" class="@(CurrentPageItems.Count() > 0 || LoadingContent != null ? "mud-table-loading" : "")">
+                            <th colspan="1000" class="@(CurrentPageItems.Any() || LoadingContent is not null ? "mud-table-loading" : "")">
                                 <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
                             </th>
                         </MudTHeadRow>
