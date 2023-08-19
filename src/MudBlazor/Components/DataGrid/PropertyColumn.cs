@@ -88,7 +88,7 @@ namespace MudBlazor
             if (Property.Body is MemberExpression { Member: PropertyInfo propertyInfo })
             {
                 var actualType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? PropertyType;
-                propertyInfo.SetValue(item, Convert.ChangeType(value, actualType), null);
+                propertyInfo.SetValue(item, value == null ? null : Convert.ChangeType(value, actualType), null);
             }
         }
     }

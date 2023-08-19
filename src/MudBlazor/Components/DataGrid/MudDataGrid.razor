@@ -282,6 +282,11 @@
                                 <MudCheckBox T="bool" Label="@column.Title" Checked="@cell._valueBoolean" CheckedChanged="@cell.BoolValueChangedAsync"
                                   Color="Color.Primary" Disabled="@(!column.IsEditable || ReadOnly)" />
                             }
+                            else if (propertyType == typeof(bool?))
+                            {
+                                <MudCheckBox T="bool?" TriState="true" Label="@column.Title" Checked="@cell._valueNullBoolean" CheckedChanged="@cell.NullableBoolValueChangedAsync"
+                                             Color="Color.Primary" Disabled="@(!column.IsEditable || ReadOnly)" />
+                            }
                         }
                     }
                 </MudForm>
@@ -363,12 +368,20 @@
                         }
                         else if (column.PropertyType == typeof(bool))
                         {
-                        <MudCheckBox T="bool"
-                                     Checked="@cell._valueBoolean"
-                                     CheckedChanged="@cell.BoolValueChangedAsync"
-                                     Color="Color.Primary" />
+                            <MudCheckBox T="bool"
+                                         Checked="@cell._valueBoolean"
+                                         CheckedChanged="@cell.BoolValueChangedAsync"
+                                         Color="Color.Primary" />
                         }
-                    }
+                        else if (column.PropertyType == typeof(bool?))
+                        {
+                            <MudCheckBox T="bool?"
+                                         TriState="true"
+                                         Checked="@cell._valueNullBoolean"
+                                         CheckedChanged="@cell.NullableBoolValueChangedAsync"
+                                         Color="Color.Primary" />
+                        }
+                }
                 }
                 else
                 {
