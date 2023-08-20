@@ -984,12 +984,12 @@ namespace MudBlazor.UnitTests.Components
             var delayedFormatChangeButton = comp.Find("button");
             DateTime expectedFinalDateTime = default;
             // ensure text is updated on initialize 
-            textField.Text.Should().Be(comp.Instance.Date.Date.ToString(comp.Instance.Format));
+            textField.Text.Should().Be(comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
             // trigger the format change
             delayedFormatChangeButton.Click();
             // imitate "typing in progress" by extending the debounce interval until component re-renders
             var elapsedTime = 0;
-            var currentText = comp.Instance.Date.Date.ToString(comp.Instance.Format);
+            var currentText = comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture);
             while (elapsedTime < comp.Instance.RerenderDelay)
             {
                 var delay = comp.Instance.DebounceInterval / 2;
@@ -1004,7 +1004,7 @@ namespace MudBlazor.UnitTests.Components
             // now with the new Format
             await Task.Delay(comp.Instance.DebounceInterval);
             textField.Value.Should().Be(expectedFinalDateTime);
-            textField.Text.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format));
+            textField.Text.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
         }
     }
 }
