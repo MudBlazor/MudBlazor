@@ -118,6 +118,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Ensure that when the loading switch is enabled,
+        /// a new row appears in the table header without affecting the table body.
+        /// </summary>
+        [Test]
+        public void LoadingSwitchAddsRowToHeaderWithoutAffectingBody()
+        {
+            // Render the component
+            var comp = Context.RenderComponent<TableLoadingTest>();
+
+            // Initial count of header and body rows
+            var initialHeaderRows = comp.FindAll("thead tr");
+            var initialBodyRows = comp.FindAll("tbody tr");
+
+            // Verify initial state: 1 row in the header and 2 rows in the body
+            initialHeaderRows.Count.Should().Be(1);
+            initialBodyRows.Count.Should().Be(2);
+
+            // Toggle the loading switch to the 'loading' state
+            var loadingSwitch = comp.Find("#switch");
+            loadingSwitch.Change(true);
+
+            // Count rows after toggling the switch
+            var updatedHeaderRows = comp.FindAll("thead tr");
+            var updatedBodyRows = comp.FindAll("tbody tr");
+
+            // Verify updated state:
+            // 2 rows in the header (original + loading row) and 2 rows in the body (unchanged)
+            updatedHeaderRows.Count.Should().Be(2);
+            updatedBodyRows.Count.Should().Be(2);
+        }
+
+        /// <summary>
         /// Check if the loading and no records functionnality is working in grouped table.
         /// </summary>
         [Test]

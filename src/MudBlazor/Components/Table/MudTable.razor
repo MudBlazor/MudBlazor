@@ -61,17 +61,27 @@
                                 }
                             </MudTHeadRow>
                         }
+                        @if (Loading)
+                        {
+                            <MudTHeadRow>
+                                <th colspan="1000" class="@(CurrentPageItems.Any() || LoadingContent is not null ? "mud-table-loading" : "")">
+                                    <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
+                                </th>
+                            </MudTHeadRow>
+                        }
+                    </thead>
+                }
+                else if (Loading)
+                {
+                    <thead class="@HeadClassname">
+                        <MudTHeadRow>
+                            <th colspan="1000" class="@(CurrentPageItems.Any() || LoadingContent is not null ? "mud-table-loading" : "")">
+                                <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
+                            </th>
+                        </MudTHeadRow>
                     </thead>
                 }
                 <tbody class="mud-table-body">
-                    @if (Loading)
-                    {
-                        <tr>
-                            <td colspan="1000" class="@(CurrentPageItems.Any() || LoadingContent != null ? "mud-table-loading" : "")">
-                                <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
-                            </td>
-                        </tr>
-                    }
                     @if(GroupBy != null)
                     {
                         @foreach (var group in GroupItemsPage)
