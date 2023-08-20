@@ -44,13 +44,13 @@
                     }
                     else if (_items != null && _items.Length != 0)
                     {
-                        @if (BeforeItemsTemplate != null)
-                        {
-                            <div class="pa-1">
-                                @BeforeItemsTemplate
-                            </div>
-                        }
                         <MudList Class="@ListClass" Clickable="true" Dense="@Dense">
+                            @if (BeforeItemsTemplate != null)
+                            {
+                                <div class="pa-1">
+                                    @BeforeItemsTemplate
+                                </div>
+                            }
                             @for (var index = 0; index < _items.Length; index++)
                             {
                                 var item = _items[index];
@@ -83,6 +83,12 @@
                             {
                                 <div class="pa-1">
                                     @MoreItemsTemplate
+                                </div>
+                            }
+                            @if (AfterItemsTemplate != null)
+                            {
+                                <div class="pa-1">
+                                    @AfterItemsTemplate
                                 </div>
                             }
                         </MudList>
