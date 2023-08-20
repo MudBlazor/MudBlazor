@@ -223,6 +223,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<FormFieldChangedEventArgs> FormFieldChanged { get; set; }
 
+        /// <summary>
+        /// Callback is called when the GridState changes (i.e. when <see cref="FilterDefinitions"/>, <see cref="SortDefinitions"/>, <see cref="CurrentPage"/>, or <see cref="RowsPerPage"/> change)
+        /// </summary>
+        [Parameter] public EventCallback<GridState<T>> GridStateChanged { get; set; }
+
         #endregion
 
         #region Parameters
@@ -356,6 +361,7 @@ namespace MudBlazor
         /// The list of FilterDefinitions that have been added to the data grid. FilterDefinitions are managed by the data
         /// grid automatically when using the built in filter UI. You can also programmatically manage these definitions
         /// through this collection.
+        /// Any modification made by the data grid automatically is notified through the <see cref="GridStateChanged"/> event.
         /// </summary>
         [Parameter] public List<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
 
@@ -591,6 +597,7 @@ namespace MudBlazor
                 if (_currentPage == value)
                     return;
                 _currentPage = value;
+                InvokeAsync(() => GridStateChanged.InvokeAsync(BuildGridState()));
                 InvokeAsync(StateHasChanged);
 
                 if (_isFirstRendered)
@@ -870,6 +877,16 @@ namespace MudBlazor
             return FilteredItems.Skip(page * pageSize).Take(pageSize);
         }
 
+        private GridState<T> BuildGridState()
+            => new()
+            {
+                Page = CurrentPage,
+                PageSize = RowsPerPage,
+                SortDefinitions = SortDefinitions.Values.OrderBy(sd => sd.Index).ToList(),
+                // Additional ToList() here to decouple clients from internal list avoiding runtime issues
+                FilterDefinitions = FilterDefinitions.ToList()
+            };
+
         internal async Task InvokeServerLoadFunc()
         {
             if (ServerData == null)
@@ -878,14 +895,7 @@ namespace MudBlazor
             Loading = true;
             StateHasChanged();
 
-            var state = new GridState<T>
-            {
-                Page = CurrentPage,
-                PageSize = RowsPerPage,
-                SortDefinitions = SortDefinitions.Values.OrderBy(sd => sd.Index).ToList(),
-                // Additional ToList() here to decouple clients from internal list avoiding runtime issues
-                FilterDefinitions = FilterDefinitions.ToList()
-            };
+            var state = BuildGridState();
 
             _server_data = await ServerData(state);
             _currentRenderFilteredItemsCache = null;
@@ -947,7 +957,7 @@ namespace MudBlazor
         /// <summary>
         /// Called by the DataGrid when the "Add Filter" button is pressed.
         /// </summary>
-        public void AddFilter()
+        public async Task AddFilter()
         {
             var column = RenderedColumns.FirstOrDefault(x => x.filterable);
             var filterDefinition = CreateFilterDefinitionInstance();
@@ -956,6 +966,7 @@ namespace MudBlazor
             filterDefinition.Column = column;
             FilterDefinitions.Add(filterDefinition);
             _filtersMenuVisible = true;
+            await GridStateChanged.InvokeAsync(BuildGridState());
             StateHasChanged();
         }
 
@@ -965,16 +976,18 @@ namespace MudBlazor
             return InvokeServerLoadFunc();
         }
 
-        public Task ClearFiltersAsync()
+        public async Task ClearFiltersAsync()
         {
             FilterDefinitions.Clear();
-            return InvokeServerLoadFunc();
+            await GridStateChanged.InvokeAsync(BuildGridState());
+            await InvokeServerLoadFunc();
         }
 
         public async Task AddFilterAsync(IFilterDefinition<T> definition)
         {
             FilterDefinitions.Add(definition);
             _filtersMenuVisible = true;
+            await GridStateChanged.InvokeAsync(BuildGridState());
             await InvokeServerLoadFunc();
             if (ServerData is null) StateHasChanged();
         }
@@ -982,6 +995,7 @@ namespace MudBlazor
         internal async Task RemoveFilterAsync(Guid id)
         {
             FilterDefinitions.RemoveAll(x => x.Id == id);
+            await GridStateChanged.InvokeAsync(BuildGridState());
             await InvokeServerLoadFunc();
             GroupItems();
         }
@@ -1159,7 +1173,17 @@ namespace MudBlazor
             _rowsPerPage = size;
 
             if (resetPage)
+            {
                 CurrentPage = 0;
+
+                //GridStateChanged event is called only when resetPage is true, i.e. when the page size
+                //is actually changed from initial value.
+                //This avoid the notification to be raised when we are in the initialization stage, when 
+                //for example a pager is initializing and just want to communicates to the data grid
+                //the initial page size.
+                //When user changes the page size this method is called with resetPage = true.
+                await GridStateChanged.InvokeAsync(BuildGridState());
+            }
 
             StateHasChanged();
 
@@ -1231,6 +1255,8 @@ namespace MudBlazor
         private async Task InvokeSortUpdates(Dictionary<string, SortDefinition<T>> activeSortDefinitions, HashSet<string> removedSortDefinitions)
         {
             SortChangedEvent?.Invoke(activeSortDefinitions, removedSortDefinitions);
+
+            await GridStateChanged.InvokeAsync(BuildGridState());
 
             if (_isFirstRendered)
             {

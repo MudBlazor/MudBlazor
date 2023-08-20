@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid T="Model" ServerData="@(new Func<GridState<Model>, Task<GridData<Model>>>(ServerReload))">
+<MudDataGrid T="Model" ServerData="@(new Func<GridState<Model>, Task<GridData<Model>>>(ServerReload))" GridStateChanged="OnGridStateChanged">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
@@ -15,6 +15,10 @@
     public record Model (string Name, int Age, Severity Status);
     private int _totalItems = 100;
     IEnumerable<Model> _data;
+
+    public bool GridStateChangedEventCalled = false;
+    public int GridStateChangedEventCalledCounter = 0;
+    public GridState<Model> LastGridStateReceived;
 
     protected override void OnInitialized()
     {
@@ -37,4 +41,10 @@
         return await Task.FromResult(new GridData<Model>() { TotalItems = _totalItems, Items = data });
     }
 
+    private void OnGridStateChanged(GridState<Model> gridState)
+    {
+        GridStateChangedEventCalled = true;
+        GridStateChangedEventCalledCounter++;
+        LastGridStateReceived = gridState;
+    }
 }

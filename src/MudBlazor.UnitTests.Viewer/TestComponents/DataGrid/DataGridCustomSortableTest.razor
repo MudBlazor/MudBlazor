@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 @using System.Globalization;
 
-<MudDataGrid @ref="DataGrid" Items="@_items" Sortable="true">
+<MudDataGrid T="Item" @ref="DataGrid" Items="@_items" Sortable="true", GridStateChanged="OnGridStateChanged">
     <Columns>
         <PropertyColumn Property="x => x.Name" Comparer="@(NaturalSortingEnabled ? new MudBlazor.Utilities.NaturalComparer() : null)" />
         <PropertyColumn Property="x => x.Value" />
@@ -27,11 +27,21 @@
         new Item("1_11", 44, "1111111"),
         new Item("0", 55, "222222")
     };
-   
+
+    public bool GridStateChangedEventCalled = false;
+    public int GridStateChangedEventCalledCounter = 0;
+    public GridState<Item> LastGridStateReceived;
 
     private async Task CallSort()
     {
         await DataGrid.SetSortAsync(nameof(Item.Name), SortDirection.Ascending, x => x.Name, new MudBlazor.Utilities.NaturalComparer());
+    }
+
+    private void OnGridStateChanged(GridState<Item> gridState)
+    {
+        GridStateChangedEventCalled = true;
+        GridStateChangedEventCalledCounter++;
+        LastGridStateReceived = gridState;
     }
 
     public class Item

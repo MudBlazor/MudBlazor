@@ -2645,7 +2645,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
 
             // add a filter via the AddFilter method
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
+            await comp.InvokeAsync(dataGrid.Instance.AddFilter);
 
             // check the number of filters displayed in the filters panel
             dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
@@ -2715,7 +2715,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(6);
 
             // add a filter via the AddFilter method
-            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
+            await comp.InvokeAsync(dataGrid.Instance.AddFilter);
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
             dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(7);
@@ -2948,6 +2948,10 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridServerPaginationTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerPaginationTest.Model>>();
 
+            comp.Instance.GridStateChangedEventCalled.Should().BeFalse();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(0);
+            comp.Instance.LastGridStateReceived.Should().BeNull();
+
             // test that we are on the first page of results
             dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("Name 0");
 
@@ -2957,8 +2961,21 @@ namespace MudBlazor.UnitTests.Components
             // test that we are on the second page of results
             dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("Name 10");
 
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(1);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(1);
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(0);
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(0);
+
             // test reloading server side results programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.ReloadServerData());
+
+            //verify that GridStateChangedEvent is not called on ReloadServerData()
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(1);
         }
 
         [Test]
@@ -3207,6 +3224,10 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.FindAll("tbody tr").Count.Should().Be(4);
 
+            comp.Instance.GridStateChangedEventCalled.Should().BeFalse();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(0);
+            comp.Instance.LastGridStateReceived.Should().BeNull();
+
             await comp.InvokeAsync(() =>
             {
                 comp.Instance.FilterHiredToggled(true, dataGrid.Instance);
@@ -3214,6 +3235,34 @@ namespace MudBlazor.UnitTests.Components
             
             dataGrid.Render();
             dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(1);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(dataGrid.Instance.FilterDefinitions.Count);
+            var filterDefinitionToCheck = comp.Instance.LastGridStateReceived.FilterDefinitions.First();
+            filterDefinitionToCheck.Column.Identifier.Should().Be(dataGrid.Instance.GetColumnByPropertyName<DataGridCustomFilteringTest.Model>("Hired").Identifier);
+            filterDefinitionToCheck.Operator.Should().Be(FilterOperator.Boolean.Is);
+            filterDefinitionToCheck.Value.Should().Be(true);
+
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(0);
+
+            comp.Instance.GridStateChangedEventCalled = false;
+
+            await comp.InvokeAsync(() =>
+            {
+                comp.Instance.FilterHiredToggled(false, dataGrid.Instance);
+            });
+
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(2);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(0);
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(0);
         }
 
         [Test]
@@ -3651,6 +3700,10 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.SortMode = SortMode.Single;
             dataGrid.Instance.SortMode.Should().Be(SortMode.Single);
 
+            comp.Instance.GridStateChangedEventCalled.Should().BeFalse();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(0);
+            comp.Instance.LastGridStateReceived.Should().BeNull();
+
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value, new MudBlazor.Utilities.NaturalComparer()));
             dataGrid.Instance.DropContainerHasChanged();
             dataGrid.FindAll("th .sortable-column-header")[1].TextContent.Trim().Should().Be("Value");
@@ -3659,12 +3712,40 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
 
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(1);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(0);
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(1);
+            {
+                var sortDefinitionToCheck = comp.Instance.LastGridStateReceived.SortDefinitions.First();
+                sortDefinitionToCheck.SortBy.Should().Be("Value");
+                sortDefinitionToCheck.Descending.Should().BeFalse();
+                sortDefinitionToCheck.Comparer.Should().BeOfType<MudBlazor.Utilities.NaturalComparer>();
+            }
+
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Descending, x => x.Value, new MudBlazor.Utilities.NaturalComparer()));
             dataGrid.Instance.DropContainerHasChanged();
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Descending);
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-desc").Should().Be(true);
+
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(2);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(0);
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(1);
+            {
+                var sortDefinitionToCheck = comp.Instance.LastGridStateReceived.SortDefinitions.First();
+                sortDefinitionToCheck.SortBy.Should().Be("Value");
+                sortDefinitionToCheck.Descending.Should().BeTrue();
+                sortDefinitionToCheck.Comparer.Should().BeOfType<MudBlazor.Utilities.NaturalComparer>();
+            }
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value));
             dataGrid.Instance.DropContainerHasChanged();
@@ -3674,12 +3755,40 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
 
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(3);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(0);
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(1);
+            {
+                var sortDefinitionToCheck = comp.Instance.LastGridStateReceived.SortDefinitions.First();
+                sortDefinitionToCheck.SortBy.Should().Be("Value");
+                sortDefinitionToCheck.Descending.Should().BeFalse();
+                sortDefinitionToCheck.Comparer.Should().BeNull();
+            }
+
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name, new MudBlazor.Utilities.NaturalComparer()));
             dataGrid.Instance.DropContainerHasChanged();
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Ascending);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(true);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
+
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(4);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(0);
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(1);
+            {
+                var sortDefinitionToCheck = comp.Instance.LastGridStateReceived.SortDefinitions.First();
+                sortDefinitionToCheck.SortBy.Should().Be("Name");
+                sortDefinitionToCheck.Descending.Should().BeFalse();
+                sortDefinitionToCheck.Comparer.Should().BeOfType<MudBlazor.Utilities.NaturalComparer>();
+            }
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => x.Name, new MudBlazor.Utilities.NaturalComparer()));
             dataGrid.Instance.DropContainerHasChanged();
@@ -3690,6 +3799,20 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Instance.SortMode = SortMode.Multiple;
             dataGrid.Instance.SortMode.Should().Be(SortMode.Multiple);
+
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(5);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(0);
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(1);
+            {
+                var sortDefinitionToCheck = comp.Instance.LastGridStateReceived.SortDefinitions.First();
+                sortDefinitionToCheck.SortBy.Should().Be("Name");
+                sortDefinitionToCheck.Descending.Should().BeTrue();
+                sortDefinitionToCheck.Comparer.Should().BeOfType<MudBlazor.Utilities.NaturalComparer>();
+            }
 
             //Assign a comparer to a column
             var column = dataGrid.FindComponent<Column<DataGridCustomSortableTest.Item>>();
@@ -3710,19 +3833,88 @@ namespace MudBlazor.UnitTests.Components
             cells[15].TextContent.Should().Be("2");
             cells[18].TextContent.Should().Be("10");
 
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            //called 2 more times one to remove sorting and one to sort by Name
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(7);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(0);
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(1);
+            {
+                var sortDefinitionToCheck = comp.Instance.LastGridStateReceived.SortDefinitions.First();
+                sortDefinitionToCheck.SortBy.Should().Be("Name");
+                sortDefinitionToCheck.Descending.Should().BeFalse();
+                sortDefinitionToCheck.Comparer.Should().BeOfType<MudBlazor.Utilities.NaturalComparer>();
+            }
+
             //Multi click second column
             var headerCell = dataGrid.FindComponents<HeaderCell<DataGridCustomSortableTest.Item>>()[1];
             await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { CtrlKey = true, Button = 0 }));
             headerCell.Instance.SortDirection.Should().Be(SortDirection.Ascending);
+            
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(8);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(0);
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(2);
+            {
+                var sortDefinitionToCheck = comp.Instance.LastGridStateReceived.SortDefinitions.First(_ => _.SortBy == "Name");
+                sortDefinitionToCheck.SortBy.Should().Be("Name");
+                sortDefinitionToCheck.Descending.Should().BeFalse();
+                sortDefinitionToCheck.Comparer.Should().BeOfType<MudBlazor.Utilities.NaturalComparer>();
+            }
+            {
+                var sortDefinitionToCheck = comp.Instance.LastGridStateReceived.SortDefinitions.First(_ => _.SortBy == "Value");
+                sortDefinitionToCheck.SortBy.Should().Be("Value");
+                sortDefinitionToCheck.Descending.Should().BeFalse();
+                sortDefinitionToCheck.Comparer.Should().BeNull();
+            }
 
             //Multi click second column a second time to change it to descending
             await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { CtrlKey = true, Button = 0 }));
             headerCell.Instance.SortDirection.Should().Be(SortDirection.Descending);
 
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(9);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(0);
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(2);
+            {
+                var sortDefinitionToCheck = comp.Instance.LastGridStateReceived.SortDefinitions.First(_ => _.SortBy == "Name");
+                sortDefinitionToCheck.SortBy.Should().Be("Name");
+                sortDefinitionToCheck.Descending.Should().BeFalse();
+                sortDefinitionToCheck.Comparer.Should().BeOfType<MudBlazor.Utilities.NaturalComparer>();
+            }
+            {
+                var sortDefinitionToCheck = comp.Instance.LastGridStateReceived.SortDefinitions.First(_ => _.SortBy == "Value");
+                sortDefinitionToCheck.SortBy.Should().Be("Value");
+                sortDefinitionToCheck.Descending.Should().BeTrue();
+                sortDefinitionToCheck.Comparer.Should().BeNull();
+            }
+
             //remove first column from sort
             headerCell = dataGrid.FindComponents<HeaderCell<DataGridCustomSortableTest.Item>>()[0];
             await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { AltKey = true, Button = 0 }));
             headerCell.Instance.SortDirection.Should().Be(SortDirection.None);
+
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(10);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(0);
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(1);
+            {
+                var sortDefinitionToCheck = comp.Instance.LastGridStateReceived.SortDefinitions.First();
+                sortDefinitionToCheck.SortBy.Should().Be("Value");
+                sortDefinitionToCheck.Descending.Should().BeTrue();
+                sortDefinitionToCheck.Comparer.Should().BeNull();
+            }
         }
 
         [Test]

@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDataGrid Items="@_items" Filterable>
+<MudDataGrid T="Model" Items="@_items" Filterable GridStateChanged="OnGridStateChanged">
     <Columns>
         <PropertyColumn Property="x => x.Name" Filterable="false" />
         <PropertyColumn Property="x => x.Age" Filterable="false" />
@@ -14,7 +14,7 @@
     </FilterTemplate>
 </MudDataGrid>
 
-@code {
+ @code {
     public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
 
     private IEnumerable<Model> _items = new List<Model>()
@@ -26,6 +26,10 @@
     };
 
     public bool FilterHired = false;
+
+    public bool GridStateChangedEventCalled = false;
+    public int GridStateChangedEventCalledCounter = 0;
+    public GridState<Model> LastGridStateReceived;
 
     public async Task FilterHiredToggled(bool value, MudDataGrid<Model> dataGrid)
     {
@@ -44,5 +48,12 @@
         {
             await dataGrid.ClearFiltersAsync();
         }
+    }
+
+    private void OnGridStateChanged(GridState<Model> gridState)
+    {
+        GridStateChangedEventCalled = true;
+        GridStateChangedEventCalledCounter++;
+        LastGridStateReceived = gridState;
     }
 }
