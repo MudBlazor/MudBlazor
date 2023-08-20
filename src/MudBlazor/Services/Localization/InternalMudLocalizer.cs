@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MudBlazor.Resources;
@@ -14,14 +12,15 @@ namespace MudBlazor
     /// </summary>
     internal sealed class InternalMudLocalizer
     {
-        private readonly IStringLocalizer _localizer;
-        private readonly MudLocalizer? _mudLocalizer;
+        private readonly ILocalizationInterceptor _interceptor;
 
-        public InternalMudLocalizer(ILoggerFactory loggerFactory, MudLocalizer? mudLocalizer = null)
+        public InternalMudLocalizer(ILoggerFactory loggerFactory, MudLocalizer? mudLocalizer = null, ILocalizationInterceptor? interceptor = null)
         {
-            var factory = new ResourceManagerStringLocalizerFactory(Options.Create(new LocalizationOptions()), loggerFactory);
-            _localizer = factory.Create(typeof(LanguageResource));
-            _mudLocalizer = mudLocalizer;
+            var options = Options.Create(new LocalizationOptions());
+            var factory = new ResourceManagerStringLocalizerFactory(options, loggerFactory);
+            var localizer = factory.Create(typeof(LanguageResource));
+            
+            _interceptor = interceptor ?? new DefaultLocalizationInterceptor(localizer, mudLocalizer);
         }
 
         /// <summary>
@@ -33,17 +32,7 @@ namespace MudBlazor
         {
             get
             {
-                // First check whether custom translations are available or the current ui culture is english, then we want to use the internal translations
-                var currentCulture = Thread.CurrentThread.CurrentUICulture.Parent.TwoLetterISOLanguageName;
-                if (_mudLocalizer == null || currentCulture.Equals("en", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return _localizer[key];
-                }
-
-                // If CurrentUICulture is not english and a custom MudLocalizer service implementation is registered, try to use user provided languages.
-                // If no translation was found, fall back to the internal english translation
-                var res = _mudLocalizer[key];
-                return res.ResourceNotFound ? _localizer[key] : res;
+                return _interceptor.Handle(key);
             }
         }
     }
