@@ -1,11 +1,54 @@
-﻿@namespace MudBlazor.Docs.Examples
+﻿@using System.Globalization
 
-<MudDatePicker Label="dd.MM.yyyy" Editable="true" @bind-Date="date1" Mask="@(new DateMask("dd.MM.yyyy"))" DateFormat="dd.MM.yyyy" Placeholder="de-AT Date" />
-<MudDatePicker Label="MM/dd/yyyy" Editable="true" @bind-Date="date2" Mask="@(new DateMask("MM/dd/yyyy"))" DateFormat="MM/dd/yyyy" Placeholder="en-US Date" />
-<MudDatePicker Label="yyyy-MM-dd" Editable="true" @bind-Date="date3" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="ISO Date" />
+@namespace MudBlazor.Docs.Examples
+
+<MudDatePicker Label="dd.MM.yyyy" Editable="true" @bind-Date="date1" Mask="@(new DateMask("dd.MM.yyyy"))" DateFormat="dd.MM.yyyy" Placeholder="de-AT Date" HelperText="@HelperText(date1)" />
+<MudDatePicker Label="MM/dd/yyyy" Editable="true" @bind-Date="date2" Mask="@(new DateMask("MM/dd/yyyy"))" DateFormat="MM/dd/yyyy" Placeholder="en-US Date" HelperText="@HelperText(date2)" />
+<MudDatePicker Label="yyyy-MM-dd" Editable="true" @bind-Date="date3" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="ISO Date" HelperText="@HelperText(date3)" />
+<MudDatePicker Label="No Mask" Editable="true" Date="date4" Placeholder="day.month.year" DateFormat="@dateFormat" TextChanged="DatePickerTextChanged" HelperText="@bound" Clearable="true" />
 
 @code {
     DateTime? date1 = null;
     DateTime? date2 = DateTime.Today;
     DateTime? date3 = null;
+    DateTime? date4 = null;
+
+    string dateFormat = "dd.MM.yyyy";
+    string bound = "not set";
+
+    private string HelperText(DateTime? value)
+    {
+        return value.HasValue ? "set" : "not set";
+    }
+
+
+    private void DatePickerTextChanged(string value)
+    {
+        if (value == null || value.Length < 6)
+        {
+            date4 = null;
+        }
+        else
+        {
+            string[] formats = { "dd.MM.yyyy", "dd.M.yyyy", "d.MM.yyyy", "d.M.yyyy", "dd.MM.yy", "dd.M.yy", "d.MM.yy", "d.M.yy" };
+            if (DateTime.TryParseExact(value, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime validDate))
+            {
+                date4 = validDate;
+            }
+            else
+            {
+                date4 = null;
+            }
+
+        }
+
+        if (date4 is null)
+        {
+            bound = "not set";
+        }
+        else
+        {
+            bound = date4.Value.ToString(dateFormat);
+        }
+    }
 }
