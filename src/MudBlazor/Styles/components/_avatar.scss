@@ -1,10 +1,9 @@
 ﻿@import '../abstracts/variables';
 
 .mud-avatar {
-    display: flex;
+    display: inline-flex;
     overflow: hidden;
     position: relative;
-    display: inline-flex;
     align-items: center;
     flex-shrink: 0;
     line-height: 1;
@@ -70,11 +69,12 @@
 }
 
 .mud-avatar-filled {
-    color: var(--mud-palette-white);
-    background-color: var(--mud-palette-grey-light);
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-lines-inputs);
 
     @each $color in $mud-palette-colors {
         &.mud-avatar-filled-#{$color} {
+            color: var(--mud-palette-#{$color}-text);
             background-color: var(--mud-palette-#{$color});
         }
     }
