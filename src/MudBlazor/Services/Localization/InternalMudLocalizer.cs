@@ -16,7 +16,7 @@ namespace MudBlazor
         private readonly IStringLocalizer _localizer;
         private readonly MudLocalizer? _mudLocalizer;
 
-        public InternalMudLocalizer(ILoggerFactory loggerFactory, MudLocalizer? mudLocalizer = null, ILocalizationInterceptor? interceptor = null)
+        public InternalMudLocalizer(ILoggerFactory loggerFactory, ILocalizationInterceptor? interceptor = null, MudLocalizer? mudLocalizer = null)
         {
             var options = Options.Create(new LocalizationOptions());
             var factory = new ResourceManagerStringLocalizerFactory(options, loggerFactory);
