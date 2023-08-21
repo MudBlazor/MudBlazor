@@ -7,8 +7,8 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// The <see cref="InternalMudLocalizer"/> service handles translations, providing english as an included default language,
-    /// while allowing users to add custom translations without restricting how they can be implemented.
+    /// The <see cref="InternalMudLocalizer"/> service forwards translations to the <see cref="ILocalizationInterceptor"/> service.
+    /// By default the <see cref="DefaultLocalizationInterceptor"/> is used, though custom implementations can be provided.
     /// </summary>
     internal sealed class InternalMudLocalizer
     {
@@ -24,7 +24,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets the translation for the given translation key.
+        /// Gets the translation for the given translation key from the <see cref="ILocalizationInterceptor"/>.
         /// </summary>
         /// <param name="key">the translation key to look up</param>
         /// <returns>The string resource as a <see cref="LocalizedString"/>.</returns>

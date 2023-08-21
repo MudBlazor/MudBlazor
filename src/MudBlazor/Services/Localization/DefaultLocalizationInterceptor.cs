@@ -5,6 +5,10 @@ using Microsoft.Extensions.Localization;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// The <see cref="DefaultLocalizationInterceptor"/>  handles translations, providing english as an included default language,
+    /// while allowing users to add custom translations without restricting how they can be implemented.
+    /// </summary>
     internal class DefaultLocalizationInterceptor : ILocalizationInterceptor
     {
         private readonly IStringLocalizer _localizer;

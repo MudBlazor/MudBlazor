@@ -8,7 +8,6 @@ namespace MudBlazor
     /// <code>services.Add{scope}Transient&lt;MudLocalizer, CustomMudLocalizerImpl&gt;()</code>
     /// or
     /// <code>services.TryAdd{scope}Transient&lt;MudLocalizer, CustomMudLocalizerImpl&gt;()</code>
-    /// Though 
     /// </summary>
     public class MudLocalizer
     {
