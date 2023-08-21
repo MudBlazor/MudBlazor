@@ -1,0 +1,30 @@
+﻿<div class="mud-codeblock">
+    <div class="csharp"><pre>
+<span class="keyword">using</span> Microsoft.Extensions.Localization;
+<span class="keyword">using</span> System.Threading;
+<span class="keyword">using</span> MudBlazor;
+
+<span class="keyword">internal</span> <span class="keyword">class</span> CustomInterceptor : ILocalizationInterceptor
+{
+    <span class="keyword">public</span> LocalizedString Handle(<span class="keyword">string</span> key, <span class="keyword">IStringLocalizer</span> defaultEnglishLocalizer, <span class="keyword">MudLocalizer</span> customMudLocalizer)
+    {
+        <span class="keyword">var</span> <span class="localVar">currentCulture</span> = Thread.CurrentThread.CurrentUICulture.Parent.TwoLetterISOLanguageName;
+        <span class="keyword">if</span> (<span class="localVar">customMudLocalizer</span> == null || <span class="localVar">currentCulture</span>.Equals("en", StringComparison.InvariantCultureIgnoreCase)
+        {
+            <span class="keyword">switch</span> (<span class="localVar">key</span>)
+            {
+                <span class="keyword">case</span> "MudDataGrid.Clear":
+                    <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">LocalizedString</span>(<span class="localVar">key</span>, "Reset");
+                <span class="keyword">case</span> "MudDataGrid.Apply":
+                    <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">LocalizedString</span>(<span class="localVar">key</span>, "Confirm");
+            }
+            
+            <span class="keyword">return</span> <span class="localVar">defaultEnglishLocalizer</span>[<span class="localVar">key</span>];
+        }
+        
+        <span class="keyword">var</span> <span class="localVar">res</span> = <span class="localVar">customMudLocalizer</span>[<span class="localVar">key</span>];
+        <span class="keyword">return</span> <span class="localVar">res</span>.ResourceNotFound ? <span class="localVar">defaultEnglishLocalizer</span>[<span class="localVar">key</span>] : <span class="localVar">res</span>;
+    }
+}
+</pre></div>
+</div>
