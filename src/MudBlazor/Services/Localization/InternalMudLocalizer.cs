@@ -13,14 +13,17 @@ namespace MudBlazor
     internal sealed class InternalMudLocalizer
     {
         private readonly ILocalizationInterceptor _interceptor;
+        private readonly IStringLocalizer _localizer;
+        private readonly MudLocalizer? _mudLocalizer;
 
         public InternalMudLocalizer(ILoggerFactory loggerFactory, MudLocalizer? mudLocalizer = null, ILocalizationInterceptor? interceptor = null)
         {
             var options = Options.Create(new LocalizationOptions());
             var factory = new ResourceManagerStringLocalizerFactory(options, loggerFactory);
-            var localizer = factory.Create(typeof(LanguageResource));
+            _localizer = factory.Create(typeof(LanguageResource));
+            _mudLocalizer = mudLocalizer;
             
-            _interceptor = interceptor ?? new DefaultLocalizationInterceptor(localizer, mudLocalizer);
+            _interceptor = interceptor ?? new DefaultLocalizationInterceptor();
         }
 
         /// <summary>
@@ -32,7 +35,7 @@ namespace MudBlazor
         {
             get
             {
-                return _interceptor.Handle(key);
+                return _interceptor.Handle(key, _localizer, _mudLocalizer);
             }
         }
     }
