@@ -5,7 +5,7 @@
 <MudDatePicker Label="dd.MM.yyyy" Editable="true" @bind-Date="date1" Mask="@(new DateMask("dd.MM.yyyy"))" DateFormat="dd.MM.yyyy" Placeholder="de-AT Date" HelperText="@HelperText(date1)" />
 <MudDatePicker Label="MM/dd/yyyy" Editable="true" @bind-Date="date2" Mask="@(new DateMask("MM/dd/yyyy"))" DateFormat="MM/dd/yyyy" Placeholder="en-US Date" HelperText="@HelperText(date2)" />
 <MudDatePicker Label="yyyy-MM-dd" Editable="true" @bind-Date="date3" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd" Placeholder="ISO Date" HelperText="@HelperText(date3)" />
-<MudDatePicker Label="No Mask" Editable="true" Date="date4" Placeholder="day.month.year" DateFormat="@dateFormat" TextChanged="DatePickerTextChanged" HelperText="@bound" Clearable="true" />
+<MudDatePicker Label="No Mask" Editable="true" Date="date4" ImmediateText="true" Placeholder="day.month.year" DateFormat="@dateFormat" TextChanged="DatePickerTextChanged" HelperText="@bound" Clearable="true" />
 
 @code {
     DateTime? date1 = null;
