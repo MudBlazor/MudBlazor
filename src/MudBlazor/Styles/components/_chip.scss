@@ -82,6 +82,14 @@
             height: 32px;
             font-size: 1rem;
         }
+
+        .mud-chip-icon {
+            font-size: 1.5rem;
+            margin-left: -6px;
+            margin-right: 6px;
+            margin-inline-start: -6px;
+            margin-inline-end: 6px;
+        }
     }
 
     &.mud-chip-label {
