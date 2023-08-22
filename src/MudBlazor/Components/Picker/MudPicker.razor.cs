@@ -274,7 +274,7 @@ namespace MudBlazor
         public EventCallback<string> TextChanged { get; set; }
 
         /// <summary>
-        /// If true and Editable is true, the update Text immediately on typing.
+        /// If true and Editable is true, update Text immediately on typing.
         /// If false, Text is updated only on Enter or loss of focus.
         /// </summary>
         [Parameter]
