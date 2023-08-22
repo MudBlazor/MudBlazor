@@ -195,6 +195,11 @@ namespace MudBlazor
         /// Callback is called whenever a row is clicked.
         /// </summary>
         [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowClick { get; set; }
+        
+        /// <summary>
+        /// Callback is called whenever a row is right clicked.
+        /// </summary>
+        [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowContextMenuClick { get; set; }
 
         /// <summary>
         /// Callback is called when an item has begun to be edited. Returns the item being edited.
@@ -1099,6 +1104,11 @@ namespace MudBlazor
                 await SetEditingItemAsync(item);
 
             await SetSelectedItemAsync(item);
+        }
+
+        internal async Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)
+        {
+            await RowContextMenuClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
         }
 
         /// <summary>
