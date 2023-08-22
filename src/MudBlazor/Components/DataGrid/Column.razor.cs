@@ -263,6 +263,7 @@ namespace MudBlazor
         internal HeaderContext<T> headerContext;
         private FilterContext<T> filterContext;
         internal FooterContext<T> footerContext;
+        internal bool _required = true;
 
         public FilterContext<T> FilterContext
         {

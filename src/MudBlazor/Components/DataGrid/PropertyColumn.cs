@@ -30,6 +30,9 @@ namespace MudBlazor
         [Parameter]
         public string? Format { get; set; }
 
+        [Parameter]
+        public bool Required { get; set; } = true;
+
         protected override void OnParametersSet()
         {
             // We have to do a bit of pre-processing on the lambda expression. Only do that if it's new or changed.
@@ -52,6 +55,8 @@ namespace MudBlazor
                 _propertyName = _id.ToString();
             }
             Title ??= property.GetLastMemberName();
+
+            _required = Required;
 
             CompileGroupBy();
         }
