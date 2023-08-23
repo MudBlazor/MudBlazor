@@ -1,0 +1,287 @@
+﻿
+/*.MuiStepper-horizontal {
+    display: flex;
+    flex-direction: row;
+    -moz-box-align: center;
+    align-items: center;
+
+    .MuiStep-root.MuiStep-horizontal {
+        padding-left: 8px;
+        padding-right: 8px;
+
+        .MuiStepLabel-root.MuiStepLabel-horizontal {
+            display: flex;
+            -moz-box-align: center;
+            align-items: center;
+
+            .MuiStepLabel-iconContainer {
+                flex-shrink: 0;
+                display: flex;
+                padding-right: 8px;
+
+                &.Mui-active {
+                }
+            }
+        }
+    }
+}*/
+
+.mud-stepper {
+    display: flex;
+
+    .mud-stepper-step {
+        //Types of steps
+        .mud-stepper-step-label {
+            display: flex;
+            -moz-box-align: center;
+            align-items: center;
+
+            .mud-stepper-step-label-icon {
+                flex-shrink: 0;
+                display: flex;
+                //Number
+                color: var(--mud-palette-white);
+                //Circle
+                border-radius: 50%;
+                background-color: var(--mud-palette-text-disabled);
+                height: 24px;
+                width: 24px;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .mud-stepper-step-label-content {
+                width: 100%;
+                color: var(--mud-palette-text-secondary);
+            }
+        }
+
+        &.active {
+            .mud-stepper-step-label {
+
+                .mud-stepper-step-label-icon {
+                    background-color: var(--mud-palette-primary);
+                }
+
+                .mud-stepper-step-label-content {
+                    color: var(--mud-palette-text-primary);
+                    //subtitle2;
+                }
+            }
+
+            &.mud-stepper-stepAlternativeLabel {
+
+                .mud-stepper-step-label {
+
+                    .mud-stepper-step-label-content {
+                    }
+                }
+            }
+        }
+        /*Type - Error*/
+        &.mud-stepper-stepError {
+
+            .mud-stepper-step-label {
+                .mud-stepper-step-label-icon {
+                    background-color: transparent;
+                    color: transparent;
+                }
+
+                .mud-stepper-step-label-content {
+                    color: var(--mud-palette-error) !important;
+
+                    * {
+                        color: inherit !important;
+                    }
+                }
+            }
+        }
+        /*Type - Done*/
+        &.mud-stepper-stepDone {
+
+            .mud-stepper-step-label {
+                .mud-stepper-step-label-icon {
+                    background-color: var(--mud-palette-primary);
+                }
+
+                .mud-stepper-step-label-content {
+                    color: var(--mud-palette-text-primary);
+                    //.subtitle2;
+                }
+            }
+        }
+        /*Type - Skipped*/
+        &.mud-stepper-stepSkipped {
+
+            .mud-stepper-step-label {
+                .mud-stepper-step-label-icon {
+                    /*background-color: var(--mud-palette-primary);*/
+                    .mud-stepper-step-label-icon-contentNumber {
+                        /*display: none;*/
+                    }
+
+                    &::before {
+                        /*  font-family: 'Material Icons';
+                        content: '\e876';
+                        -webkit-font-feature-settings: 'liga' 1;
+                        -moz-font-feature-settings: 'liga' 1;
+                        font-feature-settings: 'liga' 1;
+                        font-size: 18px;
+                        color: var(--mud-palette-text-primary) !important;*/
+                    }
+                }
+
+                .mud-stepper-step-label-content {
+                    /*  color: var(--mud-palette-text-primary);
+                    .subtitle2;*/
+                }
+            }
+        }
+    }
+
+    &.mud-stepperHorizontal:not(.mud-stepperVertical) {
+        -moz-box-align: center;
+        align-items: center;
+        flex-direction: row;
+
+        .mud-stepper-step {
+            padding-left: 8px;
+            padding-right: 8px;
+
+            .mud-stepper-step-label {
+                /*flex-direction: column;*/
+                .mud-stepper-step-label-icon {
+                    margin-right: 8px;
+                }
+
+                .mud-stepper-step-label-content {
+                }
+            }
+
+            &.mud-stepper-stepAlternativeLabel {
+                -webkit-flex: 1;
+                -ms-flex: 1;
+                flex: 1;
+                position: relative;
+
+                .mud-stepper-step-label {
+                    flex-direction: column;
+
+                    .mud-stepper-step-label-icon {
+                        margin-right: 0px;
+                    }
+
+                    .mud-stepper-step-label-content {
+                        text-align: center;
+                        margin-top: 16px;
+                    }
+                }
+
+                .mud-stepper-connector {
+                    position: absolute;
+                    top: 12px;
+                    left: calc(-50% + 20px);
+                    right: calc(50% + 20px);
+
+                    .mud-stepper-connector-line {
+                        //Nothing needed
+                    }
+                }
+            }
+        }
+
+        .mud-stepper-connector {
+            flex: 1 1 auto;
+
+            .mud-stepper-connector-line {
+                display: block;
+                border-color: rgb(189, 189, 189);
+                border-top-style: solid;
+                border-top-width: 1px;
+            }
+        }
+    }
+
+    &.mud-stepperVertical:not(.mud-stepperHorizontal) {
+        -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+        flex-direction: column;
+
+        .mud-stepper-step {
+
+            &:not(:last-of-type):not(.active)::after {
+                content: "";
+                position: relative;
+                margin-left: 12px;
+                min-height: 24px;
+                display: block;
+                border-left: 1px solid rgb(189, 189, 189);
+            }
+
+            .mud-stepper-step-label {
+                text-align: left;
+                padding: 8px 0px;
+
+                .mud-stepper-step-label-icon {
+                    margin-right: 8px;
+                }
+
+                .mud-stepper-step-label-content {
+                }
+            }
+
+            .mud-stepper-step-verticalContent {
+                margin-left: 12px;
+                padding-left: 20px;
+                padding-right: 8px;
+                border-left: 1px solid rgb(189, 189, 189);
+            }
+
+            &.mud-stepper-stepAlternativeLabel {
+                -webkit-flex: 1;
+                -ms-flex: 1;
+                flex: 1;
+                position: relative;
+
+                .mud-stepper-step-label {
+                    flex-direction: column;
+
+                    .mud-stepper-step-label-icon {
+                        margin-right: 0px;
+                    }
+
+                    .mud-stepper-step-label-content {
+                        text-align: center;
+                        margin-top: 16px;
+                    }
+                }
+
+                .mud-stepper-connector {
+                    position: absolute;
+                    top: 12px;
+                    left: calc(-50% + 20px);
+                    right: calc(50% + 20px);
+
+                    .mud-stepper-connector-line {
+                        //Nothing needed
+                    }
+                }
+            }
+
+            &:last-of-type .mud-stepper-step-verticalContent {
+                border-color: transparent;
+            }
+        }
+
+        .mud-stepper-connector {
+            flex: 1 1 auto;
+
+            .mud-stepper-connector-line {
+                display: block;
+                border-color: rgb(189, 189, 189);
+                border-top-style: solid;
+                border-top-width: 1px;
+            }
+        }
+    }
+}
