@@ -1,31 +1,4 @@
 ﻿
-/*.MuiStepper-horizontal {
-    display: flex;
-    flex-direction: row;
-    -moz-box-align: center;
-    align-items: center;
-
-    .MuiStep-root.MuiStep-horizontal {
-        padding-left: 8px;
-        padding-right: 8px;
-
-        .MuiStepLabel-root.MuiStepLabel-horizontal {
-            display: flex;
-            -moz-box-align: center;
-            align-items: center;
-
-            .MuiStepLabel-iconContainer {
-                flex-shrink: 0;
-                display: flex;
-                padding-right: 8px;
-
-                &.Mui-active {
-                }
-            }
-        }
-    }
-}*/
-
 .mud-stepper {
     display: flex;
 
@@ -65,7 +38,6 @@
 
                 .mud-stepper-step-label-content {
                     color: var(--mud-palette-text-primary);
-                    //subtitle2;
                 }
             }
 
