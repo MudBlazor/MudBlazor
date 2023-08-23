@@ -1,0 +1,212 @@
+@namespace MudBlazor
+@inherits MudComponentBase
+
+<div @attributes="@UserAttributes" class="mud-stepper mud-stepperHorizontal" style="@Style" role="tablist">
+    @foreach (var step in _steps)
+    {
+        bool isActive = ActiveStep == step;
+        int stepIndex = _steps.IndexOf(step);
+        <div class="mud-stepper-step @(isActive ? "active" : "") @(step.Completed ? "mud-stepper-stepDone" : "")" role="tab" aria-controls="BINDTHISWITHTHESTEP" aria-selected="true">
+            @*Accessibility*@
+            <div class="mud-stepper-step-label">
+                <div class="@step.LabelIconClassname">
+                    @if (step.Completed)
+                    {
+                        <MudIcon Size="Size.Small" Icon="@Icons.Material.Outlined.Done"/>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.caption">@(stepIndex + 1)</MudText>
+                    }
+                </div>
+                <div class="mud-stepper-step-label-content">
+                    <MudText Typo="@(isActive ? Typo.subtitle2 : Typo.body2)" Color="Color.Default"
+                             Style="line-height: var(--mud-typography-body2-lineheight)">
+                        @step.Title
+                    </MudText>
+                    @if (!string.IsNullOrEmpty(step.SecondaryText))
+                    {
+                        <MudText Typo="Typo.caption">@step.SecondaryText</MudText>
+                    }
+                </div>
+            </div>
+        </div>
+        if (_steps[^1] != step)
+        {
+            <div class="mud-stepper-connector">
+                <div class="mud-stepper-connector-line"></div>
+            </div>
+        }
+    }
+</div>
+
+<CascadingValue Value="this">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    private List<MudStepperStep> _steps = new();
+    public IReadOnlyList<MudStepperStep> Steps { get; private set; }
+
+    private HashSet<MudStepperStep> _skippedSteps = new();
+
+    public MudStepperStep? ActiveStep { get; private set; }
+
+    private int _activeIndex;
+
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public int ActiveIndex
+    {
+        get => _activeIndex;
+        set
+        {
+            var validPanel = _steps.Count > 0 && value != -1 && value <= _steps.Count - 1;
+
+            if (_activeIndex != value)
+            {
+                _activeIndex = value;
+                ActiveStep = validPanel ? _steps[value] : null;
+                ActiveIndexChanged.InvokeAsync(value);
+            }
+            else if (validPanel)
+                ActiveStep = _steps[value];
+        }
+    }
+
+    /// <summary>
+    /// The color of the completed step. It supports the theme colors.
+    /// </summary>
+    [Parameter]
+    public Color CompletedStepColor { get; set; } = Color.Primary;
+
+    /// <summary>
+    /// The color of the current step. It supports the theme colors.
+    /// </summary>
+    [Parameter]
+    public Color CurrentStepColor { get; set; } = Color.Secondary;
+
+    /// <summary>
+    /// The color of the error step. It supports the theme colors.
+    /// </summary>
+    [Parameter]
+    public Color ErrorStepColor { get; set; } = Color.Error;
+
+    [Parameter]
+    public bool NonLinear { get; set; }
+
+    #region CallBacks
+
+    [Parameter]
+    public EventCallback<int> ActiveIndexChanged { get; set; }
+
+    #endregion
+
+    #region Funcs
+
+    /// <summary>
+    /// Fired when a step gets activated. Returned Task will be awaited.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public Func<StepperInteractionEventArgs, Task> OnPreviewInteraction { get; set; }
+
+    #endregion
+
+    public bool IsCurrentStepSkippable => _steps.Any() && ActiveStep is not null && ActiveStep.Skippable;
+    public bool CanGoBack => _steps.Any() && ActiveIndex > 0;
+    public bool IsCompleted => _steps.Any() && _steps.All(x => x.Completed);
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    #region Children Handling
+
+    internal void AddStep(MudStepperStep step)
+    {
+        _steps.Add(step);
+        if (ActiveStep is null)
+            ActiveIndex = _steps.IndexOf(step);
+        StateHasChanged();
+    }
+
+    #endregion
+
+    private async void ProcessStep(MudStepperStep stepToProcess, MouseEventArgs ev, StepInteractionType stepInteractionType, bool ignoreDisabledState = false)
+    {
+        if (!stepToProcess.Disabled || ignoreDisabledState)
+        {
+            var index = _steps.IndexOf(stepToProcess);
+
+            var previewArgs = new StepperInteractionEventArgs() { StepIndex = index, InteractionType = stepInteractionType };
+
+            if (OnPreviewInteraction != null)
+                await OnPreviewInteraction.Invoke(previewArgs);
+
+            if (previewArgs.Cancel) return;
+
+            switch (previewArgs.InteractionType)
+            {
+                case StepInteractionType.Complete:
+                {
+                    stepToProcess.Completed = true;
+
+                    if (_steps.Count - 1 != index)
+                        ActiveIndex = index + 1;
+                    break;
+                }
+                case StepInteractionType.Activate:
+                    ActiveIndex = index;
+                    break;
+                case StepInteractionType.Skip:
+                    if (stepToProcess.Skippable) //Or should I raise exception if its not skippable???
+                        ActiveIndex = index + 1;
+                    break;
+            }
+
+            await ActiveStep?.OnClick.InvokeAsync(ev);
+        }
+    }
+
+    #region Life cycle management
+
+    public MudStepper()
+    {
+        Steps = _steps.AsReadOnly();
+    }
+
+    #endregion
+
+    #region Public methods
+
+    public void PreviousStep()
+    {
+        if (CanGoBack)
+            ProcessStep(_steps[ActiveIndex - 1], new MouseEventArgs(), StepInteractionType.Activate);
+    }
+
+    public void CompleteCurrentStep()
+    {
+        ProcessStep(ActiveStep, new MouseEventArgs(), StepInteractionType.Complete);
+    }
+
+    public void SkipCurrentStep()
+    {
+        ProcessStep(ActiveStep, new MouseEventArgs(), StepInteractionType.Skip);
+    }
+
+    public void Reset()
+    {
+        if (!_steps.Any())
+            return;
+
+        foreach (var step in _steps)
+        {
+            step.Completed = false;
+        }
+        ProcessStep(_steps[0], new MouseEventArgs(), StepInteractionType.Activate);
+    }
+
+    #endregion
+
+}

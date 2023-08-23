@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudPaper Style="width: 800px" Class="pa-6">
+    <MudStepper @ref="_mudStepper">
+        <MudStepperStep Title="Select campaign settings">Select campaign settings content</MudStepperStep>
+        <MudStepperStep Title="Create an ad group" SecondaryText="Optional" Skippable="true">Create an ad group content</MudStepperStep>
+        <MudStepperStep Title="Create an ad">Create an ad content</MudStepperStep>
+    </MudStepper>
+</MudPaper>
+
+<MudDivider/>
+
+<MudButton OnClick="() => _mudStepper.PreviousStep()" Disabled="!_mudStepper.CanGoBack">PreviousStep</MudButton>
+<MudSpacer/>
+<MudButton OnClick="() => _mudStepper.SkipCurrentStep()" Disabled="!_mudStepper.IsCurrentStepSkippable">SkipCurrentStep</MudButton>
+<MudButton OnClick="() => _mudStepper.CompleteCurrentStep()" Disabled="_mudStepper.IsCompleted">CompleteCurrentStep</MudButton>
+
+<MudButton OnClick="() => _mudStepper.Reset()">Reset</MudButton>
+
+<MudDivider/>
+
+<p>isCompleted: @_mudStepper.IsCompleted</p>
+<p>NonLinear: @_mudStepper.NonLinear</p>
+
+@code {
+    MudStepper _mudStepper = new();
+}

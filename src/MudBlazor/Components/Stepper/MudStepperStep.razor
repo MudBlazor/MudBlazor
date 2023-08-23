@@ -1,0 +1,71 @@
+@namespace MudBlazor
+@using MudBlazor.Utilities
+@inherits MudComponentBase
+
+<div @attributes="UserAttributes" class="@Class" style="@Styles">
+    @ChildContent
+</div>
+
+@code {
+    [CascadingParameter]
+    private MudStepper Parent { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string SecondaryText { get; set; }
+
+    [Parameter]
+    public bool Skippable { get; set; }
+
+    
+    private bool _completed;
+    
+    [Parameter]
+    public bool Completed
+    {
+        get => _completed;
+        set
+        {
+            if (_completed == value)
+                return;
+
+            _completed = value;
+            CompletedChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<bool> CompletedChanged { get; set; }
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>
+    /// Raised when tab is clicked TODO: Probably should be called OnActivated or OnCLicked
+    /// </summary>
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Parent?.AddStep(this);
+    }
+
+    protected string Styles => new StyleBuilder()
+        .AddStyle("display", Parent?.ActiveStep == this ? "contents" : "none")
+        .AddStyle(Style)
+        .Build();
+
+    public string LabelIconClassname =>
+        new CssBuilder("mud-stepper-step-label-icon")
+            .AddClass($"mud-{Parent?.CompletedStepColor.ToDescriptionString()}", Completed && Parent?.CompletedStepColor != Color.Default && Parent?.ActiveStep != this)
+            .AddClass($"mud-{Parent?.CurrentStepColor.ToDescriptionString()}", Parent?.ActiveStep == this)
+            .Build();
+
+}
