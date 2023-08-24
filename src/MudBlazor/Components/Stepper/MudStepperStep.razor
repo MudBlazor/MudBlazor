@@ -1,12 +1,15 @@
 @namespace MudBlazor
 @using MudBlazor.Utilities
 @inherits MudComponentBase
+@implements IAsyncDisposable
 
 <div @attributes="UserAttributes" class="@Class" style="@Styles">
     @ChildContent
 </div>
 
 @code {
+    private Boolean _disposed;
+
     [CascadingParameter]
     private MudStepper Parent { get; set; }
 
@@ -22,23 +25,15 @@
     [Parameter]
     public bool Skippable { get; set; }
 
-    
+
     private bool _completed;
     
+    /// <summary>
+    /// Sets whether the step is completed, this can be used for reviving lost position of process. Default is false.
+    /// </summary>
     [Parameter]
-    public bool Completed
-    {
-        get => _completed;
-        set
-        {
-            if (_completed == value)
-                return;
-
-            _completed = value;
-            CompletedChanged.InvokeAsync(value);
-        }
-    }
-
+    public bool Completed { get; set; }
+    
     [Parameter]
     public EventCallback<bool> CompletedChanged { get; set; }
 
@@ -57,6 +52,25 @@
         Parent?.AddStep(this);
     }
 
+    protected async override Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        
+        await SetCompleted(Completed);
+    }
+
+
+    public async Task SetCompleted(bool value)
+    {
+        if (_completed != value)
+        {
+            _completed = value;
+            Completed = _completed;
+            await CompletedChanged.InvokeAsync(Completed);
+            StateHasChanged();
+        }
+    }
+
     protected string Styles => new StyleBuilder()
         .AddStyle("display", Parent?.ActiveStep == this ? "contents" : "none")
         .AddStyle(Style)
@@ -67,5 +81,15 @@
             .AddClass($"mud-{Parent?.CompletedStepColor.ToDescriptionString()}", Completed && Parent?.CompletedStepColor != Color.Default && Parent?.ActiveStep != this)
             .AddClass($"mud-{Parent?.CurrentStepColor.ToDescriptionString()}", Parent?.ActiveStep == this)
             .Build();
+    
+    public async ValueTask DisposeAsync()
+    {
+        if(_disposed)
+            return;
+
+        _disposed = true;
+        if (Parent is not null)
+            await Parent.RemovePanel(this);
+    }
 
 }

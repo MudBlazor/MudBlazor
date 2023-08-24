@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudPaper Style="width: 800px">
+    <MudStepper @ref="_mudStepper" @bind-ActiveIndex="_index">
+        <MudStepperStep Title="Select campaign settings">Select campaign settings content</MudStepperStep>
+        <MudStepperStep Title="Create an ad group" Completed="_completed">Create an ad group content</MudStepperStep>
+        <MudStepperStep Title="Create an ad">Create an ad content</MudStepperStep>
+    </MudStepper>
+</MudPaper>
+
+<MudDivider/>
+
+<p>_index: @_index</p>
+
+<MudDivider/>
+
+<MudSwitch @bind-Checked="@_completed" Color="Color.Primary">Completed</MudSwitch>
+<MudNumericField @bind-Value="_index" Label="Standard" Variant="Variant.Text" Min="0" Max="10" />
+
+@code {
+    MudStepper _mudStepper = new();
+
+    private bool _completed;
+    int _index;
+}

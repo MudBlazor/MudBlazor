@@ -1,0 +1,42 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudPaper Style="width: 800px">
+    <MudStepper @bind-ActiveIndex="_index">
+        <ChildContent>
+            @foreach (var step in _steps)
+            {
+                <MudStepperStep Title="@step.Title">Select campaign settings content @step.Title</MudStepperStep>
+            }
+        </ChildContent>
+        <CompletedContent>
+            Well done!!!
+        </CompletedContent>
+    </MudStepper>
+</MudPaper>
+
+<MudDivider/>
+
+<MudButton OnClick="Remove">Remove</MudButton>
+<MudText>@_steps.Count</MudText>
+<MudButton OnClick="Add">Add</MudButton>
+
+<MudDivider/>
+
+<p>_index: @_index</p>
+
+
+@code {
+    List<MudStepperStep> _steps = new List<MudStepperStep>() { new MudStepperStep(){Title = "First"}, new MudStepperStep(){Title = "Second"} };
+    int _index;
+
+    private void Add()
+    {
+        Random rnd = new Random();
+        _steps.Add(new MudStepperStep() { Title = $"Step {rnd.Next(0, 10000)}" });
+    }
+
+    private void Remove()
+    {
+        _steps.Remove(_steps[^1]);
+    }
+
+}
