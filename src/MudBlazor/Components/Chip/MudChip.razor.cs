@@ -101,7 +101,7 @@ namespace MudBlazor
         /// Avatar Icon, Overrides the regular Icon if set.
         /// </summary>
         [Parameter]
-        [Obsolete("Use AvatarTemplate to render avatar as a fragment.")]
+        [Obsolete($"Use {nameof(AvatarContent)} to render avatar as a fragment.")]
         [Category(CategoryTypes.Chip.Behavior)]
         public string Avatar { get; set; }
 
@@ -109,7 +109,7 @@ namespace MudBlazor
         /// Avatar CSS Class, appends to Chips default avatar classes.
         /// </summary>
         [Parameter]
-        [Obsolete("Use AvatarTemplate to render avatar as a fragment.")]
+        [Obsolete($"Use {nameof(AvatarContent)} to render avatar as a fragment.")]
         [Category(CategoryTypes.Chip.Appearance)]
         public string AvatarClass { get; set; }
 

@@ -139,10 +139,10 @@
 
 .mud-chip-filled {
     color: var(--mud-palette-text-primary);
-    background-color: var(--mud-palette-action-disabled-background);
+    background-color: var(--mud-palette-chip-default);
 
     &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-        background-color: var(--mud-palette-action-disabled);
+        background-color: var(--mud-palette-chip-default-hover);
     }
 
     @each $color in $mud-palette-colors {
@@ -185,10 +185,10 @@
 }
 .mud-chip-text {
     color: var(--mud-palette-text-primary);
-    background-color: var(--mud-palette-action-default-hover);
+    background-color: var(--mud-palette-chip-default);
 
     &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-        background-color: var(--mud-palette-action-disabled-background);
+        background-color: var(--mud-palette-chip-default-hover);
     }
 
     @each $color in $mud-palette-colors {
