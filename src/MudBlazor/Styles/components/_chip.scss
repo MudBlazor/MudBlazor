@@ -263,3 +263,26 @@
     }
   }
 }
+
+.mud-stepper-step-button {
+    display: inline-flex;
+    -moz-box-align: center;
+    align-items: center;
+    -moz-box-pack: center;
+    justify-content: center;
+    position: relative;
+    background-color: transparent;
+    outline: 0px;
+    border: 0px;
+    border-radius: 0px;
+    cursor: pointer;
+    user-select: none;
+    vertical-align: middle;
+    appearance: none;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+    padding: 24px 16px;
+    margin: -24px -16px;
+    box-sizing: content-box;
+}

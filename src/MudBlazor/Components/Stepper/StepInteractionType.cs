@@ -8,5 +8,5 @@ public enum StepInteractionType
 {
     Activate,
     Complete,
-    Skip
+    Skip,
 }
