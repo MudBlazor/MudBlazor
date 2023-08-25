@@ -970,10 +970,11 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        internal Task ApplyFiltersAsync()
+        internal async Task ApplyFiltersAsync()
         {
             _filtersMenuVisible = false;
-            return InvokeServerLoadFunc();
+            await GridStateChanged.InvokeAsync(BuildGridState());
+            await InvokeServerLoadFunc();
         }
 
         public async Task ClearFiltersAsync()

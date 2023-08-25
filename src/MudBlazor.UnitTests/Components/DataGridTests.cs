@@ -3568,6 +3568,10 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridCultureSimpleTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCultureSimpleTest.Model>>();
 
+            comp.Instance.GridStateChangedEventCalled.Should().BeFalse();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(0);
+            comp.Instance.LastGridStateReceived.Should().BeNull();
+
             // amount with invariant culture (decimals separated by point)
             var amountHeader = dataGrid.FindAll("th .mud-menu button")[2];
             amountHeader.Click();
@@ -3582,6 +3586,22 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
             dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(22.0);
+
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(1);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(0);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(dataGrid.Instance.FilterDefinitions.Count);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(1);
+
+            {
+                var filterDefinitionToCheck = comp.Instance.LastGridStateReceived.FilterDefinitions.First();
+                filterDefinitionToCheck.Column.Identifier.Should().Be(dataGrid.Instance.GetColumnByPropertyName<DataGridCultureSimpleTest.Model>("Amount").Identifier);
+                filterDefinitionToCheck.Operator.Should().Be(FilterOperator.Number.Equal);
+                filterDefinitionToCheck.Value.Should().Be(22.0);
+            }
 
             dataGrid.Instance.FilterDefinitions.Clear();
             dataGrid.Render();
@@ -3600,6 +3620,22 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
             dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(2.2);
+
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(2);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(0);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(dataGrid.Instance.FilterDefinitions.Count);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(1);
+
+            {
+                var filterDefinitionToCheck = comp.Instance.LastGridStateReceived.FilterDefinitions.First();
+                filterDefinitionToCheck.Column.Identifier.Should().Be(dataGrid.Instance.GetColumnByPropertyName<DataGridCultureSimpleTest.Model>("Total").Identifier);
+                filterDefinitionToCheck.Operator.Should().Be(FilterOperator.Number.Equal);
+                filterDefinitionToCheck.Value.Should().Be(2.2);
+            }
         }
 
         [Test]
@@ -3608,12 +3644,32 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridCultureEditableTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridCultureEditableTest.Model>>();
 
+            comp.Instance.GridStateChangedEventCalled.Should().BeFalse();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(0);
+            comp.Instance.LastGridStateReceived.Should().BeNull();
+
             // amount with invariant culture (decimals separated by point)
             var filterAmount = dataGrid.FindAll("th.filter-header-cell input")[2];
             filterAmount.Input(new ChangeEventArgs() { Value = "2,2" });
 
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
             dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(22.0);
+
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(1);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(0);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(dataGrid.Instance.FilterDefinitions.Count);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(1);
+
+            {
+                var filterDefinitionToCheck = comp.Instance.LastGridStateReceived.FilterDefinitions.First();
+                filterDefinitionToCheck.Column.Identifier.Should().Be(dataGrid.Instance.GetColumnByPropertyName<DataGridCultureEditableTest.Model>("Amount").Identifier);
+                filterDefinitionToCheck.Operator.Should().Be(FilterOperator.Number.Equal);
+                filterDefinitionToCheck.Value.Should().Be(22.0);
+            }
 
             dataGrid.Instance.FilterDefinitions.Clear();
             dataGrid.Render();
@@ -3624,6 +3680,22 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
             dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(2.2);
+
+            comp.Instance.GridStateChangedEventCalled.Should().BeTrue();
+            comp.Instance.GridStateChangedEventCalledCounter.Should().Be(2);
+            comp.Instance.LastGridStateReceived.Should().NotBeNull();
+            comp.Instance.LastGridStateReceived.Page.Should().Be(dataGrid.Instance.CurrentPage);
+            comp.Instance.LastGridStateReceived.PageSize.Should().Be(dataGrid.Instance.RowsPerPage);
+            comp.Instance.LastGridStateReceived.SortDefinitions.Count.Should().Be(0);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(dataGrid.Instance.FilterDefinitions.Count);
+            comp.Instance.LastGridStateReceived.FilterDefinitions.Count.Should().Be(1);
+
+            {
+                var filterDefinitionToCheck = comp.Instance.LastGridStateReceived.FilterDefinitions.First();
+                filterDefinitionToCheck.Column.Identifier.Should().Be(dataGrid.Instance.GetColumnByPropertyName<DataGridCultureEditableTest.Model>("Amount").Identifier);
+                filterDefinitionToCheck.Operator.Should().Be(FilterOperator.Number.Equal);
+                filterDefinitionToCheck.Value.Should().Be(2.2);
+            }
         }
 
         [Test]
