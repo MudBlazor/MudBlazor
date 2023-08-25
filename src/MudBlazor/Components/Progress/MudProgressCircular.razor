@@ -13,12 +13,11 @@
         <svg class="mud-progress-circular-svg" viewBox="22 22 44 44">
             <circle class="@SvgClassname" cx="44" cy="44" r="20" fill="none" stroke-width="@StrokeWidth" style="stroke-dasharray: @_magicNumber; stroke-dashoffset: @_svgValue;"></circle>
         </svg>
-        @if (ShowPercentage)
+        if (ShowPercentage)
         {
             <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
                 <MudText Typo="PercentageTypo">@(RoundedPercentage)%</MudText>
             </div>
         }
     }
-
 </div>
