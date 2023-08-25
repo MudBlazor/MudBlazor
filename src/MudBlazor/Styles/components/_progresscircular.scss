@@ -1,6 +1,7 @@
 ﻿
 .mud-progress-circular {
     display: inline-block;
+    position: relative;
     color: var(--mud-palette-text-secondary);
 
     &.mud-progress-indeterminate {
