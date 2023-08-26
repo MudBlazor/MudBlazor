@@ -1,21 +1,21 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudFab : MudBaseButton
     {
         protected string Classname =>
-        new CssBuilder("mud-button-root mud-fab")
-          .AddClass($"mud-fab-extended", !string.IsNullOrEmpty(Label))
-          .AddClass($"mud-fab-{Color.ToDescriptionString()}")
-          .AddClass($"mud-fab-size-{Size.ToDescriptionString()}")
-          .AddClass($"mud-ripple", !DisableRipple && !GetDisabledState())
-          .AddClass($"mud-fab-disable-elevation", DisableElevation)
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-button-root mud-fab")
+                .AddClass($"mud-fab-extended", !string.IsNullOrEmpty(Label))
+                .AddClass($"mud-fab-{Color.ToDescriptionString()}")
+                .AddClass($"mud-fab-size-{Size.ToDescriptionString()}")
+                .AddClass($"mud-ripple", !DisableRipple && !GetDisabledState())
+                .AddClass($"mud-fab-disable-elevation", DisableElevation)
+                .AddClass(Class)
+                .Build();
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -34,21 +34,23 @@ namespace MudBlazor
         /// <summary>
         /// If applied Icon will be added at the start of the component.
         /// </summary>
-        [Obsolete("This property is obsolete. Use StartIcon instead.")] [Parameter] public string Icon { get => StartIcon; set => StartIcon = value; }
+        [Obsolete("This property is obsolete. Use StartIcon instead.")]
+        [Parameter]
+        public string? Icon { get => StartIcon; set => StartIcon = value; }
 
         /// <summary>
         /// If applied Icon will be added at the start of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public string StartIcon { get; set; }
+        public string? StartIcon { get; set; }
 
         /// <summary>
         /// If applied Icon will be added at the end of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public string EndIcon { get; set; }
+        public string? EndIcon { get; set; }
 
         /// <summary>
         /// The color of the icon. It supports the theme colors.
@@ -69,13 +71,13 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public string Label { get; set; }
+        public string? Label { get; set; }
 
         /// <summary>
         /// Title of the icon used for accessibility.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public string Title { get; set; }
+        public string? Title { get; set; }
     }
 }
