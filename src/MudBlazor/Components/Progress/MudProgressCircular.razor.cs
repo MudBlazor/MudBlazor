@@ -74,7 +74,7 @@ namespace MudBlazor
         }
 
         private double _fraction;
-        private double RoundedPercentage => Math.Round(_fraction * 100, 0);
+        private int GetRoundedPercentage() => (int)Math.Round(_fraction * 100, 0);
 
         private int ToSvgValue(double value)
         {
@@ -102,6 +102,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Appearance)]
         public Typo PercentageTypo { get; set; } = Typo.caption;
+        
+        /// <summary>
+        /// RenderFragment for rendering custom content when <see cref="ShowPercentage"/> is true
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Appearance)]
+        public RenderFragment<int>? PercentageContent { get; set; }
 
         protected override void OnInitialized()
         {

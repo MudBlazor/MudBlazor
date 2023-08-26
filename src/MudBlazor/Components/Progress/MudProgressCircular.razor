@@ -15,8 +15,15 @@
         </svg>
         if (ShowPercentage)
         {
-            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
-                <MudText Typo="PercentageTypo">@(RoundedPercentage)%</MudText>
+            <div class="mud-progress-circular-percentage">
+                @if (PercentageContent is null)
+                {
+                    <MudText Typo="PercentageTypo">@GetRoundedPercentage()%</MudText>
+                }
+                else
+                {
+                    @PercentageContent(GetRoundedPercentage())
+                }
             </div>
         }
     }

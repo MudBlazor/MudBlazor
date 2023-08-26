@@ -3,12 +3,14 @@
 @using System.Threading;
 
 @implements IDisposable
-
-<MudProgressCircular Color="Color.Default" Value="@Value" />
-<MudProgressCircular Color="Color.Primary" Value="@Value" />
-<MudProgressCircular Color="Color.Secondary" Value="@Value" />
-<MudProgressCircular Color="Color.Success" Value="@Value" />
-<MudProgressCircular Color="Color.Info" Value="@Value" />
+    
+<MudProgressCircular Color="Color.Primary" Value="@Value" ShowPercentage="true" />
+<MudProgressCircular Color="Color.Primary" Value="@Value" ShowPercentage="true" Size="Size.Large" PercentageTypo="Typo.subtitle1" />
+<MudProgressCircular Color="Color.Primary" Value="@Value" ShowPercentage="true" Size="Size.Large">
+    <PercentageContent>
+        <MudText Typo="Typo.h6">@context</MudText>
+    </PercentageContent>
+</MudProgressCircular>
 
 @code {
 	public int Value { get; set; }
