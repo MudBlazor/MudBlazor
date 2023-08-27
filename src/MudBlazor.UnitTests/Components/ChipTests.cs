@@ -88,5 +88,13 @@ namespace MudBlazor.UnitTests.Components
             chip.ClassName.Should().Contain("mud-clickable");
             chip.ClassName.Should().Contain("mud-ripple");
         }
+
+        [Test]
+        public void Chip_Should_Render_Avatar_Test()
+        {
+            var comp = Context.RenderComponent<ChipAvatarContentTest>();
+
+            comp.Find("div.mud-chip").InnerHtml.Should().Contain("mud-avatar");
+        }
     }
 }

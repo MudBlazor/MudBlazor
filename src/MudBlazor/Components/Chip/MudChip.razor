@@ -2,7 +2,11 @@
 @inherits MudComponentBase
 
 <div tabindex="0" @attributes="UserAttributes" class="@Classname" style="@Style" @onclick="@OnClickHandler">
-    @if (!String.IsNullOrEmpty(Avatar))
+    @if (AvatarContent is not null)
+    {
+        @AvatarContent
+    }
+    else if (!String.IsNullOrEmpty(Avatar))
     {
         <MudAvatar Class="@AvatarClass" Color="@Color">
             <MudIcon Icon="@Avatar" />
@@ -25,7 +29,7 @@
         {
             @ChildContent
         }
-        @if (OnClose.HasDelegate || ChipSet?.AllClosable==true)
+        @if (OnClose.HasDelegate || ChipSet?.AllClosable == true)
         {
             <MudIconButton Class="mud-chip-close-button" Icon="@(String.IsNullOrEmpty(CloseIcon) ? $"{Icons.Material.Filled.Cancel}" : $"{CloseIcon}")" OnClick="OnCloseHandler" Size="Size.Small"/>
         }

@@ -237,6 +237,9 @@ namespace MudBlazor
 
             theme.AppendLine($"--{Palette}-divider: {palette.Divider};");
             theme.AppendLine($"--{Palette}-divider-light: {palette.DividerLight};");
+            
+            theme.AppendLine($"--{Palette}-chip-default: {palette.ChipDefault};");
+            theme.AppendLine($"--{Palette}-chip-default-hover: {palette.ChipDefaultHover};");
 
             theme.AppendLine($"--{Palette}-grey-default: {palette.GrayDefault};");
             theme.AppendLine($"--{Palette}-grey-light: {palette.GrayLight};");
