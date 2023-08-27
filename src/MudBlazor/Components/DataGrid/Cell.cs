@@ -18,7 +18,7 @@ namespace MudBlazor
         internal string? _valueString;
         internal double? _valueNumber;
         internal bool _valueBoolean;
-        internal bool? _valueNullBoolean;
+        internal bool? _valueNullableBoolean;
         internal bool _isEditing;
         internal CellContext<T> _cellContext;
 
@@ -113,7 +113,7 @@ namespace MudBlazor
             {
                 if (_column.dataType == typeof(bool?))
                 {
-                    _valueNullBoolean = null;
+                    _valueNullableBoolean = null;
                 }
                 return;
             }
@@ -149,7 +149,7 @@ namespace MudBlazor
                 }
                 else if (_column.dataType == typeof(bool?))
                 {
-                    _valueNullBoolean = (bool?)ComputedValue;
+                    _valueNullableBoolean = (bool?)ComputedValue;
                 }
             }
         }
