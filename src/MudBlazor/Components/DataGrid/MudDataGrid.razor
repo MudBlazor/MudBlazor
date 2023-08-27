@@ -284,7 +284,7 @@
                             }
                             else if (propertyType == typeof(bool?))
                             {
-                                <MudCheckBox T="bool?" TriState="true" Label="@column.Title" Checked="@cell._valueNullBoolean" CheckedChanged="@cell.NullableBoolValueChangedAsync"
+                                <MudCheckBox T="bool?" TriState="true" Label="@column.Title" Checked="@cell._valueNullableBoolean" CheckedChanged="@cell.NullableBoolValueChangedAsync"
                                              Color="Color.Primary" Disabled="@(!column.IsEditable || ReadOnly)" />
                             }
                         }
@@ -377,7 +377,7 @@
                         {
                             <MudCheckBox T="bool?"
                                          TriState="true"
-                                         Checked="@cell._valueNullBoolean"
+                                         Checked="@cell._valueNullableBoolean"
                                          CheckedChanged="@cell.NullableBoolValueChangedAsync"
                                          Color="Color.Primary" />
                         }
