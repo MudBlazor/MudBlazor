@@ -167,11 +167,6 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
-        if (!IsInitialized)
-        {
-            return;
-        }
-
         foreach (var holderKeyValuePair in _holders)
         {
             // We just remove them from the dictionary, we don't care to queue for "mudPopover.disconnect" as the "mudPopover.dispose" will do it for us
