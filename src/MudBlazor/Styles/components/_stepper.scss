@@ -104,6 +104,9 @@
 
     &.mud-stepperVertical {
 
+        .mud-stepper-nav {
+            padding: 8px 16px;
+        }
 
         .mud-stepper-nav-step {
             padding: 0;
@@ -125,7 +128,7 @@
         .mud-stepper-content {
             margin-left: 12px;
             padding-left: 20px;
-            padding-right: 8px;
+            padding-right: 0;
             border-left: 1px solid var(--mud-palette-lines-inputs);
         }
     }
