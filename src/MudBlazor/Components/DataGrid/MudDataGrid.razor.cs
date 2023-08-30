@@ -1408,9 +1408,9 @@ namespace MudBlazor
 
         internal void ToggleGroupExpansion(GroupDefinition<T> g)
         {
-            if (_groupExpansionsDict.ContainsKey(g.Grouping.Key))
+            if (_groupExpansionsDict.TryGetValue(g.Grouping.Key, out var value))
             {
-                _groupExpansionsDict[g.Grouping.Key] = !_groupExpansionsDict[g.Grouping.Key];
+                _groupExpansionsDict[g.Grouping.Key] = !value;
             }
  
             GroupItems();
