@@ -3,10 +3,6 @@
 @inherits MudComponentBase
 @implements IAsyncDisposable
 
-<div @attributes="UserAttributes" class="@Class" style="@Styles">
-    @ChildContent
-</div>
-
 @code {
     private Boolean _disposed;
 
@@ -71,16 +67,21 @@
         }
     }
 
-    protected string Styles => new StyleBuilder()
-        .AddStyle("display", Parent?.ActiveStep == this ? "contents" : "none")
+    internal string Styles => new StyleBuilder()
         .AddStyle(Style)
         .Build();
 
-    public string LabelIconClassname =>
-        new CssBuilder("mud-stepper-step-label-icon")
+    internal string LabelIconClassname =>
+        new CssBuilder("mud-stepper-nav-step-label-icon")
             .AddClass($"mud-{Parent?.CompletedStepColor.ToDescriptionString()}", Completed && Parent?.CompletedStepColor != Color.Default && Parent?.ActiveStep != this)
             .AddClass($"mud-{Parent?.CurrentStepColor.ToDescriptionString()}", Parent?.ActiveStep == this)
             .Build();
+    
+    internal string Classname => new CssBuilder("mud-stepper-content")
+        .AddClass(Parent?.StepClass, !string.IsNullOrEmpty(Parent?.StepClass))
+        .AddClass(Class)
+        .Build();
+
     
     public async ValueTask DisposeAsync()
     {

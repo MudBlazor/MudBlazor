@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,9 @@ public partial class MudStepper : MudComponentBase
 
     private HashSet<MudStepperStep> _skippedSteps = new();
 
+    /// <summary>
+    /// Active step of the Stepper, can be not selected
+    /// </summary>
     public MudStepperStep? ActiveStep { get; private set; }
 
     /// <summary>
@@ -46,11 +50,31 @@ public partial class MudStepper : MudComponentBase
     /// </summary>
     [Parameter]
     public Color ErrorStepColor { get; set; } = Color.Error;
+    
+    /// <summary>
+    /// Class for the navigation bar of the component
+    /// </summary>
+    [Parameter]
+    public string NavClass { get; set; }
 
-    [Parameter] public bool NonLinear { get; set; }
+    [Parameter]
+    public bool NonLinear { get; set; }
     
-    [Parameter] public bool Vertical { get; set; }
+    /// <summary>
+    /// Renders the component in vertical manner. Each step is collapsible
+    /// </summary>
+    [Parameter]
+    public bool Vertical { get; set; }
     
+    /// <summary>
+    /// Sets css class for all steps globally
+    /// </summary>
+    [Parameter]
+    public string StepClass { get; set; }
+    
+    /// <summary>
+    /// Renders labels for each step title below the circle
+    /// </summary>
     [Parameter]
     public bool AlternateLabel { get; set; }
 
@@ -61,7 +85,7 @@ public partial class MudStepper : MudComponentBase
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
-    public Func<StepperInteractionEventArgs, Task> OnPreviewInteraction { get; set; }
+    public Func<StepperInteractionEventArgs, Task>? OnPreviewInteraction { get; set; }
 
     #endregion
 
@@ -69,7 +93,14 @@ public partial class MudStepper : MudComponentBase
     public bool CanGoBack => _steps.Any() && _activeIndex > 0;
     public bool IsCompleted => _steps.Any() && _steps.All(x => x.Completed);
 
+    /// <summary>
+    /// Space for all the MudSteps
+    /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
+    
+    /// <summary>
+    /// This content is displayed when all steps are completed
+    /// </summary>
     [Parameter] public RenderFragment CompletedContent { get; set; }
 
     #region Children Handling
@@ -86,7 +117,7 @@ public partial class MudStepper : MudComponentBase
     {
         if (step == ActiveStep)
         {
-            //TODO: Fiddle with active indexes
+            //TODO: Fiddle with active indexes, this will be async
         }
         _steps.Remove(step);
         StateHasChanged();
@@ -113,7 +144,7 @@ public partial class MudStepper : MudComponentBase
             {
                 case StepInteractionType.Complete:
                     {
-                        stepToProcess.SetCompleted(true);
+                        await stepToProcess.SetCompleted(true);
 
                         if (_steps.Count - 1 != index)
                             index++;
@@ -197,8 +228,13 @@ public partial class MudStepper : MudComponentBase
 
     protected string Classname => new CssBuilder("mud-stepper")
         .AddClass("mud-stepperHorizontal", Vertical == false)
-        .AddClass("mud-stepperAlternateLabel", AlternateLabel)
+        .AddClass("mud-stepperVertical", Vertical)
+        .AddClass("mud-stepperAlternateLabel", AlternateLabel && !Vertical)
         .AddClass(Class)
+        .Build();
+
+    protected string NavClassname => new CssBuilder("mud-stepper-nav")
+        .AddClass(NavClass)
         .Build();
 
     #endregion
