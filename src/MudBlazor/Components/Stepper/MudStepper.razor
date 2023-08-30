@@ -2,66 +2,74 @@
 @using MudBlazor.Utilities
 @inherits MudComponentBase
 
-<div @attributes="@UserAttributes" class="@Classname" style="@Style" role="tablist">
-    @foreach (var step in _steps)
-    {
-        bool isActive = ActiveStep == step;
-        string stepClassname = new CssBuilder()
-            .AddClass("mud-stepper-step")
-            .AddClass("active", isActive)
-            .AddClass("mud-ripple", NonLinear)
-            .Build();
+<div @attributes="@UserAttributes" class="@Classname" style="@Style">
 
-        @if (NonLinear)
+    <div class="@NavClassname" role="tablist">
+        @foreach (var step in _steps)
         {
-            <div class="@stepClassname" role="tab" aria-controls="" aria-selected="@isActive"
-                 @onclick="@((e) => ProcessStep(step, e, StepInteractionType.Activate))">
-                @RenderStepLabel(step, isActive)
-            </div>
+            bool isActive = ActiveStep == step;
+            string stepClassname = new CssBuilder()
+                .AddClass("mud-stepper-nav-step")
+                .AddClass("active", isActive)
+                .AddClass("mud-ripple", NonLinear)
+                .Build();
+
+            @if (NonLinear)
+            {
+                <div class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@isActive"
+                     @onclick="@((e) => ProcessStep(step, e, StepInteractionType.Activate))">
+                    @RenderStepLabel(step, isActive)
+                </div>
+            }
+            else
+            {
+                <div class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@isActive">
+                    @RenderStepLabel(step, isActive)
+                </div>
+            }
+
+            if (Vertical)
+            {
+                @StepContent(step)
+            }
+
+            if (_steps[^1] != step)
+            {
+                <div class="mud-stepper-nav-connector">
+                    <div class="mud-stepper-nav-connector-line"></div>
+                </div>
+            }
+        }
+    </div>
+
+    @if (Vertical == false && ActiveStep is not null)
+    {
+        @StepContent(ActiveStep)
+    }
+    <CascadingValue Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+
+
+    <MudCardActions>
+        <MudButton OnClick="PreviousStep" Disabled="!CanGoBack">Previous</MudButton>
+        <MudSpacer/>
+        @if (!IsCompleted)
+        {
+            <MudButton OnClick="SkipCurrentStep" Disabled="!IsCurrentStepSkippable">Skip</MudButton>
+            <MudButton OnClick="CompleteCurrentStep" Color="Color.Primary">Next</MudButton>
         }
         else
         {
-            <div class="mud-stepper-step @(isActive ? "active" : "")" role="tab" aria-controls="" aria-selected="@isActive">
-                @RenderStepLabel(step, isActive)
-            </div>
+            <MudButton OnClick="Reset">Reset</MudButton>
         }
-
-        if (_steps[^1] != step)
-        {
-            <div class="mud-stepper-connector">
-                <div class="mud-stepper-connector-line"></div>
-            </div>
-        }
-    }
+    </MudCardActions>
 </div>
-
-<CascadingValue Value="this" IsFixed="true">
-    @ChildContent
-    @if (IsCompleted)
-    {
-        @CompletedContent
-    }
-</CascadingValue>
-
-
-<MudCardActions>
-    <MudButton OnClick="PreviousStep" Disabled="!CanGoBack">Previous</MudButton>
-    <MudSpacer/>
-    @if (!IsCompleted)
-    {
-        <MudButton OnClick="SkipCurrentStep" Disabled="!IsCurrentStepSkippable">Skip</MudButton>
-        <MudButton OnClick="CompleteCurrentStep" Color="Color.Primary">Next</MudButton>
-    }
-    else
-    {
-        <MudButton OnClick="Reset">Reset</MudButton>
-    }
-</MudCardActions>
 
 @code {
 
     RenderFragment RenderStepLabel(MudStepperStep step, bool isActive) =>
-        @<div class="mud-stepper-step-label">
+        @<div class="mud-stepper-nav-step-label">
             <div class="@step.LabelIconClassname">
                 @if (step.Completed)
                 {
@@ -72,7 +80,7 @@
                     <MudText Typo="Typo.caption">@(_steps.IndexOf(step) + 1)</MudText>
                 }
             </div>
-            <div class="mud-stepper-step-label-content">
+            <div class="mud-stepper-nav-step-label-content">
                 <MudText Typo="@(isActive ? Typo.subtitle2 : Typo.body2)" Color="Color.Default"
                          Style="line-height: var(--mud-typography-body2-lineheight)">
                     @step.Title
@@ -82,6 +90,20 @@
                     <MudText Typo="Typo.caption">@step.SecondaryText</MudText>
                 }
             </div>
+        </div>;
+
+    RenderFragment StepContent(MudStepperStep step) =>
+        @<div @attributes="UserAttributes" class="@step.Classname" style="@step.Styles" role="tabpanel" aria-labelledby="@step.Title" tabindex="0">
+            @if (Vertical)
+            {
+                <MudCollapse Expanded="step == ActiveStep">
+                    @step.ChildContent
+                </MudCollapse>
+            }
+            else
+            {
+                @step.ChildContent
+            }
         </div>;
 
 }

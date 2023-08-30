@@ -1,88 +1,132 @@
 ﻿
 
 .mud-stepper {
-    display: flex;
 
-    .mud-stepper-step {
-        padding: 24px;
-        position: relative;
+    .mud-stepper-nav {
 
-        .mud-stepper-step-label {
-            display: flex;
-            align-items: center;
-            flex-direction: row;
-            height: 100%;
+        .mud-stepper-nav-step {
+            padding: 24px;
+            position: relative;
 
-            .mud-stepper-step-label-icon {
-                flex-shrink: 0;
+            .mud-stepper-nav-step-label {
                 display: flex;
-                color: var(--mud-palette-white);
-                border-radius: 50%;
-                background-color: var(--mud-palette-text-disabled);
-                height: 24px;
-                width: 24px;
                 align-items: center;
-                justify-content: center;
-                //horizontal has this margin
-                margin-right: 8px;
+                flex-direction: row;
+                height: 100%;
+
+                .mud-stepper-nav-step-label-icon {
+                    flex-shrink: 0;
+                    display: flex;
+                    color: var(--mud-palette-white);
+                    border-radius: 50%;
+                    background-color: var(--mud-palette-text-disabled);
+                    height: 24px;
+                    width: 24px;
+                    align-items: center;
+                    justify-content: center;
+                    //horizontal has this margin
+                    margin-right: 8px;
+                }
+
+                .mud-stepper-nav-step-label-content {
+                    width: 100%;
+                    color: var(--mud-palette-text-secondary);
+                }
             }
 
-            .mud-stepper-step-label-content {
-                width: 100%;
-                color: var(--mud-palette-text-secondary);
-            }
-        }
+            &.active {
 
-        &.active {
-
-            .mud-stepper-step-label-content {
-                color: var(--mud-palette-text-primary);
+                .mud-stepper-nav-step-label-content {
+                    color: var(--mud-palette-text-primary);
+                }
             }
         }
     }
 
-    .mud-stepper-connector {
-        flex: 1 1 auto;
-        //horizontal has this margin
-        align-self: center;
-        margin: 0 -16px;
+    .mud-stepper-content {
+        padding: 0 24px;
+    }
 
-        .mud-stepper-connector-line {
+
+
+    .mud-stepper-nav-connector {
+        flex: 1 1 auto;
+
+        .mud-stepper-nav-connector-line {
             display: block;
             border-color: var(--mud-palette-lines-inputs);
-            border-top-style: solid;
-            border-top-width: 1px;
         }
     }
 
     &.mud-stepperHorizontal {
 
-        &.mud-stepperAlternateLabel {
-            height: unset;
+        .mud-stepper-nav {
+            display: flex;
+        }
 
-            .mud-stepper-step {
+        &.mud-stepperAlternateLabel {
+
+            .mud-stepper-nav-step {
                 flex-basis: 175px;
             }
 
-            .mud-stepper-step-label {
+            .mud-stepper-nav-step-label {
                 flex-direction: column;
                 justify-content: flex-start;
                 align-items: center;
 
-                .mud-stepper-step-label-icon {
+                .mud-stepper-nav-step-label-icon {
                     margin-right: 0px !important;
                 }
 
-                .mud-stepper-step-label-content {
+                .mud-stepper-nav-step-label-content {
                     margin-top: 12px;
                     text-align: center;
                 }
             }
 
-            .mud-stepper-connector {
+            .mud-stepper-nav-connector {
                 margin: 35px -67px 0;
                 align-self: flex-start;
             }
+        }
+
+        .mud-stepper-nav-connector {
+            align-self: center;
+            margin: 0 -16px;
+
+            .mud-stepper-nav-connector-line {
+                border-top-style: solid;
+                border-top-width: 1px;
+            }
+        }
+    }
+
+    &.mud-stepperVertical {
+
+
+        .mud-stepper-nav-step {
+            padding: 0;
+
+            .mud-stepper-nav-step-label {
+                padding: 8px 0px;
+            }
+        }
+
+        .mud-stepper-nav-connector {
+            margin-left: 12px;
+
+            .mud-stepper-nav-connector-line {
+                border-left: 1px solid rgb(189, 189, 189);
+                min-height: 24px;
+            }
+        }
+
+        .mud-stepper-content {
+            margin-left: 12px;
+            padding-left: 20px;
+            padding-right: 8px;
+            border-left: 1px solid var(--mud-palette-lines-inputs);
         }
     }
 }

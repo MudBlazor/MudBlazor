@@ -9,4 +9,5 @@ public enum StepInteractionType
     Activate,
     Complete,
     Skip,
+    Reset
 }
