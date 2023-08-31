@@ -115,8 +115,9 @@ namespace MudBlazor
         public string InputStyle { get; set; }
 
         /// <summary>
-        /// Represents the maximum number of files that can be selected at one time
-        /// in the file dialog. It does not limit the total number of uploaded files
+        /// Represents the maximum number of files that can retrieved from the internal call to
+        /// InputFileChangeEventArgs.GetMultipleFiles().
+        /// It does not limit the total number of uploaded files
         /// when AppendMultipleFiles="true". A limit should be validated manually, for
         /// example in the FilesChanged event callback. 
         /// </summary>
