@@ -41,6 +41,27 @@ else
     public string Icon { get; set; }
 
     /// <summary>
+    /// The color of the icon. It supports the theme colors.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Appearance)]
+    public Color? IconColor { get; set; }
+
+    /// <summary>
+    /// The Icon Size.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.FormComponent.Appearance)]
+    public Size IconSize { get; set; } = Size.Medium;
+
+    /// <summary>
+    /// The viewbox size of an svg element.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Icon.Behavior)]
+    public string ViewBox { get; set; } = "0 0 24 24";
+
+    /// <summary>
     /// If true, the tabpanel will be disabled.
     /// </summary>
     [Parameter]
