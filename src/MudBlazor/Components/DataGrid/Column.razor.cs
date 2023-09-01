@@ -125,6 +125,7 @@ namespace MudBlazor
 
         [Parameter] public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
 
+        [Parameter] public RenderFragment<IFilterDefinition<T>> SimpleFilterTemplate { get; set; }
         public string Identifier { get; set; }
         
 

@@ -66,7 +66,7 @@
                                     <MudGrid Spacing="0">
                                         @foreach (var f in FilterDefinitions)
                                         {
-                                            @Filter(f, null)
+                                            @Filter(f, f.Column)
                                         }
                                     </MudGrid>
                                     <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">@Localizer["MudDataGrid.AddFilter"]</MudButton>
@@ -398,7 +398,23 @@
                 var filter = new Filter<T>(this, filterDefinition, column);
                 var fieldType = filterDefinition.FieldType;
             }
-            @if (column is null)
+            @if (column != null && FilterMode == DataGridFilterMode.Simple && column.SimpleFilterTemplate != null)
+            {
+                <MudItem xs="1" Class="d-flex">
+                    <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end"></MudIconButton>
+                </MudItem>
+                <MudItem xs="4">
+                    <MudSelect T="Column<T>" Value="@filterDefinition.Column" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="@Localizer["MudDataGrid.Column"]" Dense="true" Margin="@Margin.Dense"
+                               Class="filter-field">
+                    @foreach (var renderColumn in RenderedColumns.Where(x => x.Filterable != false) ?? Enumerable.Empty<Column<T>>())
+                        {
+                            <MudSelectItem T="Column<T>" Value="@renderColumn">@renderColumn.Title</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                @column.SimpleFilterTemplate(filterDefinition)
+            }
+            else if (column is null || FilterMode == DataGridFilterMode.Simple)
             {
                 <MudItem xs="1" Class="d-flex">
                     <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end"></MudIconButton>
