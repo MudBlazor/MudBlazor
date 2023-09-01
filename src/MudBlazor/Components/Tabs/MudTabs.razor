@@ -87,18 +87,14 @@
         }
         else
         {
-            if (!string.IsNullOrWhiteSpace(panel.Text))
+            var hasText = !string.IsNullOrWhiteSpace(panel.Text);
+            if (!string.IsNullOrWhiteSpace(panel.Icon))
             {
-                if (!string.IsNullOrWhiteSpace(panel.Icon))
-                {
-                    <MudIcon Icon="@panel.Icon" ViewBox="@panel.ViewBox" Color="@(panel.IconColor.HasValue ? panel.IconColor.Value : IconColor)" Size="@panel.IconSize" Class="mud-tab-icon-text" />
-                }
+                <MudIcon Icon="@panel.Icon" ViewBox="@panel.IconViewBox" Color="@(panel.IconColor.HasValue ? panel.IconColor.Value : IconColor)"
+                         Size="@panel.IconSize" Class="@(hasText ? "mud-tab-icon-text" : null)" />
+            }
+            if (hasText)
                 @panel.Text
-            }
-            else if (!string.IsNullOrWhiteSpace(panel.Icon))
-            {
-                <MudIcon Icon="@panel.Icon" ViewBox="@panel.ViewBox" Color="@(panel.IconColor.HasValue ? panel.IconColor.Value : IconColor)" Size="@panel.IconSize" />
-            }
         }
         @if (panel.BadgeData != null || panel.BadgeDot)
         {

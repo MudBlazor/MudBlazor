@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -1263,6 +1264,27 @@ namespace MudBlazor.UnitTests.Components
             tabs[0].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeTrue();
             tabs[1].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeFalse(); // The close icon is not shown.
             tabs[2].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeTrue();
+        }
+
+        [Test]
+        public void TabPanel_IconAppearance_Test()
+        {
+            var comp = Context.RenderComponent<TabsIconAndTextExample>();
+            var svgIcons = comp.FindAll("div.mud-tabs>>svg");
+
+            // 1st TabPanel Icon
+            svgIcons[0].ClassList.Should().Contain("mud-tab-icon-text");
+            svgIcons[0].ClassList.Should().Contain("mud-icon-size-medium");
+            svgIcons[0].OuterHtml.Contains("viewBox=\"0 0 23 23\"");
+
+            // 2nd TabPanel Icon
+            svgIcons[1].ClassList.Should().Contain("mud-success-text");
+            svgIcons[1].ClassList.Should().Contain("mud-icon-size-small");
+            svgIcons[1].OuterHtml.Contains("viewBox=\"0 0 24 24\"");
+
+            // 3rd TabPanel Icon
+            svgIcons[2].ClassList.Should().Contain("mud-error-text");
+            svgIcons[2].ClassList.Should().Contain("mud-icon-size-large");
         }
     }
 }
