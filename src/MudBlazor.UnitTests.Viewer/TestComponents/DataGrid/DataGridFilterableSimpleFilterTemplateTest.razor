@@ -1,0 +1,47 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudDataGrid Items="@_items" Filterable="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name">
+            <SimpleFilterTemplate>
+                <MudItem xs="3">
+                    <MudSelect @bind-Value="context.Operator" FullWidth="true" Label="Operator" Dense="true" Margin="@Margin.Dense"
+                               Class="filter-operator">
+                        @foreach (var fieldOperator in operators_local)
+                        {
+                            <MudSelectItem Value="@fieldOperator">@fieldOperator</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="4">
+                    <MudTextField T="string" ValueChanged="@(x => context.Value = x)" FullWidth="true" Label="Value" Placeholder="FilterValue" Margin="@Margin.Dense"
+                                  Immediate="true" Class="filter-input" />
+                </MudItem>
+            </SimpleFilterTemplate>
+        </PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "SimpleFilterTemplate test";
+    string[] operators_local = new string[] { "contains", "not contains" };
+    private IEnumerable<Item> _items = new List<Item>()
+    {
+        new Item("B"), 
+        new Item("A"), 
+        new Item("C"),
+        new Item("C")
+    };
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+
+}
