@@ -3740,7 +3740,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridGroupExpandedTest()
+        public async Task DataGridGroupExpandedTrueTest()
         {
             var comp = Context.RenderComponent<DataGridGroupExpandedTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
@@ -3754,11 +3754,11 @@ namespace MudBlazor.UnitTests.Components
                 comp.Instance.AddFruit());
             // datagrid should be expanded with the new category
             dataGrid.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(5);
         }
 
         [Test]
-        public async Task DataGridGroupExpandedAsyncTest()
+        public async Task DataGridGroupExpandedTrueAsyncTest()
         {
             var comp = Context.RenderComponent<DataGridGroupExpandedAsyncTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedAsyncTest.Fruit>>();
@@ -3772,11 +3772,11 @@ namespace MudBlazor.UnitTests.Components
                 comp.Instance.AddFruit());
             // datagrid should be expanded with the new category
             dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(3));
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(5));
         }
-
+        
         [Test]
-        public async Task DataGridGroupExpandedServerDataTest()
+        public async Task DataGridGroupExpandedTrueServerDataTest()
         {
             var comp = Context.RenderComponent<DataGridGroupExpandedServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedServerDataTest.Fruit>>();
@@ -3789,7 +3789,60 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.AddFruit());
             // datagrid should be expanded with the new category
             dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(3));
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(5));
+        }
+
+        [Test]
+        public async Task DataGridGroupExpandedFalseTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupExpandedFalseTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseTest.Fruit>>();
+
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
+            comp.Instance.ExpandAllGroups();
+            dataGrid.Render();
+            // after all groups are expanded
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
+            await comp.InvokeAsync(() =>
+                comp.Instance.AddFruit());
+            // datagrid should be collapsed with the new category
+            dataGrid.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(8);
+        }
+
+        [Test]
+        public async Task DataGridGroupExpandedFalseAsyncTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupExpandedFalseAsyncTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseAsyncTest.Fruit>>();
+
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
+            dataGrid.Instance.ExpandAllGroups();
+            dataGrid.Render();
+            // after all groups are expanded
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
+            await comp.InvokeAsync(() =>
+                comp.Instance.AddFruit());
+            // datagrid should be collapsed with the new category
+            dataGrid.Render();
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(8));
+        }
+        
+        [Test]
+        public async Task DataGridGroupExpandedFalseServerDataTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupExpandedFalseServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseServerDataTest.Fruit>>();
+
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
+            dataGrid.Instance.ExpandAllGroups();
+            dataGrid.Render();
+            // after all groups are expanded
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
+            await comp.InvokeAsync(() => comp.Instance.AddFruit());
+            // datagrid should be collapsed with the new category
+            dataGrid.Render();
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(8));
         }
 
         [Test]
