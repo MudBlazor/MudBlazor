@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -257,6 +258,25 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item").Count.Should().Be(4);
             comp.FindAll("div.mud-list-item")[3].Click();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
+        }
+
+        [Test]
+        public async Task IsOpenChanged_InvokedWhenOpened_CheckTrueInvocationCountIsOne()
+        {
+            var comp = Context.RenderComponent<MenuIsOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Menu.OpenMenu(EventArgs.Empty));
+            comp.Instance.TrueInvocationCount.Should().Be(1);
+            comp.Instance.FalseInvocationCount.Should().Be(0);
+        }
+        
+        [Test]
+        public async Task IsOpenChanged_InvokedWhenClosed_CheckTrueInvocationCountIsOneClickFalseInvocationCountIsOne()
+        {
+            var comp = Context.RenderComponent<MenuIsOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Menu.OpenMenu(EventArgs.Empty));
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Menu.CloseMenu());
+            comp.Instance.TrueInvocationCount.Should().Be(1);
+            comp.Instance.FalseInvocationCount.Should().Be(1);
         }
     }
 }
