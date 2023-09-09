@@ -429,7 +429,7 @@
         }
 
         .mud-table-row {
-            display: initial;
+            display: revert;
 
             .mud-table-cell:last-child {
                 border-bottom: 1px solid var(--mud-palette-table-lines);
