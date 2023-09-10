@@ -310,7 +310,7 @@ namespace MudBlazor
 
         protected override int GetCalendarYear(DateTime yearDate)
         {
-            var date = DateRange.Start ?? DateTime.Today;
+            var date = DateRange?.Start ?? DateTime.Today;
             var diff = Culture.Calendar.GetYear(date) - Culture.Calendar.GetYear(yearDate);
             var calenderYear = Culture.Calendar.GetYear(date);
             return calenderYear - diff;
