@@ -6,18 +6,19 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.VisualBasic;
-using MudBlazor.Extensions;
-using MudBlazor.Internal;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudPagination : MudComponentBase
     {
-        #region Css Classes
+        private int _count = 1;
+        private int _selected = 1;
+        private int _middleCount = 3;
+        private int _boundaryCount = 2;
+        private bool _selectedFirstSet;
 
         private string Classname =>
             new CssBuilder("mud-pagination")
@@ -38,11 +39,8 @@ namespace MudBlazor
                 .AddClass("mud-pagination-item-selected")
                 .Build();
 
-        #endregion
-
-        #region Parameter
-
-        private int _count = 1;
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
 
         /// <summary>
         /// The number of pages.
@@ -59,8 +57,6 @@ namespace MudBlazor
             }
         }
 
-        private int _boundaryCount = 2;
-
         /// <summary>
         /// The number of items at the start and end of the pagination.
         /// </summary>
@@ -75,8 +71,6 @@ namespace MudBlazor
             }
         }
 
-        private int _middleCount = 3;
-
         /// <summary>
         /// The number of items in the middle of the pagination.
         /// </summary>
@@ -90,9 +84,6 @@ namespace MudBlazor
                 _middleCount = Math.Max(1, value);
             }
         }
-
-        private bool _selectedFirstSet;
-        private int _selected = 1;
 
         /// <summary>
         /// The selected page number.
@@ -230,12 +221,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Pagination.Appearance)]
         public string LastIcon { get; set; } = Icons.Material.Filled.LastPage;
 
-        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
-
-        #endregion
-
-        #region Methods
-
         /*generates an array representing the pagination numbers, e.g. for Count==11, MiddleCount==3, BoundaryCount==1,
          Selected==6 the output will be the int array [1, 2, -1, 5, 6, 7, -1, 10, 11]
          -1 is displayed as "..." in the ui*/
@@ -261,7 +246,7 @@ namespace MudBlazor
             }
 
             //calculate start value for middle items
-            var startValue = 0;
+            int startValue;
             if (Selected <= BoundaryCount + MiddleCount / 2 + 1)
                 startValue = BoundaryCount + 2;
             else if (Selected >= Count - BoundaryCount - MiddleCount / 2)
@@ -324,7 +309,5 @@ namespace MudBlazor
         {
             Selected = pageIndex + 1;
         }
-
-        #endregion
     }
 }

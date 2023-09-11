@@ -126,7 +126,7 @@ namespace MudBlazor
         /// If true, instead of positioning the menu at the left upper corner, position at the exact cursor location.
         /// This makes sense for larger activators
         /// </summary>
-        [Obsolete("Use PositionAtCursor instead.",true)]
+        [Obsolete("Use PositionAtCursor instead.", true)]
         [Parameter]
         public bool PositionAtCurser
         {
@@ -246,17 +246,42 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Menu.PopupBehavior)]
         public RenderFragment ChildContent { get; set; }
+        
+        /// <summary>
+        /// Fired when the menu IsOpen property changes.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Menu.PopupBehavior)]
+        public EventCallback<bool> IsOpenChanged { get; set; }
 
         public string PopoverStyle { get; set; }
 
+        /// <summary>
+        /// Gets a value indicating whether the menu is currently open or not.
+        /// </summary>
+        public bool IsOpen
+        {
+            get { return _isOpen; }
+        }
+
+        /// <summary>
+        /// Closes the menu.
+        /// </summary>
         public void CloseMenu()
         {
             _isOpen = false;
             _isMouseOver = false;
             PopoverStyle = null;
             StateHasChanged();
+            IsOpenChanged.InvokeAsync(_isOpen);
         }
 
+        /// <summary>
+        /// Opens the menu.
+        /// </summary>
+        /// <param name="args">The arguments of the calling mouse event. If
+        /// <see cref="PositionAtCursor"/> is true, the menu will be positioned using the
+        /// coordinates in this parameter.</param>
         public void OpenMenu(EventArgs args)
         {
             if (Disabled)
@@ -264,6 +289,7 @@ namespace MudBlazor
             if (PositionAtCursor) SetPopoverStyle((MouseEventArgs)args);
             _isOpen = true;
             StateHasChanged();
+            IsOpenChanged.InvokeAsync(_isOpen);
         }
 
         // Sets the popover style ONLY when there is an activator

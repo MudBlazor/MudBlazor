@@ -1,5 +1,7 @@
 ﻿
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -7,12 +9,39 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
     public class TreeViewTest : BunitTest
     {
+        [Test]
+        public void TreeView_ClickWhileDisabled_DoesNotChangeSelection()
+        {
+            var comp = Context.RenderComponent<DisabledTreeViewTest>(new ComponentParameter[] { Parameter(nameof(MudTreeView<string>.Disabled), true) });
+            comp.Find("div.mud-treeview-item-content").Click();
+            comp.Instance.SelectedValue.Should().BeNull();
+
+            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            comp.Instance.SelectedValue.Should().BeNull();
+        }
+
+        [Test]
+        public void TreeView_ClickWhileActive_DoesChangeSelection()
+        {
+            var comp = Context.RenderComponent<DisabledTreeViewTest>(new ComponentParameter[] { Parameter(nameof(MudTreeView<string>.Disabled), false) });
+            comp.Find("div.mud-treeview-item-content").Click();
+            comp.Instance.SelectedValue.Should().NotBeNull();
+
+            // To reset
+            comp.Find("div.mud-treeview-item-content").Click();
+            comp.Instance.SelectedValue.Should().BeNull();
+
+            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            comp.Instance.SelectedValue.Should().NotBeNull();
+        }
+
         [Test]
         public void Collapsed_ClickOnArrowButton_CheckClose()
         {
@@ -186,5 +215,44 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.DeselectSecond());
             comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be(null));
         }
+        
+
+        [Test]
+        public async Task TreeViewItem_BodyContent()
+        {
+            var comp = Context.RenderComponent<TreeViewTest5>();
+            var treeView = comp.FindComponent<MudTreeView<TreeViewTest5.TreeItemData>>();
+            var treeViewItem = comp.FindComponents<MudTreeViewItem<TreeViewTest5.TreeItemData>>()[2];
+
+            comp.FindAll("ul.mud-treeview").Count.Should().Be(5);
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-content").Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-arrow").Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-icon").Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-bodycontent").Count.Should().Be(4);
+            comp.FindAll("button.mud-treeview-item-arrow-expand").Count.Should().Be(4);
+            comp.FindAll("p.mud-typography")[0].InnerHtml.MarkupMatches("This is item one");
+            comp.FindAll("p.mud-typography")[1].InnerHtml.MarkupMatches("This is item two");
+            comp.FindAll("p.mud-typography")[2].InnerHtml.MarkupMatches("This is item three");
+            comp.FindAll("p.mud-typography")[3].InnerHtml.MarkupMatches("This is item six");
+            comp.FindAll("div").Count.Should().Be(32);
+            comp.FindAll("button").Count.Should().Be(12);
+
+            // Test updating the treeview root.
+            comp.Instance.SimulateUpdateRoot = true;
+			treeView.SetParam("Items", await comp.Instance.LoadServerData(null));
+            comp.FindAll("p.mud-typography")[1].InnerHtml.MarkupMatches("This is item 2");
+
+            // Test reloading the treeview item.
+            comp.FindAll("button.mud-treeview-item-arrow-expand")[2].Click();
+            comp.FindAll("p.mud-typography")[3].InnerHtml.MarkupMatches("This is item four");
+            comp.FindAll("p.mud-typography")[4].InnerHtml.MarkupMatches("This is item five");
+
+            comp.Instance.SimulateUpdate3 = true;
+            await treeViewItem.InvokeAsync(treeViewItem.Instance.ReloadAsync);
+            comp.FindAll("p.mud-typography")[3].InnerHtml.MarkupMatches("This is item 4");
+            comp.FindAll("p.mud-typography")[4].InnerHtml.MarkupMatches("This is item 5");
+        }
+        
     }
 }

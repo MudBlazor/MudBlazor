@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Bordered="true">
+@*<MudDataGrid Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Bordered="true">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)">
@@ -27,7 +27,7 @@
         <Column T="Model" Field="@nameof(Model.Hired)" />
         <Column T="Model" Field="@nameof(Model.HiredOn)" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
@@ -70,19 +70,18 @@
             _selectedItems.Remove(item);
     }
 
-    private void ClearFilter(FilterContext<Model> context)
+    private async Task ClearFilterAsync(FilterContext<Model> context)
     {
         _selectedItems = _items.ToHashSet();
         _filterItems = _items.ToHashSet();
-        context.Actions.ClearFilter(_filterDefinition);
+        await context.Actions.ClearFilterAsync(_filterDefinition);
         _filterOpen = false;
     }
 
-    private void ApplyFilter(FilterContext<Model> context)
+    private async Task ApplyFilterAsync(FilterContext<Model> context)
     {
         _filterItems = _selectedItems.ToHashSet();
-        context.Actions.ApplyFilter(_filterDefinition);
+        await context.Actions.ApplyFilterAsync(_filterDefinition);
         _filterOpen = false;
     }
-
 }

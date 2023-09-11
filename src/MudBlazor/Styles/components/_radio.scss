@@ -26,6 +26,10 @@
         }
     }
 
+    &.mud-readonly, .mud-readonly:hover {
+        cursor: default;
+    }
+
     & .mud-radio-dense {
         padding: 4px;
     }

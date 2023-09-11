@@ -79,7 +79,7 @@ namespace MudBlazor.UnitTests.Components
             //Check user on blur implementation works
             var @switch = comp.FindComponent<MudSwitch<bool>>();
             @switch.Instance.Checked = true;
-            await comp.InvokeAsync(() => select.Instance.OnLostFocus(new FocusEventArgs()));
+            await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
             comp.WaitForAssertion(() => @switch.Instance.Checked.Should().Be(false));
         }
 
@@ -994,6 +994,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task SelectTest_KeyboardNavigation_MultiSelect_Focus()
+        {
+            var comp = Context.RenderComponent<MultiSelectTest6>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            var mudSelectElement = comp.Find(".mud-select");
+            comp.Find("div.mud-input-control").Click();
+            select.Instance._isOpen.Should().BeTrue();
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[0].Click();
+            items[2].Click();
+            //emulate focus out
+            mudSelectElement.FocusOut();
+            comp.WaitForAssertion(() => select.Instance.Text.Should().Be("Alaska, Alabama, American Samoa"));
+            //check if we received focus event from the MudSelect.OnFocusOutAsync
+            Context.JSInterop.VerifyFocusAsyncInvoke();
+        }
+
+        [Test]
         public async Task SelectTest_ItemlessSelect()
         {
             var comp = Context.RenderComponent<MudSelect<string>>();
@@ -1043,6 +1061,33 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
 
             sut.Instance.Items.Should().HaveCountGreaterOrEqualTo(4);
+        }
+
+        [Test]
+        public async Task Select_ValueChangeEventCountTest()
+        {
+            var comp = Context.RenderComponent<SelectEventCountTest>(x =>
+            {
+                x.Add(c => c.MultiSelection, false);
+            });
+            var select = comp.FindComponent<MudSelect<string>>();
+            var input = comp.Find("div.mud-input-control");
+
+            comp.Instance.ValueChangeCount.Should().Be(0);
+            comp.Instance.ValuesChangeCount.Should().Be(0);
+
+            await comp.InvokeAsync(() => select.SetParam("Value", "1"));
+            await comp.InvokeAsync(() => select.Instance.ForceUpdate());
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
+            comp.Instance.ValuesChangeCount.Should().Be(1);
+            select.Instance.Value.Should().Be("1");
+
+            // Changing value programmatically without ForceUpdate should change value, but should not fire change events
+            // Its by design, so this part can be change if design changes
+            await comp.InvokeAsync(() => select.SetParam("Value", "2"));
+            comp.WaitForAssertion(() => comp.Instance.ValueChangeCount.Should().Be(1));
+            comp.Instance.ValuesChangeCount.Should().Be(1);
+            select.Instance.Value.Should().Be("2");
         }
 
         /// <summary>

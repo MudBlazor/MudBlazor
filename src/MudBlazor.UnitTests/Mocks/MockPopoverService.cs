@@ -8,8 +8,9 @@ using Moq;
 namespace MudBlazor.UnitTests.Mocks
 {
     /// <summary>
-    /// Mock for scroll spy
+    /// Mock for popover
     /// </summary>
+    [Obsolete($"Use {nameof(MockPopoverServiceV2)}. This will be removed in v7.")]
     public class MockPopoverService : IMudPopoverService
     {
         private List<MudPopoverHandler> _handlers = new();

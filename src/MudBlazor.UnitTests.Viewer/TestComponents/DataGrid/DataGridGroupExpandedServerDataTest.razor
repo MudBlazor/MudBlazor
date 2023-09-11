@@ -1,0 +1,66 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid @ref="dataGrid" T="Fruit" ServerData="ServerDataFunc" Filterable="true" Hideable="true" Groupable="true"
+    GroupExpanded="true">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Fruits</MudText>
+        <MudSpacer />
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Title="Name" Filterable="false" Groupable="false" />
+        <PropertyColumn Property="x => x.Count" />
+        <PropertyColumn Property="x => x.Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
+            <GroupTemplate>
+                <span style="font-weight:bold">Category: @context.Grouping.Key</span>
+            </GroupTemplate>
+        </PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudButton Class="expand-all" OnClick="@ExpandAllGroups" Color="@Color.Primary">Expand All</MudButton>
+    <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">Collapse All</MudButton>
+    <MudButton Class="add-button" OnClick="@AddFruit" Color="@Color.Primary">Add Fruit</MudButton>
+</div>
+
+@code {
+    MudDataGrid<Fruit> dataGrid;
+    public record Fruit(string Name, int Count, string Category);
+
+    List<Fruit> Fruits { get; set; } = new()
+    {
+        new("Apple", 2, "Pome"),
+        new("Pear", 4, "Pome"),
+        new("Orange", 4, "Citrus")
+    };
+
+    private async Task<GridData<Fruit>> ServerDataFunc(GridState<Fruit> gridState)
+    {
+        await Task.Delay(100);
+        return new GridData<Fruit>
+        {
+            Items = Fruits,
+            TotalItems = Fruits.Count()
+        };
+    }
+
+    Func<Fruit, object> _groupBy = x => 
+    {
+        return x.Category;
+    };
+
+    public void AddFruit()
+    {
+        Fruits.Add(new Fruit("Banana", 5, "Musa"));
+    }
+
+    public void ExpandAllGroups()
+    {
+        dataGrid?.ExpandAllGroups();
+    }
+
+    public void CollapseAllGroups()
+    {
+        dataGrid?.CollapseAllGroups();
+    }
+}

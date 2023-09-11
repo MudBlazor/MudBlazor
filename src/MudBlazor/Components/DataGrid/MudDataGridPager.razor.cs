@@ -67,8 +67,8 @@ namespace MudBlazor
             {
                 DataGrid.HasPager = true;
                 DataGrid.PagerStateHasChangedEvent += StateHasChanged;
-                var size = DataGrid._rowsPerPage ?? PageSizeOptions.First();
-                await DataGrid.SetRowsPerPageAsync(size);
+                var size = DataGrid._rowsPerPage ?? PageSizeOptions.FirstOrDefault();
+                await DataGrid.SetRowsPerPageAsync(size, false);
             }
         }
 

@@ -8,6 +8,8 @@ using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Moq;
+using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -113,6 +115,38 @@ namespace MudBlazor.UnitTests.Components
 
             // It should be equal to 4 = two rows + header row + loading row
             trs.Count.Should().Be(4);
+        }
+
+        /// <summary>
+        /// Ensure that when the loading switch is enabled,
+        /// a new row appears in the table header without affecting the table body.
+        /// </summary>
+        [Test]
+        public void LoadingSwitchAddsRowToHeaderWithoutAffectingBody()
+        {
+            // Render the component
+            var comp = Context.RenderComponent<TableLoadingTest>();
+
+            // Initial count of header and body rows
+            var initialHeaderRows = comp.FindAll("thead tr");
+            var initialBodyRows = comp.FindAll("tbody tr");
+
+            // Verify initial state: 1 row in the header and 2 rows in the body
+            initialHeaderRows.Count.Should().Be(1);
+            initialBodyRows.Count.Should().Be(2);
+
+            // Toggle the loading switch to the 'loading' state
+            var loadingSwitch = comp.Find("#switch");
+            loadingSwitch.Change(true);
+
+            // Count rows after toggling the switch
+            var updatedHeaderRows = comp.FindAll("thead tr");
+            var updatedBodyRows = comp.FindAll("tbody tr");
+
+            // Verify updated state:
+            // 2 rows in the header (original + loading row) and 2 rows in the body (unchanged)
+            updatedHeaderRows.Count.Should().Be(2);
+            updatedBodyRows.Count.Should().Be(2);
         }
 
         /// <summary>
@@ -233,6 +267,28 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(59);
         }
 
+        [Test]
+        public void TableFilterCachingTest()
+        {
+            var comp = Context.RenderComponent<TableFilterTest1>();
+            // print the generated html      
+            var table = comp.FindComponent<MudTable<string>>().Instance;
+            var searchString = comp.Find("#searchString");
+            table.FilteringRunCount.Should().Be(1);
+            // should return 3 items
+            searchString.Change("Ala");
+            table.FilteringRunCount.Should().Be(2);
+            // no matches
+            searchString.Change("ZZZ");
+            table.FilteringRunCount.Should().Be(3);
+            // should return 1 item
+            searchString.Change("Alaska");
+            table.FilteringRunCount.Should().Be(4);
+            // clear search
+            searchString.Change(string.Empty);
+            table.FilteringRunCount.Should().Be(5);
+        }
+
         /// <summary>
         /// simple navigation using the paging buttons
         /// </summary>
@@ -301,6 +357,19 @@ namespace MudBlazor.UnitTests.Components
             //navigate to specified page
             await table.InvokeAsync(() => table.Instance.NavigateTo(pageIndex));
             comp.FindAll("tr.mud-table-row")[0].TextContent.Should().Be(expectedFirstItem);
+        }
+
+        /// <summary>
+        /// page size option initial value test. Initial value should not be 10 since PageSizeOption is set to be new int[]{8, 16, 32}
+        /// </summary>
+        [Test]
+        public async Task TablePageSizeOptions()
+        {
+            var comp = Context.RenderComponent<TablePageSizeOptionsTest>();
+            // print the generated html      
+            // select elements needed for the test
+            var pager = comp.FindComponent<MudSelect<int>>().Instance;
+            pager.Value.Should().Be(8);
         }
 
         /// <summary>
@@ -501,6 +570,24 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(0);
         }
 
+        [Test]
+        public void TableMultiSelection_MultiGrouping_DefaultCheckboxStatesTest()
+        {
+            var comp = Context.RenderComponent<TableMultiSelection_MultiGrouping_DefaultCheckboxStatesTest>();
+            var mudTable = comp.Instance.MudTable;
+
+            // All row checkbox states must be false.
+            mudTable.Context.Rows.Count(r => r.Value.IsChecked).Should().Be(0);
+
+            // All grouprow checkbox states must be false.
+            mudTable.Context.GroupRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(14);
+
+            // The headerrow checkbox state must be false.
+            mudTable.Context.HeaderRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(1);
+
+            // The footerrow checkbox state must be false.
+            mudTable.Context.FooterRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(0);
+        }
 
         /// <summary>
         /// checking the header checkbox should select all items (all checkboxes on, all items in SelectedItems)
@@ -1003,6 +1090,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The table should not crash if its ServerData Items are null
+        /// </summary>
+        [Test]
+        public async Task TableServerSideDataNull()
+        {
+            var comp = Context.RenderComponent<TableServerSideDataTest6>();
+        }
+
+        /// <summary>
+        /// The table should not render its NoContent fragment prior to loading server data
+        /// </summary>
+        [Test]
+        public async Task TableServerDataLoadingTest()
+        {
+            var comp = Context.RenderComponent<TableServerDataLoadingTest>();
+            comp.Instance.NoRecordsHasRendered.Should().BeFalse();
+        }
+
+        /// <summary>
         /// The table should render the classes and style to the tr using the RowStyleFunc and RowClassFunc parameters
         /// </summary>
         [Test]
@@ -1032,6 +1138,23 @@ namespace MudBlazor.UnitTests.Components
         public class TableRowValidatorTest : TableRowValidator
         {
             public int ControlCount => _formControls.Count;
+        }
+
+        [Test]
+        public async Task TableInlineEdit_SetValidatorModel()
+        {
+            var comp = Context.RenderComponent<TableInlineEditTest>();
+            var validator = comp.Instance.Table.Validator;
+
+            var trs = comp.FindAll("tr");
+            trs.Count.Should().Be(4); // three rows + header row
+
+            trs[1].Click();
+            validator.Model.Should().Be("A");
+            trs[2].Click();
+            validator.Model.Should().Be("B");
+            trs[3].Click();
+            validator.Model.Should().Be("C");
         }
 
         [Test]
@@ -1654,7 +1777,7 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(2);
 
             inputs = comp.FindAll("input").ToArray();
-            inputs.Where(x => x.IsChecked()).Count().Should().Be(3);
+            inputs.Where(x => x.IsChecked()).Count().Should().Be(5);
 
             inputs[1].Change(false);
             table.SelectedItems.Count.Should().Be(0);
@@ -1730,6 +1853,29 @@ namespace MudBlazor.UnitTests.Components
             table.Context.GroupRows.Count.Should().Be(4); // 4 categories
             var tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(5); // 1 table header + 4 group headers
+        }
+
+        [Test]
+        public void ExpandAndCollapsAllGroupsTest()
+        {
+            var comp = Context.RenderComponent<TableGroupingTest>();
+            var table = comp.Instance.tableInstance;
+            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null) { GroupName = "Category", IsInitiallyExpanded = false, Expandable = true };
+            comp.Render();
+
+            // Header only since we have IsInitiallyExpanded = false
+            table.Context.GroupRows.Count.Should().Be(4);
+            comp.FindAll("tr").ToArray().Length.Should().Be(5); // 1 table header + 4 group headers
+
+            // Expand all groups
+            table.ExpandAllGroups();
+            comp.Render();
+            comp.FindAll("tr").ToArray().Length.Should().Be(18); // 1 table header + 4 group headers + 9 item rows + 4 group footers
+
+            // Collapse all groups
+            table.CollapseAllGroups();
+            comp.Render();
+            comp.FindAll("tr").ToArray().Length.Should().Be(5); // 1 table header + 4 group headers
         }
 
         /// <summary>

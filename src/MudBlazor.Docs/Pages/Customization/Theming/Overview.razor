@@ -24,6 +24,8 @@
                 <li><MudLink Href="/customization/typography">Typography</MudLink></li>
                 <li><MudText Inline="true">Layout Properties</MudText></li>
                 <li><MudLink Href="/customization/z-index">z-index</MudLink></li>
+                <li><MudText Inline="true">Pseudo CSS scope</MudText></li>
+                <li><MudLink Href="/customization/pseudocss">Pseudo CSS</MudLink></li>
             </ul>
             <MudText Class="mt-4">You can find all the <MudLink Href="/customization/default-theme" Color="Color.Secondary">Default Theme</MudLink> values under customization.</MudText>
         </DocsPageSection>
@@ -49,6 +51,13 @@
                 <Description>With <CodeInline>GetSystemPreference()</CodeInline> you can get the user defined dark theme preference. Returns <CodeInline>true</CodeInline> if dark mode is preferred.</Description>
             </SectionHeader>
             <SectionContent Code="OverviewThemesSystemPreferenceExample"/>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Watch system preference">
+                <Description><CodeInline>WatchSystemPreference(Func)</CodeInline> calls Func when the system preferences change. <CodeInline>true</CodeInline> if dark mode is preferred.</Description>
+            </SectionHeader>
+            <SectionContent Code="OverviewThemesWatchSystemPreferenceExample"/>
         </DocsPageSection>
         
         <DocsPageSection>

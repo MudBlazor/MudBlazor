@@ -53,6 +53,7 @@
         padding-left: 24px;
         padding-right: 24px;
         width: 100%;
+        min-width: 0;
 
         .mud-timeline-item-content {
             max-height: calc(50% - 48px);

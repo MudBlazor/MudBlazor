@@ -74,6 +74,9 @@ namespace MudBlazor
         /// </summary>
         protected override void OnInitialized()
         {
+            if (HasServerData)
+                Loading = true;
+
             if (Columns == null && RowTemplate == null && RowEditingTemplate == null)
             {
                 string[] quickcolumnslist = null;
@@ -347,27 +350,31 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Grouping)]
         public RenderFragment<TableGroupData<object, T>> GroupFooterTemplate { get; set; }
 
-        private IEnumerable<T> _preEditSort { get; set; } = null;
-        private bool _hasPreEditSort => _preEditSort != null;
+        private IEnumerable<T> _preEditSort;
+        private bool _currentRenderFilteredItemsCached;
+        private bool HasPreEditSort => _preEditSort != null;
+
+        /// <summary>
+        /// For unit testing the filtering cache mechanism.
+        /// </summary>
+        internal uint FilteringRunCount { get; private set; } = 0;
 
         public IEnumerable<T> FilteredItems
         {
             get
             {
-                if (IsEditing && _hasPreEditSort)
+                if (_currentRenderFilteredItemsCached) return _preEditSort;
+                if (IsEditing && HasPreEditSort)
                     return _preEditSort;
-                if (ServerData != null)
-                {
-                    _preEditSort = _server_data.Items.ToList();
-                    return _preEditSort;
-                }
-
-                if (Filter == null)
-                {
+                if (HasServerData)
+                    _preEditSort = _server_data.Items?.ToList();
+                else if (Filter == null)
                     _preEditSort = Context.Sort(Items).ToList();
-                    return _preEditSort;
-                }
-                _preEditSort = Context.Sort(Items.Where(Filter)).ToList();
+                else
+                    _preEditSort = Context.Sort(Items.Where(Filter)).ToList();
+
+                _currentRenderFilteredItemsCached = true;
+                unchecked { FilteringRunCount++; }
                 return _preEditSort;
             }
         }
@@ -378,7 +385,7 @@ namespace MudBlazor
             {
                 if (@PagerContent == null)
                     return FilteredItems; // we have no pagination
-                if (ServerData == null)
+                if (!HasServerData)
                 {
                     var filteredItemCount = GetFilteredItemsCount();
                     int lastPageNo;
@@ -398,7 +405,7 @@ namespace MudBlazor
             if (n < 0 || pageSize <= 0)
                 return Array.Empty<T>();
 
-            if (ServerData != null)
+            if (HasServerData)
                 return _server_data.Items;
 
             return FilteredItems.Skip(n * pageSize).Take(pageSize);
@@ -408,7 +415,7 @@ namespace MudBlazor
         {
             get
             {
-                if (ServerData != null)
+                if (HasServerData)
                     return (int)Math.Ceiling(_server_data.TotalItems / (double)RowsPerPage);
 
                 return (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
@@ -417,7 +424,7 @@ namespace MudBlazor
 
         public override int GetFilteredItemsCount()
         {
-            if (ServerData != null)
+            if (HasServerData)
                 return _server_data.TotalItems;
             return FilteredItems.Count();
         }
@@ -462,7 +469,9 @@ namespace MudBlazor
                 Context.Selection.Add(item);
             else
                 Context.Selection.Remove(item);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
+
+            if (SelectedItemsChanged.HasDelegate)
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
         internal override void OnHeaderCheckboxClicked(bool checkedState)
@@ -474,18 +483,11 @@ namespace MudBlazor
             }
             else
                 Context.Selection.Clear();
-            
-            Context.UpdateRowCheckBoxes(notify: false);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
-        }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-                await InvokeServerLoadFunc();
+            Context.UpdateRowCheckBoxes();
 
-            TableContext.UpdateRowCheckBoxes();
-            await base.OnAfterRenderAsync(firstRender);
+            if (SelectedItemsChanged.HasDelegate)
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
         /// <summary>
@@ -505,10 +507,11 @@ namespace MudBlazor
 
         internal override async Task InvokeServerLoadFunc()
         {
-            if (ServerData == null)
+            if (!HasServerData)
                 return;
 
             Loading = true;
+            await InvokeAsync(StateHasChanged);
             var label = Context.CurrentSortLabel;
 
             var state = new TableState
@@ -534,6 +537,14 @@ namespace MudBlazor
             base.OnAfterRender(firstRender);
             if (!firstRender)
                 Context?.PagerStateHasChanged?.Invoke();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
+                await InvokeServerLoadFunc();
+            TableContext.UpdateRowCheckBoxes(updateGroups: false);
         }
 
         /// <summary>
@@ -576,8 +587,35 @@ namespace MudBlazor
                     Context.Selection.Remove(item);
             }
 
-            Context.UpdateRowCheckBoxes(notify: false);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
+            Context.UpdateRowCheckBoxes();
+
+            if (SelectedItemsChanged.HasDelegate)
+                SelectedItemsChanged.InvokeAsync(SelectedItems);
+        }
+
+        public void ExpandAllGroups()
+        {
+            ToggleExpandGroups(expand: true);
+        }
+
+        public void CollapseAllGroups()
+        {
+            ToggleExpandGroups(expand: false);
+        }
+
+        private void ToggleExpandGroups(bool expand)
+        {
+            if (_groupBy is not null)
+            {
+                _groupBy.IsInitiallyExpanded = expand;
+                Context?.GroupRows.Where(gr => gr.GroupDefinition == _groupBy).ToList().ForEach(gr => gr.IsExpanded = _groupBy.IsInitiallyExpanded);
+            }
+        }
+
+        private string ClearFilterCache()
+        {
+            _currentRenderFilteredItemsCached = false; 
+            return ""; 
         }
     }
 }

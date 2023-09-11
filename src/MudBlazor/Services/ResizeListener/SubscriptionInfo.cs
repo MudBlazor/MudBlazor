@@ -7,6 +7,8 @@ using System.Collections.Generic;
 
 namespace MudBlazor.Services
 {
+#nullable enable
+    [Obsolete("This will be removed in v7.")]
     public class SubscriptionInfo<TAction,TOption>
     {
         private readonly Dictionary<Guid, Action<TAction>> _subscriptions;
@@ -21,7 +23,7 @@ namespace MudBlazor.Services
         public Guid AddSubscription(Action<TAction> action)
         {
             var id = Guid.NewGuid();
-            _subscriptions.Add(id, action);
+            _subscriptions.TryAdd(id, action);
 
             return id;
         }
@@ -30,7 +32,10 @@ namespace MudBlazor.Services
 
         public bool RemoveSubscription(Guid listenerId)
         {
-            _subscriptions.Remove(listenerId);
+            if (_subscriptions.ContainsKey(listenerId))
+            {
+                _subscriptions.Remove(listenerId);
+            }
             return _subscriptions.Count == 0;
         }
 
@@ -43,6 +48,7 @@ namespace MudBlazor.Services
         }
     }
 
+    [Obsolete("This will be removed in v7.")]
     public class ResizeServiceSubscriptionInfo : SubscriptionInfo<BrowserWindowSize,ResizeOptions>
     {
         public ResizeServiceSubscriptionInfo(ResizeOptions options) : base(options)
@@ -50,6 +56,7 @@ namespace MudBlazor.Services
         }
     }
 
+    [Obsolete("This will be removed in v7.")]
     public class BreakpointServiceSubscriptionInfo : SubscriptionInfo<Breakpoint, ResizeOptions>
     {
         public BreakpointServiceSubscriptionInfo(ResizeOptions options) : base(options)

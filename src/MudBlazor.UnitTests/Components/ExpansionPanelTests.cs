@@ -11,6 +11,21 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class ExpansionPanelTests : BunitTest
     {
+
+        [OneTimeSetUp]
+        public void Init()
+        {
+            AssertionOptions.FormattingOptions.MaxDepth = 100;
+            AssertionOptions.FormattingOptions.MaxLines = 5000;
+        }
+
+        [OneTimeTearDown]
+        public void Cleanup()
+        {
+            AssertionOptions.FormattingOptions.MaxDepth = 5;
+            AssertionOptions.FormattingOptions.MaxLines = 100;
+        }
+
         /// <summary>
         /// Expansion panel must expand and collapse in the right order
         /// Here we are open the first, then the third and then the second

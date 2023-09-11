@@ -26,7 +26,8 @@ else
 
 
     /// <summary>
-    /// Text will be displayed in the TabPanel as TabTitle.
+    /// Text will be displayed in the TabPanel as TabTitle. Text is no longer rendered
+    /// as a MarkupString, so use the TabContent RenderFragment instead for HTML content.
     /// </summary>
     [Parameter] 
     [Category(CategoryTypes.Tabs.Behavior)]
@@ -45,6 +46,13 @@ else
     [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
     public bool Disabled { get; set; }
+
+    /// <summary>
+    /// MudDynamicTabs: If true, shows the close icon in the TabPanel.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public bool ShowCloseIcon { get; set; } = true;
 
     /// <summary>
     /// Optional information to be showed into a badge

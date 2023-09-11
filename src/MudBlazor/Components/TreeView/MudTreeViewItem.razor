@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
 
@@ -14,7 +14,7 @@
 
             @if (MudTreeRoot != null && MudTreeRoot.MultiSelection)
             {
-                <MudCheckBox Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" @bind-Checked="IsChecked" Disabled="@Disabled"></MudCheckBox> 
+                <MudCheckBox Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" @bind-Checked="IsChecked" Disabled="@Disabled"></MudCheckBox>
             }
 
             @if (!string.IsNullOrEmpty(Icon))
@@ -23,23 +23,30 @@
                     <MudIcon Icon="@Icon" Color="@IconColor" />
                 </div>
             }
-            
-            <MudText Typo="@TextTypo" Class="@TextClassname">
-                @Text
-            </MudText>  
 
-            @if (!string.IsNullOrEmpty(EndText))
-            {            
-                <MudText Typo="@EndTextTypo" Class="@EndTextClass">
-                    @EndText
-                </MudText>  
-            }
-
-            @if (!string.IsNullOrEmpty(EndIcon))
+            @if (BodyContent != null)
             {
-                <div class="mud-treeview-item-icon">
-                    <MudIcon Icon="@EndIcon" Color="@EndIconColor" />
-                </div>
+                @BodyContent(this)
+            }
+            else
+            {
+                <MudText Typo="@TextTypo" Class="@TextClassname">
+                    @Text
+                </MudText>
+
+                @if (!string.IsNullOrEmpty(EndText))
+                {
+                    <MudText Typo="@EndTextTypo" Class="@EndTextClass">
+                        @EndText
+                    </MudText>
+                }
+
+                @if (!string.IsNullOrEmpty(EndIcon))
+                {
+                    <div class="mud-treeview-item-icon">
+                        <MudIcon Icon="@EndIcon" Color="@EndIconColor" />
+                    </div>
+                }
             }
         }
     </div>

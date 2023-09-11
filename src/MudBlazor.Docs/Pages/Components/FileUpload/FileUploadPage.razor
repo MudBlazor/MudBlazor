@@ -27,9 +27,10 @@
             <SectionHeader Title="Use any type of MudButton">
                 <Description>
                     Use a <CodeInline>MudButton</CodeInline>, a <CodeInline>MudIconButton</CodeInline> or a <CodeInline>MudFab</CodeInline> with the HtmlTag property set to "label" within the <CodeInline>ButtonTemplate</CodeInline> render fragment.
-                    Be sure to set the button's ID using the <CodeInline>&#64;context</CodeInline> parameter.
+                    Be sure to set the button's ID using the <CodeInline>&#64;context</CodeInline> parameter. <br />
+                    A <CodeInline>MudFileUpload</CodeInline> can be <CodeInline>Disabled</CodeInline> and it will Disable its child button automatically.
                 </Description>
-            </SectionHeader>
+            </SectionHeader> 
             <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadButtonExample">
                 <FileUploadButtonExample />
             </SectionContent>
@@ -81,6 +82,17 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadSelectedTemplateExample">
                 <FileUploadSelectedTemplateExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Append Multiple Files">
+                <Description>
+                    With <CodeInline>AppendMultipleFiles</CodeInline> set to true, when additional files are selected they will be appended to the existing list.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadAppendMultipleExample">
+                <FileUploadAppendMultipleExample />
             </SectionContent>
         </DocsPageSection>
 

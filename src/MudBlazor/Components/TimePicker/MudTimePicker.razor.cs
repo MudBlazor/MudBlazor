@@ -5,8 +5,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
-using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -44,18 +42,35 @@ namespace MudBlazor
             {
                 return time.TimeOfDay;
             }
-            else
+
+            var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
+            if (m.Success)
             {
-                var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
-                if (m.Success)
+                if (DateTime.TryParseExact(value, format12Hours, CultureInfo.InvariantCulture, DateTimeStyles.None,
+                        out time))
                 {
-                    return DateTime.ParseExact(value, format12Hours, CultureInfo.InvariantCulture).TimeOfDay;
-                }
-                else
-                {
-                    return DateTime.ParseExact(value, format24Hours, CultureInfo.InvariantCulture).TimeOfDay;
+                    return time.TimeOfDay;
                 }
             }
+            else
+            {
+                if (DateTime.TryParseExact(value, format24Hours, CultureInfo.InvariantCulture, DateTimeStyles.None,
+                        out time))
+                {
+                    return time.TimeOfDay;
+                }
+            }
+
+            HandleParsingError();
+            return null;
+        }
+
+        private void HandleParsingError()
+        {
+            const string ParsingErrorMessage = "Not a valid time span";
+            Converter.GetError = true;
+            Converter.GetErrorMessage = ParsingErrorMessage;
+            Converter.OnError?.Invoke(ParsingErrorMessage);
         }
 
         private bool _amPm = false;
@@ -91,6 +106,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool AutoClose { get; set; }
+
+        /// <summary>
+        /// Sets the number interval for minutes.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int MinuteSelectionStep { get; set; } = 1;
 
         /// <summary>
         /// If true, sets 12 hour selection clock.
@@ -161,7 +183,7 @@ namespace MudBlazor
                     await SetTextAsync(Converter.Set(_value), false);
                 UpdateTimeSetFromTime();
                 await TimeChanged.InvokeAsync(_value);
-                BeginValidate();
+                await BeginValidateAsync();
                 FieldChanged(_value);
             }
         }
@@ -194,7 +216,7 @@ namespace MudBlazor
 
         protected internal override void Submit()
         {
-            if (ReadOnly)
+            if (GetReadOnlyState())
                 return;
             Time = TimeIntermediate;
         }
@@ -228,7 +250,7 @@ namespace MudBlazor
         private void UpdateTime()
         {
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
-            if((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
+            if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
                 Submit();
             }
@@ -472,7 +494,11 @@ namespace MudBlazor
                     h = value + 12;
             }
             _timeSet.Hour = h;
-            UpdateTime();
+
+            if (_currentView == OpenTo.Hours)
+            {
+                UpdateTime();
+            }
 
             if (TimeEditMode == TimeEditMode.Normal)
             {
@@ -491,6 +517,7 @@ namespace MudBlazor
         {
             if (MouseDown)
             {
+                value = RoundToStepInterval(value);
                 _timeSet.Minute = value;
                 UpdateTime();
             }
@@ -501,9 +528,24 @@ namespace MudBlazor
         /// </summary>
         private void OnMouseClickMinute(int value)
         {
+            value = RoundToStepInterval(value);
             _timeSet.Minute = value;
             UpdateTime();
             SubmitAndClose();
+        }
+
+        private int RoundToStepInterval(int value)
+        {
+            if (MinuteSelectionStep > 1) // Ignore if step is less than or equal to 1
+            {
+                var interval = MinuteSelectionStep % 60;
+                value = (value + interval / 2) / interval * interval;
+                if (value == 60) // For when it rounds up to 60
+                {
+                    value = 0;
+                }
+            }
+            return value;
         }
 
         protected async void SubmitAndClose()
@@ -522,7 +564,7 @@ namespace MudBlazor
 
         protected internal override void HandleKeyDown(KeyboardEventArgs obj)
         {
-            if (Disabled || ReadOnly)
+            if (GetDisabledState() || GetReadOnlyState())
                 return;
             base.HandleKeyDown(obj);
             switch (obj.Key)
@@ -641,6 +683,8 @@ namespace MudBlazor
                     }
                     break;
             }
+
+            StateHasChanged();
         }
 
         protected void ChangeMinute(int val)

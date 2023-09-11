@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// Primitive component which allows rendering any HTML element we want
     /// through the HtmlTag property
@@ -15,7 +16,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Element.Misc)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// The HTML element that will be rendered in the root by the component
@@ -23,6 +24,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Element.Misc)]
         public string HtmlTag { get; set; } = "span";
+
         /// <summary>
         /// The ElementReference to bind to.
         /// Use like @bind-Ref="myRef"
@@ -31,7 +33,12 @@ namespace MudBlazor
         [Category(CategoryTypes.Element.Misc)]
         public ElementReference? Ref { get; set; }
 
-        [Parameter] public EventCallback<ElementReference> RefChanged { get; set; }
+        [Parameter]
+        public EventCallback<ElementReference> RefChanged { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool ClickPropagation { get; set; } = false;
 
         /// <summary>
         /// Calling StateHasChanged to refresh the component's state
@@ -61,7 +68,7 @@ namespace MudBlazor
 
             // StopPropagation
             // the order matters. This has to be before content is added
-            if (HtmlTag == "button")
+            if (HtmlTag == "button" && ClickPropagation == false)
                 builder.AddEventStopPropagationAttribute(5, "onclick", true);
 
             //Reference capture

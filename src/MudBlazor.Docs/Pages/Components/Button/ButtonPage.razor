@@ -64,7 +64,10 @@
         
         <DocsPageSection>
             <SectionHeader Title="Sizes">
-                <Description></Description>
+                <Description>
+                    The default button size is <CodeInline>Size.Medium</CodeInline> and, by default, the icon size uses the button size.
+                    <br />Use <CodeInline>IconSize</CodeInline> to set a different icon size.
+                </Description>
             </SectionHeader>
             <SectionContent Code="ButtonSizeExample" ShowCode="false">
                 <ButtonSizeExample/>
@@ -88,6 +91,16 @@
             </SectionHeader>
             <SectionContent Code="ButtonLinkExample" ShowCode="false">
                 <ButtonLinkExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Rel Content">
+                <Description>If you set a non-null string to <CodeInline>Rel</CodeInline> parameter, the component will add <CodeInline>rel</CodeInline> to the rendered button with the value you specified. This overrides the automatic addition of <CodeInline>rel="noopener"</CodeInline> when setting <CodeInline>Target</CodeInline> to <CodeInline>_blank</CodeInline>. If you want to preserve <CodeInline>noopener</CodeInline>, add it manually along with your custom <CodeInline>Rel</CodeInline> value, for example <CodeInline>rel="nofollow noopener"</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="ButtonNofollowExample" ShowCode="false">
+                <ButtonNofollowExample/>
             </SectionContent>
         </DocsPageSection>
         

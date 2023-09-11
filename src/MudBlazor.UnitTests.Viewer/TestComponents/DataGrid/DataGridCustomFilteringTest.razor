@@ -1,13 +1,13 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDataGrid Items="@_items" Filterable="true">
+<MudDataGrid Items="@_items" Filterable>
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)" />
-        <Column T="Model" Field="@nameof(Model.Age)" />
-        <Column T="Model" Field="@nameof(Model.Status)" />
-        <Column T="Model" Field="@nameof(Model.Hired)" />
-        <Column T="Model" Field="@nameof(Model.HiredOn)" />
+        <PropertyColumn Property="x => x.Name" Filterable="false" />
+        <PropertyColumn Property="x => x.Age" Filterable="false" />
+        <PropertyColumn Property="x => x.Status" Filterable="false" />
+        <PropertyColumn Property="x => x.Hired" />
+        <PropertyColumn Property="x => x.HiredOn" Filterable="false" />
     </Columns>
     <FilterTemplate>
         <MudSwitch T="bool" Color="@Color.Primary" Checked="FilterHired" Label="Show Hired" CheckedChanged="@((value) => FilterHiredToggled(value, context))"></MudSwitch>
@@ -27,22 +27,22 @@
 
     public bool FilterHired = false;
 
-    public void FilterHiredToggled(bool value, List<FilterDefinition<Model>> filters)
+    public async Task FilterHiredToggled(bool value, MudDataGrid<Model> dataGrid)
     {
         FilterHired = value;
 
         if (FilterHired)
         {
-            filters.Add(new FilterDefinition<Model>
+            await dataGrid.AddFilterAsync(new FilterDefinition<Model>
             {
-                Field = nameof(Model.Hired),
+                Column = dataGrid.GetColumnByPropertyName<Model>("Hired"),
                 Operator = FilterOperator.Boolean.Is,
                 Value = true
             });
         }
         else
         {
-            filters.Clear();
+            await dataGrid.ClearFiltersAsync();
         }
     }
 }

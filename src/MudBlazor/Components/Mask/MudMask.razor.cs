@@ -31,7 +31,7 @@ namespace MudBlazor
                 .AddClass("mud-shrink",
                     when: () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start ||
                                 !string.IsNullOrWhiteSpace(Placeholder))
-                .AddClass("mud-disabled", Disabled)
+                .AddClass("mud-disabled", GetDisabledState())
                 .AddClass("mud-input-error", HasErrors)
                 .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
                 .AddClass(Class)
@@ -67,7 +67,7 @@ namespace MudBlazor
         private ElementReference _elementReference1;
         private IJsEvent _jsEvent;
         private IKeyInterceptor _keyInterceptor;
-        
+
         [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         [Inject] private IJsEventFactory _jsEventFactory { get; set; }
@@ -194,7 +194,7 @@ namespace MudBlazor
         {
             try
             {
-                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || ReadOnly)
+                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || GetReadOnlyState())
                         return;
                 switch (e.Key)
                 {
@@ -336,7 +336,7 @@ namespace MudBlazor
 
         internal async void OnPaste(string text)
         {
-            if (text == null || ReadOnly)
+            if (text == null || GetReadOnlyState())
                 return;
             Mask.Insert(text);
             await Update();
@@ -352,9 +352,9 @@ namespace MudBlazor
             _isFocused = true;
         }
 
-        protected internal override void OnBlurred(FocusEventArgs obj)
+        protected internal override async Task OnBlurredAsync(FocusEventArgs obj)
         {
-            base.OnBlurred(obj);
+            await base.OnBlurredAsync(obj);
             _isFocused = false;
         }
 
@@ -399,23 +399,31 @@ namespace MudBlazor
 
         private void SetMask(IMask other)
         {
-            if (_mask == null || other == null || _mask?.GetType() != other?.GetType())
+            if (other == null)
             {
-                _mask = other;
-                if (_mask == null)
-                    _mask = new PatternMask("null ********"); // warn the user that the mask parameter is missing
+                // warn the user that the mask parameter is missing
+                _mask = new PatternMask("null ********");
                 return;
             }
 
-            // set new mask properties without loosing state
-            _mask.UpdateFrom(other);
+            if (_mask.GetType() == other.GetType())
+            {
+                // update mask while retaining current state
+                _mask.UpdateFrom(other);
+                return;
+            }
+
+            // swap masks while retaining text
+            // note: this is required for `BaseMask` instances other than `PatternMask` to work as expected
+            other.SetText(Text);
+            _mask = other;
         }
 
         private async void OnCut(ClipboardEventArgs obj)
         {
-            if (ReadOnly)
+            if (GetReadOnlyState())
                 return;
-            
+
             if (_selection!=null)
                 Mask.Delete();
             await Update();
@@ -427,15 +435,16 @@ namespace MudBlazor
 
             if (disposing == true)
             {
-                _jsEvent?.Dispose();
-
                 if (_keyInterceptor != null)
                 {
                     _keyInterceptor.KeyDown -= HandleKeyDownInternally;
-                    _keyInterceptor.Dispose();
                 }
 
-                _keyInterceptor?.Dispose();
+                if (IsJSRuntimeAvailable)
+                {
+                    _jsEvent?.Dispose();
+                    _keyInterceptor?.Dispose();
+                }
             }
         }
     }

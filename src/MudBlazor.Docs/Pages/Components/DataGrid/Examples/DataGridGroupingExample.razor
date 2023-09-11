@@ -3,19 +3,19 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid @ref="dataGrid" MultiSelection="true" Items="@Elements" Sortable="true" Filterable="true"
+<MudDataGrid @ref="dataGrid" MultiSelection="true" Items="@Elements" Filterable="true"
     Hideable="true" Groupable="true" GroupExpanded="false" GroupClassFunc="GroupClassFunc">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudSpacer />
     </ToolBarContent>
     <Columns>
-        <Column T="Element" Field="Number" Title="Nr" Filterable="false" Groupable="false" />
-        <Column T="Element" Field="Sign" />
-        <Column T="Element" Field="Name" />
-        <Column T="Element" Field="Position" />
-        <Column T="Element" Field="Molar" Title="Molar mass" />
-        <Column T="Element" Field="Group" Title="Category" Grouping="true" GroupBy="@_groupBy" >
+        <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" Groupable="false" />
+        <PropertyColumn Property="x => x.Sign" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Position" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <PropertyColumn Property="x => x.Group" Title="Category" Grouping GroupBy="@_groupBy">
             <GroupTemplate>
                 @if (_customizeGroupTemplate)
                 {
@@ -26,7 +26,7 @@
                     <span style="font-weight:bold">Category: @context.Grouping.Key</span>
                 }
             </GroupTemplate>
-        </Column>
+        </PropertyColumn>
     </Columns>
     <PagerContent>
         <MudDataGridPager T="Element" />
@@ -34,7 +34,7 @@
 </MudDataGrid>
 
 <div class="d-flex flex-wrap mt-4">
-    <MudSwitch @bind-Checked="_customizeGroupTemplate" Color="@Color.Primary">Customize Group Template</MudSwitch>
+    <MudSwitch T="bool" @bind-Checked="_customizeGroupTemplate" Color="@Color.Primary">Customize Group Template</MudSwitch>
     <MudSwitch T="bool" Checked="@_customizeGroupBy" Color="@Color.Primary" CheckedChanged="@CustomizeByGroupChanged">Customize Group By</MudSwitch>
     <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary">Expand All</MudButton>
     <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">Collapse All</MudButton>
@@ -49,19 +49,13 @@
     Func<Element, object> _groupBy = x => 
     {
         if (_customizeGroupBy)
-        {
-            if (_nonmetals.Contains(x.Sign))
-                return "Nonmetal";
-
-            return "Metal";
-        }
-
+            return _nonmetals.Contains(x.Sign) ? "Nonmetal":  "Metal";
         return x.Group;
     };
 
     private string GroupClassFunc(GroupDefinition<Element> item)
     {
-        return (string)item.Grouping.Key == "Nonmetal" || (string)item.Grouping.Key == "Other"
+        return item.Grouping.Key?.ToString() == "Nonmetal" || item.Grouping.Key?.ToString() == "Other"
                 ? "mud-theme-warning"
                 : string.Empty;
     }

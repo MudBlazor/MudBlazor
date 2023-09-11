@@ -25,15 +25,15 @@
                 @attributes="UserAttributes"
                 type="@InputTypeString"                  
                 placeholder="@Placeholder" 
-                disabled=@Disabled 
-                readonly="@ReadOnly" 
+                disabled=@GetDisabledState() 
+                readonly="@GetReadOnlyState()" 
                 inputmode="@InputMode.ToString()"
 			    @oninput="OnInput" 
                 @onchange="OnChange" 
-                @onblur="@OnBlurred" 
-                @onkeydown="@InvokeKeyDown" 
+                @onblur="@OnBlurredAsync" 
+                @onkeydown="@InvokeKeyDownAsync" 
                 @onkeypress="@InvokeKeyPress" 
-                @onkeyup="@InvokeKeyUp" 
+                @onkeyup="@InvokeKeyUpAsync" 
                 @onpaste="@OnPaste" 
                 value="@_internalText" 
                 maxlength="@MaxLength"
@@ -60,14 +60,14 @@
                 @oninput="OnInput" 
                 @onchange="OnChange"
                 placeholder="@Placeholder" 
-                disabled=@Disabled 
-                readonly="@ReadOnly" 
-                @onblur="@OnBlurred" 
+                disabled=@GetDisabledState()
+                readonly="@GetReadOnlyState()"
+                @onblur="@OnBlurredAsync" 
                 inputmode="@InputMode.ToString()" 
                 pattern="@Pattern"
-                @onkeydown="@InvokeKeyDown" 
+                @onkeydown="@InvokeKeyDownAsync" 
                 @onkeypress="@InvokeKeyPress" 
-                @onkeyup="@InvokeKeyUp" 
+                @onkeyup="@InvokeKeyUpAsync" 
                 maxlength="@MaxLength"
                 @onkeydown:preventDefault="KeyDownPreventDefault" 
                 @onkeypress:preventDefault="@KeyPressPreventDefault" 
@@ -79,13 +79,13 @@
          />
 	     @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
       
-         @if (Disabled) {
+         @if (GetDisabledState()) {
              @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.
                            In Disabled state the tabindex attribute must NOT be set at all or else it will get focus on click
              *@
 	        <div class="@InputClassname"
                 style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"                  
-                @onblur="@OnBlurred" @ref="@_elementReference1" 
+                @onblur="@OnBlurredAsync" @ref="@_elementReference1" 
             >
                 @ChildContent
             </div>
@@ -96,20 +96,21 @@
             <div class="@InputClassname"
                  style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"  
                  tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)" 
-                 @onblur="@OnBlurred" @ref="@_elementReference1" 
+                 @onblur="@OnBlurredAsync" @ref="@_elementReference1" 
             >
                 @ChildContent
             </div>            
         }
     }
 
-	@if (_showClearable && !Disabled)
+	@if (GetClearable() && !GetDisabledState())
     {
         <MudIconButton Class="@ClearButtonClassname"
                     Color="@Color.Default" 
                     Icon="@ClearIcon" 
                     Size="@Size.Small" 
-                    OnClick="@ClearButtonClickHandlerAsync"
+                    OnClick="@ClearButtonClickHandlerAsync" 
+                    aria-label="Clear"
                     tabindex="-1"
                 />
 	}
@@ -135,11 +136,11 @@
 	@if (!HideSpinButtons)
 	{
 	    <div class="mud-input-numeric-spin">
-            <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1">
-                <MudIcon Icon="@NumericUpIcon" Size="@GetButtonSize()" />
+            <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(GetDisabledState() || GetReadOnlyState())" tabindex="-1">
+                <MudIcon aria-label="Increment" Icon="@NumericUpIcon" Size="@GetButtonSize()" />
             </MudButton>
-            <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1">
-                <MudIcon Icon="@NumericDownIcon" Size="@GetButtonSize()" />
+            <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(GetDisabledState() || GetReadOnlyState())" tabindex="-1">
+                <MudIcon aria-label="Decrement" Icon="@NumericDownIcon" Size="@GetButtonSize()" />
             </MudButton>
 	    </div>
 	}

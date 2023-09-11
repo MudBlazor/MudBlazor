@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Bordered="true">
+@*<MudDataGrid Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Bordered="true">
     <Columns>
         <Column T="Model" Field="@nameof(Model.Name)" />
         <Column T="Model" Field="@nameof(Model.Age)" />
@@ -12,7 +12,7 @@
         </Column>
         <Column T="Model" Field="@nameof(Model.HiredOn)" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid>*@
 
 @code {
     public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
@@ -28,19 +28,18 @@
     bool _filterHired;
     FilterDefinition<Model> _filterDefinition = new FilterDefinition<Model>
     {
-        Field = nameof(Model.Hired),
+        //Field = nameof(Model.Hired),
         Operator = FilterOperator.Boolean.Is,
         Value = true
     };
 
-    private void ApplyFilter(bool value, FilterContext<Model> context)
+    private async Task ApplyFilterAsync(bool value, FilterContext<Model> context)
     {
         _filterHired = value;
 
         if (_filterHired)
-            context.Actions.ApplyFilter(_filterDefinition);
+            await context.Actions.ApplyFilterAsync(_filterDefinition);
         else
-            context.Actions.ClearFilter(_filterDefinition);
+            await context.Actions.ClearFilterAsync(_filterDefinition);
     }
-
 }

@@ -3,7 +3,7 @@
 
 <MudDialog @attributes="UserAttributes">
     <TitleContent>
-        @if (TitleContent == null)
+        @if (TitleContent is null)
         {
             <MudText Typo="Typo.h6">@Title</MudText> }
         else
@@ -12,7 +12,7 @@
         }
     </TitleContent>
     <DialogContent>
-        @if(MessageContent!=null)
+        @if(MessageContent is not null)
         {
             @MessageContent
         }
@@ -25,7 +25,7 @@
     <DialogActions>
         <div tabindex="-1" @onkeydown="HandleKeyDown">
             <MudFocusTrap DefaultFocus="DefaultFocus.LastChild">
-                @if (CancelButton != null)
+                @if (CancelButton is not null)
                 {
                     <CascadingValue Value="@_cancelCallback">
                         @CancelButton
@@ -35,7 +35,7 @@
                 {
                     <MudButton OnClick="OnCancelClicked">@CancelText</MudButton>
                 }
-                @if (NoButton != null)
+                @if (NoButton is not null)
                 {
                     <CascadingValue Value="@_noCallback">
                         @NoButton
@@ -45,7 +45,7 @@
                 {
                     <MudButton OnClick="OnNoClicked">@NoText</MudButton>
                 }
-                @if (YesButton != null)
+                @if (YesButton is not null)
                 {
                     <CascadingValue Value="@_yesCallback">
                         @YesButton
