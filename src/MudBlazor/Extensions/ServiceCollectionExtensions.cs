@@ -297,6 +297,7 @@ namespace MudBlazor.Services
                 popoverOptions.FlipMargin = options.FlipMargin;
                 popoverOptions.QueueDelay = options.QueueDelay;
                 popoverOptions.ThrowOnDuplicateProvider = options.ThrowOnDuplicateProvider;
+                popoverOptions.Legacy = options.Legacy;
             });
 
             return services;
@@ -470,6 +471,7 @@ namespace MudBlazor.Services
                     popoverOptions.FlipMargin = options.PopoverOptions.FlipMargin;
                     popoverOptions.QueueDelay = options.PopoverOptions.QueueDelay;
                     popoverOptions.ThrowOnDuplicateProvider = options.PopoverOptions.ThrowOnDuplicateProvider;
+                    popoverOptions.Legacy = options.PopoverOptions.Legacy;
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()

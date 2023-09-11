@@ -35,5 +35,13 @@ namespace MudBlazor
         /// The default value is <c>true</c>.
         /// </summary>
         public bool ThrowOnDuplicateProvider { get; set; } = true;
+
+        /// <summary>
+        /// When <c>True</c> popovers will use the old <see cref="IMudPopoverService"/> instead of <see cref="IPopoverService"/>.
+        /// </summary>
+        /// <remarks>
+        /// This property is only for backward compatibility with old behaviour. This will be removed in v7. 
+        /// </remarks>
+        public bool Legacy { get; set; }
     }
 }
