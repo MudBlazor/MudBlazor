@@ -978,13 +978,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DebouncedTextFieldFormatChangeRerenderTest>();
             var textField = comp.FindComponent<MudTextField<DateTime>>().Instance;
-            var input = comp.Find("input");
-            var delayedFormatChangeButton = comp.Find("button");
             DateTime expectedFinalDateTime = default;
             // ensure text is updated on initialize 
             textField.Text.Should().Be(comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
             // trigger the format change
-            delayedFormatChangeButton.Click();
+            comp.Find("button").Click();
             // imitate "typing in progress" by extending the debounce interval until component re-renders
             var elapsedTime = 0;
             var currentText = comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture);
@@ -992,7 +990,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
-                input.Input(new ChangeEventArgs { Value = currentText });
+                comp.Find("input").Input(new ChangeEventArgs { Value = currentText });
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }
