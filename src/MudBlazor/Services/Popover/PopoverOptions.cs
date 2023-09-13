@@ -37,11 +37,13 @@ namespace MudBlazor
         public bool ThrowOnDuplicateProvider { get; set; } = true;
 
         /// <summary>
-        /// When <c>True</c> popovers will use the old <see cref="IMudPopoverService"/> instead of <see cref="IPopoverService"/>.
+        /// Gets or sets the mode for displaying popovers.
         /// </summary>
         /// <remarks>
-        /// This property is only for backward compatibility with old behaviour. This will be removed in v7. 
+        /// This property determines the behavior of popovers. You can set it to either <see cref="PopoverMode.Default"/>
+        /// to use the <see cref="IPopoverService"/> or <see cref="PopoverMode.Legacy"/> to use the old <see cref="IMudPopoverService"/>
+        /// for backward compatibility.
         /// </remarks>
-        public bool Legacy { get; set; }
+        public PopoverMode Mode { get; set; }
     }
 }

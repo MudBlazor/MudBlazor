@@ -20,13 +20,13 @@ namespace MudBlazor;
 /// </remarks>
 public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposable
 {
-    [Obsolete("For Legacy compatibility mode, will be removed in v7.")]
+    [Obsolete("For Legacy compatibility mode only, will be removed in v7.")]
     private MudPopoverHandler? _handler;
 
     private bool _afterFirstRender;
 
     /// <inheritdoc />
-    public virtual Guid Id { get; [Obsolete("Set is only needed for legacy. Remove in v7.")] private set; } = Guid.NewGuid();
+    public virtual Guid Id { get; [Obsolete("Set is only needed for legacy mode only. Remove in v7.")] private set; } = Guid.NewGuid();
 
     [Inject]
     [Obsolete($"Replaced by {nameof(PopoverService)}. Will be removed in v7.")]
@@ -58,7 +58,7 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
     /// <inheritdoc />
     protected override async Task OnInitializedAsync()
     {
-        if (PopoverService.PopoverOptions.Legacy)
+        if (PopoverService.PopoverOptions.Mode == PopoverMode.Legacy)
 #pragma warning disable CS0618 // Type or member is obsolete
         {
             _handler = Service.Register(ChildContent ?? new RenderFragment((x) => { }));
@@ -81,7 +81,7 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
 
         if (_afterFirstRender)
         {
-            if (PopoverService.PopoverOptions.Legacy)
+            if (PopoverService.PopoverOptions.Mode == PopoverMode.Legacy)
 #pragma warning disable CS0618 // Type or member is obsolete
             {
                 if (_handler is not null)
@@ -102,7 +102,7 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
     {
         if (firstRender)
         {
-            if (PopoverService.PopoverOptions.Legacy)
+            if (PopoverService.PopoverOptions.Mode == PopoverMode.Legacy)
 #pragma warning disable CS0618 // Type or member is obsolete
             {
                 if (_handler is not null)
@@ -133,7 +133,7 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
             if (IsJSRuntimeAvailable)
             {
 #pragma warning disable CS0618 // Type or member is obsolete
-                if (PopoverService.PopoverOptions.Legacy)
+                if (PopoverService.PopoverOptions.Mode == PopoverMode.Legacy)
                 {
                     await Service.Unregister(_handler);
                 }
