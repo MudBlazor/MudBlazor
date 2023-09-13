@@ -38,12 +38,13 @@ namespace MudBlazor
 
         /// <summary>
         /// Gets or sets the mode for displaying popovers.
+        /// The default value is <c>PopoverMode.Default</c>.
         /// </summary>
         /// <remarks>
         /// This property determines the behavior of popovers. You can set it to either <see cref="PopoverMode.Default"/>
         /// to use the <see cref="IPopoverService"/> or <see cref="PopoverMode.Legacy"/> to use the old <see cref="IMudPopoverService"/>
         /// for backward compatibility.
         /// </remarks>
-        public PopoverMode Mode { get; set; }
+        public PopoverMode Mode { get; set; } = PopoverMode.Default;
     }
 }
