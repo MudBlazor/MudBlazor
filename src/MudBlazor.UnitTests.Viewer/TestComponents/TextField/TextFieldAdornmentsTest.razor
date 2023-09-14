@@ -1,13 +1,19 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
 
-<MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Text" AdornmentStartIcon="@Icons.Material.Filled.AttachMoney" AdornmentEndIcon="@Icons.Material.Filled.Refresh" />
+<MudTextField @bind-Value="Amount" Label="Amount" Variant="_variant" AdornmentStartIcon="@Icons.Material.Filled.AttachMoney" AdornmentEndIcon="@Icons.Material.Filled.Refresh" />
 
-<MudTextField @bind-Value="Domain" Label="Domain" Variant="Variant.Text" AdornmentStartText="https://" AdornmentEndText=".com" />
+<MudTextField @bind-Value="Domain" Label="Domain" Variant="_variant" AdornmentStartText="https://" AdornmentEndText=".com" />
 
-<MudTextField @bind-Value="Buttons" Label="Buttons" Variant="Variant.Text" 
+<MudTextField @bind-Value="Buttons" Label="Buttons" Variant="_variant" 
               AdornmentStartIcon="@_startInputIcon" OnAdornmentStartClick="StartButtonTestClick" AdornmentStartAriaLabel="Toggle Icon"
               AdornmentEndIcon="@_endInputIcon" OnAdornmentEndClick="EndButtonTestClick" AdornmentEndAriaLabel="Show Password" />
+
+<MudSelect @bind-Value="_variant">
+    <MudSelectItem Value="Variant.Outlined">Outlined</MudSelectItem>
+    <MudSelectItem Value="Variant.Text">Text</MudSelectItem>
+    <MudSelectItem Value="Variant.Filled">Filled</MudSelectItem>
+</MudSelect>
 
 @code
 {
@@ -18,6 +24,8 @@
     public string Domain { get; set; } = "";
 
     public string Buttons { get; set; } = "";
+
+    private Variant _variant = Variant.Outlined;
 
     bool _isShowStart;
     string _startInputIcon = Icons.Material.Filled.Check;

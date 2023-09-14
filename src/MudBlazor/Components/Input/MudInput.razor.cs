@@ -16,7 +16,7 @@ namespace MudBlazor
 
         protected string AdornmentStartClassname => MudInputCssHelper.GetAdornmentStartClassname(this);
 
-        protected string AdornmentEndClassname => MudInputCssHelper.GetAdornmentStartClassname(this);
+        protected string AdornmentEndClassname => MudInputCssHelper.GetAdornmentEndClassname(this);
 
         protected string ClearButtonClassname =>
                     new CssBuilder()
