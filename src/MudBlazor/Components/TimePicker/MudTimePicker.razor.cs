@@ -108,6 +108,13 @@ namespace MudBlazor
         public bool AutoClose { get; set; }
 
         /// <summary>
+        /// Sets the number interval for minutes.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int MinuteSelectionStep { get; set; } = 1;
+
+        /// <summary>
         /// If true, sets 12 hour selection clock.
         /// </summary>
         [Parameter]
@@ -510,6 +517,7 @@ namespace MudBlazor
         {
             if (MouseDown)
             {
+                value = RoundToStepInterval(value);
                 _timeSet.Minute = value;
                 UpdateTime();
             }
@@ -520,9 +528,24 @@ namespace MudBlazor
         /// </summary>
         private void OnMouseClickMinute(int value)
         {
+            value = RoundToStepInterval(value);
             _timeSet.Minute = value;
             UpdateTime();
             SubmitAndClose();
+        }
+
+        private int RoundToStepInterval(int value)
+        {
+            if (MinuteSelectionStep > 1) // Ignore if step is less than or equal to 1
+            {
+                var interval = MinuteSelectionStep % 60;
+                value = (value + interval / 2) / interval * interval;
+                if (value == 60) // For when it rounds up to 60
+                {
+                    value = 0;
+                }
+            }
+            return value;
         }
 
         protected async void SubmitAndClose()

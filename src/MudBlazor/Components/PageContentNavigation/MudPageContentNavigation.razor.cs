@@ -183,12 +183,18 @@ namespace MudBlazor
             }
         }
 
-        public ValueTask DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
-            if (_scrollSpy is null) { return ValueTask.CompletedTask; }
+            if (_scrollSpy is null)
+            {
+                return;
+            }
 
             _scrollSpy.ScrollSectionSectionCentered -= ScrollSpy_ScrollSectionSectionCentered;
-            return _scrollSpy.DisposeAsync();
+            if (IsJSRuntimeAvailable)
+            {
+                await _scrollSpy.DisposeAsync();
+            }
         }
     }
 }

@@ -239,7 +239,7 @@ namespace MudBlazor.UnitTests.Components
             var radio = comp.FindComponent<MudRadio<string>>();
 
             await comp.InvokeAsync(() => radio.Instance.IMudRadioGroup = null);
-            await comp.InvokeAsync(() => radio.Instance.OnClick());
+            await comp.InvokeAsync(() => radio.Instance.OnClickAsync());
 #pragma warning disable BL0005
             await comp.InvokeAsync(() => radio.Instance.Disabled = true);
             comp.WaitForAssertion(() => group.Instance.SelectedOption.Should().Be(null));

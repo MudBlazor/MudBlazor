@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTable Items="@Elements" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" Filter="new Func<Element, bool>(FilterFunc)">
+<MudTable Items="@Elements" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" Filter="new Func<Element, bool>(FilterFunc)" Striped>
     <ToolBarContent>
         <MudTextField id="searchString" @bind-Value="searchString" Placeholder="Search"></MudTextField>
     </ToolBarContent>
@@ -25,7 +25,7 @@
 <MudSwitch id="switch" @bind-Checked="_loading">Show Loading</MudSwitch>
 
 @code {
-    public static string __description__ = "When loading is true a progress bar should appear";
+    public static string __description__ = "When loading is set to true, a progress bar should appear in the table header, which would not affect the striped table.";
 
     private bool _loading = false;
     private IEnumerable<Element> Elements = new List<Element>();

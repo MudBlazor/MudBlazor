@@ -1,5 +1,8 @@
-﻿namespace MudBlazor.Components.Chart.Interpolation
+﻿using System;
+
+namespace MudBlazor.Components.Chart.Interpolation
 {
+    [Obsolete("This will be removed in v7")]
     public class NoInterpolation : ILineInterpolator
     {
         public double[] GivenYs { get; set; }

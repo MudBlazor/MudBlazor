@@ -14,7 +14,7 @@
             <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date" OnClick="OnFormattedDateClick">@GetTitleDateString()</MudButton>
         </MudPickerToolbar>
         <MudPickerContent>
-            <div class="mud-picker-calendar-content @($"mud-picker-calendar-content-{MaxMonthColumns ?? DisplayMonths}")">
+            <div id="@_mudPickerCalendarContentElementId" class="mud-picker-calendar-content @($"mud-picker-calendar-content-{MaxMonthColumns ?? DisplayMonths}")">
                 @{
                     int dayId = 0;
                     @if (_picker_month.HasValue && _picker_month.Value.Year == 1 && _picker_month.Value.Month == 1)
@@ -129,7 +129,7 @@
                                                         @onclick="(() => { var d = selectedDay; OnDayClicked(d); })"
                                                         @onclick:stopPropagation="true"
                                                         aria-label='@selectedDay.ToString("dddd, dd MMMM yyyy")'
-                                                        onmouseover="this.closest('.mud-picker-calendar-content').style.setProperty('--selected-day', @(!firstMonthFirstYear ? tempId: tempId + 1));"
+                                                        onmouseover="@(async () => await HandleMouseoverOnPickerCalendarDayButton(!firstMonthFirstYear ? tempId : tempId + 1))"
                                                         disabled="@((selectedDay < MinDate) || (selectedDay > MaxDate) || IsDateDisabledFunc(selectedDay))">
                                                     <p class="mud-typography mud-typography-body2 mud-inherit-text">@GetCalendarDayOfMonth(selectedDay)</p>
                                                 </button>

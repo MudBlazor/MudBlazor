@@ -1118,7 +1118,75 @@ namespace MudBlazor.UnitTests.Components
             var months = comp.FindAll("button.mud-picker-month");
             months.Should().NotBeNull();
             comp.Instance.Date.Should().BeNull();
-            
+        }
+
+        [Test]
+        public async Task OnMouseOver_ShouldCallJavaScriptFunction()
+        {
+            var comp = OpenPicker();
+
+            var button = comp
+                .FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day")
+                .Single(x => x.GetAttribute("style") == "--day-id: 5;");
+
+            await button.MouseOverAsync(new());
+
+            Context.JSInterop.VerifyInvoke("mudWindow.updateStyleProperty", 1);
+            Context.JSInterop.Invocations["mudWindow.updateStyleProperty"].Single()
+                .Arguments
+                .Should()
+                .HaveCount(3)
+                .And
+                .HaveElementAt(1, "--selected-day")
+                .And
+                .HaveElementAt(2, 5);
+        }
+
+        [Test]
+        public void DatePicker_ImmediateText_Should_Callback_TextChanged()
+        {
+            string changed_text = null;
+
+            var comp = Context.RenderComponent<MudDatePicker>(EventCallback<string>("TextChanged", x => changed_text = x));
+
+            comp.SetParam(x => x.Editable, true);
+            comp.SetParam(x => x.ImmediateText, true);
+
+            // This will make the input focused!
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown"});
+
+            // Simulate user input
+            comp.Find("input").Input("22");
+
+            changed_text.Should().Be("22");
+
+            // Set ImmediateText to false
+            comp.SetParam(x => x.ImmediateText, false);
+
+            // Simulate user input
+            comp.Find("input").Input("33");
+
+            // changed_text should not be updated since ImmediateText was false
+            changed_text.Should().Be("22");
+
+            // Set ImmediateText to true
+            comp.SetParam(x => x.ImmediateText, true);
+
+            // Simulate user input
+            comp.Find("input").Input("44");
+
+            //changed_text should be updated
+            changed_text.Should().Be("44");
+
+            // Set Editable to false.
+            // ImmediateText should only work if Editable is also true.
+            comp.SetParam(x => x.Editable, false);
+
+            // Simulate user input
+            comp.Find("input").Input("55");
+
+            //changed_text should not be updated
+            changed_text.Should().Be("44");
         }
     }
 }

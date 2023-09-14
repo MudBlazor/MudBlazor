@@ -3,12 +3,13 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudCard : MudComponentBase
     {
         protected string Classname =>
-        new CssBuilder("mud-card")
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-card")
+                .AddClass(Class)
+                .Build();
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
@@ -36,6 +37,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
     }
 }

@@ -1069,7 +1069,10 @@ namespace MudBlazor
                     _keyInterceptor.KeyDown -= HandleKeyDown;
                     _keyInterceptor.KeyUp -= HandleKeyUp;
 
-                    _keyInterceptor.Dispose();
+                    if (IsJSRuntimeAvailable)
+                    {
+                        _keyInterceptor.Dispose();
+                    }
                 }
             }
         }
@@ -1083,7 +1086,7 @@ namespace MudBlazor
         protected override bool HasValue(T value)
         {
             if (MultiSelection)
-                return SelectedValues?.Count() > 0;
+                return SelectedValues?.Any() ?? false;
             else
                 return base.HasValue(value);
         }

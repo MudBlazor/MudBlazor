@@ -670,5 +670,29 @@ namespace MudBlazor.UnitTests.Components
 
             picker.DateRange.Should().Be(new DateRange(null, null));
         }
+        
+        
+
+        [Test]
+        public async Task OnMouseOver_ShouldCallJavaScriptFunction()
+        {
+            var comp = OpenPicker();
+
+            var button = comp
+                .FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day")
+                .Single(x => x.GetAttribute("style") == "--day-id: 5;");
+
+            await button.MouseOverAsync(new());
+
+            Context.JSInterop.VerifyInvoke("mudWindow.updateStyleProperty", 1);
+            Context.JSInterop.Invocations["mudWindow.updateStyleProperty"].Single()
+                .Arguments
+                .Should()
+                .HaveCount(3)
+                .And
+                .HaveElementAt(1, "--selected-day")
+                .And
+                .HaveElementAt(2, 5);
+        }
     }
 }

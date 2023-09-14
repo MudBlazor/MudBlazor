@@ -427,7 +427,7 @@ namespace MudBlazor.UnitTests.Utilities
             MudColor color = new(r, g, b, a);
 
             color.Value.ToLowerInvariant().Should().Be(expectedValue);
-            color.ToString().ToLowerInvariant().Should().Be(expectedValue);
+            color.ToString(MudColorOutputFormats.HexA).ToLowerInvariant().Should().Be(expectedValue);
             ((string)color).ToLowerInvariant().Should().Be(expectedValue);
         }
 

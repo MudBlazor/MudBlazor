@@ -22,10 +22,10 @@ namespace MudBlazor;
 internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHolder>
 {
     private readonly SemaphoreSlim _semaphore;
+    private readonly PopoverJsInterop _popoverJsInterop;
     private readonly Dictionary<Guid, MudPopoverHolder> _holders;
     private readonly BatchPeriodicQueue<MudPopoverHolder> _batchExecutor;
     private readonly ObserverManager<Guid, IPopoverObserver> _observerManager;
-    private readonly PopoverJsInterop _popoverJsInterop;
 
     /// <inheritdoc />
     public IEnumerable<IMudPopoverHolder> ActivePopovers => _holders.Values;
@@ -85,7 +85,6 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     {
         ArgumentNullException.ThrowIfNull(popover);
 
-        await InitializeServiceIfNeededAsync();
         var holder = new MudPopoverHolder(popover.Id)
             .SetFragment(popover.ChildContent)
             .SetClass(popover.PopoverClass)
@@ -168,11 +167,6 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
-        if (!IsInitialized)
-        {
-            return;
-        }
-
         foreach (var holderKeyValuePair in _holders)
         {
             // We just remove them from the dictionary, we don't care to queue for "mudPopover.disconnect" as the "mudPopover.dispose" will do it for us

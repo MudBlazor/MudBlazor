@@ -8,7 +8,9 @@
         <MudPopover Open="_isVisible" Duration="@Duration" Delay="@Delay" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="@Classname" Style="@Style" Paper="false">
             @if (TooltipContent is not null)
             {
-                @TooltipContent
+                <div class="d-block">
+                    @TooltipContent
+                </div>
             }
             else if (!string.IsNullOrEmpty(Text))
             {

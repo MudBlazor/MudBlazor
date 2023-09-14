@@ -76,6 +76,10 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Behavior)]
         public bool Disabled { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool ClickPropagation { get; set; }
+
         /// <summary>
         /// If true, no drop-shadow will be used.
         /// </summary>

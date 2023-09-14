@@ -350,7 +350,10 @@ namespace MudBlazor
                 return;
             _isDisposed = true;
             _resizeObserver.OnResized -= OnResized;
-            await _resizeObserver.DisposeAsync();
+            if (IsJSRuntimeAvailable)
+            {
+                await _resizeObserver.DisposeAsync();
+            }
         }
 
         #endregion
@@ -408,13 +411,14 @@ namespace MudBlazor
 
         public void ActivatePanel(MudTabPanel panel, bool ignoreDisabledState = false)
         {
-            ActivatePanel(panel, null, ignoreDisabledState);
+            if (panel is not null && _panels.IndexOf(panel) > -1)
+                ActivatePanel(panel, null, ignoreDisabledState);
         }
 
         public void ActivatePanel(int index, bool ignoreDisabledState = false)
         {
-            var panel = _panels[index];
-            ActivatePanel(panel, null, ignoreDisabledState);
+            if (index > -1 && index <= _panels.Count - 1)
+                ActivatePanel(_panels[index], null, ignoreDisabledState);
         }
 
         public void ActivatePanel(object id, bool ignoreDisabledState = false)

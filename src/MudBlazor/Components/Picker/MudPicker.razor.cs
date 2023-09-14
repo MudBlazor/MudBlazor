@@ -267,6 +267,14 @@ namespace MudBlazor
         public EventCallback<string> TextChanged { get; set; }
 
         /// <summary>
+        /// If true and Editable is true, update Text immediately on typing.
+        /// If false, Text is updated only on Enter or loss of focus.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool ImmediateText { get; set; }
+
+        /// <summary>
         /// Fired when the text input is clicked.
         /// </summary>
         [Parameter]
@@ -577,13 +585,13 @@ namespace MudBlazor
                 if (_keyInterceptor != null)
                 {
                     _keyInterceptor.KeyDown -= HandleKeyDown;
-                    _keyInterceptor.Dispose();
+                    if (IsJSRuntimeAvailable)
+                    {
+                        _keyInterceptor.Dispose();
+                    }
                 }
 
             }
         }
-
-
-
     }
 }

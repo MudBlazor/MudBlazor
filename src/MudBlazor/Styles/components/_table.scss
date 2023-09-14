@@ -42,7 +42,8 @@
         }
     }
 
-    > .mud-table-body:last-child {
+    > .mud-table-body:last-child,
+    > .mud-table-foot:last-child {
         > .mud-table-row:last-child {
             > .mud-table-cell {
                 border-bottom: none;
@@ -428,7 +429,7 @@
         }
 
         .mud-table-row {
-            display: initial;
+            display: revert;
 
             .mud-table-cell:last-child {
                 border-bottom: 1px solid var(--mud-palette-table-lines);
@@ -551,9 +552,9 @@
 }
 
 @media (max-width:$breakpoint-xxl) {
-  @include table-display-smalldevices("xl-");
+    @include table-display-smalldevices("xl-");
 }
 
 @media (min-width:$breakpoint-xxl) {
-  @include table-display-smalldevices("xxl-");
+    @include table-display-smalldevices("xxl-");
 }

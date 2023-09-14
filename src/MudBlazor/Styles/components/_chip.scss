@@ -27,18 +27,69 @@
         border-radius: 12px;
         font-size: 12px;
         height: 24px;
+        padding: 0 8px;
+
+        .mud-avatar {
+            margin-left: -4px;
+            margin-right: 4px;
+            margin-inline-start: -4px;
+            margin-inline-end: 4px;
+            width: 18px;
+            height: 18px;
+            font-size: 0.625rem;
+        }
+
+        .mud-icon-root {
+            font-size: 1.125rem;
+        }
+
+        .mud-chip-close-button {
+            margin-right: -4px;
+            margin-left: 4px;
+            margin-inline-end: -4px;
+            margin-inline-start: 4px;
+        }
     }
 
     &.mud-chip-size-medium {
         height: 32px;
         font-size: 14px;
         border-radius: 16px;
+
+        .mud-avatar {
+            margin-left: -8px;
+            margin-right: 8px;
+            margin-inline-start: -8px;
+            margin-inline-end: 8px;
+            width: 24px;
+            height: 24px;
+            font-size: 0.75rem;
+        }
     }
 
     &.mud-chip-size-large {
         height: 40px;
         font-size: 16px;
         border-radius: 20px;
+        padding: 0 16px;
+
+        .mud-avatar {
+            margin-left: -12px;
+            margin-right: 8px;
+            margin-inline-start: -12px;
+            margin-inline-end: 8px;
+            width: 32px;
+            height: 32px;
+            font-size: 1rem;
+        }
+
+        .mud-chip-icon {
+            font-size: 1.5rem;
+            margin-left: -6px;
+            margin-right: 6px;
+            margin-inline-start: -6px;
+            margin-inline-end: 6px;
+        }
     }
 
     &.mud-chip-label {
@@ -88,10 +139,10 @@
 
 .mud-chip-filled {
     color: var(--mud-palette-text-primary);
-    background-color: var(--mud-palette-action-disabled-background);
+    background-color: var(--mud-palette-chip-default);
 
     &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-        background-color: var(--mud-palette-action-disabled);
+        background-color: var(--mud-palette-chip-default-hover);
     }
 
     @each $color in $mud-palette-colors {
@@ -134,10 +185,10 @@
 }
 .mud-chip-text {
     color: var(--mud-palette-text-primary);
-    background-color: var(--mud-palette-action-default-hover);
+    background-color: var(--mud-palette-chip-default);
 
     &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-        background-color: var(--mud-palette-action-disabled-background);
+        background-color: var(--mud-palette-chip-default-hover);
     }
 
     @each $color in $mud-palette-colors {
