@@ -7,7 +7,6 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -124,9 +123,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormIsTouchedTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
-            var textField = textFieldcomp.Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
-            var dateField = dateComp.Instance;
             // check initial state: form should not be touched 
             form.IsTouched.Should().Be(false);
             // input a date, istouched should be true
@@ -155,13 +152,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormIsTouchedNestedTest>();
             var formsComp = comp.FindComponents<MudForm>();
             var textCompFields = comp.FindComponents<MudTextField<string>>();
-            var dateCompFields = comp.FindComponents<MudDatePicker>();
             var form = formsComp[0].Instance;
-            var textField = textCompFields[0].Instance;
-            var dateField = dateCompFields[0].Instance;
             var nestedForm = formsComp[1].Instance;
-            var nestedFormTextField = textCompFields[1].Instance;
-            var nestedFormDateField = dateCompFields[1].Instance;
 
             // check initial state: form should not be touched 
             form.IsTouched.Should().Be(false);
@@ -198,10 +190,7 @@ namespace MudBlazor.UnitTests.Components
             var textCompFields = comp.FindComponents<MudTextField<string>>();
             var dateCompFields = comp.FindComponents<MudDatePicker>();
             var form = formsComp[0].Instance;
-            var textField = textCompFields[0].Instance;
-            var dateField = dateCompFields[0].Instance;
             var nestedForm = formsComp[1].Instance;
-            var nestedFormTextField = textCompFields[1].Instance;
             var nestedFormDateField = dateCompFields[1].Instance;
 
             // check initial state: form should not be touched 
@@ -227,6 +216,28 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().Be(false);
             nestedForm.IsTouched.Should().Be(true);
         }
+
+        /// <summary>
+        /// Calling ResetTouched should set the IsTouched property to false
+        /// </summary>
+        [Test]
+        public async Task FormIsTouchedResetTest()
+        {
+            var comp = Context.RenderComponent<FormIsTouchedTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dateComp = comp.FindComponent<MudDatePicker>();
+            // check initial state: form should not be touched 
+            form.IsTouched.Should().Be(false);
+            // input a date, isTouched should be true
+            dateComp.Find("input").Change("2001-01-31");
+            form.IsTouched.Should().Be(true);
+
+            // resetTouched should set the IsTouched property to default(false)
+            await comp.InvokeAsync(() => form.ResetTouched());
+            form.IsTouched.Should().Be(false);
+        }
+
+
 
         /// <summary>
         /// Custom validation func should be called to determine whether or not a form value is good
@@ -393,7 +404,7 @@ namespace MudBlazor.UnitTests.Components
             textField.Value.Should().Be(currentText);
             textField.Text.Should().Be(currentText);
         }
-        
+
         /// <summary>
         /// After changing any of the textfields with a For expression the corresponding chip should show a change message after the textfield blurred.
         /// </summary>
@@ -591,7 +602,7 @@ namespace MudBlazor.UnitTests.Components
             radioGroup.Error.Should().BeTrue();
             radioGroup.ErrorText.Should().Be("Required");
         }
-        
+
         /// <summary>
         /// ColorPicker should be validated like every other form component when color is changed via inputs
         /// </summary>
@@ -640,13 +651,13 @@ namespace MudBlazor.UnitTests.Components
             // initial form state
             form.IsTouched.Should().BeFalse();
             form.IsValid.Should().BeFalse();
-            
+
             await comp.InvokeAsync(() => comp.Find("input").Click());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
             // open color collection view
             await comp.InvokeAsync(() => comp.Find("div.mud-picker-color-dot-current").Click());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(1));
-            
+
             // set valid color
             await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").Skip(1).First().Click());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(0));
@@ -655,10 +666,10 @@ namespace MudBlazor.UnitTests.Components
             form.Errors.Length.Should().Be(0);
             colorPicker.Error.Should().BeFalse();
             colorPicker.ErrorText.Should().BeNullOrEmpty();
-            
+
             await comp.InvokeAsync(() => comp.Find("div.mud-picker-color-dot-current").Click());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(1));
-            
+
             // set invalid color
             await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").First().Click());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(0));
@@ -1730,7 +1741,7 @@ namespace MudBlazor.UnitTests.Components
             var childForm = forms[1];
             childForm.Instance.IsValid.Should().BeFalse();
             parentForm.IsValid.Should().Be(false);
-            
+
             // remove the child form
             childFormSwitch.Change(false);
             forms = comp.FindComponents<MudForm>();
