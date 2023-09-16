@@ -8,6 +8,15 @@
             padding: 24px;
             position: relative;
 
+            &.mud-ripple {
+                transition: background-color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1) 0ms;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: var(--mud-palette-action-default-hover);
+                }
+            }
+
             .mud-stepper-nav-step-label {
                 display: flex;
                 align-items: center;
@@ -105,11 +114,11 @@
     &.mud-stepperVertical {
 
         .mud-stepper-nav {
-            padding: 8px 16px;
+            padding: 8px 0px;
         }
 
         .mud-stepper-nav-step {
-            padding: 0;
+            padding: 0 16px;
 
             .mud-stepper-nav-step-label {
                 padding: 8px 0px;
@@ -117,7 +126,7 @@
         }
 
         .mud-stepper-nav-connector {
-            margin-left: 12px;
+            margin-left: 28px;
 
             .mud-stepper-nav-connector-line {
                 border-left: 1px solid rgb(189, 189, 189);
@@ -126,7 +135,7 @@
         }
 
         .mud-stepper-content {
-            margin-left: 12px;
+            margin-left: 28px;
             padding-left: 20px;
             padding-right: 0;
             border-left: 1px solid var(--mud-palette-lines-inputs);

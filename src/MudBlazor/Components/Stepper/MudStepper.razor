@@ -52,7 +52,7 @@
 
 
     <MudCardActions>
-        <MudButton OnClick="PreviousStep" Disabled="!CanGoBack">Previous</MudButton>
+        <MudButton OnClick="PreviousStep" Disabled="!PreviousStepEnabled">Previous</MudButton>
         <MudSpacer/>
         @if (!IsCompleted)
         {
@@ -71,23 +71,37 @@
     RenderFragment RenderStepLabel(MudStepperStep step, bool isActive) =>
         @<div class="mud-stepper-nav-step-label">
             <div class="@step.LabelIconClassname">
-                @if (step.Completed)
+                @if (LabelTemplate is not null)
                 {
-                    <MudIcon Size="Size.Small" Icon="@Icons.Material.Outlined.Done"/>
+                    @LabelTemplate
                 }
                 else
                 {
-                    <MudText Typo="Typo.caption">@(_steps.IndexOf(step) + 1)</MudText>
+                    @if (step.Completed)
+                    {
+                        <MudIcon Size="Size.Small" Icon="@Icons.Material.Outlined.Done"/>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.caption">@(_steps.IndexOf(step) + 1)</MudText>
+                    }
                 }
             </div>
             <div class="mud-stepper-nav-step-label-content">
-                <MudText Typo="@(isActive ? Typo.subtitle2 : Typo.body2)" Color="Color.Default"
-                         Style="line-height: var(--mud-typography-body2-lineheight)">
-                    @step.Title
-                </MudText>
-                @if (!string.IsNullOrEmpty(step.SecondaryText))
+                @if (TitleTemplate is not null)
                 {
-                    <MudText Typo="Typo.caption">@step.SecondaryText</MudText>
+                    @TitleTemplate
+                }
+                else
+                {
+                    <MudText Typo="@(isActive ? Typo.subtitle2 : Typo.body2)" Color="Color.Default"
+                             Style="line-height: var(--mud-typography-body2-lineheight)">
+                        @step.Title
+                    </MudText>
+                    @if (!string.IsNullOrEmpty(step.SecondaryText))
+                    {
+                        <MudText Typo="Typo.caption">@step.SecondaryText</MudText>
+                    }
                 }
             </div>
         </div>;
