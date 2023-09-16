@@ -30,7 +30,9 @@ public partial class MudStepper : MudComponentBase
     /// <summary>
     /// Index of the currently shown step. If set, it doesn't save the position into the history
     /// </summary>
-    [Parameter] public int ActiveIndex { get; set; }
+    [Parameter]
+    public int ActiveIndex { get; set; }
+
     [Parameter] public EventCallback<int> ActiveIndexChanged { get; set; }
 
     /// <summary>
@@ -46,32 +48,31 @@ public partial class MudStepper : MudComponentBase
     public Color CurrentStepColor { get; set; } = Color.Primary;
 
     /// <summary>
-    /// The color of the error step. It supports the theme colors.
+    /// The color of the error step. Sets the color globaly for the whole stepper. It supports the theme colors.
     /// </summary>
     [Parameter]
     public Color ErrorStepColor { get; set; } = Color.Error;
-    
+
     /// <summary>
     /// Class for the navigation bar of the component
     /// </summary>
     [Parameter]
     public string NavClass { get; set; }
 
-    [Parameter]
-    public bool NonLinear { get; set; }
-    
+    [Parameter] public bool NonLinear { get; set; }
+
     /// <summary>
     /// Renders the component in vertical manner. Each step is collapsible
     /// </summary>
     [Parameter]
     public bool Vertical { get; set; }
-    
+
     /// <summary>
     /// Sets css class for all steps globally
     /// </summary>
     [Parameter]
     public string StepClass { get; set; }
-    
+
     /// <summary>
     /// Renders labels for each step title below the circle
     /// </summary>
@@ -90,18 +91,26 @@ public partial class MudStepper : MudComponentBase
     #endregion
 
     public bool IsCurrentStepSkippable => _steps.Any() && ActiveStep is not null && ActiveStep.Skippable;
-    public bool CanGoBack => _steps.Any() && _activeIndex > 0;
+    public bool PreviousStepEnabled => _steps.Any() && _activeIndex > 0;
     public bool IsCompleted => _steps.Any() && _steps.All(x => x.Completed);
 
     /// <summary>
     /// Space for all the MudSteps
     /// </summary>
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
     
+    [Parameter]
+    public RenderFragment<MudStepperStep>? TitleTemplate { get; set; }
+    
+    [Parameter]
+    public RenderFragment<MudStepperStep>? LabelTemplate { get; set; }
+
     /// <summary>
     /// This content is displayed when all steps are completed
     /// </summary>
-    [Parameter] public RenderFragment CompletedContent { get; set; }
+    [Parameter]
+    public RenderFragment CompletedContent { get; set; }
 
     #region Children Handling
 
@@ -119,6 +128,7 @@ public partial class MudStepper : MudComponentBase
         {
             //TODO: Fiddle with active indexes, this will be async
         }
+
         _steps.Remove(step);
         StateHasChanged();
     }
@@ -128,38 +138,38 @@ public partial class MudStepper : MudComponentBase
     private async void ProcessStep(MudStepperStep stepToProcess, MouseEventArgs ev,
         StepInteractionType stepInteractionType, bool ignoreDisabledState = false)
     {
-        if (!stepToProcess.Disabled || ignoreDisabledState)
+        if (stepToProcess.Disabled && !ignoreDisabledState)
+            return;
+
+        var index = _steps.IndexOf(stepToProcess);
+
+        var previewArgs =
+            new StepperInteractionEventArgs() { StepIndex = index, InteractionType = stepInteractionType };
+
+        if (OnPreviewInteraction != null)
+            await OnPreviewInteraction.Invoke(previewArgs);
+
+        if (previewArgs.Cancel) return;
+
+        switch (previewArgs.InteractionType)
         {
-            var index = _steps.IndexOf(stepToProcess);
+            case StepInteractionType.Complete:
+                {
+                    await stepToProcess.SetCompleted(true);
 
-            var previewArgs =
-                new StepperInteractionEventArgs() { StepIndex = index, InteractionType = stepInteractionType };
-
-            if (OnPreviewInteraction != null)
-                await OnPreviewInteraction.Invoke(previewArgs);
-
-            if (previewArgs.Cancel) return;
-
-            switch (previewArgs.InteractionType)
-            {
-                case StepInteractionType.Complete:
-                    {
-                        await stepToProcess.SetCompleted(true);
-
-                        if (_steps.Count - 1 != index)
-                            index++;
-                        break;
-                    }
-                case StepInteractionType.Skip:
-                    if (stepToProcess.Skippable) //Or should I raise exception if its not skippable???
+                    if (_steps.Count - 1 != index)
                         index++;
                     break;
-            }
-
-            SetActiveIndex(index);
-
-            await ActiveStep?.OnClick.InvokeAsync(ev);
+                }
+            case StepInteractionType.Skip:
+                if (stepToProcess.Skippable) //Or should I raise exception if its not skippable???
+                    index++;
+                break;
         }
+
+        SetActiveIndex(index);
+
+        await ActiveStep?.OnClick.InvokeAsync(ev);
     }
 
     private async void SetActiveIndex(int value)
@@ -187,7 +197,7 @@ public partial class MudStepper : MudComponentBase
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        
+
         SetActiveIndex(ActiveIndex);
     }
 
@@ -195,7 +205,7 @@ public partial class MudStepper : MudComponentBase
 
     public void PreviousStep()
     {
-        if (CanGoBack)
+        if (PreviousStepEnabled)
             ProcessStep(_steps[_activeIndex - 1], new MouseEventArgs(), StepInteractionType.Activate);
     }
 
@@ -223,7 +233,7 @@ public partial class MudStepper : MudComponentBase
     }
 
     #endregion
-    
+
     #region Apperance
 
     protected string Classname => new CssBuilder("mud-stepper")
