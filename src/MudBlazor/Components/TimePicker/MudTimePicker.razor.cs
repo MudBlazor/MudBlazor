@@ -324,8 +324,8 @@ namespace MudBlazor
           .AddClass($"mud-time-picker-dial-hidden", _currentView != OpenTo.Minutes)
         .Build();
 
-        private bool IsAm => _timeSet.Hour >= 00 && _timeSet.Hour < 12; // am is 00:00 to 11:59 
-        private bool IsPm => _timeSet.Hour >= 12 && _timeSet.Hour < 24; // pm is 12:00 to 23:59 
+        private bool IsAm => _timeSet.Hour >= 00 && _timeSet.Hour < 12; // am is 00:00 to 11:59
+        private bool IsPm => _timeSet.Hour >= 12 && _timeSet.Hour < 24; // pm is 12:00 to 23:59
 
         private string GetClockPinColor()
         {
@@ -454,17 +454,11 @@ namespace MudBlazor
         /// </summary>
         private void OnMouseUp(MouseEventArgs e)
         {
-            if (MouseDown && _currentView == OpenTo.Minutes && _timeSet.Minute != _initialMinute || _currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.OnlyHours)
-            {
-                MouseDown = false;
-                SubmitAndClose();
-            }
-
             MouseDown = false;
 
-            if (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.Normal)
+            if (MouseDown && _currentView == OpenTo.Minutes && _timeSet.Minute != _initialMinute || _currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.OnlyHours)
             {
-                _currentView = OpenTo.Minutes;
+                SubmitAndClose();
             }
         }
 
