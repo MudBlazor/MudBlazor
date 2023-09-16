@@ -408,6 +408,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[5].MouseUp();
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(18);
             underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(0);
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[5].Click();
             // Are minutes displayed
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
@@ -549,6 +550,7 @@ namespace MudBlazor.UnitTests.Components
                 {
                     comp.FindAll("div.mud-minute")[i].MouseUp();
                     underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(i);
+                    comp.FindAll("div.mud-minute")[i].Click();
                 }
             }
 
@@ -596,6 +598,7 @@ namespace MudBlazor.UnitTests.Components
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(13);
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[0].MouseUp();
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(13);
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[0].Click();
 
             // check if the view changed to minutes
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
@@ -607,6 +610,7 @@ namespace MudBlazor.UnitTests.Components
             underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(37);
             comp.FindAll("div.mud-minute")[37].MouseUp();
             underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(37);
+            comp.FindAll("div.mud-minute")[37].Click();
 
             // check if closed
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
