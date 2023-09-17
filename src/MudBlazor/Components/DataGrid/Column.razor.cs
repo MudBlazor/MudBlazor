@@ -44,6 +44,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment<FooterContext<T>> FooterTemplate { get; set; }
         [Parameter] public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
         [Parameter] public Func<T, object> GroupBy { get; set; }
+        [Parameter] public bool Required { get; set; } = true;
 
         #region HeaderCell Properties
 
@@ -263,7 +264,6 @@ namespace MudBlazor
         internal HeaderContext<T> headerContext;
         private FilterContext<T> filterContext;
         internal FooterContext<T> footerContext;
-        internal bool _required = true;
 
         public FilterContext<T> FilterContext
         {
