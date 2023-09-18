@@ -249,6 +249,7 @@ namespace MudBlazor
 
         private void UpdateTime()
         {
+            _lastSelectedHour = _timeSet.Hour;
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
             if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
@@ -415,6 +416,7 @@ namespace MudBlazor
 
         private readonly SetTime _timeSet = new();
         private int _initialHour;
+        private int _lastSelectedHour;
         private int _initialMinute;
 
         protected override void OnInitialized()
@@ -423,6 +425,7 @@ namespace MudBlazor
             UpdateTimeSetFromTime();
             _currentView = OpenTo;
             _initialHour = _timeSet.Hour;
+            _lastSelectedHour = _timeSet.Hour;
             _initialMinute = _timeSet.Minute;
         }
 
@@ -454,11 +457,17 @@ namespace MudBlazor
         /// </summary>
         private void OnMouseUp(MouseEventArgs e)
         {
-            MouseDown = false;
-
             if (MouseDown && _currentView == OpenTo.Minutes && _timeSet.Minute != _initialMinute || _currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.OnlyHours)
             {
+                MouseDown = false;
                 SubmitAndClose();
+            }
+
+            MouseDown = false;
+
+            if (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.Normal)
+            {
+                _currentView = OpenTo.Minutes;
             }
         }
 
@@ -489,7 +498,8 @@ namespace MudBlazor
             }
             _timeSet.Hour = h;
 
-            if (_currentView == OpenTo.Hours)
+            if (_currentView == OpenTo.Hours
+                || _timeSet.Hour != _lastSelectedHour)
             {
                 UpdateTime();
             }
