@@ -361,7 +361,7 @@ namespace MudBlazor.UnitTests.Components
             // should be closed
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
 
-            // should be 13 hours            
+            // should be 13 hours
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(13);
 
             // click to to open picker
@@ -936,6 +936,43 @@ namespace MudBlazor.UnitTests.Components
             // Check that the time have been changed
             comp.WaitForAssertion(() => picker.Time.Should().Be(new TimeSpan(16, 30, 00)));
 
+        }
+
+        // See #7483 for details
+        [Test]
+        [TestCase(12, 16, 3, 17, 4)]
+        [TestCase(17, 16, 3, 17, 4, Description = "Switching back to original hour")]
+        public void Selecting_hour_multiple_times_should_immediately_update_displayed_hour(
+            int initialHour,
+            int nextHour,
+            int nextHourIndex,
+            int finalHour,
+            int finalHourIndex)
+        {
+            var comp = OpenPicker(Parameter(nameof(MudTimePicker.Time), TimeSpan.FromHours(initialHour)));
+            var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
+
+            // click on the hour input
+            comp.FindAll("button.mud-timepicker-button")[0].Click();
+            comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[nextHourIndex].MouseUp();
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[nextHourIndex].Click();
+            comp.FindAll("div.mud-timepicker-hourminute button.mud-timepicker-button span.mud-button-label")[0].TextContent.Should().Be(nextHour.ToString());
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(nextHour);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(0);
+            // are minutes displayed
+            comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
+
+            // return to hour input
+            comp.FindAll("button.mud-timepicker-button")[0].Click();
+            // are hours displayed
+            comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[finalHourIndex].MouseUp();
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[finalHourIndex].Click();
+            // ensure displayed hour text is has updated
+            comp.FindAll("div.mud-timepicker-hourminute button.mud-timepicker-button span.mud-button-label")[0].TextContent.Should().Be(finalHour.ToString());
+            underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(finalHour);
+            underlyingPicker.TimeIntermediate.Value.Minutes.Should().Be(0);
         }
     }
 }
