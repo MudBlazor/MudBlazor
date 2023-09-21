@@ -286,6 +286,13 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// User styles, specific style applied to the underlying MudInput item
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ComponentBase.Common)]
+        public string? InputStyle { get; set; }
+
         private Func<T, string> _toStringFunc = x => x?.ToString();
 
         private MudInput<string> _elementReference;

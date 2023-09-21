@@ -3,7 +3,7 @@
 @inherits MudBaseInput<T>
 @using MudBlazor.Internal
 
-<div class="@Classname" style="@Style">
+<div class="@Classname" style="@(InputStyle ?? Style)">
 	@if (Adornment == Adornment.Start)
 	{
 	    <MudInputAdornment Class="@AdornmentClassname" 
