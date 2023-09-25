@@ -40,11 +40,13 @@
                 {
                     <div class="@PlaceholderClassname"></div>
                 }
-                <MudDynamicDropItem @key="_id" T="T"
-                        Item="default"
-                        ZoneIdentifier="@Identifier"
-                        Disabled="true" HideContent="false"
-                        Class="mud-drop-item-preview-start" />
+                if (Container?.TransactionInProgress() == true) {
+                    <MudDynamicDropItem @key="_id" T="T"
+                                        Item="default"
+                                        ZoneIdentifier="@Identifier"
+                                        Disabled="true" HideContent="false"
+                                        Class="@PreviewStartItemClassname"/>
+                }
             }
         }
         @foreach (var item in items)
@@ -58,6 +60,7 @@
                         ZoneIdentifier="@Identifier"
                         Disabled="@GetItemDisabledStatus(item)"
                         Index="indexCopy"
+                        Class="@GetItemClass()"
                         DisabledClass="@(DisabledClass ?? Container?.DisabledClass)">
                 @{
                     var renderer = GetItemTemplate();

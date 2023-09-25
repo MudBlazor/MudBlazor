@@ -2,7 +2,7 @@
 
 <MudDropContainer T="SimpleDropItem"
 				  Items="_items" ItemsSelector="@((item,dropzone) => item.ZoneIdentifier == dropzone)"
-				  Class="d-flex"
+				  Class="d-flex" ItemClass="my-special-item-class"
 				  DraggingClass="my-special-dragging-class" ItemDraggingClass="my-special-item-dragging-class"
 				  ItemDropped="ItemUpdated">
 	<ChildContent>
@@ -10,7 +10,8 @@
 			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 1</MudText>
 		</MudDropZone>
 		<MudDropZone T="SimpleDropItem" Identifier="Column 2" Class="second-drop-zone"
-					 DraggingClass="my-special-drop-zone-dragging-class" ItemDraggingClass="my-special-item-drop-zone-dragging-class">
+                     DraggingClass="my-special-drop-zone-dragging-class" ItemDraggingClass="my-special-item-drop-zone-dragging-class"
+                     ItemClass="my-special-item-drop-zone-class">
 			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 2</MudText>
 		</MudDropZone>
 	</ChildContent>

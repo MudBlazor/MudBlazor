@@ -184,6 +184,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DropZone_ItemClass_Propagated()
+        {
+            var comp = Context.RenderComponent<DropzoneBasicTest>();
+            
+            var container = comp.Find(".mud-drop-container");
+            var firstDropZone = container.Children[0];
+            var firstDropItem = firstDropZone.Children[1];
+
+            firstDropItem.ClassList.Should().Contain("my-special-item-class");
+
+            var secondDropZone = container.Children[1];
+            var secondDropItem = secondDropZone.Children[1];
+
+            secondDropItem.ClassList.Should().Contain("my-special-item-drop-zone-class")
+                          .And.NotContain("my-special-item-class");
+        }
+
+        [Test]
         public async Task DropZone_DragAndDropDraggingClass_DragCanceled()
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
