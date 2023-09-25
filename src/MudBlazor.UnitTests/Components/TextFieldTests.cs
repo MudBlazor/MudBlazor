@@ -333,6 +333,20 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("textarea").InnerHtml.Should().Be(text);
         }
 
+
+        /// <summary>
+        /// Ensures that a text field with both 'Lines' > 1 and 'Mask' parameters generates a 'textarea'.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TextFieldMultilineWithMask_CheckRendered()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                Parameter(nameof(MudTextField<string>.Mask), new RegexMask(@"\d")),
+                Parameter(nameof(MudTextField<string>.Lines), 2));
+            comp.Find("textarea").Should().NotBeNull();
+        }
+
         [Test]
         public async Task MultilineTextField_Should_UpdateTextOnInput()
         {
