@@ -9,7 +9,7 @@ We try to review and merge important bug fixes as soon as possible. If your bug-
 ## Upcoming Breaking Changes
 
 Since we have put off breaking changes for a very long time, we'll merge all breaking changes and remove all obsolete parameters 
-when we move to v7 in early 2023. 
+when we move to v7. Don't panic, we'll announce a release date for v7 when we feel confident that we can hold it. 
 
 For all who can't upgrade their projects to v7 we will maintain v6.x for some time, primarily by merging your bug fixes and backports.
 
