@@ -272,12 +272,12 @@
                             if (propertyType == typeof(string))
                             {
                                 <MudTextField T="string" Label="@column.Title" Value="@cell._valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
-                                  Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                                  Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
                             }
                             else if (TypeIdentifier.IsNumber(propertyType))
                             {
                                 <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
-                                     Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                                     Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
                             }
                         }
                     }
@@ -347,7 +347,7 @@
                                           Value="@cell._valueString"
                                           ValueChanged="@cell.StringValueChangedAsync"
                                           Margin="@Margin.Dense" Style="margin-top:0"
-                                          Required="true"
+                                          Required=column.Required
                                           Variant="@Variant.Text" />
                         }
                         else if (column.isNumber)
@@ -356,7 +356,7 @@
                                              Value="@cell._valueNumber"
                                              ValueChanged="@cell.NumberValueChangedAsync"
                                              Margin="@Margin.Dense" Style="margin-top:0"
-                                             Required="true" Variant="@Variant.Text" Culture="@column.Culture" />
+                                             Required=column.Required Variant="@Variant.Text" Culture="@column.Culture" />
                         }
                     }
                 }
