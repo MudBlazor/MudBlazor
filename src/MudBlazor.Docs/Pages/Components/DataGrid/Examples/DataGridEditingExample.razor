@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid T="ElementWithOptionalProperty" Items="@Elements.Take(4)" ReadOnly="@_readOnly" EditMode="@(_isCellEditMode ? DataGridEditMode.Cell : DataGridEditMode.Form)"
+<MudDataGrid T="Element" Items="@Elements.Take(4)" ReadOnly="@_readOnly" EditMode="@(_isCellEditMode ? DataGridEditMode.Cell : DataGridEditMode.Form)"
     StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommittedItemChanges"
     Bordered="true" Dense="true" EditTrigger="@(_editTriggerRowClick ? DataGridEditTrigger.OnRowClick : DataGridEditTrigger.Manual)">
     <Columns>
@@ -20,8 +20,6 @@
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
-        <PropertyColumn Property="x => x.OptionalNote" Required=false Title="Optional note" />
-        <PropertyColumn Property="x => x.OptionalSecondaryNumber" Required=false Title="Optional secondary number" />
         <TemplateColumn Hidden="@(_isCellEditMode || _readOnly || _editTriggerRowClick)" CellClass="d-flex justify-end">
             <CellTemplate>
                 <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
@@ -59,7 +57,7 @@
 </MudExpansionPanels>
 
 @code {
-    private List<ElementWithOptionalProperty> Elements = new List<ElementWithOptionalProperty>();
+    private IEnumerable<Element> Elements = new List<Element>();
     private bool _readOnly;
     private bool _isCellEditMode;
     private List<string> _events = new();
@@ -67,23 +65,21 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await httpClient.GetFromJsonAsync<List<ElementWithOptionalProperty>>("webapi/periodictable");
-        Elements[0].OptionalNote = "Testing inconclusive.";
-        Elements[0].OptionalSecondaryNumber = 11;
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
 
     // events
-    void StartedEditingItem(ElementWithOptionalProperty item)
+    void StartedEditingItem(Element item)
     {
         _events.Insert(0, $"Event = StartedEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 
-    void CanceledEditingItem(ElementWithOptionalProperty item)
+    void CanceledEditingItem(Element item)
     {
         _events.Insert(0, $"Event = CanceledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
 
-    void CommittedItemChanges(ElementWithOptionalProperty item)
+    void CommittedItemChanges(Element item)
     {
         _events.Insert(0, $"Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
     }
