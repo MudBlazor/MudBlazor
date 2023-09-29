@@ -1188,5 +1188,19 @@ namespace MudBlazor.UnitTests.Components
             //changed_text should not be updated
             changed_text.Should().Be("44");
         }
+
+        [Test]
+        public async Task OldDateWithDefinedKind_SetValue_KindUnchanged()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>();
+            var picker = comp.Instance;
+            var oldDate = DateTime.Now;
+            var newDate = oldDate.AddDays(1);
+            picker.Date = oldDate;
+
+            comp.SetParam(p => p.Text, newDate.ToShortDateString());
+
+            picker.Date.Value.Kind.Should().Be(oldDate.Kind);
+        }
     }
 }
