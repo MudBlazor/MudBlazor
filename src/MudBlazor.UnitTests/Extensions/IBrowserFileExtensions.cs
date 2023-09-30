@@ -17,8 +17,9 @@ namespace MudBlazor.UnitTests
         /// <returns></returns>
         public static async Task<string> GetFileContents(this IBrowserFile file)
         {
-            var memoryStream = new MemoryStream();
-            await file.OpenReadStream().CopyToAsync(memoryStream);
+            using var fileStream = file.OpenReadStream();
+            using var memoryStream = new MemoryStream();
+            await fileStream.CopyToAsync(memoryStream);
             return Encoding.ASCII.GetString(memoryStream.ToArray());
         }
     }
