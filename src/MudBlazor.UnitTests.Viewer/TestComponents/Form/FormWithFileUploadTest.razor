@@ -4,8 +4,7 @@
 <MudPopoverProvider></MudPopoverProvider>
 
 <MudForm ValidationDelay="0">
-    <MudFileUpload @ref="_fileUploaderRef"
-                   T="IBrowserFile"
+    <MudFileUpload T="IBrowserFile"
                    @bind-Files="File"
                    Required="@Required"
                    Validation="@Validation">
@@ -25,6 +24,4 @@
 
     [Parameter]
     public Func<IBrowserFile, string?>? Validation { get; set; }
-
-    private MudFileUpload<IBrowserFile>? _fileUploaderRef;
 }
