@@ -13,6 +13,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor.Docs.Examples;
+using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.Utilities;
@@ -946,7 +947,7 @@ namespace MudBlazor.UnitTests.Components
             form.Errors.Length.Should().Be(0);
 
             // clear selection, form should now be invalid
-            input.ClearFiles();
+            await input.ClearFiles();
             form.IsValid.Should().BeFalse();
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(1);
@@ -978,7 +979,7 @@ namespace MudBlazor.UnitTests.Components
             fileUploadInstance.ErrorText.Should().BeNullOrEmpty();
 
             // clear files
-            input.ClearFiles();
+            await input.ClearFiles();
             fileUploadInstance.Files.Should().BeNull();
 
             // form should now be invalid because a file is required
