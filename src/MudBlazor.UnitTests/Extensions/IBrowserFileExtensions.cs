@@ -13,8 +13,6 @@ namespace MudBlazor.UnitTests
         /// <summary>
         /// Returns the string contents of an IBrowserFile
         /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
         public static async Task<string> GetFileContents(this IBrowserFile file)
         {
             await using var fileStream = file.OpenReadStream();
