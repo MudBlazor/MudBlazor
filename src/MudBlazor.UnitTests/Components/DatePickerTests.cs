@@ -1196,11 +1196,12 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.Instance;
             var oldDate = DateTime.Now;
             var newDate = oldDate.AddDays(1);
-            picker.Date = oldDate;
+            comp.SetParam(p => p.Date, oldDate);
 
             comp.SetParam(p => p.Text, newDate.ToShortDateString());
 
-            picker.Date.Value.Kind.Should().Be(oldDate.Kind);
+            picker.Date.Should().NotBeNull();
+            picker.Date!.Value.Kind.Should().Be(oldDate.Kind);
         }
     }
 }

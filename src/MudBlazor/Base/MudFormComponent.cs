@@ -345,7 +345,7 @@ namespace MudBlazor
                     ErrorText = errors.FirstOrDefault();
                     ErrorId = HasErrors ? Guid.NewGuid().ToString() : null;
                     Form?.Update(this);
-                    await InvokeAsync(StateHasChanged);
+                    StateHasChanged();
                 }
             }
         }
