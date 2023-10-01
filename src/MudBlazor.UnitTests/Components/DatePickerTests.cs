@@ -782,7 +782,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
 
-        
+
         [Test]
         //mud-button-root added for greying out and making buttons not clickable if month is disabled
         public void MonthButtons_ButtonRootClassPresent()
@@ -799,7 +799,7 @@ namespace MudBlazor.UnitTests.Components
         public void AdditionalDateClassesFunc_ClassIsAdded()
         {
             Func<DateTime, string> additionalDateClassesFunc = date => "__addedtestclass__";
-            
+
             var comp = OpenPicker(Parameter(nameof(MudDatePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
 
             var daysCount = comp.FindAll("button.mud-picker-calendar-day")
@@ -1105,7 +1105,7 @@ namespace MudBlazor.UnitTests.Components
 
             datePicker.MinDate = DateTime.Now.AddDays(-1);
             datePicker.MaxDate = DateTime.Now.AddDays(1);
-            
+
 
             // Open the datepicker
             await comp.InvokeAsync(datePicker.Open);
@@ -1196,11 +1196,12 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.Instance;
             var oldDate = DateTime.Now;
             var newDate = oldDate.AddDays(1);
-            picker.Date = oldDate;
+            comp.SetParam(p => p.Date, oldDate);
 
             comp.SetParam(p => p.Text, newDate.ToShortDateString());
 
-            picker.Date.Value.Kind.Should().Be(oldDate.Kind);
+            picker.Date.Should().NotBeNull();
+            picker.Date!.Value.Kind.Should().Be(oldDate.Kind);
         }
     }
 }
