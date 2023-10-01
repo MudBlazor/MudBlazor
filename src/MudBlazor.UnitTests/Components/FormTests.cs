@@ -947,7 +947,7 @@ namespace MudBlazor.UnitTests.Components
             form.Errors.Length.Should().Be(0);
 
             // clear selection, form should now be invalid
-            await input.ClearFiles();
+            await input.ClearFilesAsync();
             form.IsValid.Should().BeFalse();
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(1);
@@ -979,7 +979,7 @@ namespace MudBlazor.UnitTests.Components
             fileUploadInstance.ErrorText.Should().BeNullOrEmpty();
 
             // clear files
-            await input.ClearFiles();
+            await input.ClearFilesAsync();
             fileUploadInstance.Files.Should().BeNull();
 
             // form should now be invalid because a file is required

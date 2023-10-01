@@ -10,7 +10,7 @@ namespace MudBlazor.UnitTests;
 
 public static class InputFileExtensions
 {
-    public static async Task ClearFiles(this IRenderedComponent<InputFile> inputFileComponent)
+    public static async Task ClearFilesAsync(this IRenderedComponent<InputFile> inputFileComponent)
     {
         ArgumentNullException.ThrowIfNull(inputFileComponent);
 

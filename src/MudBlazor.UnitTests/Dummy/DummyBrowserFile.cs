@@ -10,11 +10,15 @@ namespace MudBlazor.UnitTests.Dummy;
 
 public class DummyBrowserFile : IBrowserFile
 {
-    public string Name { get; set;  }
-    public DateTimeOffset LastModified { get; set; }
-    public long Size { get; set; }
-    public string ContentType { get; set; }
-    public byte[] Content { get; set; }
+    public string Name { get; }
+
+    public DateTimeOffset LastModified { get; }
+
+    public long Size { get; }
+
+    public string ContentType { get; }
+
+    public byte[] Content { get; }
 
     public DummyBrowserFile(string name, DateTimeOffset lastModified, long size, string contentType, byte[] content)
     {
@@ -25,6 +29,5 @@ public class DummyBrowserFile : IBrowserFile
         Content = content;
     }
 
-    public Stream OpenReadStream(long maxAllowedSize = 512000, CancellationToken cancellationToken = new())
-        => new MemoryStream(Content);
+    public Stream OpenReadStream(long maxAllowedSize = 512000, CancellationToken cancellationToken = default) => new MemoryStream(Content);
 }
