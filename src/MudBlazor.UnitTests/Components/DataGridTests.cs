@@ -118,7 +118,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
-            await comp.InvokeAsync(() => headerCell.Instance.AddFilterAsync());
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
             await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
 
             await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
@@ -3062,7 +3062,7 @@ namespace MudBlazor.UnitTests.Components
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 7);
-            await comp.InvokeAsync(() => headerCell.Instance.AddFilterAsync());
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 8);
             await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 9);
