@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -588,6 +589,37 @@ namespace MudBlazor.UnitTests.Components
 
             var textfield = comp.FindComponent<MudTextField<string>>();
             Assert.AreSame(comp.Instance.FormFieldChangedEventArgs.Field, textfield.Instance);
+        }
+
+        [Test]
+        public async Task DataGridFormValidationErrorsPreventUpdateTest()
+        {
+            var comp = Context.RenderComponent<DataGridFormValidationErrorsPreventUpdateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormValidationErrorsPreventUpdateTest.Model>>();
+
+            // open form dialog
+            dataGrid.Find("tbody tr button").Click();
+            dataGrid.Instance.isEditFormOpen.Should().BeTrue();
+
+            var field = comp.FindComponents<MudTextField<string>>()[2];
+
+            // edit data
+            field.Instance.Value.Should().Be("Augusta_Homenick26@mud.com");
+            field.WaitForElement("input").Change("not-a-valid-email-address");
+
+            // check the change occurred
+            field.Instance.Value.Should().Be("not-a-valid-email-address");
+
+            // ensure that validation message is displayed
+            field.Markup.Should().Contain("This is not a valid e-mail address");
+
+            var button = comp.FindComponents<MudButton>().Single(b => b.Markup.Contains("Save"));
+            button.WaitForElement("button").Click();
+
+            // dialog should still be open and the items data should not have been updated
+            using AssertionScope scope = new();
+            dataGrid.Instance.isEditFormOpen.Should().BeTrue();
+            comp.Instance.Items[0].Email.Should().Be("Augusta_Homenick26@mud.com");
         }
 
         [Test]

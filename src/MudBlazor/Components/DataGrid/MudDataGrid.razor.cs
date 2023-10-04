@@ -28,6 +28,7 @@ namespace MudBlazor
         private bool _columnsPanelVisible = false;
         private IEnumerable<T> _items;
         private T _selectedItem;
+        private MudForm _editForm;
         internal Dictionary<object, bool> _groupExpansionsDict = new Dictionary<object, bool>();
         private List<GroupDefinition<T>> _currentPageGroups = new List<GroupDefinition<T>>();
         private List<GroupDefinition<T>> _allGroups = new List<GroupDefinition<T>>();
@@ -1074,7 +1075,11 @@ namespace MudBlazor
         /// <returns></returns>
         internal async Task CommitItemChangesAsync()
         {
-            // Here, we need to validate at the cellular level...
+            await _editForm.Validate();
+            if (!_editForm.IsValid)
+            {
+                return;
+            }
 
             if (editingSourceItem != null)
             {
