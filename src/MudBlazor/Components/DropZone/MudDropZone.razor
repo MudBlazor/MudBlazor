@@ -58,7 +58,8 @@
                         ZoneIdentifier="@Identifier"
                         Disabled="@GetItemDisabledStatus(item)"
                         Index="indexCopy"
-                        DisabledClass="@(DisabledClass ?? Container?.DisabledClass)">
+                        DisabledClass="@(DisabledClass ?? Container?.DisabledClass)"
+                        Class="@(GetItemClassUsingSelector(item))">
                 @{
                     var renderer = GetItemTemplate();
                 }
