@@ -66,21 +66,21 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The Size of the MudAvatar.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size Size { get; set; } = Defaults.Size;
 
         /// <summary>
         /// The variant to use.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]
-        public Variant Variant { get; set; } = Variant.Filled;
+        public Variant Variant { get; set; } = Defaults.Variant;
 
         /// <summary>
         /// Child content of the component.

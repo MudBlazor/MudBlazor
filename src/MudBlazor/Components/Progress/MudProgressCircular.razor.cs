@@ -30,14 +30,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The size of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size Size { get; set; } = Defaults.Size;
 
         /// <summary>
         /// Constantly animates, does not follow any value.

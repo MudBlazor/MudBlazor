@@ -67,13 +67,13 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = Defaults.Color;
         /// <summary>
         /// The Size of the icons.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size Size { get; set; } = Defaults.Size;
         /// <summary>
         /// If true, disables ripple effect.
         /// </summary>

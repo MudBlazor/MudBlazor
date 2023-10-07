@@ -45,7 +45,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Carousel.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The transition effect of the component.

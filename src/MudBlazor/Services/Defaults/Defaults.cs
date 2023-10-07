@@ -5,6 +5,15 @@ namespace MudBlazor
 {
     public static class Defaults
     {
+        public static Color Color { get; set; }
+        public static bool Dense { get; set; }
+        public static Margin Margin { get; set; }
+        public static Origin AnchorOrigin { get; set; }
+        public static Origin TransformOrigin { get; set; }
+        public static Size Size { get; set; }
+        public static Variant Variant { get; set; }
+        public static PickerVariant PickerVariant { get; set; }
+
         public static class Classes
         {
             public static class Position

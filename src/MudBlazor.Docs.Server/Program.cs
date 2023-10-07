@@ -6,6 +6,7 @@ using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
 using MudBlazor.Examples.Data;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

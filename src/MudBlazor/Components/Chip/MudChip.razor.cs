@@ -70,14 +70,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chip.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The size of the button. small is equivalent to the dense button styling.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chip.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size Size { get; set; } = Defaults.Size;
 
         /// <summary>
         /// The variant to use.

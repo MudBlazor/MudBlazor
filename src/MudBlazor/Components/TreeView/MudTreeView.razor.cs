@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -36,7 +36,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
-        public Color Color { get; set; } = Color.Primary;
+        public Color Color { get; set; } = Defaults.Color == Color.Default ? Color.Primary : Defaults.Color;
 
         /// <summary>
         /// Check box color if multiselection is used.
@@ -106,7 +106,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
-        public bool Dense { get; set; }
+        public bool Dense { get; set; } = Defaults.Dense;
 
         /// <summary>
         /// Setting a height will allow to scroll the treeview. If not set, it will try to grow in height.

@@ -103,7 +103,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Color AdornmentColor { get; set; } = Color.Default;
+        public Color AdornmentColor { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The aria-label of the adornment.
@@ -117,7 +117,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Size IconSize { get; set; } = Size.Medium;
+        public Size IconSize { get; set; } = Defaults.Size;
 
         /// <summary>
         /// Button click event if set and Adornment used.
@@ -129,14 +129,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = Defaults.Variant;
 
         /// <summary>
         ///  Will adjust vertical spacing.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Margin Margin { get; set; } = Margin.None;
+        public Margin Margin { get; set; } = Defaults.Margin;
 
         /// <summary>
         /// The short hint displayed in the input before the user enters a value.

@@ -76,21 +76,21 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The button Size of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size Size { get; set; } = Defaults.Size;
 
         /// <summary>
         /// The button variant to use.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = Defaults.Variant;
 
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupAppearance)]
-        public bool Dense { get; set; }
+        public bool Dense { get; set; } = Defaults.Dense;
 
         /// <summary>
         /// If true, the list menu will be same width as the parent.

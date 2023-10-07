@@ -100,7 +100,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Slider.Appearance)]
-        public Color Color { get; set; } = Color.Primary;
+        public Color Color { get; set; } = Defaults.Color == Color.Default ? Color.Primary : Defaults.Color;
 
         protected string? Text
         {
@@ -158,7 +158,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = Defaults.Variant;
 
         /// <summary>
         /// Displays the value over the slider thumb.

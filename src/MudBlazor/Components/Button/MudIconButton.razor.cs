@@ -42,14 +42,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The Size of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size Size { get; set; } = Defaults.Size;
 
         /// <summary>
         /// If set uses a negative margin.
@@ -63,7 +63,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = Defaults.Variant;
 
         /// <summary>
         /// Child content of component, only shows if Icon is null or Empty.

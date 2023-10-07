@@ -84,7 +84,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
-        public bool Dense { get; set; }
+        public bool Dense { get; set; } = Defaults.Dense;
 
         /// <summary>
         /// Set true to see rows hover on mouse-over.

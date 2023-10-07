@@ -111,7 +111,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public bool Dense { get; set; }
+        public bool Dense { get; set; } = Defaults.Dense;
 
         /// <summary>
         /// The Open Autocomplete Icon
@@ -366,7 +366,7 @@ namespace MudBlazor
         public MudAutocomplete()
         {
             Adornment = Adornment.End;
-            IconSize = Size.Medium;
+            IconSize = Defaults.Size;
         }
 
         public async Task SelectOption(T value)

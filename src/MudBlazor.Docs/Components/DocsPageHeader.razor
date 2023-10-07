@@ -48,7 +48,7 @@ else
                         <CodeInline>@($"<{_componentTypeName}>")</CodeInline>
                     </MudLink>
                 </li>
-                @if (_component.ChildTypes != null)
+                @if (_component?.ChildTypes != null)
                 {
                     @foreach (var childType in _component.ChildTypes)
                     {

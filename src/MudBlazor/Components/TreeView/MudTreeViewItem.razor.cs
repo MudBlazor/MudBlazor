@@ -219,7 +219,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
-        public Color IconColor { get; set; } = Color.Default;
+        public Color IconColor { get; set; } = Defaults.Color;
 
         /// <summary>
         /// Icon placed after the text if set.
@@ -233,7 +233,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
-        public Color EndIconColor { get; set; } = Color.Default;
+        public Color EndIconColor { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The expand/collapse icon.
@@ -247,7 +247,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Expanding)]
-        public Color ExpandedIconColor { get; set; } = Color.Default;
+        public Color ExpandedIconColor { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The loading icon.
@@ -261,7 +261,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
-        public Color LoadingIconColor { get; set; } = Color.Default;
+        public Color LoadingIconColor { get; set; } = Defaults.Color;
 
         /// <summary>
         /// Called whenever the activated value changed.

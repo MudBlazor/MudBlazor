@@ -116,14 +116,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = Defaults.Variant;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
-        public Color Color { get; set; } = Color.Primary;
+        public Color Color { get; set; } = Defaults.Color == Color.Default ? Color.Primary : Defaults.Color;
 
         /// <summary>
         /// If true, the pagination buttons are displayed rectangular.
@@ -137,7 +137,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Pagination.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size Size { get; set; } = Defaults.Size;
 
         /// <summary>
         /// If true, no drop-shadow will be used.

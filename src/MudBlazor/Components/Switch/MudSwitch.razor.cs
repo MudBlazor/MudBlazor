@@ -64,14 +64,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The base color of the component in its none active/unchecked state. It supports the theme colors.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
-        public Color UnCheckedColor { get; set; } = Color.Default;
+        public Color UnCheckedColor { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The text/label will be displayed next to the switch if set.
@@ -99,7 +99,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Color ThumbIconColor { get; set; } = Color.Default;
+        public Color ThumbIconColor { get; set; } = Defaults.Color;
 
         /// <summary>
         /// If true, disables ripple effect.
@@ -113,7 +113,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size Size { get; set; } = Defaults.Size;
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]

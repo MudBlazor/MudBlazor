@@ -22,7 +22,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The Size of the component.
@@ -64,7 +64,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Size IconSize { get; set; } = Size.Medium;
+        public Size IconSize { get; set; } = Defaults.Size;
 
         /// <summary>
         /// If applied the text will be added to the component.

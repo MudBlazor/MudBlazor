@@ -76,7 +76,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Color AdornmentColor { get; set; } = Color.Default;
+        public Color AdornmentColor { get; set; } = Defaults.Color;
 
         /// <summary>
         /// Sets the icon of the input text field
@@ -211,7 +211,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public PickerVariant PickerVariant { get; set; } = PickerVariant.Inline;
+        public PickerVariant PickerVariant { get; set; } = Defaults.PickerVariant;
 
         /// <summary>
         ///  Variant of the text input
@@ -230,7 +230,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = Defaults.Variant;
 
         /// <summary>
         /// Sets if the icon will be att start or end, set to false to disable.
@@ -251,14 +251,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Size IconSize { get; set; } = Size.Medium;
+        public Size IconSize { get; set; } = Defaults.Size;
 
         /// <summary>
         /// The color of the toolbar, selected and active. It supports the theme colors.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public Color Color { get; set; } = Color.Primary;
+        public Color Color { get; set; } = Defaults.Color == Color.Default ? Color.Primary : Defaults.Color;
 
         /// <summary>
         /// Changes the cursor appearance.

@@ -105,14 +105,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public Size IconSize { get; set; } = Size.Medium;
+        public Size IconSize { get; set; } = Defaults.Size;
 
         /// <summary>
         /// The color of the adornment if used. It supports the theme colors.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Expanding)]
-        public Color AdornmentColor { get; set; } = Color.Default;
+        public Color AdornmentColor { get; set; } = Defaults.Color;
 
         /// <summary>
         /// Custom expand less icon.

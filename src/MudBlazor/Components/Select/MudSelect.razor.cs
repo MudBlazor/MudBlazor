@@ -19,7 +19,7 @@ namespace MudBlazor
     {
         private HashSet<T> _selectedValues = new HashSet<T>();
         private IEqualityComparer<T> _comparer;
-        private bool _dense;
+        private bool _dense = Defaults.Dense;
         private string multiSelectionText;
         private bool? _selectAllChecked;
         private IKeyInterceptor _keyInterceptor;
@@ -314,7 +314,7 @@ namespace MudBlazor
         public MudSelect()
         {
             Adornment = Adornment.End;
-            IconSize = Size.Medium;
+            IconSize = Defaults.Size;
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -492,14 +492,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public Origin AnchorOrigin { get; set; } = Origin.TopCenter;
+        public Origin AnchorOrigin { get; set; } = Defaults.AnchorOrigin;
 
         /// <summary>
         /// Sets the transform origin point for the popover.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public Origin TransformOrigin { get; set; } = Origin.TopCenter;
+        public Origin TransformOrigin { get; set; } = Defaults.TransformOrigin;
 
         /// <summary>
         /// Sets the direction the Select menu should open.

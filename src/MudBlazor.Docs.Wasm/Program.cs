@@ -7,6 +7,7 @@ using System.Net.Http;
 using MudBlazor.Docs.Wasm;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Services.Notifications;
+using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

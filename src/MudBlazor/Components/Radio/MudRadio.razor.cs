@@ -79,7 +79,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The base color of the component in its none active/unchecked state. It supports the theme colors.
@@ -107,14 +107,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
-        public bool Dense { get; set; }
+        public bool Dense { get; set; } = Defaults.Dense;
 
         /// <summary>
         /// The Size of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size Size { get; set; } = Defaults.Size;
 
         /// <summary>
         /// If true, disables ripple effect.

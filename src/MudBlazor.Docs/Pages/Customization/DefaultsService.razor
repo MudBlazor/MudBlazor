@@ -1,0 +1,29 @@
+﻿@page "/customization/defaultsservice"
+@inject MudDefaultsService MudDefaultsService
+@inject NavigationManager NavigationManager
+
+<DocsPage>
+    <DocsPageHeader Title="Defaults Service" SubTitle="Configure the MudBlazor defaults for maximize flexibility." />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Initial Configuration">
+                <Description>The defaults can be changed in two ways. One is configuring the default values inside the <CodeInline>Program.cs</CodeInline></Description>
+            </SectionHeader>
+
+            <SectionContent>
+                <MudBlazor.Docs.Pages.Customization.MarkdownMudDefaultService />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Configuration on Runtime">
+                <Description>Defaults also can be change on runtime via injected <CodeInline>MudDefaultsService</CodeInline>. (Currently only on Server-Side)</Description>
+            </SectionHeader>
+            
+            <SectionContent Code="DefaultsRuntimeExample" ShowCode="false">
+                <DefaultsRuntimeExample  />
+            </SectionContent>
+        </DocsPageSection>
+        <MudAlert Severity="Severity.Info">Default changes only apply after page reload.</MudAlert>
+    </DocsPageContent>
+</DocsPage>

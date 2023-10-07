@@ -52,28 +52,28 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The color of the icon in the toggled state. It supports the theme colors.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Color ToggledColor { get; set; } = Color.Default;
+        public Color ToggledColor { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The Size of the component in the untoggled state.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size Size { get; set; } = Defaults.Size;
 
         /// <summary>
         /// The Size of the component in the toggled state.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Size ToggledSize { get; set; } = Size.Medium;
+        public Size ToggledSize { get; set; } = Defaults.Size;
 
         /// <summary>
         /// If set uses a negative margin.
@@ -101,7 +101,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = Defaults.Variant;
 
         public Task Toggle()
         {

@@ -10,6 +10,20 @@ namespace MudBlazor.Services
     [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions
     {
+        public static IServiceCollection AddMudBlazorDefaults(this IServiceCollection services)
+        {
+            services.TryAddScoped<MudDefaultsService>();
+            return services;
+        }
+
+        public static IServiceCollection AddMudBlazorDefaults(this IServiceCollection services, Action<DefaultsConfiguration> options)
+        {
+            services.AddMudBlazorDefaults();
+            services.Configure(options);
+
+            return services;
+        }
+
         /// <summary>
         /// Adds a Dialog Service as a Scoped instance.
         /// </summary>
@@ -396,6 +410,7 @@ namespace MudBlazor.Services
         {
             return services
                 .AddMudBlazorDialog()
+                .AddMudBlazorDefaults()
                 .AddMudBlazorSnackbar()
                 .AddMudBlazorResizeListener()
                 .AddMudBlazorResizeObserver()
@@ -426,6 +441,17 @@ namespace MudBlazor.Services
 
             return services
                 .AddMudBlazorDialog()
+                .AddMudBlazorDefaults(defaultConfiguration =>
+                {
+                    defaultConfiguration.Color = options.DefaultsConfiguration.Color;
+                    defaultConfiguration.Dense = options.DefaultsConfiguration.Dense;
+                    defaultConfiguration.AnchorOrigin = options.DefaultsConfiguration.AnchorOrigin;
+                    defaultConfiguration.TransformOrigin = options.DefaultsConfiguration.TransformOrigin;
+                    defaultConfiguration.Margin = options.DefaultsConfiguration.Margin;
+                    defaultConfiguration.Size = options.DefaultsConfiguration.Size;
+                    defaultConfiguration.Variant = options.DefaultsConfiguration.Variant;
+                    defaultConfiguration.PickerVariant = options.DefaultsConfiguration.PickerVariant;
+                })
                 .AddMudBlazorSnackbar(snackBarConfiguration =>
                 {
                     snackBarConfiguration.ClearAfterNavigation = options.SnackbarConfiguration.ClearAfterNavigation;

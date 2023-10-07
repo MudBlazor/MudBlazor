@@ -1,0 +1,92 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject MudDefaultsService MudDefaultsService
+@inject NavigationManager NavigationManager
+
+<MudContainer MaxWidth="MaxWidth.Small">
+    <MudStack>
+        <MudButton OnClick="@(() => NavigationManager.NavigateTo("customization/defaultsservice", true))">Reload Website</MudButton>
+        <MudSwitch @bind-Checked="_dense" @bind-Checked:after="ChangeDense" Label="Dense" />
+        <MudSelect T="Color" @bind-Value="_color" @bind-Value:after="ChangeColor" Label="Color">
+            @foreach (var item in Enum.GetValues<Color>())
+            {
+                <MudSelectItem Value="item">@item.ToDescriptionString()</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect T="Margin" @bind-Value="_margin" @bind-Value:after="ChangeMargin" Label="Margin">
+            @foreach (var item in Enum.GetValues<Margin>())
+            {
+                <MudSelectItem Value="item">@item.ToDescriptionString()</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect T="Size" @bind-Value="_size" @bind-Value:after="ChangeSize" Label="Size">
+            @foreach (var item in Enum.GetValues<Size>())
+            {
+                <MudSelectItem Value="item">@item.ToDescriptionString()</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect T="Variant" @bind-Value="_variant" @bind-Value:after="ChangeVariant" Label="Variant">
+            @foreach (var item in Enum.GetValues<Variant>())
+            {
+                <MudSelectItem Value="item">@item.ToDescriptionString()</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect T="Origin" @bind-Value="_anchorOrigin" @bind-Value:after="ChangeAnchorOrigin" Label="AnchorOrigin">
+            @foreach (var item in Enum.GetValues<Origin>())
+            {
+                <MudSelectItem Value="item">@item.ToDescriptionString()</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect T="Origin" @bind-Value="_transformOrigin" @bind-Value:after="ChangeTransformOrigin" Label="TransformOrigin">
+            @foreach (var item in Enum.GetValues<Origin>())
+            {
+                <MudSelectItem Value="item">@item.ToDescriptionString()</MudSelectItem>
+            }
+        </MudSelect>
+    </MudStack>
+</MudContainer>
+
+@code {
+    bool _dense = MudBlazor.Defaults.Dense;
+    Color _color = MudBlazor.Defaults.Color;
+    Margin _margin = MudBlazor.Defaults.Margin;
+    Size _size = MudBlazor.Defaults.Size;
+    Variant _variant = MudBlazor.Defaults.Variant;
+    Origin _anchorOrigin = MudBlazor.Defaults.AnchorOrigin;
+    Origin _transformOrigin = MudBlazor.Defaults.TransformOrigin;
+
+    private void ChangeColor()
+    {
+        MudDefaultsService.SetColor(_color);
+    }
+
+    private void ChangeDense()
+    {
+        MudDefaultsService.SetDense(_dense);
+    }
+
+    private void ChangeMargin()
+    {
+        MudDefaultsService.SetMargin(_margin);
+    }
+
+    private void ChangeSize()
+    {
+        MudDefaultsService.SetSize(_size);
+    }
+
+    private void ChangeVariant()
+    {
+        MudDefaultsService.SetVariant(_variant);
+    }
+
+    private void ChangeAnchorOrigin()
+    {
+        MudDefaultsService.SetAnchorOrigin(_anchorOrigin);
+    }
+
+    private void ChangeTransformOrigin()
+    {
+        MudDefaultsService.SetTransformOrigin(_transformOrigin);
+    }
+}

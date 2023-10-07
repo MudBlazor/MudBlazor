@@ -55,7 +55,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Size? IconSize { get; set; }
+        public Size? IconSize { get; set; } = Defaults.Size;
 
         /// <summary>
         /// Icon class names, separated by space
@@ -69,21 +69,21 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The Size of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size Size { get; set; } = Defaults.Size;
 
         /// <summary>
         /// The variant to use.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = Defaults.Variant;
 
         /// <summary>
         /// If true, the button will take up 100% of available width.

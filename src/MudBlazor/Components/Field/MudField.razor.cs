@@ -94,7 +94,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = Defaults.Variant;
 
         /// <summary>
         /// If true, the input element will be disabled.
@@ -129,14 +129,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Color AdornmentColor { get; set; } = Color.Default;
+        public Color AdornmentColor { get; set; } = Defaults.Color;
 
         /// <summary>
         /// Sets the Icon Size.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Appearance)]
-        public Size IconSize { get; set; } = Size.Medium;
+        public Size IconSize { get; set; } = Defaults.Size;
 
         /// <summary>
         /// Button click event if set and Adornment used.

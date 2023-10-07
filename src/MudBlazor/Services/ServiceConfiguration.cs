@@ -14,5 +14,7 @@
         public ResizeObserverOptions ResizeObserverOptions { get; set; } = new ResizeObserverOptions();
 
         public PopoverOptions PopoverOptions { get; set; } = new PopoverOptions();
+
+        public DefaultsConfiguration DefaultsConfiguration { get; set; } = new DefaultsConfiguration();
     }
 }

@@ -1,0 +1,19 @@
+@namespace MudBlazor.Docs.Pages.Customization
+
+<div class="mud-codeblock">
+<div class="csharp"><pre>
+<span class="keyword">using</span> MudBlazor.Services;
+
+<span class="localVar">builder.Services</span>.<span class="function">AddMudServices</span>(<span class="localVar">config</span> =&gt;
+{
+    <span class="localVar">config.DefaultConfiguration</span>.Color = <span class="keyword">Color.Primary</span>;
+    <span class="localVar">config.DefaultConfiguration</span>.Dense = <span class="keyword">true</span>;
+    <span class="localVar">config.DefaultConfiguration</span>.Margin = <span class="keyword">Margin.Dense</span>;
+    <span class="localVar">config.DefaultConfiguration</span>.Size = <span class="keyword">Size.Small</span>;
+    <span class="localVar">config.DefaultConfiguration</span>.Variant = <span class="keyword">Variant.Outlined</span>;
+    <span class="localVar">config.DefaultConfiguration</span>.PickerVariant = <span class="keyword">PickerVariant.Dialog</span>;
+    <span class="localVar">config.DefaultConfiguration</span>.AnchorOrigin = <span class="keyword">Origin.BottomCenter</span>;
+    <span class="localVar">config.DefaultConfiguration</span>.TransformOrigin = <span class="keyword">Origin.TopCenter</span>;
+});
+</pre></div>
+</div>

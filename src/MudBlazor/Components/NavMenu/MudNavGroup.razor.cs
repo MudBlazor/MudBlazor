@@ -49,7 +49,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-        public Color IconColor { get; set; } = Color.Default;
+        public Color IconColor { get; set; } = Defaults.Color;
 
         /// <summary>
         /// If true, the button will be disabled.

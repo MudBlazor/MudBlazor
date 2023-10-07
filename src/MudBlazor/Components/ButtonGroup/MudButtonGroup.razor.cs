@@ -55,20 +55,20 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ButtonGroup.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = Defaults.Color;
 
         /// <summary>
         /// The size of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ButtonGroup.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size Size { get; set; } = Defaults.Size;
 
         /// <summary>
         /// The variant to use.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ButtonGroup.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = Defaults.Variant;
     }
 }

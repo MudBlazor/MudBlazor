@@ -51,7 +51,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-        public Color IconColor { get; set; } = Color.Default;
+        public Color IconColor { get; set; } = Defaults.Color;
 
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
