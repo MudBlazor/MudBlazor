@@ -35,7 +35,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            Variant = ThemeService.GetDefaultVariant();
+            Variant = ThemeService.Provider.DefaultVariant;
         }
 
         /// <summary>
