@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BCSS.Services;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,6 +17,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpClient<GitHubApiClient>();
 builder.Services.TryAddDocsViewServices();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddBcss();
 
 builder.Services.AddScoped(sp =>
 {
