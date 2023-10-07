@@ -28,6 +28,9 @@ namespace MudBlazor
         [Inject]
         private IJSRuntime JsRuntime { get; set; } = null!;
 
+        [Inject]
+        public MudThemeService ThemeService { get; set; }
+
         /// <summary>
         /// The theme used by the application.
         /// </summary>
@@ -65,6 +68,9 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<bool> IsDarkModeChanged { get; set; }
 
+        [Parameter]
+        public Variant DefaultVariant { get; set; }
+
         [DynamicDependency(nameof(SystemPreferenceChanged))]
         public BaseMudThemeProvider()
         {
@@ -99,6 +105,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             Theme ??= new MudTheme();
+            ThemeService.Attach(this);
         }
 
         protected string BuildTheme()

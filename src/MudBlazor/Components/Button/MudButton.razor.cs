@@ -6,6 +6,9 @@ namespace MudBlazor
 {
     public partial class MudButton : MudBaseButton
     {
+        [Inject]
+        public MudThemeService ThemeService { get; set; }
+
         protected string Classname =>
         new CssBuilder("mud-button-root mud-button")
           .AddClass($"mud-button-{Variant.ToDescriptionString()}")
@@ -28,6 +31,12 @@ namespace MudBlazor
           .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToDescriptionString()}")
           .AddClass(IconClass)
         .Build();
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            Variant = ThemeService.GetDefaultVariant();
+        }
 
         /// <summary>
         /// Icon placed before the text if set.
@@ -83,7 +92,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; }
 
         /// <summary>
         /// If true, the button will take up 100% of available width.
