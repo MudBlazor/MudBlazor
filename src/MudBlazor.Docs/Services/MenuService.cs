@@ -231,7 +231,8 @@ namespace MudBlazor.Docs.Services
         /// </summary>
         public IEnumerable<DocsLink> Customization => _customization ??= new List<DocsLink>()
         {
-            new DocsLink {Title="Default theme", Href="customization/default-theme"},
+            new DocsLink {Title = "Default theme", Href="customization/default-theme"},
+            new DocsLink {Title = "Theme Service", Href="customization/themeservice"},
             new DocsLink {Title = "Overview", Href = "customization/overview"},
             new DocsLink {Title = "Palette", Href = "customization/palette"},
             new DocsLink {Title = "Typography", Href = "customization/typography"},

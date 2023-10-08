@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public class BaseMudThemeProvider : ComponentBase, IDisposable
+    public partial class MudThemeProvider : ComponentBase, IDisposable
     {
         // private const string Breakpoint = "mud-breakpoint";
         private const string Palette = "mud-palette";
@@ -19,7 +19,7 @@ namespace MudBlazor
         private const string LayoutProperties = "mud";
         private const string Zindex = "mud-zindex";
 
-        private readonly DotNetObjectReference<BaseMudThemeProvider> _dotNetRef;
+        private readonly DotNetObjectReference<MudThemeProvider> _dotNetRef;
 
         private event Func<bool, Task>? _darkLightModeChanged;
 
@@ -66,7 +66,7 @@ namespace MudBlazor
         public EventCallback<bool> IsDarkModeChanged { get; set; }
 
         [DynamicDependency(nameof(SystemPreferenceChanged))]
-        public BaseMudThemeProvider()
+        public MudThemeProvider()
         {
             _dotNetRef = DotNetObjectReference.Create(this);
         }
@@ -99,6 +99,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             Theme ??= new MudTheme();
+            ThemeService.Attach(this);
         }
 
         protected string BuildTheme()
