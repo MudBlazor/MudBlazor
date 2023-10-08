@@ -33,7 +33,8 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     public int ActiveIndex { get; set; }
 
-    [Parameter] public EventCallback<int> ActiveIndexChanged { get; set; }
+    [Parameter]
+    public EventCallback<int> ActiveIndexChanged { get; set; }
 
     /// <summary>
     /// The color of the completed step. It supports the theme colors.
@@ -59,7 +60,8 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     public string NavClass { get; set; }
 
-    [Parameter] public bool NonLinear { get; set; }
+    [Parameter]
+    public bool NonLinear { get; set; }
 
     /// <summary>
     /// Renders the component in vertical manner. Each step is collapsible
@@ -79,8 +81,6 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     public bool AlternateLabel { get; set; }
 
-    #region Funcs
-
     /// <summary>
     /// Fired when a step gets activated. Returned Task will be awaited.
     /// </summary>
@@ -88,11 +88,13 @@ public partial class MudStepper : MudComponentBase
     [Category(CategoryTypes.Tabs.Behavior)]
     public Func<StepperInteractionEventArgs, Task>? OnPreviewInteraction { get; set; }
 
-    #endregion
-
     public bool IsCurrentStepSkippable => _steps.Any() && ActiveStep is not null && ActiveStep.Skippable;
+    public bool CanGoToNextStep =>
+        _steps.Any() && ActiveStep is not null && (_steps.Count - 1 == _activeIndex ||
+                                                   !_steps[_activeIndex + 1].Disabled);
+
     public bool PreviousStepEnabled => _steps.Any() && _activeIndex > 0;
-    public bool IsCompleted => _steps.Any() && _steps.All(x => x.Completed);
+    public bool IsCompleted => _steps.Any() && _steps.Where(x => !x.Skippable).All(x => x.Completed);
 
     /// <summary>
     /// Space for all the MudSteps

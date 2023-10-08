@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudPaper Style="width: 800px">
+    <MudStepper NonLinear="true" ErrorStepColor="Color.Warning">
+        <MudStepperStep Title="Select campaign settings">Select campaign settings content</MudStepperStep>
+        <MudStepperStep Title="Disabled Step" Disabled="SwitchToggle" HasError="true" ErrorStepColor="Color.Tertiary">Create an ad group content</MudStepperStep>
+        <MudStepperStep Title="Create an ad" SecondaryText="Secondary text" HasError="true">Create an ad content</MudStepperStep>
+    </MudStepper>
+</MudPaper>
+
+<MudDivider/>
+
+<MudSwitch @bind-Checked="@SwitchToggle" Label="Step 2 disabled" Color="Color.Primary" />
+
+@code {
+
+    public bool SwitchToggle { get; set; } = true;
+
+}

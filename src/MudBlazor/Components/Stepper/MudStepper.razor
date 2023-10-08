@@ -11,19 +11,19 @@
             string stepClassname = new CssBuilder()
                 .AddClass("mud-stepper-nav-step")
                 .AddClass("active", isActive)
-                .AddClass("mud-ripple", NonLinear)
+                .AddClass("mud-ripple", NonLinear && !step.Disabled)
                 .Build();
 
             @if (NonLinear)
             {
-                <div class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@isActive"
+                <div class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@(isActive ? "true" : "false")"
                      @onclick="@((e) => ProcessStep(step, e, StepInteractionType.Activate))">
                     @RenderStepLabel(step, isActive)
                 </div>
             }
             else
             {
-                <div class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@isActive">
+                <div class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@(isActive ? "true" : "false")">
                     @RenderStepLabel(step, isActive)
                 </div>
             }
@@ -42,7 +42,7 @@
         }
     </div>
 
-    @if (Vertical == false && ActiveStep is not null)
+    @if (!Vertical && ActiveStep is not null)
     {
         @StepContent(ActiveStep)
     }
@@ -57,7 +57,7 @@
         @if (!IsCompleted)
         {
             <MudButton OnClick="SkipCurrentStep" Disabled="!IsCurrentStepSkippable">Skip</MudButton>
-            <MudButton OnClick="CompleteCurrentStep" Color="Color.Primary">Next</MudButton>
+            <MudButton OnClick="CompleteCurrentStep" Color="Color.Primary" Disabled="!CanGoToNextStep">Next</MudButton>
         }
         else
         {
@@ -81,20 +81,24 @@
                     {
                         <MudIcon Size="Size.Small" Icon="@Icons.Material.Outlined.Done"/>
                     }
+                    else if (step.HasError)
+                    {
+                        <MudIcon Size="Size.Small" Icon="@Icons.Material.Outlined.PriorityHigh"/>
+                    }
                     else
                     {
                         <MudText Typo="Typo.caption">@(_steps.IndexOf(step) + 1)</MudText>
                     }
                 }
             </div>
-            <div class="mud-stepper-nav-step-label-content">
+            <div class="@step.LabelContentClassname">
                 @if (TitleTemplate is not null)
                 {
                     @TitleTemplate
                 }
                 else
                 {
-                    <MudText Typo="@(isActive ? Typo.subtitle2 : Typo.body2)" Color="Color.Default"
+                    <MudText Typo="@(isActive ? Typo.subtitle2 : Typo.body2)"
                              Style="line-height: var(--mud-typography-body2-lineheight)">
                         @step.Title
                     </MudText>
