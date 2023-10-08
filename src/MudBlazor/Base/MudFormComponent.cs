@@ -645,7 +645,7 @@ namespace MudBlazor
             if (For is not null && For != _currentFor)
             {
                 // Extract validation attributes
-                // Sourced from https://stackoverflow.com/a/43076222/4839162 
+                // Sourced from https://stackoverflow.com/a/43076222/4839162
                 // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
                 var expression = (MemberExpression)For.Body;
                 var propertyInfo = expression.Expression?.Type.GetProperty(expression.Member.Name);

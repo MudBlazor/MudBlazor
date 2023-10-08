@@ -249,6 +249,7 @@ namespace MudBlazor
 
         private void UpdateTime()
         {
+            _lastSelectedHour = _timeSet.Hour;
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
             if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
@@ -324,8 +325,8 @@ namespace MudBlazor
           .AddClass($"mud-time-picker-dial-hidden", _currentView != OpenTo.Minutes)
         .Build();
 
-        private bool IsAm => _timeSet.Hour >= 00 && _timeSet.Hour < 12; // am is 00:00 to 11:59 
-        private bool IsPm => _timeSet.Hour >= 12 && _timeSet.Hour < 24; // pm is 12:00 to 23:59 
+        private bool IsAm => _timeSet.Hour >= 00 && _timeSet.Hour < 12; // am is 00:00 to 11:59
+        private bool IsPm => _timeSet.Hour >= 12 && _timeSet.Hour < 24; // pm is 12:00 to 23:59
 
         private string GetClockPinColor()
         {
@@ -415,6 +416,7 @@ namespace MudBlazor
 
         private readonly SetTime _timeSet = new();
         private int _initialHour;
+        private int _lastSelectedHour;
         private int _initialMinute;
 
         protected override void OnInitialized()
@@ -423,6 +425,7 @@ namespace MudBlazor
             UpdateTimeSetFromTime();
             _currentView = OpenTo;
             _initialHour = _timeSet.Hour;
+            _lastSelectedHour = _timeSet.Hour;
             _initialMinute = _timeSet.Minute;
         }
 
@@ -495,7 +498,8 @@ namespace MudBlazor
             }
             _timeSet.Hour = h;
 
-            if (_currentView == OpenTo.Hours)
+            if (_currentView == OpenTo.Hours
+                || _timeSet.Hour != _lastSelectedHour)
             {
                 UpdateTime();
             }

@@ -256,7 +256,7 @@
     <CascadingValue Value="true" IsFixed Name="IsNested">
         <MudDialog Options="EditDialogOptions" @bind-IsVisible="isEditFormOpen">
             <DialogContent>
-                <MudForm FieldChanged="FormFieldChanged">
+                <MudForm @ref="_editForm" FieldChanged="FormFieldChanged">
                     @foreach (var column in RenderedColumns)
                     {
                         var cell = new Cell<T>(this, column, _editingItem);
@@ -272,12 +272,12 @@
                             if (propertyType == typeof(string))
                             {
                                 <MudTextField T="string" Label="@column.Title" Value="@cell._valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
-                                  Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                                  Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
                             }
                             else if (TypeIdentifier.IsNumber(propertyType))
                             {
                                 <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
-                                     Required="true" Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                                     Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
                             }
                         }
                     }
@@ -347,7 +347,7 @@
                                           Value="@cell._valueString"
                                           ValueChanged="@cell.StringValueChangedAsync"
                                           Margin="@Margin.Dense" Style="margin-top:0"
-                                          Required="true"
+                                          Required=column.Required
                                           Variant="@Variant.Text" />
                         }
                         else if (column.isNumber)
@@ -356,7 +356,7 @@
                                              Value="@cell._valueNumber"
                                              ValueChanged="@cell.NumberValueChangedAsync"
                                              Margin="@Margin.Dense" Style="margin-top:0"
-                                             Required="true" Variant="@Variant.Text" Culture="@column.Culture" />
+                                             Required=column.Required Variant="@Variant.Text" Culture="@column.Culture" />
                         }
                     }
                 }
@@ -465,7 +465,7 @@
                     }
                     else if (fieldType.IsGuid)
                     {
-                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="@Localizer["MudDataGrid.Value"]" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense"
+                        <MudTextField T="Guid?" Value="@filter._valueGuid" ValueChanged="@filter.GuidValueChanged" FullWidth="true" Label="@Localizer["MudDataGrid.Value"]" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense"
                                       Immediate="true" Class="filter-input"/>
                     }
                 </MudItem>
@@ -525,7 +525,7 @@
                     }
                     else if (fieldType.IsGuid)
                     {
-                        <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="@Localizer["MudDataGrid.Value"]" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense"
+                        <MudTextField T="Guid?" Value="@filter._valueGuid" ValueChanged="@filter.GuidValueChanged" FullWidth="true" Label="@Localizer["MudDataGrid.Value"]" Placeholder="@Localizer["MudDataGrid.FilterValue"]" Margin="@Margin.Dense"
                                       Immediate="true" Class="filter-input"/>
                     }
                 </MudItem>

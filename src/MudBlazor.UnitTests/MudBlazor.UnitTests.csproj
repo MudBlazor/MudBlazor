@@ -34,19 +34,19 @@
   </Target>
 
   <ItemGroup>
-    <PackageReference Include="bunit" Version="1.22.19" />
+    <PackageReference Include="bunit" Version="1.23.9" />
     <PackageReference Include="coverlet.msbuild" Version="6.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="6.11.0" />
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
     <PackageReference Include="FluentValidation" Version="11.7.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.5.0" />
-    <PackageReference Include="Moq" Version="4.18.4" />
+    <PackageReference Include="Moq" Version="4.20.69" />
     <PackageReference Include="nunit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.1" />
-    <PackageReference Include="ReportGenerator" Version="5.1.24" />
+    <PackageReference Include="ReportGenerator" Version="5.1.25" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
   </ItemGroup>
 

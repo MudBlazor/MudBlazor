@@ -115,7 +115,11 @@ namespace MudBlazor
         public string InputStyle { get; set; }
 
         /// <summary>
-        /// Maximum number of files that can be uploaded
+        /// Represents the maximum number of files that can retrieved from the internal call to
+        /// InputFileChangeEventArgs.GetMultipleFiles().
+        /// It does not limit the total number of uploaded files
+        /// when AppendMultipleFiles="true". A limit should be validated manually, for
+        /// example in the FilesChanged event callback.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
@@ -154,10 +158,11 @@ namespace MudBlazor
             }
             else if (typeof(T) == typeof(IBrowserFile))
             {
-                _value = (T)args.File;
+                _value = args.FileCount == 1 ? (T)args.File : default;
             }
             else return;
 
+            Touched = true;
             await FilesChanged.InvokeAsync(_value);
             await BeginValidateAsync();
             FieldChanged(_value);

@@ -150,7 +150,47 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Check if the loading and no records functionnality is working in grouped table.
+        /// Ensure that when the table loader is visible,
+        /// adding new columns dynamically such as multi-selection
+        /// will not affect the number of columns in the row with the loader.
+        /// </summary>
+        [Test]
+        public void DynamicColumnsDoNotAffectLoadingRow()
+        {
+            // Render the component
+            var comp = Context.RenderComponent<TableLoadingTest>();
+
+            // Ensure table initially has 6 columns
+            var headersRow = comp.FindAll("thead tr")[0];
+            headersRow.ChildElementCount.Should().Be(6);
+
+            // Toggle the loading switch to the 'loading' state
+            var loadingSwitch = comp.Find("#switch");
+            loadingSwitch.Change(true);
+
+            // Get the loader row which is second row in the thead
+            var loaderRow = comp.FindAll("thead tr")[1];
+
+            // Verify that loader row has one child which is a loader cell
+            var loaderCell = loaderRow.QuerySelector(".mud-table-loading");
+            loaderCell.IsOnlyChild();
+
+            // Toggle the multi-selection switch to the 'on' state
+            var multiSelectionSwitch = comp.Find("#multi-selection");
+            multiSelectionSwitch.Change(true);
+
+            // Ensure table has 7 columns
+            headersRow = comp.FindAll("thead tr")[0];
+            headersRow.ChildElementCount.Should().Be(7);
+
+            // Verify that loader row still has one child
+            // which is a loader cell
+            loaderCell = loaderRow.QuerySelector(".mud-table-loading");
+            loaderCell.IsOnlyChild();
+        }
+
+        /// <summary>
+        /// Check if the loading and no records functionality is working in grouped table.
         /// </summary>
         [Test]
         public void TableGroupLoadingAndNoRecordsTest()

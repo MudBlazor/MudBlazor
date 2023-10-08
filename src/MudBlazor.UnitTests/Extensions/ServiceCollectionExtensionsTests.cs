@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
-using MudBlazor.Interop;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
@@ -320,6 +319,7 @@ public class ServiceCollectionExtensionsTests
             options.ContainerClass = "container_class";
             options.FlipMargin = 100;
             options.ThrowOnDuplicateProvider = false;
+            options.Mode = PopoverMode.Legacy;
             expectedOptions = options;
         });
         var serviceProvider = services.BuildServiceProvider();
@@ -539,6 +539,7 @@ public class ServiceCollectionExtensionsTests
             options.PopoverOptions.ContainerClass = "container_class";
             options.PopoverOptions.FlipMargin = 100;
             options.PopoverOptions.ThrowOnDuplicateProvider = false;
+            options.PopoverOptions.Mode = PopoverMode.Legacy;
 
             expectedOptions = options;
         });
@@ -611,6 +612,7 @@ public class ServiceCollectionExtensionsTests
         Assert.AreEqual(expectedOptions.PopoverOptions.ContainerClass, actualPopoverOptions.ContainerClass);
         Assert.AreEqual(expectedOptions.PopoverOptions.FlipMargin, actualPopoverOptions.FlipMargin);
         Assert.AreEqual(expectedOptions.PopoverOptions.ThrowOnDuplicateProvider, actualPopoverOptions.ThrowOnDuplicateProvider);
+        Assert.AreEqual(expectedOptions.PopoverOptions.Mode, actualPopoverOptions.Mode);
 
         Assert.AreEqual(expectedOptions.ResizeObserverOptions.EnableLogging, actualResizeObserverOptions.EnableLogging);
         Assert.AreEqual(expectedOptions.ResizeObserverOptions.ReportRate, actualResizeObserverOptions.ReportRate);
