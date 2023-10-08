@@ -47,6 +47,7 @@
 
     &.mud-clickable {
         cursor: pointer;
+        user-select: none;
     }
 
     .mud-chip-icon {
@@ -82,7 +83,6 @@
         display: inline-flex;
         height: 100%;
         max-width: 100%;
-        user-select: none;
     }
 }
 
