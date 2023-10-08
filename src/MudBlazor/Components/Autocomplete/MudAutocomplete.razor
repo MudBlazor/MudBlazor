@@ -95,26 +95,8 @@
                     }
                     else if (NoItemsTemplate != null)
                     {
-                        @if (BeforeItemsTemplate != null)
-                        {
-                            <div class="pa-1">
-                                @BeforeItemsTemplate
-                            </div>
-                        }
                         <div class="pa-1">
                             @NoItemsTemplate
-                        </div>
-                    }
-                    else if (BeforeItemsTemplate != null && IsLoading is false)
-                    {
-                        <div class="pa-1">
-                            @BeforeItemsTemplate
-                        </div>
-                    }
-                    @if (AfterItemsTemplate != null && IsLoading is false)
-                    {
-                        <div class="pa-1">
-                            @AfterItemsTemplate
                         </div>
                     }
                 </MudPopover>
