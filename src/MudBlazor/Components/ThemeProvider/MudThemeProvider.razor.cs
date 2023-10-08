@@ -99,7 +99,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             Theme ??= new MudTheme();
-            ThemeService.Attach(this);
+            ThemeService?.Attach(this);
         }
 
         protected string BuildTheme()

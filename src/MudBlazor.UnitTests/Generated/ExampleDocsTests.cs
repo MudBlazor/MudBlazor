@@ -46,6 +46,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
 #pragma warning restore CS0618
             ctx.Services.AddSingleton<IPopoverService, MockPopoverServiceV2>();
+            ctx.Services.AddScoped<MudThemeService>();
             ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddTransient<InternalMudLocalizer>();
             ctx.Services.AddOptions();
