@@ -2,19 +2,18 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+
 namespace MudBlazor
 {
     public class MudThemeService
     {
 #nullable enable
-        public MudThemeProvider? Provider { get; set; }
+        public MudThemeProvider? Provider { get; internal set; }
 
-        public void Attach(MudThemeProvider provider)
+        public void Attach(MudThemeProvider? provider)
         {
-            if (provider == null)
-            {
-                return;
-            }
+            ArgumentNullException.ThrowIfNull(provider);
             Provider = provider;
         }
 

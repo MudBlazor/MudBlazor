@@ -20,6 +20,21 @@ namespace MudBlazor.UnitTests;
 public class ServiceCollectionExtensionsTests
 {
     [Test]
+    public void AddMudTheme_ShouldRegisterServices()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act
+        services.AddMudTheme();
+        var serviceProvider = services.BuildServiceProvider();
+        var themeService = serviceProvider.GetService<MudThemeService>();
+
+        // Assert
+        Assert.IsNotNull(themeService);
+    }
+
+    [Test]
     public void AddMudBlazorDialog_ShouldRegisterServices()
     {
         // Arrange
