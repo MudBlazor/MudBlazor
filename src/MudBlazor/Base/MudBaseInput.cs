@@ -181,6 +181,13 @@ namespace MudBlazor
         public int Lines { get; set; } = 1;
 
         /// <summary>
+        /// Will display input as resizable multiline textarea, regardless of number of lines set by <see cref="Lines"/>.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Resizable { get; set; }
+
+        /// <summary>
         ///  The text to be displayed.
         /// </summary>
         [Parameter]

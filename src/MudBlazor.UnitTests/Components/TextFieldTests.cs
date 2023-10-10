@@ -393,6 +393,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void ResizableTextField_Should_RenderAsTextArea()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                Parameter(nameof(MudTextField<string>.Text), "Doors and Corners, kid"),
+                Parameter(nameof(MudTextField<string>.Lines), 1),
+                Parameter(nameof(MudTextField<string>.Resizable), true));
+            comp.FindAll("textarea").Should().NotBeEmpty();
+        }
+
+        [Test]
+        public void MultilineTextField_WithResizableFlag_ShouldUseResizableClass()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                Parameter(nameof(MudTextField<string>.Text), "That's where they get you"),
+                Parameter(nameof(MudTextField<string>.Lines), 2),
+                Parameter(nameof(MudTextField<string>.Resizable), true));
+            comp.FindAll("textarea.mud-input-resizable").Should().NotBeEmpty();
+        }
+
+        [Test]
         public async Task TextFieldClearableTest()
         {
             var comp = Context.RenderComponent<TextFieldClearableTest>();

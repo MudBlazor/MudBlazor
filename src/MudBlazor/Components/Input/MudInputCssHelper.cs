@@ -25,6 +25,7 @@ namespace MudBlazor
                 .AddClass($"mud-input-root-{baseInput.Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-root-adorned-{baseInput.Adornment.ToDescriptionString()}", baseInput.Adornment != Adornment.None)
                 .AddClass($"mud-input-root-margin-{baseInput.Margin.ToDescriptionString()}", when: () => baseInput.Margin != Margin.None)
+                .AddClass("mud-input-resizable", baseInput.Resizable)
                 .AddClass(baseInput.Class)
                 .Build();
 
