@@ -4,7 +4,7 @@
 
 @inject InternalMudLocalizer Localizer
 
-@if (Column != null && !Column.Hidden)
+@if (Column != null && !Column.hidden)
 {
     <th scope="col" class="@_classname" style="@_style" colspan="@Column?.HeaderColSpan" @attributes="@UserAttributes">
         @if (Column.filterable && Column.FilterTemplate != null)

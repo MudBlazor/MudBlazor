@@ -56,53 +56,10 @@
                         {
                             <HeaderCell SortDirection="@(GetColumnSortDirection(column.PropertyName))" T="T" Column="@column"></HeaderCell>
                         }
-                        </tr>
-                        @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
-                        {
-                            <MudOverlay Visible="true" OnClick="@(() => _filtersMenuVisible = false)"></MudOverlay>
-                            <MudPaper Class="pa-2 filters-panel" Style="position:absolute;width:auto;min-width:700px;z-index:var(--mud-zindex-drawer)" Elevation="4">
-                                @if (FilterTemplate == null)
-                                {
-                                    <MudGrid Spacing="0">
-                                        @foreach (var f in FilterDefinitions)
-                                        {
-                                            @Filter(f, null)
-                                        }
-                                    </MudGrid>
-                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">@Localizer["MudDataGrid.AddFilter"]</MudButton>
-                                    @if (ServerData != null)
-                                    {
-                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary">@Localizer["MudDataGrid.Apply"]</MudButton>
-                                    }
-                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary">@Localizer["MudDataGrid.Clear"]</MudButton>
-                                }
-                                else
-                                {
-                                    @FilterTemplate(this)
-                                }
-                            </MudPaper>
-                        }
-                        @if (_columnsPanelVisible)
-                        {
-                            <MudOverlay Visible="true" OnClick="@(() => _columnsPanelVisible = false)"></MudOverlay>
-                            <MudPaper Class="pa-2 columns-panel" Style="position:absolute;max-width:450px;z-index:var(--mud-zindex-drawer)" Elevation="4">
-                                <MudGrid Spacing="0">
-                                    @foreach (var column in RenderedColumns)
-                                    {
-                                        <MudItem xs="12">
-                                            <MudSwitch T="bool" Disabled="@(!(column.Hideable ?? false))" Checked="@column.Hidden" CheckedChanged="@column.ToggleAsync" Converter="_oppositeBoolConverter" Color="Color.Primary" Label="@column.Title" />
-                                        </MudItem>
-                                    }
-                                    <MudItem xs="6">
-                                        <MudButton OnClick="@HideAllColumnsAsync" Color="@Color.Primary">@Localizer["MudDataGrid.HideAll"]</MudButton>
-                                    </MudItem>
-                                    <MudItem xs="6" Class="d-flex justify-end">
-                                        <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary">@Localizer["MudDataGrid.ShowAll"]</MudButton>
-                                    </MudItem>
-                                </MudGrid>
-
-                            </MudPaper>
-                        }
+                        </tr>                             
+                                
+                        
+                        
                         @if (Filterable && FilterMode == DataGridFilterMode.ColumnFilterRow)
                         {
                             <tr class="mud-table-row">
@@ -114,6 +71,117 @@
                         }
                     </thead>
                     <tbody class="mud-table-body">
+                               
+                                @if (_columnsPanelVisible)
+                                {
+                                    <MudOverlay ZIndex="10" Visible="true" OnClick="@(() => _columnsPanelVisible = false)"></MudOverlay>
+
+                                    <MudPopover Open="@_columnsPanelVisible" Paper="true" Class="mud-data-grid-columns-panel pa-2" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.TopLeft"
+                                                TransformOrigin="Origin.TopLeft" Elevation="4"
+                                                Style="min-width:700px;max-width:700px;z-index:11;" MaxHeight="400">
+                                        <MudDropContainer @ref="_columnsPanelDropContainer" T="Column<T>" Items="@RenderedColumns"
+                                                          ItemsSelector="(item, dropzone) => true" ItemDropped="ColumnOrderUpdated">
+                                            <ChildContent>
+                                                <MudDropZone T="Column<T>" Class="flex-grow-1" AllowReorder=this.ColumnsPanelReordering />
+                                            </ChildContent>
+                                            <ItemRenderer>
+                                                <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                                                    @if (ColumnsPanelReordering)
+                                                    {
+                                                        <MudStack Spacing="0">
+                                                            @if (RenderedColumns.IndexOf(context) != 0)
+                                                            {
+                                                                <MudIconButton Icon="@Icons.Material.Filled.ArrowDropUp" Size="@Size.Small" Title=@Localizer["MudDataGrid.MoveUp"] Disabled="@(RenderedColumns.IndexOf(context) == 0)" OnClick="@(e => ColumnUp(context))"></MudIconButton>
+                                                            }
+                                                            @if (RenderedColumns.IndexOf(context) != RenderedColumns.Count - 1)
+                                                            {
+                                                                <MudIconButton Icon="@Icons.Material.Filled.ArrowDropDown" Size="@Size.Small" Title=@Localizer["MudDataGrid.MoveDown"] Disabled="@(RenderedColumns.IndexOf(context) == RenderedColumns.Count - 1)" OnClick="@(e => ColumnDown(context))"></MudIconButton>
+                                                            }
+                                                        </MudStack>
+                                                    }
+
+                                                    @if (context?.grouping ?? false)
+                                                    {
+                                                        <MudIconButton Icon="@Icons.Material.Filled.AccountTree" Size="@Size.Small" Title=@Localizer["MudDataGrid.Ungroup"] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.UngroupColumn())"></MudIconButton>
+                                                    }
+                                                    else
+                                                    {
+                                                        <MudIconButton Icon="@Icons.Material.Filled.TableRows" Size="@Size.Small" Title=@Localizer["MudDataGrid.Group"] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.GroupColumn())"></MudIconButton>
+                                                    }
+                                                    <MudSwitch T="bool" Class="flex-grow-1" Color="Color.Primary" Disabled="@(!context.hideable)" Checked="@context.hidden" CheckedChanged="@context.ToggleAsync" Converter="_oppositeBoolConverter" Label="@context.Title" />
+                                                    <MudSpacer />
+
+                                                    <div>
+                                                        <MudIconButton Icon="@context.SortIcon" Class="@context.HeaderCell.sortIconClass" Size="@Size.Small" Title=@Localizer["MudDataGrid.Sort"] Disabled="!context.sortable" OnClick="@(e => context?.HeaderCell.SortChangedAsync(e))"></MudIconButton>
+                                                        @if (context.DataGrid.SortMode == SortMode.Multiple)
+                                                        {
+                                                            if (context.SortIndex < 0)
+                                                            {
+                                                                <span class="mud-sort-index mud-text-disabled invisible">@(context.SortIndex + 1)</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="mud-sort-index mud-text-disabled">@(context.SortIndex + 1)</span>
+                                                            }
+                                                        }
+                                                    </div>
+
+                                                    @if (context.HeaderCell.hasFilter)
+                                                    {
+                                                        <MudIconButton Class="filter-button filtered" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" Title=@Localizer["MudDataGrid.Filter"] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.OpenFilters())"></MudIconButton>
+                                                    }
+                                                    else
+                                                    {
+                                                        <MudIconButton Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" Title=@Localizer["MudDataGrid.Filter"] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.AddFilterAsync())"></MudIconButton>
+                                                    }
+
+                                                    @if (ColumnsPanelReordering)
+                                                    {
+                                                        <MudIconButton Icon="@context.DataGrid.DragIndicatorIcon" Size="@Size.Small" Class="drag-icon-options"></MudIconButton>
+                                                    }
+                                                </MudStack>
+                                            </ItemRenderer>
+                                        </MudDropContainer>
+                                        <MudStack Row="true">
+                                            @if (Groupable)
+                                            {
+                                                <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">@Localizer["MudDataGrid.CollapseAllGroups"]</MudButton>
+                                                <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary">@Localizer["MudDataGrid.ExpandAllGroups"]</MudButton>
+                                            }
+                                            <MudSpacer />
+
+                                            <MudButton OnClick="@HideAllColumnsAsync" Color="@Color.Primary">@Localizer["MudDataGrid.HideAll"]</MudButton>
+                                            <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary">@Localizer["MudDataGrid.ShowAll"]</MudButton>
+                                        </MudStack>
+                                    </MudPopover>
+                                }
+                                @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
+                                {
+                                    <MudOverlay ZIndex="12" Visible="true" OnClick="@(() => _filtersMenuVisible = false)"></MudOverlay>
+                                    <MudPopover Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.TopLeft"
+                                                TransformOrigin="Origin.TopLeft" Elevation="4" Style="min-width:700px;max-width:700px;z-index:13;" MaxHeight="400">
+                                        <!--Style="position:absolute;width:auto;min-width:700px;z-index:calc(var(--mud-zindex-drawer) + 1)" Elevation="4">-->
+                                        @if (FilterTemplate == null)
+                                        {
+                                            <MudGrid Spacing="0">
+                                                @foreach (var f in FilterDefinitions)
+                                                {
+                                                    @Filter(f, null)
+                                                }
+                                            </MudGrid>
+                                            <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">@Localizer["MudDataGrid.AddFilter"]</MudButton>
+                                            @if (ServerData != null)
+                                            {
+                                                <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary">@Localizer["MudDataGrid.Apply"]</MudButton>
+                                            }
+                                            <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary">@Localizer["MudDataGrid.Clear"]</MudButton>
+                                        }
+                                        else
+                                        {
+                                            @FilterTemplate(this)
+                                        }
+                                    </MudPopover>
+                                }
                         @if (Loading)
                         {
                             <tr>
@@ -161,7 +229,7 @@
                                                 <CascadingValue Value="@Validator" IsFixed="true">
                                                     @foreach (var column in RenderedColumns)
                                                     {
-                                                        if (!column.Hidden)
+                                                        if (!column.hidden)
                                                         {
                                                             @Cell(column, item)
                                                         }
@@ -196,7 +264,7 @@
                                         <CascadingValue Value="@Validator" IsFixed="true">
                                             @foreach (var column in RenderedColumns)
                                             {
-                                                if (!column.Hidden)
+                                                if (!column.hidden)
                                                 {
                                                     @Cell(column, item)
                                                 }
@@ -315,7 +383,7 @@
             {
                 foreach (var column in RenderedColumns)
                 {
-                    if (!column.Hidden)
+                    if (!column.hidden)
                     {
                         if (column.AggregateDefinition is not null || column.FooterTemplate is not null || hasFooter)
                         {

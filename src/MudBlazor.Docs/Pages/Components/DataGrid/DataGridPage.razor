@@ -311,5 +311,18 @@
                 <DataGridColumReorderingExample />
             </SectionContent>
         </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Columns Panel">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> can open a columns panel using <CodeInline>ShowColumnsPanel</CodeInline>. 
+                    The panel allows the re-ordering, hiding, filtering and grouping of columns. The enabled functionality matches the grid and column options with the exception of column re-ordering.
+                    <br><br>
+                    Column re-ordering is enabled in the panel using the <CodeInline>ColumnsPanelReordering</CodeInline> property. Re-ordering is on an insert basis so it does not respect the column level <CodeInline>DragAndDropEnabled</CodeInline> property which swaps columns.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridColumnsPanelExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridColumnsPanelExample />
+            </SectionContent>
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
