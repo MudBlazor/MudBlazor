@@ -78,7 +78,7 @@
 
                                     <MudPopover Open="@_columnsPanelVisible" Paper="true" Class="mud-data-grid-columns-panel pa-2" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.TopLeft"
                                                 TransformOrigin="Origin.TopLeft" Elevation="4"
-                                                Style="min-width:700px;max-width:700px;z-index:11;" MaxHeight="400">
+                                                Style="width:700px;max-width:700px;z-index:11;" MaxHeight="400">
                                         <MudDropContainer @ref="_columnsPanelDropContainer" T="Column<T>" Items="@RenderedColumns"
                                                           ItemsSelector="(item, dropzone) => true" ItemDropped="ColumnOrderUpdated">
                                             <ChildContent>
@@ -159,7 +159,7 @@
                                 {
                                     <MudOverlay ZIndex="12" Visible="true" OnClick="@(() => _filtersMenuVisible = false)"></MudOverlay>
                                     <MudPopover Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.TopLeft"
-                                                TransformOrigin="Origin.TopLeft" Elevation="4" Style="min-width:700px;max-width:700px;z-index:13;" MaxHeight="400">
+                                                TransformOrigin="Origin.TopLeft" Elevation="4" Style="width:700px;max-width:700px;z-index:13;" MaxHeight="400">
                                         @if (FilterTemplate == null)
                                         {
                                             <MudStack>
