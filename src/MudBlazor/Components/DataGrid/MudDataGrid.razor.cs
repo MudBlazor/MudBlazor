@@ -44,7 +44,7 @@ namespace MudBlazor
                .AddClass("mud-lg-table", Breakpoint == Breakpoint.Lg || Breakpoint == Breakpoint.Always)
                .AddClass("mud-xl-table", Breakpoint == Breakpoint.Xl || Breakpoint == Breakpoint.Always)
                .AddClass("mud-table-dense", Dense)
-               .AddClass("mud-table-hover", Hover)
+               .AddClass("mud-table-hover", Hover || SelectOnRowClick)
                .AddClass("mud-table-bordered", Bordered)
                .AddClass("mud-table-striped", Striped)
                .AddClass("mud-table-outlined", Outlined)
@@ -414,7 +414,7 @@ namespace MudBlazor
         /// <summary>
         /// When true, row-click also toggles the checkbox state
         /// </summary>
-        [Parameter] public bool SelectOnRowClick { get; set; } = true;
+        [Parameter] public bool SelectOnRowClick { get; set; }
 
         /// <summary>
         /// When the grid is not read only, you can specify what type of editing mode to use.
