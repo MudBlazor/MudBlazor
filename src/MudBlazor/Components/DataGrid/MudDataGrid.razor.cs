@@ -1347,6 +1347,7 @@ namespace MudBlazor
                     await column.HideAsync();
             }
             DropContainerHasChanged();
+            StateHasChanged();
         }
 
         internal async Task ShowAllColumnsAsync()
@@ -1357,6 +1358,7 @@ namespace MudBlazor
                     await column.ShowAsync();
             }
             DropContainerHasChanged();
+            StateHasChanged();
         }
 
         /// <summary>
