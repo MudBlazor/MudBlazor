@@ -2705,7 +2705,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
 
             // check the number of filters displayed in the filters panel
-            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
 
             var filterDefinitionInstance = dataGrid.Instance.FilterDefinitions.FirstOrDefault();
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
@@ -2771,19 +2771,19 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
 
             // check the number of filters displayed in the filters panel
-            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(6);
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(6);
 
             // click the Add Filter button in the filters panel to add a filter
-            dataGrid.FindAll(".filters-panel > button")[0].Click();
+            comp.FindAll(".filters-panel > button")[0].Click();
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
-            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(7);
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(7);
 
             // add a filter via the AddFilter method
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
-            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(8);
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(8);
 
             // add a filter via the AddFilter method
             //await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(Guid.NewGuid(), "Status"));
@@ -2793,11 +2793,11 @@ namespace MudBlazor.UnitTests.Components
             }));
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
-            dataGrid.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(9);
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(9);
 
             // toggle the filters menu (should be closed after this)
             await comp.InvokeAsync(() => dataGrid.Instance.ToggleFiltersMenu());
-            dataGrid.FindAll(".filters-panel").Count.Should().Be(0);
+            comp.FindAll(".filters-panel").Count.Should().Be(0);
 
             // test internal filter class for string data type.
             var internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition, null);
@@ -3076,25 +3076,28 @@ namespace MudBlazor.UnitTests.Components
                 var clickablePopover = listItems[0].Find(".mud-list-item");
                 clickablePopover.Click();
 
-                // at this point, the column picker should be open
-                var switches = dataGrid.FindComponents<MudSwitch<bool>>();
+                var switches = comp.FindComponents<MudSwitch<bool>>();
                 switches.Count.Should().Be(2);
 
-                var buttons = dataGrid.FindComponents<MudButton>();
+                var iconbuttons = comp.FindComponents<MudIconButton>();
+                iconbuttons.Count.Should().Be(9);
+
+
+                var buttons = comp.FindComponents<MudButton>();
                 // this is the show all button
                 buttons[1].Find("button").Click();
                 // 2 columns, 0 hidden
-                dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+                comp.FindAll(".mud-table-head th").Count.Should().Be(2);
 
                 //dataGrid.Instance._columns[0].Hide();
                 ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+            comp.FindAll(".mud-table-head th").Count.Should().Be(2);
 
             await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
-            dataGrid.FindAll(".mud-paper.columns-panel").Count.Should().Be(1);
+            comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(1);
             await comp.InvokeAsync(() => dataGrid.Instance.HideColumnsPanel());
-            dataGrid.FindAll(".mud-paper.columns-panel").Count.Should().Be(0);
+            comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(0);
 
             await comp.InvokeAsync(() => dataGrid.Instance.HideAllColumnsAsync());
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
@@ -3124,13 +3127,13 @@ namespace MudBlazor.UnitTests.Components
             clickablePopover.Click();
 
             // at this point, the column picker should be open
-            var switches = dataGrid.FindComponents<MudSwitch<bool>>();
+            var switches = comp.FindComponents<MudSwitch<bool>>();
             switches.Count.Should().Be(2);
 
             switches[0].Instance.Checked.Should().BeFalse();
             switches[1].Instance.Checked.Should().BeTrue();
 
-            var buttons = dataGrid.FindComponents<MudButton>();
+            var buttons = comp.FindComponents<MudButton>();
 
             // this is the hide all button
             buttons[0].Find("button").Click();
