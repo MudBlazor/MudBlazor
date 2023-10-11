@@ -1,4 +1,7 @@
 ﻿.mud-ripple {
+    --mud-ripple-offset-x: 0;
+    --mud-ripple-offset-y: 0;
+
     position: relative;
     overflow: hidden;
 
@@ -8,15 +11,15 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        top: 0;
-        left: 0;
+        top: var(--mud-ripple-offset-y);
+        left: var(--mud-ripple-offset-x);
         pointer-events: none;
         background-image: radial-gradient(circle, #000 10%, transparent 10.01%);
         background-repeat: no-repeat;
         background-position: 50%;
-        transform: scale(10,10);
+        transform: scale(20,20);
         opacity: 0;
-        transition: transform .3s, opacity 1s;
+        transition: transform .6s, opacity 1s;
     }
 
     &:active:after {
@@ -28,7 +31,7 @@
 
 .mud-ripple-icon, .mud-ripple-checkbox, .mud-ripple-switch, .mud-ripple-radio {
     &:after {
-        transform: scale(7,7);
+        transform: scale(14,14);
     }
 }
 
