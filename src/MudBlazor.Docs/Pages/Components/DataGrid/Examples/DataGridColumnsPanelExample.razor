@@ -3,10 +3,8 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudButton Variant="@Variant.Filled" Color="@Color.Primary" OnClick="ShowColumnsPanel">Show Columns Panel</MudButton>
 <MudDataGrid T="Element" @ref="grid" Items="@_elements" DragDropColumnReordering="@_dragDropReorderingEnabled" ColumnsPanelReordering="@_columnsPanelReorderingEnabled"
-             ColumnResizeMode="ResizeMode.Container" Hideable="@_hideable" Filterable="@_filterable" Groupable="@_groupable" FilterMode="@_filterMode"
-             ShowColumnOptions="@_showColumnOptions">
+             ColumnResizeMode="ResizeMode.Container" Hideable="@_hideable" Filterable="@_filterable" Groupable="@_groupable" FilterMode="@_filterMode" ShowMenuIcon="true">
     <Columns>
         <SelectColumn T="Element"/>
         <PropertyColumn Property="x => x.Number" Title="Nr" />
@@ -27,9 +25,7 @@
     <MudSwitch @bind-Checked="@_columnsPanelReorderingEnabled" Color="Color.Primary">Columns Panel Column Reordering</MudSwitch>
     <MudSwitch @bind-Checked="@_hideable" Color="Color.Primary">Hideable</MudSwitch>
     <MudSwitch @bind-Checked="@_filterable" Color="Color.Primary">Filterable</MudSwitch>
-    <MudSwitch @bind-Checked="@_groupable" Color="Color.Primary">Groupable</MudSwitch>
-    <MudSwitch @bind-Checked="@_showColumnOptions" Color="Color.Primary">Show Column Options</MudSwitch>
-    
+    <MudSwitch @bind-Checked="@_groupable" Color="Color.Primary">Groupable</MudSwitch>    
 </div>
 
 <div class="d-flex flex-wrap mt-4">
@@ -60,10 +56,4 @@
     {
         _elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
-
-    public void ShowColumnsPanel()
-    {
-        grid.ShowColumnsPanel();
-    }
-
 }
