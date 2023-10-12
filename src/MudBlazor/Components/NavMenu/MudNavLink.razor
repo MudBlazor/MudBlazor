@@ -12,7 +12,7 @@
                  ActiveClass="@ActiveClass">
             @if (!string.IsNullOrEmpty(Icon))
             {
-                <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname"/>
+                <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" ViewBox="@IconViewBox"/>
             }
             <div class="mud-nav-link-text">
                 @ChildContent
@@ -26,7 +26,7 @@
              ActiveClass="@ActiveClass">
             @if (!string.IsNullOrEmpty(Icon))
             {
-                <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
+                <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" ViewBox="@IconViewBox" />
             }
             <div Class="mud-nav-link-text">
                 @ChildContent

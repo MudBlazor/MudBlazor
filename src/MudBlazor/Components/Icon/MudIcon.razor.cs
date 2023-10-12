@@ -6,6 +6,8 @@ namespace MudBlazor
 #nullable enable
     public partial class MudIcon : MudComponentBase
     {
+        public const string DefaultViewBox = "0 0 24 24";
+
         protected string Classname =>
             new CssBuilder("mud-icon-root")
                 .AddClass("mud-icon-default", Color == Color.Default)
@@ -48,7 +50,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Icon.Behavior)]
-        public string ViewBox { get; set; } = "0 0 24 24";
+        public string ViewBox { get; set; } = DefaultViewBox;
 
         /// <summary>
         /// Child content of component.
