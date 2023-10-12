@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTextField T="string" Label="AutoGrow" Variant="Variant.Text" Text="@sampleText" AutoGrow HelperText="This field grows when you enter new lines" />
+<MudTextField T="string" Label="AutoGrow with Lines" Variant="Variant.Text" Text="@sampleText" AutoGrow Lines="3" HelperText="This field has always at least 3 lines" />
+<MudTextField T="string" Label="AutoGrow with MaxLines" Variant="Variant.Text" Text="@sampleText" AutoGrow MaxLines="4" HelperText="This field grows to a maximum of 4 lines" />
+
+@code
+{
+    string sampleText = "Lorem ipsum dolor sit amet.";
+}
