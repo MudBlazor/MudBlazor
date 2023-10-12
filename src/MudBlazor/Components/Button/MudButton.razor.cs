@@ -65,6 +65,13 @@ namespace MudBlazor
         public string? IconClass { get; set; }
 
         /// <summary>
+        /// The viewbox size of an svg icon element.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Icon.Behavior)]
+        public string IconViewBox { get; set; } = MudIcon.DefaultViewBox;
+
+        /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
         [Parameter]

@@ -108,6 +108,13 @@ namespace MudBlazor
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
+        /// The viewbox size of an svg icon element.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Icon.Behavior)]
+        public string IconViewBox { get; set; } = MudIcon.DefaultViewBox;
+
+        /// <summary>
         /// The color of the adornment if used. It supports the theme colors.
         /// </summary>
         [Parameter]

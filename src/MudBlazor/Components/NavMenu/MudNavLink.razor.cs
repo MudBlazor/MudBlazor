@@ -57,6 +57,13 @@ namespace MudBlazor
         [Category(CategoryTypes.NavMenu.Behavior)]
         public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
 
+        /// <summary>
+        /// The viewbox size of an svg icon element.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Icon.Behavior)]
+        public string IconViewBox { get; set; } = MudIcon.DefaultViewBox;
+
         [Parameter]
         [Category(CategoryTypes.NavMenu.ClickAction)]
         public string? Target { get; set; }

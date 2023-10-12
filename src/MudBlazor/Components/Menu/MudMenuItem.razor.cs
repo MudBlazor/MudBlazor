@@ -51,6 +51,13 @@ namespace MudBlazor
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
+        /// The viewbox size of an svg element.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Icon.Behavior)]
+        public string IconViewBox { get; set; } = MudIcon.DefaultViewBox;
+
+        /// <summary>
         /// If set to false, clicking the menu item will keep the menu open
         /// </summary>
         [Parameter] 
