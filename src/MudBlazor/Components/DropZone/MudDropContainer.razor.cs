@@ -62,6 +62,13 @@ namespace MudBlazor
         public EventCallback<MudItemDropInfo<T>> ItemDropped { get; set; }
 
         /// <summary>
+        /// Callback that indicates that an item has been dropped on a drop zone. Should be used to update the "status" of the data item
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Items)]
+        public EventCallback<MudItemDropInfo<T>> ItemPicked { get; set; }
+
+        /// <summary>
         /// The method is used to determinate if an item can be dropped within a drop zone
         /// </summary>
         [Parameter]
@@ -132,8 +139,13 @@ namespace MudBlazor
         {
             var createTransaction = new MudDragAndDropItemTransaction<T>(item, identifier, index, commitCallback, cancelCallback);
             _transaction = createTransaction;
+            ItemPicked.InvokeAsync(new MudItemDropInfo<T>(item, identifier, index));
             TransactionStarted?.Invoke(this, createTransaction);
         }
+
+
+
+
 
         public T? GetTransactionItem()
         {
