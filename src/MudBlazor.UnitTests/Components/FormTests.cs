@@ -1819,5 +1819,22 @@ namespace MudBlazor.UnitTests.Components
             forms.Count.Should().Be(1);
             parentForm.IsValid.Should().BeTrue();
         }
+
+        [Test]
+        public async Task FormComponent_Should_UpdateValidationMessagesOnEditContextChanged()
+        {
+            var comp = Context.RenderComponent<FormComponentUpdateValidationMessagesOnEditContextChangedTest>();
+            var validator = comp.FindComponent<FormComponentUpdateValidationMessagesValidator>();
+            var errorMessage = "some error";
+
+            await validator.InvokeAsync(() => validator.Instance.AddError(nameof(FormComponentUpdateValidationMessagesModel.Name), errorMessage));
+
+            var tf = comp.FindComponent<MudTextField<string>>();
+            tf.Instance.ValidationErrors.Should().HaveCount(1).And.Contain(new[] { errorMessage });
+
+            await validator.InvokeAsync(() => validator.Instance.ClearErrors());
+
+            tf.Instance.ValidationErrors.Should().HaveCount(0);
+        }
     }
 }

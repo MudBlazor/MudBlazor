@@ -621,6 +621,10 @@ namespace MudBlazor
                 var errorMessages = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
                 Error = errorMessages.Length > 0;
                 ErrorText = Error ? errorMessages[0] : null;
+
+                ValidationErrors.Clear();
+                ValidationErrors.AddRange(errorMessages);
+
                 StateHasChanged();
             }
         }
