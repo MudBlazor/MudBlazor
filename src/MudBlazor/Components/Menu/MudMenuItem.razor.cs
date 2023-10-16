@@ -70,6 +70,7 @@ namespace MudBlazor
         [Obsolete("This will be removed in v7.")]
         public object CommandParameter { get; set; }
 
+        [Parameter] public EventCallback<EventArgs> OnAction { get; set; }
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
         [Parameter] public EventCallback<TouchEventArgs> OnTouch { get; set; }
 
@@ -88,7 +89,10 @@ namespace MudBlazor
             }
             else
             {
-                await OnClick.InvokeAsync(ev);
+                if(OnClick.HasDelegate)
+                    await OnClick.InvokeAsync(ev);
+                else 
+                    await OnActionHandler(ev);
 #pragma warning disable CS0618
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
@@ -113,7 +117,10 @@ namespace MudBlazor
             }
             else
             {
-                await OnTouch.InvokeAsync(ev);
+                if(OnTouch.HasDelegate)
+                    await OnTouch.InvokeAsync(ev);
+                else 
+                    await OnActionHandler(ev);
 #pragma warning disable CS0618
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
@@ -121,6 +128,21 @@ namespace MudBlazor
                 }
 #pragma warning restore CS0618
             }
+        }
+
+        protected EventArgs _lastActionHandled = new EventArgs();
+        protected internal async Task OnActionHandler(EventArgs ev)
+        {
+            if (!OnAction.HasDelegate) return;
+
+            var needInvoke = false;
+            lock (_lastActionHandled)
+            {
+                needInvoke = _lastActionHandled != ev;
+                _lastActionHandled = ev;
+            }
+            if (needInvoke)
+                await OnAction.InvokeAsync(ev);
         }
     }
 }
