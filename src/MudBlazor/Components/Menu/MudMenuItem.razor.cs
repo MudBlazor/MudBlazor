@@ -92,7 +92,7 @@ namespace MudBlazor
                 if(OnClick.HasDelegate)
                     await OnClick.InvokeAsync(ev);
                 else 
-                    await OnActionHandler(ev);
+                    await OnActionHandlerAsync(ev);
 #pragma warning disable CS0618
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
@@ -120,7 +120,7 @@ namespace MudBlazor
                 if(OnTouch.HasDelegate)
                     await OnTouch.InvokeAsync(ev);
                 else 
-                    await OnActionHandler(ev);
+                    await OnActionHandlerAsync(ev);
 #pragma warning disable CS0618
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
@@ -130,8 +130,8 @@ namespace MudBlazor
             }
         }
 
-        protected EventArgs _lastActionHandled = new EventArgs();
-        protected internal async Task OnActionHandler(EventArgs ev)
+        private EventArgs _lastActionHandled = new EventArgs();
+        protected internal async Task OnActionHandlerAsync(EventArgs ev)
         {
             if (!OnAction.HasDelegate) return;
 
