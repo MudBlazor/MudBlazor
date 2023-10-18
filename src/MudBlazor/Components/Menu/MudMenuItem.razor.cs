@@ -130,7 +130,7 @@ namespace MudBlazor
             }
         }
 
-        private EventArgs _lastActionHandled = new EventArgs();
+        private EventArgs _lastActionHandled = EventArgs.Empty;
         protected internal async Task OnActionHandlerAsync(EventArgs ev)
         {
             if (!OnAction.HasDelegate) return;

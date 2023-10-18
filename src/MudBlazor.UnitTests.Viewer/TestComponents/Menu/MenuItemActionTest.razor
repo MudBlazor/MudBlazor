@@ -8,20 +8,20 @@
 <MudText>Callers: @Callers</MudText>
 
 <MudMenu Label="Menu">
-    <MudMenuItem OnAction="IncrementByAction" AutoClose="false" IconSize="Size.Large" IconColor="Color.Secondary">OnAction</MudMenuItem>
+    <MudMenuItem id="id_on_action" OnAction="IncrementByAction" AutoClose="false" IconSize="Size.Large" IconColor="Color.Secondary">OnAction</MudMenuItem>
     <MudMenuItem OnClick="IncrementByClick" AutoClose="false" IconSize="Size.Large" IconColor="Color.Secondary">OnClick</MudMenuItem>
     <MudMenuItem OnTouch="IncrementByTouch" AutoClose="false" IconSize="Size.Large" IconColor="Color.Secondary">OnTouch</MudMenuItem>
     <MudMenuItem OnClick="IncrementByClick" OnTouch="IncrementByTouch" AutoClose="false" IconSize="Size.Large" IconColor="Color.Secondary">OnClick + OnTouch</MudMenuItem>
-    <MudMenuItem OnAction="IncrementByAction" OnTouch="IncrementByTouch" AutoClose="false" IconSize="Size.Large" IconColor="Color.Secondary">OnAction + OnTouch</MudMenuItem>
-    <MudMenuItem OnAction="IncrementByAction" OnClick="IncrementByClick" AutoClose="false" IconSize="Size.Large" IconColor="Color.Secondary">OnAction + OnClick</MudMenuItem>
+    <MudMenuItem id="id_on_action_on_touch" OnAction="IncrementByAction" OnTouch="IncrementByTouch" AutoClose="false" IconSize="Size.Large" IconColor="Color.Secondary">OnAction + OnTouch</MudMenuItem>
+    <MudMenuItem id="id_on_action_on_click" OnAction="IncrementByAction" OnClick="IncrementByClick" AutoClose="false" IconSize="Size.Large" IconColor="Color.Secondary">OnAction + OnClick</MudMenuItem>
 </MudMenu>
 
 @code
 {
     public static string __description__ = "Test OnAction behavior on MudMenuItem.";
 
-    private int Count = 0;
-    private string Callers = "";
+    public int Count { get; set; } = 0;
+    public string Callers { get; set; } = "";
 
     private void IncrementByAction()
     {
