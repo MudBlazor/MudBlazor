@@ -130,19 +130,21 @@ namespace MudBlazor
             }
         }
 
-        private EventArgs _lastActionHandled = EventArgs.Empty;
+        private DateTime _lastCall = DateTime.MinValue;
+        private readonly TimeSpan _silenceTime = TimeSpan.FromMilliseconds(100);
         protected internal async Task OnActionHandlerAsync(EventArgs ev)
         {
+            var now = DateTime.UtcNow;
+
             if (!OnAction.HasDelegate) return;
 
-            var needInvoke = false;
-            lock (_lastActionHandled)
+            lock (this)
             {
-                needInvoke = _lastActionHandled != ev;
-                _lastActionHandled = ev;
+                if (now - _lastCall <= _silenceTime) return;
+                _lastCall = now;
             }
-            if (needInvoke)
-                await OnAction.InvokeAsync(ev);
+
+            await OnAction.InvokeAsync(ev);
         }
     }
 }
