@@ -174,7 +174,8 @@ namespace MudBlazor
         public bool AutoGrow { get; set; }
 
         /// <summary>
-        /// If AutoGrow is set to true, the input element will not grow bigger than MaxLines lines.
+        /// If AutoGrow is set to true, the input element will not grow bigger than MaxLines lines. If MaxLines is set to 0
+        /// or less, the property will be ignored.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
