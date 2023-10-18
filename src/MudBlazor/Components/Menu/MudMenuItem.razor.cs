@@ -74,6 +74,16 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
         [Parameter] public EventCallback<TouchEventArgs> OnTouch { get; set; }
 
+        /// <summary>
+        /// Minimum time between OnAction calls
+        /// </summary>
+        /// <remarks>
+        /// The OnAction event will not be fired again if it has already been fired less than SilenceTime ago.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Menu.Behavior)]
+        public TimeSpan SilenceTime { get; set; } = TimeSpan.FromMilliseconds(100);
+
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
             if (Disabled)
@@ -131,7 +141,6 @@ namespace MudBlazor
         }
 
         private DateTime _lastCall = DateTime.MinValue;
-        private readonly TimeSpan _silenceTime = TimeSpan.FromMilliseconds(100);
         protected internal async Task OnActionHandlerAsync(EventArgs ev)
         {
             var now = DateTime.UtcNow;
@@ -140,7 +149,7 @@ namespace MudBlazor
 
             lock (this)
             {
-                if (now - _lastCall <= _silenceTime) return;
+                if (now - _lastCall <= SilenceTime) return;
                 _lastCall = now;
             }
 
