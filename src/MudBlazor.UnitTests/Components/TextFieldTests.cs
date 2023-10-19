@@ -393,6 +393,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task AutoGrowTextField_Should_InvokeJavaScriptInitOnRender()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                Parameter(nameof(MudTextField<string>.AutoGrow), true),
+                Parameter(nameof(MudTextField<string>.MaxLines), 5));
+
+            Context.JSInterop.VerifyInvoke("mudInputAutoGrow.initAutoGrow", 1);
+            Context.JSInterop.Invocations["mudInputAutoGrow.initAutoGrow"].Single()
+                .Arguments
+                .Should()
+                .HaveCount(2)
+                .And
+                .HaveElementAt(1, 5); // MaxLines
+
+            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "A"));
+
+            Context.JSInterop.Invocations["mudInputAutoGrow.adjustHeight"].Single()
+               .Arguments
+               .Should()
+               .HaveCount(1);
+        }
+
+        [Test]
         public async Task TextFieldClearableTest()
         {
             var comp = Context.RenderComponent<TextFieldClearableTest>();
