@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid Items=@_items ReadOnly=false EditMode=DataGridEditMode.Cell Dense FixedHeader=true MultiSelection="true">
+<MudDataGrid Items=@_items ReadOnly=false EditMode=DataGridEditMode.Cell Dense FixedHeader=true MultiSelection="true" SelectOnRowClick="true">
     <Columns>
         <SelectColumn/>        
         <PropertyColumn Property="x => x.Name" IsEditable=false/>
