@@ -4,7 +4,7 @@
         <ChildContent>
             @foreach (var step in _steps)
             {
-                <MudStepperStep Title="@step.Title">Select campaign settings content @step.Title</MudStepperStep>
+                <MudStep Title="@step.Title">Select campaign settings content @step.Title</MudStep>
             }
         </ChildContent>
         <CompletedContent>
@@ -25,13 +25,13 @@
 
 
 @code {
-    List<MudStepperStep> _steps = new List<MudStepperStep>() { new MudStepperStep() { Title = "First" }, new MudStepperStep() { Title = "Second" } };
+    List<MudStep> _steps = new List<MudStep>() { new MudStep() { Title = "First" }, new MudStep() { Title = "Second" } };
     int _index;
 
     private void Add()
     {
         Random rnd = new Random();
-        _steps.Add(new MudStepperStep() { Title = $"Step {rnd.Next(0, 10000)}" });
+        _steps.Add(new MudStep() { Title = $"Step {rnd.Next(0, 10000)}" });
     }
 
     private void Remove()

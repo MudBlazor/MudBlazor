@@ -68,7 +68,7 @@
 
 @code {
 
-    RenderFragment RenderStepLabel(MudStepperStep step, bool isActive) =>
+    RenderFragment RenderStepLabel(MudStep step, bool isActive) =>
         @<div class="mud-stepper-nav-step-label">
             <div class="@step.LabelIconClassname">
                 @if (LabelTemplate is not null)
@@ -110,7 +110,7 @@
             </div>
         </div>;
 
-    RenderFragment StepContent(MudStepperStep step) =>
+    RenderFragment StepContent(MudStep step) =>
         @<div @attributes="UserAttributes" class="@step.Classname" style="@step.Styles" role="tabpanel" aria-labelledby="@step.Title" tabindex="0">
             @if (Vertical)
             {

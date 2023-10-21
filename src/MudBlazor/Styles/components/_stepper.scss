@@ -34,7 +34,9 @@
                     align-items: center;
                     justify-content: center;
                     //horizontal has this margin
-                    margin-right: 8px;
+                    //margin-right: 8px;
+                    margin-inline-end: 8px;
+                    margin-inline-start: 0px;
                 }
 
                 .mud-stepper-nav-step-label-content {
@@ -85,7 +87,8 @@
                 align-items: center;
 
                 .mud-stepper-nav-step-label-icon {
-                    margin-right: 0px !important;
+                    //margin-right: 0px !important;
+                    margin-inline-end: 0px !important;
                 }
 
                 .mud-stepper-nav-step-label-content {
@@ -126,19 +129,26 @@
         }
 
         .mud-stepper-nav-connector {
-            margin-left: 28px;
+            //margin-left: 28px;
+            margin-inline-start: 28px;
+            margin-inline-end: 0;
 
             .mud-stepper-nav-connector-line {
-                border-left: 1px solid rgb(189, 189, 189);
+                //border-left: 1px solid rgb(189, 189, 189);
+                border-inline-start: 1px solid rgb(189, 189, 189);
                 min-height: 24px;
             }
         }
 
         .mud-stepper-content {
-            margin-left: 28px;
-            padding-left: 20px;
-            padding-right: 0;
-            border-left: 1px solid var(--mud-palette-lines-inputs);
+            //margin-left: 28px;
+            margin-inline-start: 28px;
+            margin-inline-end: 0;
+            //padding-left: 20px;
+            padding-inline-start: 20px;
+            padding-inline-end: 0;
+            //border-left: 1px solid var(--mud-palette-lines-inputs);
+            border-inline-start: 1px solid var(--mud-palette-lines-inputs);
         }
     }
 }
