@@ -15,17 +15,17 @@ namespace MudBlazor;
 
 public partial class MudStepper : MudComponentBase
 {
-    private List<MudStepperStep> _steps = new();
+    private List<MudStep> _steps = new();
     private int _activeIndex = -1;
 
-    public IReadOnlyList<MudStepperStep> Steps { get; private set; }
+    public IReadOnlyList<MudStep> Steps { get; private set; }
 
-    private HashSet<MudStepperStep> _skippedSteps = new();
+    private HashSet<MudStep> _skippedSteps = new();
 
     /// <summary>
     /// Active step of the Stepper, can be not selected
     /// </summary>
-    public MudStepperStep? ActiveStep { get; private set; }
+    public MudStep? ActiveStep { get; private set; }
 
     /// <summary>
     /// Index of the currently shown step. If set, it doesn't save the position into the history
@@ -33,8 +33,7 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     public int ActiveIndex { get; set; }
 
-    [Parameter]
-    public EventCallback<int> ActiveIndexChanged { get; set; }
+    [Parameter] public EventCallback<int> ActiveIndexChanged { get; set; }
 
     /// <summary>
     /// The color of the completed step. It supports the theme colors.
@@ -60,8 +59,7 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     public string NavClass { get; set; }
 
-    [Parameter]
-    public bool NonLinear { get; set; }
+    [Parameter] public bool NonLinear { get; set; }
 
     /// <summary>
     /// Renders the component in vertical manner. Each step is collapsible
@@ -89,6 +87,7 @@ public partial class MudStepper : MudComponentBase
     public Func<StepperInteractionEventArgs, Task>? OnPreviewInteraction { get; set; }
 
     public bool IsCurrentStepSkippable => _steps.Any() && ActiveStep is not null && ActiveStep.Skippable;
+
     public bool CanGoToNextStep =>
         _steps.Any() && ActiveStep is not null && (_steps.Count - 1 == _activeIndex ||
                                                    !_steps[_activeIndex + 1].Disabled);
@@ -101,12 +100,10 @@ public partial class MudStepper : MudComponentBase
     /// </summary>
     [Parameter]
     public RenderFragment ChildContent { get; set; }
-    
-    [Parameter]
-    public RenderFragment<MudStepperStep>? TitleTemplate { get; set; }
-    
-    [Parameter]
-    public RenderFragment<MudStepperStep>? LabelTemplate { get; set; }
+
+    [Parameter] public RenderFragment<MudStep>? TitleTemplate { get; set; }
+
+    [Parameter] public RenderFragment<MudStep>? LabelTemplate { get; set; }
 
     /// <summary>
     /// This content is displayed when all steps are completed
@@ -114,9 +111,7 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     public RenderFragment CompletedContent { get; set; }
 
-    #region Children Handling
-
-    internal void AddStep(MudStepperStep step)
+    internal void AddStep(MudStep step)
     {
         _steps.Add(step);
         if (ActiveStep is null)
@@ -124,7 +119,7 @@ public partial class MudStepper : MudComponentBase
         StateHasChanged();
     }
 
-    internal async Task RemovePanel(MudStepperStep step)
+    internal async Task RemovePanel(MudStep step)
     {
         if (step == ActiveStep)
         {
@@ -135,9 +130,7 @@ public partial class MudStepper : MudComponentBase
         StateHasChanged();
     }
 
-    #endregion
-
-    private async void ProcessStep(MudStepperStep stepToProcess, MouseEventArgs ev,
+    private async void ProcessStep(MudStep stepToProcess, MouseEventArgs ev,
         StepInteractionType stepInteractionType, bool ignoreDisabledState = false)
     {
         if (stepToProcess.Disabled && !ignoreDisabledState)
@@ -164,7 +157,7 @@ public partial class MudStepper : MudComponentBase
                     break;
                 }
             case StepInteractionType.Skip:
-                if (stepToProcess.Skippable) //Or should I raise exception if its not skippable???
+                if (stepToProcess.Skippable)
                     index++;
                 break;
         }
@@ -187,14 +180,11 @@ public partial class MudStepper : MudComponentBase
             ActiveStep = _steps[value];
     }
 
-    #region Life cycle management
 
     public MudStepper()
     {
         Steps = _steps.AsReadOnly();
     }
-
-    #endregion
 
     protected override void OnParametersSet()
     {
@@ -202,8 +192,6 @@ public partial class MudStepper : MudComponentBase
 
         SetActiveIndex(ActiveIndex);
     }
-
-    #region Public methods
 
     public void PreviousStep()
     {
@@ -234,9 +222,7 @@ public partial class MudStepper : MudComponentBase
         ProcessStep(_steps[0], new MouseEventArgs(), StepInteractionType.Activate);
     }
 
-    #endregion
-
-    #region Apperance
+    internal async Task Refresh() => StateHasChanged();
 
     protected string Classname => new CssBuilder("mud-stepper")
         .AddClass("mud-stepperHorizontal", Vertical == false)
@@ -248,6 +234,4 @@ public partial class MudStepper : MudComponentBase
     protected string NavClassname => new CssBuilder("mud-stepper-nav")
         .AddClass(NavClass)
         .Build();
-
-    #endregion
 }

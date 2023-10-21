@@ -17,7 +17,7 @@
 
     [Parameter]
     public string SecondaryText { get; set; }
-    
+
     /// <summary>
     /// The color of the completed step. It supports the theme colors.
     /// </summary>
@@ -29,25 +29,29 @@
     /// </summary>
     [Parameter]
     public Color? ErrorStepColor { get; set; }
-    
+
     [Parameter]
     public bool Skippable { get; set; }
 
-
-    private bool _completed;
-    
     /// <summary>
     /// Sets whether the step is completed, this can be used for reviving lost position of process. Default is false.
     /// </summary>
     [Parameter]
     public bool Completed { get; set; }
     
+    private bool _completed;
+
     [Parameter]
     public EventCallback<bool> CompletedChanged { get; set; }
 
     [Parameter]
     public bool Disabled { get; set; }
+
+    private bool _disabled;
     
+    [Parameter]
+    public EventCallback<bool> DisabledChanged { get; set; }
+
     [Parameter]
     public bool HasError { get; set; }
 
@@ -66,20 +70,32 @@
     protected async override Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        
+
         await SetCompleted(Completed);
+        await SetDisabled(Disabled);
     }
 
 
     public async Task SetCompleted(bool value)
     {
-        if (_completed != value)
-        {
-            _completed = value;
-            Completed = _completed;
-            await CompletedChanged.InvokeAsync(Completed);
-            StateHasChanged();
-        }
+        if (_completed == value)
+            return;
+
+        _completed = value;
+        Completed = _completed;
+        await CompletedChanged.InvokeAsync(Completed);
+        Parent?.Refresh();
+    }
+
+    public async Task SetDisabled(bool value)
+    {
+        if (_disabled == value)
+            return;
+
+        _disabled = value;
+        Disabled = _disabled;
+        await DisabledChanged.InvokeAsync(Disabled);
+        Parent?.Refresh();
     }
 
     internal string Styles => new StyleBuilder()
@@ -97,16 +113,16 @@
         new CssBuilder("mud-stepper-nav-step-label-content")
             .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}-text", !Completed && HasError)
             .Build();
-    
+
     internal string Classname => new CssBuilder("mud-stepper-content")
         .AddClass(Parent?.StepClass, !string.IsNullOrEmpty(Parent?.StepClass))
         .AddClass(Class)
         .Build();
 
-    
+
     public async ValueTask DisposeAsync()
     {
-        if(_disposed)
+        if (_disposed)
             return;
 
         _disposed = true;

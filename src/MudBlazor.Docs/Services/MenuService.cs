@@ -79,7 +79,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Pagination", typeof(MudPagination))
             .AddItem("Stack", typeof(MudStack))
             .AddItem("Spacer", typeof(MudSpacer))
-            .AddItem("Stepper", typeof(MudStepper), typeof(MudStepperStep))
+            .AddItem("Stepper", typeof(MudStepper), typeof(MudStep))
 
             //GROUPS
 
