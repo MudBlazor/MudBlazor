@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -17,67 +18,130 @@ namespace MudBlazor
         private Color _oldColor;
         private IEnumerable<T?>? _oldValues;
         private string? _oldSelectedClass;
+        private bool _oldBordered;
         private List<MudToggleItem<T>> _items = new();
 
+        protected string Classname => new CssBuilder("mud-toggle-group")
+            .AddClass(Class)
+            .Build();
+
+        protected string Stylename => new StyleBuilder()
+            .AddStyle("grid-template-columns", $"repeat({_items.Count}, minmax(0, 1fr))", Vertical == false)
+            .AddStyle("grid-template-rows", $"repeat({_items.Count}, minmax(0, 1fr))", Vertical == true)
+            .AddStyle(Style)
+            .Build();
+
+        /// <summary>
+        /// The generic value for the component.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public T? Value { get; set; }
 
+        /// <summary>
+        /// Fires when value changed.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public EventCallback<T?> ValueChanged { get; set; }
 
+        /// <summary>
+        /// Selected values that stored for multiselection mode.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public IEnumerable<T?>? SelectedValues { get; set; }
 
+        /// <summary>
+        /// Fires when SelectedValues changed.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public EventCallback<IEnumerable<T?>> SelectedValuesChanged { get; set; }
 
+        /// <summary>
+        /// Classnames only applied selected item, sepereated by space.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string? SelectedClass { get; set; }
 
+        /// <summary>
+        /// Class for toggle item text.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string? TextClass { get; set; }
 
+        /// <summary>
+        /// If true, items ordered vertically.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Vertical { get; set; }
 
+        /// <summary>
+        /// if true, first and last item will be rounded.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Rounded { get; set; }
 
+        /// <summary>
+        /// If true, items will be bordered. Default is true.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool Bordered { get; set; } = true;
+
+        /// <summary>
+        /// If true, disables the ripple effect.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool DisableRipple { get; set; }
 
+        /// <summary>
+        /// If true, component's margin and padding will reduce.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Dense { get; set; }
 
+        /// <summary>
+        /// If true, multiselection is available.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public bool MultiSelection { get; set; }
 
+        /// <summary>
+        /// If true, user can deselect items in single selection mode.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public bool ToggleSelection { get; set; }
 
+        /// <summary>
+        /// Shows the icon when item is selected. Default is true and default icon is tickmark.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool ShowSelectedIcon { get; set; } = true;
+        public bool ShowIconWhenSelected { get; set; } = true;
 
+        /// <summary>
+        /// The color of the component. Affect borders and selection color. Default is primary.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public Color Color { get; set; } = Color.Primary;
 
+        /// <summary>
+        /// If true, only shows the icon.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public int Spacing { get; set; } = 0;
+        public bool IconOnly { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
@@ -85,7 +149,7 @@ namespace MudBlazor
 
         protected internal void Register(MudToggleItem<T> item)
         {
-            if (_items.Contains(item))
+            if (_items.Select(x => x.Value).Contains(item.Value))
             {
                 return;
             }
@@ -147,10 +211,13 @@ namespace MudBlazor
                 StateHasChanged();
             }
 
-            if (Color != _oldColor || SelectedClass != _oldSelectedClass)
+            if (Color != _oldColor ||
+                SelectedClass != _oldSelectedClass ||
+                Bordered != _oldBordered)
             {
                 _oldColor = Color;
                 _oldSelectedClass = SelectedClass;
+                _oldBordered = Bordered;
                 foreach (IMudStateHasChanged mudComponent in _items)
                 {
                     mudComponent.StateHasChanged();

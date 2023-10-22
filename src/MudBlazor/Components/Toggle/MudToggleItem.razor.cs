@@ -4,7 +4,6 @@
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -21,9 +20,9 @@ namespace MudBlazor
             .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
             .AddClass("mud-ripple", Parent?.DisableRipple == false)
             .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
-            .AddClass("border-r-2 border-b-2")
-            .AddClass("border-l-2", Parent?.Vertical == true || Parent?.IsFirstItem(this) == true)
-            .AddClass("border-t-2", Parent?.Vertical == false || Parent?.IsFirstItem(this) == true)
+            .AddClass("border-r-2 border-b-2", Parent?.Bordered == true)
+            .AddClass("border-l-2", Parent?.Bordered == true && (Parent?.Vertical == true || Parent?.IsFirstItem(this) == true))
+            .AddClass("border-t-2", Parent?.Bordered == true && (Parent?.Vertical == false || Parent?.IsFirstItem(this) == true))
             .AddClass("rounded-l-xl", Parent is { Rounded: true, Vertical: false } && Parent?.IsFirstItem(this) == true)
             .AddClass("rounded-t-xl", Parent is { Rounded: true, Vertical: true } && Parent?.IsFirstItem(this) == true)
             .AddClass("rounded-r-xl", Parent is { Rounded: true, Vertical: false } && Parent?.IsLastItem(this) == true)
@@ -34,15 +33,7 @@ namespace MudBlazor
             .Build();
 
         protected string TextClassname => new CssBuilder()
-            .AddClass("me-2", _selected && !IsEmpty() && Parent?.ShowSelectedIcon == true)
             .AddClass(Parent?.TextClass)
-            .Build();
-
-        protected string Stylename => new StyleBuilder()
-            .AddStyle("min-width", $"{Parent?.GetItemWidth().ToInvariantString()}%", Parent?.Vertical == false && !IsEmpty())
-            .AddStyle("width", "fit-content", Parent?.Vertical == true || IsEmpty())
-            .AddStyle("height", "fit-content", Parent?.Vertical == true || IsEmpty())
-            .AddStyle(Style)
             .Build();
 
         [CascadingParameter]

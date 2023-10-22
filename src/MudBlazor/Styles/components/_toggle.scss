@@ -1,4 +1,9 @@
 ﻿@import '../abstracts/variables';
+
+.mud-toggle-group {
+    display: grid;
+}
+
 .mud-toggle-item {
     cursor: pointer;
     margin-top: 4px;
