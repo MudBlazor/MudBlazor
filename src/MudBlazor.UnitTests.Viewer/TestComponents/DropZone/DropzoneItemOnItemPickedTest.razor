@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Selector == dropzone)" ItemPicked="(o, tran)=>OnDragStart(tran)" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1" ItemsClassSelector="GetItemClass">
+<MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Selector == dropzone)" TransactionStarted="(o, tran)=>OnDragStart(tran)" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1" ItemsClassSelector="GetItemClass">
     <ChildContent>
         @for (int i = 1; i < 5; i++)
         {
