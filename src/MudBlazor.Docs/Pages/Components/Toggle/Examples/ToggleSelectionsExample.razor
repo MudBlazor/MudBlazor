@@ -5,9 +5,9 @@
         <MudText>Single Selection</MudText>
         <MudText>Value: @_value1</MudText>
         <MudToggleGroup T="string" @bind-Value="_value1" Color="Color.Primary">
-            <MudToggleItem T="string" Value="@("Item One")" Text="Item One" />
-            <MudToggleItem T="string" Value="@("Item Two")" Text="Item Two" />
-            <MudToggleItem T="string" Value="@("Item Three")" Text="Item Three" />
+            <MudToggleItem Value="@("Item One")" Text="Item One" />
+            <MudToggleItem Value="@("Item Two")" Text="Item Two" />
+            <MudToggleItem Value="@("Item Three")" Text="Item Three" />
         </MudToggleGroup>
     </MudStack>
 
@@ -17,9 +17,9 @@
         <MudText>Multi Selection</MudText>
         <MudText>Values: @string.Join(", ", _value2 ?? new List<int?>())</MudText>
         <MudToggleGroup T="int?" @bind-SelectedValues="_value2" Color="Color.Primary" MultiSelection="true">
-            <MudToggleItem T="int?" Value="1" Text="Item One" />
-            <MudToggleItem T="int?" Value="2" Text="Item Two" />
-            <MudToggleItem T="int?" Value="3" Text="Item Three" />
+            <MudToggleItem Value="(int?)1" Text="Item One" />
+            <MudToggleItem Value="(int?)2" Text="Item Two" />
+            <MudToggleItem Value="(int?)3" Text="Item Three" />
         </MudToggleGroup>
     </MudStack>
 
@@ -29,9 +29,9 @@
         <MudText>Toggle Selection</MudText>
         <MudText>Value: @_value3</MudText>
         <MudToggleGroup T="string" @bind-Value="_value3" Color="Color.Primary" ToggleSelection="true">
-            <MudToggleItem T="string" Value="@("Item One")" Text="Item One" />
-            <MudToggleItem T="string" Value="@("Item Two")" Text="Item Two" />
-            <MudToggleItem T="string" Value="@("Item Three")" Text="Item Three" />
+            <MudToggleItem Value="@("Item One")" Text="Item One" />
+            <MudToggleItem Value="@("Item Two")" Text="Item Two" />
+            <MudToggleItem Value="@("Item Three")" Text="Item Three" />
         </MudToggleGroup>
     </MudStack>
 </MudStack>

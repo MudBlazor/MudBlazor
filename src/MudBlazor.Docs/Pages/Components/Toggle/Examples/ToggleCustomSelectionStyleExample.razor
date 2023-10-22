@@ -2,16 +2,16 @@
 
 <MudStack>
     <MudToggleGroup T="string" Color="Color.Primary" SelectedClass="@_style">
-        <MudToggleItem T="string" Value="@("Item One")" Text="Item One" />
-        <MudToggleItem T="string" Value="@("Item Two")" Text="Item Two" />
-        <MudToggleItem T="string" Value="@("Item Three")" Text="Item Three" />
+        <MudToggleItem Value="@("Item One")" Text="Item One" />
+        <MudToggleItem Value="@("Item Two")" Text="Item Two" />
+        <MudToggleItem Value="@("Item Three")" Text="Item Three" />
     </MudToggleGroup>
 
     <MudSelect T="string" @bind-Value="_style" Variant="Variant.Outlined">
-        <MudSelectItem T="string" Value="@("mud-theme-primary")" />
-        <MudSelectItem T="string" Value="@("mud-theme-secondary")" />
-        <MudSelectItem T="string" Value="@("custom-gradient")" />
-        <MudSelectItem T="string" Value="@("custom-striped")" />
+        <MudSelectItem Value="@("mud-theme-primary")" />
+        <MudSelectItem Value="@("mud-theme-secondary")" />
+        <MudSelectItem Value="@("custom-gradient")" />
+        <MudSelectItem Value="@("custom-striped")" />
     </MudSelect>
 </MudStack>
 
