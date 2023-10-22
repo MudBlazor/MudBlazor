@@ -641,6 +641,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Include callbacks in test coverage.
             dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.CommittedItemChanges.HasDelegate.Should().Be(true);
             dataGrid.Instance.StartedEditingItem.HasDelegate.Should().Be(true);
@@ -665,6 +666,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Make sure that the callbacks have not been fired yet.
             comp.Instance.RowClicked.Should().Be(false);
+            comp.Instance.RowContextMenuClicked.Should().Be(false);
             comp.Instance.SelectedItemChanged.Should().Be(false);
             comp.Instance.CommittedItemChanges.Should().Be(false);
             comp.Instance.StartedEditingItem.Should().Be(false);
@@ -672,12 +674,16 @@ namespace MudBlazor.UnitTests.Components
 
             // Fire RowClick, SelectedItemChanged, SelectedItemsChanged, and StartedEditingItem callbacks.
             dataGrid.FindAll(".mud-table-body tr")[0].Click();
+            
+            // Fire RowContextMenuClick
+            dataGrid.FindAll(".mud-table-body tr")[0].ContextMenu();
 
             // Edit an item.
             dataGrid.FindAll(".mud-table-body tr td input")[0].Change("A test");
 
             // Make sure that the callbacks have been fired.
             comp.Instance.RowClicked.Should().Be(true);
+            comp.Instance.RowContextMenuClicked.Should().Be(true);
             comp.Instance.SelectedItemChanged.Should().Be(true);
             comp.Instance.CommittedItemChanges.Should().Be(true);
             comp.Instance.CanceledEditingItem.Should().Be(false);
@@ -686,6 +692,25 @@ namespace MudBlazor.UnitTests.Components
             // but we can brute force it by directly calling the CancelEditingItemAsync method on the datagrid
             await dataGrid.InvokeAsync(dataGrid.Instance.CancelEditingItemAsync);
             comp.Instance.CanceledEditingItem.Should().Be(true);
+        }
+
+        [Test]
+        public async Task DataGridOnContextMenuClickWhenIsGrouped()
+        {
+            var comp = Context.RenderComponent<DataGridGroupExpandedTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
+            
+            // Include callbacks in test coverage.
+            dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
+
+            // Make sure that the callbacks have not been fired yet.
+            comp.Instance.RowContextMenuClicked.Should().Be(false);
+
+            // Fire RowContextMenuClick
+            dataGrid.FindAll(".mud-table-body tr")[1].ContextMenu();
+            
+            // Make sure that the callbacks have been fired.
+            comp.Instance.RowContextMenuClicked.Should().Be(true);
         }
 
         [Test]
