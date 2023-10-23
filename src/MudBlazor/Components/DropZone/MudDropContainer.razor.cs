@@ -65,7 +65,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.DropZone.Items)]
-        public EventHandler<MudDragAndDropItemTransaction<T>> ItemPicked { get; set; }
+        public EventCallback<MudDragAndDropItemTransaction<T>> ItemPicked { get; set; }
 
         /// <summary>
         /// The method is used to determinate if an item can be dropped within a drop zone
@@ -138,8 +138,8 @@ namespace MudBlazor
         {
             var createTransaction = new MudDragAndDropItemTransaction<T>(item, identifier, index, commitCallback, cancelCallback);
             _transaction = createTransaction;
-            TransactionStarted += ItemPicked;
             TransactionStarted?.Invoke(this, createTransaction);
+            ItemPicked.InvokeAsync(createTransaction);
         }
 
 
