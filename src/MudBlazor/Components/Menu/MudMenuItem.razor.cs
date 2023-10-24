@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -70,6 +71,7 @@ namespace MudBlazor
         [Obsolete("This will be removed in v7.")]
         public object CommandParameter { get; set; }
 
+        [Parameter] public EventCallback<EventArgs> OnAction { get; set; }
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
         [Parameter] public EventCallback<TouchEventArgs> OnTouch { get; set; }
 
@@ -88,7 +90,10 @@ namespace MudBlazor
             }
             else
             {
-                await OnClick.InvokeAsync(ev);
+                if(OnClick.HasDelegate)
+                    await OnClick.InvokeAsync(ev);
+                else 
+                    await OnActionHandlerAsync(ev);
 #pragma warning disable CS0618
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
@@ -113,7 +118,10 @@ namespace MudBlazor
             }
             else
             {
-                await OnTouch.InvokeAsync(ev);
+                if(OnTouch.HasDelegate)
+                    await OnTouch.InvokeAsync(ev);
+                else 
+                    await OnActionHandlerAsync(ev);
 #pragma warning disable CS0618
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
@@ -121,6 +129,24 @@ namespace MudBlazor
                 }
 #pragma warning restore CS0618
             }
+        }
+
+        private DateTime _lastCall = DateTime.MinValue;
+        private SemaphoreSlim _semaphoreLastCall = new(1);
+        protected internal async Task OnActionHandlerAsync(EventArgs ev)
+        {
+            var now = DateTime.UtcNow;
+
+            if (!OnAction.HasDelegate) return;
+
+            await _semaphoreLastCall.WaitAsync();
+            var needCall = now - _lastCall > MudGlobal.MenuItemDebounceInterval;
+            if (needCall) _lastCall = now;
+            _semaphoreLastCall.Release();
+
+            if (needCall)
+                await OnAction.InvokeAsync(ev);
+
         }
     }
 }

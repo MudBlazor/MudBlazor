@@ -14,6 +14,14 @@ namespace MudBlazor
     public static class MudGlobal
     {
         /// <summary>
+        /// Minimum time between OnAction calls for MenuItem
+        /// </summary>
+        /// <remarks>
+        /// The OnAction event will not be fired again if it has already been fired less than this TimeSpan ago.
+        /// </remarks>
+        public static TimeSpan MenuItemDebounceInterval { get; set; } = TimeSpan.FromMilliseconds(100);
+
+        /// <summary>
         /// Global unhandled exception handler for such exceptions which can not be bubbled up. Note: this is not a global catch-all.
         /// It just allows the user to handle such exceptions which were suppressed inside MudBlazor using Task.AndForget() in places
         /// where it is impossible to await the task. Exceptions in user code or in razor files will still crash your app if you are not carefully
