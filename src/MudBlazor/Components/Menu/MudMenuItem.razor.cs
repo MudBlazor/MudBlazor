@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -82,7 +83,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public TimeSpan SilenceTime { get; set; } = TimeSpan.FromMilliseconds(100);
+        public TimeSpan DebounceInterval { get; set; } = TimeSpan.FromMilliseconds(100);
 
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
@@ -141,19 +142,20 @@ namespace MudBlazor
         }
 
         private DateTime _lastCall = DateTime.MinValue;
+        private SemaphoreSlim _semaphoreLastCall = new(1);
         protected internal async Task OnActionHandlerAsync(EventArgs ev)
         {
             var now = DateTime.UtcNow;
 
             if (!OnAction.HasDelegate) return;
 
-            lock (this)
-            {
-                if (now - _lastCall <= SilenceTime) return;
-                _lastCall = now;
-            }
+            await _semaphoreLastCall.WaitAsync();
+            var needCall = now - _lastCall > DebounceInterval;
+            _lastCall = now;
+            _semaphoreLastCall.Release();
 
-            await OnAction.InvokeAsync(ev);
+            if (needCall)
+                await OnAction.InvokeAsync(ev);
         }
     }
 }
