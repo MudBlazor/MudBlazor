@@ -75,16 +75,6 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
         [Parameter] public EventCallback<TouchEventArgs> OnTouch { get; set; }
 
-        /// <summary>
-        /// Minimum time between OnAction calls
-        /// </summary>
-        /// <remarks>
-        /// The OnAction event will not be fired again if it has already been fired less than SilenceTime ago.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Menu.Behavior)]
-        public TimeSpan DebounceInterval { get; set; } = TimeSpan.FromMilliseconds(100);
-
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
             if (Disabled)
@@ -150,12 +140,13 @@ namespace MudBlazor
             if (!OnAction.HasDelegate) return;
 
             await _semaphoreLastCall.WaitAsync();
-            var needCall = now - _lastCall > DebounceInterval;
-            _lastCall = now;
+            var needCall = now - _lastCall > MudGlobal.MenuItemDebounceInterval;
+            if (needCall) _lastCall = now;
             _semaphoreLastCall.Release();
 
             if (needCall)
                 await OnAction.InvokeAsync(ev);
+
         }
     }
 }
