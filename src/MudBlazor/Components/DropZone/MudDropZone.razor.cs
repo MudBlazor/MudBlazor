@@ -112,6 +112,14 @@ namespace MudBlazor
         [Category(CategoryTypes.DropZone.DraggingClass)]
         public string? ItemDraggingClass { get; set; }
 
+        /// <summary>
+        /// The method is used to determinate item class to be rendered in a drop zone.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Items)]
+        public Func<T, string>? ItemsClassSelector { get; set; }
+
+
         [Parameter]
         [Category(CategoryTypes.DropZone.Behavior)]
         public bool AllowReorder { get; set; }
@@ -178,6 +186,20 @@ namespace MudBlazor
 
             return result;
         }
+
+        private string GetItemClassUsingSelector(T item)
+        {
+            if (ItemsClassSelector is not null)
+            {
+                return ItemsClassSelector(item);
+            }
+            else if (Container is not null && Container.ItemsClassSelector is not null)
+            {
+                return Container.ItemsClassSelector(item, Identifier);
+            }
+            else return string.Empty;
+        }
+
 
         protected string Classname =>
             new CssBuilder("mud-drop-zone")
