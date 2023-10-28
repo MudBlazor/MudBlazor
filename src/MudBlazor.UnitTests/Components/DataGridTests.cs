@@ -4129,5 +4129,24 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[3].InnerHtml.Should().Be("Hired");
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
         }
+
+        [Test]
+        public void DataGridRedundantMenuTest()
+        {
+            var comp = Context.RenderComponent<DataGridRedundantMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridRedundantMenuTest.Model>>();
+
+            dataGrid.Instance.FilterMode = DataGridFilterMode.ColumnFilterRow;
+            dataGrid.Instance.SortMode = SortMode.None;
+
+            // Render after applying conditions
+            comp.Render();
+
+            // Assert that the `column-options` span is present but empty
+            var columnOptionsSpan = comp.Find(".column-options");
+            columnOptionsSpan.Should().NotBeNull();
+            columnOptionsSpan.TextContent.Trim().Should().BeEmpty();
+        }
+
     }
 }
