@@ -17,7 +17,7 @@
         />
 	}
 
-	@if (Lines > 1)
+	@if (AutoGrow || Lines > 1)
 	{
 	    <textarea class="@InputClassname"
                 @ref="ElementReference" 

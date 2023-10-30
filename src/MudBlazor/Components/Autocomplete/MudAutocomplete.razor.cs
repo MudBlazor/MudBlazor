@@ -265,14 +265,14 @@ namespace MudBlazor
 
 
         /// <summary>
-        /// Optional presentation template that is always shown at the top of the list
+        /// Optional presentation template that is shown at the top of the list. If no items are present, the fragment is hidden.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment BeforeItemsTemplate { get; set; }
 
         /// <summary>
-        /// Optional presentation template that is always shown at the bottom of the list
+        /// Optional presentation template that is shown at the bottom of the list. If no items are present, the fragment is hidden.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]

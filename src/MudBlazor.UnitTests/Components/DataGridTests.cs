@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -591,6 +592,37 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridFormValidationErrorsPreventUpdateTest()
+        {
+            var comp = Context.RenderComponent<DataGridFormValidationErrorsPreventUpdateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormValidationErrorsPreventUpdateTest.Model>>();
+
+            // open form dialog
+            dataGrid.Find("tbody tr button").Click();
+            dataGrid.Instance.isEditFormOpen.Should().BeTrue();
+
+            var field = comp.FindComponents<MudTextField<string>>()[2];
+
+            // edit data
+            field.Instance.Value.Should().Be("Augusta_Homenick26@mud.com");
+            field.WaitForElement("input").Change("not-a-valid-email-address");
+
+            // check the change occurred
+            field.Instance.Value.Should().Be("not-a-valid-email-address");
+
+            // ensure that validation message is displayed
+            field.Markup.Should().Contain("This is not a valid e-mail address");
+
+            var button = comp.FindComponents<MudButton>().Single(b => b.Markup.Contains("Save"));
+            button.WaitForElement("button").Click();
+
+            // dialog should still be open and the items data should not have been updated
+            using AssertionScope scope = new();
+            dataGrid.Instance.isEditFormOpen.Should().BeTrue();
+            comp.Instance.Items[0].Email.Should().Be("Augusta_Homenick26@mud.com");
+        }
+
+        [Test]
         public async Task DataGridVisualStylingTest()
         {
             var comp = Context.RenderComponent<DataGridVisualStylingTest>();
@@ -609,6 +641,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Include callbacks in test coverage.
             dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.CommittedItemChanges.HasDelegate.Should().Be(true);
             dataGrid.Instance.StartedEditingItem.HasDelegate.Should().Be(true);
@@ -633,6 +666,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Make sure that the callbacks have not been fired yet.
             comp.Instance.RowClicked.Should().Be(false);
+            comp.Instance.RowContextMenuClicked.Should().Be(false);
             comp.Instance.SelectedItemChanged.Should().Be(false);
             comp.Instance.CommittedItemChanges.Should().Be(false);
             comp.Instance.StartedEditingItem.Should().Be(false);
@@ -640,12 +674,16 @@ namespace MudBlazor.UnitTests.Components
 
             // Fire RowClick, SelectedItemChanged, SelectedItemsChanged, and StartedEditingItem callbacks.
             dataGrid.FindAll(".mud-table-body tr")[0].Click();
+            
+            // Fire RowContextMenuClick
+            dataGrid.FindAll(".mud-table-body tr")[0].ContextMenu();
 
             // Edit an item.
             dataGrid.FindAll(".mud-table-body tr td input")[0].Change("A test");
 
             // Make sure that the callbacks have been fired.
             comp.Instance.RowClicked.Should().Be(true);
+            comp.Instance.RowContextMenuClicked.Should().Be(true);
             comp.Instance.SelectedItemChanged.Should().Be(true);
             comp.Instance.CommittedItemChanges.Should().Be(true);
             comp.Instance.CanceledEditingItem.Should().Be(false);
@@ -654,6 +692,25 @@ namespace MudBlazor.UnitTests.Components
             // but we can brute force it by directly calling the CancelEditingItemAsync method on the datagrid
             await dataGrid.InvokeAsync(dataGrid.Instance.CancelEditingItemAsync);
             comp.Instance.CanceledEditingItem.Should().Be(true);
+        }
+
+        [Test]
+        public async Task DataGridOnContextMenuClickWhenIsGrouped()
+        {
+            var comp = Context.RenderComponent<DataGridGroupExpandedTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
+            
+            // Include callbacks in test coverage.
+            dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
+
+            // Make sure that the callbacks have not been fired yet.
+            comp.Instance.RowContextMenuClicked.Should().Be(false);
+
+            // Fire RowContextMenuClick
+            dataGrid.FindAll(".mud-table-body tr")[1].ContextMenu();
+            
+            // Make sure that the callbacks have been fired.
+            comp.Instance.RowContextMenuClicked.Should().Be(true);
         }
 
         [Test]
@@ -4072,5 +4129,24 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[3].InnerHtml.Should().Be("Hired");
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
         }
+
+        [Test]
+        public void DataGridRedundantMenuTest()
+        {
+            var comp = Context.RenderComponent<DataGridRedundantMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridRedundantMenuTest.Model>>();
+
+            dataGrid.Instance.FilterMode = DataGridFilterMode.ColumnFilterRow;
+            dataGrid.Instance.SortMode = SortMode.None;
+
+            // Render after applying conditions
+            comp.Render();
+
+            // Assert that the `column-options` span is present but empty
+            var columnOptionsSpan = comp.Find(".column-options");
+            columnOptionsSpan.Should().NotBeNull();
+            columnOptionsSpan.TextContent.Trim().Should().BeEmpty();
+        }
+
     }
 }
