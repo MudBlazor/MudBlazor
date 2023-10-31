@@ -329,6 +329,14 @@ namespace MudBlazor
             EvaluateForm(debounce: false);
         }
 
+        /// <summary>
+        /// Reset the isTouched property
+        /// </summary>
+        public void ResetTouched()
+        {
+            this._touched = false;
+        }
+
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)

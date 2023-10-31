@@ -123,9 +123,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormIsTouchedTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
-            var textField = textFieldcomp.Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
-            var dateField = dateComp.Instance;
             // check initial state: form should not be touched
             form.IsTouched.Should().Be(false);
             // input a date, istouched should be true
@@ -154,13 +152,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormIsTouchedNestedTest>();
             var formsComp = comp.FindComponents<MudForm>();
             var textCompFields = comp.FindComponents<MudTextField<string>>();
-            var dateCompFields = comp.FindComponents<MudDatePicker>();
             var form = formsComp[0].Instance;
-            var textField = textCompFields[0].Instance;
-            var dateField = dateCompFields[0].Instance;
             var nestedForm = formsComp[1].Instance;
-            var nestedFormTextField = textCompFields[1].Instance;
-            var nestedFormDateField = dateCompFields[1].Instance;
 
             // check initial state: form should not be touched
             form.IsTouched.Should().Be(false);
@@ -197,10 +190,7 @@ namespace MudBlazor.UnitTests.Components
             var textCompFields = comp.FindComponents<MudTextField<string>>();
             var dateCompFields = comp.FindComponents<MudDatePicker>();
             var form = formsComp[0].Instance;
-            var textField = textCompFields[0].Instance;
-            var dateField = dateCompFields[0].Instance;
             var nestedForm = formsComp[1].Instance;
-            var nestedFormTextField = textCompFields[1].Instance;
             var nestedFormDateField = dateCompFields[1].Instance;
 
             // check initial state: form should not be touched
@@ -226,6 +216,28 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().Be(false);
             nestedForm.IsTouched.Should().Be(true);
         }
+
+        /// <summary>
+        /// Calling ResetTouched should set the IsTouched property to false
+        /// </summary>
+        [Test]
+        public async Task FormIsTouchedResetTest()
+        {
+            var comp = Context.RenderComponent<FormIsTouchedTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dateComp = comp.FindComponent<MudDatePicker>();
+            // check initial state: form should not be touched 
+            form.IsTouched.Should().Be(false);
+            // input a date, isTouched should be true
+            dateComp.Find("input").Change("2001-01-31");
+            form.IsTouched.Should().Be(true);
+
+            // resetTouched should set the IsTouched property to default(false)
+            await comp.InvokeAsync(() => form.ResetTouched());
+            form.IsTouched.Should().Be(false);
+        }
+
+
 
         /// <summary>
         /// Custom validation func should be called to determine whether or not a form value is good
