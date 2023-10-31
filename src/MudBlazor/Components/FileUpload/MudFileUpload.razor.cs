@@ -36,12 +36,7 @@ namespace MudBlazor
         public T Files
         {
             get => _value;
-            set
-            {
-                if (_value != null && _value.Equals(value))
-                    return;
-                _value = value;
-            }
+            set => SetFilesAsync(value).AndForget();
         }
 
         /// <summary>
@@ -162,13 +157,7 @@ namespace MudBlazor
             }
             else return;
 
-            Touched = true;
-            await FilesChanged.InvokeAsync(_value);
-            await BeginValidateAsync();
-            FieldChanged(_value);
-            if (!Error ||
-                !SuppressOnChangeWhenInvalid) //only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
-                await OnFilesChanged.InvokeAsync(args);
+            await NotifyValueChangedAsync(args);
         }
 
         protected override void OnInitialized()
@@ -178,6 +167,28 @@ namespace MudBlazor
                     typeof(IBrowserFile));
 
             base.OnInitialized();
+        }
+
+        private async Task SetFilesAsync(T value)
+        {
+            if (_value != null && _value.Equals(value)
+                || _value == null && value == null)
+                return;
+
+            _value = value;
+            await NotifyValueChangedAsync(null);
+        }
+
+        private async Task NotifyValueChangedAsync(InputFileChangeEventArgs args)
+        {
+            Touched = true;
+            await FilesChanged.InvokeAsync(_value);
+            await BeginValidateAsync();
+            FieldChanged(_value);
+            if (args != null
+                || !Error
+                || !SuppressOnChangeWhenInvalid) // only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
+                await OnFilesChanged.InvokeAsync(args);
         }
     }
 }

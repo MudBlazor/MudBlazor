@@ -226,7 +226,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormIsTouchedTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
-            // check initial state: form should not be touched 
+            // check initial state: form should not be touched
             form.IsTouched.Should().Be(false);
             // input a date, isTouched should be true
             dateComp.Find("input").Change("2001-01-31");
@@ -990,6 +990,50 @@ namespace MudBlazor.UnitTests.Components
 
             // clear files
             await input.ClearFilesAsync();
+            fileUploadInstance.Files.Should().BeNull();
+
+            // form should now be invalid because a file is required
+            form.IsValid.Should().BeFalse();
+            form.IsTouched.Should().BeTrue();
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Required");
+            fileUploadInstance.Error.Should().BeTrue();
+            fileUploadInstance.ErrorText.Should().Be("Required");
+
+            // re-add a file, form should now be valid and touched
+            input.UploadFiles(fileToUpload);
+            form.IsValid.Should().BeTrue();
+            form.IsTouched.Should().BeTrue();
+            form.Errors.Length.Should().Be(0);
+            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.Files.Name.Should().Be(fileName);
+        }
+
+        /// <summary>
+        /// FileUpload should be validated like every other form component when a file is cleared
+        /// </summary>
+        [Test]
+        public async Task Form_Should_Validate_FileUpload_When_File_Cleared_Programmatically()
+        {
+            var fileName = "cat.jpg";
+            var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "image/jpeg", Array.Empty<byte>());
+            var fileToUpload = InputFileContent.CreateFromText("I am a cat image, trust me.", "cat.jpg");
+            var comp = Context.RenderComponent<FormWithFileUploadTest>(
+                ComponentParameterFactory.Parameter(nameof(FormWithFileUploadTest.File), defaultFile));
+            var form = comp.FindComponent<MudForm>().Instance;
+            var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
+            var fileUploadInstance = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
+            var input = fileUploadComp.FindComponent<InputFile>();
+
+            // check initial state: form should not be valid because form is untouched
+            form.IsValid.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
+            fileUploadInstance.Files.Should().NotBeNull();
+            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.ErrorText.Should().BeNullOrEmpty();
+
+            // clear files
+            comp.SetParam(p => p.File, null);
             fileUploadInstance.Files.Should().BeNull();
 
             // form should now be invalid because a file is required
