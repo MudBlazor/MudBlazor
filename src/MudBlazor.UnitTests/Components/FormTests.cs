@@ -1010,7 +1010,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// FileUpload should be validated like every other form component when a file is cleared
+        /// FileUpload should be validated like every other form component when a file is cleared programmatically
         /// </summary>
         [Test]
         public async Task Form_Should_Validate_FileUpload_When_File_Cleared_Programmatically()
@@ -1033,7 +1033,7 @@ namespace MudBlazor.UnitTests.Components
             fileUploadInstance.ErrorText.Should().BeNullOrEmpty();
 
             // clear files
-            comp.SetParam(p => p.File, null);
+            await comp.InvokeAsync(async () => await fileUploadInstance.ClearAsync());
             fileUploadInstance.Files.Should().BeNull();
 
             // form should now be invalid because a file is required

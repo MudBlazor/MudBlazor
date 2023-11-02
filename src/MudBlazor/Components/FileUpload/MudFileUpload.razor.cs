@@ -36,7 +36,12 @@ namespace MudBlazor
         public T Files
         {
             get => _value;
-            set => SetFilesAsync(value).AndForget();
+            set
+            {
+                if (_value != null && _value.Equals(value))
+                    return;
+                _value = value;
+            }
         }
 
         /// <summary>
@@ -65,7 +70,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
-        public RenderFragment<string> ButtonTemplate { get; set; }
+        public RenderFragment<FileUploadButtonTemplateContext<T>> ButtonTemplate { get; set; }
 
         /// <summary>
         /// Renders the selected files, if desired.
@@ -135,6 +140,12 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
 
+        public async Task ClearAsync()
+        {
+            _value = default;
+            await NotifyValueChangedAsync();
+        }
+
         private async Task OnChange(InputFileChangeEventArgs args)
         {
             if (GetDisabledState()) return;
@@ -157,7 +168,11 @@ namespace MudBlazor
             }
             else return;
 
-            await NotifyValueChangedAsync(args);
+            await NotifyValueChangedAsync();
+
+            if (!Error
+                || !SuppressOnChangeWhenInvalid) // only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
+                await OnFilesChanged.InvokeAsync(args);
         }
 
         protected override void OnInitialized()
@@ -169,26 +184,12 @@ namespace MudBlazor
             base.OnInitialized();
         }
 
-        private async Task SetFilesAsync(T value)
-        {
-            if (_value != null && _value.Equals(value)
-                || _value == null && value == null)
-                return;
-
-            _value = value;
-            await NotifyValueChangedAsync(null);
-        }
-
-        private async Task NotifyValueChangedAsync(InputFileChangeEventArgs args)
+        private async Task NotifyValueChangedAsync()
         {
             Touched = true;
             await FilesChanged.InvokeAsync(_value);
             await BeginValidateAsync();
             FieldChanged(_value);
-            if (args != null
-                || !Error
-                || !SuppressOnChangeWhenInvalid) // only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
-                await OnFilesChanged.InvokeAsync(args);
         }
     }
 }

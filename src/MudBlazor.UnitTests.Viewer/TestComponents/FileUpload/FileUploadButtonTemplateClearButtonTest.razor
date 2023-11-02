@@ -1,0 +1,91 @@
+﻿@inject ISnackbar Snackbar
+
+@using System.Threading
+@using System.IO
+@using System.Text
+
+<MudForm Model="@_model"
+         @bind-IsValid="_isValid"
+         @bind-IsTouched="_isTouched">
+    <MudItem xs="12">
+        <MudStack Style="width: 100%">
+            <MudFileUpload T="IBrowserFile"
+                           @bind-Files="_model.File"
+                           For="@(() => _model.File)"
+                           Hidden="@false"
+                           InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
+                           InputStyle="opacity:0"
+                           @ondragenter="@SetDragClass"
+                           @ondragleave="@ClearDragClass"
+                           @ondragend="@ClearDragClass">
+                <ButtonTemplate>
+                    <MudPaper Height="300px" Outlined="true" Class="@DragClass">
+                        <MudText Typo="Typo.h6">Drag and drop files here or click</MudText>
+                        <MudChip Color="Color.Dark" Text="@_model.File?.Name" />
+                    </MudPaper>
+                    <MudToolBar DisableGutters="true"
+                                Class="relative d-flex justify-end gap-4 z-30">
+                        <MudButton HtmlTag="label" for="@context">Upload with context</MudButton>
+                        <MudButton HtmlTag="label" for="@context.Id">Upload with context Id</MudButton>
+                        <MudButton OnClick="@context.Actions.ClearAsync">Clear</MudButton>
+                    </MudToolBar>
+                </ButtonTemplate>
+            </MudFileUpload>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12">
+        IsValid: @_isValid - IsTouched: @_isTouched
+    </MudItem>
+</MudForm>
+
+@code {
+    public class Model
+    {
+        public IBrowserFile? File { get; set; } = new BrowserFile(
+            Guid.NewGuid().ToString(),
+            DateTimeOffset.Now,
+            default,
+            "text",
+            Encoding.ASCII.GetBytes(_fileContent));
+    }
+
+    private Model _model = null!;
+    private bool _isValid;
+    private bool _isTouched;
+    private static string _fileContent = "this is content";
+    private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
+    private string DragClass = DefaultDragClass;
+
+    protected override void OnInitialized()
+        => _model = new Model();
+
+    private void SetDragClass()
+    {
+        DragClass = $"{DefaultDragClass} mud-border-primary";
+    }
+
+    private void ClearDragClass()
+    {
+        DragClass = DefaultDragClass;
+    }
+
+    public class BrowserFile : IBrowserFile
+    {
+        public string Name { get; }
+        public DateTimeOffset LastModified { get; }
+        public long Size { get; }
+        public string ContentType { get; }
+        public byte[] Content { get; }
+
+        public BrowserFile(string name, DateTimeOffset lastModified, long size, string contentType, byte[] content)
+        {
+            Name = name;
+            LastModified = lastModified;
+            Size = size;
+            ContentType = contentType;
+            Content = content;
+        }
+
+        public Stream OpenReadStream(long maxAllowedSize = 512000, CancellationToken cancellationToken = default) => new MemoryStream(Content);
+    }
+}
