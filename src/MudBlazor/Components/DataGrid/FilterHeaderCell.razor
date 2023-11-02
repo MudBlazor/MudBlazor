@@ -50,17 +50,20 @@
                             <MudTimePicker Time="@_valueTime" TimeChanged="@TimeValueChangedAsync" Margin="@Margin.Dense" />
                         </MudItem>
                     </MudGrid>
-                }                
-                <MudMenu Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" Dense="true">
-                    @foreach (var o in operators)
-                    {
-                        if (!string.IsNullOrWhiteSpace(o))
+                }
+                @if (!Column.ShowFilterIcon.HasValue || Column.ShowFilterIcon.Value)
+                {
+                    <MudMenu Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" Dense="true">
+                        @foreach (var o in operators)
                         {
-                            <MudMenuItem Style="@chosenOperatorStyle(o)" OnClick="@(async () => await ChangeOperatorAsync(o))">@Localizer[$"MudDataGrid.{o}"]</MudMenuItem>
+                            if (!string.IsNullOrWhiteSpace(o))
+                            {
+                                <MudMenuItem Style="@chosenOperatorStyle(o)" OnClick="@(async () => await ChangeOperatorAsync(o))">@Localizer[$"MudDataGrid.{o}"]</MudMenuItem>
+                            }
                         }
-                    }
-                </MudMenu>
-                <MudIconButton Class="align-self-center" Icon="@Icons.Material.Filled.FilterAltOff" Size="@Size.Small" OnClick="@ClearFilterAsync"></MudIconButton>
+                    </MudMenu>
+                    <MudIconButton Class="align-self-center" Icon="@Icons.Material.Filled.FilterAltOff" Size="@Size.Small" OnClick="@ClearFilterAsync"></MudIconButton>
+                }
             </MudStack>      
         }
     </th>
