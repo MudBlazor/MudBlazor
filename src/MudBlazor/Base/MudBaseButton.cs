@@ -76,6 +76,9 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Behavior)]
         public bool Disabled { get; set; }
 
+        /// <summary> 
+        /// If true, does not stop click propagation. 
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public bool ClickPropagation { get; set; }
