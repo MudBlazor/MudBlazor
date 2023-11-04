@@ -1054,6 +1054,49 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// FileUpload should be validated like every other form component when a file is cleared via template action
+        /// </summary>
+        [Test]
+        public async Task Form_Should_Validate_FileUpload_When_File_Cleared_Via_Template_Action()
+        {
+            var fileName = "cat.jpg";
+            var fileToUpload = InputFileContent.CreateFromText("I am a cat image, trust me.", "cat.jpg");
+            var comp = Context.RenderComponent<FormWithFileUploadAndButtonTemplateContextTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
+            var fileUploadInstance = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
+            var input = fileUploadComp.FindComponent<InputFile>();
+            var clearButton = fileUploadComp.Find("button#upload-button");
+
+            // check initial state: form should not be valid because form is untouched
+            form.IsValid.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
+            fileUploadInstance.Files.Should().NotBeNull();
+            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.ErrorText.Should().BeNullOrEmpty();
+
+            // clear files
+            await comp.InvokeAsync(() => clearButton.Click());
+            fileUploadInstance.Files.Should().BeNull();
+
+            // form should now be invalid because a file is required
+            form.IsValid.Should().BeFalse();
+            form.IsTouched.Should().BeTrue();
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Required");
+            fileUploadInstance.Error.Should().BeTrue();
+            fileUploadInstance.ErrorText.Should().Be("Required");
+
+            // re-add a file, form should now be valid and touched
+            input.UploadFiles(fileToUpload);
+            form.IsValid.Should().BeTrue();
+            form.IsTouched.Should().BeTrue();
+            form.Errors.Length.Should().Be(0);
+            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.Files.Name.Should().Be(fileName);
+        }
+
+        /// <summary>
         /// Testing the functionality of the EditForm example from the docs.
         /// </summary>
         [Test]
