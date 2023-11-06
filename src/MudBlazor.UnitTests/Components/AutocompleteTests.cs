@@ -1291,5 +1291,19 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("div.mud-popover").InnerHtml.Should().BeEmpty();
         }
+
+        [Test]
+        public async Task Autocomplete_Should_ApplyListItemClass()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var listItemClassTest = "list-item-class-test";
+
+            autocompletecomp.SetParam(a => a.ListItemClass, listItemClassTest);
+            var inputControl = comp.Find("div.mud-input-control");
+            inputControl.Click();
+
+            comp.WaitForAssertion(() => comp.Find("div.mud-list-item").ClassList.Should().Contain(listItemClassTest));
+        }
     }
 }

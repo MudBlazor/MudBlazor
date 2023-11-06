@@ -56,6 +56,12 @@ namespace MudBlazor
             .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
             .Build();
 
+        protected string GetListItemClassname(bool isSelected) =>
+            new CssBuilder()
+            .AddClass("mud-selected-item mud-primary-text mud-primary-hover", isSelected)
+            .AddClass(ListItemClass)
+            .Build();
+
         /// <summary>
         /// User class names for the popover, separated by space
         /// </summary>
@@ -69,6 +75,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public string ListClass { get; set; }
+
+        /// <summary>
+        /// User class names for the internal list item, separated by space.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string ListItemClass { get; set; }
 
         /// <summary>
         /// Set the anchor origin point to determen where the popover will open from.
