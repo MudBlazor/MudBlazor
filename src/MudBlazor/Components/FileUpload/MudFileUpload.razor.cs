@@ -70,7 +70,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
-        public RenderFragment<string> ButtonTemplate { get; set; }
+        public RenderFragment<FileUploadButtonTemplateContext<T>> ButtonTemplate { get; set; }
 
         /// <summary>
         /// Renders the selected files, if desired.
@@ -140,6 +140,12 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
 
+        public async Task ClearAsync()
+        {
+            _value = default;
+            await NotifyValueChangedAsync();
+        }
+
         private async Task OnChange(InputFileChangeEventArgs args)
         {
             if (GetDisabledState()) return;
@@ -162,12 +168,10 @@ namespace MudBlazor
             }
             else return;
 
-            Touched = true;
-            await FilesChanged.InvokeAsync(_value);
-            await BeginValidateAsync();
-            FieldChanged(_value);
-            if (!Error ||
-                !SuppressOnChangeWhenInvalid) //only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
+            await NotifyValueChangedAsync();
+
+            if (!Error
+                || !SuppressOnChangeWhenInvalid) // only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
                 await OnFilesChanged.InvokeAsync(args);
         }
 
@@ -178,6 +182,14 @@ namespace MudBlazor
                     typeof(IBrowserFile));
 
             base.OnInitialized();
+        }
+
+        private async Task NotifyValueChangedAsync()
+        {
+            Touched = true;
+            await FilesChanged.InvokeAsync(_value);
+            await BeginValidateAsync();
+            FieldChanged(_value);
         }
     }
 }

@@ -6,7 +6,7 @@
                    Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.CloudUpload"
-                   for="@context">
+                   for="@context.Id">
             Upload Files
         </MudButton>
     </ButtonTemplate>
@@ -18,7 +18,7 @@
                 Color="Color.Secondary"
                 Icon="@Icons.Material.Filled.Image"
                 Label="Load picture"
-                for="@context" />
+                for="@context.Id" />
     </ButtonTemplate>
 </MudFileUpload>
 
@@ -27,7 +27,7 @@
         <MudFab HtmlTag="label"
                 Color="Color.Success"
                 Icon="@Icons.Material.Filled.AttachFile"
-                for="@context" />
+                for="@context.Id" />
     </ButtonTemplate>
 </MudFileUpload>
 
@@ -36,7 +36,7 @@
         <MudIconButton HtmlTag="label"
                        Color="Color.Info"
                        Icon="@Icons.Material.Filled.PhotoCamera"
-                       for="@context">
+                       for="@context.Id">
         </MudIconButton>
     </ButtonTemplate>
 </MudFileUpload>
@@ -46,7 +46,7 @@
         <MudButton HtmlTag="label"
                    Variant="Variant.Filled"
                    Color="Color.Primary"
-                   for="@context">
+                   for="@context.Id">
             Disabled Button
         </MudButton>
     </ButtonTemplate>
