@@ -332,8 +332,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DataGridMultiSelectionTest_Should_Not_Render_Footer_If_ShowInFooter_Is_False()
         {
             var comp = Context.RenderComponent<DataGridMultiSelectionTest>(
-                Parameter(nameof(MudBlazor.UnitTests.TestComponents.DataGridMultiSelectionTest.ShowInFooter),
-                    false));
+                Parameter(nameof(MudBlazor.UnitTests.TestComponents.DataGridMultiSelectionTest.ShowInFooter), false));
             comp.FindAll("td.footer-cell").Should().BeEmpty();
         }
 
