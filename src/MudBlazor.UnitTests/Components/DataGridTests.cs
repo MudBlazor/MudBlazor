@@ -16,6 +16,7 @@ using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
+using static Bunit.ComponentParameterFactory;
 using static MudBlazor.Docs.Examples.TableRelationalExample;
 
 namespace MudBlazor.UnitTests.Components
@@ -328,6 +329,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridMultiSelectionTest_Should_Not_Render_Footer_If_ShowInFooter_Is_False()
+        {
+            var comp = Context.RenderComponent<DataGridMultiSelectionTest>(
+                Parameter(nameof(MudBlazor.UnitTests.TestComponents.DataGridMultiSelectionTest.ShowInFooter),
+                    false));
+            comp.FindAll("td.footer-cell").Should().BeEmpty();
+        }
+
+        [Test]
         public async Task DataGridSelectAllWithFilterTest()
         {
             var comp = Context.RenderComponent<DataGridMultiSelectionTest>();
@@ -346,16 +356,16 @@ namespace MudBlazor.UnitTests.Components
             // Add a FilterDefinition to filter where the Name == "B".
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(twoBFilter));
 
-            dataGrid.FindAll("tbody tr").Count.Should().Be(2, because: "two 'B' rows shown per the filter"); 
+            dataGrid.FindAll("tbody tr").Count.Should().Be(2, because: "two 'B' rows shown per the filter");
 
             // select-all
             dataGrid.FindAll("input[type=checkbox]")[0].Change(true);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(2, because: "only the two 'B' rows that are visible should get selected"); 
+            dataGrid.Instance.SelectedItems.Count.Should().Be(2, because: "only the two 'B' rows that are visible should get selected");
 
             await comp.InvokeAsync(() => dataGrid.Instance.ClearFiltersAsync());
             dataGrid.Render();
 
-            dataGrid.FindAll("tbody tr").Count.Should().Be(4, because: "all rows should be shown when filter disapplied"); 
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4, because: "all rows should be shown when filter disapplied");
             dataGrid.Instance.SelectedItems.Count.Should().Be(2, because: "selection should not have changed when filter disapplied");
             dataGrid.FindAll("input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
             dataGrid.FindAll("tfoot input")[0].IsChecked().Should().BeFalse(because: "select all checkbox should reflect 'not all selected' state");
@@ -395,13 +405,13 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Find("tfoot input").Change(false);
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
         }
-        
+
         [Test]
         public async Task DataGridEditableSelectionTest()
         {
             var comp = Context.RenderComponent<DataGridEditableWithSelectColumnTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditableWithSelectColumnTest.Item>>();
-            
+
             // test that all rows, header and footer have cell with a checkbox
             dataGrid.FindAll("input.mud-checkbox-input").Count().Should().Be(dataGrid.Instance.Items.Count()+2);
 
@@ -674,7 +684,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Fire RowClick, SelectedItemChanged, SelectedItemsChanged, and StartedEditingItem callbacks.
             dataGrid.FindAll(".mud-table-body tr")[0].Click();
-            
+
             // Fire RowContextMenuClick
             dataGrid.FindAll(".mud-table-body tr")[0].ContextMenu();
 
@@ -699,7 +709,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridGroupExpandedTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
-            
+
             // Include callbacks in test coverage.
             dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
 
@@ -708,7 +718,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Fire RowContextMenuClick
             dataGrid.FindAll(".mud-table-body tr")[1].ContextMenu();
-            
+
             // Make sure that the callbacks have been fired.
             comp.Instance.RowContextMenuClicked.Should().Be(true);
         }
@@ -2913,7 +2923,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridHeaderTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHeaderTemplateTest.Model>>();
-            
+
             dataGrid.Find("thead th").TextContent.Trim().Should().Be("test");
 
             dataGrid.Find("span.column-header").FirstChild.NodeName.Should().Be("svg");
@@ -3282,7 +3292,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 comp.Instance.FilterHiredToggled(true, dataGrid.Instance);
             });
-            
+
             dataGrid.Render();
             dataGrid.FindAll("tbody tr").Count.Should().Be(1);
         }
@@ -3831,7 +3841,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Render();
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(5));
         }
-        
+
         [Test]
         public async Task DataGridGroupExpandedTrueServerDataTest()
         {
@@ -3884,7 +3894,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Render();
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(8));
         }
-        
+
         [Test]
         public async Task DataGridGroupExpandedFalseServerDataTest()
         {
@@ -3963,7 +3973,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
 
             var initialFilterCount = dataGrid.Instance.FilteringRunCount;
-            
+
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 1);
 
