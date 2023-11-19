@@ -375,4 +375,13 @@
   <data name="MudDataGridPager_InfoFormat" xml:space="preserve">
     <value>{0}-{1} of {2}</value>
   </data>
+  <data name="MudStepper.Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="MudStepper.Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="MudStepper.Skip" xml:space="preserve">
+    <value>Skip</value>
+  </data>
 </root>

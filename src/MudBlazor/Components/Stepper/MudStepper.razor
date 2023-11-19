@@ -2,6 +2,8 @@
 @using MudBlazor.Utilities
 @inherits MudComponentBase
 
+@inject InternalMudLocalizer Localizer
+
 <div @attributes="@UserAttributes" class="@Classname" style="@Style">
 
     <div class="@NavClassname" role="tablist">
@@ -52,12 +54,12 @@
 
 
     <MudCardActions>
-        <MudButton OnClick="PreviousStep" Disabled="!PreviousStepEnabled">Previous</MudButton>
+        <MudButton OnClick="PreviousStep" Disabled="!PreviousStepEnabled">@Localizer["MudStepper.Previous"]</MudButton>
         <MudSpacer/>
         @if (!IsCompleted)
         {
-            <MudButton OnClick="SkipCurrentStep" Disabled="!IsCurrentStepSkippable">Skip</MudButton>
-            <MudButton OnClick="CompleteCurrentStep" Color="Color.Primary" Disabled="!CanGoToNextStep">Next</MudButton>
+            <MudButton OnClick="SkipCurrentStep" Disabled="!IsCurrentStepSkippable">@Localizer["MudStepper.Skip"]</MudButton>
+            <MudButton OnClick="CompleteCurrentStep" Color="Color.Primary" Disabled="!CanGoToNextStep">@Localizer["MudStepper.Next"]</MudButton>
         }
         else
         {
