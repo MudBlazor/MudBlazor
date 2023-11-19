@@ -72,12 +72,24 @@ public partial class MudStepper : MudComponentBase
     /// </summary>
     [Parameter]
     public string StepClass { get; set; }
+    
+    /// <summary>
+    /// Sets style for all steps globally
+    /// </summary>
+    [Parameter]
+    public string StepStyle { get; set; }
 
     /// <summary>
     /// Renders labels for each step title below the circle
     /// </summary>
     [Parameter]
     public bool AlternateLabel { get; set; }
+
+    /// <summary>
+    /// If there is too many steps, the navigation becomes scrollable.
+    /// </summary>
+    [Parameter] 
+    public bool ScrollableNavigation { get; set; } = true;
 
     /// <summary>
     /// Fired when a step gets activated. Returned Task will be awaited.
@@ -239,7 +251,12 @@ public partial class MudStepper : MudComponentBase
         .AddClass(Class)
         .Build();
 
+    internal string StepClassname => new CssBuilder("mud-stepper-content")
+        .AddClass(StepClass)
+        .Build();
+    
     protected string NavClassname => new CssBuilder("mud-stepper-nav")
+        .AddClass("mud-stepper-nav-scrollable", ScrollableNavigation)
         .AddClass(NavClass)
         .Build();
 }

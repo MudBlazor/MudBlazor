@@ -7,44 +7,17 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="Basic Usage">
-                <Description>The default <CodeInline>MudStack</CodeInline> displays its items vertically in a column.</Description>
+            <SectionHeader Title="Horizontal stepper">
+                <Description>Stepper needs <CodeInline>@nameof(MudStep)</CodeInline> in its child content. Each step can have <CodeInline>@nameof(MudStep.Title)</CodeInline> and <CodeInline>@nameof(MudStep.SecondaryText)</CodeInline> so the component can be displayed properly.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="StepperBasicExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="StepperBasicExample" ShowCode="true">
                 <StepperBasicExample/>
             </SectionContent>
         </DocsPageSection>
-        
-        <DocsPageSection>
-            <SectionHeader Title="StepperDisabledExample">
-                <Description>The default <CodeInline>MudStack</CodeInline> displays its items vertically in a column.</Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="StepperDisabledExample" ShowCode="false">
-                <StepperDisabledExample/>
-            </SectionContent>
-        </DocsPageSection>
-        
-        <DocsPageSection>
-            <SectionHeader Title="StepperCustomLabelExample">
-                <Description>The default <CodeInline>MudStack</CodeInline> displays its items vertically in a column.</Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="StepperCustomLabelExample" ShowCode="false">
-                <StepperCustomLabelExample/>
-            </SectionContent>
-        </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="StepperBasicAlternativeLabelExample">
-                <Description>The default <CodeInline>MudStack</CodeInline> displays its items vertically in a column.</Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="StepperBasicAlternativeLabelExample" ShowCode="false">
-                <StepperBasicAlternativeLabelExample/>
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="StepperNonLinearExample">
-                <Description>The default <CodeInline>MudStack</CodeInline> displays its items vertically in a column.</Description>
+            <SectionHeader Title="Non-linear version">
+                <Description>If you need to jump between the steps, parameter <CodeInline>@nameof(MudStepper.NonLinear)</CodeInline> is there for that.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="StepperNonLinearExample" ShowCode="false">
                 <StepperNonLinearExample/>
@@ -52,8 +25,26 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Completed">
-                <Description>The default <CodeInline>MudStack</CodeInline> displays its items vertically in a column.</Description>
+            <SectionHeader Title="Alternate Label">
+                <Description><CodeInline>@nameof(MudStepper.AlternateLabel)</CodeInline> sets all the labels in the navigation on bottom and centers them.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="StepperBasicAlternativeLabelExample" ShowCode="false">
+                <StepperBasicAlternativeLabelExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Customization">
+                <Description>The component can be customized via <CodeInline>@nameof(MudStepper.TitleTemplate)</CodeInline>, <CodeInline>@nameof(MudStepper.LabelTemplate)</CodeInline> and <CodeInline>@nameof(MudStepper.ConnectorTemplate)</CodeInline>. It can also contain success message after the last step thanks to the <CodeInline>@nameof(MudStepper.CompletedContent)</CodeInline> fragment.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="StepperCustomLabelExample" ShowCode="false">
+                <StepperCustomLabelExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Step binding">
+                <Description>Each step can be also disabled via <CodeInline>@nameof(MudStep.Disabled)</CodeInline> or completed via <CodeInline>@nameof(MudStep.Completed)</CodeInline>.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="StepperBindedStepExample" ShowCode="false">
                 <StepperBindedStepExample/>
@@ -61,7 +52,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="StepperDynamicExample">
+            <SectionHeader Title="Dynamically adding new tab">
                 <Description>The default <CodeInline>MudStack</CodeInline> displays its items vertically in a column.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="StepperDynamicExample" ShowCode="false">
@@ -70,8 +61,8 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="StepperBasicVerticalExample">
-                <Description>The default <CodeInline>MudStack</CodeInline> displays its items vertically in a column.</Description>
+            <SectionHeader Title="Vertical stepper">
+                <Description>Stepper also has a vertical version enabled by parameter <CodeInline>@nameof(MudStepper.Vertical).</CodeInline></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="StepperBasicVerticalExample" ShowCode="false">
                 <StepperBasicVerticalExample/>
@@ -79,8 +70,8 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="StepperBasicVerticalNonlinearExample">
-                <Description>The default <CodeInline>MudStack</CodeInline> displays its items vertically in a column.</Description>
+            <SectionHeader Title="Non-linear vertical stepper">
+                <Description>The vertical stepper has all the options as the horizontal.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="StepperBasicVerticalNonlinearExample" ShowCode="false">
                 <StepperBasicVerticalNonlinearExample/>

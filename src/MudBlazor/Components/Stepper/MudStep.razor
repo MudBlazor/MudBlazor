@@ -99,6 +99,7 @@
     }
 
     internal string Styles => new StyleBuilder()
+        .AddStyle(Parent?.StepStyle)
         .AddStyle(Style)
         .Build();
 
@@ -114,11 +115,9 @@
             .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}-text", !Completed && HasError)
             .Build();
 
-    internal string Classname => new CssBuilder("mud-stepper-content")
-        .AddClass(Parent?.StepClass, !string.IsNullOrEmpty(Parent?.StepClass))
+    internal string Classname => new CssBuilder(Parent?.StepClassname)
         .AddClass(Class)
         .Build();
-
 
     public async ValueTask DisposeAsync()
     {
