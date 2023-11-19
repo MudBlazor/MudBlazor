@@ -86,6 +86,9 @@ public partial class MudStepper : MudComponentBase
     [Category(CategoryTypes.Tabs.Behavior)]
     public Func<StepperInteractionEventArgs, Task>? OnPreviewInteraction { get; set; }
 
+    //TODO: Stepper controls
+    public StepperControls StepperControls { get; set; } = new();
+
     public bool IsCurrentStepSkippable => _steps.Any() && ActiveStep is not null && ActiveStep.Skippable;
 
     public bool CanGoToNextStep =>
@@ -101,15 +104,20 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
-    [Parameter] public RenderFragment<MudStep>? TitleTemplate { get; set; }
+    [Parameter] 
+    public RenderFragment<MudStep>? TitleTemplate { get; set; }
 
-    [Parameter] public RenderFragment<MudStep>? LabelTemplate { get; set; }
+    [Parameter]
+    public RenderFragment<MudStep>? LabelTemplate { get; set; }
 
+    [Parameter]
+    public RenderFragment<MudStep>? ConnectorTemplate { get; set; }
+    
     /// <summary>
     /// This content is displayed when all steps are completed
     /// </summary>
     [Parameter]
-    public RenderFragment CompletedContent { get; set; }
+    public RenderFragment? CompletedContent { get; set; }
 
     internal void AddStep(MudStep step)
     {

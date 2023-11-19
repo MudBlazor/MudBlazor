@@ -1,0 +1,42 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudPaper Style="width: 800px">
+    <MudStepper @ref="stepper" CompletedStepColor="Color.Success" CurrentStepColor="Color.Primary">
+        <TitleTemplate></TitleTemplate>
+        <ConnectorTemplate Context="step">
+            <div class="mud-stepper-nav-connector">
+                @{
+                    int value = step.Completed ? 100 : 0;
+
+                    <MudProgressLinear Value="value" Min="0" Max="100" Color="Color.Success" Style="height: 2px; background-color: #d4ddeb; border-radius: 2px;"/>
+                }
+            </div>
+        </ConnectorTemplate>
+        <LabelTemplate>
+            @if (stepper.ActiveStep == context)
+            {
+                <div style="height: 10px; width:10px; border: 2px solid var(--mud-palette-primary); border-radius: 50%;"></div>
+            }
+            else if (context.Completed)
+            {
+                <div style="height: 10px; width:10px; background-color: var(--mud-palette-success); border-radius: 50%;"></div>
+            }
+            else
+            {
+                <div style="height: 10px; width:10px; background-color: #d4ddeb; border-radius: 50%;"></div>
+            }
+        </LabelTemplate>
+        <ChildContent>
+            <MudStep Title="Select campaign settings">Select campaign settings content</MudStep>
+            <MudStep Title="Create an ad group" SecondaryText="Optional" Skippable="true">Create an ad group content</MudStep>
+            <MudStep Title="Create an ad">Create an ad content</MudStep>
+            <MudStep Title="Publish an ad">Publish an ad content</MudStep>
+        </ChildContent>
+        <CompletedContent>Congratulations, all steps are completed.</CompletedContent>
+    </MudStepper>
+</MudPaper>
+
+@code {
+    MudStepper stepper;
+
+
+}
