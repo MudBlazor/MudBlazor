@@ -17,6 +17,18 @@
                     background-color: var(--mud-palette-action-default-hover);
                 }
             }
+          
+          &.mud-stepper-nav-step-disabled {
+            
+            .mud-stepper-nav-step-label-icon {
+              background-color: var(--mud-palette-lines-default) !important;
+              color: var(--mud-palette-text-disabled) !important;
+            }
+
+            .mud-stepper-nav-step-label-content {
+              color: var(--mud-palette-text-disabled) !important;
+            }
+          }
 
             .mud-stepper-nav-step-label {
                 display: flex;
@@ -53,6 +65,17 @@
                 }
             }
         }
+      
+      &.mud-stepper-nav-scrollable {
+        overflow: auto;
+        .mud-stepper-nav-step {
+          min-width: fit-content;
+        }
+        
+        .mud-stepper-nav-connector {
+          min-width: 32px;
+        }
+      }
     }
 
     .mud-stepper-content {

@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 <MudPaper Style="width: 800px">
-    <MudStepper @ref="stepper" CompletedStepColor="Color.Success" CurrentStepColor="Color.Primary">
-        <TitleTemplate></TitleTemplate>
+    <MudStepper @ref="stepper" CompletedStepColor="Color.Success" CurrentStepColor="Color.Primary" NavClass="border-b mud-border-lines-default" StepClass="pt-4">
+        <TitleTemplate>@*This is here just to not render any text*@</TitleTemplate>
         <ConnectorTemplate Context="step">
             <div class="mud-stepper-nav-connector">
                 @{

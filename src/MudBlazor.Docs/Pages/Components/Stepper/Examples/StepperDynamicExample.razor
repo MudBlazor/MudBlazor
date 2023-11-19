@@ -15,13 +15,13 @@
 
 <MudDivider/>
 
-<MudButton OnClick="Remove">Remove</MudButton>
+<MudButton OnClick="Remove" Color="Color.Error">Remove</MudButton>
 <MudText>@_steps.Count</MudText>
-<MudButton OnClick="Add">Add</MudButton>
+<MudButton OnClick="Add" Color="Color.Primary">Add</MudButton>
 
 <MudDivider/>
 
-<p>_index: @_index</p>
+<p>Current step index: @_index</p>
 
 
 @code {
