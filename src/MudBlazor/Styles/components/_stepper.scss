@@ -11,6 +11,7 @@
             &.mud-ripple {
                 transition: background-color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1) 0ms;
                 cursor: pointer;
+                user-select: none;
 
                 &:hover {
                     background-color: var(--mud-palette-action-default-hover);

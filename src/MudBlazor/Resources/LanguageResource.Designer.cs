@@ -382,5 +382,32 @@ namespace MudBlazor.Resources {
                 return ResourceManager.GetString("MudDataGrid.Value", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next.
+        /// </summary>
+        public static string MudStepper_Next {
+            get {
+                return ResourceManager.GetString("MudStepper.Next", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous.
+        /// </summary>
+        public static string MudStepper_Previous {
+            get {
+                return ResourceManager.GetString("MudStepper.Previous", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skip.
+        /// </summary>
+        public static string MudStepper_Skip {
+            get {
+                return ResourceManager.GetString("MudStepper.Skip", resourceCulture);
+            }
+        }
     }
 }
