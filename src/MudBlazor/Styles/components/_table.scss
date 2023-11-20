@@ -203,12 +203,12 @@
     & * .mud-table-root {
 
         .mud-table-foot {
-
+            position: sticky;
+            z-index: 2;
+            bottom: 0;
+            
             & * .mud-table-cell {
                 background-color: var(--mud-palette-surface);
-                position: sticky;
-                z-index: 2;
-                bottom: 0;
             }
         }
     }
@@ -360,6 +360,7 @@
 
     & .mud-select-input {
         margin-top: 0px !important;
+        padding: 0 7px !important;
     }
 
     & .mud-input .mud-input-root {

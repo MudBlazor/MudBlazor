@@ -8,10 +8,6 @@ namespace MudBlazor
 #nullable enable
     public partial class MudPopover : MudPopoverBase
     {
-        [Inject]
-        [Obsolete($"Replaced by {nameof(PopoverService)}. Will be removed in v7.")]
-        public IMudPopoverService Service { get; set; } = null!;
-
         protected internal override string PopoverClass =>
             new CssBuilder("mud-popover")
                 .AddClass($"mud-popover-fixed", Fixed)

@@ -333,6 +333,20 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("textarea").InnerHtml.Should().Be(text);
         }
 
+
+        /// <summary>
+        /// Ensures that a text field with both 'Lines' > 1 and 'Mask' parameters generates a 'textarea'.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TextFieldMultilineWithMask_CheckRendered()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                Parameter(nameof(MudTextField<string>.Mask), new RegexMask(@"\d")),
+                Parameter(nameof(MudTextField<string>.Lines), 2));
+            comp.Find("textarea").Should().NotBeNull();
+        }
+
         [Test]
         public async Task MultilineTextField_Should_UpdateTextOnInput()
         {
@@ -376,6 +390,29 @@ namespace MudBlazor.UnitTests.Components
             tf1.Text.Should().Be("Beratna");
             tf2.Text.Should().Be("Beratna");
             comp.Find("textarea").TrimmedText().Should().Be("Beratna");
+        }
+
+        [Test]
+        public async Task AutoGrowTextField_Should_InvokeJavaScriptInitOnRender()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                Parameter(nameof(MudTextField<string>.AutoGrow), true),
+                Parameter(nameof(MudTextField<string>.MaxLines), 5));
+
+            Context.JSInterop.VerifyInvoke("mudInputAutoGrow.initAutoGrow", 1);
+            Context.JSInterop.Invocations["mudInputAutoGrow.initAutoGrow"].Single()
+                .Arguments
+                .Should()
+                .HaveCount(2)
+                .And
+                .HaveElementAt(1, 5); // MaxLines
+
+            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "A"));
+
+            Context.JSInterop.Invocations["mudInputAutoGrow.adjustHeight"].Single()
+               .Arguments
+               .Should()
+               .HaveCount(1);
         }
 
         [Test]
@@ -938,13 +975,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DebouncedTextFieldRerenderTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
-            var input = comp.Find("input");
-            var delayedRerenderButton = comp.Find("button");
-            input.Input(new ChangeEventArgs { Value = "test" });
+            comp.Find("input").Input(new ChangeEventArgs { Value = "test" });
             // trigger first value change
             await Task.Delay(comp.Instance.DebounceInterval);
             // trigger delayed re-render
-            delayedRerenderButton.Click();
+            comp.Find("button").Click();
             // imitate "typing in progress" by extending the debounce interval until component re-renders
             var elapsedTime = 0;
             var currentText = "test";
@@ -952,7 +987,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
-                input.Input(new ChangeEventArgs { Value = currentText });
+                comp.Find("input").Input(new ChangeEventArgs { Value = currentText });
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }
@@ -980,13 +1015,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DebouncedTextFieldFormatChangeRerenderTest>();
             var textField = comp.FindComponent<MudTextField<DateTime>>().Instance;
-            var input = comp.Find("input");
-            var delayedFormatChangeButton = comp.Find("button");
             DateTime expectedFinalDateTime = default;
             // ensure text is updated on initialize 
             textField.Text.Should().Be(comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
             // trigger the format change
-            delayedFormatChangeButton.Click();
+            comp.Find("button").Click();
             // imitate "typing in progress" by extending the debounce interval until component re-renders
             var elapsedTime = 0;
             var currentText = comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture);
@@ -994,7 +1027,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
-                input.Input(new ChangeEventArgs { Value = currentText });
+                comp.Find("input").Input(new ChangeEventArgs { Value = currentText });
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }

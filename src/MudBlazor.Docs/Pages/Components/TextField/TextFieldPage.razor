@@ -153,6 +153,25 @@
     <SectionContent Code="TextFieldMultilineExample" ShowCode="false">
         <TextFieldMultilineExample/>
     </SectionContent>
+    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+        If you use Blazor Server for your app, note that there is a default limit on the maximum message size SignalR can handle. If you want to support large texts in the input element (around 15k characters and more)
+        you need to increase the message size limit by setting <CodeInline>MaximumReceiveMessageSize</CodeInline> accordingly in the HubOptions in your Program.cs file.
+        For more details see <MudLink Typo="Typo.body2" Href="https://github.com/MudBlazor/MudBlazor/issues/7263">this issue</MudLink> on github.
+    </MudAlert>
+    <SectionSubGroups>
+        <DocsPageSection>
+            <SectionHeader Title="Auto Grow">
+                <Description>
+                    With the <CodeInline>AutoGrow</CodeInline> property set to true, the height of the text field automatically changes with the number of lines of text.
+                    The text field will not get smaller than the number of lines specified with the <CodeInline>Lines</CodeInline> property.
+                    You can limit the maximum height of the text field with the <CodeInline>MaxLines</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="TextFieldAutoGrowExample" ShowCode="false">
+                <TextFieldAutoGrowExample />
+            </SectionContent>
+        </DocsPageSection>
+    </SectionSubGroups>
 </DocsPageSection>
 
 <DocsPageSection>

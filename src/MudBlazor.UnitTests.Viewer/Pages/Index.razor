@@ -15,14 +15,14 @@
     </MudAppBar>
     <MudDrawer Open="@drawerOpen" DisableOverlay="true" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Always" Breakpoint="Breakpoint.Sm">
         <MudDrawerHeader>
-            <MudText Typo="Typo.h6">TestComponents</MudText>
+            <MudText Typo="Typo.h6">Test Components</MudText>
         </MudDrawerHeader>
-        <MudList>
+        <MudNavMenu>
             @foreach (var type in availableComponentTypes)
             {
-                <MudListItem OnClick="@(() => selectedType = type)" @key="type.Name">@type.Name</MudListItem>
+                <MudNavLink OnClick="@(() => selectedType = type)" @key="type.Name">@type.Name</MudNavLink>
             }
-        </MudList>
+        </MudNavMenu>
     </MudDrawer>
     <MudMainContent Class="mt-4">
 
@@ -66,17 +66,16 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        availableComponentTypes = getTestComponenTypes().ToArray();
+        availableComponentTypes = getTestComponentTypes().ToArray();
     }
 
     RenderFragment TestComponent() => builder =>
     {
         builder.OpenComponent(0, selectedType);
-        //builder.AddAttribute(1, "Title", "Some title");
         builder.CloseComponent();
     };
 
-    IEnumerable<Type> getTestComponenTypes()
+    IEnumerable<Type> getTestComponentTypes()
     {
         foreach (var type in typeof(Program).Assembly.GetTypes().OrderBy(x => x.Name))
         {
@@ -102,28 +101,19 @@
     {
         if (type == null)
             return "";
-        try
-        {
-            var field = type.GetField("__description__", BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField);
-            return (string)field.GetValue(null);
-        }
-        catch (Exception)
-        {
-            return "public static string __description__ = \"...\"; not found in this component.";
-        }
+        var field = type.GetField("__description__", BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField);
+        if (field == null || field.FieldType != typeof(string))
+            return "This test component does not have a description. Field \"public static string __description__\" not found in this component.";
+        return (string)field.GetValue(null);
     }
 
     private Task<IEnumerable<Type>> Search(string text)
     {
         if (string.IsNullOrWhiteSpace(text))
-        {
-            // the user just clicked the autocomplete open, show the most popular pages as search result according to our analytics data
-            // ordered by popularity
             return Task.FromResult<IEnumerable<Type>>(new Type[0]);
-        }
-        var lowerText = text.ToLowerInvariant();
+
         return Task.FromResult<IEnumerable<Type>>(
-            availableComponentTypes.Where(type => type.Name.ToLowerInvariant().StartsWith(lowerText))
+            availableComponentTypes.Where(type => type.Name.Contains(text, StringComparison.OrdinalIgnoreCase))
         );
     }
 

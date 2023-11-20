@@ -30,6 +30,18 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-list-class"));
         }
 
+        [Test]
+        public async Task SelectTest_CheckLayerClass()
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => comp.SetParam("OuterClass", "my-outer-class"));
+            await comp.InvokeAsync(() => comp.SetParam("Class", "my-main-class"));
+            await comp.InvokeAsync(() => comp.SetParam("InputClass", "my-input-class"));
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-outer-class"));
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-main-class"));
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-input-class"));
+        }
+
         /// <summary>
         /// Select id should propagate to label for attribute
         /// </summary>

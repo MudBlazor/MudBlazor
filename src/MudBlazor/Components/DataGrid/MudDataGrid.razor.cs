@@ -28,6 +28,7 @@ namespace MudBlazor
         private bool _columnsPanelVisible = false;
         private IEnumerable<T> _items;
         private T _selectedItem;
+        private MudForm _editForm;
         internal Dictionary<object, bool> _groupExpansionsDict = new Dictionary<object, bool>();
         private List<GroupDefinition<T>> _currentPageGroups = new List<GroupDefinition<T>>();
         private List<GroupDefinition<T>> _allGroups = new List<GroupDefinition<T>>();
@@ -195,6 +196,11 @@ namespace MudBlazor
         /// Callback is called whenever a row is clicked.
         /// </summary>
         [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowClick { get; set; }
+        
+        /// <summary>
+        /// Callback is called whenever a row is right clicked.
+        /// </summary>
+        [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowContextMenuClick { get; set; }
 
         /// <summary>
         /// Callback is called when an item has begun to be edited. Returns the item being edited.
@@ -1074,7 +1080,11 @@ namespace MudBlazor
         /// <returns></returns>
         internal async Task CommitItemChangesAsync()
         {
-            // Here, we need to validate at the cellular level...
+            await _editForm.Validate();
+            if (!_editForm.IsValid)
+            {
+                return;
+            }
 
             if (editingSourceItem != null)
             {
@@ -1098,6 +1108,11 @@ namespace MudBlazor
                 await SetEditingItemAsync(item);
 
             await SetSelectedItemAsync(item);
+        }
+
+        internal async Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)
+        {
+            await RowContextMenuClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
         }
 
         /// <summary>

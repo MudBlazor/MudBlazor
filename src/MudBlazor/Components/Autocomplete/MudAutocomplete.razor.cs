@@ -56,6 +56,12 @@ namespace MudBlazor
             .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
             .Build();
 
+        protected string GetListItemClassname(bool isSelected) =>
+            new CssBuilder()
+            .AddClass("mud-selected-item mud-primary-text mud-primary-hover", isSelected)
+            .AddClass(ListItemClass)
+            .Build();
+
         /// <summary>
         /// User class names for the popover, separated by space
         /// </summary>
@@ -69,6 +75,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public string ListClass { get; set; }
+
+        /// <summary>
+        /// User class names for the internal list item, separated by space.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string ListItemClass { get; set; }
 
         /// <summary>
         /// Set the anchor origin point to determen where the popover will open from.
@@ -265,14 +278,14 @@ namespace MudBlazor
 
 
         /// <summary>
-        /// Optional presentation template that is always shown at the top of the list
+        /// Optional presentation template that is shown at the top of the list. If no items are present, the fragment is hidden.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment BeforeItemsTemplate { get; set; }
 
         /// <summary>
-        /// Optional presentation template that is always shown at the bottom of the list
+        /// Optional presentation template that is shown at the bottom of the list. If no items are present, the fragment is hidden.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]

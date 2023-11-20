@@ -29,6 +29,11 @@ namespace MudBlazor
 
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
+            if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
+            {
+                date = DateTime.SpecifyKind(date.Value, _value.Value.Kind);
+            }
+
             if (_value != date)
             {
                 Touched = true;
