@@ -20,6 +20,9 @@
     <Content Update="TestComponents\RadioGroup\RadioGroupExceptionTest.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+    <Content Update="TestComponents\Table\TableNotEditableRowTest.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
   </ItemGroup>
 
 </Project>
