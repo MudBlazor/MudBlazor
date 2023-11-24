@@ -1,11 +1,22 @@
 ﻿@page "/components/stepper"
 
 <DocsPage>
-    <DocsPageHeader Title="Stepper" SubTitle="">
+    <DocsPageHeader Title="Stepper" SubTitle="A wizard that guides the user through a series of steps to complete a transaction.">
     </DocsPageHeader>
 
     <DocsPageContent>
 
+        <DocsPageSection>           
+            <MudAlert Severity="Severity.Warning">
+                <b>Warning experimental component!</b>
+            </MudAlert>
+            <MudAlert Class="mt-4" Severity="Severity.Error">
+                This component is under active development and breaking changes may occur even in minor patch releases.<br/>
+                <b>DO NOT</b> use this component if you are not prepared to update your code and adapt to new changes.<br />
+                The finished component might not have the same name, might not have the features it has now, or look the same.
+            </MudAlert>
+        </DocsPageSection>
+        
         <DocsPageSection>
             <SectionHeader Title="Horizontal stepper">
                 <Description>Stepper needs <CodeInline>@nameof(MudStep)</CodeInline> in its child content. Each step can have <CodeInline>@nameof(MudStep.Title)</CodeInline> and <CodeInline>@nameof(MudStep.SecondaryText)</CodeInline> so the component can be displayed properly.</Description>
