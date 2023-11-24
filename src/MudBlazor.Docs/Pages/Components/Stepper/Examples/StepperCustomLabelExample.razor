@@ -12,13 +12,17 @@
             </div>
         </ConnectorTemplate>
         <LabelTemplate>
-            @if (stepper.ActiveStep == context)
+            @if (stepper.ActiveStep == context && context.Completed)
             {
-                <div style="height: 10px; width:10px; border: 2px solid var(--mud-palette-primary); border-radius: 50%;"></div>
+                <div style="height: 10px; width:10px; border: 2px solid var(--mud-palette-primary);background-color: var(--mud-palette-success); border-radius: 50%;"></div>
             }
             else if (context.Completed)
             {
                 <div style="height: 10px; width:10px; background-color: var(--mud-palette-success); border-radius: 50%;"></div>
+            }
+            else if (stepper.ActiveStep == context)
+            {
+                <div style="height: 10px; width:10px; border: 2px solid var(--mud-palette-primary); border-radius: 50%;"></div>
             }
             else
             {
