@@ -19,6 +19,11 @@
     public string SecondaryText { get; set; }
 
     /// <summary>
+    /// Returns true if this step is the stepper's ActiveStep
+    /// </summary>
+    public bool IsActive => Parent?.ActiveStep == this;
+
+    /// <summary>
     /// The color of the completed step. It supports the theme colors.
     /// </summary>
     [Parameter]
