@@ -80,7 +80,7 @@ public partial class MudStepper : MudComponentBase
     public string StepStyle { get; set; }
 
     /// <summary>
-    /// Renders labels for each step title below the circle
+    /// Centers the labels for each step below the circle. Applies only to horizontal steppers
     /// </summary>
     [Parameter]
     public bool AlternateLabel { get; set; }
