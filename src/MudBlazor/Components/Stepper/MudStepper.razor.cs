@@ -184,7 +184,7 @@ public partial class MudStepper : MudComponentBase
 
         SetActiveIndex(index);
 
-        await ActiveStep?.OnClick.InvokeAsync(ev);
+        await (ActiveStep?.OnClick.InvokeAsync(ev) ?? Task.CompletedTask);
     }
 
     private async void SetActiveIndex(int value)
