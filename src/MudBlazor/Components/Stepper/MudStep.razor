@@ -55,6 +55,11 @@
     [Parameter]
     public bool HasError { get; set; }
 
+    private bool _hasError;
+
+    [Parameter]
+    public EventCallback<bool> HasErrorChanged { get; set; }
+
     /// <summary>
     /// Raised when tab is clicked TODO: Probably should be called OnActivated or OnCLicked
     /// </summary>
@@ -70,12 +75,22 @@
     protected async override Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-
+        await SetHasError(HasError);
         await SetCompleted(Completed);
         await SetDisabled(Disabled);
     }
+    
+    public async Task SetHasError(bool value)
+    {
+        if (_hasError == value)
+            return;
 
-
+        _hasError = value;
+        HasError = _hasError;
+        await HasErrorChanged.InvokeAsync(HasError);
+        Parent?.Refresh();
+    }
+    
     public async Task SetCompleted(bool value)
     {
         if (_completed == value)
