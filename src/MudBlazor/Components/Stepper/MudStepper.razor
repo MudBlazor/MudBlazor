@@ -17,19 +17,10 @@
                 .AddClass("mud-stepper-nav-step-disabled", step.Disabled)
                 .Build();
 
-            @if (NonLinear)
-            {
-                <div class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@(isActive ? "true" : "false")"
-                     @onclick="@((e) => ProcessStep(step, e, StepInteractionType.Activate))">
-                    @RenderStepLabel(step, isActive)
-                </div>
-            }
-            else
-            {
-                <div class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@(isActive ? "true" : "false")">
-                    @RenderStepLabel(step, isActive)
-                </div>
-            }
+            <div class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@(isActive ? "true" : "false")"
+                 @onclick="@((e) => { if (NonLinear) ProcessStep(step, e, StepInteractionType.Activate); })">
+                @RenderStepLabel(step, isActive)
+            </div>
 
             if (Vertical)
             {
