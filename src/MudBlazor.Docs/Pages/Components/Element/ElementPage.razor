@@ -1,40 +1,42 @@
 ﻿@page "/components/element"
 
 <DocsPage>
-    <DocsPageHeader Title="MudElement" SubTitle="A primitive component that allows you to create your own components and render the html element you want in an interactive way." />
+    <DocsPageHeader Title="MudElement" SubTitle="A primitive component that allows you to dynamically change the rendered html element." />
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Basic example">
-                <Description>MudElement accepts all attributes you want, plus an <CodeInline>HtmlTag</CodeInline> parameter that tells the component which html element to render, and <CodeInline>Class</CodeInline> and <CodeInline>Style</CodeInline> parameters for styling.</Description>
+                <Description><CodeInline>MudElement</CodeInline> has an <CodeInline>HtmlTag</CodeInline> parameter that 
+                tells it which html element to render. It also accepts all possible html attributes and passes them on 
+                to the underlying element. Furthermore, you can set the parameters <CodeInline>Class</CodeInline> and 
+                <CodeInline>Style</CodeInline> for styling.</Description>
             </SectionHeader>
-            <SectionContent Code="MudElementSimpleExample">
+            <SectionContent Code="@nameof(MudElementSimpleExample)">
                 <MudElementSimpleExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Interactive example">
-                <Description>Change the rendered html element in an interactive way:</Description>
+                <Description>In this example the rendered html element changes dynamically. This is the main use-case of
+                <CodeInline>MudElement</CodeInline>.</Description>
             </SectionHeader>
-            <SectionContent Code="MudElementChangingExample" ShowCode="false">
+            <SectionContent Code="@nameof(MudElementChangingExample)" ShowCode="false">
                 <MudElementChangingExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Passing a ref">
+            <SectionHeader Title="Obtaining an ElementReference">
                 <Description>
-                    You can pass an <CodeInline>ElementReference</CodeInline> to the root element that <CodeInline>MudElement</CodeInline> is going to render
+                    If you need access to the underlying element, you can two-way bind an <CodeInline>ElementReference</CodeInline> 
+                    to <CodeInline>MudElement</CodeInline> which in turn passes it to the element it renders.
                     <br />
-                    Just make sure that you bind this reference to the 
-                    <CodeInline>
-                        Ref 
-                    </CodeInline>
-                    property of the <CodeInline>MudElement</CodeInline>.
+                    Just make sure that you use use <CodeInline>@("@")bind-Ref</CodeInline> instead of just <CodeInline>Ref</CodeInline>
+                    so the underlying reference can be passed out into your variable.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="MudElementRefExample" ShowCode="false">
+            <SectionContent Code="@nameof(MudElementRefExample)" ShowCode="false">
                 <MudElementRefExample />
             </SectionContent>
         </DocsPageSection>

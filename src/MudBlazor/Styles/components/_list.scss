@@ -1,132 +1,132 @@
 ﻿.mud-list {
-    margin: 0;
-    padding: 0;
-    position: relative;
-    list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  list-style: none;
 
-    &.mud-list-padding {
-        padding-top: 8px;
-        padding-bottom: 8px;
-    }
+  &.mud-list-padding {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
 }
 
 .mud-list-item {
-    width: 100%;
-    display: flex;
-    position: relative;
-    box-sizing: border-box;
-    text-align: start;
-    align-items: center;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    justify-content: flex-start;
-    text-decoration: none;
+  width: 100%;
+  display: flex;
+  position: relative;
+  box-sizing: border-box;
+  text-align: start;
+  align-items: center;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  justify-content: flex-start;
+  text-decoration: none;
 
-    &.mud-list-item-dense {
-        padding-top: 4px;
-        padding-bottom: 4px;
+  &.mud-list-item-dense {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  &.mud-list-item-disabled {
+    color: var(--mud-palette-action-disabled) !important;
+    cursor: default !important;
+    pointer-events: none !important;
+
+    .mud-list-item-icon {
+      color: var(--mud-palette-action-disabled) !important;
     }
-
-    &.mud-list-item-disabled {
-        color: var(--mud-palette-action-disabled) !important;
-        cursor: default !important;
-        pointer-events: none !important;
-
-        .mud-list-item-icon {
-            color: var(--mud-palette-action-disabled) !important;
-        }
-    }
+  }
 }
 
 .mud-list-item-clickable {
-    color: inherit;
-    border: 0;
-    cursor: pointer;
-    margin: 0;
-    outline: 0;
-    user-select: none;
-    border-radius: 0;
-    vertical-align: middle;
-    background-color: transparent;
-    -webkit-appearance: none;
-    -webkit-tap-highlight-color: transparent;
-    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  color: inherit;
+  border: 0;
+  cursor: pointer;
+  margin: 0;
+  outline: 0;
+  user-select: none;
+  border-radius: 0;
+  vertical-align: middle;
+  background-color: transparent;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
-    &:hover {
-        background-color: var(--mud-palette-action-default-hover);
-    }
+  &:hover {
+    background-color: var(--mud-palette-action-default-hover);
+  }
 
-    &:focus:not(.mud-selected-item) {
-        background-color: var(--mud-palette-action-default-hover);
-    }
+  &:focus:not(.mud-selected-item) {
+    background-color: var(--mud-palette-action-default-hover);
+  }
 }
 
 .mud-list-item-gutters {
-    padding-left: 16px;
-    padding-right: 16px;
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
 
 .mud-list-item-text {
-    flex: 1 1 auto;
-    min-width: 0;
-    margin-top: 4px;
-    margin-bottom: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 
 
 .mud-list-item-text-inset {
-    padding-left: 56px;
-    padding-inline-start: 56px;
-    padding-inline-end: unset;
+  padding-left: 56px;
+  padding-inline-start: 56px;
+  padding-inline-end: unset;
 }
 
 .mud-list-item-icon {
-    color: var(--mud-palette-action-default);
-    display: inline-flex;
-    min-width: 56px;
-    flex-shrink: 0;
+  color: var(--mud-palette-action-default);
+  display: inline-flex;
+  min-width: 56px;
+  flex-shrink: 0;
 }
 
 
 .mud-list-subheader {
-    color: var(--mud-palette-action-default);
-    font-size: 0.875rem;
-    box-sizing: border-box;
-    list-style: none;
-    font-weight: 500;
-    padding-top: 8px;
-    padding-bottom: 20px;
+  color: var(--mud-palette-action-default);
+  font-size: 0.875rem;
+  box-sizing: border-box;
+  list-style: none;
+  font-weight: 500;
+  padding-top: 8px;
+  padding-bottom: 20px;
 }
 
 .mud-list-subheader-gutters {
-    padding-left: 16px;
-    padding-right: 16px;
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
 .mud-list-subheader-inset {
-    padding-left: 72px;
-    padding-inline-start: 72px;
-    padding-inline-end: unset;
+  padding-left: 72px;
+  padding-inline-start: 72px;
+  padding-inline-end: unset;
 }
 
 .mud-list-subheader-sticky {
-    top: 0;
-    z-index: 1;
-    position: sticky;
-    background-color: inherit;
+  top: 0;
+  z-index: 1;
+  position: sticky;
+  background-color: inherit;
 }
 
 
 .mud-list-item-avatar {
-    min-width: 56px;
-    flex-shrink: 0;
+  min-width: 56px;
+  flex-shrink: 0;
 }
 
 .mud-nested-list {
-    & > .mud-list-item {
-        padding-left: 32px;
-        padding-inline-start: 32px;
-        padding-inline-end: unset;
-    }
+  & > .mud-list-item {
+    padding-left: 32px;
+    padding-inline-start: 32px;
+    padding-inline-end: unset;
+  }
 }

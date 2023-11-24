@@ -12,7 +12,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
-public partial class MudDynamicDropItem<T> : MudComponentBase
+public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
 {
     private bool _dragOperationIsInProgress = false;
     private Guid _id = Guid.NewGuid();
@@ -92,7 +92,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
 
     #region Event handling and callbacks
 
-    private async Task DragStarted()
+    private async Task DragStartedAsync()
     {
         if (Container is null)
         {
@@ -104,7 +104,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         await OnDragStarted.InvokeAsync();
     }
 
-    private async Task TouchStarted(TouchEventArgs e)
+    private async Task TouchStartedAsync(TouchEventArgs e)
     {
         if (Index == -1) return; //the -1 item shouldn't be ever moved.
         if (Disabled) return; //disabled items shouldn't be moved.
@@ -142,7 +142,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         StateHasChanged();
     }
 
-    private async Task DragEnded(DragEventArgs e)
+    private async Task DragEndedAsync(DragEventArgs e)
     {
         if (_dragOperationIsInProgress)
         {
@@ -157,7 +157,8 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
             await OnDragEnded.InvokeAsync(Item);
         }
     }
-    private async void TouchMoved(TouchEventArgs e)
+
+    private async Task TouchMovedAsync(TouchEventArgs e)
     {
         if (Index == -1 || Disabled) return;
 
@@ -183,7 +184,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase
         //JS.InvokeVoidAsync("draggableTouch");
     }
 
-    private async Task TouchEnded(TouchEventArgs e)
+    private async Task TouchEndedAsync(TouchEventArgs e)
     {
         if (Index == -1 || Disabled)
         {

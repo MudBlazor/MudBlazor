@@ -47,22 +47,22 @@ public interface IPopoverService : IAsyncDisposable
     /// <summary>
     /// Creates a popover.
     /// </summary>
-    /// <param name="mudPopover">The popover to create.</param>
-    Task CreatePopoverAsync(IPopover mudPopover);
+    /// <param name="popover">The popover to create.</param>
+    Task CreatePopoverAsync(IPopover popover);
 
     /// <summary>
     /// Updates an existing popover.
     /// </summary>
-    /// <param name="mudPopover">The popover to update.</param>
+    /// <param name="popover">The popover to update.</param>
     /// <returns><c>true</c> if the update was successful; otherwise, <c>false</c>.</returns>
-    Task<bool> UpdatePopoverAsync(IPopover mudPopover);
+    Task<bool> UpdatePopoverAsync(IPopover popover);
 
     /// <summary>
     /// Destroys a popover.
     /// </summary>
-    /// <param name="mudPopover">The popover to destroy.</param>
+    /// <param name="popover">The popover to destroy.</param>
     /// <returns>The task result indicates whether the popover was successfully destroyed.</returns>
-    Task<bool> DestroyPopoverAsync(IPopover mudPopover);
+    Task<bool> DestroyPopoverAsync(IPopover popover);
 
     /// <summary>
     /// Counts the number of popover providers.

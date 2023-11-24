@@ -1,5 +1,39 @@
 # ![MudBlazor](content/MudBlazor-GitHub-NoBg.png)
 
+<!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
+
+- [Information and Guidelines for Contributors](#information-and-guidelines-for-contributors)
+   * [Code of Conduct](#code-of-conduct)
+   * [Minimal Prerequisites to Compile from Source](#minimal-prerequisites-to-compile-from-source)
+   * [Pull Requests](#pull-requests)
+      + [Pull Requests which introduce new components](#pull-requests-which-introduce-new-components)
+   * [Project structure and where to find the most important files](#project-structure-and-where-to-find-the-most-important-files)
+   * [Coding Dos and Don'ts](#coding-dos-and-donts)
+   * [Parameter Registration or Why we can't have Logic in Parameter Setters](#parameter-registration-or-why-we-cant-have-logic-in-parameter-setters)
+      + [Example of a bad Parameter definition](#example-of-a-bad-parameter-definition)
+      + [Example of a good Parameter definition](#example-of-a-good-parameter-definition)
+      + [What about the bad parameters all over the MudBlazor code base?](#what-about-the-bad-parameters-all-over-the-mudblazor-code-base)
+   * [Avoid overwriting parameters in Blazor Components](#avoid-overwriting-parameters-in-blazor-components)
+      + [Example of a bad code](#example-of-a-bad-code)
+      + [Example of a good code](#example-of-a-good-code)
+   * [Blazor Component parameter should not be set outside of its component.](#blazor-component-parameter-should-not-be-set-outside-of-its-component)
+      + [Example of a bad code](#example-of-a-bad-code-1)
+      + [Example of a good code](#example-of-a-good-code-1)
+   * [Unit Testing and Continuous Integration](#unit-testing-and-continuous-integration)
+      + [How not to break stuff](#how-not-to-break-stuff)
+      + [Make your code break-safe](#make-your-code-break-safe)
+      + [How to write a unit test?](#how-to-write-a-unit-test)
+      + [How to write a bUnit test](#how-to-write-a-bunit-test)
+      + [What are common errors when writing tests?](#what-are-common-errors-when-writing-tests)
+         - [Do not save html elements you query via `Find` or `FindAll` in a variable!](#do-not-save-html-elements-you-query-via-find-or-findall-in-a-variable)
+         - [Always use InvokeAsync to set parameter values on a component](#always-use-invokeasync-to-set-parameter-values-on-a-component)
+      + [What does not need to be tested?](#what-does-not-need-to-be-tested)
+      + [What is the MudBlazor.UnitTests.Viewer for?](#what-is-the-mudblazorunittestsviewer-for)
+      + [What are the auto-generated tests for?](#what-are-the-auto-generated-tests-for)
+      + [Continuous Integration](#continuous-integration)
+
+<!-- TOC end -->
+
 # Information and Guidelines for Contributors
 Thank you for contributing to MudBlazor and making it even better. We are happy about every contribution! Issues, bug-fixes, new components...
 
@@ -12,15 +46,14 @@ Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 - [.NET 7.0 SDK](https://dotnet.microsoft.com/download/dotnet/7.0)
 
 ## Pull Requests
-- Your Pull Request must only consist of one topic. It is better to split Pull Requests with more than one feature or bug fix in seperate Pull Requests
-- You must fork the repository and clone it locally first. (The main repository is protected and does not accept direct commits.)
+- Your Pull Request (PR) must only consist of one topic. It is better to split Pull Requests with more than one feature or bug fix in seperate Pull Requests
+- First fork the repository and clone your fork locally to make your changes. (The main repository is protected and does not accept direct commits.)
 - You should work on a seperate branch with a descriptive name. The following naming convention can be used: `feature/my-new-feature` for new features and enhancements, `fix/my-bug-fix` for bug fixes. For example `fix/button-hover-color` if your PR is about a bug involving the hover color of buttons
 - You should build, test and run one of the Docs projects locally to confirm your changes give the expected result. We generally suggest the MudBlazor.Docs.Server project for the best debugging experience.
-- You must choose `dev` as the target branch
-- All tests must pass
-- You must include tests when your Pull Requests alters any logic. This also ensures that your feature will not break in the future. For more information on testing, see one of the following sections
-- Small changes should only contain one commit. If you have several commits, squash them into one commit ([Rebase guide](https://docs.github.com/en/github/getting-started-with-github/about-git-rebase))
-- You should rebase your branch onto dev
+- Choose `dev` as the target branch
+- All tests must pass, when you push, they will be executed on the CI server and you'll receive a test report per email. But you can also execute them locally for quicker feedback.
+- You must include tests when your Pull Requests alters any logic. This also ensures that your feature will not break in the future under changes from other contributors. For more information on testing, see the appropriate section below
+- If there are new changes in the main repo, you should either merge the main repo's (upstream) dev or rebase your branch onto it.
 - Before working on a large change, it is recommended to first open an issue to discuss it with others
 - If your Pull Request is still in progress, convert it to a draft Pull Request
 - Your commit messages should follow the following format: 
@@ -67,6 +100,208 @@ Most important files:
 - Component doc pages ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.Docs/Pages/Components))
 - Component tests ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.UnitTests/Components))
 - Test components ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.UnitTests.Viewer/TestComponents))
+
+## Coding Dos and Don'ts
+- **No code in parameter getter/setter!** See section *Parameter Registration or Why we can't have Logic in Parameter Setters* below
+- **Don't overwrite parameters in components!** See section *Avoid overwriting parameters in Blazor Components* below
+- **No programmatic assignments to another component's parameters** See section *Blazor Component parameter should not be set outside of its component.* below
+- **Don't break stuff!** See section *Unit Testing and Continuous Integration* below
+- **Add a test to guard against others breaking your feature/fix!** See section *Unit Testing and Continuous Integration* below
+
+## Parameter Registration or Why we can't have Logic in Parameter Setters
+MudBlazor parameters shall be auto-properties, meaning that there must not be logic in the property getter or setter. This rule prevents update-loops and other nasty bugs such as swallowed exceptions due to unobserved async discards. 
+"This is quite inconvenient" you may say, where do I call the EventCallback and how to react to parameter changes? Luckily the MudBlazor team has got your back. Thanks to our ParameterState framework you don't need to keep track of 
+old parameter values in fields and mess around with `SetParametersAsync`.
+
+**TLDR; Register parameters in the constructor with a change handler that contains all the code that needs to be executed when the parameter value changes.**
+
+**NB: Code in `[Parameter]` attributed property setters is no longer alowed in MudBlazor!** (No matter if async functions are called in them or not.)
+
+### Example of a bad Parameter definition
+
+Here is a real example of a parameter with additional logic in the setter, which is now forbidden. 
+```c#
+private bool _expanded;
+
+[Parameter]
+public bool Expanded
+{
+    get => _expanded;
+    set
+    {
+        if (_expanded == value)
+            return;
+        _expanded = value;
+        if (_isRendered)
+        {
+            _state = _expanded ? CollapseState.Entering : CollapseState.Exiting;
+            _ = UpdateHeight();  // <-- unobserved async discard !!!
+            _updateHeight = true;
+        }
+        else if (_expanded)
+        {
+            _state = CollapseState.Entered;
+        }
+        _ = ExpandedChanged.InvokeAsync(_expanded); // <-- unobserved async discard !!!
+    }
+}
+```
+
+Note how the setter is invoking async functions which can not be awaited, because property setters can only have synchronous code. As a result, the async 
+functions are invoked and their return value `Task` is discarded. This not only creates hard to test multi-threaded behavior, it also prevents the user of this 
+component from being able to catch any errors in the asnc functions. Any exceptions that happen in these asynchronous functions may or may not bubble up
+to the user. In some cases Blazor just catches them and they are silently ignored, in other cases they may cause application crashes that can't be prevented with `try catch`. 
+
+The alternative would be to move the code from the setter into `SetParametersAsync` and depending on the component you would also need code in `OnInitializedAsync`. 
+This is cumbersome and error prone and requires you to keep track of the old parameter value in a field and write a series of `if` statements in `SetParametersAsync` if there are multiple parameters.
+
+Using our new `ParameterState` pattern all this is not required.
+
+### Example of a good Parameter definition
+```c#
+private ParameterState<bool> _expandedState;
+
+[Parameter]
+public bool Expanded { get; set; }
+```
+
+In the constructor, we register the parameter so that the base class can manage it for us automatically behind the scenes:
+
+```c#
+public MudCollapse()
+{
+    _expandedState = RegisterParameter(
+        nameof(Expanded),           // the property name is needed for automatic value change detection in SetParametersAsync
+        () => Expanded,             // a get func enabling the ParameterState to read the parameter value w/o resorting to Reflection
+        () => ExpandedChanged,      // a get func enabling the ParameterState to get the EventCallback of the parameter (if the param is two-way bindable)
+        ExpandedChangedHandlerAsync // the change handler 
+    );
+}
+```
+
+The code from the setter moves into the change handler function which is async so the called functions can be awaited.
+
+```c#
+private async Task ExpandedChangedHandlerAsync()
+{
+    if (_isRendered)
+    {
+        _state = _expandedState.Value ? CollapseState.Entering : CollapseState.Exiting;
+        await UpdateHeightAsync();  // async Task not discarded
+        _updateHeight = true;
+    }
+    else if (_expandedState.Value)
+    {
+        _state = CollapseState.Entered;
+    }
+    await ExpandedChanged.InvokeAsync(_expandedState.Value); // async Task not discarded
+}
+```
+
+There are a couple of overloads for the `RegisterParameter` method for different use-cases. For instance, you don't always need an `EventCallback` for every parameter. 
+Some parameters need async logic in their change handler other don't, etc.
+
+### What about the bad parameters all over the MudBlazor code base?
+
+We are slowly but surely refactoring all of those, you can help if you like.
+
+## Avoid overwriting parameters in Blazor Components
+This `ParameterState` framework offers a solution to prevent parameter overwriting issues.
+For a detailed explanation of this problem, refer to the [article](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/overwriting-parameters?view=aspnetcore-8.0#overwritten-parameters).
+
+### Example of a bad code
+```c#
+[Parameter]
+public bool Expanded { get; set; }
+
+[Parameter]
+public EventCallback<bool> ExpandedChanged { get; set; }
+
+
+private Task ToggleAsync()
+{
+	Expanded = !Expanded;
+	return ExpandedChanged.InvokeAsync(Expanded);
+}
+```
+
+### Example of a good code
+```c#
+private ParameterState<bool> _expandedState;
+
+[Parameter]
+public bool Expanded { get; set; }
+
+[Parameter]
+public EventCallback<bool> ExpandedChanged { get; set; }
+
+public MudTreeViewItemToggleButton()
+{
+    _expandedState = RegisterParameter(
+        nameof(Expanded),
+        () => Expanded,
+        () => ExpandedChanged
+    );
+}
+
+private Task ToggleAsync()
+{
+	return _expanded.SetValueAsync(!_expanded.Value);
+}
+```
+
+## Blazor Component parameter should not be set outside of its component.
+
+Consider a hypothetical `CalendarComponent`:
+```c#
+public class CalendarComponent : ComponentBase
+{
+	[Parameter]
+	public ShowOnlyOneCalendar { get;set; }
+}
+```
+
+### Example of a bad code
+```razor
+<CalendarComponent @ref="@_calendar" />
+<button @onclick="Update">
+        Update
+</button>
+
+@code
+{
+    private CalendarComponent _calendarRef = null!;
+
+    private void Update()
+    {
+        _calendarRef.ShowOnlyOneCalendar = true;
+    }
+}
+```
+This code would result in a [BL0005](https://learn.microsoft.com/en-us/aspnet/core/diagnostics/bl0005?view=aspnetcore-8.0) warning.
+
+### Example of a good code
+
+Instead of using an imperative programming approach (`component.Parameter1 = v1`), a Component Parameter is supposed to be passed in a declarative syntax:
+
+```razor
+<CalendarComponent ShowOnlyOneCalendar="@_showOnlyOne"  />
+<button @onclick="Update">
+        Update
+</button>
+
+@code
+{
+    private bool _showOnlyOne;;
+	
+    private void Update()
+    {
+        _showOnlyOne = true;
+    }
+}
+```
+In the improved version, we pass `ShowOnlyOneCalendar` as a parameter to `CalendarComponent` directly in the markup, using a variable (`_showOnlyOne`) that can be manipulated within the component's code.
+This adheres to the recommended Blazor coding practices and avoids errors like `BL0005`.
 
 ## Unit Testing and Continuous Integration
 
@@ -170,7 +405,7 @@ examples as unit tests by instantiating them in a bUnit context and checking
 whether rendering them throws an error or not. While this is not comparable
 to a good hand-written unit test we can at least catch exceptions thrown by
 the render logic. These tests are generated automatically on build and their
-cs files start with a underscore.
+cs files start with an underscore.
 
 ### Continuous Integration
 

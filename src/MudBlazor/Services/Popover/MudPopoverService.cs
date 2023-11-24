@@ -19,12 +19,12 @@ namespace MudBlazor
     [Obsolete($"Please use {nameof(PopoverService)}. This will be removed in v7.")]
     public class MudPopoverService : IMudPopoverService, IAsyncDisposable
     {
-        private readonly Dictionary<Guid, MudPopoverHandler> _handlers = new();
-        private readonly PopoverJsInterop _popoverJsInterop;
-        private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
+        private bool _isInitialized;
         private readonly IJSRuntime _jsRuntime;
         private readonly PopoverOptions _options;
-        private bool _isInitialized;
+        private readonly PopoverJsInterop _popoverJsInterop;
+        private readonly Dictionary<Guid, MudPopoverHandler> _handlers = new();
+        private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
         public event EventHandler? FragmentsChanged;
 

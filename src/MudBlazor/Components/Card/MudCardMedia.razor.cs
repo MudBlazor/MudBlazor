@@ -3,11 +3,12 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudCardMedia : MudComponentBase
     {
         protected string StyleString =>
             StyleBuilder.Default($"background-image:url(\"{Image}\");height: {Height}px;")
-                .AddStyle(this.Style)
+                .AddStyle(Style)
                 .Build();
 
         protected string Classname =>
@@ -20,15 +21,15 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]
-        public string Title { get; set; }
-        
+        public string? Title { get; set; }
+
         /// <summary>
         /// Specifies the path to the image.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]
-        public string Image { get; set; }
-        
+        public string? Image { get; set; }
+
         /// <summary>
         /// Specifies the height of the image in px.
         /// </summary>

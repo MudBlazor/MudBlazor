@@ -4,13 +4,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
-using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor.Interfaces;
 
 namespace MudBlazor.Docs.Components
@@ -18,7 +17,7 @@ namespace MudBlazor.Docs.Components
     public partial class DocsPage : ComponentBase
     {
         [Parameter] public bool DisplayFooter { get; set; }
-        
+
         private Queue<DocsSectionLink> _bufferedSections = new();
         private MudPageContentNavigation _contentNavigation;
         private NavigationFooterLink _previous;
@@ -39,7 +38,7 @@ namespace MudBlazor.Docs.Components
         public event Action<Stopwatch> Rendered;
         private Dictionary<DocsPageSection, MudPageContentSection> _sectionMapper = new();
 
-        int _sectionCount;
+        private int _sectionCount;
 
         public int SectionCount
         {
@@ -61,7 +60,7 @@ namespace MudBlazor.Docs.Components
             base.OnInitialized();
             RenderQueue.Clear();
             var relativePath = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-            if (relativePath.Contains("#") == true)
+            if (relativePath.Contains("#"))
             {
                 _anchor = relativePath.Split(new[] {"#"}, StringSplitOptions.RemoveEmptyEntries)[1];
             }
@@ -74,7 +73,7 @@ namespace MudBlazor.Docs.Components
             _previous = DocsService.Previous;
             _next = DocsService.Next;
             _section = DocsService.Section;
-            
+
             /*for after this release is done*/
             _displayView = false;
             _componentName = "temp";
@@ -103,17 +102,22 @@ namespace MudBlazor.Docs.Components
 
         public string GetParentTitle(DocsPageSection section)
         {
-            if (section == null) { return string.Empty; }
+            if (section == null)
+            {
+                return string.Empty;
+            }
 
-            if (section == null || section.ParentSection == null ||
-                _sectionMapper.ContainsKey(section.ParentSection) == false) { return string.Empty; }
+            if (section.ParentSection == null || _sectionMapper.ContainsKey(section.ParentSection) == false)
+            {
+                return string.Empty;
+            }
 
             var item = _sectionMapper[section.ParentSection];
 
             return item.Title;
         }
 
-        internal async void AddSection(DocsSectionLink sectionLinkInfo, DocsPageSection section)
+        internal async Task AddSectionAsync(DocsSectionLink sectionLinkInfo, DocsPageSection section)
         {
             _bufferedSections.Enqueue(sectionLinkInfo);
 
@@ -121,14 +125,14 @@ namespace MudBlazor.Docs.Components
             {
                 while (_bufferedSections.Count > 0)
                 {
-                    var item = _bufferedSections.Dequeue();
+                    _ = _bufferedSections.Dequeue();
 
                     if (_contentNavigation.Sections.FirstOrDefault(x => x.Id == sectionLinkInfo.Id) == default)
                     {
                         MudPageContentSection parentInfo = null;
-                        if (section.ParentSection != null && _sectionMapper.ContainsKey(section.ParentSection) == true)
+                        if (section.ParentSection != null && _sectionMapper.TryGetValue(section.ParentSection, out var value))
                         {
-                            parentInfo = _sectionMapper[section.ParentSection];
+                            parentInfo = value;
                         }
 
                         var info =
@@ -140,7 +144,7 @@ namespace MudBlazor.Docs.Components
                 }
 
                 ((IMudStateHasChanged)_contentNavigation).StateHasChanged();
-                
+
                 if (_anchor != null)
                 {
                     if (sectionLinkInfo.Id == _anchor)

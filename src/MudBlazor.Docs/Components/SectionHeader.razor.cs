@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
 using MudBlazor.Utilities;
@@ -53,12 +54,12 @@ public partial class SectionHeader
         SectionInfo = new DocsSectionLink {Id = id, Title = Title,};
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        base.OnAfterRender(firstRender);
-        if (firstRender == true && DocsPage != null && !String.IsNullOrWhiteSpace(Title))
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender && DocsPage != null && !string.IsNullOrWhiteSpace(Title))
         {
-            DocsPage.AddSection(SectionInfo, Section);
+            await DocsPage.AddSectionAsync(SectionInfo, Section);
         }
     }
 
@@ -70,9 +71,7 @@ public partial class SectionHeader
         {
             return Typo.h6;
         }
-        else
-        {
-            return Typo.h5;
-        }
+
+        return Typo.h5;
     }
 }

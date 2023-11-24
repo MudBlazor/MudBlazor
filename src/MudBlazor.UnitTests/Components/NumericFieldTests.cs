@@ -254,7 +254,7 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
         /// </summary>
-        [Test, Timeout(1000)]
+        [Test, CancelAfter(1000)]
         public async Task NumericFieldUpdateLoopProtectionTest()
         {
             var comp = Context.RenderComponent<MudNumericField<int>>();
@@ -703,6 +703,26 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(x => x.Max, value);
             comp.SetParam(x => x.Min, value);
             await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            comp.Instance.Value.Should().Be(value);
+        }
+
+        [TestCaseSource(nameof(TypeCases))]
+        public async Task NumericFieldNullable_NoMinMax_Increment_Decrement<T>(T value) where T : struct
+        {
+            var comp = Context.RenderComponent<MudNumericField<T?>>();
+            comp.SetParam(x => x.Step, value);
+
+            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            comp.Instance.Value.Should().Be(value);
+
+            comp.Find("input").Change("");
+
+            if (typeof(T) == typeof(byte) || typeof(T) == typeof(ushort) || typeof(T) == typeof(uint) || typeof(T) == typeof(ulong))
+                value = Num.To<T>(0);
+            else
+                value = (T)Convert.ChangeType(-Convert.ToDouble(value), typeof(T));
+
             await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
             comp.Instance.Value.Should().Be(value);
         }

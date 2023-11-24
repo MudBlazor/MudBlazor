@@ -10,6 +10,7 @@ using MudBlazor.Charts;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 using Bunit;
+using AngleSharp.Dom;
 
 namespace MudBlazor.UnitTests.Charts
 {
@@ -26,7 +27,14 @@ namespace MudBlazor.UnitTests.Charts
         {
             "#264653", "#2a9d8f", "#e9c46a", "#f4a261", "#e76f51"
         };
-        
+
+        private readonly string[] _customPalette =
+        {
+            "#015482", "#CC1512", "#FFE135", "#087830", "#D70040", "#B20931", "#202E54", "#F535AA", "#017B92",
+            "#FA4224", "#062A78", "#56B4BE", "#207000", "#FF43A4", "#FB8989", "#5E9B8A", "#FFB7CE", "#C02B18",
+            "#01153E", "#2EE8BB", "#EBDDE2"
+        };
+
         private static Array GetInterpolationOptions()
         {
             return Enum.GetValues(typeof(InterpolationOption));
@@ -53,6 +61,7 @@ namespace MudBlazor.UnitTests.Charts
             {
                 new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, -72, 69, 62, 62, -55, 65, 70 } },
                 new ChartSeries() { Name = "Series 2", Data = new double[] { 10, 41, 35, 51, 49, 62, -69, 91, -148 } },
+                new ChartSeries() { Name = "Series 3", Data = new double[] { 10, 41, 35, 51, 49, 62, -69, 91, -148 }, IsVisible = false }
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
             
@@ -106,6 +115,146 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartOptions, new ChartOptions(){ChartPalette = _modifiedPalette}));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
+
+            comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"");
+            comp.Markup.Should().Contain("class=\"mud-charts-yaxis\"");
+            comp.Markup.Should().Contain("mud-chart-legend-item");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.CanHideSeries, true)
+                .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _baseChartPalette, InterpolationOption = opt }));
+
+            if (comp.Instance.CanHideSeries)
+            {
+                var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+
+                comp.InvokeAsync(() => {
+                    seriesCheckboxes[0].Change(false); 
+                });
+
+                seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+
+                comp.InvokeAsync(() => {
+                    seriesCheckboxes[2].Change(true);  
+                });
+
+                seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+                
+                seriesCheckboxes[0].IsChecked().Should().BeFalse();
+                seriesCheckboxes[1].IsChecked().Should().BeTrue();
+                seriesCheckboxes[2].IsChecked().Should().BeTrue();
+            }
+        }
+
+        [Theory]
+        [TestCaseSource("GetInterpolationOptions")]
+        public void LineChartExampleZeroValues(InterpolationOption opt)
+        {
+            List<ChartSeries> chartSeries = new List<ChartSeries>()
+            {
+                new ChartSeries() { Name = "Series 1", Data = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
+            };
+            string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.Height, "350px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette, InterpolationOption = opt }));
+
+            comp.Instance.ChartSeries.Should().NotBeEmpty();
+
+            comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"");
+            comp.Markup.Should().Contain("class=\"mud-charts-yaxis\"");
+            comp.Markup.Should().Contain("mud-chart-legend-item");
+            comp.Markup.Should().Contain("Series 1");
+
+            switch (opt)
+            {
+                case InterpolationOption.NaturalSpline:
+                    comp.Markup.Should().Contain("d=\"M 30 325 L 37.28395061728395 325 L 44.5679012345679 325 L 51.851851851851855 325 L 59.135802469135804 325 L 66.41975308641975 325 L 73.70370370370371 325 L 80.98765432098766 325 L 88.27160493827161 325 L 95.55555555555556 325 L 102.8395061728395 325 L 110.12345679012346 325 L 117.40740740740742 325 L 124.69135802469137 325 L 131.97530864197532 325 L 139.25925925925927 325 L 146.54320987654322 325 L 153.82716049382717 325 L 161.11111111111111 325 L 168.39506172839506 325 L 175.679012345679 325 L 182.96296296296296 325 L 190.2469135802469 325 L 197.53086419753086 325 L 204.81481481481484 325 L 212.0987654320988 325 L 219.38271604938274 325 L 226.66666666666669 325 L 233.95061728395063 325 L 241.23456790123458 325 L 248.51851851851853 325 L 255.80246913580248 325 L 263.08641975308643 325 L 270.3703703703704 325 L 277.65432098765433 325 L 284.9382716049383 325 L 292.22222222222223 325 L 299.5061728395062 325 L 306.7901234567901 325 L 314.0740740740741 325 L 321.358024691358 325 L 328.641975308642 325 L 335.9259259259259 325 L 343.2098765432099 325 L 350.4938271604938 325 L 357.77777777777777 325 L 365.0617283950617 325 L 372.34567901234567 325 L 379.6296296296297 325 L 386.9135802469136 325 L 394.1975308641976 325 L 401.4814814814815 325 L 408.7654320987655 325 L 416.0493827160494 325 L 423.33333333333337 325 L 430.6172839506173 325 L 437.90123456790127 325 L 445.1851851851852 325 L 452.46913580246917 325 L 459.7530864197531 325 L 467.03703703703707 325 L 474.320987654321 325 L 481.60493827160496 325 L 488.8888888888889 325 L 496.17283950617286 325 L 503.4567901234568 325 L 510.74074074074076 325 L 518.0246913580247 325 L 525.3086419753087 325 L 532.5925925925926 325 L 539.8765432098766 325 L 547.1604938271605 325 L 554.4444444444445 325 L 561.7283950617284 325 L 569.0123456790124 325 L 576.2962962962963 325 L 583.5802469135803 325 L 590.8641975308642 325 L 598.1481481481482 325 L 605.4320987654321 325 L 612.716049382716 325\"");
+                    break;
+                case InterpolationOption.Straight:
+                    comp.Markup.Should()
+                        .Contain("d=\"M 30 325 L 103.75 325 L 177.5 325 L 251.25 325 L 325 325 L 398.75 325 L 472.5 325 L 546.25 325 L 620 325\"");
+                    break;
+                case InterpolationOption.EndSlope:
+                    comp.Markup.Should().Contain("d=\"M 30 325 L 37.28395061728395 325 L 44.5679012345679 325 L 51.851851851851855 325 L 59.135802469135804 325 L 66.41975308641975 325 L 73.70370370370371 325 L 80.98765432098766 325 L 88.27160493827161 325 L 95.55555555555556 325 L 102.8395061728395 325 L 110.12345679012346 325 L 117.40740740740742 325 L 124.69135802469137 325 L 131.97530864197532 325 L 139.25925925925927 325 L 146.54320987654322 325 L 153.82716049382717 325 L 161.11111111111111 325 L 168.39506172839506 325 L 175.679012345679 325 L 182.96296296296296 325 L 190.2469135802469 325 L 197.53086419753086 325 L 204.81481481481484 325 L 212.0987654320988 325 L 219.38271604938274 325 L 226.66666666666669 325 L 233.95061728395063 325 L 241.23456790123458 325 L 248.51851851851853 325 L 255.80246913580248 325 L 263.08641975308643 325 L 270.3703703703704 325 L 277.65432098765433 325 L 284.9382716049383 325 L 292.22222222222223 325 L 299.5061728395062 325 L 306.7901234567901 325 L 314.0740740740741 325 L 321.358024691358 325 L 328.641975308642 325 L 335.9259259259259 325 L 343.2098765432099 325 L 350.4938271604938 325 L 357.77777777777777 325 L 365.0617283950617 325 L 372.34567901234567 325 L 379.6296296296297 325 L 386.9135802469136 325 L 394.1975308641976 325 L 401.4814814814815 325 L 408.7654320987655 325 L 416.0493827160494 325 L 423.33333333333337 325 L 430.6172839506173 325 L 437.90123456790127 325 L 445.1851851851852 325 L 452.46913580246917 325 L 459.7530864197531 325 L 467.03703703703707 325 L 474.320987654321 325 L 481.60493827160496 325 L 488.8888888888889 325 L 496.17283950617286 325 L 503.4567901234568 325 L 510.74074074074076 325 L 518.0246913580247 325 L 525.3086419753087 325 L 532.5925925925926 325 L 539.8765432098766 325 L 547.1604938271605 325 L 554.4444444444445 325 L 561.7283950617284 325 L 569.0123456790124 325 L 576.2962962962963 325 L 583.5802469135803 325 L 590.8641975308642 325 L 598.1481481481482 325 L 605.4320987654321 325 L 612.716049382716 325\"");
+                    break;
+                case InterpolationOption.Periodic:
+                    comp.Markup.Should().Contain("d=\"M 30 325 L 37.28395061728395 325 L 44.5679012345679 325 L 51.851851851851855 325 L 59.135802469135804 325 L 66.41975308641975 325 L 73.70370370370371 325 L 80.98765432098766 325 L 88.27160493827161 325 L 95.55555555555556 325 L 102.8395061728395 325 L 110.12345679012346 325 L 117.40740740740742 325 L 124.69135802469137 325 L 131.97530864197532 325 L 139.25925925925927 325 L 146.54320987654322 325 L 153.82716049382717 325 L 161.11111111111111 325 L 168.39506172839506 325 L 175.679012345679 325 L 182.96296296296296 325 L 190.2469135802469 325 L 197.53086419753086 325 L 204.81481481481484 325 L 212.0987654320988 325 L 219.38271604938274 325 L 226.66666666666669 325 L 233.95061728395063 325 L 241.23456790123458 325 L 248.51851851851853 325 L 255.80246913580248 325 L 263.08641975308643 325 L 270.3703703703704 325 L 277.65432098765433 325 L 284.9382716049383 325 L 292.22222222222223 325 L 299.5061728395062 325 L 306.7901234567901 325 L 314.0740740740741 325 L 321.358024691358 325 L 328.641975308642 325 L 335.9259259259259 325 L 343.2098765432099 325 L 350.4938271604938 325 L 357.77777777777777 325 L 365.0617283950617 325 L 372.34567901234567 325 L 379.6296296296297 325 L 386.9135802469136 325 L 394.1975308641976 325 L 401.4814814814815 325 L 408.7654320987655 325 L 416.0493827160494 325 L 423.33333333333337 325 L 430.6172839506173 325 L 437.90123456790127 325 L 445.1851851851852 325 L 452.46913580246917 325 L 459.7530864197531 325 L 467.03703703703707 325 L 474.320987654321 325 L 481.60493827160496 325 L 488.8888888888889 325 L 496.17283950617286 325 L 503.4567901234568 325 L 510.74074074074076 325 L 518.0246913580247 325 L 525.3086419753087 325 L 532.5925925925926 325 L 539.8765432098766 325 L 547.1604938271605 325 L 554.4444444444445 325 L 561.7283950617284 325 L 569.0123456790124 325 L 576.2962962962963 325 L 583.5802469135803 325 L 590.8641975308642 325 L 598.1481481481482 325 L 605.4320987654321 325 L 612.716049382716 325\"");
+                    break;
+            }
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
+
+            comp.Markup.Should().Contain(_modifiedPalette[0]);
+            comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"");
+            comp.Markup.Should().Contain("class=\"mud-charts-yaxis\"");
+            comp.Markup.Should().Contain("mud-chart-legend-item");
+        }
+
+        [Test]
+        public void LineChartColoring()
+        {
+            List<ChartSeries> chartSeries = new List<ChartSeries>()
+            {
+                new ChartSeries() { Name = "Deep Sea Blue", Data = new double[] { 40, 20, 25, 27, 46 } },
+                new ChartSeries() { Name = "Venetian Red", Data = new double[] { 19, 24, 35, 13, 28 } },
+                new ChartSeries() { Name = "Banana Yellow", Data = new double[] { 8, 6, 11, 13, 4 } },
+                new ChartSeries() { Name = "La Salle Green", Data = new double[] { 18, 9, 7, 10, 7 } },
+                new ChartSeries() { Name = "Rich Carmine", Data = new double[] { 9, 14, 6, 15, 20 } },
+                new ChartSeries() { Name = "Shiraz", Data = new double[] { 9, 4, 11, 5, 19 } },
+                new ChartSeries() { Name = "Cloud Burst", Data = new double[] { 14, 9, 20, 16, 6 } },
+                new ChartSeries() { Name = "Neon Pink", Data = new double[] { 14, 8, 4, 14, 8 } },
+                new ChartSeries() { Name = "Ocean", Data = new double[] { 11, 20, 13, 5, 5 } },
+                new ChartSeries() { Name = "Orangey Red", Data = new double[] { 6, 6, 19, 20, 6 } },
+                new ChartSeries() { Name = "Catalina Blue", Data = new double[] { 3, 2, 20, 3, 10 } },
+                new ChartSeries() { Name = "Fountain Blue", Data = new double[] { 3, 18, 11, 12, 3 } },
+                new ChartSeries() { Name = "Irish Green", Data = new double[] { 20, 5, 15, 16, 13 } },
+                new ChartSeries() { Name = "Wild Strawberry", Data = new double[] { 15, 9, 12, 12, 1 } },
+                new ChartSeries() { Name = "Geraldine", Data = new double[] { 5, 13, 19, 15, 8 } },
+                new ChartSeries() { Name = "Grey Teal", Data = new double[] { 12, 16, 20, 16, 17 } },
+                new ChartSeries() { Name = "Baby Pink", Data = new double[] { 1, 18, 10, 19, 8 } },
+                new ChartSeries() { Name = "Thunderbird", Data = new double[] { 15, 16, 10, 8, 5 } },
+                new ChartSeries() { Name = "Navy", Data = new double[] { 16, 2, 3, 5, 5 } },
+                new ChartSeries() { Name = "Aqua Marina", Data = new double[] { 17, 6, 11, 19, 6 } },
+                new ChartSeries() { Name = "Lavender Pinocchio", Data = new double[] { 1, 11, 4, 18, 1 } },
+                new ChartSeries() { Name = "Deep Sea Blue", Data = new double[] { 1, 11, 4, 18, 1 } }
+            };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.Height, "350px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = new string[] { "#1E9AB0" } })
+                .Add(p => p.ChartSeries, chartSeries));
+
+            var paths1 = comp.FindAll("path");
+
+            int count;
+            count = paths1.Count(p => p.OuterHtml.Contains($"stroke=\"{"#1E9AB0"}\""));
+            count.Should().Be(22);
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _customPalette }));
+
+            var paths2 = comp.FindAll("path");
+
+            foreach (var color in _customPalette)
+            {
+                count = paths2.Count(p => p.OuterHtml.Contains($"stroke=\"{color}\""));
+                if (color == _customPalette[0])
+                {
+                    count.Should().Be(2, because: "the number of series defined exceeds the number of colors in the chart palette, thus, any new defined series takes the color from the chart palette in the same fashion as the previous series starting from the beginning");
+                }
+                else
+                {
+                    count.Should().Be(1);
+                }
+            }
         }
     }
 }

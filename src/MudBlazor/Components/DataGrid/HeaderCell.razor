@@ -10,7 +10,7 @@
         @ChildContent
     </th>
 }
-else if (Column != null && !Column.Hidden)
+else if (Column != null && !Column.HiddenState.Value)
 {
     <th @ref=@_headerElement scope="col" class="@_classname" style="@_style" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
         @if (DataGrid.DragDropColumnReordering)
@@ -71,8 +71,16 @@ else if (Column != null && !Column.Hidden)
                     }
                     else
                     {                        
-                        <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync"></MudIconButton>
-                        if(DataGrid.SortMode == SortMode.Multiple)
+                        <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync"></MudIconButton> 
+                    }
+
+                    if (DataGrid.SortMode == SortMode.Multiple)
+                    {
+                        if (Column.SortIndex < 0)
+                        {
+                            <span class="mud-sort-index mud-text-disabled invisible">@(Column.SortIndex + 1)</span>
+                        }
+                        else
                         {
                             <span class="mud-sort-index mud-text-disabled">@(Column.SortIndex + 1)</span>
                         }
@@ -87,7 +95,7 @@ else if (Column != null && !Column.Hidden)
                     }
                     else if (showFilterIcon)
                     {
-                        <MudIconButton Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" OnClick="@AddFilterAsync"></MudIconButton>
+                        <MudIconButton Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" OnClick="@AddFilter"></MudIconButton>
                     }
                 }
 
@@ -97,7 +105,7 @@ else if (Column != null && !Column.Hidden)
                         <MudMenuItem Disabled="@(_initialDirection == SortDirection.None)" OnClick="@RemoveSortAsync">@Localizer["MudDataGrid.Unsort"]</MudMenuItem>
                         @if (filterable && DataGrid.FilterMode != DataGridFilterMode.ColumnFilterRow)
                         {
-                            <MudMenuItem OnClick="@AddFilterAsync">@Localizer["MudDataGrid.Filter"]</MudMenuItem>
+                            <MudMenuItem OnClick="@AddFilter">@Localizer["MudDataGrid.Filter"]</MudMenuItem>
                         }
                         @if (hideable)
                         {

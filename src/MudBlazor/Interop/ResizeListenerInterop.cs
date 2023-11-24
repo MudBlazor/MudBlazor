@@ -20,9 +20,11 @@ internal class ResizeListenerInterop
         _jsRuntime = jsRuntime;
     }
 
-    public ValueTask<bool> MatchMedia(string mediaQuery)
+    public async ValueTask<bool> MatchMedia(string mediaQuery)
     {
-        return _jsRuntime.InvokeAsync<bool>("mudResizeListener.matchMedia", mediaQuery);
+        var matchMedia = await _jsRuntime.InvokeAsyncWithErrorHandling(false, "mudResizeListener.matchMedia", mediaQuery);
+
+        return matchMedia.value;
     }
 
     public ValueTask<bool> ListenForResize<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] T>(DotNetObjectReference<T> dotNetObjectReference, ResizeOptions options, Guid javaScriptListerId) where T : class
@@ -40,8 +42,15 @@ internal class ResizeListenerInterop
         return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.cancelListeners", jsListenerIds);
     }
 
-    public ValueTask<BrowserWindowSize> GetBrowserWindowSize()
+    public ValueTask Dispose()
     {
-        return _jsRuntime.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize");
+        return _jsRuntime.InvokeVoidAsyncIgnoreErrors("mudResizeListenerFactory.dispose");
+    }
+
+    public async ValueTask<BrowserWindowSize> GetBrowserWindowSize()
+    {
+        var size = await _jsRuntime.InvokeAsyncWithErrorHandling(new BrowserWindowSize(), "mudResizeListener.getBrowserWindowSize");
+
+        return size.value;
     }
 }

@@ -4,7 +4,6 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Services;
-using MudBlazor.Interop;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
@@ -47,6 +46,7 @@ namespace MudBlazor.UnitTests.Components
 #pragma warning restore CS0618
             ctx.Services.AddSingleton<IPopoverService, MockPopoverServiceV2>();
             ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
+            ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
             ctx.Services.AddTransient<InternalMudLocalizer>();
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>

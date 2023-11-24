@@ -249,6 +249,7 @@ namespace MudBlazor
 
         private void UpdateTime()
         {
+            _lastSelectedHour = _timeSet.Hour;
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
             if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
@@ -324,8 +325,8 @@ namespace MudBlazor
           .AddClass($"mud-time-picker-dial-hidden", _currentView != OpenTo.Minutes)
         .Build();
 
-        private bool IsAm => _timeSet.Hour >= 00 && _timeSet.Hour < 12; // am is 00:00 to 11:59 
-        private bool IsPm => _timeSet.Hour >= 12 && _timeSet.Hour < 24; // pm is 12:00 to 23:59 
+        private bool IsAm => _timeSet.Hour >= 00 && _timeSet.Hour < 12; // am is 00:00 to 11:59
+        private bool IsPm => _timeSet.Hour >= 12 && _timeSet.Hour < 24; // pm is 12:00 to 23:59
 
         private string GetClockPinColor()
         {
@@ -415,6 +416,7 @@ namespace MudBlazor
 
         private readonly SetTime _timeSet = new();
         private int _initialHour;
+        private int _lastSelectedHour;
         private int _initialMinute;
 
         protected override void OnInitialized()
@@ -423,6 +425,7 @@ namespace MudBlazor
             UpdateTimeSetFromTime();
             _currentView = OpenTo;
             _initialHour = _timeSet.Hour;
+            _lastSelectedHour = _timeSet.Hour;
             _initialMinute = _timeSet.Minute;
         }
 
@@ -468,6 +471,18 @@ namespace MudBlazor
             }
         }
 
+        private int HourAmPm(int value)
+        {
+            if (AmPm)
+            {
+                if (IsAm && value == 12)
+                    return 0;
+                else if (IsPm && value < 12)
+                    return value + 12;
+            }
+            return value;
+        }
+
         /// <summary>
         /// If MouseDown is true enables "dragging" effect on the clock pin/stick.
         /// </summary>
@@ -475,7 +490,7 @@ namespace MudBlazor
         {
             if (MouseDown)
             {
-                _timeSet.Hour = value;
+                _timeSet.Hour = HourAmPm(value);
                 UpdateTime();
             }
         }
@@ -485,17 +500,10 @@ namespace MudBlazor
         /// </summary>
         private void OnMouseClickHour(int value)
         {
-            var h = value;
-            if (AmPm)
-            {
-                if (IsAm && value == 12)
-                    h = 0;
-                else if (IsPm && value < 12)
-                    h = value + 12;
-            }
-            _timeSet.Hour = h;
+            _timeSet.Hour = HourAmPm(value);
 
-            if (_currentView == OpenTo.Hours)
+            if (_currentView == OpenTo.Hours
+                || _timeSet.Hour != _lastSelectedHour)
             {
                 UpdateTime();
             }

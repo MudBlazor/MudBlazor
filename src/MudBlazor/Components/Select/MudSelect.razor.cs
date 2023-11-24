@@ -24,9 +24,19 @@ namespace MudBlazor
         private bool? _selectAllChecked;
         private IKeyInterceptor _keyInterceptor;
 
+        protected string OuterClassname =>
+            new CssBuilder("mud-select")
+            .AddClass(OuterClass)
+            .Build();
+
         protected string Classname =>
             new CssBuilder("mud-select")
             .AddClass(Class)
+            .Build();
+
+        protected string InputClassname =>
+            new CssBuilder("mud-select-input")
+            .AddClass(InputClass)
             .Build();
 
         [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
@@ -135,6 +145,18 @@ namespace MudBlazor
             await _elementReference.SetText(Text);
             await ScrollToItemAsync(item);
         }
+
+        /// <summary>
+        /// The outer div's classnames, seperated by space.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter] public string OuterClass { get; set; }
+
+        /// <summary>
+        /// Input's classnames, seperated by space.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter] public string InputClass { get; set; }
 
         /// <summary>
         /// Fired when dropdown opens.
@@ -608,14 +630,14 @@ namespace MudBlazor
                 _selectedValues.Add(value);
             }
 
-            HilightItemForValue(value);
+            await HilightItemForValueAsync(value);
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T)(object)Text, updateText: false);
             await InvokeAsync(StateHasChanged);
         }
 
-        private async void HilightItemForValue(T value)
+        private async Task HilightItemForValueAsync(T value)
         {
             if (value == null)
             {
@@ -645,7 +667,7 @@ namespace MudBlazor
             if (MultiSelection)
                 HilightItem(_items.FirstOrDefault(x => !x.Disabled));
             else
-                HilightItemForValue(Value);
+                await HilightItemForValueAsync(Value);
         }
 
         private void UpdateSelectAllChecked()

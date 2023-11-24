@@ -13,7 +13,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "applicationUrl": "https://localhost:7128;http://localhost:5128",
-      "launchUrl": "components/tooltip",
+      "launchUrl": "components/togglegroup",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

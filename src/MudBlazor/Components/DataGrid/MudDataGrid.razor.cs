@@ -26,14 +26,17 @@ namespace MudBlazor
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
+        private string _columnsPanelSearch = string.Empty;
         private IEnumerable<T> _items;
         private T _selectedItem;
-        internal HashSet<object> _groupExpansions = new HashSet<object>();
+        private MudForm _editForm;
+        internal Dictionary<object, bool> _groupExpansionsDict = new Dictionary<object, bool>();
         private List<GroupDefinition<T>> _currentPageGroups = new List<GroupDefinition<T>>();
         private List<GroupDefinition<T>> _allGroups = new List<GroupDefinition<T>>();
         internal HashSet<T> _openHierarchies = new HashSet<T>();
         private PropertyInfo[] _properties = typeof(T).GetProperties();
         private MudDropContainer<Column<T>> _dropContainer;
+        private MudDropContainer<Column<T>> _columnsPanelDropContainer;
         protected string _classname =>
             new CssBuilder("mud-table")
                .AddClass("mud-data-grid")
@@ -84,6 +87,17 @@ namespace MudBlazor
                 .AddStyle("left", "0px", when: hasStickyColumns)
             .Build();
 
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            if (ServerData != null && QuickFilter != null)
+            {
+                throw new InvalidOperationException(
+                    $"Do not supply both '{nameof(ServerData)}' and '{nameof(QuickFilter)}'."
+                );
+            }
+        }
+
         internal SortDirection GetColumnSortDirection(string columnName)
         {
             if (columnName == null)
@@ -92,8 +106,7 @@ namespace MudBlazor
             }
             else
             {
-                SortDefinition<T> sortDefinition = null;
-                var ok = SortDefinitions.TryGetValue(columnName, out sortDefinition);
+                var ok = SortDefinitions.TryGetValue(columnName, out var sortDefinition);
 
                 if (ok)
                 {
@@ -130,8 +143,8 @@ namespace MudBlazor
         {
             dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
 
-            var dragAndDropSource = RenderedColumns.Where(rc => rc.PropertyName == dropItem.Item.PropertyName).SingleOrDefault();
-            var dragAndDropDestination = RenderedColumns.Where(rc => rc.PropertyName == dropItem.DropzoneIdentifier).SingleOrDefault();
+            var dragAndDropSource = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.Item.PropertyName);
+            var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.DropzoneIdentifier);
             if (dragAndDropSource != null && dragAndDropDestination != null)
             {
                 var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
@@ -148,8 +161,7 @@ namespace MudBlazor
 
                 StateHasChanged();
             }
-            return Task.CompletedTask;
-            
+            return Task.CompletedTask;            
         }
 
         public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
@@ -164,8 +176,8 @@ namespace MudBlazor
         // converters
         private Converter<bool, bool?> _oppositeBoolConverter = new Converter<bool, bool?>
         {
-            SetFunc = value => value ? false : true,
-            GetFunc = value => value.HasValue ? !value.Value : true,
+            SetFunc = value => !value,
+            GetFunc = value => !value ?? true,
         };
 
         #region Notify Children Delegates
@@ -197,6 +209,11 @@ namespace MudBlazor
         [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowClick { get; set; }
 
         /// <summary>
+        /// Callback is called whenever a row is right clicked.
+        /// </summary>
+        [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowContextMenuClick { get; set; }
+
+        /// <summary>
         /// Callback is called when an item has begun to be edited. Returns the item being edited.
         /// </summary>
         [Parameter] public EventCallback<T> StartedEditingItem { get; set; }
@@ -226,6 +243,10 @@ namespace MudBlazor
         #endregion
 
         #region Parameters
+        /// <summary>
+        /// If true, the columns in the DataGrid can be reordered via the columns panel.
+        /// </summary>
+        [Parameter] public bool ColumnsPanelReordering { get; set; } = false;
 
         /// <summary>
         /// If true, the columns in the DataGrid can be reordered via drag and drop. This is overridable by each column.
@@ -579,6 +600,11 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Rows Per Page two-way bindable parameter
+        /// </summary>
+        [Parameter] public EventCallback<int> RowsPerPageChanged { get; set; }
+
+        /// <summary>
         /// The page index of the currently displayed page (Zero based). Usually called by MudTablePager.
         /// Note: requires a MudTablePager in PagerContent.
         /// </summary>
@@ -670,11 +696,10 @@ namespace MudBlazor
                     {
                         _currentPageGroups.Clear();
                         _allGroups.Clear();
-                        _groupExpansions.Clear();
-                        _groupExpansions.Add("__initial__");
+                        _groupExpansionsDict.Clear();
 
                         foreach (var column in RenderedColumns)
-                            column.RemoveGrouping();
+                            column.RemoveGrouping().AndForget();
                     }
                 }
             }
@@ -1075,7 +1100,11 @@ namespace MudBlazor
         /// <returns></returns>
         internal async Task CommitItemChangesAsync()
         {
-            // Here, we need to validate at the cellular level...
+            await _editForm.Validate();
+            if (!_editForm.IsValid)
+            {
+                return;
+            }
 
             if (editingSourceItem != null)
             {
@@ -1099,6 +1128,11 @@ namespace MudBlazor
                 await SetEditingItemAsync(item);
 
             await SetSelectedItemAsync(item);
+        }
+
+        internal async Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)
+        {
+            await RowContextMenuClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
         }
 
         /// <summary>
@@ -1160,6 +1194,8 @@ namespace MudBlazor
 
             if (resetPage)
                 CurrentPage = 0;
+
+            await RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
 
             StateHasChanged();
 
@@ -1325,10 +1361,10 @@ namespace MudBlazor
         {
             foreach (var column in RenderedColumns)
             {
-                if (column.Hideable ?? false)
+                if (column.hideable)
                     await column.HideAsync();
             }
-
+            DropContainerHasChanged();
             StateHasChanged();
         }
 
@@ -1336,34 +1372,75 @@ namespace MudBlazor
         {
             foreach (var column in RenderedColumns)
             {
-                if (column.Hideable ?? false)
+                if (column.hideable)
                     await column.ShowAsync();
             }
-
+            DropContainerHasChanged();
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Shows a columns panel that lets you show/hide, filter, group, sort and re-arrange columns.
+        /// </summary>
         public void ShowColumnsPanel()
         {
             _columnsPanelVisible = true;
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Hides the columns panel
+        /// </summary>
         public void HideColumnsPanel()
         {
             _columnsPanelVisible = false;
             StateHasChanged();
         }
 
+        private Task ColumnOrderUpdated(MudItemDropInfo<Column<T>> dropItem)
+        {
+            RenderedColumns.Remove(dropItem.Item);
+            RenderedColumns.Insert(dropItem.IndexInZone, dropItem.Item);
+            DropContainerHasChanged();
+
+            return Task.CompletedTask;
+        }
+
+        private void ColumnUp(Column<T> column)
+        {
+            var index = RenderedColumns.IndexOf(column);
+            if (index > 0)
+            {
+                RenderedColumns.RemoveAt(index);
+                RenderedColumns.Insert(index-1, column);
+            }
+            DropContainerHasChanged();
+        }
+
+        private void ColumnDown(Column<T> column)
+        {
+            var index = RenderedColumns.IndexOf(column);
+            if (index < RenderedColumns.Count - 1)
+            {
+                RenderedColumns.RemoveAt(index);
+                RenderedColumns.Insert(index + 1, column);
+            }
+            DropContainerHasChanged();
+        }
+
         internal void DropContainerHasChanged()
         {
             _dropContainer?.Refresh();
+            _columnsPanelDropContainer?.Refresh();
         }
 
-        
+
         public void GroupItems(bool noStateChange = false)
         {
-            if (GroupedColumn == null)
+            if (!noStateChange)
+                DropContainerHasChanged();
+
+            if (GroupedColumn?.groupBy == null)
             {
                 _currentPageGroups = new List<GroupDefinition<T>>();
                 _allGroups = new List<GroupDefinition<T>>();
@@ -1375,34 +1452,33 @@ namespace MudBlazor
             var currentPageGroupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
 
             // Maybe group Items to keep groups expanded after clearing a filter?
-            var allGroupings = FilteredItems.GroupBy(GroupedColumn.groupBy);
+            var allGroupings = FilteredItems.GroupBy(GroupedColumn.groupBy).ToArray();
 
-            if (GetFilteredItemsCount() > 0 && _groupExpansions.Count == 0 && GroupExpanded)
+            if (GetFilteredItemsCount() > 0)
             {
-                _groupExpansions.Add("__initial__");
                 foreach (var group in allGroupings)
                 {
-                    _groupExpansions.Add(group.Key);
+                    _groupExpansionsDict.TryAdd(group.Key, GroupExpanded);
                 }
             }
 
             // construct the groups
             _currentPageGroups = currentPageGroupings.Select(x => new GroupDefinition<T>(x,
-                _groupExpansions.Contains(x.Key))).ToList();
+                _groupExpansionsDict[x.Key])).ToList();
 
             _allGroups = allGroupings.Select(x => new GroupDefinition<T>(x,
-                _groupExpansions.Contains(x.Key))).ToList();                
+                _groupExpansionsDict[x.Key])).ToList();                
 
             if ((_isFirstRendered || ServerData != null) && !noStateChange)
                 StateHasChanged();
         }
 
-        internal void ChangedGrouping(Column<T> column)
+        internal async Task ChangedGrouping(Column<T> column)
         {
             foreach (var c in RenderedColumns)
             {
                 if (c.PropertyName != column.PropertyName)
-                    c.RemoveGrouping();
+                    await c.RemoveGrouping();
             }
 
             GroupItems();
@@ -1410,13 +1486,9 @@ namespace MudBlazor
 
         internal void ToggleGroupExpansion(GroupDefinition<T> g)
         {
-            if (_groupExpansions.Contains(g.Grouping.Key))
+            if (_groupExpansionsDict.TryGetValue(g.Grouping.Key, out var value))
             {
-                _groupExpansions.Remove(g.Grouping.Key);
-            }
-            else
-            {
-                _groupExpansions.Add(g.Grouping.Key);
+                _groupExpansionsDict[g.Grouping.Key] = !value;
             }
 
             GroupItems();
@@ -1427,17 +1499,17 @@ namespace MudBlazor
             foreach (var group in _allGroups)
             {
                 group.IsExpanded = true;
-                _groupExpansions.Add(group.Grouping.Key);
+                _groupExpansionsDict[group.Grouping.Key] = true;
             }
         }
 
         public void CollapseAllGroups()
         {
-            _groupExpansions.Clear();
-            _groupExpansions.Add("__initial__");
-
             foreach (var group in _allGroups)
+            {
                 group.IsExpanded = false;
+                _groupExpansionsDict[group.Grouping.Key] = false;
+            }
         }
 
         #endregion

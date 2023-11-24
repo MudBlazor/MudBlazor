@@ -15,6 +15,7 @@ public partial class MudStack : MudComponentBase
             .AddClass($"flex-{(Row ? "row" : "column")}{(Reverse ? "-reverse" : string.Empty)}")
             .AddClass($"justify-{Justify?.ToDescriptionString()}", Justify != null)
             .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems != null)
+            .AddClass($"flex-{Wrap?.ToDescriptionString()}", Wrap != null)
             .AddClass($"gap-{Spacing}")
             .AddClass(Class)
             .Build();
@@ -53,6 +54,13 @@ public partial class MudStack : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
     public AlignItems? AlignItems { get; set; }
+
+    /// <summary>
+    /// Defines the flexbox wrapping behavior of its items.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Stack.Behavior)]
+    public Wrap? Wrap { get; set; }
 
     /// <summary>
     /// Child content of the component.

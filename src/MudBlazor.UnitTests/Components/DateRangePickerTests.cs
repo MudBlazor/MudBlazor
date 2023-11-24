@@ -1,15 +1,15 @@
 ﻿#pragma warning disable BL0005 // Set parameter outside component
 
-using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
+using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
 using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
@@ -46,6 +46,24 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudDateRangePicker>();
             var openButton = comp.Find(".mud-input-adornment button");
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Date Range Picker");
+        }
+
+        [Test]
+        public void DateRangePicker_Preset_No_Timestamp()
+        {
+            var comp = Context.RenderComponent<DateRangePickerPresetWithoutTimestampTest>();
+
+            comp.Markup.Should().Contain("mud-range-start-selected");
+            comp.Markup.Should().Contain("mud-range-end-selected");
+        }
+
+        [Test]
+        public void DateRangePicker_Preset_Timestamp()
+        {
+            var comp = Context.RenderComponent<DateRangePickerPresetRangeWithTimestampTest>();
+            
+            comp.Markup.Should().Contain("mud-range-start-selected");
+            comp.Markup.Should().Contain("mud-range-end-selected");
         }
 
         [Test]
@@ -655,7 +673,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DateRangePicker_Should_Clear()
+        public void DateRangePicker_Should_Clear()
         {
             var comp = Context.RenderComponent<MudDateRangePicker>();
             // select elements needed for the test

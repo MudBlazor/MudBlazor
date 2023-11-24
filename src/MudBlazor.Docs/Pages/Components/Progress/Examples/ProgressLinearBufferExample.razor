@@ -7,34 +7,39 @@
 <MudProgressLinear Color="Color.Warning" Buffer="true" Value="@Value" BufferValue="@BufferValue" Class="my-7" />
 <MudProgressLinear Color="Color.Error" Buffer="true" Value="@Value" BufferValue="@BufferValue" Class="my-7" />
 @code {
-	public int Value { get; set; }
-	public int BufferValue { get; set; }
+    private bool _disposed;
 
-	public async void SimulateProgress()
-	{
-		Value = 5;
-		BufferValue = 10;
+    public int Value { get; set; }
 
-		do
-		{
-			if (_disposed)
-			{
-				return;
-			}
+    public int BufferValue { get; set; }
 
-			Value += 4;
-			BufferValue += 5;
-			StateHasChanged();
-			await Task.Delay(500);
+    public async Task SimulateProgressAsync()
+    {
+        Value = 5;
+        BufferValue = 10;
 
-		} while (Value < 100);
+        do
+        {
+            if (_disposed)
+            {
+                return;
+            }
 
-		SimulateProgress();
-	}
+            Value += 4;
+            BufferValue += 5;
+            StateHasChanged();
+            await Task.Delay(500);
 
-	protected override void OnInitialized() => SimulateProgress();
+        } while (Value < 100);
 
-	private bool _disposed;
+        await SimulateProgressAsync();
+    }
 
-	public void Dispose() => _disposed = true;
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await SimulateProgressAsync();
+    }
+
+    public void Dispose() => _disposed = true;
 }

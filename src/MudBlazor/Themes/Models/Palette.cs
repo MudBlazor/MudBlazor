@@ -222,6 +222,16 @@ namespace MudBlazor
         /// Gets or sets the light color for dividers.
         /// </summary>
         public virtual MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
+        
+        /// <summary>
+        /// Gets or sets the default color for chips.
+        /// </summary>
+        public virtual MudColor ChipDefault { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.08).ToString(MudColorOutputFormats.RGBA);
+        
+        /// <summary>
+        /// Gets or sets the default hover color for chips.
+        /// </summary>
+        public virtual MudColor ChipDefaultHover { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.12).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// Gets or sets the darkened value of the primary color.

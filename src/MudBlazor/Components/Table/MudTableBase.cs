@@ -554,10 +554,15 @@ namespace MudBlazor
 
         internal abstract Task InvokeServerLoadFunc();
 
-        internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
+        internal abstract Task FireRowClickEventAsync(MouseEventArgs args, MudTr mudTr, object item);
+
+        internal abstract Task FireRowMouseEnterEventAsync(MouseEventArgs args, MudTr mudTr, object item);
+
+        internal abstract Task FireRowMouseLeaveEventAsync(MouseEventArgs args, MudTr mudTr, object item);
 
         internal abstract void OnHeaderCheckboxClicked(bool checkedState);
-
+        internal abstract bool HasRowMouseEnterEventHandler { get; }
+        internal abstract bool HasRowMouseLeaveEventHandler { get; }
         internal abstract bool IsEditable { get; }
 
         public abstract bool ContainsItem(object item);

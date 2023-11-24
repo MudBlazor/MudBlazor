@@ -210,7 +210,17 @@ namespace MudBlazor
                 _ = OnEvaluateForm();
         }
 
-        private void OnTimerComplete(object stateInfo) => InvokeAsync(OnEvaluateForm);
+        private void OnTimerComplete(object stateInfo)
+        {
+            try
+            {
+                InvokeAsync(OnEvaluateForm);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"An error occured while executing {nameof(OnEvaluateForm)}: {e.Message}");
+            }
+        }
 
         private bool _shouldRender = true; // <-- default is true, we need the form children to render
 
@@ -317,6 +327,14 @@ namespace MudBlazor
             }
 
             EvaluateForm(debounce: false);
+        }
+
+        /// <summary>
+        /// Reset the isTouched property
+        /// </summary>
+        public void ResetTouched()
+        {
+            this._touched = false;
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)

@@ -30,6 +30,18 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-list-class"));
         }
 
+        [Test]
+        public async Task SelectTest_CheckLayerClass()
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => comp.SetParam("OuterClass", "my-outer-class"));
+            await comp.InvokeAsync(() => comp.SetParam("Class", "my-main-class"));
+            await comp.InvokeAsync(() => comp.SetParam("InputClass", "my-input-class"));
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-outer-class"));
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-main-class"));
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("my-input-class"));
+        }
+
         /// <summary>
         /// Select id should propagate to label for attribute
         /// </summary>
@@ -78,9 +90,9 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("1"));
             //Check user on blur implementation works
             var @switch = comp.FindComponent<MudSwitch<bool>>();
-            @switch.Instance.Checked = true;
+            @switch.Instance.Value = true;
             await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
-            comp.WaitForAssertion(() => @switch.Instance.Checked.Should().Be(false));
+            comp.WaitForAssertion(() => @switch.Instance.Value.Should().Be(false));
         }
 
         /// <summary>

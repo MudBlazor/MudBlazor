@@ -321,13 +321,7 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             await Task.Delay(100);
             var autocompletecomp = comp.FindComponent<MudAutocomplete<ExternalList>>();
-            var input = autocompletecomp.Find("input");
-
-            var wrappedElement = ((dynamic)input).WrappedElement;
-            var value = ((IHtmlInputElement)wrappedElement).Value;
-
-            //The value of the input should be California
-            value.Should().Be("One");
+            autocompletecomp.Find("input").GetAttribute("value").Should().Be("One");
         }
 
         /// <summary>
@@ -1015,7 +1009,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Test
 
-            comp.WaitForAssertion(() => Assert.IsFalse(cancelToken?.IsCancellationRequested));
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
 
             // Arrange second call
 
@@ -1032,7 +1026,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Test
 
-            comp.WaitForAssertion(() => Assert.IsTrue(cancelToken?.IsCancellationRequested));
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
 
             first.SetCanceled();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ToMarkup().Should().NotContain("Foo"));
@@ -1075,7 +1069,7 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.SetParam(a => a.Text, testText);
 
             // Assert
-            autocompletecomp.WaitForAssertion(() => Assert.AreEqual(testText, eventText));
+            autocompletecomp.WaitForAssertion(() => eventText.Should().Be(testText));
         }
 
         [Test]
@@ -1262,10 +1256,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// BeforeItemsTemplate should render when there are no items
+        /// BeforeItemsTemplate should not render when there are no items
         /// </summary>
         [Test]
-        public async Task Autocomplete_Should_LoadListStartWhenSet()
+        public async Task Autocomplete_Should_Not_LoadListStartWhenSet()
         {
             var comp = Context.RenderComponent<AutocompleteListStartRendersTest>();
 
@@ -1274,15 +1268,14 @@ namespace MudBlazor.UnitTests.Components
             inputControl.Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            var mudText = comp.FindAll("p.mud-typography");
-            mudText[mudText.Count - 1].InnerHtml.Should().Contain("StartList_Content"); //ensure the text is shown
+            comp.Find("div.mud-popover").InnerHtml.Should().BeEmpty();
         }
 
         /// <summary>
-        /// AfterItemsTemplate should render when there are no items
+        /// AfterItemsTemplate should not render when there are no items
         /// </summary>
         [Test]
-        public async Task Autocomplete_Should_LoadListEndWhenSet()
+        public async Task Autocomplete_Should_Not_LoadListEndWhenSet()
         {
             var comp = Context.RenderComponent<AutocompleteListEndRendersTest>();
 
@@ -1290,8 +1283,21 @@ namespace MudBlazor.UnitTests.Components
             inputControl.Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            var mudText = comp.FindAll("p.mud-typography");
-            mudText[mudText.Count - 1].InnerHtml.Should().Contain("EndList_Content"); //ensure the text is shown
+            comp.Find("div.mud-popover").InnerHtml.Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_ApplyListItemClass()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var listItemClassTest = "list-item-class-test";
+
+            autocompletecomp.SetParam(a => a.ListItemClass, listItemClassTest);
+            var inputControl = comp.Find("div.mud-input-control");
+            inputControl.Click();
+
+            comp.WaitForAssertion(() => comp.Find("div.mud-list-item").ClassList.Should().Contain(listItemClassTest));
         }
     }
 }

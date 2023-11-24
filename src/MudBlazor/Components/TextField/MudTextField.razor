@@ -27,6 +27,8 @@
                               InputType="@InputType"
                               InputMode="@InputMode"
                               Lines="@Lines"
+                              MaxLines="@MaxLines"
+                              AutoGrow="@AutoGrow"
                               Style="@Style"
                               Variant="@Variant"
                               TextUpdateSuppression="@TextUpdateSuppression"
@@ -51,15 +53,16 @@
                               OnBlur="@OnBlurredAsync"
                               OnKeyDown="@InvokeKeyDownAsync"
                               OnInternalInputChanged="OnChange"
-                              OnKeyPress="@InvokeKeyPress"
+                              OnKeyPress="@InvokeKeyPressObsolete"
                               OnKeyUp="@InvokeKeyUpAsync"
                               KeyDownPreventDefault="KeyDownPreventDefault"
-                              KeyPressPreventDefault="KeyPressPreventDefault"
+                              KeyPressPreventDefault="KeyPressPreventDefaultObsolete"
                               KeyUpPreventDefault="KeyUpPreventDefault"
                               HideSpinButtons="true"
                               Clearable="@Clearable"
                               OnClearButtonClick="@OnClearButtonClick"
-                              Pattern="@Pattern"/>
+                              Pattern="@Pattern"
+                              ShrinkLabel="@ShrinkLabel"/>
                 }
                 else
                 {

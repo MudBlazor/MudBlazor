@@ -199,6 +199,64 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataPicker_ShouldClearText_WhenDateSetNull()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>();
+
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+
+            string invalid = "INVALID_DATE";
+            comp.SetParam(p => p.Text, "INVALID_DATE");
+            
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(invalid);
+
+            await Task.Delay(150);
+            
+            comp.SetParam(p => p.Date, null);
+            
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(null);
+        }
+        
+        
+        [Test]
+        public async Task DataPicker_ShouldDeBounceSetDate_WhenDateSetToTheSameValueQuickly()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>();
+
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+
+            string invalid = "INVALID_DATE";
+            comp.SetParam(p => p.Text, "INVALID_DATE");
+            
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(invalid);
+            
+            comp.SetParam(p => p.Date, null);
+            
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(invalid);
+        }
+        
+        [Test]
+        public async Task DataPicker_ShouldDisplayError_WhenTextSetToInvalidValue()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>();
+
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+            comp.SetParam(p => p.Text, "INVALID_DATE");
+
+            picker.Error.Should().BeTrue();
+        }
+        
+        [Test]
         public void Check_Intial_Date_Format()
         {
             DateTime? date = new DateTime(2021, 1, 13);
@@ -531,9 +589,7 @@ namespace MudBlazor.UnitTests.Components
             var datePicker = comp.FindComponent<MudDatePicker>();
             await comp.InvokeAsync(() => datePicker.Instance.Open());
 
-            // didn't have time to finish this test case
-            // TODO: check that the days are like here https://mrmashal.github.io/angular-material-persian-datepicker/demo/demoBasicUsage/index.html
-            // for 1399-11-26
+            datePicker.Instance.Text.Should().Be("1399/11/26");
         }
 
         [Test]
@@ -782,7 +838,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
 
-        
+
         [Test]
         //mud-button-root added for greying out and making buttons not clickable if month is disabled
         public void MonthButtons_ButtonRootClassPresent()
@@ -799,7 +855,7 @@ namespace MudBlazor.UnitTests.Components
         public void AdditionalDateClassesFunc_ClassIsAdded()
         {
             Func<DateTime, string> additionalDateClassesFunc = date => "__addedtestclass__";
-            
+
             var comp = OpenPicker(Parameter(nameof(MudDatePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
 
             var daysCount = comp.FindAll("button.mud-picker-calendar-day")
@@ -1105,7 +1161,7 @@ namespace MudBlazor.UnitTests.Components
 
             datePicker.MinDate = DateTime.Now.AddDays(-1);
             datePicker.MaxDate = DateTime.Now.AddDays(1);
-            
+
 
             // Open the datepicker
             await comp.InvokeAsync(datePicker.Open);
@@ -1140,6 +1196,68 @@ namespace MudBlazor.UnitTests.Components
                 .HaveElementAt(1, "--selected-day")
                 .And
                 .HaveElementAt(2, 5);
+        }
+
+        [Test]
+        public void DatePicker_ImmediateText_Should_Callback_TextChanged()
+        {
+            string changed_text = null;
+
+            var comp = Context.RenderComponent<MudDatePicker>(EventCallback<string>("TextChanged", x => changed_text = x));
+
+            comp.SetParam(x => x.Editable, true);
+            comp.SetParam(x => x.ImmediateText, true);
+
+            // This will make the input focused!
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown"});
+
+            // Simulate user input
+            comp.Find("input").Input("22");
+
+            changed_text.Should().Be("22");
+
+            // Set ImmediateText to false
+            comp.SetParam(x => x.ImmediateText, false);
+
+            // Simulate user input
+            comp.Find("input").Input("33");
+
+            // changed_text should not be updated since ImmediateText was false
+            changed_text.Should().Be("22");
+
+            // Set ImmediateText to true
+            comp.SetParam(x => x.ImmediateText, true);
+
+            // Simulate user input
+            comp.Find("input").Input("44");
+
+            //changed_text should be updated
+            changed_text.Should().Be("44");
+
+            // Set Editable to false.
+            // ImmediateText should only work if Editable is also true.
+            comp.SetParam(x => x.Editable, false);
+
+            // Simulate user input
+            comp.Find("input").Input("55");
+
+            //changed_text should not be updated
+            changed_text.Should().Be("44");
+        }
+
+        [Test]
+        public async Task OldDateWithDefinedKind_SetValue_KindUnchanged()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>();
+            var picker = comp.Instance;
+            var oldDate = DateTime.Now;
+            var newDate = oldDate.AddDays(1);
+            comp.SetParam(p => p.Date, oldDate);
+
+            comp.SetParam(p => p.Text, newDate.ToShortDateString());
+
+            picker.Date.Should().NotBeNull();
+            picker.Date!.Value.Kind.Should().Be(oldDate.Kind);
         }
     }
 }

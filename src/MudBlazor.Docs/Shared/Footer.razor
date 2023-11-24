@@ -46,18 +46,7 @@
     </MudItem>
     <MudItem xs="12">
         <MudToolBar DisableGutters="true" Dense="true">
-            <MudText Typo="Typo.body1">Copyright © 2020-2022 MudBlazor.</MudText>
+            <MudText Typo="Typo.body1">@($"Copyright © 2020-{DateTime.Now.Year} MudBlazor.")</MudText>
         </MudToolBar>
     </MudItem>
 </MudGrid>
-
-@code {
-    string MudBlazorVersion
-    {
-        get
-        {
-            var v = typeof(MudText).Assembly.GetName().Version;
-            return $"v{v.Major}.{v.Minor}.{v.Build}.";
-        }
-    }
-}

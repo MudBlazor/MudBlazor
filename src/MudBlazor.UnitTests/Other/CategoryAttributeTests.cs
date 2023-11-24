@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using NUnit.Framework;
 
@@ -88,7 +89,8 @@ namespace MudBlazor.UnitTests.Other
                 }
             }
 
-            Assert.True(isTestOK, "Some component properties don't have categories.");
+            // If this fails some component properties don't have categories.
+            isTestOK.Should().BeTrue();
         }
 
         // Returns the class that declares the specified method.

@@ -274,6 +274,14 @@ namespace MudBlazor
         public EventCallback<string> TextChanged { get; set; }
 
         /// <summary>
+        /// If true and Editable is true, update Text immediately on typing.
+        /// If false, Text is updated only on Enter or loss of focus.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool ImmediateText { get; set; }
+
+        /// <summary>
         /// Fired when the text input is clicked.
         /// </summary>
         [Parameter]
@@ -564,7 +572,12 @@ namespace MudBlazor
                     {
                         Clear();
                         _value = default(T);
+
+                        // TODO: Probably need to  create a HandleKeyDownAsync that awaits ResetValueAsync()
+                        // Simply replacing Reset() with ResetValueAsync().AndForget() may cause issues in BSS
+#pragma warning disable CS0618
                         Reset();
+#pragma warning disable CS0618
                     }
 
                     break;
