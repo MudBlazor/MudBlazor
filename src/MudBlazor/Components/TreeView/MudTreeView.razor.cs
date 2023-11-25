@@ -249,6 +249,16 @@ namespace MudBlazor
 
         internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
 
+        /// <summary>
+        /// Sets the selected value of the tree view.
+        /// If the value is found, the corresponding item is selected; 
+        /// otherwise, no changes are made.
+        /// </summary>
+        /// <param name="value">The value to be set as the selected value.</param>
+        /// <remarks>
+        /// This method updates the internal state to reflect the new selection and 
+        /// triggers the necessary UI updates and events.
+        /// </remarks>
         public async Task SetSelectedValue(T value)
         {
             if (_selectedValue?.Value?.Equals(value) ?? false)
