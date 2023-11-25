@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -444,6 +445,7 @@ namespace MudBlazor
         }
 
         private void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
+        internal List<MudTreeViewItem<T>> ChildItems => _childItems.ToList();
 
         internal IEnumerable<MudTreeViewItem<T>> GetSelectedItems()
         {

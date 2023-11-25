@@ -154,7 +154,7 @@ namespace MudBlazor
         /// Called whenever the selected value changed.
         /// </summary>
         [Parameter] public EventCallback<T> SelectedValueChanged { get; set; }
-
+        
         /// <summary>
         /// Called whenever the selectedvalues changed.
         /// </summary>
@@ -249,5 +249,50 @@ namespace MudBlazor
 
         internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
 
+        public async Task SetSelectedValue(T value)
+        {
+            if (_selectedValue?.Value?.Equals(value) ?? false)
+            {
+                return;
+            }
+
+            if (_selectedValue != null)
+            {
+                await _selectedValue.Select(false);
+                _selectedValue = null;
+            }
+
+            if (value != null)
+            {
+                var item = FindItemByValue(value);
+                if (item != null)
+                {
+                    await item.Select(true);
+                    _selectedValue = item;
+                }
+            }
+        }
+
+        internal MudTreeViewItem<T>? FindItemByValue(T value, List<MudTreeViewItem<T>>? children = null)
+        {
+            children ??= _childItems;
+
+            foreach (var item in children)
+            {
+                if (Equals(item.Value, value))
+                {
+                    return item;
+                }
+
+                var foundChild = FindItemByValue(value, item.ChildItems);
+                if (foundChild != null)
+                {
+                    return foundChild;
+                }
+            }
+
+            return null;
+        }
+        
     }
 }
