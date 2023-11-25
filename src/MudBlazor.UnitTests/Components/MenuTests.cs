@@ -309,5 +309,31 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Count.Should().Be(1);
             comp.Instance.Callers.Should().Be("T");
         }
+
+        [Test]
+        public void OnActionAndOnTouch_WhenTouchMove_NoneInvoked()
+        {
+            var comp = Context.RenderComponent<MenuItemActionTest>();
+            comp.Find("button.mud-button-root").Click();
+            var item = comp.Find("#id_on_action_on_touch");
+            item.TouchStart();
+            item.TouchMove();
+            item.TouchEnd();
+            comp.Instance.Count.Should().Be(0);
+            comp.Instance.Callers.Should().Be(string.Empty);
+        }
+
+        [Test]
+        public void OnActionAndOnClick_WhenTouchMove_NoneInvoked()
+        {
+            var comp = Context.RenderComponent<MenuItemActionTest>();
+            comp.Find("button.mud-button-root").Click();
+            var item = comp.Find("#id_on_action_on_click");
+            item.TouchStart();
+            item.TouchMove();
+            item.TouchEnd();
+            comp.Instance.Count.Should().Be(0);
+            comp.Instance.Callers.Should().Be(string.Empty);
+        }
     }
 }
