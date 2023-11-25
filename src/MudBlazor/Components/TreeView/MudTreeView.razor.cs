@@ -256,20 +256,14 @@ namespace MudBlazor
                 return;
             }
 
-            if (_selectedValue != null)
-            {
-                await _selectedValue.Select(false);
-                _selectedValue = null;
-            }
-
             if (value != null)
             {
                 var item = FindItemByValue(value);
                 if (item != null)
                 {
-                    await item.Select(true);
-                    _selectedValue = item;
+                    await UpdateSelected(item, true);
                 }
+                return;
             }
         }
 
