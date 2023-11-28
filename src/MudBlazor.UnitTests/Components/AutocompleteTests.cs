@@ -20,6 +20,9 @@ using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitial
 using static Bunit.ComponentParameterFactory;
 using Microsoft.AspNetCore.Components;
 using System.Threading;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using TestContext = Bunit.TestContext;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -629,6 +632,68 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be("");
         }
 
+        [Test]
+        public async Task Autocomplete_Should_Navigate_TopToBottom_And_BottomToTop()
+        {
+            var comp = Context.RenderComponent<AutoCompleteKeyboardTopBottomNavigationTest>(); // {Alabama, Alaska, American Samoa}
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocompleteInstance = autocompletecomp.Instance;
+            var selectedItemIndexPropertyInfo = typeof(MudAutocomplete<string>).GetField("_selectedListItemIndex", BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new ArgumentException("Cannot find field named '_selectedListItemIndex' on type 'MudAutocomplete<T>'");
+
+            // click to open the popup
+            autocompletecomp.Find(TagNames.Input).Click();
+            comp.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue("Input has been focused and should open the popup"));
+            
+            // send arrow up once, top -> bottom navigation
+            await comp.InvokeAsync(() => autocompleteInstance.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            
+            // last item should be highlighted
+            comp.WaitForAssertion(() => selectedItemIndexPropertyInfo.GetValue(autocompleteInstance).Should().Be(2));
+            
+            // reset input field
+            autocompletecomp.Find(TagNames.Input).Input(string.Empty);
+            comp.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue("Input has been focused and should open the popup"));
+            
+            // send arrow down three times, bottom -> top navigation
+            await comp.InvokeAsync(() => autocompleteInstance.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.InvokeAsync(() => autocompleteInstance.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.InvokeAsync(() => autocompleteInstance.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            
+            // first item should be highlighted
+            comp.WaitForAssertion(() => selectedItemIndexPropertyInfo.GetValue(autocompleteInstance).Should().Be(0));
+        }
+        
+        [Test]
+        public async Task Autocomplete_Should_Not_Highlight_DisabledItem_WithKeyArrows()
+        {
+            var comp = Context.RenderComponent<AutocompleteDisabledItemsKeyArrowTest>(); // {*Alabama, Alaska, Arizona, Delaware, *District of Columbia}
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocompleteInstance = autocompletecomp.Instance;
+            var selectedItemIndexPropertyInfo = typeof(MudAutocomplete<string>).GetField("_selectedListItemIndex", BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new ArgumentException("Cannot find field named '_selectedListItemIndex' on type 'MudAutocomplete<T>'");
+
+            // click to open the popup
+            autocompletecomp.Find(".mud-input-slot").Click();
+            comp.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue("Input has been focused and should open the popup"));
+            
+            // send arrow down three times
+            await comp.InvokeAsync(() => autocompleteInstance.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.InvokeAsync(() => autocompleteInstance.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            await comp.InvokeAsync(() => autocompleteInstance.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowDown" }));
+            
+            // first enabled item should be highlighted
+            comp.WaitForAssertion(() => selectedItemIndexPropertyInfo.GetValue(autocompleteInstance).Should().Be(1));
+            
+            // reset input field
+            autocompletecomp.Find(TagNames.Input).Input(string.Empty);
+            comp.WaitForAssertion(() => autocompleteInstance.IsOpen.Should().BeTrue("Input has been focused and should open the popup"));
+            
+            // send arrow up once
+            await comp.InvokeAsync(() => autocompleteInstance.OnInputKeyUp(new KeyboardEventArgs() { Key = "ArrowUp" }));
+            
+            // last enabled item should be highlighted
+            comp.WaitForAssertion(() => selectedItemIndexPropertyInfo.GetValue(autocompleteInstance).Should().Be(3));
+        }
+        
         [Test]
         public async Task Autocomplete_Should_Not_Select_Disabled_Item()
         {

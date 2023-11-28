@@ -1,0 +1,27 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudAutocomplete @bind-Value="value" SearchFunc="@Search"  Label="Navigate with keyboard arrows">
+    <ItemTemplate>
+        @context
+    </ItemTemplate>
+</MudAutocomplete>
+
+@code
+{
+    public static string __description__ = "User should be able to navigate top to bottom and bottom to top with keyboard arrow keys.";
+
+    string value = null;
+
+    private string[] states =
+    {
+        "Alabama", "Alaska", "American Samoa"
+    };
+
+    private Task<IEnumerable<string>> Search(string value)
+    {
+        var result = string.IsNullOrEmpty(value) ? states : states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        return Task.FromResult(result);
+    }
+}

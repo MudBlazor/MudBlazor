@@ -55,7 +55,7 @@
                             {
                                 var item = _items[index];
                                 bool isSelected = index == _selectedListItemIndex;
-                                bool isDisabled = !_enabledItemIndices.Contains(index);
+                                bool isDisabled = !_enabledItemIndicesLinkedList.Contains(index);
                                 var captureIndex = index;
                                 <MudListItem @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClick(item))" OnClickHandlerPreventDefault="true" Class="@GetListItemClassname(isSelected)">
                                     @if (ItemTemplate == null)
