@@ -61,6 +61,10 @@ namespace MudBlazor
         [Category(CategoryTypes.NavMenu.ClickAction)]
         public string? Target { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Appearance)]
+        public string? Text { get; set; }
+
         /// <summary>
         /// User class names when active, separated by space.
         /// </summary>
