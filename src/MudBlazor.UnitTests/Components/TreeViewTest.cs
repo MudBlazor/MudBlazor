@@ -26,7 +26,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-treeview-item-content").DoubleClick();
             comp.Instance.SelectedValue.Should().BeNull();
         }
-
+        
         [Test]
         public void TreeView_ClickWhileActive_DoesChangeSelection()
         {
@@ -254,5 +254,61 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p.mud-typography")[4].InnerHtml.MarkupMatches("This is item 5");
         }
         
+        
+        [Test]
+        public async Task TreeView_SetSelectedValue_SetsSelectedValue()
+        {
+            var comp = Context.RenderComponent<TreeViewTest6>();
+            
+            await comp.Instance.Tree.SetSelectedValue("logo.png");
+            comp.Instance.SelectedValue.Should().Be("logo.png");
+        }
+        
+        [Test]
+        public async Task TreeView_SetSelectedValue_ReturnsTrueWhenChanged()
+        {
+            var comp = Context.RenderComponent<TreeViewTest6>();
+            
+            var results = await comp.Instance.Tree.SetSelectedValue("logo.png");
+            results.Should().BeTrue();
+        }
+        
+        [Test]
+        public async Task TreeView_SetSelectedValue_ReturnsFalseWhenNoMatched()
+        {
+            var comp = Context.RenderComponent<TreeViewTest6>();
+            
+            var results = await comp.Instance.Tree.SetSelectedValue("xxxxxx");
+            results.Should().BeFalse();
+        }
+        
+        [Test]
+        public async Task TreeView_SetSelectedValue_ReturnsTrueWhenNoMatched()
+        {
+            var comp = Context.RenderComponent<TreeViewTest6>();
+            
+            var results = await comp.Instance.Tree.SetSelectedValue("xxxxxx");
+            results.Should().BeFalse();
+        }
+        
+        [Test]
+        public async Task TreeView_SetSelectedValue_ReturnsTrueWhenItemAlreadySelected()
+        {
+            var comp = Context.RenderComponent<TreeViewTest6>();
+            
+            await comp.Instance.Tree.SetSelectedValue("logo.png");
+            var results = await comp.Instance.Tree.SetSelectedValue("logo.png");
+            results.Should().BeTrue();
+        }
+        
+        [Test]
+        public async Task TreeView_SetSelectedValue_WillUnselectValueWhenSetToNull()
+        {
+            var comp = Context.RenderComponent<TreeViewTest6>();
+            
+            await comp.Instance.Tree.SetSelectedValue("logo.png");
+            await comp.Instance.Tree.SetSelectedValue(null);
+            comp.Instance.SelectedValue.Should().Be(null);
+        }
     }
 }

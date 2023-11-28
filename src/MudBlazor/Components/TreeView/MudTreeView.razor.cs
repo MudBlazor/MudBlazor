@@ -255,15 +255,19 @@ namespace MudBlazor
         /// otherwise, no changes are made.
         /// </summary>
         /// <param name="value">The value to be set as the selected value.</param>
+        ///<returns>
+        /// Returns true if the value is found and the corresponding item is selected; 
+        /// otherwise, returns false.
+        /// </returns>
         /// <remarks>
         /// This method updates the internal state to reflect the new selection and 
         /// triggers the necessary UI updates and events.
         /// </remarks>
-        public async Task SetSelectedValue(T value)
+        public async Task<bool> SetSelectedValue(T value)
         {
             if (_selectedValue?.Value?.Equals(value) ?? false)
             {
-                return;
+                return true;
             }
 
             if (value != null)
@@ -271,10 +275,19 @@ namespace MudBlazor
                 var item = FindItemByValue(value);
                 if (item != null)
                 {
-                    await UpdateSelected(item, true);
+                   await InvokeAsync(async () => await UpdateSelected(item, true));
+                   return true;
                 }
-                return;
+
+                return false;
             }
+
+            if (_selectedValue != null)
+            {
+                await InvokeAsync(async () => await UpdateSelected(_selectedValue, false));
+            }
+            
+            return true;
         }
 
         internal MudTreeViewItem<T>? FindItemByValue(T value, List<MudTreeViewItem<T>>? children = null)
