@@ -30,6 +30,8 @@ window.mudInputAutoGrow = {
         elem.addEventListener('input', () => {
             elem.adjustAutoGrowHeight();
         });
+
+        elem.adjustAutoGrowHeight();
     },
     adjustHeight: (elem) => {
         if (typeof elem.adjustAutoGrowHeight === 'function') {
