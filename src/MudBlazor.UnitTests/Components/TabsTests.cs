@@ -295,7 +295,8 @@ namespace MudBlazor.UnitTests.Components
                 { 2, 200 },
                 { 3, 300 },
                 { 4, 400 },
-                { 5, 400 },
+                { 5, 500 },
+                { 6, 584 },
             };
 
             for (var i = 0; i < 6; i++)

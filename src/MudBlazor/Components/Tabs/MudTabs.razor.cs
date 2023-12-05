@@ -712,11 +712,12 @@ namespace MudBlazor
             var position = GetLengthOfPanelItems(panel, isLast);
             if (isLast)
             {
-                if (position - _toolbarContentSize > 0)
+                var compare = _toolbarContentSize;
+                if (_showScrollButtons)
+                    compare += 48 * 2;
+                if (position - compare > 0)
                 {
-                    position -= _toolbarContentSize;
-                    if (_showScrollButtons)
-                        position += 48 * 2;
+                    position -= compare;
                 }
                 else
                     return false;
@@ -730,7 +731,7 @@ namespace MudBlazor
 
         private void CenterScrollPositionAroundSelectedItem()
         {
-            if (_showScrollButtons && _activePanelIndex + 1 == _panels.Count)
+            if (_showScrollButtons && ActivePanelIndex + 1 == _panels.Count)
             {
                 var isScrolled = ScrollToItem(_panels.Last(), true);
                 if (isScrolled)
@@ -758,7 +759,6 @@ namespace MudBlazor
                 if (length >= _toolbarContentSize)
                 {
                     _scrollIndex = _panels.IndexOf(panelToStart);
-                    ScrollToItem(panelToStart);
                     break;
                 }
 
@@ -777,7 +777,6 @@ namespace MudBlazor
                 if (length < 0)
                 {
                     _scrollIndex = _panels.IndexOf(panelToStart);
-                    ScrollToItem(panelToStart);
                     break;
                 }
 
