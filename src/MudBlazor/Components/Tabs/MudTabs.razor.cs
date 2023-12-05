@@ -409,26 +409,26 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public async Task ActivatePanel(MudTabPanel panel, bool ignoreDisabledState = false)
+        public void ActivatePanel(MudTabPanel panel, bool ignoreDisabledState = false)
         {
             if (panel is not null && _panels.IndexOf(panel) > -1)
-                await ActivatePanel(panel, null, ignoreDisabledState);
+                ActivatePanel(panel, null, ignoreDisabledState);
         }
 
-        public async Task ActivatePanel(int index, bool ignoreDisabledState = false)
+        public void ActivatePanel(int index, bool ignoreDisabledState = false)
         {
             if (index > -1 && index <= _panels.Count - 1)
-                await ActivatePanel(_panels[index], null, ignoreDisabledState);
+                ActivatePanel(_panels[index], null, ignoreDisabledState);
         }
 
-        public async Task ActivatePanel(object id, bool ignoreDisabledState = false)
+        public void ActivatePanel(object id, bool ignoreDisabledState = false)
         {
             var panel = _panels.Where((p) => Equals(p.ID, id)).FirstOrDefault();
             if (panel != null)
-                await ActivatePanel(panel, null, ignoreDisabledState);
+                ActivatePanel(panel, null, ignoreDisabledState);
         }
 
-        private async Task ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool ignoreDisabledState = false)
+        private async void ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool ignoreDisabledState = false)
         {
             if (!panel.Disabled || ignoreDisabledState)
             {
@@ -486,8 +486,8 @@ namespace MudBlazor
 
         protected string WrapperScrollStyle =>
         new StyleBuilder()
-            .AddStyle("transform", $"translateX({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position is Position.Top or Position.Bottom)
-            .AddStyle("transform", $"translateY({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
+            .AddStyle("transform", $"translateX({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position is Position.Top or Position.Bottom)
+            .AddStyle("transform", $"translateY({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
             .Build();
 
         protected string PanelsClassnames =>
