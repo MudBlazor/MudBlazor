@@ -13,7 +13,7 @@
                 }
                 @if (_showScrollButtons)
                 {
-                    <div @ref="@_prevButton" class="mud-tabs-scroll-button">
+                    <div class="mud-tabs-scroll-button">
                         <MudIconButton Icon="@_prevIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollPrev())" Disabled="@_prevButtonDisabled" />
                     </div>
                 }
@@ -51,7 +51,7 @@
                 </div>
                 @if (_showScrollButtons)
                 {
-                    <div @ref="@_nextButton" class="mud-tabs-scroll-button">
+                    <div class="mud-tabs-scroll-button">
                         <MudIconButton Icon="@_nextIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollNext())" Disabled="@_nextButtonDisabled" />
                     </div>
                 }

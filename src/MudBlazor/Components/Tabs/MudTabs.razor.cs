@@ -25,8 +25,6 @@ namespace MudBlazor
         private bool _showScrollButtons;
         private bool _disableSliderAnimation;
         private ElementReference _tabsContentSize;
-        private ElementReference _prevButton;
-        private ElementReference _nextButton;
         private double _sliderSize;
         private double _sliderPosition;
         private double _toolbarContentSize;
@@ -315,14 +313,14 @@ namespace MudBlazor
             base.OnInitialized();
         }
 
-        protected override async Task OnParametersSetAsync()
+        protected override void OnParametersSet()
         {
             if (_resizeObserver == null)
             {
                 _resizeObserver = _resizeObserverFactory.Create();
             }
 
-            await Rerender();
+            Rerender();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -339,7 +337,7 @@ namespace MudBlazor
 
                 _resizeObserver.OnResized += OnResized;
 
-                await Rerender();
+                Rerender();
                 StateHasChanged();
 
                 _isRendered = true;
@@ -375,7 +373,7 @@ namespace MudBlazor
             if (_isRendered == true && _resizeObserver.IsElementObserved(reference) == false)
             {
                 await _resizeObserver.Observe(reference);
-                await Rerender();
+                Rerender();
                 StateHasChanged();
             }
         }
@@ -407,7 +405,7 @@ namespace MudBlazor
 
             _panels.Remove(tabPanel);
             await _resizeObserver.Unobserve(tabPanel.PanelRef);
-            await Rerender();
+            Rerender();
             StateHasChanged();
         }
 
@@ -448,7 +446,7 @@ namespace MudBlazor
                 CenterScrollPositionAroundSelectedItem();
                 SetScrollabilityStates();
                 SetSliderState();
-                await SetScrollButtonVisibility();
+                SetScrollButtonVisibility();
                 SetScrollabilityStates();
                 StateHasChanged();
             }
@@ -583,14 +581,14 @@ namespace MudBlazor
 
         #region Rendering and placement
 
-        private async Task Rerender()
+        private void Rerender()
         {
             _nextIcon = RightToLeft ? PrevIcon : NextIcon;
             _prevIcon = RightToLeft ? NextIcon : PrevIcon;
 
             GetToolbarContentSize();
             GetAllTabsSize();
-            await SetScrollButtonVisibility();
+            SetScrollButtonVisibility();
             SetSliderState();
             SetScrollabilityStates();
         }
@@ -659,19 +657,17 @@ namespace MudBlazor
 
         #region scrolling 
 
-        private async Task SetScrollButtonVisibility()
+        private void SetScrollButtonVisibility()
         {
             _showScrollButtons = AlwaysShowScrollButtons || _allTabsSize > _toolbarContentSize || _scrollIndex != 0;
-            await _resizeObserver.Observe(_prevButton);
-            await _resizeObserver.Observe(_nextButton);
         }
 
-        private async Task ScrollPrev()
+        private void ScrollPrev()
         {
             var scrollAmount = Math.Max(GetVisiblePanels(), 1);
             _scrollIndex = Math.Max(_scrollIndex - scrollAmount, 0);
             ScrollToItem(_panels[_scrollIndex]);
-            await SetScrollButtonVisibility();
+            SetScrollButtonVisibility();
             SetScrollabilityStates();
         }
 
@@ -719,9 +715,8 @@ namespace MudBlazor
                 if (position - _toolbarContentSize > 0)
                 {
                     position -= _toolbarContentSize;
-                    var nextSize = GetRelevantSize(_nextButton);
-                    var prevSize = GetRelevantSize(_prevButton);
-                    position += nextSize + prevSize;
+                    if (_showScrollButtons)
+                        position += 48 * 2;
                 }
                 else
                     return false;
