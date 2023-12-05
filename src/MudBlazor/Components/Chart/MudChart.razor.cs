@@ -104,6 +104,13 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// If true, the legend will be hidden.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Chart.Appearance)]
+        public bool HideLegend { get; set; } = false;
+
+        /// <summary>
         /// Selected index of a portion of the chart.
         /// </summary>
         [Parameter] public EventCallback<int> SelectedIndexChanged { get; set; }

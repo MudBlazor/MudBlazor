@@ -41,4 +41,7 @@
 
 	@MudChartParent?.CustomGraphics
 </svg>
-<Legend Data="@_legends" />
+@if (!HideLegend)
+{
+	<Legend Data="@_legends" />
+}
