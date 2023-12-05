@@ -58,6 +58,12 @@ namespace MudBlazor
         public bool Error { get; set; }
 
         /// <summary>
+        /// If true, all validation will be overridden with the given ErrorText, still requires error to be set true.
+        /// </summary>
+        [Parameter]
+        public bool UseManualErrorMessage { get; set; } = false;
+        
+        /// <summary>
         /// The ErrorText that will be displayed if Error true
         /// </summary>
         [Parameter]

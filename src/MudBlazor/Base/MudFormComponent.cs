@@ -55,6 +55,14 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Validation)]
         public string? ErrorText { get; set; }
 
+
+        /// <summary>
+        /// If true, all validation will be overridden with the given ErrorText, still requires error to be set true.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public bool UseManualErrorMessage { get; set; } = false;
+
         /// <summary>
         /// If true, the label will be displayed in an error state.
         /// </summary>
@@ -286,9 +294,18 @@ namespace MudBlazor
             var errors = new List<string>();
             try
             {
+                if (UseManualErrorMessage)
+                {
+                    if (Error && !string.IsNullOrWhiteSpace(ErrorText))
+                        errors.Add(ErrorText);
+                    
+                    return;
+                }
+                
                 // conversion error
                 if (ConversionError)
                     errors.Add(ConversionErrorMessage);
+                
                 // validation errors
                 if (Validation is ValidationAttribute validationAttribute)
                     ValidateWithAttribute(validationAttribute, _value, errors);
