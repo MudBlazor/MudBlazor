@@ -278,5 +278,62 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.TrueInvocationCount.Should().Be(1);
             comp.Instance.FalseInvocationCount.Should().Be(1);
         }
+
+        [Test]
+        public void OnAction_WhenClick_OnActionInvoked()
+        {
+            var comp = Context.RenderComponent<MenuItemActionTest>();
+            comp.Find("button.mud-button-root").Click();
+            comp.Find("#id_on_action").Click();
+            comp.Instance.Count.Should().Be(1);
+            comp.Instance.Callers.Should().Be("A");
+        }
+
+        [Test]
+        public void OnActionAndOnClick_WhenClick_JustOnClickInvoked()
+        {
+            var comp = Context.RenderComponent<MenuItemActionTest>();
+            comp.Find("button.mud-button-root").Click();
+            comp.Find("#id_on_action_on_click").Click();
+            comp.Instance.Count.Should().Be(1);
+            comp.Instance.Callers.Should().Be("C");
+        }
+
+        [Test]
+        public void OnActionAndOnTouch_WhenTouch_JustOnTouchInvoked()
+        {
+            var comp = Context.RenderComponent<MenuItemActionTest>();
+            comp.Find("button.mud-button-root").Click();
+            var item = comp.Find("#id_on_action_on_touch");
+            item.TouchEnd();
+            comp.Instance.Count.Should().Be(1);
+            comp.Instance.Callers.Should().Be("T");
+        }
+
+        [Test]
+        public void OnActionAndOnTouch_WhenTouchMove_NoneInvoked()
+        {
+            var comp = Context.RenderComponent<MenuItemActionTest>();
+            comp.Find("button.mud-button-root").Click();
+            var item = comp.Find("#id_on_action_on_touch");
+            item.TouchStart();
+            item.TouchMove();
+            item.TouchEnd();
+            comp.Instance.Count.Should().Be(0);
+            comp.Instance.Callers.Should().Be(string.Empty);
+        }
+
+        [Test]
+        public void OnActionAndOnClick_WhenTouchMove_NoneInvoked()
+        {
+            var comp = Context.RenderComponent<MenuItemActionTest>();
+            comp.Find("button.mud-button-root").Click();
+            var item = comp.Find("#id_on_action_on_click");
+            item.TouchStart();
+            item.TouchMove();
+            item.TouchEnd();
+            comp.Instance.Count.Should().Be(0);
+            comp.Instance.Callers.Should().Be(string.Empty);
+        }
     }
 }

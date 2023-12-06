@@ -590,4 +590,21 @@ public class BrowserViewportServiceTests
         Assert.AreEqual(5, beforeObserversCount);
         Assert.Zero(afterObserversCount);
     }
+
+    [Test]
+    public async Task DisposeAsync_SubscribeShouldBeIgnored()
+    {
+        // Arrange
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock);
+        var observer = new BrowserViewportObserverMock();
+
+        // Act
+        await service.DisposeAsync();
+        await service.SubscribeAsync(observer);
+
+        // Asset
+        Assert.Zero(observer.Notifications.Count);
+        Assert.Zero(service.ObserversCount);
+    }
 }

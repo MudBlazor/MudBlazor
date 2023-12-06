@@ -6,13 +6,13 @@
                    Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.CloudUpload"
-                   for="@context">
+                   for="@context.Id">
             Upload using OnFilesChanged
         </MudButton>
     </ButtonTemplate>
 </MudFileUpload>
 
-@code{ 
+@code{
 
     public IBrowserFile File { get; private set; }
     private void UploadFiles(InputFileChangeEventArgs args)

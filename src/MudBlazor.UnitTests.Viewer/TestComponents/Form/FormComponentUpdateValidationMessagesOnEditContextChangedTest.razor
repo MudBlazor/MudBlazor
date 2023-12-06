@@ -1,0 +1,10 @@
+﻿<EditForm Model="@model">
+    <FormComponentUpdateValidationMessagesValidator />
+    <MudTextField Label="Name" @bind-Value="model.Name" For="@(() => model.Name)" />
+</EditForm>
+
+@code {
+    public static string __description__ = "Form should update its validation messages when the state of the edit context changes.";
+
+    private FormComponentUpdateValidationMessagesModel model { get; set; } = new();
+}

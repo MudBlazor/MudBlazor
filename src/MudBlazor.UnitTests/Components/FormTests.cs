@@ -123,9 +123,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormIsTouchedTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
-            var textField = textFieldcomp.Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
-            var dateField = dateComp.Instance;
             // check initial state: form should not be touched
             form.IsTouched.Should().Be(false);
             // input a date, istouched should be true
@@ -154,13 +152,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormIsTouchedNestedTest>();
             var formsComp = comp.FindComponents<MudForm>();
             var textCompFields = comp.FindComponents<MudTextField<string>>();
-            var dateCompFields = comp.FindComponents<MudDatePicker>();
             var form = formsComp[0].Instance;
-            var textField = textCompFields[0].Instance;
-            var dateField = dateCompFields[0].Instance;
             var nestedForm = formsComp[1].Instance;
-            var nestedFormTextField = textCompFields[1].Instance;
-            var nestedFormDateField = dateCompFields[1].Instance;
 
             // check initial state: form should not be touched
             form.IsTouched.Should().Be(false);
@@ -197,10 +190,7 @@ namespace MudBlazor.UnitTests.Components
             var textCompFields = comp.FindComponents<MudTextField<string>>();
             var dateCompFields = comp.FindComponents<MudDatePicker>();
             var form = formsComp[0].Instance;
-            var textField = textCompFields[0].Instance;
-            var dateField = dateCompFields[0].Instance;
             var nestedForm = formsComp[1].Instance;
-            var nestedFormTextField = textCompFields[1].Instance;
             var nestedFormDateField = dateCompFields[1].Instance;
 
             // check initial state: form should not be touched
@@ -226,6 +216,28 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().Be(false);
             nestedForm.IsTouched.Should().Be(true);
         }
+
+        /// <summary>
+        /// Calling ResetTouched should set the IsTouched property to false
+        /// </summary>
+        [Test]
+        public async Task FormIsTouchedResetTest()
+        {
+            var comp = Context.RenderComponent<FormIsTouchedTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dateComp = comp.FindComponent<MudDatePicker>();
+            // check initial state: form should not be touched
+            form.IsTouched.Should().Be(false);
+            // input a date, isTouched should be true
+            dateComp.Find("input").Change("2001-01-31");
+            form.IsTouched.Should().Be(true);
+
+            // resetTouched should set the IsTouched property to default(false)
+            await comp.InvokeAsync(() => form.ResetTouched());
+            form.IsTouched.Should().Be(false);
+        }
+
+
 
         /// <summary>
         /// Custom validation func should be called to determine whether or not a form value is good
@@ -978,6 +990,93 @@ namespace MudBlazor.UnitTests.Components
 
             // clear files
             await input.ClearFilesAsync();
+            fileUploadInstance.Files.Should().BeNull();
+
+            // form should now be invalid because a file is required
+            form.IsValid.Should().BeFalse();
+            form.IsTouched.Should().BeTrue();
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Required");
+            fileUploadInstance.Error.Should().BeTrue();
+            fileUploadInstance.ErrorText.Should().Be("Required");
+
+            // re-add a file, form should now be valid and touched
+            input.UploadFiles(fileToUpload);
+            form.IsValid.Should().BeTrue();
+            form.IsTouched.Should().BeTrue();
+            form.Errors.Length.Should().Be(0);
+            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.Files.Name.Should().Be(fileName);
+        }
+
+        /// <summary>
+        /// FileUpload should be validated like every other form component when a file is cleared programmatically
+        /// </summary>
+        [Test]
+        public async Task Form_Should_Validate_FileUpload_When_File_Cleared_Programmatically()
+        {
+            var fileName = "cat.jpg";
+            var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "image/jpeg", Array.Empty<byte>());
+            var fileToUpload = InputFileContent.CreateFromText("I am a cat image, trust me.", "cat.jpg");
+            var comp = Context.RenderComponent<FormWithFileUploadTest>(
+                ComponentParameterFactory.Parameter(nameof(FormWithFileUploadTest.File), defaultFile));
+            var form = comp.FindComponent<MudForm>().Instance;
+            var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
+            var fileUploadInstance = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
+            var input = fileUploadComp.FindComponent<InputFile>();
+
+            // check initial state: form should not be valid because form is untouched
+            form.IsValid.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
+            fileUploadInstance.Files.Should().NotBeNull();
+            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.ErrorText.Should().BeNullOrEmpty();
+
+            // clear files
+            await comp.InvokeAsync(async () => await fileUploadInstance.ClearAsync());
+            fileUploadInstance.Files.Should().BeNull();
+
+            // form should now be invalid because a file is required
+            form.IsValid.Should().BeFalse();
+            form.IsTouched.Should().BeTrue();
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Required");
+            fileUploadInstance.Error.Should().BeTrue();
+            fileUploadInstance.ErrorText.Should().Be("Required");
+
+            // re-add a file, form should now be valid and touched
+            input.UploadFiles(fileToUpload);
+            form.IsValid.Should().BeTrue();
+            form.IsTouched.Should().BeTrue();
+            form.Errors.Length.Should().Be(0);
+            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.Files.Name.Should().Be(fileName);
+        }
+
+        /// <summary>
+        /// FileUpload should be validated like every other form component when a file is cleared via template action
+        /// </summary>
+        [Test]
+        public async Task Form_Should_Validate_FileUpload_When_File_Cleared_Via_Template_Action()
+        {
+            var fileName = "cat.jpg";
+            var fileToUpload = InputFileContent.CreateFromText("I am a cat image, trust me.", "cat.jpg");
+            var comp = Context.RenderComponent<FormWithFileUploadAndButtonTemplateContextTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
+            var fileUploadInstance = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
+            var input = fileUploadComp.FindComponent<InputFile>();
+            var clearButton = fileUploadComp.Find("button#upload-button");
+
+            // check initial state: form should not be valid because form is untouched
+            form.IsValid.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
+            fileUploadInstance.Files.Should().NotBeNull();
+            fileUploadInstance.Error.Should().BeFalse();
+            fileUploadInstance.ErrorText.Should().BeNullOrEmpty();
+
+            // clear files
+            await comp.InvokeAsync(() => clearButton.Click());
             fileUploadInstance.Files.Should().BeNull();
 
             // form should now be invalid because a file is required
@@ -1818,6 +1917,23 @@ namespace MudBlazor.UnitTests.Components
             forms = comp.FindComponents<MudForm>();
             forms.Count.Should().Be(1);
             parentForm.IsValid.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task FormComponent_Should_UpdateValidationMessagesOnEditContextChanged()
+        {
+            var comp = Context.RenderComponent<FormComponentUpdateValidationMessagesOnEditContextChangedTest>();
+            var validator = comp.FindComponent<FormComponentUpdateValidationMessagesValidator>();
+            var errorMessage = "some error";
+
+            await validator.InvokeAsync(() => validator.Instance.AddError(nameof(FormComponentUpdateValidationMessagesModel.Name), errorMessage));
+
+            var tf = comp.FindComponent<MudTextField<string>>();
+            tf.Instance.ValidationErrors.Should().HaveCount(1).And.Contain(new[] { errorMessage });
+
+            await validator.InvokeAsync(() => validator.Instance.ClearErrors());
+
+            tf.Instance.ValidationErrors.Should().HaveCount(0);
         }
     }
 }

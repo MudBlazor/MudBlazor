@@ -58,15 +58,15 @@
   </Target>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.16" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.16" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.25" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.25" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.25" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.14" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.14" />
   </ItemGroup>
 
   <Target Name="ToolRestore">

@@ -12,6 +12,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
@@ -106,10 +107,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies the button template renders
+        /// Verifies the button template context's ToString method returns the FileUpload component Id
         /// </summary>
         [Test]
-        public void FileUpload_ButtonTemplateTest()
+        public void FileUpload_ButtonTemplate_Backwards_Compatibility_Test()
         {
             var comp = Context.RenderComponent<FileUploadButtonTemplateTest>();
 
@@ -119,6 +120,44 @@ namespace MudBlazor.UnitTests.Components
 
             var after = comp.Find(".mud-input-control-input-container div");
             after.MarkupMatches("<div>Select Template</div>");
+        }
+
+        /// <summary>
+        /// Verifies the button template renders
+        /// </summary>
+        [Test]
+        public void FileUpload_ButtonTemplateContextTest_Renders()
+        {
+            var comp = Context.RenderComponent<FileUploadButtonTemplateContextTest>();
+
+            var label = comp.Find("label");
+            label.ToMarkup().Should().Contain("Upload");
+            label.GetAttribute("for").Should().StartWith("mud_fileupload_"); //ensure button markup renders
+
+            var clearButton = comp.Find("button#clear-button");
+            clearButton.ToMarkup().Should().Contain("Clear");
+        }
+
+        /// <summary>
+        /// Verifies the button template context's ClearAsync action clears the Files property
+        /// </summary>
+        [Test]
+        public async Task FileUpload_ButtonTemplateContext_ClearAsync_Action_Clears_Files()
+        {
+            var fileName = "cat.jpg";
+            var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "image/jpeg", Array.Empty<byte>());
+            var comp = Context.RenderComponent<FileUploadButtonTemplateContextTest>(
+                ComponentParameterFactory.Parameter(nameof(FileUploadButtonTemplateContextTest.File), defaultFile));
+            var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
+            var fileUploadInstance = fileUploadComp.Instance;
+            var clearButton = fileUploadComp.Find("button#clear-button");
+
+            fileUploadInstance.Files.Should().NotBeNull();
+            fileUploadInstance.Files.Name.Should().Be(fileName);
+
+            await comp.InvokeAsync(() => clearButton.Click());
+
+            fileUploadInstance.Files.Should().BeNull();
         }
 
         /// <summary>
@@ -186,7 +225,7 @@ namespace MudBlazor.UnitTests.Components
                 InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt"),
                 InputFileContent.CreateFromText("A Balrog, servant of Morgoth", "upload2.txt")
             };
-            
+
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture; //<<< rework this!
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
@@ -277,7 +316,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false)]
         public void FileUploadAppendMultipleTest(bool appendMultiple)
         {
-            var comp = Context.RenderComponent<FileUploadAppendMultipleTest>(p => 
+            var comp = Context.RenderComponent<FileUploadAppendMultipleTest>(p =>
                 p.Add(x => x.AppendMultipleFiles, appendMultiple));
 
             var input = comp.FindComponent<InputFile>();
