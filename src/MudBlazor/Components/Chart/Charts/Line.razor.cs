@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,8 +18,7 @@ namespace MudBlazor.Charts
         private const double VerticalStartSpace = 25.0;
         private const double VerticalEndSpace = 25.0;
 
-        [CascadingParameter]
-        public MudChart MudChartParent { get; set; }
+        [CascadingParameter] public MudChart MudChartParent { get; set; }
 
         private List<SvgPath> _horizontalLines = new();
         private List<SvgText> _horizontalValues = new();
@@ -37,51 +36,32 @@ namespace MudBlazor.Charts
             base.OnParametersSet();
 
             if (MudChartParent != null)
-                _series = MudChartParent.ChartSeries;
+                _series = MudChartParent.ChartSeries; 
+            
+            ComputeUnitsAndNumberOfLines(out double gridXUnits, out double gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines);                    
 
-            ComputeUnitsAndNumberOfLines(
-                out double gridXUnits,
-                out double gridYUnits,
-                out int numHorizontalLines,
-                out int lowestHorizontalLine,
-                out int numVerticalLines
-            );
+            var horizontalSpace = (BoundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines - 1);
+            var verticalSpace = (BoundHeight - VerticalStartSpace - VerticalEndSpace) / (numHorizontalLines - 1); 
 
-            var horizontalSpace =
-                (BoundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines - 1);
-            var verticalSpace =
-                (BoundHeight - VerticalStartSpace - VerticalEndSpace) / (numHorizontalLines - 1);
-
-            GenerateHorizontalGridLines(
-                numHorizontalLines,
-                lowestHorizontalLine,
-                gridYUnits,
-                verticalSpace
-            );
+            GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, gridXUnits, horizontalSpace);
             GenerateChartLines(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
         }
 
-        private void ComputeUnitsAndNumberOfLines(
-            out double gridXUnits,
-            out double gridYUnits,
-            out int numHorizontalLines,
-            out int lowestHorizontalLine,
-            out int numVerticalLines
-        )
+        private void ComputeUnitsAndNumberOfLines(out double gridXUnits, out double gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
         {
             gridXUnits = 30;
 
             gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
             if (gridYUnits <= 0)
                 gridYUnits = 20;
-
+                
             if (_series.SelectMany(series => series.Data).Any())
             {
                 var minY = _series.SelectMany(series => series.Data).Min();
                 var maxY = _series.SelectMany(series => series.Data).Max();
                 lowestHorizontalLine = (int)Math.Floor(minY / gridYUnits);
-                var highestHorizontalLine = (int)Math.Ceiling(maxY / gridYUnits);
+                var highestHorizontalLine = (int)Math.Ceiling(maxY / gridYUnits);                
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
 
                 // this is a safeguard against millions of gridlines which might arise with very high values
@@ -92,9 +72,9 @@ namespace MudBlazor.Charts
                     lowestHorizontalLine = (int)Math.Floor(minY / gridYUnits);
                     highestHorizontalLine = (int)Math.Ceiling(maxY / gridYUnits);
                     numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
-                }
+                }    
 
-                numVerticalLines = _series.Max(series => series.Data.Length);
+                numVerticalLines = _series.Max(series => series.Data.Length);  
             }
             else
             {
@@ -104,43 +84,33 @@ namespace MudBlazor.Charts
             }
         }
 
-        private void GenerateHorizontalGridLines(
-            int numHorizontalLines,
-            int lowestHorizontalLine,
-            double gridYUnits,
-            double verticalSpace
-        )
+        private void GenerateHorizontalGridLines(int numHorizontalLines, int lowestHorizontalLine, double gridYUnits, double verticalSpace)
         {
             _horizontalLines.Clear();
             _horizontalValues.Clear();
 
             for (var i = 0; i < numHorizontalLines; i++)
             {
-                var y = VerticalStartSpace + i * verticalSpace;
+                var y = VerticalStartSpace + i * verticalSpace;                
                 var line = new SvgPath()
                 {
                     Index = i,
-                    Data =
-                        $"M {ToS(HorizontalStartSpace)} {ToS((BoundHeight - y))} L {ToS((BoundWidth - HorizontalEndSpace))} {ToS((BoundHeight - y))}"
+                    Data = $"M {ToS(HorizontalStartSpace)} {ToS((BoundHeight - y))} L {ToS((BoundWidth - HorizontalEndSpace))} {ToS((BoundHeight - y))}"
                 };
                 _horizontalLines.Add(line);
 
                 var startGridY = (lowestHorizontalLine + i) * gridYUnits;
-                var lineValue = new SvgText()
-                {
-                    X = HorizontalStartSpace - 10,
-                    Y = BoundHeight - y + 5,
-                    Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat)
+                var lineValue = new SvgText() 
+                { 
+                    X = HorizontalStartSpace - 10, 
+                    Y = BoundHeight - y + 5, 
+                    Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat) 
                 };
                 _horizontalValues.Add(lineValue);
             }
         }
 
-        private void GenerateVerticalGridLines(
-            int numVerticalLines,
-            double gridXUnits,
-            double horizontalSpace
-        )
+        private void GenerateVerticalGridLines(int numVerticalLines, double gridXUnits, double horizontalSpace)
         {
             _verticalLines.Clear();
             _verticalValues.Clear();
@@ -151,74 +121,56 @@ namespace MudBlazor.Charts
                 var line = new SvgPath()
                 {
                     Index = i,
-                    Data =
-                        $"M {ToS(x)} {ToS((BoundHeight - VerticalStartSpace))} L {ToS(x)} {ToS(VerticalEndSpace)}"
+                    Data = $"M {ToS(x)} {ToS((BoundHeight - VerticalStartSpace))} L {ToS(x)} {ToS(VerticalEndSpace)}"
                 };
                 _verticalLines.Add(line);
 
                 var xLabels = i < XAxisLabels.Length ? XAxisLabels[i] : "";
                 var lineValue = new SvgText()
-                {
-                    X = x,
-                    Y = BoundHeight - 2,
+                { 
+                    X = x, 
+                    Y = BoundHeight - 2, 
                     Value = xLabels
                 };
                 _verticalValues.Add(lineValue);
             }
         }
 
-        private void GenerateChartLines(
-            int lowestHorizontalLine,
-            double gridYUnits,
-            double horizontalSpace,
-            double verticalSpace
-        )
+        private void GenerateChartLines(int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace)
         {
             _legends.Clear();
             _chartLines.Clear();
 
             for (var i = 0; i < _series.Count; i++)
-            {
+            {                
                 StringBuilder chartLine = new StringBuilder();
-
-                var data = _series[i].Data;
-
+                            
+                var data = _series[i].Data;   
+                
                 (double x, double y) GetXYForDataPoint(int index)
                 {
                     var x = HorizontalStartSpace + index * horizontalSpace;
-                    var gridValue =
-                        (data[index] / gridYUnits - lowestHorizontalLine) * verticalSpace;
+                    var gridValue = (data[index] / gridYUnits - lowestHorizontalLine) * verticalSpace;
                     var y = BoundHeight - VerticalStartSpace - gridValue;
                     return (x, y);
-                }
+                }             
 
-                bool interpolationEnabled =
-                    MudChartParent != null
-                    && MudChartParent.ChartOptions.InterpolationOption
-                        != InterpolationOption.Straight;
+                bool interpolationEnabled = MudChartParent != null && MudChartParent.ChartOptions.InterpolationOption != InterpolationOption.Straight;
                 if (interpolationEnabled)
                 {
                     double[] XValues = new double[data.Length];
-                    double[] YValues = new double[data.Length];
+                    double[] YValues = new double[data.Length];                
                     for (var j = 0; j < data.Length; j++)
                         (XValues[j], YValues[j]) = GetXYForDataPoint(j);
 
-                    ILineInterpolator interpolator = MudChartParent
-                        ?.ChartOptions
-                        .InterpolationOption switch
-                    {
+                    ILineInterpolator interpolator = MudChartParent?.ChartOptions.InterpolationOption switch {
                         InterpolationOption.NaturalSpline => new NaturalSpline(XValues, YValues),
-                        InterpolationOption.EndSlope => new EndSlopeSpline(XValues, YValues),
-                        InterpolationOption.Periodic => new PeriodicSpline(XValues, YValues),
-                        _
-                            => throw new NotImplementedException(
-                                "Interpolation option not implemented yet"
-                            )
+                        InterpolationOption.EndSlope      => new EndSlopeSpline(XValues, YValues),
+                        InterpolationOption.Periodic      => new PeriodicSpline(XValues, YValues),
+                        _                                 => throw new NotImplementedException("Interpolation option not implemented yet")
                     };
 
-                    horizontalSpace =
-                        (BoundWidth - HorizontalStartSpace - HorizontalEndSpace)
-                        / interpolator.InterpolatedXs.Length;
+                    horizontalSpace = (BoundWidth - HorizontalStartSpace - HorizontalEndSpace) / interpolator.InterpolatedXs.Length;
 
                     for (var j = 0; j < interpolator.InterpolatedYs.Length; j++)
                     {
@@ -228,7 +180,7 @@ namespace MudBlazor.Charts
                             chartLine.Append(" L ");
 
                         var x = HorizontalStartSpace + j * horizontalSpace;
-                        var y = interpolator.InterpolatedYs[j];
+                        var y = interpolator.InterpolatedYs[j];                        
                         chartLine.Append(ToS(x));
                         chartLine.Append(' ');
                         chartLine.Append(ToS(y));
@@ -251,11 +203,18 @@ namespace MudBlazor.Charts
                 }
                 if (_series[i].IsVisible)
                 {
-                    var line = new SvgPath() { Index = i, Data = chartLine.ToString() };
-                    _chartLines.Add(line);
+                var line = new SvgPath()
+                {
+                    Index = i,
+                    Data = chartLine.ToString()
+                };
+                _chartLines.Add(line);
                 }
-
-                var legend = new SvgLegend() { Index = i, Labels = _series[i].Name };
+                var legend = new SvgLegend()
+                {
+                    Index = i,
+                    Labels = _series[i].Name
+                };
                 _legends.Add(legend);
             }
         }
