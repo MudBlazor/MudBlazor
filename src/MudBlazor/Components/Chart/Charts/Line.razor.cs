@@ -249,7 +249,7 @@ namespace MudBlazor.Charts
                         chartLine.Append(ToS(y));
                     }
                 }
-                if (!_series[i].IsVisible)
+                if (_series[i].IsVisible)
                 {
                     var line = new SvgPath() { Index = i, Data = chartLine.ToString() };
                     _chartLines.Add(line);
