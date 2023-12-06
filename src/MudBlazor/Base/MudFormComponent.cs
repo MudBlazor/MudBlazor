@@ -62,7 +62,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool UseManualErrorMessage { get; set; } = false;
-
+        
+        /// <summary>
+        /// Callback method that will be called when the value is set and is valid
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public EventCallback<T> OnValidValueSet { get; set; }
+        
         /// <summary>
         /// If true, the label will be displayed in an error state.
         /// </summary>
@@ -362,6 +369,9 @@ namespace MudBlazor
                     ErrorText = errors.FirstOrDefault();
                     ErrorId = HasErrors ? Guid.NewGuid().ToString() : null;
                     Form?.Update(this);
+
+                    if (!Error) await OnValidValueSet.InvokeAsync(_value);
+
                     StateHasChanged();
                 }
             }

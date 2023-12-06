@@ -765,6 +765,26 @@ namespace MudBlazor.UnitTests.Components
         }
         
         [Test]
+        public async Task TextField_ShouldCallOnValidValueSet_WithValidValue()
+        {
+            var validValue = "";
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                ComponentParameter.CreateParameter("Value", ""),
+                ComponentParameter.CreateParameter("Required", true),
+                EventCallback<string>("OnValidValueSet", x => validValue = x));
+            
+            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Text", "A"));
+            await comp.InvokeAsync(() => { comp.Instance.Validate(); });
+            comp.Instance.Error.Should().BeFalse();
+            validValue.Should().BeEquivalentTo("A");
+
+            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Text", ""));
+            await comp.InvokeAsync(() => { comp.Instance.Validate(); });
+            comp.Instance.Error.Should().BeTrue();
+            validValue.Should().BeEquivalentTo("A");
+        }
+        
+        [Test]
         public async Task TextField_ShouldSetErrorText_WhenManualOverRideTrue()
         {
             var errorText = Guid.NewGuid().ToString();
