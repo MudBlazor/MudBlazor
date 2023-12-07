@@ -53,6 +53,7 @@ namespace MudBlazor.UnitTests.Charts
             {
                 new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, -72, 69, 62, 62, -55, 65, 70 } },
                 new ChartSeries() { Name = "Series 2", Data = new double[] { 10, 41, 35, 51, 49, 62, -69, 91, -148 } },
+                new ChartSeries() { Name = "Series 3", Data = new double[] { 10, 41, 35, 51, 49, 62, -69, 91, -148 }, IsVisible = false }
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
             
@@ -106,6 +107,15 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartOptions, new ChartOptions(){ChartPalette = _modifiedPalette}));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
+
+            var seriesElements = comp.FindAll(".mud-chart-legend-item");
+            seriesElements[0].InnerHtml.Should().NotContain("text-decoration: line-through;");
+            seriesElements[1].InnerHtml.Should().NotContain("text-decoration: line-through;");
+            seriesElements[2].InnerHtml.Should().Contain("text-decoration: line-through;");
+            
+            comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"");
+            comp.Markup.Should().Contain("class=\"mud-charts-yaxis\"");
+            comp.Markup.Should().Contain("mud-chart-legend-item");
         }
     }
 }
