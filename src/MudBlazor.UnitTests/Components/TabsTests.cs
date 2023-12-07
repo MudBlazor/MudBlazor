@@ -295,7 +295,7 @@ namespace MudBlazor.UnitTests.Components
                 { 2, 200 },
                 { 3, 300 },
                 { 4, 400 },
-                { 5, 486 },
+                { 5, 390 },
             };
 
             for (var i = 0; i < 6; i++)
@@ -700,7 +700,7 @@ namespace MudBlazor.UnitTests.Components
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
-            styleAttr.Should().Be($"transform:translateX(-496px);");
+            styleAttr.Should().Be($"transform:translateX(-400px);");
         }
 
         [Test]

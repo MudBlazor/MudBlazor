@@ -713,10 +713,10 @@ namespace MudBlazor
             if (isLast)
             {
                 var compare = _toolbarContentSize;
-                if (AlwaysShowScrollButtons)
-                    compare -= 48 * 2;
                 if (position - compare > 0)
                 {
+                    if (!AlwaysShowScrollButtons && _showScrollButtons)
+                        compare -= 48 * 2;
                     position -= compare;
                 }
                 else
