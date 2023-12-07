@@ -295,8 +295,7 @@ namespace MudBlazor.UnitTests.Components
                 { 2, 200 },
                 { 3, 300 },
                 { 4, 400 },
-                { 5, 500 },
-                { 6, 584 },
+                { 5, 486 },
             };
 
             for (var i = 0; i < 6; i++)
@@ -438,7 +437,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.SetPanelActive(5);
 
-            var expectedTranslation = 400.0;
+            var expectedTranslation = 500.0;
 
             for (var i = 0; i < 2; i++)
             {
@@ -701,7 +700,7 @@ namespace MudBlazor.UnitTests.Components
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
-            styleAttr.Should().Be($"transform:translateX(-400px);");
+            styleAttr.Should().Be($"transform:translateX(-496px);");
         }
 
         [Test]

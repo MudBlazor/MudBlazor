@@ -713,8 +713,8 @@ namespace MudBlazor
             if (isLast)
             {
                 var compare = _toolbarContentSize;
-                if (_showScrollButtons)
-                    compare += 48 * 2;
+                if (AlwaysShowScrollButtons)
+                    compare -= 48 * 2;
                 if (position - compare > 0)
                 {
                     position -= compare;
@@ -733,9 +733,13 @@ namespace MudBlazor
         {
             if (_showScrollButtons && ActivePanelIndex + 1 == _panels.Count)
             {
-                var isScrolled = ScrollToItem(_panels.Last(), true);
+                var lastPannel = _panels.Last();
+                var isScrolled = ScrollToItem(lastPannel, true);
                 if (isScrolled)
+                {
+                    _scrollIndex = _panels.IndexOf(lastPannel);
                     return;
+                }
             }
 
             MudTabPanel panelToStart = ActivePanel;
