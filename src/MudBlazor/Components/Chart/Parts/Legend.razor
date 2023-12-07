@@ -8,7 +8,11 @@
         {
             <div class="mud-chart-legend-item" @onclick=@(()=>{ if (MudChartParent!=null) { MudChartParent.SelectedIndex=item.Index; }}) @onclick:stopPropagation=@(MudChartParent!=null)>
                 <span class="mud-chart-legend-marker" style="@($"background-color:{MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count())}")"></span>
-                <MudText Typo="Typo.body2" Inline="true">@item.Labels</MudText>
+                @if (item.IsVisible) {
+                    <MudText Typo="Typo.body2" Inline="true">@item.Labels</MudText>}
+                else {
+                    <MudText Typo="Typo.body2" Inline="true" Style="text-decoration: line-through;">@item.Labels</MudText>
+                }
             </div>
         }
     </div>

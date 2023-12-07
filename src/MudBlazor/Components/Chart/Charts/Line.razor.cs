@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -203,17 +203,18 @@ namespace MudBlazor.Charts
                 }
                 if (_series[i].IsVisible)
                 {
-                var line = new SvgPath()
-                {
-                    Index = i,
-                    Data = chartLine.ToString()
-                };
-                _chartLines.Add(line);
+                    var line = new SvgPath()
+                    {
+                        Index = i,
+                        Data = chartLine.ToString()
+                    };
+                    _chartLines.Add(line);
                 }
                 var legend = new SvgLegend()
                 {
                     Index = i,
-                    Labels = _series[i].Name
+                    Labels = _series[i].Name,
+                    IsVisible = _series[i].IsVisible
                 };
                 _legends.Add(legend);
             }
