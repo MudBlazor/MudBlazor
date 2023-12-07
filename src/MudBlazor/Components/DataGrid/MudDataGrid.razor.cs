@@ -26,6 +26,7 @@ namespace MudBlazor
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
+        private string _columnsPanelSearch = string.Empty;
         private IEnumerable<T> _items;
         private T _selectedItem;
         private MudForm _editForm;
