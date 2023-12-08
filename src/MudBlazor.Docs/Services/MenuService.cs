@@ -118,6 +118,7 @@ namespace MudBlazor.Docs.Services
                 //.AddItem("Options", typeof(ChartOptions)) // <-- this does not work because ChartOptions is not a component!
                 .AddItem("Donut Chart", typeof(Donut))
                 .AddItem("Line Chart", typeof(Line))
+                .AddItem("Scatter Chart", typeof(Scatter))
                 .AddItem("Pie Chart", typeof(Pie))
                 .AddItem("Bar Chart", typeof(Bar))
             )

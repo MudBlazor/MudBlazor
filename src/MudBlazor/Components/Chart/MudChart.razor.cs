@@ -27,8 +27,16 @@ namespace MudBlazor
         public List<ChartSeries> ChartSeries { get; set; } = new();
 
         [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public List<XYChartSeries> XYChartSeries { get; set; } = new();
+
+        [Parameter]
         [Category(CategoryTypes.Chart.Appearance)]
         public ChartOptions ChartOptions { get; set; } = new();
+
+        [Parameter]
+        [Category(CategoryTypes.Chart.Appearance)]
+        public XYChartOptions XYChartOptions { get; set; } = new();
 
         /// <summary>
         /// RenderFragment for costumization inside the chart's svg.
@@ -134,6 +142,7 @@ namespace MudBlazor
         Donut,
         Line,
         Pie,
-        Bar
+        Bar,
+        Scatter
     }
 }

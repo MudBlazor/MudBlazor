@@ -1,0 +1,28 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudChart ChartType="ChartType.Scatter" XYChartSeries="@Series" Width="100%" Height="350px" XYChartOptions="@Options"></MudChart>
+
+@code {
+    public List<XYChartSeries> Series = new List<XYChartSeries>();
+    public XYChartOptions Options = new XYChartOptions();
+    protected override void OnInitialized()
+    {
+        double[] XData  = { 10, 20, 30, 40, 50, 60, 70 };
+        double[] YData1 = { 65, 68, 70, 74, 74, 72, 74 };
+        double[] YData2 = { 88, 90, 91, 92, 91, 90, 90 };
+        double[] YData3 = { 89, 91, 92, 92, 92, 92, 91 };
+        double[] YData4 = { 85, 86, 90, 90, 92, 99, 0 };
+
+
+        Series.Add(new XYChartSeries() { Name = "Chernobyl-1", YData = YData1, XData = XData });
+        Series.Add(new XYChartSeries() { Name = "Chernobyl-2", YData = YData2, XData = XData });
+        Series.Add(new XYChartSeries() { Name = "Chernobyl-3", YData = YData3, XData = XData });
+        Series.Add(new XYChartSeries() { Name = "Chernobyl-4", YData = YData4, XData = XData });
+
+        Options.YAxisTicks = 5;
+        Options.XAxisTicks = 10;
+
+        StateHasChanged();
+    }
+}
