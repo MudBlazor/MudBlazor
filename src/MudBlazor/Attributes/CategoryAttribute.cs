@@ -104,7 +104,7 @@ namespace MudBlazor
     ///     Note: The following properties belong to the "Behavior" group, not to the "Appearance" group:<br/>
     ///      - <see cref="MudIconButton.Icon"/> - because it describes meaning of the button, since MudIconButton doesn't have text,<br/>
     ///      - <see cref="MudBaseInput{T}.Label"/> - because it describes meaning of the field,<br/>
-    ///      - <see cref="MudBaseInput{T}.AdornmentText"/> - because it can describe information important to a user, e.g. a numeric field unit such as kilograms.<br/>
+    ///      - <see cref="MudBaseInput{T}.AdornmentEndText"/> - because it can describe information important to a user, e.g. a numeric field unit such as kilograms.<br/>
     ///     Sometimes choosing a category can be difficult - in such case choose a category that makes the most sense.
     ///     </para>
     ///

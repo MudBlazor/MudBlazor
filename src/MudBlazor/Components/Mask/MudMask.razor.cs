@@ -25,11 +25,12 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-input")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}")
-                .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
+                .AddClass("mud-input-adorned-start", HasStartAdornment)
+                .AddClass("mud-input-adorned-end", HasEndAdornment)
                 .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
                 .AddClass("mud-input-underline", when: () => DisableUnderLine == false && Variant != Variant.Outlined)
                 .AddClass("mud-shrink",
-                    when: () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start ||
+                    when: () => !string.IsNullOrEmpty(Text) || HasStartAdornment ||
                                 !string.IsNullOrWhiteSpace(Placeholder))
                 .AddClass("mud-disabled", GetDisabledState())
                 .AddClass("mud-input-error", HasErrors)
@@ -41,15 +42,24 @@ namespace MudBlazor
             new CssBuilder("mud-input-slot")
                 .AddClass("mud-input-root")
                 .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
-                .AddClass($"mud-input-root-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
+                .AddClass("mud-input-root-adorned-start", HasStartAdornment)
+                .AddClass("mud-input-root-adorned-end", HasStartAdornment)
                 .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
                 .AddClass(Class)
                 .Build();
 
-        protected string AdornmentClassname =>
+        protected string AdornmentStartClassname =>
             new CssBuilder("mud-input-adornment")
-                .AddClass($"mud-input-adornment-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
+                .AddClass("mud-input-adornment-start")
+                .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentStartText) && !string.IsNullOrEmpty(AdornmentEndText))
+                .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
+                .AddClass(Class)
+                .Build();
+
+        protected string AdornmentEndClassname =>
+            new CssBuilder("mud-input-adornment")
+                .AddClass("mud-input-adornment-end")
+                .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentStartText) && !string.IsNullOrEmpty(AdornmentEndText))
                 .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
                 .AddClass(Class)
                 .Build();
@@ -57,9 +67,9 @@ namespace MudBlazor
         protected string ClearButtonClassname =>
             new CssBuilder()
                 // .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
-                .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End)
+                .AddClass("mud-icon-button-edge-end", HasEndAdornment)
                 // .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
-                .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End)
+                .AddClass("mud-icon-button-edge-margin-end", !HasEndAdornment)
                 .Build();
 
 

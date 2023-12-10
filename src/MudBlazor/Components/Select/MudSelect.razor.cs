@@ -335,7 +335,6 @@ namespace MudBlazor
 
         public MudSelect()
         {
-            Adornment = Adornment.End;
             IconSize = Size.Medium;
         }
 
@@ -744,7 +743,7 @@ namespace MudBlazor
 
         private void UpdateIcon()
         {
-            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
+            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentEndIcon) ? AdornmentEndIcon : _isOpen ? CloseIcon : OpenIcon;
         }
 
         protected override void OnInitialized()

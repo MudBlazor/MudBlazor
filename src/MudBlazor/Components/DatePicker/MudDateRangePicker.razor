@@ -11,8 +11,8 @@
                           @onclick="() => { if (!Editable) ToggleState(); }" ForId="@FieldId">
                <InputContent>
                    <MudRangeInput @ref="_rangeInput" @attributes="UserAttributes" InputType="@InputType.Text" Class="@PickerInputClass" Style="@Style" Variant="@Variant" ReadOnly="@(!Editable)"
-                                   @bind-Value="@RangeText" Disabled="@GetDisabledState()" Adornment="@Adornment" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize" OnAdornmentClick="ToggleState"
-                                   Required="@Required" RequiredError="@RequiredError" Error="@Error" ErrorText="@ErrorText" Margin="@Margin" AdornmentAriaLabel="@AdornmentAriaLabel"
+                                   @bind-Value="@RangeText" Disabled="@GetDisabledState()" AdornmentEndIcon="@AdornmentIcon" AdornmentEndColor="@AdornmentColor" IconSize="@IconSize" OnAdornmentEndClick="ToggleState"
+                                   Required="@Required" RequiredError="@RequiredError" Error="@Error" ErrorText="@ErrorText" Margin="@Margin" AdornmentEndAriaLabel="@AdornmentAriaLabel"
                                    Clearable="Clearable"/>
                </InputContent>
            </MudInputControl>;

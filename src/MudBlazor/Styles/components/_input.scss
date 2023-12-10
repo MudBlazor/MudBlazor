@@ -93,6 +93,13 @@
             padding-inline-start: unset;
         }
 
+        &.mud-input-adorned-start.mud-input-adorned-end {
+          padding-left: 12px;
+          padding-right: 12px;
+          padding-inline-start: 12px;
+          padding-inline-end: 12px;
+        }
+
         &.mud-input-underline {
             &:before {
                 left: 0;
@@ -178,6 +185,13 @@
             padding-right: 14px;
             padding-inline-end: 14px;
             padding-inline-start: unset;
+        }
+
+        &.mud-input-adorned-start.mud-input-adorned-end {
+          padding-left: 14px;
+          padding-right: 14px;
+          padding-inline-end: 14px;
+          padding-inline-start: 14px;
         }
     }
 }
@@ -278,6 +292,13 @@
                 padding-inline-end: 0;
                 padding-inline-start: 12px;
             }
+
+          &.mud-input-root-adorned-start.mud-input-root-adorned-end {
+            padding-left: 0;
+            padding-right: 0;
+            padding-inline-end: 0;
+            padding-inline-start: 0;
+          }
         }
     }
 
@@ -305,6 +326,13 @@
             padding-inline-end: 0;
             padding-inline-start: 14px;
         }
+
+      &.mud-input-root-adorned-start.mud-input-root-adorned-end {
+        padding-left: 0;
+        padding-right: 0;
+        padding-inline-start: 0;
+        padding-inline-end: 0;
+      }
     }
 
     &::-ms-reveal, &::-ms-clear {
@@ -394,6 +422,14 @@
         margin-inline-end: unset;
         margin-inline-start: 12px;
       }
+
+      &.mud-input-root-adorned-start.mud-input-root-adorned-end {
+        margin-left: 0;
+        margin-right: 0;
+        margin-inline-start: 0;
+        margin-inline-end: 0;
+
+      }
     }
 
     &::-webkit-scrollbar {
@@ -436,6 +472,13 @@
       margin-right: 0;
       margin-inline-end: 0;
       margin-inline-start: 14px;
+    }
+
+    &.mud-input-root-adorned-start.mud-input-root-adorned-end {
+      margin-left: 0;
+      margin-right: 0;
+      margin-inline-end: 0;
+      margin-inline-start: 0;
     }
   }
 }

@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -71,25 +70,77 @@ namespace MudBlazor
         public bool HelperTextOnFocus { get; set; }
 
         /// <summary>
-        /// Icon that will be used if Adornment is set to Start or End.
+        /// Icon that will be used at the start if specified.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string AdornmentIcon { get; set; }
+        public string AdornmentStartIcon { get; set; }
 
         /// <summary>
-        /// Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
+        /// Text that will be used at the start if specified, the Text overrides Icon.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string AdornmentText { get; set; }
+        public string AdornmentStartText { get; set; }
+        
+        /// <summary>
+        /// The color of the start adornment if used. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color AdornmentStartColor { get; set; } = Color.Default;
+        
+        /// <summary>
+        /// The aria-label of the start adornment.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string AdornmentStartAriaLabel { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Button click event if set and start Adornment used.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnAdornmentStartClick { get; set; }
 
         /// <summary>
-        /// The Adornment if used. By default, it is set to None.
+        /// Icon that will be used at the end if specified.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public Adornment Adornment { get; set; } = Adornment.None;
+        public string AdornmentEndIcon { get; set; }
+
+        /// <summary>
+        /// Text that will be used if end if specified, the Text overrides Icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string AdornmentEndText { get; set; }
+        
+        /// <summary>
+        /// The color of the end adornment if used. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color AdornmentEndColor { get; set; } = Color.Default;
+        
+        /// <summary>
+        /// The aria-label of the end adornment.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string AdornmentEndAriaLabel { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Button click event if set and end Adornment used.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnAdornmentEndClick { get; set; }
+
+        
+        public bool HasStartAdornment =>
+            !string.IsNullOrEmpty(AdornmentStartText) || !string.IsNullOrEmpty(AdornmentStartIcon);
+
+        public bool HasEndAdornment =>
+            !string.IsNullOrEmpty(AdornmentEndText) || !string.IsNullOrEmpty(AdornmentEndIcon);
 
         /// <summary>
         /// The validation is only triggered if the user has changed the input value at least once. By default, it is false
@@ -99,30 +150,11 @@ namespace MudBlazor
         public bool OnlyValidateIfDirty { get; set; } = false;
 
         /// <summary>
-        /// The color of the adornment if used. It supports the theme colors.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public Color AdornmentColor { get; set; } = Color.Default;
-
-        /// <summary>
-        /// The aria-label of the adornment.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public string AdornmentAriaLabel { get; set; } = string.Empty;
-
-        /// <summary>
         /// The Icon Size.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Size IconSize { get; set; } = Size.Medium;
-
-        /// <summary>
-        /// Button click event if set and Adornment used.
-        /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
 
         /// <summary>
         /// Variant to use.

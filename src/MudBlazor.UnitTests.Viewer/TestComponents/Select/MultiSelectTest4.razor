@@ -5,7 +5,7 @@
     <MudItem xs="12" md="12">
         <MudSelect T="string" Label="Felines" HelperText="Pick your favorite feline"
                    MultiSelection="true" SelectAll="true" SelectAllText="Select all felines"
-                   @bind-Value="value" @bind-SelectedValues="options" AdornmentIcon="@Icons.Material.Filled.Search"
+                   @bind-Value="value" @bind-SelectedValues="options" AdornmentEndIcon="@Icons.Material.Filled.Search"
                    MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))">
             @foreach (var feline in felines)
             {

@@ -4,9 +4,9 @@
 @using MudBlazor.Internal
 
 <div class="@Classname" style="@Style">
-    @if (Adornment == Adornment.Start)
+    @if (HasStartAdornment)
     {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" AriaLabel="@AdornmentAriaLabel" />
+        <MudInputAdornment Class="@AdornmentStartClassname" Icon="@AdornmentStartIcon" Color="@AdornmentStartColor" Size="@IconSize" Text="@AdornmentStartText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentStartClick" AriaLabel="@AdornmentStartAriaLabel" />
     }
 
     @if (InputType == InputType.Hidden && ChildContent != null)
@@ -24,7 +24,7 @@
 
     @if (IsClearable() && !GetDisabledState())
     {
-        <MudIconButton Class="@(Adornment is Adornment.Start ? "me-0" : "me-n4")" Style="z-index: 2"
+        <MudIconButton Class="@(HasStartAdornment ? "me-0" : "me-n4")" Style="z-index: 2"
                        Color="@Color.Default"
                        Icon="@Icons.Material.Filled.Clear"
                        Size="@Size.Small"
@@ -33,9 +33,9 @@
                        tabindex="-1" />
     }
 
-    @if (Adornment == Adornment.End)
+    @if (HasEndAdornment)
     {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" AriaLabel="@AdornmentAriaLabel" />
+        <MudInputAdornment Class="@AdornmentEndClassname" Icon="@AdornmentEndIcon" Color="@AdornmentEndColor" Size="@IconSize" Text="@AdornmentEndText" Edge="@Edge.End" AdornmentClick="@OnAdornmentEndClick" AriaLabel="@AdornmentEndAriaLabel" />
     }
 
     @if (Variant == Variant.Outlined)

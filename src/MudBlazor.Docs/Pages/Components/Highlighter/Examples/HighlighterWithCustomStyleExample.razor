@@ -3,8 +3,8 @@
 <MudPaper Elevation="0">
     <MudList>
         <MudListSubheader>
-            <MudTextField @bind-Value="@searchTerm" AdornmentIcon="@Icons.Material.Filled.Brush"
-                          Adornment="Adornment.End" Immediate="true" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="@searchTerm" AdornmentEndIcon="@Icons.Material.Filled.Brush"
+                          Immediate="true" Variant="Variant.Outlined" />
         </MudListSubheader>
 
         @foreach (var sentence in sentences)

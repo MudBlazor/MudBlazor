@@ -193,7 +193,7 @@
                 </div>
                 <MudDivider/>
                 <div class="d-flex flex-column pa-4 gap-4">
-                    <MudTextField T="string" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Rounded.CreditCard" Mask="@(new PatternMask("0000 0000 0000 0000"))" Label="Card Number" Placeholder="0000 0000 0000 0000"  Variant="@Variant.Text" />
+                    <MudTextField T="string" AdornmentStartIcon="@Icons.Material.Rounded.CreditCard" Mask="@(new PatternMask("0000 0000 0000 0000"))" Label="Card Number" Placeholder="0000 0000 0000 0000"  Variant="@Variant.Text" />
                     <div class="d-flex gap-4">
                         <MudTextField T="string" Mask="@(new DateMask("MM/YY", 'Y', 'M'))" Label="Expiration" Placeholder="MM/YY"  Variant="@Variant.Text" />
                         <MudTextField T="string" Mask="@(new PatternMask("000"))" Label="CVC" Placeholder="000" Variant="@Variant.Text" />

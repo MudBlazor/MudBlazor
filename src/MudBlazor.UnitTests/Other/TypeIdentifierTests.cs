@@ -61,8 +61,8 @@ namespace MudBlazor.UnitTests.Other
         [TestCase(null, false)]
         [TestCase(typeof(int), false)]
         [TestCase(typeof(int?), false)]
-        [TestCase(typeof(Adornment), true)]
-        [TestCase(typeof(Adornment?), true)]
+        [TestCase(typeof(Size), true)]
+        [TestCase(typeof(Size?), true)]
         public void IsEnum_Test(Type type, bool expected)
         {
             var isEnum = TypeIdentifier.IsEnum(type);
