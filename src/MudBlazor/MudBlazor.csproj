@@ -69,7 +69,7 @@
     <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.14" />
   </ItemGroup>
 
-  <Target Name="ToolRestore">
+  <Target Name="ToolRestore" BeforeTargets="Restore">
     <Exec Command="dotnet tool restore --disable-parallel --no-cache" StandardOutputImportance="high" />
   </Target>
 
