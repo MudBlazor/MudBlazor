@@ -70,7 +70,8 @@
   </ItemGroup>
 
   <Target Name="ToolRestore" BeforeTargets="Restore">
-    <Exec Command="dotnet tool restore --disable-parallel --no-cache" StandardOutputImportance="high" />
+    <Message Text="Restoring dotnet tools" Importance="High" />
+    <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
   </Target>
 
   <!--combine js files-->

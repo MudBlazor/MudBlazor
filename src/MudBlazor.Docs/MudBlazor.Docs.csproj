@@ -90,8 +90,9 @@
   </ItemGroup>
 
   <!--Excubo  webcompiler -  used for scss and js compilation-->
-  <Target Name="ToolRestore">
-    <Exec Command="dotnet tool restore --disable-parallel --no-cache" StandardOutputImportance="high" />
+  <Target Name="ToolRestore" BeforeTargets="Restore">
+    <Message Text="Restoring dotnet tools" Importance="High" />
+    <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
   </Target>
 
   <Target Name="WebCompiler" DependsOnTargets="ToolRestore">
