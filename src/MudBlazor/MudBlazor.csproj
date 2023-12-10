@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
   </PropertyGroup>
-
+ 
   <PropertyGroup>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Nuget.png</PackageIcon>
@@ -69,7 +69,9 @@
     <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.14" />
   </ItemGroup>
 
-  <Target Name="ToolRestore">
+  <!--Excubo  webcompiler -  used for scss and js compilation-->
+  <!--Restore the tool only once for all builds-->
+  <Target Name="ToolRestore" BeforeTargets="DispatchToInnerBuilds">
     <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
   </Target>
 
@@ -84,7 +86,7 @@
     <WriteLinesToFile File="./TScripts/combined/MudBlazor.js" Lines="@(jsLines)" Overwrite="true" />
   </Target>
 
-  <Target Name="WebCompiler" DependsOnTargets="ToolRestore;CombineJS">
+  <Target Name="WebCompiler" DependsOnTargets="CombineJS">
     <!--compile and minify scss-->
     <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json" StandardOutputImportance="high" StandardErrorImportance="high" />
     <!--minify js-->

@@ -90,11 +90,12 @@
   </ItemGroup>
 
   <!--Excubo  webcompiler -  used for scss and js compilation-->
-  <Target Name="ToolRestore">
+  <!--Restore the tool only once for all builds-->
+  <Target Name="ToolRestore" BeforeTargets="DispatchToInnerBuilds">
     <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
   </Target>
 
-  <Target Name="WebCompiler" DependsOnTargets="ToolRestore">
+  <Target Name="WebCompiler">
     <Exec Command="dotnet webcompiler ./Styles/MudBlazorDocs.scss -c excubowebcompiler.json" StandardOutputImportance="high" StandardErrorImportance="high" />
   </Target>
 
