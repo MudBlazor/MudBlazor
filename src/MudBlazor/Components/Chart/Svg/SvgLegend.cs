@@ -1,4 +1,7 @@
 ﻿
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+
 namespace MudBlazor.Charts.SVG.Models
 {
     public class SvgLegend
@@ -7,5 +10,12 @@ namespace MudBlazor.Charts.SVG.Models
         public string Labels { get; set; }
         public string Data { get; set; }
         public bool IsVisible {get; set;} = true;
+        public EventCallback<SvgLegend> OnVisibilityChanged { get; set; }
+
+        public async Task HandleCheckboxChange(bool isVisible)
+        {
+            IsVisible = !isVisible;
+            await OnVisibilityChanged.InvokeAsync(this);
+        }
     }
 }

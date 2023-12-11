@@ -10,6 +10,7 @@ using MudBlazor.Charts;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 using Bunit;
+using AngleSharp.Dom;
 
 namespace MudBlazor.UnitTests.Charts
 {
@@ -108,14 +109,34 @@ namespace MudBlazor.UnitTests.Charts
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
 
-            var seriesElements = comp.FindAll(".mud-chart-legend-item");
-            seriesElements[0].InnerHtml.Should().NotContain("text-decoration: line-through;");
-            seriesElements[1].InnerHtml.Should().NotContain("text-decoration: line-through;");
-            seriesElements[2].InnerHtml.Should().Contain("text-decoration: line-through;");
-            
             comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"");
             comp.Markup.Should().Contain("class=\"mud-charts-yaxis\"");
             comp.Markup.Should().Contain("mud-chart-legend-item");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.LinesCanBeHidden, true)
+                .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _baseChartPalette, InterpolationOption = opt }));
+
+            if (comp.Instance.LinesCanBeHidden)
+            {
+                var seriesCheckboxes = comp.FindAll(".mud-chart-legend-checkbox");
+
+                comp.InvokeAsync(() => {
+                    seriesCheckboxes[0].Change(false); 
+                });
+
+                seriesCheckboxes = comp.FindAll(".mud-chart-legend-checkbox");
+
+                comp.InvokeAsync(() => {
+                    seriesCheckboxes[2].Change(true);  
+                });
+
+                seriesCheckboxes = comp.FindAll(".mud-chart-legend-checkbox");
+                
+                seriesCheckboxes[0].IsChecked().Should().BeFalse();
+                seriesCheckboxes[1].IsChecked().Should().BeTrue();
+                seriesCheckboxes[2].IsChecked().Should().BeTrue();
+            }
         }
     }
 }

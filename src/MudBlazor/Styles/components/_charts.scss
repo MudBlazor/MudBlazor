@@ -63,6 +63,12 @@
             & .mud-chart-legend-text {
                 display: inline-flex;
             }
+            
+            & .mud-chart-legend-checkbox{
+                padding: 0px; 
+                font-size: 1rem; 
+                margin-left: 0.25rem;
+            }
         }
     }
 }
@@ -107,11 +113,6 @@
     position: relative;
     display: inline-block;
 }
-
-
-
-
-
 
 .mud-chart-marker-color-0 {
     background-color: #008FFB;
