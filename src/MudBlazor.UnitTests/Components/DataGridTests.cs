@@ -234,6 +234,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridFilterableSimpleFilterTemplateTest()
+        {
+            var comp = Context.RenderComponent<DataGridFilterableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterableTest.Item>>();
+
+            // Count the number of rows including header.
+            dataGrid.FindAll("tr").Count.Should().Be(6); // header row + four rows + footer row
+
+            // Check the values of rows
+            dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("B");
+            dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("A");
+            dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+            dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("C");
+
+            // Add a FilterDefinition to filter where the Name = "C".
+            await comp.InvokeAsync(() =>
+            {
+                return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableTest.Item>
+                {
+                    Column = dataGrid.Instance.RenderedColumns.First(),
+                    Operator = FilterOperator.String.Equal,
+                    Value = "C"
+                });
+            });
+
+            // Check the values of rows
+            dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("C");
+            dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("C");
+
+            dataGrid.Instance.Filterable = false;
+        }
+
+        [Test]
         public async Task DataGridFilterableServerDataTest()
         {
             var comp = Context.RenderComponent<DataGridFilterableServerDataTest>();
