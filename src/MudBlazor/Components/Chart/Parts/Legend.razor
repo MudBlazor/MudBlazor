@@ -4,15 +4,21 @@
 @if (MudChartParent?.ChartOptions.DisableLegend != true)
 {
     <div @attributes="UserAttributes" class="mud-chart-legend">
-        @foreach (var item in Data)
+        @foreach (var item in Data)        
         {
-            <div class="mud-chart-legend-item" @onclick=@(()=>{ if (MudChartParent!=null) { MudChartParent.SelectedIndex=item.Index; }}) @onclick:stopPropagation=@(MudChartParent!=null) >
-                <span class="mud-chart-legend-marker" style="@($"background-color:{MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count())}")"></span>
+            <div class="mud-chart-legend-item @(MudChartParent?.CanHideSeries == true ? "your-special-class" : "")" @onclick=@(()=>{ if (MudChartParent!=null) { MudChartParent.SelectedIndex=item.Index; }}) @onclick:stopPropagation=@(MudChartParent!=null) >
+                @if(MudChartParent?.CanHideSeries == false)
+                {
+                    <span class="mud-chart-legend-marker" style="@($"background-color:{MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count())}")"></span>
                     <MudText Typo="Typo.body2" Inline="true">@item.Labels</MudText>
-                    @if(MudChartParent?.LinesCanBeHidden == true)
-                    {    
-                        <input class="mud-chart-legend-checkbox" type="checkbox" checked="@item.IsVisible" @onchange="@(() => item.HandleCheckboxChange(item.IsVisible))" />            
-                    } 
+                }
+                else
+                {   
+                    <div class="mud-chart-legend-checkbox">    
+                        <MudCheckBox Checked="@item.IsVisible" CheckedChanged="@((bool value) => item.HandleCheckboxChangeAsync())" CustomColor="@($"{MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count())}")"></MudCheckBox>               
+                        <MudText Typo="Typo.body2" Inline="true">@item.Labels</MudText>
+                    </div> 
+                }                 
             </div>
         }
     </div>

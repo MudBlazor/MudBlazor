@@ -114,10 +114,10 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().Contain("mud-chart-legend-item");
 
             comp.SetParametersAndRender(parameters => parameters
-                .Add(p => p.LinesCanBeHidden, true)
+                .Add(p => p.CanHideSeries, true)
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _baseChartPalette, InterpolationOption = opt }));
 
-            if (comp.Instance.LinesCanBeHidden)
+            if (comp.Instance.CanHideSeries)
             {
                 var seriesCheckboxes = comp.FindAll(".mud-chart-legend-checkbox");
 

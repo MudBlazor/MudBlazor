@@ -227,7 +227,6 @@ namespace MudBlazor.Charts
             if (series != null)
             {
                 series.IsVisible = legend.IsVisible;
-                Console.WriteLine(series.IsVisible);
                 OnParametersSet();
             }
         }

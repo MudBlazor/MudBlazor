@@ -134,7 +134,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public bool LinesCanBeHidden { get; set; } = false;
+        public bool CanHideSeries { get; set; } = false;
     }
 
     public enum ChartType
