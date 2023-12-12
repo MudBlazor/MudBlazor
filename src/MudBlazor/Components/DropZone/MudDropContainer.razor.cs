@@ -61,6 +61,7 @@ namespace MudBlazor
         [Category(CategoryTypes.DropZone.Items)]
         public EventCallback<MudItemDropInfo<T>> ItemDropped { get; set; }
 
+        /// <summary>
         /// EventHandler that indicates that an item has been picked from a drop zone and transaction has started.
         /// </summary>
         [Parameter]
