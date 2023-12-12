@@ -119,19 +119,19 @@ namespace MudBlazor.UnitTests.Charts
 
             if (comp.Instance.CanHideSeries)
             {
-                var seriesCheckboxes = comp.FindAll(".mud-chart-legend-checkbox");
+                var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
 
                 comp.InvokeAsync(() => {
                     seriesCheckboxes[0].Change(false); 
                 });
 
-                seriesCheckboxes = comp.FindAll(".mud-chart-legend-checkbox");
+                seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
 
                 comp.InvokeAsync(() => {
                     seriesCheckboxes[2].Change(true);  
                 });
 
-                seriesCheckboxes = comp.FindAll(".mud-chart-legend-checkbox");
+                seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
                 
                 seriesCheckboxes[0].IsChecked().Should().BeFalse();
                 seriesCheckboxes[1].IsChecked().Should().BeTrue();
