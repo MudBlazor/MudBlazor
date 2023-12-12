@@ -4,7 +4,7 @@
 @if (MudChartParent?.ChartOptions.DisableLegend != true)
 {
     <div @attributes="UserAttributes" class="mud-chart-legend">
-        @foreach (var item in Data)        
+        @foreach (var item in Data)
         {
             <div class="mud-chart-legend-item" @onclick=@(()=>{ if (MudChartParent!=null) { MudChartParent.SelectedIndex=item.Index; }}) @onclick:stopPropagation=@(MudChartParent!=null) >
                 @if(MudChartParent?.CanHideSeries == false)
