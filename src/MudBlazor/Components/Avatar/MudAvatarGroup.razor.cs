@@ -127,6 +127,13 @@ namespace MudBlazor
         public string? MaxAvatarClass { get; set; }
 
         /// <summary>
+        /// Template for MaxAvatar.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.AvatarGroup.Appearance)]
+        public RenderFragment<int>? MaxAvatarTemplate { get; set; }
+
+        /// <summary>
         /// Child content of the component.
         /// </summary>
         [Parameter]
