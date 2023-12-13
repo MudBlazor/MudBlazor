@@ -8,7 +8,9 @@
     @if(_avatars.Count > Max)
     {
         @if (MaxAvatarTemplate != null)
+        {
             @MaxAvatarTemplate.Invoke(_avatars.Count - Max)
+        }
         else
         {
            <MudAvatar Class="@MaxAvatarClassname" Color="@MaxColor" Size="@MaxSize" Variant="@MaxVariant" Rounded="@MaxRounded" Square="@MaxSquare" Elevation="@MaxElevation">
