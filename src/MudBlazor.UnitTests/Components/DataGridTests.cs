@@ -3127,22 +3127,22 @@ namespace MudBlazor.UnitTests.Components
             var switches = dataGrid.FindComponents<MudSwitch<bool>>();
             switches.Count.Should().Be(2);
 
-            switches[0].Instance.Checked.Should().BeFalse();
-            switches[1].Instance.Checked.Should().BeTrue();
+            switches[0].Instance.Value.Should().BeFalse();
+            switches[1].Instance.Value.Should().BeTrue();
 
             var buttons = dataGrid.FindComponents<MudButton>();
 
             // this is the hide all button
             buttons[0].Find("button").Click();
-            switches[0].Instance.Checked.Should().BeTrue();
-            switches[1].Instance.Checked.Should().BeTrue();
+            switches[0].Instance.Value.Should().BeTrue();
+            switches[1].Instance.Value.Should().BeTrue();
             // 2 columns, 2 hidden
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
 
             // this is the show all button
             buttons[1].Find("button").Click();
-            switches[0].Instance.Checked.Should().BeFalse();
-            switches[1].Instance.Checked.Should().BeFalse();
+            switches[0].Instance.Value.Should().BeFalse();
+            switches[1].Instance.Value.Should().BeFalse();
             // 2 columns, 0 hidden
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
         }

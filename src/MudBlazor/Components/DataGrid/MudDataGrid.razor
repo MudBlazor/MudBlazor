@@ -90,7 +90,7 @@
                                     @foreach (var column in RenderedColumns)
                                     {
                                         <MudItem xs="12">
-                                            <MudSwitch T="bool" Disabled="@(!(column.Hideable ?? false))" Checked="@column.Hidden" CheckedChanged="@column.ToggleAsync" Converter="_oppositeBoolConverter" Color="Color.Primary" Label="@column.Title" />
+                                            <MudSwitch T="bool" Disabled="@(!(column.Hideable ?? false))" Value="@column.Hidden" ValueChanged="@column.ToggleAsync" Converter="_oppositeBoolConverter" Color="Color.Primary" Label="@column.Title" />
                                         </MudItem>
                                     }
                                     <MudItem xs="6">
