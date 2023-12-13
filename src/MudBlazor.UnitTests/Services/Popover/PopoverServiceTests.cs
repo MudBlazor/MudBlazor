@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.JSInterop;
@@ -47,7 +46,7 @@ public class PopoverServiceTests
     }
 
     [Test]
-    public async Task IsInitialized_ShouldConnectAutomaticallyAfterCreatePopoverAsync()
+    public async Task IsInitialized_ShouldNotConnectAutomaticallyAfterCreatePopoverAsync()
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
@@ -61,7 +60,7 @@ public class PopoverServiceTests
         await service.CreatePopoverAsync(popover);
 
         // Assert
-        Assert.IsTrue(service.IsInitialized);
+        Assert.IsFalse(service.IsInitialized);
     }
 
     [Test]

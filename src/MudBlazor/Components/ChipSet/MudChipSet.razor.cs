@@ -119,6 +119,7 @@ namespace MudBlazor
                     {
                         chip.IsSelected = false;
                     }
+                    _lastSelectedValues = null;
                 }
                 else
                 {

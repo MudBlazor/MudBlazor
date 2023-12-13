@@ -75,6 +75,9 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Behavior)]
         public bool Disabled { get; set; }
 
+        /// <summary>
+        /// If true, the click event bubbles up to the containing/parent component.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public bool ClickPropagation { get; set; }

@@ -28,7 +28,8 @@ namespace MudBlazor
         private bool _columnsPanelVisible = false;
         private IEnumerable<T> _items;
         private T _selectedItem;
-        internal HashSet<object> _groupExpansions = new HashSet<object>();
+        private MudForm _editForm;
+        internal Dictionary<object, bool> _groupExpansionsDict = new Dictionary<object, bool>();
         private List<GroupDefinition<T>> _currentPageGroups = new List<GroupDefinition<T>>();
         private List<GroupDefinition<T>> _allGroups = new List<GroupDefinition<T>>();
         internal HashSet<T> _openHierarchies = new HashSet<T>();
@@ -195,6 +196,11 @@ namespace MudBlazor
         /// Callback is called whenever a row is clicked.
         /// </summary>
         [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowClick { get; set; }
+        
+        /// <summary>
+        /// Callback is called whenever a row is right clicked.
+        /// </summary>
+        [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowContextMenuClick { get; set; }
 
         /// <summary>
         /// Callback is called when an item has begun to be edited. Returns the item being edited.
@@ -670,8 +676,7 @@ namespace MudBlazor
                     {
                         _currentPageGroups.Clear();
                         _allGroups.Clear();
-                        _groupExpansions.Clear();
-                        _groupExpansions.Add("__initial__");
+                        _groupExpansionsDict.Clear();
 
                         foreach (var column in RenderedColumns)
                             column.RemoveGrouping();
@@ -1075,7 +1080,11 @@ namespace MudBlazor
         /// <returns></returns>
         internal async Task CommitItemChangesAsync()
         {
-            // Here, we need to validate at the cellular level...
+            await _editForm.Validate();
+            if (!_editForm.IsValid)
+            {
+                return;
+            }
 
             if (editingSourceItem != null)
             {
@@ -1099,6 +1108,11 @@ namespace MudBlazor
                 await SetEditingItemAsync(item);
 
             await SetSelectedItemAsync(item);
+        }
+
+        internal async Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)
+        {
+            await RowContextMenuClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
         }
 
         /// <summary>
@@ -1375,23 +1389,22 @@ namespace MudBlazor
             var currentPageGroupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
 
             // Maybe group Items to keep groups expanded after clearing a filter?
-            var allGroupings = FilteredItems.GroupBy(GroupedColumn.groupBy);
+            var allGroupings = FilteredItems.GroupBy(GroupedColumn.groupBy).ToArray();
 
-            if (GetFilteredItemsCount() > 0 && _groupExpansions.Count == 0 && GroupExpanded)
+            if (GetFilteredItemsCount() > 0)
             {
-                _groupExpansions.Add("__initial__");
                 foreach (var group in allGroupings)
                 {
-                    _groupExpansions.Add(group.Key);
+                    _groupExpansionsDict.TryAdd(group.Key, GroupExpanded);
                 }
             }
 
             // construct the groups
             _currentPageGroups = currentPageGroupings.Select(x => new GroupDefinition<T>(x,
-                _groupExpansions.Contains(x.Key))).ToList();
+                _groupExpansionsDict[x.Key])).ToList();
 
             _allGroups = allGroupings.Select(x => new GroupDefinition<T>(x,
-                _groupExpansions.Contains(x.Key))).ToList();                
+                _groupExpansionsDict[x.Key])).ToList();                
 
             if ((_isFirstRendered || ServerData != null) && !noStateChange)
                 StateHasChanged();
@@ -1410,15 +1423,11 @@ namespace MudBlazor
 
         internal void ToggleGroupExpansion(GroupDefinition<T> g)
         {
-            if (_groupExpansions.Contains(g.Grouping.Key))
+            if (_groupExpansionsDict.TryGetValue(g.Grouping.Key, out var value))
             {
-                _groupExpansions.Remove(g.Grouping.Key);
+                _groupExpansionsDict[g.Grouping.Key] = !value;
             }
-            else
-            {
-                _groupExpansions.Add(g.Grouping.Key);
-            }
-
+ 
             GroupItems();
         }
 
@@ -1427,17 +1436,17 @@ namespace MudBlazor
             foreach (var group in _allGroups)
             {
                 group.IsExpanded = true;
-                _groupExpansions.Add(group.Grouping.Key);
+                _groupExpansionsDict[group.Grouping.Key] = true;
             }
         }
 
         public void CollapseAllGroups()
         {
-            _groupExpansions.Clear();
-            _groupExpansions.Add("__initial__");
-
             foreach (var group in _allGroups)
+            {
                 group.IsExpanded = false;
+                _groupExpansionsDict[group.Grouping.Key] = false;
+            }
         }
 
         #endregion

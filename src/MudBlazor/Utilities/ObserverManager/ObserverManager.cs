@@ -114,7 +114,7 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     public async Task NotifyAsync(Func<TObserver, Task> notification, Func<TIdentity, TObserver, bool>? predicate = null)
     {
         var defunct = default(List<TIdentity>);
-        foreach (var observer in _observers)
+        foreach (var observer in _observers.ToArray())
         {
             // Skip observers which don't match the provided predicate.
             if (predicate != null && !predicate(observer.Key, observer.Value.Observer))

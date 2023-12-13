@@ -1,7 +1,7 @@
 @namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid @ref="dataGrid" Items="@Fruits" Filterable="true" Hideable="true" Groupable="true"
-    GroupExpanded="true">
+<MudDataGrid T="Fruit" @ref="dataGrid" Items="@Fruits" Filterable="true" Hideable="true" Groupable="true"
+    GroupExpanded="true" RowContextMenuClick="@OnRowContextMenuClick">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Fruits</MudText>
         <MudSpacer />
@@ -25,7 +25,21 @@
 
 @code {
     MudDataGrid<Fruit> dataGrid;
-    public record Fruit(string Name, int Count, string Category);
+
+    public class Fruit
+    {
+        public string Name { get; set; }
+        public int Count { get; set; }
+        public string Category { get; set; }
+
+        public Fruit(string name, int count, string category)
+        {
+            Name = name;
+            Count = count;
+            Category = category;
+        }
+    }
+    public bool RowContextMenuClicked { get; set; }
 
     List<Fruit> Fruits { get; set; } = new()
     {
@@ -52,5 +66,10 @@
     public void CollapseAllGroups()
     {
         dataGrid?.CollapseAllGroups();
+    }
+
+    private void OnRowContextMenuClick(DataGridRowClickEventArgs<Fruit> args)
+    {
+        RowContextMenuClicked = true;
     }
 }

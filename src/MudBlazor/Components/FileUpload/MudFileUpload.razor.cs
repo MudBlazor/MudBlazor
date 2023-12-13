@@ -70,7 +70,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
-        public RenderFragment<string> ButtonTemplate { get; set; }
+        public RenderFragment<FileUploadButtonTemplateContext<T>> ButtonTemplate { get; set; }
 
         /// <summary>
         /// Renders the selected files, if desired.
@@ -115,7 +115,11 @@ namespace MudBlazor
         public string InputStyle { get; set; }
 
         /// <summary>
-        /// Maximum number of files that can be uploaded
+        /// Represents the maximum number of files that can retrieved from the internal call to
+        /// InputFileChangeEventArgs.GetMultipleFiles().
+        /// It does not limit the total number of uploaded files
+        /// when AppendMultipleFiles="true". A limit should be validated manually, for
+        /// example in the FilesChanged event callback.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
@@ -136,6 +140,12 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
 
+        public async Task ClearAsync()
+        {
+            _value = default;
+            await NotifyValueChangedAsync();
+        }
+
         private async Task OnChange(InputFileChangeEventArgs args)
         {
             if (GetDisabledState()) return;
@@ -154,15 +164,14 @@ namespace MudBlazor
             }
             else if (typeof(T) == typeof(IBrowserFile))
             {
-                _value = (T)args.File;
+                _value = args.FileCount == 1 ? (T)args.File : default;
             }
             else return;
 
-            await FilesChanged.InvokeAsync(_value);
-            await BeginValidateAsync();
-            FieldChanged(_value);
-            if (!Error ||
-                !SuppressOnChangeWhenInvalid) //only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
+            await NotifyValueChangedAsync();
+
+            if (!Error
+                || !SuppressOnChangeWhenInvalid) // only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
                 await OnFilesChanged.InvokeAsync(args);
         }
 
@@ -173,6 +182,14 @@ namespace MudBlazor
                     typeof(IBrowserFile));
 
             base.OnInitialized();
+        }
+
+        private async Task NotifyValueChangedAsync()
+        {
+            Touched = true;
+            await FilesChanged.InvokeAsync(_value);
+            await BeginValidateAsync();
+            FieldChanged(_value);
         }
     }
 }

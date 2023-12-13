@@ -495,6 +495,10 @@ namespace MudBlazor
         /// Table will await this func and update based on the returned TableData.
         /// Used only with ServerData
         /// </summary>
+        /// <remarks>
+        /// MudTable will automatically control loading animation visibility if ServerData is set.
+        /// See <see cref="MudTableBase.Loading"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
         public Func<TableState, Task<TableData<T>>> ServerData { get; set; }

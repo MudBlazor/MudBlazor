@@ -24,9 +24,19 @@ namespace MudBlazor
         private bool? _selectAllChecked;
         private IKeyInterceptor _keyInterceptor;
 
+        protected string OuterClassname =>
+            new CssBuilder("mud-select")
+            .AddClass(OuterClass)
+            .Build();
+
         protected string Classname =>
             new CssBuilder("mud-select")
             .AddClass(Class)
+            .Build();
+
+        protected string InputClassname =>
+            new CssBuilder("mud-select-input")
+            .AddClass(InputClass)
             .Build();
 
         [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
@@ -135,6 +145,18 @@ namespace MudBlazor
             await _elementReference.SetText(Text);
             await ScrollToItemAsync(item);
         }
+
+        /// <summary>
+        /// The outer div's classnames, seperated by space.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter] public string OuterClass { get; set; }
+
+        /// <summary>
+        /// Input's classnames, seperated by space.
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter] public string InputClass { get; set; }
 
         /// <summary>
         /// Fired when dropdown opens.

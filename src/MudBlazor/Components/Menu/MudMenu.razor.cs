@@ -238,6 +238,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Menu.PopupBehavior)]
         public RenderFragment ChildContent { get; set; }
+        
+        /// <summary>
+        /// Fired when the menu IsOpen property changes.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Menu.PopupBehavior)]
+        public EventCallback<bool> IsOpenChanged { get; set; }
 
         public string PopoverStyle { get; set; }
 
@@ -258,6 +265,7 @@ namespace MudBlazor
             _isMouseOver = false;
             PopoverStyle = null;
             StateHasChanged();
+            IsOpenChanged.InvokeAsync(_isOpen);
         }
 
         /// <summary>
@@ -273,6 +281,7 @@ namespace MudBlazor
             if (PositionAtCursor) SetPopoverStyle((MouseEventArgs)args);
             _isOpen = true;
             StateHasChanged();
+            IsOpenChanged.InvokeAsync(_isOpen);
         }
 
         // Sets the popover style ONLY when there is an activator

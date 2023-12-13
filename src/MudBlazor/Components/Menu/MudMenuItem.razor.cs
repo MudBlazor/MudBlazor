@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -60,6 +61,8 @@ namespace MudBlazor
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Target { get; set; }
         [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public bool ForceLoad { get; set; }
 
+
+        [Parameter] public EventCallback<EventArgs> OnAction { get; set; }
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
         [Parameter] public EventCallback<TouchEventArgs> OnTouch { get; set; }
 
@@ -78,13 +81,19 @@ namespace MudBlazor
             }
             else
             {
-                await OnClick.InvokeAsync(ev);
+                if(OnClick.HasDelegate)
+                    await OnClick.InvokeAsync(ev);
+                else 
+                    await OnActionHandlerAsync(ev);
             }
         }
 
+        private bool _isTouchMoved;
+        private void OnTouchStartHandler() => _isTouchMoved = false;
+        private void OnTouchMoveHandler() => _isTouchMoved = true;
         protected internal async Task OnTouchHandler(TouchEventArgs ev)
         {
-            if (Disabled)
+            if (Disabled || _isTouchMoved)
                 return;
             if (AutoClose) MudMenu.CloseMenu();
 
@@ -97,8 +106,29 @@ namespace MudBlazor
             }
             else
             {
-                await OnTouch.InvokeAsync(ev);
+                if(OnTouch.HasDelegate)
+                    await OnTouch.InvokeAsync(ev);
+                else 
+                    await OnActionHandlerAsync(ev);
             }
+        }
+
+        private DateTime _lastCall = DateTime.MinValue;
+        private SemaphoreSlim _semaphoreLastCall = new(1);
+        protected internal async Task OnActionHandlerAsync(EventArgs ev)
+        {
+            var now = DateTime.UtcNow;
+
+            if (!OnAction.HasDelegate) return;
+
+            await _semaphoreLastCall.WaitAsync();
+            var needCall = now - _lastCall > MudGlobal.MenuItemDebounceInterval;
+            if (needCall) _lastCall = now;
+            _semaphoreLastCall.Release();
+
+            if (needCall)
+                await OnAction.InvokeAsync(ev);
+
         }
     }
 }

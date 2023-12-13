@@ -92,11 +92,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Chip.Appearance)]
         public Color SelectedColor { get; set; } = Color.Inherit;
+        
+        [Parameter]
+        [Category(CategoryTypes.Chip.Appearance)]
+        public RenderFragment AvatarContent { get; set; }
 
         /// <summary>
         /// Avatar Icon, Overrides the regular Icon if set.
         /// </summary>
         [Parameter]
+        [Obsolete($"Use {nameof(AvatarContent)} to render avatar as a fragment.")]
         [Category(CategoryTypes.Chip.Behavior)]
         public string Avatar { get; set; }
 
@@ -104,6 +109,7 @@ namespace MudBlazor
         /// Avatar CSS Class, appends to Chips default avatar classes.
         /// </summary>
         [Parameter]
+        [Obsolete($"Use {nameof(AvatarContent)} to render avatar as a fragment.")]
         [Category(CategoryTypes.Chip.Appearance)]
         public string AvatarClass { get; set; }
 

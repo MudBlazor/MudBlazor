@@ -84,7 +84,7 @@ namespace MudBlazor
         /// <param name="configure">Additional configuration for the snackbar.</param>
         /// <param name="key">If a key is provided, this message will not be shown while any other message with the same key is being shown.</param>
         /// <returns>The snackbar created by the parameters.</returns>
-        public Snackbar Add<T>(Dictionary<string, object> componentParameters = null, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "") where T : IComponent
+        public Snackbar Add<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(Dictionary<string, object> componentParameters = null, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "") where T : IComponent
         {
             var type = typeof(T);
             var message = new SnackbarMessage(type, componentParameters, key);

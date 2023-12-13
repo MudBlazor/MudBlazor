@@ -44,5 +44,13 @@ namespace MudBlazor.UnitTests.Components
             var comp2 = Context.RenderComponent<MudPicker<DateTime?>>(x => x.Add(f => f.For, () => value.Date).Add(l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
+
+        [Test]
+        public void PickerHasImmediateText()
+        {
+            var comp = Context.RenderComponent<MudPicker<DateTime?>>(ComponentParameter.CreateParameter("ImmediateText", true));
+            comp.Instance.ImmediateText.Should().Be(true);
+        }
+
     }
 }

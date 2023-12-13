@@ -35,54 +35,60 @@ namespace MudBlazor.Charts
             if (MudChartParent != null)
                 _series = MudChartParent.ChartSeries;
 
-            ComputeUnitsAndNumberOfLines(out double gridXUnits, out double gridYUnits, out int numHorizontalLines, out int numVerticalLines);                    
+            ComputeUnitsAndNumberOfLines(out double gridXUnits, out double gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines);
 
             var horizontalSpace = (BoundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines - 1);
-            var verticalSpace = (BoundHeight - VerticalStartSpace - VerticalEndSpace) / (numHorizontalLines - 1); 
+            var verticalSpace = (BoundHeight - VerticalStartSpace - VerticalEndSpace) / (numHorizontalLines - 1);
 
-            GenerateHorizontalGridLines(numHorizontalLines, gridYUnits, verticalSpace);
+            GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, gridXUnits, horizontalSpace);
-            GenerateBars(gridYUnits, horizontalSpace, verticalSpace);
+            GenerateBars(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
         }
 
-        private void ComputeUnitsAndNumberOfLines(out double gridXUnits, out double gridYUnits, out int numHorizontalLines, out int numVerticalLines)
+        private void ComputeUnitsAndNumberOfLines(out double gridXUnits, out double gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
         {
             gridXUnits = 30;
 
             gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
             if (gridYUnits <= 0)
                 gridYUnits = 20;
-                
+
             if (_series.SelectMany(series => series.Data).Any())
             {
+                var minY = _series.SelectMany(series => series.Data).Min();
                 var maxY = _series.SelectMany(series => series.Data).Max();
-                numHorizontalLines = (int)Math.Ceiling(maxY / gridYUnits) + 1;
+                lowestHorizontalLine = Math.Min((int)Math.Floor(minY / gridYUnits), 0);
+                var highestHorizontalLine = Math.Max((int)Math.Ceiling(maxY / gridYUnits), 0);
+                numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
 
                 // this is a safeguard against millions of gridlines which might arise with very high values
                 int maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
                 while (numHorizontalLines > maxYTicks)
                 {
                     gridYUnits *= 2;
-                    numHorizontalLines = (int)Math.Ceiling(maxY / gridYUnits) + 1;
-                }    
+                    lowestHorizontalLine = Math.Min((int)Math.Floor(minY / gridYUnits), 0);
+                    highestHorizontalLine = Math.Max((int)Math.Ceiling(maxY / gridYUnits), 0);
+                    numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
+                }
 
-                numVerticalLines = _series.Max(series => series.Data.Length);  
+                numVerticalLines = _series.Max(series => series.Data.Length);
             }
             else
             {
                 numHorizontalLines = 1;
+                lowestHorizontalLine = 0;
                 numVerticalLines = 1;
             }
         }
 
-        private void GenerateHorizontalGridLines(int numHorizontalLines, double gridYUnits, double verticalSpace)
+        private void GenerateHorizontalGridLines(int numHorizontalLines, int lowestHorizontalLine, double gridYUnits, double verticalSpace)
         {
             _horizontalLines.Clear();
             _horizontalValues.Clear();
 
             for (var i = 0; i < numHorizontalLines; i++)
             {
-                var y = VerticalStartSpace + i * verticalSpace;                
+                var y = VerticalStartSpace + i * verticalSpace;
                 var line = new SvgPath()
                 {
                     Index = i,
@@ -90,12 +96,12 @@ namespace MudBlazor.Charts
                 };
                 _horizontalLines.Add(line);
 
-                var startGridY = i * gridYUnits;
-                var lineValue = new SvgText() 
-                { 
-                    X = HorizontalStartSpace - 10, 
-                    Y = BoundHeight - y + 5, 
-                    Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat) 
+                var startGridY = (lowestHorizontalLine + i) * gridYUnits;
+                var lineValue = new SvgText()
+                {
+                    X = HorizontalStartSpace - 10,
+                    Y = BoundHeight - y + 5,
+                    Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat)
                 };
                 _horizontalValues.Add(lineValue);
             }
@@ -127,7 +133,7 @@ namespace MudBlazor.Charts
             }
         }
 
-        private void GenerateBars(double gridYUnits, double horizontalSpace, double verticalSpace)
+        private void GenerateBars(int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace)
         {
             _legends.Clear();
             _bars.Clear();
@@ -139,9 +145,9 @@ namespace MudBlazor.Charts
                 for (var j = 0; j < data.Length; j++)
                 {
                     var gridValueX = HorizontalStartSpace + i * 10 + j * horizontalSpace;
-                    var gridValueY = BoundHeight - VerticalStartSpace;
-                    var dataValue = data[j] * verticalSpace / gridYUnits;
-                    var gridValue = gridValueY - dataValue;
+                    var gridValueY = BoundHeight - VerticalStartSpace + lowestHorizontalLine * verticalSpace;
+                    var dataValue = (data[j] / gridYUnits - lowestHorizontalLine) * verticalSpace;
+                    var gridValue = BoundHeight - VerticalStartSpace - dataValue;
 
                     var bar = new SvgPath()
                     {
