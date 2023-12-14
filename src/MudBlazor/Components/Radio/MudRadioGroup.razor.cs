@@ -71,12 +71,25 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.Radio.Data)]
+        public T? Value
+        {
+            get => _value;
+            set => SetSelectedOptionAsync(value, true).AndForget();
+        }
+
+        [Parameter]
+        public EventCallback<T> ValueChanged { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Radio.Data)]
+        [Obsolete("Use Value instead.")]
         public T? SelectedOption
         {
             get => _value;
             set => SetSelectedOptionAsync(value, true).AndForget();
         }
 
+        [Obsolete("Use ValueChanged instead.")]
         [Parameter]
         public EventCallback<T> SelectedOptionChanged { get; set; }
 
@@ -92,10 +105,11 @@ namespace MudBlazor
 
                 if (updateRadio)
                 {
-                    var radio = _radios.FirstOrDefault(r => OptionEquals(r.Option, _value));
+                    var radio = _radios.FirstOrDefault(r => OptionEquals(r.Value, _value));
                     await SetSelectedRadioAsync(radio, false);
                 }
 
+                await ValueChanged.InvokeAsync(_value);
                 await SelectedOptionChanged.InvokeAsync(_value);
 
                 await BeginValidateAsync();
@@ -131,7 +145,7 @@ namespace MudBlazor
 
                 if (updateOption)
                 {
-                    await SetSelectedOptionAsync(GetOptionOrDefault(_selectedRadio), false);
+                    await SetSelectedOptionAsync(GetValueOrDefault(_selectedRadio), false);
                 }
             }
         }
@@ -142,7 +156,7 @@ namespace MudBlazor
 
             if (_selectedRadio is null)
             {
-                if (OptionEquals(radio.Option, _value))
+                if (OptionEquals(radio.Value, _value))
                 {
                     return SetSelectedRadioAsync(radio, false);
                 }
@@ -184,9 +198,9 @@ namespace MudBlazor
             return base.ResetValueAsync();
         }
 
-        private static T? GetOptionOrDefault(MudRadio<T>? radio)
+        private static T? GetValueOrDefault(MudRadio<T>? radio)
         {
-            return radio is not null ? radio.Option : default;
+            return radio is not null ? radio.Value : default;
         }
 
         private static bool OptionEquals(T? option1, T? option2)
