@@ -614,7 +614,7 @@ namespace MudBlazor.UnitTests.Components
             var colorPickerComp = comp.FindComponent<MudColorPicker>();
             var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
             var forbiddenColor = colorPicker.Value;
-            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor?, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
+            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
             // should not be valid since the default color is invalid
             form.IsTouched.Should().BeFalse();
             form.IsValid.Should().BeFalse();
@@ -647,7 +647,7 @@ namespace MudBlazor.UnitTests.Components
             var colorPickerComp = comp.FindComponent<MudColorPicker>();
             var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
             var forbiddenColor = colorPicker.Palette.First();
-            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor?, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
+            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
             // initial form state
             form.IsTouched.Should().BeFalse();
             form.IsValid.Should().BeFalse();

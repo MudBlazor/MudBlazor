@@ -45,7 +45,7 @@
         public string Selector { get; set; }
     }
 
-    private string? GetItemClass(DropItem item, String dropzoneid)
+    private string GetItemClass(DropItem item, String dropzoneid)
     {
         if (dropzoneid == "1") return "mud-theme-primary";
         else if (dropzoneid == "2") return "mud-theme-secondary";
