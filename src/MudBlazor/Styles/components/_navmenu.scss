@@ -241,6 +241,10 @@
         & .mud-nav-link .mud-icon-root:first-child + .mud-nav-link-text {
             display: none;
         }
+
+        & .mud-nav-link .mud-avatar:first-child + .mud-nav-link-text {
+            display: none;
+        }
     }
 
     .mud-nav-group {
@@ -278,5 +282,4 @@
             }
         }
     }
-
 }
