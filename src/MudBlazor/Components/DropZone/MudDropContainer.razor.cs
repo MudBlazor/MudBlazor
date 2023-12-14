@@ -16,7 +16,7 @@ namespace MudBlazor
     /// The container of a drag and drop zones
     /// </summary>
     /// <typeparam name="T">Type of items</typeparam>
-    public partial class MudDropContainer<T> : MudComponentBase
+    public partial class MudDropContainer<T> : MudComponentBase where T : notnull
     {
         private MudDragAndDropItemTransaction<T>? _transaction;
         private Dictionary<string, MudDropZone<T>> _mudDropZones = new();

@@ -13,7 +13,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudDropZone<T> : MudComponentBase, IDisposable
+    public partial class MudDropZone<T> : MudComponentBase, IDisposable where T : notnull
     {
         private bool _containerIsInitialized = false;
         private bool _canDrop = false;
