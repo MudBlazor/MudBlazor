@@ -572,7 +572,7 @@ namespace MudBlazor
                     {
                         Clear();
                         _value = default(T);
-                        Reset();
+                        ResetValueAsync().AndForget();
                     }
 
                     break;
