@@ -134,10 +134,15 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
+        protected internal async Task OnClickBackgroundHandlerAsync(MouseEventArgs ev)
         {
             if (AutoClose)
                 Visible = false;
+            await BaseOnClickHandlerAsync(ev);
+        }
+
+        private async Task BaseOnClickHandlerAsync(MouseEventArgs ev)
+        {
             await OnClick.InvokeAsync(ev);
 #pragma warning disable CS0618
             if (Command?.CanExecute(CommandParameter) ?? false)
@@ -145,6 +150,11 @@ namespace MudBlazor
                 Command.Execute(CommandParameter);
             }
 #pragma warning restore CS0618
+        }
+
+        protected internal async Task OnClickOverlayHandlerAsync(MouseEventArgs ev)
+        {
+            await BaseOnClickHandlerAsync(ev);
         }
 
         //if not visible or CSS `position:absolute`, don't lock scroll
