@@ -102,8 +102,10 @@ namespace MudBlazor
             {
                 Value = value;
                 await ValueChanged.InvokeAsync(value);
+#pragma warning disable CS0618
                 Checked = value;
                 await CheckedChanged.InvokeAsync(value);
+#pragma warning restore CS0618
                 await BeginValidateAsync();
                 FieldChanged(Value);
             }

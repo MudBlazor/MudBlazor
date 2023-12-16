@@ -110,7 +110,9 @@ namespace MudBlazor
                 }
 
                 await ValueChanged.InvokeAsync(_value);
+#pragma warning disable CS0618
                 await SelectedOptionChanged.InvokeAsync(_value);
+#pragma warning restore CS0618
 
                 await BeginValidateAsync();
                 FieldChanged(_value);
