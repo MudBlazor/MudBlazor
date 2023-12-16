@@ -12,8 +12,6 @@ namespace MudBlazor
 #nullable enable
     public partial class MudBreakpointProvider : IBrowserViewportObserver, IAsyncDisposable
     {
-        private Guid _breakPointListenerSubscriptionId;
-
         public Breakpoint Breakpoint { get; private set; } = Breakpoint.Always;
 
         [Parameter]
