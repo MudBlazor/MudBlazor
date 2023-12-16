@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 namespace MudBlazor
 {
 #nullable enable
+#pragma warning disable CS1998
     [Obsolete("This will be removed in v7.")]
     public enum TaskOption
     {
