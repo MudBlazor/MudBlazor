@@ -14,7 +14,7 @@ namespace MudBlazor
         public Action PagerStateHasChanged { get; set; }
         public bool HasPager { get; set; }
         public abstract void Add(MudTr row, object item);
-        public abstract void Remove(MudTr row, object item);
+        public abstract void Remove(MudTr row, object item, bool clearSelection = true);
         public abstract void UpdateRowCheckBoxes(bool updateGroups = true, bool updateHeaderFooter = true);
         public List<MudTHeadRow> HeaderRows { get; set; } = new List<MudTHeadRow>();
         public List<MudTFootRow> FooterRows { get; set; } = new List<MudTFootRow>();
@@ -120,7 +120,7 @@ namespace MudBlazor
             Rows[t] = row;
         }
 
-        public override void Remove(MudTr row, object item)
+        public override void Remove(MudTr row, object item, bool clearSelection = true)
         {
             var t = item.As<T>();
             if (t is null)
@@ -129,7 +129,10 @@ namespace MudBlazor
                 Rows.Remove(t);
             if (!Table.ContainsItem(item))
             {
-                Selection.Remove(t);
+                if (clearSelection)
+                {
+                    Selection.Remove(t);
+                }
                 Table.UpdateSelection();
             }
         }

@@ -1,0 +1,41 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTable T="ComplexObject" ServerData="ServerData" MultiSelection @bind-SelectedItems="_selectedItems" Comparer="Comparer" Dense>
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>DateTime</MudTh>
+        <MudTh>X</MudTh>
+        <MudTh>Y</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Id</MudTd>
+        <MudTd>@context.Name</MudTd>
+        <MudTd>@context.DateTime</MudTd>
+        <MudTd>@context.NestedObject.X</MudTd>
+        <MudTd>@context.NestedObject.Y</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+<MudText Class="mt-3" Typo="Typo.button">Selected id's'</MudText>
+<MudText>@string.Join(", ", _selectedItems.Select(x => x.Id))</MudText>
+
+<MudDivider Class="my-4" />
+
+<MudTable T="string" ServerData="ServerDataBasicType" MultiSelection @bind-SelectedItems="_selectedItemsBasicType" Dense>
+    <HeaderContent>
+        <MudTh>Value</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+<MudText Class="mt-3" Typo="Typo.button">Selected values</MudText>
+<MudText>@string.Join(", ", _selectedItemsBasicType)</MudText>

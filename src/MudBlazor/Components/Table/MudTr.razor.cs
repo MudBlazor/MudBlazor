@@ -113,7 +113,7 @@ namespace MudBlazor
 
         public void Dispose()
         {
-            Context?.Remove(this, Item);
+            Context?.Remove(this, Item, false);
         }
 
         public void SetChecked(bool checkedState, bool notify)
