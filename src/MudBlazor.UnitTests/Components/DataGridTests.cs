@@ -3931,12 +3931,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ExpandAllGroups();
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(14);
-            comp.Instance.NavigateToPage(1);
-            comp.Render();
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Next));
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(18);
             comp.Instance.CollapseAllGroups();
-            comp.Instance.NavigateToPage(0);
-            comp.Render();
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
             comp.Instance.RefreshList();
             comp.Render();
