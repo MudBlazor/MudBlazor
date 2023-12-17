@@ -12,10 +12,8 @@ namespace MudBlazor.UnitTests.TestComponents
 {
 #pragma warning disable CS1998 // async without await
 
-    public partial class TableServerSideDataMultiSelectTest
+    public partial class TableMultiSelectionTest9
     {
-        #region COMPLEX TYPE TEST
-
         public static string __description__ = "The selected items should not be cleared when the page changes or filters are applied.";
         private List<ComplexObject> _simulatedServerData = Enumerable
             .Range(1, 50)
@@ -70,31 +68,5 @@ namespace MudBlazor.UnitTests.TestComponents
             public float X { get; set; }
             public float Y { get; set; }
         }
-
-        #endregion
-
-        #region BASIC TYPE DATA TEST
-
-        private List<string> _simulatedServerDataBasicType = Enumerable.Range(1, 50).Select(x => $"Test {x}").ToList();
-        private HashSet<string> _selectedItemsBasicType = new();
-
-        protected async Task<TableData<string>> ServerDataBasicType(TableState state)
-        {
-            try
-            {
-                TableData<string> data = new();
-                data.TotalItems = _simulatedServerDataBasicType.Count;
-                // Serialize & deserialize to test a more real scenario where the references to the objects is not the same
-                string jsonData = JsonSerializer.Serialize(_simulatedServerDataBasicType);
-                data.Items = JsonSerializer.Deserialize<List<string>>(jsonData).Skip(state.PageSize * state.Page).Take(state.PageSize);
-                return data;
-            }
-            catch
-            {
-                return new();
-            }
-        }
-
-        #endregion
     }
 }
