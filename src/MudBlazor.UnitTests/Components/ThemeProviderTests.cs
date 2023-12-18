@@ -314,10 +314,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         private bool _systemMockValue;
-        private async Task SystemChangedResult(bool newValue)
+        private Task SystemChangedResult(bool newValue)
         {
             _systemMockValue = newValue;
+            return Task.CompletedTask;
         }
+
         [Test]
         public async Task WatchSystemTest()
         {

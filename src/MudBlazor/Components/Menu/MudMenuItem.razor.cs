@@ -103,9 +103,12 @@ namespace MudBlazor
             }
         }
 
+        private bool _isTouchMoved;
+        private void OnTouchStartHandler() => _isTouchMoved = false;
+        private void OnTouchMoveHandler() => _isTouchMoved = true;
         protected internal async Task OnTouchHandler(TouchEventArgs ev)
         {
-            if (Disabled)
+            if (Disabled || _isTouchMoved)
                 return;
             if (AutoClose) MudMenu.CloseMenu();
 

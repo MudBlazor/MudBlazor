@@ -100,7 +100,25 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Behavior)]
-        public T? Option { get; set; }
+        public T? Value { get; set; }
+
+        /// <summary>
+        /// The value to associate to the button.
+        /// </summary>
+        [Obsolete("Use Value instead.")]
+        [Parameter]
+        [Category(CategoryTypes.Radio.Behavior)]
+        public T? Option
+        {
+            get
+            {
+                return Option;
+            }
+            set
+            {
+                Value = value;
+            }
+        }
 
         /// <summary>
         /// If true, compact padding will be applied.

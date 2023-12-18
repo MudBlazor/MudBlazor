@@ -275,4 +275,34 @@ public class ObserverManagerTests
             .VerifyLogging($"Adding entry for {DefunctObserverId}/{DefunctObserver}. 1 total observers after add.")
             .VerifyLogging($"Removing defunct entry for {DefunctObserverId}. 0 total observers after remove.");
     }
+
+    [Test]
+    public void CollectionModified()
+    {
+        // Arrange
+        var observerManager = new ObserverManager<int, int>(NullLogger.Instance);
+
+        for (var i = 0; i < 1000; i++)
+        {
+            observerManager.Subscribe(i, i);
+        }
+
+        bool Predicate(int id, int observer)
+        {
+            if (id == 500)
+            {
+                observerManager.Subscribe(1001, 1001);
+            }
+
+            return true;
+        }
+
+        Task NotificationAsync(int observer)
+        {
+            return Task.CompletedTask;
+        }
+
+        // Act & Assert
+        Assert.DoesNotThrowAsync(() => observerManager.NotifyAsync(NotificationAsync, Predicate));
+    }
 }

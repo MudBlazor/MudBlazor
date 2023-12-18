@@ -10,7 +10,6 @@ namespace MudBlazor
     {
         private bool _isHidden = true;
         private bool _serviceIsReady = false;
-        private Guid _breakpointServiceSubscriptionId;
         private Breakpoint _currentBreakpoint = Breakpoint.None;
 
         [Inject]
