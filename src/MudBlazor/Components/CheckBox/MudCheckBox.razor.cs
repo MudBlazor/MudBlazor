@@ -36,15 +36,7 @@ namespace MudBlazor
                 .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple && !GetReadOnlyState() && !GetDisabledState())
                 .AddClass($"mud-disabled", GetDisabledState())
                 .AddClass($"mud-readonly", GetReadOnlyState())
-                .AddClass("mud-checkbox-custom", !string.IsNullOrWhiteSpace(CustomColor) && (UnCheckedColor == null || (UnCheckedColor != null && BoolValue == true)))
                 .Build();
-
-        /// <summary>
-        /// The color of the component. It supports custom colors.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public string? CustomColor { get; set; } = null;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -260,11 +252,6 @@ namespace MudBlazor
                     }
                 }
             }
-        }
-
-        protected string GetCustomStyle()
-        {
-            return !string.IsNullOrWhiteSpace(CustomColor) ? $"--mud-palette-custom-color: {CustomColor};" : "";
         }
     }
 }

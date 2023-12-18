@@ -14,8 +14,8 @@
                 }
                 else
                 {   
-                    <div class="mud-chart-legend-checkbox">    
-                        <MudCheckBox Checked="@item.IsVisible" CheckedChanged="@((bool value) => item.HandleCheckboxChangeAsync())" CustomColor="@($"{MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count())}")"></MudCheckBox>               
+                    <div class="mud-chart-legend-checkbox" style="@GetCheckBoxStyle(item.Index)">    
+                        <MudCheckBox Checked="@item.IsVisible" CheckedChanged="@((bool value) => item.HandleCheckboxChangeAsync())"></MudCheckBox>               
                         <MudText Typo="Typo.body2" Inline="true">@item.Labels</MudText>
                     </div> 
                 }                 

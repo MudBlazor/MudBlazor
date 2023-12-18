@@ -43,7 +43,6 @@
     cursor: pointer;
 }
 
-.mud-checkbox-custom {
-    color: var(--mud-palette-custom-color, defaultColor);
+.mud-chart-legend-checkbox .mud-checkbox svg path:last-child {
+    fill: var(--checkbox-color) !important;
 }
-
