@@ -127,7 +127,7 @@ namespace MudBlazor
         public string? MaxAvatarClass { get; set; }
 
         /// <summary>
-        /// Template for MaxAvatar.
+        /// Template that will be rendered when the number of avatars exceeds the maximum (parameter Max).
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Appearance)]
