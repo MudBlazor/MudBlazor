@@ -43,3 +43,7 @@
     cursor: pointer;
 }
 
+.mud-checkbox-custom {
+    color: var(--mud-palette-custom-color, defaultColor);
+}
+
