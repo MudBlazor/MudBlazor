@@ -1,6 +1,9 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudChart ChartType="ChartType.Line" ChartSeries="@_series" XAxisLabels="@_xAxisLabels" ChartOptions="@_options" Width="100%" Height="350px"></MudChart>
+<div>
+    <MudChart ChartType="ChartType.Line" ChartSeries="@_series" XAxisLabels="@_xAxisLabels" ChartOptions="@_options" Width="100%" Height="350px"></MudChart>
+    <MudSlider @bind-Value="_options.YAxisTicks" Min="10" Max="400" Step="10" Color="Color.Info">Y-Axis Ticks: @_options.YAxisTicks.ToString()</MudSlider>
+</div>
 
 @code {
     private readonly List<ChartSeries> _series = new();
@@ -19,7 +22,7 @@
         _series.Add(new ChartSeries { Name = "Chernobyl-3", Data = data3 });
         _series.Add(new ChartSeries { Name = "Chernobyl-4", Data = data4 });
 
-        _options.YAxisTicks = 400;
+        _options.YAxisTicks = 50;
 
         StateHasChanged();
     }

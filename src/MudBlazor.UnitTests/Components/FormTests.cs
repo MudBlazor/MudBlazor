@@ -92,13 +92,13 @@ namespace MudBlazor.UnitTests.Components
             // check initial state: form should be invalid due to having a required field that is not filled
             form.IsValid.Should().Be(false);
             form.IsTouched.Should().Be(false);
-            comp.FindComponents<MudSwitch<bool>>()[0].Instance.Checked.Should().Be(false);
-            comp.FindComponents<MudSwitch<bool>>()[1].Instance.Checked.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>()[0].Instance.Value.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>()[1].Instance.Value.Should().Be(false);
             // filling in the required field
             textFields[1].Find("input").Change("Fill in the required field to make this form valid");
             form.IsValid.Should().Be(true);
-            comp.FindComponents<MudSwitch<bool>>()[0].Instance.Checked.Should().Be(true);
-            comp.FindComponents<MudSwitch<bool>>()[1].Instance.Checked.Should().Be(true);
+            comp.FindComponents<MudSwitch<bool>>()[0].Instance.Value.Should().Be(true);
+            comp.FindComponents<MudSwitch<bool>>()[1].Instance.Value.Should().Be(true);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudForm>().Instance;
             // check initial state: form should be valid due to having no required field, but the user's two-way binding did override that value to false
             comp.WaitForAssertion(() => form.IsValid.Should().Be(true));
-            comp.WaitForAssertion(() => comp.FindComponent<MudSwitch<bool>>().Instance.Checked.Should().Be(true));
+            comp.WaitForAssertion(() => comp.FindComponent<MudSwitch<bool>>().Instance.Value.Should().Be(true));
         }
 
         /// <summary>
@@ -459,9 +459,9 @@ namespace MudBlazor.UnitTests.Components
                 tf.Instance.Text.Should().NotBeNullOrEmpty();
             comp.FindComponent<MudTextField<int>>().Instance.Value.Should().Be(17);
             // then click the checkbox
-            comp.FindComponent<MudCheckBox<bool>>().Instance.Checked.Should().Be(true);
+            comp.FindComponent<MudCheckBox<bool>>().Instance.Value.Should().Be(true);
             comp.FindAll("input")[3].Change(false); // it was on before
-            comp.FindComponent<MudCheckBox<bool>>().Instance.Checked.Should().Be(false);
+            comp.FindComponent<MudCheckBox<bool>>().Instance.Value.Should().Be(false);
             // the text fields should be unchanged
             foreach (var tf in comp.FindComponents<MudTextField<string>>())
                 tf.Instance.Text.Should().NotBeNullOrEmpty();
@@ -569,7 +569,7 @@ namespace MudBlazor.UnitTests.Components
             textfields[2].Instance.Text.Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => checkbox.Instance.HasErrors.Should().BeFalse());
             checkbox.Instance.ErrorText.Should().BeNullOrEmpty();
-            comp.WaitForAssertion(() => checkbox.Instance.Checked.Should().BeFalse());
+            comp.WaitForAssertion(() => checkbox.Instance.Value.Should().BeFalse());
             // TODO: fill out the form with errors, field after field, check how fields get validation errors after blur
         }
 
@@ -614,7 +614,7 @@ namespace MudBlazor.UnitTests.Components
             var colorPickerComp = comp.FindComponent<MudColorPicker>();
             var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
             var forbiddenColor = colorPicker.Value;
-            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor?, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
+            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
             // should not be valid since the default color is invalid
             form.IsTouched.Should().BeFalse();
             form.IsValid.Should().BeFalse();
@@ -647,7 +647,7 @@ namespace MudBlazor.UnitTests.Components
             var colorPickerComp = comp.FindComponent<MudColorPicker>();
             var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
             var forbiddenColor = colorPicker.Palette.First();
-            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor?, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
+            colorPickerComp.SetParam(x => x.Validation, new Func<MudColor, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null));
             // initial form state
             form.IsTouched.Should().BeFalse();
             form.IsValid.Should().BeFalse();
@@ -1615,10 +1615,10 @@ namespace MudBlazor.UnitTests.Components
 
             var inputs = comp.FindAll("input").ToArray();
             // check initial state
-            radioGroup.SelectedOption.Should().Be(null);
+            radioGroup.Value.Should().Be(null);
             // click radio 1
             inputs[2].Click();
-            radioGroup.SelectedOption.Should().Be("1");
+            radioGroup.Value.Should().Be("1");
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("1");
             Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, radioGroup);
 

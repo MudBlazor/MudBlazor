@@ -572,7 +572,12 @@ namespace MudBlazor
                     {
                         Clear();
                         _value = default(T);
+
+                        // TODO: Probably need to  create a HandleKeyDownAsync that awaits ResetValueAsync()
+                        // Simply replacing Reset() with ResetValueAsync().AndForget() may cause issues in BSS
+#pragma warning disable CS0618
                         Reset();
+#pragma warning disable CS0618
                     }
 
                     break;

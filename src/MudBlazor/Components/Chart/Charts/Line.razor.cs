@@ -201,20 +201,33 @@ namespace MudBlazor.Charts
                         chartLine.Append(ToS(y));
                     }
                 }
-
-                var line = new SvgPath()
+                if (_series[i].IsVisible)
                 {
-                    Index = i,
-                    Data = chartLine.ToString()
-                };
-                _chartLines.Add(line);
-
+                    var line = new SvgPath()
+                    {
+                        Index = i,
+                        Data = chartLine.ToString()
+                    };
+                    _chartLines.Add(line);
+                }
                 var legend = new SvgLegend()
                 {
                     Index = i,
-                    Labels = _series[i].Name
+                    Labels = _series[i].Name,
+                    IsVisible = _series[i].IsVisible,
+                    OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
                 };
                 _legends.Add(legend);
+            }
+        }
+    
+        private void HandleLegendVisibilityChanged(SvgLegend legend)
+        {
+            var series = _series[legend.Index];
+            if (series != null)
+            {
+                series.IsVisible = legend.IsVisible;
+                OnParametersSet();
             }
         }
     }

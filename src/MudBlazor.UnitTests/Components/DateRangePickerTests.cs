@@ -655,7 +655,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DateRangePicker_Should_Clear()
+        public void DateRangePicker_Should_Clear()
         {
             var comp = Context.RenderComponent<MudDateRangePicker>();
             // select elements needed for the test

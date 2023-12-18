@@ -16,9 +16,10 @@
         }
     }
     
-    private async Task OnSystemPreferenceChanged(bool newValue)
+    private Task OnSystemPreferenceChanged(bool newValue)
     {
         _isDarkMode = newValue;
         StateHasChanged();
+        return Task.CompletedTask;
     }
 }
