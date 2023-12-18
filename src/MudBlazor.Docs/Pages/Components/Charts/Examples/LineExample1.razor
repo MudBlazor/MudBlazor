@@ -3,13 +3,10 @@
 <div>
     <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" ChartOptions="@Options"/>
     <MudGrid>
-        <MudItem xs="4">
-            <MudButton @onclick="RandomizeData" Variant="Variant.Filled">Randomize Data</MudButton>
-        </MudItem>
-        <MudItem xs="4">
+        <MudItem xs="6">
             <MudText Typo="Typo.body1" Class="py-3">Selected: @(Index < 0 ? "None" : Series[Index].Name)</MudText>
         </MudItem>
-        <MudItem xs="4">
+        <MudItem xs="6">
             <MudSlider @bind-Value="Options.LineStrokeWidth" Min="1" Max="10" Color="Color.Info">Line Width: @Options.LineStrokeWidth.ToString()</MudSlider>
         </MudItem>
     </MudGrid>
@@ -21,25 +18,9 @@
     
     public List<ChartSeries> Series = new List<ChartSeries>()
     {
-        new ChartSeries() { Name = "Fossile", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+        new ChartSeries() { Name = "Fossil", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
         new ChartSeries() { Name = "Renewable", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
     };
     public string[] XAxisLabels = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
-
-    Random random = new Random();
-    public void RandomizeData()
-    {
-        var new_series = new List<ChartSeries>()
-        {
-            new ChartSeries() { Name = "Fossile", Data = new double[9] },
-            new ChartSeries() { Name = "Renewable", Data = new double[9] },
-        };
-        for (int i = 0; i < 9; i++)
-        {
-            new_series[0].Data[i] = random.NextDouble() * 100;
-            new_series[1].Data[i] = random.NextDouble() * 100;
-        }
-        Series = new_series;
-        StateHasChanged();
-    }
+    
 }
