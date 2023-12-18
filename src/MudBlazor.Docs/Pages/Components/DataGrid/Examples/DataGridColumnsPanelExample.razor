@@ -38,9 +38,6 @@
 
 @code {
     IEnumerable<Element> _elements = new List<Element>();
-    bool _applyDropClassesOnDragStarted = false;
-
-    string _dragIndicatorIcon = Icons.Material.Filled.DragIndicator;
 
     DataGridFilterMode _filterMode = DataGridFilterMode.Simple;
     bool _dragDropReorderingEnabled = true;
@@ -48,8 +45,6 @@
     bool _hideable = true;
     bool _filterable = true;
     bool _groupable = true;
-    bool _horizontalScroll = true;
-    bool _showColumnOptions = true;
     public MudDataGrid<Element> grid = null;
 
     protected override async Task OnInitializedAsync()
