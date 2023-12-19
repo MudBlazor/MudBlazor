@@ -131,7 +131,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Appearance)]
-        public RenderFragment<int>? MaxAvatarTemplate { get; set; }
+        public RenderFragment<int>? MaxAvatarsTemplate { get; set; }
 
         /// <summary>
         /// Child content of the component.
