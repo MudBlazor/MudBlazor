@@ -127,6 +127,13 @@ namespace MudBlazor
         public string? MaxAvatarClass { get; set; }
 
         /// <summary>
+        /// Template that will be rendered when the number of avatars exceeds the maximum (parameter Max).
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.AvatarGroup.Appearance)]
+        public RenderFragment<int>? MaxAvatarsTemplate { get; set; }
+
+        /// <summary>
         /// Child content of the component.
         /// </summary>
         [Parameter]
