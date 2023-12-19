@@ -69,10 +69,6 @@
     <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.14" />
   </ItemGroup>
 
-  <Target Name="ToolRestore">
-    <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
-  </Target>
-
   <!--combine js files-->
   <Target Name="CombineJS">
     <CreateItem Include="./TScripts/*.js">
@@ -84,7 +80,7 @@
     <WriteLinesToFile File="./TScripts/combined/MudBlazor.js" Lines="@(jsLines)" Overwrite="true" />
   </Target>
 
-  <Target Name="WebCompiler" DependsOnTargets="ToolRestore;CombineJS">
+  <Target Name="WebCompiler" DependsOnTargets="CombineJS">
     <!--compile and minify scss-->
     <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json" StandardOutputImportance="high" StandardErrorImportance="high" />
     <!--minify js-->

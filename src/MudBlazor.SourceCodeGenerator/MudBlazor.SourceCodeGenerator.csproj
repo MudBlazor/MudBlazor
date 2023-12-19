@@ -17,4 +17,10 @@
     <InternalsVisibleTo Include="MudBlazor.UnitTests" />
   </ItemGroup>
 
+<!--  Run `dotnet tool restore` in a single target framework project to prevent multiple executions.-->
+  <Target Name="ToolRestore" BeforeTargets="PreBuildEvent">
+    <Exec Command="dotnet tool restore --tool-manifest ../MudBlazor/.config/dotnet-tools.json" StandardOutputImportance="high" />
+    <Exec Command="dotnet tool restore --tool-manifest ../MudBlazor.Docs/.config/dotnet-tools.json" StandardOutputImportance="high" />
+  </Target>
+  
 </Project>
