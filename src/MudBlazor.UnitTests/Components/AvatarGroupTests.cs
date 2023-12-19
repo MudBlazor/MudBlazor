@@ -122,9 +122,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AvatarGroupMaxAvatarTemplateTest()
+        public void AvatarGroupMaxAvatarsTemplateTest()
         {
-            var comp = Context.RenderComponent<AvatarGroupMaxAvatarTemplateTest>();
+            var comp = Context.RenderComponent<AvatarGroupMaxAvatarsTemplateTest>();
 
             comp.FindComponent<MudButton>().Should().NotBeNull();
 
