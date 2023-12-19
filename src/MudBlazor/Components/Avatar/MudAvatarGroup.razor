@@ -7,9 +7,9 @@
     </CascadingValue>
     @if(_avatars.Count > Max)
     {
-        @if (MaxAvatarTemplate != null)
+        @if (MaxAvatarsTemplate != null)
         {
-            @MaxAvatarTemplate.Invoke(_avatars.Count - Max)
+            @MaxAvatarsTemplate.Invoke(_avatars.Count - Max)
         }
         else
         {
