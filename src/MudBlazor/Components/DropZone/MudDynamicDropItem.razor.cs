@@ -12,7 +12,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
-public partial class MudDynamicDropItem<T> : MudComponentBase
+public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
 {
     private bool _dragOperationIsInProgress = false;
     private Guid _id = Guid.NewGuid();

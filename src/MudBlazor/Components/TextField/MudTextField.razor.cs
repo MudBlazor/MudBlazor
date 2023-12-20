@@ -121,7 +121,6 @@ namespace MudBlazor
             _maskReference.OnPaste(text);
         }
 
-
         private IMask _mask = null;
 
         /// <summary>
@@ -166,6 +165,21 @@ namespace MudBlazor
         {
             await SetTextAsync(s);
         }
+
+        /// <summary>
+        /// If true the input element will grow automatically with the text.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public bool AutoGrow { get; set; }
+
+        /// <summary>
+        /// If AutoGrow is set to true, the input element will not grow bigger than MaxLines lines. If MaxLines is set to 0
+        /// or less, the property will be ignored.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public int MaxLines { get; set; }
     }
 
     [Obsolete("MudTextFieldString is no longer available.", true)]

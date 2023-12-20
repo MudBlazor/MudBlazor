@@ -812,5 +812,84 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Text.Should().Be("1000"));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1000));
         }
+        
+        /// <summary>
+        /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text.
+        /// </summary>
+        [Test]
+        public async Task DebouncedNumericFieldRerenderTest()
+        {
+            var comp = Context.RenderComponent<DebouncedNumericFieldRerenderTest>();
+            var numericField = comp.FindComponent<MudNumericField<int>>().Instance;
+            var input = comp.Find("input");
+            var delayedRerenderButton = comp.Find("button#re-render");
+            var converter = new DefaultConverter<int>();
+            input.Input(new ChangeEventArgs { Value = "1" });
+            // trigger first value change
+            await Task.Delay(comp.Instance.DebounceInterval);
+            // trigger delayed re-render
+            delayedRerenderButton.Click();
+            // imitate "typing in progress" by extending the debounce interval until component re-renders
+            var elapsedTime = 0;
+            var currentText = "1";
+            while (elapsedTime < comp.Instance.RerenderDelay)
+            {
+                var delay = comp.Instance.DebounceInterval / 2;
+                currentText += "2";
+                input.Input(new ChangeEventArgs { Value = currentText });
+                await Task.Delay(delay);
+                elapsedTime += delay;
+            }
+            // after the final debounce, the value should be updated without swallowing any user input 
+            await Task.Delay(comp.Instance.DebounceInterval);
+            comp.Instance.Value.Should().Be(converter.Get(currentText));
+            numericField.Text.Should().Be(currentText);
+        }
+        
+        [Test]
+        public async Task DebouncedNumericField_Should_RenderDefaultValueTextOnFirstRender()
+        {
+            var defaultValue = 1;
+            var converter = new DefaultConverter<int>();
+            var comp = Context.RenderComponent<DebouncedNumericFieldRerenderTest>(
+                Parameter(nameof(MudNumericField<int>.Value), defaultValue));
+            var textfield = comp.FindComponent<MudNumericField<int>>().Instance;
+            textfield.Text.Should().Be(converter.Set(defaultValue));
+        }
+        
+        /// <summary>
+        /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text while changing culture.
+        /// </summary>
+        [Test]
+        public async Task DebouncedNumericFieldCultureChangeRerenderTest()
+        {
+            var comp = Context.RenderComponent<DebouncedNumericFieldCultureChangeRerenderTest>();
+            var numericField = comp.FindComponent<MudNumericField<double>>().Instance;
+            var input = comp.Find("input");
+            var delayedCultureChange = comp.Find("button#culture-change");
+            // ensure text is updated on initialize 
+            numericField.Text.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
+            // trigger first value change
+            await Task.Delay(comp.Instance.DebounceInterval);
+            // trigger the culture change
+            delayedCultureChange.Click();
+            // imitate "typing in progress" by extending the debounce interval until component re-renders
+            var elapsedTime = 0;
+            var currentText = comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture);
+            while (elapsedTime < comp.Instance.RerenderDelay)
+            {
+                var delay = comp.Instance.DebounceInterval / 2;
+                currentText += "2";
+                input.Input(new ChangeEventArgs { Value = currentText });
+                await Task.Delay(delay);
+                elapsedTime += delay;
+            }
+            // after the culture change delay has elapsed, the uncommitted text is retained (with the old culture)
+            numericField.Text.Should().Be(currentText);
+            // once debounce occurs, both value and text are translated into the new culture
+            // e.g. 1.00222222 (one comma something in en-US) turns into 100.222.222 (hundred million something in de-DE)
+            await Task.Delay(comp.Instance.DebounceInterval * 2);
+            numericField.Text.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
+        }
     }
 }

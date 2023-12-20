@@ -28,12 +28,23 @@ namespace MudBlazor
         /// Gets the delay for batch popovers detachment.
         /// The default value is <c>0.5 seconds</c>.
         /// </summary>
-        public TimeSpan QueueDelay { get; } = TimeSpan.FromSeconds(0.5);
+        public TimeSpan QueueDelay { get; set; } = TimeSpan.FromSeconds(0.5);
 
         /// <summary>
         /// Gets or sets a value indicating whether to throw an exception when a duplicate <see cref="MudPopoverProvider"/> is encountered.
         /// The default value is <c>true</c>.
         /// </summary>
         public bool ThrowOnDuplicateProvider { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the mode for displaying popovers.
+        /// The default value is <c>PopoverMode.Default</c>.
+        /// </summary>
+        /// <remarks>
+        /// This property determines the behavior of popovers. You can set it to either <see cref="PopoverMode.Default"/>
+        /// to use the <see cref="IPopoverService"/> or <see cref="PopoverMode.Legacy"/> to use the old <see cref="IMudPopoverService"/>
+        /// for backward compatibility.
+        /// </remarks>
+        public PopoverMode Mode { get; set; } = PopoverMode.Default;
     }
 }

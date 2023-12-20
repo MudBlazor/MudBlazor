@@ -36,5 +36,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public int OverscanCount { get; set; } = 3;
+
+        /// <summary>
+        /// Gets the size of each item in pixels. Defaults to 50px.
+        /// </summary>
+        [Parameter]
+        public float ItemSize { get; set; } = 50f;
     }
 }

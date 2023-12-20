@@ -3,7 +3,7 @@
 @using Microsoft.AspNetCore.Components.Routing
 
 <div class="@GetPanelClass()" @attributes="UserAttributes">
-    @if (_sections.Any() && _sections.Count() > 1)
+    @if (_sections.Count > 1)
     {
         <MudText Typo="Typo.subtitle1" Class="title" GutterBottom="true">
             @Headline
@@ -18,5 +18,3 @@
         </MudNavMenu>
     }
 </div>
-
-    @code { }

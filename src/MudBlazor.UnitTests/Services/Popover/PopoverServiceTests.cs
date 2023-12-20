@@ -7,14 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
-using MudBlazor.Examples.Data.Models;
+using MudBlazor.Interop;
 using MudBlazor.UnitTests.Services.Popover.Mocks;
+using MudBlazor.Utilities.Background.Batch;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services.Popover;
@@ -46,7 +46,7 @@ public class PopoverServiceTests
     }
 
     [Test]
-    public async Task IsInitialized_ShouldConnectAutomaticallyAfterCreatePopoverAsync()
+    public async Task IsInitialized_ShouldNotConnectAutomaticallyAfterCreatePopoverAsync()
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
@@ -60,7 +60,7 @@ public class PopoverServiceTests
         await service.CreatePopoverAsync(popover);
 
         // Assert
-        Assert.IsTrue(service.IsInitialized);
+        Assert.IsFalse(service.IsInitialized);
     }
 
     [Test]
@@ -191,7 +191,7 @@ public class PopoverServiceTests
         popover.PopoverClass = "popoverClass";
         popover.PopoverStyles = "popoverStyle";
         popover.Tag = "my-tag";
-        popover.UserAttributes = new Dictionary<string, object>
+        popover.UserAttributes = new Dictionary<string, object?>
         {
             { "key1", "value1" },
             { "key2", false }
@@ -245,7 +245,7 @@ public class PopoverServiceTests
         popover.PopoverClass = "popoverClass";
         popover.PopoverStyles = "popoverStyle";
         popover.Tag = "my-tag";
-        popover.UserAttributes = new Dictionary<string, object>
+        popover.UserAttributes = new Dictionary<string, object?>
         {
             { "key1", "value1" },
             { "key2", false }
@@ -287,6 +287,31 @@ public class PopoverServiceTests
         //two notifications from CreatePopoverAsync and DestroyPopover
         Assert.AreEqual(2, observer.PopoverNotifications.Count);
         Assert.Contains(popover.Id, observer.PopoverNotifications);
+    }
+
+    [Test]
+    public async Task DestroyPopoverAsync_ShouldQueueForDisconnect()
+    {
+        // Arrange
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var popoverOne = new PopoverMock();
+        var popoverTwo = new PopoverMock();
+        var popoverThree = new PopoverMock();
+        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+
+        // Act
+        await service.CreatePopoverAsync(popoverOne);
+        await service.CreatePopoverAsync(popoverTwo);
+        await service.CreatePopoverAsync(popoverThree);
+        var isDestroyedOne = await service.DestroyPopoverAsync(popoverOne);
+        var isDestroyedTwo = await service.DestroyPopoverAsync(popoverTwo);
+        var isDestroyedThree = await service.DestroyPopoverAsync(popoverThree);
+
+        // Assert
+        Assert.AreEqual(3, service.QueueCount);
+        Assert.True(isDestroyedOne);
+        Assert.True(isDestroyedTwo);
+        Assert.True(isDestroyedThree);
     }
 
     [Test]
@@ -424,7 +449,11 @@ public class PopoverServiceTests
     }
 
     [Test]
-    public async Task DisposeAsync_ShouldClearActivePopovers()
+    [Ignore(reason:
+        $"Not used anymore and replace by {nameof(DisposeAsync_ShouldClearActivePopovers)}," +
+        $"because the {nameof(PopoverService.DisposeAsync)} doesn't trigger a guaranteed {nameof(IBatchTimerHandler<MudPopoverHolder>.OnBatchTimerElapsedAsync)} to disconnect popover," +
+        $"since the {nameof(PopoverJsInterop.Dispose)} does it.")]
+    public async Task DisposeAsync_ShouldClearActivePopoversAndFireOnBatchTimerElapsedAsync()
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
@@ -459,5 +488,49 @@ public class PopoverServiceTests
                 It.IsAny<CancellationToken>()),
             Times.AtLeastOnce,
             "The periodic handler method was not called.");
+    }
+
+    [Test]
+    public async Task DisposeAsync_ShouldClearActivePopovers()
+    {
+        // Arrange
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var observer = new PopoverObserverMock();
+        service.Subscribe(observer);
+
+        await service.CreatePopoverAsync(new PopoverMock());
+        await service.CreatePopoverAsync(new PopoverMock());
+
+        // Act
+        await service.DisposeAsync();
+
+        // Assert
+        Assert.Zero(service.QueueCount);
+        Assert.IsEmpty(service.ActivePopovers);
+    }
+
+    [Test]
+    public async Task DisposeAsync_ShouldClearAllObservers()
+    {
+        // Arrange
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var popover = new PopoverMock();
+        service.Subscribe(new PopoverObserverMock());
+        service.Subscribe(new PopoverObserverMock());
+        service.Subscribe(new PopoverObserverMock());
+        service.Subscribe(new PopoverObserverMock());
+        service.Subscribe(new PopoverObserverMock());
+        var beforeObserversCount = service.ObserversCount;
+
+        // Act
+        await service.CreatePopoverAsync(popover);
+        await service.DisposeAsync();
+        var afterObserversCount = service.ObserversCount;
+
+        // Assert
+        Assert.AreEqual(5, beforeObserversCount);
+        Assert.Zero(afterObserversCount);
     }
 }

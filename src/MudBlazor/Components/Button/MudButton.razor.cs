@@ -1,47 +1,47 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudButton : MudBaseButton
     {
         protected string Classname =>
-        new CssBuilder("mud-button-root mud-button")
-          .AddClass($"mud-button-{Variant.ToDescriptionString()}")
-          .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
-          .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
-          .AddClass($"mud-width-full", FullWidth)
-          .AddClass($"mud-ripple", !DisableRipple)
-          .AddClass($"mud-button-disable-elevation", DisableElevation)
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-button-root mud-button")
+                .AddClass($"mud-button-{Variant.ToDescriptionString()}")
+                .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
+                .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
+                .AddClass($"mud-width-full", FullWidth)
+                .AddClass($"mud-ripple", !DisableRipple)
+                .AddClass($"mud-button-disable-elevation", DisableElevation)
+                .AddClass(Class)
+                .Build();
 
         protected string StartIconClass =>
-        new CssBuilder("mud-button-icon-start")
-          .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToDescriptionString()}")
-          .AddClass(IconClass)
-        .Build();
+            new CssBuilder("mud-button-icon-start")
+                .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToDescriptionString()}")
+                .AddClass(IconClass)
+                .Build();
 
         protected string EndIconClass =>
-        new CssBuilder("mud-button-icon-end")
-          .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToDescriptionString()}")
-          .AddClass(IconClass)
-        .Build();
+            new CssBuilder("mud-button-icon-end")
+                .AddClass($"mud-button-icon-size-{(IconSize ?? Size).ToDescriptionString()}")
+                .AddClass(IconClass)
+                .Build();
 
         /// <summary>
         /// Icon placed before the text if set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public string StartIcon { get; set; }
+        public string? StartIcon { get; set; }
 
         /// <summary>
         /// Icon placed after the text if set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public string EndIcon { get; set; }
+        public string? EndIcon { get; set; }
 
         /// <summary>
         /// The color of the icon. It supports the theme colors.
@@ -62,7 +62,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public string IconClass { get; set; }
+        public string? IconClass { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -97,7 +97,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public RenderFragment ChildContent { get; set; }
-
+        public RenderFragment? ChildContent { get; set; }
     }
 }

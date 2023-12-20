@@ -92,7 +92,7 @@ public class MudPopoverHandler : IMudPopoverHolder
             Fragment = fragment;
             SetComponentBaseParameters(componentBase, @class, @style, showContent);
             ElementReference?.StateHasChanged();
-            _updater.Invoke(); // <-- this doesn't do anything anymore except making unit tests happy
+            _updater?.Invoke(); // <-- this doesn't do anything anymore except making unit tests happy
         }
         finally
         {

@@ -4,10 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Bunit;
@@ -15,10 +12,10 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -39,7 +36,8 @@ namespace MudBlazor.UnitTests.Components
             var entries = logger.GetEntries();
             entries.Count.Should().Be(1);
             entries[0].Level.Should().Be(LogLevel.Warning);
-            entries[0].Message.Should().Be(string.Format("T must be of type {0} or {1}", typeof(IReadOnlyList<IBrowserFile>), typeof(IBrowserFile)));
+            entries[0].Message.Should().Be(string.Format("T must be of type {0} or {1}",
+                typeof(IReadOnlyList<IBrowserFile>), typeof(IBrowserFile)));
         }
 
         /// <summary>
@@ -49,8 +47,8 @@ namespace MudBlazor.UnitTests.Components
         public void FileUpload_CSSTest()
         {
             var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
-            .Add(x => x.Class, "outer-test")
-            .Add(x => x.InputClass, "inner-test"));
+                .Add(x => x.Class, "outer-test")
+                .Add(x => x.InputClass, "inner-test"));
 
             comp.Find(".mud-input-control.mud-file-upload.outer-test"); //find outer div
 
@@ -89,7 +87,7 @@ namespace MudBlazor.UnitTests.Components
         public void FileUpload_HiddenTest2()
         {
             var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters =>
-            parameters.Add(x => x.Hidden, false));
+                parameters.Add(x => x.Hidden, false));
 
             var input = comp.Find("input");
             input.HasAttribute("hidden").Should().BeFalse();
@@ -102,17 +100,17 @@ namespace MudBlazor.UnitTests.Components
         public void FileUpload_AcceptTest()
         {
             var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
-            .Add(x => x.Accept, ".png, .jpg"));
+                .Add(x => x.Accept, ".png, .jpg"));
 
             var input = comp.Find("input");
             input.GetAttribute("accept").Should().Be(".png, .jpg");
         }
 
         /// <summary>
-        /// Verifies the button template renders
+        /// Verifies the button template context's ToString method returns the FileUpload component Id
         /// </summary>
         [Test]
-        public void FileUpload_ButtonTemplateTest()
+        public void FileUpload_ButtonTemplate_Backwards_Compatibility_Test()
         {
             var comp = Context.RenderComponent<FileUploadButtonTemplateTest>();
 
@@ -122,6 +120,44 @@ namespace MudBlazor.UnitTests.Components
 
             var after = comp.Find(".mud-input-control-input-container div");
             after.MarkupMatches("<div>Select Template</div>");
+        }
+
+        /// <summary>
+        /// Verifies the button template renders
+        /// </summary>
+        [Test]
+        public void FileUpload_ButtonTemplateContextTest_Renders()
+        {
+            var comp = Context.RenderComponent<FileUploadButtonTemplateContextTest>();
+
+            var label = comp.Find("label");
+            label.ToMarkup().Should().Contain("Upload");
+            label.GetAttribute("for").Should().StartWith("mud_fileupload_"); //ensure button markup renders
+
+            var clearButton = comp.Find("button#clear-button");
+            clearButton.ToMarkup().Should().Contain("Clear");
+        }
+
+        /// <summary>
+        /// Verifies the button template context's ClearAsync action clears the Files property
+        /// </summary>
+        [Test]
+        public async Task FileUpload_ButtonTemplateContext_ClearAsync_Action_Clears_Files()
+        {
+            var fileName = "cat.jpg";
+            var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "image/jpeg", Array.Empty<byte>());
+            var comp = Context.RenderComponent<FileUploadButtonTemplateContextTest>(
+                ComponentParameterFactory.Parameter(nameof(FileUploadButtonTemplateContextTest.File), defaultFile));
+            var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
+            var fileUploadInstance = fileUploadComp.Instance;
+            var clearButton = fileUploadComp.Find("button#clear-button");
+
+            fileUploadInstance.Files.Should().NotBeNull();
+            fileUploadInstance.Files.Name.Should().Be(fileName);
+
+            await comp.InvokeAsync(() => clearButton.Click());
+
+            fileUploadInstance.Files.Should().BeNull();
         }
 
         /// <summary>
@@ -149,7 +185,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FileUpload_FileValueChangedTest()
         {
-            InputFileContent[] fileContent = { InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt"), InputFileContent.CreateFromText("A Balrog, servant of Morgoth", "upload2.txt") };
+            InputFileContent[] fileContent =
+            {
+                InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt"),
+                InputFileContent.CreateFromText("A Balrog, servant of Morgoth", "upload2.txt")
+            };
 
             var comp = Context.RenderComponent<FileUploadFormValidationTest>();
 
@@ -180,7 +220,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FileUpload_ValidationTest()
         {
-            InputFileContent[] fileContent = { InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt"), InputFileContent.CreateFromText("A Balrog, servant of Morgoth", "upload2.txt") };
+            InputFileContent[] fileContent =
+            {
+                InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt"),
+                InputFileContent.CreateFromText("A Balrog, servant of Morgoth", "upload2.txt")
+            };
+
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture; //<<< rework this!
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
             var comp = Context.RenderComponent<FileUploadFormValidationTest>();
 
@@ -238,7 +285,8 @@ namespace MudBlazor.UnitTests.Components
             var multipleInput = multiple.FindComponent<InputFile>();
             multipleInput.UploadFiles(Files.ToArray()); //upload second files
 
-            comp.Instance.Files.Count.Should().Be(11); //if no error occurs, we have successfully uploaded more than 10 files
+            comp.Instance.Files.Count.Should()
+                .Be(11); //if no error occurs, we have successfully uploaded more than 10 files
         }
 
         /// <summary>
@@ -251,10 +299,37 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("input").HasAttribute("disabled").Should().BeFalse();
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("label").HasAttribute("disabled").Should().BeFalse();
 
-            comp.SetParametersAndRender(parameters => parameters.Add(x => x.Disabled, true)); //The input and child button should be disabled when file upload is disabled
+            comp.SetParametersAndRender(parameters =>
+                parameters.Add(x => x.Disabled,
+                    true)); //The input and child button should be disabled when file upload is disabled
 
             comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("input").HasAttribute("disabled").Should().BeTrue();
-            comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("button").HasAttribute("disabled").Should().BeTrue(); //we need to test for a button as the MudButton replaces disabled labels with buttons
+            comp.FindComponent<MudFileUpload<IBrowserFile>>().Find("button").HasAttribute("disabled").Should()
+                .BeTrue(); //we need to test for a button as the MudButton replaces disabled labels with buttons
+        }
+
+        /// <summary>
+        /// Verifies files are appended correctly
+        /// </summary>
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void FileUploadAppendMultipleTest(bool appendMultiple)
+        {
+            var comp = Context.RenderComponent<FileUploadAppendMultipleTest>(p =>
+                p.Add(x => x.AppendMultipleFiles, appendMultiple));
+
+            var input = comp.FindComponent<InputFile>();
+            input.UploadFiles(GenerateFile(), GenerateFile(), GenerateFile()); //upload first file
+            comp.Instance.Files.Count.Should().Be(3);
+
+            input.UploadFiles(GenerateFile());
+            comp.Instance.Files.Count.Should().Be(appendMultiple ? 4 : 1);
+
+            InputFileContent GenerateFile()
+            {
+                return InputFileContent.CreateFromText("snakex64 is Canadian", $"{Guid.NewGuid()}.txt");
+            }
         }
     }
 }

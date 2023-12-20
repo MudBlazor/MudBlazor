@@ -14,7 +14,26 @@
                            AdornmentClick="@OnAdornmentClick"/>
     }
 
-    <input class="@InputClassname"
+    @if(Lines > 1){
+        <textarea class="@InputClassname"
+           @ref="_elementReference"
+           @attributes="UserAttributes"
+           type="@InputType.ToDescriptionString()"
+           value="@Text"
+           placeholder="@Placeholder"
+           disabled=@GetDisabledState()
+           readonly="@GetReadOnlyState()"
+           @onblur="@OnBlurredAsync"
+           @onfocus="OnFocused"
+           @oncut="OnCut"
+           @oncopy="OnCopy"
+           inputmode="@InputMode.ToString()"
+           >
+            @Text
+        </textarea>
+    }
+    else{
+        <input class="@InputClassname"
            @ref="_elementReference"
            @attributes="UserAttributes"
            type="@InputType.ToDescriptionString()"
@@ -28,7 +47,8 @@
            @oncopy="OnCopy"
            inputmode="@InputMode.ToString()"
            />
-
+    }    
+    
     @if (GetDisabledState())
     {
          @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.

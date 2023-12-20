@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -36,12 +37,28 @@ namespace MudBlazor
         /// <summary>
         /// The state of the component
         /// </summary>
+        [Obsolete("Use Value instead.")]
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
         public T? Checked
         {
             get => _value;
             set => _value = value;
+        }
+
+        /// <summary>
+        /// The state of the component
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
+        public T? Value
+        {
+            get => _value;
+            set
+            {
+                _value = value;
+                
+            }
         }
 
         /// <summary>
@@ -52,12 +69,19 @@ namespace MudBlazor
         public bool StopClickPropagation { get; set; } = true;
 
         /// <summary>
+        /// Fired when Value changes.
+        /// </summary>
+        [Parameter]
+        public EventCallback<T?> ValueChanged { get; set; }
+
+        /// <summary>
         /// Fired when Checked changes.
         /// </summary>
+        [Obsolete("Use ValueChanged instead.")]
         [Parameter]
         public EventCallback<T?> CheckedChanged { get; set; }
 
-        protected bool? BoolValue => Converter.Set(Checked);
+        protected bool? BoolValue => Converter.Set(Value);
 
         protected virtual Task OnChange(ChangeEventArgs args)
         {
@@ -74,12 +98,16 @@ namespace MudBlazor
         {
             if (GetDisabledState())
                 return;
-            if (!EqualityComparer<T>.Default.Equals(Checked, value))
+            if (!EqualityComparer<T>.Default.Equals(Value, value))
             {
+                Value = value;
+                await ValueChanged.InvokeAsync(value);
+#pragma warning disable CS0618
                 Checked = value;
                 await CheckedChanged.InvokeAsync(value);
+#pragma warning restore CS0618
                 await BeginValidateAsync();
-                FieldChanged(Checked);
+                FieldChanged(Value);
             }
         }
 
@@ -87,7 +115,7 @@ namespace MudBlazor
         {
             var changed = base.SetConverter(value);
             if (changed)
-                SetBoolValueAsync(Converter.Set(Checked)).AndForget();
+                SetBoolValueAsync(Converter.Set(Value)).AndForget();
 
             return changed;
         }

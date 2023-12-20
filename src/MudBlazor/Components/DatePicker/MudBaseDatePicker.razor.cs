@@ -10,6 +10,7 @@ namespace MudBlazor
 {
     public abstract partial class MudBaseDatePicker : MudPicker<DateTime?>
     {
+        private readonly string _mudPickerCalendarContentElementId;
         private bool _dateFormatTouched;
 
         protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>
@@ -19,9 +20,12 @@ namespace MudBlazor
         })
         {
             AdornmentAriaLabel = "Open Date Picker";
+            _mudPickerCalendarContentElementId = Guid.NewGuid().ToString();
         }
 
         [Inject] protected IScrollManager ScrollManager { get; set; }
+        
+        [Inject] private IJsApiService JsApiService { get; set; }
 
         /// <summary>
         /// Max selectable date.
@@ -401,6 +405,10 @@ namespace MudBlazor
             {
                 return month.EndOfMonth(Culture) < MinDate || month > MaxDate;
             }
+            if (DateTime.DaysInMonth(month.Year, month.Month) < FixDay!.Value)
+            {
+                return true;
+            }
             var day = new DateTime(month.Year, month.Month, FixDay!.Value);
             return day < MinDate || day > MaxDate || IsDateDisabledFunc(day);
         }
@@ -611,5 +619,10 @@ namespace MudBlazor
         /// <param name="year">Gregorian year</param>
         /// <returns>Year according to culture</returns>
         protected abstract int GetCalendarYear(int year);
+
+        private ValueTask HandleMouseoverOnPickerCalendarDayButton(int tempId)
+        {
+            return this.JsApiService.UpdateStyleProperty(_mudPickerCalendarContentElementId, "--selected-day", tempId);
+        }
     }
 }

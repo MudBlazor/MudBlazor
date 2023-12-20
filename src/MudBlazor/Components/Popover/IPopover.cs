@@ -43,7 +43,7 @@ public interface IPopover
     /// UserAttributes carries all attributes you add to the component that don't match any of its parameters.
     /// They will be splatted onto the underlying HTML tag.
     /// </summary>
-    Dictionary<string, object> UserAttributes { get; set; }
+    Dictionary<string, object?> UserAttributes { get; set; }
 
     /// <summary>
     /// Child content of the component.

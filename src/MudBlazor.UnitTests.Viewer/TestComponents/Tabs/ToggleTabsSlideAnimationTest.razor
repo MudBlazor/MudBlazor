@@ -33,7 +33,9 @@ Disabled (@toggle):
 />
 
 @code {
-    public static int SelectedTab { get; set; } = 2;
+    [Parameter]
+    public int SelectedTab { get; set; } = 2;
+
     public MudTabs Tabs;
     public bool toggle { get; set; } = true;
 

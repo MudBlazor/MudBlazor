@@ -10,12 +10,12 @@
 @ChildContent
 
 @code {
-
+#nullable enable
     /// <summary>
     /// The content to render
     /// </summary>
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     /// Re-render the content

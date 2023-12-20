@@ -4,3 +4,6 @@
 .invisible {
     visibility: hidden;
 }
+[hidden] {
+  display: none!important;
+}

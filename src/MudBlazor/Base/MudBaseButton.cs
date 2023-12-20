@@ -8,14 +8,18 @@ using static System.String;
 
 namespace MudBlazor
 {
+#nullable enable
     public abstract class MudBaseButton : MudComponentBase
     {
         /// <summary>
         /// Potential activation target for this button. This enables RenderFragments with user-defined
         /// buttons which will automatically activate the intended functionality. 
         /// </summary>
-        [CascadingParameter] 
-        protected IActivatable Activateable { get; set; }
+        [CascadingParameter]
+        protected IActivatable? Activateable { get; set; }
+
+        [CascadingParameter(Name = "ParentDisabled")]
+        private bool ParentDisabled { get; set; }
 
         /// <summary>
         /// The HTML element that will be rendered in the root by the component
@@ -37,15 +41,15 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
-        public string Href { get; set; }
+        public string? Href { get; set; }
         /// <summary>
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where (Obsolete replaced by Href)
         /// </summary>
-        
+
         [Obsolete("Use Href Instead.", false)]
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
-        public string Link
+        public string? Link
         {
             get => Href;
             set => Href = value;
@@ -56,14 +60,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
-        public string Target { get; set; }
+        public string? Target { get; set; }
 
         /// <summary>
         /// The value of rel attribute for web crawlers. Overrides "noopener" set by <see cref="Target"/> attribute.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
-        public string Rel { get; set; }
+        public string? Rel { get; set; }
 
         /// <summary>
         /// If true, the button will be disabled.
@@ -71,9 +75,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public bool Disabled { get; set; }
-        [CascadingParameter(Name = "ParentDisabled")]
-        private bool ParentDisabled { get; set; }
-        protected bool GetDisabledState() => Disabled || ParentDisabled;
+
+        /// <summary>
+        /// If true, the click event bubbles up to the containing/parent component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool ClickPropagation { get; set; }
 
         /// <summary>
         /// If true, no drop-shadow will be used.
@@ -95,7 +103,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
         [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
-        public ICommand Command { get; set; }
+        public ICommand? Command { get; set; }
 
         /// <summary>
         /// Command parameter.
@@ -103,12 +111,15 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
         [Obsolete("This will be removed in v7.")]
-        public object CommandParameter { get; set; }
+        public object? CommandParameter { get; set; }
 
         /// <summary>
         /// Button click event.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+        protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         protected virtual async Task OnClickHandler(MouseEventArgs ev)
         {
@@ -157,10 +168,13 @@ namespace MudBlazor
 
         public ValueTask FocusAsync() => _elementReference.FocusAsync();
 
-        protected string GetRel()
+        protected string? GetRel()
         {
-            if (Rel == null && Target == "_blank")
+            if (Rel is null && Target == "_blank")
+            {
                 return "noopener";
+            }
+
             return Rel;
         }
     }

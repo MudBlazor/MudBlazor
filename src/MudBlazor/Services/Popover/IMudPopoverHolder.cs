@@ -66,7 +66,7 @@ public interface IMudPopoverHolder
     /// UserAttributes carries all attributes you add to the component that don't match any of its parameters.
     /// They will be splatted onto the underlying HTML tag.
     /// </summary>
-    Dictionary<string, object> UserAttributes { get; }
+    Dictionary<string, object?> UserAttributes { get; }
 
     /// <summary>
     /// Gets or sets the element reference for the <see cref="MudRender"/>.

@@ -149,12 +149,14 @@ namespace MudBlazor
             {
                 if (!sortable && !filterable && !groupable)
                     return false;
+                if (!sortable && DataGrid.FilterMode == DataGridFilterMode.ColumnFilterRow)
+                    return false;
 
                 return Column?.ShowColumnOptions ?? DataGrid?.ShowColumnOptions ?? true;
             }
         }
 
-        private string sortIconClass
+        internal string sortIconClass
         {
             get
             {
@@ -173,7 +175,7 @@ namespace MudBlazor
             }
         }
 
-        private bool hasFilter
+        internal bool hasFilter
         {
             get
             {
@@ -367,7 +369,7 @@ namespace MudBlazor
             DataGrid.DropContainerHasChanged();
         }
 
-        internal async Task ApplyFilterAsync(FilterDefinition<T> filterDefinition)
+        internal async Task ApplyFilterAsync(IFilterDefinition<T> filterDefinition)
         {
             DataGrid.FilterDefinitions.Add(filterDefinition);
             if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
@@ -376,7 +378,7 @@ namespace MudBlazor
             DataGrid.DropContainerHasChanged();
         }
 
-        internal async Task ApplyFiltersAsync(IEnumerable<FilterDefinition<T>> filterDefinitions)
+        internal async Task ApplyFiltersAsync(IEnumerable<IFilterDefinition<T>> filterDefinitions)
         {
             DataGrid.FilterDefinitions.AddRange(filterDefinitions);
             if (DataGrid.ServerData is not null) await DataGrid.ReloadServerData();
@@ -394,7 +396,7 @@ namespace MudBlazor
             DataGrid.DropContainerHasChanged();
         }
 
-        internal async Task ClearFilterAsync(FilterDefinition<T> filterDefinition)
+        internal async Task ClearFilterAsync(IFilterDefinition<T> filterDefinition)
         {
             await DataGrid.RemoveFilterAsync(filterDefinition.Id);
             if (DataGrid.ServerData is null) ((IMudStateHasChanged)DataGrid).StateHasChanged();
@@ -402,7 +404,7 @@ namespace MudBlazor
             DataGrid.DropContainerHasChanged();
         }
 
-        internal async Task ClearFiltersAsync(IEnumerable<FilterDefinition<T>> filterDefinitions)
+        internal async Task ClearFiltersAsync(IEnumerable<IFilterDefinition<T>> filterDefinitions)
         {
             DataGrid.FilterDefinitions.RemoveAll(x => filterDefinitions.Any(y => y.Id == x.Id));
             if (DataGrid.ServerData != null) await DataGrid.ReloadServerData();
@@ -428,11 +430,13 @@ namespace MudBlazor
         internal void GroupColumn()
         {
             Column?.SetGrouping(true);
+            DataGrid.DropContainerHasChanged();
         }
 
         internal void UngroupColumn()
         {
             Column?.SetGrouping(false);
+            DataGrid.DropContainerHasChanged();
         }
 
         private void MarkAsUnsorted()

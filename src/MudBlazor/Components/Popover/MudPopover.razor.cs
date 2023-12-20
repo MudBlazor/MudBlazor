@@ -8,10 +8,6 @@ namespace MudBlazor
 #nullable enable
     public partial class MudPopover : MudPopoverBase
     {
-        [Inject]
-        [Obsolete($"Replaced by {nameof(PopoverService)}. Will be removed in v7.")]
-        public IMudPopoverService Service { get; set; } = null!;
-
         protected internal override string PopoverClass =>
             new CssBuilder("mud-popover")
                 .AddClass($"mud-popover-fixed", Fixed)
@@ -45,7 +41,7 @@ namespace MudBlazor
             };
         }
 
-        [CascadingParameter(Name = "RightToLeft")] 
+        [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
         /// <summary>
@@ -102,7 +98,7 @@ namespace MudBlazor
         /// </summary>
         /// 
         [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
-        [Parameter] 
+        [Parameter]
         public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>

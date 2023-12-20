@@ -69,7 +69,7 @@ internal abstract class BackgroundWorkerBase : IAsyncDisposable
     public virtual async Task StopAsync(CancellationToken cancellationToken)
     {
         // Stop called without start
-        if (_executeTask == null)
+        if (_executeTask is null)
         {
             return;
         }
@@ -94,7 +94,7 @@ internal abstract class BackgroundWorkerBase : IAsyncDisposable
     public virtual ValueTask DisposeAsync()
     {
         _stoppingCts?.Cancel();
-        
+
         return ValueTask.CompletedTask;
     }
 }

@@ -5,30 +5,34 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudRating : MudComponentBase
     {
+        private int _selectedValue = 0;
+        private int? _hoveredValue = null;
+
         /// <summary>
         /// Space separated class names
         /// </summary>
         protected string ClassName =>
-        new CssBuilder("")
-          .AddClass($"mud-rating-root")
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("")
+                .AddClass($"mud-rating-root")
+                .AddClass(Class)
+                .Build();
 
         /// <summary>
         /// User class names for RatingItems, separated by space
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
-        public string RatingItemsClass { get; set; }
+        public string? RatingItemsClass { get; set; }
 
         /// <summary>
         /// User styles for RatingItems.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
-        public string RatingItemsStyle { get; set; }
+        public string? RatingItemsStyle { get; set; }
 
         /// <summary>
         /// Input name. If not initialized, name will be random guid.
@@ -92,7 +96,8 @@ namespace MudBlazor
         /// <summary>
         /// Fires when SelectedValue changes.
         /// </summary>
-        [Parameter] public EventCallback<int> SelectedValueChanged { get; set; }
+        [Parameter]
+        public EventCallback<int> SelectedValueChanged { get; set; }
 
         /// <summary>
         /// Selected value. This property is two-way bindable.
@@ -113,12 +118,11 @@ namespace MudBlazor
             }
         }
 
-        private int _selectedValue = 0;
-
         /// <summary>
         /// Fires when hovered value change. Value will be null if no rating item is hovered.
         /// </summary>
-        [Parameter] public EventCallback<int?> HoveredValueChanged { get; set; }
+        [Parameter]
+        public EventCallback<int?> HoveredValueChanged { get; set; }
 
         internal int? HoveredValue
         {
@@ -126,14 +130,14 @@ namespace MudBlazor
             set
             {
                 if (_hoveredValue == value)
+                {
                     return;
+                }
 
                 _hoveredValue = value;
                 HoveredValueChanged.InvokeAsync(value);
             }
         }
-
-        private int? _hoveredValue = null;
 
         internal bool IsRatingHover => HoveredValue.HasValue;
 
@@ -151,44 +155,32 @@ namespace MudBlazor
 
         private void IncreaseValue(int val)
         {
-            if ((SelectedValue == MaxValue && val > 0) || (SelectedValue == 0 && val < 0))
-            {
-
-            }
-            else
+            if ((SelectedValue != MaxValue || val <= 0) && (SelectedValue != 0 || val >= 0))
             {
                 SelectedValue += val;
             }
         }
 
-        protected internal void HandleKeyDown(KeyboardEventArgs obj)
+        protected internal void HandleKeyDown(KeyboardEventArgs keyboardEventArgs)
         {
             if (Disabled || ReadOnly)
             {
                 return;
             }
 
-            switch (obj.Key)
+            switch (keyboardEventArgs.Key)
             {
+                case "ArrowRight" when keyboardEventArgs.ShiftKey:
+                    IncreaseValue(MaxValue - SelectedValue);
+                    break;
                 case "ArrowRight":
-                    if (obj.ShiftKey == true)
-                    {
-                        IncreaseValue(MaxValue - SelectedValue);
-                    }
-                    else
-                    {
-                        IncreaseValue(1);
-                    }
+                    IncreaseValue(1);
+                    break;
+                case "ArrowLeft" when keyboardEventArgs.ShiftKey:
+                    IncreaseValue(-SelectedValue);
                     break;
                 case "ArrowLeft":
-                    if (obj.ShiftKey == true)
-                    {
-                        IncreaseValue(-SelectedValue);
-                    }
-                    else
-                    {
-                        IncreaseValue(-1);
-                    }
+                    IncreaseValue(-1);
                     break;
             }
         }

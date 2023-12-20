@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudToggleIconButton : MudComponentBase
     {
         /// <summary>
@@ -15,35 +16,36 @@ namespace MudBlazor
         /// <summary>
         /// Fires whenever toggled is changed. 
         /// </summary>
-        [Parameter] public EventCallback<bool> ToggledChanged { get; set; }
+        [Parameter]
+        public EventCallback<bool> ToggledChanged { get; set; }
 
         /// <summary>
         /// The Icon that will be used in the untoggled state.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
 
         /// <summary>
         /// The Icon that will be used in the toggled state.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public string ToggledIcon { get; set; }
+        public string? ToggledIcon { get; set; }
 
         /// <summary>
         /// Title of the icon used for accessibility.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// Title used in toggled state, if different.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
-        public string ToggledTitle { get; set; }
+        public string? ToggledTitle { get; set; }
 
         /// <summary>
         /// The color of the icon in the untoggled state. It supports the theme colors.

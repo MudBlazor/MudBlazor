@@ -39,7 +39,7 @@ internal class MudPopoverHolder : IMudPopoverHolder
     public DateTime? ActivationDate { get; private set; }
 
     /// <inheritdoc />
-    public Dictionary<string, object> UserAttributes { get; set; } = new();
+    public Dictionary<string, object?> UserAttributes { get; set; } = new();
 
     /// <inheritdoc />
     public MudRender? ElementReference { get; set; }
@@ -114,7 +114,7 @@ internal class MudPopoverHolder : IMudPopoverHolder
     /// </summary>
     /// <param name="userAttributes">The user-defined attributes.</param>
     /// <returns>The updated <see cref="MudPopoverHolder"/> instance.</returns>
-    public MudPopoverHolder SetUserAttributes(Dictionary<string, object> userAttributes)
+    public MudPopoverHolder SetUserAttributes(Dictionary<string, object?> userAttributes)
     {
         UserAttributes = userAttributes;
 

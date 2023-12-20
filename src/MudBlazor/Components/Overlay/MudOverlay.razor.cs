@@ -174,7 +174,12 @@ namespace MudBlazor
         //When disposing the overlay, remove the class that prevented scrolling
         public ValueTask DisposeAsync()
         {
-            return UnblockScrollAsync();
+            if (IsJSRuntimeAvailable)
+            {
+                return UnblockScrollAsync();
+            }
+
+            return ValueTask.CompletedTask;
         }
     }
 }

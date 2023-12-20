@@ -1,11 +1,11 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<aside @onmouseenter="EventUtil.AsNonRenderingEventHandler(OnMouseEnter)" @onmouseleave="EventUtil.AsNonRenderingEventHandler(OnMouseLeave)" @attributes="UserAttributes" class="@Classname" style="@Stylename">
+<aside @onmouseenter="EventUtil.AsNonRenderingEventHandler(OnMouseEnterAsync)" @onmouseleave="EventUtil.AsNonRenderingEventHandler(OnMouseLeaveAsync)" @attributes="UserAttributes" class="@Classname" style="@Stylename">
     <div @ref="_contentRef" class="mud-drawer-content">
         <CascadingValue Value="this" IsFixed="true">
             @ChildContent
         </CascadingValue>
     </div>
 </aside>
-<MudOverlay Visible="@OverlayVisible" OnClick="@CloseDrawer" Class="@OverlayClass" DarkBackground="true" LockScroll=false />
+<MudOverlay Visible="@OverlayVisible" OnClick="@CloseDrawerAsync" Class="@OverlayClass" DarkBackground="true" LockScroll="false" />
