@@ -250,12 +250,23 @@ namespace MudBlazor.UnitTests.Components
 
             var mudSwipeArea = comp.FindComponent<MudSwipeArea>().Instance;
 
+            var initialTouchPoints = new TouchPoint[]
+            {
+                new() {ClientX = 200, ClientY = 0},
+            };
+            var touchPoints = new TouchPoint[]
+            {
+                new() {ClientX = 100, ClientY = 0},
+            };
+
             comp.Instance.EnableSwipeGesture = false;
-            await comp.InvokeAsync(() => mudSwipeArea.OnSwipe(SwipeDirection.RightToLeft));
+            await comp.InvokeAsync(() => mudSwipeArea.OnTouchStart(new TouchEventArgs() { Touches = initialTouchPoints }));
+            await comp.InvokeAsync(async () => await mudSwipeArea.OnTouchEnd(new TouchEventArgs() { ChangedTouches = touchPoints }));
             comp.Instance.SelectedIndex.Should().Be(0);
 
             comp.Instance.EnableSwipeGesture = true;
-            await comp.InvokeAsync(() => mudSwipeArea.OnSwipe(SwipeDirection.RightToLeft));
+            await comp.InvokeAsync(() => mudSwipeArea.OnTouchStart(new TouchEventArgs() { Touches = initialTouchPoints }));
+            await comp.InvokeAsync(async () => await mudSwipeArea.OnTouchEnd(new TouchEventArgs() { ChangedTouches = touchPoints }));
             comp.Instance.SelectedIndex.Should().Be(1);
         }
 

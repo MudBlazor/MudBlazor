@@ -25,8 +25,8 @@ namespace MudBlazor
         private bool _showScrollButtons;
         private bool _disableSliderAnimation;
         private ElementReference _tabsContentSize;
-        private double _size;
-        private double _position;
+        private double _sliderSize;
+        private double _sliderPosition;
         private double _toolbarContentSize;
         private double _allTabsSize;
         private double _scrollPosition;
@@ -350,7 +350,10 @@ namespace MudBlazor
                 return;
             _isDisposed = true;
             _resizeObserver.OnResized -= OnResized;
-            await _resizeObserver.DisposeAsync();
+            if (IsJSRuntimeAvailable)
+            {
+                await _resizeObserver.DisposeAsync();
+            }
         }
 
         #endregion
@@ -360,7 +363,7 @@ namespace MudBlazor
         internal void AddPanel(MudTabPanel tabPanel)
         {
             _panels.Add(tabPanel);
-            if (_panels.Count == 1)
+            if (_panels.Count == _activePanelIndex + 1 || _activePanelIndex == -1 && _panels.Count == 1)
                 ActivePanel = tabPanel;
             StateHasChanged();
         }
@@ -408,13 +411,14 @@ namespace MudBlazor
 
         public void ActivatePanel(MudTabPanel panel, bool ignoreDisabledState = false)
         {
-            ActivatePanel(panel, null, ignoreDisabledState);
+            if (panel is not null && _panels.IndexOf(panel) > -1)
+                ActivatePanel(panel, null, ignoreDisabledState);
         }
 
         public void ActivatePanel(int index, bool ignoreDisabledState = false)
         {
-            var panel = _panels[index];
-            ActivatePanel(panel, null, ignoreDisabledState);
+            if (index > -1 && index <= _panels.Count - 1)
+                ActivatePanel(_panels[index], null, ignoreDisabledState);
         }
 
         public void ActivatePanel(object id, bool ignoreDisabledState = false)
@@ -507,19 +511,19 @@ namespace MudBlazor
 
         protected string SliderStyle => RightToLeft ?
             new StyleBuilder()
-            .AddStyle("width", _size.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("right", _position.ToPx(), Position is Position.Top or Position.Bottom)
+            .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
+            .AddStyle("right", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
             .AddStyle("transition", _disableSliderAnimation ? "none" : "right .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
             .AddStyle("transition", _disableSliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
-            .AddStyle("height", _size.ToPx(), IsVerticalTabs())
-            .AddStyle("top", _position.ToPx(), IsVerticalTabs())
+            .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
+            .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
             .Build() : new StyleBuilder()
-            .AddStyle("width", _size.ToPx(), Position is Position.Top or Position.Bottom)
-            .AddStyle("left", _position.ToPx(), Position is Position.Top or Position.Bottom)
+            .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
+            .AddStyle("left", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
             .AddStyle("transition", _disableSliderAnimation ? "none" : "left .3s cubic-bezier(.64,.09,.08,1);", Position is Position.Top or Position.Bottom)
             .AddStyle("transition", _disableSliderAnimation ? "none" : "top .3s cubic-bezier(.64,.09,.08,1);", IsVerticalTabs())
-            .AddStyle("height", _size.ToPx(), IsVerticalTabs())
-            .AddStyle("top", _position.ToPx(), IsVerticalTabs())
+            .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
+            .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
             .Build();
 
         private bool IsVerticalTabs()
@@ -598,9 +602,12 @@ namespace MudBlazor
         {
             if (ActivePanel == null) { return; }
 
-            _position = GetLengthOfPanelItems(ActivePanel);
-            _size = GetRelevantSize(ActivePanel.PanelRef);
+            _sliderPosition = GetLengthOfPanelItems(ActivePanel);
+            _sliderSize = GetRelevantSize(ActivePanel.PanelRef);
         }
+
+        private bool IsSliderPositionDetermined => _activePanelIndex > 0 && _sliderPosition > 0 ||
+                                                   _activePanelIndex <= 0;
 
         private void GetToolbarContentSize() => _toolbarContentSize = GetRelevantSize(_tabsContentSize);
 

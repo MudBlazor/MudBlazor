@@ -584,6 +584,40 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DisableCalendarMonthButtonsWhenFixDayOutOfRange()
+        {
+            var comp = OpenPicker(new[]
+            {
+                Parameter(nameof(MudDatePicker.OpenTo), OpenTo.Month),
+                Parameter(nameof(MudDatePicker.FixDay), 31)
+            });
+
+            comp
+                .FindAll("button.mud-picker-month")
+                .Select(button => ((IHtmlButtonElement)button).IsDisabled)
+                .Should()
+                .BeEquivalentTo(
+                    // Only months with 31 days not disabled
+                    new[]
+                    {
+                        false,
+                        true,
+                        false,
+                        true,
+                        false,
+                        true,
+                        false,
+                        false,
+                        true,
+                        false,
+                        true,
+                        false
+                    },
+                    options => options.WithStrictOrdering()
+                );
+        }
+
+        [Test]
         public void IsDateDisabledFunc_DoesNotHaveEffectOnMonthsIfDayNotFixed()
         {
             Func<DateTime, bool> isDisabledFunc = date => true;
@@ -748,7 +782,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
 
-        
+
         [Test]
         //mud-button-root added for greying out and making buttons not clickable if month is disabled
         public void MonthButtons_ButtonRootClassPresent()
@@ -765,14 +799,15 @@ namespace MudBlazor.UnitTests.Components
         public void AdditionalDateClassesFunc_ClassIsAdded()
         {
             Func<DateTime, string> additionalDateClassesFunc = date => "__addedtestclass__";
-            var comp = Context.RenderComponent<MudDatePicker>(
-                Parameter(nameof(MudDatePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
 
-            var daysCount = comp.FindAll("button.mud-picker-calendar-day").Select(button =>
-                ((IHtmlBaseElement)button)).Count();
+            var comp = OpenPicker(Parameter(nameof(MudDatePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
 
-            comp.FindAll("button.mud-picker-calendar-day").Select(button =>
-                ((IHtmlBaseElement)button).ClassName.Contains("__addedtestclass__"))
+            var daysCount = comp.FindAll("button.mud-picker-calendar-day")
+                                .Select(button => (IHtmlButtonElement)button)
+                                .Count();
+
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(button => ((IHtmlButtonElement)button).ClassName.Contains("__addedtestclass__"))
                 .Should().HaveCount(daysCount);
         }
 
@@ -1070,7 +1105,7 @@ namespace MudBlazor.UnitTests.Components
 
             datePicker.MinDate = DateTime.Now.AddDays(-1);
             datePicker.MaxDate = DateTime.Now.AddDays(1);
-            
+
 
             // Open the datepicker
             await comp.InvokeAsync(datePicker.Open);
@@ -1083,7 +1118,90 @@ namespace MudBlazor.UnitTests.Components
             var months = comp.FindAll("button.mud-picker-month");
             months.Should().NotBeNull();
             comp.Instance.Date.Should().BeNull();
-            
+        }
+
+        [Test]
+        public async Task OnMouseOver_ShouldCallJavaScriptFunction()
+        {
+            var comp = OpenPicker();
+
+            var button = comp
+                .FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day")
+                .Single(x => x.GetAttribute("style") == "--day-id: 5;");
+
+            await button.MouseOverAsync(new());
+
+            Context.JSInterop.VerifyInvoke("mudWindow.updateStyleProperty", 1);
+            Context.JSInterop.Invocations["mudWindow.updateStyleProperty"].Single()
+                .Arguments
+                .Should()
+                .HaveCount(3)
+                .And
+                .HaveElementAt(1, "--selected-day")
+                .And
+                .HaveElementAt(2, 5);
+        }
+
+        [Test]
+        public void DatePicker_ImmediateText_Should_Callback_TextChanged()
+        {
+            string changed_text = null;
+
+            var comp = Context.RenderComponent<MudDatePicker>(EventCallback<string>("TextChanged", x => changed_text = x));
+
+            comp.SetParam(x => x.Editable, true);
+            comp.SetParam(x => x.ImmediateText, true);
+
+            // This will make the input focused!
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown"});
+
+            // Simulate user input
+            comp.Find("input").Input("22");
+
+            changed_text.Should().Be("22");
+
+            // Set ImmediateText to false
+            comp.SetParam(x => x.ImmediateText, false);
+
+            // Simulate user input
+            comp.Find("input").Input("33");
+
+            // changed_text should not be updated since ImmediateText was false
+            changed_text.Should().Be("22");
+
+            // Set ImmediateText to true
+            comp.SetParam(x => x.ImmediateText, true);
+
+            // Simulate user input
+            comp.Find("input").Input("44");
+
+            //changed_text should be updated
+            changed_text.Should().Be("44");
+
+            // Set Editable to false.
+            // ImmediateText should only work if Editable is also true.
+            comp.SetParam(x => x.Editable, false);
+
+            // Simulate user input
+            comp.Find("input").Input("55");
+
+            //changed_text should not be updated
+            changed_text.Should().Be("44");
+        }
+
+        [Test]
+        public async Task OldDateWithDefinedKind_SetValue_KindUnchanged()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>();
+            var picker = comp.Instance;
+            var oldDate = DateTime.Now;
+            var newDate = oldDate.AddDays(1);
+            comp.SetParam(p => p.Date, oldDate);
+
+            comp.SetParam(p => p.Text, newDate.ToShortDateString());
+
+            picker.Date.Should().NotBeNull();
+            picker.Date!.Value.Kind.Should().Be(oldDate.Kind);
         }
     }
 }

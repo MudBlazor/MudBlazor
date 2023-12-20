@@ -4,7 +4,7 @@
 
 <MudFileUpload T="IReadOnlyList<IBrowserFile>" MaximumFileCount="100" @bind-Files="Files">
     <ButtonTemplate>
-        <MudButton HtmlTag="label" for="@context">Upload</MudButton>
+        <MudButton HtmlTag="label" for="@context.Id">Upload</MudButton>
     </ButtonTemplate>
     <SelectedTemplate>
         <div>

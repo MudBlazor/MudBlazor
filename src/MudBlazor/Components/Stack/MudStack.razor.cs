@@ -4,20 +4,20 @@
 
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
-using MudBlazor.Extensions;
 
 namespace MudBlazor;
 
+#nullable enable
 public partial class MudStack : MudComponentBase
 {
     protected string Classname =>
-    new CssBuilder("d-flex")
-      .AddClass($"flex-{(Row ? "row" : "column")}{(Reverse ? "-reverse" : string.Empty)}")
-      .AddClass($"justify-{Justify?.ToDescriptionString()}", Justify != null)
-      .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems != null)
-      .AddClass($"gap-{Spacing}")
-      .AddClass(Class)
-    .Build();
+        new CssBuilder("d-flex")
+            .AddClass($"flex-{(Row ? "row" : "column")}{(Reverse ? "-reverse" : string.Empty)}")
+            .AddClass($"justify-{Justify?.ToDescriptionString()}", Justify != null)
+            .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems != null)
+            .AddClass($"gap-{Spacing}")
+            .AddClass(Class)
+            .Build();
 
     /// <summary>
     /// If true, items will be placed horizontally in a row instead of vertically.
@@ -59,6 +59,5 @@ public partial class MudStack : MudComponentBase
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 }
-

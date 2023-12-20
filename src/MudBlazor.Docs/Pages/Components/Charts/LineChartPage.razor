@@ -8,37 +8,45 @@
 
         <DocsPageSection>
             <SectionHeader Title="Basic Usage">
-                <Description></Description>
+                <Description>
+                    To get a Line Chart use <CodeInline>ChartType="ChartType.Line"</CodeInline> to render the configured <CodeInline>ChartSeries</CodeInline> as line graphs.
+                    Like in the other chart types, the Series in the chart are clickable. You can bind <CodeInline>SelectedIndex</CodeInline> to make your chart interactive.  
+                    Using the <CodeInline>ChartOptions</CodeInline> you can change the thickness of the lines by setting the parameter <CodeInline>LineStrokeWidth</CodeInline>. 
+                </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="LineExample1">
                 <LineExample1 />
             </SectionContent>
         </DocsPageSection>
-        
-        <DocsPageSection>
-            <SectionHeader Title="Line Widths">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent ShowCode="false" Code="LineWidthExample">
-                <LineWidthExample />
-            </SectionContent>
-        </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Y Axis ticks">
-                <Description></Description>
+            <SectionHeader Title="Y-Axis Ticks">
+                <Description>Using the <CodeInline>ChartOptions</CodeInline> you can also change tick interval of the Y-axis by setting parameter <CodeInline>YAxisTicks</CodeInline>. </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="LineExample2">
-                <LineExample2 />
+            <SectionContent ShowCode="false" Code="LineExampleYAxisTicks">
+                <LineExampleYAxisTicks />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Interpolation">
-                <Description></Description>
+                <Description>The <CodeInline>ChartOptions</CodeInline> parameter <CodeInline>InterpolationOption</CodeInline> lets you control the smootheness of
+                    the lines via different interpolation algorithms.</Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="LineExample3">
-                <LineExample3 />
+            <SectionContent ShowCode="false" Code="LineExampleInterpolation">
+                <LineExampleInterpolation />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Hide Chart Series">
+                <Description>
+                    If you set the parameter <CodeInline>CanHideSeries</CodeInline> then the legend will show check boxes 
+                    that allow the user to toggle the visibility of certain chart series. 
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="LineExampleHideLines">
+                <LineExampleHideLines />
             </SectionContent>
         </DocsPageSection>
 

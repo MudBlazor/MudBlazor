@@ -78,6 +78,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Timeline", typeof(MudTimeline), typeof(MudTimelineItem))
             .AddItem("Pagination", typeof(MudPagination))
             .AddItem("Stack", typeof(MudStack))
+            .AddItem("Spacer", typeof(MudSpacer))
             .AddItem("Collapse", typeof(MudCollapse))
 
             //GROUPS
@@ -120,6 +121,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Line Chart", typeof(Line))
                 .AddItem("Pie Chart", typeof(Pie))
                 .AddItem("Bar Chart", typeof(Bar))
+                .AddItem("Stacked Bar Chart", typeof(StackedBar))
             )
             // this must be last!
             .GetComponentsSortedByName();
@@ -147,7 +149,7 @@ namespace MudBlazor.Docs.Services
                 return _parents[type];
             return null;
         }
-        
+
 
         public MenuService()
         {
@@ -221,6 +223,7 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Icon Reference", Href = "features/icons"}, // <-- note: title changed from "Icons" to "Icon Reference" to avoid confusion in Search box with the MudIcon page which is also called "Icons"
                 new DocsLink {Title = "Masking", Href = "features/masking"},
                 new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
+                new DocsLink {Title = "Localization", Href = "features/localization"}
             }.OrderBy(x => x.Title);
 
 
@@ -237,7 +240,7 @@ namespace MudBlazor.Docs.Services
             new DocsLink {Title = "z-index", Href = "customization/z-index"},
             new DocsLink {Title = "Pseudo CSS", Href = "customization/pseudocss"},
         }.OrderBy(x => x.Title);
-        
+
         private IEnumerable<DocsLink> _utilities;
 
         /// <summary>
@@ -252,7 +255,7 @@ namespace MudBlazor.Docs.Services
             new DocsLink {Group = "Layout", Title = "Object Fit", Href = "utilities/object-fit"},
             new DocsLink {Group = "Layout", Title = "Object Position", Href = "utilities/object-position"},
             new DocsLink {Group = "Layout", Title = "Position", Href = "utilities/position"},
-            
+
             new DocsLink {Group = "Flexbox", Title = "Enable Flexbox", Href = "utilities/enable-flex"},
             new DocsLink {Group = "Flexbox", Title = "Flex Direction", Href = "utilities/flex-direction"},
             new DocsLink {Group = "Flexbox", Title = "Flex Wrap", Href = "utilities/flex-wrap"},
@@ -265,13 +268,13 @@ namespace MudBlazor.Docs.Services
             new DocsLink {Group = "Flexbox", Title = "Align Content", Href = "utilities/align-content"},
             new DocsLink {Group = "Flexbox", Title = "Align Items", Href = "utilities/align-items"},
             new DocsLink {Group = "Flexbox", Title = "Align Self", Href = "utilities/align-self"},
-            
+
             new DocsLink {Group = "Spacing", Title = "Spacing", Href = "utilities/spacing"},
-            
+
             new DocsLink {Group = "Borders", Title = "Border Radius", Href = "utilities/border-radius"},
             new DocsLink {Group = "Borders", Title = "Border Style", Href = "utilities/border-style"},
             new DocsLink {Group = "Borders", Title = "Border Width", Href = "utilities/border-width"},
-            
+
             new DocsLink {Group = "Interactivity", Title = "Cursor", Href = "utilities/cursor"},
             new DocsLink {Group = "Interactivity", Title = "Pointer Events", Href = "utilities/pointer-events"},
         };

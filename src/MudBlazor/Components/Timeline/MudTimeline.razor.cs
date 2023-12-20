@@ -3,14 +3,26 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudTimeline : MudBaseItemsControl<MudTimelineItem>
     {
-        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
+        protected string Classnames =>
+            new CssBuilder("mud-timeline")
+                .AddClass($"mud-timeline-{TimelineOrientation.ToDescriptionString()}")
+                .AddClass($"mud-timeline-position-{ConvertTimelinePosition().ToDescriptionString()}")
+                .AddClass($"mud-timeline-reverse", Reverse && TimelinePosition == TimelinePosition.Alternate)
+                .AddClass($"mud-timeline-align-{TimelineAlign.ToDescriptionString()}")
+                .AddClass($"mud-timeline-modifiers", !DisableModifiers)
+                .AddClass($"mud-timeline-rtl", RightToLeft)
+                .AddClass(Class)
+                .Build();
+
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
 
         /// <summary>
         /// Sets the orientation of the timeline and its timeline items.
@@ -47,17 +59,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Timeline.Behavior)]
         public bool DisableModifiers { get; set; } = false;
 
-        protected string Classnames =>
-            new CssBuilder("mud-timeline")
-                .AddClass($"mud-timeline-{TimelineOrientation.ToDescriptionString()}")
-                .AddClass($"mud-timeline-position-{ConvertTimelinePosition().ToDescriptionString()}")
-                .AddClass($"mud-timeline-reverse", Reverse && TimelinePosition == TimelinePosition.Alternate)
-                .AddClass($"mud-timeline-align-{TimelineAlign.ToDescriptionString()}")
-                .AddClass($"mud-timeline-modifiers", !DisableModifiers)
-                .AddClass($"mud-timeline-rtl", RightToLeft)
-                .AddClass(Class)
-                .Build();
-
         private TimelinePosition ConvertTimelinePosition()
         {
             if (TimelineOrientation == TimelineOrientation.Vertical)
@@ -71,17 +72,15 @@ namespace MudBlazor
                     _ => TimelinePosition
                 };
             }
-            else
+
+            return TimelinePosition switch
             {
-                return TimelinePosition switch
-                {
-                    TimelinePosition.Start => TimelinePosition.Alternate,
-                    TimelinePosition.Left => TimelinePosition.Alternate,
-                    TimelinePosition.Right => TimelinePosition.Alternate,
-                    TimelinePosition.End => TimelinePosition.Alternate,
-                    _ => TimelinePosition
-                };
-            }
+                TimelinePosition.Start => TimelinePosition.Alternate,
+                TimelinePosition.Left => TimelinePosition.Alternate,
+                TimelinePosition.Right => TimelinePosition.Alternate,
+                TimelinePosition.End => TimelinePosition.Alternate,
+                _ => TimelinePosition
+            };
         }
     }
 }

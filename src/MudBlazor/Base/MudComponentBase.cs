@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
 
 namespace MudBlazor
@@ -41,12 +42,24 @@ namespace MudBlazor
         /// </summary>
         [Parameter(CaptureUnmatchedValues = true)]
         [Category(CategoryTypes.ComponentBase.Common)]
-        public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
+        public Dictionary<string, object?> UserAttributes { get; set; } = new Dictionary<string, object?>();
+
+        /// <summary>
+        /// Gets or sets a value indicating whether <see cref="JSRuntime" /> is available.
+        /// </summary>
+        protected bool IsJSRuntimeAvailable { get; set; }
 
         /// <summary>
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
         /// </summary>
-        public string FieldId => (UserAttributes?.ContainsKey("id") == true ? UserAttributes["id"].ToString() ?? $"mudinput-{Guid.NewGuid()}" : $"mudinput-{Guid.NewGuid()}");
+        public string FieldId => (UserAttributes?.ContainsKey("id") == true ? UserAttributes["id"]?.ToString() ?? $"mudinput-{Guid.NewGuid()}" : $"mudinput-{Guid.NewGuid()}");
+
+        /// <inheritdoc />
+        protected override void OnAfterRender(bool firstRender)
+        {
+            IsJSRuntimeAvailable = true;
+            base.OnAfterRender(firstRender);
+        }
 
         /// <inheritdoc />
         void IMudStateHasChanged.StateHasChanged() => StateHasChanged();

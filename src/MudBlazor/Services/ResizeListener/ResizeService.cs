@@ -11,6 +11,7 @@ namespace MudBlazor.Services
     /// <summary>
     /// This service listens to browser resize events and allows you to react to a changing window size in Blazor
     /// </summary>
+    [Obsolete($"Use {nameof(IBrowserViewportService)} instead. This will be removed in v7.")]
     public class ResizeService :
         ResizeBasedService<ResizeService, ResizeServiceSubscriptionInfo, BrowserWindowSize, ResizeOptions>,
         IResizeService
@@ -103,6 +104,7 @@ namespace MudBlazor.Services
         }
     }
 
+    [Obsolete($"Use {nameof(IBrowserViewportService)} instead. This will be removed in v7.")]
     public interface IResizeService : IAsyncDisposable
     {
         /// <summary>

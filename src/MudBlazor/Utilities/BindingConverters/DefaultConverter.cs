@@ -161,7 +161,7 @@ namespace MudBlazor
                     {
                         return (T)(object)TimeSpan.ParseExact(value, Format ?? DefaultTimeSpanFormat, Culture);
                     }
-                    catch (FormatException)
+                    catch (Exception e) when (e is FormatException or OverflowException)
                     {
                         UpdateGetError("Not a valid time span");
                     }

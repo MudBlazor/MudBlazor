@@ -1,13 +1,14 @@
-using MudBlazor.Utilities;
+﻿using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudLayout : MudDrawerContainer
     {
         protected override string Classname =>
-        new CssBuilder("mud-layout")
-            .AddClass(base.Classname)
-            .Build();
+            new CssBuilder("mud-layout")
+                .AddClass(base.Classname)
+                .Build();
 
         public MudLayout()
         {

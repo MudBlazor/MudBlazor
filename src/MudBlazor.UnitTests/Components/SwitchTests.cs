@@ -20,29 +20,29 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudSwitch<bool>>();
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Checked.Should().Be(true));
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "Delete", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Checked.Should().Be(false));
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(false));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowRight", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Checked.Should().Be(true));
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Checked.Should().Be(false));
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(false));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Checked.Should().Be(true));
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Checked.Should().Be(false));
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(false));
 
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Checked.Should().Be(true));
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
 
             comp.SetParam("Disabled", true);
             await comp.InvokeAsync(() => comp.Instance.HandleKeyDown(new KeyboardEventArgs() { Key = "ArrowLeft", Type = "keydown", }));
-            comp.WaitForAssertion(() => comp.Instance.Checked.Should().Be(true));
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(true));
         }
 
         [Test]
@@ -64,12 +64,12 @@ namespace MudBlazor.UnitTests.Components
 
             var checkboxClasses = comp.Find(".mud-button-root.mud-icon-button.mud-switch-base");
             // check initial state
-            box.Checked.Should().Be(false);
+            box.Value.Should().Be(false);
             checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });
 
             // click and check if it has new color
             input.Change(true);
-            box.Checked.Should().Be(true);
+            box.Value.Should().Be(true);
             checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
         }
 

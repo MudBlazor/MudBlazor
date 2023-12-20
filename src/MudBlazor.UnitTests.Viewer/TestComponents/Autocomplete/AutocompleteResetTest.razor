@@ -1,4 +1,5 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿@using System.Threading
+@namespace MudBlazor.UnitTests.TestComponents
 <MudPopoverProvider></MudPopoverProvider>
 <MudAutocomplete @ref="_selectAsync"
                  T="string"
@@ -27,9 +28,9 @@
         await _selectAsync.ResetAsync();
     }
 
-    private async Task SomeTask()
+    private Task SomeTask()
     {
-        //await Task.Delay(5);
+        return Task.CompletedTask;
     }
 
     private Task<IEnumerable<string>> Search(string value)

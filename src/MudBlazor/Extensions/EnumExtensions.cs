@@ -32,10 +32,14 @@ namespace MudBlazor.Extensions
         internal static IEnumerable<Enum> GetSafeEnumValues(Type? type)
         {
             if (type is null)
+            {
                 return Enumerable.Empty<Enum>();
+            }
 
             if (type.IsEnum)
+            {
                 return Enum.GetValues(type).Cast<Enum>();
+            }
 
             if (type.IsGenericType && typeof(Nullable<>) == type.GetGenericTypeDefinition())
             {

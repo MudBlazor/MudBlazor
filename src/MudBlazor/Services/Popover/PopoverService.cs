@@ -22,10 +22,10 @@ namespace MudBlazor;
 internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHolder>
 {
     private readonly SemaphoreSlim _semaphore;
+    private readonly PopoverJsInterop _popoverJsInterop;
     private readonly Dictionary<Guid, MudPopoverHolder> _holders;
     private readonly BatchPeriodicQueue<MudPopoverHolder> _batchExecutor;
     private readonly ObserverManager<Guid, IPopoverObserver> _observerManager;
-    private readonly PopoverJsInterop _popoverJsInterop;
 
     /// <inheritdoc />
     public IEnumerable<IMudPopoverHolder> ActivePopovers => _holders.Values;
@@ -35,6 +35,22 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
     /// <inheritdoc />
     public PopoverOptions PopoverOptions { get; }
+
+    /// <summary>
+    /// Gets the number of items currently queued in the <see cref="_batchExecutor"/> for processing in the <see cref="OnBatchTimerElapsedAsync"/> method.
+    /// </summary>
+    /// <remarks>
+    /// This property is not exposed in the public API of the <see cref="IPopoverService"/> interface and is intended for internal use only.
+    /// </remarks>
+    public int QueueCount => _batchExecutor.Count;
+
+    /// <summary>
+    /// Gets the number of observers.
+    /// </summary>
+    /// <remarks>
+    /// This property is not exposed in the public API of the <see cref="IPopoverService"/> interface and is intended for internal use only.
+    /// </remarks>
+    public int ObserversCount => _observerManager.Count;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PopoverService"/> class.
@@ -48,7 +64,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         _semaphore = new SemaphoreSlim(1, 1);
         _holders = new Dictionary<Guid, MudPopoverHolder>();
         _popoverJsInterop = new PopoverJsInterop(jsInterop);
-        _batchExecutor = new BatchPeriodicQueue<MudPopoverHolder>(this, PopoverOptions.QueueDelay);
+        _batchExecutor = new BatchPeriodicQueue<MudPopoverHolder>(this, PopoverOptions.QueueDelay, tickOnDispose: false);
         _observerManager = new ObserverManager<Guid, IPopoverObserver>(logger);
     }
 
@@ -69,7 +85,6 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     {
         ArgumentNullException.ThrowIfNull(popover);
 
-        await InitializeServiceIfNeededAsync();
         var holder = new MudPopoverHolder(popover.Id)
             .SetFragment(popover.ChildContent)
             .SetClass(popover.PopoverClass)
@@ -87,16 +102,16 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     {
         ArgumentNullException.ThrowIfNull(popover);
 
-        //We initialize the service regardless of whether the popover exists or not.
-        //Adding it in an if clause doesn't provide significant benefits.
-        //Instead, we prioritize ensuring that the service is ready for use, as its initialization is a one-time operation.
+        // We initialize the service regardless of whether the popover exists or not.
+        // Adding it in an if clause doesn't provide significant benefits.
+        // Instead, we prioritize ensuring that the service is ready for use, as its initialization is a one-time operation.
         await InitializeServiceIfNeededAsync();
         if (!_holders.TryGetValue(popover.Id, out var holder))
         {
             return false;
         }
 
-        //Do not put after the semaphore as it can cause deadlock
+        // Do not put after the semaphore as it can cause deadlock
         await InitializePopoverIfNeededAsync(holder);
 
         if (holder.IsDetached)
@@ -131,9 +146,9 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     {
         ArgumentNullException.ThrowIfNull(popover);
 
-        //We initialize the service regardless of whether the popover exists or not.
-        //Adding it in an if clause doesn't provide significant benefits.
-        //Instead, we prioritize ensuring that the service is ready for use, as its initialization is a one-time operation.
+        // We initialize the service regardless of whether the popover exists or not.
+        // Adding it in an if clause doesn't provide significant benefits.
+        // Instead, we prioritize ensuring that the service is ready for use, as its initialization is a one-time operation.
         await InitializeServiceIfNeededAsync();
 
         return await DestroyPopoverByIdAsync(popover.Id);
@@ -152,41 +167,45 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
-        if (!IsInitialized)
-        {
-            return;
-        }
-
-        //Queue all lefts overs.
         foreach (var holderKeyValuePair in _holders)
         {
-            await DestroyPopoverByIdAsync(holderKeyValuePair.Key);
+            // We just remove them from the dictionary, we don't care to queue for "mudPopover.disconnect" as the "mudPopover.dispose" will do it for us
+            await DestroyPopoverByIdAsync(holderKeyValuePair.Key, queueForDisconnect: false);
         }
 
-        //Cleanup and call the OnBatchTimerElapsedAsync with everything what's left.
+        // BatchPeriodicQueue(tickOnDispose) should be false, since BatchPeriodicQueue.OnBatchTimerElapsedAsync will cause deadlock on WinForm and WPF.
+        // We do not care about guaranteed "mudPopover.disconnect" JS call on all popovers from OnBatchTimerElapsedAsync -> DetachRange as the "mudPopover.dispose" already does it on JS side.
         await _batchExecutor.DisposeAsync();
 
+        // In case someone has custom implementation and didn't unsubscribe
+        _observerManager.Clear();
+
+        // https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968
+        // Fixed in NET8
         _ = _popoverJsInterop.Dispose();
     }
 
     /// <inheritdoc />
     public virtual Task OnBatchTimerElapsedAsync(IReadOnlyCollection<MudPopoverHolder> items, CancellationToken stoppingToken)
     {
-        //In our case we do not care if the cancellation token in requested, we should not interrupt the process and and just detach to cleanup resources.
-        //In the future, there might be a requirement to split the jobs and introduce a change where instead of using IReadOnlyCollection<MudPopoverHolder>,
-        //we would utilize IReadOnlyCollection<PopoverQueueContainer>. This new collection would consist of various operations, such as detaching items, rendering items,
-        //and triggering the PopoverCollectionUpdatedNotification, among others.
+        // In our case we do not care if the cancellation token in requested, we should not interrupt the process and and just detach to cleanup resources.
+        // In the future, there might be a requirement to split the jobs and introduce a change where instead of using IReadOnlyCollection<MudPopoverHolder>,
+        // we would utilize IReadOnlyCollection<PopoverQueueContainer>. This new collection would consist of various operations, such as detaching items, rendering items,
+        // and triggering the PopoverCollectionUpdatedNotification, among others.
         return DetachRange(items);
     }
 
-    private async Task<bool> DestroyPopoverByIdAsync(Guid id)
+    private async Task<bool> DestroyPopoverByIdAsync(Guid id, bool queueForDisconnect = true)
     {
         if (!_holders.Remove(id, out var holder))
         {
             return false;
         }
 
-        _batchExecutor.QueueItem(holder);
+        if (queueForDisconnect)
+        {
+            _batchExecutor.QueueItem(holder);
+        }
         // Although it is not completely detached from the JS side until OnBatchTimerElapsedAsync fires, we mark it as "Detached"
         // because we want let know the UpdatePopoverAsync method that there is no need to update it anymore,
         // as it is no longer being rendered by MudPopoverProvider since it has been removed from the ActivePopovers collection.
@@ -200,7 +219,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
     private async Task DetachRange(IReadOnlyCollection<MudPopoverHolder> holders)
     {
-        //Ignore task if zero items in collection to not enter in the semaphore
+        // Ignore task if zero items in collection to not enter in the semaphore
         if (holders.Count == 0)
         {
             return;
@@ -245,10 +264,10 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
             if (holder.IsConnected || holder.IsDetached)
             {
-                //It is not redundant to include a check before and after the semaphore.
-                //If we call InitializePopoverIfNeededAsync multiple times in parallel in the background,
-                //it may lead to double connection, which is undesired.
-                //The initial check helps to prevent double initialization of the popover.
+                // It is not redundant to include a check before and after the semaphore.
+                // If we call InitializePopoverIfNeededAsync multiple times in parallel in the background,
+                // it may lead to double connection, which is undesired.
+                // The initial check helps to prevent double initialization of the popover.
                 return;
             }
 
@@ -272,15 +291,15 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             await _semaphore.WaitAsync();
             if (IsInitialized)
             {
-                //It is not redundant to include a check before and after the semaphore.
-                //If we call InitializeServiceIfNeededAsync multiple times in parallel in the background,
-                //it may lead to double initialization, which is undesired.
-                //The initial check helps to prevent unnecessary reinitialization of the service.
+                // It is not redundant to include a check before and after the semaphore.
+                // If we call InitializeServiceIfNeededAsync multiple times in parallel in the background,
+                // it may lead to double initialization, which is undesired.
+                // The initial check helps to prevent unnecessary reinitialization of the service.
                 return;
             }
 
             await _popoverJsInterop.Initialize(PopoverOptions.ContainerClass, PopoverOptions.FlipMargin);
-            //Starts in background
+            // Starts in background
             await _batchExecutor.StartAsync();
             IsInitialized = true;
         }

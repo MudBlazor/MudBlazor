@@ -10,13 +10,10 @@ namespace MudBlazor
     /// <typeparam name="T">The type of data represented by each row in the data grid.</typeparam>
     public partial class TemplateColumn<T> : Column<T>
     {
-        private readonly string _propertyName = Guid.NewGuid().ToString();
-
         protected internal override object? CellContent(T item)
             => null;
 
-        public override string? PropertyName
-            => _propertyName;
+        public override string PropertyName { get; } = Guid.NewGuid().ToString();
 
         protected internal override object? PropertyFunc(T item)
             => null;

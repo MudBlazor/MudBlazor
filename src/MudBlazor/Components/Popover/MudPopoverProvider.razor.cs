@@ -79,8 +79,8 @@ namespace MudBlazor
             }
 #pragma warning restore CS0618
 
-            //Let's in our new case ignore _isConnectedToService and always update the subscription except IsEnabled = false. The manager is specifically designed for it.
-            //The reason is because If an observer throws an exception during the PopoverCollectionUpdatedNotification, indicating a malfunction, it will be automatically unsubscribed.
+            // Let's in our new case ignore _isConnectedToService and always update the subscription except IsEnabled = false. The manager is specifically designed for it.
+            // The reason is because If an observer throws an exception during the PopoverCollectionUpdatedNotification, indicating a malfunction, it will be automatically unsubscribed.
             if (IsEnabled)
             {
                 PopoverService.Subscribe(this);
@@ -122,7 +122,7 @@ namespace MudBlazor
         {
             switch (container.Operation)
             {
-                //Update popover individually
+                // Update popover individually
                 case PopoverHolderOperation.Update:
                     {
                         foreach (var holder in container.Holders)
@@ -135,7 +135,7 @@ namespace MudBlazor
 
                         break;
                     }
-                //Update whole MudPopoverProvider
+                // Update whole MudPopoverProvider
                 case PopoverHolderOperation.Create:
                 case PopoverHolderOperation.Remove:
                     await InvokeAsync(StateHasChanged);

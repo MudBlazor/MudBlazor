@@ -4,7 +4,7 @@
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
     <div class="mud-input-control-input-container">
         @InputContent
-        @if (!String.IsNullOrEmpty(Label))
+        @if (!string.IsNullOrEmpty(Label))
         {
             <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant" Disabled=@Disabled Error="@Error" 
                            Margin="@Margin" ForId="@ForId">
@@ -12,7 +12,7 @@
             </MudInputLabel>
         }
     </div>
-    @if (Error || !String.IsNullOrEmpty(HelperText) || !String.IsNullOrEmpty(CounterText))
+    @if (Error || !string.IsNullOrEmpty(HelperText) || !string.IsNullOrEmpty(CounterText))
     {
         <div class="@HelperContainer">
             <p class="@HelperClass">
@@ -23,13 +23,13 @@
                             @ErrorText
                         </div>
                     }
-                    else if (!String.IsNullOrEmpty(HelperText))
+                    else if (!string.IsNullOrEmpty(HelperText))
                     {
                         <div class="me-auto">
                             @HelperText
                         </div>
                     }
-                    @if (!String.IsNullOrEmpty(CounterText))
+                    @if (!string.IsNullOrEmpty(CounterText))
                     {
                         <div class="ms-auto">
                             @CounterText

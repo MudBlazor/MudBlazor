@@ -2,7 +2,7 @@
 @using MudBlazor.Utilities
 
 <li class="@Classname">
-    @if (Parent?.ItemTemplate == null)
+    @if (Parent?.ItemTemplate is null)
     {
         <a href="@(Item?.Href ?? "#")">
             @if (Item?.Icon != null)
@@ -19,9 +19,12 @@
 </li>
 
 @code {
-    [Parameter] public BreadcrumbItem Item { get; set; }
+#nullable enable
+    [Parameter]
+    public BreadcrumbItem? Item { get; set; }
 
-    [CascadingParameter] public MudBreadcrumbs Parent { get; set; }
+    [CascadingParameter]
+    public MudBreadcrumbs? Parent { get; set; }
 
     private string Classname => new CssBuilder("mud-breadcrumb-item")
         .AddClass("mud-disabled", Item?.Disabled)

@@ -21,6 +21,7 @@
             <SectionHeader Title="Click Event and display for selected Row">
                 <Description>
                     The <CodeInline>RowClassFunc</CodeInline> function can be used to customize the display of the selected row. <CodeInline>RowClickEvent</CodeInline> is triggered each time the row is clicked. 
+                    In addition to that the <CodeInline>RowClass</CodeInline> can be used to apply a general row style independent of the selection state. In this example we show a pointer curser.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="TableRowClassFuncExample" ShowCode="false" Block="true" FullWidth="true">
@@ -64,11 +65,13 @@
 
         <DocsPageSection>
             <SectionHeader Title="Sorting">
-                <Description>
-                    To enable sorting, add <CodeInline>&lt;MudTableSortLabel></CodeInline> to the header cells and define a function that simply returns the value which should be sorted by when sorting by the specific column.
-                    Click on a header to sort the table by that column, then click to cycle through sorting directions.
-                    Sorting can be allowed and disallowed on the column level with the property <CodeInline>Enabled</CodeInline>.
-                </Description>
+                    <Description>
+                        To enable sorting, add <CodeInline>&lt;MudTableSortLabel></CodeInline> to the header cells and define a function that simply returns the value which should be sorted by when sorting by the specific column.
+                        You can also specify whether default ordering direction should be ascending or descending by specifying the <CodeInline>&lt;InitialDirection></CodeInline> parameter of <CodeInline>&lt;MudTableSortLabel></CodeInline>.<br />
+                        Click on a header to sort the table by that column, then click to cycle through sorting directions.
+                        By default, sorting directions are ascending, descending and unsorted; if you want to cycle through ascending and descending only, you need to specify the <CodeInline>&lt;AllowUnsorted></CodeInline> parameter of the <CodeInline>&lt;MudTable></CodeInline>.
+                        Sorting can be allowed and disallowed on the column level with the property <CodeInline>Enabled</CodeInline>.
+                    </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="TableSortingExample" ShowCode="false" Block="true" FullWidth="true">
                 <TableSortingExample />

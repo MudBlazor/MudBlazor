@@ -3,16 +3,17 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
+using MudBlazor.Extensions;
 
 namespace MudBlazor.Services
 {
 #nullable enable
+    [Obsolete($"Use {nameof(IBrowserViewportService)} instead. This will be removed in v7.")]
     public class BreakpointService :
         ResizeBasedService<BreakpointService, BreakpointServiceSubscriptionInfo, Breakpoint, ResizeOptions>,
         IBreakpointService
@@ -64,30 +65,22 @@ namespace MudBlazor.Services
         public async ValueTask<bool> MatchMedia(string mediaQuery) =>
             await _jsRuntime.InvokeAsync<bool>("mudResizeListener.matchMedia", mediaQuery);
 
-        public static Dictionary<Breakpoint, int> DefaultBreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
-        {
-            [Breakpoint.Xl] = 1920,
-            [Breakpoint.Lg] = 1280,
-            [Breakpoint.Md] = 960,
-            [Breakpoint.Sm] = 600,
-            [Breakpoint.Xs] = 0,
-        };
-
         /// <inheritdoc />
         public async Task<Breakpoint> GetBreakpoint()
         {
+            var defaultBreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(_options);
             // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
             if (_windowSize == null)
                 _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
             if (_windowSize == null)
                 return Breakpoint.Xs;
-            if (_windowSize.Width >= DefaultBreakpointDefinitions[Breakpoint.Xl])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Xl])
                 return Breakpoint.Xl;
-            if (_windowSize.Width >= DefaultBreakpointDefinitions[Breakpoint.Lg])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Lg])
                 return Breakpoint.Lg;
-            if (_windowSize.Width >= DefaultBreakpointDefinitions[Breakpoint.Md])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Md])
                 return Breakpoint.Md;
-            if (_windowSize.Width >= DefaultBreakpointDefinitions[Breakpoint.Sm])
+            if (_windowSize.Width >= defaultBreakpointDefinitions[Breakpoint.Sm])
                 return Breakpoint.Sm;
             return Breakpoint.Xs;
         }
@@ -147,11 +140,12 @@ namespace MudBlazor.Services
                 throw new ArgumentNullException(nameof(callback));
             }
 
-            options ??= _options;
-            if (options.BreakpointDefinitions == null || options.BreakpointDefinitions.Count == 0)
-            {
-                options.BreakpointDefinitions = DefaultBreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
-            }
+            // Always clone the ResizeOptions, regardless of the circumstances.
+            // This is necessary because the options may originate from the _options (IOptions<ResizeOptions>) - these are the user-defined options when adding BreakpointService in the DI container.
+            // Only the user should be allowed to modify these settings, and the service should not directly modify the reference to prevent potential bugs.
+            var optionsClone = (options ?? _options).Clone();
+            //Safe to modify now
+            optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone);
 
             DotNetRef ??= DotNetObjectReference.Create(this);
 
@@ -161,13 +155,13 @@ namespace MudBlazor.Services
 
                 //We capture both key and value, because someone might unsubscribe at meantime
                 //This way we do not need to check if key exist and do look up the dictionary again later
-                var existingOptionKeyValuePair = Listeners.FirstOrDefault(x => x.Value.Option == options);
+                var existingOptionKeyValuePair = Listeners.FirstOrDefault(x => x.Value.Option == optionsClone);
 
                 //better way than existingOptionKeyValuePair.Equals(default) to avoid boxing
                 //we use ValueTuple to compare if KeyValuePair struct is default
                 if ((existingOptionKeyValuePair.Key, existingOptionKeyValuePair.Value) == default)
                 {
-                    return await CreateSubscriptionAsync(callback, options);
+                    return await CreateSubscriptionAsync(callback, optionsClone);
                 }
 
                 var subscriptionId = existingOptionKeyValuePair.Value.AddSubscription(callback);
@@ -195,7 +189,6 @@ namespace MudBlazor.Services
                 if (_breakpoint == Breakpoint.None)
                 {
                     _breakpoint = await GetBreakpoint();
-
                 }
             }
 
@@ -210,6 +203,7 @@ namespace MudBlazor.Services
     /// <param name="Breakpoint">The current breakpoint of the window</param>
     public record BreakpointServiceSubscribeResult(Guid SubscriptionId, Breakpoint Breakpoint);
 
+    [Obsolete($"Use {nameof(IBrowserViewportService)} instead. This will be removed in v7.")]
     public interface IBreakpointService : IAsyncDisposable
     {
         /// <summary>
