@@ -614,11 +614,10 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Converts gregorian year into whatever year it is in the provided culture
+        /// Converts gregorian date into whatever year it is in the provided culture
         /// </summary>
-        /// <param name="year">Gregorian year</param>
+        /// <param name="yearDate">Gregorian Date</param>
         /// <returns>Year according to culture</returns>
-        protected abstract int GetCalendarYear(int year);
         protected abstract int GetCalendarYear(DateTime yearDate);
 
         private ValueTask HandleMouseoverOnPickerCalendarDayButton(int tempId)

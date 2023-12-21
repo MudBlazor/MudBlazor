@@ -300,14 +300,6 @@ namespace MudBlazor
             return date.StartOfMonth(Culture);
         }
 
-        protected override int GetCalendarYear(int year)
-        {
-            var date = DateRange?.Start ?? DateTime.Today;
-            var diff = date.Year - year;
-            var calenderYear = Culture.Calendar.GetYear(date);
-            return calenderYear - diff;
-        }
-
         protected override int GetCalendarYear(DateTime yearDate)
         {
             var date = DateRange?.Start ?? DateTime.Today;
