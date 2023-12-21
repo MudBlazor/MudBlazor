@@ -1111,7 +1111,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ToggleTabsSliderAnimation()
         {
-            var comp = Context.RenderComponent<ToggleTabsSlideAnimationTest>();
+            //The first tab should be active because for the rest the slider position is calculated by JS
+            //and before the calculation the slider is hidden to avoid movement on first load
+            var comp = Context.RenderComponent<ToggleTabsSlideAnimationTest>(p => p.Add(x => x.SelectedTab, 0));
 
             //Toggle DisableSliderAnimation to true
             //Check if style attr contains transform: none

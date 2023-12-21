@@ -1,52 +1,54 @@
 ﻿@using MudBlazor.Services
 @namespace MudBlazor.Docs.Examples
+@implements IBrowserViewportObserver
 @implements IAsyncDisposable
 
-<MudAlert Severity=Severity.Warning>
-	MudBlazor 5.2 introduced new implementations for handling browser resize events.
-	The <strong>IResizeListenerService</strong> can still be used but we strongly encourage you to move to the 
-	<strong>IResizeService </strong>
+<MudAlert Severity="Severity.Warning">
+    MudBlazor 5.2 introduced new implementations for handling browser resize events.
+    The <strong>IResizeListenerService</strong> can still be used but we strongly encourage you to move to the
+    <strong>IBrowserViewportService </strong>
 </MudAlert>
 
 <MudCard Class="pa-5">
     <MudText>
         Resize the window and see width and height change:<br />
-        Browser window is @(width)x@(height)px
+        Browser window is @(_width)x@(_height)px
     </MudText>
 </MudCard>
 
 @code
 {
-	[Inject] IResizeService ResizeService { get; set; }
+    [Inject]
+    private IBrowserViewportService BrowserViewportService { get; set; }
 
-    int width = 0;
-    int height = 0;
-
-	private Guid _subscriptionId;
+    private int _width = 0;
+    private int _height = 0;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-			_subscriptionId = await ResizeService.SubscribeAsync((size) =>
-			{
-				width = size.Width;
-				height = size.Height;
-				InvokeAsync(StateHasChanged);
-			}, new ResizeOptions
-			{
-				ReportRate = 50,
-				NotifyOnBreakpointOnly = false,
-			});
-
-            var size = await ResizeService.GetBrowserWindowSize();
-            height = size.Height;
-            width = size.Width;
-            StateHasChanged();
+            await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
         }
 
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    public async ValueTask DisposeAsync() => await ResizeService.UnsubscribeAsync(_subscriptionId);
+    public async ValueTask DisposeAsync() => await BrowserViewportService.UnsubscribeAsync(this);
+
+    Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
+
+    ResizeOptions IBrowserViewportObserver.ResizeOptions { get; } = new()
+    {
+        ReportRate = 50,
+        NotifyOnBreakpointOnly = false
+    };
+
+    Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+    {
+        _width = browserViewportEventArgs.BrowserWindowSize.Width;
+        _height = browserViewportEventArgs.BrowserWindowSize.Height;
+
+        return InvokeAsync(StateHasChanged);
+    }
 }

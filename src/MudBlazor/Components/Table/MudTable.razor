@@ -61,17 +61,27 @@
                                 }
                             </MudTHeadRow>
                         }
+                        @if (Loading)
+                        {
+                            <tr class="mud-table-row">
+                                <th colspan="1000" class="@(CurrentPageItems.Any() || LoadingContent is not null ? "mud-table-loading" : "")">
+                                    <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
+                                </th>
+                            </tr>
+                        }
+                    </thead>
+                }
+                else if (Loading)
+                {
+                    <thead class="@HeadClassname">
+                        <tr class="mud-table-row">
+                            <th colspan="1000" class="@(CurrentPageItems.Any() || LoadingContent is not null ? "mud-table-loading" : "")">
+                                <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
+                            </th>
+                        </tr>
                     </thead>
                 }
                 <tbody class="mud-table-body">
-                    @if (Loading)
-                    {
-                        <tr>
-                            <td colspan="1000" class="@(CurrentPageItems.Count() > 0 || LoadingContent != null ? "mud-table-loading" : "")">
-                                <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
-                            </td>
-                        </tr>
-                    }
                     @if(GroupBy != null)
                     {
                         @foreach (var group in GroupItemsPage)
@@ -84,10 +94,10 @@
                     }
                     else
                     {
-                        @if (CurrentPageItems != null && CurrentPageItems.Count() > 0)
+                        @if (CurrentPageItems != null && CurrentPageItems.Any())
                         {
                             var rowIndex = 0;
-                            <MudVirtualize IsEnabled="@Virtualize" OverscanCount="@OverscanCount" Items="@CurrentPageItems?.ToList()" Context="item">
+                                <MudVirtualize IsEnabled="@Virtualize" Items="@CurrentPageItems?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="IsEditable"
@@ -131,7 +141,7 @@
                             </MudVirtualize>
                         }
                     }
-                    @if(!(CurrentPageItems != null && CurrentPageItems.Count() > 0)
+                    @if(!(CurrentPageItems != null && CurrentPageItems.Any())
                         && (Loading ? LoadingContent != null : NoRecordsContent != null)
                     )
                     {
@@ -195,8 +205,8 @@
 
          RenderFragment rootNode =
             @<text>
-                <MudVirtualize IsEnabled="@Virtualize" Items="@source?.ToList()" Context="item" ChildContent="@child()">              
-                </MudVirtualize>
+        <MudVirtualize IsEnabled="@Virtualize" Items="@source?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item" ChildContent="@child()">
+        </MudVirtualize>
             </text>;
 
          RenderFragment<T> child() => item =>

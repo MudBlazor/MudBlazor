@@ -27,11 +27,11 @@ namespace MudBlazor.UnitTests.Mocks
         {
         }
 
-        public Task CreatePopoverAsync(IPopover mudPopover) => Task.CompletedTask;
+        public Task CreatePopoverAsync(IPopover popover) => Task.CompletedTask;
 
-        public Task<bool> UpdatePopoverAsync(IPopover mudPopover) => Task.FromResult(true);
+        public Task<bool> UpdatePopoverAsync(IPopover popover) => Task.FromResult(true);
 
-        public Task<bool> DestroyPopoverAsync(IPopover mudPopover) => Task.FromResult(true);
+        public Task<bool> DestroyPopoverAsync(IPopover popover) => Task.FromResult(true);
 
         public ValueTask<int> GetProviderCountAsync() => ValueTask.FromResult(0);
 

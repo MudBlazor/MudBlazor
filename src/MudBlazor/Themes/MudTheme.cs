@@ -1,16 +1,51 @@
 ﻿namespace MudBlazor
 {
+#nullable enable
+    /// <summary>
+    /// Represents the theme settings for the MudBlazor user interface.
+    /// </summary>
     public class MudTheme
     {
-        //public Breakpoints Breakpoints { get; set; }
+#pragma warning disable CS0618
+        /// <summary>
+        /// Gets or sets the palette for the light theme.
+        /// </summary>
         public Palette Palette { get; set; }
+
+        /// <summary>
+        /// Gets or sets the palette for the dark theme.
+        /// </summary>
         public Palette PaletteDark { get; set; }
+#pragma warning restore CS0618
+
+        /// <summary>
+        /// Gets or sets the shadow settings.
+        /// </summary>
         public Shadow Shadows { get; set; }
+
+        /// <summary>
+        /// Gets or sets the typography settings.
+        /// </summary>
         public Typography Typography { get; set; }
+
+        /// <summary>
+        /// Gets or sets the layout properties.
+        /// </summary>
         public LayoutProperties LayoutProperties { get; set; }
+
+        /// <summary>
+        /// Gets or sets the z-index values.
+        /// </summary>
         public ZIndex ZIndex { get; set; }
+
+        /// <summary>
+        /// Gets or sets the pseudo CSS styles.
+        /// </summary>
         public PseudoCss PseudoCss { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MudTheme"/> class.
+        /// </summary>
         public MudTheme()
         {
             Palette = new PaletteLight();

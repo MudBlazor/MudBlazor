@@ -1,11 +1,15 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudSkeleton : MudComponentBase
     {
+        private string? _width;
+        private string? _height;
+        private string? _styleString;
+
         protected string Classname =>
             new CssBuilder("mud-skeleton")
                 .AddClass($"mud-skeleton-{SkeletonType.ToDescriptionString()}")
@@ -18,14 +22,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Skeleton.Appearance)]
-        public string Width { set; get; }
+        public string? Width { set; get; }
 
         /// <summary>
         /// Height defined in string, needs px or % or equal prefix.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Skeleton.Appearance)]
-        public string Height { set; get; }
+        public string? Height { set; get; }
 
         /// <summary>
         /// Shape of the skeleton that will be rendered.
@@ -40,10 +44,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Skeleton.Appearance)]
         public Animation Animation { set; get; } = Animation.Pulse;
-
-        private string _width;
-        private string _height;
-        private string _styleString;
 
         protected override void OnInitialized()
         {

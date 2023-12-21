@@ -4,7 +4,7 @@
 
 <svg @attributes="UserAttributes" class="mud-chart-donut" width="@ParentWidth" height="@ParentHeight" viewBox="0 0 42 42">
     <Filters />
-    <circle class="mud-donut-ring" cx="21" cy="21" r="15.91549430918954"></circle>
+    <circle class="mud-donut-ring" cx="21" cy="21" r="@(100 / (2 * Math.PI))"></circle>
     @foreach (var item in _circles.ToList())
     {
         <circle class="mud-chart-serie mud-donut-segment" @onclick="() => SelectedIndex = item.Index"  stroke="@(MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count()))"

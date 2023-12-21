@@ -3,12 +3,12 @@
 @inherits MudBaseInput<T>
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-	<div class="mud-select" id="@_elementId">
+    <div class="@OuterClassname" id="@_elementId" @onfocusout="@OnFocusOutAsync">
 		<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
 						 Error="@Error" ErrorText="@ErrorText" ErrorId="@ErrorId" Disabled="@GetDisabledState()" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
 			<InputContent>
                 <MudInput @ref="_elementReference" InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
-                          Class="mud-select-input" Margin="@Margin" Placeholder="@Placeholder"
+                          Class="@InputClassname" Margin="@Margin" Placeholder="@Placeholder"
                           Variant="@Variant"
                           TextUpdateSuppression="false"
                           Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine"
@@ -16,7 +16,7 @@
                           OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@_currentIcon" Adornment="@Adornment"
                           AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
                           Clearable="@Clearable" OnClearButtonClick="(async (e) => await SelectClearButtonClickHandlerAsync(e))"
-                          @attributes="UserAttributes" OnBlur="@OnLostFocus">
+                          @attributes="UserAttributes" OnBlur="@OnBlurAsync">
                     @if (CanRenderValue)
                     {
                         @GetSelectedValuePresenter()

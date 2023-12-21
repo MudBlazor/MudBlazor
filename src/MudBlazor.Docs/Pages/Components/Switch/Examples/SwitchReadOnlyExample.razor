@@ -1,9 +1,9 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <div class="d-flex flex-column align-center">
-    <MudSwitch ReadOnly="@ReadOnly" @bind-Checked="@SwitchValue" Color="Color.Primary" Class="mr-n2 mb-6"/>
+    <MudSwitch ReadOnly="@ReadOnly" @bind-Value="@SwitchValue" Color="Color.Primary" Class="mr-n2 mb-6"/>
     <MudButton OnClick="@ToggleValue" Variant="Variant.Filled" DisableElevation="true">Toggle Value</MudButton>
-    <MudCheckBox @bind-Checked="@ReadOnly" Label="@(ReadOnly ? "readonly-mode" : "edit-mode")" />
+    <MudCheckBox @bind-Value="@ReadOnly" Label="@(ReadOnly ? "readonly-mode" : "edit-mode")" />
 </div>
 
 @code {

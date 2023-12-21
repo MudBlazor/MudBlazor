@@ -79,8 +79,8 @@ namespace MudBlazor
             }
 #pragma warning restore CS0618
 
-            //Let's in our new case ignore _isConnectedToService and always update the subscription except IsEnabled = false. The manager is specifically designed for it.
-            //The reason is because If an observer throws an exception during the PopoverCollectionUpdatedNotification, indicating a malfunction, it will be automatically unsubscribed.
+            // Let's in our new case ignore _isConnectedToService and always update the subscription except IsEnabled = false. The manager is specifically designed for it.
+            // The reason is because If an observer throws an exception during the PopoverCollectionUpdatedNotification, indicating a malfunction, it will be automatically unsubscribed.
             if (IsEnabled)
             {
                 PopoverService.Subscribe(this);
@@ -118,9 +118,29 @@ namespace MudBlazor
         Guid IPopoverObserver.Id { get; } = Guid.NewGuid();
 
         /// <inheritdoc />
-        Task IPopoverObserver.PopoverCollectionUpdatedNotification(IEnumerable<IMudPopoverHolder> holders)
+        async Task IPopoverObserver.PopoverCollectionUpdatedNotificationAsync(PopoverHolderContainer container)
         {
-            return InvokeAsync(StateHasChanged);
+            switch (container.Operation)
+            {
+                // Update popover individually
+                case PopoverHolderOperation.Update:
+                    {
+                        foreach (var holder in container.Holders)
+                        {
+                            if (holder.ElementReference is not null)
+                            {
+                                await InvokeAsync(holder.ElementReference.StateHasChanged);
+                            }
+                        }
+
+                        break;
+                    }
+                // Update whole MudPopoverProvider
+                case PopoverHolderOperation.Create:
+                case PopoverHolderOperation.Remove:
+                    await InvokeAsync(StateHasChanged);
+                    break;
+            }
         }
     }
 }

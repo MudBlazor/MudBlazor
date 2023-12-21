@@ -21,7 +21,7 @@ internal class PopoverMock : IPopover
 
     public object? Tag { get; set; }
 
-    public Dictionary<string, object> UserAttributes { get; set; } = new();
+    public Dictionary<string, object?> UserAttributes { get; set; } = new();
 
     public RenderFragment? ChildContent { get; set; }
 }

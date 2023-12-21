@@ -46,8 +46,8 @@ namespace MudBlazor.UnitTests.Charts
             List<ChartSeries> chartSeries = new List<ChartSeries>()
             {
                 new () { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
-                new () { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
-                new () { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
+                new () { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, -4, 16, 31 } },
+                new () { Name = "Sweden", Data = new double[] { 8, 6, -11, 13, 4, 16, 10, 16, 18 } },
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
@@ -86,13 +86,13 @@ namespace MudBlazor.UnitTests.Charts
             if (chartSeries.Count == 3 && chartSeries.Any(x => x.Data.Contains(40)))
             {
                 comp.Markup.Should()
-                    .Contain("d=\"M 30 325 L 30 205\"");
+                    .Contain("d=\"M 30 265 L 30 145\"");
             }
 
             if (chartSeries.Count == 3 && chartSeries.Any(x => x.Data.Contains(80)))
             {
                 comp.Markup.Should()
-                    .Contain("d=\"M 546.25 325 L 546.25 85\"");
+                    .Contain("d=\"M 546.25 265 L 546.25 25\"");
             }
 
             comp.SetParametersAndRender(parameters => parameters

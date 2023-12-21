@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MudBlazor;
@@ -17,16 +16,16 @@ public interface IPopoverObserver
     /// <summary>
     /// Gets the unique identifier of the observer.
     /// </summary>
-    public Guid Id { get; }
+    Guid Id { get; }
 
     /// <summary>
     /// Notifies the observer of a popover collection update in <see cref="IPopoverService.ActivePopovers"/>.
-    /// This notification is triggered only when <see cref="IPopoverService.CreatePopoverAsync"/> or <see cref="IPopoverService.DestroyPopoverAsync"/> is called.
+    /// This notification is triggered only when <see cref="IPopoverService.CreatePopoverAsync"/>, <see cref="IPopoverService.UpdatePopoverAsync"/> or <see cref="IPopoverService.DestroyPopoverAsync"/> is called.
     /// </summary>
-    /// <param name="holders">Collection of the updated holder of the popover.</param>
-    /// <remarks>
-    /// Please note that this notification will not be triggered when <see cref="IPopoverService.UpdatePopoverAsync"/> is called, but this might change in future.
-    /// Currently, the <paramref name="holders"/> collection always contains one item. However, in the future, the behavior might change, and a list of updated states could be sent if the decision is made to update by batches.
+    /// <param name="container">The container holding the collection of updated popover holders and the corresponding operation.</param>
+    /// <returns>A task representing the asynchronous notification operation.</returns>
+    /// /// <remarks>
+    /// Please note that this notification will not be triggered if <see cref="IPopoverService.UpdatePopoverAsync"/>, <see cref="IPopoverService.DestroyPopoverAsync"/> return <c>false</c>.
     /// </remarks>
-    public Task PopoverCollectionUpdatedNotification(IEnumerable<IMudPopoverHolder> holders);
+    Task PopoverCollectionUpdatedNotificationAsync(PopoverHolderContainer container);
 }

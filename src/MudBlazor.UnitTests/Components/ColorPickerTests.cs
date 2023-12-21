@@ -78,7 +78,7 @@ namespace MudBlazor.UnitTests.Components
         {
             if (checkInstanceValue == true)
             {
-                comp.Instance.ColorValue.Should().Be(expectedColor);
+                comp.WaitForAssertion(()=> comp.Instance.ColorValue.Should().Be(expectedColor));
             }
 
             if (mode is ColorPickerMode.RGB or ColorPickerMode.HSL)
@@ -897,7 +897,7 @@ namespace MudBlazor.UnitTests.Components
                 var colorElement = collectionView.Children[i];
                 colorElement.ClassList.Should().Contain("mud-picker-color-dot");
 
-                colorElement.Click();
+                comp.InvokeAsync(() => colorElement.Click());
                 comp.Instance.ColorValue.Should().Be(expectedColor);
 
                 comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
@@ -953,7 +953,7 @@ namespace MudBlazor.UnitTests.Components
                 colorElement.ClassList.Should().Contain("mud-picker-color-dot");
 
                 colorElement.Click();
-                comp.Instance.ColorValue.Should().Be(expectedColor);
+                comp.WaitForAssertion(() => comp.Instance.ColorValue.Should().Be(expectedColor));
 
                 comp.Find(".mud-picker-color-grid").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
             }

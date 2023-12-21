@@ -20,7 +20,7 @@
            var eventCallbacks = getEventCallbacks().ToList();
         }
 
-        @if (properties.Count() > 0)
+        @if (properties.Count > 0)
         {
             <DocsPageSection>
                 <SectionHeader Title="Properties" />
@@ -85,7 +85,7 @@
             </DocsPageSection>
         }
 
-        @if (eventCallbacks.Count() > 0)
+        @if (eventCallbacks.Any())
         {
             <DocsPageSection>
                 <SectionHeader Title="EventCallbacks" />
@@ -106,7 +106,7 @@
             </DocsPageSection>
         }
 
-        @if (methods.Count() > 0)
+        @if (methods.Any())
         {
             <DocsPageSection>
                 <SectionHeader Title="Methods" />

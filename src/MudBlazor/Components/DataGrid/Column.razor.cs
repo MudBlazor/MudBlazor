@@ -44,6 +44,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment<FooterContext<T>> FooterTemplate { get; set; }
         [Parameter] public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
         [Parameter] public Func<T, object> GroupBy { get; set; }
+        [Parameter] public bool Required { get; set; } = true;
 
         #region HeaderCell Properties
 
@@ -236,6 +237,22 @@ namespace MudBlazor
             }
         }
 
+        internal bool hideable
+        {
+            get
+            {
+                return Hideable ?? DataGrid?.Hideable ?? false;
+            }
+        }
+
+        internal bool sortable
+        {
+            get
+            {
+                return Sortable ?? DataGrid?.SortMode != SortMode.None;
+            }
+        }
+
         internal bool groupable
         {
             get
@@ -260,6 +277,7 @@ namespace MudBlazor
         private IComparer<object> _comparer = null;
         private Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
+        internal bool hidden;
         internal HeaderContext<T> headerContext;
         private FilterContext<T> filterContext;
         internal FooterContext<T> footerContext;
@@ -272,15 +290,11 @@ namespace MudBlazor
                 if (filterContext.FilterDefinition == null)
                 {
                     var operators = FilterOperator.GetOperatorByDataType(PropertyType);
-                    filterContext.FilterDefinition = new FilterDefinition<T>()
-                    {
-                        DataGrid = DataGrid,
-                        //Field = PropertyName,
-                        //FieldType = PropertyType,
-                        Title = Title,
-                        Operator = operators.FirstOrDefault(),
-                        Column = this,
-                    };
+                    var filterDefinition = DataGrid.CreateFilterDefinitionInstance();
+                    filterDefinition.Title = Title;
+                    filterDefinition.Operator = operators.FirstOrDefault();
+                    filterDefinition.Column = this;
+                    filterContext.FilterDefinition = filterDefinition;
                 }
 
                 return filterContext;
@@ -289,15 +303,13 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            if (!Hideable.HasValue)
-                Hideable = DataGrid?.Hideable;
-
+            hidden = Hidden;
             groupBy = GroupBy;
 
             if (groupable && Grouping)
                 grouping = Grouping;
 
-            if (null != DataGrid)
+            if (DataGrid != null)
                 DataGrid.AddColumn(this);
 
             // Add the HeaderContext
@@ -327,14 +339,14 @@ namespace MudBlazor
 
         internal Func<T, object> GetLocalSortFunc()
         {
-            if (null == _sortBy)
+            if (_sortBy == null)
             {
                 if (this is TemplateColumn<T>)
                 {
                     _sortBy = x => true;
                 }
                 else
-                    _sortBy = x => PropertyFunc(x);
+                    _sortBy = PropertyFunc;
             }
 
             return _sortBy;
@@ -348,11 +360,11 @@ namespace MudBlazor
                 // set the default GroupBy
                 if (type == typeof(IDictionary<string, object>))
                 {
-                    groupBy = x => (x as IDictionary<string, object>)[PropertyName];
+                    groupBy = x => (x as IDictionary<string, object>)?[PropertyName];
                 }
                 else
                 {
-                    groupBy = x => PropertyFunc(x);
+                    groupBy = PropertyFunc;
                 }
             }
         }
@@ -377,20 +389,20 @@ namespace MudBlazor
 
         public async Task HideAsync()
         {
-            Hidden = true;
-            await HiddenChanged.InvokeAsync(Hidden);
+            hidden = true;
+            await HiddenChanged.InvokeAsync(hidden);
         }
 
         public async Task ShowAsync()
         {
-            Hidden = false;
-            await HiddenChanged.InvokeAsync(Hidden);
+            hidden = false;
+            await HiddenChanged.InvokeAsync(hidden);
         }
 
         public async Task ToggleAsync()
         {
-            Hidden = !Hidden;
-            await HiddenChanged.InvokeAsync(Hidden);
+            hidden = !hidden;
+            await HiddenChanged.InvokeAsync(hidden);
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
 
@@ -417,8 +429,6 @@ namespace MudBlazor
         protected internal abstract object PropertyFunc(T item);
 
         protected internal virtual Type PropertyType { get; }
-
-        protected internal virtual string FullPropertyName { get; }
 
         protected internal abstract void SetProperty(object item, object value);
 

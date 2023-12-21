@@ -17,7 +17,7 @@
 
     async Task DeleteServer(Server server)
     {
-        var parameters = new DialogParameters { ["server"]=server };
+        var parameters = new DialogParameters<DialogPassingDataExample_Dialog> { { x => x.server, server } };
 
         var dialog = await DialogService.ShowAsync<DialogPassingDataExample_Dialog>("Delete Server", parameters);
         var result = await dialog.Result;

@@ -1,11 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudForm>
-    <MudRadioGroup @bind-SelectedOption="@SelectedOption">
-        <MudRadio Option="@("Radio 1")" Color="Color.Primary">Primary</MudRadio>
-        <MudRadio Option="@("Radio 2")" Color="Color.Secondary">Secondary</MudRadio>
-        <MudRadio Option="@("Radio 3")">Default</MudRadio>
-        <MudRadio Option="@("Radio 4")" Color="Color.Primary" Disabled="true">Disabled</MudRadio>
+    <MudRadioGroup @bind-Value="@SelectedOption">
+        <MudRadio Value="@("Radio 1")" Color="Color.Primary">Primary</MudRadio>
+        <MudRadio Value="@("Radio 2")" Color="Color.Secondary">Secondary</MudRadio>
+        <MudRadio Value="@("Radio 3")">Default</MudRadio>
+        <MudRadio Value="@("Radio 4")" Color="Color.Primary" Disabled="true">Disabled</MudRadio>
     </MudRadioGroup>
 </MudForm>
 
