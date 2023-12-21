@@ -939,7 +939,7 @@ namespace MudBlazor.UnitTests.Components
             inputs.Change(true);
             table.SelectedItems.Count.Should().Be(10);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(10);
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(10);
 
             // click next page button
             var buttons = comp.FindAll("button[aria-label=\"Next page\"]");
@@ -959,13 +959,13 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(10);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
             // No item from current page should be checked
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0);
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(0);
 
             // Click the checkbox of the row with id 12
             inputs2[2].Change(true);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12 }");
             // One checkbox of the current page should be checked
-            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(1);
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(1);
         }
 
         /// <summary>
