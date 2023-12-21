@@ -13,7 +13,7 @@ window.getTabbableElements = (element) => {
         "iframe:not([tabindex='-1'])," +
         "details:not([tabindex='-1'])," +
         "[tabindex]:not([tabindex='-1'])," +
-        "[contentEditable=true]:not([tabindex='-1']"
+        "[contentEditable=true]:not([tabindex='-1'])"
     );
 };
 
