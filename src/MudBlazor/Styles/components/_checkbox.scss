@@ -43,3 +43,6 @@
     cursor: pointer;
 }
 
+.mud-chart-legend-checkbox .mud-checkbox svg path:last-child {
+    fill: var(--checkbox-color) !important;
+}

@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @typeparam T
 
 <TemplateColumn T="T" Tag="@("select-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
@@ -6,11 +6,11 @@
     <HeaderTemplate>
         @if (ShowInHeader)
         {
-            <MudCheckBox T="bool" Size="@Size" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAllAsync" />
+            <MudCheckBox T="bool" Size="@Size" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAllAsync" />
         }
     </HeaderTemplate>
     <CellTemplate>
-        <MudCheckBox T="bool" Size="@Size" Checked="@context.IsSelected" CheckedChanged="@context.Actions.SetSelectedItemAsync" />
+        <MudCheckBox T="bool" Size="@Size" Value="@context.IsSelected" ValueChanged="@context.Actions.SetSelectedItemAsync" />
     </CellTemplate>
 </TemplateColumn>
 
@@ -25,7 +25,7 @@
     {
         <MudCheckBox T="bool"
                      Size="@Size"
-                     Checked="@context.IsAllSelected"
-                     CheckedChanged="@context.Actions.SetSelectAllAsync" />
+                     Value="@context.IsAllSelected"
+                     ValueChanged="@context.Actions.SetSelectAllAsync" />
     };
 }

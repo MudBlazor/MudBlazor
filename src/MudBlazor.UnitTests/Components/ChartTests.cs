@@ -46,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void LineChartSelectionTest()
         {
-            var comp = Context.RenderComponent<LineExample1>();
+            var comp = Context.RenderComponent<LineChartSelectionTest>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:

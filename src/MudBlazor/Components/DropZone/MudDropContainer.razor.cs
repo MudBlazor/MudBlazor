@@ -16,7 +16,7 @@ namespace MudBlazor
     /// The container of a drag and drop zones
     /// </summary>
     /// <typeparam name="T">Type of items</typeparam>
-    public partial class MudDropContainer<T> : MudComponentBase
+    public partial class MudDropContainer<T> : MudComponentBase where T : notnull
     {
         private MudDragAndDropItemTransaction<T>? _transaction;
         private Dictionary<string, MudDropZone<T>> _mudDropZones = new();
@@ -61,6 +61,7 @@ namespace MudBlazor
         [Category(CategoryTypes.DropZone.Items)]
         public EventCallback<MudItemDropInfo<T>> ItemDropped { get; set; }
 
+        /// <summary>
         /// EventHandler that indicates that an item has been picked from a drop zone and transaction has started.
         /// </summary>
         [Parameter]

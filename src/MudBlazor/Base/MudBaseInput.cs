@@ -319,6 +319,13 @@ namespace MudBlazor
             OnKeyPress.InvokeAsync(obj).AndForget();
         }
 
+        protected internal virtual void InvokeKeyPressObsolete(KeyboardEventArgs obj)
+        {
+#pragma warning disable CS0618
+            InvokeKeyPress(obj);
+#pragma warning restore CS0618
+        }
+
         /// <summary>
         /// Prevent the default action for the KeyPress event.
         /// </summary>
@@ -326,6 +333,20 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         [Obsolete("This will be removed in v7")]
         public bool KeyPressPreventDefault { get; set; }
+
+        internal bool KeyPressPreventDefaultObsolete
+        {
+#pragma warning disable CS0618
+            get
+            {
+                return KeyPressPreventDefault;
+            }
+            set
+            {
+                KeyPressPreventDefault = value;
+            }
+#pragma warning restore CS0618
+        }
 
         /// <summary>
         /// Fired on the KeyUp event.

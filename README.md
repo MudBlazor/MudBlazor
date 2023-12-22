@@ -41,7 +41,9 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 | 1.x.x - 2.0.x | .NET 3.1 | Ended 03/2021 |
 | 5.x.x | .NET 5 | Ended 01/2022 |
 | 6.0.x | [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0) | :heavy_check_mark: |
-| 6.1.x | [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0) & [.NET 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) | :heavy_check_mark: |
+| 6.1.x | [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0), [.NET 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) | :heavy_check_mark: |
+
+Note: With .NET 8, currently only the interactive rendering modes are supported in BSS and WASM.
 
 ## Stats
 ![Alt](https://repobeats.axiom.co/api/embed/db53a44092e88fc34a4c0f37db12773b6787ec7e.svg "Repobeats analytics image")
