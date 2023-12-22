@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+<div @attributes="UserAttributes" class="@Classname" style="@Style" @onclick="HandleOnClickAsync">
+    @if (ChildContent is not null)
+    {
+        @ChildContent
+    }
+    else
+    {
+        <div class="d-flex align-center justify-center mud-width-full mud-height-full">
+            @if (Parent?.IconOnly == true)
+            {
+                <MudIcon Class="@(string.IsNullOrEmpty(Text) ? null : "me-2")" Icon="@Icon" />
+            }
+            else if ((Parent?.ShowIconWhenSelected == true && _selected) || IsEmpty())
+            {
+                <MudIcon Class="@(string.IsNullOrEmpty(Text) ? null : "me-2")" Icon="@Icon" />
+                <MudText Class="@TextClassname" Align="Align.Center">@(string.IsNullOrEmpty(Text) ? Value : Text)</MudText>
+
+            }
+            else
+            {
+                <MudText Class="@TextClassname" Style="@(_selected ? null : "padding-left: 16px; padding-right: 16px")" Align="Align.Center">@(string.IsNullOrEmpty(Text) ? Value : Text)</MudText>
+            }
+
+        </div>
+    }
+</div>

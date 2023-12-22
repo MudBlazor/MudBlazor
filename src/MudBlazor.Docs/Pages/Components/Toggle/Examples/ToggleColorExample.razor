@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack>
+    <MudToggleGroup T="string" Color="_color">
+        <MudToggleItem Value="@("Item One")" Text="Item One" />
+        <MudToggleItem Value="@("Item Two")" Text="Item Two" />
+        <MudToggleItem Value="@("Item Three")" Text="Item Three" />
+    </MudToggleGroup>
+
+    <MudSelect T="Color" @bind-Value="_color" Variant="Variant.Outlined">
+        @foreach (var color in Enum.GetValues<Color>())
+        {
+            <MudSelectItem T="Color" Value="color" />
+        }
+    </MudSelect>
+</MudStack>
+
+@code {
+    private Color _color = Color.Primary;
+}
