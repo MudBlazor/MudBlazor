@@ -96,7 +96,6 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Autocomplete", typeof(MudAutocomplete<T>))
                 .AddItem("Field", typeof(MudField))
                 .AddItem("File Upload", typeof(MudFileUpload<T>))
-                .AddItem("Toggle", typeof(MudToggleGroup<T>), typeof(MudToggleItem<T>))
             )
 
             //Pickers
