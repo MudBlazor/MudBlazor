@@ -21,7 +21,7 @@ namespace MudBlazor
             .AddClass("mud-ripple", Parent?.DisableRipple == false)
             .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
             .AddClass("border-r border-b", Parent?.Bordered == true)
-            .AddClass("border-l", Parent?.Bordered == true && (Parent?.Vertical == true || Parent?.IsFirstItem(this) == true))
+            .AddClass("border-l", Parent?.Bordered == true && (Parent?.Vertical == true || Parent?.IsFirstItem(this) == true || Parent?.RightToLeft == true))
             .AddClass("border-t", Parent?.Bordered == true && (Parent?.Vertical == false || Parent?.IsFirstItem(this) == true))
             .AddClass("mud-toggle-item-dense", Parent?.Dense == true)
             .AddClass("mud-toggle-item-vertical", Parent?.Vertical == true)

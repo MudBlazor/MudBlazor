@@ -5,14 +5,30 @@
 }
 
 .mud-toggle-group-horizontal {
-    > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
+    &:not(.mud-toggle-group-rtl) {
+        > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            margin-left: -1px;
+        }
     }
-    > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        margin-left: -1px;
+
+    &.mud-toggle-group-rtl {
+        > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            margin-left: -1px;
+        }
+
+        > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
     }
 }
 

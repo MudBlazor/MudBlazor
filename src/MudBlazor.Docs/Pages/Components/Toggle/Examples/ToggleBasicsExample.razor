@@ -2,25 +2,25 @@
 
 <MudStack>
     <MudText>Text Based</MudText>
-    <MudToggleGroup T="string" Bordered="@_bordered">
+    <MudToggleGroup T="string" Bordered="@_bordered" RightToLeft="_rightToLeft">
         <MudToggleItem Value="@("Item One")" Text="Item One" />
         <MudToggleItem Value="@("Item Two")" Text="Item Two" />
         <MudToggleItem Value="@("Item Three")" Text="Item Three" />
     </MudToggleGroup>
 
-    <MudToggleGroup T="string" Dense="true" Bordered="@_bordered">
+    <MudToggleGroup T="string" Dense="true" Bordered="@_bordered" RightToLeft="_rightToLeft">
         <MudToggleItem Value="@("Dense Item 1")" Text="Dense Item 1" />
         <MudToggleItem Value="@("Dense Item 2")" Text="Dense Item 2" />
         <MudToggleItem Value="@("Dense Item 3")" Text="Dense Item 3" />
     </MudToggleGroup>
 
-    <MudToggleGroup T="string" Rounded="true" Bordered="@_bordered">
+    <MudToggleGroup T="string" Rounded="true" Bordered="@_bordered" RightToLeft="_rightToLeft">
         <MudToggleItem Value="@("Rounded Item 1")" Text="Rounded Item 1" />
         <MudToggleItem Value="@("Rounded Item 2")" Text="Rounded Item 2" />
         <MudToggleItem Value="@("Rounded Item 3")" Text="Rounded Item 3" />
     </MudToggleGroup>
 
-    <MudToggleGroup T="int?" ShowSelectedIcon="false" Bordered="@_bordered">
+    <MudToggleGroup T="int?" ShowSelectedIcon="false" Bordered="@_bordered" RightToLeft="_rightToLeft">
         <MudToggleItem Value="(int?)1" Text="No-Tickmark 1" />
         <MudToggleItem Value="(int?)2" Text="No-Tickmark 2" />
         <MudToggleItem Value="(int?)3" Text="No-Tickmark 3" />
@@ -29,14 +29,14 @@
     <MudText Class="mt-4">Icon Based</MudText>
     <div class="d-flex justify-space-between">
         <div>
-            <MudToggleGroup T="string" IconOnly="true" Bordered="@_bordered">
+            <MudToggleGroup T="string" IconOnly="true" Bordered="@_bordered" RightToLeft="_rightToLeft">
                 <MudToggleItem Value="@("left")" Icon="@Icons.Material.Filled.FormatAlignLeft" />
                 <MudToggleItem Value="@("center")" Icon="@Icons.Material.Filled.FormatAlignCenter" />
                 <MudToggleItem Value="@("right")" Icon="@Icons.Material.Filled.FormatAlignRight" />
                 <MudToggleItem Value="@("justify")" Icon="@Icons.Material.Filled.FormatAlignJustify" />
             </MudToggleGroup>
 
-            <MudToggleGroup T="string" Rounded="true" IconOnly="true" Bordered="@_bordered">
+            <MudToggleGroup T="string" Rounded="true" IconOnly="true" Bordered="@_bordered" RightToLeft="_rightToLeft">
                 <MudToggleItem Value="@("left")" Icon="@Icons.Material.Filled.FormatAlignLeft" />
                 <MudToggleItem Value="@("center")" Icon="@Icons.Material.Filled.FormatAlignCenter" />
                 <MudToggleItem Value="@("right")" Icon="@Icons.Material.Filled.FormatAlignRight" />
@@ -45,7 +45,7 @@
         </div>
         
 
-        <MudToggleGroup T="string" Vertical="true" IconOnly="true" Bordered="@_bordered">
+        <MudToggleGroup T="string" Vertical="true" IconOnly="true" Bordered="@_bordered" RightToLeft="_rightToLeft">
             <MudToggleItem Value="@("left")" Icon="@Icons.Material.Filled.FormatAlignLeft" />
             <MudToggleItem Value="@("center")" Icon="@Icons.Material.Filled.FormatAlignCenter" />
             <MudToggleItem Value="@("right")" Icon="@Icons.Material.Filled.FormatAlignRight" />
@@ -55,9 +55,11 @@
 
     <MudStack>
         <MudSwitch @bind-Checked="@_bordered" Label="Bordered" />
+        <MudSwitch @bind-Checked="@_rightToLeft" Label="RightToLeft" />
     </MudStack>
 </MudStack>
 
 @code{
     bool _bordered = true;
+    bool _rightToLeft = false;
 }

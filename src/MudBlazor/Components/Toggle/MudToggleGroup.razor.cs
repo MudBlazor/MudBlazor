@@ -19,12 +19,14 @@ namespace MudBlazor
         private IEnumerable<T?>? _oldValues;
         private string? _oldSelectedClass;
         private bool _oldBordered;
+        private bool _oldRtl;
         private List<MudToggleItem<T>> _items = new();
 
         protected string Classname => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)
             .AddClass("mud-toggle-group-vertical", Vertical)
             .AddClass("rounded")
+            .AddClass("mud-toggle-group-rtl", RightToLeft)
             .AddClass(Class)
             .Build();
 
@@ -84,11 +86,18 @@ namespace MudBlazor
         public bool Vertical { get; set; }
 
         /// <summary>
-        /// if true, first and last item will be rounded.
+        /// If true, first and last item will be rounded.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Rounded { get; set; }
+
+        /// <summary>
+        /// If true, design changes regard to RTL.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool RightToLeft { get; set; }
 
         /// <summary>
         /// If true, items will be bordered. Default is true.
@@ -216,11 +225,13 @@ namespace MudBlazor
 
             if (Color != _oldColor ||
                 SelectedClass != _oldSelectedClass ||
-                Bordered != _oldBordered)
+                Bordered != _oldBordered ||
+                RightToLeft != _oldRtl)
             {
                 _oldColor = Color;
                 _oldSelectedClass = SelectedClass;
                 _oldBordered = Bordered;
+                _oldRtl = RightToLeft;
                 foreach (IMudStateHasChanged mudComponent in _items)
                 {
                     mudComponent.StateHasChanged();
