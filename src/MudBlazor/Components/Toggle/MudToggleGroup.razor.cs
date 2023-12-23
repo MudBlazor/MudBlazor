@@ -92,11 +92,7 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Appearance)]
         public bool Rounded { get; set; }
 
-        /// <summary>
-        /// If true, design changes regard to RTL.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
+        [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
         /// <summary>
