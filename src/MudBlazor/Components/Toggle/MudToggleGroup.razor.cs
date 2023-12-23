@@ -14,13 +14,16 @@ namespace MudBlazor
 #nullable enable
     public partial class MudToggleGroup<T> : MudComponentBase
     {
-        private T? _oldValue;
-        private Color _oldColor;
-        private IEnumerable<T?>? _oldValues;
-        private string? _oldSelectedClass;
-        private bool _oldBordered;
-        private bool _oldRtl;
+        private T? _value;
+        private Color _color;
+        private IEnumerable<T?>? _values;
+        private string? _selectedClass;
+        private bool _bordered;
+        private bool _rtl;
         private List<MudToggleItem<T>> _items = new();
+        private bool _dense;
+        private bool _rounded;
+        private bool _showCheckMark = true;
 
         protected string Classname => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)
@@ -100,7 +103,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool Bordered { get; set; } = true;
+        public bool ShowBorder { get; set; } = true;
 
         /// <summary>
         /// If true, disables the ripple effect.
@@ -130,7 +133,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool ShowIconWhenSelected { get; set; } = true;
+        public bool ShowCheckMark { get; set; } = true;
 
         /// <summary>
         /// The color of the component. Affect borders and selection color. Default is primary.
@@ -159,12 +162,13 @@ namespace MudBlazor
 
             _items.Add(item);
         }
+        
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
             var multiSelection = SelectionMode == SelectionMode.MultiSelection;
             // Handle single selection mode
-            if (((_oldValue is null && Value is not null) || (_oldValue is not null && Value is null) || (_oldValue is not null && !_oldValue.Equals(Value))) && !multiSelection)
+            if (((_value is null && Value is not null) || (_value is not null && Value is null) || (_value is not null && !_value.Equals(Value))) && !multiSelection)
             {
                 DeselectAllItems();
 
@@ -174,11 +178,11 @@ namespace MudBlazor
                     selectedItem?.SetSelected(true);
                 }
 
-                _oldValue = Value;
+                _value = Value;
             }
 
             // Handle multi-selection mode
-            if (((_oldValues is null && SelectedValues is not null) || (_oldValues is not null && !_oldValues.Equals(SelectedValues))) && multiSelection)
+            if (((_values is null && SelectedValues is not null) || (_values is not null && !_values.Equals(SelectedValues))) && multiSelection)
             {
                 DeselectAllItems();
 
@@ -188,7 +192,7 @@ namespace MudBlazor
                     selectedItems.ForEach(x => x.SetSelected(true));
                 }
 
-                _oldValues = SelectedValues;
+                _values = SelectedValues;
             }
         }
 
@@ -215,15 +219,22 @@ namespace MudBlazor
                 StateHasChanged();
             }
 
-            if (Color != _oldColor ||
-                SelectedClass != _oldSelectedClass ||
-                Bordered != _oldBordered ||
-                RightToLeft != _oldRtl)
+            if (Color != _color ||
+                SelectedClass != _selectedClass ||
+                ShowBorder != _bordered ||
+                RightToLeft != _rtl || 
+                Dense != _dense ||
+                Rounded != _rounded || 
+                ShowCheckMark != _showCheckMark
+                )
             {
-                _oldColor = Color;
-                _oldSelectedClass = SelectedClass;
-                _oldBordered = Bordered;
-                _oldRtl = RightToLeft;
+                _color = Color;
+                _selectedClass = SelectedClass;
+                _bordered = ShowBorder;
+                _rtl = RightToLeft;
+                _dense = Dense;
+                _rounded = Rounded;
+                _showCheckMark = ShowCheckMark;
                 foreach (IMudStateHasChanged mudComponent in _items)
                 {
                     mudComponent.StateHasChanged();

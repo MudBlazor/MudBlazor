@@ -14,9 +14,9 @@
             {
                 <MudIcon Class="@(string.IsNullOrEmpty(Text) ? null : "me-2")" Icon="@Icon" />
             }
-            else if ((Parent?.ShowIconWhenSelected == true && _selected) || IsEmpty())
+            else if ((Parent?.ShowCheckMark == true && _selected) || IsEmpty())
             {
-                <MudIcon Class="@(string.IsNullOrEmpty(Text) ? null : "me-2")" Icon="@Icon" />
+                <MudIcon Class="me-2" Icon="@Icon" />
                 <MudText Class="@TextClassname" Align="Align.Center">@(string.IsNullOrEmpty(Text) ? Value : Text)</MudText>
 
             }
