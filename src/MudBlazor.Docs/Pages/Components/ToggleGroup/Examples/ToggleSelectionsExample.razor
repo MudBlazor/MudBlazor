@@ -1,13 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudStack Class="mud-width-full">
+<MudStack>
     <MudStack>
         <MudText>Single Selection</MudText>
         <MudText>Value: @_value1</MudText>
-        <MudToggleGroup T="string" @bind-Value="_value1" Color="Color.Primary">
-            <MudToggleItem Value="@("Item One")" Text="Item One" />
-            <MudToggleItem Value="@("Item Two")" Text="Item Two" />
-            <MudToggleItem Value="@("Item Three")" Text="Item Three" />
+        <MudToggleGroup T="string" SelectionMode="SelectionMode.SingleSelection" @bind-Value="_value1" Color="Color.Primary">
+            <MudToggleItem Value="@("Yes")" Text="Yes" />
+            <MudToggleItem Value="@("No")" Text="No" />
+            <MudToggleItem Value="@("Don't know")" Text="Don't know" />
         </MudToggleGroup>
     </MudStack>
 
@@ -15,11 +15,11 @@
 
     <MudStack>
         <MudText>Multi Selection</MudText>
-        <MudText>Values: @string.Join(", ", _value2 ?? new List<int?>())</MudText>
-        <MudToggleGroup T="int?" @bind-SelectedValues="_value2" Color="Color.Primary" MultiSelection="true">
-            <MudToggleItem Value="(int?)1" Text="Item One" />
-            <MudToggleItem Value="(int?)2" Text="Item Two" />
-            <MudToggleItem Value="(int?)3" Text="Item Three" />
+        <MudText>Values: @string.Join(", ", _value2 ?? new List<string>())</MudText>
+        <MudToggleGroup T="string" SelectionMode="SelectionMode.MultiSelection" @bind-SelectedValues="_value2" Color="Color.Secondary">
+            <MudToggleItem Value="@("Extra Bag")" Text="Extra Bag" />
+            <MudToggleItem Value="@("Vegan Menu")" Text="Vegan Menu" />
+            <MudToggleItem Value="@("Carbon Offset")" Text="Carbon Offset" />
         </MudToggleGroup>
     </MudStack>
 
@@ -27,17 +27,17 @@
 
     <MudStack>
         <MudText>Toggle Selection</MudText>
-        <MudText>Value: @_value3</MudText>
-        <MudToggleGroup T="string" @bind-Value="_value3" Color="Color.Primary" ToggleSelection="true">
-            <MudToggleItem Value="@("Item One")" Text="Item One" />
-            <MudToggleItem Value="@("Item Two")" Text="Item Two" />
-            <MudToggleItem Value="@("Item Three")" Text="Item Three" />
+        <MudText>Value: @(_value3 == null ? "null" : _value3.ToString())</MudText>
+        <MudToggleGroup T="int?" SelectionMode="SelectionMode.ToggleSelection" @bind-Value="_value3" Color="Color.Tertiary">
+            <MudToggleItem Value="@((int?)1)" Text="Coffee (1)" />
+            <MudToggleItem Value="@((int?)2)" Text="Tee (2)" />
+            <MudToggleItem Value="@((int?)3)" Text="Hot Chocolate (3)" />
         </MudToggleGroup>
     </MudStack>
 </MudStack>
 
 @code {
-    private string _value1;
-    private IEnumerable<int?> _value2;
-    private string _value3;
+    private string _value1 = "Yes";
+    private IEnumerable<string> _value2;
+    private int? _value3;
 }

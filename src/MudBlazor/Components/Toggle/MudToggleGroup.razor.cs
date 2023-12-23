@@ -31,8 +31,8 @@ namespace MudBlazor
             .Build();
 
         protected string Stylename => new StyleBuilder()
-            .AddStyle("grid-template-columns", $"repeat({_items.Count}, minmax(0, 1fr))", Vertical == false)
-            .AddStyle("grid-template-rows", $"repeat({_items.Count}, minmax(0, 1fr))", Vertical == true)
+            .AddStyle("grid-template-columns", $"repeat({_items.Count}, minmax(0, 1fr))", !Vertical)
+            .AddStyle("grid-template-rows", $"repeat({_items.Count}, minmax(0, 1fr))", Vertical)
             .AddStyle(Style)
             .Build();
 
@@ -117,18 +117,13 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, multiselection is available.
+        /// The selection behavior of the group. SingleSelection (the default) is a radio-button like exclusive collection. 
+        /// MultiSelection behaves like a group of check boxes. ToggleSelection is an exclusive single selection where
+        /// you can also select nothing by toggling off the current choice.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool MultiSelection { get; set; }
-
-        /// <summary>
-        /// If true, user can deselect items in single selection mode.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Behavior)]
-        public bool ToggleSelection { get; set; }
+        public SelectionMode SelectionMode { get; set; }
 
         /// <summary>
         /// Shows the icon when item is selected. Default is true and default icon is tickmark.
@@ -167,9 +162,9 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-
+            var multiSelection = SelectionMode == SelectionMode.MultiSelection;
             // Handle single selection mode
-            if (((_oldValue is null && Value is not null) || (_oldValue is not null && Value is null) || (_oldValue is not null && !_oldValue.Equals(Value))) && !MultiSelection)
+            if (((_oldValue is null && Value is not null) || (_oldValue is not null && Value is null) || (_oldValue is not null && !_oldValue.Equals(Value))) && !multiSelection)
             {
                 DeselectAllItems();
 
@@ -183,7 +178,7 @@ namespace MudBlazor
             }
 
             // Handle multi-selection mode
-            if (((_oldValues is null && SelectedValues is not null) || (_oldValues is not null && !_oldValues.Equals(SelectedValues))) && MultiSelection)
+            if (((_oldValues is null && SelectedValues is not null) || (_oldValues is not null && !_oldValues.Equals(SelectedValues))) && multiSelection)
             {
                 DeselectAllItems();
 
@@ -202,15 +197,16 @@ namespace MudBlazor
             base.OnAfterRender(firstRender);
             if (firstRender)
             {
+                var multiSelection = SelectionMode == SelectionMode.MultiSelection;
                 // Handle single selection mode
-                if (Value is not null && !MultiSelection)
+                if (Value is not null && !multiSelection)
                 {
                     var selectedItem = _items.FirstOrDefault(x => Value.Equals(x.Value));
                     selectedItem?.SetSelected(true);
                 }
 
                 // Handle multi-selection mode
-                if (SelectedValues is not null && MultiSelection)
+                if (SelectedValues is not null && multiSelection)
                 {
                     var selectedItems = _items.Where(x => SelectedValues.Contains(x.Value)).ToList();
                     selectedItems.ForEach(x => x.SetSelected(true));
@@ -239,7 +235,7 @@ namespace MudBlazor
 
         protected internal async Task ToggleItemAsync(MudToggleItem<T> item)
         {
-            if (MultiSelection)
+            if (SelectionMode == SelectionMode.MultiSelection)
             {
                 if (item.IsSelected())
                 {
@@ -253,10 +249,8 @@ namespace MudBlazor
                     await SelectedValuesChanged.InvokeAsync(SelectedValues);
                 }
                 item.SetSelected(!item.IsSelected());
-                return;
             }
-
-            if (ToggleSelection)
+            else if (SelectionMode == SelectionMode.ToggleSelection)
             {
                 var selected = item.IsSelected();
                 if (!selected)
@@ -295,7 +289,6 @@ namespace MudBlazor
         protected internal bool IsFirstItem(MudToggleItem<T> item) => item.Equals(_items.FirstOrDefault());
 
         protected internal bool IsLastItem(MudToggleItem<T> item) => item.Equals(_items.LastOrDefault());
-
-        protected internal double GetItemWidth() => 100 / (_items.Count == 0 ? 1 : _items.Count);
+        
     }
 }
