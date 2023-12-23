@@ -4,6 +4,30 @@
     display: grid;
 }
 
+.mud-toggle-group-horizontal {
+    > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        margin-left: -1px;
+    }
+}
+
+.mud-toggle-group-vertical {
+    > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+}
+
 .mud-toggle-item {
     cursor: pointer;
     margin-top: 4px;
@@ -13,6 +37,7 @@
     padding-left: 12px;
     padding-right: 12px;
     user-select: none;
+    border-radius: var(--mud-default-borderradius);
 
     &.mud-toggle-item-dense {
         padding-top: 4px;

@@ -22,6 +22,9 @@ namespace MudBlazor
         private List<MudToggleItem<T>> _items = new();
 
         protected string Classname => new CssBuilder("mud-toggle-group")
+            .AddClass("mud-toggle-group-horizontal", !Vertical)
+            .AddClass("mud-toggle-group-vertical", Vertical)
+            .AddClass("rounded")
             .AddClass(Class)
             .Build();
 
