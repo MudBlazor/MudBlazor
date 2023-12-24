@@ -48,15 +48,8 @@
 
 .mud-toggle-item {
     cursor: pointer;
-    margin-top: 4px;
-    margin-bottom: 4px;
     user-select: none;
     border-radius: var(--mud-default-borderradius);
-
-    &.mud-toggle-item-vertical {
-        margin-top: 0px;
-        margin-bottom: 0px;
-    }
 
     @each $color in $mud-palette-colors {
         &.mud-toggle-item-#{$color} {
