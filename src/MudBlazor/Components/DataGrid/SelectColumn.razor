@@ -6,16 +6,16 @@
     <HeaderTemplate>
         @if (ShowInHeader)
         {
-            <MudCheckBox T="bool" Size="@Size" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAllAsync" />
+            <MudCheckBox T="bool" Size="@Size" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAllAsync" />
         }
     </HeaderTemplate>
     <CellTemplate>
-        <MudCheckBox T="bool" Size="@Size" Checked="@context.IsSelected" CheckedChanged="@context.Actions.SetSelectedItemAsync" />
+        <MudCheckBox T="bool" Size="@Size" Value="@context.IsSelected" ValueChanged="@context.Actions.SetSelectedItemAsync" />
     </CellTemplate>
     <FooterTemplate>
         @if (ShowInFooter)
         {
-            <MudCheckBox T="bool" Size="@Size" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAllAsync" />
+            <MudCheckBox T="bool" Size="@Size" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAllAsync" />
         }
     </FooterTemplate>
 </TemplateColumn>

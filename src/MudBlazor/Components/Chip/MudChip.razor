@@ -2,23 +2,27 @@
 @inherits MudComponentBase
 
 <div tabindex="0" @attributes="UserAttributes" class="@Classname" style="@Style" @onclick="@OnClickHandler">
-    @if (AvatarContent is not null)
-    {
-        @AvatarContent
-    }
-    else if (!String.IsNullOrEmpty(Avatar))
-    {
-        <MudAvatar Class="@AvatarClass" Color="@Color">
-            <MudIcon Icon="@Avatar" />
-        </MudAvatar>
-    }
-    else if (!String.IsNullOrEmpty(Icon) && !IsChecked)
-    {
-        <MudIcon Icon="@Icon" Class="mud-chip-icon" Size="Size.Small" Color="@IconColor" />
-    }
-    else if (IsChecked)
-    {
-        <MudIcon Icon="@CheckedIcon" Class="mud-chip-icon" Size="Size.Small" />
+    @{
+        if (AvatarContent is not null)
+        {
+            @AvatarContent
+        }
+#pragma warning disable CS0618
+        else if (!String.IsNullOrEmpty(Avatar))
+        {
+            <MudAvatar Class="@AvatarClass" Color="@Color">
+                <MudIcon Icon="@Avatar" />
+            </MudAvatar>
+        }
+#pragma warning restore CS0618
+        else if (!String.IsNullOrEmpty(Icon) && !IsChecked)
+        {
+            <MudIcon Icon="@Icon" Class="mud-chip-icon" Size="Size.Small" Color="@IconColor" />
+        }
+        else if (IsChecked)
+        {
+            <MudIcon Icon="@CheckedIcon" Class="mud-chip-icon" Size="Size.Small" />
+        }
     }
     <span class="mud-chip-content">
         @if (ChildContent == null)

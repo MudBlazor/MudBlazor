@@ -79,6 +79,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Pagination", typeof(MudPagination))
             .AddItem("Stack", typeof(MudStack))
             .AddItem("Spacer", typeof(MudSpacer))
+            .AddItem("Collapse", typeof(MudCollapse))
 
             //GROUPS
 
@@ -120,6 +121,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Line Chart", typeof(Line))
                 .AddItem("Pie Chart", typeof(Pie))
                 .AddItem("Bar Chart", typeof(Bar))
+                .AddItem("Stacked Bar Chart", typeof(StackedBar))
             )
             // this must be last!
             .GetComponentsSortedByName();

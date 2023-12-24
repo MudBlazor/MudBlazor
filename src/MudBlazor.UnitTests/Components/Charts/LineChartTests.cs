@@ -10,6 +10,7 @@ using MudBlazor.Charts;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 using Bunit;
+using AngleSharp.Dom;
 
 namespace MudBlazor.UnitTests.Charts
 {
@@ -53,6 +54,7 @@ namespace MudBlazor.UnitTests.Charts
             {
                 new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, -72, 69, 62, 62, -55, 65, 70 } },
                 new ChartSeries() { Name = "Series 2", Data = new double[] { 10, 41, 35, 51, 49, 62, -69, 91, -148 } },
+                new ChartSeries() { Name = "Series 3", Data = new double[] { 10, 41, 35, 51, 49, 62, -69, 91, -148 }, IsVisible = false }
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
             
@@ -106,6 +108,35 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartOptions, new ChartOptions(){ChartPalette = _modifiedPalette}));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
+
+            comp.Markup.Should().Contain("class=\"mud-charts-xaxis\"");
+            comp.Markup.Should().Contain("class=\"mud-charts-yaxis\"");
+            comp.Markup.Should().Contain("mud-chart-legend-item");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.CanHideSeries, true)
+                .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _baseChartPalette, InterpolationOption = opt }));
+
+            if (comp.Instance.CanHideSeries)
+            {
+                var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+
+                comp.InvokeAsync(() => {
+                    seriesCheckboxes[0].Change(false); 
+                });
+
+                seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+
+                comp.InvokeAsync(() => {
+                    seriesCheckboxes[2].Change(true);  
+                });
+
+                seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+                
+                seriesCheckboxes[0].IsChecked().Should().BeFalse();
+                seriesCheckboxes[1].IsChecked().Should().BeTrue();
+                seriesCheckboxes[2].IsChecked().Should().BeTrue();
+            }
         }
     }
 }

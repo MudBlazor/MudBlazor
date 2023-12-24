@@ -75,6 +75,7 @@ namespace MudBlazor.Docs.Models
                 [typeof(MudText)] = "typography",
                 [typeof(MudSnackbarProvider)] = "snackbar",
                 [typeof(Bar)] = "barchart",
+                [typeof(StackedBar)] = "stackedbarchart",
                 [typeof(Donut)] = "donutchart",
                 [typeof(Line)] = "linechart",
                 [typeof(Pie)] = "piechart",
