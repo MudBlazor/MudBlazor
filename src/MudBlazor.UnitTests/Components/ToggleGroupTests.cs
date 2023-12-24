@@ -12,10 +12,10 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class ToggleTests : BunitTest
+    public class ToggleGroupTests : BunitTest
     {
         [Test]
-        public void ToggleBind_Test()
+        public void ToggleGroup_Bind_Test()
         {
             var comp = Context.RenderComponent<ToggleBindTest>();
             var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ToggleCustomFragmentBind_Test()
+        public void ToggleGroup_CustomFragmentBind_Test()
         {
             var comp = Context.RenderComponent<ToggleCustomFragmentTest>();
             var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
@@ -45,29 +45,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ToggleBindMultiSelection_Test()
+        public void ToggleGroup_SelectionMode_Test()
         {
             var comp = Context.RenderComponent<ToggleBindMultiSelectionTest>();
-            var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
-            var toggleSecond = comp.FindComponents<MudToggleGroup<string>>().Last();
+            var group1 = comp.FindComponents<MudToggleGroup<string>>().First();
+            var group2 = comp.FindComponents<MudToggleGroup<string>>().Last();
             var toggleItemSecond = comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
             var toggleItemThird = comp.FindAll("div.mud-toggle-item").GetItemByIndex(2);
 
-            toggleFirst.Instance.SelectedValues.Should().BeNull();
-            toggleSecond.Instance.SelectedValues.Should().BeNull();
+            group1.Instance.SelectedValues.Should().BeNull();
+            group2.Instance.SelectedValues.Should().BeNull();
             toggleItemSecond.Click();
-            toggleFirst.Instance.SelectedValues.Should().Contain("Item Two");
-            toggleSecond.Instance.SelectedValues.Should().Contain("Item Two");
+            group1.Instance.SelectedValues.Should().Contain("Item Two");
+            group2.Instance.SelectedValues.Should().Contain("Item Two");
             toggleItemThird.Click();
-            toggleFirst.Instance.SelectedValues.Should().BeEquivalentTo("Item Two", "Item Three");
-            toggleSecond.Instance.SelectedValues.Should().Contain("Item Three");
+            group1.Instance.SelectedValues.Should().BeEquivalentTo("Item Two", "Item Three");
+            group2.Instance.SelectedValues.Should().Contain("Item Three");
             toggleItemSecond.Click();
-            toggleFirst.Instance.SelectedValues.Should().BeEquivalentTo("Item Three");
-            toggleSecond.Instance.SelectedValues.Should().Contain("Item Three");
+            group1.Instance.SelectedValues.Should().BeEquivalentTo("Item Three");
+            group2.Instance.SelectedValues.Should().Contain("Item Three");
         }
 
         [Test]
-        public void ToggleInitialize_Test()
+        public void ToggleGroup_Initialize_Test()
         {
             var comp = Context.RenderComponent<ToggleInitializeTest>();
             var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
@@ -86,7 +86,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ToggleToggleSelection_Test()
+        public void ToggleGroup_ToggleSelection_Test()
         {
             var comp = Context.RenderComponent<ToggleToggleSelectionTest>();
             var toggle = comp.FindComponent<MudToggleGroup<string>>();
