@@ -14,7 +14,7 @@ namespace MudBlazor
     {
         private bool _selected;
 
-        protected string Classname => new CssBuilder("mud-toggle-item")
+        protected string Classes => new CssBuilder("mud-toggle-item")
             .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", _selected && string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass(Parent?.SelectedClass, _selected && !string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
@@ -32,8 +32,13 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        protected string TextClassname => new CssBuilder()
+        protected string TextClassName => new CssBuilder()
             .AddClass(Parent?.TextClass)
+            .Build();
+        
+        protected string IconClassName => new CssBuilder()
+            .AddClass(Parent?.IconClass)
+            .AddClass("me-2", Parent?.ShowText)
             .Build();
 
         [CascadingParameter]
@@ -45,8 +50,14 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string Icon { get; set; } = Icons.Material.Filled.Done;
+        public string? Icon { get; set; }
+        
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public string? SelectedIcon { get; set; }
 
+        private string? CurrentIcon => IsSelected ? SelectedIcon ?? Icon : Icon;
+        
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string? Text { get; set; }
@@ -67,7 +78,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        protected internal bool IsSelected() => _selected;
+        protected internal bool IsSelected => _selected;
 
         protected async Task HandleOnClickAsync()
         {

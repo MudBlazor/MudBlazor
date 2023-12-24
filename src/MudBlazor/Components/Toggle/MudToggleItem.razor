@@ -2,29 +2,22 @@
 @inherits MudComponentBase
 @typeparam T
 
-<div @attributes="UserAttributes" class="@Classname" style="@Style" @onclick="HandleOnClickAsync">
-    @if (ChildContent is not null)
-    {
+<div @attributes="UserAttributes" class="@Classes" style="@Style" @onclick="HandleOnClickAsync">
+    @if (ChildContent is not null) {
         @ChildContent
     }
-    else
-    {
+    else {
         <div class="d-flex align-center justify-center mud-width-full mud-height-full">
-            @if (Parent?.IconOnly == true)
-            {
-                <MudIcon Class="@(string.IsNullOrEmpty(Text) ? null : "me-2")" Icon="@Icon" />
+            @if (Parent?.ShowIcon == true && !string.IsNullOrWhiteSpace(CurrentIcon)) {
+                <MudIcon Class="@IconClassName" Icon="@CurrentIcon"/>
             }
-            else if ((Parent?.ShowCheckMark == true && _selected) || IsEmpty())
-            {
-                <MudIcon Class="me-2" Icon="@Icon" />
-                <MudText Class="@TextClassname" Align="Align.Center">@(string.IsNullOrEmpty(Text) ? Value : Text)</MudText>
-
+            @if (Parent?.ShowText == true) {
+                <MudText Class="@TextClassName" Align="Align.Center">@(Text == null ? Value : Text)</MudText>
             }
-            else
-            {
-                <MudText Class="@TextClassname" Style="@(_selected ? null : "padding-left: 16px; padding-right: 16px")" Align="Align.Center">@(string.IsNullOrEmpty(Text) ? Value : Text)</MudText>
-            }
-
+            @* else *@
+            @* { *@
+            @*     <MudText Class="@TextClassname" Style="@(_selected ? null : "padding-left: 16px; padding-right: 16px")" Align="Align.Center">@(string.IsNullOrEmpty(Text) ? Value : Text)</MudText> *@
+            @* } *@
         </div>
     }
 </div>

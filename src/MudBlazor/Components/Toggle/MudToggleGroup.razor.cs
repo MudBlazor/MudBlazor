@@ -18,14 +18,15 @@ namespace MudBlazor
         private Color _color;
         private IEnumerable<T?>? _values;
         private string? _selectedClass;
-        private bool _bordered;
+        private bool _showBorder = true;
         private bool _rtl;
         private List<MudToggleItem<T>> _items = new();
         private bool _dense;
         private bool _rounded;
-        private bool _showCheckMark = true;
+        private bool _showText = true;
+        private bool _showIcon = true;
 
-        protected string Classname => new CssBuilder("mud-toggle-group")
+        protected string Classes => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)
             .AddClass("mud-toggle-group-vertical", Vertical)
             .AddClass("rounded")
@@ -33,7 +34,7 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        protected string Stylename => new StyleBuilder()
+        protected string Styles => new StyleBuilder()
             .AddStyle("grid-template-columns", $"repeat({_items.Count}, minmax(0, 1fr))", !Vertical)
             .AddStyle("grid-template-rows", $"repeat({_items.Count}, minmax(0, 1fr))", Vertical)
             .AddStyle(Style)
@@ -80,7 +81,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string? TextClass { get; set; }
-
+        
+        /// <summary>
+        /// Class for toggle item icon.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public string? IconClass { get; set; }
+        
         /// <summary>
         /// If true, items ordered vertically.
         /// </summary>
@@ -129,13 +137,6 @@ namespace MudBlazor
         public SelectionMode SelectionMode { get; set; }
 
         /// <summary>
-        /// Shows the icon when item is selected. Default is true and default icon is tickmark.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Behavior)]
-        public bool ShowCheckMark { get; set; } = true;
-
-        /// <summary>
         /// The color of the component. Affect borders and selection color. Default is primary.
         /// </summary>
         [Parameter]
@@ -143,11 +144,18 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
-        /// If true, only shows the icon.
+        /// If true, the items show their Icon and the SelectedIcon depending on their selection state 
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool IconOnly { get; set; }
+        public bool ShowIcon { get; set; } = true;
+
+        /// <summary>
+        /// If true, the items show their Text or their stringified Value if Text is null.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool ShowText { get; set; } = true;
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
@@ -221,20 +229,22 @@ namespace MudBlazor
 
             if (Color != _color ||
                 SelectedClass != _selectedClass ||
-                ShowBorder != _bordered ||
+                ShowBorder != _showBorder ||
                 RightToLeft != _rtl || 
                 Dense != _dense ||
                 Rounded != _rounded || 
-                ShowCheckMark != _showCheckMark
+                ShowText != _showText ||
+                ShowIcon != _showIcon 
                 )
             {
                 _color = Color;
                 _selectedClass = SelectedClass;
-                _bordered = ShowBorder;
+                _showBorder = ShowBorder;
                 _rtl = RightToLeft;
                 _dense = Dense;
                 _rounded = Rounded;
-                _showCheckMark = ShowCheckMark;
+                _showText = ShowText;
+                _showIcon = ShowIcon;
                 foreach (IMudStateHasChanged mudComponent in _items)
                 {
                     mudComponent.StateHasChanged();
@@ -248,7 +258,7 @@ namespace MudBlazor
         {
             if (SelectionMode == SelectionMode.MultiSelection)
             {
-                if (item.IsSelected())
+                if (item.IsSelected)
                 {
                     SelectedValues = SelectedValues?.Where(x => !Equals(x, item.Value));
                     await SelectedValuesChanged.InvokeAsync(SelectedValues);
@@ -259,11 +269,11 @@ namespace MudBlazor
                     SelectedValues = SelectedValues.Append(item.Value);
                     await SelectedValuesChanged.InvokeAsync(SelectedValues);
                 }
-                item.SetSelected(!item.IsSelected());
+                item.SetSelected(!item.IsSelected);
             }
             else if (SelectionMode == SelectionMode.ToggleSelection)
             {
-                var selected = item.IsSelected();
+                var selected = item.IsSelected;
                 if (!selected)
                 {
                     DeselectAllItems();
