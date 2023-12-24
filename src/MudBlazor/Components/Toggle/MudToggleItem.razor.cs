@@ -117,9 +117,7 @@ namespace MudBlazor
             }
         }
 
-        private bool IsEmpty()
-        {
-            return string.IsNullOrEmpty(Text) && Value is null;
-        }
+        protected internal bool IsEmpty => string.IsNullOrEmpty(Text) && Value is null;
+        
     }
 }
