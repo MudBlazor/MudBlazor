@@ -205,10 +205,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleItem_IsEmpty_Test()
         {
+#pragma warning disable BL0005
             new MudToggleItem<string>() { Text = null, Value = null }.IsEmpty.Should().Be(true);
             new MudToggleItem<string>() { Text = "", Value = null }.IsEmpty.Should().Be(true);
             new MudToggleItem<string>() { Text = "a", Value = null }.IsEmpty.Should().Be(false);
             new MudToggleItem<string>() { Text = null, Value = "a" }.IsEmpty.Should().Be(false);
+#pragma warning enable BL0005
         }
         
         [Test]
