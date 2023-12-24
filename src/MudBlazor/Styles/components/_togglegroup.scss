@@ -14,6 +14,7 @@
         > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
+            border-left-width: 1px;
             margin-left: -1px;
         }
     }
@@ -22,6 +23,7 @@
         > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
+            border-left-width: 1px;
             margin-left: -1px;
         }
 
