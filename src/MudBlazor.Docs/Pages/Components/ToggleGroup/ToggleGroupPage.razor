@@ -72,7 +72,10 @@
         <DocsPageSection>
             <SectionHeader Title="Custom Content">
                 <Description>
-                    <CodeInline>MudToggleItem</CodeInline> supports customization of its content with a render fragment.
+                    <CodeInline>MudToggleItem</CodeInline> supports customization of its content with a 
+                    <CodeInline>RenderFragment<CodeInline Tag>bool</CodeInline></CodeInline> where the parameter conveys
+                    whether or not the item is currently selected. In the example the <CodeInline>context</CodeInline>
+                    variable was used to color the selected chip green.
                 </Description>
             </SectionHeader>
             <SectionContent Code="ToggleCustomContentExample" ShowCode="false">

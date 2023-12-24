@@ -91,9 +91,12 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Appearance)]
         public string? Text { get; set; }
 
+        /// <summary>
+        /// Define custom content. The boolean parameter conveys whether or not the item is selected. 
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public RenderFragment? ChildContent { get; set; }
+        public RenderFragment<bool>? ChildContent { get; set; }
 
         protected override void OnInitialized()
         {

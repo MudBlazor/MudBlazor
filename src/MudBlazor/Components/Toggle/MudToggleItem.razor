@@ -4,7 +4,7 @@
 
 <div @attributes="UserAttributes" class="@Classes" style="@Style" @onclick="HandleOnClickAsync">
     @if (ChildContent is not null) {
-        @ChildContent
+        @ChildContent(IsSelected)
     }
     else {
         <div class="d-flex align-center justify-center mud-width-full mud-height-full">
