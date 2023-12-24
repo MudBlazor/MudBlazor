@@ -1,0 +1,19 @@
+﻿@using MudBlazor.Internal
+@namespace MudBlazor
+@inherits MudPicker<DateTime?>
+
+@Render
+
+@code {
+    protected override RenderFragment PickerContent =>
+    @<CascadingValue Value="@this" IsFixed="true">
+        <MudGrid Spacing="0">
+            <MudItem xs="6">
+                <MudDatePicker PickerVariant="PickerVariant.Static" Date="_datePicked" DateChanged="DateSelected" />
+            </MudItem>
+            <MudItem xs="6">
+                <MudTimePicker PickerVariant="PickerVariant.Static" Time="_timePicked" TimeChanged="TimeSelected" />
+            </MudItem>
+        </MudGrid>
+    </CascadingValue>;
+}
