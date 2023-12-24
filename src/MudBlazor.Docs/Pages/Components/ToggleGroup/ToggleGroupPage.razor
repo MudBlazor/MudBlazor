@@ -4,25 +4,33 @@
     <DocsPageHeader Title="Toggle Group" SubTitle="A bunch of toggle buttons forming a selection of values to choose from with various selection modes.">
         <Description>
             <MudText>See also: <MudLink Href="/components/buttongroup">Button Group</MudLink></MudText>
+            <DocsPageSection>           
+                <MudAlert Class="mt-4" Severity="Severity.Warning">
+                    <b>Warning experimental component!</b>
+                </MudAlert>
+                <MudAlert Class="mt-4" Severity="Severity.Error">
+                    This component is under active development and breaking changes may occur even in minor patch releases.<br/>
+                    <b>DO NOT</b> use this component if you are not prepared to update your code and adapt to new changes.<br />
+                    Name, behavior and look of the component might be subject to change.
+                </MudAlert>
+            </DocsPageSection>
         </Description>
-    </DocsPageHeader>
-    
-    <DocsPageSection>           
-        <MudAlert Severity="Severity.Warning">
-            <b>Warning experimental component!</b>
-        </MudAlert>
-        <MudAlert Class="mt-4" Severity="Severity.Error">
-            This component is under active development and breaking changes may occur even in minor patch releases.<br/>
-            <b>DO NOT</b> use this component if you are not prepared to update your code and adapt to new changes.<br />
-            Name, behavior and look of the component might be subject to change.
-        </MudAlert>
-    </DocsPageSection>
-        
+    </DocsPageHeader>    
+       
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader Title="Usage">
                 <Description>
-                    The <CodeInline>MudToggleGroup</CodeInline> holds a number of <CodeInline>MudToggleItems</CodeInline> and semantically groups them together into a selection.
+                    The <CodeInline>MudToggleGroup</CodeInline> holds a number of <CodeInline>MudToggleItems</CodeInline> 
+                    and semantically groups them together into a selection. The items can be configured to show text and/or 
+                    an icon, depending on the group's <CodeInline>ShowText</CodeInline> and <CodeInline>ShowIcon</CodeInline>
+                    settings which are both <CodeInline>true</CodeInline> by default. To show a check mark only on selected
+                    items set the <CodeInline>SelectedIcon</CodeInline> accordingly. If you don't set a <CodeInline>SelectedIcon</CodeInline>
+                    the <CodeInline>Icon</CodeInline> is shown in both cases.
+                    <MudAlert Severity="Severity.Info" Class="mt-3">
+                        If you don't set the <CodeInline>Text</CodeInline> property the items will simply show the 
+                        <CodeInline>Value</CodeInline> if <CodeInline>ShowText</CodeInline> is <CodeInline>true</CodeInline>.
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent Code="ToggleBasicsExample" ShowCode="false">
@@ -33,26 +41,20 @@
         <DocsPageSection>
             <SectionHeader Title="Selection Mode">
                 <Description>
-                    <CodeInline>MudToggleGroup</CodeInline> has three different selection modes: Single selection, multi selection and toggle selection. 
+                    <CodeInline>MudToggleGroup</CodeInline> has three different selection modes: <CodeInline>SelectionMode.SingleSelection</CodeInline>,
+                    <CodeInline>SelectionMode.MultiSelection</CodeInline> and <CodeInline>SelectionMode.ToggleSelection</CodeInline>. 
                     Single selection is the default and allows only one choice to be selected at the same time, just like in a radio group. 
-                    By setting parameter <CodeInline>MultiSelection</CodeInline> on the group, zero, one or many items can be selected at the same time.
-                     
-                    like a group of check 
+                    With multi-selection many items can be selected at the same time or none. Toggle-selection is an exclusive single
+                    selection which allows toggling off the selected value so that nothing is selected.
+                    <MudAlert Severity="Severity.Info" Class="mt-3">
+                        You must set the <CodeInline>Value</CodeInline> property of each item to a unique value or the selection
+                        won't work. Also, the type of the item's value must match the group's <CodeInline>T</CodeInline> parameter.
+                    </MudAlert>
+
                 </Description>
             </SectionHeader>
             <SectionContent Code="ToggleSelectionsExample" ShowCode="false">
                 <ToggleSelectionsExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Color">
-                <Description>
-                    ToggleGroup supports mud colors.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="ToggleColorExample" ShowCode="false">
-                <ToggleColorExample />
             </SectionContent>
         </DocsPageSection>
 

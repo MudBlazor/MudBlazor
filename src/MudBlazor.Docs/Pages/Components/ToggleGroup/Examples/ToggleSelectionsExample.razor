@@ -17,9 +17,9 @@
         <MudText>Multi Selection</MudText>
         <MudText>Values: @string.Join(", ", _value2 ?? new List<string>())</MudText>
         <MudToggleGroup T="string" SelectionMode="SelectionMode.MultiSelection" @bind-SelectedValues="_value2" Color="Color.Secondary">
-            <MudToggleItem Value="@("Extra Bag")" Text="Extra Bag" />
-            <MudToggleItem Value="@("Vegan Menu")" Text="Vegan Menu" />
-            <MudToggleItem Value="@("Carbon Offset")" Text="Carbon Offset" />
+            <MudToggleItem Value="@("Extra Bag")" Icon="@Icons.Material.Filled.CheckBoxOutlineBlank" SelectedIcon="@Icons.Material.Filled.CheckBox"/>
+            <MudToggleItem Value="@("Vegan Menu")" Icon="@Icons.Material.Filled.CheckBoxOutlineBlank" SelectedIcon="@Icons.Material.Filled.CheckBox" />
+            <MudToggleItem Value="@("Carbon Offset")" Icon="@Icons.Material.Filled.CheckBoxOutlineBlank" SelectedIcon="@Icons.Material.Filled.CheckBox" />
         </MudToggleGroup>
     </MudStack>
 
@@ -38,6 +38,6 @@
 
 @code {
     private string _value1 = "Yes";
-    private IEnumerable<string> _value2;
+    private IEnumerable<string> _value2 = new []{ "Vegan Menu", "Carbon Offset"};
     private int? _value3;
 }
