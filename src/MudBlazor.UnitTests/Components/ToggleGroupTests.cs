@@ -212,7 +212,7 @@ namespace MudBlazor.UnitTests.Components
         }
         
         [Test]
-        public  async Task ToggleGroup_ItemRegistration_Test()
+        public void ToggleGroup_ItemRegistration_Test()
         {
             var comp = Context.RenderComponent<MudToggleGroup<string>>(builder =>
             {
