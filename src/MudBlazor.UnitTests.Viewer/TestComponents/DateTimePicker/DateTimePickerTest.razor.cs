@@ -3,11 +3,18 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MudBlazor.UnitTests.TestComponents.DateTimePicker
 {
     public partial class DateTimePickerTest
     {
-        private DateTime? _dateTime { get; set; }
+        private DateTimeContainingObject _model = new();
+    }
+
+    public class DateTimeContainingObject
+    {
+        [Required(ErrorMessage = "Date and time required")]
+        public DateTime? DateTime { get; set; }
     }
 }

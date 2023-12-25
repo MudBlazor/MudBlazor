@@ -1,4 +1,20 @@
 ﻿
-<DateTimePicker @bind-Date="_dateTime" />
+<EditForm Context="editContext" Model="_model">
+    <DataAnnotationsValidator />
 
-<MudText>SelectedDateTime @_dateTime?.ToString("O")</MudText>
+    <DateTimePicker Class="my-2" Label="Pick a date" @bind-Date="_model.DateTime" For="() => _model.DateTime"
+                    Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.EditCalendar" Variant="Variant.Outlined"
+                    Clearable>
+
+        <PickerActions>
+            <MudButton>Closed</MudButton>
+        </PickerActions>
+
+    </DateTimePicker>
+
+    <MudStack Row Justify="Justify.FlexEnd">
+        <MudButton ButtonType="ButtonType.Submit">Submit</MudButton>
+    </MudStack>
+</EditForm>
+
+<MudText Class="my-4">SelectedDateTime @_model.DateTime?.ToString("O")</MudText>
