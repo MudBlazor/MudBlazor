@@ -10,14 +10,14 @@
         <MudPickerContent>
             <MudGrid Spacing="0">
                 <MudItem xs="6">
-                    <MudDatePicker PickerVariant="PickerVariant.Static" Date="_datePicked" DateChanged="DateSelected" DateFormat="@DateFormat"
-                                   DisplayMonths="DisplayMonths" FirstDayOfWeek="FirstDayOfWeek" FixDay="FixDay" FixMonth="FixMonth" FixYear="FixYear"
-                                   OpenTo="DateOpenTo" PickerMonth="PickerMonth" ShowWeekNumbers="ShowWeekNumbers" StartMonth="StartMonth" TitleDateFormat="TitleDateFormat"
-                                   MaxMonthColumns="MaxMonthColumns" NextIcon="NextIcon" PreviousIcon="PreviousIcon" PickerMonthChanged="PickerMonthChanged" />
+                    <MudDatePicker PickerVariant="PickerVariant.Static" Date="@_datePicked" DateChanged="DateSelected" DateFormat="@DateFormat"
+                                   DisplayMonths="@DisplayMonths" FirstDayOfWeek="@FirstDayOfWeek" FixDay="@FixDay" FixMonth="@FixMonth" FixYear="@FixYear"
+                                   OpenTo="@DateOpenTo" PickerMonth="@PickerMonth" ShowWeekNumbers="@ShowWeekNumbers" StartMonth="@StartMonth" TitleDateFormat="@TitleDateFormat"
+                                   MaxMonthColumns="@MaxMonthColumns" NextIcon="@NextIcon" PreviousIcon="@PreviousIcon" PickerMonthChanged="@PickerMonthChanged" />
                 </MudItem>
                 <MudItem xs="6">
                     <MudTimePicker PickerVariant="PickerVariant.Static" Time="_timePicked" TimeChanged="TimeSelected" TimeFormat="@TimeFormat"
-                                   OpenTo="TimeOpenTo" />
+                                   OpenTo="@TimeOpenTo" MinuteSelectionStep="@MinuteSelectionStep" TimeEditMode="@TimeEditMode" />
                 </MudItem>
             </MudGrid>
         </MudPickerContent>

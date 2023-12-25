@@ -102,6 +102,14 @@ namespace MudBlazor
         public OpenTo TimeOpenTo { get; set; } = OpenTo.Hours;
 
         [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int MinuteSelectionStep { get; set; } = 1;
+
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
+
+        [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public EventCallback<DateTime?> PickerMonthChanged { get; set; }
 
