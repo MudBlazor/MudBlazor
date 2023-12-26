@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public partial class DateTimePicker : MudPicker<DateTime?>
+    public partial class MudDateTimePicker : MudPicker<DateTime?>
     {
         [Parameter] public EventCallback<DateTime?> DateTimeChanged { get; set; }
 
@@ -112,7 +112,7 @@ namespace MudBlazor
         private DateTime? _datePicked { get; set; }
         private TimeSpan? _timePicked { get; set; }
 
-        public DateTimePicker() : base(new DefaultConverter<DateTime?>())
+        public MudDateTimePicker() : base(new DefaultConverter<DateTime?>())
         {
             Converter.GetFunc = OnGet;
             Converter.SetFunc = OnSet;

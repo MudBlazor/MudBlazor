@@ -2,10 +2,10 @@
 <EditForm Context="editContext" Model="_model">
     <DataAnnotationsValidator />
 
-    <DateTimePicker Class="my-2" Label="Pick a date" @bind-DateTime="_model.DateTime" For="() => _model.DateTime"
+    <MudDateTimePicker Class="my-2" Label="Pick a date" @bind-DateTime="_model.DateTime" For="() => _model.DateTime"
                     Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.EditCalendar" Variant="Variant.Outlined"
                     Clearable>
-    </DateTimePicker>
+    </MudDateTimePicker>
 
     <MudStack Row Justify="Justify.FlexEnd">
         <MudButton ButtonType="ButtonType.Submit">Submit</MudButton>
