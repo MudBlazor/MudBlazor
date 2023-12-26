@@ -8,16 +8,14 @@
     protected override RenderFragment PickerContent =>
     @<CascadingValue Value="@this" IsFixed="true">
         <MudPickerContent>
-            <MudGrid Spacing="0">
+            <MudStack Row Spacing="0">
                 <MudDatePicker PickerVariant="PickerVariant.Static" Date="@_datePicked" DateChanged="DateSelected" DateFormat="@DateFormat"
                                FirstDayOfWeek="@FirstDayOfWeek" FixDay="@FixDay" FixMonth="@FixMonth" FixYear="@FixYear" DisableToolbar="DisableToolbar"
                                OpenTo="@DateOpenTo" PickerMonth="@PickerMonth" ShowWeekNumbers="@ShowWeekNumbers" StartMonth="@StartMonth" TitleDateFormat="@TitleDateFormat"
                                MaxMonthColumns="@MaxMonthColumns" NextIcon="@NextIcon" PreviousIcon="@PreviousIcon" PickerMonthChanged="@PickerMonthChanged" />
-                <MudItem xs="6">
-                    <MudTimePicker PickerVariant="PickerVariant.Static" Time="_timePicked" TimeChanged="TimeSelected" TimeFormat="@TimeFormat"
-                                   DisableToolbar="DisableToolbar" OpenTo="@TimeOpenTo" MinuteSelectionStep="@MinuteSelectionStep" TimeEditMode="@TimeEditMode" />
-                </MudItem>
-            </MudGrid>
+                <MudTimePicker PickerVariant="PickerVariant.Static" Time="_timePicked" TimeChanged="TimeSelected" TimeFormat="@TimeFormat"
+                               DisableToolbar="DisableToolbar" OpenTo="@TimeOpenTo" MinuteSelectionStep="@MinuteSelectionStep" TimeEditMode="@TimeEditMode" />
+            </MudStack>
         </MudPickerContent>
     </CascadingValue>;
 }
