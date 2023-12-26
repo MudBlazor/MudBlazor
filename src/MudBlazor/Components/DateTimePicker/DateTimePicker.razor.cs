@@ -11,11 +11,11 @@ namespace MudBlazor
 {
     public partial class DateTimePicker : MudPicker<DateTime?>
     {
-        [Parameter] public EventCallback<DateTime?> DateChanged { get; set; }
+        [Parameter] public EventCallback<DateTime?> DateTimeChanged { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public DateTime? Date
+        public DateTime? DateTime
         {
             get => GetDateTime();
             set => SetDateTime(value);
@@ -44,10 +44,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public DateTime? MaxDateTime { get; set; }
-
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public int DisplayMonths { get; set; } = 1;
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -131,12 +127,18 @@ namespace MudBlazor
             return value?.ToString(GetDateTimeFormat()) ?? null;
         }
 
+        protected override Task StringValueChanged(string value)
+        {
+            DateTime? date = Converter.Get(value);
+            return SetDateTime(date);
+        }
+
         public DateTime? OnGet(string value)
         {
             if (string.IsNullOrEmpty(value)) 
                 return null;
 
-            bool parsed = DateTime.TryParseExact(value, ((DefaultConverter<DateTime?>)Converter).Format, Culture, DateTimeStyles.None, out DateTime date);
+            bool parsed = System.DateTime.TryParseExact(value, ((DefaultConverter<DateTime?>)Converter).Format, Culture, DateTimeStyles.None, out var date);
             
             if (parsed)
                 return date;
@@ -161,9 +163,9 @@ namespace MudBlazor
             _datePicked = date;
             if (_datePicked != null && _timePicked != null)
             {
-                if (DateChanged.HasDelegate)
+                if (DateTimeChanged.HasDelegate)
                 {
-                    DateChanged.InvokeAsync(GetDateTime());
+                    DateTimeChanged.InvokeAsync(GetDateTime());
                 }
                 SubmitAndClose();
             }
@@ -178,9 +180,9 @@ namespace MudBlazor
             _timePicked = time;
             if (_datePicked != null && _timePicked != null)
             {
-                if (DateChanged.HasDelegate)
+                if (DateTimeChanged.HasDelegate)
                 {
-                    DateChanged.InvokeAsync(GetDateTime());
+                    DateTimeChanged.InvokeAsync(GetDateTime());
                 }
                 SubmitAndClose();
             }
