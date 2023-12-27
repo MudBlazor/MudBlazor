@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Xml;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -26,15 +27,27 @@ namespace MudBlazor
             get => _value;
             set => SetDateAsync(value, true).AndForget();
         }
-
+        
+        private DateTime _lastSetTime = DateTime.MinValue;
+        private const int DebounceTimeoutMs = 100;
+        
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
             if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
             {
                 date = DateTime.SpecifyKind(date.Value, _value.Value.Kind);
             }
+ 
+            var now = DateTime.UtcNow;
+            
+            if (_value == date && (now - _lastSetTime).TotalMilliseconds < DebounceTimeoutMs)
+            {
+                return;
+            }
 
-            if (_value != date)
+            _lastSetTime = now;
+            
+            if (_value != date || (date is null && Text != null))
             {
                 Touched = true;
 
