@@ -251,8 +251,6 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
             picker.Date.Should().Be(null);
-
-            string invalid = "INVALID_DATE";
             comp.SetParam(p => p.Text, "INVALID_DATE");
 
             picker.Error.Should().BeTrue();
