@@ -18,7 +18,8 @@ namespace MudBlazor
         private Color _color;
         private IEnumerable<T?>? _values;
         private string? _selectedClass;
-        private bool _showBorder = true;
+        private bool _showOutline = true;
+        private bool _showDelimiters = true;
         private bool _rtl;
         private List<MudToggleItem<T>> _items = new();
         private bool _dense;
@@ -31,6 +32,7 @@ namespace MudBlazor
             .AddClass("mud-toggle-group-vertical", Vertical)
             .AddClass("rounded")
             .AddClass("mud-toggle-group-rtl", RightToLeft)
+            .AddClass($"border mud-border-{Color.ToDescriptionString()} border-solid", ShowOutline)
             .AddClass(Class)
             .Build();
 
@@ -107,11 +109,18 @@ namespace MudBlazor
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// If true, items will be bordered. Default is true.
+        /// If true, outline border will show. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool ShowBorder { get; set; } = true;
+        public bool ShowOutline { get; set; } = true;
+
+        /// <summary>
+        /// If true, the line delimiter between items will show. Default is true.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool ShowDelimiters { get; set; } = true;
 
         /// <summary>
         /// If true, disables the ripple effect.
@@ -229,7 +238,8 @@ namespace MudBlazor
 
             if (Color != _color ||
                 SelectedClass != _selectedClass ||
-                ShowBorder != _showBorder ||
+                ShowOutline != _showOutline ||
+                ShowDelimiters != _showDelimiters ||
                 RightToLeft != _rtl || 
                 Dense != _dense ||
                 Rounded != _rounded || 
@@ -239,7 +249,8 @@ namespace MudBlazor
             {
                 _color = Color;
                 _selectedClass = SelectedClass;
-                _showBorder = ShowBorder;
+                _showOutline = ShowOutline;
+                _showDelimiters = ShowDelimiters;
                 _rtl = RightToLeft;
                 _dense = Dense;
                 _rounded = Rounded;

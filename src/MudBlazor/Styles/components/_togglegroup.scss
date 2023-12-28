@@ -14,8 +14,11 @@
         > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
-            border-left-width: 1px;
             margin-left: -1px;
+
+            &.mud-toggle-item-delimiter {
+                border-left-width: 1px;
+            }
         }
     }
 
@@ -43,6 +46,10 @@
     > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
         border-top-left-radius: 0;
         border-top-right-radius: 0;
+
+        &.mud-toggle-item-delimiter {
+            border-top-width: 1px;
+        }
     }
 }
 
