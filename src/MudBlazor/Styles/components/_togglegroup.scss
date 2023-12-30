@@ -80,6 +80,7 @@
     }
 
     &.mud-toggle-item-selected {
-        background-color: blue;
+        /*background-color: blue;*/
+        border-radius: unset;
     }
 }
