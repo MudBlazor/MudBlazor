@@ -3,13 +3,13 @@
 <MudStack>
     <div class="d-flex justify-space-between">
         <MudStack Spacing="16" AlignItems="@AlignItems.Start">
-            <MudToggleGroup T="string" Style="width: 300px;" ShowOutline="@_outline" ShowDelimiters="@_delimiter" Dense="@_dense" Rounded="@_rounded" ShowIcon="@_checkMark">
+            <MudToggleGroup T="string" Style="width: 300px;" Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" ShowIcon="@_checkMark">
                 <MudToggleItem Value="@("One")" SelectedIcon="@Icons.Material.Filled.Check"/>
                 <MudToggleItem Value="@("Two")" SelectedIcon="@Icons.Material.Filled.Check"/>
                 <MudToggleItem Value="@("Three")" SelectedIcon="@Icons.Material.Filled.Check"/>
             </MudToggleGroup>
                     
-            <MudToggleGroup T="string" ShowOutline="@_outline" ShowDelimiters="@_delimiter" Dense="@_dense" Rounded="@_rounded" ShowText="@false">
+            <MudToggleGroup T="string" Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" ShowText="@false">
                 <MudToggleItem Value="@("left")" Icon="@Icons.Material.Filled.FormatAlignLeft"/>
                 <MudToggleItem Value="@("center")" Icon="@Icons.Material.Filled.FormatAlignCenter"/>
                 <MudToggleItem Value="@("right")" Icon="@Icons.Material.Filled.FormatAlignRight"/>
@@ -17,7 +17,7 @@
             </MudToggleGroup>
         </MudStack>
 
-        <MudToggleGroup T="string" Vertical ShowText="@false" ShowOutline="@_outline" ShowDelimiters="@_delimiter" Dense="@_dense" Rounded="@_rounded">
+        <MudToggleGroup T="string" Vertical ShowText="@false" Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded">
             <MudToggleItem Value="@("left")" Icon="@Icons.Material.Filled.FormatAlignLeft"/>
             <MudToggleItem Value="@("center")" Icon="@Icons.Material.Filled.FormatAlignCenter"/>
             <MudToggleItem Value="@("right")" Icon="@Icons.Material.Filled.FormatAlignRight"/>
@@ -29,8 +29,8 @@
         <MudCheckBox @bind-Checked="@_dense" Label="Dense"/>
         <MudCheckBox @bind-Checked="@_rounded" Label="Rounded"/>
         <MudCheckBox @bind-Checked="@_checkMark" Label="Check Mark"/>
-        <MudCheckBox @bind-Checked="@_outline" Label="ShowOutline"/>
-        <MudCheckBox @bind-Checked="@_delimiter" Label="ShowDelimiter" />
+        <MudCheckBox @bind-Checked="@_outline" Label="Outline"/>
+        <MudCheckBox @bind-Checked="@_delimiters" Label="Delimiters" />
     </MudStack>
 </MudStack>
 
@@ -39,5 +39,5 @@
     bool _rounded = false;
     bool _checkMark = true;
     bool _outline = true;
-    bool _delimiter = true;
+    bool _delimiters = true;
 }

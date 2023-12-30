@@ -18,8 +18,8 @@ namespace MudBlazor
         private Color _color;
         private IEnumerable<T?>? _values;
         private string? _selectedClass;
-        private bool _showOutline = true;
-        private bool _showDelimiters = true;
+        private bool _outline = true;
+        private bool _delimiters = true;
         private bool _rtl;
         private List<MudToggleItem<T>> _items = new();
         private bool _dense;
@@ -32,7 +32,7 @@ namespace MudBlazor
             .AddClass("mud-toggle-group-vertical", Vertical)
             .AddClass("rounded")
             .AddClass("mud-toggle-group-rtl", RightToLeft)
-            .AddClass($"border mud-border-{Color.ToDescriptionString()} border-solid", ShowOutline)
+            .AddClass($"border mud-border-{Color.ToDescriptionString()} border-solid", Outline)
             .AddClass(Class)
             .Build();
 
@@ -113,14 +113,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool ShowOutline { get; set; } = true;
+        public bool Outline { get; set; } = true;
 
         /// <summary>
         /// If true, the line delimiter between items will show. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool ShowDelimiters { get; set; } = true;
+        public bool Delimiters { get; set; } = true;
 
         /// <summary>
         /// If true, disables the ripple effect.
@@ -238,8 +238,8 @@ namespace MudBlazor
 
             if (Color != _color ||
                 SelectedClass != _selectedClass ||
-                ShowOutline != _showOutline ||
-                ShowDelimiters != _showDelimiters ||
+                Outline != _outline ||
+                Delimiters != _delimiters ||
                 RightToLeft != _rtl || 
                 Dense != _dense ||
                 Rounded != _rounded || 
@@ -249,8 +249,8 @@ namespace MudBlazor
             {
                 _color = Color;
                 _selectedClass = SelectedClass;
-                _showOutline = ShowOutline;
-                _showDelimiters = ShowDelimiters;
+                _outline = Outline;
+                _delimiters = Delimiters;
                 _rtl = RightToLeft;
                 _dense = Dense;
                 _rounded = Rounded;

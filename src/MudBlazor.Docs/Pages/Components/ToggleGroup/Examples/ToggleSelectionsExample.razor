@@ -16,7 +16,7 @@
     <MudStack>
         <MudText>Multi Selection</MudText>
         <MudText>Values: @string.Join(", ", _value2 ?? new List<string>())</MudText>
-        <MudToggleGroup T="string" SelectionMode="SelectionMode.MultiSelection" @bind-SelectedValues="_value2" Color="Color.Secondary">
+        <MudToggleGroup T="string" SelectionMode="SelectionMode.MultiSelection" @bind-SelectedValues="_value2" Color="Color.Secondary" Delimiters>
             <MudToggleItem Value="@("Extra Bag")" Icon="@Icons.Material.Filled.CheckBoxOutlineBlank" SelectedIcon="@Icons.Material.Filled.CheckBox"/>
             <MudToggleItem Value="@("Vegan Menu")" Icon="@Icons.Material.Filled.CheckBoxOutlineBlank" SelectedIcon="@Icons.Material.Filled.CheckBox" />
             <MudToggleItem Value="@("Carbon Offset")" Icon="@Icons.Material.Filled.CheckBoxOutlineBlank" SelectedIcon="@Icons.Material.Filled.CheckBox" />

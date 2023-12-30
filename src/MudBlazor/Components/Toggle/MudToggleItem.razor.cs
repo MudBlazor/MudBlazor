@@ -27,7 +27,7 @@ namespace MudBlazor
             .AddClass("rounded-b-xl", Parent is { Rounded: true, Vertical: true } && Parent?.IsLastItem(this) == true)
             .AddClass(ItemPadding)
             .AddClass("mud-toggle-item-vertical", Parent?.Vertical == true)
-            .AddClass("mud-toggle-item-delimiter", Parent?.ShowDelimiters == true)
+            .AddClass("mud-toggle-item-delimiter", Parent?.Delimiters == true)
             .AddClass(Class)
             .Build();
         
