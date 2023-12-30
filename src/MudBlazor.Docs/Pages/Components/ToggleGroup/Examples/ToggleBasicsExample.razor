@@ -3,25 +3,38 @@
 <MudStack>
     <div class="d-flex justify-space-between">
         <MudStack Spacing="16" AlignItems="@AlignItems.Start">
-            <MudToggleGroup T="string" Style="width: 300px;" Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" ShowIcon="@_checkMark">
-                <MudToggleItem Value="@("One")" SelectedIcon="@Icons.Material.Filled.Check"/>
-                <MudToggleItem Value="@("Two")" SelectedIcon="@Icons.Material.Filled.Check"/>
-                <MudToggleItem Value="@("Three")" SelectedIcon="@Icons.Material.Filled.Check"/>
+            <MudToggleGroup T="string" Style="width: 360px;" Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" CheckMark="@_checkMark">
+                <MudToggleItem Value="@("One")"/>
+                <MudToggleItem Value="@("Two")"/>
+                <MudToggleItem Value="@("Three")"/>
+            </MudToggleGroup>
+            <MudToggleGroup T="string" Style="width: 360px;" Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" CheckMark="@_checkMark">
+                <MudToggleItem Value="@("One")"/>
+                <MudToggleItem Value="@("Two")"/>
+                <MudToggleItem Value="@("Three")"/>
             </MudToggleGroup>
                     
-            <MudToggleGroup T="string" Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" ShowText="@false">
-                <MudToggleItem Value="@("left")" Icon="@Icons.Material.Filled.FormatAlignLeft"/>
-                <MudToggleItem Value="@("center")" Icon="@Icons.Material.Filled.FormatAlignCenter"/>
-                <MudToggleItem Value="@("right")" Icon="@Icons.Material.Filled.FormatAlignRight"/>
-                <MudToggleItem Value="@("justify")" Icon="@Icons.Material.Filled.FormatAlignJustify"/>
+            <MudToggleGroup T="string" Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" >
+                <MudToggleItem Value="@("left")">
+                    <MudIcon Icon="@Icons.Material.Filled.FormatAlignLeft"/>
+                </MudToggleItem>
+                <MudToggleItem Value="@("center")">
+                    <MudIcon Icon="@Icons.Material.Filled.FormatAlignCenter"/>                
+                </MudToggleItem>
+                <MudToggleItem Value="@("right")">
+                    <MudIcon Icon="@Icons.Material.Filled.FormatAlignRight"/>                
+                </MudToggleItem>
+                <MudToggleItem Value="@("justify")">
+                    <MudIcon Icon="@Icons.Material.Filled.FormatAlignJustify"/>                
+                </MudToggleItem>
             </MudToggleGroup>
         </MudStack>
 
         <MudToggleGroup T="string" Vertical ShowText="@false" Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded">
-            <MudToggleItem Value="@("left")" Icon="@Icons.Material.Filled.FormatAlignLeft"/>
-            <MudToggleItem Value="@("center")" Icon="@Icons.Material.Filled.FormatAlignCenter"/>
-            <MudToggleItem Value="@("right")" Icon="@Icons.Material.Filled.FormatAlignRight"/>
-            <MudToggleItem Value="@("justify")" Icon="@Icons.Material.Filled.FormatAlignJustify"/>
+            <MudToggleItem Value="@("left")" UnselectedIcon="@Icons.Material.Filled.FormatAlignLeft"/>
+            <MudToggleItem Value="@("center")" UnselectedIcon="@Icons.Material.Filled.FormatAlignCenter"/>
+            <MudToggleItem Value="@("right")" UnselectedIcon="@Icons.Material.Filled.FormatAlignRight"/>
+            <MudToggleItem Value="@("justify")" UnselectedIcon="@Icons.Material.Filled.FormatAlignJustify"/>
         </MudToggleGroup>
     </div>
 

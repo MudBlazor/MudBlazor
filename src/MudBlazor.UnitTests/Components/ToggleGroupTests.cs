@@ -187,7 +187,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 builder.Add(x => x.IconClass, "c69");
                 builder.Add(x => x.TextClass, "c42");
-                builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a").Add(x=>x.Icon, @Icons.Material.Filled.Coronavirus));
+                builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a").Add(x=>x.UnselectedIcon, @Icons.Material.Filled.Coronavirus));
             });
             var icon = comp.Find("svg");
             icon.ClassList.Should().Contain("c69");

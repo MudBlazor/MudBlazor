@@ -36,9 +36,9 @@ namespace MudBlazor
             .AddClass(Parent?.TextClass)
             .Build();
         
-        protected string IconClassName => new CssBuilder()
+        protected string CheckMarkClasses => new CssBuilder()
             .AddClass(Parent?.IconClass)
-            .AddClass("me-2", Parent?.ShowText)
+            .AddClass("me-1")
             .Build();
 
         protected string ItemPadding
@@ -79,13 +79,13 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string? Icon { get; set; }
-        
+        public string? UnselectedIcon { get; set; }
+
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string? SelectedIcon { get; set; }
+        public string? SelectedIcon { get; set; } = Icons.Material.Filled.Check;
 
-        private string? CurrentIcon => IsSelected ? SelectedIcon ?? Icon : Icon;
+        private string? CurrentIcon => IsSelected ? SelectedIcon ?? UnselectedIcon : UnselectedIcon;
         
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]

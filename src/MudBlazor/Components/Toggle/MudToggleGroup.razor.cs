@@ -154,11 +154,12 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
-        /// If true, the items show their Icon and the SelectedIcon depending on their selection state 
+        /// If true, the items show a check mark next to the text or render fragment. Customize the check mark by setting
+        /// SelectedIcon and UnselectedIcon 
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool ShowIcon { get; set; } = true;
+        public bool CheckMark { get; set; } = true;
 
         /// <summary>
         /// If true, the items show their Text or their stringified Value if Text is null.
@@ -245,7 +246,7 @@ namespace MudBlazor
                 Dense != _dense ||
                 Rounded != _rounded || 
                 ShowText != _showText ||
-                ShowIcon != _showIcon 
+                CheckMark != _showIcon 
                 )
             {
                 _color = Color;
@@ -256,7 +257,7 @@ namespace MudBlazor
                 _dense = Dense;
                 _rounded = Rounded;
                 _showText = ShowText;
-                _showIcon = ShowIcon;
+                _showIcon = CheckMark;
                 foreach (IMudStateHasChanged mudComponent in _items)
                 {
                     mudComponent.StateHasChanged();
