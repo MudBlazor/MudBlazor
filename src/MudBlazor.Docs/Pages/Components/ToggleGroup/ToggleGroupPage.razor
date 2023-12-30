@@ -22,11 +22,10 @@
             <SectionHeader Title="Usage">
                 <Description>
                     The <CodeInline>MudToggleGroup</CodeInline> holds a number of <CodeInline>MudToggleItems</CodeInline> 
-                    and semantically groups them together into a selection. The items can be configured to show text and/or 
-                    an icon, depending on the group's <CodeInline>ShowText</CodeInline> and <CodeInline>ShowIcon</CodeInline>
-                    settings which are both <CodeInline>true</CodeInline> by default. To show a check mark only on selected
-                    items set the <CodeInline>SelectedIcon</CodeInline> accordingly. If you don't set a <CodeInline>SelectedIcon</CodeInline>
-                    the <CodeInline>Icon</CodeInline> is shown in both cases.
+                    and semantically groups them together into a selection. The items can be configured to show text or 
+                    custom content such as an icon. To show a check mark set the <CodeInline>CheckMark</CodeInline> parameter. 
+                    The check mark will push the text to the side by default. If you don't want this you can set
+                    the <CodeInline>FixedContent</CodeInline> parameter to counterbalance the checkmark with padding on the right.
                     <MudAlert Severity="Severity.Info" Class="mt-3">
                         If you don't set the <CodeInline>Text</CodeInline> property the items will simply show the 
                         <CodeInline>Value</CodeInline> if <CodeInline>ShowText</CodeInline> is <CodeInline>true</CodeInline>.
