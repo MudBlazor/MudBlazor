@@ -37,7 +37,7 @@ namespace MudBlazor
             .Build();
         
         protected string CheckMarkClasses => new CssBuilder()
-            .AddClass(Parent?.IconClass)
+            .AddClass(Parent?.CheckMarkClass)
             .AddClass("me-2")
             .Build();
 

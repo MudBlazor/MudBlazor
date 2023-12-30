@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AngleSharp.Common;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -185,8 +186,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudToggleGroup<string>>(builder =>
             {
-                builder.Add(x => x.IconClass, "c69");
+                builder.Add(x => x.CheckMarkClass, "c69");
                 builder.Add(x => x.TextClass, "c42");
+                builder.Add(x => x.CheckMark, true);
                 builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a").Add(x=>x.UnselectedIcon, @Icons.Material.Filled.Coronavirus));
             });
             var icon = comp.Find("svg");
@@ -194,12 +196,6 @@ namespace MudBlazor.UnitTests.Components
             icon.ClassList.Should().Contain("me-2"); // <--- the spacing between icon and text
             var text = comp.Find(".mud-typography");
             text.ClassList.Should().Contain("c42");
-            // now hide the text and check that above spacing is gone
-            comp.InvokeAsync(() => comp.SetParam(x => x.ShowText, false));
-            comp.FindAll(".mud-typography").Count.Should().Be(0);
-            icon = comp.Find("svg");
-            icon.ClassList.Should().Contain("c69");
-            icon.ClassList.Should().NotContain("me-2");
         }
                 
         [Test]

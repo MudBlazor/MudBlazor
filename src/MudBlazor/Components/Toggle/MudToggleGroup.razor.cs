@@ -90,7 +90,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string? IconClass { get; set; }
+        public string? CheckMarkClass { get; set; }
         
         /// <summary>
         /// If true, items ordered vertically.
