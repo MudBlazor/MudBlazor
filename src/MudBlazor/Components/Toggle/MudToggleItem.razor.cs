@@ -16,7 +16,7 @@ namespace MudBlazor
 
         protected string Classes => new CssBuilder("mud-toggle-item")
             .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", _selected && string.IsNullOrEmpty(Parent?.SelectedClass))
-            .AddClass("mud-toggle-item-selected", _selected)
+            .AddClass("mud-toggle-item-selected-border", _selected && Parent?.Outline == true)
             .AddClass(Parent?.SelectedClass, _selected && !string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
             .AddClass("mud-ripple", Parent?.DisableRipple == false)
