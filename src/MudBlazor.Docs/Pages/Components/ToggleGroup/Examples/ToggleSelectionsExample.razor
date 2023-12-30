@@ -4,7 +4,7 @@
     <MudStack>
         <MudText>Single Selection</MudText>
         <MudText>Value: @_value1</MudText>
-        <MudToggleGroup T="string" SelectionMode="SelectionMode.SingleSelection" @bind-Value="_value1" Color="Color.Primary">
+        <MudToggleGroup T="string" SelectionMode="SelectionMode.SingleSelection" @bind-Value="_value1" Color="Color.Primary" FixedContent>
             <MudToggleItem Value="@("Yes")" Text="Yes" />
             <MudToggleItem Value="@("No")" Text="No" />
             <MudToggleItem Value="@("Don't know")" Text="Don't know" />
@@ -29,9 +29,9 @@
         <MudText>Toggle Selection</MudText>
         <MudText>Value: @(_value3 == null ? "null" : _value3.ToString())</MudText>
         <MudToggleGroup T="int?" SelectionMode="SelectionMode.ToggleSelection" @bind-Value="_value3" Color="Color.Tertiary">
-            <MudToggleItem Value="@((int?)1)" Text="Coffee (1)" SelectedIcon="@Icons.Material.Filled.Check" />
-            <MudToggleItem Value="@((int?)2)" Text="Tee (2)" SelectedIcon="@Icons.Material.Filled.Check" />
-            <MudToggleItem Value="@((int?)3)" Text="Hot Chocolate (3)" SelectedIcon="@Icons.Material.Filled.Check" />
+            <MudToggleItem Value="@((int?)1)" Text="Coffee (1)" />
+            <MudToggleItem Value="@((int?)2)" Text="Tee (2)" />
+            <MudToggleItem Value="@((int?)3)" Text="Water (3)" />
         </MudToggleGroup>
     </MudStack>
 </MudStack>

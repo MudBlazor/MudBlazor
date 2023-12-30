@@ -38,7 +38,7 @@ namespace MudBlazor
         
         protected string CheckMarkClasses => new CssBuilder()
             .AddClass(Parent?.IconClass)
-            .AddClass("me-1")
+            .AddClass("me-2")
             .Build();
 
         protected string ItemPadding
@@ -69,6 +69,8 @@ namespace MudBlazor
                 return Parent?.Dense==true ? "px-1 py-1" : "px-2 py-2";
             }
         }
+
+        private bool CounterBalanceCheckmark => Parent?.CheckMark == true && Parent?.FixedContent == true;
 
         [CascadingParameter]
         public MudToggleGroup<T>? Parent { get; set; }

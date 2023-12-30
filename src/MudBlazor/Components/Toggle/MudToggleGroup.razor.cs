@@ -24,8 +24,8 @@ namespace MudBlazor
         private List<MudToggleItem<T>> _items = new();
         private bool _dense;
         private bool _rounded;
-        private bool _showText = true;
-        private bool _showIcon = true;
+        private bool _checkMark = true;
+        private bool _fixedContent = false;
 
         protected string Classes => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)
@@ -162,11 +162,12 @@ namespace MudBlazor
         public bool CheckMark { get; set; } = true;
 
         /// <summary>
-        /// If true, the items show their Text or their stringified Value if Text is null.
+        /// If true, the check mark is counter balanced with padding on the right side which makes the content stay always
+        /// centered no matter if the check mark is shown or not. 
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool ShowText { get; set; } = true;
+        public bool FixedContent { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
@@ -245,8 +246,8 @@ namespace MudBlazor
                 RightToLeft != _rtl || 
                 Dense != _dense ||
                 Rounded != _rounded || 
-                ShowText != _showText ||
-                CheckMark != _showIcon 
+                CheckMark != _checkMark ||
+                FixedContent != _fixedContent
                 )
             {
                 _color = Color;
@@ -256,8 +257,8 @@ namespace MudBlazor
                 _rtl = RightToLeft;
                 _dense = Dense;
                 _rounded = Rounded;
-                _showText = ShowText;
-                _showIcon = CheckMark;
+                _checkMark = CheckMark;
+                _fixedContent = FixedContent;
                 foreach (IMudStateHasChanged mudComponent in _items)
                 {
                     mudComponent.StateHasChanged();
