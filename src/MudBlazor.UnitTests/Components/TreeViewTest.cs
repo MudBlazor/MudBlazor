@@ -214,6 +214,9 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => comp.Instance.DeselectSecond());
             comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be(null));
+
+            await comp.InvokeAsync(() => comp.Instance.SelectFirstWithValue());
+            comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be("content"));
         }
         
 

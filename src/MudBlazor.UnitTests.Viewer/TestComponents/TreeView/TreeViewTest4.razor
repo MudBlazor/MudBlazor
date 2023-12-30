@@ -27,4 +27,9 @@
         await _treeView.Select(_item2, false);
     }
 
+    public async Task SelectFirstWithValue()
+    {
+        await _treeView.Select("content", true);
+    }
+
 }
