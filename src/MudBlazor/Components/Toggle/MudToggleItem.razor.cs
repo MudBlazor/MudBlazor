@@ -16,6 +16,7 @@ namespace MudBlazor
 
         protected string Classes => new CssBuilder("mud-toggle-item")
             .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", _selected && string.IsNullOrEmpty(Parent?.SelectedClass))
+            .AddClass("mud-toggle-item-selected-border", _selected && Parent?.Outline == true)
             .AddClass(Parent?.SelectedClass, _selected && !string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
             .AddClass("mud-ripple", Parent?.DisableRipple == false)
@@ -35,9 +36,9 @@ namespace MudBlazor
             .AddClass(Parent?.TextClass)
             .Build();
         
-        protected string IconClassName => new CssBuilder()
-            .AddClass(Parent?.IconClass)
-            .AddClass("me-2", Parent?.ShowText)
+        protected string CheckMarkClasses => new CssBuilder()
+            .AddClass(Parent?.CheckMarkClass)
+            .AddClass("me-2")
             .Build();
 
         protected string ItemPadding
@@ -69,6 +70,8 @@ namespace MudBlazor
             }
         }
 
+        private bool CounterBalanceCheckmark => Parent?.CheckMark == true && Parent?.FixedContent == true;
+
         [CascadingParameter]
         public MudToggleGroup<T>? Parent { get; set; }
 
@@ -78,13 +81,13 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string? Icon { get; set; }
-        
+        public string? UnselectedIcon { get; set; }
+
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string? SelectedIcon { get; set; }
+        public string? SelectedIcon { get; set; } = Icons.Material.Filled.Check;
 
-        private string? CurrentIcon => IsSelected ? SelectedIcon ?? Icon : Icon;
+        private string? CurrentIcon => IsSelected ? SelectedIcon ?? UnselectedIcon : UnselectedIcon;
         
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]

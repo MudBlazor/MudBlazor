@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AngleSharp.Common;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -138,6 +139,21 @@ namespace MudBlazor.UnitTests.Components
             item3.ClassList.Should().Contain("pe-2");
             item3.ClassList.Should().Contain("ps-1");
             item3.ClassList.Should().Contain("py-1");
+            await comp.InvokeAsync(() => comp.SetParam(x => x.Dense, false));
+            item1 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(0);
+            item2 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
+            item3 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(2);
+            // (x|_|_)
+            item1.ClassList.Should().Contain("ps-3");
+            item1.ClassList.Should().Contain("pe-2");
+            item1.ClassList.Should().Contain("py-2");
+            // (_|X|_)
+            item2.ClassList.Should().Contain("px-2");
+            item2.ClassList.Should().Contain("py-2");
+            // (_|_|x)
+            item3.ClassList.Should().Contain("pe-3");
+            item3.ClassList.Should().Contain("ps-2");
+            item3.ClassList.Should().Contain("py-2");            
         }
         
         [Test]
@@ -178,6 +194,21 @@ namespace MudBlazor.UnitTests.Components
             item3.ClassList.Should().Contain("pb-2");
             item3.ClassList.Should().Contain("pt-1");
             item3.ClassList.Should().Contain("px-1");
+            await comp.InvokeAsync(() => comp.SetParam(x => x.Dense, false));
+            item1 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(0);
+            item2 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
+            item3 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(2);
+            // top (x|_|_) bottom
+            item1.ClassList.Should().Contain("pt-3");
+            item1.ClassList.Should().Contain("pb-2");
+            item1.ClassList.Should().Contain("px-2");
+            // top (_|X|_) bottom
+            item2.ClassList.Should().Contain("px-2");
+            item2.ClassList.Should().Contain("py-2");
+            // top (_|_|x) bottom
+            item3.ClassList.Should().Contain("pb-3");
+            item3.ClassList.Should().Contain("pt-2");
+            item3.ClassList.Should().Contain("px-2");
         }
         
         [Test]
@@ -185,21 +216,16 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudToggleGroup<string>>(builder =>
             {
-                builder.Add(x => x.IconClass, "c69");
+                builder.Add(x => x.CheckMarkClass, "c69");
                 builder.Add(x => x.TextClass, "c42");
-                builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a").Add(x=>x.Icon, @Icons.Material.Filled.Coronavirus));
+                builder.Add(x => x.CheckMark, true);
+                builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a").Add(x=>x.UnselectedIcon, @Icons.Material.Filled.Coronavirus));
             });
             var icon = comp.Find("svg");
             icon.ClassList.Should().Contain("c69");
             icon.ClassList.Should().Contain("me-2"); // <--- the spacing between icon and text
             var text = comp.Find(".mud-typography");
             text.ClassList.Should().Contain("c42");
-            // now hide the text and check that above spacing is gone
-            comp.InvokeAsync(() => comp.SetParam(x => x.ShowText, false));
-            comp.FindAll(".mud-typography").Count.Should().Be(0);
-            icon = comp.Find("svg");
-            icon.ClassList.Should().Contain("c69");
-            icon.ClassList.Should().NotContain("me-2");
         }
                 
         [Test]

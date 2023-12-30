@@ -24,13 +24,14 @@ namespace MudBlazor
         private List<MudToggleItem<T>> _items = new();
         private bool _dense;
         private bool _rounded;
-        private bool _showText = true;
-        private bool _showIcon = true;
+        private bool _checkMark = true;
+        private bool _fixedContent = false;
 
         protected string Classes => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)
             .AddClass("mud-toggle-group-vertical", Vertical)
-            .AddClass("rounded")
+            .AddClass("rounded", !Rounded)
+            .AddClass("rounded-xl", Rounded)
             .AddClass("mud-toggle-group-rtl", RightToLeft)
             .AddClass($"border mud-border-{Color.ToDescriptionString()} border-solid", Outline)
             .AddClass(Class)
@@ -89,7 +90,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string? IconClass { get; set; }
+        public string? CheckMarkClass { get; set; }
         
         /// <summary>
         /// If true, items ordered vertically.
@@ -153,18 +154,20 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
-        /// If true, the items show their Icon and the SelectedIcon depending on their selection state 
+        /// If true, the items show a check mark next to the text or render fragment. Customize the check mark by setting
+        /// SelectedIcon and UnselectedIcon 
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool ShowIcon { get; set; } = true;
+        public bool CheckMark { get; set; }
 
         /// <summary>
-        /// If true, the items show their Text or their stringified Value if Text is null.
+        /// If true, the check mark is counter balanced with padding on the right side which makes the content stay always
+        /// centered no matter if the check mark is shown or not. 
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool ShowText { get; set; } = true;
+        public bool FixedContent { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
@@ -243,8 +246,8 @@ namespace MudBlazor
                 RightToLeft != _rtl || 
                 Dense != _dense ||
                 Rounded != _rounded || 
-                ShowText != _showText ||
-                ShowIcon != _showIcon 
+                CheckMark != _checkMark ||
+                FixedContent != _fixedContent
                 )
             {
                 _color = Color;
@@ -254,8 +257,8 @@ namespace MudBlazor
                 _rtl = RightToLeft;
                 _dense = Dense;
                 _rounded = Rounded;
-                _showText = ShowText;
-                _showIcon = ShowIcon;
+                _checkMark = CheckMark;
+                _fixedContent = FixedContent;
                 foreach (IMudStateHasChanged mudComponent in _items)
                 {
                     mudComponent.StateHasChanged();

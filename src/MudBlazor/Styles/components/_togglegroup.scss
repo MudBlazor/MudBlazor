@@ -79,7 +79,7 @@
         }
     }
 
-    &.mud-toggle-item-selected {
-        background-color: blue;
+    &.mud-toggle-item-selected-border {
+        border-radius: unset;
     }
 }
