@@ -159,7 +159,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool CheckMark { get; set; } = true;
+        public bool CheckMark { get; set; }
 
         /// <summary>
         /// If true, the check mark is counter balanced with padding on the right side which makes the content stay always
