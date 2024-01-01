@@ -6,6 +6,7 @@ using System;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Models.Context;
@@ -25,9 +26,7 @@ namespace MudBlazor.Docs.Services
                 BaseAddress = new Uri("https://discord.com/")
             };
             _jsonSerializerOptions = new JsonSerializerOptions();
-#pragma warning disable SYSLIB0049
-            _jsonSerializerOptions.AddContext<DiscordApiJsonSerializerContext>();
-#pragma warning restore SYSLIB0049
+            _jsonSerializerOptions.TypeInfoResolver = JsonTypeInfoResolver.Combine(DiscordApiJsonSerializerContext.Default);
         }
 
         public async Task<DiscordInvite?> GetDiscordInviteAsync()
