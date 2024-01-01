@@ -27,7 +27,9 @@ namespace MudBlazor.Docs.Services
             };
             _http.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Mobile Safari/537.36");
             _jsonSerializerOptions = new JsonSerializerOptions();
+#pragma warning disable SYSLIB0049
             _jsonSerializerOptions.AddContext<GithubApiJsonSerializerContext>();
+#pragma warning restore SYSLIB0049
         }
 
         public async Task<GithubContributors[]> GetContributorsAsync()

@@ -25,7 +25,9 @@ namespace MudBlazor.Docs.Services
                 BaseAddress = new Uri("https://discord.com/")
             };
             _jsonSerializerOptions = new JsonSerializerOptions();
+#pragma warning disable SYSLIB0049
             _jsonSerializerOptions.AddContext<DiscordApiJsonSerializerContext>();
+#pragma warning restore SYSLIB0049
         }
 
         public async Task<DiscordInvite?> GetDiscordInviteAsync()

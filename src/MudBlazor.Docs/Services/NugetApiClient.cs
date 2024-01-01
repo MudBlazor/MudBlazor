@@ -26,7 +26,9 @@ namespace MudBlazor.Docs.Services
                 BaseAddress = new Uri("https://azuresearch-usnc.nuget.org/")
             };
             _jsonSerializerOptions = new JsonSerializerOptions();
+#pragma warning disable SYSLIB0049
             _jsonSerializerOptions.AddContext<NugetApiJsonSerializerContext>();
+#pragma warning restore SYSLIB0049
         }
 
         public async Task<NugetPackage?> GetPackageAsync(string packageName)
