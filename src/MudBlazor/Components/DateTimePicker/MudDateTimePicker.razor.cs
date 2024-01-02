@@ -18,7 +18,7 @@ namespace MudBlazor
         public DateTime? DateTime
         {
             get => GetDateTime();
-            set => SetDateTime(value);
+            set => _ = SetDateTime(value);
         }
 
         [Parameter]
@@ -109,6 +109,10 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public EventCallback<DateTime?> PickerMonthChanged { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public Func<DateTime?, bool> IsDateTimeDisabledFunc { get; set; }
+
         private DateTime? _datePicked { get; set; }
         private TimeSpan? _timePicked { get; set; }
 
@@ -116,6 +120,7 @@ namespace MudBlazor
         {
             Converter.GetFunc = OnGet;
             Converter.SetFunc = OnSet;
+            ((DefaultConverter<DateTime?>)Converter).Format = DateTimeFormat;
             FirstDayOfWeek = Culture.DateTimeFormat.FirstDayOfWeek;
         }
 
@@ -129,8 +134,12 @@ namespace MudBlazor
 
         protected override Task StringValueChanged(string value)
         {
+            Touched = true;
             DateTime? date = Converter.Get(value);
-            return SetDateTime(date);
+            _datePicked = date?.Date;
+            _timePicked = date?.TimeOfDay;
+            // DateTimeChanged.InvokeAsync(date);
+            return SetDateTimeAsync(date, false);
         }
 
         public DateTime? OnGet(string value)
@@ -158,35 +167,35 @@ namespace MudBlazor
         /// <summary>
         /// Called when a new date is picked
         /// </summary>
-        protected Task DateSelected(DateTime? date)
+        protected async Task DateSelected(DateTime? date)
         {
             _datePicked = date;
             if (_datePicked != null && _timePicked != null)
             {
                 if (DateTimeChanged.HasDelegate)
                 {
-                    DateTimeChanged.InvokeAsync(GetDateTime());
+                    await DateTimeChanged.InvokeAsync(GetDateTime());
                 }
                 SubmitAndClose();
             }
-            return SetDateTimeText();
+            await SetDateTimeAsync(GetDateTime(), false);
         }
 
         /// <summary>
         /// Called when a new time is picked
         /// </summary>
-        protected Task TimeSelected(TimeSpan? time)
+        protected async Task TimeSelected(TimeSpan? time)
         {
             _timePicked = time;
             if (_datePicked != null && _timePicked != null)
             {
                 if (DateTimeChanged.HasDelegate)
                 {
-                    DateTimeChanged.InvokeAsync(GetDateTime());
+                    await DateTimeChanged.InvokeAsync(GetDateTime());
                 }
                 SubmitAndClose();
             }
-            return SetDateTimeText();
+            await SetDateTimeAsync(GetDateTime(), false);
         }
 
         protected DateTime? GetDateTime() 
@@ -195,11 +204,44 @@ namespace MudBlazor
         /// <summary>
         /// Sets the date and time selection
         /// </summary>
-        protected Task SetDateTime(DateTime? dateTime)
+        protected async Task SetDateTime(DateTime? dateTime)
         {
             _datePicked = dateTime?.Date;
             _timePicked = dateTime?.TimeOfDay;
-            return SetDateTimeText();
+            await SetDateTimeAsync(dateTime, true);
+            await SetTextAsync(Converter.Set(_value), false);
+        }
+
+        protected async Task SetDateTimeAsync(DateTime? date, bool updateValue)
+        {
+            if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
+            {
+                date = System.DateTime.SpecifyKind(date.Value, _value.Value.Kind);
+            }
+
+            _datePicked = date?.Date;
+            _timePicked = date?.TimeOfDay;
+            StateHasChanged();
+
+            if (_value != date)
+            {
+                Touched = true;
+
+                if (date is not null && IsDateTimeDisabledFunc is not null && IsDateTimeDisabledFunc(date))
+                {
+                    return;
+                }
+
+                _value = date;
+                if (updateValue)
+                {
+                    Converter.GetError = false;
+                    await SetTextAsync(Converter.Set(_value), false);
+                }
+                await DateTimeChanged.InvokeAsync(_value);
+                await BeginValidateAsync();
+                FieldChanged(_value);
+            }
         }
 
         protected Task SetDateTimeText()
@@ -223,12 +265,17 @@ namespace MudBlazor
             }
         }
 
+        private bool IsDisabled()
+        {
+            return Disabled || IsDateTimeDisabledFunc != null && IsDateTimeDisabledFunc(GetDateTime());
+        }
+
         /// <summary>
         /// Clears the date and time selection
         /// </summary>
         public override void Clear(bool close = true)
         {
-            SetDateTime(null);
+            Task task = SetDateTimeAsync(null, true);
             base.Clear(close);
         }
     }
