@@ -489,7 +489,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("Johanna");
             dataGrid.FindAll("td input")[3].GetAttribute("value").Trim().Should().Be("23");
             dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("Steve");
-            Assert.IsNull(dataGrid.FindAll("td input")[5].GetAttribute("value"));
+            dataGrid.FindAll("td input")[5].GetAttribute("value").Should().BeNull();
             dataGrid.FindAll(".mud-table-body tr td input")[0].Change("Jonathan");
             dataGrid.FindAll(".mud-table-body tr td input")[1].Change(52);
             dataGrid.FindAll(".mud-table-body tr td input")[0].GetAttribute("value").Trim().Should().Be("Jonathan");

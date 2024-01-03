@@ -31,7 +31,7 @@ public class ServiceCollectionExtensionsTests
         var dialogService = serviceProvider.GetService<IDialogService>();
 
         // Assert
-        Assert.IsNotNull(dialogService);
+        dialogService.Should().NotBeNull();
     }
 
     [Test]
@@ -48,7 +48,7 @@ public class ServiceCollectionExtensionsTests
         var snackBarService = serviceProvider.GetService<ISnackbar>();
 
         // Assert
-        Assert.IsNotNull(snackBarService);
+        snackBarService.Should().NotBeNull();
     }
 
     [Test]
@@ -74,7 +74,7 @@ public class ServiceCollectionExtensionsTests
         var actualOptions = options.Value;
 
         // Assert
-        Assert.IsNotNull(snackBarService);
+        snackBarService.Should().NotBeNull();
         Assert.AreSame(expectedOptions, actualOptions);
     }
 
@@ -99,11 +99,11 @@ public class ServiceCollectionExtensionsTests
 #pragma warning restore CS0618
 
         // Assert
-        Assert.IsNotNull(browserViewportService);
-        Assert.IsNotNull(resizeListenerService);
-        Assert.IsNotNull(browserWindowSizeProvider);
-        Assert.IsNotNull(resizeService);
-        Assert.IsNotNull(breakpointService);
+        browserViewportService.Should().NotBeNull();
+        resizeListenerService.Should().NotBeNull();
+        browserWindowSizeProvider.Should().NotBeNull();
+        resizeService.Should().NotBeNull();
+        breakpointService.Should().NotBeNull();
     }
 
     [Test]
@@ -140,12 +140,12 @@ public class ServiceCollectionExtensionsTests
         var actualOptions = options.Value;
 
         // Assert
-        Assert.IsNotNull(browserViewportService);
-        Assert.IsNotNull(resizeListenerService);
-        Assert.IsNotNull(browserWindowSizeProvider);
-        Assert.IsNotNull(breakpointService);
-        Assert.IsNotNull(resizeService);
-        Assert.IsNotNull(expectedOptions);
+        browserViewportService.Should().NotBeNull();
+        resizeListenerService.Should().NotBeNull();
+        browserWindowSizeProvider.Should().NotBeNull();
+        breakpointService.Should().NotBeNull();
+        resizeService.Should().NotBeNull();
+        expectedOptions.Should().NotBeNull();
         Assert.AreSame(expectedOptions, actualOptions);
     }
 
@@ -162,7 +162,7 @@ public class ServiceCollectionExtensionsTests
         var resizeObserver = serviceProvider.GetService<IResizeObserver>();
 
         // Assert
-        Assert.IsNotNull(resizeObserver);
+        resizeObserver.Should().NotBeNull();
     }
 
     [Test]
@@ -186,8 +186,8 @@ public class ServiceCollectionExtensionsTests
         var actualOptions = options.Value;
 
         // Assert
-        Assert.IsNotNull(resizeObserver);
-        Assert.IsNotNull(expectedOptions);
+        resizeObserver.Should().NotBeNull();
+        expectedOptions.Should().NotBeNull();
         Assert.AreSame(expectedOptions, actualOptions);
     }
 
@@ -203,7 +203,7 @@ public class ServiceCollectionExtensionsTests
         var resizeObserverFactory = serviceProvider.GetService<IResizeObserverFactory>();
 
         // Assert
-        Assert.IsNotNull(resizeObserverFactory);
+        resizeObserverFactory.Should().NotBeNull();
     }
 
     [Test]
@@ -226,8 +226,8 @@ public class ServiceCollectionExtensionsTests
         var actualOptions = options.Value;
 
         // Assert
-        Assert.IsNotNull(resizeObserverFactory);
-        Assert.IsNotNull(expectedOptions);
+        resizeObserverFactory.Should().NotBeNull();
+        expectedOptions.Should().NotBeNull();
         Assert.AreSame(expectedOptions, actualOptions);
     }
 
@@ -245,8 +245,8 @@ public class ServiceCollectionExtensionsTests
         var keyInterceptorFactory = serviceProvider.GetService<IKeyInterceptorFactory>();
 
         // Assert
-        Assert.IsNotNull(keyInterceptor);
-        Assert.IsNotNull(keyInterceptorFactory);
+        keyInterceptor.Should().NotBeNull();
+        keyInterceptorFactory.Should().NotBeNull();
     }
 
     [Test]
@@ -263,8 +263,8 @@ public class ServiceCollectionExtensionsTests
         var jsEventFactory = serviceProvider.GetService<IJsEventFactory>();
 
         // Assert
-        Assert.IsNotNull(jsEvent);
-        Assert.IsNotNull(jsEventFactory);
+        jsEvent.Should().NotBeNull();
+        jsEventFactory.Should().NotBeNull();
     }
 
     [Test]
@@ -280,7 +280,7 @@ public class ServiceCollectionExtensionsTests
         var scrollManager = serviceProvider.GetService<IScrollManager>();
 
         // Assert
-        Assert.IsNotNull(scrollManager);
+        scrollManager.Should().NotBeNull();
     }
 
     [Test]
@@ -300,8 +300,8 @@ public class ServiceCollectionExtensionsTests
         var popoverService = serviceProvider.GetService<IPopoverService>();
 
         // Assert
-        Assert.IsNotNull(mudPopoverService);
-        Assert.IsNotNull(popoverService);
+        mudPopoverService.Should().NotBeNull();
+        popoverService.Should().NotBeNull();
     }
 
     [Test]
@@ -332,9 +332,9 @@ public class ServiceCollectionExtensionsTests
         var actualOptions = options.Value;
 
         // Assert
-        Assert.IsNotNull(mudPopoverService);
-        Assert.IsNotNull(popoverService);
-        Assert.IsNotNull(expectedOptions);
+        mudPopoverService.Should().NotBeNull();
+        popoverService.Should().NotBeNull();
+        expectedOptions.Should().NotBeNull();
         Assert.AreSame(expectedOptions, actualOptions);
     }
 
@@ -352,8 +352,8 @@ public class ServiceCollectionExtensionsTests
         var scrollListenerFactory = serviceProvider.GetService<IScrollListenerFactory>();
 
         // Assert
-        Assert.IsNotNull(scrollListener);
-        Assert.IsNotNull(scrollListenerFactory);
+        scrollListener.Should().NotBeNull();
+        scrollListenerFactory.Should().NotBeNull();
     }
 
     [Test]
@@ -370,8 +370,8 @@ public class ServiceCollectionExtensionsTests
         var scrollSpyFactory = serviceProvider.GetService<IScrollSpyFactory>();
 
         // Assert
-        Assert.IsNotNull(scrollSpy);
-        Assert.IsNotNull(scrollSpyFactory);
+        scrollSpy.Should().NotBeNull();
+        scrollSpyFactory.Should().NotBeNull();
     }
 
     [Test]
@@ -387,7 +387,7 @@ public class ServiceCollectionExtensionsTests
         var jsApiService = serviceProvider.GetService<IJsApiService>();
 
         // Assert
-        Assert.IsNotNull(jsApiService);
+        jsApiService.Should().NotBeNull();
     }
 
     [Test]
@@ -404,8 +404,8 @@ public class ServiceCollectionExtensionsTests
         var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
 
         // Assert
-        Assert.IsNotNull(eventListener);
-        Assert.IsNotNull(eventListenerFactory);
+        eventListener.Should().NotBeNull();
+        eventListenerFactory.Should().NotBeNull();
     }
 
     [Test]
@@ -422,7 +422,7 @@ public class ServiceCollectionExtensionsTests
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
 
         // Assert
-        Assert.IsNotNull(mudLocalizer);
+        mudLocalizer.Should().NotBeNull();
     }
 
     [Test]
@@ -467,30 +467,30 @@ public class ServiceCollectionExtensionsTests
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
 
         // Assert
-        Assert.IsNotNull(dialogService);
-        Assert.IsNotNull(snackBarService);
-        Assert.IsNotNull(resizeListenerService);
-        Assert.IsNotNull(browserViewportService);
-        Assert.IsNotNull(browserWindowSizeProvider);
-        Assert.IsNotNull(resizeService);
-        Assert.IsNotNull(breakpointService);
-        Assert.IsNotNull(resizeObserver);
-        Assert.IsNotNull(resizeObserverFactory);
-        Assert.IsNotNull(keyInterceptor);
-        Assert.IsNotNull(keyInterceptorFactory);
-        Assert.IsNotNull(jsEvent);
-        Assert.IsNotNull(jsEventFactory);
-        Assert.IsNotNull(scrollManager);
-        Assert.IsNotNull(mudPopoverService);
-        Assert.IsNotNull(popoverService);
-        Assert.IsNotNull(scrollListener);
-        Assert.IsNotNull(scrollListenerFactory);
-        Assert.IsNotNull(scrollSpy);
-        Assert.IsNotNull(scrollSpyFactory);
-        Assert.IsNotNull(jsApiService);
-        Assert.IsNotNull(eventListener);
-        Assert.IsNotNull(eventListenerFactory);
-        Assert.IsNotNull(mudLocalizer);
+        dialogService.Should().NotBeNull();
+        snackBarService.Should().NotBeNull();
+        resizeListenerService.Should().NotBeNull();
+        browserViewportService.Should().NotBeNull();
+        browserWindowSizeProvider.Should().NotBeNull();
+        resizeService.Should().NotBeNull();
+        breakpointService.Should().NotBeNull();
+        resizeObserver.Should().NotBeNull();
+        resizeObserverFactory.Should().NotBeNull();
+        keyInterceptor.Should().NotBeNull();
+        keyInterceptorFactory.Should().NotBeNull();
+        jsEvent.Should().NotBeNull();
+        jsEventFactory.Should().NotBeNull();
+        scrollManager.Should().NotBeNull();
+        mudPopoverService.Should().NotBeNull();
+        popoverService.Should().NotBeNull();
+        scrollListener.Should().NotBeNull();
+        scrollListenerFactory.Should().NotBeNull();
+        scrollSpy.Should().NotBeNull();
+        scrollSpyFactory.Should().NotBeNull();
+        jsApiService.Should().NotBeNull();
+        eventListener.Should().NotBeNull();
+        eventListenerFactory.Should().NotBeNull();
+        mudLocalizer.Should().NotBeNull();
     }
 
     [Test]
@@ -583,30 +583,30 @@ public class ServiceCollectionExtensionsTests
         var actualPopoverOptions = popoverOptions.Value;
 
         // Assert
-        Assert.IsNotNull(dialogService);
-        Assert.IsNotNull(snackBarService);
-        Assert.IsNotNull(resizeListenerService);
-        Assert.IsNotNull(browserViewportService);
-        Assert.IsNotNull(browserWindowSizeProvider);
-        Assert.IsNotNull(resizeService);
-        Assert.IsNotNull(breakpointService);
-        Assert.IsNotNull(resizeObserver);
-        Assert.IsNotNull(resizeObserverFactory);
-        Assert.IsNotNull(keyInterceptor);
-        Assert.IsNotNull(keyInterceptorFactory);
-        Assert.IsNotNull(jsEvent);
-        Assert.IsNotNull(jsEventFactory);
-        Assert.IsNotNull(scrollManager);
-        Assert.IsNotNull(mudPopoverService);
-        Assert.IsNotNull(popoverService);
-        Assert.IsNotNull(scrollListener);
-        Assert.IsNotNull(scrollListenerFactory);
-        Assert.IsNotNull(scrollSpy);
-        Assert.IsNotNull(scrollSpyFactory);
-        Assert.IsNotNull(jsApiService);
-        Assert.IsNotNull(eventListener);
-        Assert.IsNotNull(eventListenerFactory);
-        Assert.IsNotNull(mudLocalizer);
+        dialogService.Should().NotBeNull();
+        snackBarService.Should().NotBeNull();
+        resizeListenerService.Should().NotBeNull();
+        browserViewportService.Should().NotBeNull();
+        browserWindowSizeProvider.Should().NotBeNull();
+        resizeService.Should().NotBeNull();
+        breakpointService.Should().NotBeNull();
+        resizeObserver.Should().NotBeNull();
+        resizeObserverFactory.Should().NotBeNull();
+        keyInterceptor.Should().NotBeNull();
+        keyInterceptorFactory.Should().NotBeNull();
+        jsEvent.Should().NotBeNull();
+        jsEventFactory.Should().NotBeNull();
+        scrollManager.Should().NotBeNull();
+        mudPopoverService.Should().NotBeNull();
+        popoverService.Should().NotBeNull();
+        scrollListener.Should().NotBeNull();
+        scrollListenerFactory.Should().NotBeNull();
+        scrollSpy.Should().NotBeNull();
+        scrollSpyFactory.Should().NotBeNull();
+        jsApiService.Should().NotBeNull();
+        eventListener.Should().NotBeNull();
+        eventListenerFactory.Should().NotBeNull();
+        mudLocalizer.Should().NotBeNull();
 
         // We can't check reference here, instead we need to check each value
         actualPopoverOptions.QueueDelay.Should().Be(expectedOptions!.PopoverOptions.QueueDelay);

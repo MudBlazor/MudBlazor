@@ -205,9 +205,9 @@ public class PopoverServiceTests
         updatedState!.ShowContent.Should().BeFalse();
         Assert.IsEmpty(updatedState.Class);
         Assert.IsEmpty(updatedState.Style);
-        Assert.IsNull(updatedState.Tag);
+        updatedState.Tag.Should().BeNull();
         Assert.IsEmpty(updatedState.UserAttributes);
-        Assert.IsNull(updatedState.Fragment);
+        updatedState.Fragment.Should().BeNull();
 
         //Act
         var isUpdated = await service.UpdatePopoverAsync(popover);
@@ -261,7 +261,7 @@ public class PopoverServiceTests
         updatedState!.ShowContent.Should().BeFalse();
         Assert.IsEmpty(updatedState.Class);
         Assert.IsEmpty(updatedState.Style);
-        Assert.IsNull(updatedState.Tag);
+        updatedState.Tag.Should().BeNull();
         Assert.IsEmpty(updatedState.UserAttributes);
         //two notifications from CreatePopoverAsync and DestroyPopover, UpdatePopoverAsync shouldn't fire notification since destroyed
         observer.PopoverNotifications.Count.Should().Be(2);

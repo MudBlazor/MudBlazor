@@ -241,8 +241,8 @@ public class BrowserViewportServiceTests
         // Assert
         Assert.AreEqual(mainOptionsClone, mainOptions, "Properties mutated, this shouldn't happen");
         Assert.AreNotSame(mainOptionsClone, mainOptions, "The object references shouldn't be different");
-        Assert.IsNull(observerOptions2);
-        Assert.IsNull(observer2.ResizeOptions);
+        observerOptions2.Should().BeNull();
+        observer2.ResizeOptions.Should().BeNull();
         Assert.AreSame(observerOptions2, observer2.ResizeOptions, "The object reference should stay same, otherwise means the instance was replaced");
         Assert.AreEqual(observerOptions1Clone, observerOptions1, "Properties mutated, this shouldn't happen");
     }
