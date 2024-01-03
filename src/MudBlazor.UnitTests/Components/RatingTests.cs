@@ -24,8 +24,8 @@ namespace MudBlazor.UnitTests.Components
             var inputs = comp.FindAll("input[type=\"radio\"].mud-rating-input").ToArray();
             // check initial state
             comp.Instance.SelectedValue.Should().Be(0);
-            5.Should().Be(ratingItemsSpans.Length);
-            5.Should().Be(inputs.Length);
+            ratingItemsSpans.Length.Should().Be(5);
+            inputs.Length.Should().Be(5);
 
             // click first rating item
             ratingItemsSpans[0].Click();
@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Components
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             // check initial state
             comp.Instance.SelectedValue.Should().Be(0);
-            5.Should().Be(ratingItemsSpans.Length);
+            ratingItemsSpans.Length.Should().Be(5);
 
             // click 2nd rating item
             ratingItemsSpans[1].Click();
@@ -113,7 +113,7 @@ namespace MudBlazor.UnitTests.Components
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             // check initial state
             comp.Instance.SelectedValue.Should().Be(2);
-            5.Should().Be(ratingItemsSpans.Length);
+            ratingItemsSpans.Length.Should().Be(5);
 
             // click first rating item
             ratingItemsSpans[0].Click();
@@ -148,7 +148,7 @@ namespace MudBlazor.UnitTests.Components
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             // check initial state
             comp.Instance.SelectedValue.Should().Be(0);
-            12.Should().Be(ratingItemsSpans.Length);
+            ratingItemsSpans.Length.Should().Be(12);
 
             comp.Instance.HandleItemHovered(6);
             comp.Instance.HoveredValue.Should().Be(6);
