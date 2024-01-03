@@ -130,9 +130,7 @@ namespace MudBlazor
             if (!Table.ContainsItem(item))
             {
                 if (!Table.RetainSelection)
-                {
                     Selection.Remove(t);
-                }
                 Table.UpdateSelection();
             }
         }
