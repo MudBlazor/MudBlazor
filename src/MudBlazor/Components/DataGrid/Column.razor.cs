@@ -77,7 +77,18 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool? Hideable { get; set; }
 
-        [Parameter] public bool Hidden { get; set; }
+        [Parameter] public bool Hidden 
+        {
+            get => hidden;
+            set
+            {
+                if (hidden != value)
+                {
+                    hidden = value;
+                    HiddenChanged.InvokeAsync(hidden);
+                }
+            }
+        }
         [Parameter] public EventCallback<bool> HiddenChanged { get; set; }
 
         /// <summary>
@@ -303,7 +314,6 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            hidden = Hidden;
             groupBy = GroupBy;
 
             if (groupable && Grouping)
