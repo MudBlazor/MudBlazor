@@ -5,6 +5,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using MudBlazor.UnitTests.Utilities.Background.Mocks;
 using NUnit.Framework;
 
@@ -51,7 +52,7 @@ public class BackgroundWorkerTests
 
         var exception = Assert.ThrowsAsync<Exception>(() => worker.StartAsync(CancellationToken.None));
 
-        Assert.AreEqual("fail!", exception?.Message);
+        exception?.Message.Should().Be("fail!");
     }
 
     [Test]
@@ -101,7 +102,7 @@ public class BackgroundWorkerTests
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(1));
 
         Assert.ThrowsAsync<AggregateException>(() => worker.StopAsync(cts.Token));
-        Assert.AreEqual(2, worker.TokenCalls);
+        worker.TokenCalls.Should().Be(2);
     }
 
     [Test]

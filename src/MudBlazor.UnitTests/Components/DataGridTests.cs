@@ -1884,25 +1884,25 @@ namespace MudBlazor.UnitTests.Components
             var filters = dataGrid.Instance.FilterDefinitions;
 
             // assertions for string
-            Assert.AreEqual(filterDefinition.Id, filters[0].Id);
-            Assert.AreEqual(filterDefinition.Operator, filters[0].Operator);
-            Assert.AreEqual(filterDefinition.Value, filters[0].Value);
+            filters[0].Id.Should().Be(filterDefinition.Id);
+            filters[0].Operator.Should().Be(filterDefinition.Operator);
+            filters[0].Value.Should().Be(filterDefinition.Value);
             filters[0].Value = "Not Joe";
-            Assert.AreEqual(filterDefinition.Value, "Not Joe");
+            filterDefinition.Value.Should().Be("Not Joe");
 
             // assertions for int
-            Assert.AreEqual(filterDefinition2.Id, filters[1].Id);
-            Assert.AreEqual(filterDefinition2.Operator, filters[1].Operator);
-            Assert.AreEqual(filterDefinition2.Value, filters[1].Value);
+            filters[1].Id.Should().Be(filterDefinition2.Id);
+            filters[1].Operator.Should().Be(filterDefinition2.Operator);
+            filters[1].Value.Should().Be(filterDefinition2.Value);
             filters[1].Value = 45;
-            Assert.AreEqual(filterDefinition2.Value, 45);
+            filterDefinition2.Value.Should().Be(45);
 
             // assertions for Enum
-            Assert.AreEqual(filterDefinition3.Id, filters[2].Id);
-            Assert.AreEqual(filterDefinition3.Operator, filters[2].Operator);
-            Assert.AreEqual(filterDefinition3.Value, filters[2].Value);
+            filters[2].Id.Should().Be(filterDefinition3.Id);
+            filters[2].Operator.Should().Be(filterDefinition3.Operator);
+            filters[2].Value.Should().Be(filterDefinition3.Value);
             filters[2].Value = Severity.Error;
-            Assert.AreEqual(filterDefinition3.Value, Severity.Error);
+            filterDefinition3.Value.Should().Be(Severity.Error);
         }
 
         [Test]

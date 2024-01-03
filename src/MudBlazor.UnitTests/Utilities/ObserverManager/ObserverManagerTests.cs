@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
@@ -39,8 +40,8 @@ public class ObserverManagerTests
         _observerManager.Subscribe(id, observer);
 
         // Assert
-        Assert.AreEqual(1, _observerManager.Count);
-        Assert.AreEqual(observer, _observerManager.Observers[id]);
+        _observerManager.Count.Should().Be(1);
+        _observerManager.Observers[id].Should().Be(observer);
     }
 
     [Test]
@@ -56,8 +57,8 @@ public class ObserverManagerTests
         _observerManager.Subscribe(id, observer2);
 
         // Assert
-        Assert.AreEqual(1, _observerManager.Count);
-        Assert.AreEqual(observer2, _observerManager.Observers[id]);
+        _observerManager.Count.Should().Be(1);
+        _observerManager.Observers[id].Should().Be(observer2);
     }
 
     [Test]
@@ -72,7 +73,7 @@ public class ObserverManagerTests
         _observerManager.Unsubscribe(id);
 
         // Assert
-        Assert.AreEqual(0, _observerManager.Count);
+        _observerManager.Count.Should().Be(0);
         Assert.IsFalse(_observerManager.Observers.ContainsKey(id));
     }
 
@@ -97,7 +98,7 @@ public class ObserverManagerTests
         await _observerManager.NotifyAsync(NotificationAsync);
 
         // Assert
-        Assert.AreEqual(2, notificationCalledCount);
+        notificationCalledCount.Should().Be(2);
     }
 
     [Test]
@@ -126,7 +127,7 @@ public class ObserverManagerTests
         await _observerManager.NotifyAsync(NotificationAsync);
 
         // Assert
-        Assert.AreEqual(2, _observerManager.Count);
+        _observerManager.Count.Should().Be(2);
         Assert.IsTrue(_observerManager.Observers.ContainsKey(1));
         Assert.IsTrue(_observerManager.Observers.ContainsKey(3));
         Assert.IsFalse(_observerManager.Observers.ContainsKey(2));
@@ -144,7 +145,7 @@ public class ObserverManagerTests
         _observerManager.Clear();
 
         // Assert
-        Assert.AreEqual(0, _observerManager.Count, "Count should be 0 after clearing.");
+        _observerManager.Count.Should().Be(0);
         CollectionAssert.IsEmpty(_observerManager.Observers, "Observers collection should be empty after clearing.");
     }
 

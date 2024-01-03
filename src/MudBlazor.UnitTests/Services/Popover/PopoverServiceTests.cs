@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.JSInterop;
@@ -131,7 +132,7 @@ public class PopoverServiceTests
 
         // Assert
         var activePopovers = service.ActivePopovers.Select(x => x.Id).ToList();
-        Assert.AreEqual(1, observer.PopoverNotifications.Count);
+        observer.PopoverNotifications.Count.Should().Be(1);
         Assert.Contains(popover.Id, observer.PopoverNotifications);
         Assert.Contains(popover.Id, activePopovers);
     }
@@ -213,16 +214,16 @@ public class PopoverServiceTests
 
         // Assert after update
         Assert.IsTrue(isUpdated);
-        Assert.AreEqual(popover.Open, updatedState.ShowContent);
-        Assert.AreEqual(popover.PopoverClass, updatedState.Class);
-        Assert.AreEqual(popover.PopoverStyles, updatedState.Style);
-        Assert.AreEqual(popover.Tag, updatedState.Tag);
-        Assert.AreEqual(popover.UserAttributes, updatedState.UserAttributes);
-        Assert.AreEqual(newRenderFragment, updatedState.Fragment);
+        updatedState.ShowContent.Should().Be(popover.Open);
+        updatedState.Class.Should().Be(popover.PopoverClass);
+        updatedState.Style.Should().Be(popover.PopoverStyles);
+        updatedState.Tag.Should().Be(popover.Tag);
+        updatedState.UserAttributes.Should().BeSameAs(popover.UserAttributes);
+        updatedState.Fragment.Should().Be(newRenderFragment);
 
         //Assert
         //two notifications from CreatePopoverAsync and UpdatePopoverAsync
-        Assert.AreEqual(2, observer.PopoverNotifications.Count);
+        observer.PopoverNotifications.Count.Should().Be(2);
         Assert.Contains(popover.Id, observer.PopoverNotifications);
     }
 
@@ -263,7 +264,7 @@ public class PopoverServiceTests
         Assert.IsNull(updatedState.Tag);
         Assert.IsEmpty(updatedState.UserAttributes);
         //two notifications from CreatePopoverAsync and DestroyPopover, UpdatePopoverAsync shouldn't fire notification since destroyed
-        Assert.AreEqual(2, observer.PopoverNotifications.Count);
+        observer.PopoverNotifications.Count.Should().Be(2);
         Assert.Contains(popover.Id, observer.PopoverNotifications);
     }
 
@@ -285,7 +286,7 @@ public class PopoverServiceTests
         Assert.True(isDestroyed);
         Assert.IsEmpty(service.ActivePopovers);
         //two notifications from CreatePopoverAsync and DestroyPopover
-        Assert.AreEqual(2, observer.PopoverNotifications.Count);
+        observer.PopoverNotifications.Count.Should().Be(2);
         Assert.Contains(popover.Id, observer.PopoverNotifications);
     }
 
@@ -308,7 +309,7 @@ public class PopoverServiceTests
         var isDestroyedThree = await service.DestroyPopoverAsync(popoverThree);
 
         // Assert
-        Assert.AreEqual(3, service.QueueCount);
+        service.QueueCount.Should().Be(3);
         Assert.True(isDestroyedOne);
         Assert.True(isDestroyedTwo);
         Assert.True(isDestroyedThree);
@@ -340,10 +341,10 @@ public class PopoverServiceTests
         var firstNotification = containerNotificationList.ElementAt(0);
         var secondNotification = containerNotificationList.ElementAt(1);
         var thirdNotification = containerNotificationList.ElementAt(2);
-        Assert.AreEqual(3, containerNotificationList.Count);
-        Assert.AreEqual(PopoverHolderOperation.Create, firstNotification.Operation);
-        Assert.AreEqual(PopoverHolderOperation.Update, secondNotification.Operation);
-        Assert.AreEqual(PopoverHolderOperation.Remove, thirdNotification.Operation);
+        containerNotificationList.Count.Should().Be(3);
+        firstNotification.Operation.Should().Be(PopoverHolderOperation.Create);
+        secondNotification.Operation.Should().Be(PopoverHolderOperation.Update);
+        thirdNotification.Operation.Should().Be(PopoverHolderOperation.Remove);
     }
 
     [Test]
@@ -530,7 +531,7 @@ public class PopoverServiceTests
         var afterObserversCount = service.ObserversCount;
 
         // Assert
-        Assert.AreEqual(5, beforeObserversCount);
+        beforeObserversCount.Should().Be(5);
         Assert.Zero(afterObserversCount);
     }
 }

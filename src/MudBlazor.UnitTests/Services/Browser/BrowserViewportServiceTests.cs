@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
@@ -368,7 +369,7 @@ public class BrowserViewportServiceTests
         Assert.False(observer1.Notifications[0].IsImmediate);
         Assert.False(observer1.Notifications[1].IsImmediate);
         Assert.False(observer1.Notifications[2].IsImmediate);
-        Assert.AreNotEqual(subscription1.JavaScriptListenerId, subscription2.JavaScriptListenerId);
+        subscription2.JavaScriptListenerId.Should().NotBe(subscription1.JavaScriptListenerId);
         Assert.AreEqual(3, observer1.Notifications.Count);
         Assert.AreEqual(0, observer2.Notifications.Count);
     }

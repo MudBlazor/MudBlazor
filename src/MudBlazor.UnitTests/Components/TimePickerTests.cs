@@ -929,7 +929,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.FindAll("div.mud-minute")[30].Click(new MouseEventArgs()));
             picker.TimeIntermediate.Value.Minutes.Should().Be(30);
 
-            Assert.AreEqual(1, count);
+            count.Should().Be(1);
             // Click outside of the timepicker
             await comp.InvokeAsync(() => comp.Find("div.mud-overlay").Click());
 

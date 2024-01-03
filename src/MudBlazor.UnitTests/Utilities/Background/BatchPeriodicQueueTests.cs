@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using MudBlazor.Utilities.Background.Batch;
 using NUnit.Framework;
@@ -131,7 +132,7 @@ public class BatchPeriodicQueueTests
 
         // Assert
         Assert.IsFalse(eventSignaled);
-        Assert.AreEqual(3, batchPeriodicQueue.Count);
+        batchPeriodicQueue.Count.Should().Be(3);
         //NB! Use It.IsAny<CancellationToken>() instead of stoppingTokenSource.Token because it case of DisposeAsync the token will be default
         mockHandler.Verify(
             h => h.OnBatchTimerElapsedAsync(

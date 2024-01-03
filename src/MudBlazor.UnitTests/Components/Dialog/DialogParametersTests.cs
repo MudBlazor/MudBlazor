@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -37,7 +38,7 @@ public sealed class DialogParametersTests
         dialogParameters._parameters = new() { { "TestValue", "Test" } };
 
         var parameter = dialogParameters.Get(x => x.TestValue);
-        Assert.AreEqual("Test", parameter);
+        parameter.Should().Be("Test");
     }
 
     [Test]
@@ -54,7 +55,7 @@ public sealed class DialogParametersTests
         dialogParameters._parameters = new() { { "TestValue", "Test" } };
 
         var parameter = dialogParameters.TryGet(x => x.TestValue);
-        Assert.AreEqual("Test", parameter!);
+        parameter!.Should().Be("Test");
     }
 
     [Test]
@@ -63,7 +64,7 @@ public sealed class DialogParametersTests
         var dialogParameters = new DialogParameters<DialogWithParameters>();
 
         var parameter = dialogParameters.TryGet(x => x.TestValue);
-        Assert.AreEqual(default(string), parameter);
+        parameter.Should().Be(default(string));
     }
 
     [Test]

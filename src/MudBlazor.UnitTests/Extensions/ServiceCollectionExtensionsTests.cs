@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -608,33 +609,33 @@ public class ServiceCollectionExtensionsTests
         Assert.IsNotNull(mudLocalizer);
 
         // We can't check reference here, instead we need to check each value
-        Assert.AreEqual(expectedOptions!.PopoverOptions.QueueDelay, actualPopoverOptions.QueueDelay);
-        Assert.AreEqual(expectedOptions.PopoverOptions.ContainerClass, actualPopoverOptions.ContainerClass);
-        Assert.AreEqual(expectedOptions.PopoverOptions.FlipMargin, actualPopoverOptions.FlipMargin);
-        Assert.AreEqual(expectedOptions.PopoverOptions.ThrowOnDuplicateProvider, actualPopoverOptions.ThrowOnDuplicateProvider);
-        Assert.AreEqual(expectedOptions.PopoverOptions.Mode, actualPopoverOptions.Mode);
+        actualPopoverOptions.QueueDelay.Should().Be(expectedOptions!.PopoverOptions.QueueDelay);
+        actualPopoverOptions.ContainerClass.Should().Be(expectedOptions.PopoverOptions.ContainerClass);
+        actualPopoverOptions.FlipMargin.Should().Be(expectedOptions.PopoverOptions.FlipMargin);
+        actualPopoverOptions.ThrowOnDuplicateProvider.Should().Be(expectedOptions.PopoverOptions.ThrowOnDuplicateProvider);
+        actualPopoverOptions.Mode.Should().Be(expectedOptions.PopoverOptions.Mode);
 
-        Assert.AreEqual(expectedOptions.ResizeObserverOptions.EnableLogging, actualResizeObserverOptions.EnableLogging);
-        Assert.AreEqual(expectedOptions.ResizeObserverOptions.ReportRate, actualResizeObserverOptions.ReportRate);
+        actualResizeObserverOptions.EnableLogging.Should().Be(expectedOptions.ResizeObserverOptions.EnableLogging);
+        actualResizeObserverOptions.ReportRate.Should().Be(expectedOptions.ResizeObserverOptions.ReportRate);
 
-        Assert.AreEqual(expectedOptions.ResizeOptions.BreakpointDefinitions, actualResizeOptions.BreakpointDefinitions);
-        Assert.AreEqual(expectedOptions.ResizeOptions.EnableLogging, actualResizeOptions.EnableLogging);
-        Assert.AreEqual(expectedOptions.ResizeOptions.NotifyOnBreakpointOnly, actualResizeOptions.NotifyOnBreakpointOnly);
-        Assert.AreEqual(expectedOptions.ResizeOptions.ReportRate, actualResizeOptions.ReportRate);
-        Assert.AreEqual(expectedOptions.ResizeOptions.SuppressInitEvent, actualResizeOptions.SuppressInitEvent);
+        actualResizeOptions.BreakpointDefinitions.Should().BeSameAs(expectedOptions.ResizeOptions.BreakpointDefinitions);
+        actualResizeOptions.EnableLogging.Should().Be(expectedOptions.ResizeOptions.EnableLogging);
+        actualResizeOptions.NotifyOnBreakpointOnly.Should().Be(expectedOptions.ResizeOptions.NotifyOnBreakpointOnly);
+        actualResizeOptions.ReportRate.Should().Be(expectedOptions.ResizeOptions.ReportRate);
+        actualResizeOptions.SuppressInitEvent.Should().Be(expectedOptions.ResizeOptions.SuppressInitEvent);
 
-        Assert.AreEqual(expectedOptions.SnackbarConfiguration.ClearAfterNavigation, actualSnackBarOptions.ClearAfterNavigation);
-        Assert.AreEqual(expectedOptions.SnackbarConfiguration.MaxDisplayedSnackbars, actualSnackBarOptions.MaxDisplayedSnackbars);
-        Assert.AreEqual(expectedOptions.SnackbarConfiguration.NewestOnTop, actualSnackBarOptions.NewestOnTop);
-        Assert.AreEqual(expectedOptions.SnackbarConfiguration.PositionClass, actualSnackBarOptions.PositionClass);
-        Assert.AreEqual(expectedOptions.SnackbarConfiguration.PreventDuplicates, actualSnackBarOptions.PreventDuplicates);
-        Assert.AreEqual(expectedOptions.SnackbarConfiguration.MaximumOpacity, actualSnackBarOptions.MaximumOpacity);
-        Assert.AreEqual(expectedOptions.SnackbarConfiguration.ShowTransitionDuration, actualSnackBarOptions.ShowTransitionDuration);
-        Assert.AreEqual(expectedOptions.SnackbarConfiguration.VisibleStateDuration, actualSnackBarOptions.VisibleStateDuration);
-        Assert.AreEqual(expectedOptions.SnackbarConfiguration.HideTransitionDuration, actualSnackBarOptions.HideTransitionDuration);
-        Assert.AreEqual(expectedOptions.SnackbarConfiguration.ShowCloseIcon, actualSnackBarOptions.ShowCloseIcon);
-        Assert.AreEqual(expectedOptions.SnackbarConfiguration.RequireInteraction, actualSnackBarOptions.RequireInteraction);
-        Assert.AreEqual(expectedOptions.SnackbarConfiguration.BackgroundBlurred, actualSnackBarOptions.BackgroundBlurred);
-        Assert.AreEqual(expectedOptions.SnackbarConfiguration.SnackbarVariant, actualSnackBarOptions.SnackbarVariant);
+        actualSnackBarOptions.ClearAfterNavigation.Should().Be(expectedOptions.SnackbarConfiguration.ClearAfterNavigation);
+        actualSnackBarOptions.MaxDisplayedSnackbars.Should().Be(expectedOptions.SnackbarConfiguration.MaxDisplayedSnackbars);
+        actualSnackBarOptions.NewestOnTop.Should().Be(expectedOptions.SnackbarConfiguration.NewestOnTop);
+        actualSnackBarOptions.PositionClass.Should().Be(expectedOptions.SnackbarConfiguration.PositionClass);
+        actualSnackBarOptions.PreventDuplicates.Should().Be(expectedOptions.SnackbarConfiguration.PreventDuplicates);
+        actualSnackBarOptions.MaximumOpacity.Should().Be(expectedOptions.SnackbarConfiguration.MaximumOpacity);
+        actualSnackBarOptions.ShowTransitionDuration.Should().Be(expectedOptions.SnackbarConfiguration.ShowTransitionDuration);
+        actualSnackBarOptions.VisibleStateDuration.Should().Be(expectedOptions.SnackbarConfiguration.VisibleStateDuration);
+        actualSnackBarOptions.HideTransitionDuration.Should().Be(expectedOptions.SnackbarConfiguration.HideTransitionDuration);
+        actualSnackBarOptions.ShowCloseIcon.Should().Be(expectedOptions.SnackbarConfiguration.ShowCloseIcon);
+        actualSnackBarOptions.RequireInteraction.Should().Be(expectedOptions.SnackbarConfiguration.RequireInteraction);
+        actualSnackBarOptions.BackgroundBlurred.Should().Be(expectedOptions.SnackbarConfiguration.BackgroundBlurred);
+        actualSnackBarOptions.SnackbarVariant.Should().Be(expectedOptions.SnackbarConfiguration.SnackbarVariant);
     }
 }
