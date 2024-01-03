@@ -10,6 +10,12 @@ namespace MudBlazor.Services
     [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions
     {
+        public static IServiceCollection AddMudTheme(this IServiceCollection services)
+        {
+            services.TryAddScoped<MudThemeService>();
+            return services;
+        }
+
         /// <summary>
         /// Adds a Dialog Service as a Scoped instance.
         /// </summary>
@@ -395,6 +401,7 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudServices(this IServiceCollection services)
         {
             return services
+                .AddMudTheme()
                 .AddMudBlazorDialog()
                 .AddMudBlazorSnackbar()
                 .AddMudBlazorResizeListener()
@@ -425,6 +432,7 @@ namespace MudBlazor.Services
             configuration(options);
 
             return services
+                .AddMudTheme()
                 .AddMudBlazorDialog()
                 .AddMudBlazorSnackbar(snackBarConfiguration =>
                 {
