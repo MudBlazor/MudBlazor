@@ -299,14 +299,15 @@ namespace MudBlazor.UnitTests.Components
             var DefaultTheme = new MudTheme();
 
             //Dark theme
-            Assert.IsInstanceOf(typeof(PaletteDark), DefaultTheme.PaletteDark);
+            DefaultTheme.PaletteDark.Should().BeOfType<PaletteDark>();
             DefaultTheme.PaletteDark.Primary.Should().Be(new MudColor("#776be7"));
             DefaultTheme.PaletteDark.Error.Should().Be(new MudColor("#f64e62"));
             DefaultTheme.PaletteDark.White.Should().Be(new MudColor(Colors.Shades.White));
 
             //Light theme
 #pragma warning disable CS0618
-            Assert.IsInstanceOf(typeof(Palette), DefaultTheme.Palette);
+            // Note we're testing against the base type
+            DefaultTheme.Palette.Should().BeAssignableTo<Palette>();
 #pragma warning restore CS0618
             DefaultTheme.Palette.Primary.Should().Be(new MudColor("#594AE2"));
             DefaultTheme.Palette.Error.Should().Be(new MudColor(Colors.Red.Default));

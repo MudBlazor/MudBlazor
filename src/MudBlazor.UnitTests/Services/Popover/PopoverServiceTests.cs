@@ -32,7 +32,7 @@ public class PopoverServiceTests
         var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
 
         // Assert
-        Assert.IsEmpty(service.ActivePopovers);
+        service.ActivePopovers.Should().BeEmpty();
     }
 
     [Test]
@@ -133,8 +133,8 @@ public class PopoverServiceTests
         // Assert
         var activePopovers = service.ActivePopovers.Select(x => x.Id).ToList();
         observer.PopoverNotifications.Count.Should().Be(1);
-        Assert.Contains(popover.Id, observer.PopoverNotifications);
-        Assert.Contains(popover.Id, activePopovers);
+        observer.PopoverNotifications.Should().Contain(popover.Id);
+        activePopovers.Should().Contain(popover.Id);
     }
 
     [Test]
@@ -152,7 +152,7 @@ public class PopoverServiceTests
 
         // Assert
         result.Should().BeFalse();
-        Assert.IsEmpty(observer.PopoverNotifications);
+        observer.PopoverNotifications.Should().BeEmpty();
     }
 
     [Test]
@@ -170,7 +170,7 @@ public class PopoverServiceTests
 
         // Assert
         result.Should().BeFalse();
-        Assert.IsEmpty(observer.PopoverNotifications);
+        observer.PopoverNotifications.Should().BeEmpty();
     }
 
     [Test]
@@ -201,12 +201,12 @@ public class PopoverServiceTests
         var updatedState = service.ActivePopovers.FirstOrDefault(x => x.Id == popover.Id);
 
         //Assert before update
-        Assert.NotNull(updatedState);
+        updatedState.Should().NotBeNull();
         updatedState!.ShowContent.Should().BeFalse();
-        Assert.IsEmpty(updatedState.Class);
-        Assert.IsEmpty(updatedState.Style);
+        updatedState.Class.Should().BeEmpty();
+        updatedState.Style.Should().BeEmpty();
         updatedState.Tag.Should().BeNull();
-        Assert.IsEmpty(updatedState.UserAttributes);
+        updatedState.UserAttributes.Should().BeEmpty();
         updatedState.Fragment.Should().BeNull();
 
         //Act
@@ -224,7 +224,7 @@ public class PopoverServiceTests
         //Assert
         //two notifications from CreatePopoverAsync and UpdatePopoverAsync
         observer.PopoverNotifications.Count.Should().Be(2);
-        Assert.Contains(popover.Id, observer.PopoverNotifications);
+        observer.PopoverNotifications.Should().Contain(popover.Id);
     }
 
     [Test]
@@ -255,17 +255,17 @@ public class PopoverServiceTests
         var isUpdated = await service.UpdatePopoverAsync(popover);
 
         // Assert
-        Assert.NotNull(updatedState);
+        updatedState.Should().NotBeNull();
         isDestroyed.Should().BeTrue();
         isUpdated.Should().BeFalse();
         updatedState!.ShowContent.Should().BeFalse();
-        Assert.IsEmpty(updatedState.Class);
-        Assert.IsEmpty(updatedState.Style);
+        updatedState.Class.Should().BeEmpty();
+        updatedState.Style.Should().BeEmpty();
         updatedState.Tag.Should().BeNull();
-        Assert.IsEmpty(updatedState.UserAttributes);
+        updatedState.UserAttributes.Should().BeEmpty();
         //two notifications from CreatePopoverAsync and DestroyPopover, UpdatePopoverAsync shouldn't fire notification since destroyed
         observer.PopoverNotifications.Count.Should().Be(2);
-        Assert.Contains(popover.Id, observer.PopoverNotifications);
+        observer.PopoverNotifications.Should().Contain(popover.Id);
     }
 
     [Test]
@@ -283,11 +283,11 @@ public class PopoverServiceTests
         var isDestroyed = await service.DestroyPopoverAsync(popover);
 
         // Assert
-        Assert.True(isDestroyed);
-        Assert.IsEmpty(service.ActivePopovers);
+        isDestroyed.Should().BeTrue();
+        service.ActivePopovers.Should().BeEmpty();
         //two notifications from CreatePopoverAsync and DestroyPopover
         observer.PopoverNotifications.Count.Should().Be(2);
-        Assert.Contains(popover.Id, observer.PopoverNotifications);
+        observer.PopoverNotifications.Should().Contain(popover.Id);
     }
 
     [Test]
@@ -310,9 +310,9 @@ public class PopoverServiceTests
 
         // Assert
         service.QueueCount.Should().Be(3);
-        Assert.True(isDestroyedOne);
-        Assert.True(isDestroyedTwo);
-        Assert.True(isDestroyedThree);
+        isDestroyedOne.Should().BeTrue();
+        isDestroyedTwo.Should().BeTrue();
+        isDestroyedThree.Should().BeTrue();
     }
 
     [Test]
@@ -360,7 +360,7 @@ public class PopoverServiceTests
         var updatedState = service.ActivePopovers.FirstOrDefault(x => x.Id == popover.Id);
 
         //Assert
-        Assert.NotNull(updatedState);
+        updatedState.Should().NotBeNull();
         updatedState!.IsConnected.Should().BeFalse();
         updatedState.IsDetached.Should().BeFalse();
 
@@ -386,7 +386,7 @@ public class PopoverServiceTests
         var updatedState = service.ActivePopovers.FirstOrDefault(x => x.Id == popover.Id);
 
         //Assert
-        Assert.NotNull(updatedState);
+        updatedState.Should().NotBeNull();
         updatedState!.IsConnected.Should().BeFalse();
         updatedState.IsDetached.Should().BeFalse();
 
@@ -482,7 +482,7 @@ public class PopoverServiceTests
 
         // Assert
         eventSignaled.Should().BeTrue();
-        Assert.IsEmpty(service.ActivePopovers);
+        service.ActivePopovers.Should().BeEmpty();
         popoverTimerMock.Verify(
             h => h.OnBatchTimerElapsedAfterAsync(
                 It.Is<IReadOnlyCollection<MudPopoverHolder>>(items => items.Count == 2),
@@ -507,8 +507,8 @@ public class PopoverServiceTests
         await service.DisposeAsync();
 
         // Assert
-        Assert.Zero(service.QueueCount);
-        Assert.IsEmpty(service.ActivePopovers);
+        service.QueueCount.Should().Be(0);
+        service.ActivePopovers.Should().BeEmpty();
     }
 
     [Test]
@@ -532,6 +532,6 @@ public class PopoverServiceTests
 
         // Assert
         beforeObserversCount.Should().Be(5);
-        Assert.Zero(afterObserversCount);
+        afterObserversCount.Should().Be(0);
     }
 }

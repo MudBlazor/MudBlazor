@@ -49,7 +49,7 @@ public class BatchPeriodicQueueTests
 
         // Assert
         eventSignaled.Should().BeTrue();
-        Assert.Zero(batchPeriodicQueue.Count);
+        batchPeriodicQueue.Count.Should().Be(0);
         //NB! Use It.IsAny<CancellationToken>() instead of stoppingTokenSource.Token because it creates a linked token via CancellationTokenSource.CreateLinkedTokenSource, therefore the reference won't match
         mockHandler.Verify(
             h => h.OnBatchTimerElapsedAsync(
@@ -91,7 +91,7 @@ public class BatchPeriodicQueueTests
 
         // Assert
         eventSignaled.Should().BeTrue();
-        Assert.Zero(batchPeriodicQueue.Count);
+        batchPeriodicQueue.Count.Should().Be(0);
         //NB! Use It.IsAny<CancellationToken>() instead of stoppingTokenSource.Token because it case of DisposeAsync the token will be default
         mockHandler.Verify(
             h => h.OnBatchTimerElapsedAsync(

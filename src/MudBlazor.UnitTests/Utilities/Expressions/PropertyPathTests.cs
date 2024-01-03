@@ -39,8 +39,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             var property2 = PropertyPath.Visit(exp2);
 
             // Assert
-            Assert.True(property1.IsBodyMemberExpression);
-            Assert.True(property2.IsBodyMemberExpression);
+            property1.IsBodyMemberExpression.Should().BeTrue();
+            property2.IsBodyMemberExpression.Should().BeTrue();
             property1.ToString().Should().Be("Name");
             property2.ToString().Should().Be("Manager.Name");
             property1.GetPath().Should().Be("Name");
@@ -61,7 +61,7 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             var property = PropertyPath.Visit(exp);
 
             // Assert
-            Assert.False(property.IsBodyMemberExpression);
+            property.IsBodyMemberExpression.Should().BeFalse();
             property.ToString().Should().Be("");
             property.GetPath().Should().Be("");
             property.GetLastMemberName().Should().Be("");

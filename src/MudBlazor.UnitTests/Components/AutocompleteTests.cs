@@ -1015,7 +1015,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Test
 
-            comp.WaitForAssertion(() => Assert.IsFalse(cancelToken?.IsCancellationRequested));
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
 
             // Arrange second call
 
@@ -1032,7 +1032,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Test
 
-            comp.WaitForAssertion(() => Assert.IsTrue(cancelToken?.IsCancellationRequested));
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
 
             first.SetCanceled();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ToMarkup().Should().NotContain("Foo"));
@@ -1075,7 +1075,7 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.SetParam(a => a.Text, testText);
 
             // Assert
-            autocompletecomp.WaitForAssertion(() => Assert.AreEqual(testText, eventText));
+            autocompletecomp.WaitForAssertion(() => eventText.Should().Be(testText));
         }
 
         [Test]

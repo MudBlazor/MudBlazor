@@ -588,7 +588,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("J K Simmons");
 
             var textfield = comp.FindComponent<MudTextField<string>>();
-            Assert.AreSame(comp.Instance.FormFieldChangedEventArgs.Field, textfield.Instance);
+            textfield.Instance.Should().BeSameAs(comp.Instance.FormFieldChangedEventArgs.Field);
         }
 
         [Test]

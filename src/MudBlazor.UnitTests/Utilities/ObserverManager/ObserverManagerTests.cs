@@ -146,7 +146,7 @@ public class ObserverManagerTests
 
         // Assert
         _observerManager.Count.Should().Be(0);
-        CollectionAssert.IsEmpty(_observerManager.Observers, "Observers collection should be empty after clearing.");
+        _observerManager.Observers.Should().BeEmpty();
     }
 
     [Test]
@@ -172,7 +172,7 @@ public class ObserverManagerTests
         }
 
         // Assert
-        CollectionAssert.AreEqual(expectedObservers, actualObservers, "Enumerated observers should match the expected observers.");
+        actualObservers.Should().BeEquivalentTo(expectedObservers);
     }
 
     [Test]
@@ -199,7 +199,7 @@ public class ObserverManagerTests
         }
 
         // Assert
-        CollectionAssert.AreEqual(expectedObservers, actualObservers, "Enumerated observers should match the expected observers.");
+        actualObservers.Should().BeEquivalentTo(expectedObservers);
     }
 
     [Test]
@@ -218,7 +218,7 @@ public class ObserverManagerTests
         var actualObservers = _observerManager.ToList();
 
         // Assert
-        CollectionAssert.AreEqual(expectedObservers, actualObservers, "Enumerated observers should match the expected observers.");
+        actualObservers.Should().BeEquivalentTo(expectedObservers);
     }
 
 

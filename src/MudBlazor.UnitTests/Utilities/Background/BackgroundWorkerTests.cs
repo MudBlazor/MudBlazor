@@ -23,8 +23,8 @@ public class BackgroundWorkerTests
 
         var startTask = worker.StartAsync(CancellationToken.None);
 
-        Assert.True(startTask.IsCompleted);
-        Assert.False(tcs.Task.IsCompleted);
+        startTask.IsCompleted.Should().BeTrue();
+        tcs.Task.IsCompleted.Should().BeFalse();
 
         // Complete the task
         tcs.TrySetResult(null!);
@@ -39,8 +39,8 @@ public class BackgroundWorkerTests
 
         var stopTask = worker.StartAsync(CancellationToken.None);
 
-        Assert.True(stopTask.IsCompleted);
-        Assert.AreSame(stopTask, worker.ExecuteTask);
+        stopTask.IsCompleted.Should().BeTrue();
+        worker.ExecuteTask.Should().BeSameAs(stopTask);
     }
 
     [Test]
@@ -63,7 +63,7 @@ public class BackgroundWorkerTests
 
         await worker.StopAsync(CancellationToken.None);
 
-        Assert.Null(worker.ExecuteTask);
+        worker.ExecuteTask.Should().BeNull();
     }
 
     [Test]
@@ -74,11 +74,11 @@ public class BackgroundWorkerTests
 
         await worker.StartAsync(CancellationToken.None);
 
-        Assert.False(worker.ExecuteTask?.IsCompleted);
+        worker.ExecuteTask?.IsCompleted.Should().BeFalse();
 
         await worker.StopAsync(CancellationToken.None);
 
-        Assert.True(worker.ExecuteTask?.IsCompleted);
+        worker.ExecuteTask?.IsCompleted.Should().BeTrue();
     }
 
     [Test]

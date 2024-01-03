@@ -18,10 +18,10 @@ public sealed class DialogParametersTests
     public void DialogParametersGeneric_Add_ShouldAddParameter()
     {
         var dialogParameters = new DialogParameters<DialogWithParameters>();
-        Assert.IsEmpty(dialogParameters._parameters);
+        dialogParameters._parameters.Should().BeEmpty();
 
         dialogParameters.Add(x => x.TestValue, "Test");
-        Assert.Contains(new KeyValuePair<string, object>("TestValue", "Test"), dialogParameters._parameters);
+        dialogParameters._parameters.Should().Contain(new KeyValuePair<string, object>("TestValue", "Test"));
     }
 
     [Test]

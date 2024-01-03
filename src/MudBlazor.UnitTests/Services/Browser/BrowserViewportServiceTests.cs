@@ -36,8 +36,8 @@ public class BrowserViewportServiceTests
         await service.SubscribeAsync(observer, fireImmediately: false);
 
         // Assert
-        Assert.Zero(observer.Notifications.Count);
-        Assert.AreEqual(1, service.ObserversCount);
+        observer.Notifications.Count.Should().Be(0);
+        service.ObserversCount.Should().Be(1);
         jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Never);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
     }
@@ -56,8 +56,8 @@ public class BrowserViewportServiceTests
         await service.SubscribeAsync(observerId, Lambda, fireImmediately: false);
 
         // Assert
-        Assert.Zero(lambdaInvokedCount);
-        Assert.AreEqual(1, service.ObserversCount);
+        lambdaInvokedCount.Should().Be(0);
+        service.ObserversCount.Should().Be(1);
         jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Never);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
     }
@@ -83,8 +83,8 @@ public class BrowserViewportServiceTests
         await service.SubscribeAsync(observerId, LambdaAsync, fireImmediately: false);
 
         // Assert
-        Assert.Zero(observerNotifications.Count);
-        Assert.AreEqual(1, service.ObserversCount);
+        observerNotifications.Count.Should().Be(0);
+        service.ObserversCount.Should().Be(1);
         jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Never);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
     }
@@ -102,9 +102,9 @@ public class BrowserViewportServiceTests
 
         // Assert
         var firstNotification = observer.Notifications[0];
-        Assert.True(firstNotification.IsImmediate);
-        Assert.AreEqual(1, observer.Notifications.Count);
-        Assert.AreEqual(1, service.ObserversCount);
+        firstNotification.IsImmediate.Should().BeTrue();
+        observer.Notifications.Count.Should().Be(1);
+        service.ObserversCount.Should().Be(1);
         jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Exactly(2));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
     }
@@ -124,9 +124,9 @@ public class BrowserViewportServiceTests
 
         // Assert
         var firstNotification = observerNotifications[0];
-        Assert.True(firstNotification.IsImmediate);
-        Assert.AreEqual(1, observerNotifications.Count);
-        Assert.AreEqual(1, service.ObserversCount);
+        firstNotification.IsImmediate.Should().BeTrue();
+        observerNotifications.Count.Should().Be(1);
+        service.ObserversCount.Should().Be(1);
         jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Exactly(2));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
     }
@@ -153,9 +153,9 @@ public class BrowserViewportServiceTests
 
         // Assert
         var firstNotification = observerNotifications[0];
-        Assert.True(firstNotification.IsImmediate);
-        Assert.AreEqual(1, observerNotifications.Count);
-        Assert.AreEqual(1, service.ObserversCount);
+        firstNotification.IsImmediate.Should().BeTrue();
+        observerNotifications.Count.Should().Be(1);
+        service.ObserversCount.Should().Be(1);
         jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Exactly(2));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
     }
@@ -175,9 +175,9 @@ public class BrowserViewportServiceTests
 
         // Assert
         var firstNotification = observer.Notifications[0];
-        Assert.True(firstNotification.IsImmediate);
-        Assert.AreEqual(1, observer.Notifications.Count);
-        Assert.AreEqual(1, service.ObserversCount);
+        firstNotification.IsImmediate.Should().BeTrue();
+        observer.Notifications.Count.Should().Be(1);
+        service.ObserversCount.Should().Be(1);
         jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Exactly(2));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
     }
@@ -207,15 +207,15 @@ public class BrowserViewportServiceTests
 
         // Assert
         var firstNotification = observerNotifications[0];
-        Assert.True(firstNotification.IsImmediate);
+        firstNotification.IsImmediate.Should().BeTrue();
         var options1Mutated = options1.Clone();
         // This is the "real" options that goes inside "mudResizeListenerFactory.listenForResize"
         options1Mutated.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(options1Mutated);
         // BrowserViewportSubscription holds this information on what was the real options that were passed to the "mudResizeListenerFactory.listenForResize"
         var innerObserverOptions = service.GetInternalSubscription(observerId)?.Options;
-        Assert.AreEqual(1, observerNotifications.Count);
-        Assert.AreEqual(1, service.ObserversCount);
-        Assert.AreEqual(options1Mutated, innerObserverOptions);
+        observerNotifications.Count.Should().Be(1);
+        service.ObserversCount.Should().Be(1);
+        innerObserverOptions.Should().Be(options1Mutated);
         jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<object[]>()), Times.Exactly(2));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
     }
@@ -239,12 +239,15 @@ public class BrowserViewportServiceTests
         await service.SubscribeAsync(observer2, fireImmediately: false);
 
         // Assert
-        Assert.AreEqual(mainOptionsClone, mainOptions, "Properties mutated, this shouldn't happen");
-        Assert.AreNotSame(mainOptionsClone, mainOptions, "The object references shouldn't be different");
+        // If this fails properties mutated, this shouldn't happen
+        mainOptions.Should().Be(mainOptionsClone);
+        mainOptions.Should().NotBeSameAs(mainOptionsClone);
         observerOptions2.Should().BeNull();
         observer2.ResizeOptions.Should().BeNull();
-        Assert.AreSame(observerOptions2, observer2.ResizeOptions, "The object reference should stay same, otherwise means the instance was replaced");
-        Assert.AreEqual(observerOptions1Clone, observerOptions1, "Properties mutated, this shouldn't happen");
+        // The object reference should stay same, otherwise means the instance was replaced
+        observer2.ResizeOptions.Should().BeSameAs(observerOptions2);
+        // If this fails properties mutated, this shouldn't happen
+        observerOptions1.Should().Be(observerOptions1Clone);
     }
 
     [Test]
@@ -262,7 +265,7 @@ public class BrowserViewportServiceTests
         await service.SubscribeAsync(observer2, fireImmediately: false);
 
         // Assert
-        Assert.AreEqual(2, service.ObserversCount);
+        service.ObserversCount.Should().Be(2);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Once);
     }
 
@@ -282,7 +285,7 @@ public class BrowserViewportServiceTests
         await service.SubscribeAsync(observer2, fireImmediately: false);
 
         // Assert
-        Assert.AreEqual(2, service.ObserversCount);
+        service.ObserversCount.Should().Be(2);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Exactly(2));
     }
 
@@ -303,11 +306,11 @@ public class BrowserViewportServiceTests
         await service.RaiseOnResized(new BrowserWindowSize { Width = 1280, Height = 1024 }, Breakpoint.Sm, subscription.JavaScriptListenerId);
 
         // Assert
-        Assert.True(observer.Notifications[0].IsImmediate);
-        Assert.False(observer.Notifications[1].IsImmediate);
-        Assert.False(observer.Notifications[2].IsImmediate);
-        Assert.False(observer.Notifications[3].IsImmediate);
-        Assert.AreEqual(4, observer.Notifications.Count);
+        observer.Notifications[0].IsImmediate.Should().BeTrue();
+        observer.Notifications[1].IsImmediate.Should().BeFalse();
+        observer.Notifications[2].IsImmediate.Should().BeFalse();
+        observer.Notifications[3].IsImmediate.Should().BeFalse();
+        observer.Notifications.Count.Should().Be(4);
     }
 
     [Test]
@@ -332,15 +335,15 @@ public class BrowserViewportServiceTests
         await service.RaiseOnResized(new BrowserWindowSize { Width = 1280, Height = 1024 }, Breakpoint.Sm, subscription1.JavaScriptListenerId);
 
         // Assert
-        Assert.False(observer1.Notifications[0].IsImmediate);
-        Assert.False(observer1.Notifications[1].IsImmediate);
-        Assert.False(observer1.Notifications[2].IsImmediate);
-        Assert.False(observer2.Notifications[0].IsImmediate);
-        Assert.False(observer2.Notifications[1].IsImmediate);
-        Assert.False(observer2.Notifications[2].IsImmediate);
-        Assert.AreEqual(subscription1.JavaScriptListenerId, subscription2.JavaScriptListenerId);
-        Assert.AreEqual(3, observer1.Notifications.Count);
-        Assert.AreEqual(3, observer2.Notifications.Count);
+        observer1.Notifications[0].IsImmediate.Should().BeFalse();
+        observer1.Notifications[1].IsImmediate.Should().BeFalse();
+        observer1.Notifications[2].IsImmediate.Should().BeFalse();
+        observer2.Notifications[0].IsImmediate.Should().BeFalse();
+        observer2.Notifications[1].IsImmediate.Should().BeFalse();
+        observer2.Notifications[2].IsImmediate.Should().BeFalse();
+        subscription2.JavaScriptListenerId.Should().Be(subscription1.JavaScriptListenerId);
+        observer1.Notifications.Count.Should().Be(3);
+        observer2.Notifications.Count.Should().Be(3);
     }
 
     [Test]
@@ -366,12 +369,12 @@ public class BrowserViewportServiceTests
         await service.RaiseOnResized(new BrowserWindowSize { Width = 1280, Height = 1024 }, Breakpoint.Sm, subscription1.JavaScriptListenerId);
 
         // Assert
-        Assert.False(observer1.Notifications[0].IsImmediate);
-        Assert.False(observer1.Notifications[1].IsImmediate);
-        Assert.False(observer1.Notifications[2].IsImmediate);
+        observer1.Notifications[0].IsImmediate.Should().BeFalse();
+        observer1.Notifications[1].IsImmediate.Should().BeFalse();
+        observer1.Notifications[2].IsImmediate.Should().BeFalse();
         subscription2.JavaScriptListenerId.Should().NotBe(subscription1.JavaScriptListenerId);
-        Assert.AreEqual(3, observer1.Notifications.Count);
-        Assert.AreEqual(0, observer2.Notifications.Count);
+        observer1.Notifications.Count.Should().Be(3);
+        observer2.Notifications.Count.Should().Be(0);
     }
 
     [Test]
@@ -387,7 +390,7 @@ public class BrowserViewportServiceTests
         await service.UnsubscribeAsync(observer);
 
         // Assert
-        Assert.Zero(service.ObserversCount);
+        service.ObserversCount.Should().Be(0);
     }
 
     [Test]
@@ -407,7 +410,7 @@ public class BrowserViewportServiceTests
         await service.UnsubscribeAsync(observer2);
 
         // Assert
-        Assert.Zero(service.ObserversCount);
+        service.ObserversCount.Should().Be(0);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener", It.IsAny<object[]>()), Times.Once);
     }
 
@@ -429,7 +432,7 @@ public class BrowserViewportServiceTests
         await service.UnsubscribeAsync(observer2);
 
         // Assert
-        Assert.Zero(service.ObserversCount);
+        service.ObserversCount.Should().Be(0);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener", It.IsAny<object[]>()), Times.Exactly(2));
     }
 
@@ -453,7 +456,7 @@ public class BrowserViewportServiceTests
         var result = await service.GetCurrentBreakpointAsync();
 
         // Assert
-        Assert.AreEqual(expectedBreakpoint, result);
+        result.Should().Be(expectedBreakpoint);
     }
 
     [Test]
@@ -468,7 +471,7 @@ public class BrowserViewportServiceTests
         var result = await service.IsBreakpointWithinReferenceSizeAsync(breakpoint, referenceBreakpoint);
 
         // Assert
-        Assert.AreEqual(expectedResult, result);
+        result.Should().Be(expectedResult);
     }
 
     [Test]
@@ -498,7 +501,7 @@ public class BrowserViewportServiceTests
         var result = await service.IsBreakpointWithinWindowSizeAsync(breakpoint);
 
         // Assert
-        Assert.AreEqual(expectedResult, result);
+        result.Should().Be(expectedResult);
     }
 
     [Test]
@@ -521,8 +524,8 @@ public class BrowserViewportServiceTests
         var result2 = await service.IsMediaQueryMatchAsync("random");
 
         // Assert
-        Assert.True(result1);
-        Assert.False(result2);
+        result1.Should().BeTrue();
+        result2.Should().BeFalse();
     }
 
     [Test]
@@ -588,8 +591,8 @@ public class BrowserViewportServiceTests
         var afterObserversCount = service.ObserversCount;
 
         // Assert
-        Assert.AreEqual(5, beforeObserversCount);
-        Assert.Zero(afterObserversCount);
+        beforeObserversCount.Should().Be(5);
+        afterObserversCount.Should().Be(0);
     }
 
     [Test]
@@ -605,7 +608,7 @@ public class BrowserViewportServiceTests
         await service.SubscribeAsync(observer);
 
         // Asset
-        Assert.Zero(observer.Notifications.Count);
-        Assert.Zero(service.ObserversCount);
+        observer.Notifications.Count.Should().Be(0);
+        service.ObserversCount.Should().Be(0);
     }
 }

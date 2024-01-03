@@ -75,7 +75,7 @@ public class ServiceCollectionExtensionsTests
 
         // Assert
         snackBarService.Should().NotBeNull();
-        Assert.AreSame(expectedOptions, actualOptions);
+        actualOptions.Should().BeSameAs(expectedOptions);
     }
 
 
@@ -146,7 +146,7 @@ public class ServiceCollectionExtensionsTests
         breakpointService.Should().NotBeNull();
         resizeService.Should().NotBeNull();
         expectedOptions.Should().NotBeNull();
-        Assert.AreSame(expectedOptions, actualOptions);
+        actualOptions.Should().BeSameAs(expectedOptions);
     }
 
     [Test]
@@ -188,7 +188,7 @@ public class ServiceCollectionExtensionsTests
         // Assert
         resizeObserver.Should().NotBeNull();
         expectedOptions.Should().NotBeNull();
-        Assert.AreSame(expectedOptions, actualOptions);
+        actualOptions.Should().BeSameAs(expectedOptions);
     }
 
     [Test]
@@ -228,7 +228,7 @@ public class ServiceCollectionExtensionsTests
         // Assert
         resizeObserverFactory.Should().NotBeNull();
         expectedOptions.Should().NotBeNull();
-        Assert.AreSame(expectedOptions, actualOptions);
+        actualOptions.Should().BeSameAs(expectedOptions);
     }
 
     [Test]
@@ -335,7 +335,7 @@ public class ServiceCollectionExtensionsTests
         mudPopoverService.Should().NotBeNull();
         popoverService.Should().NotBeNull();
         expectedOptions.Should().NotBeNull();
-        Assert.AreSame(expectedOptions, actualOptions);
+        actualOptions.Should().BeSameAs(expectedOptions);
     }
 
     [Test]
