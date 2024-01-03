@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Xml;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -26,15 +27,34 @@ namespace MudBlazor
             get => _value;
             set => SetDateAsync(value, true).AndForget();
         }
-
+        
+        private DateTime _lastSetTime = DateTime.MinValue;
+        private const int DebounceTimeoutMs = 100;
+        
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
             if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
             {
                 date = DateTime.SpecifyKind(date.Value, _value.Value.Kind);
             }
+ 
+            var now = DateTime.UtcNow;
+            
+            /* See #7866 for more details
+             * When the date is set in the UI, this method gets called with the same value multiple time. This guard
+             * debounces the value to the same value in a short time frame is ignored
+             */
+            if (_value == date && (now - _lastSetTime).TotalMilliseconds < DebounceTimeoutMs)
+            {
+                return;
+            }
 
-            if (_value != date)
+            _lastSetTime = now;
+            
+            // When the _value is null and an invalid date is entered into the UI, the data value passed to this method
+            // will be null. We need to check if the text has been set my the user and if so handle tha validation
+            // without this the UI doesn't display a validation error correctly
+            if (_value != date || (date is null && Text != null))
             {
                 Touched = true;
 

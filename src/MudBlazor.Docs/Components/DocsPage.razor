@@ -1,4 +1,5 @@
-﻿
+﻿@using System.Runtime.Versioning
+
 <MudMainContent Class="mudblazor-main-content">
     <MudContainer MaxWidth="MaxWidth.Large">
         <div id="docspage" class="docs-page">
@@ -14,6 +15,16 @@
     {
         <MudContainer MaxWidth="MaxWidth.Large" Class="mt-16">
             <Footer />
+        </MudContainer>
+    }
+    else {
+        // Just show copyright and version
+        <MudContainer MaxWidth="MaxWidth.Large">
+            <MudToolBar DisableGutters="true" Dense="true">
+                <MudText Typo="Typo.body1">Copyright © 2020-@DateTime.Now.Year MudBlazor.</MudText>
+                <MudSpacer/>
+                <MudText Typo="Typo.body1">Powered by .NET @Environment.Version.ToString()</MudText>
+            </MudToolBar>
         </MudContainer>
     }
     <MudDrawer Class="docs-page-content-navigation-drawer" @bind-Open="_contentDrawerOpen" Breakpoint="Breakpoint.Lg" Anchor="Anchor.End" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent">
@@ -34,3 +45,4 @@
         }
     </MudDrawer>
 </MudMainContent>
+

@@ -199,6 +199,64 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataPicker_ShouldClearText_WhenDateSetNull()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>();
+
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+
+            string invalid = "INVALID_DATE";
+            comp.SetParam(p => p.Text, "INVALID_DATE");
+            
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(invalid);
+
+            await Task.Delay(150);
+            
+            comp.SetParam(p => p.Date, null);
+            
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(null);
+        }
+        
+        
+        [Test]
+        public async Task DataPicker_ShouldDeBounceSetDate_WhenDateSetToTheSameValueQuickly()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>();
+
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+
+            string invalid = "INVALID_DATE";
+            comp.SetParam(p => p.Text, "INVALID_DATE");
+            
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(invalid);
+            
+            comp.SetParam(p => p.Date, null);
+            
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(invalid);
+        }
+        
+        [Test]
+        public async Task DataPicker_ShouldDisplayError_WhenTextSetToInvalidValue()
+        {
+            var comp = Context.RenderComponent<MudDatePicker>();
+
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+            comp.SetParam(p => p.Text, "INVALID_DATE");
+
+            picker.Error.Should().BeTrue();
+        }
+        
+        [Test]
         public void Check_Intial_Date_Format()
         {
             DateTime? date = new DateTime(2021, 1, 13);
