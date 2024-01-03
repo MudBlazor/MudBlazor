@@ -323,11 +323,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task WatchSystemTest()
         {
-            Assert.IsFalse(_systemMockValue);
+            _systemMockValue.Should().BeFalse();
             var comp = Context.RenderComponent<MudThemeProvider>();
             await comp.Instance.WatchSystemPreference(SystemChangedResult);
             await comp.Instance.SystemPreferenceChanged(true);
-            Assert.IsTrue(_systemMockValue);
+            _systemMockValue.Should().BeTrue();
         }
 
         [Test]

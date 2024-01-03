@@ -220,7 +220,7 @@ namespace MudBlazor.UnitTests.Components
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Success, config => { config.HideIcon = true; }));
             var hasIcon = _provider.Find("#mud-snackbar-container .mud-snackbar").FirstElementChild.ClassName.Contains("mud-snackbar-icon");
-            Assert.IsFalse(hasIcon);
+            hasIcon.Should().BeFalse();
         }
 
         [Test]

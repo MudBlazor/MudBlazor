@@ -74,7 +74,7 @@ public class ObserverManagerTests
 
         // Assert
         _observerManager.Count.Should().Be(0);
-        Assert.IsFalse(_observerManager.Observers.ContainsKey(id));
+        _observerManager.Observers.ContainsKey(id).Should().BeFalse();
     }
 
     [Test]
@@ -128,9 +128,9 @@ public class ObserverManagerTests
 
         // Assert
         _observerManager.Count.Should().Be(2);
-        Assert.IsTrue(_observerManager.Observers.ContainsKey(1));
-        Assert.IsTrue(_observerManager.Observers.ContainsKey(3));
-        Assert.IsFalse(_observerManager.Observers.ContainsKey(2));
+        _observerManager.Observers.ContainsKey(1).Should().BeTrue();
+        _observerManager.Observers.ContainsKey(3).Should().BeTrue();
+        _observerManager.Observers.ContainsKey(2).Should().BeFalse();
     }
 
     [Test]

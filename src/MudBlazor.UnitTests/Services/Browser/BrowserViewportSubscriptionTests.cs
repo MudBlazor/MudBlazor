@@ -23,7 +23,7 @@ public class BrowserViewportSubscriptionTests
         var result = subscription1.Equals(subscription2);
 
         // Assert
-        Assert.IsTrue(result);
+        result.Should().BeTrue();
     }
 
     [Test]
@@ -37,7 +37,7 @@ public class BrowserViewportSubscriptionTests
         var result = subscription1.Equals(subscription2);
 
         // Assert
-        Assert.IsFalse(result);
+        result.Should().BeFalse();
     }
 
     [Test]
@@ -51,7 +51,7 @@ public class BrowserViewportSubscriptionTests
         var result = subscription.Equals(obj);
 
         // Assert
-        Assert.IsTrue(result);
+        result.Should().BeTrue();
     }
 
     [Test]
@@ -66,7 +66,7 @@ public class BrowserViewportSubscriptionTests
         var result = subscription1.Equals(obj);
 
         // Assert
-        Assert.IsFalse(result);
+        result.Should().BeFalse();
     }
 
     [Test]
@@ -80,7 +80,7 @@ public class BrowserViewportSubscriptionTests
         var result = subscription.Equals(obj);
 
         // Assert
-        Assert.IsFalse(result);
+        result.Should().BeFalse();
     }
 
     [Test]
@@ -94,7 +94,7 @@ public class BrowserViewportSubscriptionTests
         var result = subscription.Equals(other);
 
         // Assert
-        Assert.IsFalse(result);
+        result.Should().BeFalse();
     }
 
     [Test]
