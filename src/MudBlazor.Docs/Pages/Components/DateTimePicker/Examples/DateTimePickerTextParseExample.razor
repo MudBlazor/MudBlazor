@@ -1,22 +1,23 @@
 ﻿@using System.Globalization
 @namespace MudBlazor.Docs.Examples
 
-<MudDatePicker Label="Flexible Date" Editable="true" Date="date" ImmediateText="true" Placeholder="day.month.year" DateFormat="@dateFormat" TextChanged="DatePickerTextChanged" HelperText="@bound" Clearable="true" />
+<MudDateTimePicker Label="Flexible Date" Editable="true" DateTime="date" ImmediateText="true" Placeholder="day.month.year hours:minutes:seconds" DateTimeFormat="@dateFormat" TextChanged="DatePickerTextChanged" HelperText="@bound" Clearable="true" />
 
 @code {
     DateTime? date = null;
-    string dateFormat = "dd.MM.yyyy";
+    string dateFormat = "dd.MM.yyyy hh:mm:ss";
     string bound = "not set";
 
     private void DatePickerTextChanged(string value)
     {
+        Console.WriteLine(value);
         if (value == null || value.Length < 6)
         {
             date = null;
         }
         else
         {
-            string[] formats = { "ddMMyy", "dd.MM.yyyy", "dd.M.yyyy", "d.MM.yyyy", "d.M.yyyy", "dd.MM.yy", "dd.M.yy", "d.MM.yy", "d.M.yy" };
+            string[] formats = { "ddMMyy hh:mm:ss", "dd.MM.yyyy hh:mm:ss", "dd.M.yyyy hh:m:s", "d.MM.yyyy h:mm:ss", "d.M.yyyy h:m:ss", "dd.MM.yy hh:mm:ss", "dd.M.yy h:m:s", "d.MM.yy h:m:s", "d.M.yy h:m:s" };
             if (DateTime.TryParseExact(value, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime validDate))
             {
                 date = validDate;

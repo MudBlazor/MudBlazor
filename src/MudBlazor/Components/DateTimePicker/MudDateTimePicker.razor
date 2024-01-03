@@ -9,12 +9,12 @@
     @<CascadingValue Value="@this" IsFixed="true">
         <MudPickerContent>
             <MudStack Row Spacing="0">
-                <MudDatePicker PickerVariant="PickerVariant.Static" Date="@_datePicked" DateChanged="DateSelected" DateFormat="@DateFormat" Disabled="IsDisabled()"
+                <MudDatePicker PickerVariant="PickerVariant.Static" Date="@_datePicked" DateChanged="DateSelected" DateFormat="@DateFormat" Disabled="@Disabled"
                                FirstDayOfWeek="@FirstDayOfWeek" FixDay="@FixDay" FixMonth="@FixMonth" FixYear="@FixYear" DisableToolbar="DisableToolbar"
                                OpenTo="@DateOpenTo" PickerMonth="@PickerMonth" ShowWeekNumbers="@ShowWeekNumbers" StartMonth="@StartMonth" TitleDateFormat="@TitleDateFormat"
-                               MaxMonthColumns="@MaxMonthColumns" NextIcon="@NextIcon" PreviousIcon="@PreviousIcon" PickerMonthChanged="@PickerMonthChanged" />
+                               MaxMonthColumns="@MaxMonthColumns" NextIcon="@NextIcon" PreviousIcon="@PreviousIcon" PickerMonthChanged="@PickerMonthChanged" IsDateDisabledFunc="@IsDateTimeDisabledFunc" AdditionalDateClassesFunc="AdditionalDateClassesFunc" />
 
-                <MudTimePicker PickerVariant="PickerVariant.Static" Time="_timePicked" TimeChanged="TimeSelected" TimeFormat="@TimeFormat" Disabled="IsDisabled()"
+                <MudTimePicker PickerVariant="PickerVariant.Static" Time="_timePicked" TimeChanged="TimeSelected" TimeFormat="@TimeFormat" Disabled="@Disabled"
                                DisableToolbar="DisableToolbar" OpenTo="@TimeOpenTo" MinuteSelectionStep="@MinuteSelectionStep" TimeEditMode="@TimeEditMode" />
             </MudStack>
         </MudPickerContent>

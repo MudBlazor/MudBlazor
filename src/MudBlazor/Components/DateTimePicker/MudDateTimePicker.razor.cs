@@ -111,7 +111,13 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public Func<DateTime?, bool> IsDateTimeDisabledFunc { get; set; }
+        public Func<DateTime, bool> IsDateTimeDisabledFunc { get; set; }
+        /// <summary>
+        /// Function to conditionally apply new classes to specific days
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
 
         private DateTime? _datePicked { get; set; }
         private TimeSpan? _timePicked { get; set; }
@@ -227,7 +233,7 @@ namespace MudBlazor
             {
                 Touched = true;
 
-                if (date is not null && IsDateTimeDisabledFunc is not null && IsDateTimeDisabledFunc(date))
+                if (date is not null && IsDateTimeDisabledFunc is not null && IsDateTimeDisabledFunc((DateTime) date))
                 {
                     return;
                 }
@@ -263,11 +269,6 @@ namespace MudBlazor
             {
                 Close();
             }
-        }
-
-        private bool IsDisabled()
-        {
-            return Disabled || IsDateTimeDisabledFunc != null && IsDateTimeDisabledFunc(GetDateTime());
         }
 
         /// <summary>
