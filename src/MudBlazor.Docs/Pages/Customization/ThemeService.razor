@@ -1,0 +1,20 @@
+@page "/customization/themeservice"
+
+<DocsPage>
+    <DocsPageHeader Title="Theme Service" SubTitle="Controlling MudTheme" />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="MudThemeService">
+                <Description>You can inject MudThemeService in anywhere of your app to communicate MudThemeProvider (via Provider property).</Description>
+            </SectionHeader>
+            <SectionContent>
+                <code>
+                    @("@inject MudThemeService ThemeService")
+                    <br />
+                    @("<MudButton OnClick=\"(() => ThemeService.Provider.IsDarkMode = true)\" />")
+                </code>
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
