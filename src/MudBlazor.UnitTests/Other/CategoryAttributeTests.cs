@@ -89,7 +89,7 @@ namespace MudBlazor.UnitTests.Other
                 }
             }
 
-            // If this fails ome component properties don't have categories.
+            // If this fails some component properties don't have categories.
             isTestOK.Should().BeTrue();
         }
 
