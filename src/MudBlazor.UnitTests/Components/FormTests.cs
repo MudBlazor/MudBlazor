@@ -1550,7 +1550,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormShouldRegisterOnlyTopSubscribeToParentFormFormControlsTest>();
             var form = comp.FindComponent<MudFormTestable>().Instance;
 
-            Assert.AreEqual(14, form.FormControls.Count);
+            form.FormControls.Count.Should().Be(14);
         }
 
         /// <summary>
@@ -1606,12 +1606,12 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => textField.SetText("new value"));
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("new value");
-            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, textField);
+            textField.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
             numeric.Value.Should().Be(0);
             await comp.InvokeAsync(() => numeric.Increment());
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(1);
-            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, numeric);
+            numeric.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
             var inputs = comp.FindAll("input").ToArray();
             // check initial state
@@ -1620,7 +1620,7 @@ namespace MudBlazor.UnitTests.Components
             inputs[2].Click();
             radioGroup.Value.Should().Be("1");
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("1");
-            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, radioGroup);
+            radioGroup.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
             var fileContent = InputFileContent.CreateFromText("", "upload.txt");
 
@@ -1629,7 +1629,7 @@ namespace MudBlazor.UnitTests.Components
             input.UploadFiles(fileContent);
 
             (comp.Instance.FormFieldChangedEventArgs.NewValue is IBrowserFile).Should().BeTrue();
-            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, mudFile);
+            mudFile.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
         }
 
         /// <summary>
@@ -1652,15 +1652,15 @@ namespace MudBlazor.UnitTests.Components
             var dateString = new DateTime(2022, 04, 03).ToShortDateString();
             await comp.InvokeAsync(() => datePicker.Find("input").Change(dateString));
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(new DateTime(2022, 04, 03));
-            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, datePicker.Instance);
+            datePicker.Instance.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
             await comp.InvokeAsync(() => timePicker.Find("input").Change("00:45"));
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(new TimeSpan(00, 45, 00));
-            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, timePicker.Instance);
+            timePicker.Instance.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
             await comp.InvokeAsync(() => colorPicker.Find("input").Change("#180f6fff"));
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(new MudColor("#180f6fff"));
-            Assert.AreEqual(comp.Instance.FormFieldChangedEventArgs.Field, colorPicker.Instance);
+            colorPicker.Instance.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
         }
 
         /// <summary>

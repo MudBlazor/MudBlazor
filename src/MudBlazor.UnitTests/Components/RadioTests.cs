@@ -258,7 +258,7 @@ namespace MudBlazor.UnitTests.Components
             }
             catch (Exception ex)
             {
-                Assert.AreEqual(ex.InnerException.GetType(), typeof(MudBlazor.Utilities.Exceptions.GenericTypeMismatchException));
+                typeof(MudBlazor.Utilities.Exceptions.GenericTypeMismatchException).Should().Be(ex.InnerException.GetType());
             }
         }
 
