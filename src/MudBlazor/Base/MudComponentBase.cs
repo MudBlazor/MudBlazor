@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BCSS;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
@@ -10,6 +11,9 @@ namespace MudBlazor
 #nullable enable
     public abstract class MudComponentBase : ComponentBase, IMudStateHasChanged
     {
+        [Inject]
+        public BcssService BcssService { get; set; }
+
         [Inject]
         private ILoggerFactory LoggerFactory { get; set; } = null!;
         private ILogger? _logger;
@@ -63,5 +67,16 @@ namespace MudBlazor
 
         /// <inheritdoc />
         void IMudStateHasChanged.StateHasChanged() => StateHasChanged();
+
+        string? _oldClass;
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            if (_oldClass != Class)
+            {
+                BcssService.Add(Class);
+                _oldClass = Class;
+            }
+        }
     }
 }
