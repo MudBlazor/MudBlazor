@@ -49,7 +49,10 @@
                         You must set the <CodeInline>Value</CodeInline> property of each item to a unique value or the selection
                         won't work. Also, the type of the item's value must match the group's <CodeInline>T</CodeInline> parameter.
                     </MudAlert>
-
+                    <MudAlert Severity="Severity.Info" Class="mt-3">
+                        Make sure to bind the toggle group's <CodeInline>Value</CodeInline> property in single- and toggle-selection mode 
+                        and <CodeInline>SelectedValues</CodeInline> with multi-selection.
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ToggleSelectionsExample)" ShowCode="false">
