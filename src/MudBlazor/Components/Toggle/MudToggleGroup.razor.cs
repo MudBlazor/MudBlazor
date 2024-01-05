@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -179,10 +180,28 @@ namespace MudBlazor
             {
                 return;
             }
-
             _items.Add(item);
         }
-        
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            var isValueBound = ValueChanged.HasDelegate;
+            var isSelectedValuesBound = SelectedValuesChanged.HasDelegate;
+            switch (SelectionMode)
+            {
+                case SelectionMode.SingleSelection:
+                case SelectionMode.ToggleSelection:
+                    if (!isValueBound && isSelectedValuesBound)
+                        throw new ArgumentException($"For SelectionMode {SelectionMode} you should bind {nameof(Value)} instead of {nameof(SelectedValues)}");
+                    break;
+                case SelectionMode.MultiSelection:
+                    if (isValueBound && !isSelectedValuesBound)
+                        throw new ArgumentException($"For SelectionMode {SelectionMode} you should bind {nameof(SelectedValues)} instead of {nameof(Value)}");
+                    break;
+            }
+        }
+
         protected override void OnParametersSet()
         {
             base.OnParametersSet();

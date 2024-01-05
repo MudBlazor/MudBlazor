@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Common;
@@ -101,9 +102,9 @@ namespace MudBlazor.UnitTests.Components
             toggleItem.Click();
             toggle.Instance.Value.Should().BeNull();
         }
-        
+
         [Test]
-        public  async Task ToggleGroup_HorizontalItemPadding_Test()
+        public async Task ToggleGroup_HorizontalItemPadding_Test()
         {
             var comp = Context.RenderComponent<MudToggleGroup<string>>(builder =>
             {
@@ -153,9 +154,9 @@ namespace MudBlazor.UnitTests.Components
             // (_|_|x)
             item3.ClassList.Should().Contain("pe-3");
             item3.ClassList.Should().Contain("ps-2");
-            item3.ClassList.Should().Contain("py-2");            
+            item3.ClassList.Should().Contain("py-2");
         }
-        
+
         [Test]
         public async Task ToggleGroup_VerticalItemPadding_Test()
         {
@@ -210,7 +211,7 @@ namespace MudBlazor.UnitTests.Components
             item3.ClassList.Should().Contain("pt-2");
             item3.ClassList.Should().Contain("px-2");
         }
-        
+
         [Test]
         public void ToggleGroup_CustomClasses_Test()
         {
@@ -219,7 +220,7 @@ namespace MudBlazor.UnitTests.Components
                 builder.Add(x => x.CheckMarkClass, "c69");
                 builder.Add(x => x.TextClass, "c42");
                 builder.Add(x => x.CheckMark, true);
-                builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a").Add(x=>x.UnselectedIcon, @Icons.Material.Filled.Coronavirus));
+                builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a").Add(x => x.UnselectedIcon, @Icons.Material.Filled.Coronavirus));
             });
             var icon = comp.Find("svg");
             icon.ClassList.Should().Contain("c69");
@@ -227,7 +228,7 @@ namespace MudBlazor.UnitTests.Components
             var text = comp.Find(".mud-typography");
             text.ClassList.Should().Contain("c42");
         }
-                
+
         [Test]
         public void ToggleItem_IsEmpty_Test()
         {
@@ -238,7 +239,7 @@ namespace MudBlazor.UnitTests.Components
             new MudToggleItem<string>() { Text = null, Value = "a" }.IsEmpty.Should().Be(false);
 #pragma warning restore BL0005
         }
-        
+
         [Test]
         public void ToggleGroup_ItemRegistration_Test()
         {
@@ -254,6 +255,32 @@ namespace MudBlazor.UnitTests.Components
             // re-registering an item won't do nothing
             comp.Instance.Register(comp.Instance.GetItems().First());
             comp.Instance.GetItems().Count().Should().Be(3);
+        }
+
+        [Test]
+        public void ToggleGroup_Exception_Test()
+        {
+            foreach (var mode in new[] { SelectionMode.SingleSelection, SelectionMode.ToggleSelection })
+            {
+                Assert.Catch<ArgumentException>(() =>
+                    {
+                        Action<IEnumerable<string>> callback = _ => { };
+                        Context.RenderComponent<MudToggleGroup<string>>(builder =>
+                        {
+                            builder.Add(x => x.SelectionMode, mode);
+                            builder.Add(x => x.SelectedValuesChanged, callback);
+                        });
+                    }, $"For SelectionMode {mode} you should bind {nameof(MudToggleGroup<string>.Value)} instead of {nameof(MudToggleGroup<string>.SelectedValues)}");
+            }
+            Assert.Catch<ArgumentException>(() =>
+                {
+                    Action<string> callback = _ => { };
+                    Context.RenderComponent<MudToggleGroup<string>>(builder =>
+                    {
+                        builder.Add(x => x.SelectionMode, SelectionMode.MultiSelection);
+                        builder.Add(x => x.ValueChanged, callback);
+                    });
+                }, $"For SelectionMode {SelectionMode.MultiSelection} you should bind {nameof(MudToggleGroup<string>.SelectedValues)} instead of {nameof(MudToggleGroup<string>.Value)}");
         }
     }
 }
