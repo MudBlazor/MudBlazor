@@ -261,7 +261,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ToggleGroup_Exception_Test()
+        public void ToggleGroup_SelectionModeWarning_Test()
         {
             var provider = new MockLoggerProvider();
             var logger = provider.CreateLogger(GetType().FullName!) as MockLogger;
