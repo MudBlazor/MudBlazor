@@ -263,6 +263,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_SelectionModeWarning_Test()
         {
+            // fight partial coverage
+            Assert.DoesNotThrow(() =>
+            {
+                Context.RenderComponent<MudToggleGroup<string>>(builder =>
+                {
+                    builder.Add(x => x.SelectionMode, SelectionMode.MultiSelection);
+                    builder.Add(x => x.ValueChanged, new Action<string>(_ => { }));
+                });
+            });
             var provider = new MockLoggerProvider();
             var logger = provider.CreateLogger(GetType().FullName!) as MockLogger;
             Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider)); //set up the logging provider
