@@ -268,11 +268,10 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider)); //set up the logging provider
             foreach (var mode in new[] { SelectionMode.SingleSelection, SelectionMode.ToggleSelection })
             {
-                Action<IEnumerable<string>> callback = _ => { };
                 Context.RenderComponent<MudToggleGroup<string>>(builder =>
                 {
                     builder.Add(x => x.SelectionMode, mode);
-                    builder.Add(x => x.SelectedValuesChanged, callback);
+                    builder.Add(x => x.SelectedValuesChanged, new Action<IEnumerable<string>>(_ => { }));
                 });
                 logger!.GetEntries().Last().Level.Should().Be(LogLevel.Warning);
                 logger.GetEntries().Last().Message.Should().Be($"For SelectionMode {mode} you should bind {nameof(MudToggleGroup<string>.Value)} instead of {nameof(MudToggleGroup<string>.SelectedValues)}");
@@ -284,6 +283,20 @@ namespace MudBlazor.UnitTests.Components
             });
             logger!.GetEntries().Last().Level.Should().Be(LogLevel.Warning);
             logger.GetEntries().Last().Message.Should().Be($"For SelectionMode {SelectionMode.MultiSelection} you should bind {nameof(MudToggleGroup<string>.SelectedValues)} instead of {nameof(MudToggleGroup<string>.Value)}");
+            logger.GetEntries().Count.Should().Be(3);
+            // no warning if both are bound
+            Context.RenderComponent<MudToggleGroup<string>>(builder =>
+            {
+                builder.Add(x => x.SelectionMode, SelectionMode.MultiSelection);
+                builder.Add(x => x.ValueChanged, new Action<string>(_ => { }));
+                builder.Add(x => x.SelectedValuesChanged, new Action<IEnumerable<string>>(_ => { }));
+            });
+            logger.GetEntries().Count.Should().Be(3);
+            // no warning if none are bound
+            Context.RenderComponent<MudToggleGroup<string>>(builder =>
+            {
+                builder.Add(x => x.SelectionMode, SelectionMode.MultiSelection);
+            });
             logger.GetEntries().Count.Should().Be(3);
         }
     }
