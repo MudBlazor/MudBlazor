@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -190,14 +191,15 @@ namespace MudBlazor
             var isSelectedValuesBound = SelectedValuesChanged.HasDelegate;
             switch (SelectionMode)
             {
+                default:
                 case SelectionMode.SingleSelection:
                 case SelectionMode.ToggleSelection:
                     if (!isValueBound && isSelectedValuesBound)
-                        throw new ArgumentException($"For SelectionMode {SelectionMode} you should bind {nameof(Value)} instead of {nameof(SelectedValues)}");
+                        Logger?.LogWarning($"For SelectionMode {SelectionMode} you should bind {nameof(Value)} instead of {nameof(SelectedValues)}");
                     break;
                 case SelectionMode.MultiSelection:
                     if (isValueBound && !isSelectedValuesBound)
-                        throw new ArgumentException($"For SelectionMode {SelectionMode} you should bind {nameof(SelectedValues)} instead of {nameof(Value)}");
+                        Logger?.LogWarning($"For SelectionMode {SelectionMode} you should bind {nameof(SelectedValues)} instead of {nameof(Value)}");
                     break;
             }
         }

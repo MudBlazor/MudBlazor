@@ -10,6 +10,9 @@ using AngleSharp.Common;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -260,27 +263,28 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleGroup_Exception_Test()
         {
+            var provider = new MockLoggerProvider();
+            var logger = provider.CreateLogger(GetType().FullName!) as MockLogger;
+            Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider)); //set up the logging provider
             foreach (var mode in new[] { SelectionMode.SingleSelection, SelectionMode.ToggleSelection })
             {
-                Assert.Catch<ArgumentException>(() =>
-                    {
-                        Action<IEnumerable<string>> callback = _ => { };
-                        Context.RenderComponent<MudToggleGroup<string>>(builder =>
-                        {
-                            builder.Add(x => x.SelectionMode, mode);
-                            builder.Add(x => x.SelectedValuesChanged, callback);
-                        });
-                    }, $"For SelectionMode {mode} you should bind {nameof(MudToggleGroup<string>.Value)} instead of {nameof(MudToggleGroup<string>.SelectedValues)}");
-            }
-            Assert.Catch<ArgumentException>(() =>
+                Action<IEnumerable<string>> callback = _ => { };
+                Context.RenderComponent<MudToggleGroup<string>>(builder =>
                 {
-                    Action<string> callback = _ => { };
-                    Context.RenderComponent<MudToggleGroup<string>>(builder =>
-                    {
-                        builder.Add(x => x.SelectionMode, SelectionMode.MultiSelection);
-                        builder.Add(x => x.ValueChanged, callback);
-                    });
-                }, $"For SelectionMode {SelectionMode.MultiSelection} you should bind {nameof(MudToggleGroup<string>.SelectedValues)} instead of {nameof(MudToggleGroup<string>.Value)}");
+                    builder.Add(x => x.SelectionMode, mode);
+                    builder.Add(x => x.SelectedValuesChanged, callback);
+                });
+                logger!.GetEntries().Last().Level.Should().Be(LogLevel.Warning);
+                logger.GetEntries().Last().Message.Should().Be($"For SelectionMode {mode} you should bind {nameof(MudToggleGroup<string>.Value)} instead of {nameof(MudToggleGroup<string>.SelectedValues)}");
+            }
+            Context.RenderComponent<MudToggleGroup<string>>(builder =>
+            {
+                builder.Add(x => x.SelectionMode, SelectionMode.MultiSelection);
+                builder.Add(x => x.ValueChanged, new Action<string>(_ => { }));
+            });
+            logger!.GetEntries().Last().Level.Should().Be(LogLevel.Warning);
+            logger.GetEntries().Last().Message.Should().Be($"For SelectionMode {SelectionMode.MultiSelection} you should bind {nameof(MudToggleGroup<string>.SelectedValues)} instead of {nameof(MudToggleGroup<string>.Value)}");
+            logger.GetEntries().Count.Should().Be(3);
         }
     }
 }
