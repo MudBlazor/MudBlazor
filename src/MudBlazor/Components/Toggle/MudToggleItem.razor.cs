@@ -79,22 +79,35 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public T? Value { get; set; }
 
+        /// <summary>
+        /// Icon to show if the item is not selected (if CheckMark is true on the parent group)
+        /// Leave null to show no check mark (default).
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string? UnselectedIcon { get; set; }
 
+        /// <summary>
+        /// Icon to show if the item is selected (if CheckMark is true on the parent group)
+        /// By default this is set to a check mark icon.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string? SelectedIcon { get; set; } = Icons.Material.Filled.Check;
 
         private string? CurrentIcon => IsSelected ? SelectedIcon ?? UnselectedIcon : UnselectedIcon;
         
+        /// <summary>
+        /// The text to show. You need to set this only if you want a text that differs from the Value. If null,
+        /// show Value?.ToString().
+        /// Note: the Text is only shown if you haven't defined your own child content
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string? Text { get; set; }
 
         /// <summary>
-        /// Define custom content. The boolean parameter conveys whether or not the item is selected. 
+        /// Custom child content which overrides the text. The boolean parameter conveys whether or not the item is selected. 
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
