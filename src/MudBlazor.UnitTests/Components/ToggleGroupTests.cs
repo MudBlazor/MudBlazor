@@ -3,12 +3,16 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Common;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -56,17 +60,17 @@ namespace MudBlazor.UnitTests.Components
             var toggleItemSecond = comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
             var toggleItemThird = comp.FindAll("div.mud-toggle-item").GetItemByIndex(2);
 
-            group1.Instance.SelectedValues.Should().BeNull();
-            group2.Instance.SelectedValues.Should().BeNull();
+            group1.Instance.Values.Should().BeNull();
+            group2.Instance.Values.Should().BeNull();
             toggleItemSecond.Click();
-            group1.Instance.SelectedValues.Should().Contain("Item Two");
-            group2.Instance.SelectedValues.Should().Contain("Item Two");
+            group1.Instance.Values.Should().Contain("Item Two");
+            group2.Instance.Values.Should().Contain("Item Two");
             toggleItemThird.Click();
-            group1.Instance.SelectedValues.Should().BeEquivalentTo("Item Two", "Item Three");
-            group2.Instance.SelectedValues.Should().Contain("Item Three");
+            group1.Instance.Values.Should().BeEquivalentTo("Item Two", "Item Three");
+            group2.Instance.Values.Should().Contain("Item Three");
             toggleItemSecond.Click();
-            group1.Instance.SelectedValues.Should().BeEquivalentTo("Item Three");
-            group2.Instance.SelectedValues.Should().Contain("Item Three");
+            group1.Instance.Values.Should().BeEquivalentTo("Item Three");
+            group2.Instance.Values.Should().Contain("Item Three");
         }
 
         [Test]
@@ -79,13 +83,13 @@ namespace MudBlazor.UnitTests.Components
             var buttonTwo = comp.FindAll("button").Last();
 
             toggleFirst.Instance.Value.Should().Be("Item Two");
-            toggleSecond.Instance.SelectedValues.Should().BeEquivalentTo("Item One", "Item Three");
+            toggleSecond.Instance.Values.Should().BeEquivalentTo("Item One", "Item Three");
 
             buttonOne.Click();
             toggleFirst.Instance.Value.Should().Be("Item One");
 
             buttonTwo.Click();
-            toggleSecond.Instance.SelectedValues.Should().BeEquivalentTo("Item Two", "Item Three");
+            toggleSecond.Instance.Values.Should().BeEquivalentTo("Item Two", "Item Three");
         }
 
         [Test]
@@ -101,9 +105,9 @@ namespace MudBlazor.UnitTests.Components
             toggleItem.Click();
             toggle.Instance.Value.Should().BeNull();
         }
-        
+
         [Test]
-        public  async Task ToggleGroup_HorizontalItemPadding_Test()
+        public async Task ToggleGroup_HorizontalItemPadding_Test()
         {
             var comp = Context.RenderComponent<MudToggleGroup<string>>(builder =>
             {
@@ -153,9 +157,9 @@ namespace MudBlazor.UnitTests.Components
             // (_|_|x)
             item3.ClassList.Should().Contain("pe-3");
             item3.ClassList.Should().Contain("ps-2");
-            item3.ClassList.Should().Contain("py-2");            
+            item3.ClassList.Should().Contain("py-2");
         }
-        
+
         [Test]
         public async Task ToggleGroup_VerticalItemPadding_Test()
         {
@@ -210,7 +214,7 @@ namespace MudBlazor.UnitTests.Components
             item3.ClassList.Should().Contain("pt-2");
             item3.ClassList.Should().Contain("px-2");
         }
-        
+
         [Test]
         public void ToggleGroup_CustomClasses_Test()
         {
@@ -219,7 +223,7 @@ namespace MudBlazor.UnitTests.Components
                 builder.Add(x => x.CheckMarkClass, "c69");
                 builder.Add(x => x.TextClass, "c42");
                 builder.Add(x => x.CheckMark, true);
-                builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a").Add(x=>x.UnselectedIcon, @Icons.Material.Filled.Coronavirus));
+                builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a").Add(x => x.UnselectedIcon, @Icons.Material.Filled.Coronavirus));
             });
             var icon = comp.Find("svg");
             icon.ClassList.Should().Contain("c69");
@@ -227,7 +231,7 @@ namespace MudBlazor.UnitTests.Components
             var text = comp.Find(".mud-typography");
             text.ClassList.Should().Contain("c42");
         }
-                
+
         [Test]
         public void ToggleItem_IsEmpty_Test()
         {
@@ -238,7 +242,7 @@ namespace MudBlazor.UnitTests.Components
             new MudToggleItem<string>() { Text = null, Value = "a" }.IsEmpty.Should().Be(false);
 #pragma warning restore BL0005
         }
-        
+
         [Test]
         public void ToggleGroup_ItemRegistration_Test()
         {
@@ -254,6 +258,46 @@ namespace MudBlazor.UnitTests.Components
             // re-registering an item won't do nothing
             comp.Instance.Register(comp.Instance.GetItems().First());
             comp.Instance.GetItems().Count().Should().Be(3);
+        }
+
+        [Test]
+        public void ToggleGroup_SelectionModeWarning_Test()
+        {
+            var provider = new MockLoggerProvider();
+            var logger = provider.CreateLogger(GetType().FullName!) as MockLogger;
+            Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider)); //set up the logging provider
+            foreach (var mode in new[] { SelectionMode.SingleSelection, SelectionMode.ToggleSelection })
+            {
+                Context.RenderComponent<MudToggleGroup<string>>(builder =>
+                {
+                    builder.Add(x => x.SelectionMode, mode);
+                    builder.Add(x => x.ValuesChanged, new Action<IEnumerable<string>>(_ => { }));
+                });
+                logger!.GetEntries().Last().Level.Should().Be(LogLevel.Warning);
+                logger.GetEntries().Last().Message.Should().Be($"For SelectionMode {mode} you should bind {nameof(MudToggleGroup<string>.Value)} instead of {nameof(MudToggleGroup<string>.Values)}");
+            }
+            Context.RenderComponent<MudToggleGroup<string>>(builder =>
+            {
+                builder.Add(x => x.SelectionMode, SelectionMode.MultiSelection);
+                builder.Add(x => x.ValueChanged, new Action<string>(_ => { }));
+            });
+            logger!.GetEntries().Last().Level.Should().Be(LogLevel.Warning);
+            logger.GetEntries().Last().Message.Should().Be($"For SelectionMode {SelectionMode.MultiSelection} you should bind {nameof(MudToggleGroup<string>.Values)} instead of {nameof(MudToggleGroup<string>.Value)}");
+            logger.GetEntries().Count.Should().Be(3);
+            // no warning if both are bound
+            Context.RenderComponent<MudToggleGroup<string>>(builder =>
+            {
+                builder.Add(x => x.SelectionMode, SelectionMode.MultiSelection);
+                builder.Add(x => x.ValueChanged, new Action<string>(_ => { }));
+                builder.Add(x => x.ValuesChanged, new Action<IEnumerable<string>>(_ => { }));
+            });
+            logger.GetEntries().Count.Should().Be(3);
+            // no warning if none are bound
+            Context.RenderComponent<MudToggleGroup<string>>(builder =>
+            {
+                builder.Add(x => x.SelectionMode, SelectionMode.MultiSelection);
+            });
+            logger.GetEntries().Count.Should().Be(3);
         }
     }
 }
