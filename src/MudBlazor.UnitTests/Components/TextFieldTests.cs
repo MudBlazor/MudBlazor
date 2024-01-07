@@ -947,6 +947,39 @@ namespace MudBlazor.UnitTests.Components
             text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
         }
 
+        /// <summary>
+        /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
+        /// </summary>
+        [Test]
+        public async Task OnBlurWithModifiedValueTriggerValidationOnce1()
+        {
+            var callCounter = 0;
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Validation, (string value) => { callCounter++; return true; })
+            );
+            comp.Find("input").Change("A");
+            callCounter.Should().Be(1);
+            comp.Find("input").Blur();
+            callCounter.Should().Be(1);
+        }
+        
+        /// <summary>
+        /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
+        /// </summary>
+        [Test]
+        public async Task OnBlurWithModifiedValueTriggerValidationOnce2()
+        {
+            var callCounter = 0;
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.OnlyValidateIfDirty, true)
+                .Add(p => p.Validation, (string value) => { callCounter++; return true; })
+            );
+            comp.Find("input").Change("A");
+            callCounter.Should().Be(1);
+            comp.Find("input").Blur();
+            callCounter.Should().Be(1);
+        }
+
         [Test]
         public async Task OnKeyDownErrorContentCaughtException()
         {
