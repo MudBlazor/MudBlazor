@@ -321,13 +321,7 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             await Task.Delay(100);
             var autocompletecomp = comp.FindComponent<MudAutocomplete<ExternalList>>();
-            var input = autocompletecomp.Find("input");
-
-            var wrappedElement = ((dynamic)input).WrappedElement;
-            var value = ((IHtmlInputElement)wrappedElement).Value;
-
-            //The value of the input should be California
-            value.Should().Be("One");
+            autocompletecomp.Find("input").GetAttribute("value").Should().Be("One");
         }
 
         /// <summary>
