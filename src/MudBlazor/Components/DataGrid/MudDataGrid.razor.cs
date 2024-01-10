@@ -87,6 +87,17 @@ namespace MudBlazor
                 .AddStyle("left", "0px", when: hasStickyColumns)
             .Build();
 
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            if (ServerData != null && QuickFilter != null)
+            {
+                throw new InvalidOperationException(
+                    $"Do not supply both '{nameof(ServerData)}' and '{nameof(QuickFilter)}'."
+                );
+            }
+        }
+
         internal SortDirection GetColumnSortDirection(string columnName)
         {
             if (columnName == null)

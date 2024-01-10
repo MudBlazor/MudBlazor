@@ -17,6 +17,7 @@ using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static MudBlazor.Docs.Examples.TableRelationalExample;
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -231,6 +232,20 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("C");
 
             dataGrid.Instance.Filterable = false;
+        }
+
+        [Test]
+        public async Task DataGrid_SetParameters_ServerData_QuickFilter_Throw()
+        {
+            var serverDataFunc =
+                new Func<GridState<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Context.RenderComponent<MudDataGrid<TestModel1>>(
+                    Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
+                    Parameter(nameof(MudDataGrid<TestModel1>.QuickFilter), (TestModel1 x) => true)
+                )
+            );
+            exception.Message.Should().Be("Do not supply both 'ServerData' and 'QuickFilter'.");
         }
 
         [Test]
@@ -2008,15 +2023,6 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.FindAll("tfoot td").First().TextContent.Trim().Should().Be("Names: Sam, Alicia, Ira, John");
             dataGrid.FindAll("tfoot td").Last().TextContent.Trim().Should().Be($"Highest: {132000:C0} | 2 Over {100000:C0}");
-        }
-
-        [Test]
-        public async Task DataGridServerDataQuickFilterTest()
-        {
-            var comp = Context.RenderComponent<DataGridServerDataQuickFilterTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataQuickFilterTest.Item>>();
-
-            dataGrid.FindAll("tr").Count.Should().Be(3);
         }
 
         [Test]
