@@ -121,16 +121,16 @@ else
         return $"components/{_parentComponent?.Link}";
     }
 
-    string GetTitle() => $"{Title} - MudBlazor";
+    private string GetTitle() => $"{Title} - MudBlazor";
 
-    string GetSubTitle()
+    private string GetSubTitle()
     {
         if (string.IsNullOrEmpty(SubTitle))
             return "";
         return SubTitle.TrimEnd('.') + ".";
     }
 
-    string GetKeywords()
+    private string GetKeywords()
     {
         var keywords = new HashSet<string>(Regex.Split(Keywords ?? "", @",\s"));
         keywords.Add(Title);
@@ -145,7 +145,7 @@ else
         return string.Join(", ", keywords);
     }
 
-    string GetCanonicalUri()
+    private string GetCanonicalUri()
     {
         return NavigationManager.Uri.Replace(NavigationManager.BaseUri, "https://mudblazor.com/");
     }
