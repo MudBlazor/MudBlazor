@@ -67,6 +67,22 @@ namespace MudBlazor
             table.FireRowClickEvent(args, this, Item);
         }
 
+        public void OnRowHoverStart(MouseEventArgs args)
+        {
+            var table = Context?.Table;
+            if (table is null)
+                return;
+            table.FireRowHoverStartEvent(args, this, Item);
+        }
+
+        public void OnRowHoverStop(MouseEventArgs args)
+        {
+            var table = Context?.Table;
+            if (table is null)
+                return;
+            table.FireRowHoverStopEvent(args, this, Item);
+        }
+
         private void StartEditingItem() => StartEditingItem(buttonClicked: true);
 
         private void StartEditingItem(bool buttonClicked)

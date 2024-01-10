@@ -195,6 +195,48 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Row hover start event.
+        /// </summary>
+        [Parameter] public EventCallback<TableRowHoverEventArgs<T>> OnRowHoverStart { get; set; }
+
+        internal override void FireRowHoverStartEvent(MouseEventArgs args, MudTr row, object o)
+        {
+            var item = default(T);
+            try
+            {
+                item = (T)o;
+            }
+            catch (Exception) { /*ignore*/}
+            OnRowHoverStart.InvokeAsync(new TableRowHoverEventArgs<T>()
+            {
+                MouseEventArgs = args,
+                Row = row,
+                Item = item,
+            });
+        }
+
+        /// <summary>
+        /// Row hover stop event.
+        /// </summary>
+        [Parameter] public EventCallback<TableRowHoverEventArgs<T>> OnRowHoverStop { get; set; }
+
+        internal override void FireRowHoverStopEvent(MouseEventArgs args, MudTr row, object o)
+        {
+            var item = default(T);
+            try
+            {
+                item = (T)o;
+            }
+            catch (Exception) { /*ignore*/}
+            OnRowHoverStop.InvokeAsync(new TableRowHoverEventArgs<T>()
+            {
+                MouseEventArgs = args,
+                Row = row,
+                Item = item,
+            });
+        }
+
+        /// <summary>
         /// Returns the class that will get joined with RowClass. Takes the current item and row index.
         /// </summary>
         [Parameter]

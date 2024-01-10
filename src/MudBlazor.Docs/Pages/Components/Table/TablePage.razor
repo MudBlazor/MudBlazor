@@ -30,6 +30,18 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Hover Events">
+                <Description>
+                    <CodeInline>OnRowHoverStart</CodeInline> is triggered when the row starts being hovered (onmouseenter event).
+                    <CodeInline>OnRowHoverStop</CodeInline> is triggered when the row stops being hovered (onmouseleave event).
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(TableRowHoverEventsExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TableRowHoverEventsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Table with pagination and filtering">
                 <Description>
                     The <CodeInline>&lt;MudTable></CodeInline> component supports pagination, sorting and filtering of rows, as well as single and multiple row selection. To tell the table how to render your data, define a <CodeInline>&lt;RowTemplate></CodeInline>

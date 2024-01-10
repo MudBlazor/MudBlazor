@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTable T="string" Items="items" OnRowHoverStart="@(args => OnRowHoverStart(args))" OnRowHoverStop="@(args => OnRowHoverStop(args))">
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+<p>
+    Current: '@(currentlyHoveredItem)', last: '@(lastHoveredItem)'
+</p>
+
+@code {
+    public static string __description__ = @"
+        OnRowHoverStart should be called whenever a row (<tr>) starts being hovered (onmouseenter).
+        OnRowHoverStop should be called whenever a row (<tr>) stops being hovered (onmouseleave).
+        The paragraph (<p>) should be refreshed with the current and last hovered element.
+        ";
+
+    string[] items = new string[] { "A", "B" };
+
+    string currentlyHoveredItem = string.Empty;
+    string lastHoveredItem = string.Empty;
+
+    private void OnRowHoverStart(TableRowHoverEventArgs<string> args)
+    {
+        currentlyHoveredItem = args.Item;
+    }
+
+    private void OnRowHoverStop(TableRowHoverEventArgs<string> args)
+    {
+        currentlyHoveredItem = string.Empty;
+        lastHoveredItem = args.Item;
+    }
+}
