@@ -2,7 +2,7 @@
 @using System.Globalization
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDataGrid Items="@_items" Filterable="true">
+<MudDataGrid T="Model" Items="@_items" Filterable="true" GridStateChanged="OnGridStateChanged">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
@@ -21,4 +21,15 @@
     };
 
     public record Model(string Name, int? Age, double? Amount, double? Total);
+
+    public bool GridStateChangedEventCalled = false;
+    public int GridStateChangedEventCalledCounter = 0;
+    public GridState<Model> LastGridStateReceived;
+
+    private void OnGridStateChanged(GridState<Model> gridState)
+    {
+        GridStateChangedEventCalled = true;
+        GridStateChangedEventCalledCounter++;
+        LastGridStateReceived = gridState;
+    }
 }
