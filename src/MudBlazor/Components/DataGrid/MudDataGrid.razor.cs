@@ -90,11 +90,22 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            if (ServerData != null && QuickFilter != null)
+            if (ServerData != null)
             {
-                throw new InvalidOperationException(
-                    $"Do not supply both '{nameof(ServerData)}' and '{nameof(QuickFilter)}'."
-                );
+                if (Items != null)
+                {
+                    throw new InvalidOperationException(
+                        $"{GetType()} can only accept one item source from its parameters. " +
+                        $"Do not supply both '{nameof(Items)}' and '{nameof(ServerData)}'."
+                    );
+                }
+
+                if (QuickFilter != null)
+                {
+                    throw new InvalidOperationException(
+                        $"Do not supply both '{nameof(ServerData)}' and '{nameof(QuickFilter)}'."
+                    );
+                }
             }
         }
 
