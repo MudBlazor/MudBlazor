@@ -105,7 +105,7 @@ else
     {
         base.OnParametersSet();
         _isApiPage = NavigationManager.Uri.ToString().Contains("/api/");
-        _componentName = NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+        _componentName = NavigationManager.GetComponentLink();
         _componentType = ApiLink.GetTypeFromComponentLink(_componentName);
         _component = MenuService.GetComponent(_componentType);
         _parentComponent = MenuService.GetParent(_componentType);
