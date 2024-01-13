@@ -601,6 +601,11 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Rows Per Page two-way bindable parameter
+        /// </summary>
+        [Parameter] public EventCallback<int> RowsPerPageChanged { get; set; }
+
+        /// <summary>
         /// The page index of the currently displayed page (Zero based). Usually called by MudTablePager.
         /// Note: requires a MudTablePager in PagerContent.
         /// </summary>
@@ -1192,6 +1197,8 @@ namespace MudBlazor
                 CurrentPage = 0;
 
             StateHasChanged();
+
+            await RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
 
             if (_isFirstRendered)
                 await InvokeAsync(InvokeServerLoadFunc);
