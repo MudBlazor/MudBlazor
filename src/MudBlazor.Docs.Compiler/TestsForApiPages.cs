@@ -24,9 +24,12 @@ namespace MudBlazor.Docs.Compiler
                 var cb = new CodeBuilder();
 
                 cb.AddHeader();
+                cb.AddLine("using Microsoft.AspNetCore.Components;");
+                cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
                 cb.AddLine("using MudBlazor.Charts;");
                 cb.AddLine("using MudBlazor.Docs.Components;");
                 cb.AddLine("using MudBlazor.Internal;");
+                cb.AddLine("using MudBlazor.UnitTests.Mocks;");
                 cb.AddLine("using NUnit.Framework;");
                 cb.AddLine("using ComponentParameter = Bunit.ComponentParameter;");
                 cb.AddLine();
@@ -53,6 +56,7 @@ namespace MudBlazor.Docs.Compiler
                     cb.AddLine($"public void {SafeTypeName(type, removeT: true)}_API_Test()");
                     cb.AddLine("{");
                     cb.IndentLevel++;
+                    cb.AddLine(@$"ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager(""https://localhost:2112/"", ""https://localhost:2112/api/{SafeTypeName(type)}""));");
                     cb.AddLine(@$"ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter(""Type"", typeof({SafeTypeName(type)})));");
                     cb.IndentLevel--;
                     cb.AddLine("}");

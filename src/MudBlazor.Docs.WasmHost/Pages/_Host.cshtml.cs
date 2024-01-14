@@ -5,16 +5,14 @@ namespace MudBlazor.Docs.WasmHost.Pages
 {
     public class HostModel : PageModel
     {
+        public bool PreRender { get; set; }
         public IActionResult OnGet()
         {
-            if (Request.Headers.ContainsKey("UsePrerender") == false)
+            if (Request.Headers.ContainsKey("UsePrerender"))
             {
-                return File("index.html", "text/html");
+                PreRender = true;
             }
-            else
-            {
-                return Page();
-            }
+            return Page();
         }
     }
 }
