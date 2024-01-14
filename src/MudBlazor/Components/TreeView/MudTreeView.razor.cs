@@ -11,8 +11,8 @@ namespace MudBlazor
 {
     public partial class MudTreeView<T> : MudComponentBase
     {
-        private MudTreeViewItem<T> _selectedValue;
-        private HashSet<MudTreeViewItem<T>> _selectedValues;
+        private MudTreeViewItem<T>? _selectedValue => FindItemByValue(SelectedValue);
+        private HashSet<MudTreeViewItem<T>>? _selectedValues;
         private List<MudTreeViewItem<T>> _childItems = new();
 
         protected string Classname =>
@@ -149,11 +149,16 @@ namespace MudBlazor
             get => SelectedValueChanged;
             set => SelectedValueChanged = value;
         }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        [Parameter] public T? SelectedValue { get; set; }
 
         /// <summary>
         /// Called whenever the selected value changed.
         /// </summary>
-        [Parameter] public EventCallback<T> SelectedValueChanged { get; set; }
+        [Parameter] public EventCallback<T?> SelectedValueChanged { get; set; }
         
         /// <summary>
         /// Called whenever the selectedvalues changed.
@@ -209,7 +214,7 @@ namespace MudBlazor
 
             if (_selectedValue == item && !requestedValue)
             {
-                _selectedValue = default;
+                SelectedValue = default;
                 await item.Select(requestedValue);
                 await SelectedValueChanged.InvokeAsync(default);
                 return;
@@ -220,7 +225,7 @@ namespace MudBlazor
                 await _selectedValue.Select(false);
             }
 
-            _selectedValue = item;
+            SelectedValue = item.Value;
             await item.Select(requestedValue);
             await SelectedValueChanged.InvokeAsync(item.Value);
         }
@@ -249,6 +254,17 @@ namespace MudBlazor
 
         internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
 
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            if (parameters.TryGetValue(nameof(SelectedValue), out T selected) &&
+                (selected == null ? SelectedValue != null : !selected.Equals(SelectedValue)))
+            {
+                await SetSelectedValue(selected);
+            }
+            
+            await base.SetParametersAsync(parameters);
+        }
+
         /// <summary>
         /// Sets the selected value of the tree view.
         /// If the value is found, the corresponding item is selected; 
@@ -263,13 +279,8 @@ namespace MudBlazor
         /// This method updates the internal state to reflect the new selection and 
         /// triggers the necessary UI updates and events.
         /// </remarks>
-        public async Task<bool> SetSelectedValue(T value)
+        private async Task<bool> SetSelectedValue(T value)
         {
-            if (_selectedValue?.Value?.Equals(value) ?? false)
-            {
-                return true;
-            }
-
             if (value != null)
             {
                 var item = FindItemByValue(value);
