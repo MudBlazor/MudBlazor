@@ -100,6 +100,21 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Item2Activated.Should().BeTrue();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(2);
         }
+        
+        [Test]
+        public void TreeView_WillUnselectItems_WhenNotMultiSelect()
+        {
+            var comp = Context.RenderComponent<TreeViewTest7>();
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
+            comp.Find("div.mud-treeview-item-content").Click();
+            comp.Instance.Item1Activated.Should().BeTrue();
+            comp.Instance.Item2Activated.Should().BeFalse();
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
+            comp.FindAll("div.mud-treeview-item-content")[4].Click();
+            comp.Instance.Item1Activated.Should().BeFalse();
+            comp.Instance.Item2Activated.Should().BeTrue();
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
+        }
 
         [Test]
         public void Normal_Activate_CheckActivated_Deactivate_Check()

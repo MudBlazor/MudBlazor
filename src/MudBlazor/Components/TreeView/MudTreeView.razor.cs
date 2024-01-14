@@ -12,7 +12,9 @@ namespace MudBlazor
 {
     public partial class MudTreeView<T> : MudComponentBase
     {
-        private MudTreeViewItem<T>? _selectedTreeItem => FindItemByValue(SelectedValue);
+        private MudTreeViewItem<T>? _selectedTreeItem => SelectedValue is not null 
+            ? FindItemByValue(SelectedValue)
+            : null;
         private HashSet<MudTreeViewItem<T>>? _selectedValues;
         private List<MudTreeViewItem<T>> _childItems = new();
         private T? _selectedValue;
@@ -116,7 +118,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
-        public string Height { get; set; }
+        public string? Height { get; set; }
 
         /// <summary>
         /// Setting a maximum height will allow to scroll the treeview. If not set, it will try to grow in height.
@@ -124,14 +126,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
-        public string MaxHeight { get; set; }
+        public string? MaxHeight { get; set; }
 
         /// <summary>
         /// Setting a width the treeview. You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
-        public string Width { get; set; }
+        public string? Width { get; set; }
 
         /// <summary>
         /// If true, treeview will be disabled and all its childitems.
@@ -142,11 +144,11 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public HashSet<T> Items { get; set; }
+        public HashSet<T> Items { get; set; } = new();
 
         [ExcludeFromCodeCoverage]
         [Obsolete("Use SelectedValueChanged instead.", true)]
-        [Parameter] public EventCallback<T> ActivatedValueChanged
+        [Parameter] public EventCallback<T?> ActivatedValueChanged
         {
             get => SelectedValueChanged;
             set => SelectedValueChanged = value;
@@ -183,20 +185,20 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// ItemTemplate for rendering children.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public RenderFragment<T> ItemTemplate { get; set; }
+        public RenderFragment<T>? ItemTemplate { get; set; }
 
         [CascadingParameter] MudTreeView<T> MudTreeRoot { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public Func<T, Task<HashSet<T>>> ServerData { get; set; }
+        public Func<T, Task<HashSet<T>>>? ServerData { get; set; }
 
         public MudTreeView()
         {
