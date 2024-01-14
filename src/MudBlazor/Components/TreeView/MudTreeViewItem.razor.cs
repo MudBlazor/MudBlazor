@@ -186,10 +186,7 @@ namespace MudBlazor
         public bool Activated
         {
             get => _isSelected;
-            set
-            {
-                _ = MudTreeRoot?.UpdateSelected(this, value);
-            }
+            set { }
         }
 
         [Parameter]
@@ -325,10 +322,21 @@ namespace MudBlazor
         {
             if (firstRender && _isSelected)
             {
-                await MudTreeRoot.UpdateSelected(this, _isSelected);
+                await MudTreeRoot.Select(this);
             }
 
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            if (parameters.TryGetValue(nameof(Activated), out bool selected) &&
+                selected != Activated && MudTreeRoot is not null)
+            {
+                await MudTreeRoot.Select(this, Activated);
+            }
+            
+            await base.SetParametersAsync(parameters);
         }
 
         protected async Task OnItemClicked(MouseEventArgs ev)
@@ -347,7 +355,7 @@ namespace MudBlazor
 
             if (MudTreeRoot?.IsSelectable ?? false)
             {
-                await MudTreeRoot.UpdateSelected(this, !_isSelected);
+                await MudTreeRoot.Select(this, !_isSelected);
             }
 
             await OnClick.InvokeAsync(ev);
@@ -375,7 +383,7 @@ namespace MudBlazor
 
             if (MudTreeRoot?.IsSelectable ?? false)
             {
-                await MudTreeRoot.UpdateSelected(this, !_isSelected);
+                await MudTreeRoot.Select(this, !_isSelected);
             }
 
             await OnDoubleClick.InvokeAsync(ev);

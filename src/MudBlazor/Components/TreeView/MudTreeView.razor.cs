@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -11,9 +12,10 @@ namespace MudBlazor
 {
     public partial class MudTreeView<T> : MudComponentBase
     {
-        private MudTreeViewItem<T>? _selectedValue => FindItemByValue(SelectedValue);
+        private MudTreeViewItem<T>? _selectedTreeItem => FindItemByValue(SelectedValue);
         private HashSet<MudTreeViewItem<T>>? _selectedValues;
         private List<MudTreeViewItem<T>> _childItems = new();
+        private T? _selectedValue;
 
         protected string Classname =>
         new CssBuilder("mud-treeview")
@@ -149,11 +151,22 @@ namespace MudBlazor
             get => SelectedValueChanged;
             set => SelectedValueChanged = value;
         }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        [Parameter] public T? SelectedValue { get; set; }
+
+        [Parameter]
+        public T? SelectedValue
+        {
+            get => _selectedValue;
+            set
+            {
+                if (value is not null && FindItemByValue(value) is not null )
+                {
+                    _selectedValue = value;
+                    return;
+                }
+
+                _selectedValue = default;
+            }
+        }
 
         /// <summary>
         /// Called whenever the selected value changed.
@@ -206,33 +219,9 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        internal async Task UpdateSelected(MudTreeViewItem<T> item, bool requestedValue)
-        {
-            if ((_selectedValue == item && requestedValue) ||
-                (_selectedValue != item && !requestedValue))
-                return;
-
-            if (_selectedValue == item && !requestedValue)
-            {
-                SelectedValue = default;
-                await item.Select(requestedValue);
-                await SelectedValueChanged.InvokeAsync(default);
-                return;
-            }
-
-            if (_selectedValue != null)
-            {
-                await _selectedValue.Select(false);
-            }
-
-            SelectedValue = item.Value;
-            await item.Select(requestedValue);
-            await SelectedValueChanged.InvokeAsync(item.Value);
-        }
-
         internal Task UpdateSelectedItems()
         {
-            _selectedValues ??= new HashSet<MudTreeViewItem<T>>();
+            _selectedValues ??= new();
 
             //collect selected items
             _selectedValues.Clear();
@@ -244,19 +233,36 @@ namespace MudBlazor
                 }
             }
 
-            return SelectedValuesChanged.InvokeAsync(new HashSet<T>(_selectedValues.Select(i => i.Value)));
+            return SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
 
+        protected HashSet<T> SelectedValues => _selectedValues is not null
+            ? new(_selectedValues.Select(i => i.Value))
+            : new();
+        
         public async Task Select(MudTreeViewItem<T> item, bool isSelected = true)
         {
-            await UpdateSelected(item, isSelected);
+            if (MultiSelection)
+            {
+                await item.Select(isSelected);
+                await SelectedValuesChanged.InvokeAsync(SelectedValues);
+                return;
+            }
+
+            if (isSelected)
+            {
+                await SetSelectedValue(item.Value);
+                return;
+            }
+
+            await SetSelectedValue(default);
         }
 
         internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
 
         public override async Task SetParametersAsync(ParameterView parameters)
         {
-            if (parameters.TryGetValue(nameof(SelectedValue), out T selected) &&
+            if (parameters.TryGetValue(nameof(SelectedValue), out T? selected) &&
                 (selected == null ? SelectedValue != null : !selected.Equals(SelectedValue)))
             {
                 await SetSelectedValue(selected);
@@ -279,28 +285,49 @@ namespace MudBlazor
         /// This method updates the internal state to reflect the new selection and 
         /// triggers the necessary UI updates and events.
         /// </remarks>
-        private async Task<bool> SetSelectedValue(T value)
+        internal async Task<bool> SetSelectedValue(T? value)
         {
-            if (value != null)
+            try
             {
-                var item = FindItemByValue(value);
-                if (item != null)
+                await UnSelectAllChildren();
+
+                if (value == null ||
+                    FindItemByValue(value) is not { } item)
                 {
-                   await InvokeAsync(async () => await UpdateSelected(item, true));
-                   return true;
+                    if (SelectedValue == null)
+                    {
+                        return false;
+                    }
+
+                    SelectedValue = default;
+                    return true;
                 }
 
-                return false;
+                SelectedValue = value;
+                await item.Select(true);
+                return true;
             }
-
-            if (_selectedValue != null)
+            finally
             {
-                await InvokeAsync(async () => await UpdateSelected(_selectedValue, false));
+                await SelectedValueChanged.InvokeAsync(SelectedValue);
             }
-            
-            return true;
         }
 
+        internal async Task UnSelectAllChildren(List<MudTreeViewItem<T>>? children = null)
+        {
+            children ??= _childItems;
+            
+            foreach (var item in children)
+            {
+                await UnSelectAllChildren(item.ChildItems);
+
+                if (item.Activated)
+                {
+                    await item.Select(false);
+                }
+            }
+        }
+        
         internal MudTreeViewItem<T>? FindItemByValue(T value, List<MudTreeViewItem<T>>? children = null)
         {
             children ??= _childItems;
