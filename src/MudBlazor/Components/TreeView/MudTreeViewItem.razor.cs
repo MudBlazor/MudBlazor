@@ -186,7 +186,12 @@ namespace MudBlazor
         public bool Activated
         {
             get => _isSelected;
-            set { }
+            set
+            {
+                if(_isSelected.Equals(value)) return;
+
+                _isSelected = value;
+            }
         }
 
         [Parameter]
@@ -424,7 +429,7 @@ namespace MudBlazor
             if (_isSelected == value)
                 return Task.CompletedTask;
 
-            _isSelected = value;
+            Activated = value;
 
             StateHasChanged();
 
