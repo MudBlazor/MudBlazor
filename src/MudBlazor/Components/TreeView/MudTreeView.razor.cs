@@ -17,7 +17,6 @@ namespace MudBlazor
             : null;
         private HashSet<MudTreeViewItem<T>>? _selectedValues;
         private List<MudTreeViewItem<T>> _childItems = new();
-        private T? _selectedValue;
 
         protected string Classname =>
         new CssBuilder("mud-treeview")
@@ -155,20 +154,8 @@ namespace MudBlazor
         }
 
         [Parameter]
-        public T? SelectedValue
-        {
-            get => _selectedValue;
-            set
-            {
-                if (value is not null && FindItemByValue(value) is not null )
-                {
-                    _selectedValue = value;
-                    return;
-                }
-
-                _selectedValue = default;
-            }
-        }
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public T? SelectedValue { get; set; }
 
         /// <summary>
         /// Called whenever the selected value changed.
@@ -273,21 +260,14 @@ namespace MudBlazor
             await base.SetParametersAsync(parameters);
         }
 
-        /// <summary>
-        /// Sets the selected value of the tree view.
-        /// If the value is found, the corresponding item is selected; 
-        /// otherwise, no changes are made.
-        /// </summary>
-        /// <param name="value">The value to be set as the selected value.</param>
-        ///<returns>
-        /// Returns true if the value is found and the corresponding item is selected; 
-        /// otherwise, returns false.
-        /// </returns>
-        /// <remarks>
-        /// This method updates the internal state to reflect the new selection and 
-        /// triggers the necessary UI updates and events.
-        /// </remarks>
-        internal async Task<bool> SetSelectedValue(T? value)
+        ///  <summary>
+        ///  Sets the selected value of the tree view.
+        ///  If the value is found, the corresponding item is selected; 
+        ///  otherwise, selected value is set null.
+        ///  If the selected item is valid it sets the corresponding tree item to selected.
+        ///  </summary>
+        ///  <param name="value">The value to be set as the selected value.</param>
+        internal async Task SetSelectedValue(T? value)
         {
             try
             {
@@ -298,16 +278,15 @@ namespace MudBlazor
                 {
                     if (SelectedValue == null)
                     {
-                        return false;
+                        return;
                     }
 
                     SelectedValue = default;
-                    return true;
+                    return;
                 }
 
                 SelectedValue = value;
                 await item.Select(true);
-                return true;
             }
             finally
             {
