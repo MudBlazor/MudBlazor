@@ -1196,9 +1196,9 @@ namespace MudBlazor
             if (resetPage)
                 CurrentPage = 0;
 
-            StateHasChanged();
-
             await RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
+
+            StateHasChanged();
 
             if (_isFirstRendered)
                 await InvokeAsync(InvokeServerLoadFunc);
