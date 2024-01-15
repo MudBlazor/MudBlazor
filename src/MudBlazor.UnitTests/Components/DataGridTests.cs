@@ -2062,7 +2062,7 @@ namespace MudBlazor.UnitTests.Components
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
             var popover = dataGrid.FindComponent<MudPopover>();
 
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
             await comp.InvokeAsync(() =>
             {
                 var columnHamburger = dataGrid.FindAll("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
@@ -2076,7 +2076,7 @@ namespace MudBlazor.UnitTests.Components
                 //dataGrid.Instance._columns[0].Hide();
                 ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(1);
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(5);
             await comp.InvokeAsync(() =>
             {
                 var columnsButton = dataGrid.Find("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
@@ -2089,22 +2089,22 @@ namespace MudBlazor.UnitTests.Components
                 clickablePopover.Click();
 
                 var switches = comp.FindComponents<MudSwitch<bool>>();
-                switches.Count.Should().Be(2);
+                switches.Count.Should().Be(6);
 
                 var iconbuttons = comp.FindComponents<MudIconButton>();
-                iconbuttons.Count.Should().Be(9);
+                iconbuttons.Count.Should().Be(29);
 
 
                 var buttons = comp.FindComponents<MudButton>();
                 // this is the show all button
                 buttons[1].Find("button").Click();
                 // 2 columns, 0 hidden
-                comp.FindAll(".mud-table-head th").Count.Should().Be(2);
+                comp.FindAll(".mud-table-head th").Count.Should().Be(6);
 
                 //dataGrid.Instance._columns[0].Hide();
                 ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
-            comp.FindAll(".mud-table-head th").Count.Should().Be(2);
+            comp.FindAll(".mud-table-head th").Count.Should().Be(6);
 
             await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
             comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(1);
@@ -2112,9 +2112,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(0);
 
             await comp.InvokeAsync(() => dataGrid.Instance.HideAllColumnsAsync());
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(3);
             await comp.InvokeAsync(() => dataGrid.Instance.ShowAllColumnsAsync());
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
         }
 
         [Test]
@@ -2140,26 +2140,83 @@ namespace MudBlazor.UnitTests.Components
 
             // at this point, the column picker should be open
             var switches = comp.FindComponents<MudSwitch<bool>>();
-            switches.Count.Should().Be(2);
+            switches.Count.Should().Be(6);
 
             switches[0].Instance.Value.Should().BeFalse();
             switches[1].Instance.Value.Should().BeTrue();
+            switches[2].Instance.Value.Should().BeFalse();
+            switches[3].Instance.Value.Should().BeFalse();
+            switches[4].Instance.Value.Should().BeFalse();
+            switches[0].Instance.Value.Should().BeFalse();
 
             var buttons = comp.FindComponents<MudButton>();
 
             // this is the hide all button
             buttons[0].Find("button").Click();
+            //all hideable columns should be hidden
             switches[0].Instance.Value.Should().BeTrue();
             switches[1].Instance.Value.Should().BeTrue();
-            // 2 columns, 2 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
+            switches[2].Instance.Value.Should().BeTrue();
+            switches[3].Instance.Value.Should().BeFalse();
+            switches[4].Instance.Value.Should().BeFalse();
+            switches[5].Instance.Value.Should().BeFalse();
+
+            // 6 columns, 3 hidden
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(3);
 
             // this is the show all button
             buttons[1].Find("button").Click();
             switches[0].Instance.Value.Should().BeFalse();
             switches[1].Instance.Value.Should().BeFalse();
-            // 2 columns, 0 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(2);
+            switches[2].Instance.Value.Should().BeFalse();
+            switches[3].Instance.Value.Should().BeFalse();
+            switches[4].Instance.Value.Should().BeFalse();
+            switches[5].Instance.Value.Should().BeFalse();
+            // 6 columns, 0 hidden
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
+
+            //programatically changing the hidden which overrides hideable
+            await dataGrid.InvokeAsync(() =>
+            {
+                foreach (var column in dataGrid.Instance.RenderedColumns)
+                {
+                    column.State.Hidden = true;
+                };
+            });
+
+            comp = Context.RenderComponent<DataGridColumnHiddenTest>();
+            switches = comp.FindComponents<MudSwitch<bool>>();
+            switches.Count.Should().Be(6);
+            switches[0].Instance.Value.Should().BeTrue();
+            switches[1].Instance.Value.Should().BeTrue();
+            switches[2].Instance.Value.Should().BeTrue();
+            switches[3].Instance.Value.Should().BeTrue();
+            switches[4].Instance.Value.Should().BeTrue();
+            switches[5].Instance.Value.Should().BeTrue();
+            // 6 columns, 6 hidden
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
+
+            //programatically changing the hidden which overrides hideable
+            await dataGrid.InvokeAsync(() =>
+            {
+                foreach (var column in dataGrid.Instance.RenderedColumns)
+                {
+                    column.State.Hidden = false;
+                };
+            });
+
+            comp = Context.RenderComponent<DataGridColumnHiddenTest>();
+            switches = comp.FindComponents<MudSwitch<bool>>();
+            switches.Count.Should().Be(6);
+            switches[0].Instance.Value.Should().BeFalse();
+            switches[1].Instance.Value.Should().BeFalse();
+            switches[2].Instance.Value.Should().BeFalse();
+            switches[3].Instance.Value.Should().BeFalse();
+            switches[4].Instance.Value.Should().BeFalse();
+            switches[5].Instance.Value.Should().BeFalse();
+
+            // 6 columns, 0 hidden
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
         }
 
         // This is not easily convertable to the new property expression.

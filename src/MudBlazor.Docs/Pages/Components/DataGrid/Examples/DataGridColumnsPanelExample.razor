@@ -38,6 +38,11 @@
     </MudRadioGroup>
 </div>
 
+<div class="d-flex flex-wrap mt-4 gap-1">
+    <MudButton OnClick="@(() => HideColumns(false))" Variant="Variant.Filled" Color="Color.Primary">Show All Columns</MudButton>
+    <MudButton OnClick="@(() => HideColumns(true))" Variant="Variant.Filled" Color="Color.Primary">Hide All Columns</MudButton>
+</div>
+
 @code {
     IEnumerable<Element> _elements = new List<Element>();
 
@@ -61,4 +66,12 @@
         SetFunc = value => value ? false : true,
         GetFunc = value => value.HasValue ? !value.Value : true,
     };
+
+    public void HideColumns(bool hide)
+    {        
+        foreach (var column in grid.RenderedColumns)
+        {
+            column.State.Hidden = hide;
+        };
+    }
 }
