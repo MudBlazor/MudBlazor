@@ -9,6 +9,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Components.DataGrid;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -127,7 +128,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
 
         public string Identifier { get; set; }
-        
+
 
         private CultureInfo _culture;
         /// <summary>
@@ -277,7 +278,7 @@ namespace MudBlazor
         private IComparer<object> _comparer = null;
         private Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
-        internal bool hidden;
+        public ColumnState<T> State { get; private set; }
         internal HeaderContext<T> headerContext;
         private FilterContext<T> filterContext;
         internal FooterContext<T> footerContext;
@@ -301,9 +302,15 @@ namespace MudBlazor
             }
         }
 
+        protected override async Task OnParametersSetAsync()
+        {
+            await base.OnParametersSetAsync();
+            State.SyncParameters();
+        }
+
         protected override void OnInitialized()
         {
-            hidden = Hidden;
+            State = new(this);
             groupBy = GroupBy;
 
             if (groupable && Grouping)
@@ -389,20 +396,20 @@ namespace MudBlazor
 
         public async Task HideAsync()
         {
-            hidden = true;
-            await HiddenChanged.InvokeAsync(hidden);
+            State.Hidden = true;
+            await HiddenChanged.InvokeAsync(State.Hidden);
         }
 
         public async Task ShowAsync()
         {
-            hidden = false;
-            await HiddenChanged.InvokeAsync(hidden);
+            State.Hidden = false;
+            await HiddenChanged.InvokeAsync(State.Hidden);
         }
 
         public async Task ToggleAsync()
         {
-            hidden = !hidden;
-            await HiddenChanged.InvokeAsync(hidden);
+            State.Hidden = !State.Hidden;
+            await HiddenChanged.InvokeAsync(State.Hidden);
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
 
