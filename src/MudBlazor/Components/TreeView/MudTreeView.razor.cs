@@ -12,10 +12,7 @@ namespace MudBlazor
 {
     public partial class MudTreeView<T> : MudComponentBase
     {
-        private MudTreeViewItem<T>? _selectedTreeItem => SelectedValue is not null 
-            ? FindItemByValue(SelectedValue)
-            : null;
-        private HashSet<MudTreeViewItem<T>>? _selectedValues;
+        private HashSet<MudTreeViewItem<T>> _selectedValues = new();
         private List<MudTreeViewItem<T>> _childItems = new();
 
         protected string Classname =>
@@ -180,6 +177,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public RenderFragment<T>? ItemTemplate { get; set; }
+        
+        /// <summary>
+        /// Comparer is used to check if tow tree items are equal
+        /// </summary>
+        [Parameter] 
+        [Category(CategoryTypes.TreeView.Selecting)]
+        public IEqualityComparer<T?> Comparer { get; set; } = EqualityComparer<T?>.Default;
 
         [CascadingParameter] MudTreeView<T> MudTreeRoot { get; set; }
 
@@ -225,9 +229,7 @@ namespace MudBlazor
             return SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
 
-        protected HashSet<T> SelectedValues => _selectedValues is not null
-            ? new(_selectedValues.Select(i => i.Value))
-            : new();
+        private HashSet<T> SelectedValues => new(_selectedValues.Select(i => i.Value));
         
         public async Task Select(MudTreeViewItem<T> item, bool isSelected = true)
         {
@@ -251,8 +253,8 @@ namespace MudBlazor
 
         public override async Task SetParametersAsync(ParameterView parameters)
         {
-            if (parameters.TryGetValue(nameof(SelectedValue), out T? selected) &&
-                (selected == null ? SelectedValue != null : !selected.Equals(SelectedValue)))
+            if (parameters.TryGetValue(nameof(SelectedValue), out T? selected) && 
+                !Comparer.Equals(selected, SelectedValue))
             {
                 await SetSelectedValue(selected);
             }
@@ -269,29 +271,19 @@ namespace MudBlazor
         ///  <param name="value">The value to be set as the selected value.</param>
         internal async Task SetSelectedValue(T? value)
         {
-            try
+            if(Comparer.Equals(value, SelectedValue)) return;
+            
+            await UnSelectAllChildren();
+
+            if (value == null ||
+                FindItemByValue(value) is not { } item)
             {
-                await UnSelectAllChildren();
-
-                if (value == null ||
-                    FindItemByValue(value) is not { } item)
-                {
-                    if (SelectedValue == null)
-                    {
-                        return;
-                    }
-
-                    SelectedValue = default;
-                    return;
-                }
-
-                SelectedValue = value;
-                await item.Select(true);
+                await SelectedValueChanged.InvokeAsync(default);
+                return;
             }
-            finally
-            {
-                await SelectedValueChanged.InvokeAsync(SelectedValue);
-            }
+
+            await SelectedValueChanged.InvokeAsync(value);
+            await item.Select(true);
         }
 
         internal async Task UnSelectAllChildren(List<MudTreeViewItem<T>>? children = null)
@@ -315,7 +307,7 @@ namespace MudBlazor
 
             foreach (var item in children)
             {
-                if (Equals(item.Value, value))
+                if (Comparer.Equals(item.Value, value))
                 {
                     return item;
                 }
