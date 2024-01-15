@@ -1,9 +1,9 @@
-﻿<MudHidden Breakpoint="Breakpoint.MdAndUp">
+﻿<div class="d-flex align-center flex-grow-1 d-md-none">
     <MudIconButton OnClick="DrawerToggleCallback" Icon="@Icons.Material.Rounded.Notes" Color="Color.Inherit" Edge="Edge.Start"/>
     <MudSpacer/>
     <NavLink ActiveClass="d-flex" href="/">
         <MudBlazorLogo Class="docs-mudblazor-logo"/>
-        <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text">MudBlazor</MudText>
+        <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text mt-1">MudBlazor</MudText>
     </NavLink>
     <MudSpacer/>
     @if (DisplaySearchBar)
@@ -14,11 +14,11 @@
     {
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Edge="Edge.End" Href="https://github.com/MudBlazor/MudBlazor/"/>
     }
-</MudHidden>
-<MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+</div>
+<div class="d-none d-md-flex align-center flex-grow-1">
     <NavLink ActiveClass="d-flex me-4" href="/">
         <MudBlazorLogo Class="docs-mudblazor-logo"/>
-        <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text">MudBlazor</MudText>
+        <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text mt-1">MudBlazor</MudText>
     </NavLink>
     <MudButton Href="/docs/overview" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.Docs)">Docs</MudButton>
     <MudButton Href="/getting-started/installation" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.GettingStarted)">Getting Started</MudButton>
@@ -96,7 +96,7 @@
     <MudTooltip Duration="1000" Text="GitHub Repository" ShowOnFocus="false">
         <MudIconButton Href="https://github.com/MudBlazor/MudBlazor/" Target="_blank" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Edge="Edge.End"/>
     </MudTooltip>
-</MudHidden>
+</div>
 
 
 <MudDialog @bind-IsVisible="_searchDialogOpen" Options="_dialogOptions" Class="docs-gray-bg" ClassContent="docs-mobile-dialog-search">
