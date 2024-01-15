@@ -471,6 +471,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridRowsPerPageTwoWayBindingTest()
+        {
+            var comp = Context.RenderComponent<DataGridRowsPerPageBindingTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridRowsPerPageBindingTest.Item>>();
+
+            // confirm that BoundRowsPerPage is equal to the initial value of 5 (See DataGridRowsPerPageBindingTest)
+            comp.Instance.BoundRowsPerPage.Should().Be(5);
+
+            // programmatically set the datagrid rowsPerPage to 10
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.SetRowsPerPageAsync(10));
+
+            // confirm that BoundRowsPerPage changes when rowsPerPage is set to 10
+            comp.Instance.BoundRowsPerPage.Should().Be(10);
+        }
+
+        [Test]
         public async Task DataGridInlineEditTest()
         {
             var comp = Context.RenderComponent<DataGridCellEditTest>();
