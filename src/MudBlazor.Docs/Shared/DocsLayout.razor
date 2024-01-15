@@ -6,7 +6,7 @@
     <MudAppBar Class="docs-appbar" Elevation="0">
         <Appbar DrawerToggleCallback="ToggleDrawer" DisplaySearchBar="true" />
     </MudAppBar>
-    <MudDrawer Open="@_drawerOpen" OpenChanged="OnDrawerOpenChanged" ClipMode="DrawerClipMode.Docked" Elevation="0" Breakpoint="Breakpoint.Lg">
+    <MudDrawer Open="@_drawerOpen" OpenChanged="OnDrawerOpenChanged" ClipMode="DrawerClipMode.Docked" Elevation="0" Breakpoint="Breakpoint.Md">
         <MudHidden Breakpoint="Breakpoint.MdAndUp">
             <MudToolBar Dense="true" DisableGutters="true" Class="docs-gray-bg">
                 @if (_topMenuOpen == false)
