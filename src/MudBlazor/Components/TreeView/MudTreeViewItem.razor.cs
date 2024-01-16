@@ -205,7 +205,7 @@ namespace MudBlazor
                     return;
 
                 _isChecked = value;
-                MudTreeRoot?.UpdateSelectedItems();
+                MudTreeRoot?.SetSelectedItemsCompare();
                 SelectedChanged.InvokeAsync(_isChecked);
             }
         }
@@ -452,7 +452,7 @@ namespace MudBlazor
             {
                 if (MudTreeRoot != null)
                 {
-                    await MudTreeRoot.UpdateSelectedItems();
+                    await MudTreeRoot.SetSelectedItemsCompare();
                 }
             }
         }

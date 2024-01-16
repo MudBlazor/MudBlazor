@@ -12,7 +12,8 @@ namespace MudBlazor
 {
     public partial class MudTreeView<T> : MudComponentBase
     {
-        private HashSet<MudTreeViewItem<T>> _selectedValues = new();
+        private object _selectedUpdateLock = new();
+        private HashSet<MudTreeViewItem<T>>? _selectedValues;
         private List<MudTreeViewItem<T>> _childItems = new();
 
         protected string Classname =>
@@ -207,22 +208,25 @@ namespace MudBlazor
         {
             if (firstRender && MudTreeRoot == this)
             {
-                await UpdateSelectedItems();
+                await SetSelectedItemsCompare();
             }
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        internal Task UpdateSelectedItems()
+        internal Task SetSelectedItemsCompare()
         {
-            _selectedValues ??= new();
-
-            //collect selected items
-            _selectedValues.Clear();
-            foreach (var item in _childItems)
+            lock (_selectedUpdateLock)
             {
-                foreach (var selectedItem in item.GetSelectedItems())
+                _selectedValues ??= new(new MudTreeViewItemComparer<T>(Comparer));
+
+                //collect selected items
+                _selectedValues.Clear();
+                foreach (var item in _childItems)
                 {
-                    _selectedValues.Add(selectedItem);
+                    foreach (var selectedItem in item.GetSelectedItems())
+                    {
+                        _selectedValues.Add(selectedItem);
+                    }
                 }
             }
 
@@ -259,6 +263,12 @@ namespace MudBlazor
                 await SetSelectedValue(selected);
             }
             
+            if (parameters.TryGetValue(nameof(Comparer), out IEqualityComparer<T?>? comparer) && 
+                !Equals(comparer, Comparer))
+            {
+                UpdateSelectedValueCompare(comparer!);
+            }
+            
             await base.SetParametersAsync(parameters);
         }
 
@@ -282,8 +292,29 @@ namespace MudBlazor
                 return;
             }
 
-            await SelectedValueChanged.InvokeAsync(value);
+            await SelectedValueChanged.InvokeAsync(item.Value);
             await item.Select(true);
+        }
+
+        private void UpdateSelectedValueCompare(IEqualityComparer<T?> comparer)
+        {
+            lock (_selectedUpdateLock)
+            {
+                if (_selectedValues is null)
+                {
+                    _selectedValues = new(new MudTreeViewItemComparer<T>(comparer));
+                    return;
+                }
+                
+                var newSelected = new HashSet<MudTreeViewItem<T>>(new MudTreeViewItemComparer<T>(comparer));
+
+                foreach (var item in _selectedValues)
+                {
+                    newSelected.Add(item);
+                }
+
+                _selectedValues = newSelected;
+            }
         }
 
         internal async Task UnSelectAllChildren(List<MudTreeViewItem<T>>? children = null)

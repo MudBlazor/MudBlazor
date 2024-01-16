@@ -303,5 +303,43 @@ namespace MudBlazor.UnitTests.Components
             
             comp.Instance.SelectedValue.Should().Be(default);
         }
+
+        [Test] public void TreeView_SelectedValue_ShouldUseCompareParameter()
+        {
+            // test tree with items ("Ax", "Bx", "Cx", "Dx")
+            var comp = Context.RenderComponent<TreeViewCompareTest>();
+            
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "Ax"));
+            
+            comp.Instance.SelectedValue.Should().Be("Ax");
+            
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "A"));
+            
+            comp.Instance.SelectedValue.Should().Be(default);
+            
+            // set the comparer to a value that will only check the first character of the string
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Compare, 
+                new DelegateEqualityComparer<string>(
+                    (x, y) => 
+                    {
+                        if (string.IsNullOrEmpty(x) && string.IsNullOrEmpty(y))
+                            return true;
+                        if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+                            return false;
+                        return x[0] == y[0];
+                    },
+                    obj => 
+                    {
+                        if (string.IsNullOrEmpty(obj))
+                            return 0;
+                        return obj[0].GetHashCode();
+                    }
+                )
+            ));
+            
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "A"));
+            
+            comp.Instance.SelectedValue.Should().Be("Ax");
+        }
     }
 }
