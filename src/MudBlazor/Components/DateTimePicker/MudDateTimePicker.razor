@@ -8,15 +8,22 @@
     protected override RenderFragment PickerContent =>
     @<CascadingValue Value="@this" IsFixed="true">
         <MudPickerContent>
-            <MudStack Row Spacing="0">
-                <MudDatePicker PickerVariant="PickerVariant.Static" Date="@_datePicked" DateChanged="DateSelected" DateFormat="@DateFormat" Disabled="@Disabled"
-                               FirstDayOfWeek="@FirstDayOfWeek" FixDay="@FixDay" FixMonth="@FixMonth" FixYear="@FixYear" DisableToolbar="DisableToolbar"
-                               OpenTo="@DateOpenTo" PickerMonth="@PickerMonth" ShowWeekNumbers="@ShowWeekNumbers" StartMonth="@StartMonth" TitleDateFormat="@TitleDateFormat"
-                               MaxMonthColumns="@MaxMonthColumns" NextIcon="@NextIcon" PreviousIcon="@PreviousIcon" PickerMonthChanged="@PickerMonthChanged" IsDateDisabledFunc="@IsDateTimeDisabledFunc" AdditionalDateClassesFunc="AdditionalDateClassesFunc" />
-
-                <MudTimePicker PickerVariant="PickerVariant.Static" Time="_timePicked" TimeChanged="TimeSelected" TimeFormat="@TimeFormat" Disabled="@Disabled"
-                               DisableToolbar="DisableToolbar" OpenTo="@TimeOpenTo" MinuteSelectionStep="@MinuteSelectionStep" TimeEditMode="@TimeEditMode" />
-            </MudStack>
+            <MudPickerToolbar Class="mud-picker-datepicker-toolbar align-center justify-center" DisableToolbar="@DisableToolbar" Orientation="@Orientation" PickerVariant="@PickerVariant" Color="@Color">
+                <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center">
+                    <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year" OnClick="OnYearClick">@GetFormattedYearString()</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date" OnClick="OnFormattedDateClick">@GetTitleDateString()</MudButton>
+                </MudStack>
+            </MudPickerToolbar>
+            <MudPickerContent>
+                <div class="mud-picker-datetime-layout">
+                    <MudDatePicker @ref="_datePickerRef" PickerVariant="PickerVariant.Static" Date="@_datePicked" DateChanged="DateSelected" DateFormat="@DateFormat" Disabled="@Disabled"
+                                   FirstDayOfWeek="@FirstDayOfWeek" FixDay="@FixDay" FixMonth="@FixMonth" FixYear="@FixYear" DisableToolbar="true"
+                                   OpenTo="@DateOpenTo" PickerMonth="@PickerMonth" ShowWeekNumbers="@ShowWeekNumbers" StartMonth="@StartMonth" TitleDateFormat="@TitleDateFormat"
+                                   MaxMonthColumns="@MaxMonthColumns" NextIcon="@NextIcon" PreviousIcon="@PreviousIcon" PickerMonthChanged="@PickerMonthChanged" IsDateDisabledFunc="@IsDateTimeDisabledFunc" AdditionalDateClassesFunc="AdditionalDateClassesFunc" />
+                    <MudTimePicker @ref="_timePickerRef" PickerVariant="PickerVariant.Static" Time="_timePicked" TimeChanged="TimeSelected" TimeFormat="@TimeFormat" Disabled="@Disabled"
+                                   DisableToolbar="true" OpenTo="@TimeOpenTo" MinuteSelectionStep="@MinuteSelectionStep" TimeEditMode="@TimeEditMode" />
+                </div>
+            </MudPickerContent>
         </MudPickerContent>
     </CascadingValue>;
 }
