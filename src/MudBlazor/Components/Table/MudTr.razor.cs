@@ -67,20 +67,20 @@ namespace MudBlazor
             table.FireRowClickEvent(args, this, Item);
         }
 
-        public async Task OnRowMouseEnter(MouseEventArgs args)
+        public async Task OnRowMouseEnterAsync(MouseEventArgs args)
         {
             var table = Context?.Table;
             if (table is null)
                 return;
-            await table.FireRowMouseEnterEvent(args, this, Item);
+            await table.FireRowMouseEnterEventAsync(args, this, Item);
         }
 
-        public async Task OnRowMouseLeave(MouseEventArgs args)
+        public async Task OnRowMouseLeaveAsync(MouseEventArgs args)
         {
             var table = Context?.Table;
             if (table is null)
                 return;
-            await table.FireRowMouseLeaveEvent(args, this, Item);
+            await table.FireRowMouseLeaveEventAsync(args, this, Item);
         }
 
         private void StartEditingItem() => StartEditingItem(buttonClicked: true);

@@ -41,7 +41,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Check if the OnRowMouseEnter and OnRowMouseLeave event callbacks are fired as intended
+        /// Check if the OnRowMouseEnterAsync and OnRowMouseLeaveAsync event callbacks are fired as intended
         /// </summary>
         [Test]
         public void TableRowHover()
