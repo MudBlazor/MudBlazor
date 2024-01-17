@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTable T="string" Items="items" OnRowHoverStart="@(args => OnRowHoverStart(args))" OnRowHoverStop="@(args => OnRowHoverStop(args))">
+<MudTable T="string" Items="items" OnRowMouseEnter="@(args => OnRowMouseEnter(args))" OnRowMouseLeave="@(args => OnRowMouseLeave(args))">
     <RowTemplate>
         <MudTd>@context</MudTd>
     </RowTemplate>
@@ -12,8 +12,8 @@
 
 @code {
     public static string __description__ = @"
-        OnRowHoverStart should be called whenever a row (<tr>) starts being hovered (onmouseenter).
-        OnRowHoverStop should be called whenever a row (<tr>) stops being hovered (onmouseleave).
+        OnRowMouseEnter should be called whenever a row (<tr>) starts being hovered (onmouseenter).
+        OnRowMouseLeave should be called whenever a row (<tr>) stops being hovered (onmouseleave).
         The paragraph (<p>) should be refreshed with the current and last hovered element.
         ";
 
@@ -22,12 +22,12 @@
     string currentlyHoveredItem = string.Empty;
     string lastHoveredItem = string.Empty;
 
-    private void OnRowHoverStart(TableRowHoverEventArgs<string> args)
+    private void OnRowMouseEnter(TableRowHoverEventArgs<string> args)
     {
         currentlyHoveredItem = args.Item;
     }
 
-    private void OnRowHoverStop(TableRowHoverEventArgs<string> args)
+    private void OnRowMouseLeave(TableRowHoverEventArgs<string> args)
     {
         currentlyHoveredItem = string.Empty;
         lastHoveredItem = args.Item;

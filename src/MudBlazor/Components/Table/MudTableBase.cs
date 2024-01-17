@@ -556,9 +556,9 @@ namespace MudBlazor
 
         internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
 
-        internal abstract void FireRowHoverStartEvent(MouseEventArgs args, MudTr mudTr, object item);
+        internal abstract Task FireRowMouseEnterEvent(MouseEventArgs args, MudTr mudTr, object item);
 
-        internal abstract void FireRowHoverStopEvent(MouseEventArgs args, MudTr mudTr, object item);
+        internal abstract Task FireRowMouseLeaveEvent(MouseEventArgs args, MudTr mudTr, object item);
 
         internal abstract void OnHeaderCheckboxClicked(bool checkedState);
 
