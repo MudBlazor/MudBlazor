@@ -12,7 +12,9 @@ else
 {
     @if (Parent?.ActivePanel == this)
     {
-        @ChildContent
+        <div @attributes="UserAttributes" class="@Class" style="@Style">
+            @ChildContent
+        </div>
     }
 }
 
