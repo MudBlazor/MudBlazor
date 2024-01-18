@@ -9,14 +9,14 @@ namespace MudBlazor;
 
 public class MudTreeViewItemComparer<T> : IEqualityComparer<MudTreeViewItem<T>>
 {
-    private IEqualityComparer<T?> _valueComparer;
+    private readonly IEqualityComparer<T?> _valueComparer;
 
     public MudTreeViewItemComparer(IEqualityComparer<T?> valueComparer)
     {
         _valueComparer = valueComparer;
     }
 
-    public bool Equals(MudTreeViewItem<T> x, MudTreeViewItem<T> y)
+    public bool Equals(MudTreeViewItem<T>? x, MudTreeViewItem<T>? y)
     {
         if (x == null && y == null) return true;
         if (x == null || y == null) return false;
