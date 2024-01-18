@@ -55,7 +55,7 @@ namespace MudBlazor
             }
         }
 
-        public void OnRowClicked(MouseEventArgs args)
+        public async Task OnRowClickedAsync(MouseEventArgs args)
         {
             var table = Context?.Table;
             if (table is null)
@@ -64,7 +64,7 @@ namespace MudBlazor
             StartEditingItem(buttonClicked: false);
             if (table.MultiSelection && table.SelectOnRowClick && !table.IsEditable)
                 IsChecked = !IsChecked;
-            table.FireRowClickEvent(args, this, Item);
+            await table.FireRowClickEventAsync(args, this, Item);
         }
 
         public async Task OnRowMouseEnterAsync(MouseEventArgs args)
