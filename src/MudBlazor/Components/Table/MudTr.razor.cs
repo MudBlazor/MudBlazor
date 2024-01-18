@@ -67,6 +67,22 @@ namespace MudBlazor
             table.FireRowClickEvent(args, this, Item);
         }
 
+        public async Task OnRowMouseEnterAsync(MouseEventArgs args)
+        {
+            var table = Context?.Table;
+            if (table is null)
+                return;
+            await table.FireRowMouseEnterEventAsync(args, this, Item);
+        }
+
+        public async Task OnRowMouseLeaveAsync(MouseEventArgs args)
+        {
+            var table = Context?.Table;
+            if (table is null)
+                return;
+            await table.FireRowMouseLeaveEventAsync(args, this, Item);
+        }
+
         private void StartEditingItem() => StartEditingItem(buttonClicked: true);
 
         private void StartEditingItem(bool buttonClicked)
