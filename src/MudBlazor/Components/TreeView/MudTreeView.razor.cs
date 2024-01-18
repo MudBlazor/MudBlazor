@@ -233,7 +233,9 @@ namespace MudBlazor
             return SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
 
-        private HashSet<T> SelectedValues => new(_selectedValues.Select(i => i.Value));
+        private HashSet<T> SelectedValues => _selectedValues is not null
+            ? new(_selectedValues.Select(i => i.Value))
+            : new();
         
         public async Task Select(MudTreeViewItem<T> item, bool isSelected = true)
         {
