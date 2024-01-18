@@ -6,7 +6,7 @@ public class MockStaticRenderContext : IRenderContext
 {
     public bool IsInteractiveWebAssembly() => false;
 
-    public bool IsInteractiveServer() => true;
+    public bool IsInteractiveServer() => false;
 
     public bool IsStatic() => true;
 }
