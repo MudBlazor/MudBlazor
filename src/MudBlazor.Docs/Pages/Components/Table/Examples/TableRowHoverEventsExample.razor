@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable T="Element" Items="@elements.Take(3)" Hover="true" OnRowMouseEnterAsync="RowMouseEnterEvent" OnRowMouseLeaveAsync="RowMouseLeaveEvent" Breakpoint="Breakpoint.Sm">
+<MudTable T="Element" Items="@elements.Take(3)" Hover="true" OnRowMouseEnter="RowMouseEnterEvent" OnRowMouseLeave="RowMouseLeaveEvent" Breakpoint="Breakpoint.Sm">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>

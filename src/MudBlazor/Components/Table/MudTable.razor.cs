@@ -197,7 +197,7 @@ namespace MudBlazor
         /// <summary>
         /// Row hover start event.
         /// </summary>
-        [Parameter] public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseEnterAsync { get; set; }
+        [Parameter] public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseEnter { get; set; }
 
         internal override async Task FireRowMouseEnterEventAsync(MouseEventArgs args, MudTr row, object o)
         {
@@ -207,7 +207,7 @@ namespace MudBlazor
                 item = (T)o;
             }
             catch (Exception) { /*ignore*/}
-            await OnRowMouseEnterAsync.InvokeAsync(new TableRowHoverEventArgs<T>()
+            await OnRowMouseEnter.InvokeAsync(new TableRowHoverEventArgs<T>()
             {
                 MouseEventArgs = args,
                 Row = row,
@@ -218,7 +218,7 @@ namespace MudBlazor
         /// <summary>
         /// Row hover stop event.
         /// </summary>
-        [Parameter] public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseLeaveAsync { get; set; }
+        [Parameter] public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseLeave { get; set; }
 
         internal override async Task FireRowMouseLeaveEventAsync(MouseEventArgs args, MudTr row, object o)
         {
@@ -228,7 +228,7 @@ namespace MudBlazor
                 item = (T)o;
             }
             catch (Exception) { /*ignore*/}
-            await OnRowMouseLeaveAsync.InvokeAsync(new TableRowHoverEventArgs<T>()
+            await OnRowMouseLeave.InvokeAsync(new TableRowHoverEventArgs<T>()
             {
                 MouseEventArgs = args,
                 Row = row,
