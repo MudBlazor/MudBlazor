@@ -50,6 +50,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
             ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddTransient<InternalMudLocalizer>();
+            ctx.Services.AddScoped<IRenderContext, MockRenderContext>();
             ctx.Services.AddScoped(sp => new HttpClient());
         }
 

@@ -48,6 +48,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IPopoverService, MockPopoverServiceV2>();
             ctx.Services.AddSingleton<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddTransient<InternalMudLocalizer>();
+            ctx.Services.AddScoped<IRenderContext, MockRenderContext>();
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>
                 new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });
