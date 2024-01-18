@@ -341,5 +341,44 @@ namespace MudBlazor.UnitTests.Components
             
             comp.Instance.SelectedValue.Should().Be("Ax");
         }
+        
+        /// <summary>
+        /// This test checks that when multiple values are selected and the compare parameter is updated,
+        /// selected values are updated correctly. 
+        /// </summary>
+        [Test]
+        public async Task TreeView_SelectedValues_ShouldUseCompareParameter()
+        {
+            // tree containing two children with values AA and AB
+            var comp = Context.RenderComponent<TreeViewCompareMultiSelectTest>();
+
+            await comp.InvokeAsync(() => comp.Instance.Item1.SelectedChanged.InvokeAsync(true));
+            await comp.InvokeAsync(() => comp.Instance.Item2.SelectedChanged.InvokeAsync(true));
+            
+            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item2Selected.Should().BeTrue();
+            
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Compare, 
+                new DelegateEqualityComparer<string>(
+                    (x, y) => 
+                    {
+                        if (string.IsNullOrEmpty(x) && string.IsNullOrEmpty(y))
+                            return true;
+                        if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+                            return false;
+                        return x[0] == y[0];
+                    },
+                    obj => 
+                    {
+                        if (string.IsNullOrEmpty(obj))
+                            return 0;
+                        return obj[0].GetHashCode();
+                    }
+                )
+            ));
+            
+            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item2Selected.Should().BeFalse();
+        }
     }
 }

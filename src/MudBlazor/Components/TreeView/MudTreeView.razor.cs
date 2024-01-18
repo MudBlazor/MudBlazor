@@ -266,7 +266,7 @@ namespace MudBlazor
             if (parameters.TryGetValue(nameof(Comparer), out IEqualityComparer<T?>? comparer) && 
                 !Equals(comparer, Comparer))
             {
-                UpdateSelectedValueCompare(comparer!);
+                await UpdateSelectedValueCompare(comparer!);
             }
             
             await base.SetParametersAsync(parameters);
@@ -296,8 +296,10 @@ namespace MudBlazor
             await item.Select(true);
         }
 
-        private void UpdateSelectedValueCompare(IEqualityComparer<T?> comparer)
+        private async ValueTask UpdateSelectedValueCompare(IEqualityComparer<T?> comparer)
         {
+            List<MudTreeViewItem<T>> unselectedItem;
+            
             lock (_selectedUpdateLock)
             {
                 if (_selectedValues is null)
@@ -313,7 +315,15 @@ namespace MudBlazor
                     newSelected.Add(item);
                 }
 
+                unselectedItem = _selectedValues.Except(newSelected).ToList();
+
                 _selectedValues = newSelected;
+            }
+            
+            
+            foreach (var unselectedItems in unselectedItem)
+            {
+                await unselectedItems.SelectedChanged.InvokeAsync(false);
             }
         }
 
