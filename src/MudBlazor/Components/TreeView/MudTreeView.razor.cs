@@ -180,7 +180,7 @@ namespace MudBlazor
         public RenderFragment<T>? ItemTemplate { get; set; }
         
         /// <summary>
-        /// Comparer is used to check if tow tree items are equal
+        /// Comparer is used to check if two tree items are equal
         /// </summary>
         [Parameter] 
         [Category(CategoryTypes.TreeView.Selecting)]
