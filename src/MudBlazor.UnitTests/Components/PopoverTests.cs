@@ -14,6 +14,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
+using MudBlazor.Docs.Examples;
+using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Popover;
 using NUnit.Framework;
@@ -1070,6 +1072,15 @@ namespace MudBlazor.UnitTests.Components
         public void MudPopoverProvider_NoRenderWhenIsEnabledIsFalse()
         {
             var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderIsEnabled, false));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void MudPopoverProvider_NoRenderWhenStaticRendering(bool providerIsEnabled)
+        {
+            Context.Services.AddScoped<IRenderContext, MockStaticRenderContext>();
+            var comp = Context.RenderComponent<PopoverProviderTest>(p => p.Add(x => x.ProviderIsEnabled, providerIsEnabled));
             Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
         }
 

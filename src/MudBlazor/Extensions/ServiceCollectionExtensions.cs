@@ -362,6 +362,17 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        /// Adds the services required for detecting render context.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        public static IServiceCollection AddMudRenderContext(this IServiceCollection services)
+        {
+            services.TryAddScoped<IRenderContext, RenderContext>();
+
+            return services;
+        }
+
+        /// <summary>
         /// Adds common services required by MudBlazor components
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -384,7 +395,8 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService(configuration.PopoverOptions)
                 .AddMudEventManager()
-                .AddMudLocalization();
+                .AddMudLocalization()
+                .AddMudRenderContext();
         }
 
         /// <summary>
@@ -408,7 +420,8 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService()
                 .AddMudEventManager()
-                .AddMudLocalization();
+                .AddMudLocalization()
+                .AddMudRenderContext();
         }
 
         /// <summary>
@@ -475,7 +488,8 @@ namespace MudBlazor.Services
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()
-                .AddMudLocalization();
+                .AddMudLocalization()
+                .AddMudRenderContext();
         }
     }
 }

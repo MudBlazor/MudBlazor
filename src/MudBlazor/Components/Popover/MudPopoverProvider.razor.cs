@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Services;
 
 namespace MudBlazor
 {
@@ -21,6 +22,9 @@ namespace MudBlazor
 
         [Inject]
         internal IPopoverService PopoverService { get; set; } = null!;
+
+        [Inject]
+        internal IRenderContext RenderContext { get; set; } = null!;
 
         /// <summary>
         /// In some scenarios we need more than one ThemeProvider but we must not have more than one
@@ -40,6 +44,11 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            if (RenderContext.IsStaticServer())
+            {
+                IsEnabled = false;
+            }
+
             if (IsEnabled == false)
             {
                 return;
