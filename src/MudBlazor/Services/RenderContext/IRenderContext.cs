@@ -9,20 +9,20 @@ public interface IRenderContext
 {
 
     /// <summary>
-    /// WebAssembly interctive mode
+    /// Is the rendering in Interactive WebAssembly mode
     /// </summary>
     /// <returns>true if the mode is active else false</returns>
     bool IsInteractiveWebAssembly();
 
     /// <summary>
-    /// Server Side interctive mode
+    /// Is the rendering in Interactive Server mode
     /// </summary>
     /// <returns>true if the mode is active else false</returns>
     bool IsInteractiveServer();
 
     /// <summary>
-    /// The server is statically rendering the page for SSR or PreRendering.
-    /// No interactivity is available.
+    /// Is the rendering in Static mode (SSR or PreRendering)
+    /// Note: No interactivity is available.
     /// </summary>
     /// <returns>true if the mode is active else false</returns>
     bool IsStaticServer();
