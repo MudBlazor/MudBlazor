@@ -8,6 +8,6 @@ public class MockStaticRenderContext : IRenderContext
 
     public bool IsInteractiveServer() => false;
 
-    public bool IsStatic() => true;
+    public bool IsStaticServer() => true;
 }
 

@@ -8,6 +8,6 @@ public interface IRenderContext
 
     bool IsInteractiveServer();
 
-    bool IsStatic();
+    bool IsStaticServer();
 }
 

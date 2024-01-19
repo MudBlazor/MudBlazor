@@ -19,7 +19,7 @@ public class RenderContext : IRenderContext
 
     public bool IsInteractiveServer() => !IsInteractiveWebAssembly() && IsInitialized();
 
-    public bool IsStatic() => !IsInteractiveWebAssembly() && !IsInitialized();
+    public bool IsStaticServer() => !IsInteractiveWebAssembly() && !IsInitialized();
 
     private bool IsInitialized()
     {

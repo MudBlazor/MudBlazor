@@ -23,6 +23,6 @@ public class RenderContextTests
         var renderContext = new RenderContext(jsruntimeMock.Object);
         renderContext.IsInteractiveWebAssembly().Should().BeFalse();
         renderContext.IsInteractiveServer().Should().BeFalse();
-        renderContext.IsStatic().Should().BeTrue();
+        renderContext.IsStaticServer().Should().BeTrue();
     }
 }

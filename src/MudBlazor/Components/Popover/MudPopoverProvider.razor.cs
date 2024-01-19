@@ -44,7 +44,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            if (RenderContext.IsStatic())
+            if (RenderContext.IsStaticServer())
             {
                 IsEnabled = false;
             }
