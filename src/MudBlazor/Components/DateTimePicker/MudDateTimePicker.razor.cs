@@ -28,14 +28,6 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string DateFormat { get; set; } = "yyyy/MM/dd";
-
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public string TimeFormat { get; set; } = "HH:mm:ss";
-
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
         public string DateTimeFormat { get; set; } = "yyyy/MM/dd HH:mm:ss";
 
         [Parameter]
@@ -80,7 +72,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public string TitleDateFormat { get; set; } = "ddd, dd MMM hh:mm";
+        public string TitleDateFormat { get; set; } = "ddd, dd MMM HH:mm";
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -131,6 +123,7 @@ namespace MudBlazor
         {
             Converter.GetFunc = OnGet;
             Converter.SetFunc = OnSet;
+            ((DefaultConverter<DateTime?>)Converter).Culture = CultureInfo.CurrentCulture;
             ((DefaultConverter<DateTime?>)Converter).Format = DateTimeFormat;
             FirstDayOfWeek = Culture.DateTimeFormat.FirstDayOfWeek;
         }
@@ -146,9 +139,15 @@ namespace MudBlazor
         protected override Task StringValueChanged(string value)
         {
             Touched = true;
-            DateTime? date = Converter.Get(value);
-            _datePicked = date?.Date;
-            _timePicked = date?.TimeOfDay;
+            bool parsed = System.DateTime.TryParse(value, out DateTime date);
+            if (parsed)
+            {
+                SetDateTime(date);
+            }
+            else
+            {
+                HandleParsingError();
+            }
             return base.StringValueChanged(value);
         }
 
@@ -204,7 +203,7 @@ namespace MudBlazor
 
         protected string GetTitleDateString()
         {
-            return GetDateTime()?.ToString(TitleDateFormat);
+            return GetDateTime()?.ToString(TitleDateFormat, Culture);
         }
 
         private void OnFormattedDateClick()
@@ -231,6 +230,12 @@ namespace MudBlazor
             SetTextAsync(Converter.Set(_value), false).AndForget();
         }
 
+        public async Task GoToDate(DateTime date, bool submitDate = true)
+            => await _datePickerRef.GoToDate(date, submitDate);
+
+        public void GoToDate()
+            => _datePickerRef.GoToDate();
+
         protected async Task SetDateTimeAsync(DateTime? date, bool updateValue)
         {
             if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
@@ -256,7 +261,6 @@ namespace MudBlazor
                 {
                     Converter.GetError = false;
                     await SetTextAsync(Converter.Set(_value), false);
-                    await DateTimeChanged.InvokeAsync(GetDateTime());
                 }
                 await DateTimeChanged.InvokeAsync(_value);
                 await BeginValidateAsync();
@@ -280,14 +284,14 @@ namespace MudBlazor
         {
             if (AutoClose && PickerVariant != PickerVariant.Static)
             {
-                Close(AutoClose);
+                Close(_datePicked is not null && _timePicked is not null);
             }
         }
 
         protected internal override void Submit()
         {
             base.Submit();
-            SetDateTimeAsync(GetDateTime(), false).AndForget();
+            SetDateTimeAsync(GetDateTime(), true).AndForget();
         }
 
         protected override void OnClosed()
