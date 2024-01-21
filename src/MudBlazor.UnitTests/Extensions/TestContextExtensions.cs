@@ -18,7 +18,6 @@ namespace MudBlazor.UnitTests
                 options.SnackbarConfiguration.ShowTransitionDuration = 0;
                 options.SnackbarConfiguration.HideTransitionDuration = 0;
             });
-            ctx.Services.AddScoped<IRenderContext, MockRenderContext>();
             ctx.Services.AddScoped(sp => new HttpClient());
             ctx.Services.AddOptions();
         }
