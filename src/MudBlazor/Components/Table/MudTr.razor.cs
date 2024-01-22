@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
@@ -53,6 +54,12 @@ namespace MudBlazor
                     IsCheckedChanged.InvokeAsync(value);
                 }
             }
+        }
+
+        [Obsolete($"Use {nameof(OnRowClickedAsync)} instead.")]
+        public async void OnRowClicked(MouseEventArgs args)
+        {
+            await OnRowClickedAsync(args);
         }
 
         public async Task OnRowClickedAsync(MouseEventArgs args)
