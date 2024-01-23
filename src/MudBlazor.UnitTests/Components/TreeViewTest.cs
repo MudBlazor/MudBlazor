@@ -380,5 +380,24 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Item1Selected.Should().BeTrue();
             comp.Instance.Item2Selected.Should().BeFalse();
         }
+        
+        [Test]
+        public void MudTreeViewItemComparer_ShouldReturnTrueWhenBothNull()
+        {
+            var comparer = new MudTreeViewItemComparer<string>(EqualityComparer<string>.Default);
+            
+            comparer.Equals(null, null).Should().BeTrue();
+        }
+        
+        [Test]
+        public void MudTreeViewItemComparer_ShouldReturnFalseWhenOneNull()
+        {
+            var comparer = new MudTreeViewItemComparer<string>(EqualityComparer<string>.Default);
+
+            var treeItem = new MudTreeViewItem<string> { Value = "value" };
+
+            comparer.Equals(treeItem, null).Should().BeFalse();
+            comparer.Equals(null, treeItem).Should().BeFalse();
+        }
     }
 }
