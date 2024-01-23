@@ -12,15 +12,14 @@ Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 - [.NET 7.0 SDK](https://dotnet.microsoft.com/download/dotnet/7.0)
 
 ## Pull Requests
-- Your Pull Request must only consist of one topic. It is better to split Pull Requests with more than one feature or bug fix in seperate Pull Requests
-- You must fork the repository and clone it locally first. (The main repository is protected and does not accept direct commits.)
+- Your Pull Request (PR) must only consist of one topic. It is better to split Pull Requests with more than one feature or bug fix in seperate Pull Requests
+- First fork the repository and clone your fork locally to make your changes. (The main repository is protected and does not accept direct commits.)
 - You should work on a seperate branch with a descriptive name. The following naming convention can be used: `feature/my-new-feature` for new features and enhancements, `fix/my-bug-fix` for bug fixes. For example `fix/button-hover-color` if your PR is about a bug involving the hover color of buttons
 - You should build, test and run one of the Docs projects locally to confirm your changes give the expected result. We generally suggest the MudBlazor.Docs.Server project for the best debugging experience.
-- You must choose `dev` as the target branch
-- All tests must pass
-- You must include tests when your Pull Requests alters any logic. This also ensures that your feature will not break in the future. For more information on testing, see one of the following sections
-- Small changes should only contain one commit. If you have several commits, squash them into one commit ([Rebase guide](https://docs.github.com/en/github/getting-started-with-github/about-git-rebase))
-- You should rebase your branch onto dev
+- Choose `dev` as the target branch
+- All tests must pass, when you push, they will be executed on the CI server and you'll receive a test report per email. But you can also execute them locally for quicker feedback.
+- You must include tests when your Pull Requests alters any logic. This also ensures that your feature will not break in the future under changes from other contributors. For more information on testing, see the appropriate section below
+- If there are new changes in the main repo, you should either merge the main repo's (upstream) dev or rebase your branch onto it.
 - Before working on a large change, it is recommended to first open an issue to discuss it with others
 - If your Pull Request is still in progress, convert it to a draft Pull Request
 - Your commit messages should follow the following format: 
