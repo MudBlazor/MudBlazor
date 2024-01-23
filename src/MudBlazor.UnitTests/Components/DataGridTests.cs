@@ -705,7 +705,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Fire RowClick, SelectedItemChanged, SelectedItemsChanged, and StartedEditingItem callbacks.
             dataGrid.FindAll(".mud-table-body tr")[0].Click();
-            
+
             // Fire RowContextMenuClick
             dataGrid.FindAll(".mud-table-body tr")[0].ContextMenu();
 
@@ -723,6 +723,33 @@ namespace MudBlazor.UnitTests.Components
             // but we can brute force it by directly calling the CancelEditingItemAsync method on the datagrid
             await dataGrid.InvokeAsync(dataGrid.Instance.CancelEditingItemAsync);
             comp.Instance.CanceledEditingItem.Should().Be(true);
+        }
+
+        [Test]
+        public async Task DataGridEditComplexPropertyExpressionTest()
+        {
+            var comp = Context.RenderComponent<DataGridEditComplexPropertyExpressionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditComplexPropertyExpressionTest.Item>>();
+
+
+            dataGrid.Render();
+
+            // Make sure that the value is as expected before we try to change it
+            comp.Instance.Items[0].Name.Should().Be("A");
+            comp.Instance.Items[0].SubItem.SubProperty.Should().Be("A-D");
+            comp.Instance.Items[0].SubItem.SubItem2.SubProperty2.Should().Be("A-D-E");
+
+            // Edit an item 'normally'
+            dataGrid.FindAll(".mud-table-body tr td input")[0].Change("Test 1");
+            comp.Instance.Items[0].Name.Should().Be("Test 1");
+
+            // Edit an item that has a sub property like x.Something.SomethingElse
+            dataGrid.FindAll(".mud-table-body tr td input")[1].Change("Test 2");
+            comp.Instance.Items[0].SubItem.SubProperty.Should().Be("Test 2");
+
+            // Edit an item that has a sub property like x.Something.SomethingElse.SomethingElseAgain
+            dataGrid.FindAll(".mud-table-body tr td input")[2].Change("Test 3");
+            comp.Instance.Items[0].SubItem.SubItem2.SubProperty2.Should().Be("Test 3");
         }
 
         [Test]
