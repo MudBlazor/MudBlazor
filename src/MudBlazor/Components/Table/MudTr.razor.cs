@@ -83,6 +83,32 @@ namespace MudBlazor
             await table.FireRowMouseLeaveEventAsync(args, this, Item);
         }
 
+        private EventCallback<MouseEventArgs> RowMouseEnterEventCallback
+        {
+            get
+            {
+                var hasEventHandler = Context?.Table?.HasRowMouseEnterEventHandler ?? false;
+
+                if (hasEventHandler)
+                    return EventCallback.Factory.Create<MouseEventArgs>(this, OnRowMouseEnterAsync);
+
+                return default;
+            }
+        }
+        
+        private EventCallback<MouseEventArgs> RowMouseLeaveEventCallback
+        {
+            get
+            {
+                var hasEventHandler = Context?.Table?.HasRowMouseLeaveEventHandler ?? false;
+
+                if (hasEventHandler)
+                    return EventCallback.Factory.Create<MouseEventArgs>(this, OnRowMouseLeaveAsync);
+
+                return default;
+            }
+        }
+        
         private void StartEditingItem() => StartEditingItem(buttonClicked: true);
 
         private void StartEditingItem(bool buttonClicked)
