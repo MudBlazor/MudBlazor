@@ -107,8 +107,11 @@ namespace MudBlazor
 			{
 				item = RecursiveGetSubProperties(memberExpression, item);
 
-				if (memberExpression.Member is PropertyInfo propertyInfo)
-					propertyInfo.SetValue(item, value);
+                if (memberExpression.Member is PropertyInfo propertyInfo)
+                {
+                    var actualType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? PropertyType;
+                    propertyInfo.SetValue(item, Convert.ChangeType(value, actualType), null);
+                }
 			}
 		}
 	}
