@@ -105,6 +105,7 @@ namespace MudBlazor
         protected override async void OnDayClicked(DateTime dateTime)
         {
             _selectedDate = dateTime;
+            
             if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
             {
                 Submit();

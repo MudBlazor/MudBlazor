@@ -12,6 +12,11 @@ namespace MudBlazor
     {
         private readonly string _mudPickerCalendarContentElementId;
         private bool _dateFormatTouched;
+        
+        /// <summary>
+        /// When DisplayMonths is greater than 1 and user clicks on header of date view calendar, this variable stores index of date view calendar
+        /// </summary>
+        private int _monthPickerIndex = -1;
 
         protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>
         {
@@ -393,6 +398,17 @@ namespace MudBlazor
             _picker_month = _picker_month?.AddMonths(month);
             StateHasChanged();
         }
+        
+        /// <summary>
+        /// user clicked on a month in header, when in date view.
+        /// method opens month view in corresponding mud-picker-calendar-container
+        /// </summary>
+        protected virtual void OnMonthInHeaderClicked(int monthPickerIndex)
+        {
+            CurrentView = OpenTo.Month;
+            _monthPickerIndex = monthPickerIndex;
+            StateHasChanged();
+        }
 
         /// <summary>
         /// Check if month is disabled
@@ -518,7 +534,7 @@ namespace MudBlazor
                 return MaxDate.Value.Year;
             return DateTime.Today.Year + 100;
         }
-
+        
         private string GetYearClasses(int year)
         {
             if (year == GetMonthStart(0).Year)
