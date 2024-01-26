@@ -1984,8 +1984,21 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
 
-            dataGrid.FindAll("button")[10].OuterHtml.Contains("disabled")
-                .Should().BeTrue();
+            var buttons = dataGrid.FindAll("button");
+            buttons[10].OuterHtml.Contains("disabled").Should().BeTrue();
+            buttons.Count.Should().Be(13);
+        }
+
+        [Test]
+        public async Task DataGridRowDetailButtonDisabledAndHiddenTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            comp.SetParametersAndRender((nameof(DataGridHierarchyColumnTest.HideDisabledIcons), true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            var buttons = dataGrid.FindAll("button");
+            buttons[10].OuterHtml.Contains("disabled").Should().BeFalse();
+            buttons.Count.Should().Be(12);
         }
 
         [Test]
