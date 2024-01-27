@@ -18,6 +18,7 @@ using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static MudBlazor.Docs.Examples.TableRelationalExample;
 using static Bunit.ComponentParameterFactory;
+using System.Data.Common;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -2005,12 +2006,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridRowDetailInitiallyExpandedTest()
+        public async Task DataGridRowDetailInitiallyExpandedMultipleTest()
         {
             var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
 
             var item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Ira");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Anders");
 
             dataGrid.Instance._openHierarchies.Should().Contain(item);
         }
