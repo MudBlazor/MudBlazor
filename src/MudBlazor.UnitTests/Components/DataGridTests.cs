@@ -2005,6 +2005,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridRowDetailInitiallyExpandedTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            var item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Ira");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+        }
+
+        [Test]
         public async Task DataGridChildRowContentTest()
         {
             var comp = Context.RenderComponent<DataGridChildRowContentTest>();
