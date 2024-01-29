@@ -19,7 +19,7 @@ namespace MudBlazor
         public DateTime? DateTime
         {
             get => GetDateTime();
-            set => SetDateTime(value);
+            set => SetDateTime(value, true);
         }
 
         [Parameter]
@@ -28,7 +28,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string DateTimeFormat { get; set; } = "yyyy/MM/dd HH:mm:ss";
+        public string DateTimeFormat { get; set; } = "yyyy-MM-dd HH:mm:ss";
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -139,14 +139,25 @@ namespace MudBlazor
         protected override Task StringValueChanged(string value)
         {
             Touched = true;
-            bool parsed = System.DateTime.TryParse(value, out DateTime date);
-            if (parsed)
+            if (string.IsNullOrEmpty(value))
             {
-                SetDateTime(date);
+                Clear(false);
             }
             else
             {
-                HandleParsingError();
+                DateTime date;
+                bool parsed = System.DateTime.TryParseExact(value, DateTimeFormat, Culture, DateTimeStyles.None, out date);
+                if (!parsed)
+                    parsed = System.DateTime.TryParse(value, Culture, DateTimeStyles.None, out date);
+
+                if (parsed)
+                {
+                    SetDateTime(date, false);
+                }
+                else
+                {
+                    HandleParsingError();
+                }
             }
             return base.StringValueChanged(value);
         }
@@ -222,12 +233,11 @@ namespace MudBlazor
         /// <summary>
         /// Sets the date and time selection
         /// </summary>
-        protected void SetDateTime(DateTime? dateTime)
+        protected void SetDateTime(DateTime? dateTime, bool updateValue)
         {
             _datePicked = dateTime?.Date;
             _timePicked = dateTime?.TimeOfDay;
-            SetDateTimeAsync(dateTime, true).AndForget();
-            SetTextAsync(Converter.Set(_value), false).AndForget();
+            SetDateTimeAsync(dateTime, updateValue).AndForget();
         }
 
         public async Task GoToDate(DateTime date, bool submitDate = true)
@@ -245,7 +255,6 @@ namespace MudBlazor
 
             _datePicked = date?.Date;
             _timePicked = date?.TimeOfDay;
-            StateHasChanged();
 
             if (_value != date)
             {
@@ -266,12 +275,6 @@ namespace MudBlazor
                 await BeginValidateAsync();
                 FieldChanged(_value);
             }
-        }
-
-        protected Task SetDateTimeText()
-        {
-            string dateTimeString = GetDateTime()?.ToString(GetDateTimeFormat()) ?? string.Empty;
-            return SetTextAsync(dateTimeString, false);
         }
 
         protected string GetDateTimeFormat()
@@ -307,7 +310,7 @@ namespace MudBlazor
         /// </summary>
         public override void Clear(bool close = true)
         {
-            SetDateTimeAsync(null, true).AndForget();
+            SetDateTimeAsync(null, close).AndForget();
             base.Clear(close);
         }
     }
