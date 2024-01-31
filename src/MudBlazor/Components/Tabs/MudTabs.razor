@@ -29,18 +29,16 @@
                             }
                             else
                             {
-                                if (panel.TabWrapperContent == null)
-                                {
-                                    <div class="d-inline-block" style="width: fit-content;" @key="@panel">
+                                <div class="d-inline-block" style="width: fit-content;" @key="@panel">
+                                    @if (panel.TabWrapperContent is null) 
+                                    {
                                         @RenderTab(panel)
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="d-inline-block" style="width: fit-content;" @key="@panel">
+                                    }
+                                    else
+                                    {
                                         @panel.TabWrapperContent(RenderTab(panel))
-                                    </div>
-                                }
+                                    }
+                                </div>
                             }
                         }
                         @if (!HideSlider && IsSliderPositionDetermined)
