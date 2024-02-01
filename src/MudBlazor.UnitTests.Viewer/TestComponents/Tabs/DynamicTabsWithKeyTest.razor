@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDynamicTabs KeepPanelsAlive MinimumTabWidth="100px"
+ AddIconClass="custom-add-button" CloseIconClass="custom-close-button" CloseTab="@OnCloseTab" @bind-ActivePanelIndex="@_activePanel">
+     @foreach (var item in _tabs)
+    {
+        <MudTabPanel ID="@item.Id" Text="@($"tab {item.Id}")" ShowCloseIcon @key="@item"/>
+    }
+</MudDynamicTabs>
+
+@code {
+    private int _activePanel = 3;
+    private List<Item> _tabs =
+        Enumerable.Range(0, 4).Select(x => new Item { Id = x }).ToList();
+
+    public static string __description__ = "Slider needs to be visible while popping tabs from the front";
+
+    private void OnCloseTab(MudTabPanel panel)
+    {
+        var itemId = panel.Text;
+        var idx = _tabs.FindIndex(x => x.Id.Equals(panel.ID));
+        _tabs.RemoveAt(idx);
+    }
+
+    private class Item
+    {
+        internal int Id { get; init; }
+    }
+}
