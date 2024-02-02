@@ -167,6 +167,13 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Data)]
         public HashSet<T> Items { get; set; }
 
+        /// <summary>
+        /// Defines the treeview body content when there are no matching items found
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Data)]
+        public RenderFragment NoItemsContent { get; set; }
+
         [ExcludeFromCodeCoverage]
         [Obsolete("Use SelectedValueChanged instead.", true)]
         [Parameter]

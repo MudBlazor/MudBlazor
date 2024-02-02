@@ -6,6 +6,9 @@
     </div>
 
     <MudTreeViewEx Items="TreeItems" ItemsFilter=_filterFunc>
+        <NoItemsContent>
+            <MudAlert Severity=Severity.Info>No items found</MudAlert>
+        </NoItemsContent>
         <ItemTemplate>
             <MudTreeViewItemEx @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems" Value="@context"
                              Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />

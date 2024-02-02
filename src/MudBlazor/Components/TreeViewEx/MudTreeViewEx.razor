@@ -6,7 +6,11 @@
 	<CascadingValue Value="@MudTreeRoot" IsFixed="true">
 		@if (ItemTemplate != null && FilteredItems != null)
 		{
-			@if (VisibleItemsLimit > 0)
+			@if (FilteredItems.Count == 0)
+			{
+				@NoItemsContent
+			}
+			else if (VisibleItemsLimit > 0)
 			{
 				foreach (var item in GetTrimmedItems())
 					@ItemTemplate(item)
