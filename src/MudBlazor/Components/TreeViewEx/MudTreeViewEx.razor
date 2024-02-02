@@ -1,0 +1,61 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+<ul @attributes="UserAttributes" class="@Classname" style="@Stylename">
+	<CascadingValue Value="@MudTreeRoot" IsFixed="true">
+		@if (ItemTemplate != null && FilteredItems != null)
+		{
+			@if (VisibleItemsLimit > 0)
+			{
+				foreach (var item in GetTrimmedItems())
+					@ItemTemplate(item)
+
+				@if (FilteredItems.Count > _currentVisibleItemsLimit)
+				{
+					<li>
+						<div class="mud-treeview-item-content gap-2 justify-end">
+							@String.Format(MudTreeRoot.VisibleItemsExtendText, FilteredItems.Count - _currentVisibleItemsLimit)
+							<MudIconButton Variant=Variant.Filled OnClick=IncrementVisibleItemsLimit Icon=@Icons.Material.Filled.MoreHoriz />
+
+							@if (MudTreeRoot.EnableShowAllItemsButton)
+							{
+								<MudIconButton Variant=Variant.Filled OnClick=ShowAllItems Icon=@Icons.Material.Filled.AllInclusive />
+							}
+						</div>
+					</li>
+				}
+			}
+			else
+			{
+				foreach (var item in FilteredItems)
+					@ItemTemplate(item)
+			}
+		}
+		else if (ChildContent != null)
+		{
+			@ChildContent
+		}
+	</CascadingValue>
+</ul>
+
+@code{
+	private int? _currentVisibleItemsLimit;
+
+	private void IncrementVisibleItemsLimit()
+	{
+		_currentVisibleItemsLimit += this.VisibleItemsIncrement;
+	}
+
+	private void ShowAllItems()
+	{
+		_currentVisibleItemsLimit = this.FilteredItems.Count;
+	}
+
+	private IEnumerable<T> GetTrimmedItems()
+	{
+		_currentVisibleItemsLimit ??= VisibleItemsLimit;
+
+		return FilteredItems.Take(_currentVisibleItemsLimit.Value);
+	}
+}

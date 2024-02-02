@@ -1,0 +1,65 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="300px" Elevation="0">
+    <div style="width: 100%">
+        <MudTextField @bind-Value=_filter Label="Items title filter 2" Immediate=true />
+    </div>
+
+    <MudTreeViewEx Items="TreeItems" ItemsFilter=_filterFunc>
+        <ItemTemplate>
+            <MudTreeViewItemEx @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems" Value="@context"
+                             Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
+        </ItemTemplate>
+    </MudTreeViewEx>
+</MudPaper>
+
+@code {
+    private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+    private string _filter = null;
+
+    private Func<TreeItemData, bool> _filterFunc;
+
+    public class TreeItemData
+    {
+        public string Title { get; set; }
+
+        public string Icon { get; set; }
+
+        public int? Number { get; set; }
+
+        public bool IsExpanded { get; set; }
+
+        public HashSet<TreeItemData> TreeItems { get; set; }
+
+        public TreeItemData(string title, string icon, int? number = null)
+        {
+            Title = title;
+            Icon = icon;
+            Number = number;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        _filterFunc = item => string.IsNullOrEmpty(_filter) || item.Title.Contains(_filter, StringComparison.CurrentCultureIgnoreCase);
+
+        TreeItems.Add(new TreeItemData("All Mail", Icons.Material.Filled.Email));
+        TreeItems.Add(new TreeItemData("Trash", Icons.Material.Filled.Delete));
+        TreeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label)
+        {
+            IsExpanded = true,
+            TreeItems = new HashSet<TreeItemData>()
+            {
+                new TreeItemData("Social", Icons.Material.Filled.Group, 90),
+                new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
+                new TreeItemData("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
+                new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733),
+                new TreeItemData("Social 2", Icons.Material.Filled.Group, 90),
+                new TreeItemData("Updates 2", Icons.Material.Filled.Info, 2294),
+                new TreeItemData("Forums 2", Icons.Material.Filled.QuestionAnswer, 3566),
+                new TreeItemData("Promotions 2", Icons.Material.Filled.LocalOffer, 733)
+            }
+        });
+        TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label));
+    }
+}

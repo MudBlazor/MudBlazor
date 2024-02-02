@@ -13,7 +13,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "applicationUrl": "https://localhost:7128;http://localhost:5128",
-      "launchUrl": "components/tabs",
+      "launchUrl": "components/treeview#filtered-items",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
