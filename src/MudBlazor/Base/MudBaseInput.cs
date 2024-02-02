@@ -477,7 +477,6 @@ namespace MudBlazor
             {
                 _validated = true;
                 await base.ValidateValue();
-                _validated = true;
             }
         }
 
