@@ -990,11 +990,12 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
                 .Add(p => p.OnlyValidateIfDirty, true)
                 .Add(p => p.Validation, async (string value) => {
-                    await Task.Delay(TimeSpan.FromMilliseconds(100));
                     callCounter++;
+                    await Task.Delay(TimeSpan.FromMilliseconds(100));
                     return true;
                 })
             );
+            await Task.Delay(TimeSpan.FromMilliseconds(300));
             comp.Find("input").Change("A");
             callCounter.Should().Be(1);
             comp.Find("input").Blur();
