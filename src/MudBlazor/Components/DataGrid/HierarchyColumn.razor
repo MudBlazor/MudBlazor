@@ -3,6 +3,7 @@
 @typeparam T
 
 <TemplateColumn T="T" Tag="@("hierarchy-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
+    Hideable="Hideable" Hidden="Hidden" HiddenChanged="HiddenChanged"
     Filterable="false" IsEditable="false">
     <CellTemplate>
          <MudIconButton 
@@ -19,4 +20,12 @@
     [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ExpandMore;
     [Parameter] public Size IconSize { get; set; } = Size.Medium;
     [Parameter] public Func<T, bool> ButtonDisabledFunc { get; set; } = x => false;
+
+    /// <summary>
+    /// Determines whether this column can be hidden. This overrides the Hideable parameter on the DataGrid.
+    /// </summary>
+    [Parameter] public bool? Hideable { get; set; }
+
+    [Parameter] public bool Hidden { get; set; }
+    [Parameter] public EventCallback<bool> HiddenChanged { get; set; }
 }
