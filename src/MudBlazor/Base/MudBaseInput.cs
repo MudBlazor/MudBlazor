@@ -218,6 +218,13 @@ namespace MudBlazor
         public virtual string Pattern { get; set; }
 
         /// <summary>
+        /// Shrink prevents the label from moving down into the field when the field is empty.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool Shrink { get; set; } = false;
+
+        /// <summary>
         /// Derived classes need to override this if they can be something other than text
         /// </summary>
         internal virtual InputType GetInputType() { return InputType.Text; }
