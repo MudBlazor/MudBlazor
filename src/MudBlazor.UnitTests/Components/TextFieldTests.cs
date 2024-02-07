@@ -995,10 +995,10 @@ namespace MudBlazor.UnitTests.Components
                     return true;
                 })
             );
-            await Task.Delay(TimeSpan.FromMilliseconds(300));
             comp.Find("input").Change("A");
-            callCounter.Should().Be(1);
+            comp.WaitForAssertion(() => callCounter.Should().Be(1));
             comp.Find("input").Blur();
+            await Task.Delay(TimeSpan.FromMilliseconds(200));
             callCounter.Should().Be(1);
         }
 
