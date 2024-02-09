@@ -45,6 +45,13 @@ namespace MudBlazor
             .AddClass(FooterClass).Build();
 
         /// <summary>
+        /// Set true for hide ToolBarContent
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public bool HideToolBarContent { get; set; }
+
+        /// <summary>
         /// When editing a row and this is true, the editing row must be saved/canceled before a new row will be selected.
         /// </summary>
         [Parameter]
