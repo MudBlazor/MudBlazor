@@ -56,6 +56,7 @@ in your component and apply styles at component level.
 MudBlazor is divided in different projects. The most important ones are:
 - [MudBlazor](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor): contains all components
 - [MudBlazor.Docs](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.Docs): contains the [docs](https://mudblazor.com/)
+- [MudBlazor.Docs.WasmHost](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.Docs.WasmHost): local copy of the docs that can be set as the startup project and run locally to review changes before submission.
 - [MudBlazor.UnitTests](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.UnitTests): contains bUnit tests for all components
 - [MudBlazor.UnitTests.Viewer](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.UnitTests.Viewer): a visual representation of the unit tests. When you launch the project, you can test whether the components look and behave correctly
 
@@ -77,6 +78,11 @@ require a bUnit test that is checking that logic.
 
 When you are making changes to any components and preparing a PR make
 sure you run the entire test suite to see if anything broke. 
+
+Documentation changes should be reviwed by locally previewing with 
+MudBlazor.Docs.WasmHost ast the startup project.
+
+Once changes are pushed to the dev branch, they can ve viewed at https://dev.mudblazor.com/ .
 
 ### Make your code break-safe
 
