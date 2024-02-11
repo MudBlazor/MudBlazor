@@ -427,15 +427,15 @@ namespace MudBlazor
             }
         }
 
-        internal void GroupColumn()
+        internal async Task GroupColumn()
         {
-            Column?.SetGrouping(true);
+            await Column?.SetGrouping(true);
             DataGrid.DropContainerHasChanged();
         }
 
-        internal void UngroupColumn()
+        internal async Task UngroupColumn()
         {
-            Column?.SetGrouping(false);
+            await Column?.SetGrouping(false);
             DataGrid.DropContainerHasChanged();
         }
 
