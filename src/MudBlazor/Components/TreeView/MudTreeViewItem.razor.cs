@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -337,7 +337,7 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-            if (Text == null && (Value == null && MudTreeRoot.ServerData != null))
+            if (Text == null && (Value == null && MudTreeRoot?.ServerData != null))
                 throw new InvalidOperationException(
                     $"'{nameof(MudTreeView<T>)}.{nameof(MudTreeRoot.ServerData)}' requires '{nameof(MudTreeViewItem<T>)}.{nameof(Value)}' to be supplied.");
         }
