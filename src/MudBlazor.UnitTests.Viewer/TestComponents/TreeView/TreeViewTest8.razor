@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTreeView Items="@TreeItems" Hover="true" Width="100%" ServerData="LoadServerData" @ref="Tree">
+<MudTreeView T="TreeItemData" Items="@TreeItems" Hover="true" Width="100%" ServerData="LoadServerData" @ref="Tree">
      <ItemTemplate Context="item">
-            <MudTreeViewItem Items="@item.TreeItems" CanExpand=@item.CanExpand>
+        <MudTreeViewItem T="TreeItemData" Items="@item.TreeItems" CanExpand=@item.CanExpand>
                 <BodyContent>
                     <MudIcon Icon="@item.Icon" Size="Size.Small"></MudIcon>
                     <MudText>@item.Title</MudText>

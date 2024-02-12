@@ -276,10 +276,12 @@ namespace MudBlazor.UnitTests.Components
             {
                 var comp = Context.RenderComponent<TreeViewTest8>();
 
-                comp.Render();
+                comp.SetParametersAndRender();
+
+                comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
             });
 
-            exception.Message.Should().Be("'MudTreeView.ServerData' requires 'MudTreeViewItem.Value' to be supplied.");
+            exception.Message.Should().Be("'MudTreeView.ServerData' requires 'ItemTemplate.MudTreeViewItem.Value' to be supplied.");
         }
 
         [Test]
