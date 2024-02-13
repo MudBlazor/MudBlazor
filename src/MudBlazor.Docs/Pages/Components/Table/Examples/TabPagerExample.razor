@@ -22,25 +22,45 @@
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
-        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }" InfoFormat="@($"Left {infoFormat}")" HorizontalAlignment="HorizontalAlignment.Left" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
-        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }" InfoFormat="@($"Start {infoFormat}")" HorizontalAlignment="HorizontalAlignment.Start" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
-        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }" InfoFormat="@($"Center {infoFormat}")" HorizontalAlignment="HorizontalAlignment.Center" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
-        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }" InfoFormat="@($"Right {infoFormat}")" HorizontalAlignment="HorizontalAlignment.Right" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
-        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }" InfoFormat="@($"End {infoFormat}")" HorizontalAlignment="HorizontalAlignment.End" HidePageNumber="@hidePageNumber" HidePagination="@hidePagination" HideRowsPerPage="@hideRowsPerPage" />
+            <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }"
+                           RowsPerPageString="@rowsPerPageString"
+                           InfoFormat="@infoFormat"
+                           AllItemsText="@allItemsText"
+                           HorizontalAlignment="@horizontalAlignment"
+                           HideRowsPerPage="@hideRowsPerPage"
+                           HidePageNumber="@hidePageNumber"
+                           HidePagination="@hidePagination" />
     </PagerContent>
 </MudTable>
 
 <div class="d-flex flex-wrap mt-4">
-    <MudSwitch @bind-Checked="@hideRowsPerPage" Color="Color.Tertiary">Hide/Show Rows per Page</MudSwitch>
-    <MudSwitch @bind-Checked="@hidePageNumber" Color="Color.Primary">Hide/Show Page Number</MudSwitch>
-    <MudSwitch @bind-Checked="@hidePagination" Color="Color.Secondary">Hide/Show Pagination</MudSwitch>
+    <MudSelect T="HorizontalAlignment" Label="HorizontalAlignment" @bind-Value="horizontalAlignment">
+        <MudSelectItem Value="HorizontalAlignment.Center" />
+        <MudSelectItem Value="HorizontalAlignment.Left" />
+        <MudSelectItem Value="HorizontalAlignment.Right" />
+        <MudSelectItem Value="HorizontalAlignment.Start" />
+        <MudSelectItem Value="HorizontalAlignment.End" />
+    </MudSelect>
+</div>
+<div class="d-flex flex-wrap mt-4">
+    <MudTextField Label="RowsPerPageString" @bind-Value="@rowsPerPageString" Immediate/>
+     <MudTextField Class="ml-4" Label="AllItemsText" @bind-Value="@allItemsText" Immediate />
+     <MudTextField Class="ml-4" Label="InfoFormat" @bind-Value="@infoFormat" Immediate />
+</div>
+<div class="d-flex flex-wrap mt-4">
+     <MudSwitch @bind-Checked="@hideRowsPerPage" Color="Color.Tertiary">hideRowsPerPage</MudSwitch>
+     <MudSwitch @bind-Checked="@hidePageNumber" Color="Color.Primary">HidePageNumberr</MudSwitch>
+     <MudSwitch @bind-Checked="@hidePagination" Color="Color.Secondary">hidePagination</MudSwitch>
 </div>
 
 @code {
+    private HorizontalAlignment horizontalAlignment = HorizontalAlignment.Right;
     private bool hidePageNumber;
     private bool hidePagination;
     private bool hideRowsPerPage;
+    private string rowsPerPageString = "Rows per page:";
     private string infoFormat = "{first_item}-{last_item} of {all_items}";
+    private string allItemsText = "All";
 
     private IEnumerable<Element> Elements = new List<Element>();
 
