@@ -6,6 +6,8 @@
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.IsMarried" />
+        <PropertyColumn Property="x => x.Gender" />
         <TemplateColumn>
             <CellTemplate>
                 snakex64
@@ -17,15 +19,17 @@
 @code {
     private IEnumerable<Model> _items = new List<Model>()
 {
-        new Model{ Name= "John", Age= 45 },
-        new Model{ Name= "Johanna", Age= 23 },
-        new Model{ Name= "Steve", Age= 32 }
+        new Model{ Name= "John", Age= 45, IsMarried = false, Gender = null },
+        new Model{ Name= "Johanna", Age= 23, IsMarried = true, Gender = true },
+        new Model{ Name= "Steve", Age= 32, IsMarried = true, Gender = false }
     };
 
     public class Model
     {
         public string Name { get; set; }
         public int Age { get; set; }
+        public bool IsMarried { get; set; }
+        public bool? Gender { get; set; }
         public string GetOnly => "snakex64";
     }
 }
