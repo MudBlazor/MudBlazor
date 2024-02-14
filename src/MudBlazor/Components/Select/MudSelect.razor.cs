@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -86,25 +87,41 @@ namespace MudBlazor
             await _elementReference.SetText(Text);
             await ScrollToItemAsync(item);
         }
+
+        private int _debounceInterval = 600;
+        private string _searchChars = "";
+        private Timer _timer = null;
+        private void OnTimerComplete(object stateInfo)
+        {
+            _searchChars = "";
+            if (_timer is not null)
+            {
+                _timer.Dispose();
+                _timer = null;
+            }
+        }
+
         private ValueTask ScrollToItemAsync(MudSelectItem<T> item)
-            =>item != null? ScrollManager.ScrollToListItemAsync(item.ItemId): ValueTask.CompletedTask;
-        private async Task SelectFirstItem(string startChar = null)
+            => item != null ? ScrollManager.ScrollToListItemAsync(item.ItemId) : ValueTask.CompletedTask;
+
+        private async Task SelectFirstItem(string input = null)
         {
             if (_items == null || _items.Count == 0)
                 return;
+
             var items = _items.Where(x => !x.Disabled);
             var firstItem = items.FirstOrDefault();
-            if (!string.IsNullOrWhiteSpace(startChar))
+            if (!string.IsNullOrWhiteSpace(input))
             {
                 // find first item that starts with the letter
                 var currentItem = items.FirstOrDefault(x => x.ItemId == (string)_activeItemId);
                 if (currentItem != null &&
-                    Converter.Set(currentItem.Value)?.ToLowerInvariant().StartsWith(startChar) == true)
+                    Converter.Set(currentItem.Value)?.ToLowerInvariant().StartsWith(input) == true)
                 {
                     // this will step through all items that start with the same letter if pressed multiple times
                     items = items.SkipWhile(x => x != currentItem).Skip(1);
                 }
-                items = items.Where(x => Converter.Set(x.Value)?.ToLowerInvariant().StartsWith(startChar) == true);
+                items = items.Where(x => Converter.Set(x.Value)?.ToLowerInvariant().StartsWith(input) == true);
             }
             var item = items.FirstOrDefault();
             if (item == null)
@@ -886,10 +903,21 @@ namespace MudBlazor
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
+
             var key = obj.Key.ToLowerInvariant();
             if (_isOpen && key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
             {
-                await SelectFirstItem(key);
+                if (_timer is null)
+                {
+                    _timer = new Timer(OnTimerComplete, null, _debounceInterval, 1);
+                }
+                else
+                {
+                    _timer.Change(_debounceInterval, 1);
+                }
+                _searchChars += key;
+
+                await SelectFirstItem(_searchChars);
                 return;
             }
             switch (obj.Key)
@@ -1085,7 +1113,7 @@ namespace MudBlazor
         {
             base.Dispose(disposing);
 
-            if (disposing == true)
+            if (disposing)
             {
                 if (_keyInterceptor != null)
                 {
@@ -1097,6 +1125,8 @@ namespace MudBlazor
                         _keyInterceptor.Dispose();
                     }
                 }
+
+                _timer?.Dispose();
             }
         }
 
