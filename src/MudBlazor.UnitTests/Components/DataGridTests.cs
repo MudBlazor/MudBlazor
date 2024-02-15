@@ -18,6 +18,7 @@ using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static MudBlazor.Docs.Examples.TableRelationalExample;
 using static Bunit.ComponentParameterFactory;
+using MudBlazor.Services;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -3178,5 +3179,41 @@ namespace MudBlazor.UnitTests.Components
             columnOptionsSpan.TextContent.Trim().Should().BeEmpty();
         }
 
+        [Test]
+        public async Task ShouldSetIsGenderGroupedToTrueWhenGroupingIsApplied()
+        {
+            // Render the DataGridGroupingTest component for testing.
+            var comp = Context.RenderComponent<DataGridColumnGroupingTest>();
+
+            // Attempt to find the MudPopoverProvider component within the rendered component.
+            // MudPopoverProvider is used to manage popovers in the component, including the grouping popover.
+            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
+            
+            // Assert that initially, before any user interaction, IsGenderGrouped should be false.
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+
+            // Find the button within the 'th' element with class 'gender' that triggers the popover for grouping.
+            var genderHeaderOption = comp.Find("th.gender .mud-menu button");
+
+            // Simulate a click on the gender header group button to open the popover with grouping options.
+            genderHeaderOption.Click();
+
+            // Find all MudListItem components within the popoverProvider. 
+            // These list items represent the individual options within the grouping popover.
+            var listItems = popoverProvider.FindComponents<MudListItem>();
+
+            // Assert that there are exactly 2 list items (options) available in the popover.
+            listItems.Count.Should().Be(2);
+
+            // From the list items found, select the second one which is expected to be the clickable option for grouping.
+            var clickablePopover = listItems[1].Find(".mud-list-item");
+
+            // click on the grouping option to apply grouping to the data grid.
+            clickablePopover.Click();
+
+            // After clicking the grouping option, assert that IsGenderGrouped is now true, indicating that
+            // the action of applying grouping has successfully updated the component's state.
+            comp.Instance.IsGenderGrouped.Should().Be(true);
+        }
     }
 }

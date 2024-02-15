@@ -700,7 +700,7 @@ namespace MudBlazor
                         _groupExpansionsDict.Clear();
 
                         foreach (var column in RenderedColumns)
-                            column.RemoveGrouping();
+                            column.RemoveGrouping().AndForget();
                     }
                 }
             }
@@ -1474,12 +1474,12 @@ namespace MudBlazor
                 StateHasChanged();
         }
 
-        internal void ChangedGrouping(Column<T> column)
+        internal async Task ChangedGrouping(Column<T> column)
         {
             foreach (var c in RenderedColumns)
             {
                 if (c.PropertyName != column.PropertyName)
-                    c.RemoveGrouping();
+                    await c.RemoveGrouping();
             }
 
             GroupItems();

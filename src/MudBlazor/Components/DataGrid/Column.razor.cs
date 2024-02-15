@@ -115,7 +115,8 @@ namespace MudBlazor
         /// <summary>
         /// Specifies whether the column is grouped.
         /// </summary>
-        [Parameter] public bool Grouping { get; set; }
+        [Parameter] public bool Grouping { get; set; }        
+        [Parameter] public EventCallback<bool> GroupingChanged { get; set; }
 
         /// <summary>
         /// Specifies whether the column is sticky.
@@ -370,21 +371,26 @@ namespace MudBlazor
         }
 
         // Allows child components to change column grouping.
-        internal void SetGrouping(bool g)
+        internal async Task SetGrouping(bool g)
         {
             if (groupable)
             {
                 grouping = g;
-                DataGrid?.ChangedGrouping(this);
+                await DataGrid?.ChangedGrouping(this);
+                await GroupingChanged.InvokeAsync(grouping);
             }
         }
 
         /// <summary>
         /// This method's sole purpose is for the DataGrid to remove grouping in mass.
         /// </summary>
-        internal void RemoveGrouping()
+        internal async Task RemoveGrouping()
         {
-            grouping = false;
+            if (grouping != false)
+            {
+                grouping = false;
+                await GroupingChanged.InvokeAsync(grouping);
+            }
         }
 
         public async Task HideAsync()
