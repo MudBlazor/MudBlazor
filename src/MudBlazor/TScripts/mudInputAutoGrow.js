@@ -5,8 +5,8 @@
 window.mudInputAutoGrow = {
 
     initAutoGrow: (elem, maxLines) => {
-        const compStyles = getComputedStyle(elem);
-        const lineHeight = parseFloat(compStyles.getPropertyValue('line-height'));
+        const compStyle = getComputedStyle(elem);
+        const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
 
         let minHeight = lineHeight * elem.rows;
 
@@ -17,10 +17,20 @@ window.mudInputAutoGrow = {
 
         // Fix scrollbar flashing.
         // https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize#comment23512418_8522283.
-        elem.setAttribute("style", "overflow-y:hidden;");
+        elem.style.overflowY = "hidden";
 
         // Capture min and max height in closure to trigger height adjustment on element in MudTextField.
         elem.adjustAutoGrowHeight = function () {
+            // Save scroll positions https://github.com/MudBlazor/MudBlazor/issues/8152.
+            const scrollTops = [];
+            let curElem = elem;
+            while (curElem && curElem.parentNode && curElem.parentNode instanceof Element) {
+                if (curElem.parentNode.scrollTop) {
+                    scrollTops.push([curElem.parentNode, curElem.parentNode.scrollTop]);
+                }
+                curElem = curElem.parentNode;
+            }
+
             elem.style.height = 0;
 
             let newHeight = Math.max(minHeight, elem.scrollHeight);
@@ -29,18 +39,17 @@ window.mudInputAutoGrow = {
             }
 
             elem.style.height = newHeight + "px";
+
+            // Restore scroll positions.
+            scrollTops.forEach(([node, scrollTop]) => {
+                node.style.scrollBehavior = 'auto';
+                node.scrollTop = scrollTop;
+                node.style.scrollBehavior = null;
+            });
         }
 
         elem.addEventListener('input', () => {
-            var startOffset = window.scrollY;
-
             elem.adjustAutoGrowHeight();
-
-            // Preserve scroll position.
-            // https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize#comment122501893_25621277.
-            if (startOffset > window.scrollY) {
-                window.scrollTo({ top: startOffset });
-            }
         });
 
         elem.adjustAutoGrowHeight();
