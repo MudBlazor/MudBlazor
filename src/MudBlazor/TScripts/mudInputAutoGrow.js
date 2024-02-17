@@ -12,12 +12,9 @@ window.mudInputAutoGrow = {
 
         let maxHeight = 0;
         if (maxLines > 0) {
+            // Cap the height to the max number of lines.
             maxHeight = lineHeight * maxLines;
         }
-
-        // Fix scrollbar flashing.
-        // https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize#comment23512418_8522283.
-        elem.style.overflowY = "hidden";
 
         // Capture min and max height in closure to trigger height adjustment on element in MudTextField.
         elem.adjustAutoGrowHeight = function () {
@@ -48,14 +45,17 @@ window.mudInputAutoGrow = {
             });
         }
 
+        // Adjust height when input happens.
         elem.addEventListener('input', () => {
             elem.adjustAutoGrowHeight();
         });
 
+        // Adjust height when the window resizes.
         window.addEventListener('resize', () => {
             elem.adjustAutoGrowHeight();
         });
 
+        // Initial height adjustment.
         elem.adjustAutoGrowHeight();
     },
     adjustHeight: (elem) => {
