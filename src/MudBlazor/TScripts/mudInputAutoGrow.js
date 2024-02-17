@@ -52,6 +52,10 @@ window.mudInputAutoGrow = {
             elem.adjustAutoGrowHeight();
         });
 
+        window.addEventListener('resize', () => {
+            elem.adjustAutoGrowHeight();
+        });
+
         elem.adjustAutoGrowHeight();
     },
     adjustHeight: (elem) => {
