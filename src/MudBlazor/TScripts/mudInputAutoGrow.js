@@ -32,7 +32,15 @@ window.mudInputAutoGrow = {
         }
 
         elem.addEventListener('input', () => {
+            var startOffset = window.scrollY;
+
             elem.adjustAutoGrowHeight();
+
+            // Preserve scroll position.
+            // https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize#comment122501893_25621277.
+            if (startOffset > window.scrollY) {
+                window.scrollTo({ top: startOffset });
+            }
         });
 
         elem.adjustAutoGrowHeight();
