@@ -15,6 +15,10 @@ window.mudInputAutoGrow = {
             maxHeight = lineHeight * maxLines;
         }
 
+        // Fix scrollbar flashing.
+        // https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize#comment23512418_8522283.
+        elem.setAttribute("style", "overflow-y:hidden;");
+
         // Capture min and max height in closure to trigger height adjustment on element in MudTextField.
         elem.adjustAutoGrowHeight = function () {
             elem.style.height = 0;
