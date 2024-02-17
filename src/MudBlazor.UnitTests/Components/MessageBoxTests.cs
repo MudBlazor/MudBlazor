@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class MessageBoxTests : BunitTest
     {
-        [Test, Timeout(3000)]
+        [Test, CancelAfter(3000)]
         [TestCase(0, null)]
         [TestCase(1, false)]
         [TestCase(2, true)]
@@ -43,7 +43,7 @@ namespace MudBlazor.UnitTests.Components
             yesNoCancel.Result.Should().Be(expectedResult);
         }
 
-        [Test, Timeout(3000)]
+        [Test, CancelAfter(3000)]
         [TestCase(0, null)]
         [TestCase(1, false)]
         [TestCase(2, true)]

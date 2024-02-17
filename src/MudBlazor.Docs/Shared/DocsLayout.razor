@@ -6,8 +6,8 @@
     <MudAppBar Class="docs-appbar" Elevation="0">
         <Appbar DrawerToggleCallback="ToggleDrawer" DisplaySearchBar="true" />
     </MudAppBar>
-    <MudDrawer Open="@_drawerOpen" OpenChanged="OnDrawerOpenChanged" ClipMode="DrawerClipMode.Docked" Elevation="0" Breakpoint="Breakpoint.Lg">
-        <MudHidden Breakpoint="Breakpoint.MdAndUp">
+    <MudDrawer Open="@_drawerOpen" OpenChanged="OnDrawerOpenChanged" ClipMode="DrawerClipMode.Docked" Elevation="0" Breakpoint="Breakpoint.Md">
+        <div class="d-block d-md-none">
             <MudToolBar Dense="true" DisableGutters="true" Class="docs-gray-bg">
                 @if (_topMenuOpen == false)
                 {
@@ -39,8 +39,8 @@
                     </MudNavGroup>
                 </MudNavMenu>
             }
-        </MudHidden>
-         <MudNavMenu Color="Color.Primary" Rounded="true" Dense="true" Margin="Margin.Dense" Class="pa-2 overflow-auto mb-3">
+        </div>
+        <MudNavMenu Color="Color.Primary" Rounded="true" Dense="true" Margin="Margin.Dense" Class="pa-2 overflow-auto mb-3">
             @if (!_topMenuOpen && LayoutService.GetDocsBasePage(NavigationManager.Uri) == DocsBasePage.Docs)
             {
                 <NavMenu @ref="@_navMenuRef"/>

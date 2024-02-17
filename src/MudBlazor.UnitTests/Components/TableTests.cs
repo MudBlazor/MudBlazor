@@ -8,6 +8,7 @@ using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Moq;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
@@ -37,6 +38,36 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p").TextContent.Trim().Should().Be("0,0,1,-1");
             trs[4].Click(); // clicking the header should add 100
             comp.Find("p").TextContent.Trim().Should().Be("0,0,1,-1,100");
+        }
+
+        /// <summary>
+        /// Check if the OnRowMouseEnter and OnRowMouseLeave event callbacks are fired as intended
+        /// </summary>
+        [Test]
+        public void TableRowHover()
+        {
+            var comp = Context.RenderComponent<TableRowHoverTest>();
+            comp.Find("p").TextContent.Trim().Should().Be("Current: '', last: ''");
+
+            var trs = comp.FindAll("tr");
+
+            trs[0].TriggerEvent("onmouseenter", new MouseEventArgs());
+            comp.Find("p").TextContent.Trim().Should().Be("Current: 'A', last: ''");
+
+            trs[0].TriggerEvent("onmouseleave", new MouseEventArgs());
+            comp.Find("p").TextContent.Trim().Should().Be("Current: '', last: 'A'");
+
+            trs[1].TriggerEvent("onmouseenter", new MouseEventArgs());
+            comp.Find("p").TextContent.Trim().Should().Be("Current: 'B', last: 'A'");
+
+            trs[1].TriggerEvent("onmouseleave", new MouseEventArgs());
+            comp.Find("p").TextContent.Trim().Should().Be("Current: '', last: 'B'");
+
+            trs[0].TriggerEvent("onmouseenter", new MouseEventArgs());
+            comp.Find("p").TextContent.Trim().Should().Be("Current: 'A', last: 'B'");
+
+            trs[0].TriggerEvent("onmouseleave", new MouseEventArgs());
+            comp.Find("p").TextContent.Trim().Should().Be("Current: '', last: 'A'");
         }
 
         /// <summary>

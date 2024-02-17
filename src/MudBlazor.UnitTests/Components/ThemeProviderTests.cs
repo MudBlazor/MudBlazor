@@ -269,10 +269,10 @@ namespace MudBlazor.UnitTests.Components
                     Secondary = "#F50057"
                 }
             };
-            Assert.AreEqual(new MudColor(Colors.Blue.Lighten1), myCustomTheme.PaletteDark.Primary);// Set by user
-            Assert.AreEqual(new MudColor("#f64e62"), myCustomTheme.PaletteDark.Error);// Default dark overwritten from light
-            Assert.AreEqual(new MudColor(Colors.Shades.White), myCustomTheme.PaletteDark.White);// Equal in dark and light.
-            Assert.AreEqual(new MudColor("#F50057"), myCustomTheme.PaletteDark.Secondary);// Setting not in PaletteDark()
+            myCustomTheme.PaletteDark.Primary.Should().Be(new MudColor(Colors.Blue.Lighten1));// Set by user
+            myCustomTheme.PaletteDark.Error.Should().Be(new MudColor("#f64e62"));// Default dark overwritten from light
+            myCustomTheme.PaletteDark.White.Should().Be(new MudColor(Colors.Shades.White));// Equal in dark and light.
+            myCustomTheme.PaletteDark.Secondary.Should().Be(new MudColor("#F50057"));// Setting not in PaletteDark()
         }
 
         [Test]
@@ -287,10 +287,10 @@ namespace MudBlazor.UnitTests.Components
                     Secondary = "#F50057"
                 }
             };
-            Assert.AreEqual(new MudColor(Colors.Blue.Lighten1), myCustomTheme.PaletteDark.Primary);// Set by user
-            Assert.AreEqual(new MudColor(Colors.Red.Default), myCustomTheme.PaletteDark.Error);// Default from light not overwritten by dark theme 
-            Assert.AreEqual(new MudColor(Colors.Shades.White), myCustomTheme.PaletteDark.White);// Equal in dark and light.
-            Assert.AreEqual(new MudColor("#F50057"), myCustomTheme.PaletteDark.Secondary);// Setting not in PaletteDark()
+            myCustomTheme.PaletteDark.Primary.Should().Be(new MudColor(Colors.Blue.Lighten1));// Set by user
+            myCustomTheme.PaletteDark.Error.Should().Be(new MudColor(Colors.Red.Default));// Default from light not overwritten by dark theme 
+            myCustomTheme.PaletteDark.White.Should().Be(new MudColor(Colors.Shades.White));// Equal in dark and light.
+            myCustomTheme.PaletteDark.Secondary.Should().Be(new MudColor("#F50057"));// Setting not in PaletteDark()
         }
 
         [Test]
@@ -299,18 +299,19 @@ namespace MudBlazor.UnitTests.Components
             var DefaultTheme = new MudTheme();
 
             //Dark theme
-            Assert.IsInstanceOf(typeof(PaletteDark), DefaultTheme.PaletteDark);
-            Assert.AreEqual(new MudColor("#776be7"), DefaultTheme.PaletteDark.Primary);
-            Assert.AreEqual(new MudColor("#f64e62"), DefaultTheme.PaletteDark.Error);
-            Assert.AreEqual(new MudColor(Colors.Shades.White), DefaultTheme.PaletteDark.White);
+            DefaultTheme.PaletteDark.Should().BeOfType<PaletteDark>();
+            DefaultTheme.PaletteDark.Primary.Should().Be(new MudColor("#776be7"));
+            DefaultTheme.PaletteDark.Error.Should().Be(new MudColor("#f64e62"));
+            DefaultTheme.PaletteDark.White.Should().Be(new MudColor(Colors.Shades.White));
 
             //Light theme
 #pragma warning disable CS0618
-            Assert.IsInstanceOf(typeof(Palette), DefaultTheme.Palette);
+            // Note we're testing against the base type
+            DefaultTheme.Palette.Should().BeAssignableTo<Palette>();
 #pragma warning restore CS0618
-            Assert.AreEqual(new MudColor("#594AE2"), DefaultTheme.Palette.Primary);
-            Assert.AreEqual(new MudColor(Colors.Red.Default), DefaultTheme.Palette.Error);
-            Assert.AreEqual(new MudColor(Colors.Shades.White), DefaultTheme.Palette.White);
+            DefaultTheme.Palette.Primary.Should().Be(new MudColor("#594AE2"));
+            DefaultTheme.Palette.Error.Should().Be(new MudColor(Colors.Red.Default));
+            DefaultTheme.Palette.White.Should().Be(new MudColor(Colors.Shades.White));
         }
 
         private bool _systemMockValue;
@@ -323,11 +324,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task WatchSystemTest()
         {
-            Assert.IsFalse(_systemMockValue);
+            _systemMockValue.Should().BeFalse();
             var comp = Context.RenderComponent<MudThemeProvider>();
             await comp.Instance.WatchSystemPreference(SystemChangedResult);
             await comp.Instance.SystemPreferenceChanged(true);
-            Assert.IsTrue(_systemMockValue);
+            _systemMockValue.Should().BeTrue();
         }
 
         [Test]

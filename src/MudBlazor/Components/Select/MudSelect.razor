@@ -16,7 +16,8 @@
                           OnAdornmentClick="@OnAdornmentClick" AdornmentIcon="@_currentIcon" Adornment="@Adornment"
                           AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
                           Clearable="@Clearable" OnClearButtonClick="(async (e) => await SelectClearButtonClickHandlerAsync(e))"
-                          @attributes="UserAttributes" OnBlur="@OnBlurAsync">
+                          @attributes="UserAttributes" OnBlur="@OnBlurAsync"
+                          ShrinkLabel="@ShrinkLabel">
                     @if (CanRenderValue)
                     {
                         @GetSelectedValuePresenter()

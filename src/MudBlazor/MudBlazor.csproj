@@ -59,21 +59,21 @@
   </Target>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.25" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.25" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.25" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.27" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.27" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.27" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.14" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.14" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.14" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.16" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.16" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.2" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -119,17 +119,6 @@
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <Watch Remove="Styles\components\_toggle.scss" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />

@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor
+
+@if(!DefaultScrollbar)
+{
+    @((MarkupString)BuildMudBlazorScrollbar())
+}
+
+@*Needed for charts, maybe put in bool, IncludeCharts="true"??*@
+<style>
+    .mud-chart-serie:hover {
+        filter: url(#lighten);
+    }
+</style>
+
+@((MarkupString)BuildTheme())
+

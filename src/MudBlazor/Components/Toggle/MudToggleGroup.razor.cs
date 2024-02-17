@@ -2,10 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -44,63 +46,63 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// The generic value for the component.
+        /// The selected value in single- and toggle-selection mode.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public T? Value { get; set; }
 
         /// <summary>
-        /// Fires when value changed.
+        /// Fires when Value changes.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public EventCallback<T?> ValueChanged { get; set; }
 
         /// <summary>
-        /// Selected values that stored for multiselection mode.
+        /// The selected values for multi-selection mode.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public IEnumerable<T?>? SelectedValues { get; set; }
+        public IEnumerable<T?>? Values { get; set; }
 
         /// <summary>
-        /// Fires when SelectedValues changed.
+        /// Fires when Values change.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public EventCallback<IEnumerable<T?>> SelectedValuesChanged { get; set; }
+        public EventCallback<IEnumerable<T?>> ValuesChanged { get; set; }
 
         /// <summary>
-        /// Classnames only applied selected item, sepereated by space.
+        /// Classes (separated by space) to be applied to the selected items only.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string? SelectedClass { get; set; }
 
         /// <summary>
-        /// Class for toggle item text.
+        /// Classes (separated by space) to be applied to the text of all toggle items.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string? TextClass { get; set; }
-        
+
         /// <summary>
-        /// Class for toggle item icon.
+        /// Classes (separated by space) to be applied to SelectedIcon/UnselectedIcon of the items (if CheckMark is true).
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string? CheckMarkClass { get; set; }
-        
+
         /// <summary>
-        /// If true, items ordered vertically.
+        /// If true, use vertical layout.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Vertical { get; set; }
 
         /// <summary>
-        /// If true, first and last item will be rounded.
+        /// If true, the first and last item will be rounded.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
@@ -110,14 +112,14 @@ namespace MudBlazor
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// If true, outline border will show. Default is true.
+        /// If true, show an outline border. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Outline { get; set; } = true;
 
         /// <summary>
-        /// If true, the line delimiter between items will show. Default is true.
+        /// If true, show a line delimiter between items. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
@@ -131,7 +133,7 @@ namespace MudBlazor
         public bool DisableRipple { get; set; }
 
         /// <summary>
-        /// If true, component's margin and padding will reduce.
+        /// If true, the component's padding is reduced so it takes up less space.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
@@ -147,7 +149,7 @@ namespace MudBlazor
         public SelectionMode SelectionMode { get; set; }
 
         /// <summary>
-        /// The color of the component. Affect borders and selection color. Default is primary.
+        /// The color of the component. Affects borders and selection color. Default is Colors.Primary.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
@@ -179,10 +181,29 @@ namespace MudBlazor
             {
                 return;
             }
-
             _items.Add(item);
         }
-        
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            var isValueBound = ValueChanged.HasDelegate;
+            var isSelectedValuesBound = ValuesChanged.HasDelegate;
+            switch (SelectionMode)
+            {
+                default:
+                case SelectionMode.SingleSelection:
+                case SelectionMode.ToggleSelection:
+                    if (!isValueBound && isSelectedValuesBound)
+                        Logger.LogWarning($"For SelectionMode {SelectionMode} you should bind {nameof(Value)} instead of {nameof(Values)}");
+                    break;
+                case SelectionMode.MultiSelection:
+                    if (isValueBound && !isSelectedValuesBound)
+                        Logger.LogWarning($"For SelectionMode {SelectionMode} you should bind {nameof(Values)} instead of {nameof(Value)}");
+                    break;
+            }
+        }
+
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -202,17 +223,17 @@ namespace MudBlazor
             }
 
             // Handle multi-selection mode
-            if (((_values is null && SelectedValues is not null) || (_values is not null && !_values.Equals(SelectedValues))) && multiSelection)
+            if (((_values is null && Values is not null) || (_values is not null && !_values.Equals(Values))) && multiSelection)
             {
                 DeselectAllItems();
 
-                if (SelectedValues is not null)
+                if (Values is not null)
                 {
-                    var selectedItems = _items.Where(x => SelectedValues.Contains(x.Value)).ToList();
+                    var selectedItems = _items.Where(x => Values.Contains(x.Value)).ToList();
                     selectedItems.ForEach(x => x.SetSelected(true));
                 }
 
-                _values = SelectedValues;
+                _values = Values;
             }
         }
 
@@ -230,9 +251,9 @@ namespace MudBlazor
                 }
 
                 // Handle multi-selection mode
-                if (SelectedValues is not null && multiSelection)
+                if (Values is not null && multiSelection)
                 {
-                    var selectedItems = _items.Where(x => SelectedValues.Contains(x.Value)).ToList();
+                    var selectedItems = _items.Where(x => Values.Contains(x.Value)).ToList();
                     selectedItems.ForEach(x => x.SetSelected(true));
                 }
 
@@ -243,12 +264,12 @@ namespace MudBlazor
                 SelectedClass != _selectedClass ||
                 Outline != _outline ||
                 Delimiters != _delimiters ||
-                RightToLeft != _rtl || 
+                RightToLeft != _rtl ||
                 Dense != _dense ||
-                Rounded != _rounded || 
+                Rounded != _rounded ||
                 CheckMark != _checkMark ||
                 FixedContent != _fixedContent
-                )
+               )
             {
                 _color = Color;
                 _selectedClass = SelectedClass;
@@ -274,14 +295,14 @@ namespace MudBlazor
             {
                 if (item.IsSelected)
                 {
-                    SelectedValues = SelectedValues?.Where(x => !Equals(x, item.Value));
-                    await SelectedValuesChanged.InvokeAsync(SelectedValues);
+                    Values = Values?.Where(x => !Equals(x, item.Value));
+                    await ValuesChanged.InvokeAsync(Values);
                 }
                 else
                 {
-                    SelectedValues ??= new HashSet<T>();
-                    SelectedValues = SelectedValues.Append(item.Value);
-                    await SelectedValuesChanged.InvokeAsync(SelectedValues);
+                    Values ??= new HashSet<T>();
+                    Values = Values.Append(item.Value);
+                    await ValuesChanged.InvokeAsync(Values);
                 }
                 item.SetSelected(!item.IsSelected);
             }
@@ -324,6 +345,5 @@ namespace MudBlazor
         protected internal bool IsFirstItem(MudToggleItem<T> item) => item.Equals(_items.FirstOrDefault());
 
         protected internal bool IsLastItem(MudToggleItem<T> item) => item.Equals(_items.LastOrDefault());
-        
     }
 }

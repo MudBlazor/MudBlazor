@@ -178,7 +178,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
 
-        internal override void FireRowClickEvent(MouseEventArgs args, MudTr row, object o)
+        internal override async Task FireRowClickEventAsync(MouseEventArgs args, MudTr row, object o)
         {
             var item = default(T);
             try
@@ -186,7 +186,53 @@ namespace MudBlazor
                 item = (T)o;
             }
             catch (Exception) { /*ignore*/}
-            OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>()
+            await OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>()
+            {
+                MouseEventArgs = args,
+                Row = row,
+                Item = item,
+            });
+        }
+
+        /// <summary>
+        /// Row hover start event.
+        /// </summary>
+        [Parameter] public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseEnter { get; set; }
+
+        internal override bool HasRowMouseEnterEventHandler => OnRowMouseEnter.HasDelegate;
+
+        internal override async Task FireRowMouseEnterEventAsync(MouseEventArgs args, MudTr row, object o)
+        {
+            var item = default(T);
+            try
+            {
+                item = (T)o;
+            }
+            catch (Exception) { /*ignore*/}
+            await OnRowMouseEnter.InvokeAsync(new TableRowHoverEventArgs<T>()
+            {
+                MouseEventArgs = args,
+                Row = row,
+                Item = item,
+            });
+        }
+
+        /// <summary>
+        /// Row hover stop event.
+        /// </summary>
+        [Parameter] public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseLeave { get; set; }
+        
+        internal override bool HasRowMouseLeaveEventHandler => OnRowMouseLeave.HasDelegate;
+        
+        internal override async Task FireRowMouseLeaveEventAsync(MouseEventArgs args, MudTr row, object o)
+        {
+            var item = default(T);
+            try
+            {
+                item = (T)o;
+            }
+            catch (Exception) { /*ignore*/}
+            await OnRowMouseLeave.InvokeAsync(new TableRowHoverEventArgs<T>()
             {
                 MouseEventArgs = args,
                 Row = row,

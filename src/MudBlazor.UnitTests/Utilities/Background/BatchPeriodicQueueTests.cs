@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using MudBlazor.Utilities.Background.Batch;
 using NUnit.Framework;
@@ -47,8 +48,8 @@ public class BatchPeriodicQueueTests
         var eventSignaled = signalEvent.Wait(signalEventWaitTime);
 
         // Assert
-        Assert.IsTrue(eventSignaled);
-        Assert.Zero(batchPeriodicQueue.Count);
+        eventSignaled.Should().BeTrue();
+        batchPeriodicQueue.Count.Should().Be(0);
         //NB! Use It.IsAny<CancellationToken>() instead of stoppingTokenSource.Token because it creates a linked token via CancellationTokenSource.CreateLinkedTokenSource, therefore the reference won't match
         mockHandler.Verify(
             h => h.OnBatchTimerElapsedAsync(
@@ -89,8 +90,8 @@ public class BatchPeriodicQueueTests
         var eventSignaled = signalEvent.Wait(signalEventWaitTime);
 
         // Assert
-        Assert.IsTrue(eventSignaled);
-        Assert.Zero(batchPeriodicQueue.Count);
+        eventSignaled.Should().BeTrue();
+        batchPeriodicQueue.Count.Should().Be(0);
         //NB! Use It.IsAny<CancellationToken>() instead of stoppingTokenSource.Token because it case of DisposeAsync the token will be default
         mockHandler.Verify(
             h => h.OnBatchTimerElapsedAsync(
@@ -130,8 +131,8 @@ public class BatchPeriodicQueueTests
         var eventSignaled = signalEvent.Wait(period);
 
         // Assert
-        Assert.IsFalse(eventSignaled);
-        Assert.AreEqual(3, batchPeriodicQueue.Count);
+        eventSignaled.Should().BeFalse();
+        batchPeriodicQueue.Count.Should().Be(3);
         //NB! Use It.IsAny<CancellationToken>() instead of stoppingTokenSource.Token because it case of DisposeAsync the token will be default
         mockHandler.Verify(
             h => h.OnBatchTimerElapsedAsync(

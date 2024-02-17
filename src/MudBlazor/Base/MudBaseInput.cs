@@ -13,7 +13,12 @@ namespace MudBlazor
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>
     {
         private bool _isDirty;
-
+        /// <summary>
+        /// this flag is set to true by validation in order to prevent multiple invocations of validation after a single
+        /// value change. When the value changes _validated is set back to false.
+        /// </summary>
+        private bool _validated; 
+        
         protected MudBaseInput() : base(new DefaultConverter<T>()) { }
 
         /// <summary>
@@ -213,6 +218,13 @@ namespace MudBlazor
         public virtual string Pattern { get; set; }
 
         /// <summary>
+        /// ShrinkLabel prevents the label from moving down into the field when the field is empty.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool ShrinkLabel { get; set; } = false;
+
+        /// <summary>
         /// Derived classes need to override this if they can be something other than text
         /// </summary>
         internal virtual InputType GetInputType() { return InputType.Text; }
@@ -222,6 +234,7 @@ namespace MudBlazor
             if (Text != text)
             {
                 Text = text;
+                _validated = false;
                 if (!string.IsNullOrWhiteSpace(Text))
                     Touched = true;
                 if (updateValue)
@@ -273,11 +286,14 @@ namespace MudBlazor
             if (ReadOnly)
                 return;
             _isFocused = false;
-
+            
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;
-                await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
+                if (_validated)
+                    await OnBlur.InvokeAsync(obj);
+                else
+                    await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
             }
         }
 
@@ -395,6 +411,7 @@ namespace MudBlazor
             if (!EqualityComparer<T>.Default.Equals(Value, value) || force == true)
             {
                 _isDirty = true;
+                _validated = false;
                 Value = value;
                 await ValueChanged.InvokeAsync(Value);
                 if (updateText)
@@ -461,12 +478,12 @@ namespace MudBlazor
             return changed;
         }
 
-        protected override Task ValidateValue()
+        protected override async Task ValidateValue()
         {
-            if (SubscribeToParentForm)
-                return base.ValidateValue();
-
-            return Task.CompletedTask;
+            if (SubscribeToParentForm) {
+                await base.ValidateValue();
+                _validated = true;
+            }
         }
 
         protected override async Task OnInitializedAsync()
@@ -542,6 +559,7 @@ namespace MudBlazor
         {
             SetTextAsync(null, updateValue: true).AndForget();
             this._isDirty = false;
+            this._validated = false;
             base.ResetValue();
         }
 
@@ -549,6 +567,7 @@ namespace MudBlazor
         {
             await SetTextAsync(null, updateValue: true);
             this._isDirty = false;
+            this._validated = false;
             await base.ResetValueAsync();
         }
     }

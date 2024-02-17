@@ -17,6 +17,8 @@ using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static MudBlazor.Docs.Examples.TableRelationalExample;
+using static Bunit.ComponentParameterFactory;
+using MudBlazor.Services;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -231,6 +233,20 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td")[1].TextContent.Trim().Should().Be("C");
 
             dataGrid.Instance.Filterable = false;
+        }
+
+        [Test]
+        public async Task DataGrid_SetParameters_ServerData_QuickFilter_Throw()
+        {
+            var serverDataFunc =
+                new Func<GridState<TestModel1>, Task<GridData<TestModel1>>>((x) => throw new NotImplementedException());
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Context.RenderComponent<MudDataGrid<TestModel1>>(
+                    Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
+                    Parameter(nameof(MudDataGrid<TestModel1>.QuickFilter), (TestModel1 x) => true)
+                )
+            );
+            exception.Message.Should().Be("Do not supply both 'ServerData' and 'QuickFilter'.");
         }
 
         [Test]
@@ -456,6 +472,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridRowsPerPageTwoWayBindingTest()
+        {
+            var comp = Context.RenderComponent<DataGridRowsPerPageBindingTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridRowsPerPageBindingTest.Item>>();
+
+            // confirm that BoundRowsPerPage is equal to the initial value of 5 (See DataGridRowsPerPageBindingTest)
+            comp.Instance.BoundRowsPerPage.Should().Be(5);
+
+            // programmatically set the datagrid rowsPerPage to 10
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.SetRowsPerPageAsync(10));
+
+            // confirm that BoundRowsPerPage changes when rowsPerPage is set to 10
+            comp.Instance.BoundRowsPerPage.Should().Be(10);
+        }
+
+        [Test]
         public async Task DataGridInlineEditTest()
         {
             var comp = Context.RenderComponent<DataGridCellEditTest>();
@@ -489,7 +521,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("td input")[2].GetAttribute("value").Trim().Should().Be("Johanna");
             dataGrid.FindAll("td input")[3].GetAttribute("value").Trim().Should().Be("23");
             dataGrid.FindAll("td input")[4].GetAttribute("value").Trim().Should().Be("Steve");
-            Assert.IsNull(dataGrid.FindAll("td input")[5].GetAttribute("value"));
+            dataGrid.FindAll("td input")[5].GetAttribute("value").Should().BeNull();
             dataGrid.FindAll(".mud-table-body tr td input")[0].Change("Jonathan");
             dataGrid.FindAll(".mud-table-body tr td input")[1].Change(52);
             dataGrid.FindAll(".mud-table-body tr td input")[0].GetAttribute("value").Trim().Should().Be("Jonathan");
@@ -588,7 +620,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be("J K Simmons");
 
             var textfield = comp.FindComponent<MudTextField<string>>();
-            Assert.AreSame(comp.Instance.FormFieldChangedEventArgs.Field, textfield.Instance);
+            textfield.Instance.Should().BeSameAs(comp.Instance.FormFieldChangedEventArgs.Field);
         }
 
         [Test]
@@ -798,10 +830,10 @@ namespace MudBlazor.UnitTests.Components
                 DataGrid = dataGrid.Instance
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Does not contain", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null, null)));
+            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -813,10 +845,10 @@ namespace MudBlazor.UnitTests.Components
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Does not contain", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null, null)));
+            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
 
             // null value default case sensitivity
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -828,9 +860,9 @@ namespace MudBlazor.UnitTests.Components
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Does not contain", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null, null)));
+            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
 
             // null value default case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -842,9 +874,9 @@ namespace MudBlazor.UnitTests.Components
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Does not contain", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null, null)));
+            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -860,10 +892,10 @@ namespace MudBlazor.UnitTests.Components
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Does not contain", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null, null)));
+            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
 
             // case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -875,10 +907,10 @@ namespace MudBlazor.UnitTests.Components
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Does not contain", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null, null)));
+            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -890,9 +922,9 @@ namespace MudBlazor.UnitTests.Components
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Does not contain", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null, null)));
+            func.Invoke(new("Does not contain", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -907,10 +939,10 @@ namespace MudBlazor.UnitTests.Components
                 DataGrid = dataGrid.Instance
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Not Joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("joe", 45, null, null, null, null)));
+            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -922,10 +954,10 @@ namespace MudBlazor.UnitTests.Components
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Not Joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("joe", 45, null, null, null, null)));
+            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value default case sensitivity
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -937,9 +969,9 @@ namespace MudBlazor.UnitTests.Components
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null, null)));
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
 
             // null value case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -952,10 +984,10 @@ namespace MudBlazor.UnitTests.Components
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
 
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("joe", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null, null)));
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -971,10 +1003,10 @@ namespace MudBlazor.UnitTests.Components
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Not Joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("joe", 45, null, null, null, null)));
+            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
 
             //case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -986,10 +1018,10 @@ namespace MudBlazor.UnitTests.Components
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Not Joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("joe", 45, null, null, null, null)));
+            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1001,9 +1033,9 @@ namespace MudBlazor.UnitTests.Components
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null, null)));
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1018,10 +1050,10 @@ namespace MudBlazor.UnitTests.Components
                 DataGrid = dataGrid.Instance
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Not Joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("joe", 45, null, null, null, null)));
+            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1033,10 +1065,10 @@ namespace MudBlazor.UnitTests.Components
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Not Joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("joe", 45, null, null, null, null)));
+            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1048,9 +1080,9 @@ namespace MudBlazor.UnitTests.Components
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Not Joe", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Not Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1065,10 +1097,10 @@ namespace MudBlazor.UnitTests.Components
                 DataGrid = dataGrid.Instance
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Joe Not", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("joe", 45, null, null, null, null)));
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeFalse();
 
             //case insensitive
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1080,10 +1112,10 @@ namespace MudBlazor.UnitTests.Components
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive;
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Joe Not", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("joe", 45, null, null, null, null)));
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1095,9 +1127,9 @@ namespace MudBlazor.UnitTests.Components
             };
             filterDefinition.DataGrid.FilterCaseSensitivity = DataGridFilterCaseSensitivity.Default;
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1111,10 +1143,10 @@ namespace MudBlazor.UnitTests.Components
                 DataGrid = dataGrid.Instance
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Joe Not", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(String.Empty, 45, null, null, null, null)));
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(String.Empty, 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1125,10 +1157,10 @@ namespace MudBlazor.UnitTests.Components
                 DataGrid = dataGrid.Instance
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(String.Empty, 45, null, null, null, null)));
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(String.Empty, 45, null, null, null, null)).Should().BeFalse();
 
             #endregion
 
@@ -1142,10 +1174,10 @@ namespace MudBlazor.UnitTests.Components
                 DataGrid = dataGrid.Instance
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(String.Empty, 45, null, null, null, null)));
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(String.Empty, 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1156,10 +1188,10 @@ namespace MudBlazor.UnitTests.Components
                 DataGrid = dataGrid.Instance
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("", 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(null, 45, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new(String.Empty, 45, null, null, null, null)));
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("", 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new(String.Empty, 45, null, null, null, null)).Should().BeFalse();
 
             #endregion
 
@@ -1172,9 +1204,9 @@ namespace MudBlazor.UnitTests.Components
                 DataGrid = dataGrid.Instance
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Joe Not", 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new(null, 45, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Joe Not", 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new(null, 45, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
         }
 
         [Test]
@@ -1193,9 +1225,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = true
             };
             var func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 45, null, false, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, true, null, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, false, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, true, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1205,9 +1237,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, false, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, true, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, false, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, true, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1219,9 +1251,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = true
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, false, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, true, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, false, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, true, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
         }
 
         [Test]
@@ -1240,9 +1272,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = Severity.Normal
             };
             var func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 456, Severity.Info, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, Severity.Normal, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 456, Severity.Info, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, Severity.Normal, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1252,9 +1284,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 456, Severity.Info, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, Severity.Normal, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 456, Severity.Info, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Normal, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1267,9 +1299,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = Severity.Normal
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 456, Severity.Normal, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, Severity.Info, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1279,9 +1311,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 456, Severity.Normal, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, Severity.Info, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1293,9 +1325,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = Severity.Normal
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 456, Severity.Normal, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, Severity.Info, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
         }
 
         [Test]
@@ -1315,8 +1347,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = utcnow
             };
             var func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1326,8 +1358,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1340,8 +1372,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = utcnow
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1351,8 +1383,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1365,8 +1397,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = utcnow
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1376,8 +1408,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1390,8 +1422,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = utcnow
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1401,8 +1433,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1415,8 +1447,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = utcnow
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1426,8 +1458,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1440,8 +1472,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = utcnow
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1451,8 +1483,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1465,8 +1497,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = utcnow
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1476,8 +1508,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1490,8 +1522,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = utcnow
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1501,8 +1533,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsFalse(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             #endregion
 
@@ -1514,8 +1546,8 @@ namespace MudBlazor.UnitTests.Components
                 Value = utcnow
             };
             func = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func.Invoke(new("Sam", 45, null, null, utcnow, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 45, null, null, utcnow, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
         }
 
         [Test]
@@ -1534,9 +1566,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = 45
             };
             var func = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func.Invoke(new("Sam", 456, null, null, null, null)));
-            Assert.IsFalse(func.Invoke(new("Sam", null, null, null, null, null)));
-            Assert.IsTrue(func.Invoke(new("Joe", 45, null, null, null, null)));
+            func.Invoke(new("Sam", 456, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Sam", null, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1547,9 +1579,9 @@ namespace MudBlazor.UnitTests.Components
             };
             var func2 = filterDefinition.GenerateFilterFunction();
             // data type is an int
-            Assert.IsTrue(func2.Invoke(new("Sam", 456, null, null, null, null)));
-            Assert.IsTrue(func2.Invoke(new("Sam", null, null, null, null, null)));
-            Assert.IsTrue(func2.Invoke(new("Joe", 45, null, null, null, null)));
+            func2.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
+            func2.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
+            func2.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1562,9 +1594,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = 45
             };
             var func3 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func3.Invoke(new("Sam", 456, null, null, null, null)));
-            Assert.IsTrue(func3.Invoke(new("Sam", null, null, null, null, null)));
-            Assert.IsFalse(func3.Invoke(new("Joe", 45, null, null, null, null)));
+            func3.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
+            func3.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
+            func3.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1574,9 +1606,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             var func4 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func4.Invoke(new("Sam", 456, null, null, null, null)));
-            Assert.IsTrue(func4.Invoke(new("Sam", null, null, null, null, null)));
-            Assert.IsTrue(func4.Invoke(new("Joe", 45, null, null, null, null)));
+            func4.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
+            func4.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
+            func4.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1589,9 +1621,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = 45
             };
             var func5 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func5.Invoke(new("Sam", 456, null, null, null, null)));
-            Assert.IsFalse(func5.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsFalse(func5.Invoke(new("Joe", null, null, null, null, null)));
+            func5.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
+            func5.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func5.Invoke(new("Joe", null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1601,9 +1633,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             var func6 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func6.Invoke(new("Sam", 456, null, null, null, null)));
-            Assert.IsTrue(func6.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsTrue(func6.Invoke(new("Joe", null, null, null, null, null)));
+            func6.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
+            func6.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func6.Invoke(new("Joe", null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1616,9 +1648,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = 45
             };
             var func7 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func7.Invoke(new("Sam", 4, null, null, null, null)));
-            Assert.IsFalse(func7.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsFalse(func7.Invoke(new("Joe", null, null, null, null, null)));
+            func7.Invoke(new("Sam", 4, null, null, null, null)).Should().BeTrue();
+            func7.Invoke(new("Joe", 45, null, null, null, null)).Should().BeFalse();
+            func7.Invoke(new("Joe", null, null, null, null, null)).Should().BeFalse();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1628,9 +1660,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             var func8 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func8.Invoke(new("Sam", 4, null, null, null, null)));
-            Assert.IsTrue(func8.Invoke(new("Joe", 45, null, null, null, null)));
-            Assert.IsTrue(func8.Invoke(new("Joe", null, null, null, null, null)));
+            func8.Invoke(new("Sam", 4, null, null, null, null)).Should().BeTrue();
+            func8.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
+            func8.Invoke(new("Joe", null, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1643,9 +1675,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = 45
             };
             var func9 = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func9.Invoke(new("Sam", 4, null, null, null, null)));
-            Assert.IsFalse(func9.Invoke(new("Sam", null, null, null, null, null)));
-            Assert.IsTrue(func9.Invoke(new("Joe", 45, null, null, null, null)));
+            func9.Invoke(new("Sam", 4, null, null, null, null)).Should().BeFalse();
+            func9.Invoke(new("Sam", null, null, null, null, null)).Should().BeFalse();
+            func9.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1655,9 +1687,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             var func10 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func10.Invoke(new("Sam", 4, null, null, null, null)));
-            Assert.IsTrue(func10.Invoke(new("Sam", null, null, null, null, null)));
-            Assert.IsTrue(func10.Invoke(new("Joe", 45, null, null, null, null)));
+            func10.Invoke(new("Sam", 4, null, null, null, null)).Should().BeTrue();
+            func10.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
+            func10.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1670,9 +1702,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = 45
             };
             var func11 = filterDefinition.GenerateFilterFunction();
-            Assert.IsFalse(func11.Invoke(new("Sam", 46, null, null, null, null)));
-            Assert.IsFalse(func11.Invoke(new("Sam", null, null, null, null, null)));
-            Assert.IsTrue(func11.Invoke(new("Joe", 45, null, null, null, null)));
+            func11.Invoke(new("Sam", 46, null, null, null, null)).Should().BeFalse();
+            func11.Invoke(new("Sam", null, null, null, null, null)).Should().BeFalse();
+            func11.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             // null value
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -1682,9 +1714,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = null
             };
             var func12 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func12.Invoke(new("Sam", 46, null, null, null, null)));
-            Assert.IsTrue(func12.Invoke(new("Sam", null, null, null, null, null)));
-            Assert.IsTrue(func12.Invoke(new("Joe", 45, null, null, null, null)));
+            func12.Invoke(new("Sam", 46, null, null, null, null)).Should().BeTrue();
+            func12.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
+            func12.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
 
             #endregion
 
@@ -1696,9 +1728,9 @@ namespace MudBlazor.UnitTests.Components
                 Value = 45
             };
             var func13 = filterDefinition.GenerateFilterFunction();
-            Assert.IsTrue(func13.Invoke(new("Sam", 456, null, null, null, null)));
-            Assert.IsTrue(func13.Invoke(new("Sam", null, null, null, null, null)));
-            Assert.IsTrue(func13.Invoke(new("Joe", 45, null, null, null, null)));
+            func13.Invoke(new("Sam", 456, null, null, null, null)).Should().BeTrue();
+            func13.Invoke(new("Sam", null, null, null, null, null)).Should().BeTrue();
+            func13.Invoke(new("Joe", 45, null, null, null, null)).Should().BeTrue();
         }
 
         [Test]
@@ -1884,25 +1916,25 @@ namespace MudBlazor.UnitTests.Components
             var filters = dataGrid.Instance.FilterDefinitions;
 
             // assertions for string
-            Assert.AreEqual(filterDefinition.Id, filters[0].Id);
-            Assert.AreEqual(filterDefinition.Operator, filters[0].Operator);
-            Assert.AreEqual(filterDefinition.Value, filters[0].Value);
+            filters[0].Id.Should().Be(filterDefinition.Id);
+            filters[0].Operator.Should().Be(filterDefinition.Operator);
+            filters[0].Value.Should().Be(filterDefinition.Value);
             filters[0].Value = "Not Joe";
-            Assert.AreEqual(filterDefinition.Value, "Not Joe");
+            filterDefinition.Value.Should().Be("Not Joe");
 
             // assertions for int
-            Assert.AreEqual(filterDefinition2.Id, filters[1].Id);
-            Assert.AreEqual(filterDefinition2.Operator, filters[1].Operator);
-            Assert.AreEqual(filterDefinition2.Value, filters[1].Value);
+            filters[1].Id.Should().Be(filterDefinition2.Id);
+            filters[1].Operator.Should().Be(filterDefinition2.Operator);
+            filters[1].Value.Should().Be(filterDefinition2.Value);
             filters[1].Value = 45;
-            Assert.AreEqual(filterDefinition2.Value, 45);
+            filterDefinition2.Value.Should().Be(45);
 
             // assertions for Enum
-            Assert.AreEqual(filterDefinition3.Id, filters[2].Id);
-            Assert.AreEqual(filterDefinition3.Operator, filters[2].Operator);
-            Assert.AreEqual(filterDefinition3.Value, filters[2].Value);
+            filters[2].Id.Should().Be(filterDefinition3.Id);
+            filters[2].Operator.Should().Be(filterDefinition3.Operator);
+            filters[2].Value.Should().Be(filterDefinition3.Value);
             filters[2].Value = Severity.Error;
-            Assert.AreEqual(filterDefinition3.Value, Severity.Error);
+            filterDefinition3.Value.Should().Be(Severity.Error);
         }
 
         [Test]
@@ -2008,15 +2040,6 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.FindAll("tfoot td").First().TextContent.Trim().Should().Be("Names: Sam, Alicia, Ira, John");
             dataGrid.FindAll("tfoot td").Last().TextContent.Trim().Should().Be($"Highest: {132000:C0} | 2 Over {100000:C0}");
-        }
-
-        [Test]
-        public async Task DataGridServerDataQuickFilterTest()
-        {
-            var comp = Context.RenderComponent<DataGridServerDataQuickFilterTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataQuickFilterTest.Item>>();
-
-            dataGrid.FindAll("tr").Count.Should().Be(3);
         }
 
         [Test]
@@ -3156,5 +3179,41 @@ namespace MudBlazor.UnitTests.Components
             columnOptionsSpan.TextContent.Trim().Should().BeEmpty();
         }
 
+        [Test]
+        public async Task ShouldSetIsGenderGroupedToTrueWhenGroupingIsApplied()
+        {
+            // Render the DataGridGroupingTest component for testing.
+            var comp = Context.RenderComponent<DataGridColumnGroupingTest>();
+
+            // Attempt to find the MudPopoverProvider component within the rendered component.
+            // MudPopoverProvider is used to manage popovers in the component, including the grouping popover.
+            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
+            
+            // Assert that initially, before any user interaction, IsGenderGrouped should be false.
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+
+            // Find the button within the 'th' element with class 'gender' that triggers the popover for grouping.
+            var genderHeaderOption = comp.Find("th.gender .mud-menu button");
+
+            // Simulate a click on the gender header group button to open the popover with grouping options.
+            genderHeaderOption.Click();
+
+            // Find all MudListItem components within the popoverProvider. 
+            // These list items represent the individual options within the grouping popover.
+            var listItems = popoverProvider.FindComponents<MudListItem>();
+
+            // Assert that there are exactly 2 list items (options) available in the popover.
+            listItems.Count.Should().Be(2);
+
+            // From the list items found, select the second one which is expected to be the clickable option for grouping.
+            var clickablePopover = listItems[1].Find(".mud-list-item");
+
+            // click on the grouping option to apply grouping to the data grid.
+            clickablePopover.Click();
+
+            // After clicking the grouping option, assert that IsGenderGrouped is now true, indicating that
+            // the action of applying grouping has successfully updated the component's state.
+            comp.Instance.IsGenderGrouped.Should().Be(true);
+        }
     }
 }

@@ -30,6 +30,18 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Hover Events">
+                <Description>
+                    <CodeInline>OnRowMouseEnter</CodeInline> is triggered when the row starts being hovered (onmouseenter event).
+                    <CodeInline>OnRowMouseLeave</CodeInline> is triggered when the row stops being hovered (onmouseleave event).
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(TableRowHoverEventsExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TableRowHoverEventsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Table with pagination and filtering">
                 <Description>
                     The <CodeInline>&lt;MudTable></CodeInline> component supports pagination, sorting and filtering of rows, as well as single and multiple row selection. To tell the table how to render your data, define a <CodeInline>&lt;RowTemplate></CodeInline>
@@ -47,8 +59,12 @@
         <DocsPageSection>
             <SectionHeader Title="TablePager Customization">
                 <Description>
-                    By setting <CodeInline>HideRowsPerPage</CodeInline> property or the <CodeInline>HidePageNumber</CodeInline> property or the <CodeInline>HidePagination</CodeInline> property to <CodeInline>true</CodeInline>, the corresponding information is hidden in the <CodeInline>MudTablePager</CodeInline>.
-                    The pager's position can be defined with the <CodeInline>HorizontalAlignment</CodeInline> property.
+                    The <CodeInline>TablePager</CodeInline> has many properties to customize it.
+                    The property <CodeInline>HorizontalAlignment</CodeInline> can be used to define the position.
+                    The properties <CodeInline>RowsPerPageString</CodeInline>, <CodeInline>InfoFormat</CodeInline> and <CodeInline>AllItemsText</CodeInline> can be used to customize the displayed text.
+                    The properties <CodeInline>HideRowsPerPage</CodeInline>, <CodeInline>HidePageNumber</CodeInline> and <CodeInline>HidePagination</CodeInline> can be used to hide the corresponding information.
+                    <br /><br />
+                    See <MudLink Href="@ApiLink.GetApiLinkFor(typeof(MudTablePager))">TablePager API</MudLink> for more informations.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
                         <CodeInline>@("RowsPerPage")</CodeInline> parameter of MudTable is independent of <CodeInline>@("PageSizeOptions")</CodeInline> parameter of PagerContent. Therefore, the RowsPerPage value does not have
                         to be one of the values ​​in the PageSizeOptions list. If the table pager is shown you should make sure the value of RowsPerPage is also available in the PageSizeOptions list, otherwise the users can not go back to this RowsPerPage value once they have chosen another one.
@@ -58,8 +74,8 @@
                     </MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(TabPagerExample)" ShowCode="false" Block="true" FullWidth="true">
-                <TabPagerExample />
+            <SectionContent DarkenBackground="true" Code="@nameof(TablePagerExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TablePagerExample />
             </SectionContent>
         </DocsPageSection>
 

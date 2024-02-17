@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Services;
 
@@ -12,7 +11,7 @@ public partial class DocsLayout : LayoutComponentBase
 {
     [Inject] private LayoutService LayoutService { get; set; }
     [Inject] private NavigationManager NavigationManager { get; set; }
-    
+
     private NavMenu _navMenuRef;
     private bool _drawerOpen = true;
     private bool _topMenuOpen = false;
@@ -20,7 +19,7 @@ public partial class DocsLayout : LayoutComponentBase
     {
         LayoutService.SetBaseTheme(Theme.DocsTheme());
     }
-    
+
     protected override void OnAfterRender(bool firstRender)
     {
         //refresh nav menu because no parameters change in nav menu but internal data does
