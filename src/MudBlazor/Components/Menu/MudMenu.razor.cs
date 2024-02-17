@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -285,8 +286,18 @@ namespace MudBlazor
         public void OpenMenu(EventArgs args)
         {
             if (Disabled)
+            {
                 return;
-            if (PositionAtCursor) SetPopoverStyle((MouseEventArgs)args);
+            }
+
+            if (PositionAtCursor)
+            {
+                if (args is MouseEventArgs mouseEventArgs)
+                {
+                    SetPopoverStyle(mouseEventArgs);
+                }
+            }
+
             _isOpen = true;
             StateHasChanged();
             IsOpenChanged.InvokeAsync(_isOpen);
