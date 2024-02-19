@@ -480,9 +480,10 @@ namespace MudBlazor
 
         protected override async Task ValidateValue()
         {
-            if (SubscribeToParentForm) {
-                await base.ValidateValue();
+            if (SubscribeToParentForm)
+            {
                 _validated = true;
+                await base.ValidateValue();
             }
         }
 
