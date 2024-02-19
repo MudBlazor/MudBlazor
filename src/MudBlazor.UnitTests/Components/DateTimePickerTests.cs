@@ -321,5 +321,30 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-overlay").Click();
             comp.Instance.DateTime.Value.Date.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-3-2 15:25:00"));
         }
+
+        [Test]
+        // WIP
+        public void Open_ClickCalendarHeader_Click4thMonth_Click23rdDay_CheckDate()
+        {
+            var comp = OpenPicker();
+            var picker = comp.Instance;
+            comp.Find("button.mud-button-year").Click();
+            // should show months
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[3].Click();
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().Click();
+            comp.Instance.DateTime.Value.Date.Should().Be(DateTime.Parse($"23-04-{DateTime.Now.Year} 00:00:00"));
+        }
+
+        [Test]
+        public void DatePickerStaticWithPickerActionsDayClick_Test()
+        {
+            var comp = Context.RenderComponent<DateTimePickerStaticTest>();
+            var picker = comp.FindComponent<MudDateTimePicker>();
+            // click the day 23
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().Click();
+            //comp.FindAll("").Where(x => x.Tri)
+            picker.Instance.DateTime.Should().Be(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 23));
+        }
     }
 }
