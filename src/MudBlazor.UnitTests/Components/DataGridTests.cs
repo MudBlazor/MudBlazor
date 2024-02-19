@@ -2390,7 +2390,6 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
         }
 
-
         [Test]
         public async Task DataGridServerDataColumnFilterRowTest()
         {
@@ -2409,6 +2408,18 @@ namespace MudBlazor.UnitTests.Components
             callCountText.Markup.Should().Contain("Server call count: 3");
             dataGrid.Render();
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+        }
+
+        [Test]
+        public async Task DataGridColumnFilterRowPropertyTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnFilterRowPropertyTest>();
+
+            Assert.DoesNotThrow(() => comp.FindComponent<MudTextField<string>>());
+            Assert.DoesNotThrow(() => comp.FindComponent<MudNumericField<double?>>());
+            Assert.DoesNotThrow(() => comp.FindComponent<MudSelect<Enum>>());
+            Assert.DoesNotThrow(() => comp.FindComponent<MudSelect<bool?>>());
+            Assert.DoesNotThrow(() => comp.FindComponent<MudDatePicker>());
         }
 
         [Test]
