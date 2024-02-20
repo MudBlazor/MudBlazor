@@ -82,12 +82,36 @@ namespace MudBlazor
         protected internal override Type PropertyType
             => typeof(TProperty);
 
+        /// <summary>
+        /// If the Property expression looks like 'x => x.y.z', to set the value of 'z' we need to find the value of 'y', we can dig recursively until we find it.
+        /// </summary>
+        /// <exception cref="NullReferenceException"></exception>
+        private object RecursiveGetSubProperties(MemberExpression memberExpression, object item)
+        {
+            if (memberExpression.Expression is MemberExpression subMemberExpress && subMemberExpress.Member is PropertyInfo propertyInfo)
+            {
+                var subObject = RecursiveGetSubProperties(subMemberExpress, item);
+
+                return propertyInfo.GetValue(subObject) ?? throw new NullReferenceException($"Unable to get property value, value of '{propertyInfo.Name}' is null in '{Property}'");
+            }
+
+            return item;
+        }
+
         protected internal override void SetProperty(object item, object value)
         {
-            if (Property.Body is MemberExpression { Member: PropertyInfo propertyInfo })
+            var expression = Property.Body;
+
+            // Only MemberExpression is supported, MemberExpression access members like 'x.y' is accessing the member 'y'
+            if (expression is MemberExpression memberExpression)
             {
-                var actualType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? PropertyType;
-                propertyInfo.SetValue(item, Convert.ChangeType(value, actualType), null);
+                item = RecursiveGetSubProperties(memberExpression, item);
+
+                if (memberExpression.Member is PropertyInfo propertyInfo)
+                {
+                    var actualType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? PropertyType;
+                    propertyInfo.SetValue(item, Convert.ChangeType(value, actualType), null);
+                }
             }
         }
     }

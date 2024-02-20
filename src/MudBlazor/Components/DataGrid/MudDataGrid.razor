@@ -141,7 +141,7 @@
                                                         }
                                                         else
                                                         {
-                                                            <MudIconButton DisableRipple="true" Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" Title=@Localizer["MudDataGrid.Filter"] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.AddFilterAsync())"></MudIconButton>
+                                                            <MudIconButton DisableRipple="true" Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" Title=@Localizer["MudDataGrid.Filter"] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.AddFilter())"></MudIconButton>
                                                         }
 
                                                         @if (ColumnsPanelReordering)

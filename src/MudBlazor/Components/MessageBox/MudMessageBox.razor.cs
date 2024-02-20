@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -154,6 +155,10 @@ namespace MudBlazor
         public EventCallback<bool> IsVisibleChanged { get; set; }
 
         private bool IsInline => DialogInstance == null;
+
+        protected string Classname =>
+            new CssBuilder("mud-message-box")
+            .Build();
 
         public async Task<bool?> Show(DialogOptions? options = null)
         {

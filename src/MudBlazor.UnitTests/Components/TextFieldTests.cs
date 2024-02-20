@@ -980,6 +980,28 @@ namespace MudBlazor.UnitTests.Components
             callCounter.Should().Be(1);
         }
 
+        /// <summary>
+        /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
+        /// </summary>
+        [Test]
+        public async Task OnBlurWithModifiedValueTriggerValidationOnce3()
+        {
+            var callCounter = 0;
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.OnlyValidateIfDirty, true)
+                .Add(p => p.Validation, async (string value) => {
+                    callCounter++;
+                    await Task.Delay(TimeSpan.FromMilliseconds(100));
+                    return true;
+                })
+            );
+            comp.Find("input").Change("A");
+            comp.WaitForAssertion(() => callCounter.Should().Be(1));
+            comp.Find("input").Blur();
+            await Task.Delay(TimeSpan.FromMilliseconds(200));
+            callCounter.Should().Be(1);
+        }
+
         [Test]
         public async Task OnKeyDownErrorContentCaughtException()
         {
