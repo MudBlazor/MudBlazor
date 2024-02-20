@@ -278,13 +278,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Behavior)]
         public RenderFragment ColGroup { get; set; }
 
-        /// <summary>
-        /// Allows the selection to be preserved when page or filtering changes
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Table.Behavior)]
-        public bool RetainSelection { get; set; } = false;
-
         //[Parameter] public RenderFragment<T> RowTemplate { get; set; } <-- see MudTable.razor
 
         /// <summary>
