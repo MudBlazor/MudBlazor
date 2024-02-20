@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Common;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MudBlazor.UnitTests.Mocks;
@@ -27,11 +27,11 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ToggleBindTest>();
             var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
             var toggleSecond = comp.FindComponents<MudToggleGroup<string>>().Last();
-            var toggleItem = comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
+            IElement ToggleItem() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
 
             toggleFirst.Instance.Value.Should().BeNull();
             toggleSecond.Instance.Value.Should().BeNull();
-            toggleItem.Click();
+            ToggleItem().Click();
             toggleFirst.Instance.Value.Should().Be("Item Two");
             toggleSecond.Instance.Value.Should().Be("Item Two");
         }
@@ -42,11 +42,11 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ToggleCustomFragmentTest>();
             var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
             var toggleSecond = comp.FindComponents<MudToggleGroup<string>>().Last();
-            var toggleItem = comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
+            IElement ToggleItem() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
 
             toggleFirst.Instance.Value.Should().BeNull();
             toggleSecond.Instance.Value.Should().BeNull();
-            toggleItem.Click();
+            ToggleItem().Click();
             toggleFirst.Instance.Value.Should().Be("Item Two");
             toggleSecond.Instance.Value.Should().Be("Item Two");
         }
@@ -57,18 +57,18 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ToggleBindMultiSelectionTest>();
             var group1 = comp.FindComponents<MudToggleGroup<string>>().First();
             var group2 = comp.FindComponents<MudToggleGroup<string>>().Last();
-            var toggleItemSecond = comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
-            var toggleItemThird = comp.FindAll("div.mud-toggle-item").GetItemByIndex(2);
+            IElement ToggleItemSecond() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
+            IElement ToggleItemThird() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(2);
 
             group1.Instance.Values.Should().BeNull();
             group2.Instance.Values.Should().BeNull();
-            toggleItemSecond.Click();
+            ToggleItemSecond().Click();
             group1.Instance.Values.Should().Contain("Item Two");
             group2.Instance.Values.Should().Contain("Item Two");
-            toggleItemThird.Click();
+            ToggleItemThird().Click();
             group1.Instance.Values.Should().BeEquivalentTo("Item Two", "Item Three");
             group2.Instance.Values.Should().Contain("Item Three");
-            toggleItemSecond.Click();
+            ToggleItemSecond().Click();
             group1.Instance.Values.Should().BeEquivalentTo("Item Three");
             group2.Instance.Values.Should().Contain("Item Three");
         }
@@ -79,16 +79,16 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ToggleInitializeTest>();
             var toggleFirst = comp.FindComponents<MudToggleGroup<string>>().First();
             var toggleSecond = comp.FindComponents<MudToggleGroup<string>>().Last();
-            var buttonOne = comp.FindAll("button").First();
-            var buttonTwo = comp.FindAll("button").Last();
+            IElement ButtonOne() => comp.FindAll("button").GetItemByIndex(0);
+            IElement ButtonTwo() => comp.FindAll("button").GetItemByIndex(1);
 
             toggleFirst.Instance.Value.Should().Be("Item Two");
             toggleSecond.Instance.Values.Should().BeEquivalentTo("Item One", "Item Three");
 
-            buttonOne.Click();
+            ButtonOne().Click();
             toggleFirst.Instance.Value.Should().Be("Item One");
 
-            buttonTwo.Click();
+            ButtonTwo().Click();
             toggleSecond.Instance.Values.Should().BeEquivalentTo("Item Two", "Item Three");
         }
 
@@ -97,12 +97,12 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ToggleToggleSelectionTest>();
             var toggle = comp.FindComponent<MudToggleGroup<string>>();
-            var toggleItem = comp.FindAll("div.mud-toggle-item").GetItemByIndex(0);
+            IElement ToggleItem() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(0);
 
             toggle.Instance.Value.Should().BeNull();
-            toggleItem.Click();
+            ToggleItem().Click();
             toggle.Instance.Value.Should().Be("Item One");
-            toggleItem.Click();
+            ToggleItem().Click();
             toggle.Instance.Value.Should().BeNull();
         }
 
@@ -129,35 +129,32 @@ namespace MudBlazor.UnitTests.Components
                 item.ClassList.Should().Contain("py-1");
             }
             await comp.InvokeAsync(() => comp.SetParam(x => x.Rounded, true));
-            var item1 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(0);
-            var item2 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
-            var item3 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(2);
+            IElement Item1() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(0);
+            IElement Item2() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
+            IElement Item3() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(2);
             // (x|_|_)
-            item1.ClassList.Should().Contain("ps-2");
-            item1.ClassList.Should().Contain("pe-1");
-            item1.ClassList.Should().Contain("py-1");
+            Item1().ClassList.Should().Contain("ps-2");
+            Item1().ClassList.Should().Contain("pe-1");
+            Item1().ClassList.Should().Contain("py-1");
             // (_|X|_)
-            item2.ClassList.Should().Contain("px-1");
-            item2.ClassList.Should().Contain("py-1");
+            Item2().ClassList.Should().Contain("px-1");
+            Item2().ClassList.Should().Contain("py-1");
             // (_|_|x)
-            item3.ClassList.Should().Contain("pe-2");
-            item3.ClassList.Should().Contain("ps-1");
-            item3.ClassList.Should().Contain("py-1");
+            Item3().ClassList.Should().Contain("pe-2");
+            Item3().ClassList.Should().Contain("ps-1");
+            Item3().ClassList.Should().Contain("py-1");
             await comp.InvokeAsync(() => comp.SetParam(x => x.Dense, false));
-            item1 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(0);
-            item2 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
-            item3 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(2);
             // (x|_|_)
-            item1.ClassList.Should().Contain("ps-3");
-            item1.ClassList.Should().Contain("pe-2");
-            item1.ClassList.Should().Contain("py-2");
+            Item1().ClassList.Should().Contain("ps-3");
+            Item1().ClassList.Should().Contain("pe-2");
+            Item1().ClassList.Should().Contain("py-2");
             // (_|X|_)
-            item2.ClassList.Should().Contain("px-2");
-            item2.ClassList.Should().Contain("py-2");
+            Item2().ClassList.Should().Contain("px-2");
+            Item2().ClassList.Should().Contain("py-2");
             // (_|_|x)
-            item3.ClassList.Should().Contain("pe-3");
-            item3.ClassList.Should().Contain("ps-2");
-            item3.ClassList.Should().Contain("py-2");
+            Item3().ClassList.Should().Contain("pe-3");
+            Item3().ClassList.Should().Contain("ps-2");
+            Item3().ClassList.Should().Contain("py-2");
         }
 
         [Test]
@@ -184,35 +181,32 @@ namespace MudBlazor.UnitTests.Components
                 item.ClassList.Should().Contain("py-1");
             }
             await comp.InvokeAsync(() => comp.SetParam(x => x.Rounded, true));
-            var item1 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(0);
-            var item2 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
-            var item3 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(2);
+            IElement Item1() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(0);
+            IElement Item2() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
+            IElement Item3() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(2);
             // top (x|_|_) bottom
-            item1.ClassList.Should().Contain("pt-2");
-            item1.ClassList.Should().Contain("pb-1");
-            item1.ClassList.Should().Contain("px-1");
+            Item1().ClassList.Should().Contain("pt-2");
+            Item1().ClassList.Should().Contain("pb-1");
+            Item1().ClassList.Should().Contain("px-1");
             // top (_|X|_) bottom
-            item2.ClassList.Should().Contain("px-1");
-            item2.ClassList.Should().Contain("py-1");
+            Item2().ClassList.Should().Contain("px-1");
+            Item2().ClassList.Should().Contain("py-1");
             // top (_|_|x) bottom
-            item3.ClassList.Should().Contain("pb-2");
-            item3.ClassList.Should().Contain("pt-1");
-            item3.ClassList.Should().Contain("px-1");
+            Item3().ClassList.Should().Contain("pb-2");
+            Item3().ClassList.Should().Contain("pt-1");
+            Item3().ClassList.Should().Contain("px-1");
             await comp.InvokeAsync(() => comp.SetParam(x => x.Dense, false));
-            item1 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(0);
-            item2 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
-            item3 = comp.FindAll("div.mud-toggle-item").GetItemByIndex(2);
             // top (x|_|_) bottom
-            item1.ClassList.Should().Contain("pt-3");
-            item1.ClassList.Should().Contain("pb-2");
-            item1.ClassList.Should().Contain("px-2");
+            Item1().ClassList.Should().Contain("pt-3");
+            Item1().ClassList.Should().Contain("pb-2");
+            Item1().ClassList.Should().Contain("px-2");
             // top (_|X|_) bottom
-            item2.ClassList.Should().Contain("px-2");
-            item2.ClassList.Should().Contain("py-2");
+            Item2().ClassList.Should().Contain("px-2");
+            Item2().ClassList.Should().Contain("py-2");
             // top (_|_|x) bottom
-            item3.ClassList.Should().Contain("pb-3");
-            item3.ClassList.Should().Contain("pt-2");
-            item3.ClassList.Should().Contain("px-2");
+            Item3().ClassList.Should().Contain("pb-3");
+            Item3().ClassList.Should().Contain("pt-2");
+            Item3().ClassList.Should().Contain("px-2");
         }
 
         [Test]

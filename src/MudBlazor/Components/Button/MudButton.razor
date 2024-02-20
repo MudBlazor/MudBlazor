@@ -6,7 +6,7 @@
             Class="@Classname" 
             Style="@Style"
             @attributes="UserAttributes"
-            @onclick="OnClickHandler"
+            @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
             type="@ButtonType.ToDescriptionString()"
             href="@Href" 
             target="@Target"
