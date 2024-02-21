@@ -127,7 +127,8 @@ namespace MudBlazor
                 return;
             if (Rows.TryGetValue(t, out var value) && value == row)
                 Rows.Remove(t);
-            if (!Table.ContainsItem(item))
+            // If the table uses ServerData, the item should not be removed from the selection
+            if (!Table.HasServerData && !Table.ContainsItem(item))
             {
                 Selection.Remove(t);
                 Table.UpdateSelection();
