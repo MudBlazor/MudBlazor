@@ -169,7 +169,7 @@ examples as unit tests by instantiating them in a bUnit context and checking
 whether rendering them throws an error or not. While this is not comparable
 to a good hand-written unit test we can at least catch exceptions thrown by
 the render logic. These tests are generated automatically on build and their
-cs files start with a underscore.
+cs files start with an underscore.
 
 ### Continuous Integration
 
