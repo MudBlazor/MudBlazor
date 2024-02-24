@@ -16,7 +16,8 @@
                      Disabled="@GetDisabledState()"
                      Margin="@Margin"
                      Required="@Required"
-                     ForId="@FieldId">
+					 ForId="@FieldId"
+					 FocusColor="@FocusColor">
         <InputContent>
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 @if (_mask == null)
@@ -62,7 +63,8 @@
                               Clearable="@Clearable"
                               OnClearButtonClick="@OnClearButtonClick"
                               Pattern="@Pattern"
-                              ShrinkLabel="@ShrinkLabel"/>
+							  ShrinkLabel="@ShrinkLabel"
+							  FocusColor="@FocusColor" />
                 }
                 else
                 {

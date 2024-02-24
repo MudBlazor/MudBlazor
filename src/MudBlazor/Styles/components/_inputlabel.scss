@@ -1,3 +1,5 @@
+@import '../abstracts/_variables.scss';
+
 .mud-input-label {
     display: block;
     transform-origin: top left;
@@ -76,7 +78,14 @@ label.mud-input-label.mud-input-label-inputcontrol {
     .mud-input:focus-within ~ &.mud-input-error {
         color: var(--mud-palette-error);
     }
+
+    @each $color in $mud-palette-colors {
+        .mud-input:focus-within ~ &.mud-input-label-focus-#{$color} {
+            color: var(--mud-palette-#{$color});
+        }
+    }
 }
+
 .mud-application-layout-rtl {
     .mud-input-label {
         transform-origin: top right;

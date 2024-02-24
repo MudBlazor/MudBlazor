@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -12,6 +16,7 @@ namespace MudBlazor
          .AddClass("mud-input-label-animated")
          .AddClass($"mud-input-label-{Variant.ToDescriptionString()}")
          .AddClass($"mud-input-label-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+         .AddClass($"mud-input-label-focus-{FocusColor.ToDescriptionString()}")
          .AddClass($"mud-disabled", Disabled)
          .AddClass("mud-input-error", Error)
          .AddClass(Class)

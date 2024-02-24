@@ -1,4 +1,6 @@
-﻿.mud-input {
+﻿@import '../abstracts/_variables.scss';
+
+.mud-input {
     position: relative;
     color: var(--mud-palette-text-primary);
     cursor: text;
@@ -48,8 +50,13 @@
             position: absolute;
             transform: scaleX(0);
             transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-            border-bottom: 2px solid var(--mud-palette-primary);
             pointer-events: none;
+        }
+
+        @each $color in $mud-palette-colors {
+            &.mud-input-underline-focus-#{$color}:after {
+                border-bottom: 2px solid var(--mud-palette-#{$color});
+            }
         }
 
         &.mud-disabled:before {
@@ -113,8 +120,13 @@
                 position: absolute;
                 transform: scaleX(0);
                 transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-                border-bottom: 2px solid var(--mud-palette-primary);
                 pointer-events: none;
+            }
+
+            @each $color in $mud-palette-colors {
+                &.mud-input-underline-focus-#{$color}:after {
+                    border-bottom: 2px solid var(--mud-palette-#{$color});
+                }
             }
 
             &:hover:before {
@@ -159,9 +171,11 @@
             border-color: var(--mud-palette-action-default);
         }
 
-        &:focus-within .mud-input-outlined-border {
-            border-width: 2px;
-            border-color: var(--mud-palette-primary);
+        @each $color in $mud-palette-colors {
+            &:focus-within .mud-input-outlined-border-focus-#{$color} {
+                border-width: 2px;
+                border-color: var(--mud-palette-#{$color});
+            }
         }
 
         &.mud-disabled .mud-input-outlined-border {

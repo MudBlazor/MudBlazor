@@ -1,9 +1,12 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -24,6 +27,11 @@ namespace MudBlazor
                     .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
                     .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons == true)
                     .Build();
+        protected string OutlinedFocusColorClassname =>
+            new CssBuilder()
+            .AddClass($"mud-input-outlined-border-focus-{FocusColor.ToDescriptionString()}")
+            .Build();
+
 
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
@@ -206,7 +214,7 @@ namespace MudBlazor
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.initAutoGrow", ElementReference, MaxLines);
                 _oldText = _internalText;
             }
-            else if(AutoGrow && _oldText != _internalText)
+            else if (AutoGrow && _oldText != _internalText)
             {
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.adjustHeight", ElementReference);
                 _oldText = _internalText;
