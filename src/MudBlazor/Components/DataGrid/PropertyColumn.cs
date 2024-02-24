@@ -109,8 +109,13 @@ namespace MudBlazor
 
                 if (memberExpression.Member is PropertyInfo propertyInfo)
                 {
-                    var actualType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? PropertyType;
-                    propertyInfo.SetValue(item, Convert.ChangeType(value, actualType), null);
+                    if (value == null) // We can't use the normal execution path for null values, because we can't use Convert.ChangeType with null for types such as int?, double?, etc
+                        propertyInfo.SetValue(item, null);
+                    else
+                    {
+                        var actualType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? PropertyType;
+                        propertyInfo.SetValue(item, Convert.ChangeType(value, actualType), null);
+                    }
                 }
             }
         }
