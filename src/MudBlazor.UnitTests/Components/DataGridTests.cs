@@ -511,6 +511,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridInlineEditWithNullableChangeTest()
+        {
+            var comp = Context.RenderComponent<DataGridCellEditWithNullableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellEditWithNullableTest.Model>>();
+
+            // try setting a value to null
+            dataGrid.FindAll("td input")[1].Change("");
+            dataGrid.Instance.Items.First().Age.Should().Be(null);
+
+            // try setting the value back to something not null
+            dataGrid.FindAll("td input")[1].Change("15");
+            dataGrid.Instance.Items.First().Age.Should().Be(15);
+        }
+
+        [Test]
         public async Task DataGridInlineEditWithNullableTest()
         {
             var comp = Context.RenderComponent<DataGridCellEditWithNullableTest>();
