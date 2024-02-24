@@ -1,0 +1,70 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTextField T="string" FocusColor=Color.Primary Label="TextField Label" />
+<MudTextField T="string" FocusColor=Color.Secondary Label="TextField Label" Variant="Variant.Filled" />
+<MudTextField T="string" FocusColor=Color.Tertiary Label="TextField Label" Variant="Variant.Outlined" />
+
+<MudNumericField T="int" FocusColor=Color.Warning Label="TextField Label" />
+<MudNumericField T="int" FocusColor=Color.Error Label="TextField Label" Variant="Variant.Filled" />
+<MudNumericField T="int" FocusColor=Color.Success Label="TextField Label" Variant="Variant.Outlined" />
+
+<MudSelect T="int" Val FocusColor=Color.Info Label="TextField Label">
+	@foreach (int integer in values)
+	{
+		<MudSelectItem FocusColor="Color.Info" Value="@(integer)" />
+	}
+</MudSelect>
+<MudSelect T="int" FocusColor=Color.Dark Label="TextField Label" Variant="Variant.Filled">
+	@foreach (int integer in values)
+	{
+		<MudSelectItem FocusColor="Color.Dark" Value="@(integer)" />
+	}
+</MudSelect>
+<MudSelect T="int" FocusColor=Color.Primary Label="TextField Label" Variant="Variant.Outlined">
+	@foreach (int integer in values)
+	{
+		<MudSelectItem FocusColor=Color.Primary Value="@(integer)" />
+	}
+</MudSelect>
+
+<MudAutocomplete T="string" @bind-Value=value1 SearchFunc=Search FocusColor=Color.Warning Label="TextField Label" />
+<MudAutocomplete T="string" @bind-Value=value2 SearchFunc=Search FocusColor=Color.Success Label="TextField Label" Variant="Variant.Filled" />
+<MudAutocomplete T="string" @bind-Value=value3 SearchFunc=Search FocusColor=Color.Secondary Label="TextField Label" Variant="Variant.Outlined" />
+
+@code {
+
+	public static string __description__ = "Set Color on Text Input Elements";
+
+	private string value1, value2, value3;
+	public List<int> values = new List<int>() { 420, 69, 80085 };
+
+	private async Task<IEnumerable<string>> Search(string value)
+	{
+		// In real life use an asynchronous function for fetching data from an api.
+		await Task.Delay(5);
+
+		// if text is null or empty, show complete list
+		if (string.IsNullOrEmpty(value))
+			return states;
+		return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+	}
+
+	private string[] states =
+	{
+		"Alabama", "Alaska", "American Samoa", "Arizona",
+		"Arkansas", "California", "Colorado", "Connecticut",
+		"Delaware", "District of Columbia", "Federated States of Micronesia",
+		"Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+		"Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+		"Louisiana", "Maine", "Marshall Islands", "Maryland",
+		"Massachusetts", "Michigan", "Minnesota", "Mississippi",
+		"Missouri", "Montana", "Nebraska", "Nevada",
+		"New Hampshire", "New Jersey", "New Mexico", "New York",
+		"North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+		"Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+		"Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+		"Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+		"Washington", "West Virginia", "Wisconsin", "Wyoming",
+	};
+
+}
