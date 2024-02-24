@@ -1,4 +1,8 @@
-﻿#pragma warning disable CS1998 // async without await
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+#pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System;
@@ -962,7 +966,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Blur();
             callCounter.Should().Be(1);
         }
-        
+
         /// <summary>
         /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
         /// </summary>
@@ -989,7 +993,8 @@ namespace MudBlazor.UnitTests.Components
             var callCounter = 0;
             var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
                 .Add(p => p.OnlyValidateIfDirty, true)
-                .Add(p => p.Validation, async (string value) => {
+                .Add(p => p.Validation, async (string value) =>
+                {
                     callCounter++;
                     await Task.Delay(TimeSpan.FromMilliseconds(100));
                     return true;
@@ -1021,7 +1026,7 @@ namespace MudBlazor.UnitTests.Components
             var text = mudAlert.Find("div.mud-alert-message");
             text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
         }
-        
+
         /// <summary>
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text.
         /// </summary>
@@ -1051,7 +1056,7 @@ namespace MudBlazor.UnitTests.Components
             textField.Value.Should().Be(currentText);
             textField.Text.Should().Be(currentText);
         }
-        
+
         [Test]
         public async Task DebouncedTextField_Should_RenderDefaultValueTextOnFirstRender()
         {
@@ -1061,7 +1066,7 @@ namespace MudBlazor.UnitTests.Components
             var textfield = comp.FindComponent<MudTextField<string>>().Instance;
             textfield.Text.Should().Be(defaultValue);
         }
-        
+
         /// <summary>
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text while changing format.
         /// </summary>
@@ -1093,6 +1098,31 @@ namespace MudBlazor.UnitTests.Components
             await Task.Delay(comp.Instance.DebounceInterval);
             textField.Value.Should().Be(expectedFinalDateTime);
             textField.Text.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
+        }
+
+        [Test]
+        [TestCase(Color.Primary, Variant.Text)]
+        [TestCase(Color.Secondary, Variant.Filled)]
+        [TestCase(Color.Tertiary, Variant.Outlined)]
+        [TestCase(Color.Info, Variant.Text)]
+        [TestCase(Color.Success, Variant.Filled)]
+        [TestCase(Color.Warning, Variant.Outlined)]
+        [TestCase(Color.Error, Variant.Text)]
+        [TestCase(Color.Dark, Variant.Filled)]
+        [TestCase(Color.Default, Variant.Outlined)]
+        public void TextFieldColorTest(Color color, Variant variant)
+        {
+            string textFieldElementName = variant != Variant.Outlined ? ".mud-input" : ".mud-input-outlined-border";
+            string textFieldBorderClassName = variant != Variant.Outlined ? $"mud-input-underline-focus-{color.ToDescriptionString()}" : $"mud-input-outlined-border-focus-{color.ToDescriptionString()}";
+
+            var textField = Context.RenderComponent<MudTextField<string>>(x => x.Add(c => c.FocusColor, color).Add(b => b.Variant, variant));
+            var inputLabel = Context.RenderComponent<MudInputLabel>(x => x.Add(c => c.FocusColor, color));
+
+            var textFieldClasses = textField.Find(textFieldElementName);
+            textFieldClasses.ClassList.Should().Contain(new[] { textFieldBorderClassName });
+
+            var textLabelClasses = inputLabel.Find(".mud-input-label");
+            textLabelClasses.ClassList.Should().Contain(new[] { $"mud-input-label-focus-{color.ToDescriptionString()}" });
         }
     }
 }
