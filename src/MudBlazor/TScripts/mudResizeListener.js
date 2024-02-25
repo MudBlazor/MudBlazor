@@ -132,5 +132,12 @@ window.mudResizeListenerFactory = {
         for (let i = 0; i < ids.length; i++) {
             window.mudResizeListenerFactory.cancelListener(ids[i]);
         }
+    },
+
+    dispose() {
+        var map = window.mudResizeListenerFactory.mapping;
+        for (var id in map) {
+            window.mudResizeListenerFactory.cancelListener(id);
+        }
     }
 }
