@@ -13,6 +13,7 @@ using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Interop;
 using MudBlazor.Services;
+using MudBlazor.Utilities.AsyncKeyedLocker;
 using MudBlazor.Utilities.ObserverManager;
 
 namespace MudBlazor;
@@ -27,7 +28,7 @@ namespace MudBlazor;
 internal class BrowserViewportService : IBrowserViewportService
 {
     private bool _disposed;
-    private readonly SemaphoreSlim _semaphore;
+    private readonly AsyncKeyedLocker<Guid> _semaphore;
     private readonly ResizeListenerInterop _resizeListenerInterop;
     private readonly ObserverManager<BrowserViewportSubscription, IBrowserViewportObserver> _observerManager;
     private readonly Lazy<DotNetObjectReference<BrowserViewportService>> _dotNetReferenceLazy;
@@ -52,7 +53,10 @@ internal class BrowserViewportService : IBrowserViewportService
     public BrowserViewportService(ILogger<BrowserViewportService> logger, IJSRuntime jsRuntime, IOptions<ResizeOptions>? options = null)
     {
         ResizeOptions = options?.Value ?? new ResizeOptions();
-        _semaphore = new SemaphoreSlim(1, 1);
+        _semaphore = new AsyncKeyedLocker<Guid>(lockOptions =>
+        {
+            lockOptions.PoolSize = 10000;
+        });
         _resizeListenerInterop = new ResizeListenerInterop(jsRuntime);
         _observerManager = new ObserverManager<BrowserViewportSubscription, IBrowserViewportObserver>(logger);
         _dotNetReferenceLazy = new Lazy<DotNetObjectReference<BrowserViewportService>>(CreateDotNetObjectReference);
@@ -97,10 +101,8 @@ internal class BrowserViewportService : IBrowserViewportService
             return;
         }
 
-        try
+        using (await _semaphore.LockAsync(observer.Id))
         {
-            await _semaphore.WaitAsync();
-
             // Always clone the ResizeOptions, regardless of the circumstances.
             // This is necessary because the options may originate from the "ResizeOptions" variable (IOptions<ResizeOptions>) - these are the user-defined options when adding this service in the DI container.
             // Only the user should be allowed to modify these settings, and the service should not directly modify the reference to prevent potential bugs.
@@ -127,10 +129,6 @@ internal class BrowserViewportService : IBrowserViewportService
                     await observer.NotifyBrowserViewportChangeAsync(new BrowserViewportEventArgs(subscription.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
                 }
             }
-        }
-        finally
-        {
-            _semaphore.Release();
         }
     }
 
@@ -161,18 +159,13 @@ internal class BrowserViewportService : IBrowserViewportService
     /// <inheritdoc />
     public async Task UnsubscribeAsync(Guid observerId)
     {
-        try
+        using (await _semaphore.LockAsync(observerId))
         {
-            await _semaphore.WaitAsync();
             var subscription = await RemoveJavaScriptListener(observerId);
             if (subscription is not null)
             {
                 _observerManager.Unsubscribe(subscription);
             }
-        }
-        finally
-        {
-            _semaphore.Release();
         }
     }
 
@@ -272,25 +265,18 @@ internal class BrowserViewportService : IBrowserViewportService
         {
             if (disposing)
             {
-                var jsListenerIds = _observerManager
-                    .Observers
-                    .Keys
-                    .Select(x => x.JavaScriptListenerId)
-                    .Distinct()
-                    .ToArray();
-
-                if (jsListenerIds.Length > 0)
-                {
-                    //https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968
-                    //Fixed in NET8
-                    _ = _resizeListenerInterop.CancelListeners(jsListenerIds);
-                }
                 _observerManager.Clear();
 
                 if (_dotNetReferenceLazy.IsValueCreated)
                 {
                     _dotNetReferenceLazy.Value.Dispose();
                 }
+
+                _semaphore.Dispose();
+
+                // https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968
+                // Fixed in NET8
+                _ = _resizeListenerInterop.Dispose();
             }
 
             _disposed = true;
