@@ -7,77 +7,77 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace MudBlazor.Utilities.AsyncKeyedLocker
+namespace MudBlazor.Utilities.AsyncKeyedLocker;
+
+#nullable enable
+internal sealed class AsyncKeyedLockPool<TKey> : IDisposable where TKey : notnull
 {
-    internal sealed class AsyncKeyedLockPool<TKey> : IDisposable
+    private readonly int _capacity;
+    private readonly IList<AsyncKeyedLockReleaser<TKey>> _objects;
+    private readonly Func<TKey, AsyncKeyedLockReleaser<TKey>> _objectGenerator;
+
+    public AsyncKeyedLockPool(AsyncKeyedLockDictionary<TKey> asyncKeyedLockDictionary, int capacity, int initialFill = -1)
     {
-        private readonly int _capacity;
-        private readonly IList<AsyncKeyedLockReleaser<TKey>> _objects;
-        private readonly Func<TKey, AsyncKeyedLockReleaser<TKey>> _objectGenerator;
+        _capacity = capacity;
+        _objects = new List<AsyncKeyedLockReleaser<TKey>>(capacity);
+        _objectGenerator = key => new AsyncKeyedLockReleaser<TKey>(
+            key,
+            new SemaphoreSlim(asyncKeyedLockDictionary.MaxCount, asyncKeyedLockDictionary.MaxCount),
+            asyncKeyedLockDictionary);
 
-        public AsyncKeyedLockPool(AsyncKeyedLockDictionary<TKey> asyncKeyedLockDictionary, int capacity, int initialFill = -1)
+        if (initialFill < 0)
         {
-            _capacity = capacity;
-            _objects = new List<AsyncKeyedLockReleaser<TKey>>(capacity);
-            _objectGenerator = (key) => new AsyncKeyedLockReleaser<TKey>(
-                key,
-                new SemaphoreSlim(asyncKeyedLockDictionary.MaxCount, asyncKeyedLockDictionary.MaxCount),
-                asyncKeyedLockDictionary);
-
-            if (initialFill < 0)
+            for (var i = 0; i < capacity; ++i)
             {
-                for (var i = 0; i < capacity; ++i)
-                {
-                    var releaser = _objectGenerator(default);
-                    releaser.IsNotInUse = true;
-                    _objects.Add(releaser);
-                }
-            }
-            else
-            {
-                initialFill = Math.Min(initialFill, capacity);
-                for (var i = 0; i < initialFill; ++i)
-                {
-                    var releaser = _objectGenerator(default);
-                    releaser.IsNotInUse = true;
-                    _objects.Add(releaser);
-                }
+                var releaser = _objectGenerator(default!);
+                releaser.IsNotInUse = true;
+                _objects.Add(releaser);
             }
         }
-
-        public void Dispose()
+        else
         {
-            _objects.Clear();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public AsyncKeyedLockReleaser<TKey> GetObject(TKey key)
-        {
-            Monitor.Enter(_objects);
-            if (_objects.Count > 0)
+            initialFill = Math.Min(initialFill, capacity);
+            for (var i = 0; i < initialFill; ++i)
             {
-                var lastPos = _objects.Count - 1;
-                var item = _objects[lastPos];
-                _objects.RemoveAt(lastPos);
-                Monitor.Exit(_objects);
-                item.Key = key;
-                item.IsNotInUse = false;
-                return item;
+                var releaser = _objectGenerator(default!);
+                releaser.IsNotInUse = true;
+                _objects.Add(releaser);
             }
+        }
+    }
+
+    public void Dispose()
+    {
+        _objects.Clear();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public AsyncKeyedLockReleaser<TKey> GetObject(TKey key)
+    {
+        Monitor.Enter(_objects);
+        if (_objects.Count > 0)
+        {
+            var lastPos = _objects.Count - 1;
+            var item = _objects[lastPos];
+            _objects.RemoveAt(lastPos);
             Monitor.Exit(_objects);
-
-            return _objectGenerator(key);
+            item.Key = key;
+            item.IsNotInUse = false;
+            return item;
         }
+        Monitor.Exit(_objects);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void PutObject(AsyncKeyedLockReleaser<TKey> item)
+        return _objectGenerator(key);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void PutObject(AsyncKeyedLockReleaser<TKey> item)
+    {
+        Monitor.Enter(_objects);
+        if (_objects.Count < _capacity)
         {
-            Monitor.Enter(_objects);
-            if (_objects.Count < _capacity)
-            {
-                _objects.Add(item);
-            }
-            Monitor.Exit(_objects);
+            _objects.Add(item);
         }
+        Monitor.Exit(_objects);
     }
 }
