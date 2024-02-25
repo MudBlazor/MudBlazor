@@ -33,6 +33,9 @@ window.mudInputAutoGrow = {
             let newHeight = Math.max(minHeight, elem.scrollHeight);
             if (maxHeight > 0) {
                 newHeight = Math.min(newHeight, maxHeight);
+            } else {
+                // Hide phantom scrollbars that randomly appear.
+                elem.style.overflow = 'hidden';
             }
 
             elem.style.height = newHeight + "px";
