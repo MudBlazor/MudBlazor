@@ -12,6 +12,7 @@ namespace MudBlazor
         protected string Classname =>
            new CssBuilder("mud-input-input-control")
            .AddClass(Class)
+           .AddClass("mud-input-input-control-auto-grow", when: () => AutoGrow)
            .Build();
 
         public MudInput<string> InputReference { get; private set; }
