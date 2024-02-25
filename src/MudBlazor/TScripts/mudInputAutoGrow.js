@@ -34,7 +34,7 @@ window.mudInputAutoGrow = {
             if (maxHeight > 0) {
                 newHeight = Math.min(newHeight, maxHeight);
             } else {
-                // Hide phantom scrollbars that randomly appear.
+                // Hide phantom scrollbars https://github.com/MudBlazor/MudBlazor/pull/8235.
                 elem.style.overflow = 'hidden';
             }
 
