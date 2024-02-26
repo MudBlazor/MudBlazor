@@ -1,6 +1,7 @@
 ﻿
 .mud-progress-circular {
     display: inline-block;
+    position: relative;
     color: var(--mud-palette-text-secondary);
 
     &.mud-progress-indeterminate {
@@ -25,6 +26,17 @@
         height: 56px;
         width: 56px;
     }
+}
+
+.mud-progress-circular-percentage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 

@@ -73,18 +73,42 @@ namespace MudBlazor
             }
         }
 
+        private double _fraction;
+        private int GetRoundedPercentage() => (int)Math.Round(_fraction * 100, 0);
+
         private int ToSvgValue(double value)
         {
             var minValue = Math.Min(Math.Max(Min, value), Max);
             // calculate fraction, which is a value between 0 and 1
-            var fraction = (minValue - Min) / (Max - Min);
+            _fraction = (minValue - Min) / (Max - Min);
             // now project into the range of the SVG value (126 .. 0)
-            return (int)Math.Round(_magicNumber - _magicNumber * fraction);
+            return (int)Math.Round(_magicNumber - _magicNumber * _fraction);
         }
 
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Appearance)]
         public int StrokeWidth { get; set; } = 3;
+
+        /// <summary>
+        /// Sets, whether should be shown percentage for determinate progress. Default is false
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Behavior)]
+        public bool ShowPercentage { get; set; }
+
+        /// <summary>
+        /// Typography variant to use if <see cref="ShowPercentage"/> is true
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Appearance)]
+        public Typo PercentageTypo { get; set; } = Typo.caption;
+        
+        /// <summary>
+        /// RenderFragment for rendering custom content when <see cref="ShowPercentage"/> is true
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Appearance)]
+        public RenderFragment<int>? PercentageContent { get; set; }
 
         protected override void OnInitialized()
         {
