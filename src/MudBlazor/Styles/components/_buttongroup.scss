@@ -24,6 +24,7 @@
         }
     }
 }
+
 .mud-button-group-horizontal {
     &:not(.mud-button-group-rtl) {
         > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
@@ -54,6 +55,7 @@
 
 .mud-button-group-vertical {
     flex-direction: column;
+
     .mud-icon-button {
         width: 100%;
     }
