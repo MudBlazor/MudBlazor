@@ -41,24 +41,24 @@ $shades: ( 'black': #000000, 'white': #FFFFFF, 'transparent': transparent );
 $colors: ( 'red': $red, 'pink': $pink, 'purple': $purple, 'deep-purple': $deep-purple, 'indigo': $indigo, 'blue': $blue, 'light-blue': $light-blue, 'cyan': $cyan, 'teal': $teal, 'green': $green, 'light-green': $light-green, 'lime': $lime, 'yellow': $yellow, 'amber': $amber, 'orange': $orange, 'deep-orange': $deep-orange, 'brown': $brown, 'blue-grey': $blue-grey, 'grey': $grey, 'shades': $shades );
 
 @each $name, $color in $colors {
-	@each $color_type, $color_value in $color {
-		@if $color_type == "base" {
-			.#{$name} {
-				background-color: $color_value;
-			}
+    @each $color_type, $color_value in $color {
+        @if $color_type == "base" {
+            .#{$name} {
+                background-color: $color_value;
+            }
 
-			.#{$name}-text {
-				color: $color_value;
-			}
-		}
-		@else if $name != "base" {
-			.#{$name}.#{$color_type} {
-				background-color: $color_value;
-			}
+            .#{$name}-text {
+                color: $color_value;
+            }
+        }
+        @else if $name != "base" {
+            .#{$name}.#{$color_type} {
+                background-color: $color_value;
+            }
 
-			.#{$name}-text.text-#{$color_type} {
-				color: $color_value;
-			}
-		}
-	}
+            .#{$name}-text.text-#{$color_type} {
+                color: $color_value;
+            }
+        }
+    }
 }

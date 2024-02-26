@@ -3,21 +3,21 @@
 $count: 0;
 
 @mixin order ($breakpoint) {
-	.order-#{$breakpoint}first {
-		order: -9999 !important;
-	}
+    .order-#{$breakpoint}first {
+        order: -9999 !important;
+    }
 
-	.order-#{$breakpoint}last {
-		order: 9999 !important;
-	}
+    .order-#{$breakpoint}last {
+        order: 9999 !important;
+    }
 
-	@while $count < 13 {
-		.order-#{$breakpoint}#{$count} {
-			order: $count !important;
-		}
+    @while $count < 13 {
+        .order-#{$breakpoint}#{$count} {
+            order: $count !important;
+        }
 
-		$count: $count + 1;
-	}
+        $count: $count + 1;
+    }
 }
 
 
