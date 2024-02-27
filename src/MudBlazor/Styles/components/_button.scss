@@ -45,8 +45,10 @@
   border-radius: var(--mud-default-borderradius);
   color: var(--mud-palette-text-primary);
 
-  &:hover, &:focus-visible {
-    background-color: var(--mud-palette-action-default-hover);
+  @media(hover: hover) and (pointer: fine) {
+    &:hover, &:focus-visible {
+      background-color: var(--mud-palette-action-default-hover);
+    }
   }
 }
 
@@ -68,8 +70,10 @@
     &.mud-button-text-#{$color} {
       color: var(--mud-palette-#{$color});
 
-      &:hover, &:focus-visible {
-        background-color: var(--mud-palette-#{$color}-hover);
+      @media(hover: hover) and (pointer: fine) {
+        &:hover, &:focus-visible {
+          background-color: var(--mud-palette-#{$color}-hover);
+        }
       }
     }
   }
@@ -89,8 +93,10 @@
     padding: 5px;
   }
 
-  &:hover, &:focus-visible {
-    background-color: var(--mud-palette-action-default-hover);
+  @media(hover: hover) and (pointer: fine) {
+    &:hover, &:focus-visible {
+      background-color: var(--mud-palette-action-default-hover);
+    }
   }
 
   @each $color in $mud-palette-colors {
@@ -98,9 +104,11 @@
       color: var(--mud-palette-#{$color});
       border: 1px solid var(--mud-palette-#{$color});
 
-      &:hover, &:focus-visible {
-        border: 1px solid var(--mud-palette-#{$color});
-        background-color: var(--mud-palette-#{$color}-hover);
+      @media(hover: hover) and (pointer: fine) {
+        &:hover, &:focus-visible {
+          border: 1px solid var(--mud-palette-#{$color});
+          background-color: var(--mud-palette-#{$color}-hover);
+        }
       }
     }
   }
@@ -119,9 +127,11 @@
     padding: 6px;
   }
 
-  &:hover, &:focus-visible {
-    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0,0,0,.12);
-    background-color: var(--mud-palette-action-disabled-background);
+  @media(hover: hover) and (pointer: fine) {
+    &:hover, &:focus-visible {
+      box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0,0,0,.12);
+      background-color: var(--mud-palette-action-disabled-background);
+    }
   }
 
   &:active {
@@ -140,8 +150,10 @@
       color: var(--mud-palette-#{$color}-text);
       background-color: var(--mud-palette-#{$color});
 
-      &:hover, &:focus-visible {
-        background-color: var(--mud-palette-#{$color}-darken);
+      @media(hover: hover) and (pointer: fine) {
+        &:hover, &:focus-visible {
+          background-color: var(--mud-palette-#{$color}-darken);
+        }
       }
     }
   }
@@ -150,8 +162,10 @@
 .mud-button-disable-elevation {
   box-shadow: none;
 
-  &:hover {
-    box-shadow: none;
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      box-shadow: none;
+    }
   }
 
   &:active {

@@ -36,8 +36,10 @@
       pointer-events: none;
     }
 
-    &:hover:not(.mud-disabled):before {
-      border-bottom: 1px solid var(--mud-palette-action-default);
+    @media(hover: hover) and (pointer: fine) {
+      &:hover:not(.mud-disabled):before {
+        border-bottom: 1px solid var(--mud-palette-action-default);
+      }
     }
 
     &:after {
@@ -69,8 +71,10 @@
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
 
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.13);
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.13);
+      }
     }
 
     &.mud-focused {
@@ -117,8 +121,10 @@
         pointer-events: none;
       }
 
-      &:hover:before {
-        border-bottom: 1px solid var(--mud-palette-action-default);
+      @media(hover: hover) and (pointer: fine) {
+        &:hover:before {
+          border-bottom: 1px solid var(--mud-palette-action-default);
+        }
       }
 
       &.mud-disabled:before {

@@ -18,8 +18,10 @@
       box-shadow: none;
       border: none;
 
-      &:hover, &:focus-visible {
-        background-color: var(--mud-palette-action-default-hover);
+      @media(hover: hover) and (pointer: fine) {
+        &:hover, &:focus-visible {
+          background-color: var(--mud-palette-action-default-hover);
+        }
       }
     }
   }
@@ -103,8 +105,10 @@
         .mud-button-root {
           color: var(--mud-palette-#{$color});
 
-          &:hover, &:focus-visible {
-            background-color: var(--mud-palette-#{$color}-hover);
+          @media(hover: hover) and (pointer: fine) {
+            &:hover, &:focus-visible {
+              background-color: var(--mud-palette-#{$color}-hover);
+            }
           }
         }
 
@@ -144,8 +148,10 @@
         color: var(--mud-palette-#{$color});
         border: 1px solid var(--mud-palette-#{$color});
 
-        &:hover, &:focus-visible {
-          background-color: var(--mud-palette-#{$color}-hover);
+        @media(hover: hover) and (pointer: fine) {
+          &:hover, &:focus-visible {
+            background-color: var(--mud-palette-#{$color}-hover);
+          }
         }
       }
     }
@@ -158,8 +164,10 @@
   .mud-button-root {
     box-shadow: none;
 
-    &:hover, &:focus-visible {
-      box-shadow: var(--mud-elevation-4);
+    @media(hover: hover) and (pointer: fine) {
+      &:hover, &:focus-visible {
+        box-shadow: var(--mud-elevation-4);
+      }
     }
   }
 
@@ -195,8 +203,10 @@
           background-color: var(--mud-palette-#{$color});
           color: var(--mud-palette-#{$color}-text);
 
-          &:hover, &:focus-visible {
-            background-color: var(--mud-palette-#{$color}-darken);
+          @media(hover: hover) and (pointer: fine) {
+            &:hover, &:focus-visible {
+              background-color: var(--mud-palette-#{$color}-darken);
+            }
           }
         }
 

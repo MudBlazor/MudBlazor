@@ -123,58 +123,80 @@
       font-size: 1.15rem;
     }
 
-    &:hover {
-      opacity: .70;
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        opacity: .70;
+      }}
+    }
+
+    & > .mud-chip-content {
+      align-items: center;
+      display: inline-flex;
+      height: 100%;
+      max-width: 100%;
+      user-select: none;
     }
   }
 
-  & > .mud-chip-content {
-    align-items: center;
-    display: inline-flex;
-    height: 100%;
-    max-width: 100%;
-    user-select: none;
-  }
-}
+  .mud-chip-filled {
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-chip-default);
 
-.mud-chip-filled {
-  color: var(--mud-palette-text-primary);
-  background-color: var(--mud-palette-chip-default);
+    &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+      background-color: var(--mud-palette-chip-default-hover);
+    }
 
-  &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-    background-color: var(--mud-palette-chip-default-hover);
-  }
+    @each $color in $mud-palette-colors {
+      &.mud-chip-color-#{$color} {
+        color: var(--mud-palette-#{$color}-text);
+        background-color: var(--mud-palette-#{$color});
 
-  @each $color in $mud-palette-colors {
-    &.mud-chip-color-#{$color} {
-      color: var(--mud-palette-#{$color}-text);
-      background-color: var(--mud-palette-#{$color});
-
-      &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-        background-color: var(--mud-palette-#{$color}-darken);
+        &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+          background-color: var(--mud-palette-#{$color}-darken);
+        }
       }
     }
   }
-}
 
-.mud-chip-outlined {
-  color: var(--mud-palette-text-primary);
-  border: 1px solid var(--mud-palette-lines-inputs);
+  .mud-chip-outlined {
+    color: var(--mud-palette-text-primary);
+    border: 1px solid var(--mud-palette-lines-inputs);
 
-  &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-    background-color: var(--mud-palette-action-default-hover);
+    &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+      background-color: var(--mud-palette-action-default-hover);
+    }
+
+    @each $color in $mud-palette-colors {
+      &.mud-chip-color-#{$color} {
+        color: var(--mud-palette-#{$color});
+        border: 1px solid var(--mud-palette-#{$color});
+
+        &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+          background-color: var(--mud-palette-#{$color}-hover);
+        }
+
+        &.mud-chip-selected {
+          background-color: var(--mud-palette-#{$color}-hover);
+
+          &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+            background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+          }
+        }
+      }
+    }
   }
 
-  @each $color in $mud-palette-colors {
-    &.mud-chip-color-#{$color} {
-      color: var(--mud-palette-#{$color});
-      border: 1px solid var(--mud-palette-#{$color});
+  .mud-chip-text {
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-chip-default);
 
-      &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-        background-color: var(--mud-palette-#{$color}-hover);
-      }
+    &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+      background-color: var(--mud-palette-chip-default-hover);
+    }
 
-      &.mud-chip-selected {
+    @each $color in $mud-palette-colors {
+      &.mud-chip-color-#{$color} {
+        color: var(--mud-palette-#{$color});
         background-color: var(--mud-palette-#{$color}-hover);
 
         &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
@@ -183,24 +205,3 @@
       }
     }
   }
-}
-
-.mud-chip-text {
-  color: var(--mud-palette-text-primary);
-  background-color: var(--mud-palette-chip-default);
-
-  &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-    background-color: var(--mud-palette-chip-default-hover);
-  }
-
-  @each $color in $mud-palette-colors {
-    &.mud-chip-color-#{$color} {
-      color: var(--mud-palette-#{$color});
-      background-color: var(--mud-palette-#{$color}-hover);
-
-      &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-        background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
-      }
-    }
-  }
-}

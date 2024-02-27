@@ -37,8 +37,10 @@
   &.mud-checked {
     color: var(--mud-palette-action-default);
 
-    &:hover {
-      background-color: var(--mud-palette-action-default-hover);
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--mud-palette-action-default-hover);
+      }
     }
   }
 }

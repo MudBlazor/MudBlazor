@@ -77,15 +77,17 @@
         width: 100%;
       }
 
-      &:hover {
-        .column-options .sort-direction-icon, .column-options .column-options-icon, .column-options .drag-icon-options {
-          opacity: 0.8;
-          color: var(--mud-palette-action-default);
-        }
+      @media(hover: hover) and (pointer: fine) {
+        &:hover {
+          .column-options .sort-direction-icon, .column-options .column-options-icon, .column-options .drag-icon-options {
+            opacity: 0.8;
+            color: var(--mud-palette-action-default);
+          }
 
-        .column-options .mud-menu .mud-icon-button-label {
-          opacity: 1.0;
-          color: var(--mud-palette-action-default);
+          .column-options .mud-menu .mud-icon-button-label {
+            opacity: 1.0;
+            color: var(--mud-palette-action-default);
+          }
         }
       }
 
@@ -147,15 +149,17 @@
 }
 
 .mud-data-grid-columns-panel {
-  &:hover {
-    .column-options .sort-direction-icon, .column-options .column-options-icon, .column-options .drag-icon-options {
-      opacity: 0.8;
-      color: var(--mud-palette-action-default);
-    }
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      .column-options .sort-direction-icon, .column-options .column-options-icon, .column-options .drag-icon-options {
+        opacity: 0.8;
+        color: var(--mud-palette-action-default);
+      }
 
-    .column-options .mud-menu .mud-icon-button-label {
-      opacity: 1.0;
-      color: var(--mud-palette-action-default);
+      .column-options .mud-menu .mud-icon-button-label {
+        opacity: 1.0;
+        color: var(--mud-palette-action-default);
+      }
     }
   }
 

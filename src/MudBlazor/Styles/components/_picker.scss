@@ -39,15 +39,19 @@
   &.mud-picker-input-text {
     cursor: text;
 
-    &:hover {
-      cursor: text;
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        cursor: text;
+      }
     }
 
     &.mud-disabled {
       cursor: default;
 
-      &:hover {
-        cursor: default;
+      @media(hover: hover) and (pointer: fine) {
+        &:hover {
+          cursor: default;
+        }
       }
     }
   }

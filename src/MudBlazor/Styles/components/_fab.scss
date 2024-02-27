@@ -34,8 +34,10 @@
     cursor: default;
     pointer-events: none;
 
-    &:hover {
-      background-color: var(--mud-palette-action-disabled-background);
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--mud-palette-action-disabled-background);
+      }
     }
   }
 }
@@ -43,8 +45,10 @@
 .mud-fab-disable-elevation {
   box-shadow: none;
 
-  &:hover {
-    box-shadow: none;
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      box-shadow: none;
+    }
   }
 
   &:active {

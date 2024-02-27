@@ -70,10 +70,12 @@
     pointer-events: none;
   }
 
-  &:hover:not(.mud-nav-link-disabled) {
-    cursor: pointer;
-    text-decoration: none;
-    background-color: var(--mud-palette-action-default-hover);
+  @media(hover: hover) and (pointer: fine) {
+    &:hover:not(.mud-nav-link-disabled) {
+      cursor: pointer;
+      text-decoration: none;
+      background-color: var(--mud-palette-action-default-hover);
+    }
   }
 
   &:focus:not(.mud-nav-link-disabled) {

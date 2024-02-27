@@ -14,8 +14,10 @@
   }
 
   .hover\:mud-#{$color}-hover {
-    &:hover, &:focus-visible {
-      background-color: var(--mud-palette-#{$color}-hover) !important;
+    @media(hover: hover) and (pointer: fine) {
+      &:hover, &:focus-visible {
+        background-color: var(--mud-palette-#{$color}-hover) !important;
+      }
     }
   }
 
