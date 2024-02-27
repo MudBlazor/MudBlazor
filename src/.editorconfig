@@ -43,8 +43,11 @@ indent_size = 2
 
 # Sassy CSS - CSS preprocessor
 [*.scss]
-indent_size = 4
+charset = utf-8
+indent_size = 2
+end_of_line = lf
 insert_final_newline = true
+trim_trailing_whitespace = true
 
 # IDE0055: Fix formatting
 dotnet_diagnostic.IDE0055.severity = warning

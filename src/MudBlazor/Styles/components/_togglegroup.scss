@@ -1,85 +1,85 @@
 ﻿@import '../abstracts/variables';
 
 .mud-toggle-group {
-    display: grid;
+  display: grid;
 }
 
 .mud-toggle-group-horizontal {
-    &:not(.mud-toggle-group-rtl) {
-        > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-
-        > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            margin-left: -1px;
-
-            &.mud-toggle-item-delimiter {
-                border-left-width: 1px;
-            }
-
-            &.mud-toggle-delimiter-alternative {
-                border-left-color: var(--mud-palette-background-grey) !important;
-            }
-        }
-    }
-
-    &.mud-toggle-group-rtl {
-        > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            margin-left: -1px;
-
-            &.mud-toggle-item-delimiter {
-                border-left-width: 1px;
-            }
-        }
-
-        > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-    }
-}
-
-.mud-toggle-group-vertical {
+  &:not(.mud-toggle-group-rtl) {
     > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
     }
 
     > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      margin-left: -1px;
 
-        &.mud-toggle-item-delimiter {
-            border-top-width: 1px;
-        }
+      &.mud-toggle-item-delimiter {
+        border-left-width: 1px;
+      }
 
-        &.mud-toggle-delimiter-alternative {
-            border-top-color: var(--mud-palette-background-grey) !important;
-        }
+      &.mud-toggle-delimiter-alternative {
+        border-left-color: var(--mud-palette-background-grey) !important;
+      }
     }
+  }
+
+  &.mud-toggle-group-rtl {
+    > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      margin-left: -1px;
+
+      &.mud-toggle-item-delimiter {
+        border-left-width: 1px;
+      }
+    }
+
+    > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+}
+
+.mud-toggle-group-vertical {
+  > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+
+    &.mud-toggle-item-delimiter {
+      border-top-width: 1px;
+    }
+
+    &.mud-toggle-delimiter-alternative {
+      border-top-color: var(--mud-palette-background-grey) !important;
+    }
+  }
 }
 
 .mud-toggle-item {
-    cursor: pointer;
-    user-select: none;
-    border-radius: var(--mud-default-borderradius);
+  cursor: pointer;
+  user-select: none;
+  border-radius: var(--mud-default-borderradius);
 
-    @each $color in $mud-palette-colors {
-        &.mud-toggle-item-#{$color} {
-            color: var(--mud-palette-#{$color});
+  @each $color in $mud-palette-colors {
+    &.mud-toggle-item-#{$color} {
+      color: var(--mud-palette-#{$color});
 
-            &:hover:not(.mud-toggle-item-selected), &:focus-visible:not(.mud-toggle-item-selected) {
-                background-color: var(--mud-palette-#{$color}-hover);
-            }
-        }
+      &:hover:not(.mud-toggle-item-selected), &:focus-visible:not(.mud-toggle-item-selected) {
+        background-color: var(--mud-palette-#{$color}-hover);
+      }
     }
+  }
 
-    &.mud-toggle-item-selected-border {
-        border-radius: unset;
-    }
+  &.mud-toggle-item-selected-border {
+    border-radius: unset;
+  }
 }

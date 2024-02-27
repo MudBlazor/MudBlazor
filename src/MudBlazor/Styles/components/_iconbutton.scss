@@ -1,83 +1,83 @@
 ﻿.mud-icon-button {
-    flex: 0 0 auto;
-    padding: 12px;
-    overflow: visible;
-    font-size: 1.5rem;
-    text-align: center;
-    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    border-radius: 50%;
-    color: var(--mud-palette-action-default);
+  flex: 0 0 auto;
+  padding: 12px;
+  overflow: visible;
+  font-size: 1.5rem;
+  text-align: center;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-radius: 50%;
+  color: var(--mud-palette-action-default);
 
-    &.mud-button {
-        min-width: unset;
-        border-radius: var(--mud-default-borderradius);
-    }
+  &.mud-button {
+    min-width: unset;
+    border-radius: var(--mud-default-borderradius);
+  }
 
-    &:hover, &:focus-visible {
-        background-color: var(--mud-palette-action-default-hover);
-    }
+  &:hover, &:focus-visible {
+    background-color: var(--mud-palette-action-default-hover);
+  }
 
-    &:disabled {
-        color: var(--mud-palette-action-disabled);
-        background-color: transparent;
-    }
+  &:disabled {
+    color: var(--mud-palette-action-disabled);
+    background-color: transparent;
+  }
 
-    &.mud-readonly, .mud-readonly:hover {
-        cursor: default;
-    }
+  &.mud-readonly, .mud-readonly:hover {
+    cursor: default;
+  }
 }
 
 .mud-icon-button-color-inherit {
-    color: inherit;
+  color: inherit;
 
-    &:hover, &:focus-visible {
-        background-color: var(--mud-palette-action-default-hover);
-    }
+  &:hover, &:focus-visible {
+    background-color: var(--mud-palette-action-default-hover);
+  }
 }
 
 .mud-icon-button-label {
-    width: 100%;
-    display: flex;
-    align-items: inherit;
-    justify-content: inherit;
+  width: 100%;
+  display: flex;
+  align-items: inherit;
+  justify-content: inherit;
 }
 
 .mud-icon-button-edge-start {
-    margin-left: -12px;
-    margin-inline-start: -12px;
-    margin-inline-end: unset;
+  margin-left: -12px;
+  margin-inline-start: -12px;
+  margin-inline-end: unset;
 }
 
 .mud-icon-button-edge-end {
-    margin-right: -12px;
-    margin-inline-end: -12px;
-    margin-inline-start: unset;
+  margin-right: -12px;
+  margin-inline-end: -12px;
+  margin-inline-start: unset;
 }
 
 .mud-icon-button-edge-margin-end {
-    margin-right: 8px;
-    margin-inline-end: 8px;
-    margin-inline-start: unset;
+  margin-right: 8px;
+  margin-inline-end: 8px;
+  margin-inline-start: unset;
 }
 
 .mud-icon-button-size-small {
-    padding: 3px;
-    font-size: 1.125rem;
+  padding: 3px;
+  font-size: 1.125rem;
 
-    &.mud-icon-button-edge-start {
-        margin-left: -3px;
-        margin-inline-start: -3px;
-        margin-inline-end: unset;
-    }
+  &.mud-icon-button-edge-start {
+    margin-left: -3px;
+    margin-inline-start: -3px;
+    margin-inline-end: unset;
+  }
 
-    &.mud-icon-button-edge-end {
-        margin-right: -3px;
-        margin-inline-end: -3px;
-        margin-inline-start: unset;
-    }
+  &.mud-icon-button-edge-end {
+    margin-right: -3px;
+    margin-inline-end: -3px;
+    margin-inline-start: unset;
+  }
 }
 
 
 .mud-icon-button-size-large.mud-button > .mud-icon-button-label > .mud-icon-size-large {
-    font-size: 2rem;
+  font-size: 2rem;
 }

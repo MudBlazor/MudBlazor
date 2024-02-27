@@ -1,41 +1,41 @@
 ﻿@import '../../abstracts/variables';
 
 @mixin display-mixin ($breakpoint) {
-    .d-#{$breakpoint}none {
-        display: none !important;
-    }
+  .d-#{$breakpoint}none {
+    display: none !important;
+  }
 
-    .d-#{$breakpoint}inline {
-        display: inline !important;
-    }
+  .d-#{$breakpoint}inline {
+    display: inline !important;
+  }
 
-    .d-#{$breakpoint}inline-block {
-        display: inline-block !important;
-    }
+  .d-#{$breakpoint}inline-block {
+    display: inline-block !important;
+  }
 
-    .d-#{$breakpoint}block {
-        display: block !important;
-    }
+  .d-#{$breakpoint}block {
+    display: block !important;
+  }
 
-    .d-#{$breakpoint}table {
-        display: table !important;
-    }
+  .d-#{$breakpoint}table {
+    display: table !important;
+  }
 
-    .d-#{$breakpoint}table-row {
-        display: table-row !important;
-    }
+  .d-#{$breakpoint}table-row {
+    display: table-row !important;
+  }
 
-    .d-#{$breakpoint}table-cell {
-        display: table-cell !important;
-    }
+  .d-#{$breakpoint}table-cell {
+    display: table-cell !important;
+  }
 
-    .d-#{$breakpoint}flex {
-        display: flex !important;
-    }
+  .d-#{$breakpoint}flex {
+    display: flex !important;
+  }
 
-    .d-#{$breakpoint}inline-flex {
-        display: inline-flex !important;
-    }
+  .d-#{$breakpoint}inline-flex {
+    display: inline-flex !important;
+  }
 }
 
 
@@ -45,21 +45,21 @@
 @include display-mixin("");
 
 @media (min-width:$breakpoint-sm) {
-    @include display-mixin("sm-");
+  @include display-mixin("sm-");
 }
 
 @media (min-width:$breakpoint-md) {
-    @include display-mixin("md-");
+  @include display-mixin("md-");
 }
 
 @media (min-width:$breakpoint-lg) {
-    @include display-mixin("lg-");
+  @include display-mixin("lg-");
 }
 
 @media (min-width:$breakpoint-xl) {
-    @include display-mixin("xl-");
+  @include display-mixin("xl-");
 }
 
 @media (min-width:$breakpoint-xxl) {
-    @include display-mixin("xxl-");
+  @include display-mixin("xxl-");
 }
