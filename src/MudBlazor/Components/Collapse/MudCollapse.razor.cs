@@ -65,7 +65,6 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
-        // If we use OnInitialized to Attach
         protected override void OnInitialized()
         {
             base.OnInitialized();

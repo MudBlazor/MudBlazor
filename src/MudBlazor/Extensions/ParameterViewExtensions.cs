@@ -8,7 +8,7 @@ namespace MudBlazor
     {
         public static bool Contains<T>(this ParameterView view, string parameterName)
         {
-            return view.TryGetValue<T>(parameterName, out var _);
+            return view.TryGetValue<T>(parameterName, out _);
         }
 
         /// <summary>
