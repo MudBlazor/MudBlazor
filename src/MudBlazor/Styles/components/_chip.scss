@@ -98,6 +98,7 @@
 
     &.mud-clickable {
         cursor: pointer;
+        user-select: none;
     }
 
     .mud-chip-icon {
@@ -133,7 +134,6 @@
         display: inline-flex;
         height: 100%;
         max-width: 100%;
-        user-select: none;
     }
 }
 
@@ -141,17 +141,21 @@
     color: var(--mud-palette-text-primary);
     background-color: var(--mud-palette-chip-default);
 
-    &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-        background-color: var(--mud-palette-chip-default-hover);
+&.mud-clickable {
+        &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+            background-color: var(--mud-palette-chip-default-hover);
+        }
     }
 
     @each $color in $mud-palette-colors {
         &.mud-chip-color-#{$color} {
             color: var(--mud-palette-#{$color}-text);
             background-color: var(--mud-palette-#{$color});
-
-            &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-                background-color: var(--mud-palette-#{$color}-darken);
+        
+            &.mud-clickable {
+                &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+                    background-color: var(--mud-palette-#{$color}-darken);
+                }
             }
         }
     }
@@ -160,8 +164,10 @@
     color: var(--mud-palette-text-primary);
     border: 1px solid var(--mud-palette-lines-inputs);
 
-    &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-        background-color: var(--mud-palette-action-default-hover);
+    &.mud-clickable {
+        &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+            background-color: var(--mud-palette-action-default-hover);
+        }
     }
 
     @each $color in $mud-palette-colors {
@@ -169,13 +175,15 @@
             color: var(--mud-palette-#{$color});
             border: 1px solid var(--mud-palette-#{$color});
 
-            &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-                background-color: var(--mud-palette-#{$color}-hover);
+            &.mud-clickable {
+                &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+                    background-color: var(--mud-palette-#{$color}-hover);
+                }
             }
 
             &.mud-chip-selected {
                 background-color: var(--mud-palette-#{$color}-hover);
-
+              
                 &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
                     background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
                 }
@@ -187,8 +195,10 @@
     color: var(--mud-palette-text-primary);
     background-color: var(--mud-palette-chip-default);
 
-    &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-        background-color: var(--mud-palette-chip-default-hover);
+    &.mud-clickable {
+        &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+            background-color: var(--mud-palette-chip-default-hover);
+        }
     }
 
     @each $color in $mud-palette-colors {
@@ -196,8 +206,10 @@
             color: var(--mud-palette-#{$color});
             background-color: var(--mud-palette-#{$color}-hover);
 
-            &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-                background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+            &.mud-clickable {
+                &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+                    background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+                }
             }
         }
     }
