@@ -1,198 +1,198 @@
 .mud-picker {
-    &.mud-rounded {
-        border-radius: var(--mud-default-borderradius);
-    }
+  &.mud-rounded {
+    border-radius: var(--mud-default-borderradius);
+  }
 
-    & .mud-picker-actions {
-        flex: 0 0 auto;
-        display: flex;
-        padding: 8px;
-        align-items: center;
-        justify-content: flex-end;
+  & .mud-picker-actions {
+    flex: 0 0 auto;
+    display: flex;
+    padding: 8px;
+    align-items: center;
+    justify-content: flex-end;
 
-        & > :not(:first-child) {
-            margin-left: 8px;
-            margin-inline-start: 8px;
-            margin-inline-end: unset;
-        }
+    & > :not(:first-child) {
+      margin-left: 8px;
+      margin-inline-start: 8px;
+      margin-inline-end: unset;
     }
+  }
 }
 
 .mud-picker-inline {
-    display: flex;
-    flex: 1 1 auto;
-    position: relative;
-    max-width: 100%;
+  display: flex;
+  flex: 1 1 auto;
+  position: relative;
+  max-width: 100%;
 
-    &.mud-picker-input-button {
-        & .mud-input, .mud-input .mud-input-root {
-            cursor: pointer
-        }
-
-        &.mud-disabled {
-            & .mud-input, .mud-input .mud-input-root {
-                cursor: default;
-            }
-        }
+  &.mud-picker-input-button {
+    & .mud-input, .mud-input .mud-input-root {
+      cursor: pointer
     }
 
-    &.mud-picker-input-text {
-        cursor: text;
-
-        &:hover {
-            cursor: text;
-        }
-
-        &.mud-disabled {
-            cursor: default;
-
-            &:hover {
-                cursor: default;
-            }
-        }
+    &.mud-disabled {
+      & .mud-input, .mud-input .mud-input-root {
+        cursor: default;
+      }
     }
+  }
+
+  &.mud-picker-input-text {
+    cursor: text;
+
+    &:hover {
+      cursor: text;
+    }
+
+    &.mud-disabled {
+      cursor: default;
+
+      &:hover {
+        cursor: default;
+      }
+    }
+  }
 }
 
 .mud-picker-static {
-    display: flex;
-    overflow: hidden;
-    min-width: 310px;
-    flex-direction: column;
+  display: flex;
+  overflow: hidden;
+  min-width: 310px;
+  flex-direction: column;
 }
 
 .mud-picker-container {
-    display: flex;
-    flex-direction: column;
-    border-radius: inherit;
+  display: flex;
+  flex-direction: column;
+  border-radius: inherit;
 
-    &.mud-picker-container-landscape {
-        flex-direction: row;
-    }
+  &.mud-picker-container-landscape {
+    flex-direction: row;
+  }
 
-    & .mud-toolbar {
-        border-top-left-radius: inherit;
-        border-top-right-radius: inherit;
-    }
+  & .mud-toolbar {
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+  }
 }
 
 .mud-picker-popover-paper {
-    outline: 0;
-    z-index: calc(var(--mud-zindex-popover) + 1);
-    position: absolute;
-    min-width: 16px;
-    min-height: 16px;
-    overflow-x: hidden;
-    overflow-y: auto;
+  outline: 0;
+  z-index: calc(var(--mud-zindex-popover) + 1);
+  position: absolute;
+  min-width: 16px;
+  min-height: 16px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .mud-picker-view {
-    display: none;
-    margin-top: 20px;
+  display: none;
+  margin-top: 20px;
 
-    &.mud-picker-open {
-        display: block;
-        animation: mud-animation-fadein 251ms;
-    }
+  &.mud-picker-open {
+    display: block;
+    animation: mud-animation-fadein 251ms;
+  }
 }
 
 .mud-picker-content {
-    display: flex;
-    //max-width: 325px;
-    max-width: 100%;
-    min-width: 310px;
-    min-height: 305px;
-    overflow: hidden;
-    flex-direction: column;
-    justify-content: center;
+  display: flex;
+  //max-width: 325px;
+  max-width: 100%;
+  min-width: 310px;
+  min-height: 305px;
+  overflow: hidden;
+  flex-direction: column;
+  justify-content: center;
 
-    &.mud-picker-content-landscape {
-        padding: 0 8px;
-    }
+  &.mud-picker-content-landscape {
+    padding: 0 8px;
+  }
 }
 
 .mud-picker-toolbar {
-    height: 100px;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    justify-content: center;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
 
-    &.mud-picker-toolbar-landscape {
-        height: auto;
-        padding: 8px;
-        max-width: 150px;
-        justify-content: flex-start;
-    }
+  &.mud-picker-toolbar-landscape {
+    height: auto;
+    padding: 8px;
+    max-width: 150px;
+    justify-content: flex-start;
+  }
 
 
-    &.mud-button-root {
-        padding: 0;
-        min-width: 16px;
-        text-transform: none;
-    }
+  &.mud-button-root {
+    padding: 0;
+    min-width: 16px;
+    text-transform: none;
+  }
 }
 
 .mud-picker-inline-paper {
-    .mud-paper {
-        position: relative !important;
-    }
+  .mud-paper {
+    position: relative !important;
+  }
 }
 
 .mud-picker-hidden {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .mud-picker-pos-top {
-    top: 0px;
-    position: fixed;
-    visibility: visible;
+  top: 0px;
+  position: fixed;
+  visibility: visible;
 
-    &.mud-picker-pos-left {
-        left: 10px;
-    }
+  &.mud-picker-pos-left {
+    left: 10px;
+  }
 
-    &.mud-picker-pos-right {
-        right: 10px;
-    }
+  &.mud-picker-pos-right {
+    right: 10px;
+  }
 }
 
 .mud-picker-pos-above {
-    bottom: 0px;
-    visibility: visible;
+  bottom: 0px;
+  visibility: visible;
 
-    &.mud-picker-pos-left {
-        left: 50%;
-        transform: translateX(-50%);
-    }
+  &.mud-picker-pos-left {
+    left: 50%;
+    transform: translateX(-50%);
+  }
 
-    &.mud-picker-pos-right {
-        right: 0px;
-    }
+  &.mud-picker-pos-right {
+    right: 0px;
+  }
 }
 
 .mud-picker-pos-bottom {
-    bottom: 10px;
-    position: fixed;
-    visibility: visible;
+  bottom: 10px;
+  position: fixed;
+  visibility: visible;
 
-    &.mud-picker-pos-left {
-        left: 10px;
-    }
+  &.mud-picker-pos-left {
+    left: 10px;
+  }
 
-    &.mud-picker-pos-right {
-        right: 10px;
-    }
+  &.mud-picker-pos-right {
+    right: 10px;
+  }
 }
 
 .mud-picker-pos-below {
-    visibility: visible;
+  visibility: visible;
 
-    &.mud-picker-pos-left {
-        left: 50%;
-        transform: translateX(-50%);
-    }
+  &.mud-picker-pos-left {
+    left: 50%;
+    transform: translateX(-50%);
+  }
 
-    &.mud-picker-pos-right {
-        right: 0px;
-    }
+  &.mud-picker-pos-right {
+    right: 0px;
+  }
 }

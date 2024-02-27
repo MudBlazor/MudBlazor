@@ -1,384 +1,384 @@
 ﻿@import '../abstracts/variables';
 
 .mud-picker-datepicker-toolbar {
-    align-items: flex-start;
-    flex-direction: column;
+  align-items: flex-start;
+  flex-direction: column;
 
-    .mud-button-year {
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.75;
-        letter-spacing: 0.00938em;
-    }
+  .mud-button-year {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.75;
+    letter-spacing: 0.00938em;
+  }
 
-    .mud-button-date {
-        font-size: 2.125rem;
-        font-weight: 400;
-        line-height: 1.17;
-        letter-spacing: 0.00735em;
-        text-transform: none;
-    }
+  .mud-button-date {
+    font-size: 2.125rem;
+    font-weight: 400;
+    line-height: 1.17;
+    letter-spacing: 0.00735em;
+    text-transform: none;
+  }
 }
 
 .mud-picker-datepicker-toolbar-landscape {
-    padding: 16px;
+  padding: 16px;
 }
 
 .mud-picker-datepicker-date-landscape {
-    margin-right: 16px;
-    margin-inline-end: 16px;
-    margin-inline-start: unset;
+  margin-right: 16px;
+  margin-inline-end: 16px;
+  margin-inline-start: unset;
 }
 
 
 .mud-picker-calendar-header-switch {
-    display: flex;
-    margin-top: 4px;
-    align-items: center;
-    margin-bottom: 8px;
-    justify-content: space-between;
+  display: flex;
+  margin-top: 4px;
+  align-items: center;
+  margin-bottom: 8px;
+  justify-content: space-between;
 
-    & > .mud-icon-button {
-        z-index: 1;
-        padding: 8px;
-        margin: 6px;
-        background-color: var(--mud-palette-surface);
+  & > .mud-icon-button {
+    z-index: 1;
+    padding: 8px;
+    margin: 6px;
+    background-color: var(--mud-palette-surface);
 
-        &:hover {
-            background-color: var(--mud-palette-action-default-hover);
-        }
+    &:hover {
+      background-color: var(--mud-palette-action-default-hover);
     }
+  }
 
-    & .mud-picker-calendar-header-transition {
-        width: 100%;
-        height: 23px;
-        overflow: hidden;
+  & .mud-picker-calendar-header-transition {
+    width: 100%;
+    height: 23px;
+    overflow: hidden;
 
-        &:hover {
-            & .mud-typography {
-                cursor: pointer;
-                font-weight: 500;
-            }
-        }
+    &:hover {
+      & .mud-typography {
+        cursor: pointer;
+        font-weight: 500;
+      }
     }
+  }
 }
 
 
 .mud-picker-calendar-header-day {
-    display: flex;
-    max-height: 16px;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  max-height: 16px;
+  align-items: center;
+  justify-content: center;
 
-    .mud-day-label {
-        color: var(--mud-palette-text-secondary);
-        width: 36px;
-        margin: 0 2px;
-        text-align: center;
-    }
+  .mud-day-label {
+    color: var(--mud-palette-text-secondary);
+    width: 36px;
+    margin: 0 2px;
+    text-align: center;
+  }
 }
 
 .mud-picker-year-container {
-    height: 300px;
-    overflow-y: auto;
+  height: 300px;
+  overflow-y: auto;
 
-    .mud-picker-year {
-        cursor: pointer;
-        height: 40px;
-        display: flex;
-        outline: none;
-        align-items: center;
-        justify-content: center;
-        user-select: none;
-        animation: mud-animation-fadein 500ms;
-        transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  .mud-picker-year {
+    cursor: pointer;
+    height: 40px;
+    display: flex;
+    outline: none;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    animation: mud-animation-fadein 500ms;
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
-        &:hover {
-            background-color: var(--mud-palette-action-default-hover);
-        }
-
-        & .mud-picker-year-selected {
-            margin: 10px 0;
-            font-weight: 500;
-        }
+    &:hover {
+      background-color: var(--mud-palette-action-default-hover);
     }
+
+    & .mud-picker-year-selected {
+      margin: 10px 0;
+      font-weight: 500;
+    }
+  }
 }
 
 .mud-picker-month-container {
-    width: 310px;
+  width: 310px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: stretch;
+
+  .mud-picker-month {
+    flex: 1 0 33.33%;
+    cursor: pointer;
+    height: 60px;
     display: flex;
-    flex-wrap: wrap;
-    align-content: stretch;
+    outline: none;
+    transition: font-size 100ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
-    .mud-picker-month {
-        flex: 1 0 33.33%;
-        cursor: pointer;
-        height: 60px;
-        display: flex;
-        outline: none;
-        transition: font-size 100ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-        align-items: center;
-        justify-content: center;
-        transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-
-        &:hover {
-            background-color: var(--mud-palette-action-default-hover);
-        }
-
-        & .mud-picker-month-selected {
-            font-weight: 500;
-        }
-
-        &.mud-disabled {
-            color: var(--mud-palette-text-disabled);
-            pointer-events: none;
-        }
+    &:hover {
+      background-color: var(--mud-palette-action-default-hover);
     }
+
+    & .mud-picker-month-selected {
+      font-weight: 500;
+    }
+
+    &.mud-disabled {
+      color: var(--mud-palette-text-disabled);
+      pointer-events: none;
+    }
+  }
 }
 
 
 .mud-picker-slide-transition {
-    display: block;
-    position: relative;
+  display: block;
+  position: relative;
 }
 
 .mud-picker-slide-transition > * {
-    top: 0;
-    left: 0;
-    right: 0;
-    position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  position: absolute;
 }
 
 .mud-picker-calendar-transition {
-    margin-top: 12px;
-    min-height: 216px;
+  margin-top: 12px;
+  min-height: 216px;
 }
 
 .mud-picker-calendar-progress-container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .mud-picker-calendar-content {
-    display: grid;
-    --selected-day: 0;
-    grid-column-gap: 10px;
-    grid-template-columns: auto;
+  display: grid;
+  --selected-day: 0;
+  grid-column-gap: 10px;
+  grid-template-columns: auto;
 }
 
 @media(min-width: $breakpoint-sm) {
-    .mud-picker-calendar-content:not(.mud-picker-calendar-content-1) {
-        grid-template-columns: repeat(2, minmax(auto, 1fr));
+  .mud-picker-calendar-content:not(.mud-picker-calendar-content-1) {
+    grid-template-columns: repeat(2, minmax(auto, 1fr));
 
-        .mud-picker-calendar-header-1,
-        .mud-picker-calendar-header-3,
-        .mud-picker-calendar-header-5,
-        .mud-picker-calendar-header-7,
-        .mud-picker-calendar-header-9,
-        .mud-picker-calendar-header-11 {
-            .mud-picker-nav-button-next {
-                visibility: hidden;
-            }
+    .mud-picker-calendar-header-1,
+    .mud-picker-calendar-header-3,
+    .mud-picker-calendar-header-5,
+    .mud-picker-calendar-header-7,
+    .mud-picker-calendar-header-9,
+    .mud-picker-calendar-header-11 {
+      .mud-picker-nav-button-next {
+        visibility: hidden;
+      }
 
-            .mud-picker-nav-button-prev {
-                visibility: visible;
-            }
-        }
-
-        .mud-picker-calendar-header-2,
-        .mud-picker-calendar-header-4,
-        .mud-picker-calendar-header-6,
-        .mud-picker-calendar-header-8,
-        .mud-picker-calendar-header-10,
-        .mud-picker-calendar-header-12 {
-            .mud-picker-nav-button-next {
-                visibility: visible;
-            }
-
-            .mud-picker-nav-button-prev {
-                visibility: hidden;
-            }
-        }
+      .mud-picker-nav-button-prev {
+        visibility: visible;
+      }
     }
+
+    .mud-picker-calendar-header-2,
+    .mud-picker-calendar-header-4,
+    .mud-picker-calendar-header-6,
+    .mud-picker-calendar-header-8,
+    .mud-picker-calendar-header-10,
+    .mud-picker-calendar-header-12 {
+      .mud-picker-nav-button-next {
+        visibility: visible;
+      }
+
+      .mud-picker-nav-button-prev {
+        visibility: hidden;
+      }
+    }
+  }
 }
 
 @media(min-width: $breakpoint-md) {
-    .mud-picker-calendar-content:not(.mud-picker-calendar-content-1):not(.mud-picker-calendar-content-2) {
-        grid-template-columns: repeat(3, minmax(auto, 1fr));
+  .mud-picker-calendar-content:not(.mud-picker-calendar-content-1):not(.mud-picker-calendar-content-2) {
+    grid-template-columns: repeat(3, minmax(auto, 1fr));
 
-        .mud-picker-calendar-header-1,
-        .mud-picker-calendar-header-4,
-        .mud-picker-calendar-header-7,
-        .mud-picker-calendar-header-10 {
-            .mud-picker-nav-button-next {
-                visibility: hidden;
-            }
+    .mud-picker-calendar-header-1,
+    .mud-picker-calendar-header-4,
+    .mud-picker-calendar-header-7,
+    .mud-picker-calendar-header-10 {
+      .mud-picker-nav-button-next {
+        visibility: hidden;
+      }
 
-            .mud-picker-nav-button-prev {
-                visibility: visible;
-            }
-        }
-
-        .mud-picker-calendar-header-2,
-        .mud-picker-calendar-header-5,
-        .mud-picker-calendar-header-8,
-        .mud-picker-calendar-header-11 {
-            .mud-picker-nav-button-next, .mud-picker-nav-button-prev {
-                visibility: hidden;
-            }
-        }
-
-        .mud-picker-calendar-header-3,
-        .mud-picker-calendar-header-6,
-        .mud-picker-calendar-header-9,
-        .mud-picker-calendar-header-12 {
-            .mud-picker-nav-button-next {
-                visibility: visible;
-            }
-
-            .mud-picker-nav-button-prev {
-                visibility: hidden;
-            }
-        }
+      .mud-picker-nav-button-prev {
+        visibility: visible;
+      }
     }
+
+    .mud-picker-calendar-header-2,
+    .mud-picker-calendar-header-5,
+    .mud-picker-calendar-header-8,
+    .mud-picker-calendar-header-11 {
+      .mud-picker-nav-button-next, .mud-picker-nav-button-prev {
+        visibility: hidden;
+      }
+    }
+
+    .mud-picker-calendar-header-3,
+    .mud-picker-calendar-header-6,
+    .mud-picker-calendar-header-9,
+    .mud-picker-calendar-header-12 {
+      .mud-picker-nav-button-next {
+        visibility: visible;
+      }
+
+      .mud-picker-nav-button-prev {
+        visibility: hidden;
+      }
+    }
+  }
 }
 
 :not(.mud-picker-hidden) {
-    .mud-picker-calendar-header-last {
-        .mud-picker-nav-button-next {
-            visibility: inherit !important;
-        }
+  .mud-picker-calendar-header-last {
+    .mud-picker-nav-button-next {
+      visibility: inherit !important;
     }
+  }
 }
 
 .mud-picker-hidden {
-    .mud-picker-nav-button-next, .mud-picker-nav-button-prev {
-        visibility: hidden !important;
-    }
+  .mud-picker-nav-button-next, .mud-picker-nav-button-prev {
+    visibility: hidden !important;
+  }
 }
 
 .mud-picker-calendar-container {
-    display: flex;
-    width: 310px;
-    flex-direction: column;
+  display: flex;
+  width: 310px;
+  flex-direction: column;
 }
 
 .mud-picker-calendar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 
-    .mud-day {
-        color: var(--mud-palette-text-primary);
-        width: 36px;
-        height: 36px;
-        margin: 0 2px;
-        padding: 0;
-        font-size: 0.75rem;
-        font-weight: 500;
+  .mud-day {
+    color: var(--mud-palette-text-primary);
+    width: 36px;
+    height: 36px;
+    margin: 0 2px;
+    padding: 0;
+    font-size: 0.75rem;
+    font-weight: 500;
 
-        &:hover {
-            background-color: var(--mud-palette-action-default-hover);
-        }
-
-        &.mud-hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        &.mud-current {
-            font-weight: 600;
-        }
-
-        &.mud-selected {
-            font-weight: 500;
-        }
-
-        .mud-typography {
-            margin-top: 2px;
-        }
-
-        &.mud-disabled {
-            color: var(--mud-palette-text-disabled);
-            pointer-events: none;
-        }
-
-        &.mud-range {
-            margin: 0;
-            width: 40px;
-            transition: none;
-
-            &.mud-range-start-selected {
-                border-radius: 50% 0% 0% 50%;
-            }
-
-            &.mud-range-end-selected {
-                border-radius: 0% 50% 50% 0%;
-            }
-
-            &.mud-range-between {
-                border-radius: 0;
-                background-color: var(--mud-palette-action-default-hover);
-            }
-
-            &.mud-range-selection:hover {
-                &.mud-range-start-selected {
-                    border-radius: 50%;
-                }
-
-                &:not(.mud-range-start-selected) {
-                    border-radius: 0% 50% 50% 0%;
-                }
-            }
-
-            &.mud-range-selection:not(:hover):not(.mud-range-start-selected) {
-                border-radius: 0;
-                background: linear-gradient(var(--mud-palette-action-default-hover) 100%, var(--mud-palette-action-default-hover) 100%, transparent 0%);
-                background-size: 100% calc(100% * (var(--selected-day) - var(--day-id)));
-            }
-        }
+    &:hover {
+      background-color: var(--mud-palette-action-default-hover);
     }
+
+    &.mud-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    &.mud-current {
+      font-weight: 600;
+    }
+
+    &.mud-selected {
+      font-weight: 500;
+    }
+
+    .mud-typography {
+      margin-top: 2px;
+    }
+
+    &.mud-disabled {
+      color: var(--mud-palette-text-disabled);
+      pointer-events: none;
+    }
+
+    &.mud-range {
+      margin: 0;
+      width: 40px;
+      transition: none;
+
+      &.mud-range-start-selected {
+        border-radius: 50% 0% 0% 50%;
+      }
+
+      &.mud-range-end-selected {
+        border-radius: 0% 50% 50% 0%;
+      }
+
+      &.mud-range-between {
+        border-radius: 0;
+        background-color: var(--mud-palette-action-default-hover);
+      }
+
+      &.mud-range-selection:hover {
+        &.mud-range-start-selected {
+          border-radius: 50%;
+        }
+
+        &:not(.mud-range-start-selected) {
+          border-radius: 0% 50% 50% 0%;
+        }
+      }
+
+      &.mud-range-selection:not(:hover):not(.mud-range-start-selected) {
+        border-radius: 0;
+        background: linear-gradient(var(--mud-palette-action-default-hover) 100%, var(--mud-palette-action-default-hover) 100%, transparent 0%);
+        background-size: 100% calc(100% * (var(--selected-day) - var(--day-id)));
+      }
+    }
+  }
 }
 
 @each $color in $mud-palette-colors {
-    .mud-range-selection-#{$color} {
-        &:hover {
-            color: var(--mud-palette-#{$color}-text) !important;
-            background-color: var(--mud-palette-#{$color}) !important;
-        }
+  .mud-range-selection-#{$color} {
+    &:hover {
+      color: var(--mud-palette-#{$color}-text) !important;
+      background-color: var(--mud-palette-#{$color}) !important;
     }
+  }
 }
 
 .mud-picker-calendar-week {
-    display: flex;
-    margin: 0 5px;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  margin: 0 5px;
+  justify-content: center;
+  align-items: center;
 
-    .mud-picker-calendar-week-text {
-        width: 15px;
-        margin-top: 2px !important;
-        color: var(--mud-palette-text-disabled);
-    }
+  .mud-picker-calendar-week-text {
+    width: 15px;
+    margin-top: 2px !important;
+    color: var(--mud-palette-text-disabled);
+  }
 }
 
 .mud-application-layout-rtl {
-    .mud-picker-calendar .mud-day.mud-range {
-        &.mud-range-start-selected {
-            border-radius: 0% 50% 50% 0%;
-        }
-
-        &.mud-range-end-selected {
-            border-radius: 50% 0% 0% 50%;
-        }
-
-        &.mud-range-selection:hover {
-            &:not(.mud-range-start-selected) {
-                border-radius: 50% 0% 0% 50%;
-            }
-        }
+  .mud-picker-calendar .mud-day.mud-range {
+    &.mud-range-start-selected {
+      border-radius: 0% 50% 50% 0%;
     }
+
+    &.mud-range-end-selected {
+      border-radius: 50% 0% 0% 50%;
+    }
+
+    &.mud-range-selection:hover {
+      &:not(.mud-range-start-selected) {
+        border-radius: 50% 0% 0% 50%;
+      }
+    }
+  }
 }

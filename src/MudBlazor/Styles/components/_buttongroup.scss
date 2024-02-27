@@ -1,322 +1,324 @@
 @import '../abstracts/variables';
 
 .mud-button-group-root {
+  border-radius: var(--mud-default-borderradius);
+  display: inline-flex;
+
+  .mud-button-root {
     border-radius: var(--mud-default-borderradius);
-    display: inline-flex;
+  }
+
+  &.mud-button-group-override-styles {
+    .mud-button {
+      color: var(--mud-palette-text-primary);
+    }
 
     .mud-button-root {
-        border-radius: var(--mud-default-borderradius);
+      background-color: inherit;
+      box-shadow: none;
+      border: none;
+
+      &:hover, &:focus-visible {
+        background-color: var(--mud-palette-action-default-hover);
+      }
     }
-
-    &.mud-button-group-override-styles {
-        .mud-button {
-            color: var(--mud-palette-text-primary);
-        }
-
-        .mud-button-root {
-            background-color: inherit;
-            box-shadow: none;
-            border: none;
-
-            &:hover, &:focus-visible {
-                background-color: var(--mud-palette-action-default-hover);
-            }
-        }
-    }
+  }
 }
+
 .mud-button-group-horizontal {
-    &:not(.mud-button-group-rtl) {
-        > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-
-        > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            margin-left: -1px;
-        }
-    }
-
-    &.mud-button-group-rtl {
-        > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            margin-left: -1px;
-        }
-
-        > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-    }
-}
-
-.mud-button-group-vertical {
-    flex-direction: column;
-    .mud-icon-button {
-        width: 100%;
-    }
-
+  &:not(.mud-button-group-rtl) {
     > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
     }
 
     > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-        border-top-right-radius: 0;
-        border-top-left-radius: 0;
-        margin-top: -1px;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      margin-left: -1px;
     }
+  }
+
+  &.mud-button-group-rtl {
+    > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      margin-left: -1px;
+    }
+
+    > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+}
+
+.mud-button-group-vertical {
+  flex-direction: column;
+
+  .mud-icon-button {
+    width: 100%;
+  }
+
+  > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    margin-top: -1px;
+  }
 }
 
 .mud-button-group-text {
-    &.mud-button-group-override-styles {
+  &.mud-button-group-override-styles {
+    .mud-button-root {
+      padding: 6px 8px;
+    }
+
+    &.mud-button-group-horizontal {
+      &:not(.mud-button-group-rtl) {
+        .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+          border-left: 1px solid var(--mud-palette-text-primary);
+        }
+      }
+
+      &.mud-button-group-rtl {
+        .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+          border-right: 1px solid var(--mud-palette-text-primary);
+        }
+      }
+    }
+
+    &.mud-button-group-vertical {
+      .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
+        border-bottom: 1px solid var(--mud-palette-text-primary);
+      }
+    }
+
+    @each $color in $mud-palette-colors {
+      &.mud-button-group-text-#{$color} {
         .mud-button-root {
-            padding: 6px 8px;
+          color: var(--mud-palette-#{$color});
+
+          &:hover, &:focus-visible {
+            background-color: var(--mud-palette-#{$color}-hover);
+          }
         }
 
         &.mud-button-group-horizontal {
-            &:not(.mud-button-group-rtl) {
-                .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-                    border-left: 1px solid var(--mud-palette-text-primary);
-                }
+          &:not(.mud-button-group-rtl) {
+            .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+              border-left: 1px solid var(--mud-palette-#{$color});
             }
+          }
 
-            &.mud-button-group-rtl {
-                .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-                    border-right: 1px solid var(--mud-palette-text-primary);
-                }
+          &.mud-button-group-rtl {
+            .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+              border-right: 1px solid var(--mud-palette-#{$color});
             }
+          }
         }
 
         &.mud-button-group-vertical {
-            .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
-                border-bottom: 1px solid var(--mud-palette-text-primary);
-            }
+          .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
+            border-bottom: 1px solid var(--mud-palette-#{$color});
+          }
         }
-
-        @each $color in $mud-palette-colors {
-            &.mud-button-group-text-#{$color} {
-                .mud-button-root {
-                    color: var(--mud-palette-#{$color});
-
-                    &:hover, &:focus-visible {
-                        background-color: var(--mud-palette-#{$color}-hover);
-                    }
-                }
-
-                &.mud-button-group-horizontal {
-                    &:not(.mud-button-group-rtl) {
-                        .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-                            border-left: 1px solid var(--mud-palette-#{$color});
-                        }
-                    }
-
-                    &.mud-button-group-rtl {
-                        .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-                            border-right: 1px solid var(--mud-palette-#{$color});
-                        }
-                    }
-                }
-
-                &.mud-button-group-vertical {
-                    .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
-                        border-bottom: 1px solid var(--mud-palette-#{$color});
-                    }
-                }
-            }
-        }
+      }
     }
+  }
 }
 
 .mud-button-group-outlined {
-    &.mud-button-group-override-styles {
-        .mud-button-root {
-            padding: 5px 15px;
-            border: 1px solid var(--mud-palette-text-primary);
-        }
-
-        @each $color in $mud-palette-colors {
-            &.mud-button-group-outlined-#{$color} .mud-button-root {
-                color: var(--mud-palette-#{$color});
-                border: 1px solid var(--mud-palette-#{$color});
-
-                &:hover, &:focus-visible {
-                    background-color: var(--mud-palette-#{$color}-hover);
-                }
-            }
-        }
+  &.mud-button-group-override-styles {
+    .mud-button-root {
+      padding: 5px 15px;
+      border: 1px solid var(--mud-palette-text-primary);
     }
+
+    @each $color in $mud-palette-colors {
+      &.mud-button-group-outlined-#{$color} .mud-button-root {
+        color: var(--mud-palette-#{$color});
+        border: 1px solid var(--mud-palette-#{$color});
+
+        &:hover, &:focus-visible {
+          background-color: var(--mud-palette-#{$color}-hover);
+        }
+      }
+    }
+  }
 }
 
 .mud-button-group-filled {
-    box-shadow: var(--mud-elevation-2);
+  box-shadow: var(--mud-elevation-2);
 
+  .mud-button-root {
+    box-shadow: none;
+
+    &:hover, &:focus-visible {
+      box-shadow: var(--mud-elevation-4);
+    }
+  }
+
+  &.mud-button-group-override-styles {
     .mud-button-root {
-        box-shadow: none;
-
-        &:hover, &:focus-visible {
-            box-shadow: var(--mud-elevation-4);
-        }
+      background-color: var(--mud-palette-action-default-hover);
+      padding: 6px 16px;
     }
 
-    &.mud-button-group-override-styles {
+    &.mud-button-group-horizontal {
+      &:not(.mud-button-group-rtl) {
+        .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+          border-left: 1px solid var(--mud-palette-divider);
+        }
+      }
+
+      &.mud-button-group-rtl {
+        .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+          border-right: 1px solid var(--mud-palette-divider);
+        }
+      }
+    }
+
+    &.mud-button-group-vertical {
+      .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+        border-top: 1px solid var(--mud-palette-divider);
+      }
+    }
+
+    @each $color in $mud-palette-colors {
+      &.mud-button-group-filled-#{$color} {
         .mud-button-root {
-            background-color: var(--mud-palette-action-default-hover);
-            padding: 6px 16px;
+          background-color: var(--mud-palette-#{$color});
+          color: var(--mud-palette-#{$color}-text);
+
+          &:hover, &:focus-visible {
+            background-color: var(--mud-palette-#{$color}-darken);
+          }
         }
 
         &.mud-button-group-horizontal {
-            &:not(.mud-button-group-rtl) {
-                .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-                    border-left: 1px solid var(--mud-palette-divider);
-                }
+          &:not(.mud-button-group-rtl) {
+            .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+              border-left: 1px solid var(--mud-palette-#{$color}-lighten);
             }
+          }
 
-            &.mud-button-group-rtl {
-                .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-                    border-right: 1px solid var(--mud-palette-divider);
-                }
+          &.mud-button-group-rtl {
+            .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+              border-right: 1px solid var(--mud-palette-#{$color}-lighten);
             }
+          }
         }
 
         &.mud-button-group-vertical {
-            .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-                border-top: 1px solid var(--mud-palette-divider);
-            }
+          .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+            border-top: 1px solid var(--mud-palette-#{$color}-lighten);
+          }
         }
-
-        @each $color in $mud-palette-colors {
-            &.mud-button-group-filled-#{$color} {
-                .mud-button-root {
-                    background-color: var(--mud-palette-#{$color});
-                    color: var(--mud-palette-#{$color}-text);
-
-                    &:hover, &:focus-visible {
-                        background-color: var(--mud-palette-#{$color}-darken);
-                    }
-                }
-
-                &.mud-button-group-horizontal {
-                    &:not(.mud-button-group-rtl) {
-                        .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-                            border-left: 1px solid var(--mud-palette-#{$color}-lighten);
-                        }
-                    }
-
-                    &.mud-button-group-rtl {
-                        .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-                            border-right: 1px solid var(--mud-palette-#{$color}-lighten);
-                        }
-                    }
-                }
-
-                &.mud-button-group-vertical {
-                    .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-                        border-top: 1px solid var(--mud-palette-#{$color}-lighten);
-                    }
-                }
-            }
-        }
+      }
     }
+  }
 }
 
 .mud-button-group-disable-elevation {
-    box-shadow: none;
+  box-shadow: none;
 }
 
 .mud-button-group-root {
-    &.mud-button-group-text-size-small .mud-button-root {
-        padding: 4px 5px;
-        font-size: 0.8125rem;
+  &.mud-button-group-text-size-small .mud-button-root {
+    padding: 4px 5px;
+    font-size: 0.8125rem;
 
-        &.mud-icon-button .mud-icon-root {
-            font-size: 1.422rem;
-        }
+    &.mud-icon-button .mud-icon-root {
+      font-size: 1.422rem;
     }
+  }
 
-    &.mud-button-group-text-size-large .mud-button-root {
-        padding: 8px 11px;
-        font-size: 0.9375rem;
+  &.mud-button-group-text-size-large .mud-button-root {
+    padding: 8px 11px;
+    font-size: 0.9375rem;
 
-        &.mud-icon-button .mud-icon-root {
-            font-size: 1.641rem;
-        }
+    &.mud-icon-button .mud-icon-root {
+      font-size: 1.641rem;
     }
+  }
 
-    &.mud-button-group-outlined-size-small .mud-button-root {
-        padding: 3px 9px;
-        font-size: 0.8125rem;
+  &.mud-button-group-outlined-size-small .mud-button-root {
+    padding: 3px 9px;
+    font-size: 0.8125rem;
 
-        &.mud-icon-button {
-            padding: 3px 9px;
+    &.mud-icon-button {
+      padding: 3px 9px;
 
-            .mud-icon-root {
-                font-size: 1.422rem;
-            }
-        }
+      .mud-icon-root {
+        font-size: 1.422rem;
+      }
     }
+  }
 
-    &.mud-button-group-outlined-size-large .mud-button-root {
-        padding: 7px 21px;
-        font-size: 0.9375rem;
+  &.mud-button-group-outlined-size-large .mud-button-root {
+    padding: 7px 21px;
+    font-size: 0.9375rem;
 
-        &.mud-icon-button {
-            padding: 7px 15px;
+    &.mud-icon-button {
+      padding: 7px 15px;
 
-            .mud-icon-root {
-                font-size: 1.641rem;
-            }
-        }
+      .mud-icon-root {
+        font-size: 1.641rem;
+      }
     }
+  }
 
-    &.mud-button-group-filled-size-small .mud-button-root {
-        padding: 4px 10px;
-        font-size: 0.8125rem;
+  &.mud-button-group-filled-size-small .mud-button-root {
+    padding: 4px 10px;
+    font-size: 0.8125rem;
 
-        &.mud-icon-button {
-            padding: 4px 10px;
+    &.mud-icon-button {
+      padding: 4px 10px;
 
-            .mud-icon-root {
-                font-size: 1.422rem;
-            }
-        }
+      .mud-icon-root {
+        font-size: 1.422rem;
+      }
     }
+  }
 
-    &.mud-button-group-filled-size-large .mud-button-root {
-        padding: 8px 22px;
-        font-size: 0.9375rem;
+  &.mud-button-group-filled-size-large .mud-button-root {
+    padding: 8px 22px;
+    font-size: 0.9375rem;
 
-        &.mud-icon-button {
-            padding: 8px 16px;
+    &.mud-icon-button {
+      padding: 8px 16px;
 
-            .mud-icon-root {
-                font-size: 1.641rem;
-            }
-        }
+      .mud-icon-root {
+        font-size: 1.641rem;
+      }
     }
+  }
 }
 
 .mud-button-group-root {
-    .mud-button-root.mud-icon-button {
-        padding-right: 12px;
-        padding-left: 12px;
+  .mud-button-root.mud-icon-button {
+    padding-right: 12px;
+    padding-left: 12px;
 
-        .mud-icon-root {
-            font-size: 1.516rem;
-        }
-
-        &.mud-ripple-icon {
-            &:after {
-                transform: scale(10,10);
-            }
-
-            &:active:after {
-                transform: scale(0,0);
-                opacity: 0.1;
-                transition: 0s;
-            }
-        }
+    .mud-icon-root {
+      font-size: 1.516rem;
     }
+
+    &.mud-ripple-icon {
+      &:after {
+        transform: scale(10,10);
+      }
+
+      &:active:after {
+        transform: scale(0,0);
+        opacity: 0.1;
+        transition: 0s;
+      }
+    }
+  }
 }

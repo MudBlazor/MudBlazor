@@ -1,89 +1,89 @@
 ﻿.mud-select {
-    display: flex;
-    flex-grow: 1;
-    position: relative;
+  display: flex;
+  flex-grow: 1;
+  position: relative;
 
-    &.mud-autocomplete {
-        display: block;
+  &.mud-autocomplete {
+    display: block;
 
-        & .mud-select-input {
-            cursor: text;
-        }
-
-        & .mud-input-adornment {
-            cursor: pointer;
-        }
+    & .mud-select-input {
+      cursor: text;
     }
 
-    &.mud-autocomplete--with-progress {
-        & .mud-select-input input {
-            padding-right: 3.5rem !important;
-        }
+    & .mud-input-adornment {
+      cursor: pointer;
+    }
+  }
 
-        & .mud-input-adorned-end input {
-            padding-right: 4.5rem !important;
-        }
-
-        & .mud-select-input .mud-icon-button {
-            display: none !important;
-        }
-
-        & .progress-indicator-circular {
-            position: absolute;
-            width: 100%;
-            top: 0;
-            bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-top: 0.25rem;
-            padding-bottom: 0.25rem;
-            padding-right: 1rem;
-        }
-
-        & .progress-indicator-circular--with-adornment {
-            padding-right: 3rem;
-        }
-
-        & .mud-progress-linear {
-            position: absolute;
-            bottom: -1px;
-            height: 2px;
-        }
+  &.mud-autocomplete--with-progress {
+    & .mud-select-input input {
+      padding-right: 3.5rem !important;
     }
 
+    & .mud-input-adorned-end input {
+      padding-right: 4.5rem !important;
+    }
+
+    & .mud-select-input .mud-icon-button {
+      display: none !important;
+    }
+
+    & .progress-indicator-circular {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-top: 0.25rem;
+      padding-bottom: 0.25rem;
+      padding-right: 1rem;
+    }
+
+    & .progress-indicator-circular--with-adornment {
+      padding-right: 3rem;
+    }
+
+    & .mud-progress-linear {
+      position: absolute;
+      bottom: -1px;
+      height: 2px;
+    }
+  }
+
+  .mud-select-input {
+    cursor: pointer;
+
+    & .mud-input-slot {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    & .mud-input-adornment-end {
+      margin-left: 0;
+    }
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+
+  .mud-disabled {
     .mud-select-input {
-        cursor: pointer;
-
-        & .mud-input-slot {
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-
-        & .mud-input-adornment-end {
-            margin-left: 0;
-        }
-
-        &:disabled {
-            cursor: default;
-        }
+      cursor: default;
     }
-
-    .mud-disabled {
-        .mud-select-input {
-            cursor: default;
-        }
-    }
+  }
 }
 
 
 .mud-select > .mud-form-helpertext {
-    margin-top: -21px;
+  margin-top: -21px;
 }
 
 .mud-select-all {
-    margin-top: 10px;
-    border-bottom: 1px solid lightgrey;
-    padding-bottom: 18px;
+  margin-top: 10px;
+  border-bottom: 1px solid lightgrey;
+  padding-bottom: 18px;
 }

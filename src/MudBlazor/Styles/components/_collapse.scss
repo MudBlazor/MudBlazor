@@ -1,48 +1,48 @@
 ﻿.mud-collapse-container {
-    height: 0px;
-    overflow: hidden;
+  height: 0px;
+  overflow: hidden;
 }
 
 @keyframes mud-expand-anim {
-    from {
-        height: 0;
-    }
+  from {
+    height: 0;
+  }
 }
 
 .mud-collapse-entering {
-    animation: mud-expand-anim 1s ease-in-out 0ms 1 forwards;
+  animation: mud-expand-anim 1s ease-in-out 0ms 1 forwards;
 
-    &.mud-navgroup-collapse {
-        animation-duration: 300ms !important;
-    }
+  &.mud-navgroup-collapse {
+    animation-duration: 300ms !important;
+  }
 }
 
 .mud-collapse-entered {
-    overflow: initial;
+  overflow: initial;
 }
 
 @keyframes mud-collapse-anim {
-    to {
-        height: 0;
-    }
+  to {
+    height: 0;
+  }
 }
 
 .mud-collapse-exiting {
-    animation: mud-collapse-anim 0.5s cubic-bezier(0, 1, 0, 1) 0ms 1 forwards;
+  animation: mud-collapse-anim 0.5s cubic-bezier(0, 1, 0, 1) 0ms 1 forwards;
 
-    &.mud-navgroup-collapse {
-        animation-duration: 300ms;
-    }
+  &.mud-navgroup-collapse {
+    animation-duration: 300ms;
+  }
 }
 
 .mud-collapse-hidden {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .mud-collapse-wrapper {
-    display: flex;
+  display: flex;
 }
 
 .mud-collapse-wrapper-inner {
-    width: 100%;
+  width: 100%;
 }
