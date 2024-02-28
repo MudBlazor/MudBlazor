@@ -42,6 +42,11 @@ internal class ResizeListenerInterop
         return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.cancelListeners", jsListenerIds);
     }
 
+    public ValueTask Dispose()
+    {
+        return _jsRuntime.InvokeVoidAsyncIgnoreErrors("mudResizeListenerFactory.dispose");
+    }
+
     public async ValueTask<BrowserWindowSize> GetBrowserWindowSize()
     {
         var size = await _jsRuntime.InvokeAsyncWithErrorHandling(new BrowserWindowSize(), "mudResizeListener.getBrowserWindowSize");

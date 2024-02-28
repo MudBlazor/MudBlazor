@@ -1,34 +1,34 @@
 ﻿* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    border-width: 0;
-    border-style: solid;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 strong, b {
-    font-weight: 700;
+  font-weight: 700;
 }
 
 body {
-    color: var(--mud-palette-text-primary);
-    font-family: var(--mud-typography-default-family);
-    font-size: var(--mud-typography-default-size);
-    font-weight: var(--mud-typography-default-weight);
-    line-height: var(--mud-typography-default-lineheight);
-    letter-spacing: var(--mud-typography-default-letterspacing);
-    text-transform: var(--mud-typography-default-text-transform);
-    background-color: var(--mud-palette-background);
+  color: var(--mud-palette-text-primary);
+  font-family: var(--mud-typography-default-family);
+  font-size: var(--mud-typography-default-size);
+  font-weight: var(--mud-typography-default-weight);
+  line-height: var(--mud-typography-default-lineheight);
+  letter-spacing: var(--mud-typography-default-letterspacing);
+  text-transform: var(--mud-typography-default-text-transform);
+  background-color: var(--mud-palette-background);
 }
 
 a {
-    color: var(--mud-palette-text-primary);
+  color: var(--mud-palette-text-primary);
 }
 
 .mud-layout {
-    height: 100%;
-    width: 100%;
-    position: relative;
+  height: 100%;
+  width: 100%;
+  position: relative;
 }

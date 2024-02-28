@@ -1,40 +1,39 @@
 ﻿.mud-ripple {
-    --mud-ripple-offset-x: 0;
-    --mud-ripple-offset-y: 0;
+  --mud-ripple-offset-x: 0;
+  --mud-ripple-offset-y: 0;
+  position: relative;
+  overflow: hidden;
 
-    position: relative;
-    overflow: hidden;
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: var(--mud-ripple-offset-y);
+    left: var(--mud-ripple-offset-x);
+    pointer-events: none;
+    background-image: radial-gradient(circle, #000 10%, transparent 10.01%);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    transform: scale(20,20);
+    opacity: 0;
+    transition: transform .6s, opacity 1s;
+  }
 
-    &:after {
-        content: "";
-        display: block;
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: var(--mud-ripple-offset-y);
-        left: var(--mud-ripple-offset-x);
-        pointer-events: none;
-        background-image: radial-gradient(circle, #000 10%, transparent 10.01%);
-        background-repeat: no-repeat;
-        background-position: 50%;
-        transform: scale(20,20);
-        opacity: 0;
-        transition: transform .6s, opacity 1s;
-    }
-
-    &:active:after {
-        transform: scale(0,0);
-        opacity: 0.1;
-        transition: 0s;
-    }
+  &:active:after {
+    transform: scale(0,0);
+    opacity: 0.1;
+    transition: 0s;
+  }
 }
 
 .mud-ripple-icon, .mud-ripple-checkbox, .mud-ripple-switch, .mud-ripple-radio {
-    &:after {
-        transform: scale(14,14);
-    }
+  &:after {
+    transform: scale(14,14);
+  }
 }
 
 .mud-ripple-switch {
-    position: absolute;
+  position: absolute;
 }

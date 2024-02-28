@@ -1,204 +1,205 @@
 .mud-dialog-container {
-    display: flex;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: var(--mud-zindex-dialog);
+  display: flex;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--mud-zindex-dialog);
 
-    &.mud-dialog-center {
-        align-items: center;
-        justify-content: center;
-    }
+  &.mud-dialog-center {
+    align-items: center;
+    justify-content: center;
+  }
 
-    &.mud-dialog-topcenter {
-        align-items: flex-start;
-        justify-content: center;
-        padding-top: 32px;
-    }
+  &.mud-dialog-topcenter {
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 32px;
+  }
 
-    &.mud-dialog-bottomcenter {
-        align-items: flex-end;
-        justify-content: center;
-        padding-bottom: 32px;
-    }
+  &.mud-dialog-bottomcenter {
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 32px;
+  }
 
-    &.mud-dialog-centerright {
-        align-items: center;
-        justify-content: flex-end;
-        padding-right: 32px;
-    }
+  &.mud-dialog-centerright {
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 32px;
+  }
 
-    &.mud-dialog-centerleft {
-        align-items: center;
-        justify-content: flex-start;
-        padding-left: 32px;
-    }
+  &.mud-dialog-centerleft {
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 32px;
+  }
 
-    &.mud-dialog-topleft .mud-dialog {
-        position: absolute;
-        top: 32px;
-        left: 32px;
-    }
+  &.mud-dialog-topleft .mud-dialog {
+    position: absolute;
+    top: 32px;
+    left: 32px;
+  }
 
-    &.mud-dialog-topright .mud-dialog {
-        position: absolute;
-        top: 32px;
-        right: 32px;
-    }
+  &.mud-dialog-topright .mud-dialog {
+    position: absolute;
+    top: 32px;
+    right: 32px;
+  }
 
-    &.mud-dialog-bottomleft .mud-dialog {
-        position: absolute;
-        bottom: 32px;
-        left: 32px;
-    }
+  &.mud-dialog-bottomleft .mud-dialog {
+    position: absolute;
+    bottom: 32px;
+    left: 32px;
+  }
 
-    &.mud-dialog-bottomright .mud-dialog {
-        position: absolute;
-        bottom: 32px;
-        right: 32px;
-    }
+  &.mud-dialog-bottomright .mud-dialog {
+    position: absolute;
+    bottom: 32px;
+    right: 32px;
+  }
 }
 
 .mud-dialog {
+  display: flex;
+  z-index: calc(var(--mud-zindex-dialog) + 2);
+  flex-direction: column;
+  color: var(--mud-palette-text-primary);
+  background-color: var(--mud-palette-surface);
+  border-radius: var(--mud-default-borderradius);
+  -webkit-animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+  animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+  box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2), 0px 24px 38px 3px rgba(0,0,0,0.14), 0px 9px 46px 8px rgba(0,0,0,0.12);
+  max-height: calc(100vh - var(--mud-appbar-height));
+  overflow-y: auto;
+
+  &.mud-dialog-rtl .mud-dialog-title .mud-button-close {
+    right: unset;
+    left: 8px;
+  }
+
+  & .mud-dialog-title {
+    z-index: +1;
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 16px 24px;
+    border-top-left-radius: var(--mud-default-borderradius);
+    border-top-right-radius: var(--mud-default-borderradius);
+
+    + * > .mud-dialog-content {
+      border-radius: 0
+    }
+
+    & .mud-button-close {
+      top: 8px;
+      right: 8px;
+      position: absolute;
+    }
+  }
+
+  & .mud-dialog-content {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 8px 24px;
+    -webkit-overflow-scrolling: touch;
+    border-top-left-radius: var(--mud-default-borderradius);
+    border-top-right-radius: var(--mud-default-borderradius);
+
+    &.mud-dialog-no-side-padding {
+      padding: 12px 0px;
+    }
+  }
+
+  & .mud-dialog-actions {
+    flex: 0 0 auto;
     display: flex;
-    z-index: calc(var(--mud-zindex-dialog) + 2);
-    flex-direction: column;
-    color: var(--mud-palette-text-primary);
-    background-color: var(--mud-palette-surface);
-    border-radius: var(--mud-default-borderradius);
-    -webkit-animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
-    animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
-    box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2), 0px 24px 38px 3px rgba(0,0,0,0.14), 0px 9px 46px 8px rgba(0,0,0,0.12);
-    max-height: calc(100vh - var(--mud-appbar-height));
-    overflow-y: auto;
-    
-    &.mud-dialog-rtl .mud-dialog-title .mud-button-close {
-        right: unset;
-        left: 8px;
+    padding: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    border-bottom-left-radius: var(--mud-default-borderradius);
+    border-bottom-right-radius: var(--mud-default-borderradius);
+
+    & > :not(:first-child) {
+      margin-left: 8px;
+      margin-inline-start: 8px;
+      margin-inline-end: unset;
     }
-    
-    & .mud-dialog-title {
-        z-index: +1;
-        flex: 0 0 auto;
-        margin: 0;
-        padding: 16px 24px;        
-        border-top-left-radius: var(--mud-default-borderradius);
-        border-top-right-radius: var(--mud-default-borderradius);
-
-        + * > .mud-dialog-content {
-            border-radius: 0
-        }
-        & .mud-button-close {
-            top: 8px;
-            right: 8px;
-            position: absolute;
-        }
-    }
-
-    & .mud-dialog-content {
-        position: relative;
-        flex: 1 1 auto;
-        padding: 8px 24px;
-        -webkit-overflow-scrolling: touch;
-        border-top-left-radius: var(--mud-default-borderradius);
-        border-top-right-radius: var(--mud-default-borderradius);
-
-        &.mud-dialog-no-side-padding {
-            padding: 12px 0px;
-        }
-    }
-
-    & .mud-dialog-actions {
-        flex: 0 0 auto;
-        display: flex;
-        padding: 8px;
-        align-items: center;
-        justify-content: flex-end;
-        border-bottom-left-radius: var(--mud-default-borderradius);
-        border-bottom-right-radius: var(--mud-default-borderradius);
-
-        & > :not(:first-child) {
-            margin-left: 8px;
-            margin-inline-start: 8px;
-            margin-inline-end: unset;
-        }
-    }
+  }
 }
 
 
 .mud-dialog-width-false {
-    max-width: calc(100% - 64px);
+  max-width: calc(100% - 64px);
 }
 
 .mud-dialog-width-xs {
-    max-width: 444px;
+  max-width: 444px;
 }
 
 .mud-dialog-width-sm {
-    max-width: 600px;
+  max-width: 600px;
 }
 
 .mud-dialog-width-md {
-    max-width: 960px;
+  max-width: 960px;
 }
 
 .mud-dialog-width-lg {
-    max-width: 1280px;
+  max-width: 1280px;
 }
 
 .mud-dialog-width-xl {
-    max-width: 1920px;
+  max-width: 1920px;
 }
 
 .mud-dialog-width-xxl {
-    max-width: 2560px;
+  max-width: 2560px;
 }
 
 .mud-dialog-width-full {
-    width: calc(100% - 64px);
+  width: calc(100% - 64px);
 }
 
 .mud-dialog-fullscreen {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    max-width: 100%;
-    max-height: none;
-    border-radius: 0;
-    overflow-y: hidden;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  max-width: 100%;
+  max-height: none;
+  border-radius: 0;
+  overflow-y: hidden;
 }
 
 @-webkit-keyframes mud-open-dialog-center {
-    0% {
-        opacity: 0;
-    }
+  0% {
+    opacity: 0;
+  }
 
-    1% {
-        -webkit-transform: scale(0.5);
-        transform: scale(0.5);
-        opacity: 1;
-    }
+  1% {
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    opacity: 1;
+  }
 
-    100% {
-        -webkit-transform: scale(1);
-        transform: scale(1);
-    }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
 }
 
 @keyframes mud-open-dialog-center {
-    0% {
-        opacity: 0;
-    }
+  0% {
+    opacity: 0;
+  }
 
-    1% {
-        -webkit-transform: scale(0.5);
-        transform: scale(0.5);
-        opacity: 1;
-    }
+  1% {
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    opacity: 1;
+  }
 
-    100% {
-        -webkit-transform: scale(1);
-        transform: scale(1);
-    }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
 }
