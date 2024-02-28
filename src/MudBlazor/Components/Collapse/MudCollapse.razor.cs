@@ -18,7 +18,7 @@ namespace MudBlazor
         }
 
         internal double _height;
-        private StateManager<bool> _expandedState;
+        private ParameterState<bool> _expandedState;
         private bool _isRendered;
         private bool _updateHeight;
         private ElementReference _wrapper;
@@ -69,13 +69,13 @@ namespace MudBlazor
         {
             base.OnInitialized();
 
-            _expandedState = StateManager.Attach(() => Expanded, ExpandedChanged);
+            _expandedState = ParameterState.Attach(() => Expanded, ExpandedChanged);
         }
 
         protected override async Task OnParametersSetAsync()
         {
             await base.OnParametersSetAsync();
-            await _expandedState.SynchronizeParameterAsync();
+            await _expandedState.OnParametersSetAsync();
         }
 
         public override async Task SetParametersAsync(ParameterView parameters)

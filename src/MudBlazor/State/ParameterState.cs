@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor.State;
 
 #nullable enable
-internal class StateManager
+internal class ParameterState
 {
-    public static StateManager<T> Attach<T>(Func<T> parameterState, EventCallback<T> eventCallback = default, bool fireOnSynchronize = false) => StateManager<T>.Attach(parameterState, eventCallback, fireOnSynchronize);
+    public static ParameterState<T> Attach<T>(Func<T> getParameterValueFunc, EventCallback<T> eventCallback = default, bool fireOnSynchronize = false) => ParameterState<T>.Attach(getParameterValueFunc, eventCallback, fireOnSynchronize);
 }

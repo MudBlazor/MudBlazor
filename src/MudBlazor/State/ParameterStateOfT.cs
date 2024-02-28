@@ -10,24 +10,31 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State;
 
+/// <summary>
+/// 
+/// </summary>
+/// <remarks>
+/// 
+/// </remarks>
+/// <typeparam name="T">Parameter's type.</typeparam>
 #nullable enable
-internal struct StateManager<T>
+internal struct ParameterState<T> : IParameterSynchronization
 {
     private readonly bool _fireOnSynchronize;
-    private readonly Func<T>? _parameterState;
+    private readonly Func<T>? _getParameterValueFunc;
     private readonly EventCallback<T> _eventCallback;
 
     private T _lastValue;
 
-    [MemberNotNullWhen(true, nameof(_parameterState))]
-    public readonly bool IsAttached => _parameterState is not null;
+    [MemberNotNullWhen(true, nameof(_getParameterValueFunc))]
+    public readonly bool IsAttached => _getParameterValueFunc is not null;
 
     public T Value { get; private set; }
 
-    private StateManager(Func<T> parameterState, EventCallback<T> eventCallback, bool fireOnSynchronize)
+    private ParameterState(Func<T> getParameterValueFunc, EventCallback<T> eventCallback, bool fireOnSynchronize)
     {
-        var currentParameterValue = parameterState();
-        _parameterState = parameterState;
+        var currentParameterValue = getParameterValueFunc();
+        _getParameterValueFunc = getParameterValueFunc;
         _lastValue = currentParameterValue;
         Value = currentParameterValue;
         _eventCallback = eventCallback;
@@ -52,14 +59,26 @@ internal struct StateManager<T>
         return Task.CompletedTask;
     }
 
-    public Task SynchronizeParameterAsync()
+    public void OnInitialized()
     {
         if (!IsAttached)
         {
             throw new InvalidOperationException("StateManager is not attached.");
         }
 
-        var currentParameterValue = _parameterState();
+        var currentParameterValue = _getParameterValueFunc();
+        Value = currentParameterValue;
+        _lastValue = currentParameterValue;
+    }
+
+    public Task OnParametersSetAsync()
+    {
+        if (!IsAttached)
+        {
+            throw new InvalidOperationException("StateManager is not attached.");
+        }
+
+        var currentParameterValue = _getParameterValueFunc();
         if (!EqualityComparer<T>.Default.Equals(_lastValue, currentParameterValue))
         {
             Value = currentParameterValue;
@@ -74,5 +93,5 @@ internal struct StateManager<T>
         return Task.CompletedTask;
     }
 
-    public static StateManager<T> Attach(Func<T> parameterState, EventCallback<T> eventCallback = default, bool fireOnSynchronize = false) => new(parameterState, eventCallback, fireOnSynchronize);
+    public static ParameterState<T> Attach(Func<T> getParameterValueFunc, EventCallback<T> eventCallback = default, bool fireOnSynchronize = false) => new(getParameterValueFunc, eventCallback, fireOnSynchronize);
 }
