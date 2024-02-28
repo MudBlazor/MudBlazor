@@ -109,14 +109,14 @@ namespace MudBlazor
         {
             get
             {
-                if (MaxHeight != null)
+                return MaxHeight switch
                 {
-                    if (MaxHeight <= 200) return 0.2;
-                    if (MaxHeight <= 600) return 0.4;
-                    if (MaxHeight <= 1400) return 0.6;
-                    return 1;
-                }
-                return Math.Min(_height / 800.0, 1);
+                    null => Math.Min(_height / 800.0, 1),
+                    <= 200 => 0.2,
+                    <= 600 => 0.4,
+                    <= 1400 => 0.6,
+                    _ => 1
+                };
             }
         }
 
