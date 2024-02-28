@@ -87,7 +87,7 @@
       }
     }
 
-    &:focus-visible {
+    &:focus-visible, &:active {
       cursor: default;
       background-color: transparent !important;
     }

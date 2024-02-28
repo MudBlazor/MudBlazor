@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-slider {
   color: var(--mud-palette-text-primary);
@@ -108,7 +108,7 @@
         }
 
 
-        &:active, &:focus-visible {
+        &:focus-visible, &:active {
           @include slider-thumb {
             box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3),0 0 0 2px rgba(var(--mud-palette-#{$color}-rgb), 0.24);
           }

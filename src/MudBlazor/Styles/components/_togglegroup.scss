@@ -79,7 +79,7 @@
         }
       }
 
-      &:focus-visible:not(.mud-toggle-item-selected) {
+      &:focus-visible:not(.mud-toggle-item-selected), &:active:not(.mud-toggle-item-selected) {
         background-color: var(--mud-palette-#{$color}-hover);
       }
     }

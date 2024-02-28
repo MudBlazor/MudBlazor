@@ -20,7 +20,7 @@
       }
     }
 
-    &:focus-visible {
+    &:focus-visible, &:active {
       background-color: var(--mud-palette-#{$color}-hover) !important;
     }
   }

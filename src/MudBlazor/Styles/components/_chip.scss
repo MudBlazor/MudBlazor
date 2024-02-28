@@ -149,7 +149,7 @@
     }
   }
 
-  &:focus-visible:not(.mud-disabled) {
+  &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
     background-color: var(--mud-palette-chip-default-hover);
   }
 
@@ -164,7 +164,7 @@
         }
       }
 
-      &:focus-visible:not(.mud-disabled) {
+      &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
         background-color: var(--mud-palette-#{$color}-darken);
       }
     }
@@ -181,7 +181,7 @@
     }
   }
 
-  &:focus-visible:not(.mud-disabled) {
+  &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
     background-color: var(--mud-palette-action-default-hover);
   }
 
@@ -196,7 +196,7 @@
         }
       }
 
-      &:focus-visible:not(.mud-disabled) {
+      &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
         background-color: var(--mud-palette-#{$color}-hover);
       }
 
@@ -209,7 +209,7 @@
           }
         }
 
-        &:focus-visible:not(.mud-disabled) {
+        &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
           background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
         }
       }
@@ -227,7 +227,7 @@
     }
   }
 
-  &:focus-visible:not(.mud-disabled) {
+  &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
     background-color: var(--mud-palette-chip-default-hover);
   }
 
@@ -242,7 +242,7 @@
         }
       }
 
-      &:focus-visible:not(.mud-disabled) {
+      &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
         background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
       }
     }

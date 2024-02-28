@@ -47,7 +47,7 @@
         outline: 2px solid var(--mud-palette-primary);
     }
 
-    &:focus-visible {
+    &:focus-visible, &:active {
         background-color: var(--mud-palette-action-default-hover);
         outline: none;
     }

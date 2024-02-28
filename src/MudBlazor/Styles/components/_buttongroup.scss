@@ -24,7 +24,7 @@
         }
       }
 
-      &:focus-visible {
+      &:focus-visible, &:active {
         background-color: var(--mud-palette-action-default-hover);
       }
     }
@@ -115,7 +115,7 @@
             }
           }
 
-          &:focus-visible {
+          &:focus-visible, &:active {
             background-color: var(--mud-palette-#{$color}-hover);
           }
         }
@@ -162,7 +162,7 @@
           }
         }
 
-        &:focus-visible {
+        &:focus-visible, &:active {
           background-color: var(--mud-palette-#{$color}-hover);
         }
       }
@@ -182,7 +182,7 @@
       }
     }
 
-    &:focus-visible {
+    &:focus-visible, &:active {
       box-shadow: var(--mud-elevation-4);
     }
   }
@@ -225,7 +225,7 @@
             }
           }
 
-          &:focus-visible {
+          &:focus-visible, &:active {
             background-color: var(--mud-palette-#{$color}-darken);
           }
         }

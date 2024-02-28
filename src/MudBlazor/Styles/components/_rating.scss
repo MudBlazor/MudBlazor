@@ -1,8 +1,8 @@
-﻿.mud-rating-root {
+.mud-rating-root {
   display: inline-flex;
   color: #ffb400;
 
-  &:focus-visible {
+  &:focus-visible, &:active {
     outline: none;
 
     &:not(.mud-disabled) {

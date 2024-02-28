@@ -1,7 +1,7 @@
 ﻿a {
   text-decoration: none;
 
-  &:focus-visible {
+  &:focus-visible, &:active {
     outline: none;
   }
 }
