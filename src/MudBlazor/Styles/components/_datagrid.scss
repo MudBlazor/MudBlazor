@@ -141,7 +141,12 @@
       user-select: none;
     }
 
-    .mud-resizer:hover,
+    @media(hover: hover) and (pointer: fine) {
+      .mud-resizer:hover {
+        border-right: 2px solid var(--mud-palette-primary);
+      }
+    }
+
     .mud-resizing {
       border-right: 2px solid var(--mud-palette-primary);
     }

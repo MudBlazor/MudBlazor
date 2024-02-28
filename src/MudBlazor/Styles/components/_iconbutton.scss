@@ -1,4 +1,4 @@
-﻿.mud-icon-button {
+.mud-icon-button {
   flex: 0 0 auto;
   padding: 12px;
   overflow: visible;
@@ -13,7 +13,13 @@
     border-radius: var(--mud-default-borderradius);
   }
 
-  &:hover, &:focus-visible {
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--mud-palette-action-default-hover);
+    }
+  }
+
+  &:focus-visible {
     background-color: var(--mud-palette-action-default-hover);
   }
 
@@ -22,15 +28,27 @@
     background-color: transparent;
   }
 
-  &.mud-readonly, .mud-readonly:hover {
+  &.mud-readonly {
     cursor: default;
+  }
+
+  @media(hover: hover) and (pointer: fine) {
+    .mud-readonly:hover {
+      cursor: default;
+    }
   }
 }
 
 .mud-icon-button-color-inherit {
   color: inherit;
 
-  &:hover, &:focus-visible {
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--mud-palette-action-default-hover);
+    }
+  }
+
+  &:focus-visible {
     background-color: var(--mud-palette-action-default-hover);
   }
 }

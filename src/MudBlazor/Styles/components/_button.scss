@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-button-root {
   color: inherit;
@@ -46,9 +46,13 @@
   color: var(--mud-palette-text-primary);
 
   @media(hover: hover) and (pointer: fine) {
-    &:hover, &:focus-visible {
+    &:hover {
       background-color: var(--mud-palette-action-default-hover);
     }
+  }
+
+  &:focus-visible {
+    background-color: var(--mud-palette-action-default-hover);
   }
 }
 
@@ -71,9 +75,13 @@
       color: var(--mud-palette-#{$color});
 
       @media(hover: hover) and (pointer: fine) {
-        &:hover, &:focus-visible {
+        &:hover {
           background-color: var(--mud-palette-#{$color}-hover);
         }
+      }
+
+      &:focus-visible {
+        background-color: var(--mud-palette-#{$color}-hover);
       }
     }
   }
@@ -94,9 +102,13 @@
   }
 
   @media(hover: hover) and (pointer: fine) {
-    &:hover, &:focus-visible {
+    &:hover {
       background-color: var(--mud-palette-action-default-hover);
     }
+  }
+
+  &:focus-visible {
+    background-color: var(--mud-palette-action-default-hover);
   }
 
   @each $color in $mud-palette-colors {
@@ -105,10 +117,15 @@
       border: 1px solid var(--mud-palette-#{$color});
 
       @media(hover: hover) and (pointer: fine) {
-        &:hover, &:focus-visible {
+        &:hover {
           border: 1px solid var(--mud-palette-#{$color});
           background-color: var(--mud-palette-#{$color}-hover);
         }
+      }
+
+      &:focus-visible {
+        border: 1px solid var(--mud-palette-#{$color});
+        background-color: var(--mud-palette-#{$color}-hover);
       }
     }
   }
@@ -128,10 +145,15 @@
   }
 
   @media(hover: hover) and (pointer: fine) {
-    &:hover, &:focus-visible {
+    &:hover {
       box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0,0,0,.12);
       background-color: var(--mud-palette-action-disabled-background);
     }
+  }
+
+  &:focus-visible {
+    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0,0,0,.12);
+    background-color: var(--mud-palette-action-disabled-background);
   }
 
   &:active {
@@ -151,9 +173,13 @@
       background-color: var(--mud-palette-#{$color});
 
       @media(hover: hover) and (pointer: fine) {
-        &:hover, &:focus-visible {
+        &:hover {
           background-color: var(--mud-palette-#{$color}-darken);
         }
+      }
+
+      &:focus-visible {
+        background-color: var(--mud-palette-#{$color}-darken);
       }
     }
   }
