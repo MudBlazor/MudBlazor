@@ -19,9 +19,13 @@
       border: none;
 
       @media(hover: hover) and (pointer: fine) {
-        &:hover, &:focus-visible {
+        &:hover {
           background-color: var(--mud-palette-action-default-hover);
         }
+      }
+
+      &:focus-visible {
+        background-color: var(--mud-palette-action-default-hover);
       }
     }
   }
@@ -106,9 +110,13 @@
           color: var(--mud-palette-#{$color});
 
           @media(hover: hover) and (pointer: fine) {
-            &:hover, &:focus-visible {
+            &:hover {
               background-color: var(--mud-palette-#{$color}-hover);
             }
+          }
+
+          &:focus-visible {
+            background-color: var(--mud-palette-#{$color}-hover);
           }
         }
 
@@ -149,9 +157,13 @@
         border: 1px solid var(--mud-palette-#{$color});
 
         @media(hover: hover) and (pointer: fine) {
-          &:hover, &:focus-visible {
+          &:hover {
             background-color: var(--mud-palette-#{$color}-hover);
           }
+        }
+
+        &:focus-visible {
+          background-color: var(--mud-palette-#{$color}-hover);
         }
       }
     }
@@ -165,9 +177,13 @@
     box-shadow: none;
 
     @media(hover: hover) and (pointer: fine) {
-      &:hover, &:focus-visible {
+      &:hover {
         box-shadow: var(--mud-elevation-4);
       }
+    }
+
+    &:focus-visible {
+      box-shadow: var(--mud-elevation-4);
     }
   }
 
@@ -204,9 +220,13 @@
           color: var(--mud-palette-#{$color}-text);
 
           @media(hover: hover) and (pointer: fine) {
-            &:hover, &:focus-visible {
+            &:hover {
               background-color: var(--mud-palette-#{$color}-darken);
             }
+          }
+
+          &:focus-visible {
+            background-color: var(--mud-palette-#{$color}-darken);
           }
         }
 
