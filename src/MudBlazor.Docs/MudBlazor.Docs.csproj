@@ -95,7 +95,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MudBlazor.SassCompiler" Version="2.0.4">
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.71.1">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
@@ -104,6 +104,7 @@
     <Error Condition="!Exists('$(MSBuildProjectDirectory)/wwwroot/MudBlazorDocs.min.css')" Text="Missing MudBlazorDocs.min.css in wwwroot" />
     <ItemGroup>
       <!--Include without duplication-->
+       <_NewCompiledCssFiles Remove="@(_NewCompiledCssFiles)" />
       <_NewCompiledDocsCssFiles Include="wwwroot\MudBlazorDocs.min.css" Exclude="@(Content)" />
       <Content Include="@(_NewCompiledDocsCssFiles)" />
     </ItemGroup>
