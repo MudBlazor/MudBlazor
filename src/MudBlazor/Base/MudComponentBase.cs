@@ -69,25 +69,25 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            _parameters?.OnInitialized();
+            _parameters.OnInitialized();
         }
 
         /// <inheritdoc />
         public override Task SetParametersAsync(ParameterView parameters)
         {
-            return _parameters.Count > 0 ? _parameters.SetParametersAsync(base.SetParametersAsync, parameters) : base.SetParametersAsync(parameters);
+            return _parameters.SetParametersAsync(base.SetParametersAsync, parameters);
         }
 
         /// <inheritdoc />
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            _parameters?.OnParametersSet();
+            _parameters.OnParametersSet();
         }
 
         internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Action parameterChangedHandler)
         {
-            var attach = ParameterState<T>.Attach(parameterName, getParameterValueFunc, eventCallbackFunc, new ParameterChangedLambdaHandler(parameterChangedHandler));
+            var attach = ParameterState.Attach(parameterName, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
             _parameters.Add(attach);
 
             return attach;
@@ -95,7 +95,7 @@ namespace MudBlazor
 
         internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Func<Task> parameterChangedHandler)
         {
-            var attach = ParameterState<T>.Attach(parameterName, getParameterValueFunc, eventCallbackFunc, new ParameterChangedLambdaTaskHandler(parameterChangedHandler));
+            var attach = ParameterState.Attach(parameterName, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
             _parameters.Add(attach);
 
             return attach;
@@ -103,7 +103,7 @@ namespace MudBlazor
 
         internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc)
         {
-            var attach = ParameterState<T>.Attach(parameterName, getParameterValueFunc, eventCallbackFunc);
+            var attach = ParameterState.Attach(parameterName, getParameterValueFunc, eventCallbackFunc);
             _parameters.Add(attach);
 
             return attach;
