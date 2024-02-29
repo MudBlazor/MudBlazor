@@ -67,10 +67,10 @@ namespace MudBlazor
 
         public MudCollapse()
         {
-            _expandedState = RegisterParameter(nameof(Expanded), () => Expanded, () => ExpandedChanged, ExpandedParameterChangedHandler);
+            _expandedState = RegisterParameter(nameof(Expanded), () => Expanded, () => ExpandedChanged, ExpandedParameterChangedHandlerAsync);
         }
 
-        private async Task ExpandedParameterChangedHandler()
+        private async Task ExpandedParameterChangedHandlerAsync()
         {
             if (_isRendered)
             {
