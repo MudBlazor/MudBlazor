@@ -14,33 +14,33 @@ namespace MudBlazor.State;
 #nullable enable
 internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
 {
-    private readonly IReadOnlyCollection<IParameterComponentLifeCycle> _stateSynchronizations;
+    private readonly List<IParameterComponentLifeCycle> _parameters;
 
-    public int Count => _stateSynchronizations.Count;
+    public int Count => _parameters.Count;
 
-    public ParameterSet(params IParameterComponentLifeCycle[] stateSynchronizations)
+    public ParameterSet()
     {
-        _stateSynchronizations = stateSynchronizations;
+        _parameters = new List<IParameterComponentLifeCycle>();
     }
 
-    public ParameterSet(IReadOnlyCollection<IParameterComponentLifeCycle> stateSynchronizations)
+    public void Add(IParameterComponentLifeCycle parameter)
     {
-        _stateSynchronizations = stateSynchronizations;
+        _parameters.Add(parameter);
     }
 
     public void OnInitialized()
     {
-        foreach (var stateSynchronization in _stateSynchronizations)
+        foreach (var parameter in _parameters)
         {
-            stateSynchronization.OnInitialized();
+            parameter.OnInitialized();
         }
     }
 
     public void OnParametersSet()
     {
-        foreach (var stateSynchronization in _stateSynchronizations)
+        foreach (var parameter in _parameters)
         {
-            stateSynchronization.OnParametersSet();
+            parameter.OnParametersSet();
         }
     }
 
@@ -48,7 +48,7 @@ internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
     {
         // We check for HasHandler first for performance since we do not need HasParameterChanged if there is nothing to execute.
         // We need to call .ToList() otherwise the IEnumerable will be lazy invoked after the baseSetParametersAsync but we need before.
-        var changedParams = _stateSynchronizations.Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters)).ToList();
+        var changedParams = _parameters.Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters)).ToList();
 
         await baseSetParametersAsync(parameters);
 
@@ -58,7 +58,7 @@ internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
         }
     }
 
-    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => _stateSynchronizations.GetEnumerator();
+    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => _parameters.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

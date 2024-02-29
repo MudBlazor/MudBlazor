@@ -67,8 +67,7 @@ namespace MudBlazor
 
         public MudCollapse()
         {
-            _expandedState = ParameterState.Attach(nameof(Expanded), () => Expanded, () => ExpandedChanged, ExpandedParameterChangedHandler);
-            RegisterParams(_expandedState);
+            _expandedState = RegisterParameter(nameof(Expanded), () => Expanded, () => ExpandedChanged, ExpandedParameterChangedHandler);
         }
 
         private async Task ExpandedParameterChangedHandler()
