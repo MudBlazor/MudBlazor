@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State;
@@ -10,5 +11,18 @@ namespace MudBlazor.State;
 #nullable enable
 internal class ParameterState
 {
-    public static ParameterState<T> Attach<T>(Func<T> getParameterValueFunc, EventCallback<T> eventCallback = default, bool fireOnSynchronize = false) => ParameterState<T>.Attach(getParameterValueFunc, eventCallback, fireOnSynchronize);
+    public static ParameterState<T> Attach<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Action parameterChangedHandler)
+    {
+        return ParameterState<T>.Attach(parameterName, getParameterValueFunc, eventCallbackFunc, new ParameterChangedLambdaHandler(parameterChangedHandler));
+    }
+
+    public static ParameterState<T> Attach<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Func<Task> parameterChangedHandler)
+    {
+        return ParameterState<T>.Attach(parameterName, getParameterValueFunc, eventCallbackFunc, new ParameterChangedLambdaTaskHandler(parameterChangedHandler));
+    }
+
+    public static ParameterState<T> Attach<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc)
+    {
+        return ParameterState<T>.Attach(parameterName, getParameterValueFunc, eventCallbackFunc);
+    }
 }

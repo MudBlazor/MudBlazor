@@ -65,40 +65,26 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
-        protected override void OnInitialized()
+        public MudCollapse()
         {
-            base.OnInitialized();
-
-            _expandedState = ParameterState.Attach(() => Expanded, ExpandedChanged);
+            _expandedState = ParameterState.Attach(nameof(Expanded), () => Expanded, () => ExpandedChanged, ExpandedParameterChangedHandler);
+            RegisterParams(_expandedState);
         }
 
-        protected override async Task OnParametersSetAsync()
+        private async Task ExpandedParameterChangedHandler()
         {
-            await base.OnParametersSetAsync();
-            await _expandedState.OnParametersSetAsync();
-        }
-
-        public override async Task SetParametersAsync(ParameterView parameters)
-        {
-            var expandedChanged = parameters.HasParameterChanged(nameof(Expanded), Expanded);
-
-            await base.SetParametersAsync(parameters);
-
-            if (expandedChanged)
+            if (_isRendered)
             {
-                if (_isRendered)
-                {
-                    _state = _expandedState.Value ? CollapseState.Entering : CollapseState.Exiting;
-                    await UpdateHeightAsync();
-                    _updateHeight = true;
-                }
-                else if (_expandedState.Value)
-                {
-                    _state = CollapseState.Entered;
-                }
-
-                await ExpandedChanged.InvokeAsync(_expandedState.Value);
+                _state = _expandedState.Value ? CollapseState.Entering : CollapseState.Exiting;
+                await UpdateHeightAsync();
+                _updateHeight = true;
             }
+            else if (_expandedState.Value)
+            {
+                _state = CollapseState.Entered;
+            }
+
+            await ExpandedChanged.InvokeAsync(_expandedState.Value);
         }
 
         /// <summary>

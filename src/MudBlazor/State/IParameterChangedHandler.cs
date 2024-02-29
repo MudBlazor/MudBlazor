@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.State;
 
-internal interface IParameterSynchronization
+#nullable enable
+internal interface IParameterChangedHandler
 {
-    void OnInitialized();
-
-    Task OnParametersSetAsync();
+    Task HandleAsync();
 }

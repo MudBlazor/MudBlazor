@@ -18,34 +18,43 @@ namespace MudBlazor.State;
 /// </remarks>
 /// <typeparam name="T">Parameter's type.</typeparam>
 #nullable enable
-internal struct ParameterState<T> : IParameterSynchronization
+internal class ParameterState<T> : IParameterComponentLifeCycle
 {
-    private readonly bool _fireOnSynchronize;
     private readonly Func<T>? _getParameterValueFunc;
-    private readonly EventCallback<T> _eventCallback;
+    private readonly Func<EventCallback<T>>? _eventCallback;
 
-    private T _lastValue;
+    private T? _lastValue;
 
-    [MemberNotNullWhen(true, nameof(_getParameterValueFunc))]
-    public readonly bool IsAttached => _getParameterValueFunc is not null;
+    public string ParameterName { get; }
 
-    public T Value { get; private set; }
+    [MemberNotNullWhen(true, nameof(_getParameterValueFunc), nameof(_eventCallback))]
+    public bool IsAttached => _getParameterValueFunc is not null;
 
-    private ParameterState(Func<T> getParameterValueFunc, EventCallback<T> eventCallback, bool fireOnSynchronize)
+    [MemberNotNullWhen(true, nameof(ParameterChangedHandler))]
+    public bool HasHandler => ParameterChangedHandler is not null;
+
+    [MemberNotNullWhen(true, nameof(_lastValue), nameof(Value))]
+    public bool IsInitialized { get; private set; }
+
+    public T? Value { get; private set; }
+
+    public IParameterChangedHandler? ParameterChangedHandler { get; }
+
+    private ParameterState(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null)
     {
-        var currentParameterValue = getParameterValueFunc();
+        ParameterName = parameterName;
         _getParameterValueFunc = getParameterValueFunc;
-        _lastValue = currentParameterValue;
-        Value = currentParameterValue;
-        _eventCallback = eventCallback;
-        _fireOnSynchronize = fireOnSynchronize;
+        _eventCallback = eventCallbackFunc;
+        ParameterChangedHandler = parameterChangedHandler;
+        _lastValue = default;
+        Value = default;
     }
 
     public Task SetValueAsync(T value)
     {
         if (!IsAttached)
         {
-            throw new InvalidOperationException("StateManager is not attached.");
+            throw new InvalidOperationException("ParameterState is not attached.");
         }
 
         if (!EqualityComparer<T>.Default.Equals(Value, value))
@@ -53,7 +62,7 @@ internal struct ParameterState<T> : IParameterSynchronization
             Value = value;
             _lastValue = value;
 
-            return _eventCallback.InvokeAsync(value);
+            return _eventCallback().InvokeAsync(value);
         }
 
         return Task.CompletedTask;
@@ -63,19 +72,20 @@ internal struct ParameterState<T> : IParameterSynchronization
     {
         if (!IsAttached)
         {
-            throw new InvalidOperationException("StateManager is not attached.");
+            throw new InvalidOperationException("ParameterState is not attached.");
         }
 
+        IsInitialized = true;
         var currentParameterValue = _getParameterValueFunc();
         Value = currentParameterValue;
         _lastValue = currentParameterValue;
     }
 
-    public Task OnParametersSetAsync()
+    public void OnParametersSet()
     {
         if (!IsAttached)
         {
-            throw new InvalidOperationException("StateManager is not attached.");
+            throw new InvalidOperationException("ParameterState is not attached.");
         }
 
         var currentParameterValue = _getParameterValueFunc();
@@ -83,15 +93,25 @@ internal struct ParameterState<T> : IParameterSynchronization
         {
             Value = currentParameterValue;
             _lastValue = currentParameterValue;
-
-            if (_fireOnSynchronize)
-            {
-                return _eventCallback.InvokeAsync(currentParameterValue);
-            }
         }
-
-        return Task.CompletedTask;
     }
 
-    public static ParameterState<T> Attach(Func<T> getParameterValueFunc, EventCallback<T> eventCallback = default, bool fireOnSynchronize = false) => new(getParameterValueFunc, eventCallback, fireOnSynchronize);
+    public Task ParameterChangeHandleAsync()
+    {
+        return HasHandler ? ParameterChangedHandler.HandleAsync() : Task.CompletedTask;
+    }
+
+    public bool HasParameterChanged(ParameterView parameters)
+    {
+        if (!IsAttached)
+        {
+            throw new InvalidOperationException("ParameterState is not attached.");
+        }
+
+        var currentParameterValue = _getParameterValueFunc();
+
+        return parameters.HasParameterChanged(ParameterName, currentParameterValue);
+    }
+
+    public static ParameterState<T> Attach(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null) => new(parameterName, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
 }

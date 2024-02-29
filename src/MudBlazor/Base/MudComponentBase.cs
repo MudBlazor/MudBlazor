@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
+using MudBlazor.State;
 
 namespace MudBlazor
 {
@@ -14,6 +16,8 @@ namespace MudBlazor
         private ILoggerFactory LoggerFactory { get; set; } = null!;
         private ILogger? _logger;
         protected ILogger Logger => _logger ??= LoggerFactory.CreateLogger(GetType());
+
+        internal ParameterSet? _parameters;
 
         /// <summary>
         /// User class names, separated by space.
@@ -59,6 +63,31 @@ namespace MudBlazor
         {
             IsJSRuntimeAvailable = true;
             base.OnAfterRender(firstRender);
+        }
+
+        /// <inheritdoc />
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            _parameters?.OnInitialized();
+        }
+
+        /// <inheritdoc />
+        public override Task SetParametersAsync(ParameterView parameters)
+        {
+            return _parameters is not null ? _parameters.SetParametersAsync(base.SetParametersAsync, parameters) : base.SetParametersAsync(parameters);
+        }
+
+        /// <inheritdoc />
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            _parameters?.OnParametersSet();
+        }
+
+        protected void RegisterParams(params IParameterComponentLifeCycle[] stateSynchronizations)
+        {
+            _parameters = new ParameterSet(stateSynchronizations);
         }
 
         /// <inheritdoc />
