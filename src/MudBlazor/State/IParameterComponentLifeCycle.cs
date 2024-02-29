@@ -10,6 +10,8 @@ namespace MudBlazor.State;
 #nullable enable
 public interface IParameterComponentLifeCycle
 {
+    string ParameterName { get; }
+
     bool HasHandler { get; }
 
     bool HasParameterChanged(ParameterView parameters);

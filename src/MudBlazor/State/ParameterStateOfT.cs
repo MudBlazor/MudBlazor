@@ -18,7 +18,7 @@ namespace MudBlazor.State;
 /// </remarks>
 /// <typeparam name="T">Parameter's type.</typeparam>
 #nullable enable
-internal class ParameterState<T> : IParameterComponentLifeCycle
+internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<ParameterState<T>>
 {
     private readonly Func<T>? _getParameterValueFunc;
     private readonly Func<EventCallback<T>>? _eventCallbackFunc;
@@ -114,4 +114,25 @@ internal class ParameterState<T> : IParameterComponentLifeCycle
     }
 
     public static ParameterState<T> Attach(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null) => new(parameterName, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
+
+    public bool Equals(ParameterState<T>? other)
+    {
+        if (ReferenceEquals(null, other))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        // We assume that the parameter should be unique withing the component including when inheritance is involved.
+        // The equals method can be used to check that we do not register same parameter again as it should be 1:1 one [Parameter] one ParameterState for it. 
+        return ParameterName == other.ParameterName;
+    }
+
+    public override bool Equals(object? obj) => obj is ParameterState<T> parameterState && Equals(parameterState);
+
+    public override int GetHashCode() => ParameterName.GetHashCode();
 }

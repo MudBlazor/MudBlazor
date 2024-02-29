@@ -25,6 +25,11 @@ internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
 
     public void Add(IParameterComponentLifeCycle parameter)
     {
+        if (_parameters.Contains(parameter))
+        {
+            throw new InvalidOperationException($"{parameter.ParameterName} is already registered");
+        }
+
         _parameters.Add(parameter);
     }
 
