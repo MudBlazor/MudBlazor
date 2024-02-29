@@ -1,4 +1,4 @@
-﻿.mud-list {
+.mud-list {
   margin: 0;
   padding: 0;
   position: relative;
@@ -58,7 +58,7 @@
     }
   }
 
-  &:focus:not(.mud-selected-item) {
+  &:focus:not(.mud-selected-item), &:active {
     background-color: var(--mud-palette-action-default-hover);
   }
 }

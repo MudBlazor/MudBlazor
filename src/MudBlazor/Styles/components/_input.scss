@@ -236,7 +236,7 @@
       -webkit-appearance: textfield;
     }
 
-    &:focus {
+    &:focus, &:active {
       outline: 0;
     }
 
@@ -355,7 +355,7 @@
       -webkit-appearance: textfield;
     }
 
-    &:focus {
+    &:focus, &:active {
       outline: 0;
     }
 

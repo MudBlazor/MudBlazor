@@ -1,4 +1,4 @@
-﻿.mud-icon-default {
+.mud-icon-default {
   color: var(--mud-palette-text-secondary);
 }
 
@@ -17,7 +17,7 @@
   flex-shrink: 0;
   user-select: none;
 
-  &:focus {
+  &:focus, &:active {
     outline: none;
   }
 
