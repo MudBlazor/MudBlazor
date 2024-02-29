@@ -100,16 +100,6 @@
     </PackageReference>
   </ItemGroup>
 
-  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="Compile Sass" BeforeTargets="BeforeBuild">
-    <Error Condition="!Exists('$(MSBuildProjectDirectory)/wwwroot/MudBlazorDocs.min.css')" Text="Missing MudBlazorDocs.min.css in wwwroot" />
-    <ItemGroup>
-      <!--Include without duplication-->
-       <_NewCompiledCssFiles Remove="@(_NewCompiledCssFiles)" />
-      <_NewCompiledDocsCssFiles Include="wwwroot\MudBlazorDocs.min.css" Exclude="@(Content)" />
-      <Content Include="@(_NewCompiledDocsCssFiles)" />
-    </ItemGroup>
-  </Target>
-
   <!--Dont Include in build output-->
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
