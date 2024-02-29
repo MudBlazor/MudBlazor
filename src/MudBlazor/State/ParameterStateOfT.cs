@@ -20,15 +20,14 @@ namespace MudBlazor.State;
 #nullable enable
 internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<ParameterState<T>>
 {
-    private readonly Func<T>? _getParameterValueFunc;
-    private readonly Func<EventCallback<T>>? _eventCallbackFunc;
-
     private T? _lastValue;
+    private readonly Func<T> _getParameterValueFunc;
+    private readonly Func<EventCallback<T>> _eventCallbackFunc;
 
+    /// <summary>
+    /// Gets the associated parameter name of the component's <see cref="ParameterAttribute"/>.
+    /// </summary>
     public string ParameterName { get; }
-
-    [MemberNotNullWhen(true, nameof(_getParameterValueFunc), nameof(_eventCallbackFunc))]
-    public bool IsAttached => _getParameterValueFunc is not null;
 
     [MemberNotNullWhen(true, nameof(ParameterChangedHandler))]
     public bool HasHandler => ParameterChangedHandler is not null;
@@ -36,6 +35,9 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     [MemberNotNullWhen(true, nameof(_lastValue), nameof(Value))]
     public bool IsInitialized { get; private set; }
 
+    /// <summary>
+    /// Gets the current value.
+    /// </summary>
     public T? Value { get; private set; }
 
     public IParameterChangedHandler? ParameterChangedHandler { get; }
@@ -52,11 +54,6 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
 
     public Task SetValueAsync(T value)
     {
-        if (!IsAttached)
-        {
-            throw new InvalidOperationException("ParameterState is not attached.");
-        }
-
         if (!EqualityComparer<T>.Default.Equals(Value, value))
         {
             Value = value;
@@ -70,11 +67,6 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
 
     public void OnInitialized()
     {
-        if (!IsAttached)
-        {
-            throw new InvalidOperationException("ParameterState is not attached.");
-        }
-
         IsInitialized = true;
         var currentParameterValue = _getParameterValueFunc();
         Value = currentParameterValue;
@@ -83,11 +75,6 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
 
     public void OnParametersSet()
     {
-        if (!IsAttached)
-        {
-            throw new InvalidOperationException("ParameterState is not attached.");
-        }
-
         var currentParameterValue = _getParameterValueFunc();
         if (!EqualityComparer<T>.Default.Equals(_lastValue, currentParameterValue))
         {
@@ -101,13 +88,9 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
         return HasHandler ? ParameterChangedHandler.HandleAsync() : Task.CompletedTask;
     }
 
+    /// <inheritdoc />
     public bool HasParameterChanged(ParameterView parameters)
     {
-        if (!IsAttached)
-        {
-            throw new InvalidOperationException("ParameterState is not attached.");
-        }
-
         var currentParameterValue = _getParameterValueFunc();
 
         return parameters.HasParameterChanged(ParameterName, currentParameterValue);
@@ -115,6 +98,7 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
 
     public static ParameterState<T> Attach(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null) => new(parameterName, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
 
+    /// <inheritdoc />
     public bool Equals(ParameterState<T>? other)
     {
         if (ReferenceEquals(null, other))
@@ -127,12 +111,15 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
             return true;
         }
 
-        // We assume that the parameter should be unique withing the component including when inheritance is involved.
-        // The equals method can be used to check that we do not register same parameter again as it should be 1:1 one [Parameter] one ParameterState for it. 
+        // We expect parameter name to be unique within the component (considering inheritance).
+        // To ensure uniqueness, the equals method is utilized to prevent registering the same parameter multiple times.
+        // Each [Parameter] should have a one-to-one relationship with its corresponding ParameterState.
         return ParameterName == other.ParameterName;
     }
 
+    /// <inheritdoc />
     public override bool Equals(object? obj) => obj is ParameterState<T> parameterState && Equals(parameterState);
 
+    /// <inheritdoc />
     public override int GetHashCode() => ParameterName.GetHashCode();
 }

@@ -14,6 +14,11 @@ public interface IParameterComponentLifeCycle
 
     bool HasHandler { get; }
 
+    /// <summary>
+    /// Checks if a parameter changed.
+    /// </summary>
+    /// <param name="parameters">The parameters.</param>
+    /// <returns><c>true</c> if the parameter value has changed, <c>false</c> otherwise.</returns>
     bool HasParameterChanged(ParameterView parameters);
 
     Task ParameterChangeHandleAsync();

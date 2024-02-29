@@ -12,16 +12,9 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor.State;
 
 #nullable enable
-internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
+internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
 {
-    private readonly List<IParameterComponentLifeCycle> _parameters;
-
-    public int Count => _parameters.Count;
-
-    public ParameterSet()
-    {
-        _parameters = new List<IParameterComponentLifeCycle>();
-    }
+    private readonly List<IParameterComponentLifeCycle> _parameters = new();
 
     public void Add(IParameterComponentLifeCycle parameter)
     {

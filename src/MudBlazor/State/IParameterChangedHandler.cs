@@ -9,5 +9,9 @@ namespace MudBlazor.State;
 #nullable enable
 internal interface IParameterChangedHandler
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
     Task HandleAsync();
 }

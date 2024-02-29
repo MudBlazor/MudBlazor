@@ -8,15 +8,23 @@ using System.Threading.Tasks;
 namespace MudBlazor.State;
 
 #nullable enable
+/// <summary>
+/// 
+/// </summary>
 internal class ParameterChangedLambdaHandler : IParameterChangedHandler
 {
     private readonly Action _lambda;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="lambda"></param>
     public ParameterChangedLambdaHandler(Action lambda)
     {
         _lambda = lambda;
     }
 
+    /// <inheritdoc />
     public Task HandleAsync()
     {
         _lambda();
