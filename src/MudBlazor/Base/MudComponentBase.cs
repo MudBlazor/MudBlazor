@@ -109,6 +109,22 @@ namespace MudBlazor
             return attach;
         }
 
+        internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Action parameterChangedHandler)
+        {
+            var attach = ParameterState.Attach(parameterName, getParameterValueFunc, parameterChangedHandler);
+            _parameters.Add(attach);
+
+            return attach;
+        }
+
+        internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<Task> parameterChangedHandler)
+        {
+            var attach = ParameterState.Attach(parameterName, getParameterValueFunc, parameterChangedHandler);
+            _parameters.Add(attach);
+
+            return attach;
+        }
+
         /// <inheritdoc />
         void IMudStateHasChanged.StateHasChanged() => StateHasChanged();
     }

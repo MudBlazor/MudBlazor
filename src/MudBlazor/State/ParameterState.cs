@@ -25,4 +25,14 @@ internal class ParameterState
     {
         return ParameterState<T>.Attach(parameterName, getParameterValueFunc, eventCallbackFunc);
     }
+
+    public static ParameterState<T> Attach<T>(string parameterName, Func<T> getParameterValueFunc, Action parameterChangedHandler)
+    {
+        return ParameterState<T>.Attach(parameterName, getParameterValueFunc, ()=> default, new ParameterChangedLambdaHandler(parameterChangedHandler));
+    }
+
+    public static ParameterState<T> Attach<T>(string parameterName, Func<T> getParameterValueFunc, Func<Task> parameterChangedHandler)
+    {
+        return ParameterState<T>.Attach(parameterName, getParameterValueFunc, () => default, new ParameterChangedLambdaTaskHandler(parameterChangedHandler));
+    }
 }
