@@ -21,13 +21,13 @@ namespace MudBlazor.State;
 internal class ParameterState<T> : IParameterComponentLifeCycle
 {
     private readonly Func<T>? _getParameterValueFunc;
-    private readonly Func<EventCallback<T>>? _eventCallback;
+    private readonly Func<EventCallback<T>>? _eventCallbackFunc;
 
     private T? _lastValue;
 
     public string ParameterName { get; }
 
-    [MemberNotNullWhen(true, nameof(_getParameterValueFunc), nameof(_eventCallback))]
+    [MemberNotNullWhen(true, nameof(_getParameterValueFunc), nameof(_eventCallbackFunc))]
     public bool IsAttached => _getParameterValueFunc is not null;
 
     [MemberNotNullWhen(true, nameof(ParameterChangedHandler))]
@@ -44,7 +44,7 @@ internal class ParameterState<T> : IParameterComponentLifeCycle
     {
         ParameterName = parameterName;
         _getParameterValueFunc = getParameterValueFunc;
-        _eventCallback = eventCallbackFunc;
+        _eventCallbackFunc = eventCallbackFunc;
         ParameterChangedHandler = parameterChangedHandler;
         _lastValue = default;
         Value = default;
@@ -62,7 +62,7 @@ internal class ParameterState<T> : IParameterComponentLifeCycle
             Value = value;
             _lastValue = value;
 
-            return _eventCallback().InvokeAsync(value);
+            return _eventCallbackFunc().InvokeAsync(value);
         }
 
         return Task.CompletedTask;
