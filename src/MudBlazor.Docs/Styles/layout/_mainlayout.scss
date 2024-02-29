@@ -97,7 +97,7 @@
   box-shadow: none !important;
   margin-top: 8px;
   background-color: var(--mud-palette-background-grey);
-  
+
   .mud-list{
     background-color: var(--mud-palette-background-grey);
     .mud-list-item{
@@ -110,11 +110,23 @@
         font-weight: 500;
         color: var(--mud-palette-text-secondary);
       }
-      
-      &:hover{
+
+      @media(hover: hover) and (pointer: fine) {
+        &:hover {
+          color: var(--mud-palette-primary-text);
+          background-color: var(--mud-palette-primary);
+
+          .mud-typography-body2 {
+            color: var(--mud-palette-primary-text);
+          }
+        }
+      }
+
+      &:active {
         color: var(--mud-palette-primary-text);
         background-color: var(--mud-palette-primary);
-        .mud-typography-body2{
+
+        .mud-typography-body2 {
           color: var(--mud-palette-primary-text);
         }
       }

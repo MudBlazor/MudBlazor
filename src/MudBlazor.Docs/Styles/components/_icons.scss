@@ -64,8 +64,15 @@
         overflow: hidden;
     }
 
-    &:hover {
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
         cursor: pointer;
         background-color: var(--mud-palette-action-default-hover);
+      }
+    }
+
+    &:active {
+      cursor: pointer;
+      background-color: var(--mud-palette-action-default-hover);
     }
 }
