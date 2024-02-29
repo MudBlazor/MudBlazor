@@ -2210,5 +2210,17 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell")[1].TextContent.Should().Be("Value_0");
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(true);
         }
+
+        /// <summary>
+        /// Selecting the 'Select All' checkbox should trigger the 'SelectedItemsChanged' event only once
+        /// </summary>
+        [Test]
+        public async Task TestSelectedItemsChanedWithMultiSelection()
+        {
+            var comp = Context.RenderComponent<TableMultiSelectionSelectedItemsChangedTest>();
+            var selectAllCheckbox = comp.Find("input");
+            selectAllCheckbox.Change(true);
+            comp.Find("#counter").TextContent.Should().Be("1");
+        }
     }
 }

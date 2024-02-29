@@ -51,7 +51,7 @@ namespace MudBlazor
         public List<MudTableSortLabel<T>> SortLabels { get; set; } = new List<MudTableSortLabel<T>>();
 
         /// <summary>
-        /// Updates the state of all group- and/or header/footer checkboxs.
+        /// Updates the state of all checkboxes.
         /// </summary>
         /// <remarks>
         /// Setting checkbox state for Row items and refresh all, is triggered from MudTable OnAfterRenderAsync.
@@ -60,6 +60,14 @@ namespace MudBlazor
         {
             if (!Table.MultiSelection)
                 return;
+
+            // Update row checkboxes
+            foreach (var pair in Rows.ToArray())
+            {
+                var row = pair.Value;
+                var item = pair.Key;
+                row.SetChecked(Selection.Contains(item), notify: false);
+            }
 
             if (updateGroups)
             {
