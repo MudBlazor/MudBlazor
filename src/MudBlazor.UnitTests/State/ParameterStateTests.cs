@@ -36,6 +36,24 @@ public class ParameterStateTests
     }
 
     [Test]
+    public async Task SetValueAsync_UpdatesWithSameValue_And_NoEventCallbackFire()
+    {
+        // Arrange
+        const int InitialValue = 5;
+        var eventFired = false;
+        var callback = new EventCallback<int>(null, () => { eventFired = true; });
+        var parameterState = ParameterState.Attach(nameof(InitialValue), () => InitialValue, () => callback);
+
+        // Act
+        parameterState.OnInitialized();
+        await parameterState.SetValueAsync(InitialValue);
+
+        // Assert
+        parameterState.Value.Should().Be(InitialValue);
+        eventFired.Should().BeFalse();
+    }
+
+    [Test]
     public void OnInitialized_SetsInitialValue()
     {
         // Arrange
@@ -141,6 +159,38 @@ public class ParameterStateTests
 
         // Act
         var areEqual = parameterState1.Equals(parameterState2);
+
+        // Assert
+        areEqual.Should().BeFalse();
+    }
+
+    [Test]
+    public void GetHashCode_ReturnsTrueForSameParameterName()
+    {
+        // Arrange
+        var parameterState1 = ParameterState.Attach("TestParameter", () => 5, () => (EventCallback<int>)default);
+        var parameterState2 = ParameterState.Attach("TestParameter", () => 10, () => (EventCallback<int>)default);
+
+        // Act
+        var hashCode1 = parameterState1.GetHashCode();
+        var hashCode2 = parameterState2.GetHashCode();
+        var areEqual = hashCode1 == hashCode2;
+
+        // Assert
+        areEqual.Should().BeTrue();
+    }
+
+    [Test]
+    public void GetHashCode_ReturnsFalseForDifferentParameterName()
+    {
+        // Arrange
+        var parameterState1 = ParameterState.Attach("TestParameter1", () => 5, () => (EventCallback<int>)default);
+        var parameterState2 = ParameterState.Attach("TestParameter2", () => 10, () => (EventCallback<int>)default);
+
+        // Act
+        var hashCode1 = parameterState1.GetHashCode();
+        var hashCode2 = parameterState2.GetHashCode();
+        var areEqual = hashCode1 == hashCode2;
 
         // Assert
         areEqual.Should().BeFalse();

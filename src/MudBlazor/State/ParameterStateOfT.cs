@@ -24,11 +24,10 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     private readonly Func<T> _getParameterValueFunc;
     private readonly Func<EventCallback<T>> _eventCallbackFunc;
 
-    /// <summary>
-    /// Gets the associated parameter name of the component's <see cref="ParameterAttribute"/>.
-    /// </summary>
+    /// <inheritdoc />
     public string ParameterName { get; }
 
+    /// <inheritdoc />
     [MemberNotNullWhen(true, nameof(ParameterChangedHandler))]
     public bool HasHandler => ParameterChangedHandler is not null;
 

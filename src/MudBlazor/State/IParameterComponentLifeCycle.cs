@@ -10,8 +10,14 @@ namespace MudBlazor.State;
 #nullable enable
 public interface IParameterComponentLifeCycle
 {
+    /// <summary>
+    /// Gets the associated parameter name of the component's <see cref="ParameterAttribute"/>.
+    /// </summary>
     string ParameterName { get; }
 
+    /// <summary>
+    /// 
+    /// </summary>
     bool HasHandler { get; }
 
     /// <summary>
