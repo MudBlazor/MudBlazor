@@ -54,7 +54,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
         // We check for HasHandler first for performance since we do not need HasParameterChanged if there is nothing to execute.
-        // We need to call .ToList() otherwise the IEnumerable will be lazy invoked after the baseSetParametersAsync but we need before.
+        // We need to call .ToList() otherwise the IEnumerable will be lazy invoked after the baseSetParametersAsync, but we need before.
         var changedParams = _parameters.Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters)).ToList();
 
         await baseSetParametersAsync(parameters);

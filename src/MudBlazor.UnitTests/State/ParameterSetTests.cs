@@ -2,9 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
+using System.Reflection.Metadata;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
@@ -16,6 +19,37 @@ namespace MudBlazor.UnitTests.State;
 [TestFixture]
 internal class ParameterSetTests
 {
+    [Test]
+    public void Add_AddsParameterSuccessfully()
+    {
+        // Arrange
+        const int Parameter = 1;
+        var parameterSet = new ParameterSet();
+        var parameterState = ParameterState.Attach(nameof(Parameter), () => Parameter, () => (EventCallback<int>)default);
+
+        // Act
+        parameterSet.Add(parameterState);
+
+        // Assert
+        parameterSet.Contains(parameterState).Should().BeTrue();
+    }
+
+    [Test]
+    public void Add_ThrowsExceptionIfParameterAlreadyRegistered()
+    {
+        // Arrange
+        const int Parameter = 1;
+        var parameterSet = new ParameterSet();
+        var parameterState = ParameterState.Attach(nameof(Parameter), () => Parameter, () => (EventCallback<int>)default);
+        parameterSet.Add(parameterState);
+
+        // Act 
+        var addSameParameter = () => parameterSet.Add(parameterState);
+
+        // Assert
+        addSameParameter.Should().Throw<InvalidOperationException>();
+    }
+
     [Test]
     public void GetEnumeratorNonGeneric_ReturnsAllParameters()
     {

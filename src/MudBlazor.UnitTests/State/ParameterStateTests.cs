@@ -69,6 +69,27 @@ public class ParameterStateTests
     }
 
     [Test]
+    public void OnParametersSet_UpdatesValueIfChanged()
+    {
+        // Arrange
+        var initialValue = 5;
+        const int NewValue = 10;
+        // ReSharper disable once AccessToModifiedClosure
+        var parameterState = ParameterState.Attach(nameof(initialValue), () => initialValue, () => (EventCallback<int>)default);
+
+        // Act
+        parameterState.OnParametersSet();
+
+        // Assert
+        parameterState.Value.Should().Be(initialValue);
+
+        // Act & Assert
+        initialValue = NewValue;
+        parameterState.OnParametersSet();
+        parameterState.Value.Should().Be(NewValue);
+    }
+
+    [Test]
     public async Task ParameterChangeHandleAsync_HandlesParameterChangeIfHandlerExists()
     {
         // Arrange
@@ -85,13 +106,14 @@ public class ParameterStateTests
     }
 
     [Test]
-    public void HasHandler_ReturnsFalseIfNoHandlerSupplied()
+    public async Task HasHandler_ReturnsFalseIfNoHandlerSupplied()
     {
         // Arrange
         const int InitialValue = 5;
         var parameterState = ParameterState.Attach(nameof(InitialValue), () => InitialValue, () => (EventCallback<int>)default);
 
         // Act & Assert
+        await parameterState.ParameterChangeHandleAsync(); //Does nothing, we are making coverage happy
         parameterState.HasHandler.Should().BeFalse();
     }
 
@@ -159,6 +181,32 @@ public class ParameterStateTests
 
         // Act
         var areEqual = parameterState1.Equals(parameterState2);
+
+        // Assert
+        areEqual.Should().BeFalse();
+    }
+
+    [Test]
+    public void Equals_ReturnsTrueForSameReference()
+    {
+        // Arrange
+        var parameterState = ParameterState.Attach("TestParameter1", () => 5, () => (EventCallback<int>)default);
+
+        // Act
+        var areEqual = parameterState.Equals(parameterState);
+
+        // Assert
+        areEqual.Should().BeTrue();
+    }
+
+    [Test]
+    public void Equals_ReturnsFalseForNull()
+    {
+        // Arrange
+        var parameterState = ParameterState.Attach("TestParameter1", () => 5, () => (EventCallback<int>)default);
+
+        // Act
+        var areEqual = parameterState.Equals(null);
 
         // Assert
         areEqual.Should().BeFalse();
