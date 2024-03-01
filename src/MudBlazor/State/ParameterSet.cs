@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor.State;
 
 #nullable enable
+/// <summary>
+/// Represents a collection of registered parameters
+/// </summary>
 internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
 {
     private readonly List<IParameterComponentLifeCycle> _parameters = new();
@@ -26,6 +29,9 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
         _parameters.Add(parameter);
     }
 
+    /// <summary>
+    /// Executes <see cref="IParameterComponentLifeCycle.OnInitialized"/> for all registered parameters.
+    /// </summary>
     public void OnInitialized()
     {
         foreach (var parameter in _parameters)
@@ -34,6 +40,9 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
         }
     }
 
+    /// <summary>
+    /// Executes <see cref="IParameterComponentLifeCycle.OnParametersSet"/> for all registered parameters.
+    /// </summary>
     public void OnParametersSet()
     {
         foreach (var parameter in _parameters)
