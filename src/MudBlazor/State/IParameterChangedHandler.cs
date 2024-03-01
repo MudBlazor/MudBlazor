@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 namespace MudBlazor.State;
 
 #nullable enable
+/// <summary>
+/// Represents an interface for handling parameter change.
+/// </summary>
 internal interface IParameterChangedHandler
 {
     /// <summary>
-    /// 
+    /// Handles parameter changes asynchronously.
     /// </summary>
-    /// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task HandleAsync();
 }
