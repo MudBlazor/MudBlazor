@@ -24,7 +24,7 @@ public class ParameterStateTests
         const int NewValue = 10;
         var eventFired = false;
         var callback = new EventCallback<int>(null, () => { eventFired = true; });
-        var parameterState = ParameterState<int>.Attach(nameof(InitialValue), () => InitialValue, () => callback);
+        var parameterState = ParameterState.Attach(nameof(InitialValue), () => InitialValue, () => callback);
 
         // Act
         parameterState.OnInitialized();
@@ -40,7 +40,7 @@ public class ParameterStateTests
     {
         // Arrange
         const int InitialValue = 5;
-        var parameterState = ParameterState<int>.Attach(nameof(InitialValue), () => InitialValue, () => default);
+        var parameterState = ParameterState.Attach(nameof(InitialValue), () => InitialValue, () => (EventCallback<int>)default);
 
         // Act
         parameterState.OnInitialized();
@@ -62,7 +62,19 @@ public class ParameterStateTests
         await parameterState.ParameterChangeHandleAsync();
 
         // Assert
+        parameterState.HasHandler.Should().BeTrue();
         parameterChangedHandlerMock.FireCount.Should().Be(1);
+    }
+
+    [Test]
+    public void HasHandler_ReturnsFalseIfNoHandlerSupplied()
+    {
+        // Arrange
+        const int InitialValue = 5;
+        var parameterState = ParameterState.Attach(nameof(InitialValue), () => InitialValue, () => (EventCallback<int>)default);
+
+        // Act & Assert
+        parameterState.HasHandler.Should().BeFalse();
     }
 
     [Test]
@@ -72,7 +84,7 @@ public class ParameterStateTests
         const int InitialValue = 5;
         const int NewValue = 10;
         var parameterName = nameof(InitialValue);
-        var parameterState = ParameterState<int>.Attach(parameterName, () => InitialValue, () => default);
+        var parameterState = ParameterState.Attach(parameterName, () => InitialValue, () => (EventCallback<int>)default);
         var parametersDictionary = new Dictionary<string, object?>
         {
             { parameterName, NewValue }
@@ -92,7 +104,7 @@ public class ParameterStateTests
         // Arrange
         const int InitialValue = 5;
         var parameterName = nameof(InitialValue);
-        var parameterState = ParameterState<int>.Attach(parameterName, () => InitialValue, () => default);
+        var parameterState = ParameterState.Attach(parameterName, () => InitialValue, () => (EventCallback<int>)default);
         var parametersDictionary = new Dictionary<string, object?>
         {
             { parameterName, InitialValue }
@@ -104,5 +116,33 @@ public class ParameterStateTests
 
         // Assert
         changed.Should().BeFalse();
+    }
+
+    [Test]
+    public void Equals_ReturnsTrueForSameParameterName()
+    {
+        // Arrange
+        var parameterState1 = ParameterState.Attach("TestParameter", () => 5, () => (EventCallback<int>)default);
+        var parameterState2 = ParameterState.Attach("TestParameter", () => 10, () => (EventCallback<int>)default);
+
+        // Act
+        var areEqual = parameterState1.Equals(parameterState2);
+
+        // Assert
+        areEqual.Should().BeTrue();
+    }
+
+    [Test]
+    public void Equals_ReturnsFalseForDifferentParameterName()
+    {
+        // Arrange
+        var parameterState1 = ParameterState.Attach("TestParameter1", () => 5, () => (EventCallback<int>)default);
+        var parameterState2 = ParameterState.Attach("TestParameter2", () => 10, () => (EventCallback<int>)default);
+
+        // Act
+        var areEqual = parameterState1.Equals(parameterState2);
+
+        // Assert
+        areEqual.Should().BeFalse();
     }
 }
