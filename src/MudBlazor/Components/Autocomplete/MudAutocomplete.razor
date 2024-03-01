@@ -4,7 +4,7 @@
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
     <div class="@AutocompleteClassname">
-		<MudInputControl Label="@Label" Variant="@Variant" FocusColor="@FocusColor" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
+        <MudInputControl Label="@Label" Variant="@Variant" FocusColor="@FocusColor" HelperText="@HelperText" HelperTextOnFocus="@HelperTextOnFocus" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
                          Error="@Error" ErrorText="@ErrorText" Disabled="@GetDisabledState()" @onclick="@ToggleMenu" Required="@Required" ForId="@FieldId">
             <InputContent>
                 <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
@@ -22,7 +22,7 @@
                           Placeholder="@Placeholder" Immediate="true"
                           InputMode="@InputMode" Pattern="@Pattern"
                           ShrinkLabel="@ShrinkLabel"
-						  FocusColor="@FocusColor"
+                          FocusColor="@FocusColor"
                           T="string" />
 
                 @if (ShowProgressIndicator && IsLoading)
