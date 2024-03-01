@@ -89,7 +89,7 @@ namespace MudBlazor
         /// Register a component Parameter, its EventCallback and a change handler so that the base can manage it as a ParameterState object.
         /// It is the new rule in MudBlazor, that parameters must be auto properties. By registering the parameter with
         /// a change handler you can still execute code when the parameter value changes.
-        /// See CONTRIBUTING.md for an more detailed explanation on why MudBlazor parameters have to registered. 
+        /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
         ///
         /// Note: Register must be called in the constructor! 
         /// </summary>
