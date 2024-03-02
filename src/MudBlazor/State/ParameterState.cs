@@ -9,43 +9,89 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor.State;
 
 #nullable enable
+
+/// <summary>
+/// Helper class for creating <see cref="ParameterState{T}"/> object with different overloads of the <see cref="ParameterState{T}.Attach"/> method.
+/// </summary>
 internal class ParameterState
 {
     /// <summary>
-    /// Create a ParameterState&lt;T&gt; object which automatically manages parameter value changes as part of
-    /// MudBlazor's ParameterState framework. For details and usage please read CONTRIBUTING.md
-    ///
-    /// Note: usually you don't need to call this directly. Instead use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
-    /// component's constructor.  
+    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's <see cref="ParameterState"/> framework.
     /// </summary>
-    /// <param name="parameterName">pass the parameter name using nameof(...)</param>
-    /// <param name="getParameterValueFunc">a get func that allows ParameterState to read the property value</param>
-    /// <param name="eventCallbackFunc">a get func that allows ParameterState to get the EventCallback of the parameter</param>
-    /// <param name="parameterChangedHandler">
-    ///     a change handler containing code that needs to be executed when the parameter value changes
-    /// </param>
-    /// <typeparam name="T">The type of the property value</typeparam>
-    /// <returns>The ParameterState object to be stored in a field for accessing the current value.</returns>
+    /// <typeparam name="T">The type of the component's property value.</typeparam>
+    /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+    /// <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
+    /// <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
+    /// <param name="parameterChangedHandler">An action containing code that needs to be executed when the parameter value changes.</param>
+    /// <remarks>
+    /// For details and usage please read CONTRIBUTING.md
+    /// </remarks>
+    /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
     public static ParameterState<T> Attach<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Action parameterChangedHandler)
     {
         return ParameterState<T>.Attach(parameterName, getParameterValueFunc, eventCallbackFunc, new ParameterChangedLambdaHandler(parameterChangedHandler));
     }
 
+    /// <summary>
+    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's <see cref="ParameterState"/> framework.
+    /// </summary>
+    /// <typeparam name="T">The type of the component's property value.</typeparam>
+    /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+    /// <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
+    /// <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
+    /// <param name="parameterChangedHandler">A function containing code that needs to be executed when the parameter value changes.</param>
+    /// <remarks>
+    /// For details and usage, please read CONTRIBUTING.md.
+    /// </remarks>
+    /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
     public static ParameterState<T> Attach<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Func<Task> parameterChangedHandler)
     {
         return ParameterState<T>.Attach(parameterName, getParameterValueFunc, eventCallbackFunc, new ParameterChangedLambdaTaskHandler(parameterChangedHandler));
     }
 
+    /// <summary>
+    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's <see cref="ParameterState"/> framework.
+    /// </summary>
+    /// <typeparam name="T">The type of the component's property value.</typeparam>
+    /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+    /// <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
+    /// <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
+    /// <remarks>
+    /// For details and usage, please read CONTRIBUTING.md.
+    /// </remarks>
+    /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
     public static ParameterState<T> Attach<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc)
     {
         return ParameterState<T>.Attach(parameterName, getParameterValueFunc, eventCallbackFunc);
     }
 
+    /// <summary>
+    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's <see cref="ParameterState"/> framework.
+    /// </summary>
+    /// <typeparam name="T">The type of the component's property value.</typeparam>
+    /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+    /// <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
+    /// <param name="parameterChangedHandler">An action containing code that needs to be executed when the parameter value changes.</param>
+    /// <remarks>
+    /// For details and usage, please read CONTRIBUTING.md.
+    /// </remarks>
+    /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
     public static ParameterState<T> Attach<T>(string parameterName, Func<T> getParameterValueFunc, Action parameterChangedHandler)
     {
         return ParameterState<T>.Attach(parameterName, getParameterValueFunc, ()=> default, new ParameterChangedLambdaHandler(parameterChangedHandler));
     }
 
+    /// <summary>
+    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's <see cref="ParameterState"/> framework.
+    /// </summary>
+    /// <typeparam name="T">The type of the component's property value.</typeparam>
+    /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+    /// <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
+    /// <param name="parameterChangedHandler">A function containing code that needs to be executed when the parameter value changes.</param>
+    /// <remarks>
+    /// For details and usage, please read CONTRIBUTING.md.
+    /// </remarks>
+    /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
     public static ParameterState<T> Attach<T>(string parameterName, Func<T> getParameterValueFunc, Func<Task> parameterChangedHandler)
     {
         return ParameterState<T>.Attach(parameterName, getParameterValueFunc, () => default, new ParameterChangedLambdaTaskHandler(parameterChangedHandler));

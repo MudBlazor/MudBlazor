@@ -8,38 +8,50 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor.State;
 
 #nullable enable
-public interface IParameterComponentLifeCycle
+/// <summary>
+/// Represents the lifecycle methods for Blazor component parameters used by the ParameterState framework.
+/// </summary>
+internal interface IParameterComponentLifeCycle
 {
     /// <summary>
     /// Gets the associated parameter name of the component's <see cref="ParameterAttribute"/>.
     /// </summary>
     string ParameterName { get; }
 
-
+    /// <summary>
+    /// Indicates whether a <see cref="IParameterChangedHandler"/> is supplied for handling parameter changes.
+    /// </summary>
     bool HasHandler { get; }
 
     /// <summary>
-    /// Checks if a parameter changed.
+    /// Determines whether the parameter has changed by comparing it with the provided parameters.
     /// </summary>
-    /// <param name="parameters">The parameters.</param>
+    /// <param name="parameters">The parameter view containing the parameters to compare with.</param>
     /// <returns><c>true</c> if the parameter value has changed, <c>false</c> otherwise.</returns>
     bool HasParameterChanged(ParameterView parameters);
 
     /// <summary>
-    /// Called by the ParameterState framework. You shouldn't need to call this directly.
+    /// Called by the <see cref="ParameterState"/> framework when <see cref="IParameterChangedHandler"/> is supplied.
     /// </summary>
+    /// <remarks>
+    /// This method should be directly called and is controlled by the <see cref="MudComponentBase"/>.
+    /// </remarks>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task ParameterChangeHandleAsync();
 
     /// <summary>
-    /// Implements <see cref="IParameterComponentLifeCycle.OnInitialized"/>.
-    /// Called by the ParameterState framework. You shouldn't need to call this directly.
+    /// Invoked when <see cref="ComponentBase.OnInitialized"/> is called, used to set the initial parameter value.
     /// </summary>
+    /// <remarks>
+    /// This method should be directly called and is controlled by the <see cref="MudComponentBase"/>.
+    /// </remarks>
     void OnInitialized();
 
     /// <summary>
-    /// Implements <see cref="IParameterComponentLifeCycle.OnParametersSet"/>.
-    /// Called by the ParameterState framework. You shouldn't need to call this directly.
+    /// Invoked when <see cref="ComponentBase.OnParametersSet"/> is called, used to synchronize the parameter value when Blazor updates the parameters.
     /// </summary>
+    /// <remarks>
+    /// This method should be directly called and is controlled by the <see cref="MudComponentBase"/>.
+    /// </remarks>
     void OnParametersSet();
 }

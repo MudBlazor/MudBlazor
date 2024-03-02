@@ -100,7 +100,7 @@ namespace MudBlazor
         /// <param name="eventCallbackFunc">A get function the ParameterState uses to retrieve the EventCallback of the parameter</param>
         /// <param name="parameterChangedHandler">A function that is executed when the parameter value changes</param>
         /// <typeparam name="T">The parameter's value type</typeparam>
-        /// <returns>Returns the ParameterState object so you can store it in a field to be able to set its value.</returns>
+        /// <returns>Returns the ParameterState object, so you can store it in a field to be able to set its value.</returns>
         internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Action parameterChangedHandler)
         {
             var attach = ParameterState.Attach(parameterName, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);

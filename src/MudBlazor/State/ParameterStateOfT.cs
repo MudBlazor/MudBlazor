@@ -11,12 +11,12 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor.State;
 
 /// <summary>
-/// The ParameterState automatically manages parameter value changes as part of
+/// The <see cref="ParameterState{T}"/> automatically manages parameter value changes as part of
 /// MudBlazor's ParameterState framework. For details and usage please read CONTRIBUTING.md
 /// </summary>
 /// <remarks>
-/// Note: usually you don't need to create this object directly. Instead use the RegisterParameter method from within
-/// the component's constructor.
+/// You don't need to create this object directly.
+/// Instead, use the "MudComponentBase.RegisterParameter" method from within the component's constructor.
 /// </remarks>
 /// <typeparam name="T">Parameter's type.</typeparam>
 #nullable enable
