@@ -162,7 +162,7 @@ private async Task ExpandedChangedHandlerAsync()
 We are slowly but surely refactoring all of those, you can help if you like.
 
 ## Avoid overwriting parameters in Blazor Components
-This `ParameterState` framework offers a solution to prevent parameter overwriting issues often encountered in Blazor components.
+This `ParameterState` framework offers a solution to prevent parameter overwriting issues.
 For a detailed explanation of this problem, refer to the [article](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/overwriting-parameters?view=aspnetcore-8.0#overwritten-parameters).
 
 ### Example of a bad code
