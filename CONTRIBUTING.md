@@ -67,12 +67,14 @@ Most important files:
 - Component tests ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.UnitTests/Components))
 - Test components ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.UnitTests.Viewer/TestComponents))
 
-## Parameter Registration or why can't I have logic in a parameter setter
+## Parameter Registration or Why we can't have Logic in Parameters Setters
 MudBlazor parameters shall be auto-properties, meaning that there must not be logic in the property getter or setter. This rule prevents update-loops and other nasty bugs such as swallowed exceptions due to unobserved async discards. 
 "This is quite inconvenient" you may say, where do I call the EventCallback and how to react to parameter changes? Luckily the MudBlazor team has got your back. Thanks to our ParameterState framework you don't need to keep track of 
 old parameter values in fields mess around with `SetParametersAsync`.
 
-**TLDR; Register your parameters in the constructor with a change handler that contains all the code you want to execute when the parameter value changes.**
+**TLDR; Register parameters in the constructor with a change handler that contains all the code that needs to be executed when the parameter value changes.**
+
+**NB: Code in `[Parameter]` attributed property setters is no longer alowed in MudBlazor!** (No matter if async functions are called in them or not.)
 
 ### Example of a bad Parameter definition
 
@@ -86,20 +88,20 @@ public bool Expanded
     get => _expanded;
     set
     {
-	if (_expanded == value)
-	    return;
-	_expanded = value;
-	if (_isRendered)
-	{
-	    _state = _expanded ? CollapseState.Entering : CollapseState.Exiting;
-	    _ = UpdateHeight();  // <-- unobserved async discard !!!
-	    _updateHeight = true;
-	}
-	else if (_expanded)
-	{
-	    _state = CollapseState.Entered;
-	}
-	_ = ExpandedChanged.InvokeAsync(_expanded); // <-- unobserved async discard !!!
+        if (_expanded == value)
+            return;
+        _expanded = value;
+        if (_isRendered)
+        {
+            _state = _expanded ? CollapseState.Entering : CollapseState.Exiting;
+            _ = UpdateHeight();  // <-- unobserved async discard !!!
+            _updateHeight = true;
+        }
+        else if (_expanded)
+        {
+            _state = CollapseState.Entered;
+        }
+        _ = ExpandedChanged.InvokeAsync(_expanded); // <-- unobserved async discard !!!
     }
 }
 ```
@@ -107,7 +109,7 @@ public bool Expanded
 Note how the setter is invoking async functions which can not be awaited, because property setters can only have synchronous code. As a result, the async 
 functions are invoked and their return value `Task` is discarded. This not only creates hard to test multi-threaded behavior, it also prevents the user of this 
 component from being able to catch any errors in the asnc functions. Any exceptions that happen in these asynchronous functions may or may not bubble up
-to the user. In some cases Blazor just catches them and they are silently ignored, in other cases they may cause application crashes that can't be prevented with `try catch`.
+to the user. In some cases Blazor just catches them and they are silently ignored, in other cases they may cause application crashes that can't be prevented with `try catch`. 
 
 The alternative would be to move the code from the setter into `SetParametersAsync` and depending on the component you would also need code in `OnInitializedAsync`. 
 This is cumbersome and error prone and requires you to keep track of the old parameter value in a field and write a series of `if` statements in `SetParametersAsync` if there are multiple parameters.
@@ -128,28 +130,28 @@ In the constructor, we register the parameter so that the base class can manage 
 public MudCollapse()
 {
     _expandedState = RegisterParameter(
-			nameof(Expanded),    // the property name is needed for automatic value change detection in SetParametersAsync
-			() => Expanded,     // a get func enabling the ParameterState to read the parameter value w/o resorting to Reflection
-			() => ExpandedChanged,     // a get func enabling the ParameterState to get the EventCallback of the parameter
-			ExpandedParameterChangedHandlerAsync    // the change handler 
-		);
+        nameof(Expanded),           // the property name is needed for automatic value change detection in SetParametersAsync
+        () => Expanded,             // a get func enabling the ParameterState to read the parameter value w/o resorting to Reflection
+        () => ExpandedChanged,      // a get func enabling the ParameterState to get the EventCallback of the parameter
+        ExpandedChangedHandlerAsync // the change handler 
+    );
 }
 ```
 
 The code from the setter moves into the change handler function which is async so the called functions can be awaited.
 
 ```c#
-private async Task ExpandedParameterChangedHandlerAsync()
+private async Task ExpandedChangedHandlerAsync()
 {
     if (_isRendered)
     {
-	_state = _expandedState.Value ? CollapseState.Entering : CollapseState.Exiting;
-	await UpdateHeightAsync();  // async Task not discarded
-	_updateHeight = true;
+        _state = _expandedState.Value ? CollapseState.Entering : CollapseState.Exiting;
+        await UpdateHeightAsync();  // async Task not discarded
+        _updateHeight = true;
     }
     else if (_expandedState.Value)
     {
-	_state = CollapseState.Entered;
+        _state = CollapseState.Entered;
     }
     await ExpandedChanged.InvokeAsync(_expandedState.Value); // async Task not discarded
 }
