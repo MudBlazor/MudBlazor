@@ -1,114 +1,114 @@
 ﻿@import '../abstracts/variables';
 
 .mud-radio {
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    vertical-align: middle;
-    -webkit-tap-highlight-color: transparent;
-    color: var(--mud-palette-action-default);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  -webkit-tap-highlight-color: transparent;
+  color: var(--mud-palette-action-default);
+
+  & > .mud-radio-content {
+    color: var(--mud-palette-text-primary);
+  }
+
+  &.mud-disabled, .mud-disabled:hover, .mud-disabled:focus-visible {
+    cursor: default;
+    background-color: transparent !important;
 
     & > .mud-radio-content {
-        color: var(--mud-palette-text-primary);
+      color: var(--mud-palette-text-disabled);
     }
 
-    &.mud-disabled, .mud-disabled:hover, .mud-disabled:focus-visible {
-        cursor: default;
-        background-color: transparent !important;
-
-        & > .mud-radio-content {
-            color: var(--mud-palette-text-disabled);
-        }
-
-        & * {
-            cursor: default;
-            color: var(--mud-palette-text-disabled);
-        }
+    & * {
+      cursor: default;
+      color: var(--mud-palette-text-disabled);
     }
+  }
 
-    &.mud-readonly, .mud-readonly:hover {
-        cursor: default;
+  &.mud-readonly, .mud-readonly:hover {
+    cursor: default;
+  }
+
+  & .mud-radio-dense {
+    padding: 4px;
+  }
+
+  &.mud-checked {
+    color: var(--mud-palette-action-default);
+
+    &:hover {
+      background-color: var(--mud-palette-action-default-hover);
     }
-
-    & .mud-radio-dense {
-        padding: 4px;
-    }
-
-    &.mud-checked {
-        color: var(--mud-palette-action-default);
-
-        &:hover {
-            background-color: var(--mud-palette-action-default-hover);
-        }
-    }
+  }
 }
 
 .mud-radio-button {
+  width: 100%;
+  display: flex;
+  align-items: inherit;
+  justify-content: inherit;
+
+  & .mud-radio-input {
+    top: 0;
+    left: 0;
     width: 100%;
+    cursor: inherit;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    padding: 0;
+    z-index: 1;
+    position: absolute;
+  }
+
+  & .mud-radio-icons {
     display: flex;
-    align-items: inherit;
-    justify-content: inherit;
-
-    & .mud-radio-input {
-        top: 0;
-        left: 0;
-        width: 100%;
-        cursor: inherit;
-        height: 100%;
-        margin: 0;
-        opacity:0;
-        padding: 0;
-        z-index: 1;
-        position: absolute;
-    }
-
-    & .mud-radio-icons {
-        display: flex;
-        position: relative;
-    }
+    position: relative;
+  }
 }
 
 
 .mud-radio-icons.mud-checked .mud-radio-icon-checked {
-    transform: scale(1);
-    transition: transform 150ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  transform: scale(1);
+  transition: transform 150ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
 }
 
 .mud-radio-icon-checked {
-    left: 0;
-    position: absolute;
-    transform: scale(0);
-    transition: transform 150ms cubic-bezier(0.4, 0, 1, 1) 0ms;
+  left: 0;
+  position: absolute;
+  transform: scale(0);
+  transition: transform 150ms cubic-bezier(0.4, 0, 1, 1) 0ms;
 }
 
 .mud-radio-content-placement- {
-    &start {
-        margin-left: 16px;
-        margin-right: -11px;
-        margin-inline-start: 16px;
-        margin-inline-end: -11px;
-        flex-direction: row-reverse;
-    }
+  &start {
+    margin-left: 16px;
+    margin-right: -11px;
+    margin-inline-start: 16px;
+    margin-inline-end: -11px;
+    flex-direction: row-reverse;
+  }
 
-    &end {
-        margin-left: -11px;
-        margin-right: 16px;
-        margin-inline-start: -11px;
-        margin-inline-end: 16px;
-        flex-direction: row;
-    }
+  &end {
+    margin-left: -11px;
+    margin-right: 16px;
+    margin-inline-start: -11px;
+    margin-inline-end: 16px;
+    flex-direction: row;
+  }
 
-    &top {
-        margin-left: 16px;
-        margin-inline-start: 16px;
-        margin-inline-end: unset;
-        flex-direction: column-reverse;
-    }
+  &top {
+    margin-left: 16px;
+    margin-inline-start: 16px;
+    margin-inline-end: unset;
+    flex-direction: column-reverse;
+  }
 
-    &bottom {
-        margin-left: 16px;
-        margin-inline-start: 16px;
-        margin-inline-end: unset;
-        flex-direction: column;
-    }
+  &bottom {
+    margin-left: 16px;
+    margin-inline-start: 16px;
+    margin-inline-end: unset;
+    flex-direction: column;
+  }
 }

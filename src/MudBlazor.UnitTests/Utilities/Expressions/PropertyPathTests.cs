@@ -4,6 +4,7 @@
 
 using System.Linq.Expressions;
 using System;
+using FluentAssertions;
 using MudBlazor.Utilities.Expressions;
 using NUnit.Framework;
 
@@ -38,16 +39,16 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             var property2 = PropertyPath.Visit(exp2);
 
             // Assert
-            Assert.True(property1.IsBodyMemberExpression);
-            Assert.True(property2.IsBodyMemberExpression);
-            Assert.AreEqual("Name", property1.ToString());
-            Assert.AreEqual("Manager.Name", property2.ToString());
-            Assert.AreEqual("Name", property1.GetPath());
-            Assert.AreEqual("Manager.Name", property2.GetPath());
-            Assert.AreEqual("Name", property1.GetLastMemberName());
-            Assert.AreEqual("Name", property2.GetLastMemberName());
-            Assert.AreEqual(1, property1.GetMembers().Count);
-            Assert.AreEqual(2, property2.GetMembers().Count);
+            property1.IsBodyMemberExpression.Should().BeTrue();
+            property2.IsBodyMemberExpression.Should().BeTrue();
+            property1.ToString().Should().Be("Name");
+            property2.ToString().Should().Be("Manager.Name");
+            property1.GetPath().Should().Be("Name");
+            property2.GetPath().Should().Be("Manager.Name");
+            property1.GetLastMemberName().Should().Be("Name");
+            property2.GetLastMemberName().Should().Be("Name");
+            property1.GetMembers().Count.Should().Be(1);
+            property2.GetMembers().Count.Should().Be(2);
         }
 
         [Test]
@@ -60,11 +61,11 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             var property = PropertyPath.Visit(exp);
 
             // Assert
-            Assert.False(property.IsBodyMemberExpression);
-            Assert.AreEqual("", property.ToString());
-            Assert.AreEqual("", property.GetPath());
-            Assert.AreEqual("", property.GetLastMemberName());
-            Assert.AreEqual(0, property.GetMembers().Count);
+            property.IsBodyMemberExpression.Should().BeFalse();
+            property.ToString().Should().Be("");
+            property.GetPath().Should().Be("");
+            property.GetLastMemberName().Should().Be("");
+            property.GetMembers().Count.Should().Be(0);
         }
     }
 }

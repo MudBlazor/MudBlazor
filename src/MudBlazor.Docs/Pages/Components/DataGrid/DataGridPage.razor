@@ -61,9 +61,10 @@
                     <br><br>
                     Row level classes and styles can be applied using the <CodeInline>RowClass</CodeInline> and <CodeInline>RowStyle</CodeInline> properties 
                     respectively. To style rows according to the data of the row, you would use the <CodeInline>RowClassFunc</CodeInline> and <CodeInline>RowStyleFunc</CodeInline>
-                    properties. For even finer grain control, you can style at the header, cell and footer level as well by using the <CodeInline>CellClass</CodeInline>, 
-                    <CodeInline>CellStyle</CodeInline>, <CodeInline>CellClassFunc</CodeInline>, <CodeInline>CellStyleFunc</CodeInline>, etc. properties. However, the header and footer
-                    do not have the Func properties since they are not needed.
+                    properties. For even finer grain control, you can style at the header, cell and footer level as well by using the <CodeInline>HeaderClass</CodeInline>, <CodeInline>HeaderStyle</CodeInline>, 
+                    <CodeInline>HeaderClassFunc</CodeInline>, <CodeInline>HeaderStyleFunc</CodeInline>, <CodeInline>CellClass</CodeInline>, 
+                    <CodeInline>CellStyle</CodeInline>, <CodeInline>CellClassFunc</CodeInline>, <CodeInline>CellStyleFunc</CodeInline>, 
+                    <CodeInline>FooterClass</CodeInline>, <CodeInline>FooterStyle</CodeInline>, <CodeInline>FooterClassFunc</CodeInline> and <CodeInline>FooterStyleFunc</CodeInline> properties.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="DataGridVisualStylingExample" ShowCode="false" Block="true" FullWidth="true">
@@ -75,10 +76,11 @@
             <SectionHeader Title="Editing">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows editing the data passed into it. Setting the <CodeInline>ReadOnly</CodeInline> property
-                    to <CodeInline>false</CodeInline> and the <CodeInline>EditMode</CodeInline> property to turns editing. There are two different edit modes:
-                    <CodeInline>Cell and Form</CodeInline>. <CodeInline>Form</CodeInline> displays a form in a popup when editing. <CodeInline>Cell</CodeInline> is more like 
-                    excel where each cell is ready to edit and as you make edits, they are applied to the data source. To disable editing on a column, set its 
-                    <CodeInline>IsEditable</CodeInline> property to <CodeInline>false</CodeInline>. To mark a property as not required, set its <CodeInline>Required</CodeInline> property to <CodeInline>false</CodeInline>
+                    to <CodeInline>false</CodeInline> and the <CodeInline>EditMode</CodeInline> property to <CodeInline>DataGridEditMode.Form</CodeInline> 
+                    or to <CodeInline>DataGridEditMode.Cell</CodeInline> turns on editing. Edit mode <CodeInline>Form</CodeInline> displays a form in a popup 
+                    when editing. Edit mode <CodeInline>Cell</CodeInline> is more like Excel where each cell is ready to edit and as you make edits, they are 
+                    applied to the data source. To disable editing on a column, set its <CodeInline>IsEditable</CodeInline> property to <CodeInline>false</CodeInline>. 
+                    To mark a property as not required, set its <CodeInline>Required</CodeInline> property to <CodeInline>false</CodeInline>.
                     <br><br>
                     By default, the built in editing in the data grid automatically supplies the proper input component for each cell. However, this can be overidden
                     by supplying an <CodeInline>&lt;EditTemplate></CodeInline>. Inside the template, you have full control over the editing. Take a look at the Position
@@ -222,25 +224,6 @@
             </SectionContent>
         </DocsPageSection>
 
-        @*<DocsPageSection>
-            <SectionHeader Title="Advanced Data Grid Using IDictionary">
-                <Description>
-                    This example uses a <CodeInline>List&lt;IDictionary&lt;string, object>></CodeInline> for the <CodeInline>Items</CodeInline> data source.
-                    <br><br>
-                    In a more advanced scenario, the data grid offers sorting, filtering, pagination and selection. There are two ways to filter the data 
-                    fed into the data grid. A <CodeInline>QuickFilter</CodeInline> function allows filtering the items in the grid globally. Data can also be filtered by specifying 
-                    column filters, enabling a more robust filtration.
-                    <br><br>
-                    In this example, we turn sorting and filtering off for the Nr column using the boolean <CodeInline>Sortable</CodeInline> and <CodeInline>Filterable</CodeInline> properties
-                    as well as hide the column options icon button by setting the <CodeInline>ShowColumnOptions</CodeInline> property to <CodeInline>false</CodeInline>. Additionally, we 
-                    can override the default <CodeInline>SortBy</CodeInline> function for each column, seen in the Name column where we show how you can switch to a sort by the Name's length.
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="DataGridAdvancedIDictionaryExample" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridAdvancedIDictionaryExample />
-            </SectionContent>
-        </DocsPageSection>*@
-
         <DocsPageSection>
             <SectionHeader Title="Sticky Columns">
                 <Description>
@@ -309,6 +292,19 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="DataGridColumReorderingExample" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridColumReorderingExample />
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Columns Panel">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> can open a columns panel using <CodeInline>ShowColumnsPanel</CodeInline>. 
+                    The panel allows the re-ordering, hiding, filtering and grouping of columns. The enabled functionality matches the grid and column options with the exception of column re-ordering.
+                    <br><br>
+                    Column re-ordering is enabled in the panel using the <CodeInline>ColumnsPanelReordering</CodeInline> property. Re-ordering is on an insert basis so it does not respect the column level <CodeInline>DragAndDropEnabled</CodeInline> property which swaps columns.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="DataGridColumnsPanelExample" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridColumnsPanelExample />
             </SectionContent>
         </DocsPageSection>
     </DocsPageContent>

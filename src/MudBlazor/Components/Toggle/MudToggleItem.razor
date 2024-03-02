@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+<div @attributes="UserAttributes" class="@Classes" style="@Style" @onclick="HandleOnClickAsync">    
+    <div class="@($"d-flex align-center justify-center mud-width-full mud-height-full {(CounterBalanceCheckmark ? "pe-7" : "")}")">
+        @if (Parent?.CheckMark == true && (CurrentIcon.IsNonEmpty() || Parent?.FixedContent == true)) {
+            <MudIcon Class="@CheckMarkClasses" Icon="@CurrentIcon" Size="Size.Small"/>
+        }
+        @if (ChildContent is not null) {
+            @ChildContent(IsSelected)
+        }
+        else {
+            <MudText Class="@TextClassName" Align="Align.Center">@(Text == null ? Value : Text)</MudText>
+        }
+    </div>
+</div>

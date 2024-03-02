@@ -115,7 +115,8 @@ namespace MudBlazor
         /// <summary>
         /// Specifies whether the column is grouped.
         /// </summary>
-        [Parameter] public bool Grouping { get; set; }
+        [Parameter] public bool Grouping { get; set; }        
+        [Parameter] public EventCallback<bool> GroupingChanged { get; set; }
 
         /// <summary>
         /// Specifies whether the column is sticky.
@@ -237,6 +238,22 @@ namespace MudBlazor
             }
         }
 
+        internal bool hideable
+        {
+            get
+            {
+                return Hideable ?? DataGrid?.Hideable ?? false;
+            }
+        }
+
+        internal bool sortable
+        {
+            get
+            {
+                return Sortable ?? DataGrid?.SortMode != SortMode.None;
+            }
+        }
+
         internal bool groupable
         {
             get
@@ -261,6 +278,7 @@ namespace MudBlazor
         private IComparer<object> _comparer = null;
         private Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
+        internal bool hidden;
         internal HeaderContext<T> headerContext;
         private FilterContext<T> filterContext;
         internal FooterContext<T> footerContext;
@@ -286,9 +304,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            if (!Hideable.HasValue)
-                Hideable = DataGrid?.Hideable;
-
+            hidden = Hidden;
             groupBy = GroupBy;
 
             if (groupable && Grouping)
@@ -355,39 +371,44 @@ namespace MudBlazor
         }
 
         // Allows child components to change column grouping.
-        internal void SetGrouping(bool g)
+        internal async Task SetGrouping(bool g)
         {
             if (groupable)
             {
                 grouping = g;
-                DataGrid?.ChangedGrouping(this);
+                await DataGrid?.ChangedGrouping(this);
+                await GroupingChanged.InvokeAsync(grouping);
             }
         }
 
         /// <summary>
         /// This method's sole purpose is for the DataGrid to remove grouping in mass.
         /// </summary>
-        internal void RemoveGrouping()
+        internal async Task RemoveGrouping()
         {
-            grouping = false;
+            if (grouping != false)
+            {
+                grouping = false;
+                await GroupingChanged.InvokeAsync(grouping);
+            }
         }
 
         public async Task HideAsync()
         {
-            Hidden = true;
-            await HiddenChanged.InvokeAsync(Hidden);
+            hidden = true;
+            await HiddenChanged.InvokeAsync(hidden);
         }
 
         public async Task ShowAsync()
         {
-            Hidden = false;
-            await HiddenChanged.InvokeAsync(Hidden);
+            hidden = false;
+            await HiddenChanged.InvokeAsync(hidden);
         }
 
         public async Task ToggleAsync()
         {
-            Hidden = !Hidden;
-            await HiddenChanged.InvokeAsync(Hidden);
+            hidden = !hidden;
+            await HiddenChanged.InvokeAsync(hidden);
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
 

@@ -23,24 +23,22 @@
                         {
                             @if (panel.TabContent == null && panel.TabWrapperContent == null)
                             {
-                                <MudTooltip Placement="@GetTooltipPlacement()" Text="@panel.ToolTip">
+                                <MudTooltip Placement="@GetTooltipPlacement()" Text="@panel.ToolTip" @key="@panel">
                                     @RenderTab(panel)
                                 </MudTooltip>
                             }
                             else
                             {
-                                if (panel.TabWrapperContent == null)
-                                {
-                                    <div class="d-inline-block" style="width: fit-content;">
+                                <div class="d-inline-block" style="width: fit-content;" @key="@panel">
+                                    @if (panel.TabWrapperContent is null) 
+                                    {
                                         @RenderTab(panel)
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="d-inline-block" style="width: fit-content;">
+                                    }
+                                    else
+                                    {
                                         @panel.TabWrapperContent(RenderTab(panel))
-                                    </div>
-                                }
+                                    }
+                                </div>
                             }
                         }
                         @if (!HideSlider && IsSliderPositionDetermined)

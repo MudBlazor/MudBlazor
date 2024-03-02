@@ -46,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void LineChartSelectionTest()
         {
-            var comp = Context.RenderComponent<LineExample1>();
+            var comp = Context.RenderComponent<LineChartSelectionTest>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
@@ -130,7 +130,7 @@ namespace MudBlazor.UnitTests.Components
         /// this is from issue #1591 "Line chart is not able to plot big Double values"
         /// </summary>
         [Test]
-        [Timeout(5000)]
+        [CancelAfter(5000)]
         public void LineChartWithBigValues()
         {
             // the test should run through instantly (max 5s for a slow build server). 

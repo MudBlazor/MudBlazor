@@ -224,9 +224,8 @@ namespace MudBlazor.Utilities
                     GetByteFromValuePart(value,4),
                     GetByteFromValuePart(value,6),
                 };
-
-                CalculateHSL();
             }
+            CalculateHSL();
         }
 
 

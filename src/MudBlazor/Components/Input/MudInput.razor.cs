@@ -11,7 +11,7 @@ namespace MudBlazor
     public partial class MudInput<T> : MudBaseInput<T>
     {
         protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder));
+            () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel);
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 

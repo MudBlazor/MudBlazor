@@ -6,7 +6,7 @@
     <Filters />
     @foreach (var item in _paths.ToList())
     {
-		<path @onclick="() => SelectedIndex = item.Index" class="mud-chart-serie" fill="@(MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count()))" d="@item.Data"></path>
+        <path @onclick="() => SelectedIndex = item.Index" class="mud-chart-serie" fill="@(MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % MudChartParent.ChartOptions.ChartPalette.Count()))" d="@item.Data"></path>
 	}
 
 	@MudChartParent?.CustomGraphics

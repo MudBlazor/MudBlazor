@@ -156,7 +156,7 @@ namespace MudBlazor
             }
         }
 
-        private string sortIconClass
+        internal string sortIconClass
         {
             get
             {
@@ -175,7 +175,7 @@ namespace MudBlazor
             }
         }
 
-        private bool hasFilter
+        internal bool hasFilter
         {
             get
             {
@@ -336,11 +336,16 @@ namespace MudBlazor
             DataGrid.DropContainerHasChanged();
         }
 
-        internal async Task AddFilterAsync()
+        internal void AddFilter()
         {
-            if (DataGrid.FilterMode == DataGridFilterMode.Simple && Column != null)
+            var filterDefinition = Column?.FilterContext.FilterDefinition;
+            if (DataGrid.FilterMode == DataGridFilterMode.Simple && filterDefinition != null)
             {
-                await DataGrid.AddFilterAsync(Column.FilterContext.FilterDefinition.Clone());
+                if (DataGrid.FilterDefinitions.All(x => x.Title != filterDefinition.Title))
+                {
+                    DataGrid.FilterDefinitions.Add(filterDefinition.Clone());
+                }
+                DataGrid.OpenFilters();
             }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
             {
@@ -427,14 +432,16 @@ namespace MudBlazor
             }
         }
 
-        internal void GroupColumn()
+        internal async Task GroupColumn()
         {
-            Column?.SetGrouping(true);
+            await Column?.SetGrouping(true);
+            DataGrid.DropContainerHasChanged();
         }
 
-        internal void UngroupColumn()
+        internal async Task UngroupColumn()
         {
-            Column?.SetGrouping(false);
+            await Column?.SetGrouping(false);
+            DataGrid.DropContainerHasChanged();
         }
 
         private void MarkAsUnsorted()

@@ -652,7 +652,12 @@ namespace MudBlazor
                 // Sourced from https://stackoverflow.com/a/43076222/4839162
                 // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
                 var expression = (MemberExpression)For.Body;
+
+                // Currently we have no solution for this which is trimming incompatible
+                // A possible solution is to use source gen
+#pragma warning disable IL2075
                 var propertyInfo = expression.Expression?.Type.GetProperty(expression.Member.Name);
+#pragma warning restore IL2075                
                 _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
 
                 _fieldIdentifier = FieldIdentifier.Create(For);

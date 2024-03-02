@@ -103,6 +103,41 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
+        [TestCase("rgba(12,204,210,0.5)", 12, 204, 210, 127)]
+        [TestCase("rgba(67,160,71,1)", 67, 160, 71, 1)]
+        [TestCase("#43a047", 67, 160, 71, 1)]
+        [TestCase("rgba(255,255,255,1)", 255, 255, 255, 255)]
+        public void FromString_RGBA_And_Darken(string input, byte r, byte g, byte b, byte alpha)
+        {
+            var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
+
+            foreach (var item in cultures)
+            {
+                CultureInfo.CurrentCulture = item;
+
+                MudColor color = new(input);
+
+                //lets darken it
+                var darkenColor = color.ColorRgbDarken();
+
+                //use as reference
+                var colorFromRGB = new MudColor(color.R, color.G, color.B, color.A);
+                var darkenColorFromRGB = colorFromRGB.ColorRgbDarken();
+
+                darkenColor.R.Should().Be(darkenColorFromRGB.R);
+                darkenColor.G.Should().Be(darkenColorFromRGB.G);
+                darkenColor.B.Should().Be(darkenColorFromRGB.B);
+
+                //MudColor implicitCasted = input;
+
+                //implicitCasted.R.Should().Be(r);
+                //implicitCasted.G.Should().Be(g);
+                //implicitCasted.B.Should().Be(b);
+                //implicitCasted.A.Should().Be(alpha);
+            }
+        }
+
+        [Test]
         public void FromRGB_Byte()
         {
             MudColor color = new((byte)123, (byte)240, (byte)130, (byte)76);

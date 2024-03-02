@@ -86,7 +86,7 @@ namespace MudBlazor
         /// <param name="identifier">An identifier for the function to invoke. For example, the value <c>"someScope.someFunction"</c> will invoke the function <c>window.someScope.someFunction</c>.</param>
         /// <param name="args">JSON-serializable arguments.</param>
         /// <returns>An instance of <typeparamref name="TValue"/> obtained by JSON-deserializing the return value into a tuple. The first item (sucess) is true in case where there was no exception, otherwise fall.</returns>
-        public static async ValueTask<(bool success, TValue value)> InvokeAsyncWithErrorHandling<TValue>(this IJSRuntime jsRuntime, string identifier, params object[] args)
+        public static async ValueTask<(bool success, TValue value)> InvokeAsyncWithErrorHandling<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] TValue>(this IJSRuntime jsRuntime, string identifier, params object[] args)
             => await jsRuntime.InvokeAsyncWithErrorHandling(default(TValue), identifier, args);
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace MudBlazor
             // catch prerending errors since there is no browser at this point.
             catch (InvalidOperationException ex) when (ex.Message.Contains("prerender", StringComparison.InvariantCultureIgnoreCase))
             {
-                return (false, fallbackValue);;
+                return (false, fallbackValue);
             }
             catch (JSDisconnectedException)
             {
