@@ -70,7 +70,7 @@ Most important files:
 ## Parameter Registration or Why we can't have Logic in Parameters Setters
 MudBlazor parameters shall be auto-properties, meaning that there must not be logic in the property getter or setter. This rule prevents update-loops and other nasty bugs such as swallowed exceptions due to unobserved async discards. 
 "This is quite inconvenient" you may say, where do I call the EventCallback and how to react to parameter changes? Luckily the MudBlazor team has got your back. Thanks to our ParameterState framework you don't need to keep track of 
-old parameter values in fields mess around with `SetParametersAsync`.
+old parameter values in fields and mess around with `SetParametersAsync`.
 
 **TLDR; Register parameters in the constructor with a change handler that contains all the code that needs to be executed when the parameter value changes.**
 
