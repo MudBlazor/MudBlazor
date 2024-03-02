@@ -44,16 +44,16 @@
 </div>
 
 @code {
-    IEnumerable<Element> _elements = new List<Element>();
+    private IEnumerable<Element> _elements = new List<Element>();
 
-    DataGridFilterMode _filterMode = DataGridFilterMode.Simple;
-    bool _dragDropReorderingEnabled = true;
-    bool _columnsPanelReorderingEnabled = true;
-    bool _hideable = true;
-    bool _filterable = true;
-    bool _groupable = true;
-    bool _hideMolar = false;
-    bool _hideGroup = false;
+    private DataGridFilterMode _filterMode = DataGridFilterMode.Simple;
+    private bool _dragDropReorderingEnabled = true;
+    private bool _columnsPanelReorderingEnabled = true;
+    private bool _hideable = true;
+    private bool _filterable = true;
+    private bool _groupable = true;
+    private bool _hideMolar = false;
+    private bool _hideGroup = false;
     public MudDataGrid<Element> grid = null;
 
 
@@ -68,7 +68,7 @@
         _elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
 
-    public async Task HideColumnsAsync(bool hide)
+    private async Task HideColumnsAsync(bool hide)
     {        
         foreach (var column in grid.RenderedColumns)
         {
