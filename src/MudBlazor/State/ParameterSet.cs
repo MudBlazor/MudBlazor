@@ -13,7 +13,8 @@ namespace MudBlazor.State;
 
 #nullable enable
 /// <summary>
-/// Represents a collection of registered parameters
+/// Represents a collection of registered parameters. This class is part of
+/// MudBlazor's ParameterState framework. For details and usage please read CONTRIBUTING.md
 /// </summary>
 internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
 {
@@ -51,6 +52,11 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
         }
     }
 
+    /// <summary>
+    /// Determines which <see cref="ParameterState"/> have been changed and calls their respective change handler.
+    /// </summary>
+    /// <param name="baseSetParametersAsync">A func to call the base class' SetParametersAsync</param>
+    /// <param name="parameters">The ParameterView coming from Blazor</param>
     public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
         // We check for HasHandler first for performance since we do not need HasParameterChanged if there is nothing to execute.

@@ -11,10 +11,12 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor.State;
 
 /// <summary>
-/// 
+/// The ParameterState automatically manages parameter value changes as part of
+/// MudBlazor's ParameterState framework. For details and usage please read CONTRIBUTING.md
 /// </summary>
 /// <remarks>
-/// 
+/// Note: usually you don't need to create this object directly. Instead use the RegisterParameter method from within
+/// the component's constructor.
 /// </remarks>
 /// <typeparam name="T">Parameter's type.</typeparam>
 #nullable enable
@@ -51,6 +53,15 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
         Value = default;
     }
 
+    /// <summary>
+    /// Set the parameter's value. 
+    /// </summary>
+    /// <remarks>
+    /// Note: you should never set the parameter's property directly from within the component. Instead, use SetValueAsync
+    /// on the ParameterState object.
+    /// </remarks>
+    /// <param name="value"></param>
+    /// <returns></returns>
     public Task SetValueAsync(T value)
     {
         if (!EqualityComparer<T>.Default.Equals(Value, value))
@@ -64,6 +75,10 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Implements <see cref="IParameterComponentLifeCycle.OnInitialized"/>.
+    /// Called by the ParameterState framework. You shouldn't need to call this directly.
+    /// </summary>
     public void OnInitialized()
     {
         IsInitialized = true;
@@ -72,6 +87,10 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
         _lastValue = currentParameterValue;
     }
 
+    /// <summary>
+    /// Implements <see cref="IParameterComponentLifeCycle.OnParametersSet"/>.
+    /// Called by the ParameterState framework. You shouldn't need to call this directly.
+    /// </summary>
     public void OnParametersSet()
     {
         var currentParameterValue = _getParameterValueFunc();
@@ -82,6 +101,10 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
         }
     }
 
+    /// <summary>
+    /// Implements <see cref="IParameterComponentLifeCycle.ParameterChangeHandleAsync"/>.
+    /// Called by the ParameterState framework. You shouldn't need to call this directly.
+    /// </summary>
     public Task ParameterChangeHandleAsync()
     {
         return HasHandler ? ParameterChangedHandler.HandleAsync() : Task.CompletedTask;
@@ -95,6 +118,21 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
         return parameters.HasParameterChanged(ParameterName, currentParameterValue);
     }
 
+    /// <summary>
+    /// Create a <see cref="ParameterState"/> object which automatically manages parameter value changes as part of
+    /// MudBlazor's ParameterState framework. For details and usage please read CONTRIBUTING.md
+    ///
+    /// Note: usually you don't need to call this directly. Instead use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
+    /// component's constructor.  
+    /// </summary>
+    /// <param name="parameterName">pass the parameter name using nameof(...)</param>
+    /// <param name="getParameterValueFunc">a get func that allows ParameterState to read the property value</param>
+    /// <param name="eventCallbackFunc">a get func that allows ParameterState to get the EventCallback of the parameter</param>
+    /// <param name="parameterChangedHandler">
+    ///     a change handler containing code that needs to be executed when the parameter value changes
+    /// </param>
+    /// <typeparam name="T">The type of the property value</typeparam>
+    /// <returns>The ParameterState object to be stored in a field for accessing the current value.</returns>
     public static ParameterState<T> Attach(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null) => new(parameterName, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
 
     /// <inheritdoc />
