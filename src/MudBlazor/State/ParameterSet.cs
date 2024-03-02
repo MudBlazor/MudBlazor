@@ -20,6 +20,11 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
 {
     private readonly List<IParameterComponentLifeCycle> _parameters = new();
 
+    /// <summary>
+    /// Adds a parameter to the parameter set.
+    /// </summary>
+    /// <param name="parameter">The parameter to add.</param>
+    /// <exception cref="InvalidOperationException">Thrown when the parameter is already registered.</exception>
     public void Add(IParameterComponentLifeCycle parameter)
     {
         if (_parameters.Contains(parameter))
@@ -71,7 +76,9 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
         }
     }
 
+    /// <inheritdoc/>
     public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => _parameters.GetEnumerator();
 
+    /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

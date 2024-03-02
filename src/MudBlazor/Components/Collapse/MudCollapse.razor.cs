@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
@@ -138,6 +139,7 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        [ExcludeFromCodeCoverage]
         [Obsolete($"Use {nameof(AnimationEndAsync)} instead. This will be removed in v7")]
         public void AnimationEnd()
         {
