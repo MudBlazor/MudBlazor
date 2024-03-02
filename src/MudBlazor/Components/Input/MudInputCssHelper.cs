@@ -2,21 +2,20 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
+using System;
 
 namespace MudBlazor
 {
     internal static class MudInputCssHelper
     {
-        public static string GetClassname<T>(MudBaseInput<T> baseInput, Func<bool> shrinkWhen) =>
+        public static string GetClassname<T>(MudBaseInput<T> baseInput, Func<bool> shrinkWhen, Color focusColor) =>
             new CssBuilder("mud-input")
                 .AddClass($"mud-input-{baseInput.Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-adorned-{baseInput.Adornment.ToDescriptionString()}", baseInput.Adornment != Adornment.None)
                 .AddClass($"mud-input-margin-{baseInput.Margin.ToDescriptionString()}", when: () => baseInput.Margin != Margin.None)
                 .AddClass("mud-input-underline", when: () => baseInput.DisableUnderLine == false && baseInput.Variant != Variant.Outlined)
-                .AddClass($"mud-input-underline-focus-{baseInput.FocusColor.ToDescriptionString()}", when: () => baseInput.Variant != Variant.Outlined)
+                .AddClass($"mud-input-underline-focus-{focusColor.ToDescriptionString()}", when: () => baseInput.Variant != Variant.Outlined && focusColor != Color.Default)
                 .AddClass("mud-shrink", when: shrinkWhen)
                 .AddClass("mud-disabled", baseInput.Disabled)
                 .AddClass("mud-input-error", baseInput.HasErrors)

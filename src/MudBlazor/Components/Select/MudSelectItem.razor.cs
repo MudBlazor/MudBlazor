@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -11,12 +11,12 @@ namespace MudBlazor
     /// </summary>
     public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
     {
-        private String GetCssClasses() =>  new CssBuilder()
+        private String GetCssClasses() => new CssBuilder()
             .AddClass(Class)
             .Build();
 
         private IMudSelect _parent;
-        internal string ItemId { get; } = "_"+Guid.NewGuid().ToString().Substring(0,8);
+        internal string ItemId { get; } = "_" + Guid.NewGuid().ToString().Substring(0, 8);
 
         /// <summary>
         /// The parent select component
@@ -46,7 +46,7 @@ namespace MudBlazor
             }
         }
 
-        private IMudShadowSelect  _shadowParent;
+        private IMudShadowSelect _shadowParent;
         private bool _isSelected;
 
         [CascadingParameter]
@@ -85,6 +85,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public T Value { get; set; }
+
+        /// <summary>
+        /// The Color of the component when it is selected. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color SelectedColor { get; set; } = Color.Primary;
 
         /// <summary>
         /// Mirrors the MultiSelection status of the parent select

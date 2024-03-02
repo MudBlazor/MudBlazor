@@ -1,9 +1,9 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -180,6 +180,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
         public int MaxLines { get; set; }
+
+        /// <summary>
+        /// The FocusColor of the component. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color FocusColor { get; set; } = Color.Primary;
     }
 
     [Obsolete("MudTextFieldString is no longer available.", true)]

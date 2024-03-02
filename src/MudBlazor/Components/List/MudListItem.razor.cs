@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
+using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
-using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -65,6 +64,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string AvatarClass { get; set; }
+
+        /// <summary>
+        /// The Text Color of the component. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         private bool _disabled;
         /// <summary>

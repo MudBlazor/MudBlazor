@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -46,6 +45,11 @@ namespace MudBlazor
         ///  Will adjust vertical spacing. 
         /// </summary>
         [Parameter] public Margin Margin { get; set; } = Margin.None;
+
+        /// <summary>
+        /// The FocusColor of the component. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color FocusColor { get; set; } = Color.Primary;
 
         /// <summary>
         ///  Will set the for attribute for WCAG accessiblility

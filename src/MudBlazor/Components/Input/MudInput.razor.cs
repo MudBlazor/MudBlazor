@@ -2,19 +2,19 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Utilities;
+using System;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
     public partial class MudInput<T> : MudBaseInput<T>
     {
         protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel);
+            () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel, FocusColor);
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
@@ -27,9 +27,10 @@ namespace MudBlazor
                     .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
                     .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons == true)
                     .Build();
+
         protected string OutlinedFocusColorClassname =>
             new CssBuilder()
-            .AddClass($"mud-input-outlined-border-focus-{FocusColor.ToDescriptionString()}")
+            .AddClass($"mud-input-outlined-border-focus-{FocusColor.ToDescriptionString()}", when: () => FocusColor != Color.Default)
             .Build();
 
 
@@ -37,6 +38,11 @@ namespace MudBlazor
         /// Type of the input element. It should be a valid HTML5 input type.
         /// </summary>
         [Parameter] public InputType InputType { get; set; } = InputType.Text;
+
+        /// <summary>
+        /// The FocusColor of the component. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color FocusColor { get; set; } = Color.Primary;
 
         internal override InputType GetInputType() => InputType;
 

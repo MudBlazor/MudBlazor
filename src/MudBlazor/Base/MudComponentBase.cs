@@ -2,12 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
+using System;
+using System.Collections.Generic;
 
 namespace MudBlazor
 {
@@ -47,13 +47,6 @@ namespace MudBlazor
         [Parameter(CaptureUnmatchedValues = true)]
         [Category(CategoryTypes.ComponentBase.Common)]
         public Dictionary<string, object?> UserAttributes { get; set; } = new Dictionary<string, object?>();
-
-        /// <summary>
-        /// The FocusColor of the component. It supports the theme colors.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public Color FocusColor { get; set; } = Color.Default;
 
         /// <summary>
         /// Gets or sets a value indicating whether <see cref="JSRuntime" /> is available.

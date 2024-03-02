@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Logging;
+using MudBlazor.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.Logging;
-using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -180,6 +180,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color ProgressIndicatorColor { get; set; } = Color.Default;
+
+        /// <summary>
+        /// The FocusColor of the component. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color FocusColor { get; set; } = Color.Primary;
 
         /// <summary>
         /// Func that returns a list of items matching the typed text. Provides a cancellation token that

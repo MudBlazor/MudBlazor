@@ -76,6 +76,12 @@ namespace MudBlazor
         public string? HelperText { get; set; }
 
         /// <summary>
+        /// The FocusColor of the component. It supports the theme colors.
+        /// </summary>
+        [Parameter]
+        public Color FocusColor { get; set; } = Color.Default;
+
+        /// <summary>
         /// If true, the helper text will only be visible on focus.
         /// </summary>
         [Parameter]
