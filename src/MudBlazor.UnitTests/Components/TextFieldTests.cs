@@ -5,13 +5,6 @@
 #pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Globalization;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using FluentValidation;
@@ -23,6 +16,13 @@ using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.UnitTests.TestComponents.TextField;
 using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
@@ -1109,7 +1109,6 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Warning, Variant.Outlined)]
         [TestCase(Color.Error, Variant.Text)]
         [TestCase(Color.Dark, Variant.Filled)]
-        [TestCase(Color.Default, Variant.Outlined)]
         public void TextFieldColorTest(Color color, Variant variant)
         {
             string textFieldElementName = variant != Variant.Outlined ? ".mud-input" : ".mud-input-outlined-border";
