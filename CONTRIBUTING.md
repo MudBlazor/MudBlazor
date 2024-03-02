@@ -181,7 +181,7 @@ private Task ToggleAsync()
 }
 ```
 
-### Example of a good
+### Example of a good code
 ```c#
 private ParameterState<bool> _expandedState;
 
