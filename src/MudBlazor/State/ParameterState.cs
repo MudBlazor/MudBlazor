@@ -16,7 +16,7 @@ namespace MudBlazor.State;
 internal class ParameterState
 {
     /// <summary>
-    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's <see cref="ParameterState"/> framework.
+    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's ParameterState framework.
     /// </summary>
     /// <typeparam name="T">The type of the component's property value.</typeparam>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
@@ -33,7 +33,7 @@ internal class ParameterState
     }
 
     /// <summary>
-    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's <see cref="ParameterState"/> framework.
+    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's ParameterState framework.
     /// </summary>
     /// <typeparam name="T">The type of the component's property value.</typeparam>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
@@ -50,7 +50,7 @@ internal class ParameterState
     }
 
     /// <summary>
-    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's <see cref="ParameterState"/> framework.
+    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's ParameterState framework.
     /// </summary>
     /// <typeparam name="T">The type of the component's property value.</typeparam>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
@@ -66,7 +66,7 @@ internal class ParameterState
     }
 
     /// <summary>
-    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's <see cref="ParameterState"/> framework.
+    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's ParameterState framework.
     /// </summary>
     /// <typeparam name="T">The type of the component's property value.</typeparam>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
@@ -82,7 +82,7 @@ internal class ParameterState
     }
 
     /// <summary>
-    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's <see cref="ParameterState"/> framework.
+    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's ParameterState framework.
     /// </summary>
     /// <typeparam name="T">The type of the component's property value.</typeparam>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>

@@ -25,14 +25,21 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     private T? _lastValue;
     private readonly Func<T> _getParameterValueFunc;
     private readonly Func<EventCallback<T>> _eventCallbackFunc;
+    private readonly IParameterChangedHandler? _parameterChangedHandler;
 
     /// <inheritdoc />
     public string ParameterName { get; }
 
     /// <inheritdoc />
-    [MemberNotNullWhen(true, nameof(ParameterChangedHandler))]
-    public bool HasHandler => ParameterChangedHandler is not null;
+    [MemberNotNullWhen(true, nameof(_parameterChangedHandler))]
+    public bool HasHandler => _parameterChangedHandler is not null;
 
+    /// <summary>
+    /// Gets a value indicating whether the object is initialized.
+    /// </summary>
+    /// <remarks>
+    /// This property is <c>true</c> once the <see cref="OnInitialized"/> method is called; otherwise, <c>false</c>.
+    /// </remarks>
     [MemberNotNullWhen(true, nameof(_lastValue), nameof(Value))]
     public bool IsInitialized { get; private set; }
 
@@ -41,14 +48,12 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     /// </summary>
     public T? Value { get; private set; }
 
-    public IParameterChangedHandler? ParameterChangedHandler { get; }
-
     private ParameterState(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null)
     {
         ParameterName = parameterName;
         _getParameterValueFunc = getParameterValueFunc;
         _eventCallbackFunc = eventCallbackFunc;
-        ParameterChangedHandler = parameterChangedHandler;
+        _parameterChangedHandler = parameterChangedHandler;
         _lastValue = default;
         Value = default;
     }
@@ -98,7 +103,7 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     /// <inheritdoc />
     public Task ParameterChangeHandleAsync()
     {
-        return HasHandler ? ParameterChangedHandler.HandleAsync() : Task.CompletedTask;
+        return HasHandler ? _parameterChangedHandler.HandleAsync() : Task.CompletedTask;
     }
 
     /// <inheritdoc />
@@ -110,19 +115,19 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     }
 
     /// <summary>
-    /// Create a <see cref="ParameterState"/> object which automatically manages parameter value changes as part of
-    /// MudBlazor's ParameterState framework. For details and usage please read CONTRIBUTING.md
+    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's ParameterState framework.
     ///
     /// Note: usually you don't need to call this directly. Instead, use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
     /// component's constructor.  
     /// </summary>
-    /// <param name="parameterName">pass the parameter name using nameof(...)</param>
-    /// <param name="getParameterValueFunc">a get func that allows ParameterState to read the property value</param>
-    /// <param name="eventCallbackFunc">a get func that allows ParameterState to get the EventCallback of the parameter</param>
-    /// <param name="parameterChangedHandler">
-    ///     a change handler containing code that needs to be executed when the parameter value changes
-    /// </param>
-    /// <returns>The ParameterState object to be stored in a field for accessing the current value.</returns>
+    /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+    /// <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
+    /// <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
+    /// <param name="parameterChangedHandler">A change handler containing code that needs to be executed when the parameter value changes/</param>
+    /// <remarks>
+    /// For details and usage please read CONTRIBUTING.md
+    /// </remarks>
+    /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
     public static ParameterState<T> Attach(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null) => new(parameterName, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
 
     /// <inheritdoc />
