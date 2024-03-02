@@ -15,9 +15,7 @@ public interface IParameterComponentLifeCycle
     /// </summary>
     string ParameterName { get; }
 
-    /// <summary>
-    /// 
-    /// </summary>
+
     bool HasHandler { get; }
 
     /// <summary>
@@ -27,9 +25,21 @@ public interface IParameterComponentLifeCycle
     /// <returns><c>true</c> if the parameter value has changed, <c>false</c> otherwise.</returns>
     bool HasParameterChanged(ParameterView parameters);
 
+    /// <summary>
+    /// Called by the ParameterState framework. You shouldn't need to call this directly.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task ParameterChangeHandleAsync();
 
+    /// <summary>
+    /// Implements <see cref="IParameterComponentLifeCycle.OnInitialized"/>.
+    /// Called by the ParameterState framework. You shouldn't need to call this directly.
+    /// </summary>
     void OnInitialized();
 
+    /// <summary>
+    /// Implements <see cref="IParameterComponentLifeCycle.OnParametersSet"/>.
+    /// Called by the ParameterState framework. You shouldn't need to call this directly.
+    /// </summary>
     void OnParametersSet();
 }

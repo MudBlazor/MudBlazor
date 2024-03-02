@@ -60,8 +60,8 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     /// Note: you should never set the parameter's property directly from within the component. Instead, use SetValueAsync
     /// on the ParameterState object.
     /// </remarks>
-    /// <param name="value"></param>
-    /// <returns></returns>
+    /// <param name="value">New parameter's value.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public Task SetValueAsync(T value)
     {
         if (!EqualityComparer<T>.Default.Equals(Value, value))
@@ -75,10 +75,7 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
         return Task.CompletedTask;
     }
 
-    /// <summary>
-    /// Implements <see cref="IParameterComponentLifeCycle.OnInitialized"/>.
-    /// Called by the ParameterState framework. You shouldn't need to call this directly.
-    /// </summary>
+    /// <inheritdoc />
     public void OnInitialized()
     {
         IsInitialized = true;
@@ -87,10 +84,7 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
         _lastValue = currentParameterValue;
     }
 
-    /// <summary>
-    /// Implements <see cref="IParameterComponentLifeCycle.OnParametersSet"/>.
-    /// Called by the ParameterState framework. You shouldn't need to call this directly.
-    /// </summary>
+    /// <inheritdoc />
     public void OnParametersSet()
     {
         var currentParameterValue = _getParameterValueFunc();
@@ -101,10 +95,7 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
         }
     }
 
-    /// <summary>
-    /// Implements <see cref="IParameterComponentLifeCycle.ParameterChangeHandleAsync"/>.
-    /// Called by the ParameterState framework. You shouldn't need to call this directly.
-    /// </summary>
+    /// <inheritdoc />
     public Task ParameterChangeHandleAsync()
     {
         return HasHandler ? ParameterChangedHandler.HandleAsync() : Task.CompletedTask;
@@ -122,7 +113,7 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     /// Create a <see cref="ParameterState"/> object which automatically manages parameter value changes as part of
     /// MudBlazor's ParameterState framework. For details and usage please read CONTRIBUTING.md
     ///
-    /// Note: usually you don't need to call this directly. Instead use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
+    /// Note: usually you don't need to call this directly. Instead, use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
     /// component's constructor.  
     /// </summary>
     /// <param name="parameterName">pass the parameter name using nameof(...)</param>
@@ -131,7 +122,6 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     /// <param name="parameterChangedHandler">
     ///     a change handler containing code that needs to be executed when the parameter value changes
     /// </param>
-    /// <typeparam name="T">The type of the property value</typeparam>
     /// <returns>The ParameterState object to be stored in a field for accessing the current value.</returns>
     public static ParameterState<T> Attach(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null) => new(parameterName, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
 
