@@ -161,6 +161,63 @@ private async Task ExpandedChangedHandlerAsync()
 
 We are slowly but surely refactoring all of those, you can help if you like.
 
+## Avoid overwriting parameters in Blazor Components
+This `ParameterState` framework offers a solution to prevent parameter overwriting issues often encountered in Blazor components.
+For a detailed explanation of this problem, refer to the [article](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/overwriting-parameters?view=aspnetcore-8.0#overwritten-parameters).
+
+### Example of a bad code
+```c#
+[Parameter]
+public bool Expanded { get; set; }
+
+[Parameter]
+public EventCallback<bool> ExpandedChanged { get; set; }
+
+
+private Task ToggleAsync()
+{
+	Expanded = !Expanded;
+	return ExpandedChanged.InvokeAsync(Expanded);
+}
+
+[Parameter]
+public bool Expanded { get; set; }
+
+[Parameter]
+public EventCallback<bool> ExpandedChanged { get; set; }
+
+
+private Task ToggleAsync()
+{
+	Expanded = !Expanded;
+	return ExpandedChanged.InvokeAsync(Expanded);
+}
+```
+
+### Example of a good
+```c#
+private ParameterState<bool> _expandedState;
+
+[Parameter]
+public bool Expanded { get; set; }
+
+[Parameter]
+public EventCallback<bool> ExpandedChanged { get; set; }
+
+public MudTreeViewItemToggleButton()
+{
+    _expandedState = RegisterParameter(
+        nameof(Expanded),
+        () => Expanded,
+        () => ExpandedChanged
+    );
+}
+
+private Task ToggleAsync()
+{
+	return _expanded.SetValueAsync(!_expanded.Value);
+}
+```
 
 ## Unit Testing and Continuous Integration
 
