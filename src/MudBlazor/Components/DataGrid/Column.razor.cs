@@ -10,6 +10,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -17,6 +18,7 @@ namespace MudBlazor
     public abstract partial class Column<T> : MudComponentBase
     {
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
+        internal ParameterState<bool> HiddenState { get; }
 
         internal readonly Guid uid = Guid.NewGuid();
 
@@ -278,7 +280,6 @@ namespace MudBlazor
         private IComparer<object> _comparer = null;
         private Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
-        internal bool hidden;
         internal HeaderContext<T> headerContext;
         private FilterContext<T> filterContext;
         internal FooterContext<T> footerContext;
@@ -302,9 +303,14 @@ namespace MudBlazor
             }
         }
 
+        protected Column()
+        {
+            HiddenState = RegisterParameter(nameof(Hidden), () => Hidden, () => HiddenChanged);
+        }
+
         protected override void OnInitialized()
         {
-            hidden = Hidden;
+            base.OnInitialized();
             groupBy = GroupBy;
 
             if (groupable && Grouping)
@@ -395,20 +401,20 @@ namespace MudBlazor
 
         public async Task HideAsync()
         {
-            hidden = true;
-            await HiddenChanged.InvokeAsync(hidden);
+            await HiddenState.SetValueAsync(true);
+            await HiddenChanged.InvokeAsync(HiddenState.Value);
         }
 
         public async Task ShowAsync()
         {
-            hidden = false;
-            await HiddenChanged.InvokeAsync(hidden);
+            await HiddenState.SetValueAsync(false);
+            await HiddenChanged.InvokeAsync(HiddenState.Value);
         }
 
         public async Task ToggleAsync()
         {
-            hidden = !hidden;
-            await HiddenChanged.InvokeAsync(hidden);
+            await HiddenState.SetValueAsync(!HiddenState.Value);
+            await HiddenChanged.InvokeAsync(HiddenState.Value);
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
 

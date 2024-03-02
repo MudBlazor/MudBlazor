@@ -72,9 +72,16 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
         if (!EqualityComparer<T>.Default.Equals(Value, value))
         {
             Value = value;
-            _lastValue = value;
+            var eventCallback = _eventCallbackFunc();
+            //_lastValue = value;
+            //return eventCallback.InvokeAsync(value);
 
-            return _eventCallbackFunc().InvokeAsync(value);
+            if (eventCallback.HasDelegate)
+            {
+                _lastValue = value;
+
+                return eventCallback.InvokeAsync(value);
+            }
         }
 
         return Task.CompletedTask;

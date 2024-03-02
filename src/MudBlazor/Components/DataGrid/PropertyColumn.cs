@@ -32,6 +32,7 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
             // We have to do a bit of pre-processing on the lambda expression. Only do that if it's new or changed.
             if (_lastAssignedProperty != Property)
             {
