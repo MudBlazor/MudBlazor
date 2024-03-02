@@ -94,10 +94,10 @@ namespace MudBlazor
         /// Note: Register must be called in the constructor! 
         /// </summary>
         /// <param name="parameterName">Use nameof(...) to pass the parameter name</param>
-        /// <param name="getParameterValueFunc">A get function so the base can retrieve the parameter value</param>
-        /// <param name="eventCallbackFunc">A get function so the base can retrieve the EventCallback of the parameter</param>
-        /// <param name="parameterChangedHandler">A function where you can react to parameter changes</param>
-        /// <typeparam name="T">The parameter type</typeparam>
+        /// <param name="getParameterValueFunc">A get function the ParameterState uses to retrieve the parameter value</param>
+        /// <param name="eventCallbackFunc">A get function the ParameterState uses to retrieve the EventCallback of the parameter</param>
+        /// <param name="parameterChangedHandler">A function that is executed when the parameter value changes</param>
+        /// <typeparam name="T">The parameter's value type</typeparam>
         /// <returns>Returns the ParameterState object so you can store it in a field to be able to set its value.</returns>
         internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Action parameterChangedHandler)
         {
