@@ -179,19 +179,6 @@ private Task ToggleAsync()
 	Expanded = !Expanded;
 	return ExpandedChanged.InvokeAsync(Expanded);
 }
-
-[Parameter]
-public bool Expanded { get; set; }
-
-[Parameter]
-public EventCallback<bool> ExpandedChanged { get; set; }
-
-
-private Task ToggleAsync()
-{
-	Expanded = !Expanded;
-	return ExpandedChanged.InvokeAsync(Expanded);
-}
 ```
 
 ### Example of a good
