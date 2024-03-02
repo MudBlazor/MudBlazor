@@ -166,10 +166,10 @@ public class ParameterStateTests
         var parameterState2 = ParameterState.Attach("TestParameter", () => 10, () => (EventCallback<int>)default);
 
         // Act
-        var areEqual = parameterState1.Equals(parameterState2);
+        var result = parameterState1.Equals(parameterState2);
 
         // Assert
-        areEqual.Should().BeTrue();
+        result.Should().BeTrue();
     }
 
     [Test]
@@ -180,10 +180,10 @@ public class ParameterStateTests
         var parameterState2 = ParameterState.Attach("TestParameter2", () => 10, () => (EventCallback<int>)default);
 
         // Act
-        var areEqual = parameterState1.Equals(parameterState2);
+        var result = parameterState1.Equals(parameterState2);
 
         // Assert
-        areEqual.Should().BeFalse();
+        result.Should().BeFalse();
     }
 
     [Test]
@@ -193,10 +193,10 @@ public class ParameterStateTests
         var parameterState = ParameterState.Attach("TestParameter1", () => 5, () => (EventCallback<int>)default);
 
         // Act
-        var areEqual = parameterState.Equals(parameterState);
+        var result = parameterState.Equals(parameterState);
 
         // Assert
-        areEqual.Should().BeTrue();
+        result.Should().BeTrue();
     }
 
     [Test]
@@ -206,10 +206,24 @@ public class ParameterStateTests
         var parameterState = ParameterState.Attach("TestParameter1", () => 5, () => (EventCallback<int>)default);
 
         // Act
-        var areEqual = parameterState.Equals(null);
+        var result = parameterState.Equals(null);
 
         // Assert
-        areEqual.Should().BeFalse();
+        result.Should().BeFalse();
+    }
+
+    [Test]
+    public void Equals_WithDifferentType_ReturnsFalse()
+    {
+        // Arrange
+        var parameterState = ParameterState.Attach("TestParameter1", () => 5, () => (EventCallback<int>)default);
+        var otherObject = new object();
+
+        // Act
+        var result = parameterState.Equals(otherObject);
+
+        // Assert
+        result.Should().BeFalse();
     }
 
     [Test]
@@ -222,10 +236,10 @@ public class ParameterStateTests
         // Act
         var hashCode1 = parameterState1.GetHashCode();
         var hashCode2 = parameterState2.GetHashCode();
-        var areEqual = hashCode1 == hashCode2;
+        var result = hashCode1 == hashCode2;
 
         // Assert
-        areEqual.Should().BeTrue();
+        result.Should().BeTrue();
     }
 
     [Test]
@@ -238,9 +252,9 @@ public class ParameterStateTests
         // Act
         var hashCode1 = parameterState1.GetHashCode();
         var hashCode2 = parameterState2.GetHashCode();
-        var areEqual = hashCode1 == hashCode2;
+        var result = hashCode1 == hashCode2;
 
         // Assert
-        areEqual.Should().BeFalse();
+        result.Should().BeFalse();
     }
 }
