@@ -310,21 +310,21 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         // [WIP]: OpenToMonth_Select3rdMonth_Select2ndDay_CheckDate
-        public void OpenToMonth_Select3rdMonth_Select2ndDay_Select15Hour_Select25Minutes_CheckDate()
+        public void OpenToMonth_Select4thMonth_Select23rdDay_Select15Hour_Select25Minutes_CheckDate()
         {
             var comp = OpenPicker(Parameter("DateOpenTo", OpenTo.Month));
             var picker = comp.FindComponent<MudDateTimePicker>();
             picker.Instance.DateTime.Should().BeNull();
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[2].Click();
-            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("2")).First().Click();
+            comp.FindAll("button.mud-picker-month")[3].Click();
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().Click();
             // Click on external dial (15 hours) and then click on 25 minutes
             comp.FindAll("div.mud-hour")[5].Click();
             comp.FindAll("div.mud-minute")[25].Click();
             // clicking outside to close
             comp.Find("div.mud-overlay").Click();
-            picker.Instance.DateTime.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-3-2 15:25:00"));
+            picker.Instance.DateTime.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-4-23 15:25:00"));
         }
 
         [Test]
@@ -338,7 +338,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             comp.FindAll("button.mud-picker-month")[3].Click();
             comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().Click();
-            Console.WriteLine(string.Join(",", comp.FindAll("button.mud-picker-calendar-day").Select(x => x.TrimmedText())));
+            // Console.WriteLine(string.Join(",", comp.FindAll("button.mud-picker-calendar-day").Select(x => x.TrimmedText())));
             // Click on external dial (16 hours) and then click on 35 minutes
             comp.FindAll("div.mud-hour")[7].Click();
             comp.FindAll("div.mud-minute")[35].Click();
