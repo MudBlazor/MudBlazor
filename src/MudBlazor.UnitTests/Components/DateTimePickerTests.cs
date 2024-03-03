@@ -84,6 +84,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SetPickerValue_CheckDate_SetPickerDate_CheckValue()
         {
+            var culture = CultureInfo.CurrentCulture;
+            string dateFormat = $"{culture.DateTimeFormat.ShortDatePattern} {culture.DateTimeFormat.ShortTimePattern}";
             var comp = Context.RenderComponent<MudDateTimePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
@@ -92,7 +94,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(p => p.Text, DateTime.Parse("2020-10-23 20:30:00").ToString(picker.DateTimeFormat));
             picker.DateTime.Should().Be(DateTime.Parse("2020-10-23 20:30:00"));
             comp.SetParam(p => p.DateTime, DateTime.Parse("2020-10-26 12:45:20"));
-            picker.Text.Should().Be(DateTime.Parse("2020-10-26 12:45:20").ToString(picker.DateTimeFormat));
+            picker.Text.Should().Be(DateTime.Parse("2020-10-26 12:45").ToString(dateFormat));
         }
 
         [Test]
@@ -128,7 +130,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        // WIP: The culture format is not applied
         public async Task DatePicker_Should_ApplyCultureDateFormat()
         {
             var comp = Context.RenderComponent<MudDateTimePicker>();
@@ -140,18 +141,19 @@ namespace MudBlazor.UnitTests.Components
             var customCulture = new CultureInfo("en-US");
             customCulture.DateTimeFormat.ShortDatePattern.Should().Be("M/d/yyyy");
             customCulture.DateTimeFormat.ShortDatePattern = "dd MM yyyy";
+            customCulture.DateTimeFormat.ShortTimePattern = "HH:mm";
             comp.SetParam(p => p.Culture, customCulture);
 
-            comp.SetParam(p => p.Text, "23 10 2020");
-            picker.DateTime.Should().Be(new DateTime(2020, 10, 23));
-            comp.SetParam(p => p.DateTime, new DateTime(2020, 10, 26));
-            picker.Text.Should().Be("26 10 2020 00:00:00");
+            comp.SetParam(p => p.Text, "23 10 2020 23:45");
+            picker.DateTime.Should().Be(DateTime.Parse("2020-10-23 23:45:00"));
+            comp.SetParam(p => p.DateTime, DateTime.Parse("2020-10-26 23:45:00"));
+            picker.Text.Should().Be("26 10 2020 23:45");
 
             customCulture.DateTimeFormat.ShortDatePattern = "yyyy-MM-dd";
-            comp.SetParam(p => p.Text, "13 10 2020");
-            picker.DateTime.Should().Be(new DateTime(2020, 10, 13));
-            comp.SetParam(p => p.DateTime, new DateTime(2020, 10, 16));
-            picker.Text.Should().Be("16 10 2020");
+            comp.SetParam(p => p.Text, "2024-03-13 00:00");
+            picker.DateTime.Should().Be(DateTime.Parse("2024-03-13 00:00"));
+            comp.SetParam(p => p.DateTime, DateTime.Parse("2024-3-16 00:00"));
+            picker.Text.Should().Be("2024-03-16 00:00");
         }
 
         [Test]
@@ -172,6 +174,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DatePicker_Should_Clear()
         {
+            var culture = CultureInfo.CurrentCulture;
             var comp = Context.RenderComponent<MudDateTimePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
@@ -180,17 +183,19 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(p => p.Clearable, true);
             comp.SetParam(p => p.DateTime, DateTime.Parse("2020-10-26 15:45:00"));
             picker.DateTime.Should().Be(DateTime.Parse("2020-10-26 15:45:00"));
-            picker.Text.Should().Be("2020-10-26 15:45:00");
-
-            comp.Find("button").Click(); //clear the input
-
-            picker.Text.Should().Be(string.Empty); //ensure the text and date are reset. Note this is an empty string rather than null due to how the reset works internally
+            picker.Text.Should().Be(DateTime.Parse("2020-10-26 15:45:00").ToString($"{culture.DateTimeFormat.ShortDatePattern} {culture.DateTimeFormat.ShortTimePattern}"));
+            //clear the input
+            comp.Find("button").Click();
+            //ensure the text and date are reset. Note this is an empty string rather than null due to how the reset works internally
+            picker.Text.Should().Be(string.Empty);
             picker.DateTime.Should().Be(null);
         }
 
         [Test]
-        public void Check_Intial_Date_Format()
+        public void Check_Intial_DateTime_Format()
         {
+            var culture = CultureInfo.CurrentCulture;
+            string dateFormat = $"{culture.DateTimeFormat.ShortDatePattern} {culture.DateTimeFormat.ShortTimePattern}";
             DateTime? date = DateTime.Parse("2024-01-28 10:15:00");
             var comp = Context.RenderComponent<MudDateTimePicker>(parameters => parameters
                 .Add(p => p.Culture, CultureInfo.InvariantCulture)
@@ -198,9 +203,8 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.DateTime, date)
             );
             var picker = comp.Instance;
-            var instance = comp.Instance;
             picker.DateTime.Should().Be(DateTime.Parse("2024-01-28 10:15:00"));
-            picker.Text.Should().Be("28/01/2024 10:15");
+            picker.Text.Should().Be(DateTime.Parse("2024-01-28 10:15:00").ToString("dd/MM/yyyy HH:mm"));
         }
 
         public IRenderedComponent<SimpleDateTimePickerTest> OpenPicker(ComponentParameter parameter)
@@ -305,46 +309,57 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        // WIP: For some reson, the time is not shown in the text property
-        public void OpenToMonth_Select3rdMonth_Select2ndDay_CheckDate()
+        // [WIP]: OpenToMonth_Select3rdMonth_Select2ndDay_CheckDate
+        public void OpenToMonth_Select3rdMonth_Select2ndDay_Select15Hour_Select25Minutes_CheckDate()
         {
             var comp = OpenPicker(Parameter("DateOpenTo", OpenTo.Month));
-            comp.Instance.DateTime.Should().BeNull();
+            var picker = comp.FindComponent<MudDateTimePicker>();
+            picker.Instance.DateTime.Should().BeNull();
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[2].Click();
             comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("2")).First().Click();
             // Click on external dial (15 hours) and then click on 25 minutes
-            comp.FindAll("div.mud-hour")[3].Click();
-            comp.FindAll("div.mud-minute")[5].Click();
+            comp.FindAll("div.mud-hour")[5].Click();
+            comp.FindAll("div.mud-minute")[25].Click();
             // clicking outside to close
             comp.Find("div.mud-overlay").Click();
-            comp.Instance.DateTime.Value.Date.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-3-2 15:25:00"));
+            picker.Instance.DateTime.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-3-2 15:25:00"));
         }
 
         [Test]
-        // WIP
-        public void Open_ClickCalendarHeader_Click4thMonth_Click23rdDay_CheckDate()
+        // [WIP]: Open_ClickCalendarHeader_Click4thMonth_Click23rdDay_CheckDate
+        public void Open_ClickCalendarHeader_Click4thMonth23rdDay_Click16Hour23Minute_CheckDateTime()
         {
-            var comp = OpenPicker();
-            var picker = comp.Instance;
-            comp.Find("button.mud-button-year").Click();
+            var comp = OpenPicker(Parameter("FixYear", DateTime.Now.Year));
+            var picker = comp.FindComponent<MudDateTimePicker>();
+            comp.Find("button.mud-button-month").Click(); 
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > button.mud-picker-month")[3].Click();
+            comp.FindAll("button.mud-picker-month")[3].Click();
             comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().Click();
-            comp.Instance.DateTime.Value.Date.Should().Be(DateTime.Parse($"23-04-{DateTime.Now.Year} 00:00:00"));
+            Console.WriteLine(string.Join(",", comp.FindAll("button.mud-picker-calendar-day").Select(x => x.TrimmedText())));
+            // Click on external dial (16 hours) and then click on 35 minutes
+            comp.FindAll("div.mud-hour")[7].Click();
+            comp.FindAll("div.mud-minute")[35].Click();
+            picker.Instance.DateTime.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-4-23 16:35:00"));
         }
 
         [Test]
-        public void DatePickerStaticWithPickerActionsDayClick_Test()
+        // [WIP]: DatePickerStaticWithPickerActionsDayClick_Test
+        public void DatePickerStaticWithPickerActionsDayAndTimeClick_Test()
         {
             var comp = Context.RenderComponent<DateTimePickerStaticTest>();
             var picker = comp.FindComponent<MudDateTimePicker>();
             // click the day 23
-            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().Click();
-            //comp.FindAll("").Where(x => x.Tri)
-            picker.Instance.DateTime.Should().Be(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 23));
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("23")).First().Click();
+            // Click on external dial (16 hours) and then click on 35 minutes
+            comp.FindAll("div.mud-hour")[7].Click();
+            comp.FindAll("div.mud-minute")[35].Click();
+            picker.Instance.DateTime.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-{DateTime.Now.Month}-23 16:35:00")/*new DateTime(DateTime.Now.Year, DateTime.Now.Month, 23)*/);
         }
+
+
     }
 }

@@ -28,7 +28,12 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string DateTimeFormat { get; set; } = "yyyy-MM-dd HH:mm:ss";
+        public string DateTimeFormat
+        {
+            get => GetDateTimeFormat();
+            set => SetDateTimeFormat(value);
+        }
+        private bool _cultureDateTimeFormat { get; set; } = true;
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -40,7 +45,11 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public DayOfWeek FirstDayOfWeek { get; set; }
+        public DayOfWeek FirstDayOfWeek
+        {
+            get => Culture.DateTimeFormat.FirstDayOfWeek;
+            set => Culture.DateTimeFormat.FirstDayOfWeek = value;
+        }
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -120,12 +129,15 @@ namespace MudBlazor
         private MudTimePicker _timePickerRef { get; set; }
 
         public MudDateTimePicker() : base(new DefaultConverter<DateTime?>())
+        { }
+
+        protected override void OnInitialized()
         {
             Converter.GetFunc = OnGet;
             Converter.SetFunc = OnSet;
-            ((DefaultConverter<DateTime?>)Converter).Culture = CultureInfo.CurrentCulture;
-            ((DefaultConverter<DateTime?>)Converter).Format = DateTimeFormat;
-            FirstDayOfWeek = Culture.DateTimeFormat.FirstDayOfWeek;
+            ((DefaultConverter<DateTime?>)Converter).Culture = Culture;
+            // Default format is Culture.ShortDatePattern + Culture.ShortTimePattern
+            ((DefaultConverter<DateTime?>)Converter).Format = null;
         }
 
         protected string OnSet(DateTime? value)
@@ -134,6 +146,28 @@ namespace MudBlazor
                 return null;
 
             return value?.ToString(GetDateTimeFormat()) ?? null;
+        }
+
+        protected DateTime? OnGet(string value)
+        {
+            if (string.IsNullOrEmpty(value)) 
+                return null;
+
+            bool parsed = System.DateTime.TryParseExact(value, GetDateTimeFormat(), Culture, DateTimeStyles.None, out var date);
+            
+            if (parsed)
+                return date;
+
+            HandleParsingError();
+            return null;
+        }
+
+        protected void HandleParsingError()
+        {
+            const string ParsingErrorMessage = "Not a valid datetime";
+            Converter.GetError = true;
+            Converter.GetErrorMessage = ParsingErrorMessage;
+            Converter.OnError?.Invoke(ParsingErrorMessage);
         }
 
         protected override Task StringValueChanged(string value)
@@ -146,7 +180,7 @@ namespace MudBlazor
             else
             {
                 DateTime date;
-                bool parsed = System.DateTime.TryParseExact(value, DateTimeFormat, Culture, DateTimeStyles.None, out date);
+                bool parsed = System.DateTime.TryParseExact(value, GetDateTimeFormat(), Culture, DateTimeStyles.None, out date);
                 if (!parsed)
                     parsed = System.DateTime.TryParse(value, Culture, DateTimeStyles.None, out date);
 
@@ -162,26 +196,50 @@ namespace MudBlazor
             return base.StringValueChanged(value);
         }
 
-        protected DateTime? OnGet(string value)
+        protected void SetDateTimeFormat(string format)
         {
-            if (string.IsNullOrEmpty(value)) 
-                return null;
-
-            bool parsed = System.DateTime.TryParseExact(value, ((DefaultConverter<DateTime?>)Converter).Format, Culture, DateTimeStyles.None, out var date);
-            
-            if (parsed)
-                return date;
-
-            HandleParsingError();
-            return null;
+            ((DefaultConverter<DateTime?>)Converter).Format = format;
+            StateHasChanged();
         }
 
-        private void HandleParsingError()
+        protected string GetDateTimeFormat()
         {
-            const string ParsingErrorMessage = "Not a valid datetime";
-            Converter.GetError = true;
-            Converter.GetErrorMessage = ParsingErrorMessage;
-            Converter.OnError?.Invoke(ParsingErrorMessage);
+            if (!string.IsNullOrEmpty(((DefaultConverter<DateTime?>)Converter).Format))
+            {
+                return ((DefaultConverter<DateTime?>)Converter).Format;
+            }
+            else
+            {
+                return $"{Culture.DateTimeFormat.ShortDatePattern} {Culture.DateTimeFormat.ShortTimePattern}";
+            }
+        }
+
+        protected DateTime? GetDateTime()
+        {
+            return _datePicked == null || _timePicked == null ? null : _datePicked?.Add((TimeSpan) _timePicked);
+        }
+
+        protected string GetFormattedYearString()
+        {
+            return (GetDateTime() ?? System.DateTime.Today).ToString("yyyy");
+        }
+
+        protected string GetTitleDateString()
+        {
+            return GetDateTime()?.ToString(TitleDateFormat, Culture);
+        }
+
+        protected virtual void OnFormattedDateClick()
+        {
+            // todo: raise an event the user can handle
+        }
+
+        private void OnYearClick()
+        {
+            if (!FixYear.HasValue)
+            {
+                _datePickerRef.SwitchCurrentView(OpenTo.Year);
+            }
         }
 
         /// <summary>
@@ -202,43 +260,11 @@ namespace MudBlazor
             SubmitAndClose();
         }
 
-        protected DateTime? GetDateTime()
-        {
-            return _datePicked == null || _timePicked == null ? null : _datePicked?.Add((TimeSpan) _timePicked);
-        }
-
-        protected string GetFormattedYearString()
-        {
-            return (GetDateTime() ?? System.DateTime.Today).ToString("yyyy");
-        }
-
-        protected string GetTitleDateString()
-        {
-            return GetDateTime()?.ToString(TitleDateFormat, Culture);
-        }
-
-        private void OnFormattedDateClick()
-        {
-            // todo: raise an event the user can handle
-        }
-
-        private void OnYearClick()
-        {
-            if (!FixYear.HasValue)
-            {
-                _datePickerRef.SwitchCurrentView(OpenTo.Year);
-            }
-        }
-
         /// <summary>
         /// Sets the date and time selection
         /// </summary>
         protected void SetDateTime(DateTime? dateTime, bool updateValue)
-        {
-            _datePicked = dateTime?.Date;
-            _timePicked = dateTime?.TimeOfDay;
-            SetDateTimeAsync(dateTime, updateValue).AndForget();
-        }
+            => SetDateTimeAsync(dateTime, updateValue).AndForget();
 
         public async Task GoToDate(DateTime date, bool submitDate = true)
             => await _datePickerRef.GoToDate(date, submitDate);
@@ -275,12 +301,6 @@ namespace MudBlazor
                 await BeginValidateAsync();
                 FieldChanged(_value);
             }
-        }
-
-        protected string GetDateTimeFormat()
-        {
-            string format = DateTimeFormat;
-            return format;
         }
 
         private void SubmitAndClose()

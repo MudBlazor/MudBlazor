@@ -43,11 +43,11 @@ else
     private async Task HandleDateChanged(DateTime? input)
     {
         DateTime = input;
-        await DateChanged.InvokeAsync(input);
+        await DateTimeChanged.InvokeAsync(input);
     }
 
     [Parameter] public DateTime? PickerMonth { get; set; }
-    [Parameter] public EventCallback<DateTime?> DateChanged { get; set; }
+    [Parameter] public EventCallback<DateTime?> DateTimeChanged { get; set; }
     [Parameter] public bool Readonly { get; set; } = false;
     [Parameter] public Func<DateTime, bool> IsDateDisabledFunc { get; set; }
     [Parameter] public OpenTo DateOpenTo { get; set; } = OpenTo.Date;
