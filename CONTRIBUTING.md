@@ -206,6 +206,59 @@ private Task ToggleAsync()
 }
 ```
 
+## Blazor Component parameter should not be set outside of its component.
+
+Consider a hypothetical `CalendarComponent`:
+```c#
+public class CalendarComponent : ComponentBase
+{
+	[Parameter]
+	public ShowOnlyOneCalendar { get;set; }
+}
+```
+
+### Example of a bad code
+```razor
+<CalendarComponent @ref="@_calendar" />
+<button @onclick="UpdateHeading">
+        Update
+</button>
+
+@code
+{
+    private CalendarComponent _calendarRef = null!;
+
+    private void Update()
+    {
+        _calendarRef.ShowOnlyOneCalendar = true;
+    }
+}
+```
+This code would result in a [BL0005](https://learn.microsoft.com/en-us/aspnet/core/diagnostics/bl0005?view=aspnetcore-8.0) warning.
+
+### Example of a good code
+
+Instead of using an imperative programming approach (`component.Parameter1 = v1`), a Component Parameter is supposed to be passed in a declarative syntax:
+
+```razor
+<CalendarComponent ShowOnlyOneCalendar="@showOnlyOne"  />
+<button @onclick="UpdateHeading">
+        Update
+</button>
+
+@code
+{
+    private bool _showOnlyOne;;
+	
+	private void Update()
+    {
+        _showOnlyOne = true;
+    }
+}
+```
+In the improved version, we pass `ShowOnlyOneCalendar` as a parameter to `CalendarComponent` directly in the markup, using a variable (`showOnlyOne`) that can be manipulated within the component's code.
+This adheres to the recommended Blazor coding practices and avoids errors like `BL0005`.
+
 ## Unit Testing and Continuous Integration
 
 We strive for a complete test coverage in order to keep stuff from breaking and
