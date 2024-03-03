@@ -295,7 +295,7 @@ namespace MudBlazor.UnitTests.Components
                 { 2, 200 },
                 { 3, 300 },
                 { 4, 400 },
-                { 5, 400 },
+                { 5, 390 },
             };
 
             for (var i = 0; i < 6; i++)
@@ -437,7 +437,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.SetPanelActive(5);
 
-            var expectedTranslation = 400.0;
+            var expectedTranslation = 500.0;
 
             for (var i = 0; i < 2; i++)
             {

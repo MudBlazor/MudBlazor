@@ -47,7 +47,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
                 }
                 else
                 {
-                    context.Request.Headers.Add("UsePrerender", "true");
+                    context.Request.Headers.Append("UsePrerender", "true");
 
                     var originalBodyStream = context.Response.Body;
 

@@ -1,315 +1,315 @@
 ﻿.mud-input {
-    position: relative;
-    color: var(--mud-palette-text-primary);
-    cursor: text;
-    display: inline-flex;
-    font-size: 1rem;
-    box-sizing: border-box;
-    align-items: center;
-    font-weight: 400;
-    line-height: 1.1876em;
-    letter-spacing: 0.00938em;
+  position: relative;
+  color: var(--mud-palette-text-primary);
+  cursor: text;
+  display: inline-flex;
+  font-size: 1rem;
+  box-sizing: border-box;
+  align-items: center;
+  font-weight: 400;
+  line-height: 1.1876em;
+  letter-spacing: 0.00938em;
 
-    &.mud-input-full-width {
-        width: 100%;
+  &.mud-input-full-width {
+    width: 100%;
+  }
+
+  &.mud-disabled {
+    color: var(--mud-palette-text-disabled);
+    cursor: default;
+  }
+
+  &.mud-disabled > .mud-input-adornment {
+    color: var(--mud-palette-text-disabled);
+    pointer-events: none;
+  }
+
+  &.mud-input-underline {
+    &:before {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      content: "\00a0";
+      position: absolute;
+      transition: border-bottom 0.2s, background-color 0.2s;
+      border-bottom: 1px solid var(--mud-palette-lines-inputs);
+      pointer-events: none;
+    }
+
+    &:hover:not(.mud-disabled):before {
+      border-bottom: 1px solid var(--mud-palette-action-default);
+    }
+
+    &:after {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      content: "";
+      position: absolute;
+      transform: scaleX(0);
+      transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+      border-bottom: 2px solid var(--mud-palette-primary);
+      pointer-events: none;
+    }
+
+    &.mud-disabled:before {
+      border-bottom-style: dotted;
+    }
+
+    &.mud-input-error:after {
+      transform: scaleX(1);
+      border-bottom-color: var(--mud-palette-error);
+    }
+  }
+
+  &.mud-input-filled {
+    position: relative;
+    transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+    background-color: rgba(0, 0, 0, 0.09);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.13);
+    }
+
+    &.mud-focused {
+      background-color: rgba(0, 0, 0, 0.09);
     }
 
     &.mud-disabled {
-        color: var(--mud-palette-text-disabled);
-        cursor: default;
+      background-color: rgba(0, 0, 0, 0.12);
     }
 
-    &.mud-disabled > .mud-input-adornment {
-        color: var(--mud-palette-text-disabled);
-        pointer-events: none;
+    &.mud-input-adorned-start {
+      padding-left: 12px;
+      padding-inline-start: 12px;
+      padding-inline-end: unset;
+    }
+
+    &.mud-input-adorned-end {
+      padding-right: 12px;
+      padding-inline-end: 12px;
+      padding-inline-start: unset;
     }
 
     &.mud-input-underline {
-        &:before {
-            left: 0;
-            right: 0;
-            bottom: 0;
-            content: "\00a0";
-            position: absolute;
-            transition: border-bottom 0.2s, background-color 0.2s;
-            border-bottom: 1px solid var(--mud-palette-lines-inputs);
-            pointer-events: none;
-        }
+      &:before {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        content: "\00a0";
+        position: absolute;
+        transition: border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        border-bottom: 1px solid var(--mud-palette-lines-inputs);
+        pointer-events: none;
+      }
 
-        &:hover:not(.mud-disabled):before {
-            border-bottom: 1px solid var(--mud-palette-action-default);
-        }
+      &:after {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        content: "";
+        position: absolute;
+        transform: scaleX(0);
+        transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+        border-bottom: 2px solid var(--mud-palette-primary);
+        pointer-events: none;
+      }
 
-        &:after {
-            left: 0;
-            right: 0;
-            bottom: 0;
-            content: "";
-            position: absolute;
-            transform: scaleX(0);
-            transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-            border-bottom: 2px solid var(--mud-palette-primary);
-            pointer-events: none;
-        }
+      &:hover:before {
+        border-bottom: 1px solid var(--mud-palette-action-default);
+      }
 
-        &.mud-disabled:before {
-            border-bottom-style: dotted;
-        }
+      &.mud-disabled:before {
+        border-bottom-style: dotted;
+      }
 
-        &.mud-input-error:after {
-            transform: scaleX(1);
-            border-bottom-color: var(--mud-palette-error);
-        }
+      &.mud-input-error:after {
+        transform: scaleX(1);
+        border-bottom-color: var(--mud-palette-error);
+      }
+    }
+  }
+
+  &.mud-input-outlined {
+    position: relative;
+    border-width: 0px;
+
+    & .mud-input-outlined-border {
+      display: flex;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
+      text-align: start;
+      pointer-events: none;
+      border-radius: var(--mud-default-borderradius);
+      border-color: var(--mud-palette-lines-inputs);
+      border-width: 1px;
+      border-style: solid;
+      transition: border-width,border-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     }
 
-    &.mud-input-filled {
-        position: relative;
-        transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-        background-color: rgba(0, 0, 0, 0.09);
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-
-        &:hover {
-            background-color: rgba(0, 0, 0, 0.13);
-        }
-
-        &.mud-focused {
-            background-color: rgba(0, 0, 0, 0.09);
-        }
-
-        &.mud-disabled {
-            background-color: rgba(0, 0, 0, 0.12);
-        }
-
-        &.mud-input-adorned-start {
-            padding-left: 12px;
-            padding-inline-start: 12px;
-            padding-inline-end: unset;
-        }
-
-        &.mud-input-adorned-end {
-            padding-right: 12px;
-            padding-inline-end: 12px;
-            padding-inline-start: unset;
-        }
-
-        &.mud-input-underline {
-            &:before {
-                left: 0;
-                right: 0;
-                bottom: 0;
-                content: "\00a0";
-                position: absolute;
-                transition: border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-                border-bottom: 1px solid var(--mud-palette-lines-inputs);
-                pointer-events: none;
-            }
-
-            &:after {
-                left: 0;
-                right: 0;
-                bottom: 0;
-                content: "";
-                position: absolute;
-                transform: scaleX(0);
-                transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-                border-bottom: 2px solid var(--mud-palette-primary);
-                pointer-events: none;
-            }
-
-            &:hover:before {
-                border-bottom: 1px solid var(--mud-palette-action-default);
-            }
-
-            &.mud-disabled:before {
-                border-bottom-style: dotted;
-            }
-
-            &.mud-input-error:after {
-                transform: scaleX(1);
-                border-bottom-color: var(--mud-palette-error);
-            }
-        }
+    &:not(.mud-disabled):not(:focus-within):hover .mud-input-outlined-border {
+      border-color: var(--mud-palette-action-default);
     }
 
-    &.mud-input-outlined {
-        position: relative;
-        border-width: 0px;
-
-        & .mud-input-outlined-border {
-            display: flex;
-            position: absolute;
-            top: 0;
-            right: 0;
-            left: 0;
-            box-sizing: border-box;
-            width: 100%;
-            max-width: 100%;
-            height: 100%;
-            text-align: start;
-            pointer-events: none;
-            border-radius: var(--mud-default-borderradius);
-            border-color: var(--mud-palette-lines-inputs);
-            border-width: 1px;
-            border-style: solid;
-            transition: border-width,border-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-        }
-
-        &:not(.mud-disabled):not(:focus-within):hover .mud-input-outlined-border {
-            border-color: var(--mud-palette-action-default);
-        }
-
-        &:focus-within .mud-input-outlined-border {
-            border-width: 2px;
-            border-color: var(--mud-palette-primary);
-        }
-
-        &.mud-disabled .mud-input-outlined-border {
-            border-color: var(--mud-palette-action-disabled);
-        }
-
-        &.mud-input-adorned-start {
-            padding-left: 14px;
-            padding-inline-start: 14px;
-            padding-inline-end: unset;
-        }
-
-        &.mud-input-adorned-end {
-            padding-right: 14px;
-            padding-inline-end: 14px;
-            padding-inline-start: unset;
-        }
+    &:focus-within .mud-input-outlined-border {
+      border-width: 2px;
+      border-color: var(--mud-palette-primary);
     }
+
+    &.mud-disabled .mud-input-outlined-border {
+      border-color: var(--mud-palette-action-disabled);
+    }
+
+    &.mud-input-adorned-start {
+      padding-left: 14px;
+      padding-inline-start: 14px;
+      padding-inline-end: unset;
+    }
+
+    &.mud-input-adorned-end {
+      padding-right: 14px;
+      padding-inline-end: 14px;
+      padding-inline-start: unset;
+    }
+  }
 }
 
 .mud-input-error .mud-input-outlined-border {
-    border-color: var(--mud-palette-error) !important;
+  border-color: var(--mud-palette-error) !important;
 }
 
 .mud-input:focus-within.mud-input-underline:after {
-    transform: scaleX(1);
+  transform: scaleX(1);
 }
 
 .mud-input > input, div.mud-input-slot {
-    &.mud-input-root {
-        font: inherit;
-        color: currentColor;
-        width: 100%;
-        border: 0;
-        height: 1.1876em;
-        margin: 0;
-        display: block;
-        padding: 6px 0 7px;
-        min-width: 0;
-        background: none;
-        position: relative;
-        box-sizing: content-box;
-        letter-spacing: inherit;
-        -webkit-tap-highlight-color: transparent;
+  &.mud-input-root {
+    font: inherit;
+    color: currentColor;
+    width: 100%;
+    border: 0;
+    height: 1.1876em;
+    margin: 0;
+    display: block;
+    padding: 6px 0 7px;
+    min-width: 0;
+    background: none;
+    position: relative;
+    box-sizing: content-box;
+    letter-spacing: inherit;
+    -webkit-tap-highlight-color: transparent;
 
-        @include inputplaceholder {
-            color: currentColor;
-            opacity: 0.42;
-            transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-        }
+    @include inputplaceholder {
+      color: currentColor;
+      opacity: 0.42;
+      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    }
+
+    &.mud-input-root-margin-dense {
+      padding-top: 3px;
+    }
+
+    &.mud-input-root-multiline {
+      height: auto;
+      resize: none;
+      padding: 0;
+    }
+
+    &.mud-input-root-type-search {
+      -moz-appearance: textfield;
+      -webkit-appearance: textfield;
+    }
+
+    &:focus {
+      outline: 0;
+    }
+
+    &:invalid {
+      box-shadow: none;
+    }
+
+    &:disabled {
+      opacity: 1;
+    }
+
+    &.mud-input-root-filled {
+      padding: 27px 12px 10px;
+
+      &.mud-input-root-margin-dense {
+        padding-top: 23px;
+        padding-bottom: 6px;
+      }
+
+      &:-webkit-autofill {
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+      }
+
+      &.mud-input-root-hidden-label {
+        padding-top: 18px;
+        padding-bottom: 19px;
 
         &.mud-input-root-margin-dense {
-            padding-top: 3px;
+          padding-top: 10px;
+          padding-bottom: 11px;
         }
+      }
 
-        &.mud-input-root-multiline {
-            height: auto;
-            resize: none;
-            padding: 0;
-        }
+      &.mud-input-root-multiline {
+        padding: 0;
+      }
 
-        &.mud-input-root-type-search {
-            -moz-appearance: textfield;
-            -webkit-appearance: textfield;
-        }
+      &.mud-input-root-adorned-start {
+        padding-left: 0;
+        padding-inline-start: 0;
+        padding-inline-end: 12px;
+      }
 
-        &:focus {
-            outline: 0;
-        }
+      &.mud-input-root-adorned-end {
+        padding-right: 0;
+        padding-inline-end: 0;
+        padding-inline-start: 12px;
+      }
+    }
+  }
 
-        &:invalid {
-            box-shadow: none;
-        }
+  &.mud-input-root-outlined {
+    padding: 18.5px 14px;
 
-        &:disabled {
-            opacity: 1;
-        }
 
-        &.mud-input-root-filled {
-            padding: 27px 12px 10px;
-
-            &.mud-input-root-margin-dense {
-                padding-top: 23px;
-                padding-bottom: 6px;
-            }
-
-            &:-webkit-autofill {
-                border-top-left-radius: inherit;
-                border-top-right-radius: inherit;
-            }
-
-            &.mud-input-root-hidden-label {
-                padding-top: 18px;
-                padding-bottom: 19px;
-
-                &.mud-input-root-margin-dense {
-                    padding-top: 10px;
-                    padding-bottom: 11px;
-                }
-            }
-
-            &.mud-input-root-multiline {
-                padding: 0;
-            }
-
-            &.mud-input-root-adorned-start {
-                padding-left: 0;
-                padding-inline-start: 0;
-                padding-inline-end: 12px;
-            }
-
-            &.mud-input-root-adorned-end {
-                padding-right: 0;
-                padding-inline-end: 0;
-                padding-inline-start: 12px;
-            }
-        }
+    &.mud-input-root:-webkit-autofill {
+      border-radius: inherit;
     }
 
-    &.mud-input-root-outlined {
-        padding: 18.5px 14px;
-
-
-        &.mud-input-root:-webkit-autofill {
-            border-radius: inherit;
-        }
-
-        &.mud-input-root-margin-dense {
-            padding-top: 10.5px;
-            padding-bottom: 10.5px;
-        }
-
-        &.mud-input-root-adorned-start {
-            padding-left: 0;
-            padding-inline-start: 0;
-            padding-inline-end: 14px;
-        }
-
-        &.mud-input-root-adorned-end {
-            padding-right: 0;
-            padding-inline-end: 0;
-            padding-inline-start: 14px;
-        }
+    &.mud-input-root-margin-dense {
+      padding-top: 10.5px;
+      padding-bottom: 10.5px;
     }
 
-    &::-ms-reveal, &::-ms-clear {
-        display: none !important;
+    &.mud-input-root-adorned-start {
+      padding-left: 0;
+      padding-inline-start: 0;
+      padding-inline-end: 14px;
     }
+
+    &.mud-input-root-adorned-end {
+      padding-right: 0;
+      padding-inline-end: 0;
+      padding-inline-start: 14px;
+    }
+  }
+
+  &::-ms-reveal, &::-ms-clear {
+    display: none !important;
+  }
 }
 
 .mud-input > textarea {
@@ -386,7 +386,6 @@
         margin-left: 0;
         margin-inline-start: 0;
         margin-inline-end: 12px;
-
       }
 
       &.mud-input-root-adorned-end {
@@ -455,9 +454,9 @@
 }
 
 .mud-input-adornment-start {
-    margin-right: 8px;
-    margin-inline-end: 8px;
-    margin-inline-start: unset;
+  margin-right: 8px;
+  margin-inline-end: 8px;
+  margin-inline-start: unset;
 }
 
 .mud-input-adornment-end {
@@ -467,15 +466,15 @@
 }
 
 .mud-input-number-control.mud-input-showspin .mud-input-adornment-end {
-    margin-right: 12px;
-    margin-inline-end: 12px;
-    margin-inline-start: unset;
+  margin-right: 12px;
+  margin-inline-end: 12px;
+  margin-inline-start: unset;
 }
 
 .mud-input-number-control.mud-input-showspin .mud-input-underline:not(.mud-input-filled) .mud-input-adornment-end {
-    margin-right: 24px;
-    margin-inline-end: 24px;
-    margin-inline-start: unset;
+  margin-right: 24px;
+  margin-inline-end: 24px;
+  margin-inline-start: unset;
 }
 
 .mud-input-adornment-disable-pointerevents {
@@ -483,14 +482,14 @@
 }
 
 .mud-range-input-separator {
-    visibility: hidden;
-    margin: 0 4px;
+  visibility: hidden;
+  margin: 0 4px;
 }
 
 .mud-input:focus-within .mud-range-input-separator {
-    visibility: visible;
+  visibility: visible;
 }
 
 .mud-picker .mud-shrink .mud-range-input-separator {
-    visibility: visible;
+  visibility: visible;
 }

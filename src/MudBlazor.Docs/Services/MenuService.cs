@@ -59,7 +59,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Paper", typeof(MudPaper))
             .AddItem("Rating", typeof(MudRating), typeof(MudRatingItem))
             .AddItem("Skeleton", typeof(MudSkeleton))
-            .AddItem("Table", typeof(MudTable<T>))
+            .AddItem("Table", typeof(MudTable<T>), typeof(MudTablePager))
             .AddItem("Data Grid", typeof(MudDataGrid<T>))
             .AddItem("Simple Table", typeof(MudSimpleTable))
             .AddItem("Tooltip", typeof(MudTooltip))
@@ -96,6 +96,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Autocomplete", typeof(MudAutocomplete<T>))
                 .AddItem("Field", typeof(MudField))
                 .AddItem("File Upload", typeof(MudFileUpload<T>))
+                .AddItem("ToggleGroup", typeof(MudToggleGroup<T>), typeof(MudToggleItem<T>))
             )
 
             //Pickers

@@ -5,6 +5,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using MudBlazor.UnitTests.Utilities.Background.Mocks;
 using NUnit.Framework;
 
@@ -22,8 +23,8 @@ public class BackgroundWorkerTests
 
         var startTask = worker.StartAsync(CancellationToken.None);
 
-        Assert.True(startTask.IsCompleted);
-        Assert.False(tcs.Task.IsCompleted);
+        startTask.IsCompleted.Should().BeTrue();
+        tcs.Task.IsCompleted.Should().BeFalse();
 
         // Complete the task
         tcs.TrySetResult(null!);
@@ -38,8 +39,8 @@ public class BackgroundWorkerTests
 
         var stopTask = worker.StartAsync(CancellationToken.None);
 
-        Assert.True(stopTask.IsCompleted);
-        Assert.AreSame(stopTask, worker.ExecuteTask);
+        stopTask.IsCompleted.Should().BeTrue();
+        worker.ExecuteTask.Should().BeSameAs(stopTask);
     }
 
     [Test]
@@ -51,7 +52,7 @@ public class BackgroundWorkerTests
 
         var exception = Assert.ThrowsAsync<Exception>(() => worker.StartAsync(CancellationToken.None));
 
-        Assert.AreEqual("fail!", exception?.Message);
+        exception?.Message.Should().Be("fail!");
     }
 
     [Test]
@@ -62,7 +63,7 @@ public class BackgroundWorkerTests
 
         await worker.StopAsync(CancellationToken.None);
 
-        Assert.Null(worker.ExecuteTask);
+        worker.ExecuteTask.Should().BeNull();
     }
 
     [Test]
@@ -73,11 +74,11 @@ public class BackgroundWorkerTests
 
         await worker.StartAsync(CancellationToken.None);
 
-        Assert.False(worker.ExecuteTask?.IsCompleted);
+        worker.ExecuteTask?.IsCompleted.Should().BeFalse();
 
         await worker.StopAsync(CancellationToken.None);
 
-        Assert.True(worker.ExecuteTask?.IsCompleted);
+        worker.ExecuteTask?.IsCompleted.Should().BeTrue();
     }
 
     [Test]
@@ -101,7 +102,7 @@ public class BackgroundWorkerTests
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(1));
 
         Assert.ThrowsAsync<AggregateException>(() => worker.StopAsync(cts.Token));
-        Assert.AreEqual(2, worker.TokenCalls);
+        worker.TokenCalls.Should().Be(2);
     }
 
     [Test]

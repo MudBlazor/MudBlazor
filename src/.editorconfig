@@ -41,6 +41,14 @@ indent_size = 2
 # Dotnet code style settings:
 [*.{cs,vb}]
 
+# Sassy CSS - CSS preprocessor
+[*.scss]
+charset = utf-8
+indent_size = 2
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
 # IDE0055: Fix formatting
 dotnet_diagnostic.IDE0055.severity = warning
 

@@ -230,7 +230,7 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
         /// </summary>
-        [Test, Timeout(1000)]
+        [Test, CancelAfter(1000)]
         public async Task TextFieldUpdateLoopProtectionTest()
         {
             var comp = Context.RenderComponent<MudTextField<string>>();
@@ -690,7 +690,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudTextField<string>>();
             var inputId = comp.Instance.InputReference.ElementReference.Id;
 
-            Assert.IsNotEmpty(inputId);
+            inputId.Should().NotBeEmpty();
         }
 
         class TestDataAnnotationModel
@@ -945,6 +945,61 @@ namespace MudBlazor.UnitTests.Components
             var mudAlert = comp.FindComponent<MudAlert>();
             var text = mudAlert.Find("div.mud-alert-message");
             text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+        }
+
+        /// <summary>
+        /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
+        /// </summary>
+        [Test]
+        public async Task OnBlurWithModifiedValueTriggerValidationOnce1()
+        {
+            var callCounter = 0;
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Validation, (string value) => { callCounter++; return true; })
+            );
+            comp.Find("input").Change("A");
+            callCounter.Should().Be(1);
+            comp.Find("input").Blur();
+            callCounter.Should().Be(1);
+        }
+        
+        /// <summary>
+        /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
+        /// </summary>
+        [Test]
+        public async Task OnBlurWithModifiedValueTriggerValidationOnce2()
+        {
+            var callCounter = 0;
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.OnlyValidateIfDirty, true)
+                .Add(p => p.Validation, (string value) => { callCounter++; return true; })
+            );
+            comp.Find("input").Change("A");
+            callCounter.Should().Be(1);
+            comp.Find("input").Blur();
+            callCounter.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
+        /// </summary>
+        [Test]
+        public async Task OnBlurWithModifiedValueTriggerValidationOnce3()
+        {
+            var callCounter = 0;
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.OnlyValidateIfDirty, true)
+                .Add(p => p.Validation, async (string value) => {
+                    callCounter++;
+                    await Task.Delay(TimeSpan.FromMilliseconds(100));
+                    return true;
+                })
+            );
+            comp.Find("input").Change("A");
+            comp.WaitForAssertion(() => callCounter.Should().Be(1));
+            comp.Find("input").Blur();
+            await Task.Delay(TimeSpan.FromMilliseconds(200));
+            callCounter.Should().Be(1);
         }
 
         [Test]

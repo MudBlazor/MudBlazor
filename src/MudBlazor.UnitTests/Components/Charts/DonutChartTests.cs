@@ -9,6 +9,7 @@ using FluentAssertions;
 using MudBlazor.Charts;
 using NUnit.Framework;
 using Bunit;
+using System.Collections.Generic;
 
 namespace MudBlazor.UnitTests.Charts
 {
@@ -25,8 +26,16 @@ namespace MudBlazor.UnitTests.Charts
         {
             "#264653", "#2a9d8f", "#e9c46a", "#f4a261", "#e76f51"
         };
-        
-         [SetUp]
+
+
+        private readonly string[] _customPalette =
+        {
+            "#015482", "#CC1512", "#FFE135", "#087830", "#D70040", "#B20931", "#202E54", "#F535AA", "#017B92",
+            "#FA4224", "#062A78", "#56B4BE", "#207000", "#FF43A4", "#FB8989", "#5E9B8A", "#FFB7CE", "#C02B18",
+            "#01153E", "#2EE8BB", "#EBDDE2"
+        };
+
+        [SetUp]
         public void Init()
         {
             
@@ -120,6 +129,43 @@ namespace MudBlazor.UnitTests.Charts
                 cx.Should().Be(svgViewBox[2]/2);
 
                 cx.Should().Be(svgViewBox[3]/2);
+            }
+        }
+
+        [Test]
+        public void DonutChartColoring()
+        {
+            double[] data = { 50, 25, 20, 5, 16, 14, 8, 4, 2, 8, 10, 19, 8, 17, 6, 11, 19, 24, 35, 13, 20, 12 };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Donut)
+                .Add(p => p.Height, "350px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = new string[] { "#1E9AB0" } })
+                .Add(p => p.InputData, data));
+
+            var circles1 = comp.FindAll("circle");
+
+            int count;
+            count = circles1.Count(p => p.OuterHtml.Contains($"stroke=\"{"#1E9AB0"}\""));
+            count.Should().Be(22);
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _customPalette }));
+
+            var circles2 = comp.FindAll("circle");
+
+            foreach (var color in _customPalette)
+            {
+                count = circles2.Count(p => p.OuterHtml.Contains($"stroke=\"{color}\""));
+                if (color == _customPalette[0])
+                {
+                    count.Should().Be(2, because: "the number of data points defined exceeds the number of colors in the chart palette, thus, any new defined data point takes the color from the chart palette in the same fashion as the previous data points starting from the beginning");
+                }
+                else
+                {
+                    count.Should().Be(1);
+                }
             }
         }
     }

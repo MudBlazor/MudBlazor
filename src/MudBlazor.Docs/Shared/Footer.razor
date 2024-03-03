@@ -50,14 +50,3 @@
         </MudToolBar>
     </MudItem>
 </MudGrid>
-
-@code {
-    string MudBlazorVersion
-    {
-        get
-        {
-            var v = typeof(MudText).Assembly.GetName().Version;
-            return $"v{v.Major}.{v.Minor}.{v.Build}.";
-        }
-    }
-}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -187,7 +188,9 @@ namespace MudBlazor
             get => _isSelected;
             set
             {
-                _ = MudTreeRoot?.UpdateSelected(this, value);
+                if(_isSelected.Equals(value)) return;
+
+                _isSelected = value;
             }
         }
 
@@ -202,7 +205,7 @@ namespace MudBlazor
                     return;
 
                 _isChecked = value;
-                MudTreeRoot?.UpdateSelectedItems();
+                MudTreeRoot?.SetSelectedItemsCompare();
                 SelectedChanged.InvokeAsync(_isChecked);
             }
         }
@@ -324,10 +327,21 @@ namespace MudBlazor
         {
             if (firstRender && _isSelected)
             {
-                await MudTreeRoot.UpdateSelected(this, _isSelected);
+                await MudTreeRoot.Select(this);
             }
 
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            if (parameters.TryGetValue(nameof(Activated), out bool selected) &&
+                selected != Activated && MudTreeRoot is not null)
+            {
+                await MudTreeRoot.Select(this, Activated);
+            }
+            
+            await base.SetParametersAsync(parameters);
         }
 
         protected async Task OnItemClicked(MouseEventArgs ev)
@@ -346,7 +360,7 @@ namespace MudBlazor
 
             if (MudTreeRoot?.IsSelectable ?? false)
             {
-                await MudTreeRoot.UpdateSelected(this, !_isSelected);
+                await MudTreeRoot.Select(this, !_isSelected);
             }
 
             await OnClick.InvokeAsync(ev);
@@ -374,7 +388,7 @@ namespace MudBlazor
 
             if (MudTreeRoot?.IsSelectable ?? false)
             {
-                await MudTreeRoot.UpdateSelected(this, !_isSelected);
+                await MudTreeRoot.Select(this, !_isSelected);
             }
 
             await OnDoubleClick.InvokeAsync(ev);
@@ -415,7 +429,7 @@ namespace MudBlazor
             if (_isSelected == value)
                 return Task.CompletedTask;
 
-            _isSelected = value;
+            Activated = value;
 
             StateHasChanged();
 
@@ -438,12 +452,13 @@ namespace MudBlazor
             {
                 if (MudTreeRoot != null)
                 {
-                    await MudTreeRoot.UpdateSelectedItems();
+                    await MudTreeRoot.SetSelectedItemsCompare();
                 }
             }
         }
 
         private void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
+        internal List<MudTreeViewItem<T>> ChildItems => _childItems.ToList();
 
         internal IEnumerable<MudTreeViewItem<T>> GetSelectedItems()
         {

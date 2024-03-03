@@ -7,7 +7,7 @@
     <circle class="mud-donut-ring" cx="21" cy="21" r="@(100 / (2 * Math.PI))"></circle>
     @foreach (var item in _circles.ToList())
     {
-        <circle class="mud-chart-serie mud-donut-segment" @onclick="() => SelectedIndex = item.Index"  stroke="@(MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count()))"
+        <circle class="mud-chart-serie mud-donut-segment" @onclick="() => SelectedIndex = item.Index" stroke="@(MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % MudChartParent.ChartOptions.ChartPalette.Count()))"
                 cx="@ToS(item.CX)"
                 cy="@ToS(item.CY)"
                 r="@ToS(item.Radius)"

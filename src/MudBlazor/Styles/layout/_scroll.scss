@@ -1,73 +1,73 @@
 ﻿.scroll-locked {
-    padding-right: 8px;
-    overflow: hidden;
+  padding-right: 8px;
+  overflow: hidden;
 
-    .mud-layout {
-        .mud-appbar {
-            padding-right: 8px;
-        }
-
-        .mud-main-content {
-            .mud-scroll-to-top {
-                padding-right: 8px;
-            }
-        }
+  .mud-layout {
+    .mud-appbar {
+      padding-right: 8px;
     }
+
+    .mud-main-content {
+      .mud-scroll-to-top {
+        padding-right: 8px;
+      }
+    }
+  }
 }
 
 .scroll-locked-no-padding {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 @-moz-document url-prefix() {
-    .scroll-locked {
-        padding-right: 17px; //the width of scroll-bar in firefox
+  .scroll-locked {
+    padding-right: 17px; //the width of scroll-bar in firefox
 
-        .mud-layout {
-            .mud-appbar {
-                padding-right: 17px;
-            }
+    .mud-layout {
+      .mud-appbar {
+        padding-right: 17px;
+      }
 
-            .mud-main-content {
-                .mud-scroll-to-top {
-                    padding-right: 17px;
-                }
-            }
+      .mud-main-content {
+        .mud-scroll-to-top {
+          padding-right: 17px;
         }
+      }
     }
+  }
 }
 
 .mud-scroll-to-top {
-    position: fixed;
-    cursor: pointer;
-    z-index: 100;
+  position: fixed;
+  cursor: pointer;
+  z-index: 100;
 
-    &.visible {
-        bottom: 16px;
-        right: 16px;
-        opacity: 1;
-        transition: transform 0.5s;
-        flex: 1;
-    }
+  &.visible {
+    bottom: 16px;
+    right: 16px;
+    opacity: 1;
+    transition: transform 0.5s;
+    flex: 1;
+  }
 
-    &.hidden {
-        bottom: 16px;
-        right: 16px;
-        opacity: 0;
-        transition: all 0.5s;
-        visibility: hidden;
-        transform: scale(0) rotate(180deg);
-        flex: 0;
-    }
+  &.hidden {
+    bottom: 16px;
+    right: 16px;
+    opacity: 0;
+    transition: all 0.5s;
+    visibility: hidden;
+    transform: scale(0) rotate(180deg);
+    flex: 0;
+  }
 
-    &:after {
-        content: '';
-        background: transparent;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        position: absolute;
-        z-index: var(--mud-zindex-tooltip);
-    }
+  &:after {
+    content: '';
+    background: transparent;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    z-index: var(--mud-zindex-tooltip);
+  }
 }

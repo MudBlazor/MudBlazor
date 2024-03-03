@@ -321,13 +321,7 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             await Task.Delay(100);
             var autocompletecomp = comp.FindComponent<MudAutocomplete<ExternalList>>();
-            var input = autocompletecomp.Find("input");
-
-            var wrappedElement = ((dynamic)input).WrappedElement;
-            var value = ((IHtmlInputElement)wrappedElement).Value;
-
-            //The value of the input should be California
-            value.Should().Be("One");
+            autocompletecomp.Find("input").GetAttribute("value").Should().Be("One");
         }
 
         /// <summary>
@@ -1015,7 +1009,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Test
 
-            comp.WaitForAssertion(() => Assert.IsFalse(cancelToken?.IsCancellationRequested));
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
 
             // Arrange second call
 
@@ -1032,7 +1026,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Test
 
-            comp.WaitForAssertion(() => Assert.IsTrue(cancelToken?.IsCancellationRequested));
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
 
             first.SetCanceled();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ToMarkup().Should().NotContain("Foo"));
@@ -1075,7 +1069,7 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.SetParam(a => a.Text, testText);
 
             // Assert
-            autocompletecomp.WaitForAssertion(() => Assert.AreEqual(testText, eventText));
+            autocompletecomp.WaitForAssertion(() => eventText.Should().Be(testText));
         }
 
         [Test]

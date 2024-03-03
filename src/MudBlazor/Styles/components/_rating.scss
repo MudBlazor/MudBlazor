@@ -1,54 +1,54 @@
 ﻿.mud-rating-root {
-    display: inline-flex;
-    color: #ffb400;
+  display: inline-flex;
+  color: #ffb400;
 
-    &:focus-visible {
-        outline: none;
+  &:focus-visible {
+    outline: none;
 
-        &:not(.mud-disabled) {
-            background-color: var(--mud-palette-action-default-hover);
-        }
+    &:not(.mud-disabled) {
+      background-color: var(--mud-palette-action-default-hover);
     }
+  }
 }
 
 .mud-rating-item {
-    cursor: pointer;
-    transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  cursor: pointer;
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
-    &.mud-rating-item-active {
-        transform: scale(1.2);
+  &.mud-rating-item-active {
+    transform: scale(1.2);
+  }
+
+  &.mud-disabled, .mud-disabled:hover {
+    cursor: default;
+    pointer-events: none;
+
+    & * {
+      cursor: default;
+      color: var(--mud-palette-text-disabled);
     }
+  }
 
-    &.mud-disabled, .mud-disabled:hover {
-        cursor: default;
-        pointer-events: none;
+  &.mud-readonly {
+    cursor: default;
+  }
 
-        & * {
-            cursor: default;
-            color: var(--mud-palette-text-disabled);
-        }
+  & .mud-rating-input {
+    clip: rect(0,0,0,0);
+    margin: 0;
+    opacity: 0;
+    padding: 0;
+    z-index: 1;
+    position: absolute;
+    cursor: inherit;
+    overflow: hidden;
+  }
+
+  & svg {
+    pointer-events: none;
+
+    & path {
+      pointer-events: none;
     }
-
-    &.mud-readonly {
-        cursor: default;
-    }
-
-    & .mud-rating-input {
-        clip: rect(0,0,0,0);
-        margin: 0;
-        opacity: 0;
-        padding: 0;
-        z-index: 1;
-        position: absolute;
-        cursor: inherit;
-        overflow: hidden;
-    }
-
-    & svg {
-        pointer-events: none;
-
-        & path {
-            pointer-events: none;
-        }
-    }
+  }
 }

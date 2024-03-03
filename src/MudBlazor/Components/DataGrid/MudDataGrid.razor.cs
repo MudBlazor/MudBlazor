@@ -87,6 +87,17 @@ namespace MudBlazor
                 .AddStyle("left", "0px", when: hasStickyColumns)
             .Build();
 
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            if (ServerData != null && QuickFilter != null)
+            {
+                throw new InvalidOperationException(
+                    $"Do not supply both '{nameof(ServerData)}' and '{nameof(QuickFilter)}'."
+                );
+            }
+        }
+
         internal SortDirection GetColumnSortDirection(string columnName)
         {
             if (columnName == null)
@@ -590,6 +601,11 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Rows Per Page two-way bindable parameter
+        /// </summary>
+        [Parameter] public EventCallback<int> RowsPerPageChanged { get; set; }
+
+        /// <summary>
         /// The page index of the currently displayed page (Zero based). Usually called by MudTablePager.
         /// Note: requires a MudTablePager in PagerContent.
         /// </summary>
@@ -684,7 +700,7 @@ namespace MudBlazor
                         _groupExpansionsDict.Clear();
 
                         foreach (var column in RenderedColumns)
-                            column.RemoveGrouping();
+                            column.RemoveGrouping().AndForget();
                     }
                 }
             }
@@ -1180,6 +1196,8 @@ namespace MudBlazor
             if (resetPage)
                 CurrentPage = 0;
 
+            await RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
+
             StateHasChanged();
 
             if (_isFirstRendered)
@@ -1456,12 +1474,12 @@ namespace MudBlazor
                 StateHasChanged();
         }
 
-        internal void ChangedGrouping(Column<T> column)
+        internal async Task ChangedGrouping(Column<T> column)
         {
             foreach (var c in RenderedColumns)
             {
                 if (c.PropertyName != column.PropertyName)
-                    c.RemoveGrouping();
+                    await c.RemoveGrouping();
             }
 
             GroupItems();

@@ -1,204 +1,206 @@
 ﻿@import '../abstracts/variables';
 
 .mud-chip {
-    border: none;
-    cursor: default;
-    display: inline-flex;
-    max-width: 100%;
-    outline: 0;
-    padding: 0 12px;
-    position: relative;
-    box-sizing: border-box;
-    transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    align-items: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    justify-content: center;
-    text-decoration: none;
-    line-height: normal;
-    margin: 4px;
+  border: none;
+  cursor: default;
+  display: inline-flex;
+  max-width: 100%;
+  outline: 0;
+  padding: 0 12px;
+  position: relative;
+  box-sizing: border-box;
+  transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  align-items: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  justify-content: center;
+  text-decoration: none;
+  line-height: normal;
+  margin: 4px;
 
-    &.mud-disabled {
-        opacity: 0.5;
-        pointer-events: none;
+  &.mud-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &.mud-chip-size-small {
+    border-radius: 12px;
+    font-size: 12px;
+    height: 24px;
+    padding: 0 8px;
+
+    .mud-avatar {
+      margin-left: -4px;
+      margin-right: 4px;
+      margin-inline-start: -4px;
+      margin-inline-end: 4px;
+      width: 18px;
+      height: 18px;
+      font-size: 0.625rem;
     }
 
-    &.mud-chip-size-small {
-        border-radius: 12px;
-        font-size: 12px;
-        height: 24px;
-        padding: 0 8px;
-
-        .mud-avatar {
-            margin-left: -4px;
-            margin-right: 4px;
-            margin-inline-start: -4px;
-            margin-inline-end: 4px;
-            width: 18px;
-            height: 18px;
-            font-size: 0.625rem;
-        }
-
-        .mud-icon-root {
-            font-size: 1.125rem;
-        }
-
-        .mud-chip-close-button {
-            margin-right: -4px;
-            margin-left: 4px;
-            margin-inline-end: -4px;
-            margin-inline-start: 4px;
-        }
-    }
-
-    &.mud-chip-size-medium {
-        height: 32px;
-        font-size: 14px;
-        border-radius: 16px;
-
-        .mud-avatar {
-            margin-left: -8px;
-            margin-right: 8px;
-            margin-inline-start: -8px;
-            margin-inline-end: 8px;
-            width: 24px;
-            height: 24px;
-            font-size: 0.75rem;
-        }
-    }
-
-    &.mud-chip-size-large {
-        height: 40px;
-        font-size: 16px;
-        border-radius: 20px;
-        padding: 0 16px;
-
-        .mud-avatar {
-            margin-left: -12px;
-            margin-right: 8px;
-            margin-inline-start: -12px;
-            margin-inline-end: 8px;
-            width: 32px;
-            height: 32px;
-            font-size: 1rem;
-        }
-
-        .mud-chip-icon {
-            font-size: 1.5rem;
-            margin-left: -6px;
-            margin-right: 6px;
-            margin-inline-start: -6px;
-            margin-inline-end: 6px;
-        }
-    }
-
-    &.mud-chip-label {
-        border-radius: var(--mud-default-borderradius);
-    }
-
-    &.mud-clickable {
-        cursor: pointer;
-    }
-
-    .mud-chip-icon {
-        margin-left: -4px;
-        margin-right: 4px;
-        margin-inline-start: -4px;
-        margin-inline-end: 4px;
-        color: inherit;
+    .mud-icon-root {
+      font-size: 1.125rem;
     }
 
     .mud-chip-close-button {
-        padding: 1px;
-        margin-right: -4px;
-        margin-left: 6px;
-        margin-inline-end: -4px;
-        margin-inline-start: 6px;
-        height: 18px;
-        width: 18px;
-        color: inherit;
-        transition: .3s cubic-bezier(.25,.8,.5,1),visibility 0s;
+      margin-right: -4px;
+      margin-left: 4px;
+      margin-inline-end: -4px;
+      margin-inline-start: 4px;
+    }
+  }
 
-        .mud-icon-size-small {
-            font-size: 1.15rem;
-        }
+  &.mud-chip-size-medium {
+    height: 32px;
+    font-size: 14px;
+    border-radius: 16px;
 
-        &:hover {
-            opacity: .70;
-        }
+    .mud-avatar {
+      margin-left: -8px;
+      margin-right: 8px;
+      margin-inline-start: -8px;
+      margin-inline-end: 8px;
+      width: 24px;
+      height: 24px;
+      font-size: 0.75rem;
+    }
+  }
+
+  &.mud-chip-size-large {
+    height: 40px;
+    font-size: 16px;
+    border-radius: 20px;
+    padding: 0 16px;
+
+    .mud-avatar {
+      margin-left: -12px;
+      margin-right: 8px;
+      margin-inline-start: -12px;
+      margin-inline-end: 8px;
+      width: 32px;
+      height: 32px;
+      font-size: 1rem;
     }
 
-    & > .mud-chip-content {
-        align-items: center;
-        display: inline-flex;
-        height: 100%;
-        max-width: 100%;
-        user-select: none;
+    .mud-chip-icon {
+      font-size: 1.5rem;
+      margin-left: -6px;
+      margin-right: 6px;
+      margin-inline-start: -6px;
+      margin-inline-end: 6px;
     }
+  }
+
+  &.mud-chip-label {
+    border-radius: var(--mud-default-borderradius);
+  }
+
+  &.mud-clickable {
+    cursor: pointer;
+  }
+
+  .mud-chip-icon {
+    margin-left: -4px;
+    margin-right: 4px;
+    margin-inline-start: -4px;
+    margin-inline-end: 4px;
+    color: inherit;
+  }
+
+  .mud-chip-close-button {
+    padding: 1px;
+    margin-right: -4px;
+    margin-left: 6px;
+    margin-inline-end: -4px;
+    margin-inline-start: 6px;
+    height: 18px;
+    width: 18px;
+    color: inherit;
+    transition: .3s cubic-bezier(.25,.8,.5,1),visibility 0s;
+
+    .mud-icon-size-small {
+      font-size: 1.15rem;
+    }
+
+    &:hover {
+      opacity: .70;
+    }
+  }
+
+  & > .mud-chip-content {
+    align-items: center;
+    display: inline-flex;
+    height: 100%;
+    max-width: 100%;
+    user-select: none;
+  }
 }
 
 .mud-chip-filled {
-    color: var(--mud-palette-text-primary);
-    background-color: var(--mud-palette-chip-default);
+  color: var(--mud-palette-text-primary);
+  background-color: var(--mud-palette-chip-default);
 
-    &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-        background-color: var(--mud-palette-chip-default-hover);
+  &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+    background-color: var(--mud-palette-chip-default-hover);
+  }
+
+  @each $color in $mud-palette-colors {
+    &.mud-chip-color-#{$color} {
+      color: var(--mud-palette-#{$color}-text);
+      background-color: var(--mud-palette-#{$color});
+
+      &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+        background-color: var(--mud-palette-#{$color}-darken);
+      }
     }
-
-    @each $color in $mud-palette-colors {
-        &.mud-chip-color-#{$color} {
-            color: var(--mud-palette-#{$color}-text);
-            background-color: var(--mud-palette-#{$color});
-
-            &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-                background-color: var(--mud-palette-#{$color}-darken);
-            }
-        }
-    }
+  }
 }
+
 .mud-chip-outlined {
-    color: var(--mud-palette-text-primary);
-    border: 1px solid var(--mud-palette-lines-inputs);
+  color: var(--mud-palette-text-primary);
+  border: 1px solid var(--mud-palette-lines-inputs);
 
-    &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-        background-color: var(--mud-palette-action-default-hover);
-    }
+  &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+    background-color: var(--mud-palette-action-default-hover);
+  }
 
-    @each $color in $mud-palette-colors {
-        &.mud-chip-color-#{$color} {
-            color: var(--mud-palette-#{$color});
-            border: 1px solid var(--mud-palette-#{$color});
+  @each $color in $mud-palette-colors {
+    &.mud-chip-color-#{$color} {
+      color: var(--mud-palette-#{$color});
+      border: 1px solid var(--mud-palette-#{$color});
 
-            &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-                background-color: var(--mud-palette-#{$color}-hover);
-            }
+      &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+        background-color: var(--mud-palette-#{$color}-hover);
+      }
 
-            &.mud-chip-selected {
-                background-color: var(--mud-palette-#{$color}-hover);
+      &.mud-chip-selected {
+        background-color: var(--mud-palette-#{$color}-hover);
 
-                &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-                    background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
-                }
-            }
+        &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+          background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
         }
+      }
     }
+  }
 }
+
 .mud-chip-text {
-    color: var(--mud-palette-text-primary);
-    background-color: var(--mud-palette-chip-default);
+  color: var(--mud-palette-text-primary);
+  background-color: var(--mud-palette-chip-default);
 
-    &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-        background-color: var(--mud-palette-chip-default-hover);
+  &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+    background-color: var(--mud-palette-chip-default-hover);
+  }
+
+  @each $color in $mud-palette-colors {
+    &.mud-chip-color-#{$color} {
+      color: var(--mud-palette-#{$color});
+      background-color: var(--mud-palette-#{$color}-hover);
+
+      &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+        background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+      }
     }
-
-    @each $color in $mud-palette-colors {
-        &.mud-chip-color-#{$color} {
-            color: var(--mud-palette-#{$color});
-            background-color: var(--mud-palette-#{$color}-hover);
-
-            &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
-                background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
-            }
-        }
-    }
+  }
 }

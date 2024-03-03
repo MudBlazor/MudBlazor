@@ -43,7 +43,7 @@ namespace MudBlazor.UnitTests.Services
         {
             try
             {
-                CollectionAssert.AreEqual(firstColl, secondColl);
+                secondColl.Should().BeEquivalentTo(firstColl);
                 return true;
             }
             catch (Exception)

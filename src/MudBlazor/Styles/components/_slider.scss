@@ -1,211 +1,211 @@
 ﻿@import '../abstracts/variables';
 
 .mud-slider {
-    color: var(--mud-palette-text-primary);
-    display: inline-block;
+  color: var(--mud-palette-text-primary);
+  display: inline-block;
+  width: 100%;
+  user-select: none;
+
+  & > .mud-typography {
+    margin-top: 10px;
+  }
+
+  &.mud-slider-vertical {
+    transform: rotate(270deg);
+    height: 100%;
+    width: unset;
+  }
+
+  .mud-slider-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: relative;
+    display: block;
     width: 100%;
-    user-select: none;
+    background-color: transparent;
+    cursor: pointer;
 
-    & > .mud-typography {
-        margin-top: 10px;
+    &:focus {
+      outline: none;
     }
 
-    &.mud-slider-vertical {
-        transform: rotate(270deg);
-        height: 100%;
-        width: unset;
+    &:active {
+      & + .mud-slider-value-label {
+        opacity: 1;
+      }
     }
 
-    .mud-slider-input {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        position: relative;
-        display: block;
-        width: 100%;
-        background-color: transparent;
-        cursor: pointer;
+    @include slider-track {
+      border-radius: var(--mud-default-borderradius);
+      width: 100%;
+    }
 
-        &:focus {
-            outline: none;
+
+    @include slider-thumb {
+      appearance: none;
+      -webkit-appearance: none;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.38;
+
+      @include slider-track {
+        background-color: var(--mud-palette-text-disabled);
+      }
+
+      @include slider-thumb {
+        background-color: rgb( 0, 0, 0);
+        color: rgb(255, 255, 255);
+        box-shadow: 0 0 0 1px rgb( 255, 255, 255) !important;
+        transform: scale(4, 4);
+
+        &:hover {
+          box-shadow: 0 0 0 1px rgb( 255, 255, 255) !important;
         }
+      }
+    }
+  }
 
-        &:active {
-            & + .mud-slider-value-label {
-                opacity: 1;
-            }
-        }
+  @each $color in $mud-palette-colors {
+    &.mud-slider-#{$color} {
+      .mud-slider-filled {
+        background-color: var(--mud-palette-#{$color});
+      }
 
+      .mud-slider-track-tick {
+        background-color: var(--mud-palette-#{$color});
+      }
+
+      .mud-slider-value-label {
+        color: var(--mud-palette-#{$color}-text);
+        background-color: var(--mud-palette-#{$color});
+      }
+
+
+      .mud-slider-input {
         @include slider-track {
-            border-radius: var(--mud-default-borderradius);
-            width: 100%;
+          background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.30);
         }
-
 
         @include slider-thumb {
-            appearance: none;
-            -webkit-appearance: none;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+          background-color: var(--mud-palette-#{$color});
+          box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3);
         }
 
-        &:disabled {
-            cursor: default;
-            opacity: 0.38;
-
-            @include slider-track {
-                background-color: var(--mud-palette-text-disabled);
-            }
-
-            @include slider-thumb {
-                background-color: rgb( 0, 0, 0);
-                color: rgb(255, 255, 255);
-                box-shadow: 0 0 0 1px rgb( 255, 255, 255) !important;
-                transform: scale(4, 4);
-
-                &:hover {
-                    box-shadow: 0 0 0 1px rgb( 255, 255, 255) !important;
-                }
-            }
-        }
-    }
-
-    @each $color in $mud-palette-colors {
-        &.mud-slider-#{$color} {
-            .mud-slider-filled {
-                background-color: var(--mud-palette-#{$color});
-            }
-
-            .mud-slider-track-tick {
-                background-color: var(--mud-palette-#{$color});
-            }
-
-            .mud-slider-value-label {
-                color: var(--mud-palette-#{$color}-text);
-                background-color: var(--mud-palette-#{$color});
-            }
-
-
-            .mud-slider-input {
-                @include slider-track {
-                    background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.30);
-                }
-
-                @include slider-thumb {
-                    background-color: var(--mud-palette-#{$color});
-                    box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3);
-                }
-
-                @include slider-thumb {
-                    &:hover {
-                        box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3),0 0 0 1px rgba(var(--mud-palette-#{$color}-rgb), 0.24);
-                    }
-                }
-
-
-                &:active, &:focus-visible {
-                    @include slider-thumb {
-                        box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3),0 0 0 2px rgba(var(--mud-palette-#{$color}-rgb), 0.24);
-                    }
-                }
-            }
-        }
-    }
-
-    $slider-sizes: ("small": 2, "medium": 4, "large": 6);
-    $tickcount: 50;
-    $margincount: 10;
-    $thumbscale: 6;
-
-    @each $size, $value in $slider-sizes {
-        &.mud-slider-#{$size} {
-            .mud-slider-filled {
-                height: #{$value}px;
-            }
-
-            .mud-slider-track-tick {
-                width: #{$value}px;
-                height: #{$value}px;
-            }
-
-            .mud-slider-track-tick-label {
-                transform: translateX(-50%) translateY(#{$tickcount + "%"});
-            }
-
-            .mud-slider-input {
-                @include slider-track {
-                    height: #{$value}px;
-                    margin: #{$margincount}px 0;
-                }
-
-                @include slider-thumb {
-                    height: #{$value}px;
-                    width: #{$value}px;
-                    transform: scale(#{$thumbscale}, #{$thumbscale});
-                }
-            }
+        @include slider-thumb {
+          &:hover {
+            box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3),0 0 0 1px rgba(var(--mud-palette-#{$color}-rgb), 0.24);
+          }
         }
 
-        $tickcount: $tickcount + 30;
-        $margincount: $margincount + 2;
-        $thumbscale: $thumbscale - 1;
+
+        &:active, &:focus-visible {
+          @include slider-thumb {
+            box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3),0 0 0 2px rgba(var(--mud-palette-#{$color}-rgb), 0.24);
+          }
+        }
+      }
+    }
+  }
+
+  $slider-sizes: ("small": 2, "medium": 4, "large": 6);
+  $tickcount: 50;
+  $margincount: 10;
+  $thumbscale: 6;
+
+  @each $size, $value in $slider-sizes {
+    &.mud-slider-#{$size} {
+      .mud-slider-filled {
+        height: #{$value}px;
+      }
+
+      .mud-slider-track-tick {
+        width: #{$value}px;
+        height: #{$value}px;
+      }
+
+      .mud-slider-track-tick-label {
+        transform: translateX(-50%) translateY(#{$tickcount + "%"});
+      }
+
+      .mud-slider-input {
+        @include slider-track {
+          height: #{$value}px;
+          margin: #{$margincount}px 0;
+        }
+
+        @include slider-thumb {
+          height: #{$value}px;
+          width: #{$value}px;
+          transform: scale(#{$thumbscale}, #{$thumbscale});
+        }
+      }
     }
 
+    $tickcount: $tickcount + 30;
+    $margincount: $margincount + 2;
+    $thumbscale: $thumbscale - 1;
+  }
 
 
-    .mud-slider-container {
-        position: relative;
-        width: 100%;
-        display: flex;
-        align-content: center;
-    }
 
-    .mud-slider-filled {
-        border-radius: var(--mud-default-borderradius);
-    }
+  .mud-slider-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-content: center;
+  }
 
-    .mud-slider-inner-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-    }
+  .mud-slider-filled {
+    border-radius: var(--mud-default-borderradius);
+  }
 
-    .mud-slider-value-label {
-        position: absolute;
-        top: 0;
-        transform: translateX(-50%) translateY(-125%);
-        padding: 4px 8px;
-        text-align: center;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        border-radius: 2px;
-        line-height: normal;
-        opacity: 0;
-        transition: opacity .2s ease-in-out;
-        pointer-events: none;
-        user-select: none;
-    }
+  .mud-slider-inner-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
 
-    .mud-slider-tickmarks {
-        display: flex;
-        justify-content: space-between;
-        flex-grow: 1;
-    }
+  .mud-slider-value-label {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%) translateY(-125%);
+    padding: 4px 8px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    border-radius: 2px;
+    line-height: normal;
+    opacity: 0;
+    transition: opacity .2s ease-in-out;
+    pointer-events: none;
+    user-select: none;
+  }
 
-    .mud-slider-track-tick {
-        border-radius: 9999%;
-        background-color: var(--mud-palette-primary);
-    }
+  .mud-slider-tickmarks {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+  }
 
-    .mud-slider-track-tick-label {
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
+  .mud-slider-track-tick {
+    border-radius: 9999%;
+    background-color: var(--mud-palette-primary);
+  }
+
+  .mud-slider-track-tick-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 }

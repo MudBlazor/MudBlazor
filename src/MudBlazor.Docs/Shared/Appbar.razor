@@ -1,7 +1,7 @@
-﻿<MudHidden Breakpoint="Breakpoint.MdAndUp">
+﻿<div class="d-flex align-center flex-grow-1 d-md-none">
     <MudIconButton OnClick="DrawerToggleCallback" Icon="@Icons.Material.Rounded.Notes" Color="Color.Inherit" Edge="Edge.Start"/>
     <MudSpacer/>
-    <NavLink ActiveClass="d-flex" href="/">
+    <NavLink ActiveClass="d-flex align-center" href="/">
         <MudBlazorLogo Class="docs-mudblazor-logo"/>
         <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text">MudBlazor</MudText>
     </NavLink>
@@ -14,9 +14,9 @@
     {
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Edge="Edge.End" Href="https://github.com/MudBlazor/MudBlazor/"/>
     }
-</MudHidden>
-<MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-    <NavLink ActiveClass="d-flex me-4" href="/">
+</div>
+<div class="d-none d-md-flex align-center flex-grow-1">
+    <NavLink ActiveClass="d-flex align-center me-4" href="/">
         <MudBlazorLogo Class="docs-mudblazor-logo"/>
         <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text">MudBlazor</MudText>
     </NavLink>
@@ -96,12 +96,12 @@
     <MudTooltip Duration="1000" Text="GitHub Repository" ShowOnFocus="false">
         <MudIconButton Href="https://github.com/MudBlazor/MudBlazor/" Target="_blank" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Edge="Edge.End"/>
     </MudTooltip>
-</MudHidden>
+</div>
 
 
 <MudDialog @bind-IsVisible="_searchDialogOpen" Options="_dialogOptions" Class="docs-gray-bg" ClassContent="docs-mobile-dialog-search">
     <DialogContent>
-        <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" PopoverClass="docs-mobile-dialog-search-popover" Placeholder="Search docs" SearchFunc="Search" ValueChanged="OnSearchResult" Clearable="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search">
+        <MudAutocomplete AutoFocus="true" @ref="_searchAutocomplete" T="ApiLinkServiceEntry" PopoverClass="docs-mobile-dialog-search-popover" Placeholder="Search docs" SearchFunc="Search" ValueChanged="OnSearchResult" Clearable="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search">
             <ItemTemplate Context="result">
                 <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
             </ItemTemplate>

@@ -29,7 +29,7 @@ namespace MudBlazor.Docs.Extensions
             // get the absolute path with out the base path
             var currentUri = navMan.Uri.Remove(0, navMan.BaseUri.Length - 1);
             var secondElement = currentUri
-                .Split("/", StringSplitOptions.RemoveEmptyEntries)
+                .Split(new char[] {'/', '?'}, StringSplitOptions.RemoveEmptyEntries)
                 .ElementAtOrDefault(1);
             return secondElement;
         }

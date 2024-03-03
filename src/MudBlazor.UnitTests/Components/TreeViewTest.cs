@@ -26,7 +26,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-treeview-item-content").DoubleClick();
             comp.Instance.SelectedValue.Should().BeNull();
         }
-
+        
         [Test]
         public void TreeView_ClickWhileActive_DoesChangeSelection()
         {
@@ -85,11 +85,26 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SubItemSelected.Should().BeFalse();
             comp.Instance.ParentItemSelected.Should().BeTrue();
         }
-
+        
         [Test]
         public void Normal_Activate_CheckActivated_ActivateAnother_CheckBoth()
         {
             var comp = Context.RenderComponent<TreeViewTest1>();
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
+            comp.Find("div.mud-treeview-item-content").Click();
+            comp.Instance.Item1Activated.Should().BeTrue();
+            comp.Instance.Item2Activated.Should().BeFalse();
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
+            comp.FindAll("div.mud-treeview-item-content")[4].Click();
+            comp.Instance.Item1Activated.Should().BeTrue();
+            comp.Instance.Item2Activated.Should().BeTrue();
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(2);
+        }
+        
+        [Test]
+        public void TreeView_WillUnselectItems_WhenNotMultiSelect()
+        {
+            var comp = Context.RenderComponent<TreeViewTest7>();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
             comp.Find("div.mud-treeview-item-content").Click();
             comp.Instance.Item1Activated.Should().BeTrue();
@@ -254,5 +269,135 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p.mud-typography")[4].InnerHtml.MarkupMatches("This is item 5");
         }
         
+        
+        [Test]
+        public void TreeView_SetSelectedValue_SetsSelectedValue()
+        {
+            var comp = Context.RenderComponent<TreeViewTest6>();
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "logo.png"));
+
+            comp.Instance.SelectedValue.Should().Be("logo.png");
+        }
+        
+        [Test]
+        public void TreeView_SetSelectedValue_IsSetNullWhenNotFound()
+        {
+            var comp = Context.RenderComponent<TreeViewTest6>();
+            
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "logo.png"));
+            
+            comp.Instance.SelectedValue.Should().Be("logo.png");
+            
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "xxxxxx"));
+            
+            comp.Instance.SelectedValue.Should().Be(default);
+        }
+        
+        [Test]
+        public void TreeView_SetSelectedValue_IsSetNullWhenInitialValueIsInvalid()
+        {
+            var comp = Context.RenderComponent<TreeViewTest6>();
+            
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "xxxxxx"));
+            
+            comp.Instance.SelectedValue.Should().Be(default);
+        }
+
+        [Test] public void TreeView_SelectedValue_ShouldUseCompareParameter()
+        {
+            // test tree with items ("Ax", "Bx", "Cx", "Dx")
+            var comp = Context.RenderComponent<TreeViewCompareTest>();
+            
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "Ax"));
+            
+            comp.Instance.SelectedValue.Should().Be("Ax");
+            
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "A"));
+            
+            comp.Instance.SelectedValue.Should().Be(default);
+            
+            // set the comparer to a value that will only check the first character of the string
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Compare, 
+                new DelegateEqualityComparer<string>(
+                    (x, y) => 
+                    {
+                        if (string.IsNullOrEmpty(x) && string.IsNullOrEmpty(y))
+                            return true;
+                        if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+                            return false;
+                        return x[0] == y[0];
+                    },
+                    obj => 
+                    {
+                        if (string.IsNullOrEmpty(obj))
+                            return 0;
+                        return obj[0].GetHashCode();
+                    }
+                )
+            ));
+            
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "A"));
+            
+            comp.Instance.SelectedValue.Should().Be("Ax");
+        }
+        
+        /// <summary>
+        /// This test checks that when multiple values are selected and the compare parameter is updated,
+        /// selected values are updated correctly. 
+        /// </summary>
+        [Test]
+        public async Task TreeView_SelectedValues_ShouldUseCompareParameter()
+        {
+            // tree containing two children with values AA and AB
+            var comp = Context.RenderComponent<TreeViewCompareMultiSelectTest>();
+
+            await comp.InvokeAsync(() => comp.Instance.Item1.SelectedChanged.InvokeAsync(true));
+            await comp.InvokeAsync(() => comp.Instance.Item2.SelectedChanged.InvokeAsync(true));
+            
+            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item2Selected.Should().BeTrue();
+            
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Compare, 
+                new DelegateEqualityComparer<string>(
+                    (x, y) => 
+                    {
+                        if (string.IsNullOrEmpty(x) && string.IsNullOrEmpty(y))
+                            return true;
+                        if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+                            return false;
+                        return x[0] == y[0];
+                    },
+                    obj => 
+                    {
+                        if (string.IsNullOrEmpty(obj))
+                            return 0;
+                        return obj[0].GetHashCode();
+                    }
+                )
+            ));
+            
+            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item2Selected.Should().BeFalse();
+        }
+        
+        [Test]
+        public void MudTreeViewItemComparer_ShouldReturnTrueWhenBothNull()
+        {
+            var comparer = new MudTreeViewItemComparer<string>(EqualityComparer<string>.Default);
+            
+            comparer.Equals(null, null).Should().BeTrue();
+        }
+        
+        [Test]
+        public void MudTreeViewItemComparer_ShouldReturnFalseWhenOneNull()
+        {
+            var comparer = new MudTreeViewItemComparer<string>(EqualityComparer<string>.Default);
+
+            var treeItem = new MudTreeViewItem<string> { Value = "value" };
+
+            comparer.Equals(treeItem, null).Should().BeFalse();
+            comparer.Equals(null, treeItem).Should().BeFalse();
+        }
     }
 }

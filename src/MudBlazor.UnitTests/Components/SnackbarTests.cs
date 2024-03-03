@@ -114,16 +114,16 @@ namespace MudBlazor.UnitTests.Components
         public void TestStringMessageShouldAutofillKey()
         {
             var bar = _service.Add("Oh no!");
-            Assert.AreEqual("Oh no!", bar.Message);
-            Assert.AreEqual("Oh no!", bar.SnackbarMessage.Key);
+            bar.Message.Should().Be("Oh no!");
+            bar.SnackbarMessage.Key.Should().Be("Oh no!");
         }
 
         [Test]
         public void TestStringMessageWithDifferentKey()
         {
             var bar = _service.Add("Oh no!", key:"zzz");
-            Assert.AreEqual("Oh no!", bar.Message);
-            Assert.AreEqual("zzz", bar.SnackbarMessage.Key);
+            bar.Message.Should().Be("Oh no!");
+            bar.SnackbarMessage.Key.Should().Be("zzz");
         }
 
         [Test]
@@ -141,7 +141,7 @@ namespace MudBlazor.UnitTests.Components
             }), Severity.Normal, key: key);
             _service.Add<SnackbarCustomComponent>(null, key: key);
 
-            Assert.AreEqual(1, _service.ShownSnackbars.Count());
+            _service.ShownSnackbars.Count().Should().Be(1);
         }
 
         [Test]
@@ -157,7 +157,7 @@ namespace MudBlazor.UnitTests.Components
             _service.Add("Message 1", configure: config, key: key);
             _service.Add("Message 2", configure: config, key: key);
 
-            Assert.AreEqual(1, _service.ShownSnackbars.Count());
+            _service.ShownSnackbars.Count().Should().Be(1);
         }
 
         [Test]
@@ -173,7 +173,7 @@ namespace MudBlazor.UnitTests.Components
             _service.Add("Message 1", configure: config, key: key);
             _service.Add("Message 2", configure: config, key: key);
 
-            Assert.AreEqual(2, _service.ShownSnackbars.Count());
+            _service.ShownSnackbars.Count().Should().Be(2);
         }
 
         [Test]
@@ -189,7 +189,7 @@ namespace MudBlazor.UnitTests.Components
             _service.Add("Message 1", configure: config, key: key);
             _service.Add("Message 2", configure: config, key: key);
 
-            Assert.AreEqual(1, _service.ShownSnackbars.Count());
+            _service.ShownSnackbars.Count().Should().Be(1);
         }
 
         [Test]
@@ -205,7 +205,7 @@ namespace MudBlazor.UnitTests.Components
             _service.Add("Message 1", configure: config, key: key);
             _service.Add("Message 2", configure: config, key: key);
 
-            Assert.AreEqual(2, _service.ShownSnackbars.Count());
+            _service.ShownSnackbars.Count().Should().Be(2);
         }
 
         [Test]
@@ -220,7 +220,7 @@ namespace MudBlazor.UnitTests.Components
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Success, config => { config.HideIcon = true; }));
             var hasIcon = _provider.Find("#mud-snackbar-container .mud-snackbar").FirstElementChild.ClassName.Contains("mud-snackbar-icon");
-            Assert.IsFalse(hasIcon);
+            hasIcon.Should().BeFalse();
         }
 
         [Test]
@@ -277,11 +277,11 @@ namespace MudBlazor.UnitTests.Components
             //Without key to make sure it doesn't gets removed.
             await _provider.InvokeAsync(() => _service.Add(TestText, Severity.Normal, config));
 
-            Assert.AreEqual(3, _service.ShownSnackbars.Count());
+            _service.ShownSnackbars.Count().Should().Be(3);
 
             await _provider.InvokeAsync(() => _service.RemoveByKey(Key));
 
-            Assert.AreEqual(1, _service.ShownSnackbars.Count());
+            _service.ShownSnackbars.Count().Should().Be(1);
         }
     }
 }
