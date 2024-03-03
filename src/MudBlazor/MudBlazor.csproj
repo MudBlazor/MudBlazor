@@ -76,30 +76,14 @@
     <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.2" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <SassCompilerEnableWatcher>false</SassCompilerEnableWatcher>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="MudBlazor.SassCompiler" Version="2.0.4">
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.71.1.1">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="MudBlazor.JSCompiler" Version="1.0.12">
+    <PackageReference Include="MudBlazor.JSCompiler" Version="1.0.15">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-
-  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="Compile Sass;Compile JS" BeforeTargets="BeforeBuild">
-    <Error Condition="!Exists('$(MSBuildProjectDirectory)/wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
-    <Error Condition="!Exists('$(MSBuildProjectDirectory)/wwwroot/MudBlazor.min.js')" Text="Missing MudBlazor.min.js in wwwroot" />
-    <ItemGroup>
-      <!--Include without duplication-->
-      <_NewCompiledCssFiles Include="wwwroot\MudBlazor.min.css" Exclude="@(Content)" />
-      <_NewCompiledJsFiles Include="wwwroot\MudBlazor.min.js" Exclude="@(Content)" />
-      <Content Include="@(_NewCompiledCssFiles)" />
-      <Content Include="@(_NewCompiledJsFiles)" />
-    </ItemGroup>
-  </Target>
 
   <!--Dont Include in build output-->
   <ItemGroup>
