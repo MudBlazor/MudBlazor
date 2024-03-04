@@ -87,20 +87,21 @@ namespace MudBlazor
 
         /// <summary>
         /// Register a component Parameter, its EventCallback and a change handler so that the base can manage it as a ParameterState object.
-        /// It is the new rule in MudBlazor, that parameters must be auto properties. By registering the parameter with
-        /// a change handler you can still execute code when the parameter value changes. This class is part of
-        /// MudBlazor's ParameterState framework. See CONTRIBUTING.md for a more detailed explanation on why MudBlazor
-        /// parameters have to registered. 
+        /// It is the new rule in MudBlazor, that parameters must be auto properties.
+        /// By registering the parameter with a change handler you can still execute code when the parameter value changes. This class is part of
+        /// MudBlazor's ParameterState framework.
+        /// <para />
+        /// <b>NB!</b> This method must be called in the constructor!
         /// </summary>
         /// <remarks>
-        /// Note: Register must be called in the constructor! 
+        /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
         /// </remarks>
-        /// <param name="parameterName">Use nameof(...) to pass the parameter name</param>
-        /// <param name="getParameterValueFunc">A get function the ParameterState uses to retrieve the parameter value</param>
-        /// <param name="eventCallbackFunc">A get function the ParameterState uses to retrieve the EventCallback of the parameter</param>
-        /// <param name="parameterChangedHandler">A function that is executed when the parameter value changes</param>
-        /// <typeparam name="T">The parameter's value type</typeparam>
-        /// <returns>Returns the ParameterState object, so you can store it in a field to be able to set its value.</returns>
+        /// <typeparam name="T">The type of the component's property value.</typeparam>
+        /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+        /// <param name="getParameterValueFunc">>A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
+        /// <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
+        /// <param name="parameterChangedHandler">An action containing code that needs to be executed when the parameter value changes.</param>
+        /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
         internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Action parameterChangedHandler)
         {
             var attach = ParameterState.Attach(parameterName, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
@@ -109,6 +110,23 @@ namespace MudBlazor
             return attach;
         }
 
+        /// <summary>
+        /// Register a component Parameter, its EventCallback and a change handler so that the base can manage it as a ParameterState object.
+        /// It is the new rule in MudBlazor, that parameters must be auto properties.
+        /// By registering the parameter with a change handler you can still execute code when the parameter value changes. This class is part of
+        /// MudBlazor's ParameterState framework.
+        /// <para />
+        /// <b>NB!</b> This method must be called in the constructor!
+        /// </summary>
+        /// <remarks>
+        /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
+        /// </remarks>
+        /// <typeparam name="T">The type of the component's property value.</typeparam>
+        /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+        /// <param name="getParameterValueFunc">>A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
+        /// <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
+        /// <param name="parameterChangedHandler">A function containing code that needs to be executed when the parameter value changes.</param>
+        /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
         internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Func<Task> parameterChangedHandler)
         {
             var attach = ParameterState.Attach(parameterName, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
@@ -117,6 +135,22 @@ namespace MudBlazor
             return attach;
         }
 
+        /// <summary>
+        /// Register a component Parameter, its EventCallback and a change handler so that the base can manage it as a ParameterState object.
+        /// It is the new rule in MudBlazor, that parameters must be auto properties.
+        /// By registering the parameter with a change handler you can still execute code when the parameter value changes. This class is part of
+        /// MudBlazor's ParameterState framework.
+        /// <para />
+        /// <b>NB!</b> This method must be called in the constructor!
+        /// </summary>
+        /// <remarks>
+        /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
+        /// </remarks>
+        /// <typeparam name="T">The type of the component's property value.</typeparam>
+        /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+        /// <param name="getParameterValueFunc">>A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
+        /// <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
+        /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
         internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc)
         {
             var attach = ParameterState.Attach(parameterName, getParameterValueFunc, eventCallbackFunc);
@@ -125,6 +159,22 @@ namespace MudBlazor
             return attach;
         }
 
+        /// <summary>
+        /// Register a component Parameter, its EventCallback and a change handler so that the base can manage it as a ParameterState object.
+        /// It is the new rule in MudBlazor, that parameters must be auto properties.
+        /// By registering the parameter with a change handler you can still execute code when the parameter value changes. This class is part of
+        /// MudBlazor's ParameterState framework.
+        /// <para />
+        /// <b>NB!</b> This method must be called in the constructor!
+        /// </summary>
+        /// <remarks>
+        /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
+        /// </remarks>
+        /// <typeparam name="T">The type of the component's property value.</typeparam>
+        /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+        /// <param name="getParameterValueFunc">>A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
+        /// <param name="parameterChangedHandler">An action containing code that needs to be executed when the parameter value changes.</param>
+        /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
         internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Action parameterChangedHandler)
         {
             var attach = ParameterState.Attach(parameterName, getParameterValueFunc, parameterChangedHandler);
@@ -133,6 +183,22 @@ namespace MudBlazor
             return attach;
         }
 
+        /// <summary>
+        /// Register a component Parameter, its EventCallback and a change handler so that the base can manage it as a ParameterState object.
+        /// It is the new rule in MudBlazor, that parameters must be auto properties.
+        /// By registering the parameter with a change handler you can still execute code when the parameter value changes. This class is part of
+        /// MudBlazor's ParameterState framework.
+        /// <para />
+        /// <b>NB!</b> This method must be called in the constructor!
+        /// </summary>
+        /// <remarks>
+        /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
+        /// </remarks>
+        /// <typeparam name="T">The type of the component's property value.</typeparam>
+        /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+        /// <param name="getParameterValueFunc">>A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
+        /// <param name="parameterChangedHandler">A function containing code that needs to be executed when the parameter value changes.</param>
+        /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
         internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<Task> parameterChangedHandler)
         {
             var attach = ParameterState.Attach(parameterName, getParameterValueFunc, parameterChangedHandler);
