@@ -300,7 +300,7 @@ Instead of using an imperative programming approach (`component.Parameter1 = v1`
     }
 }
 ```
-In the improved version, we pass `ShowOnlyOneCalendar` as a parameter to `CalendarComponent` directly in the markup, using a variable (`showOnlyOne`) that can be manipulated within the component's code.
+In the improved version, we pass `ShowOnlyOneCalendar` as a parameter to `CalendarComponent` directly in the markup, using a variable (`_showOnlyOne`) that can be manipulated within the component's code.
 This adheres to the recommended Blazor coding practices and avoids errors like `BL0005`.
 
 ## Unit Testing and Continuous Integration
