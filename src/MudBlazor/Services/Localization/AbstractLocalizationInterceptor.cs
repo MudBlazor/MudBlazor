@@ -20,5 +20,6 @@ public abstract class AbstractLocalizationInterceptor : ILocalizationInterceptor
         MudLocalizer = mudLocalizer;
     }
 
+    /// <inheritdoc />
     public abstract LocalizedString Handle(string key);
 }
