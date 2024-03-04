@@ -34,8 +34,6 @@
 
 <!-- TOC end -->
 
-<!-- TOC --><a name="mudblazor"></a>
-
 # Information and Guidelines for Contributors
 Thank you for contributing to MudBlazor and making it even better. We are happy about every contribution! Issues, bug-fixes, new components...
 
