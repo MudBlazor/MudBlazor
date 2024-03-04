@@ -76,6 +76,10 @@
     <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.2" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <SassCompilerEnableWatcher>false</SassCompilerEnableWatcher>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="AspNetCore.SassCompiler" Version="1.71.1.1">
       <PrivateAssets>all</PrivateAssets>
