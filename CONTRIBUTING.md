@@ -285,8 +285,8 @@ This code would result in a [BL0005](https://learn.microsoft.com/en-us/aspnet/co
 Instead of using an imperative programming approach (`component.Parameter1 = v1`), a Component Parameter is supposed to be passed in a declarative syntax:
 
 ```razor
-<CalendarComponent ShowOnlyOneCalendar="@showOnlyOne"  />
-<button @onclick="UpdateHeading">
+<CalendarComponent ShowOnlyOneCalendar="@_showOnlyOne"  />
+<button @onclick="Update">
         Update
 </button>
 
@@ -294,7 +294,7 @@ Instead of using an imperative programming approach (`component.Parameter1 = v1`
 {
     private bool _showOnlyOne;;
 	
-	private void Update()
+    private void Update()
     {
         _showOnlyOne = true;
     }
