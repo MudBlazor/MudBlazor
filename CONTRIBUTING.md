@@ -67,6 +67,13 @@ Most important files:
 - Component tests ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.UnitTests/Components))
 - Test components ([Link](https://github.com/MudBlazor/MudBlazor/tree/dev/src/MudBlazor.UnitTests.Viewer/TestComponents))
 
+## Coding Dos and Don'ts
+- **No code in parameter getter/setter!** See section *Parameter Registration or Why we can't have Logic in Parameter Setters* below
+- **Don't overwrite parameters in components!** See section *Avoid overwriting parameters in Blazor Components* below
+- **No programmatic assignments to another component's parameters** See section *Blazor Component parameter should not be set outside of its component.* below
+- **Don't break stuff!** See section *Unit Testing and Continuous Integration* below
+- **Add a test to guard against others breaking your feature/fix!** See section *Unit Testing and Continuous Integration* below
+
 ## Parameter Registration or Why we can't have Logic in Parameter Setters
 MudBlazor parameters shall be auto-properties, meaning that there must not be logic in the property getter or setter. This rule prevents update-loops and other nasty bugs such as swallowed exceptions due to unobserved async discards. 
 "This is quite inconvenient" you may say, where do I call the EventCallback and how to react to parameter changes? Luckily the MudBlazor team has got your back. Thanks to our ParameterState framework you don't need to keep track of 
@@ -132,7 +139,7 @@ public MudCollapse()
     _expandedState = RegisterParameter(
         nameof(Expanded),           // the property name is needed for automatic value change detection in SetParametersAsync
         () => Expanded,             // a get func enabling the ParameterState to read the parameter value w/o resorting to Reflection
-        () => ExpandedChanged,      // a get func enabling the ParameterState to get the EventCallback of the parameter
+        () => ExpandedChanged,      // a get func enabling the ParameterState to get the EventCallback of the parameter (if the param is two-way bindable)
         ExpandedChangedHandlerAsync // the change handler 
     );
 }
@@ -156,6 +163,9 @@ private async Task ExpandedChangedHandlerAsync()
     await ExpandedChanged.InvokeAsync(_expandedState.Value); // async Task not discarded
 }
 ```
+
+There are a couple of overloads for the `RegisterParameter` method for different use-cases. For instance, you don't always need an `EventCallback` for every parameter. 
+Some parameters need async logic in their change handler other don't, etc.
 
 ### What about the bad parameters all over the MudBlazor code base?
 
