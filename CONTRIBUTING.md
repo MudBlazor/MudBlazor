@@ -1,3 +1,40 @@
+<!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
+
+- [!MudBlazor](#mudblazor)
+- [Information and Guidelines for Contributors](#information-and-guidelines-for-contributors)
+   * [Code of Conduct](#code-of-conduct)
+   * [Minimal Prerequisites to Compile from Source](#minimal-prerequisites-to-compile-from-source)
+   * [Pull Requests](#pull-requests)
+      + [Pull Requests which introduce new components](#pull-requests-which-introduce-new-components)
+   * [Project structure and where to find the most important files](#project-structure-and-where-to-find-the-most-important-files)
+   * [Coding Dos and Don'ts](#coding-dos-and-donts)
+   * [Parameter Registration or Why we can't have Logic in Parameter Setters](#parameter-registration-or-why-we-cant-have-logic-in-parameter-setters)
+      + [Example of a bad Parameter definition](#example-of-a-bad-parameter-definition)
+      + [Example of a good Parameter definition](#example-of-a-good-parameter-definition)
+      + [What about the bad parameters all over the MudBlazor code base?](#what-about-the-bad-parameters-all-over-the-mudblazor-code-base)
+   * [Avoid overwriting parameters in Blazor Components](#avoid-overwriting-parameters-in-blazor-components)
+      + [Example of a bad code](#example-of-a-bad-code)
+      + [Example of a good code](#example-of-a-good-code)
+   * [Blazor Component parameter should not be set outside of its component.](#blazor-component-parameter-should-not-be-set-outside-of-its-component)
+      + [Example of a bad code](#example-of-a-bad-code-1)
+      + [Example of a good code](#example-of-a-good-code-1)
+   * [Unit Testing and Continuous Integration](#unit-testing-and-continuous-integration)
+      + [How not to break stuff](#how-not-to-break-stuff)
+      + [Make your code break-safe](#make-your-code-break-safe)
+      + [How to write a unit test?](#how-to-write-a-unit-test)
+      + [How to write a bUnit test](#how-to-write-a-bunit-test)
+      + [What are common errors when writing tests?](#what-are-common-errors-when-writing-tests)
+         - [Do not save html elements you query via `Find` or `FindAll` in a variable!](#do-not-save-html-elements-you-query-via-find-or-findall-in-a-variable)
+         - [Always use InvokeAsync to set parameter values on a component](#always-use-invokeasync-to-set-parameter-values-on-a-component)
+      + [What does not need to be tested?](#what-does-not-need-to-be-tested)
+      + [What is the MudBlazor.UnitTests.Viewer for?](#what-is-the-mudblazorunittestsviewer-for)
+      + [What are the auto-generated tests for?](#what-are-the-auto-generated-tests-for)
+      + [Continuous Integration](#continuous-integration)
+
+<!-- TOC end -->
+
+<!-- TOC --><a name="mudblazor"></a>
+
 # ![MudBlazor](content/MudBlazor-GitHub-NoBg.png)
 
 # Information and Guidelines for Contributors
