@@ -19,16 +19,18 @@ namespace MudBlazor.UnitTests.Services.Localization
         [SetUp]
         public void SetUp()
         {
-            var mudLocalizer = new Mock<MudLocalizer> { CallBase = true};
+            var mudLocalizer = new Mock<MudLocalizer> { CallBase = true };
             mudLocalizer.Setup(s => s["MudDataGrid.is empty"]).Returns(new LocalizedString("MudDataGrid.is empty", "XXX", false));
             mudLocalizer.Setup(s => s["MudDataGrid.is not empty"]).Returns(new LocalizedString("MudDataGrid.is not empty", "MudDataGrid.is not empty", true));
 
+
+            _internalMudLocalizer = new InternalMudLocalizer(new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object));
+            _internalMudLocalizerWithoutMudLocalizer = new InternalMudLocalizer(new DefaultLocalizationInterceptor(NullLoggerFactory.Instance));
+
             var interceptor = new Mock<ILocalizationInterceptor>();
-            interceptor.Setup(s => s.Handle("MudDataGrid.Clear", It.IsAny<IStringLocalizer>(), It.IsAny<MudLocalizer>())).Returns(new LocalizedString("MudDataGrid.Clear", "Reset", false));
-            
-            _internalMudLocalizer = new InternalMudLocalizer(NullLoggerFactory.Instance, mudLocalizer: mudLocalizer.Object);
-            _internalMudLocalizerWithoutMudLocalizer = new InternalMudLocalizer(NullLoggerFactory.Instance);
-            _internalMudLocalizerWithCustomInterceptor = new InternalMudLocalizer(NullLoggerFactory.Instance, interceptor.Object, mudLocalizer.Object);
+            interceptor.Setup(s => s.Handle("MudDataGrid.Clear")).Returns(new LocalizedString("MudDataGrid.Clear", "Reset", false));
+
+            _internalMudLocalizerWithCustomInterceptor = new InternalMudLocalizer(interceptor.Object);
         }
 
         [Test]
@@ -68,7 +70,7 @@ namespace MudBlazor.UnitTests.Services.Localization
         {
             Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
             _internalMudLocalizerWithCustomInterceptor["MudDataGrid.Clear"].Should().BeOfType(typeof(LocalizedString)).And.BeEquivalentTo(new LocalizedString("MudDataGrid.Clear", "Reset", false));
-            
+
             Thread.CurrentThread.CurrentUICulture = new CultureInfo("de-DE");
             _internalMudLocalizerWithCustomInterceptor["MudDataGrid.Clear"].Should().BeOfType(typeof(LocalizedString)).And.BeEquivalentTo(new LocalizedString("MudDataGrid.Clear", "Reset", false));
         }

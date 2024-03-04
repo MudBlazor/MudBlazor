@@ -17,10 +17,11 @@ namespace MudBlazor
         /// Gets the translation for the given translation key.
         /// Implement logic for choosing translations, overrides etc here.
         /// </summary>
-        /// <param name="key">the translation key to look up</param>
-        /// <param name="defaultEnglishLocalizer">localizer providing MudBlazors default english localizations</param>
-        /// <param name="customMudLocalizer"><see cref="MudLocalizer"/> instance if any is registered</param>
-        /// <returns><see cref="LocalizedString"/> with the translation. <see cref="LocalizedString.ResourceNotFound"/> should be <c>true</c> if no translation is provided for some translation key</returns>
-        LocalizedString Handle(string key, IStringLocalizer defaultEnglishLocalizer, MudLocalizer? customMudLocalizer);
+        /// <param name="key">The translation key to look up</param>
+        /// <remarks>
+        /// The <see cref="LocalizedString.ResourceNotFound"/> should be <c>true</c> if no translation is provided for some translation key.
+        /// </remarks>
+        /// <returns><see cref="LocalizedString"/> with the translation.</returns>
+        LocalizedString Handle(string key);
     }
 }
