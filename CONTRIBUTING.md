@@ -1,3 +1,5 @@
+# ![MudBlazor](content/MudBlazor-GitHub-NoBg.png)
+
 <!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
 
 - [!MudBlazor](#mudblazor)
@@ -34,8 +36,6 @@
 <!-- TOC end -->
 
 <!-- TOC --><a name="mudblazor"></a>
-
-# ![MudBlazor](content/MudBlazor-GitHub-NoBg.png)
 
 # Information and Guidelines for Contributors
 Thank you for contributing to MudBlazor and making it even better. We are happy about every contribution! Issues, bug-fixes, new components...
