@@ -264,7 +264,7 @@ public class CalendarComponent : ComponentBase
 ### Example of a bad code
 ```razor
 <CalendarComponent @ref="@_calendar" />
-<button @onclick="UpdateHeading">
+<button @onclick="Update">
         Update
 </button>
 
