@@ -14,7 +14,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public abstract partial class Column<T> : MudComponentBase
+    public abstract partial class Column<T> : MudComponentBase, IDisposable
     {
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
 
@@ -410,6 +410,12 @@ namespace MudBlazor
             hidden = !hidden;
             await HiddenChanged.InvokeAsync(hidden);
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
+        }
+
+        public void Dispose()
+        {
+            if (DataGrid != null)
+                DataGrid.RemoveColumn(this);
         }
 
 
