@@ -52,7 +52,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find(".mud-input-control.mud-file-upload.outer-test"); //find outer div
 
-            IElement innerClasses() => comp.Find("input").GetAttribute("class"); //find inner input
+            var innerClasses = comp.Find("input").GetAttribute("class"); //find inner input
             innerClasses.Should().Be("inner-test");
         }
 
@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
 
-            IElement input() => comp.Find("input");
+            var input = comp.Find("input");
             input.HasAttribute("multiple").Should().BeTrue();
         }
 
@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
 
-            IElement input() => comp.Find("input");
+            var input = comp.Find("input");
             input.HasAttribute("hidden").Should().BeTrue();
         }
 
@@ -89,7 +89,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters =>
                 parameters.Add(x => x.Hidden, false));
 
-            IElement input() => comp.Find("input");
+            var input = comp.Find("input");
             input.HasAttribute("hidden").Should().BeFalse();
         }
 
@@ -102,7 +102,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
                 .Add(x => x.Accept, ".png, .jpg"));
 
-            IElement input() => comp.Find("input");
+            var input = comp.Find("input");
             input.GetAttribute("accept").Should().Be(".png, .jpg");
         }
 
@@ -114,11 +114,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FileUploadButtonTemplateTest>();
 
-            IElement label() => comp.Find("label");
+            var label = comp.Find("label");
             label.ToMarkup().Should().Contain("Upload");
             label.GetAttribute("for").Should().StartWith("mud_fileupload_"); //ensure button markup renders
 
-            IElement after() => comp.Find(".mud-input-control-input-container div");
+            var after = comp.Find(".mud-input-control-input-container div");
             after.MarkupMatches("<div>Select Template</div>");
         }
 
@@ -130,11 +130,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FileUploadButtonTemplateContextTest>();
 
-            IElement label() => comp.Find("label");
+            var label = comp.Find("label");
             label.ToMarkup().Should().Contain("Upload");
             label.GetAttribute("for").Should().StartWith("mud_fileupload_"); //ensure button markup renders
 
-            IElement clearButton() => comp.Find("button#clear-button");
+            var clearButton = comp.Find("button#clear-button");
             clearButton.ToMarkup().Should().Contain("Clear");
         }
 

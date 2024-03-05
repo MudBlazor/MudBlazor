@@ -43,11 +43,11 @@ namespace MudBlazor.UnitTests.Components
         public async Task BadgeTest_Click()
         {
             var comp = Context.RenderComponent<BadgeClickTest>();
-            IRenderedComponent<MudBadge> badge() => comp.FindComponent<MudBadge>();
-            IRenderedComponent<MudNumericField<int>> numeric() => comp.FindComponent<MudNumericField<int>>();
-            comp.WaitForAssertion(() => numeric().Instance.Value.Should().Be(0));
-            await comp.InvokeAsync(() => badge().Instance.HandleBadgeClick(new MouseEventArgs()));
-            comp.WaitForAssertion(() => numeric().Instance.Value.Should().Be(1));
+            MudBadge badge() => comp.FindComponent<MudBadge>().Instance;
+            MudNumericField<int> numeric() => comp.FindComponent<MudNumericField<int>>().Instance;
+            comp.WaitForAssertion(() => numeric().Value.Should().Be(0));
+            await comp.InvokeAsync(() => badge().HandleBadgeClick(new MouseEventArgs()));
+            comp.WaitForAssertion(() => numeric().Value.Should().Be(1));
         }
     }
 }

@@ -332,7 +332,7 @@ namespace MudBlazor.UnitTests.Components
 
             for (int i = 0; i < 4; i++)
             {
-               await handler.UpdateFragmentAsync(newRenderFragment, comp.Instance, "my-extra-class", "my-extra-style:2px", i % 2 == 0);
+                await handler.UpdateFragmentAsync(newRenderFragment, comp.Instance, "my-extra-class", "my-extra-style:2px", i % 2 == 0);
             }
             updateCounter.Should().Be(4);
 
@@ -858,7 +858,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverTest>();
 
             //popup is close, so only the popover-content should be there
-            IElement provider() => comp.Find(".mud-popover-provider");
+            var provider = comp.Find(".mud-popover-provider");
             provider.Children.Should().ContainSingle();
 
             var popoverNode = comp.Find(".popoverparent").Children[1];
@@ -1023,7 +1023,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<PopoverComplexContent>();
 
-            IElement dynamicContentElement() => comp.Find(".dynamic-content");
+            var dynamicContentElement = comp.Find(".dynamic-content");
             dynamicContentElement.ChildNodes.Should().BeEmpty();
 
             await comp.Instance.AddRow();

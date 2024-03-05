@@ -99,15 +99,15 @@ namespace MudBlazor.UnitTests.Components
             IRefreshableElementCollection<IElement> spans() => comp.FindAll("span");
             IRefreshableElementCollection<IElement> svgs() => comp.FindAll("svg");
             // check dense
-            spans().GetItemByIndex(0).ClassList.Should().Contain("mud-checkbox-dense");
-            spans().GetItemByIndex(1).ClassList.Should().NotContain("mud-checkbox-dense");
-            spans().GetItemByIndex(2).ClassList.Should().NotContain("mud-checkbox-dense");
-            spans().GetItemByIndex(3).ClassList.Should().NotContain("mud-checkbox-dense");
+            spans()[0].ClassList.Should().Contain("mud-checkbox-dense");
+            spans()[1].ClassList.Should().NotContain("mud-checkbox-dense");
+            spans()[2].ClassList.Should().NotContain("mud-checkbox-dense");
+            spans()[3].ClassList.Should().NotContain("mud-checkbox-dense");
             // check size
-            svgs().GetItemByIndex(0).ClassList.Should().Contain("mud-icon-size-medium");
-            svgs().GetItemByIndex(1).ClassList.Should().Contain("mud-icon-size-small");
-            svgs().GetItemByIndex(2).ClassList.Should().Contain("mud-icon-size-medium");
-            svgs().GetItemByIndex(3).ClassList.Should().Contain("mud-icon-size-large");
+            svgs()[0].ClassList.Should().Contain("mud-icon-size-medium");
+            svgs()[1].ClassList.Should().Contain("mud-icon-size-small");
+            svgs()[2].ClassList.Should().Contain("mud-icon-size-medium");
+            svgs()[3].ClassList.Should().Contain("mud-icon-size-large");
         }
 
         /// <summary>

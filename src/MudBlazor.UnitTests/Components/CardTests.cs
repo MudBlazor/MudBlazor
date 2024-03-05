@@ -20,11 +20,11 @@ namespace MudBlazor.UnitTests.Components
         {
             //Card header with child content should be render successfully
             var comp = Context.RenderComponent<CardChildContentTest>();
-            IRenderedComponent<MudButton> button() => comp.FindComponent<MudButton>();
-            IRenderedComponent<MudNumericField<int>> numeric() => comp.FindComponent<MudNumericField<int>>();
-            comp.WaitForAssertion(() => numeric().Instance.Value.Should().Be(0));
-            await comp.InvokeAsync(() => button().Instance.OnClick.InvokeAsync());
-            comp.WaitForAssertion(() => numeric().Instance.Value.Should().Be(1));
+            MudButton button() => comp.FindComponent<MudButton>().Instance;
+            MudNumericField<int> numeric() => comp.FindComponent<MudNumericField<int>>().Instance;
+            comp.WaitForAssertion(() => numeric().Value.Should().Be(0));
+            await comp.InvokeAsync(() => button().OnClick.InvokeAsync());
+            comp.WaitForAssertion(() => numeric().Value.Should().Be(1));
         }
     }
 }

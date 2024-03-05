@@ -13,9 +13,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudSkeleton>();
 
             var skeleton = comp.Instance;
-            IElement span() => comp.Find("span");
+            var span = comp.Find("span");
 
-            IElement skeletonClasses() => comp.Find(".mud-skeleton");
+            var skeletonClasses = comp.Find(".mud-skeleton");
             // check initial state
             span.Attributes.GetNamedItem("style")?.Value.Should().BeNullOrEmpty();
             skeleton.Style.Should().BeNullOrEmpty();
@@ -33,9 +33,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudSkeleton>(p => p.Add(x => x.Height, "100px"));
 
             var skeleton = comp.Instance;
-            IElement span() => comp.Find("span");
+            var span = comp.Find("span");
 
-            IElement skeletonClasses() => comp.Find(".mud-skeleton");
+            var skeletonClasses = comp.Find(".mud-skeleton");
             // check initial state
             span.Attributes.GetNamedItem("style")?.Value.Should().Be("height:100px;");
             skeleton.Height.Should().Be("100px");
@@ -53,9 +53,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudSkeleton>(p => p.Add(x => x.Width, "300px"));
 
             var skeleton = comp.Instance;
-            IElement span() => comp.Find("span");
+            var span = comp.Find("span");
 
-            IElement skeletonClasses() => comp.Find(".mud-skeleton");
+            var skeletonClasses = comp.Find(".mud-skeleton");
             // check initial state
             span.Attributes.GetNamedItem("style")?.Value.Should().Be("width:300px;");
             skeleton.Width.Should().Be("300px");

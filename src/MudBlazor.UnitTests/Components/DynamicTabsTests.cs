@@ -4,7 +4,6 @@
 using System;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
@@ -61,10 +60,10 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleDynamicTabsTest>();
 
             // three panels three close icons;
-            IRefreshableElementCollection<IElement> closeButtons() => comp.FindAll(".my-close-icon-class");
-            closeButtons().Should().HaveCount(3);
+            var closeButtons = comp.FindAll(".my-close-icon-class");
+            closeButtons.Should().HaveCount(3);
 
-            foreach (var item in closeButtons())
+            foreach (var item in closeButtons)
             {
                 item.GetAttribute("style").Should().Be("propertyA: 4px");
                 item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
@@ -75,10 +74,10 @@ namespace MudBlazor.UnitTests.Components
                 actual.Should().BeEquivalentTo(expected);
             }
 
-            IRefreshableElementCollection<IElement> addButtons() => comp.FindAll(".my-add-icon-class");
+            var addButtons = comp.FindAll(".my-add-icon-class");
 
-            addButtons().Should().HaveCount(1);
-            foreach (var item in addButtons())
+            addButtons.Should().HaveCount(1);
+            foreach (var item in addButtons)
             {
                 item.GetAttribute("style").Should().Be("propertyB: 6px");
                 item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
@@ -97,10 +96,10 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleDynamicTabsTestWithToolTips>();
 
             // three panels three close icons;
-            IRefreshableElementCollection<IElement> closeButtons() => comp.FindAll(".my-close-icon-class");
-            closeButtons().Should().HaveCount(3);
+            var closeButtons = comp.FindAll(".my-close-icon-class");
+            closeButtons.Should().HaveCount(3);
 
-            foreach (var item in closeButtons())
+            foreach (var item in closeButtons)
             {
                 item.GetAttribute("style").Should().Be("propertyA: 4px");
                 item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
@@ -116,19 +115,19 @@ namespace MudBlazor.UnitTests.Components
                 await item.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
                 var popoverId = parent.Children[1].Id.Substring(8);
 
-                IElement toolTip() => comp.Find($"#popovercontent-{popoverId}");
+                var toolTip = comp.Find($"#popovercontent-{popoverId}");
 
-                toolTip().ClassList.Should().Contain(new string[] { "mud-tooltip" });
-                toolTip().TextContent.Should().Be("close here");
+                toolTip.ClassList.Should().Contain(new string[] { "mud-tooltip" });
+                toolTip.TextContent.Should().Be("close here");
 
                 await item.ParentElement.TriggerEventAsync("onmouseleave", new MouseEventArgs());
 
             }
 
-            IRefreshableElementCollection<IElement> addButtons() => comp.FindAll(".my-add-icon-class");
+            var addButtons = comp.FindAll(".my-add-icon-class");
 
-            addButtons().Should().HaveCount(1);
-            foreach (var item in addButtons())
+            addButtons.Should().HaveCount(1);
+            foreach (var item in addButtons)
             {
                 item.GetAttribute("style").Should().Be("propertyB: 6px");
                 item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
@@ -144,10 +143,10 @@ namespace MudBlazor.UnitTests.Components
                 await item.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
                 var popoverId = parent.Children[1].Id.Substring(8);
 
-                IElement toolTip() => comp.Find($"#popovercontent-{popoverId}");
+                var toolTip = comp.Find($"#popovercontent-{popoverId}");
 
-                toolTip().ClassList.Should().Contain(new string[] { "mud-tooltip" });
-                toolTip().TextContent.Should().Be("add here");
+                toolTip.ClassList.Should().Contain(new string[] { "mud-tooltip" });
+                toolTip.TextContent.Should().Be("add here");
 
                 await item.ParentElement.TriggerEventAsync("onmouseleave", new MouseEventArgs());
             }
@@ -158,8 +157,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SimpleDynamicTabsInteractionTest>();
 
-            IElement addButton() => comp.Find(".my-add-icon-class");
-            addButton().Click();
+            var addButton = comp.Find(".my-add-icon-class");
+            addButton.Click();
 
             await Task.Delay(5);
             comp.Instance.AddClickCounter.Should().Be(1);
@@ -179,6 +178,7 @@ namespace MudBlazor.UnitTests.Components
 
                 comp.Instance.CloseClicked.Should().HaveCount(i + 1);
             }
+
         }
     }
 }

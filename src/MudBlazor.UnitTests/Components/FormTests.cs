@@ -384,7 +384,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<FormAsyncValidationWithFieldChangedSubscriberTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
-            IElement input() => comp.Find("input");
+            var input = comp.Find("input");
             input.Input(new ChangeEventArgs { Value = "test" });
             // trigger validation
             await Task.Delay(comp.Instance.DebounceInterval);
@@ -1155,7 +1155,7 @@ namespace MudBlazor.UnitTests.Components
             // Check first run attribute
             EditFormIssue1229.TestAttribute.ValidationContextOnCall.Should().BeEmpty();
             // Trigger change
-            IElement input() => comp.Find("input");
+            var input = comp.Find("input");
             input.Change("Test");
             input.Blur();
             // Verify context was set
@@ -1891,7 +1891,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task FormWithChildFormTest()
         {
             var comp = Context.RenderComponent<FormWithChildForm>();
-            IElement childFormSwitch() => comp.Find(".mud-switch-input");
+            var childFormSwitch = comp.Find(".mud-switch-input");
             var parentForm = comp.FindComponent<MudForm>().Instance;
             var parentTextFieldCmp = comp.FindComponent<MudTextField<string>>();
             var parentTextField = parentTextFieldCmp.Instance;
