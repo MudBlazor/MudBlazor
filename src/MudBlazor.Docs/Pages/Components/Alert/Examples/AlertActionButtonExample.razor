@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudAlert OnClick="OnAlertClicked" Severity="Severity.Info">This alert has been clicked @ClickCount times</MudAlert>
+
+@code {
+    int ClickCount { get; set; } = 0;
+
+    void OnAlertClicked()
+    {
+        ClickCount++;
+    }
+}
