@@ -139,7 +139,7 @@ namespace MudBlazor.UnitTests.Components
         public void ActivatorContent_Disabled_CheckDisabled()
         {
             var comp = Context.RenderComponent<MenuTestDisabledCustomActivator>();
-            IElement activator() => comp.Find("div.mud-menu-activator");
+            var activator = comp.Find("div.mud-menu-activator");
             activator.ClassList.Should().Contain("mud-disabled");
             activator.GetAttribute("disabled").Should().NotBeNull();
         }
@@ -306,7 +306,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MenuItemActionTest>();
             comp.Find("button.mud-button-root").Click();
             IElement item() => comp.Find("#id_on_action_on_touch");
-            item.TouchEnd();
+            item().TouchEnd();
             comp.Instance.Count.Should().Be(1);
             comp.Instance.Callers.Should().Be("T");
         }
@@ -317,9 +317,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MenuItemActionTest>();
             comp.Find("button.mud-button-root").Click();
             IElement item() => comp.Find("#id_on_action_on_touch");
-            item.TouchStart();
-            item.TouchMove();
-            item.TouchEnd();
+            item().TouchStart();
+            item().TouchMove();
+            item().TouchEnd();
             comp.Instance.Count.Should().Be(0);
             comp.Instance.Callers.Should().Be(string.Empty);
         }
@@ -330,9 +330,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MenuItemActionTest>();
             comp.Find("button.mud-button-root").Click();
             IElement item() => comp.Find("#id_on_action_on_click");
-            item.TouchStart();
-            item.TouchMove();
-            item.TouchEnd();
+            item().TouchStart();
+            item().TouchMove();
+            item().TouchEnd();
             comp.Instance.Count.Should().Be(0);
             comp.Instance.Callers.Should().Be(string.Empty);
         }

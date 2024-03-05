@@ -89,13 +89,13 @@ namespace MudBlazor.UnitTests.Components
         public void DefaultStructure(bool isVertical)
         {
             var comp = Context.RenderComponent<MudProgressLinear>(x =>
-            {
-                x.Add(y => y.Min, -500);
-                x.Add(y => y.Max, 500);
-                x.Add(y => y.Value, -400);
-                x.Add(y => y.Class, "my-custom-class");
-                x.Add(y => y.Vertical, isVertical);
-            });
+                {
+                    x.Add(y => y.Min, -500);
+                    x.Add(y => y.Max, 500);
+                    x.Add(y => y.Value, -400);
+                    x.Add(y => y.Class, "my-custom-class");
+                    x.Add(y => y.Vertical, isVertical);
+                });
 
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
@@ -305,7 +305,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Size.Large, "large")]
+        [TestCase(Size.Large,"large")]
         [TestCase(Size.Medium, "medium")]
         [TestCase(Size.Small, "small")]
         public void TestClassesForSize(Size size, string expectedString)
@@ -313,7 +313,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Size, size));
 
             var container = comp.Find(".mud-progress-linear");
-
+            
             container.ClassList.Should().Contain($"mud-progress-linear-{expectedString}");
         }
 

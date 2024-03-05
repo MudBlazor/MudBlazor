@@ -34,8 +34,8 @@ namespace MudBlazor.UnitTests.Components
             // click on chip
             chip().Click();
 
-            IElement expectedEvent() => comp.Find("#chip-click-test-expected-value");
-            expectedEvent().InnerHtml.Should().Be("OnClick");
+            var expectedEvent = comp.Find("#chip-click-test-expected-value");
+            expectedEvent.InnerHtml.Should().Be("OnClick");
         }
 
         /// <summary>
@@ -48,15 +48,15 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
 
             // chip should have mud-clickable and mud-ripple classes
-            IElement chip() => comp.Find("div.mud-chip");
-            chip().ClassName.Should().Contain("mud-clickable");
-            chip().ClassName.Should().Contain("mud-ripple");
+            var chip = comp.Find("div.mud-chip");
+            chip.ClassName.Should().Contain("mud-clickable");
+            chip.ClassName.Should().Contain("mud-ripple");
 
             // click on close button
             comp.Find("button.mud-chip-close-button").Click();
 
-            IElement expectedEvent() => comp.Find("#chip-click-test-expected-value");
-            expectedEvent().InnerHtml.Should().Be("OnClose");
+            var expectedEvent = comp.Find("#chip-click-test-expected-value");
+            expectedEvent.InnerHtml.Should().Be("OnClose");
         }
 
         [Test]
@@ -85,9 +85,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ChipHrefCursorTest>();
 
             // chip should have mud-clickable and mud-ripple classes
-            IElement chip() => comp.Find("div.mud-chip");
-            chip().ClassName.Should().Contain("mud-clickable");
-            chip().ClassName.Should().Contain("mud-ripple");
+            var chip = comp.Find("div.mud-chip");
+            chip.ClassName.Should().Contain("mud-clickable");
+            chip.ClassName.Should().Contain("mud-ripple");
         }
 
         [Test]

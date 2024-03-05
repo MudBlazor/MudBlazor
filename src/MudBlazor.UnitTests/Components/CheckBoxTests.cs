@@ -302,8 +302,8 @@ namespace MudBlazor.UnitTests.Components
 
             var box = comp.Instance;
             IElement input() => comp.Find("input");
-
             IElement checkboxClasses() => comp.Find(".mud-button-root.mud-icon-button");
+
             // check initial state
             box.Value.Should().Be(false);
             checkboxClasses().ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });

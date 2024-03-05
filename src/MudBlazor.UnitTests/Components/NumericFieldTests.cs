@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using FluentValidation;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.NumericField;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
@@ -130,15 +132,14 @@ namespace MudBlazor.UnitTests.Components
             //no interval passed, so, by default is 0
             // We pass the Immediate parameter set to true, in order to bind to oninput
             var immediate = Parameter(nameof(MudNumericField<int?>.Immediate), true);
-            var comp = Context.RenderComponent<MudNumericField<int?>>(immediate);
-            var numericField = comp.Instance;
-            IElement input() => comp.Find("input");
+            IRenderedComponent<MudNumericField<int?>> comp() => Context.RenderComponent<MudNumericField<int?>>(immediate);
+            IElement input() => comp().Find("input");
             //Act
-            input.Input(new ChangeEventArgs() { Value = "100" });
+            input().Input(new ChangeEventArgs() { Value = "100" });
             //Assert
             //input value has changed, DebounceInterval is 0, so Value should change in NumericField immediately
-            numericField.Value.Should().Be(100);
-            numericField.Text.Should().Be("100");
+            comp().Instance.Value.Should().Be(100);
+            comp().Instance.Text.Should().Be("100");
         }
 
         /// <summary>
@@ -148,25 +149,24 @@ namespace MudBlazor.UnitTests.Components
         public async Task ShouldRespectDebounceIntervalPropertyInNumericFieldTest()
         {
             var interval = Parameter(nameof(MudNumericField<int?>.DebounceInterval), 200d);
-            var comp = Context.RenderComponent<MudNumericField<int?>>(interval);
-            var numericField = comp.Instance;
-            IElement input() => comp.Find("input");
+            IRenderedComponent<MudNumericField<int?>> comp() => Context.RenderComponent<MudNumericField<int?>>(interval);
+            IElement input() => comp().Find("input");
             //Act
-            input.Input(new ChangeEventArgs() { Value = "100" });
+            input().Input(new ChangeEventArgs() { Value = "100" });
             //Assert
             //if DebounceInterval is set, Immediate should be true by default
-            numericField.Immediate.Should().BeTrue();
+            comp().Instance.Immediate.Should().BeTrue();
             //input value has changed, but elapsed time is 0, so Value should not change in NumericField
-            numericField.Value.Should().BeNull();
-            numericField.Text.Should().Be("100");
+            comp().Instance.Value.Should().BeNull();
+            comp().Instance.Text.Should().Be("100");
             //DebounceInterval is 200 ms, so at 100 ms Value should not change in NumericField
             await Task.Delay(100);
-            numericField.Value.Should().BeNull();
-            numericField.Text.Should().Be("100");
+            comp().Instance.Value.Should().BeNull();
+            comp().Instance.Text.Should().Be("100");
             //More than 200 ms had elapsed, so Value should be updated
             await Task.Delay(150);
-            numericField.Value.Should().Be(100);
-            numericField.Text.Should().Be("100");
+            comp().Instance.Value.Should().Be(100);
+            comp().Instance.Text.Should().Be("100");
         }
 
         /// <summary>
@@ -820,14 +820,13 @@ namespace MudBlazor.UnitTests.Components
         public async Task DebouncedNumericFieldRerenderTest()
         {
             var comp = Context.RenderComponent<DebouncedNumericFieldRerenderTest>();
-            var numericField = comp.FindComponent<MudNumericField<int>>().Instance;
             IElement input() => comp.Find("input");
-            IElement delayedRerenderButton() => comp.Find("button#re-render");
             var converter = new DefaultConverter<int>();
-            input.Input(new ChangeEventArgs { Value = "1" });
+            input().Input(new ChangeEventArgs { Value = "1" });
             // trigger first value change
             await Task.Delay(comp.Instance.DebounceInterval);
             // trigger delayed re-render
+            var delayedRerenderButton = comp.Find("button#re-render");
             delayedRerenderButton.Click();
             // imitate "typing in progress" by extending the debounce interval until component re-renders
             var elapsedTime = 0;
@@ -836,13 +835,14 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "2";
-                input.Input(new ChangeEventArgs { Value = currentText });
+                input().Input(new ChangeEventArgs { Value = currentText });
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }
             // after the final debounce, the value should be updated without swallowing any user input 
             await Task.Delay(comp.Instance.DebounceInterval);
             comp.Instance.Value.Should().Be(converter.Get(currentText));
+            var numericField = comp.FindComponent<MudNumericField<int>>().Instance;
             numericField.Text.Should().Be(currentText);
         }
         
@@ -864,15 +864,15 @@ namespace MudBlazor.UnitTests.Components
         public async Task DebouncedNumericFieldCultureChangeRerenderTest()
         {
             var comp = Context.RenderComponent<DebouncedNumericFieldCultureChangeRerenderTest>();
-            var numericField = comp.FindComponent<MudNumericField<double>>().Instance;
+            MudNumericField<double> numericField() => Context.RenderComponent<MudNumericField<double>>().Instance;
             IElement input() => comp.Find("input");
             IElement delayedCultureChange() => comp.Find("button#culture-change");
             // ensure text is updated on initialize 
-            numericField.Text.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
+            numericField().Text.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
             // trigger first value change
             await Task.Delay(comp.Instance.DebounceInterval);
             // trigger the culture change
-            delayedCultureChange.Click();
+            delayedCultureChange().Click();
             // imitate "typing in progress" by extending the debounce interval until component re-renders
             var elapsedTime = 0;
             var currentText = comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture);
@@ -880,16 +880,16 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "2";
-                input.Input(new ChangeEventArgs { Value = currentText });
+                input().Input(new ChangeEventArgs { Value = currentText });
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }
             // after the culture change delay has elapsed, the uncommitted text is retained (with the old culture)
-            numericField.Text.Should().Be(currentText);
+            numericField().Text.Should().Be(currentText);
             // once debounce occurs, both value and text are translated into the new culture
             // e.g. 1.00222222 (one comma something in en-US) turns into 100.222.222 (hundred million something in de-DE)
             await Task.Delay(comp.Instance.DebounceInterval * 2);
-            numericField.Text.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
+            numericField().Text.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
         }
     }
 }

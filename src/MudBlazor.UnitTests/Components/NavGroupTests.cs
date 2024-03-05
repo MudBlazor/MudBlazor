@@ -1,7 +1,6 @@
 ﻿#pragma warning disable CS1998 // async without await
 
 using System.Threading.Tasks;
-using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.NavMenu;
@@ -22,12 +21,12 @@ namespace MudBlazor.UnitTests.Components
         public async Task Two_Way_Bindable_Disabled()
         {
             var comp = Context.RenderComponent<NavMenuGroupDisabledTest>();
-
+            
             comp.Markup.Should().NotContain("mud-nav-group-disabled");
             comp.Markup.Should().NotContain("expanded");
 
-            IElement input() => comp.Find("input"); // Change IsDisabled to True
-            input().Change(true);
+            var input = comp.Find("input"); // Change IsDisabled to True
+            input.Change(true);
 
             comp.Markup.Should().Contain("mud-nav-group-disabled");
         }

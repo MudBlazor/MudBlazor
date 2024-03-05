@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Size, size));
 
-            IElement slider() => comp.Find(".mud-slider");
+            var slider = comp.Find(".mud-slider");
             slider.ClassList.Should().ContainInOrder(new[] { "mud-slider", $"mud-slider-{expectedSizeClass}" });
         }
 
@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Size, size));
 
-            IElement slider() => comp.Find(".mud-slider");
+            var slider = comp.Find(".mud-slider");
             slider.ClassList.Should().ContainInOrder(new[] { "mud-slider", $"mud-slider-{expectedSizeClass}", "mud-slider-primary" });
         }
 
@@ -97,12 +97,12 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Color, color));
 
-            IElement slider() => comp.Find(".mud-slider");
+            var slider = comp.Find(".mud-slider");
             slider.ClassList.Should().ContainInOrder(new[] { "mud-slider", "mud-slider-small", $"mud-slider-{expectedColorClass}" });
         }
 
         [Test]
-        public void GenerellStructure()
+        public void GeneralStructure()
         {
             var comp = Context.RenderComponent<MudSlider<double>>(x =>
             {
@@ -115,7 +115,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Nodes.Should().ContainSingle();
 
-            IElement rootElement() => comp.Find(".mud-slider");
+            var rootElement = comp.Find(".mud-slider");
             (comp.Nodes.First() as IHtmlElement).InnerHtml.Should().Be(rootElement.InnerHtml);
 
             rootElement.Children.Should().ContainSingle();
@@ -154,7 +154,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Nodes.Should().ContainSingle();
 
-            IElement rootElement() => comp.Find(".mud-slider");
+            var rootElement = comp.Find(".mud-slider");
 
             (comp.Nodes.First() as IHtmlElement).InnerHtml.Should().Be(rootElement.InnerHtml);
 
@@ -181,7 +181,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Nodes.Should().ContainSingle();
 
-            IElement rootElement() => comp.Find(".mud-slider");
+            var rootElement = comp.Find(".mud-slider");
             (comp.Nodes.First() as IHtmlElement).InnerHtml.Should().Be(rootElement.InnerHtml);
 
             rootElement.Children.Should().ContainSingle();
@@ -212,7 +212,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Nodes.Should().ContainSingle();
 
-            IElement rootElement() => comp.Find(".mud-slider");
+            var rootElement = comp.Find(".mud-slider");
             (comp.Nodes.First() as IHtmlElement).InnerHtml.Should().Be(rootElement.InnerHtml);
 
             rootElement.Children.Should().ContainSingle();
@@ -257,7 +257,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Nodes.Should().ContainSingle();
 
-            IElement rootElement() => comp.Find(".mud-slider");
+            var rootElement = comp.Find(".mud-slider");
             (comp.Nodes.First() as IHtmlElement).InnerHtml.Should().Be(rootElement.InnerHtml);
 
             rootElement.Children.Should().ContainSingle();
@@ -311,7 +311,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Nodes.Should().ContainSingle();
 
-            IElement tickMarks() => comp.Find(".mud-slider-tickmarks");
+            var tickMarks = comp.Find(".mud-slider-tickmarks");
             tickMarks.Children.Should().HaveCount(expectedAmount);
         }
 
@@ -365,10 +365,10 @@ namespace MudBlazor.UnitTests.Components
                     x.Add(p => p.ValueLabel, true);
                 });
 
-                IElement thumb() => comp.Find(".mud-slider-value-label");
+                var thumb = comp.Find(".mud-slider-value-label");
                 thumb.GetAttribute("style").Should().Be($"left:{expectedPercentage}%;");
 
-                IElement filling() => comp.Find(".mud-slider-filled");
+                var filling = comp.Find(".mud-slider-filled");
                 filling.GetAttribute("style").Should().Be($"width:{expectedPercentage}%;");
             }
         }
@@ -387,8 +387,7 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(p => p.Variant, Variant.Filled);
             });
 
-            IElement input() => comp.Find(".mud-slider-input");
-            IElement filling() => comp.Find(".mud-slider-filled");
+            var input = comp.Find(".mud-slider-input");
             var eventArgs = new ChangeEventArgs { Value = "180" };
 
             if (immediate == false)
@@ -402,6 +401,7 @@ namespace MudBlazor.UnitTests.Components
                 await input.InputAsync(eventArgs);
             }
 
+            var filling = comp.Find(".mud-slider-filled");
             filling.GetAttribute("style").Should().Be($"width:80%;");
         }
     }

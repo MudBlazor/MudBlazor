@@ -70,11 +70,11 @@ namespace MudBlazor.UnitTests.Components
             //}
 
             //Only one panel should be expanded
-            IRefreshableElementCollection<IElement> allPanels() => comp.FindAll(".mud-expand-panel");
-            IRefreshableElementCollection<IElement> expandedPanels() => comp.FindAll(".mud-panel-expanded");
-            
-            expandedPanels().Count.Should().Be(1);
-            expandedPanels().First().Should().Be(allPanels().First());
+            var allPanels = comp.FindAll(".mud-expand-panel").ToList();
+
+            var expandedPanels = comp.FindAll(".mud-panel-expanded").ToList();
+            expandedPanels.Count.Should().Be(1);
+            expandedPanels.First().Should().Be(allPanels.First());
         }
 
         /// <summary>

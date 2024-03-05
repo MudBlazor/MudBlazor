@@ -136,7 +136,7 @@ namespace MudBlazor.UnitTests.Components
             trs.Count.Should().Be(3);
 
             // Find the loading switch
-            IElement switchElement() => comp.Find("#switch");
+            var switchElement = comp.Find("#switch");
 
             // Click the loading switch
             switchElement.Change(true);
@@ -167,7 +167,7 @@ namespace MudBlazor.UnitTests.Components
             initialBodyRows.Count.Should().Be(2);
 
             // Toggle the loading switch to the 'loading' state
-            IElement loadingSwitch() => comp.Find("#switch");
+            var loadingSwitch = comp.Find("#switch");
             loadingSwitch.Change(true);
 
             // Count rows after toggling the switch
@@ -196,7 +196,7 @@ namespace MudBlazor.UnitTests.Components
             headersRow.ChildElementCount.Should().Be(6);
 
             // Toggle the loading switch to the 'loading' state
-            IElement loadingSwitch() => comp.Find("#switch");
+            var loadingSwitch = comp.Find("#switch");
             loadingSwitch.Change(true);
 
             // Get the loader row which is second row in the thead
@@ -207,7 +207,7 @@ namespace MudBlazor.UnitTests.Components
             loaderCell.IsOnlyChild();
 
             // Toggle the multi-selection switch to the 'on' state
-            IElement multiSelectionSwitch() => comp.Find("#multi-selection");
+            var multiSelectionSwitch = comp.Find("#multi-selection");
             multiSelectionSwitch.Change(true);
 
             // Ensure table has 7 columns
@@ -227,8 +227,8 @@ namespace MudBlazor.UnitTests.Components
         public void TableGroupLoadingAndNoRecordsTest()
         {
             var comp = Context.RenderComponent<TableGroupLoadingAndNoRecordsTest>();
-            IElement searchString() => comp.Find("#searchString");
-            IElement switchElement() => comp.Find("#switch");
+            var searchString = comp.Find("#searchString");
+            var switchElement = comp.Find("#switch");
 
             // It should be equal to 5 = header row + group header row + 2 rows + footer row 
             comp.FindAll("tr").Count.Should().Be(5);
@@ -259,8 +259,8 @@ namespace MudBlazor.UnitTests.Components
         public void TableHeadContentTest()
         {
             var comp = Context.RenderComponent<TableLoadingTest>();
-            IElement searchString() => comp.Find("#searchString");
-            IElement switchElement() => comp.Find("#switch");
+            var searchString = comp.Find("#searchString");
+            var switchElement = comp.Find("#switch");
 
             // It should be equal to 3 = two rows + header row
             comp.FindAll("tr").Count.Should().Be(3);
@@ -316,7 +316,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TableFilterTest1>();
             // print the generated html      
             var table = comp.FindComponent<MudTable<string>>().Instance;
-            IElement searchString() => comp.Find("#searchString");
+            var searchString = comp.Find("#searchString");
             // should return 3 items
             searchString.Change("Ala");
             table.GetFilteredItemsCount().Should().Be(3);
@@ -344,7 +344,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TableFilterTest1>();
             // print the generated html      
             var table = comp.FindComponent<MudTable<string>>().Instance;
-            IElement searchString() => comp.Find("#searchString");
+            var searchString = comp.Find("#searchString");
             table.FilteringRunCount.Should().Be(1);
             // should return 3 items
             searchString.Change("Ala");
@@ -555,7 +555,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TablePagingFilter()
         {
             var comp = Context.RenderComponent<TablePagingTest1>();
-            IElement searchString() => comp.Find("#searchString");
+            var searchString = comp.Find("#searchString");
             // search returns 3 items
             searchString.Change("Ala");
             comp.FindAll("tr").Count.Should().Be(3);
@@ -585,7 +585,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("21-30 of 59");
             // should return 3 items and 
             var table = comp.FindComponent<MudTable<string>>().Instance;
-            IElement searchString() => comp.Find("#searchString");
+            var searchString = comp.Find("#searchString");
             searchString.Change("Ala");
             table.GetFilteredItemsCount().Should().Be(3);
             comp.FindAll("tr.mud-table-row").Count.Should().Be(3);
@@ -614,6 +614,7 @@ namespace MudBlazor.UnitTests.Components
             comp.InvokeAsync(() => { table.SelectedItems = null; });
             table.SelectedItems.Count.Should().Be(0);
         }
+
 
         [Test]
         public void TableMultiSelection_CheckboxAndRowClickTest()
@@ -925,7 +926,7 @@ namespace MudBlazor.UnitTests.Components
             var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
             // click header checkbox and verify selection text
-            IElement inputs() => comp.Find("input");
+            var inputs = comp.Find("input");
             inputs.Change(true);
             table.SelectedItems.Count.Should().Be(5);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2, 3, 4 }");
@@ -965,7 +966,7 @@ namespace MudBlazor.UnitTests.Components
             var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
             // click header checkbox and verify selection text
-            IElement inputs() => comp.Find("input");
+            var inputs = comp.Find("input");
             inputs.Change(true);
             table.SelectedItems.Count.Should().Be(10);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
@@ -1418,8 +1419,8 @@ namespace MudBlazor.UnitTests.Components
             trs[2].Click();
 
             // Change row two data
-            IElement input() => comp.Find(("#Id1"));
-            input().Change("D");
+            var input = comp.Find(("#Id1"));
+            input.Change("D");
 
             // Check row two is still in position 2 of the data rows
             var trs2 = comp.FindAll("tr");
@@ -1447,7 +1448,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("#Id2").Change("C");
 
             // Click the commit button
-            IElement commitButton() => comp.Find("button");
+            var commitButton = comp.Find("button");
             commitButton.Click();
 
             // Value in the second row should be now equal to 'C'
@@ -1548,7 +1549,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// This test validates that when the CanCancel option is set to true and no SelectedItem has been defined,
+        /// This test validates that when the CanCancel option is set to true and no SelectedItem has been defined, 
         /// by clicking on another row, the previous row is no longer editable. Meaning there are always only 2 buttons
         /// </summary>
         [Test]
@@ -1842,6 +1843,7 @@ namespace MudBlazor.UnitTests.Components
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(36);
 
+
             //verify the collapse and expand selection on UI and items
 
             inputs[1].Change(false); // LMP1 
@@ -1853,17 +1855,18 @@ namespace MudBlazor.UnitTests.Components
             table.GroupBy.InnerGroup.Expandable = true;
             table.GroupBy.InnerGroup.IsInitiallyExpanded = true;
 
+
             comp.Render();
 
             table.SelectedItems.Count.Should().Be(0);
-            inputs.Count(x => x.IsChecked()).Should().Be(0);
+            inputs.Where(x => x.IsChecked()).Count().Should().Be(0);
 
             inputs[1].Change(true); // LMP1            
             table.SelectedItems.Count.Should().Be(2);
 
             buttons = comp.FindAll("button").ToArray();
             inputs = comp.FindAll("input").ToArray();
-            inputs.Count(x => x.IsChecked()).Should().Be(5);
+            inputs.Where(x => x.IsChecked()).Count().Should().Be(5);
 
             buttons[0].Click(); //collapse            
             buttons[0].Click(); //expand            
@@ -1871,13 +1874,13 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(2);
 
             inputs = comp.FindAll("input").ToArray();
-            inputs.Count(x => x.IsChecked()).Should().Be(5);
+            inputs.Where(x => x.IsChecked()).Count().Should().Be(5);
 
             inputs[1].Change(false);
             table.SelectedItems.Count.Should().Be(0);
 
             inputs = comp.FindAll("input").ToArray();
-            inputs.Count(x => x.IsChecked()).Should().Be(0);
+            inputs.Where(x => x.IsChecked()).Count().Should().Be(0);
 
         }
 
@@ -1925,6 +1928,7 @@ namespace MudBlazor.UnitTests.Components
             tr.Length.Should().Be(6); // 01 Table header + 02 Group Headers + 02 Group Footers + 01 Entries
 
         }
+
 
         /// <summary>
         /// Tests the IsInitiallyExpanded grouping behavior.
@@ -2053,10 +2057,10 @@ namespace MudBlazor.UnitTests.Components
                 })
             );
             //Check the component rendered correctly with the initial RowsPerPage
-            IElement t() => comp.Find("input.mud-select-input").GetAttribute("Value");
+            var t = comp.Find("input.mud-select-input").GetAttribute("Value");
             int.Parse(t).Should().Be(rowsPerPage, "The component rendered correctly");
             //open the menu
-            IElement menuItem() => comp.Find("div.mud-input-control");
+            var menuItem = comp.Find("div.mud-input-control");
             menuItem.Click();
 
             //Now select the 25 and check it
@@ -2084,7 +2088,7 @@ namespace MudBlazor.UnitTests.Components
             trs[1].Click();
 
             // Filter items
-            IElement searchString() => comp.Find("#searchString");
+            var searchString = comp.Find("#searchString");
             searchString.Change("b");
 
             // Make sure number of items has updated
@@ -2137,7 +2141,7 @@ namespace MudBlazor.UnitTests.Components
             trs[2].Click();
 
             // Change row two data
-            IElement input() => comp.Find(("#Id2"));
+            var input = comp.Find(("#Id2"));
             input.Change("Change");
 
             table.SelectedItems.Count.Should().Be(3);

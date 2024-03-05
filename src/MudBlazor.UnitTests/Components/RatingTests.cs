@@ -146,10 +146,10 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudRating>(("MaxValue", 12));
             // print the generated html
             // select elements needed for the test
-            IRefreshableElementCollection<IElement> spans() => comp.FindAll("span.mud-rating-item");
+            var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             // check initial state
             comp.Instance.SelectedValue.Should().Be(0);
-            spans().Count.Should().Be(12);
+            ratingItemsSpans.Length.Should().Be(12);
 
             comp.Instance.HandleItemHovered(6);
             comp.Instance.HoveredValue.Should().Be(6);

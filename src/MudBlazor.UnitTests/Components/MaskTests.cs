@@ -305,16 +305,11 @@ namespace MudBlazor.UnitTests.Components
         public async Task MaskTest_ChangeMask2()
         {
             var comp = Context.RenderComponent<MudMask>();
-            comp.SetParam(x => x.Mask, new PatternMask("(LL) UU")
-            {
-                Placeholder = '_',
-                CleanDelimiters = true,
-                MaskChars = new[]
+            comp.SetParam(x => x.Mask, new PatternMask("(LL) UU") { Placeholder = '_', CleanDelimiters = true, MaskChars = new []
             {
                 new MaskChar('L', "[a-z]"),
                 new MaskChar('U', "[A-Z]")
-            }
-            });
+            }});
             var maskField = comp.Instance;
 
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
@@ -344,7 +339,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudMask>();
             var maskField = comp.Instance;
 
-            await comp.InvokeAsync(() => comp.SetParam("Mask", new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
+            await comp.InvokeAsync(() => comp.SetParam("Mask", new PatternMask("(aaa) 000-aa") {Placeholder = '_', CleanDelimiters = true }));
 
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(1));
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "a" }));
@@ -641,8 +636,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => maskField.OnPaste(null));
             comp.WaitForAssertion(() => maskField.Mask.ToString().Should().Be("123 |"));
             // ctrl or alt doesn't do anything
-            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1", CtrlKey = true }));
-            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1", AltKey = true }));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1", CtrlKey = true}));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1", AltKey = true}));
             comp.WaitForAssertion(() => maskField.Mask.ToString().Should().Be("123 |"));
             // clear via clear button
             await comp.InvokeAsync(() => maskField.HandleClearButton(new MouseEventArgs()));
@@ -658,11 +653,11 @@ namespace MudBlazor.UnitTests.Components
         public async Task MaskTest_MultipleTFsLinkedViaTwoWayBinding()
         {
             var comp = Context.RenderComponent<MaskedTextFieldTwoWayBindingTest>();
-            var tfs = comp.FindComponents<MudTextField<string>>().Select(x => x.Instance).ToArray();
-            var masks = comp.FindComponents<MudMask>().Select(x => x.Instance).ToArray();
+            var tfs=comp.FindComponents<MudTextField<string>>().Select(x=>x.Instance).ToArray();
+            var masks = comp.FindComponents<MudMask>().Select(x=>x.Instance).ToArray();
             await comp.InvokeAsync(() => masks[0].OnPaste("123456"));
             masks[0].Mask.ToString().Should().Be("123-456|");
-            comp.WaitForAssertion(() => masks[1].Mask.ToString().Should().Be("12/34/56|"));
+            comp.WaitForAssertion(()=>masks[1].Mask.ToString().Should().Be("12/34/56|"));
             tfs[0].Text.Should().Be("123-456");
             tfs[1].Text.Should().Be("12/34/56");
             await comp.InvokeAsync(() => masks[1].HandleKeyDown(new KeyboardEventArgs() { Key = "Backspace" }));
@@ -779,22 +774,22 @@ namespace MudBlazor.UnitTests.Components
             var patternMaskField = textFields[3].Instance;
             var regexMaskComponent = masks[4];
             var regexMaskField = textFields[4].Instance;
-
+            
             // act
-
+            
             // assert
             blockMaskComponent.Markup.Contains(blockMaskComponent.Instance.ClearIcon).Should().BeTrue();
             blockMaskField.Mask.Text.Should().Be(comp.Instance.BlockMaskValue);
-
+            
             dateMaskComponent.Markup.Contains(dateMaskComponent.Instance.ClearIcon).Should().BeTrue();
             dateMaskField.Mask.Text.Should().Be(comp.Instance.DateMaskValue);
-
+            
             multiMaskComponent.Markup.Contains(multiMaskComponent.Instance.ClearIcon).Should().BeTrue();
             multiMaskField.Mask.Text.Should().Be(comp.Instance.MultiMaskValue);
-
+            
             patternMaskComponent.Markup.Contains(patternMaskComponent.Instance.ClearIcon).Should().BeTrue();
             patternMaskField.Mask.Text.Should().Be(comp.Instance.PatternMaskValue);
-
+            
             regexMaskComponent.Markup.Contains(regexMaskComponent.Instance.ClearIcon).Should().BeTrue();
             regexMaskField.Mask.Text.Should().Be(comp.Instance.RegexMaskValue);
         }

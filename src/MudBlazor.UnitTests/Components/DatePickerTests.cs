@@ -209,19 +209,19 @@ namespace MudBlazor.UnitTests.Components
 
             string invalid = "INVALID_DATE";
             comp.SetParam(p => p.Text, "INVALID_DATE");
-
+            
             picker.Date.Should().Be(null);
             picker.Text.Should().Be(invalid);
 
             await Task.Delay(150);
-
+            
             comp.SetParam(p => p.Date, null);
-
+            
             picker.Date.Should().Be(null);
             picker.Text.Should().Be(null);
         }
-
-
+        
+        
         [Test]
         public async Task DataPicker_ShouldDeBounceSetDate_WhenDateSetToTheSameValueQuickly()
         {
@@ -233,16 +233,16 @@ namespace MudBlazor.UnitTests.Components
 
             string invalid = "INVALID_DATE";
             comp.SetParam(p => p.Text, "INVALID_DATE");
-
+            
             picker.Date.Should().Be(null);
             picker.Text.Should().Be(invalid);
-
+            
             comp.SetParam(p => p.Date, null);
-
+            
             picker.Date.Should().Be(null);
             picker.Text.Should().Be(invalid);
         }
-
+        
         [Test]
         public async Task DataPicker_ShouldDisplayError_WhenTextSetToInvalidValue()
         {
@@ -255,7 +255,7 @@ namespace MudBlazor.UnitTests.Components
 
             picker.Error.Should().BeTrue();
         }
-
+        
         [Test]
         public void Check_Intial_Date_Format()
         {
@@ -1211,7 +1211,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(x => x.ImmediateText, true);
 
             // This will make the input focused!
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown" });
+            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "9", Type = "keydown"});
 
             // Simulate user input
             comp.Find("input").Input("22");

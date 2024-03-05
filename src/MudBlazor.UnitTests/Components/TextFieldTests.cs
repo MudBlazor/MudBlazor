@@ -8,7 +8,6 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using FluentValidation;
@@ -130,13 +129,14 @@ namespace MudBlazor.UnitTests.Components
             var immediate = Parameter(nameof(MudTextField<string>.Immediate), true);
             var comp = Context.RenderComponent<MudTextField<string>>(immediate);
             var textField = comp.Instance;
-            IElement input() => comp.Find("input");
+            var input = comp.Find("input");
             //Act
             input.Input(new ChangeEventArgs() { Value = "Some Value" });
             //Assert
             //input value has changed, DebounceInterval is 0, so Value should change in TextField immediately
             textField.Value.Should().Be("Some Value");
         }
+
 
         /// <summary>
         /// Value should not change immediately. Should respect the Debounce Interval
@@ -147,9 +147,9 @@ namespace MudBlazor.UnitTests.Components
             var interval = Parameter(nameof(MudTextField<string>.DebounceInterval), 200d);
             var comp = Context.RenderComponent<MudTextField<string>>(interval);
             var textField = comp.Instance;
-            IElement input() => comp.Find("input");
+            var input = comp.Find("input");
             //Act
-            input().Input(new ChangeEventArgs() { Value = "Some Value" });
+            input.Input(new ChangeEventArgs() { Value = "Some Value" });
             //Assert
             //if DebounceInterval is set, Immediate should be true by default
             textField.Immediate.Should().BeTrue();
@@ -225,6 +225,7 @@ namespace MudBlazor.UnitTests.Components
             textfield.Error.Should().BeTrue(because: "The credit card number is fake");
             textfield.ErrorText.Should().NotBeNullOrEmpty();
         }
+
 
         /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
@@ -331,6 +332,7 @@ namespace MudBlazor.UnitTests.Components
             var textfield = comp.Instance;
             comp.Find("textarea").InnerHtml.Should().Be(text);
         }
+
 
         /// <summary>
         /// Ensures that a text field with both 'Lines' > 1 and 'Mask' parameters generates a 'textarea'.
@@ -538,6 +540,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ValidationErrors[0].Should().Be("Bar");
             comp.Instance.GetErrorText().Should().Be("Bar");
         }
+
 
         public class CustomThrowingValidationAttribute : ValidationAttribute
         {
@@ -959,7 +962,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Blur();
             callCounter.Should().Be(1);
         }
-
+        
         /// <summary>
         /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
         /// </summary>
@@ -986,8 +989,7 @@ namespace MudBlazor.UnitTests.Components
             var callCounter = 0;
             var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
                 .Add(p => p.OnlyValidateIfDirty, true)
-                .Add(p => p.Validation, async (string value) =>
-                {
+                .Add(p => p.Validation, async (string value) => {
                     callCounter++;
                     await Task.Delay(TimeSpan.FromMilliseconds(100));
                     return true;
@@ -1019,7 +1021,7 @@ namespace MudBlazor.UnitTests.Components
             var text = mudAlert.Find("div.mud-alert-message");
             text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
         }
-
+        
         /// <summary>
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text.
         /// </summary>
@@ -1049,7 +1051,7 @@ namespace MudBlazor.UnitTests.Components
             textField.Value.Should().Be(currentText);
             textField.Text.Should().Be(currentText);
         }
-
+        
         [Test]
         public async Task DebouncedTextField_Should_RenderDefaultValueTextOnFirstRender()
         {
@@ -1059,7 +1061,7 @@ namespace MudBlazor.UnitTests.Components
             var textfield = comp.FindComponent<MudTextField<string>>().Instance;
             textfield.Text.Should().Be(defaultValue);
         }
-
+        
         /// <summary>
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text while changing format.
         /// </summary>

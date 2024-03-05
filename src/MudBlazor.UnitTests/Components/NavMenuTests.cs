@@ -65,7 +65,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<NavMenuOneWay>();
             comp.Markup.Should().Contain("expanded");
 
-            IElement navgroup() => comp.Find(".mud-nav-group>button");
+            var navgroup = comp.Find(".mud-nav-group>button");
             navgroup.Click();
 
             comp.Markup.Should().NotContain("expanded");
@@ -83,7 +83,7 @@ namespace MudBlazor.UnitTests.Components
             var isExpanded = comp.Instance._isExpanded;
             isExpanded.Should().BeFalse();
 
-            IElement navgroup() => comp.Find(".mud-nav-group>button");
+            var navgroup = comp.Find(".mud-nav-group>button");
             navgroup.Click();
 
             isExpanded = comp.Instance._isExpanded;

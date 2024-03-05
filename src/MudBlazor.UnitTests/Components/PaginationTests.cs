@@ -93,7 +93,7 @@ namespace MudBlazor.UnitTests.Components
                 button.Attributes.GetNamedItem("aria-current")?.Value.Should().Be("page");
             }
         }
-
+        
         /// <summary>
         /// Tests the event callbacks of control button click events
         /// </summary>
