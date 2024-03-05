@@ -58,17 +58,18 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Dark, Color.Primary)]
         public void SwitchColorTest(Color color, Color uncheckedcolor)
         {
-            IRenderedComponent<MudSwitch<bool>> comp() => Context.RenderComponent<MudSwitch<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UnCheckedColor, uncheckedcolor));
+            var comp = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UnCheckedColor, uncheckedcolor));
 
-            IElement checkboxClasses() => comp().Find(".mud-button-root.mud-icon-button.mud-switch-base");
+            var box = comp.Instance;
+            IElement checkboxClasses() => comp.Find(".mud-button-root.mud-icon-button.mud-switch-base");
             // check initial state
-            comp().Instance.Value.Should().Be(false);
+            box.Value.Should().Be(false);
             checkboxClasses().ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });
 
             // click and check if it has new color
-            var input = comp().Find("input");
+            var input = comp.Find("input");
             input.Change(true);
-            comp().Instance.Value.Should().Be(true);
+            box.Value.Should().Be(true);
             checkboxClasses().ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
         }
 

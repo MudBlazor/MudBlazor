@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
@@ -42,20 +41,20 @@ namespace MudBlazor.UnitTests.Components
             {
                 await comp.InvokeAsync(() => comp.FindAll(".mud-expand-panel-header")[item].Click());
 
-                IRefreshableElementCollection<IElement> panels() => comp.FindAll(".mud-expand-panel");
+                var panels = comp.FindAll(".mud-expand-panel").ToList();
 
                 //just the panel that was clicked has the expanded class
-                panels()[item].OuterHtml.Should().Contain("mud-panel-expanded");
+                panels[item].OuterHtml.Should().Contain("mud-panel-expanded");
                 foreach (var other in sequence.Where(it => it != item))
                 {
                     //the other panels haven't the class expanded
-                    panels()[other].OuterHtml.Should().NotContain("mud-panel-expanded");
+                    panels[other].OuterHtml.Should().NotContain("mud-panel-expanded");
                 }
             }
         }
 
         /// <summary>
-        /// Multiple expanded expansion panels should not enter an infinite loop
+        /// Multiple expanded expansion panels should not enter an infinite loop 
         /// when MultiExpansionPanel is false
         /// </summary>
         [Test]
@@ -108,7 +107,7 @@ namespace MudBlazor.UnitTests.Components
             var panels = comp.FindAll(".mud-panel-expanded").ToList();
             panels.Count.Should().Be(1);
 
-            var header = comp.FindAll(".panel-two > .mud-expand-panel-header")[0];
+            var header = comp.FindAll(".panel-two > .mud-expand-panel-header").First();
             header.Click();
 
             //we could close the panel

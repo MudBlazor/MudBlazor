@@ -132,14 +132,15 @@ namespace MudBlazor.UnitTests.Components
             //no interval passed, so, by default is 0
             // We pass the Immediate parameter set to true, in order to bind to oninput
             var immediate = Parameter(nameof(MudNumericField<int?>.Immediate), true);
-            IRenderedComponent<MudNumericField<int?>> comp() => Context.RenderComponent<MudNumericField<int?>>(immediate);
-            IElement input() => comp().Find("input");
+            var comp = Context.RenderComponent<MudNumericField<int?>>(immediate);
+            var numericField = comp.Instance;
+            var input = comp.Find("input");
             //Act
-            input().Input(new ChangeEventArgs() { Value = "100" });
+            input.Input(new ChangeEventArgs() { Value = "100" });
             //Assert
             //input value has changed, DebounceInterval is 0, so Value should change in NumericField immediately
-            comp().Instance.Value.Should().Be(100);
-            comp().Instance.Text.Should().Be("100");
+            numericField.Value.Should().Be(100);
+            numericField.Text.Should().Be("100");
         }
 
         /// <summary>
@@ -149,24 +150,25 @@ namespace MudBlazor.UnitTests.Components
         public async Task ShouldRespectDebounceIntervalPropertyInNumericFieldTest()
         {
             var interval = Parameter(nameof(MudNumericField<int?>.DebounceInterval), 200d);
-            IRenderedComponent<MudNumericField<int?>> comp() => Context.RenderComponent<MudNumericField<int?>>(interval);
-            IElement input() => comp().Find("input");
+            var comp = Context.RenderComponent<MudNumericField<int?>>(interval);
+            var numericField = comp.Instance;
+            var input = comp.Find("input");
             //Act
-            input().Input(new ChangeEventArgs() { Value = "100" });
+            input.Input(new ChangeEventArgs() { Value = "100" });
             //Assert
             //if DebounceInterval is set, Immediate should be true by default
-            comp().Instance.Immediate.Should().BeTrue();
+            numericField.Immediate.Should().BeTrue();
             //input value has changed, but elapsed time is 0, so Value should not change in NumericField
-            comp().Instance.Value.Should().BeNull();
-            comp().Instance.Text.Should().Be("100");
+            numericField.Value.Should().BeNull();
+            numericField.Text.Should().Be("100");
             //DebounceInterval is 200 ms, so at 100 ms Value should not change in NumericField
             await Task.Delay(100);
-            comp().Instance.Value.Should().BeNull();
-            comp().Instance.Text.Should().Be("100");
+            numericField.Value.Should().BeNull();
+            numericField.Text.Should().Be("100");
             //More than 200 ms had elapsed, so Value should be updated
             await Task.Delay(150);
-            comp().Instance.Value.Should().Be(100);
-            comp().Instance.Text.Should().Be("100");
+            numericField.Value.Should().Be(100);
+            numericField.Text.Should().Be("100");
         }
 
         /// <summary>
@@ -864,7 +866,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DebouncedNumericFieldCultureChangeRerenderTest()
         {
             var comp = Context.RenderComponent<DebouncedNumericFieldCultureChangeRerenderTest>();
-            MudNumericField<double> numericField() => Context.RenderComponent<MudNumericField<double>>().Instance;
+            MudNumericField<double> numericField() => comp.FindComponent<MudNumericField<double>>().Instance;
             IElement input() => comp.Find("input");
             IElement delayedCultureChange() => comp.Find("button#culture-change");
             // ensure text is updated on initialize 

@@ -29,9 +29,16 @@ namespace MudBlazor.UnitTests.Components
         [TearDown]
         public void SnackbarTearDown()
         {
-            foreach (var closeButton in _provider.FindAll("button"))
+            // Close all snackbars via their close buttons.
+            // It affects the layout so we have to keep finding them until they're gone instead of relying on a cached list.
+            while (true)
             {
-                closeButton?.Click();
+                var closeButtons = _provider.FindAll("button");
+
+                if (closeButtons.Count == 0)
+                    break;
+
+                closeButtons.FirstOrDefault()?.Click();
             }
 
             _provider.WaitForAssertion(() => _provider.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty(), TimeSpan.FromMilliseconds(100));

@@ -35,12 +35,12 @@ namespace MudBlazor.UnitTests.Components
             //navigate to the specified page
             await comp.InvokeAsync(() => { pagination.NavigateTo(initiallySelectedPage - 1); });
 
-            var button = FindControlButton(comp, controlButton);
+            IElement button() => FindControlButton(comp, controlButton);
 
             //Click numberOfClicks times on the control button
             for (var i = 0; i < numberOfClicks; i++)
             {
-                button.Click();
+                button().Click();
             }
 
             //Expected values
