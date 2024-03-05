@@ -412,7 +412,7 @@ namespace MudBlazor
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             if (DataGrid != null)
                 DataGrid.RemoveColumn(this);
