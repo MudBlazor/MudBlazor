@@ -64,27 +64,27 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<CheckBoxTest3>();
             // select elements needed for the test
-            IEnumerable<IRenderedComponent<MudCheckBox<bool>>> boxes() => comp.FindComponents<MudCheckBox<bool>>();
+            IReadOnlyList<IRenderedComponent<MudCheckBox<bool>>> boxes() => comp.FindComponents<MudCheckBox<bool>>();
             IRefreshableElementCollection<IElement> inputs() => comp.FindAll("input");
             // check initial state
-            boxes().GetItemByIndex(0).Instance.Value.Should().Be(true);
-            boxes().GetItemByIndex(1).Instance.Value.Should().Be(true);
+            boxes()[0].Instance.Value.Should().Be(true);
+            boxes()[1].Instance.Value.Should().Be(true);
             // click and check if it has toggled
-            inputs().GetItemByIndex(0).Change(false);
-            boxes().GetItemByIndex(0).Instance.Value.Should().Be(false);
-            boxes().GetItemByIndex(1).Instance.Value.Should().Be(false);
-            
-            inputs().GetItemByIndex(0).Change(true);
-            boxes().GetItemByIndex(0).Instance.Value.Should().Be(true);
-            boxes().GetItemByIndex(1).Instance.Value.Should().Be(true);
-            
-            inputs().GetItemByIndex(1).Change(false);
-            boxes().GetItemByIndex(0).Instance.Value.Should().Be(false);
-            boxes().GetItemByIndex(1).Instance.Value.Should().Be(false);
-            
-            inputs().GetItemByIndex(1).Change(true);
-            boxes().GetItemByIndex(0).Instance.Value.Should().Be(true);
-            boxes().GetItemByIndex(1).Instance.Value.Should().Be(true);
+            inputs()[0].Change(false);
+            boxes()[0].Instance.Value.Should().Be(false);
+            boxes()[1].Instance.Value.Should().Be(false);
+
+            inputs()[0].Change(true);
+            boxes()[0].Instance.Value.Should().Be(true);
+            boxes()[1].Instance.Value.Should().Be(true);
+
+            inputs()[1].Change(false);
+            boxes()[0].Instance.Value.Should().Be(false);
+            boxes()[1].Instance.Value.Should().Be(false);
+
+            inputs()[1].Change(true);
+            boxes()[0].Instance.Value.Should().Be(true);
+            boxes()[1].Instance.Value.Should().Be(true);
         }
 
         /// <summary>

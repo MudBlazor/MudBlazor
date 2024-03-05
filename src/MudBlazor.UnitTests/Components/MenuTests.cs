@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
@@ -121,15 +122,15 @@ namespace MudBlazor.UnitTests.Components
 
             // Mouse over to menu to open popover
             IElement menu() => comp.Find(".mud-menu");
-            await menu.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+            await menu().TriggerEventAsync("onmouseenter", new MouseEventArgs());
 
             // Popover open, captures mouse
-            await menu.TriggerEventAsync("onmouseleave", new MouseEventArgs());
+            await menu().TriggerEventAsync("onmouseleave", new MouseEventArgs());
             await comp.FindAll("div.mud-list")[0].TriggerEventAsync("onmouseenter", new MouseEventArgs());
 
             // Mouse moves to menu, still need to open
             await comp.FindAll("div.mud-list")[0].TriggerEventAsync("onmouseleave", new MouseEventArgs());
-            await menu.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+            await menu().TriggerEventAsync("onmouseenter", new MouseEventArgs());
 
             comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
         }
@@ -268,7 +269,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.TrueInvocationCount.Should().Be(1);
             comp.Instance.FalseInvocationCount.Should().Be(0);
         }
-        
+
         [Test]
         public async Task IsOpenChanged_InvokedWhenClosed_CheckTrueInvocationCountIsOneClickFalseInvocationCountIsOne()
         {

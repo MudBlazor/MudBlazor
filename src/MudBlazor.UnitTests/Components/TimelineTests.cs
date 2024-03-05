@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using AngleSharp.Css.Dom;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
@@ -112,7 +113,6 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.TimelinePosition, position);
             });
 
-
             timeline.Nodes.Should().ContainSingle();
             timeline.Nodes[0].Should().BeAssignableTo<IHtmlDivElement>();
 
@@ -124,13 +124,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TimelineTest>();
 
-            var itemsDiv = comp.FindAll(".mud-timeline-item");
+            IRefreshableElementCollection<IElement> itemsDiv() => comp.FindAll(".mud-timeline-item");
 
-            itemsDiv.Should().HaveCount(5);
+            itemsDiv().Should().HaveCount(5);
 
-            for (int i = 0; i < 5; i++)
+            for (var i = 0; i < 5; i++)
             {
-                itemsDiv[i].Click();
+                itemsDiv()[i].Click();
 
                 comp.Instance.SelectedIndex.Should().Be(i);
             }
@@ -142,7 +142,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TimelineTest>();
             var firstItem = comp.FindComponent<MudTimelineItem>();
             comp.Find("div.mud-timeline-item-dot-inner").GetStyle()["background-color"].Should().Be("");
-            
+
             firstItem.SetParametersAndRender(p =>
             {
                 p.Add(t => t.DotStyle, "background-color: #ff0000");

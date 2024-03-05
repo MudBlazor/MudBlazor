@@ -615,7 +615,6 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(0);
         }
 
-
         [Test]
         public void TableMultiSelection_CheckboxAndRowClickTest()
         {
@@ -1420,7 +1419,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Change row two data
             IElement input() => comp.Find(("#Id1"));
-            input.Change("D");
+            input().Change("D");
 
             // Check row two is still in position 2 of the data rows
             var trs2 = comp.FindAll("tr");
@@ -1549,7 +1548,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// This test validates that when the CanCancel option is set to true and no SelectedItem has been defined, 
+        /// This test validates that when the CanCancel option is set to true and no SelectedItem has been defined,
         /// by clicking on another row, the previous row is no longer editable. Meaning there are always only 2 buttons
         /// </summary>
         [Test]
@@ -1843,7 +1842,6 @@ namespace MudBlazor.UnitTests.Components
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(36);
 
-
             //verify the collapse and expand selection on UI and items
 
             inputs[1].Change(false); // LMP1 
@@ -1855,18 +1853,17 @@ namespace MudBlazor.UnitTests.Components
             table.GroupBy.InnerGroup.Expandable = true;
             table.GroupBy.InnerGroup.IsInitiallyExpanded = true;
 
-
             comp.Render();
 
             table.SelectedItems.Count.Should().Be(0);
-            inputs.Where(x => x.IsChecked()).Count().Should().Be(0);
+            inputs.Count(x => x.IsChecked()).Should().Be(0);
 
             inputs[1].Change(true); // LMP1            
             table.SelectedItems.Count.Should().Be(2);
 
             buttons = comp.FindAll("button").ToArray();
             inputs = comp.FindAll("input").ToArray();
-            inputs.Where(x => x.IsChecked()).Count().Should().Be(5);
+            inputs.Count(x => x.IsChecked()).Should().Be(5);
 
             buttons[0].Click(); //collapse            
             buttons[0].Click(); //expand            
@@ -1874,13 +1871,13 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(2);
 
             inputs = comp.FindAll("input").ToArray();
-            inputs.Where(x => x.IsChecked()).Count().Should().Be(5);
+            inputs.Count(x => x.IsChecked()).Should().Be(5);
 
             inputs[1].Change(false);
             table.SelectedItems.Count.Should().Be(0);
 
             inputs = comp.FindAll("input").ToArray();
-            inputs.Where(x => x.IsChecked()).Count().Should().Be(0);
+            inputs.Count(x => x.IsChecked()).Should().Be(0);
 
         }
 
@@ -1928,7 +1925,6 @@ namespace MudBlazor.UnitTests.Components
             tr.Length.Should().Be(6); // 01 Table header + 02 Group Headers + 02 Group Footers + 01 Entries
 
         }
-
 
         /// <summary>
         /// Tests the IsInitiallyExpanded grouping behavior.

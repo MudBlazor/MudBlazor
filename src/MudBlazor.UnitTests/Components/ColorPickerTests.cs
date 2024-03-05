@@ -79,7 +79,7 @@ namespace MudBlazor.UnitTests.Components
         {
             if (checkInstanceValue == true)
             {
-                comp.WaitForAssertion(()=> comp.Instance.ColorValue.Should().Be(expectedColor));
+                comp.WaitForAssertion(() => comp.Instance.ColorValue.Should().Be(expectedColor));
             }
 
             if (mode is ColorPickerMode.RGB or ColorPickerMode.HSL)
@@ -427,9 +427,9 @@ namespace MudBlazor.UnitTests.Components
 
                 IRefreshableElementCollection<IElement> hueColorSlider() => comp.FindAll(_hueSliderCssSelector);
                 hueColorSlider().Should().ContainSingle();
-                hueColorSlider().First().Should().BeAssignableTo<IHtmlInputElement>();
+                hueColorSlider()[0].Should().BeAssignableTo<IHtmlInputElement>();
 
-                InputEventDispatchExtensions.Input(hueColorSlider().First(), i.ToString());
+                InputEventDispatchExtensions.Input(hueColorSlider()[0], i.ToString());
 
                 CheckColorRelatedValues(comp, 208.46, _defaultYForColorPanel, expectedColor, ColorPickerMode.RGB);
             }
@@ -639,7 +639,6 @@ namespace MudBlazor.UnitTests.Components
             _ = comp.Find(_colorInputCssSelector);
         }
 
-
         [Test]
         public void Toggle_ModeSwitch()
         {
@@ -705,21 +704,21 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.ColorValue.Should().Be(expectedColor);
 
-            var inputs = comp.FindAll(".mud-picker-color-inputfield input");
-            inputs.Should().ContainSingle();
-            inputs.Should().AllBeAssignableTo<IHtmlInputElement>();
-            ((IHtmlInputElement)inputs[0]).Value.Should().Be("#0cdc7c");
-            ((IHtmlInputElement)inputs[0]).MaxLength.Should().Be(7);
+            IRefreshableElementCollection<IElement> inputs() => comp.FindAll(".mud-picker-color-inputfield input");
+            inputs().Should().ContainSingle();
+            inputs().Should().AllBeAssignableTo<IHtmlInputElement>();
+            ((IHtmlInputElement)inputs().Single()).Value.Should().Be("#0cdc7c");
+            ((IHtmlInputElement)inputs().Single()).MaxLength.Should().Be(7);
 
             comp.Instance.TextValue.Should().Be("#0cdc7c");
 
             comp.SetParametersAndRender(p => p.Add(x => x.DisableAlpha, false));
             comp.Instance.ColorValue.Should().Be(expectedColor);
-            inputs = comp.FindAll(".mud-picker-color-inputfield input");
-            inputs.Should().ContainSingle();
-            inputs.Should().AllBeAssignableTo<IHtmlInputElement>();
-            ((IHtmlInputElement)inputs[0]).Value.Should().Be("#0cdc7c78");
-            ((IHtmlInputElement)inputs[0]).MaxLength.Should().Be(9);
+            
+            inputs().Should().ContainSingle();
+            inputs().Should().AllBeAssignableTo<IHtmlInputElement>();
+            ((IHtmlInputElement)inputs().Single()).Value.Should().Be("#0cdc7c78");
+            ((IHtmlInputElement)inputs().Single()).MaxLength.Should().Be(9);
 
             comp.Instance.TextValue.Should().Be("#0cdc7c78");
         }
@@ -733,7 +732,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.PickerVariant, PickerVariant.Static);
             });
 
-            var buttons = comp.FindAll(_mudToolbarButtonsCssSelector);
+            IRefreshableElementCollection<IElement> buttons() => comp.FindAll(_mudToolbarButtonsCssSelector);
 
             Dictionary<int, (ColorPickerView, string)> buttonMapper = new()
             {
@@ -744,7 +743,7 @@ namespace MudBlazor.UnitTests.Components
 
             foreach (var item in buttonMapper)
             {
-                buttons[item.Key].Click();
+                buttons()[item.Key].Click();
 
                 _ = comp.Find(item.Value.Item2);
             }
@@ -788,7 +787,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.ViewMode, view);
                 p.Add(x => x.DisableToolbar, false);
             });
-
+            
             var toolbarButtons = comp.FindAll(".mud-toolbar .mud-icon-button button");
             for (var i = 0; i < toolbarButtons.Count; i++)
             {
@@ -1036,7 +1035,6 @@ namespace MudBlazor.UnitTests.Components
             }
 
             item.Click();
-
 
             comp.Instance.ColorValue.Should().NotBe(_defaultColor);
 
