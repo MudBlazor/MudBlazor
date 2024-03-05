@@ -392,29 +392,26 @@ namespace MudBlazor
         /// </summary>
         internal async Task RemoveGrouping()
         {
-            if (grouping != false)
+            if (grouping)
             {
                 grouping = false;
                 await GroupingChanged.InvokeAsync(grouping);
             }
         }
 
-        public async Task HideAsync()
+        public Task HideAsync()
         {
-            await HiddenState.SetValueAsync(true);
-            await HiddenChanged.InvokeAsync(HiddenState.Value);
+            return HiddenState.SetValueAsync(true);
         }
 
-        public async Task ShowAsync()
+        public Task ShowAsync()
         {
-            await HiddenState.SetValueAsync(false);
-            await HiddenChanged.InvokeAsync(HiddenState.Value);
+            return HiddenState.SetValueAsync(false);
         }
 
         public async Task ToggleAsync()
         {
             await HiddenState.SetValueAsync(!HiddenState.Value);
-            await HiddenChanged.InvokeAsync(HiddenState.Value);
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
 
