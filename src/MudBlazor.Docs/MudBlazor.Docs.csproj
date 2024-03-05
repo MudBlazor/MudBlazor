@@ -95,19 +95,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MudBlazor.SassCompiler" Version="2.0.4">
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.71.1.1">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-
-  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="Compile Sass" BeforeTargets="BeforeBuild">
-    <Error Condition="!Exists('$(MSBuildProjectDirectory)/wwwroot/MudBlazorDocs.min.css')" Text="Missing MudBlazorDocs.min.css in wwwroot" />
-    <ItemGroup>
-      <!--Include without duplication-->
-      <_NewCompiledDocsCssFiles Include="wwwroot\MudBlazorDocs.min.css" Exclude="@(Content)" />
-      <Content Include="@(_NewCompiledDocsCssFiles)" />
-    </ItemGroup>
-  </Target>
 
   <!--Dont Include in build output-->
   <ItemGroup>
