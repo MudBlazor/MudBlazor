@@ -1,5 +1,14 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small" />
-<MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Medium" />
-<MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Large" />
+@inject ISnackbar Snackbar
+
+<MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small" OnClick="() => OnFabClicked(Size.Small)" />
+<MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Medium" OnClick="() => OnFabClicked(Size.Small)" />
+<MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Large" OnClick="() => OnFabClicked(Size.Small)" />
+
+@code {
+    void OnFabClicked(Size size)
+    {
+        Snackbar.Add($"{size} FAB button was clicked");
+    }
+}
