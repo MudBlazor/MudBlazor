@@ -32,7 +32,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     {
         if (_parameters.Contains(parameter))
         {
-            throw new InvalidOperationException($"{parameter.ParameterName} is already registered");
+            throw new InvalidOperationException($"{parameter.ParameterName} is already registered.");
         }
 
         _parameters.Add(parameter);

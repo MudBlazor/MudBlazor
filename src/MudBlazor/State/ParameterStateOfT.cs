@@ -11,14 +11,14 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor.State;
 
 /// <summary>
-/// The <see cref="ParameterState{T}"/> automatically manages parameter value changes as part of
+/// The <see cref="ParameterState{T}"/> automatically manages parameter value changes for <see cref="ParameterAttribute"/> as part of
 /// MudBlazor's ParameterState framework. For details and usage please read CONTRIBUTING.md
 /// </summary>
 /// <remarks>
 /// You don't need to create this object directly.
 /// Instead, use the "MudComponentBase.RegisterParameter" method from within the component's constructor.
 /// </remarks>
-/// <typeparam name="T">Parameter's type.</typeparam>
+/// <typeparam name="T">The type of the component's property value.</typeparam>
 #nullable enable
 internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<ParameterState<T>>
 {
@@ -120,8 +120,8 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
 
     /// <summary>
     /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's ParameterState framework.
-    ///
-    /// Note: usually you don't need to call this directly. Instead, use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
+    ///<para />
+    /// <b>NB!</b> Usually you don't need to call this directly. Instead, use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
     /// component's constructor.  
     /// </summary>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>

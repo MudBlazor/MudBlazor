@@ -88,8 +88,8 @@ namespace MudBlazor
         /// <summary>
         /// Register a component Parameter, its EventCallback and a change handler so that the base can manage it as a ParameterState object.
         /// It is the new rule in MudBlazor, that parameters must be auto properties.
-        /// By registering the parameter with a change handler you can still execute code when the parameter value changes. This class is part of
-        /// MudBlazor's ParameterState framework.
+        /// By registering the parameter with a change handler you can still execute code when the parameter value changes.
+        /// This class is part of MudBlazor's ParameterState framework.
         /// <para />
         /// <b>NB!</b> This method must be called in the constructor!
         /// </summary>
@@ -113,8 +113,8 @@ namespace MudBlazor
         /// <summary>
         /// Register a component Parameter, its EventCallback and a change handler so that the base can manage it as a ParameterState object.
         /// It is the new rule in MudBlazor, that parameters must be auto properties.
-        /// By registering the parameter with a change handler you can still execute code when the parameter value changes. This class is part of
-        /// MudBlazor's ParameterState framework.
+        /// By registering the parameter with a change handler you can still execute code when the parameter value changes.
+        /// This class is part of MudBlazor's ParameterState framework.
         /// <para />
         /// <b>NB!</b> This method must be called in the constructor!
         /// </summary>
@@ -138,8 +138,8 @@ namespace MudBlazor
         /// <summary>
         /// Register a component Parameter, its EventCallback and a change handler so that the base can manage it as a ParameterState object.
         /// It is the new rule in MudBlazor, that parameters must be auto properties.
-        /// By registering the parameter with a change handler you can still execute code when the parameter value changes. This class is part of
-        /// MudBlazor's ParameterState framework.
+        /// By registering the parameter with a change handler you can still execute code when the parameter value changes.
+        /// This class is part of MudBlazor's ParameterState framework.
         /// <para />
         /// <b>NB!</b> This method must be called in the constructor!
         /// </summary>
@@ -160,10 +160,10 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Register a component Parameter, its EventCallback and a change handler so that the base can manage it as a ParameterState object.
+        /// Register a component Parameter and a change handler so that the base can manage it as a ParameterState object.
         /// It is the new rule in MudBlazor, that parameters must be auto properties.
-        /// By registering the parameter with a change handler you can still execute code when the parameter value changes. This class is part of
-        /// MudBlazor's ParameterState framework.
+        /// By registering the parameter with a change handler you can still execute code when the parameter value changes.
+        /// This class is part of MudBlazor's ParameterState framework.
         /// <para />
         /// <b>NB!</b> This method must be called in the constructor!
         /// </summary>
@@ -184,10 +184,10 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Register a component Parameter, its EventCallback and a change handler so that the base can manage it as a ParameterState object.
+        /// Register a component Parameter and a change handler so that the base can manage it as a ParameterState object.
         /// It is the new rule in MudBlazor, that parameters must be auto properties.
-        /// By registering the parameter with a change handler you can still execute code when the parameter value changes. This class is part of
-        /// MudBlazor's ParameterState framework.
+        /// By registering the parameter with a change handler you can still execute code when the parameter value changes.
+        /// This class is part of MudBlazor's ParameterState framework.
         /// <para />
         /// <b>NB!</b> This method must be called in the constructor!
         /// </summary>

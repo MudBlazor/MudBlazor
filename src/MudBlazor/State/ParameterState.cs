@@ -41,7 +41,7 @@ internal class ParameterState
     /// <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
     /// <param name="parameterChangedHandler">A function containing code that needs to be executed when the parameter value changes.</param>
     /// <remarks>
-    /// For details and usage, please read CONTRIBUTING.md.
+    /// For details and usage, please read CONTRIBUTING.md
     /// </remarks>
     /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
     public static ParameterState<T> Attach<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Func<Task> parameterChangedHandler)
@@ -57,7 +57,7 @@ internal class ParameterState
     /// <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
     /// <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
     /// <remarks>
-    /// For details and usage, please read CONTRIBUTING.md.
+    /// For details and usage, please read CONTRIBUTING.md
     /// </remarks>
     /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
     public static ParameterState<T> Attach<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc)
@@ -73,7 +73,7 @@ internal class ParameterState
     /// <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
     /// <param name="parameterChangedHandler">An action containing code that needs to be executed when the parameter value changes.</param>
     /// <remarks>
-    /// For details and usage, please read CONTRIBUTING.md.
+    /// For details and usage, please read CONTRIBUTING.md
     /// </remarks>
     /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
     public static ParameterState<T> Attach<T>(string parameterName, Func<T> getParameterValueFunc, Action parameterChangedHandler)
@@ -89,7 +89,7 @@ internal class ParameterState
     /// <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
     /// <param name="parameterChangedHandler">A function containing code that needs to be executed when the parameter value changes.</param>
     /// <remarks>
-    /// For details and usage, please read CONTRIBUTING.md.
+    /// For details and usage, please read CONTRIBUTING.md
     /// </remarks>
     /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
     public static ParameterState<T> Attach<T>(string parameterName, Func<T> getParameterValueFunc, Func<Task> parameterChangedHandler)

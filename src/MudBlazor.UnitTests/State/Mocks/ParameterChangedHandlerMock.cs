@@ -7,6 +7,7 @@ using MudBlazor.State;
 
 namespace MudBlazor.UnitTests.State.Mocks;
 
+#nullable enable
 public class ParameterChangedHandlerMock : IParameterChangedHandler
 {
     public int FireCount { get; private set; }
