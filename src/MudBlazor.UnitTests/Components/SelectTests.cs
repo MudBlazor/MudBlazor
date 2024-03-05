@@ -63,8 +63,8 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
-            var menu = comp.Find("div.mud-popover");
-            var input = comp.Find("div.mud-input-control");
+            IElement menu() => comp.Find("div.mud-popover");
+            IElement input() => comp.Find("div.mud-input-control");
             // check popover class
             menu.ClassList.Should().Contain("select-popover-class");
             // check initial state
@@ -107,8 +107,8 @@ namespace MudBlazor.UnitTests.Components
                 // print the generated html
                 // select elements needed for the test
                 var select = comp.FindComponent<MudSelect<string>>();
-                var menu = comp.Find("div.mud-popover");
-                var input = comp.Find("div.mud-input-control");
+                IElement menu() => comp.Find("div.mud-popover");
+                IElement input() => comp.Find("div.mud-input-control");
                 // check initial state
                 select.Instance.Value.Should().BeNullOrEmpty();
                 comp.WaitForAssertion(() =>
@@ -164,7 +164,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectWithEnumTest>();
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<MyEnum>>();
-            var input = comp.Find("div.mud-input-control");
+            IElement input() => comp.Find("div.mud-input-control");
 
             select.Instance.Value.Should().Be(default(MyEnum));
             select.Instance.Text.Should().Be(default(MyEnum).ToString());
@@ -187,7 +187,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectUnrepresentableValueTest>();
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<int>>();
-            var input = comp.Find("div.mud-input-control");
+            IElement input() => comp.Find("div.mud-input-control");
             select.Instance.Value.Should().Be(17);
             select.Instance.Text.Should().Be("17");
             comp.Find("input").Attributes["value"]?.Value.Should().Be("17");
@@ -209,7 +209,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectUnrepresentableValueTest2>();
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<int>>();
-            var input = comp.Find("div.mud-input-control");
+            IElement input() => comp.Find("div.mud-input-control");
 
             select.Instance.Value.Should().Be(17);
             select.Instance.Text.Should().Be("17");
@@ -236,7 +236,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectWithoutItemPresentersTest>();
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<int>>();
-            var input = comp.Find("div.mud-input-control");
+            IElement input() => comp.Find("div.mud-input-control");
 
             select.Instance.Value.Should().Be(1);
             select.Instance.Text.Should().Be("1");
@@ -260,8 +260,8 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
             select.SetCallback(s => s.TextChanged, x => text = x);
-            var menu = comp.Find("div.mud-popover");
-            var input = comp.Find("div.mud-input-control");
+            IElement menu() => comp.Find("div.mud-popover");
+            IElement input() => comp.Find("div.mud-input-control");
             // check initial state
             select.Instance.Value.Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
@@ -314,8 +314,8 @@ namespace MudBlazor.UnitTests.Components
                   selectedValuesChangedCount = eventCounter++;
                   selectedValues = x;
               });
-            var menu = comp.Find("div.mud-popover");
-            var input = comp.Find("div.mud-input-control");
+            IElement menu() => comp.Find("div.mud-popover");
+            IElement input() => comp.Find("div.mud-input-control");
             // check initial state
             select.Instance.Value.Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
@@ -376,7 +376,7 @@ namespace MudBlazor.UnitTests.Components
                   selectedValues = x;
               });
 
-            var selectElement = comp.Find("div.mud-input-control");
+            IElement selectElement() => comp.Find("div.mud-input-control");
             selectElement.Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
@@ -421,7 +421,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
 
-            var selectElement = comp.Find("div.mud-input-control");
+            IElement selectElement() => comp.Find("div.mud-input-control");
             selectElement.Click();
 
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item-disabled").Count.Should().Be(1));
@@ -444,8 +444,8 @@ namespace MudBlazor.UnitTests.Components
                     validatedValue = value; // NOTE: select does only update the value for T string
                     return true;
                 }));
-                var menu = comp.Find("div.mud-popover");
-                var input = comp.Find("div.mud-input-control");
+                IElement menu() => comp.Find("div.mud-popover");
+                IElement input() => comp.Find("div.mud-input-control");
                 // check initial state
                 select.Instance.Value.Should().BeNullOrEmpty();
                 comp.WaitForAssertion(() =>
@@ -485,8 +485,8 @@ namespace MudBlazor.UnitTests.Components
                 validatedValue = value; // NOTE: select does only update the value for T string
                 return true;
             }));
-            var menu = comp.Find("div.mud-popover");
-            var input = comp.Find("div.mud-input-control");
+            IElement menu() => comp.Find("div.mud-popover");
+            IElement input() => comp.Find("div.mud-input-control");
             // Open the menu
             input.Click();
             menu.ClassList.Should().Contain("mud-popover-open");
@@ -503,8 +503,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MultiSelectTest3>();
             // select element needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
-            var menu = comp.Find("div.mud-popover");
-            var input = comp.Find("div.mud-input-control");
+            IElement menu() => comp.Find("div.mud-popover");
+            IElement input() => comp.Find("div.mud-input-control");
             // Open the menu
             input.Click();
             menu.ClassList.Should().Contain("mud-popover-open");
@@ -538,8 +538,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MultiSelectTest4>();
             // select element needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
-            var menu = comp.Find("div.mud-popover");
-            var input = comp.Find("div.mud-input-control");
+            IElement menu() => comp.Find("div.mud-popover");
+            IElement input() => comp.Find("div.mud-input-control");
             // Open the menu
             input.Click();
             menu.ClassList.Should().Contain("mud-popover-open");
@@ -559,8 +559,8 @@ namespace MudBlazor.UnitTests.Components
                 validatedValue = value; // NOTE: select does only update the value for T string
                 return true;
             }));
-            var menu = comp.Find("div.mud-popover");
-            var input = comp.Find("div.mud-input-control");
+            IElement menu() => comp.Find("div.mud-popover");
+            IElement input() => comp.Find("div.mud-input-control");
             // check initial state
             select.Instance.Value.Should().BeNullOrEmpty();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
@@ -598,7 +598,7 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
 
             // select the input of the select
-            var input = comp.Find("input");
+            IElement input() => comp.Find("input");
             //the value of the input
             var value = input.Attributes.Where(a => a.LocalName == "value").First().Value;
             value.Should().Be("FirstA, SecondA");
@@ -615,7 +615,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MultiSelectCustomizedTextTest>();
 
             // Select the input of the select
-            var input = comp.Find("input");
+            IElement input() => comp.Find("input");
 
             // The value of the input
             var value = input.Attributes.Where(a => a.LocalName == "value").First().Value;
@@ -629,7 +629,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SelectClearableTest>();
             var select = comp.FindComponent<MudSelect<string>>();
-            var input = comp.Find("div.mud-input-control");
+            IElement input() => comp.Find("div.mud-input-control");
 
             // No button when initialized
             comp.FindAll("button").Should().BeEmpty();
@@ -660,8 +660,8 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
-            var menu = comp.Find("div.mud-popover");
-            var input = comp.Find("div.mud-input-control");
+            IElement menu() => comp.Find("div.mud-popover");
+            IElement input() => comp.Find("div.mud-input-control");
 
             input.Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
@@ -745,7 +745,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectTest1>();
             // print the generated html
             var select = comp.FindComponent<MudSelect<string>>();
-            var input = comp.Find("div.mud-input-control");
+            IElement input() => comp.Find("div.mud-input-control");
 
             comp.Find("div.mud-popover").ClassList.Should().Contain("select-popover-class");
             select.Instance.Value.Should().BeNullOrEmpty();
@@ -1010,7 +1010,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MultiSelectTest6>();
             var select = comp.FindComponent<MudSelect<string>>();
-            var mudSelectElement = comp.Find(".mud-select");
+            IElement mudSelectElement() => comp.Find(".mud-select");
             comp.Find("div.mud-input-control").Click();
             select.Instance._isOpen.Should().BeTrue();
             var items = comp.FindAll("div.mud-list-item").ToArray();
@@ -1068,7 +1068,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SelectTest1>();
             var sut = comp.FindComponent<MudSelect<string>>();
 
-            var input = comp.Find("div.mud-input-control");
+            IElement input() => comp.Find("div.mud-input-control");
             input.Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
 
@@ -1083,7 +1083,7 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(c => c.MultiSelection, false);
             });
             var select = comp.FindComponent<MudSelect<string>>();
-            var input = comp.Find("div.mud-input-control");
+            IElement input() => comp.Find("div.mud-input-control");
 
             comp.Instance.ValueChangeCount.Should().Be(0);
             comp.Instance.ValuesChangeCount.Should().Be(0);

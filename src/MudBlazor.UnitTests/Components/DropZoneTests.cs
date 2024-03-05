@@ -78,7 +78,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
 
-            var container = comp.Find(".mud-drop-container");
+            IElement container() => comp.Find(".mud-drop-container");
 
             container.ClassList.Should().BeEquivalentTo(new[] { "mud-drop-container", "d-flex" });
 
@@ -123,7 +123,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DropzoneCustomItemSelectorTest>();
 
-            var container = comp.Find(".mud-drop-container");
+            IElement container() => comp.Find(".mud-drop-container");
 
             container.ClassList.Should().BeEquivalentTo(new[] { "mud-drop-container", "d-flex" });
 
@@ -146,7 +146,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
 
-            var container = comp.Find(".mud-drop-container");
+            IElement container() => comp.Find(".mud-drop-container");
             container.Children.Should().HaveCount(2);
 
             var firstDropZone = container.Children[0];
@@ -157,7 +157,7 @@ namespace MudBlazor.UnitTests.Components
             firstDropItem.TextContent.Should().Be("First Item");
             await firstDropItem.DragStartAsync(new DragEventArgs());
 
-            var secondDropZone = comp.Find(".second-drop-zone");
+            IElement secondDropZone() => comp.Find(".second-drop-zone");
 
             await secondDropZone.DropAsync(new DragEventArgs());
 
@@ -188,7 +188,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
 
-            var container = comp.Find(".mud-drop-container");
+            IElement container() => comp.Find(".mud-drop-container");
             container.Children.Should().HaveCount(2);
 
             var firstDropZone = container.Children[0];
@@ -253,7 +253,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
 
-            var container = comp.Find(".mud-drop-container");
+            IElement container() => comp.Find(".mud-drop-container");
             container.Children.Should().HaveCount(2);
 
             var firstDropZone = container.Children[0];
@@ -291,7 +291,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DropzoneDraggingTestCantDropSecondZoneTest>();
 
-            var container = comp.Find(".mud-drop-container");
+            IElement container() => comp.Find(".mud-drop-container");
             container.Children.Should().HaveCount(2);
 
             var firstDropZone = container.Children[0];
@@ -329,7 +329,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
 
-            var tempContainer = comp.Find(".mud-drop-container");
+            IElement tempContainer() => comp.Find(".mud-drop-container");
             tempContainer.Children.Should().HaveCount(2);
 
             var firstDropZone = tempContainer.Children[0];
@@ -347,14 +347,14 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DropzoneBasicTest>();
             {
-                var tempContainer = comp.Find(".mud-drop-container");
+                IElement tempContainer() => comp.Find(".mud-drop-container");
                 tempContainer.Children.Should().HaveCount(2);
 
                 var firstDropZone = tempContainer.Children[0];
                 await firstDropZone.DropAsync(new DragEventArgs());
             }
 
-            var container = comp.Find(".mud-drop-container");
+            IElement container() => comp.Find(".mud-drop-container");
             container.Children.Should().HaveCount(2);
             container.Children[0].Children.Should().HaveCount(2);
             container.Children[1].Children.Should().HaveCount(3);
@@ -365,9 +365,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DropzoneCanDropTest>();
 
-            var firstDropZone = comp.Find(".first-drop-zone");
-            var secondDropZone = comp.Find(".second-drop-zone");
-            var thirdDropZone = comp.Find(".third-drop-zone");
+            IElement firstDropZone() => comp.Find(".first-drop-zone");
+            IElement secondDropZone() => comp.Find(".second-drop-zone");
+            IElement thirdDropZone() => comp.Find(".third-drop-zone");
 
             var dragItem = firstDropZone.Children[1];
 
@@ -412,9 +412,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DropzoneCanDropTest>();
 
-            var firstDropZone = comp.Find(".first-drop-zone");
-            var secondDropZone = comp.Find(".second-drop-zone");
-            var thirdDropZone = comp.Find(".third-drop-zone");
+            IElement firstDropZone() => comp.Find(".first-drop-zone");
+            IElement secondDropZone() => comp.Find(".second-drop-zone");
+            IElement thirdDropZone() => comp.Find(".third-drop-zone");
 
             //enter sourced drop zone, no class applied
             await firstDropZone.DragEnterAsync(new DragEventArgs());
@@ -450,9 +450,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DropzoneCanDropTest>(
                 p => p.Add(x => x.SecondColumnAppliesClassesOnDragStarted, true));
 
-            var firstDropZone = comp.Find(".first-drop-zone");
-            var secondDropZone = comp.Find(".second-drop-zone");
-            var thirdDropZone = comp.Find(".third-drop-zone");
+            IElement firstDropZone() => comp.Find(".first-drop-zone");
+            IElement secondDropZone() => comp.Find(".second-drop-zone");
+            IElement thirdDropZone() => comp.Find(".third-drop-zone");
 
             var dragItem = firstDropZone.Children[1];
 
@@ -512,9 +512,9 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.ApplyDropClassesOnDragStarted, true);
             });
 
-            var firstDropZone = comp.Find(".first-drop-zone");
-            var secondDropZone = comp.Find(".second-drop-zone");
-            var thirdDropZone = comp.Find(".third-drop-zone");
+            IElement firstDropZone() => comp.Find(".first-drop-zone");
+            IElement secondDropZone() => comp.Find(".second-drop-zone");
+            IElement thirdDropZone() => comp.Find(".third-drop-zone");
 
             var dragItem = firstDropZone.Children[1];
 
@@ -635,9 +635,9 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.ApplyDropClassesOnDragStarted, true);
             });
 
-            var firstDropZone = comp.Find(".first-drop-zone");
-            var secondDropZone = comp.Find(".second-drop-zone");
-            var thirdDropZone = comp.Find(".third-drop-zone");
+            IElement firstDropZone() => comp.Find(".first-drop-zone");
+            IElement secondDropZone() => comp.Find(".second-drop-zone");
+            IElement thirdDropZone() => comp.Find(".third-drop-zone");
 
             var dragItem = firstDropZone.Children[1];
 
@@ -672,9 +672,9 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.ApplyDropClassesOnDragStarted, true);
             });
 
-            var firstDropZone = comp.Find(".first-drop-zone");
-            var secondDropZone = comp.Find(".second-drop-zone");
-            var thirdDropZone = comp.Find(".third-drop-zone");
+            IElement firstDropZone() => comp.Find(".first-drop-zone");
+            IElement secondDropZone() => comp.Find(".second-drop-zone");
+            IElement thirdDropZone() => comp.Find(".third-drop-zone");
 
             var dragItem = firstDropZone.Children[1];
 
@@ -702,8 +702,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DropzoneDisableTest>();
 
-            var firstDropZone = comp.Find(".first-drop-zone");
-            var secondDropZone = comp.Find(".second-drop-zone");
+            IElement firstDropZone() => comp.Find(".first-drop-zone");
+            IElement secondDropZone() => comp.Find(".second-drop-zone");
 
             firstDropZone.Children.Should().HaveCount(3);
             secondDropZone.Children.Should().HaveCount(3);
@@ -741,8 +741,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DropzoneDynamicItemCollectionTest>();
 
-            var firstDropZone = comp.Find(".first-drop-zone");
-            var secondDropZone = comp.Find(".second-drop-zone");
+            IElement firstDropZone() => comp.Find(".first-drop-zone");
+            IElement secondDropZone() => comp.Find(".second-drop-zone");
 
             firstDropZone.Children.Should().HaveCount(2);
             secondDropZone.Children.Should().HaveCount(1);
@@ -776,7 +776,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DropzoneVisbilityTest>();
 
-            var container = comp.Find(".mud-drop-container");
+            IElement container() => comp.Find(".mud-drop-container");
             container.Children.Should().HaveCount(2);
 
             var firstDropZone = container.Children[0];
@@ -805,7 +805,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
-            var firstDropZone = comp.Find(".dropzone-1");
+            IElement firstDropZone() => comp.Find(".dropzone-1");
             firstDropZone.Children.Should().HaveCount(6);
             firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
             firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
@@ -819,7 +819,7 @@ namespace MudBlazor.UnitTests.Components
 
             await firstDropItem.DragStartAsync(new DragEventArgs());
 
-            var thirdDropZone = comp.Find(".dropzone-3");
+            IElement thirdDropZone() => comp.Find(".dropzone-3");
             thirdDropZone.Children.Should().ContainSingle();
             thirdDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
 
@@ -845,7 +845,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
-            var firstDropZone = comp.Find(".dropzone-1");
+            IElement firstDropZone() => comp.Find(".dropzone-1");
             firstDropZone.Children.Should().HaveCount(6);
             firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
             firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
@@ -882,7 +882,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
-            var firstDropZone = comp.Find(".dropzone-1");
+            IElement firstDropZone() => comp.Find(".dropzone-1");
             firstDropZone.Children.Should().HaveCount(6);
             firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
             firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
@@ -920,7 +920,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
-            var firstDropZone = comp.Find(".dropzone-1");
+            IElement firstDropZone() => comp.Find(".dropzone-1");
             firstDropZone.Children.Should().HaveCount(6);
             firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
             firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
@@ -958,7 +958,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
-            var firstDropZone = comp.Find(".dropzone-1");
+            IElement firstDropZone() => comp.Find(".dropzone-1");
             firstDropZone.Children.Should().HaveCount(6);
             firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
             firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
@@ -995,7 +995,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
-            var firstDropZone = comp.Find(".dropzone-1");
+            IElement firstDropZone() => comp.Find(".dropzone-1");
             firstDropZone.Children.Should().HaveCount(6);
             firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
             firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
@@ -1025,14 +1025,14 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
-            var firstDropZone = comp.Find(".dropzone-1");
+            IElement firstDropZone() => comp.Find(".dropzone-1");
             firstDropZone.Children.Should().HaveCount(6);
             firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
             firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
             firstDropZone.Children[1].GetAttribute("draggable").Should().Be("false");
             firstDropZone.Children[2].TextContent.Should().Be("Item 1");
 
-            var secondDropZone = comp.Find(".dropzone-2");
+            IElement secondDropZone() => comp.Find(".dropzone-2");
 
             var secondDropItemInFirstZone = firstDropZone.Children[3];
             secondDropItemInFirstZone.TextContent.Should().Be("Item 2");
@@ -1138,12 +1138,12 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DropzoneItemClassSelectorTest>();
 
             comp.Find(".mud-drop-container");
-            var firstDropZone = comp.Find(".dropzone-1");
+            IElement firstDropZone() => comp.Find(".dropzone-1");
             var secondDropItemInFirstZone = firstDropZone.Children[3];
             secondDropItemInFirstZone.TextContent.Should().Be("Item 2");
             secondDropItemInFirstZone.ClassList.Should().Contain("mud-theme-primary");
 
-            var secondDropZone = comp.Find(".dropzone-2");
+            IElement secondDropZone() => comp.Find(".dropzone-2");
 
             await secondDropItemInFirstZone.DragStartAsync(new DragEventArgs());
 
@@ -1164,12 +1164,12 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DropzoneItemOnItemPickedTest>();
 
             comp.Find(".mud-drop-container");
-            var firstDropZone = comp.Find(".dropzone-1");
+            IElement firstDropZone() => comp.Find(".dropzone-1");
             var secondDropItemInFirstZone = firstDropZone.Children[3];
             secondDropItemInFirstZone.TextContent.Should().Be("Item 2");
             await secondDropItemInFirstZone.DragStartAsync(new DragEventArgs());
 
-            var secondDropZone = comp.Find(".dropzone-2");
+            IElement secondDropZone() => comp.Find(".dropzone-2");
             await secondDropZone.DragEnterAsync(new DragEventArgs());
 
             var firstItemInSecondDropZone = secondDropZone.Children[3];
@@ -1187,7 +1187,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DropzoneReorderTest>();
 
             comp.Find(".mud-drop-container");
-            var firstDropZone = comp.Find(".dropzone-1");
+            IElement firstDropZone() => comp.Find(".dropzone-1");
             firstDropZone.Children.Should().HaveCount(6);
             firstDropZone.Children[0].ClassList.Should().Contain(new[] { "d-none", "mud-dropitem-placeholder" });
             firstDropZone.Children[1].ClassList.Should().Contain("mud-drop-item-preview-start");
@@ -1229,7 +1229,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DropzoneDraggingTestCantDropSecondZoneTest>();
 
-            var container = comp.Find(".mud-drop-container");
+            IElement container() => comp.Find(".mud-drop-container");
             container.Children.Should().HaveCount(2);
 
             var firstDropZone = container.Children[0];

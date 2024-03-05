@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Components
         public void DatePickerOpenButtonAriaLabel()
         {
             var comp = Context.RenderComponent<DatePickerValidationTest>();
-            var openButton = comp.Find(".mud-input-adornment button");
+            IElement openButton() => comp.Find(".mud-input-adornment button");
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Date Picker");
         }
 
@@ -57,7 +57,7 @@ namespace MudBlazor.UnitTests.Components
         public void DatePickerLabelFor()
         {
             var comp = Context.RenderComponent<DatePickerValidationTest>();
-            var label = comp.Find(".mud-input-label");
+            IElement label() => comp.Find(".mud-input-label");
             label.Attributes.GetNamedItem("for")?.Value.Should().Be("datePickerLabelTest");
         }
 

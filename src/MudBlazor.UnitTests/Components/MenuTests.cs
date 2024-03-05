@@ -120,7 +120,7 @@ namespace MudBlazor.UnitTests.Components
             var pop = comp.FindComponent<MudPopover>();
 
             // Mouse over to menu to open popover
-            var menu = comp.Find(".mud-menu");
+            IElement menu() => comp.Find(".mud-menu");
             await menu.TriggerEventAsync("onmouseenter", new MouseEventArgs());
 
             // Popover open, captures mouse
@@ -138,7 +138,7 @@ namespace MudBlazor.UnitTests.Components
         public void ActivatorContent_Disabled_CheckDisabled()
         {
             var comp = Context.RenderComponent<MenuTestDisabledCustomActivator>();
-            var activator = comp.Find("div.mud-menu-activator");
+            IElement activator() => comp.Find("div.mud-menu-activator");
             activator.ClassList.Should().Contain("mud-disabled");
             activator.GetAttribute("disabled").Should().NotBeNull();
         }
@@ -304,7 +304,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MenuItemActionTest>();
             comp.Find("button.mud-button-root").Click();
-            var item = comp.Find("#id_on_action_on_touch");
+            IElement item() => comp.Find("#id_on_action_on_touch");
             item.TouchEnd();
             comp.Instance.Count.Should().Be(1);
             comp.Instance.Callers.Should().Be("T");
@@ -315,7 +315,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MenuItemActionTest>();
             comp.Find("button.mud-button-root").Click();
-            var item = comp.Find("#id_on_action_on_touch");
+            IElement item() => comp.Find("#id_on_action_on_touch");
             item.TouchStart();
             item.TouchMove();
             item.TouchEnd();
@@ -328,7 +328,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MenuItemActionTest>();
             comp.Find("button.mud-button-root").Click();
-            var item = comp.Find("#id_on_action_on_click");
+            IElement item() => comp.Find("#id_on_action_on_click");
             item.TouchStart();
             item.TouchMove();
             item.TouchEnd();

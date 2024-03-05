@@ -219,10 +219,10 @@ namespace MudBlazor.UnitTests.Components
                 builder.Add(x => x.CheckMark, true);
                 builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a").Add(x => x.UnselectedIcon, @Icons.Material.Filled.Coronavirus));
             });
-            var icon = comp.Find("svg");
+            IElement icon() => comp.Find("svg");
             icon.ClassList.Should().Contain("c69");
             icon.ClassList.Should().Contain("me-2"); // <--- the spacing between icon and text
-            var text = comp.Find(".mud-typography");
+            IElement text() => comp.Find(".mud-typography");
             text.ClassList.Should().Contain("c42");
         }
 

@@ -46,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.Style, "background:gray");
             });
 
-            var img = comp.Find("img");
+            IElement img() => comp.Find("img");
             img.GetAttribute("src").Should().Be("https://myimgsource.com/image.png");
             img.GetAttribute("alt").Should().Be("my description");
             img.GetAttribute("height").Should().Be("20");
@@ -70,7 +70,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.ObjectFit, fit);
             });
 
-            var img = comp.Find("img");
+            IElement img() => comp.Find("img");
             img.ClassList.Should().Contain(new[] { "mud-image", $"object-{expectedClass}" });
         }
 
@@ -92,7 +92,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.ObjectPosition, position);
             });
 
-            var img = comp.Find("img");
+            IElement img() => comp.Find("img");
             img.ClassList.Should().Contain(new[] { "mud-image", $"object-{expectedClass}" });
         }
     }

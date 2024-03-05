@@ -132,7 +132,7 @@ namespace MudBlazor.UnitTests.Components
             var immediate = Parameter(nameof(MudNumericField<int?>.Immediate), true);
             var comp = Context.RenderComponent<MudNumericField<int?>>(immediate);
             var numericField = comp.Instance;
-            var input = comp.Find("input");
+            IElement input() => comp.Find("input");
             //Act
             input.Input(new ChangeEventArgs() { Value = "100" });
             //Assert
@@ -150,7 +150,7 @@ namespace MudBlazor.UnitTests.Components
             var interval = Parameter(nameof(MudNumericField<int?>.DebounceInterval), 200d);
             var comp = Context.RenderComponent<MudNumericField<int?>>(interval);
             var numericField = comp.Instance;
-            var input = comp.Find("input");
+            IElement input() => comp.Find("input");
             //Act
             input.Input(new ChangeEventArgs() { Value = "100" });
             //Assert
@@ -821,8 +821,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DebouncedNumericFieldRerenderTest>();
             var numericField = comp.FindComponent<MudNumericField<int>>().Instance;
-            var input = comp.Find("input");
-            var delayedRerenderButton = comp.Find("button#re-render");
+            IElement input() => comp.Find("input");
+            IElement delayedRerenderButton() => comp.Find("button#re-render");
             var converter = new DefaultConverter<int>();
             input.Input(new ChangeEventArgs { Value = "1" });
             // trigger first value change
@@ -865,8 +865,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DebouncedNumericFieldCultureChangeRerenderTest>();
             var numericField = comp.FindComponent<MudNumericField<double>>().Instance;
-            var input = comp.Find("input");
-            var delayedCultureChange = comp.Find("button#culture-change");
+            IElement input() => comp.Find("input");
+            IElement delayedCultureChange() => comp.Find("button#culture-change");
             // ensure text is updated on initialize 
             numericField.Text.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
             // trigger first value change

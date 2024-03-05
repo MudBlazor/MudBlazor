@@ -45,7 +45,7 @@ namespace MudBlazor.UnitTests.Components
         public void TimePickerOpenButtonAriaLabel()
         {
             var comp = Context.RenderComponent<MudTimePicker>();
-            var openButton = comp.Find(".mud-input-adornment button");
+            IElement openButton() => comp.Find(".mud-input-adornment button");
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Time Picker");
         }
 

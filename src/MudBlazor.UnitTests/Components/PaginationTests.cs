@@ -300,7 +300,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PaginationStylesTest>();
 
             var buttons = comp.FindAll(".mud-pagination-item button");
-            var pagination = comp.Find("ul.mud-pagination");
+            IElement pagination() => comp.Find("ul.mud-pagination");
             var paginationItems = comp.FindAll("mud-pagination-item");
 
             //test if previous and next buttons are hidden

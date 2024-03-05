@@ -60,9 +60,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UnCheckedColor, uncheckedcolor));
 
             var box = comp.Instance;
-            var input = comp.Find("input");
+            IElement input() => comp.Find("input");
 
-            var checkboxClasses = comp.Find(".mud-button-root.mud-icon-button.mud-switch-base");
+            IElement checkboxClasses() => comp.Find(".mud-button-root.mud-icon-button.mud-switch-base");
             // check initial state
             box.Value.Should().Be(false);
             checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });

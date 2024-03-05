@@ -858,7 +858,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<PopoverTest>();
 
             //popup is close, so only the popover-content should be there
-            var provider = comp.Find(".mud-popover-provider");
+            IElement provider() => comp.Find(".mud-popover-provider");
             provider.Children.Should().ContainSingle();
 
             var popoverNode = comp.Find(".popoverparent").Children[1];
@@ -1023,7 +1023,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<PopoverComplexContent>();
 
-            var dynamicContentElement = comp.Find(".dynamic-content");
+            IElement dynamicContentElement() => comp.Find(".dynamic-content");
             dynamicContentElement.ChildNodes.Should().BeEmpty();
 
             await comp.Instance.AddRow();

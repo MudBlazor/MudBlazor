@@ -115,7 +115,7 @@ namespace MudBlazor.UnitTests.Components
                 await item.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
                 var popoverId = parent.Children[1].Id.Substring(8);
 
-                var toolTip = comp.Find($"#popovercontent-{popoverId}");
+                IElement toolTip() => comp.Find($"#popovercontent-{popoverId}");
 
                 toolTip.ClassList.Should().Contain(new string[] { "mud-tooltip" });
                 toolTip.TextContent.Should().Be("close here");
@@ -143,7 +143,7 @@ namespace MudBlazor.UnitTests.Components
                 await item.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
                 var popoverId = parent.Children[1].Id.Substring(8);
 
-                var toolTip = comp.Find($"#popovercontent-{popoverId}");
+                IElement toolTip() => comp.Find($"#popovercontent-{popoverId}");
 
                 toolTip.ClassList.Should().Contain(new string[] { "mud-tooltip" });
                 toolTip.TextContent.Should().Be("add here");
@@ -157,7 +157,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SimpleDynamicTabsInteractionTest>();
 
-            var addButton = comp.Find(".my-add-icon-class");
+            IElement addButton() => comp.Find(".my-add-icon-class");
             addButton.Click();
 
             await Task.Delay(5);

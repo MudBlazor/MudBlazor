@@ -8,7 +8,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -44,11 +43,11 @@ namespace MudBlazor.UnitTests.Components
         public async Task BadgeTest_Click()
         {
             var comp = Context.RenderComponent<BadgeClickTest>();
-            var badge = comp.FindComponent<MudBadge>();
-            var numeric = comp.FindComponent<MudNumericField<int>>();
-            comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(0));
-            await comp.InvokeAsync(() => badge.Instance.HandleBadgeClick(new MouseEventArgs()));
-            comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(1));
+            IRenderedComponent<MudBadge> badge() => comp.FindComponent<MudBadge>();
+            IRenderedComponent<MudNumericField<int>> numeric() => comp.FindComponent<MudNumericField<int>>();
+            comp.WaitForAssertion(() => numeric().Instance.Value.Should().Be(0));
+            await comp.InvokeAsync(() => badge().Instance.HandleBadgeClick(new MouseEventArgs()));
+            comp.WaitForAssertion(() => numeric().Instance.Value.Should().Be(1));
         }
     }
 }

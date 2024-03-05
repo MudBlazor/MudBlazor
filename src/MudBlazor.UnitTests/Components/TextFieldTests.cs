@@ -129,7 +129,7 @@ namespace MudBlazor.UnitTests.Components
             var immediate = Parameter(nameof(MudTextField<string>.Immediate), true);
             var comp = Context.RenderComponent<MudTextField<string>>(immediate);
             var textField = comp.Instance;
-            var input = comp.Find("input");
+            IElement input() => comp.Find("input");
             //Act
             input.Input(new ChangeEventArgs() { Value = "Some Value" });
             //Assert
@@ -147,7 +147,7 @@ namespace MudBlazor.UnitTests.Components
             var interval = Parameter(nameof(MudTextField<string>.DebounceInterval), 200d);
             var comp = Context.RenderComponent<MudTextField<string>>(interval);
             var textField = comp.Instance;
-            var input = comp.Find("input");
+            IElement input() => comp.Find("input");
             //Act
             input.Input(new ChangeEventArgs() { Value = "Some Value" });
             //Assert

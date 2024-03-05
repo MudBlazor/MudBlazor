@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Common;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
@@ -106,25 +107,25 @@ namespace MudBlazor.UnitTests.Components
                 castedInputs[0].Value.Should().Be(expectedColor.Value);
             }
 
-            var selector = comp.Find(".mud-picker-color-selector");
-            selector.Should().NotBeNull();
+            IElement selector() => comp.Find(".mud-picker-color-selector");
+            selector().Should().NotBeNull();
 
-            var selectorStyleAttribute = selector.GetAttribute("style");
+            var selectorStyleAttribute = selector().GetAttribute("style");
             selectorStyleAttribute.Should().Be($"transform: translate({expectedX.ToString(CultureInfo.InvariantCulture)}px, {expectedY.ToString(CultureInfo.InvariantCulture)}px);");
 
-            var hueSlideValue = comp.FindAll(".mud-picker-color-slider.hue input");
-            hueSlideValue.Should().ContainSingle();
-            hueSlideValue[0].Should().BeAssignableTo<IHtmlInputElement>();
+            IRefreshableElementCollection<IElement> hueSlideValue() => comp.FindAll(".mud-picker-color-slider.hue input");
+            hueSlideValue().Should().ContainSingle();
+            hueSlideValue().Single().Should().BeAssignableTo<IHtmlInputElement>();
 
-            ((IHtmlInputElement)hueSlideValue[0]).Value.Should().Be(((int)expectedColor.H).ToString());
+            ((IHtmlInputElement)hueSlideValue().Single()).Value.Should().Be(((int)expectedColor.H).ToString());
 
-            var alphaSlider = comp.FindAll(_alphaSliderCssSelector);
-            alphaSlider.Should().ContainSingle();
-            alphaSlider[0].Should().BeAssignableTo<IHtmlInputElement>();
+            IRefreshableElementCollection<IElement> alphaSlider() => comp.FindAll(_alphaSliderCssSelector);
+            alphaSlider().Should().ContainSingle();
+            alphaSlider().Single().Should().BeAssignableTo<IHtmlInputElement>();
 
-            ((IHtmlInputElement)alphaSlider[0]).Value.Should().Be(((int)expectedColor.A).ToString());
+            ((IHtmlInputElement)alphaSlider().Single()).Value.Should().Be(((int)expectedColor.A).ToString());
 
-            var alphaSliderStyleAttritbute = ((IHtmlElement)alphaSlider[0].Parent.Parent).GetAttribute("style");
+            var alphaSliderStyleAttritbute = ((IHtmlElement)alphaSlider().Single().Parent.Parent).GetAttribute("style");
 
             if (isRtl == false)
             {
@@ -138,12 +139,12 @@ namespace MudBlazor.UnitTests.Components
 
         private IHtmlInputElement[] GetColorInputs(IRenderedComponent<SimpleColorPickerTest> comp, int expectedCount = 4)
         {
-            var inputs = comp.FindAll(".mud-picker-color-inputs input");
+            IRefreshableElementCollection<IElement> inputs() => comp.FindAll(".mud-picker-color-inputs input");
 
-            inputs.Should().AllBeAssignableTo<IHtmlInputElement>();
-            inputs.Should().HaveCount(expectedCount);
+            inputs().Should().AllBeAssignableTo<IHtmlInputElement>();
+            inputs().Should().HaveCount(expectedCount);
 
-            var castedInputs = inputs.Cast<IHtmlInputElement>().ToArray();
+            var castedInputs = inputs().Cast<IHtmlInputElement>().ToArray();
 
             return castedInputs;
         }
@@ -154,8 +155,8 @@ namespace MudBlazor.UnitTests.Components
         public void ColorPickerOpenButtonAriaLabel()
         {
             var comp = Context.RenderComponent<MudColorPicker>();
-            var openButton = comp.Find(".mud-input-adornment button");
-            openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Color Picker");
+            IElement openButton() => comp.Find(".mud-input-adornment button");
+            openButton().Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Color Picker");
         }
 
         [Test]
@@ -335,11 +336,11 @@ namespace MudBlazor.UnitTests.Components
             {
                 var expectedColor = comp.Instance.ColorValue.SetAlpha((byte)i);
 
-                var hueColerSlider = comp.FindAll(_alphaSliderCssSelector);
-                hueColerSlider.Should().ContainSingle();
-                hueColerSlider[0].Should().BeAssignableTo<IHtmlInputElement>();
+                IRefreshableElementCollection<IElement> hueColorSlider() => comp.FindAll(_alphaSliderCssSelector);
+                hueColorSlider().Should().ContainSingle();
+                hueColorSlider().Single().Should().BeAssignableTo<IHtmlInputElement>();
 
-                InputEventDispatchExtensions.Input(hueColerSlider[0], i.ToString());
+                InputEventDispatchExtensions.Input(hueColorSlider().Single(), i.ToString());
 
                 CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, expectedColor, ColorPickerMode.RGB);
             }
@@ -424,11 +425,11 @@ namespace MudBlazor.UnitTests.Components
             {
                 var expectedColor = comp.Instance.ColorValue.SetH(i);
 
-                var hueColorSlider = comp.FindAll(_hueSliderCssSelector);
-                hueColorSlider.Should().ContainSingle();
-                hueColorSlider[0].Should().BeAssignableTo<IHtmlInputElement>();
+                IRefreshableElementCollection<IElement> hueColorSlider() => comp.FindAll(_hueSliderCssSelector);
+                hueColorSlider().Should().ContainSingle();
+                hueColorSlider().First().Should().BeAssignableTo<IHtmlInputElement>();
 
-                InputEventDispatchExtensions.Input(hueColorSlider[0], i.ToString());
+                InputEventDispatchExtensions.Input(hueColorSlider().First(), i.ToString());
 
                 CheckColorRelatedValues(comp, 208.46, _defaultYForColorPanel, expectedColor, ColorPickerMode.RGB);
             }
@@ -439,15 +440,14 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>();
 
-            var overlay = comp.Find(CssSelector);
-
+            IElement overlay() => comp.Find(CssSelector);
             var x = 99.2;
             var y = 200.98;
 
-            overlay.Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
+            overlay().Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
 
             MudColor color = "#232232ff";
-            MudColor expectedColor = new MudColor(color.R, color.G, color.B, _defaultColor);
+            var expectedColor = new MudColor(color.R, color.G, color.B, _defaultColor);
 
             CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
         }
@@ -458,21 +458,21 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<SimpleColorPickerTest>();
 
             var color = comp.Instance.ColorValue;
-            var modeButton = comp.Find(".mud-picker-control-switch button");
+            IElement modeButton() => comp.Find(".mud-picker-control-switch button");
 
             //default to rgb
             CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.RGB);
 
             // click to switch to HSL
-            modeButton.Click();
+            modeButton().Click();
             CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.HSL);
 
             //click again to switch to hex
-            modeButton.Click();
+            modeButton().Click();
             CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.HEX);
 
             //click last time to reset to RGB
-            modeButton.Click();
+            modeButton().Click();
             CheckColorRelatedValues(comp, _defaultXForColorPanel, _defaultYForColorPanel, color, ColorPickerMode.RGB);
         }
 
@@ -481,24 +481,24 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>();
 
-            var colorDot = comp.Find(_colorDotCssSelector);
+            IElement colorDot() => comp.Find(_colorDotCssSelector);
             // no collection
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
-            colorDot.Click();
+            colorDot().Click();
 
             // collection found
-            var colorsToSelectPanel = comp.Find(".mud-picker-color-collection");
-            colorsToSelectPanel.Children.Should().HaveCount(5);
+            IElement colorsToSelectPanel() => comp.Find(".mud-picker-color-collection");
+            colorsToSelectPanel().Children.Should().HaveCount(5);
 
             var expectedColors = new MudColor[] { "#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff" };
 
             for (var i = 0; i < 5; i++)
             {
-                var styleAttribute = colorsToSelectPanel.Children[i].GetAttribute("style");
+                var styleAttribute = colorsToSelectPanel().Children[i].GetAttribute("style");
                 styleAttribute.Should().Be($"background: {expectedColors[i].ToString(MudColorOutputFormats.RGBA)};");
             }
 
-            colorDot.Click();
+            colorDot().Click();
 
             // again no collection visible
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
@@ -511,16 +511,16 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.RenderComponent<SimpleColorPickerTest>(p => p.Add(x => x.Palette, expectedColors));
 
-            var colorDot = comp.Find(_colorDotCssSelector);
-            colorDot.Click();
+            IElement colorDot() => comp.Find(_colorDotCssSelector);
+            colorDot().Click();
 
             // collection found
-            var colorsToSelectPanel = comp.Find(".mud-picker-color-collection");
-            colorsToSelectPanel.Children.Should().HaveCount(expectedColors.Length);
+            IElement colorsToSelectPanel() => comp.Find(".mud-picker-color-collection");
+            colorsToSelectPanel().Children.Should().HaveCount(expectedColors.Length);
 
             for (var i = 0; i < expectedColors.Length; i++)
             {
-                var styleAttribute = colorsToSelectPanel.Children[i].GetAttribute("style");
+                var styleAttribute = colorsToSelectPanel().Children[i].GetAttribute("style");
                 styleAttribute.Should().Be($"background: {expectedColors[i].ToString(MudColorOutputFormats.RGBA)};");
             }
         }
@@ -530,25 +530,24 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>();
 
-            var colorDot = comp.Find(_colorDotCssSelector);
+            IElement colorDot() => comp.Find(_colorDotCssSelector);
             // no collection
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
-            colorDot.Click();
+            colorDot().Click();
 
             var expectedColors = new MudColor[] { "#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff" };
 
             for (var i = 0; i < 5; i++)
             {
-                var colorsToSelectPanel = comp.Find(".mud-picker-color-collection");
+                IElement colorsToSelectPanel() => comp.Find(".mud-picker-color-collection");
 
-                colorsToSelectPanel.Children[i].Click();
-                colorDot = comp.Find(_colorDotCssSelector);
+                colorsToSelectPanel().Children[i].Click();
 
-                var styleAttribute = colorDot.GetAttribute("style");
+                var styleAttribute = colorDot().GetAttribute("style");
                 styleAttribute.Should().Be($"background: {expectedColors[i].ToString(MudColorOutputFormats.RGBA)};");
                 comp.Instance.ColorValue.Should().Be(expectedColors[i]);
 
-                colorDot.Click();
+                colorDot().Click();
             }
         }
 
@@ -815,14 +814,14 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColors = _mudGridPaletteDefaultClors;
 
-            var collectionView = comp.Find(".mud-picker-color-view-collection");
+            IElement collectionView() => comp.Find(".mud-picker-color-view-collection");
 
-            collectionView.Children.Should().HaveCount(expectedColors.Length);
+            collectionView().Children.Should().HaveCount(expectedColors.Length);
 
-            for (var i = 0; i < collectionView.Children.Length; i++)
+            for (var i = 0; i < collectionView().Children.Length; i++)
             {
                 var expectedColor = expectedColors[i];
-                var colorElement = collectionView.Children[i];
+                var colorElement = collectionView().Children[i];
                 colorElement.ClassList.Should().Contain("mud-picker-color-dot");
 
                 var style = colorElement.GetAttribute("style");
@@ -840,12 +839,12 @@ namespace MudBlazor.UnitTests.Components
             });
 
             var expectedColors = _mudGridPaletteDefaultClors;
-            var collectionView = comp.Find(".mud-picker-color-view-collection");
+            IElement collectionView() => comp.Find(".mud-picker-color-view-collection");
 
-            for (var i = 0; i < collectionView.Children.Length; i++)
+            for (var i = 0; i < collectionView().Children.Length; i++)
             {
                 var expectedColor = expectedColors[i];
-                var colorElement = collectionView.Children[i];
+                var colorElement = collectionView().Children[i];
                 colorElement.Click();
 
                 comp.Instance.ColorValue.Should().Be(expectedColor);
@@ -864,14 +863,14 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColors = _mudGridDefaultColors;
 
-            var collectionView = comp.Find(".mud-picker-color-grid");
+            IElement collectionView() => comp.Find(".mud-picker-color-grid");
 
-            collectionView.Children.Should().HaveCount(expectedColors.Length);
+            collectionView().Children.Should().HaveCount(expectedColors.Length);
 
-            for (var i = 0; i < collectionView.Children.Length; i++)
+            for (var i = 0; i < collectionView().Children.Length; i++)
             {
                 var expectedColor = expectedColors[i];
-                var colorElement = collectionView.Children[i];
+                var colorElement = collectionView().Children[i];
                 colorElement.ClassList.Should().Contain("mud-picker-color-dot");
 
                 var style = colorElement.GetAttribute("style");
@@ -889,12 +888,12 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColors = _mudGridDefaultColors;
 
-            var collectionView = comp.Find(".mud-picker-color-grid");
+            IElement collectionView() => comp.Find(".mud-picker-color-grid");
 
-            for (var i = 0; i < collectionView.Children.Length; i++)
+            for (var i = 0; i < collectionView().Children.Length; i++)
             {
                 var expectedColor = expectedColors[i];
-                var colorElement = collectionView.Children[i];
+                var colorElement = collectionView().Children[i];
                 colorElement.ClassList.Should().Contain("mud-picker-color-dot");
 
                 comp.InvokeAsync(() => colorElement.Click());
@@ -914,17 +913,17 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColors = _mudGridDefaultColors;
 
-            var content = comp.Find(".mud-picker-content.mud-picker-color-content");
-            content.Children.Should().ContainSingle();
+            IElement content() => comp.Find(".mud-picker-content.mud-picker-color-content");
+            content().Children.Should().ContainSingle();
 
-            var gridView = comp.Find(".mud-picker-color-grid");
+            IElement gridView() => comp.Find(".mud-picker-color-grid");
 
-            gridView.Children.Should().HaveCount(expectedColors.Length);
+            gridView().Children.Should().HaveCount(expectedColors.Length);
 
-            for (var i = 0; i < gridView.Children.Length; i++)
+            for (var i = 0; i < gridView().Children.Length; i++)
             {
                 var expectedColor = expectedColors[i];
-                var colorElement = gridView.Children[i];
+                var colorElement = gridView().Children[i];
                 colorElement.ClassList.Should().Contain("mud-picker-color-dot");
 
                 var style = colorElement.GetAttribute("style");
@@ -942,14 +941,14 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColors = _mudGridDefaultColors;
 
-            var gridView = comp.Find(".mud-picker-color-grid");
+            IElement gridView() => comp.Find(".mud-picker-color-grid");
 
-            gridView.Children.Should().HaveCount(expectedColors.Length);
+            gridView().Children.Should().HaveCount(expectedColors.Length);
 
-            for (var i = 0; i < gridView.Children.Length; i++)
+            for (var i = 0; i < gridView().Children.Length; i++)
             {
                 var expectedColor = expectedColors[i];
-                var colorElement = gridView.Children[i];
+                var colorElement = gridView().Children[i];
                 colorElement.ClassList.Should().Contain("mud-picker-color-dot");
 
                 colorElement.Click();
@@ -974,8 +973,8 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColors = _mudGridDefaultColors;
 
-            var gridView = comp.Find(".mud-picker-color-grid");
-            gridView.Children[0].Click();
+            IElement gridView() => comp.Find(".mud-picker-color-grid");
+            gridView().Children[0].Click();
 
             comp.Instance.ColorValue.Should().Be(expectedColors[0]);
 
@@ -998,8 +997,8 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColors = _mudGridPaletteDefaultClors;
 
-            var gridView = comp.Find(".mud-picker-color-view-collection");
-            gridView.Children[0].Click();
+            IElement gridView() => comp.Find(".mud-picker-color-view-collection");
+            gridView().Children[0].Click();
 
             comp.Instance.ColorValue.Should().Be(expectedColors[0]);
 
@@ -1128,18 +1127,18 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.ColorPickerView, ColorPickerView.Spectrum);
             });
 
-            var buttons = comp.FindAll(_mudToolbarButtonsCssSelector);
+            IRefreshableElementCollection<IElement> buttons() => comp.FindAll(_mudToolbarButtonsCssSelector);
 
             _eventListener.ElementIdMapper.Keys.Should().ContainSingle();
             var value = _eventListener.ElementIdMapper.Values.First();
 
-            buttons[2].Click();
+            buttons().GetItemByIndex(2).Click();
             _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
 
-            buttons[1].Click();
+            buttons().GetItemByIndex(1).Click();
             _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
 
-            buttons[0].Click();
+            buttons().GetItemByIndex(0).Click();
 
             _eventListener.ElementIdMapper.Keys.Should().ContainSingle();
             _eventListener.ElementIdMapper.Values.First().Should().Be(value);
@@ -1156,13 +1155,13 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.DisableDragEffect, true);
             });
 
-            var buttons = comp.FindAll(_mudToolbarButtonsCssSelector);
+            IRefreshableElementCollection<IElement> buttons() => comp.FindAll(_mudToolbarButtonsCssSelector);
 
             _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
 
             for (var i = 3 - 1; i >= 0; i--)
             {
-                buttons[i].Click();
+                buttons().GetItemByIndex(i).Click();
                 _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
             }
         }
@@ -1176,15 +1175,13 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.ColorPickerView, ColorPickerView.Spectrum);
             });
 
-            var overlay = comp.Find(CssSelector);
+            var expectedHue = _defaultColor.H;
 
-            double expectedHue = _defaultColor.H;
-
-            for (int x = 0; x < 312; x += 5)
+            for (var x = 0; x < 312; x += 5)
             {
-                for (int y = 0; y < 250; y += 5)
+                for (var y = 0; y < 250; y += 5)
                 {
-                    overlay.Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
+                    comp.Find(CssSelector).Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
 
                     comp.Instance.Value.H.Should().Be(expectedHue);
                 }
@@ -1196,26 +1193,26 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SimpleColorPickerTest>();
 
-            var overlay = comp.Find(CssSelector);
+            IElement overlay() => comp.Find(CssSelector);
 
             var x = 99.2;
             var y = 200.98;
 
-            overlay.Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
+            overlay().Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
 
             MudColor color = "#232232ff";
             MudColor expectedColor = new MudColor(color.R, color.G, color.B, _defaultColor);
 
             CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
 
-            var selector = comp.Find(".mud-picker-color-selector");
+            IElement selector() => comp.Find(".mud-picker-color-selector");
 
             //a click in the center of the selector shouldn't change something
-            selector.Click(new MouseEventArgs { OffsetX = 13, OffsetY = 13 });
+            selector().Click(new MouseEventArgs { OffsetX = 13, OffsetY = 13 });
 
             CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
 
-            selector.Click(new MouseEventArgs { OffsetX = 5, OffsetY = 20 });
+            selector().Click(new MouseEventArgs { OffsetX = 5, OffsetY = 20 });
 
             MudColor secondExpectedColor = new MudColor(31, 30, 42, _defaultColor);
             CheckColorRelatedValues(comp, x - 8, y + 7, secondExpectedColor, ColorPickerMode.RGB);
@@ -1232,10 +1229,10 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.Instance.OpenPicker();
 
-            var providerNode = comp.Find(".mud-popover-provider");
-            providerNode.Children.Should().ContainSingle();
+            IElement providerNode() => comp.Find(".mud-popover-provider");
+            providerNode().Children.Should().ContainSingle();
 
-            var popoverNode = providerNode.Children[0];
+            var popoverNode = providerNode().Children[0];
 
             popoverNode.ClassList.Should().BeEquivalentTo(new[]
             {
@@ -1250,30 +1247,30 @@ namespace MudBlazor.UnitTests.Components
 
         //https://github.com/MudBlazor/MudBlazor/issues/4899
         [Test]
-        public void DistingishBetweenInternalAndExternalView()
+        public void DistinguishBetweenInternalAndExternalView()
         {
             var comp = Context.RenderComponent<PickerWithFixedView>();
 
             //open the color picker
-            var inputField = comp.Find(".mud-input-slot");
-            inputField.Click();
+            IElement inputField() => comp.Find(".mud-input-slot");
+            inputField().Click();
 
             //asset that the picker is open in grid mode
-            var grid = comp.Find(".mud-picker-color-grid");
+            _ = comp.Find(".mud-picker-color-grid");
 
             //find spectrum button and click
             var spectrumButton = comp.FindAll(_mudToolbarButtonsCssSelector)[1];
             spectrumButton.Click();
 
             //find the overlay and click any position
-            var overlay = comp.Find(CssSelector);
-            overlay.Click(new MouseEventArgs { OffsetX = 10.5, OffsetY = 10.5 });
+            IElement overlay() => comp.Find(CssSelector);
+            overlay().Click(new MouseEventArgs { OffsetX = 10.5, OffsetY = 10.5 });
 
             //ensure that the spectrum mode is still open and not the color grid
             _ = comp.Find(".mud-picker-color-overlay");
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-grid"));
 
-            //change the view per paramter
+            //change the view per parameter
             comp.SetParametersAndRender(x => x.Add(y => y.ColorPickerView, ColorPickerView.GridCompact));
 
             //now the grid view should be visible

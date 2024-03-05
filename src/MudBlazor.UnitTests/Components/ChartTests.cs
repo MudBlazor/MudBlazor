@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Docs.Examples;
@@ -92,9 +93,9 @@ namespace MudBlazor.UnitTests.Components
             );
 
             // check the first Y Axis value without any format
-            var yaxis = comp.FindAll("g.mud-charts-yaxis");
-            yaxis.Should().NotBeNull();
-            yaxis[0].Children[0].InnerHtml.Trim().Should().Be("0");
+            IRefreshableElementCollection<IElement> yaxis() => comp.FindAll("g.mud-charts-yaxis");
+            yaxis().Should().NotBeNull();
+            yaxis().First().Children[0].InnerHtml.Trim().Should().Be("0");
 
             // now, we will apply currency format
             options.YAxisFormat = "c2";
@@ -106,9 +107,9 @@ namespace MudBlazor.UnitTests.Components
               .Add(p => p.Width, width)
               .Add(p => p.Height, height)
             );
-            yaxis = comp.FindAll("g.mud-charts-yaxis");
-            yaxis.Should().NotBeNull();
-            yaxis[0].Children[0].InnerHtml.Trim().Should().Be($"{0:c2}");
+
+            yaxis().Should().NotBeNull();
+            yaxis().First().Children[0].InnerHtml.Trim().Should().Be($"{0:c2}");
 
             //number format
             options.YAxisFormat = "n6";
@@ -120,9 +121,9 @@ namespace MudBlazor.UnitTests.Components
               .Add(p => p.Width, width)
               .Add(p => p.Height, height)
             );
-            yaxis = comp.FindAll("g.mud-charts-yaxis");
-            yaxis.Should().NotBeNull();
-            yaxis[0].Children[0].InnerHtml.Trim().Should().Be($"{0:n6}");
+
+            yaxis().Should().NotBeNull();
+            yaxis().First().Children[0].InnerHtml.Trim().Should().Be($"{0:n6}");
         }
 
         /// <summary>

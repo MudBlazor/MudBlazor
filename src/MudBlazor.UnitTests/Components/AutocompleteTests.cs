@@ -70,13 +70,13 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var select = comp.FindComponent<MudAutocomplete<string>>();
 
-            var inputControl = comp.Find("div.mud-input-control");
+            IElement inputControl() => comp.Find("div.mud-input-control");
 
             // check initial state
             comp.Markup.Should().NotContain("mud-popover-open");
 
             // click and check if it has toggled the menu
-            inputControl.Click();
+            inputControl().Click();
             comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover-open"));
 
             // type 3 characters and check if it has toggled the menu
@@ -258,8 +258,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<AutocompleteTest6>();
 
-            var inputControl = comp.Find("div.mud-input-control");
-            inputControl.Click();
+            IElement inputControl() => comp.Find("div.mud-input-control");
+            inputControl().Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             var mudText = comp.FindAll("p.mud-typography");
@@ -274,8 +274,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<AutocompleteTest7>();
 
-            var inputControl = comp.Find("div.mud-input-control");
-            inputControl.Click();
+            IElement inputControl() => comp.Find("div.mud-input-control");
+            inputControl().Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             var mudText = comp.FindAll("p.mud-typography");
@@ -336,10 +336,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 a.Add(x => x.OnBlur, fn);
             });
-            var input = comp.Find("input");
+            IElement input() => comp.Find("input");
 
             calls.Should().Be(0);
-            input.Blur();
+            input().Blur();
             calls.Should().Be(1);
         }
 
@@ -849,7 +849,6 @@ namespace MudBlazor.UnitTests.Components
             var instance = comp.Instance;
 
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
-            var autocomplete = autocompletecomp.Instance;
 
             var markupBefore = comp.Find("svg.mud-icon-root").Children.ToMarkup().Trim();
 
@@ -1231,8 +1230,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<AutocompleteListBeforeAndAfterRendersWithItemsTest>();
 
-            var inputControl = comp.Find("div.mud-input-control");
-            inputControl.Click();
+            IElement inputControl() => comp.Find("div.mud-input-control");
+            inputControl().Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             var mudText = comp.FindAll("p.mud-typography");
@@ -1247,8 +1246,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<AutocompleteListBeforeAndAfterRendersWithItemsTest>();
 
-            var inputControl = comp.Find("div.mud-input-control");
-            inputControl.Click();
+            IElement inputControl() => comp.Find("div.mud-input-control");
+            inputControl().Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             var mudText = comp.FindAll("p.mud-typography");
@@ -1264,8 +1263,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<AutocompleteListStartRendersTest>();
 
 
-            var inputControl = comp.Find("div.mud-input-control");
-            inputControl.Click();
+            IElement inputControl() => comp.Find("div.mud-input-control");
+            inputControl().Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             comp.Find("div.mud-popover").InnerHtml.Should().BeEmpty();
@@ -1279,8 +1278,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<AutocompleteListEndRendersTest>();
 
-            var inputControl = comp.Find("div.mud-input-control");
-            inputControl.Click();
+            IElement inputControl() => comp.Find("div.mud-input-control");
+            inputControl().Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             comp.Find("div.mud-popover").InnerHtml.Should().BeEmpty();
@@ -1294,8 +1293,8 @@ namespace MudBlazor.UnitTests.Components
             var listItemClassTest = "list-item-class-test";
 
             autocompletecomp.SetParam(a => a.ListItemClass, listItemClassTest);
-            var inputControl = comp.Find("div.mud-input-control");
-            inputControl.Click();
+            IElement inputControl() => comp.Find("div.mud-input-control");
+            inputControl().Click();
 
             comp.WaitForAssertion(() => comp.Find("div.mud-list-item").ClassList.Should().Contain(listItemClassTest));
         }

@@ -716,7 +716,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ReadonlyMaskedTextFieldTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
             var mask = comp.FindComponent<MudMask>().Instance;
-            var maskInput = comp.Find("input");
+            IElement maskInput() => comp.Find("input");
             var originalValue = textField.Text;
 
             originalValue.Should().Be("1234 1234 1234 1234");

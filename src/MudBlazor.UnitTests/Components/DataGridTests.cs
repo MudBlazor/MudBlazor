@@ -2537,8 +2537,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridObservabilityTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridObservabilityTest.Model>>();
 
-            var addButton = comp.Find(".add-item-btn");
-            var removeButton = comp.Find(".remove-item-btn");
+            IElement addButton() => comp.Find(".add-item-btn");
+            IElement removeButton() => comp.Find(".remove-item-btn");
 
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(8);
 
@@ -2703,7 +2703,7 @@ namespace MudBlazor.UnitTests.Components
             var filterAmount = comp.FindAll(".mud-list-item-clickable")[1];
             filterAmount.Click();
 
-            var filterField = comp.Find(".filters-panel .filter-field .mud-select-input");
+            IElement filterField() => comp.Find(".filters-panel .filter-field .mud-select-input");
             filterField.TextContent.Trim().Should().Be("Amount");
 
             var filterInput = comp.FindAll(".filters-panel input")[2];
@@ -2721,7 +2721,7 @@ namespace MudBlazor.UnitTests.Components
             var filterTotal = comp.FindAll(".mud-list-item-clickable")[1];
             filterTotal.Click();
 
-            var filterTotalField = comp.Find(".filters-panel .filter-field .mud-select-input");
+            IElement filterTotalField() => comp.Find(".filters-panel .filter-field .mud-select-input");
             filterTotalField.TextContent.Trim().Should().Be("Total");
 
             var filterTotalInput = comp.FindAll(".filters-panel input")[2];
@@ -3187,7 +3187,7 @@ namespace MudBlazor.UnitTests.Components
             //check if dialog is open
             comp.FindAll("div.mud-dialog-container").Should().NotBeEmpty();
             //find button with arialabel close in dialog
-            var closeButton = comp.Find("button[aria-label=\"close\"]");
+            IElement closeButton() => comp.Find("button[aria-label=\"close\"]");
             closeButton.Should().NotBeNull();
             //click close button
             comp.Find("button[aria-label=\"close\"]").Click();
@@ -3249,7 +3249,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Render();
 
             // Assert that the `column-options` span is present but empty
-            var columnOptionsSpan = comp.Find(".column-options");
+            IElement columnOptionsSpan() => comp.Find(".column-options");
             columnOptionsSpan.Should().NotBeNull();
             columnOptionsSpan.TextContent.Trim().Should().BeEmpty();
         }
@@ -3268,7 +3268,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.IsGenderGrouped.Should().Be(false);
 
             // Find the button within the 'th' element with class 'gender' that triggers the popover for grouping.
-            var genderHeaderOption = comp.Find("th.gender .mud-menu button");
+            IElement genderHeaderOption() => comp.Find("th.gender .mud-menu button");
 
             // Simulate a click on the gender header group button to open the popover with grouping options.
             genderHeaderOption.Click();

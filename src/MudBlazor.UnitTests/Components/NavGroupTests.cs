@@ -25,7 +25,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("mud-nav-group-disabled");
             comp.Markup.Should().NotContain("expanded");
 
-            var input = comp.Find("input"); // Change IsDisabled to True
+            IElement input() => comp.Find("input"); // Change IsDisabled to True
             input.Change(true);
 
             comp.Markup.Should().Contain("mud-nav-group-disabled");
