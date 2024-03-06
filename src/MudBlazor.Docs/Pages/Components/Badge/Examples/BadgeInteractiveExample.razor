@@ -1,5 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
-@inject ISnackbar Snackbar
+
+
 
 <MudGrid>
     <MudItem md="3">
@@ -16,7 +17,7 @@
         </MudPaper>
     </MudItem>
     <MudItem md="6" Class="d-flex align-center justify-center my-auto">
-        <MudBadge Origin="@Origin" Content="@BadgeContent" Color="Color.Primary" Overlap="@Overlap" Dot="@Dot" Bordered="@Bordered" Icon="@BadgeIcon" OnClick="OnBadgeClicked">
+        <MudBadge Origin="@Origin" Content="@BadgeContent" Color="Color.Primary" Overlap="@Overlap" Dot="@Dot" Bordered="@Bordered" Icon="@BadgeIcon">
             @if (SelectedTestComponent == "MudIcon")
             {
                 <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Default" Size="Size.Large" />
@@ -33,11 +34,11 @@
             {
                 <MudText>MudText</MudText>
             }
-            else if (SelectedTestComponent == "MudAvatar")
+            else if(SelectedTestComponent == "MudAvatar")
             {
                 <MudAvatar Image="images/mony.jpg" Size="Size.Large" Class="ma-2" />
             }
-            else if (SelectedTestComponent == "MudChip")
+            else if(SelectedTestComponent == "MudChip")
             {
                 <MudChip Label="true" Color="Color.Warning" Style="color:black;">Radioactive Areas</MudChip>
             }
@@ -57,11 +58,10 @@
                 <MudSelectItem Value="Origin.BottomCenter">BottomCenter</MudSelectItem>
                 <MudSelectItem Value="Origin.BottomRight">BottomRight</MudSelectItem>
             </MudSelect>
-            <MudCheckBox @bind-Value="@Dot" Label="Dot" Color="Color.Primary" Style="width:100%;" />
-            <MudCheckBox @bind-Value="@Overlap" Label="Overlap" Color="Color.Primary" Style="width:100%;" />
-            <MudCheckBox @bind-Value="@Bordered" Label="Bordered" Color="Color.Primary" Style="width:100%;" />
-            <MudCheckBox T="bool" ValueChanged="AddIcon" Label="Icon" Color="Color.Primary" Style="width:100%;" />
-            <MudCheckBox @bind-Value="@Clickable" Label="Clickable" Color="Color.Primary" Style="width:100%;" />
+            <MudCheckBox @bind-Checked="@Dot" Label="Dot" Color="Color.Primary" Style="width:100%;" />
+            <MudCheckBox @bind-Checked="@Overlap" Label="Overlap" Color="Color.Primary" Style="width:100%;" />
+            <MudCheckBox @bind-Checked="@Bordered" Label="Bordered" Color="Color.Primary" Style="width:100%;" />
+            <MudCheckBox T="bool" CheckedChanged="AddIcon" Label="Icon" Color="Color.Primary" Style="width:100%;" />
             <MudText Typo="Typo.subtitle2" Class="my-2">Badge Content</MudText>
             <div style="display: flex;">
                 <MudButton OnClick="AddValue" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" FullWidth="true" Class="mr-1">Add @AddNumber</MudButton>
@@ -77,7 +77,6 @@
     public bool Overlap { get; set; }
     public bool Bordered { get; set; }
     public string BadgeIcon { get; set; }
-    public bool Clickable { get; set; }
 
     public string SelectedTestComponent { get; set; } = "MudChip";
     public string AddNumber { get; set; } = "1";
@@ -103,7 +102,7 @@
 
     public void AddValue()
     {
-        if (BadgeContent == null)
+        if(BadgeContent == null)
         {
             AddNumber = "25";
             BadgeContent = 1;
@@ -118,13 +117,5 @@
     {
         AddNumber = "1";
         BadgeContent = null;
-    }
-
-    protected void OnBadgeClicked()
-    {
-        if (!Clickable)
-            return;
-
-        Snackbar.Add("Badge was clicked");
     }
 }
