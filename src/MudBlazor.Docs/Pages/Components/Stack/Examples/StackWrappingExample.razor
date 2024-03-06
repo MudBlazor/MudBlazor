@@ -1,16 +1,15 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using MudBlazor.Utilities
 
-    <MudPaper Outlined="true" Class="border-dashed pa-4">
-        <MudStack Wrap="@_wrap" Spacing="4" Row="@_row" Style="@_size" AlignItems="AlignItems.Start">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="" >Button 1</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="" >Button 2</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="" >Button 3</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="" >Button 4</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="" >Button 5</MudButton>
-        </MudStack>
-    </MudPaper>
-
+<MudPaper Outlined="true" Class="border-dashed pa-4">
+    <MudStack Wrap="@_wrap" Spacing="4" Row="@_row" Style="@_size" AlignItems="AlignItems.Start">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="" >Button 1</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="" >Button 2</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="" >Button 3</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="" >Button 4</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="" >Button 5</MudButton>
+    </MudStack>
+</MudPaper>
 
 <MudSlider @bind-Value="@_width" Min="100" Max="800">Width: @_width.ToString()px</MudSlider>
 <MudSlider @bind-Value="@_height" Min="100" Max="800">Height: @_height.ToString()px</MudSlider>
@@ -25,11 +24,11 @@
 </MudStack>
 
 @code {
-    
     private Wrap _wrap = Wrap.NoWrap;    
+    
     private int _width { get; set; } = 200;
     private int _height { get; set; } = 200;
     private bool _row { get; set; } = true;
 
-    private string _size => $"width: {_width}px; height: {_height}px;";
+    private string _size => $"width: {_width}px; height: {_height}px;"; 
 }
