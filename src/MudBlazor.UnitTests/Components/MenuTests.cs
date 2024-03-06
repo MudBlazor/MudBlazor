@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
@@ -118,21 +117,21 @@ namespace MudBlazor.UnitTests.Components
         public async Task MenuMouseLeave_MenuMouseEnter_CheckOpen()
         {
             var comp = Context.RenderComponent<MenuTestMouseOver>();
+            var pop = comp.FindComponent<MudPopover>();
 
             // Mouse over to menu to open popover
-            IElement menu() => comp.Find(".mud-menu");
-            await menu().TriggerEventAsync("onmouseenter", new MouseEventArgs());
+            var menu = comp.Find(".mud-menu");
+            await menu.TriggerEventAsync("onmouseenter", new MouseEventArgs());
 
             // Popover open, captures mouse
-            await menu().TriggerEventAsync("onmouseleave", new MouseEventArgs());
+            await menu.TriggerEventAsync("onmouseleave", new MouseEventArgs());
             await comp.FindAll("div.mud-list")[0].TriggerEventAsync("onmouseenter", new MouseEventArgs());
 
             // Mouse moves to menu, still need to open
             await comp.FindAll("div.mud-list")[0].TriggerEventAsync("onmouseleave", new MouseEventArgs());
-            await menu().TriggerEventAsync("onmouseenter", new MouseEventArgs());
+            await menu.TriggerEventAsync("onmouseenter", new MouseEventArgs());
 
-            var pop = comp.FindComponent<MudPopover>().Instance;
-            comp.WaitForAssertion(() => pop.Open.Should().BeTrue());
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
         }
 
         [Test]
@@ -269,7 +268,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.TrueInvocationCount.Should().Be(1);
             comp.Instance.FalseInvocationCount.Should().Be(0);
         }
-
+        
         [Test]
         public async Task IsOpenChanged_InvokedWhenClosed_CheckTrueInvocationCountIsOneClickFalseInvocationCountIsOne()
         {
@@ -305,8 +304,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MenuItemActionTest>();
             comp.Find("button.mud-button-root").Click();
-            IElement item() => comp.Find("#id_on_action_on_touch");
-            item().TouchEnd();
+            var item = comp.Find("#id_on_action_on_touch");
+            item.TouchEnd();
             comp.Instance.Count.Should().Be(1);
             comp.Instance.Callers.Should().Be("T");
         }
@@ -316,10 +315,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MenuItemActionTest>();
             comp.Find("button.mud-button-root").Click();
-            IElement item() => comp.Find("#id_on_action_on_touch");
-            item().TouchStart();
-            item().TouchMove();
-            item().TouchEnd();
+            var item = comp.Find("#id_on_action_on_touch");
+            item.TouchStart();
+            item.TouchMove();
+            item.TouchEnd();
             comp.Instance.Count.Should().Be(0);
             comp.Instance.Callers.Should().Be(string.Empty);
         }
@@ -329,10 +328,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MenuItemActionTest>();
             comp.Find("button.mud-button-root").Click();
-            IElement item() => comp.Find("#id_on_action_on_click");
-            item().TouchStart();
-            item().TouchMove();
-            item().TouchEnd();
+            var item = comp.Find("#id_on_action_on_click");
+            item.TouchStart();
+            item.TouchMove();
+            item.TouchEnd();
             comp.Instance.Count.Should().Be(0);
             comp.Instance.Callers.Should().Be(string.Empty);
         }

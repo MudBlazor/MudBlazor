@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using AngleSharp.Common;
-using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
@@ -27,13 +24,13 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             // select elements needed for the test
             var box = comp.Instance;
-            IElement input() => comp.Find("input");
+            var input = comp.Find("input");
             // check initial state
             box.Value.Should().Be(false);
             // click and check if it has toggled
-            input().Change(true);
+            input.Change(true);
             box.Value.Should().Be(true);
-            input().Change(false);
+            input.Change(false);
             box.Value.Should().Be(false);
         }
 
@@ -46,13 +43,13 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudCheckBox<bool>>(ComponentParameter.CreateParameter("Value", true));
             // select elements needed for the test
             var box = comp.Instance;
-            IElement input() => comp.Find("input");
+            var input = comp.Find("input");
             // check initial state
             box.Value.Should().Be(true);
             // click and check if it has toggled
-            input().Change(false);
+            input.Change(false);
             box.Value.Should().Be(false);
-            input().Change(true);
+            input.Change(true);
             box.Value.Should().Be(true);
         }
 
@@ -64,27 +61,27 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<CheckBoxTest3>();
             // select elements needed for the test
-            IReadOnlyList<IRenderedComponent<MudCheckBox<bool>>> boxes() => comp.FindComponents<MudCheckBox<bool>>();
-            IRefreshableElementCollection<IElement> inputs() => comp.FindAll("input");
+            var boxes = comp.FindComponents<MudCheckBox<bool>>();
+            var inputs = comp.FindAll("input");
             // check initial state
-            boxes()[0].Instance.Value.Should().Be(true);
-            boxes()[1].Instance.Value.Should().Be(true);
+            boxes[0].Instance.Value.Should().Be(true);
+            boxes[1].Instance.Value.Should().Be(true);
             // click and check if it has toggled
-            inputs()[0].Change(false);
-            boxes()[0].Instance.Value.Should().Be(false);
-            boxes()[1].Instance.Value.Should().Be(false);
-
-            inputs()[0].Change(true);
-            boxes()[0].Instance.Value.Should().Be(true);
-            boxes()[1].Instance.Value.Should().Be(true);
-
-            inputs()[1].Change(false);
-            boxes()[0].Instance.Value.Should().Be(false);
-            boxes()[1].Instance.Value.Should().Be(false);
-
-            inputs()[1].Change(true);
-            boxes()[0].Instance.Value.Should().Be(true);
-            boxes()[1].Instance.Value.Should().Be(true);
+            inputs[0].Change(false);
+            boxes[0].Instance.Value.Should().Be(false);
+            boxes[1].Instance.Value.Should().Be(false);
+            inputs = comp.FindAll("input");
+            inputs[0].Change(true);
+            boxes[0].Instance.Value.Should().Be(true);
+            boxes[1].Instance.Value.Should().Be(true);
+            inputs = comp.FindAll("input");
+            inputs[1].Change(false);
+            boxes[0].Instance.Value.Should().Be(false);
+            boxes[1].Instance.Value.Should().Be(false);
+            inputs = comp.FindAll("input");
+            inputs[1].Change(true);
+            boxes[0].Instance.Value.Should().Be(true);
+            boxes[1].Instance.Value.Should().Be(true);
         }
 
         /// <summary>
@@ -96,18 +93,18 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<CheckBoxTest4>();
             // select elements needed for the test
-            IRefreshableElementCollection<IElement> spans() => comp.FindAll("span");
-            IRefreshableElementCollection<IElement> svgs() => comp.FindAll("svg");
+            var spans = comp.FindAll("span").ToArray();
+            var svgs = comp.FindAll("svg").ToArray();
             // check dense
-            spans()[0].ClassList.Should().Contain("mud-checkbox-dense");
-            spans()[1].ClassList.Should().NotContain("mud-checkbox-dense");
-            spans()[2].ClassList.Should().NotContain("mud-checkbox-dense");
-            spans()[3].ClassList.Should().NotContain("mud-checkbox-dense");
+            spans[0].ClassList.Should().Contain("mud-checkbox-dense");
+            spans[1].ClassList.Should().NotContain("mud-checkbox-dense");
+            spans[2].ClassList.Should().NotContain("mud-checkbox-dense");
+            spans[3].ClassList.Should().NotContain("mud-checkbox-dense");
             // check size
-            svgs()[0].ClassList.Should().Contain("mud-icon-size-medium");
-            svgs()[1].ClassList.Should().Contain("mud-icon-size-small");
-            svgs()[2].ClassList.Should().Contain("mud-icon-size-medium");
-            svgs()[3].ClassList.Should().Contain("mud-icon-size-large");
+            svgs[0].ClassList.Should().Contain("mud-icon-size-medium");
+            svgs[1].ClassList.Should().Contain("mud-icon-size-small");
+            svgs[2].ClassList.Should().Contain("mud-icon-size-medium");
+            svgs[3].ClassList.Should().Contain("mud-icon-size-large");
         }
 
         /// <summary>
@@ -120,19 +117,19 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             // select elements needed for the test
             var box = comp.Instance;
-            IElement input() => comp.Find("input");
+            var input = comp.Find("input");
             // check initial state
             box.Value.Should().Be(default);
             // click and check if it has toggled
-            input().Change(true);
+            input.Change(true);
             box.Value.Should().Be(true);
-            input().Change(false);
+            input.Change(false);
             box.Value.Should().Be(false);
             // click and check if this is the indeterminate value
-            input().Change(false);
+            input.Change(false);
             box.Value.Should().Be(default);
             // click and check if this is the true value
-            input().Change(true);
+            input.Change(true);
             box.Value.Should().Be(true);
         }
 
@@ -143,23 +140,23 @@ namespace MudBlazor.UnitTests.Components
         public void CheckBoxFormTest1()
         {
             var comp = Context.RenderComponent<CheckBoxFormTest1>();
-            MudForm form() => comp.FindComponent<MudForm>().Instance;
-            form().IsValid.Should().BeFalse();
-            form().Errors.Length.Should().Be(0);
+            var form = comp.FindComponent<MudForm>().Instance;
+            form.IsValid.Should().BeFalse();
+            form.Errors.Length.Should().Be(0);
             var checkbox = comp.FindComponent<MudCheckBox<bool>>();
             // click the checkbox to make the form valid
             checkbox.Find("input").Change(true);
-            form().IsValid.Should().BeTrue();
+            form.IsValid.Should().BeTrue();
             // click the checkbox to make the form invalid again because the checkbox is required
             checkbox.Find("input").Change(false);
             checkbox.Instance.Error.Should().BeTrue();
             checkbox.Instance.ErrorText.Should().Be("You must agree");
-            form().IsValid.Should().BeFalse();
-            form().Errors.Length.Should().Be(1);
-            form().Errors[0].Should().Be("You must agree");
+            form.IsValid.Should().BeFalse();
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("You must agree");
             // click the checkbox to make the form valid again
             checkbox.Find("input").Change(true);
-            form().IsValid.Should().BeTrue();
+            form.IsValid.Should().BeTrue();
             checkbox.Instance.Error.Should().BeFalse();
             checkbox.Instance.ErrorText.Should().Be(null);
         }
@@ -301,17 +298,17 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UnCheckedColor, uncheckedcolor));
 
             var box = comp.Instance;
-            IElement input() => comp.Find("input");
-            IElement checkboxClasses() => comp.Find(".mud-button-root.mud-icon-button");
+            var input = comp.Find("input");
 
+            var checkboxClasses = comp.Find(".mud-button-root.mud-icon-button");
             // check initial state
             box.Value.Should().Be(false);
-            checkboxClasses().ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });
+            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });
 
             // click and check if it has new color
-            input().Change(true);
+            input.Change(true);
             box.Value.Should().Be(true);
-            checkboxClasses().ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
+            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
         }
 
         [Test]

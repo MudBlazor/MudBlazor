@@ -4,7 +4,6 @@
 
 using System;
 using System.Threading.Tasks;
-using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
@@ -27,12 +26,12 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
 
             // chip should have mud-clickable and mud-ripple classes
-            IElement chip() => comp.Find("div.mud-chip");
-            chip().ClassName.Should().Contain("mud-clickable");
-            chip().ClassName.Should().Contain("mud-ripple");
+            var chip = comp.Find("div.mud-chip");
+            chip.ClassName.Should().Contain("mud-clickable");
+            chip.ClassName.Should().Contain("mud-ripple");
 
             // click on chip
-            chip().Click();
+            chip.Click();
 
             var expectedEvent = comp.Find("#chip-click-test-expected-value");
             expectedEvent.InnerHtml.Should().Be("OnClick");
@@ -63,15 +62,15 @@ namespace MudBlazor.UnitTests.Components
         public async Task Chip_Link_Test()
         {
             var comp = Context.RenderComponent<ChipLinkTest>();
-            MudChip chip() => comp.FindComponent<MudChip>().Instance;
+            var chip = comp.FindComponent<MudChip>();
 
-            await comp.InvokeAsync(() => ((IMudStateHasChanged)chip()).StateHasChanged());
-            await comp.InvokeAsync(() => chip().OnClickHandler(new MouseEventArgs()));
+            await comp.InvokeAsync(() => ((IMudStateHasChanged)chip.Instance).StateHasChanged());
+            await comp.InvokeAsync(() => chip.Instance.OnClickHandler(new MouseEventArgs()));
 
             comp.WaitForAssertion(() => comp.Find("#chip-click-test-expected-value").InnerHtml.Should().Be(""));
 #pragma warning disable BL0005
-            await comp.InvokeAsync(() => chip().Target = "_blank");
-            await comp.InvokeAsync(() => chip().OnClickHandler(new MouseEventArgs()));
+            await comp.InvokeAsync(() => chip.Instance.Target = "_blank");
+            await comp.InvokeAsync(() => chip.Instance.OnClickHandler(new MouseEventArgs()));
 
             comp.WaitForAssertion(() => comp.Find("#chip-click-test-expected-value").InnerHtml.Should().Be(""));
         }

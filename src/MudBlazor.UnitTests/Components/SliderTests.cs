@@ -102,7 +102,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void GeneralStructure()
+        public void GenerellStructure()
         {
             var comp = Context.RenderComponent<MudSlider<double>>(x =>
             {
@@ -388,6 +388,7 @@ namespace MudBlazor.UnitTests.Components
             });
 
             var input = comp.Find(".mud-slider-input");
+            var filling = comp.Find(".mud-slider-filled");
             var eventArgs = new ChangeEventArgs { Value = "180" };
 
             if (immediate == false)
@@ -401,7 +402,6 @@ namespace MudBlazor.UnitTests.Components
                 await input.InputAsync(eventArgs);
             }
 
-            var filling = comp.Find(".mud-slider-filled");
             filling.GetAttribute("style").Should().Be($"width:80%;");
         }
     }

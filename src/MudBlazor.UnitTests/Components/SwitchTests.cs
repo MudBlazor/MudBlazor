@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
@@ -61,16 +60,17 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudSwitch<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UnCheckedColor, uncheckedcolor));
 
             var box = comp.Instance;
-            IElement checkboxClasses() => comp.Find(".mud-button-root.mud-icon-button.mud-switch-base");
+            var input = comp.Find("input");
+
+            var checkboxClasses = comp.Find(".mud-button-root.mud-icon-button.mud-switch-base");
             // check initial state
             box.Value.Should().Be(false);
-            checkboxClasses().ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });
+            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });
 
             // click and check if it has new color
-            var input = comp.Find("input");
             input.Change(true);
             box.Value.Should().Be(true);
-            checkboxClasses().ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
+            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
         }
 
         [Test]
@@ -86,7 +86,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SwitchWithLabelExample>();
             var switches = comp.FindAll("label.mud-switch");
-
+    
             switches[0].ClassList.Should().NotContain("flex-row-reverse"); // 1st switch: (default) LabelPosition.End
             switches[2].ClassList.Should().Contain("flex-row-reverse"); // 3rd switch: LabelPosition.Start
         }
@@ -128,6 +128,9 @@ namespace MudBlazor.UnitTests.Components
             inputs[7].Change(false);
             switches[7].Children[1].ClassList.Should().Contain("mud-switch-label-large");
             switches[7].Children[0].ClassList.Should().Contain("mud-switch-span-large");
+            
+
+
         }
     }
 }

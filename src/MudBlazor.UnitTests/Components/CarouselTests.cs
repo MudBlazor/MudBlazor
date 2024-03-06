@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
@@ -249,7 +248,7 @@ namespace MudBlazor.UnitTests.Components
             //Move the SelectedIndex from -1 to 0
             await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
 
-            MudSwipeArea mudSwipeArea() => comp.FindComponent<MudSwipeArea>().Instance;
+            var mudSwipeArea = comp.FindComponent<MudSwipeArea>().Instance;
 
             var initialTouchPoints = new TouchPoint[]
             {
@@ -261,13 +260,13 @@ namespace MudBlazor.UnitTests.Components
             };
 
             comp.Instance.EnableSwipeGesture = false;
-            await comp.InvokeAsync(() => mudSwipeArea().OnTouchStart(new TouchEventArgs() { Touches = initialTouchPoints }));
-            await comp.InvokeAsync(async () => await mudSwipeArea().OnTouchEnd(new TouchEventArgs() { ChangedTouches = touchPoints }));
+            await comp.InvokeAsync(() => mudSwipeArea.OnTouchStart(new TouchEventArgs() { Touches = initialTouchPoints }));
+            await comp.InvokeAsync(async () => await mudSwipeArea.OnTouchEnd(new TouchEventArgs() { ChangedTouches = touchPoints }));
             comp.Instance.SelectedIndex.Should().Be(0);
 
             comp.Instance.EnableSwipeGesture = true;
-            await comp.InvokeAsync(() => mudSwipeArea().OnTouchStart(new TouchEventArgs() { Touches = initialTouchPoints }));
-            await comp.InvokeAsync(async () => await mudSwipeArea().OnTouchEnd(new TouchEventArgs() { ChangedTouches = touchPoints }));
+            await comp.InvokeAsync(() => mudSwipeArea.OnTouchStart(new TouchEventArgs() { Touches = initialTouchPoints }));
+            await comp.InvokeAsync(async () => await mudSwipeArea.OnTouchEnd(new TouchEventArgs() { ChangedTouches = touchPoints }));
             comp.Instance.SelectedIndex.Should().Be(1);
         }
 
@@ -281,27 +280,27 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<CarouselBindingTest>();
             // print the generated html
             //// select elements needed for the test
-            MudCarousel<string> carousel() => comp.FindComponent<MudCarousel<string>>().Instance;
+            var carousel = comp.FindComponent<MudCarousel<string>>().Instance;
             //// validating some renders
-            carousel().Should().NotBeNull();
-            carousel().MoveTo(0);
+            carousel.Should().NotBeNull();
+            carousel.MoveTo(0);
             //// working with ItemsSource
-            var source = carousel().ItemsSource;
+            var source = carousel.ItemsSource;
             source.Count().Should().Be(5);
-            carousel().Items.Count.Should().Be(5);
-            carousel().SelectedIndex.Should().Be(0);
+            carousel.Items.Count.Should().Be(5);
+            carousel.SelectedIndex.Should().Be(0);
             //// adding item
             ((IList<string>)source).Add("Item added by hand");
             source.Count().Should().Be(6);
-            carousel().Items.Count.Should().Be(5); // should call StateHasChanged() or Task.Delay(1)
+            carousel.Items.Count.Should().Be(5); // should call StateHasChanged() or Task.Delay(1)
             comp.Render();
-            carousel().Items.Count.Should().Be(6);
+            carousel.Items.Count.Should().Be(6);
             //// removing item
             ((IList<string>)source).RemoveAt(source.Count() - 1);
             source.Count().Should().Be(5);
-            carousel().Items.Count.Should().Be(6); // should call StateHasChanged() or Task.Delay(1)
+            carousel.Items.Count.Should().Be(6); // should call StateHasChanged() or Task.Delay(1)
             comp.Render();
-            carousel().Items.Count.Should().Be(5);
+            carousel.Items.Count.Should().Be(5);
         }
 
     }
