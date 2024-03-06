@@ -12,6 +12,10 @@ internal sealed class InternalMudLocalizer
 {
     private readonly ILocalizationInterceptor _interceptor;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InternalMudLocalizer"/> class with the specified <paramref name="interceptor"/>.
+    /// </summary>
+    /// <param name="interceptor">The localization interceptor to use for handling translations.</param>
     public InternalMudLocalizer(ILocalizationInterceptor interceptor)
     {
         ArgumentNullException.ThrowIfNull(interceptor);
@@ -20,9 +24,9 @@ internal sealed class InternalMudLocalizer
     }
 
     /// <summary>
-    /// Gets the translation for the given translation key from the <see cref="ILocalizationInterceptor"/>.
+    /// Gets the string resource with the given name.
     /// </summary>
-    /// <param name="key">The translation key to look up.</param>
-    /// <returns>The string resource as a <see cref="LocalizedString"/>.</returns>
+    /// <param name="key">The name of the string resource.</param>
+    /// <returns>The string resource as a <see cref="LocalizedString" />.</returns>
     public LocalizedString this[string key] => _interceptor.Handle(key);
 }

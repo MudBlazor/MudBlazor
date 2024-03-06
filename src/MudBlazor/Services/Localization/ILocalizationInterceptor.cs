@@ -5,20 +5,19 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// Customizable localization interceptor which can be implemented by users to customize existing localizations,
-/// add e.g. logging of missing translations or even completely modify how localizations are chosen.
-/// Custom implementations can be registered like this <see cref="ServiceCollectionExtensions.AddLocalizationInterceptor{TInterceptor}"/>.
+/// This customizable localization interceptor enables users to tailor existing localizations,
+/// incorporating features such as logging missing translations or completely redefining the localization selection process.
+/// Users can register custom implementations using the syntax: <see cref="ServiceCollectionExtensions.AddLocalizationInterceptor{TInterceptor}"/>.
 /// </summary>
 public interface ILocalizationInterceptor
 {
     /// <summary>
-    /// Gets the translation for the given translation key.
-    /// Implement logic for choosing translations, overrides etc here.
+    /// Retrieves the translation corresponding to the provided translation key.
     /// </summary>
-    /// <param name="key">The translation key to look up</param>
+    /// <param name="key">The name of the string resource.</param>
     /// <remarks>
-    /// The <see cref="LocalizedString.ResourceNotFound"/> should be <c>true</c> if no translation is provided for some translation key.
+    /// The value of  <see cref="LocalizedString.ResourceNotFound"/> should be <c>true</c> if no translation is available for the specified key.
     /// </remarks>
-    /// <returns><see cref="LocalizedString"/> with the translation.</returns>
+    /// <returns>The string resource as a <see cref="LocalizedString" />.</returns>
     LocalizedString Handle(string key);
 }
