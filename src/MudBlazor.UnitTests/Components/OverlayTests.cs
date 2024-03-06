@@ -43,7 +43,8 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.AutoClose, true)
             );
 
-            await comp.Find("div.mud-overlay").ClickAsync(null);
+            await comp.InvokeAsync(async () => await comp.Find("div.mud-overlay").ClickAsync(null));
+            comp.Render();
             comp.Markup.Should().BeEmpty();
         }
 

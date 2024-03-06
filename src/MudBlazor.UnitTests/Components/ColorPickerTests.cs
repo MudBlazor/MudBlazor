@@ -734,7 +734,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.PickerVariant, PickerVariant.Static);
             });
 
-            var buttons = comp.FindAll(_mudToolbarButtonsCssSelector);
+            IRefreshableElementCollection<IElement> buttons() => comp.FindAll(_mudToolbarButtonsCssSelector);
 
             Dictionary<int, (ColorPickerView, string)> buttonMapper = new()
             {
@@ -745,7 +745,7 @@ namespace MudBlazor.UnitTests.Components
 
             foreach (var item in buttonMapper)
             {
-                buttons[item.Key].Click();
+                buttons()[item.Key].Click();
 
                 _ = comp.Find(item.Value.Item2);
             }
@@ -1128,18 +1128,18 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.ColorPickerView, ColorPickerView.Spectrum);
             });
 
-            var buttons = comp.FindAll(_mudToolbarButtonsCssSelector);
+            IRefreshableElementCollection<IElement> buttons() => comp.FindAll(_mudToolbarButtonsCssSelector);
 
             _eventListener.ElementIdMapper.Keys.Should().ContainSingle();
             var value = _eventListener.ElementIdMapper.Values.First();
 
-            buttons[2].Click();
+            buttons()[2].Click();
             _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
 
-            buttons[1].Click();
+            buttons()[1].Click();
             _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
 
-            buttons[0].Click();
+            buttons()[0].Click();
 
             _eventListener.ElementIdMapper.Keys.Should().ContainSingle();
             _eventListener.ElementIdMapper.Values.First().Should().Be(value);
@@ -1156,13 +1156,13 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.DisableDragEffect, true);
             });
 
-            var buttons = comp.FindAll(_mudToolbarButtonsCssSelector);
+            IRefreshableElementCollection<IElement> buttons() => comp.FindAll(_mudToolbarButtonsCssSelector);
 
             _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
 
             for (var i = 3 - 1; i >= 0; i--)
             {
-                buttons[i].Click();
+                buttons()[i].Click();
                 _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
             }
         }
