@@ -118,7 +118,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task MenuMouseLeave_MenuMouseEnter_CheckOpen()
         {
             var comp = Context.RenderComponent<MenuTestMouseOver>();
-            var pop = comp.FindComponent<MudPopover>();
 
             // Mouse over to menu to open popover
             IElement menu() => comp.Find(".mud-menu");
@@ -132,7 +131,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("div.mud-list")[0].TriggerEventAsync("onmouseleave", new MouseEventArgs());
             await menu().TriggerEventAsync("onmouseenter", new MouseEventArgs());
 
-            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
+            var pop = comp.FindComponent<MudPopover>().Instance;
+            comp.WaitForAssertion(() => pop.Open.Should().BeTrue());
         }
 
         [Test]

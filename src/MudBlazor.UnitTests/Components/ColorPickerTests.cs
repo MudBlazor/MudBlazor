@@ -788,7 +788,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.ViewMode, view);
                 p.Add(x => x.DisableToolbar, false);
             });
-            
+
             var toolbarButtons = comp.FindAll(".mud-toolbar .mud-icon-button button");
             for (var i = 0; i < toolbarButtons.Count; i++)
             {
@@ -888,12 +888,12 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColors = _mudGridDefaultColors;
 
-            IElement collectionView() => comp.Find(".mud-picker-color-grid");
+            var collectionView = comp.Find(".mud-picker-color-grid");
 
-            for (var i = 0; i < collectionView().Children.Length; i++)
+            for (var i = 0; i < collectionView.Children.Length; i++)
             {
                 var expectedColor = expectedColors[i];
-                var colorElement = collectionView().Children[i];
+                var colorElement = collectionView.Children[i];
                 colorElement.ClassList.Should().Contain("mud-picker-color-dot");
 
                 comp.InvokeAsync(() => colorElement.Click());
@@ -997,8 +997,8 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColors = _mudGridPaletteDefaultClors;
 
-            IElement gridView() => comp.Find(".mud-picker-color-view-collection");
-            gridView().Children[0].Click();
+            var gridView = comp.Find(".mud-picker-color-view-collection");
+            gridView.Children[0].Click();
 
             comp.Instance.ColorValue.Should().Be(expectedColors[0]);
 
@@ -1160,7 +1160,7 @@ namespace MudBlazor.UnitTests.Components
 
             for (var i = 3 - 1; i >= 0; i--)
             {
-                buttons().GetItemByIndex(i).Click();
+                buttons()[i].Click();
                 _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
             }
         }

@@ -102,13 +102,13 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<RadioGroupTest3>();
 
             // select elements needed for the test
-            IReadOnlyList<IRenderedComponent<MudRadioGroup<string>>> groups() => comp.FindComponents<MudRadioGroup<string>>();
+            var groups = comp.FindComponents<MudRadioGroup<string>>();
             IRefreshableElementCollection<IElement> inputs() => comp.FindAll("input");
             IRefreshableElementCollection<IElement> spans() => comp.FindAll("span.mud-radio-icons");
 
             // check initial state, should be initialized to second radio by default for both groups
-            groups()[0].Instance.Value.Should().Be("2");
-            groups()[1].Instance.Value.Should().Be("2");
+            groups[0].Instance.Value.Should().Be("2");
+            groups[1].Instance.Value.Should().Be("2");
             spans()[0].ClassList.Should().NotContain("mud-checked");
             spans()[1].ClassList.Should().Contain("mud-checked");
             spans()[2].ClassList.Should().NotContain("mud-checked");
@@ -117,8 +117,8 @@ namespace MudBlazor.UnitTests.Components
             // click first radio of second group - they should both switch to L1
             inputs()[2].Click();
 
-            groups()[0].Instance.Value.Should().Be("1");
-            groups()[1].Instance.Value.Should().Be("1");
+            groups[0].Instance.Value.Should().Be("1");
+            groups[1].Instance.Value.Should().Be("1");
             spans()[0].ClassList.Should().Contain("mud-checked");
             spans()[1].ClassList.Should().NotContain("mud-checked");
             spans()[2].ClassList.Should().Contain("mud-checked");
@@ -127,8 +127,8 @@ namespace MudBlazor.UnitTests.Components
             // click second radio of first group - they should both switch to L1
             inputs()[1].Click();
 
-            groups()[0].Instance.Value.Should().Be("2");
-            groups()[1].Instance.Value.Should().Be("2");
+            groups[0].Instance.Value.Should().Be("2");
+            groups[1].Instance.Value.Should().Be("2");
             spans()[0].ClassList.Should().NotContain("mud-checked");
             spans()[1].ClassList.Should().Contain("mud-checked");
             spans()[2].ClassList.Should().NotContain("mud-checked");

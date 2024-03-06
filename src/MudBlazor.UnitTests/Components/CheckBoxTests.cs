@@ -146,22 +146,22 @@ namespace MudBlazor.UnitTests.Components
             MudForm form() => comp.FindComponent<MudForm>().Instance;
             form().IsValid.Should().BeFalse();
             form().Errors.Length.Should().Be(0);
-            IRenderedComponent<MudCheckBox<bool>> checkbox() => comp.FindComponent<MudCheckBox<bool>>();
+            var checkbox = comp.FindComponent<MudCheckBox<bool>>();
             // click the checkbox to make the form valid
-            checkbox().Find("input").Change(true);
+            checkbox.Find("input").Change(true);
             form().IsValid.Should().BeTrue();
             // click the checkbox to make the form invalid again because the checkbox is required
-            checkbox().Find("input").Change(false);
-            checkbox().Instance.Error.Should().BeTrue();
-            checkbox().Instance.ErrorText.Should().Be("You must agree");
+            checkbox.Find("input").Change(false);
+            checkbox.Instance.Error.Should().BeTrue();
+            checkbox.Instance.ErrorText.Should().Be("You must agree");
             form().IsValid.Should().BeFalse();
             form().Errors.Length.Should().Be(1);
             form().Errors[0].Should().Be("You must agree");
             // click the checkbox to make the form valid again
-            checkbox().Find("input").Change(true);
+            checkbox.Find("input").Change(true);
             form().IsValid.Should().BeTrue();
-            checkbox().Instance.Error.Should().BeFalse();
-            checkbox().Instance.ErrorText.Should().Be(null);
+            checkbox.Instance.Error.Should().BeFalse();
+            checkbox.Instance.ErrorText.Should().Be(null);
         }
 
         /// <summary>

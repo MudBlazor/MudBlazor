@@ -1118,8 +1118,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("2");
             comp.FindAll("td")[4].TextContent.Trim().Should().Be("3");
-            comp.FindAll("div.mud-select-input")[0].Click(); // mobile sort drop down
-            comp.FindAll("div.mud-list-item-clickable")[1].Click(); // sort b column
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-select-input")[0].Click()); // mobile sort drop down
+            await comp.InvokeAsync(() => comp.FindAll("div.mud-list-item-clickable")[1].Click()); // sort b column
             comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("3"));
             comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
             comp.WaitForAssertion(() => comp.FindAll("td")[4].TextContent.Trim().Should().Be("1"));

@@ -57,11 +57,11 @@
                 <MudSelectItem Value="Origin.BottomCenter">BottomCenter</MudSelectItem>
                 <MudSelectItem Value="Origin.BottomRight">BottomRight</MudSelectItem>
             </MudSelect>
-            <MudCheckBox @bind-Checked="@Dot" Label="Dot" Color="Color.Primary" Style="width:100%;" />
-            <MudCheckBox @bind-Checked="@Overlap" Label="Overlap" Color="Color.Primary" Style="width:100%;" />
-            <MudCheckBox @bind-Checked="@Bordered" Label="Bordered" Color="Color.Primary" Style="width:100%;" />
-            <MudCheckBox T="bool" CheckedChanged="AddIcon" Label="Icon" Color="Color.Primary" Style="width:100%;" />
-            <MudCheckBox @bind-Checked="@Clickable" Label="Clickable" Color="Color.Primary" Style="width:100%;" />
+            <MudCheckBox @bind-Value="@Dot" Label="Dot" Color="Color.Primary" Style="width:100%;" />
+            <MudCheckBox @bind-Value="@Overlap" Label="Overlap" Color="Color.Primary" Style="width:100%;" />
+            <MudCheckBox @bind-Value="@Bordered" Label="Bordered" Color="Color.Primary" Style="width:100%;" />
+            <MudCheckBox T="bool" ValueChanged="AddIcon" Label="Icon" Color="Color.Primary" Style="width:100%;" />
+            <MudCheckBox @bind-Value="@Clickable" Label="Clickable" Color="Color.Primary" Style="width:100%;" />
             <MudText Typo="Typo.subtitle2" Class="my-2">Badge Content</MudText>
             <div style="display: flex;">
                 <MudButton OnClick="AddValue" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" FullWidth="true" Class="mr-1">Add @AddNumber</MudButton>
