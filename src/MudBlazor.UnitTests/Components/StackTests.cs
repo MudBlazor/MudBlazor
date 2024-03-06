@@ -109,6 +109,18 @@ namespace MudBlazor.UnitTests.Components
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"align-{expectedClass}", "gap-3" });
         }
+
+        [Test]
+        [TestCase(Wrap.NoWrap, "nowrap")]
+        [TestCase(Wrap.Wrap, "wrap")]
+        [TestCase(Wrap.WrapReverse, "wrap-reverse")]
+        public void CheckWrapClass(Wrap wrap, string expectedClass)
+        {
+            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.Wrap, wrap));
+
+            var stackClass = stack.Find(".d-flex");
+            stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"flex-{expectedClass}", "gap-3" });
+        }
     }
 }
 
