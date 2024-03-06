@@ -221,13 +221,7 @@ namespace MudBlazor
 
         public MudListItem()
         {
-            _expandedState = RegisterParameter(nameof(Expanded), () => Expanded, () => ExpandedChanged, ExpandedParameterChangedHandlerAsync);
-        }
-
-        private Task ExpandedParameterChangedHandlerAsync()
-        {
-            return Task.CompletedTask;
-            //return ExpandedChanged.InvokeAsync(_expandedState.Value);
+            _expandedState = RegisterParameter(nameof(Expanded), () => Expanded, () => ExpandedChanged);
         }
 
         protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
@@ -239,7 +233,6 @@ namespace MudBlazor
                 if (NestedList != null)
                 {
                     await _expandedState.SetValueAsync(!_expandedState.Value);
-                    //Expanded = !Expanded;
                 }
                 else if (Href != null)
                 {
