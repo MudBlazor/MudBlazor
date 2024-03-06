@@ -50,7 +50,7 @@ public class DefaultLocalizationInterceptor : AbstractLocalizationInterceptor
     /// <returns>The string resource as a <see cref="LocalizedString" />.</returns>
     /// <remarks>
     /// This method is called when the default English translation is ignored or unavailable, and a custom MudLocalizer service implementation is registered.
-    /// It attempts to use user-provided languages, falling back to the internal English translation if no translation is found.
+    /// It attempts to use user-provided languages, falling back to the internal English translation if MudLocalizer is missing or no resource is found.
     /// </remarks>
     protected virtual LocalizedString TranslationWithFallback(string key)
     {
