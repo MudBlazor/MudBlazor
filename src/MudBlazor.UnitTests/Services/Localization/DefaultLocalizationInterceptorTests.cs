@@ -12,7 +12,7 @@ using Moq;
 namespace MudBlazor.UnitTests.Services.Localization;
 
 #nullable enable
-[TestFixture]
+[TestFixture(Description = "Similar to InternalMudLocalizerTests but more narrow focusing on IgnoreDefaultEnglish cases.")]
 public class DefaultLocalizationInterceptorTests
 {
     [Test]
@@ -43,7 +43,7 @@ public class DefaultLocalizationInterceptorTests
     }
 
     [Test]
-    [SetUICulture("en-GB")]
+    [SetUICulture("en-US")]
     public void IgnoreDefaultEnglishFalse_CustomMudLocalizer_EnglishUICulture_ReturnsDefaultEnglish()
     {
         // When IgnoreDefaultEnglish is "false" and CurrentUICulture is "en", we return default English localization
