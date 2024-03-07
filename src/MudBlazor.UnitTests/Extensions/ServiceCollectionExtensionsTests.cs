@@ -420,9 +420,11 @@ public class ServiceCollectionExtensionsTests
         services.AddMudLocalization();
         var serviceProvider = services.BuildServiceProvider();
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
+        var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
 
         // Assert
         mudLocalizer.Should().NotBeNull();
+        localizationInterceptor.Should().NotBeNull();
     }
 
     [Test]
@@ -465,6 +467,7 @@ public class ServiceCollectionExtensionsTests
         var eventListener = serviceProvider.GetService<IEventListener>();
         var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
+        var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
 
         // Assert
         dialogService.Should().NotBeNull();
@@ -491,6 +494,7 @@ public class ServiceCollectionExtensionsTests
         eventListener.Should().NotBeNull();
         eventListenerFactory.Should().NotBeNull();
         mudLocalizer.Should().NotBeNull();
+        localizationInterceptor.Should().NotBeNull();
     }
 
     [Test]
@@ -573,6 +577,7 @@ public class ServiceCollectionExtensionsTests
         var eventListener = serviceProvider.GetService<IEventListener>();
         var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
+        var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
         var snackBarOptions = serviceProvider.GetRequiredService<IOptions<SnackbarConfiguration>>();
         var resizeOptions = serviceProvider.GetRequiredService<IOptions<ResizeOptions>>();
         var resizeObserverOptions = serviceProvider.GetRequiredService<IOptions<ResizeObserverOptions>>();
@@ -607,6 +612,7 @@ public class ServiceCollectionExtensionsTests
         eventListener.Should().NotBeNull();
         eventListenerFactory.Should().NotBeNull();
         mudLocalizer.Should().NotBeNull();
+        localizationInterceptor.Should().NotBeNull();
 
         // We can't check reference here, instead we need to check each value
         actualPopoverOptions.QueueDelay.Should().Be(expectedOptions!.PopoverOptions.QueueDelay);
