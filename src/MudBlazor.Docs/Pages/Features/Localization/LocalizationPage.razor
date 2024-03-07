@@ -3,6 +3,7 @@
 @using System.Globalization
 @using System.Collections
 @using System.Resources
+@using MudBlazor.Docs.Extensions
 
 <DocsPage>
     <DocsPageHeader Title="Localization" SubTitle="Localization allows to provide custom translations for localizable text in the components." />
@@ -80,11 +81,9 @@
 @code {
     #nullable enable
 
-    private readonly IEnumerable<DictionaryEntry> _translations = ToEnumerable(LanguageResource.ResourceManager
-        .GetResourceSet(CultureInfo.InvariantCulture, true, true)).OrderBy(x => (string)x.Key, StringComparer.InvariantCultureIgnoreCase);
-    
-    private static IEnumerable<DictionaryEntry> ToEnumerable(ResourceSet? resourceSet)
-    {
-        return resourceSet == null ? new List<DictionaryEntry>() : resourceSet.Cast<DictionaryEntry>();
-    }
+    private readonly IEnumerable<DictionaryEntry> _translations = LanguageResource
+        .ResourceManager
+        .GetResourceSet(CultureInfo.InvariantCulture, true, true)
+        .ToEnumerable()
+        .OrderBy(x => (string)x.Key, StringComparer.InvariantCultureIgnoreCase);
 }
