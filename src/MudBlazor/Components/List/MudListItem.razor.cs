@@ -231,7 +231,6 @@ namespace MudBlazor
                 if (NestedList != null)
                 {
                     Expanded = !Expanded;
-                    StateHasChanged();
                 }
                 else if (Href != null)
                 {

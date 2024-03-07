@@ -35,7 +35,7 @@
         }
         @if (OnClose.HasDelegate || ChipSet?.AllClosable == true)
         {
-            <MudIconButton Class="mud-chip-close-button" Icon="@(String.IsNullOrEmpty(CloseIcon) ? $"{Icons.Material.Filled.Cancel}" : $"{CloseIcon}")" OnClick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnCloseHandler)" Size="Size.Small" />
+            <MudIconButton Class="mud-chip-close-button" Icon="@(String.IsNullOrEmpty(CloseIcon) ? $"{Icons.Material.Filled.Cancel}" : $"{CloseIcon}")" OnClick="OnCloseHandler" Size="Size.Small" />
         }
     </span>
 </div>
