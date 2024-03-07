@@ -6,26 +6,26 @@
 @code {
     private bool _disposed;
 
-	public int Value { get; set; }
+    public int Value { get; set; }
 
     public async Task SimulateProgressAsync()
-	{
-		Value = 0;
-		do
-		{
-			if (_disposed)
-			{
-				return;
-			}
+    {
+        Value = 0;
+        do
+        {
+            if (_disposed)
+            {
+                return;
+            }
 
-			Value += 4;
-			StateHasChanged();
-			await Task.Delay(500);
+            Value += 4;
+            StateHasChanged();
+            await Task.Delay(500);
 
-		} while (Value < 100);
+        } while (Value < 100);
 
         await SimulateProgressAsync();
-	}
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -33,5 +33,5 @@
         await SimulateProgressAsync();
     }
 
-	public void Dispose() => _disposed = true;
+    public void Dispose() => _disposed = true;
 }
