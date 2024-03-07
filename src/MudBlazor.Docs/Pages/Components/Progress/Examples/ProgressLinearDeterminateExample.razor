@@ -4,9 +4,11 @@
 <MudProgressLinear Color="Color.Secondary" Value="@Value" Class="my-7" />
 
 @code {
+    private bool _disposed;
+
 	public int Value { get; set; }
 
-	public async void SimulateProgress()
+    public async Task SimulateProgressAsync()
 	{
 		Value = 0;
 		do
@@ -22,11 +24,14 @@
 
 		} while (Value < 100);
 
-		SimulateProgress();
+        await SimulateProgressAsync();
 	}
 
-	protected override void OnInitialized() => SimulateProgress();
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await SimulateProgressAsync();
+    }
 
-	bool _disposed;
 	public void Dispose() => _disposed = true;
 }
