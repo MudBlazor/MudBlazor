@@ -3,14 +3,11 @@
 
 <MudPaper Width="250px" Class="py-3" Elevation="0">
     <MudNavMenu Dense>
-        <MudText Typo="Typo.h6" Class="px-4">My Application</MudText>
-        <MudDivider Class="my-2" />
-        <MudNavLink OnClick="@(() => GoTo("dashboard"))">Dashboard</MudNavLink>
         <MudNavGroup Title="Settings" Expanded="true">
-            <MudNavLink OnClick="@(() => GoTo("settings/users"))">Users</MudNavLink>
-            <MudNavLink OnClick="@(() => GoTo("settings/security"))">Security</MudNavLink>
+            <MudNavLink OnClick="@(() => GoTo("Settings/Users"))">Users</MudNavLink>
+            <MudNavLink OnClick="@(() => GoTo("Settings/Security"))">Security</MudNavLink>
         </MudNavGroup>
-        <MudNavLink OnClick="@(() => GoTo("about"))">About</MudNavLink>
+        <MudNavLink OnClick="@(() => GoTo("About"))">About</MudNavLink>
     </MudNavMenu>
 </MudPaper>
 

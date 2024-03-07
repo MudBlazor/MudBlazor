@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Components
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
             //navigate to the specified page
-            await comp.InvokeAsync(() => pagination.NavigateTo(initiallySelectedPage - 1));
+            await comp.InvokeAsync(() => { pagination.NavigateTo(initiallySelectedPage - 1); });
 
             //Click numberOfClicks times on the control button
             for (var i = 0; i < numberOfClicks; i++)
