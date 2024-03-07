@@ -41,7 +41,7 @@
                         }
                         else if (tempMonth == 0 && CurrentView == OpenTo.Month)
                         {
-                            var calendarYear = GetCalendarYear(PickerMonth?? DateTime.Today);
+                            var calendarYear = GetCalendarYear(PickerMonth ?? DateTime.Today);
                             var prevLabel = $"Go to previous year {calendarYear - 1}";
                             var nextLabel = $"Go to next year {calendarYear + 1}";
 
