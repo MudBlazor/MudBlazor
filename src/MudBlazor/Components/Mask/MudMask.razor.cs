@@ -252,7 +252,7 @@ namespace MudBlazor
             }
         }
 
-        internal async void HandleClearButton(MouseEventArgs e)
+        internal async Task HandleClearButtonAsync(MouseEventArgs e)
         {
             Mask.Clear();
             await Update();
