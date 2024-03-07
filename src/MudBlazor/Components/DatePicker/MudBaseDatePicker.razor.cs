@@ -376,7 +376,7 @@ namespace MudBlazor
         protected virtual void OnYearClicked(int year)
         {
             var current = GetMonthStart(0);
-            PickerMonth = new DateTime(year, current.Month, 1,Culture.Calendar);
+            PickerMonth = new DateTime(year, current.Month, 1, Culture.Calendar);
             var nextView = GetNextView();
             if (nextView != null)
             {
