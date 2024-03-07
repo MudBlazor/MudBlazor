@@ -24,8 +24,8 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 {
     private readonly SemaphoreSlim _initializeSemaphore;
     private readonly PopoverJsInterop _popoverJsInterop;
-    private readonly Dictionary<Guid, MudPopoverHolder> _holders;
     private readonly AsyncKeyedLocker<Guid> _popoverSemaphore;
+    private readonly Dictionary<Guid, MudPopoverHolder> _holders;
     private readonly BatchPeriodicQueue<MudPopoverHolder> _batchExecutor;
     private readonly ObserverManager<Guid, IPopoverObserver> _observerManager;
 
@@ -110,7 +110,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         ArgumentNullException.ThrowIfNull(popover);
 
         // We initialize the service regardless of whether the popover exists or not.
-        // Adding it in an if clause doesn't provide significant benefits.
+        // Adding it in an if-clause doesn't provide significant benefits.
         // Instead, we prioritize ensuring that the service is ready for use, as its initialization is a one-time operation.
         await InitializeServiceIfNeededAsync();
         if (!_holders.TryGetValue(popover.Id, out var holder))
@@ -143,7 +143,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         ArgumentNullException.ThrowIfNull(popover);
 
         // We initialize the service regardless of whether the popover exists or not.
-        // Adding it in an if clause doesn't provide significant benefits.
+        // Adding it in an if-clause doesn't provide significant benefits.
         // Instead, we prioritize ensuring that the service is ready for use, as its initialization is a one-time operation.
         await InitializeServiceIfNeededAsync();
 
@@ -204,7 +204,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             _batchExecutor.QueueItem(holder);
         }
         // Although it is not completely detached from the JS side until OnBatchTimerElapsedAsync fires, we mark it as "Detached"
-        // because we want let know the UpdatePopoverAsync method that there is no need to update it anymore,
+        // because we want to let know the UpdatePopoverAsync method that there is no need to update it anymore,
         // as it is no longer being rendered by MudPopoverProvider since it has been removed from the ActivePopovers collection.
         // Perhaps we could consider adding a state indicating that the object is queued for detaching instead.
         holder.IsDetached = true;
@@ -216,7 +216,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
     private async Task DetachRange(IReadOnlyCollection<MudPopoverHolder> holders)
     {
-        // Ignore task if zero items in collection to not enter in the semaphore
+        // Ignore task if zero items in collection to not enter the semaphore
         if (holders.Count == 0)
         {
             return;

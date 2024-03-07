@@ -18,7 +18,7 @@ public class DefaultLocalizationInterceptorTests
     [Test]
     public void IgnoreDefaultEnglishTrue_NullMudLocalizer_ReturnsDefaultEnglish()
     {
-        // Even though we are using IgnoreDefaultEnglish is "true", we still should get default English localization
+        // Even though IgnoreDefaultEnglish is "true", we still should get default English localization
         // Because we didn't provide custom MudLocalizer, so it will fall back.
 
         // Arrange
