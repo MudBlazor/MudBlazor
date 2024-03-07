@@ -55,7 +55,8 @@ internal class BrowserViewportService : IBrowserViewportService
         ResizeOptions = options?.Value ?? new ResizeOptions();
         _semaphore = new AsyncKeyedLocker<Guid>(lockOptions =>
         {
-            lockOptions.PoolSize = 10000;
+            lockOptions.PoolSize = 300;
+            lockOptions.PoolInitialFill = 50;
         });
         _resizeListenerInterop = new ResizeListenerInterop(jsRuntime);
         _observerManager = new ObserverManager<BrowserViewportSubscription, IBrowserViewportObserver>(logger);
