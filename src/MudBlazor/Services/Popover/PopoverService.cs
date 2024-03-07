@@ -66,7 +66,8 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         _initializeSemaphore = new SemaphoreSlim(1, 1);
         _popoverSemaphore = new AsyncKeyedLocker<Guid>(lockOptions =>
         {
-            lockOptions.PoolSize = 10000;
+            lockOptions.PoolSize = PopoverOptions.PoolSize;
+            lockOptions.PoolInitialFill = PopoverOptions.PoolInitialFill;
         });
         _holders = new Dictionary<Guid, MudPopoverHolder>();
         _popoverJsInterop = new PopoverJsInterop(jsInterop);
