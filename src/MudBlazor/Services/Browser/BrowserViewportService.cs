@@ -5,7 +5,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -30,8 +29,8 @@ internal class BrowserViewportService : IBrowserViewportService
     private bool _disposed;
     private readonly AsyncKeyedLocker<Guid> _semaphore;
     private readonly ResizeListenerInterop _resizeListenerInterop;
-    private readonly ObserverManager<BrowserViewportSubscription, IBrowserViewportObserver> _observerManager;
     private readonly Lazy<DotNetObjectReference<BrowserViewportService>> _dotNetReferenceLazy;
+    private readonly ObserverManager<BrowserViewportSubscription, IBrowserViewportObserver> _observerManager;
 
     private BrowserWindowSize? _latestWindowSize;
     // ReSharper disable once NotAccessedField.Local
