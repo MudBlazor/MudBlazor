@@ -2,7 +2,7 @@
 @inherits MudComponentBase
 @typeparam T
 
-<div @attributes="UserAttributes" class="@Classes" style="@Style" @onclick="HandleOnClickAsync">    
+<div tabindex="0" id="@_elementId" @attributes="UserAttributes" class="@Classes" style="@Style" @onclick="HandleOnClickAsync" @onkeydown="HandleKeyDownAsync">
     <div class="@($"d-flex align-center justify-center mud-width-full mud-height-full {(CounterBalanceCheckmark ? "pe-7" : "")}")">
         @if (Parent?.CheckMark == true && (CurrentIcon.IsNonEmpty() || Parent?.FixedContent == true)) {
             <MudIcon Class="@CheckMarkClasses" Icon="@CurrentIcon" Size="Size.Small"/>

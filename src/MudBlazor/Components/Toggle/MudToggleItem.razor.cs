@@ -2,8 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -13,6 +16,8 @@ namespace MudBlazor
     public partial class MudToggleItem<T> : MudComponentBase
     {
         private bool _selected;
+        private IKeyInterceptor? _keyInterceptor;
+        private string _elementId = "toggleitem" + Guid.NewGuid().ToString().Substring(0, 8);
 
         protected string Classes => new CssBuilder("mud-toggle-item")
             .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", _selected && string.IsNullOrEmpty(Parent?.SelectedClass))
@@ -31,16 +36,16 @@ namespace MudBlazor
             .AddClass("mud-toggle-item-delimiter", Parent?.Delimiters == true)
             .AddClass(Class)
             .Build();
-        
+
         protected string TextClassName => new CssBuilder()
             .AddClass(Parent?.TextClass)
             .Build();
-        
+
         protected string CheckMarkClasses => new CssBuilder()
             .AddClass(Parent?.CheckMarkClass)
             .AddClass("me-2")
             .Build();
-
+        
         protected string ItemPadding
         {
             get
@@ -96,7 +101,7 @@ namespace MudBlazor
         public string? SelectedIcon { get; set; } = Icons.Material.Filled.Check;
 
         private string? CurrentIcon => IsSelected ? SelectedIcon ?? UnselectedIcon : UnselectedIcon;
-        
+
         /// <summary>
         /// The text to show. You need to set this only if you want a text that differs from the Value. If null,
         /// show Value?.ToString().
@@ -112,6 +117,9 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public RenderFragment<bool>? ChildContent { get; set; }
+
+        [Inject]
+        private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
 
         protected override void OnInitialized()
         {
@@ -135,7 +143,47 @@ namespace MudBlazor
             }
         }
 
+        protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
+        {
+            if (Parent is null)
+                return;
+
+            switch (keyboardEventArgs.Key)
+            {
+                case " " or "Enter" or "NumpadEnter":
+                    await Parent.ToggleItemAsync(this);
+                    break;
+            }
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                _keyInterceptor = KeyInterceptorFactory.Create();
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions
+                {
+                    //EnableLogging = true,
+                    TargetClass = "mud-toggle-item",
+                    Keys = {
+                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" }, // prevent scrolling page
+                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
+                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
+                    },
+                });
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+        public void Dispose()
+        {
+            if (IsJSRuntimeAvailable)
+            {
+                _keyInterceptor?.Dispose();
+            }
+        }
+
         protected internal bool IsEmpty => string.IsNullOrEmpty(Text) && Value is null;
-        
+
     }
 }
