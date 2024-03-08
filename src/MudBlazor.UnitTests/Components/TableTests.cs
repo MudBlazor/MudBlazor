@@ -955,6 +955,51 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Changing page should retain the selected items
+        /// </summary>
+        [Test]
+        public void TableMultiSelectionTest9()
+        {
+            var comp = Context.RenderComponent<TableMultiSelectionTest9>();
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<MudBlazor.UnitTests.TestComponents.TableMultiSelectionTest9.ComplexObject>>().Instance;
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // click header checkbox and verify selection text
+            var inputs = comp.Find("input");
+            inputs.Change(true);
+            table.SelectedItems.Count.Should().Be(10);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(10);
+
+            // click next page button
+            var buttons = comp.FindAll("button[aria-label=\"Next page\"]");
+            buttons[0].Click();
+
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // verify table markup
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(11); // <-- one header, ten rows
+            var td = comp.FindAll("td").ToArray();
+            td.Length.Should().Be(10 * 6); // six td per row for multi selection
+            var inputs2 = comp.FindAll("input").ToArray();
+            inputs2.Length.Should().Be(11); // one checkbox per row + one for the header
+
+            // verify selection - All items should remain selected
+            table.SelectedItems.Count.Should().Be(10);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
+            // No item from current page should be checked
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(0);
+
+            // Click the checkbox of the row with id 12
+            inputs2[2].Change(true);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12 }");
+            // One checkbox of the current page should be checked
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(1);
+        }
+
+        /// <summary>
         /// Checkbox click must not bubble up.
         /// </summary>
         [Test]
@@ -2164,6 +2209,18 @@ namespace MudBlazor.UnitTests.Components
                 table.Instance.Items.ToList().GetRange(0, 100));
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell")[1].TextContent.Should().Be("Value_0");
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(true);
+        }
+
+        /// <summary>
+        /// Selecting the 'Select All' checkbox should trigger the 'SelectedItemsChanged' event only once
+        /// </summary>
+        [Test]
+        public async Task TestSelectedItemsChanedWithMultiSelection()
+        {
+            var comp = Context.RenderComponent<TableMultiSelectionSelectedItemsChangedTest>();
+            var selectAllCheckbox = comp.Find("input");
+            selectAllCheckbox.Change(true);
+            comp.Find("#counter").TextContent.Should().Be("1");
         }
     }
 }

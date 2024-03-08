@@ -1,137 +1,138 @@
 ﻿.mud-chart {
-    display: flex;
+  display: flex;
 
-    &.mud-chart-legend-bottom {
-        flex-direction: column;
+  &.mud-chart-legend-bottom {
+    flex-direction: column;
 
-        .mud-chart-legend {
-            margin-top: 10px;
-            justify-content: center;
-            width: 100%;
-        }
+    .mud-chart-legend {
+      margin-top: 10px;
+      justify-content: center;
+      width: 100%;
     }
+  }
 
-    &.mud-chart-legend-top {
-        flex-direction: column-reverse;
-
-        & .mud-chart-legend {
-            justify-content: center;
-            width: 100%;
-        }
-    }
-
-    &.mud-chart-legend-right {
-        flex-direction: row;
-
-        & .mud-chart-legend {
-            flex-direction: column;
-        }
-    }
-
-    &.mud-chart-legend-left {
-        flex-direction: row-reverse;
-
-        & .mud-chart-legend {
-            flex-direction: column;
-        }
-    }
-
-
-    & .mud-chart-donut, .mud-chart-pie, mud-chart-line {
-        display: flex;
-        margin: auto;
-    }
+  &.mud-chart-legend-top {
+    flex-direction: column-reverse;
 
     & .mud-chart-legend {
-        display: flex;
-        padding: 10px 0px;
-        margin: auto;
-        flex-wrap: wrap;
-
-        & .mud-chart-legend-item {
-            display: block;
-            margin: 2px 5px;
-
-            & .mud-chart-legend-marker {
-                height: 12px;
-                width: 12px;
-                border-radius: 50%;
-                position: relative;
-                display: inline-flex;
-            }
-
-            & .mud-chart-legend-text {
-                display: inline-flex;
-            }
-            
-            & .mud-chart-legend-checkbox{
-                display: flex;
-                align-items: center;
-            }
-            & .mud-input-control{
-                width: 35px !important;
-            }
-        }
+      justify-content: center;
+      width: 100%;
     }
+  }
+
+  &.mud-chart-legend-right {
+    flex-direction: row;
+
+    & .mud-chart-legend {
+      flex-direction: column;
+    }
+  }
+
+  &.mud-chart-legend-left {
+    flex-direction: row-reverse;
+
+    & .mud-chart-legend {
+      flex-direction: column;
+    }
+  }
+
+
+  & .mud-chart-donut, .mud-chart-pie, mud-chart-line {
+    display: flex;
+    margin: auto;
+  }
+
+  & .mud-chart-legend {
+    display: flex;
+    padding: 10px 0px;
+    margin: auto;
+    flex-wrap: wrap;
+
+    & .mud-chart-legend-item {
+      display: block;
+      margin: 2px 5px;
+
+      & .mud-chart-legend-marker {
+        height: 12px;
+        width: 12px;
+        border-radius: 50%;
+        position: relative;
+        display: inline-flex;
+      }
+
+      & .mud-chart-legend-text {
+        display: inline-flex;
+      }
+
+      & .mud-chart-legend-checkbox {
+        display: flex;
+        align-items: center;
+      }
+
+      & .mud-input-control {
+        width: 35px !important;
+      }
+    }
+  }
 }
 
 .mud-charts-yaxis {
-    fill: var(--mud-palette-text-primary);
+  fill: var(--mud-palette-text-primary);
 }
 
 .mud-charts-xaxis {
-    fill: var(--mud-palette-text-primary);
+  fill: var(--mud-palette-text-primary);
 }
 
 .mud-chart-donut {
-    & .mud-donut-hole {
-        fill: transparent;
-        user-select: none;
-        pointer-events: unset;
-    }
+  & .mud-donut-hole {
+    fill: transparent;
+    user-select: none;
+    pointer-events: unset;
+  }
 
-    & .mud-donut-ring {
-        fill: transparent;
-        stroke-width: 5;
-        stroke: white;
-        pointer-events: unset;
-    }
+  & .mud-donut-ring {
+    fill: transparent;
+    stroke-width: 5;
+    stroke: white;
+    pointer-events: unset;
+  }
 
-    & .mud-donut-segment {
-        stroke-width: 5;
-        fill: transparent;
-        pointer-events: stroke;
-        -webkit-transition: stroke .2s ease;
-        -moz-transition: stroke .2s ease;
-        -o-transition: stroke .2s ease;
-        transition: stroke .2s ease;
-    }
+  & .mud-donut-segment {
+    stroke-width: 5;
+    fill: transparent;
+    pointer-events: stroke;
+    -webkit-transition: stroke .2s ease;
+    -moz-transition: stroke .2s ease;
+    -o-transition: stroke .2s ease;
+    transition: stroke .2s ease;
+  }
 }
 
 .mud-chart-legend-marker {
-    height: 12px;
-    width: 12px;
-    border-radius: 50%;
-    position: relative;
-    display: inline-block;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  position: relative;
+  display: inline-block;
 }
 
 .mud-chart-marker-color-0 {
-    background-color: #008FFB;
+  background-color: #008FFB;
 }
 
 .mud-chart-marker-color-1 {
-    background-color: #00E396;
+  background-color: #00E396;
 }
 
 .mud-chart-marker-color-2 {
-    background-color: #FEB019;
+  background-color: #FEB019;
 }
 
 .mud-chart-marker-color-3 {
-    background-color: #FF4560;
+  background-color: #FF4560;
 }
 
 .mud-chart-marker-color-4 {
-    background-color: #594ae2;
+  background-color: #594ae2;
 }

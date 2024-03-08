@@ -336,11 +336,16 @@ namespace MudBlazor
             DataGrid.DropContainerHasChanged();
         }
 
-        internal async Task AddFilterAsync()
+        internal void AddFilter()
         {
-            if (DataGrid.FilterMode == DataGridFilterMode.Simple && Column != null)
+            var filterDefinition = Column?.FilterContext.FilterDefinition;
+            if (DataGrid.FilterMode == DataGridFilterMode.Simple && filterDefinition != null)
             {
-                await DataGrid.AddFilterAsync(Column.FilterContext.FilterDefinition.Clone());
+                if (DataGrid.FilterDefinitions.All(x => x.Title != filterDefinition.Title))
+                {
+                    DataGrid.FilterDefinitions.Add(filterDefinition.Clone());
+                }
+                DataGrid.OpenFilters();
             }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
             {

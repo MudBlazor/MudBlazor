@@ -1,9 +1,9 @@
 ﻿$cursors: (
-        auto, default, pointer, wait, text, move, help,
-        not-allowed, none, progress, cell, crosshair,
-        vertical-text, alias, copy, no-drop, grab, grabbing,
-        all-scroll, col-resize, row-resize, n-resize, w-resize,
-        zoom-in, zoom-out, url
+  auto, default, pointer, wait, text, move, help,
+  not-allowed, none, progress, cell, crosshair,
+  vertical-text, alias, copy, no-drop, grab, grabbing,
+  all-scroll, col-resize, row-resize, n-resize, w-resize,
+  zoom-in, zoom-out, url
 );
 
 @each $value in $cursors {

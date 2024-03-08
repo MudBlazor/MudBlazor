@@ -1,302 +1,305 @@
 @import '../abstracts/variables';
 
 .mud-tabs {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    &.mud-tabs-reverse {
-        flex-direction: column-reverse;
+  &.mud-tabs-reverse {
+    flex-direction: column-reverse;
+  }
+
+  &.mud-tabs-vertical {
+    flex-direction: row;
+
+    .mud-tooltip-root {
+        width: auto;
+    }
+  }
+
+  &.mud-tabs-vertical-reverse {
+    flex-direction: row-reverse;
+  }
+
+  &.mud-tabs-rounded {
+    border-radius: var(--mud-default-borderradius);
+
+    .mud-tabs-toolbar {
+      border-radius: var(--mud-default-borderradius);
     }
 
-    &.mud-tabs-vertical {
-        flex-direction: row;
+    .mud-tabs-panels {
+      border-radius: var(--mud-default-borderradius);
     }
-
-    &.mud-tabs-vertical-reverse {
-        flex-direction: row-reverse;
-    }
-
-    &.mud-tabs-rounded {
-        border-radius: var(--mud-default-borderradius);
-
-        .mud-tabs-toolbar {
-            border-radius: var(--mud-default-borderradius);
-        }
-
-        .mud-tabs-panels {
-            border-radius: var(--mud-default-borderradius);
-        }
-    }
+  }
 }
 
-.mud-tabs-toolbar {    
-    position: relative;
-    background-color: var(--mud-palette-surface);
+.mud-tabs-toolbar {
+  position: relative;
+  background-color: var(--mud-palette-surface);
 
-    &.mud-tabs-border-left {
-        border-top-right-radius: 0 !important;
-        border-bottom-right-radius: 0 !important;
-        border-right: 1px solid var(--mud-palette-lines-default);
-    }
+  &.mud-tabs-border-left {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-right: 1px solid var(--mud-palette-lines-default);
+  }
 
-    &.mud-tabs-border-right {
-        border-top-left-radius: 0 !important;
-        border-bottom-left-radius: 0 !important;
-        border-left: 1px solid var(--mud-palette-lines-default);
-    }
+  &.mud-tabs-border-right {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-left: 1px solid var(--mud-palette-lines-default);
+  }
 
-    &.mud-tabs-border-top {
-        border-bottom-left-radius: 0 !important;
-        border-bottom-right-radius: 0 !important;
-        border-bottom: 1px solid var(--mud-palette-lines-default);
-    }
+  &.mud-tabs-border-top {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-bottom: 1px solid var(--mud-palette-lines-default);
+  }
 
-    &.mud-tabs-border-bottom {
-        border-top-left-radius: 0 !important;
-        border-top-right-radius: 0 !important;
-        border-top: 1px solid var(--mud-palette-lines-default);
-    }
+  &.mud-tabs-border-bottom {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-top: 1px solid var(--mud-palette-lines-default);
+  }
 
-    &.mud-tabs-rounded {
-        border-radius: var(--mud-default-borderradius);
-    }
+  &.mud-tabs-rounded {
+    border-radius: var(--mud-default-borderradius);
+  }
 
-    &.mud-tabs-vertical {
-        .mud-tabs-toolbar-inner {
-            flex-direction: column;
+  &.mud-tabs-vertical {
+    .mud-tabs-toolbar-inner {
+      flex-direction: column;
 
-            .mud-tabs-scroll-button {
-                .mud-button-root {
-                    width: 100%;
-                    border-radius: 0px;
-                    height: 32px;
+      .mud-tabs-scroll-button {
+        .mud-button-root {
+          width: 100%;
+          border-radius: 0px;
+          height: 32px;
 
-                    .mud-icon-button-label {
-                        .mud-icon-root{
-                            transform:rotate(90deg);
-                        }
-                    }
-                }
+          .mud-icon-button-label {
+            .mud-icon-root {
+              transform: rotate(90deg);
             }
+          }
         }
+      }
     }
+  }
 
-    & .mud-tabs-toolbar-inner {
-        display: flex;
-        min-height: 48px;
-    }
+  & .mud-tabs-toolbar-inner {
+    display: flex;
+    min-height: 48px;
+  }
 }
 
 
 .mud-tabs-toolbar-content {
-    width: 100%;
-    flex: 1 1 auto;
-    display: inline-block;
-    position: relative;
-    white-space: nowrap;
-    overflow: hidden;
+  width: 100%;
+  flex: 1 1 auto;
+  display: inline-block;
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
 
-    & .mud-tabs-toolbar-wrapper {
-        width: max-content;
-        position: inherit;
-        display: flex;
-        transition: .3s cubic-bezier(.25,.8,.5,1);
+  & .mud-tabs-toolbar-wrapper {
+    width: max-content;
+    position: inherit;
+    display: flex;
+    transition: .3s cubic-bezier(.25,.8,.5,1);
 
-        &.mud-tabs-centered {
-            margin: auto;
-        }
-
-        &.mud-tabs-vertical {
-            flex-direction: column;
-        }
+    &.mud-tabs-centered {
+      margin: auto;
     }
+
+    &.mud-tabs-vertical {
+      flex-direction: column;
+    }
+  }
 }
 
 .mud-tabs-panels {
-    position: relative;
-    transition: .3s cubic-bezier(.25,.8,.5,1);
+  position: relative;
+  transition: .3s cubic-bezier(.25,.8,.5,1);
 
-    &.mud-tabs-vertical {
-        display: flex;
-        flex-grow: 1;
-    }
+  &.mud-tabs-vertical {
+    display: flex;
+    flex-grow: 1;
+  }
 }
 
 .mud-tab {
-    width:100%;
-    display: inline-flex;
-    padding: 6px 12px;
-    min-height: 48px;
-    flex-shrink: 0;
-    font-weight: 500;
-    line-height: 1.75;
-    user-select: none;
-    white-space: normal;
-    letter-spacing: 0.02857em;
-    text-transform: uppercase;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  width: 100%;
+  display: inline-flex;
+  padding: 6px 12px;
+  min-height: 48px;
+  flex-shrink: 0;
+  font-weight: 500;
+  line-height: 1.75;
+  user-select: none;
+  white-space: normal;
+  letter-spacing: 0.02857em;
+  text-transform: uppercase;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+  &:hover {
+    cursor: pointer;
+    background-color: var(--mud-palette-action-default-hover);
+  }
+
+  &.mud-tab-active {
+    color: var(--mud-palette-primary);
 
     &:hover {
-        cursor: pointer;
-        background-color: var(--mud-palette-action-default-hover);
+      background-color: var(--mud-palette-primary-hover);
     }
+  }
 
-    &.mud-tab-active {
-        color: var(--mud-palette-primary);
+  &.mud-disabled {
+    cursor: default;
+    pointer-events: none;
+    color: var(--mud-palette-text-disabled);
+  }
 
-        &:hover {
-            background-color: var(--mud-palette-primary-hover);
-        }
-    }
-
-    &.mud-disabled {
-        cursor: default;
-        pointer-events: none;
-        color: var(--mud-palette-text-disabled);
-    }
-
-    & .mud-tab-icon-text {
-        margin-right: 8px;
-        margin-inline-end: 8px;
-        margin-inline-start: unset;
-    }
+  & .mud-tab-icon-text {
+    margin-right: 8px;
+    margin-inline-end: 8px;
+    margin-inline-start: unset;
+  }
 }
 
 .mud-tab-slider {
-    position: absolute;
-    background: var(--mud-palette-primary);
+  position: absolute;
+  background: var(--mud-palette-primary);
 
-    &.mud-tab-slider-horizontal {
-        height: 2px;
-        bottom: 0;
-        transition: left .3s cubic-bezier(.64,.09,.08,1);
-        will-change: left;
+  &.mud-tab-slider-horizontal {
+    height: 2px;
+    bottom: 0;
+    transition: left .3s cubic-bezier(.64,.09,.08,1);
+    will-change: left;
 
-        &.mud-tab-slider-horizontal-reverse {
-            top: 0;
-            bottom: unset;
-        }
+    &.mud-tab-slider-horizontal-reverse {
+      top: 0;
+      bottom: unset;
     }
+  }
 
-    &.mud-tab-slider-vertical {
-        width: 2px;
-        right: 0;
-        transition: top .3s cubic-bezier(.64,.09,.08,1);
-        will-change: top;
+  &.mud-tab-slider-vertical {
+    width: 2px;
+    right: 0;
+    transition: top .3s cubic-bezier(.64,.09,.08,1);
+    will-change: top;
 
-        &.mud-tab-slider-vertical-reverse {
-            left: 0;
-            right: unset;
-        }
+    &.mud-tab-slider-vertical-reverse {
+      left: 0;
+      right: unset;
     }
+  }
 }
 
-.mud-tab-badge{
-    margin-left:8px;
-    margin-inline-start: 8px;
-    margin-inline-end: unset;
+.mud-tab-badge {
+  margin-left: 8px;
+  margin-inline-start: 8px;
+  margin-inline-end: unset;
 }
 
 @each $color in $mud-palette-colors {
-    .mud-tabs-toolbar-#{$color} {
-        background-color: var(--mud-palette-#{$color});
+  .mud-tabs-toolbar-#{$color} {
+    background-color: var(--mud-palette-#{$color});
+    color: var(--mud-palette-#{$color}-text);
+
+    .mud-tab-slider {
+      background: var(--mud-palette-#{$color}-text);
+    }
+
+    .mud-tab {
+      &.mud-tab-active {
         color: var(--mud-palette-#{$color}-text);
 
-        .mud-tab-slider {
-            background: var(--mud-palette-#{$color}-text);
+        &:hover {
+          background-color: var(--mud-palette-#{$color}-lighten);
         }
-
-        .mud-tab {
-            &.mud-tab-active {
-                color: var(--mud-palette-#{$color}-text);
-
-                &:hover {
-                    background-color: var(--mud-palette-#{$color}-lighten);
-                }
-            }
-        }
+      }
     }
+  }
 }
 
 
 .tab-transition {
-    &-enter {
-        transform: translate(100%, 0);
-    }
+  &-enter {
+    transform: translate(100%, 0);
+  }
 
-    &-leave, &-leave-active {
-        position: absolute;
-        top: 0;
-    }
+  &-leave, &-leave-active {
+    position: absolute;
+    top: 0;
+  }
 
-    &-leave-to {
-        position: absolute;
-        transform: translate(-100%, 0);
-    }
+  &-leave-to {
+    position: absolute;
+    transform: translate(-100%, 0);
+  }
 }
 
 .tab-reverse-transition {
-    &-enter {
-        transform: translate(-100%, 0);
-    }
+  &-enter {
+    transform: translate(-100%, 0);
+  }
 
-    &-leave, &-leave-to {
-        top: 0;
-        position: absolute;
-        transform: translate(100%, 0);
-    }
+  &-leave, &-leave-to {
+    top: 0;
+    position: absolute;
+    transform: translate(100%, 0);
+  }
 }
 
 .mud-dynamic-tabs {
-    .mud-tabs-toolbar {
-        .mud-tab {
-            padding: 6px 14px;
+  .mud-tabs-toolbar {
+    .mud-tab {
+      padding: 6px 14px;
 
-            .mud-icon-button {
-                padding: 4px;
-                margin-right: -4px;
-                margin-inline-end: -4px;
-                margin-inline-start: unset;
-            }
+      .mud-icon-button {
+        padding: 4px;
+        margin-right: -4px;
+        margin-inline-end: -4px;
+        margin-inline-start: unset;
+      }
 
-            .mud-tabs-panel-header-before {
-                padding-right: 8px;
-                padding-inline-end: 8px;
-                padding-inline-start: unset;
-            }
+      .mud-tabs-panel-header-before {
+        padding-right: 8px;
+        padding-inline-end: 8px;
+        padding-inline-start: unset;
+      }
 
-            .mud-tabs-panel-header-after {
-                padding-left: 8px;
-                padding-inline-start: 8px;
-                padding-inline-end: unset;
-            }
-        }
+      .mud-tabs-panel-header-after {
+        padding-left: 8px;
+        padding-inline-start: 8px;
+        padding-inline-end: unset;
+      }
     }
+  }
 }
 
 .mud-tabs-header {
-    &.mud-tabs-header-before {
-        display: inherit;
-    }
+  &.mud-tabs-header-before {
+    display: inherit;
+  }
 
-    &.mud-tabs-header-after {
-        display: inherit;
-    }
+  &.mud-tabs-header-after {
+    display: inherit;
+  }
 }
 
 .mud-tabs-panel-header {
-    display: flex;
-    flex: 1 1 auto;
+  display: flex;
+  flex: 1 1 auto;
 
-    &.mud-tabs-panel-header-before {
-        justify-content: flex-start;
-    }
+  &.mud-tabs-panel-header-before {
+    justify-content: flex-start;
+  }
 
-    &.mud-tabs-panel-header-after {
-        justify-content: flex-end;
-    }
+  &.mud-tabs-panel-header-after {
+    justify-content: flex-end;
+  }
 }
-

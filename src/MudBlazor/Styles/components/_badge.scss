@@ -1,204 +1,204 @@
 ﻿
 .mud-badge-root {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 
-    .mud-badge-wrapper {
-        top: 0;
-        left: 0;
-        flex: 0 1;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        pointer-events: none;
-        position: absolute;
-
-        &.mud-badge {
-
-            &-top {
-                align-items: flex-start;
-
-                &.left {
-                    justify-content: flex-start;
-                }
-
-                &.center {
-                    justify-content: center;
-                }
-
-                &.right {
-                    justify-content: flex-end;
-                }
-            }
-
-            &-center {
-                align-items: center;
-
-                &.left {
-                    justify-content: flex-start;
-                }
-
-                &.center {
-                    justify-content: center
-                }
-
-                &.right {
-                    justify-content: flex-end;
-                }
-            }
-
-            &-bottom {
-                align-items: flex-end;
-
-                &.left {
-                    justify-content: flex-start;
-                }
-
-                &.center {
-                    justify-content: center;
-                }
-
-                &.right {
-                    justify-content: flex-end;
-                }
-            }
-        }
-    }
-}
-
-.mud-badge {
-    border-radius: 10px;
-    font-size: 12px;
-    height: 20px;
-    letter-spacing: 0;
-    min-width: 20px;
-    padding: 4px 6px;
-    pointer-events: auto;
-    line-height: 1;
+  .mud-badge-wrapper {
+    top: 0;
+    left: 0;
+    flex: 0 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    pointer-events: none;
     position: absolute;
-    text-align: center;
-    text-indent: 0;
-    top: auto;
-    transition: .3s cubic-bezier(.25,.8,.5,1);
-    white-space: nowrap;
-  
-    &.mud-badge-default {
-      color: var(--mud-palette-text-primary);
-      background-color: var(--mud-palette-grey-light);
-    }
-
-    &.mud-badge-bordered {
-        border-color: var(--mud-palette-surface);
-        border-style: solid;
-        border-width: 2px;
-        padding: 3px 4px;
-
-        &.mud-badge-icon {
-            padding: 4px 6px;
-
-            & .mud-icon-badge {
-                margin-left: -4px;
-                margin-inline-start: -4px;
-                margin-inline-end: unset;
-                margin-top: -4px;
-            }
-        }
-    }
-
-    &.mud-badge-icon {
-        width: 20px;
-        height: 20px;
-
-        & .mud-icon-badge {
-            color: inherit;
-            font-size: 12px;
-            margin-left: -2px;
-            margin-inline-start: -2px;
-            margin-inline-end: unset;
-        }
-    }
-
-    &.mud-badge-dot {
-        border-radius: 50%;
-        height: 9px;
-        min-width: 0;
-        padding: 0;
-        width: 9px;
-    }
 
     &.mud-badge {
 
-        &-top {
-            &.left {
-                inset: auto calc(100% - 4px) calc(100% - 4px) auto;
+      &-top {
+        align-items: flex-start;
 
-                &.mud-badge-overlap {
-                    inset: auto calc(100% - 12px) calc(100% - 12px) auto;
-                }
-            }
-
-            &.center {
-                bottom: calc(100% - 4px);
-
-                &.mud-badge-overlap {
-                    bottom: calc(100% - 12px);
-                }
-            }
-
-            &.right {
-                inset: auto auto calc(100% - 4px) calc(100% - 4px);
-
-                &.mud-badge-overlap {
-                    inset: auto auto calc(100% - 12px) calc(100% - 12px);
-                }
-            }
+        &.left {
+          justify-content: flex-start;
         }
 
-        &-center {
-            &.left {
-                right: calc(100% - 4px);
-
-                &.mud-badge-overlap {
-                    right: calc(100% - 12px);
-                }
-            }
-
-            &.center {
-            }
-
-            &.right {
-                left: calc(100% - 4px);
-
-                &.mud-badge-overlap {
-                    left: calc(100% - 12px);
-                }
-            }
+        &.center {
+          justify-content: center;
         }
 
-        &-bottom {
-            &.left {
-                inset: calc(100% - 4px) calc(100% - 4px) auto auto;
-
-                &.mud-badge-overlap {
-                    inset: calc(100% - 12px) calc(100% - 12px) auto auto;
-                }
-            }
-
-            &.center {
-                top: calc(100% - 4px);
-
-                &.mud-badge-overlap {
-                    top: calc(100% - 12px);
-                }
-            }
-
-            &.right {
-                inset: calc(100% - 4px) auto auto calc(100% - 4px);
-
-                &.mud-badge-overlap {
-                    inset: calc(100% - 12px) auto auto calc(100% - 12px);
-                }
-            }
+        &.right {
+          justify-content: flex-end;
         }
+      }
+
+      &-center {
+        align-items: center;
+
+        &.left {
+          justify-content: flex-start;
+        }
+
+        &.center {
+          justify-content: center
+        }
+
+        &.right {
+          justify-content: flex-end;
+        }
+      }
+
+      &-bottom {
+        align-items: flex-end;
+
+        &.left {
+          justify-content: flex-start;
+        }
+
+        &.center {
+          justify-content: center;
+        }
+
+        &.right {
+          justify-content: flex-end;
+        }
+      }
     }
+  }
+}
+
+.mud-badge {
+  border-radius: 10px;
+  font-size: 12px;
+  height: 20px;
+  letter-spacing: 0;
+  min-width: 20px;
+  padding: 4px 6px;
+  pointer-events: auto;
+  line-height: 1;
+  position: absolute;
+  text-align: center;
+  text-indent: 0;
+  top: auto;
+  transition: .3s cubic-bezier(.25,.8,.5,1);
+  white-space: nowrap;
+
+  &.mud-badge-default {
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-grey-light);
+  }
+
+  &.mud-badge-bordered {
+    border-color: var(--mud-palette-surface);
+    border-style: solid;
+    border-width: 2px;
+    padding: 3px 4px;
+
+    &.mud-badge-icon {
+      padding: 4px 6px;
+
+      & .mud-icon-badge {
+        margin-left: -4px;
+        margin-inline-start: -4px;
+        margin-inline-end: unset;
+        margin-top: -4px;
+      }
+    }
+  }
+
+  &.mud-badge-icon {
+    width: 20px;
+    height: 20px;
+
+    & .mud-icon-badge {
+      color: inherit;
+      font-size: 12px;
+      margin-left: -2px;
+      margin-inline-start: -2px;
+      margin-inline-end: unset;
+    }
+  }
+
+  &.mud-badge-dot {
+    border-radius: 50%;
+    height: 9px;
+    min-width: 0;
+    padding: 0;
+    width: 9px;
+  }
+
+  &.mud-badge {
+
+    &-top {
+      &.left {
+        inset: auto calc(100% - 4px) calc(100% - 4px) auto;
+
+        &.mud-badge-overlap {
+          inset: auto calc(100% - 12px) calc(100% - 12px) auto;
+        }
+      }
+
+      &.center {
+        bottom: calc(100% - 4px);
+
+        &.mud-badge-overlap {
+          bottom: calc(100% - 12px);
+        }
+      }
+
+      &.right {
+        inset: auto auto calc(100% - 4px) calc(100% - 4px);
+
+        &.mud-badge-overlap {
+          inset: auto auto calc(100% - 12px) calc(100% - 12px);
+        }
+      }
+    }
+
+    &-center {
+      &.left {
+        right: calc(100% - 4px);
+
+        &.mud-badge-overlap {
+          right: calc(100% - 12px);
+        }
+      }
+
+      &.center {
+      }
+
+      &.right {
+        left: calc(100% - 4px);
+
+        &.mud-badge-overlap {
+          left: calc(100% - 12px);
+        }
+      }
+    }
+
+    &-bottom {
+      &.left {
+        inset: calc(100% - 4px) calc(100% - 4px) auto auto;
+
+        &.mud-badge-overlap {
+          inset: calc(100% - 12px) calc(100% - 12px) auto auto;
+        }
+      }
+
+      &.center {
+        top: calc(100% - 4px);
+
+        &.mud-badge-overlap {
+          top: calc(100% - 12px);
+        }
+      }
+
+      &.right {
+        inset: calc(100% - 4px) auto auto calc(100% - 4px);
+
+        &.mud-badge-overlap {
+          inset: calc(100% - 12px) auto auto calc(100% - 12px);
+        }
+      }
+    }
+  }
 }

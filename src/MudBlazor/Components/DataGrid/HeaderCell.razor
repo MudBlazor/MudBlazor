@@ -10,7 +10,7 @@
         @ChildContent
     </th>
 }
-else if (Column != null && !Column.hidden)
+else if (Column != null && !Column.HiddenState.Value)
 {
     <th @ref=@_headerElement scope="col" class="@_classname" style="@_style" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
         @if (DataGrid.DragDropColumnReordering)
@@ -95,7 +95,7 @@ else if (Column != null && !Column.hidden)
                     }
                     else if (showFilterIcon)
                     {
-                        <MudIconButton Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" OnClick="@AddFilterAsync"></MudIconButton>
+                        <MudIconButton Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" OnClick="@AddFilter"></MudIconButton>
                     }
                 }
 
@@ -105,7 +105,7 @@ else if (Column != null && !Column.hidden)
                         <MudMenuItem Disabled="@(_initialDirection == SortDirection.None)" OnClick="@RemoveSortAsync">@Localizer["MudDataGrid.Unsort"]</MudMenuItem>
                         @if (filterable && DataGrid.FilterMode != DataGridFilterMode.ColumnFilterRow)
                         {
-                            <MudMenuItem OnClick="@AddFilterAsync">@Localizer["MudDataGrid.Filter"]</MudMenuItem>
+                            <MudMenuItem OnClick="@AddFilter">@Localizer["MudDataGrid.Filter"]</MudMenuItem>
                         }
                         @if (hideable)
                         {

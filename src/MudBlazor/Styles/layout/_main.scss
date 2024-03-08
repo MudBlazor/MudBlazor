@@ -1,134 +1,134 @@
 ﻿@import '../abstracts/variables';
 
 .mud-main-content {
-    margin: 0;
-    flex: 1 1 auto;
-    padding-top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 8);
-    transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  margin: 0;
+  flex: 1 1 auto;
+  padding-top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 8);
+  transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
 }
 
 @media (min-width:$breakpoint-xs) and (orientation: landscape) {
-    .mud-main-content {
-        padding-top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
-    }
+  .mud-main-content {
+    padding-top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
+  }
 }
 
 @media (min-width:$breakpoint-sm) {
-    .mud-main-content {
-        padding-top: var(--mud-appbar-height);
-    }
+  .mud-main-content {
+    padding-top: var(--mud-appbar-height);
+  }
 }
 
 .mud-appbar-dense {
-    ~ .mud-main-content {
-        padding-top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
-    }
+  ~ .mud-main-content {
+    padding-top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
+  }
 }
 
 .mud-drawer-open {
-    &-responsive {
-        @each $breakpoint in map-keys($breakpoints) {
-            &-#{$breakpoint} {
-                @media (min-width: map-get($breakpoints, $breakpoint)) {
-                    &-left .mud-main-content {
-                        margin-left: var(--mud-drawer-width-left);
-                    }
+  &-responsive {
+    @each $breakpoint in map-keys($breakpoints) {
+      &-#{$breakpoint} {
+        @media (min-width: map-get($breakpoints, $breakpoint)) {
+          &-left .mud-main-content {
+            margin-left: var(--mud-drawer-width-left);
+          }
 
-                    &-right .mud-main-content {
-                        margin-right: var(--mud-drawer-width-right);
-                    }
+          &-right .mud-main-content {
+            margin-right: var(--mud-drawer-width-right);
+          }
 
-                    &-left#{&}-right .mud-main-content {
-                        margin-right: var(--mud-drawer-width-right);
-                        margin-left: var(--mud-drawer-width-left);
-                    }
-                }
-            }
+          &-left#{&}-right .mud-main-content {
+            margin-right: var(--mud-drawer-width-right);
+            margin-left: var(--mud-drawer-width-left);
+          }
         }
+      }
+    }
+  }
+
+  &-persistent {
+    &-left:not(&-right) .mud-main-content {
+      margin-left: var(--mud-drawer-width-left);
     }
 
-    &-persistent {
-        &-left:not(&-right) .mud-main-content {
-            margin-left: var(--mud-drawer-width-left);
+    &-right:not(&-left) .mud-main-content {
+      margin-right: var(--mud-drawer-width-right);
+    }
+
+    &-left#{&}-right .mud-main-content {
+      margin-right: var(--mud-drawer-width-right);
+      margin-left: var(--mud-drawer-width-left);
+    }
+  }
+
+  &-mini {
+    @each $breakpoint in map-keys($breakpoints) {
+      &-#{$breakpoint} {
+        &-left .mud-main-content {
+          margin-left: var(--mud-drawer-width-left);
         }
 
-        &-right:not(&-left) .mud-main-content {
-            margin-right: var(--mud-drawer-width-right);
+        &-right .mud-main-content {
+          margin-right: var(--mud-drawer-width-right);
         }
 
         &-left#{&}-right .mud-main-content {
-            margin-right: var(--mud-drawer-width-right);
-            margin-left: var(--mud-drawer-width-left);
+          margin-right: var(--mud-drawer-width-right);
+          margin-left: var(--mud-drawer-width-left);
         }
+      }
     }
 
-    &-mini {
-        @each $breakpoint in map-keys($breakpoints) {
-            &-#{$breakpoint} {
-                &-left .mud-main-content {
-                    margin-left: var(--mud-drawer-width-left);
-                }
+    &-none, &-always {
+      &-left .mud-main-content {
+        margin-left: var(--mud-drawer-width-left);
+      }
 
-                &-right .mud-main-content {
-                        margin-right: var(--mud-drawer-width-right);
-                }
+      &-right .mud-main-content {
+        margin-right: var(--mud-drawer-width-right);
+      }
 
-                &-left#{&}-right .mud-main-content {
-                    margin-right: var(--mud-drawer-width-right);
-                    margin-left: var(--mud-drawer-width-left);
-                }
-            }
-        }
-
-        &-none, &-always {
-            &-left .mud-main-content {
-                margin-left: var(--mud-drawer-width-left);
-            }
-
-            &-right .mud-main-content {
-                margin-right: var(--mud-drawer-width-right);
-            }
-
-            &-left#{&}-right .mud-main-content {
-                margin-right: var(--mud-drawer-width-right);
-                margin-left: var(--mud-drawer-width-left);
-            }
-        }
+      &-left#{&}-right .mud-main-content {
+        margin-right: var(--mud-drawer-width-right);
+        margin-left: var(--mud-drawer-width-left);
+      }
     }
+  }
 }
 
 .mud-drawer-close {
-    &-mini {
-        @each $breakpoint in map-keys($breakpoints) {
-            &-#{$breakpoint} {
-                &-left .mud-main-content {
-                    margin-left: var(--mud-drawer-width-mini-left);
-                }
-
-                &-right .mud-main-content {
-                    margin-right: var(--mud-drawer-width-mini-right);
-                }
-
-                &-left#{&}-right .mud-main-content {
-                    margin-right: var(--mud-drawer-width-mini-right);
-                    margin-left: var(--mud-drawer-width-mini-left);
-                }
-            }
+  &-mini {
+    @each $breakpoint in map-keys($breakpoints) {
+      &-#{$breakpoint} {
+        &-left .mud-main-content {
+          margin-left: var(--mud-drawer-width-mini-left);
         }
 
-        &-none, &-always {
-            &-left .mud-main-content {
-                margin-left: var(--mud-drawer-width-mini-left);
-            }
-
-            &-right .mud-main-content {
-                margin-right: var(--mud-drawer-width-mini-right);
-            }
-
-            &-left#{&}-right .mud-main-content {
-                margin-right: var(--mud-drawer-width-mini-right);
-                margin-left: var(--mud-drawer-width-mini-left);
-            }
+        &-right .mud-main-content {
+          margin-right: var(--mud-drawer-width-mini-right);
         }
+
+        &-left#{&}-right .mud-main-content {
+          margin-right: var(--mud-drawer-width-mini-right);
+          margin-left: var(--mud-drawer-width-mini-left);
+        }
+      }
     }
+
+    &-none, &-always {
+      &-left .mud-main-content {
+        margin-left: var(--mud-drawer-width-mini-left);
+      }
+
+      &-right .mud-main-content {
+        margin-right: var(--mud-drawer-width-mini-right);
+      }
+
+      &-left#{&}-right .mud-main-content {
+        margin-right: var(--mud-drawer-width-mini-right);
+        margin-left: var(--mud-drawer-width-mini-left);
+      }
+    }
+  }
 }

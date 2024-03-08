@@ -1,131 +1,131 @@
 ﻿@import '../abstracts/variables';
 
 .mud-avatar {
-    display: inline-flex;
-    overflow: hidden;
-    position: relative;
-    align-items: center;
-    flex-shrink: 0;
-    line-height: 1;
-    user-select: none;
-    border-radius: 50%;
-    justify-content: center;
-    color: var(--mud-palette-white);
-    background-color: var(--mud-palette-grey-light);
+  display: inline-flex;
+  overflow: hidden;
+  position: relative;
+  align-items: center;
+  flex-shrink: 0;
+  line-height: 1;
+  user-select: none;
+  border-radius: 50%;
+  justify-content: center;
+  color: var(--mud-palette-white);
+  background-color: var(--mud-palette-grey-light);
 
-    &.mud-avatar-small {
-        width: 24px;
-        height: 24px;
-        font-size: 0.75rem;
-    }
+  &.mud-avatar-small {
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+  }
 
-    &.mud-avatar-medium {
-        width: 40px;
-        height: 40px;
-        font-size: 1.25rem;
-    }
+  &.mud-avatar-medium {
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+  }
 
-    &.mud-avatar-large {
-        width: 56px;
-        height: 56px;
-        font-size: 1.5rem;
-    }
+  &.mud-avatar-large {
+    width: 56px;
+    height: 56px;
+    font-size: 1.5rem;
+  }
 }
 
 
 .mud-avatar-rounded {
-    border-radius: var(--mud-default-borderradius);
+  border-radius: var(--mud-default-borderradius);
 }
 
 .mud-avatar-square {
-    border-radius: 0;
+  border-radius: 0;
 }
 
 .mud-avatar > .mud-image {
-    color: transparent;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    text-align: center;
-    text-indent: 10000px;
+  color: transparent;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  text-align: center;
+  text-indent: 10000px;
 }
 
 .mud-avatar-fallback {
-    width: 75%;
-    height: 75%;
+  width: 75%;
+  height: 75%;
 }
 
 .mud-avatar-outlined {
-    color: var(--mud-palette-text-primary);
-    background-color: unset;
-    border: 1px solid var(--mud-palette-text-primary);
+  color: var(--mud-palette-text-primary);
+  background-color: unset;
+  border: 1px solid var(--mud-palette-text-primary);
 
-    @each $color in $mud-palette-colors {
-        &.mud-avatar-outlined-#{$color} {
-            color: var(--mud-palette-#{$color});
-            border: 1px solid var(--mud-palette-#{$color});
-        }
+  @each $color in $mud-palette-colors {
+    &.mud-avatar-outlined-#{$color} {
+      color: var(--mud-palette-#{$color});
+      border: 1px solid var(--mud-palette-#{$color});
     }
+  }
 }
 
 .mud-avatar-filled {
-    color: var(--mud-palette-text-primary);
-    background-color: var(--mud-palette-lines-inputs);
+  color: var(--mud-palette-text-primary);
+  background-color: var(--mud-palette-lines-inputs);
 
-    @each $color in $mud-palette-colors {
-        &.mud-avatar-filled-#{$color} {
-            color: var(--mud-palette-#{$color}-text);
-            background-color: var(--mud-palette-#{$color});
-        }
+  @each $color in $mud-palette-colors {
+    &.mud-avatar-filled-#{$color} {
+      color: var(--mud-palette-#{$color}-text);
+      background-color: var(--mud-palette-#{$color});
     }
+  }
 }
 
 
 .mud-avatar-group {
-    display: flex;
+  display: flex;
 
-    .mud-avatar:first-child {
-        margin-inline-start: 0px !important;
+  .mud-avatar:first-child {
+    margin-inline-start: 0px !important;
+  }
+
+  &.mud-avatar-group-outlined {
+    &.mud-avatar-group-outlined-transparent {
+      .mud-avatar:not(.mud-avatar-outlined) {
+        border-color: transparent;
+      }
     }
 
-    &.mud-avatar-group-outlined {
-        &.mud-avatar-group-outlined-transparent {
-            .mud-avatar:not(.mud-avatar-outlined) {
-                border-color: transparent;
-            }
-        }
-
-        &.mud-avatar-group-outlined-surface {
-            .mud-avatar:not(.mud-avatar-outlined) {
-                border-color: var(--mud-palette-surface);
-            }
-        }
-
-        @each $color in $mud-palette-colors {
-            &.mud-avatar-group-outlined-#{$color} {
-                .mud-avatar:not(.mud-avatar-outlined) {
-                    border-color: var(--mud-palette-#{$color});
-                }
-            }
-        }
-
-        .mud-avatar {
-            border: 2px solid;
-
-            &.mud-avatar-small {
-                width: 28px;
-                height: 28px;
-            }
-
-            &.mud-avatar-medium {
-                width: 44px;
-                height: 44px;
-            }
-
-            &.mud-avatar-large {
-                width: 60px;
-                height: 60px;
-            }
-        }
+    &.mud-avatar-group-outlined-surface {
+      .mud-avatar:not(.mud-avatar-outlined) {
+        border-color: var(--mud-palette-surface);
+      }
     }
+
+    @each $color in $mud-palette-colors {
+      &.mud-avatar-group-outlined-#{$color} {
+        .mud-avatar:not(.mud-avatar-outlined) {
+          border-color: var(--mud-palette-#{$color});
+        }
+      }
+    }
+
+    .mud-avatar {
+      border: 2px solid;
+
+      &.mud-avatar-small {
+        width: 28px;
+        height: 28px;
+      }
+
+      &.mud-avatar-medium {
+        width: 44px;
+        height: 44px;
+      }
+
+      &.mud-avatar-large {
+        width: 60px;
+        height: 60px;
+      }
+    }
+  }
 }

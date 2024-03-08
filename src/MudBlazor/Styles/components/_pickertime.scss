@@ -1,285 +1,285 @@
 ﻿.mud-picker-timepicker-toolbar {
 
-    .mud-timepicker-button {
-        padding: 0;
-        min-width: 16px;
-        text-transform: none;
+  .mud-timepicker-button {
+    padding: 0;
+    min-width: 16px;
+    text-transform: none;
 
-        &.mud-timepicker-toolbar-text {
-            color: rgba(255, 255, 255, 0.54);
-        }
-
-        &:hover {
-            background-color: var(--mud-theme-default-hover);
-        }
+    &.mud-timepicker-toolbar-text {
+      color: rgba(255, 255, 255, 0.54);
     }
 
-    .mud-timepicker-hourminute {
-        display: flex;
-        align-items: baseline;
-        justify-content: flex-end;
+    &:hover {
+      background-color: var(--mud-theme-default-hover);
+    }
+  }
 
-        .mud-timepicker-button {
-            font-size: 3.75rem;
-            font-weight: 300;
-            line-height: 1;
-            letter-spacing: -0.00833em;
-        }
+  .mud-timepicker-hourminute {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+
+    .mud-timepicker-button {
+      font-size: 3.75rem;
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -0.00833em;
+    }
+  }
+
+  .mud-timepicker-ampm {
+    display: flex;
+    margin-left: 20px;
+    margin-right: -20px;
+    margin-inline-start: 20px;
+    margin-inline-end: -20px;
+    flex-direction: column;
+
+    .mud-timepicker-button {
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.75;
+      letter-spacing: 0.00938em;
+    }
+  }
+
+  .mud-timepicker-separator {
+    cursor: default;
+    margin: 0 4px 0 2px;
+    margin-inline-start: 2px;
+    margin-inline-end: 4px;
+  }
+
+  &.mud-picker-timepicker-toolbar-landscape {
+    flex-wrap: wrap;
+    width: 150px;
+    justify-content: center;
+
+    .mud-timepicker-hourminute {
+      .mud-timepicker-button {
+        font-size: 3rem;
+        font-weight: 400;
+        line-height: 1.04;
+        letter-spacing: 0em;
+      }
     }
 
     .mud-timepicker-ampm {
-        display: flex;
-        margin-left: 20px;
-        margin-right: -20px;
-        margin-inline-start: 20px;
-        margin-inline-end: -20px;
-        flex-direction: column;
+      display: flex;
+      margin-left: 20px;
+      margin-right: -20px;
+      margin-inline-start: 20px;
+      margin-inline-end: -20px;
+      flex-direction: column;
 
-        .mud-timepicker-button {
-            font-size: 18px;
-            font-weight: 400;
-            line-height: 1.75;
-            letter-spacing: 0.00938em;
-        }
+      .mud-timepicker-button {
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 1.75;
+        letter-spacing: 0.00938em;
+      }
     }
 
     .mud-timepicker-separator {
-        cursor: default;
-        margin: 0 4px 0 2px;
-        margin-inline-start: 2px;
-        margin-inline-end: 4px;
+      font-size: 3rem;
+      font-weight: 400;
+      line-height: 1.04;
+      letter-spacing: 0em;
     }
-
-    &.mud-picker-timepicker-toolbar-landscape {
-        flex-wrap: wrap;
-        width: 150px;
-        justify-content: center;
-
-        .mud-timepicker-hourminute {
-            .mud-timepicker-button {
-                font-size: 3rem;
-                font-weight: 400;
-                line-height: 1.04;
-                letter-spacing: 0em;
-            }
-        }
-
-        .mud-timepicker-ampm {
-            display: flex;
-            margin-left: 20px;
-            margin-right: -20px;
-            margin-inline-start: 20px;
-            margin-inline-end: -20px;
-            flex-direction: column;
-
-            .mud-timepicker-button {
-                font-size: 18px;
-                font-weight: 400;
-                line-height: 1.75;
-                letter-spacing: 0.00938em;
-            }
-        }
-
-        .mud-timepicker-separator {
-            font-size: 3rem;
-            font-weight: 400;
-            line-height: 1.04;
-            letter-spacing: 0em;
-        }
-    }
+  }
 }
 
 .mud-picker-time-container {
-    margin: 16px 0 8px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
+  margin: 16px 0 8px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 
-    .mud-picker-time-clock {
-        width: 260px;
-        height: 260px;
-        position: relative;
-        border-radius: 50%;
-        pointer-events: none;
-        background-color: rgba(0,0,0,.07);
+  .mud-picker-time-clock {
+    width: 260px;
+    height: 260px;
+    position: relative;
+    border-radius: 50%;
+    pointer-events: none;
+    background-color: rgba(0,0,0,.07);
 
-        .mud-picker-time-clock-mask {
-            width: 100%;
-            height: 100%;
-            outline: none;
-            position: absolute;
-            user-select: none;
-            touch-actions: none;
-            pointer-events: auto;
-        }
-
-        .mud-picker-time-clock-pin {
-            top: 50%;
-            left: 50%;
-            width: 6px;
-            height: 6px;
-            position: absolute;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-        }
-
-        .mud-picker-stick-inner {
-            left: calc(50% - 1px);
-            width: 3px;
-            height: 35%;
-            bottom: 0;
-            position: absolute;
-            transform-origin: center bottom 0px;
-
-            &.mud-hour {
-                &:after {
-                    content: "";
-                    position: absolute;
-                    left: 50%;
-                    transform: translate(-50%,-50%);
-                    height: 48px;
-                    width: 48px;
-                    top: -60%;
-                    border-radius: 50%;
-                    background-color: inherit;
-                }
-            }
-        }
-
-        .mud-picker-stick-outer {
-            left: calc(50% - 1px);
-            width: 0;
-            height: 35%;
-            bottom: 35%;
-            position: absolute;
-            transform-origin: center bottom 0px;
-
-            &.mud-hour {
-                &:after {
-                    content: "";
-                    position: absolute;
-                    left: 50%;
-                    transform: translate(-50%,-50%);
-                    height: 48px;
-                    width: 62px;
-                    top: -20px;
-                    border-radius: 50%;
-                    background-color: inherit;
-                }
-            }
-        }
-
-        .mud-picker-stick {
-            left: calc(50% - 1px);
-            width: 3px;
-            height: 50%;
-            bottom: 50%;
-            position: absolute;
-            transform-origin: center bottom 0px;
-
-            &.mud-hour {
-                &:after {
-                    content: "";
-                    position: absolute;
-                    left: 50%;
-                    transform: translate(-50%,-50%);
-                    height: 62px;
-                    width: 62px;
-                    top: 20px;
-                    border-radius: 50%;
-                    background-color: inherit;
-                }
-            }
-
-            &.mud-minute {
-                &:after {
-                    content: "";
-                    position: absolute;
-                    left: 50%;
-                    transform: translate(-50%,-50%);
-                    height: 44px;
-                    width: 15px;
-                    top: 20px;
-                    border-radius: 50%;
-                    background-color: inherit;
-                }
-            }
-        }
-
-        .mud-picker-time-clock-pointer {
-            left: calc(50% - 1px);
-            width: 2px;
-            bottom: 50%;
-            position: absolute;
-            transform-origin: center bottom 0px;
-
-            &.mud-picker-time-clock-pointer-animation {
-                transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,height 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-            }
-
-            .mud-picker-time-clock-pointer-thumb {
-                position: absolute;
-                border-radius: 100%;
-
-                &.mud-onclock-text {
-                    top: -19px;
-                    left: -13px;
-                    width: 28px;
-                    height: 28px;
-                    border: none;
-                    background-color: inherit
-                }
-
-                &.mud-onclock-minute {
-                    background: transparent;
-                    border: 2px solid;
-                    width: 10px;
-                    height: 10px;
-                    top: -9px;
-                    left: -4px;
-                }
-            }
-        }
-
-        .mud-clock-number {
-            left: calc((100% - 32px) / 2);
-            color: var(--mud-palette-text-primary);
-            background-color: transparent !important;
-            width: 32px;
-            height: 32px;
-            display: inline-flex;
-            position: absolute;
-            align-items: center;
-            user-select: none;
-            border-radius: 50%;
-            justify-content: center;
-            transition-duration: 120ms;
-            transition-property: color;
-        }
+    .mud-picker-time-clock-mask {
+      width: 100%;
+      height: 100%;
+      outline: none;
+      position: absolute;
+      user-select: none;
+      touch-actions: none;
+      pointer-events: auto;
     }
+
+    .mud-picker-time-clock-pin {
+      top: 50%;
+      left: 50%;
+      width: 6px;
+      height: 6px;
+      position: absolute;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+    }
+
+    .mud-picker-stick-inner {
+      left: calc(50% - 1px);
+      width: 3px;
+      height: 35%;
+      bottom: 0;
+      position: absolute;
+      transform-origin: center bottom 0px;
+
+      &.mud-hour {
+        &:after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          transform: translate(-50%,-50%);
+          height: 48px;
+          width: 48px;
+          top: -60%;
+          border-radius: 50%;
+          background-color: inherit;
+        }
+      }
+    }
+
+    .mud-picker-stick-outer {
+      left: calc(50% - 1px);
+      width: 0;
+      height: 35%;
+      bottom: 35%;
+      position: absolute;
+      transform-origin: center bottom 0px;
+
+      &.mud-hour {
+        &:after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          transform: translate(-50%,-50%);
+          height: 48px;
+          width: 62px;
+          top: -20px;
+          border-radius: 50%;
+          background-color: inherit;
+        }
+      }
+    }
+
+    .mud-picker-stick {
+      left: calc(50% - 1px);
+      width: 3px;
+      height: 50%;
+      bottom: 50%;
+      position: absolute;
+      transform-origin: center bottom 0px;
+
+      &.mud-hour {
+        &:after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          transform: translate(-50%,-50%);
+          height: 62px;
+          width: 62px;
+          top: 20px;
+          border-radius: 50%;
+          background-color: inherit;
+        }
+      }
+
+      &.mud-minute {
+        &:after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          transform: translate(-50%,-50%);
+          height: 44px;
+          width: 15px;
+          top: 20px;
+          border-radius: 50%;
+          background-color: inherit;
+        }
+      }
+    }
+
+    .mud-picker-time-clock-pointer {
+      left: calc(50% - 1px);
+      width: 2px;
+      bottom: 50%;
+      position: absolute;
+      transform-origin: center bottom 0px;
+
+      &.mud-picker-time-clock-pointer-animation {
+        transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,height 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      }
+
+      .mud-picker-time-clock-pointer-thumb {
+        position: absolute;
+        border-radius: 100%;
+
+        &.mud-onclock-text {
+          top: -19px;
+          left: -13px;
+          width: 28px;
+          height: 28px;
+          border: none;
+          background-color: inherit
+        }
+
+        &.mud-onclock-minute {
+          background: transparent;
+          border: 2px solid;
+          width: 10px;
+          height: 10px;
+          top: -9px;
+          left: -4px;
+        }
+      }
+    }
+
+    .mud-clock-number {
+      left: calc((100% - 32px) / 2);
+      color: var(--mud-palette-text-primary);
+      background-color: transparent !important;
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      position: absolute;
+      align-items: center;
+      user-select: none;
+      border-radius: 50%;
+      justify-content: center;
+      transition-duration: 120ms;
+      transition-property: color;
+    }
+  }
 }
 
 .mud-time-picker-dial {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    transition: transform 350ms,opacity 350ms;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transition: transform 350ms,opacity 350ms;
 }
 
 .mud-time-picker-dial-out {
-    opacity: 0;
+  opacity: 0;
 }
 
 .mud-time-picker-hour.mud-time-picker-dial-out {
-    transform: scale(1.2,1.2);
-    transform-origin: center;
+  transform: scale(1.2,1.2);
+  transform-origin: center;
 }
 
 .mud-time-picker-minute.mud-time-picker-dial-out {
-    transform: scale(.8,.8);
-    transform-origin: center;
+  transform: scale(.8,.8);
+  transform-origin: center;
 }
 
 .mud-time-picker-dial-hidden {
-    visibility: hidden;
+  visibility: hidden;
 }

@@ -1,115 +1,115 @@
 ﻿@import '../abstracts/variables';
 
 .mud-alert {
-    display: flex;
-    padding: 6px 16px;
-    border-radius: var(--mud-default-borderradius);
-    background-color: transparent;
-    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  display: flex;
+  padding: 6px 16px;
+  border-radius: var(--mud-default-borderradius);
+  background-color: transparent;
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
-    &.mud-square {
-        border-radius: 0px;
-    }
+  &.mud-square {
+    border-radius: 0px;
+  }
 
-    &.mud-dense {
-        padding: 0px 12px;
-    }
+  &.mud-dense {
+    padding: 0px 12px;
+  }
 }
 
 .mud-alert-text {
-    &-normal {
-        color: var(--mud-palette-text-primary);
-        background-color: var(--mud-palette-dark-hover);
-    }
+  &-normal {
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-dark-hover);
+  }
 
-    @each $color in $mud-palette-colors {
-        &-#{$color} {
-            color: var(--mud-palette-#{$color}-darken);
-            background-color: var(--mud-palette-#{$color}-hover);
+  @each $color in $mud-palette-colors {
+    &-#{$color} {
+      color: var(--mud-palette-#{$color}-darken);
+      background-color: var(--mud-palette-#{$color}-hover);
 
-            & .mud-alert-icon {
-                color: var(--mud-palette-#{$color});
-            }
-        }
+      & .mud-alert-icon {
+        color: var(--mud-palette-#{$color});
+      }
     }
+  }
 }
 
 .mud-alert-outlined {
-    &-normal {
-        color: var(--mud-palette-text-primary);
-        border: 1px solid var(--mud-palette-text-primary);
-    }
+  &-normal {
+    color: var(--mud-palette-text-primary);
+    border: 1px solid var(--mud-palette-text-primary);
+  }
 
-    @each $color in $mud-palette-colors {
-        &-#{$color} {
-            color: var(--mud-palette-#{$color}-darken);
-            border: 1px solid var(--mud-palette-#{$color});
+  @each $color in $mud-palette-colors {
+    &-#{$color} {
+      color: var(--mud-palette-#{$color}-darken);
+      border: 1px solid var(--mud-palette-#{$color});
 
-            & .mud-alert-icon {
-                color: var(--mud-palette-#{$color});
-            }
-        }
+      & .mud-alert-icon {
+        color: var(--mud-palette-#{$color});
+      }
     }
+  }
 }
 
 .mud-alert-filled {
-    &-normal {
-        color: var(--mud-palette-dark-text);
-        font-weight: 500;
-        background-color: var(--mud-palette-dark);
+  &-normal {
+    color: var(--mud-palette-dark-text);
+    font-weight: 500;
+    background-color: var(--mud-palette-dark);
 
-        & .mud-alert-close .mud-button-root {
-            color: currentColor;
-        }
+    & .mud-alert-close .mud-button-root {
+      color: currentColor;
     }
+  }
 
-    @each $color in $mud-palette-colors {
-        &-#{$color} {
-            color: var(--mud-palette-#{$color}-text);
-            font-weight: 500;
-            background-color: var(--mud-palette-#{$color});
+  @each $color in $mud-palette-colors {
+    &-#{$color} {
+      color: var(--mud-palette-#{$color}-text);
+      font-weight: 500;
+      background-color: var(--mud-palette-#{$color});
 
-            & .mud-button-root {
-                color: currentColor;
-            }
-        }
+      & .mud-button-root {
+        color: currentColor;
+      }
     }
+  }
 }
 
 .mud-alert-icon {
-    display: flex;
-    opacity: 0.9;
-    padding: 7px 0;
-    font-size: 22px;
+  display: flex;
+  opacity: 0.9;
+  padding: 7px 0;
+  font-size: 22px;
+  margin-right: 12px;
+  margin-inline-end: 12px;
+  margin-inline-start: unset;
+
+  &.mud-alert-icon-left {
     margin-right: 12px;
     margin-inline-end: 12px;
     margin-inline-start: unset;
+  }
 
-    &.mud-alert-icon-left {
-        margin-right: 12px;
-        margin-inline-end: 12px;
-        margin-inline-start: unset;
-    }
-
-    &.mud-alert-icon-right {
-        margin-left: 12px;
-        margin-inline-start: 12px;
-        margin-inline-end: unset;
-    }
+  &.mud-alert-icon-right {
+    margin-left: 12px;
+    margin-inline-start: 12px;
+    margin-inline-end: unset;
+  }
 }
 
 .mud-alert-message {
-    padding: 9px 0;
+  padding: 9px 0;
 }
 
 .mud-alert-position {
-    flex: 1;
-    display: flex;
+  flex: 1;
+  display: flex;
 }
 
 .mud-alert-close {
-    display: flex;
-    flex: 0;
-    align-items: center;
-    margin-left: 8px;
+  display: flex;
+  flex: 0;
+  align-items: center;
+  margin-left: 8px;
 }
