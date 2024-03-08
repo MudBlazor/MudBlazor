@@ -23,6 +23,11 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+        protected string HeaderClassname =>
+       new CssBuilder("mud-expand-panel-header")           
+           .AddClass(HeaderClass)
+       .Build();
+
         protected string PanelContentClassname =>
             new CssBuilder("mud-expand-panel-content")
                 .AddClass("mud-expand-panel-gutters", DisableGutters || Parent?.DisableGutters == true)
@@ -35,6 +40,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public int? MaxHeight { get; set; }
+
+        /// <summary>
+        /// User class names, separated by space.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Appearance)]
+        public string? HeaderClass { get; set; }
 
         /// <summary>
         /// RenderFragment to be displayed in the expansion panel which will override header text if defined.
