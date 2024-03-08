@@ -10,6 +10,7 @@ using AngleSharp.Common;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MudBlazor.UnitTests.Mocks;
@@ -298,6 +299,24 @@ namespace MudBlazor.UnitTests.Components
                 builder.Add(x => x.SelectionMode, SelectionMode.MultiSelection);
             });
             logger.GetEntries().Count.Should().Be(3);
+        }
+
+        [Test]
+        public void ToggleGroup_KeyboardInput()
+        {
+            var comp = Context.RenderComponent<ToggleToggleSelectionTest>();
+            var firstGroup = comp.FindComponents<MudToggleGroup<string>>().Single();
+            var items = firstGroup.FindAll("div.mud-toggle-item");
+
+            comp.WaitForAssertion(() => firstGroup.Instance.Value.Should().Be(null));
+            items[1].KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            comp.WaitForAssertion(() => firstGroup.Instance.Value.Should().Be("Item Two"));
+            items[1].KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            comp.WaitForAssertion(() => firstGroup.Instance.Value.Should().Be(null));
+            items[0].KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            comp.WaitForAssertion(() => firstGroup.Instance.Value.Should().Be("Item One"));
+
+            // Can't tab around in test.
         }
     }
 }
