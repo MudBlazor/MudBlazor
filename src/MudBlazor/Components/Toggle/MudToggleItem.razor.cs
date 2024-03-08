@@ -36,16 +36,16 @@ namespace MudBlazor
             .AddClass("mud-toggle-item-delimiter", Parent?.Delimiters == true)
             .AddClass(Class)
             .Build();
-
+        
         protected string TextClassName => new CssBuilder()
             .AddClass(Parent?.TextClass)
             .Build();
-
+        
         protected string CheckMarkClasses => new CssBuilder()
             .AddClass(Parent?.CheckMarkClass)
             .AddClass("me-2")
             .Build();
-        
+
         protected string ItemPadding
         {
             get
@@ -101,7 +101,7 @@ namespace MudBlazor
         public string? SelectedIcon { get; set; } = Icons.Material.Filled.Check;
 
         private string? CurrentIcon => IsSelected ? SelectedIcon ?? UnselectedIcon : UnselectedIcon;
-
+        
         /// <summary>
         /// The text to show. You need to set this only if you want a text that differs from the Value. If null,
         /// show Value?.ToString().
