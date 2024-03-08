@@ -59,7 +59,7 @@ public class BlockMask : RegexMask
             var block = blocks[i];
             AddRequiredCharacters(regexBuilder, block, ref openParenthesisCount);
             AddOptionalCharacters(regexBuilder, block, ref openParenthesisCount);
-            AddDelimiter(regexBuilder, block, blocks, ref openParenthesisCount);
+            AddDelimiter(regexBuilder, i, blocks, ref openParenthesisCount);
         }
 
         CloseOpenParentheses(regexBuilder, openParenthesisCount);
@@ -107,9 +107,9 @@ public class BlockMask : RegexMask
     }
 
     // Helper method to add delimiter if there are more blocks to process
-    private void AddDelimiter(StringBuilder regexBuilder, Block block, Block[] blocks, ref int openParenthesisCount)
+    private void AddDelimiter(StringBuilder regexBuilder, int index, Block[] blocks, ref int openParenthesisCount)
     {
-        if (_delimiters.Count > 0 && Array.IndexOf(blocks, block) < blocks.Length - 1)
+        if (_delimiters.Count > 0 && index < blocks.Length - 1)
         {
             regexBuilder.Append("([");
             openParenthesisCount++;
@@ -132,12 +132,12 @@ public class BlockMask : RegexMask
     public override void UpdateFrom(IMask other)
     {
         base.UpdateFrom(other);
-        if (other is not BlockMask o)
-            return;
-
-        Blocks = o.Blocks ?? Array.Empty<Block>();
-        Delimiters = o.Delimiters;
-        _initialized = false;
-        Refresh();
+        if (other is BlockMask o)
+        {
+            Blocks = o.Blocks ?? Array.Empty<Block>();
+            Delimiters = o.Delimiters;
+            _initialized = false;
+            Refresh();
+        }
     }
 }
