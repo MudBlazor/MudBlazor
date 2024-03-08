@@ -589,9 +589,7 @@ namespace MudBlazor.UnitTests.Components
             var datePicker = comp.FindComponent<MudDatePicker>();
             await comp.InvokeAsync(() => datePicker.Instance.Open());
 
-            // didn't have time to finish this test case
-            // TODO: check that the days are like here https://mrmashal.github.io/angular-material-persian-datepicker/demo/demoBasicUsage/index.html
-            // for 1399-11-26
+            datePicker.Instance.Text.Should().Be("1399/11/26");
         }
 
         [Test]

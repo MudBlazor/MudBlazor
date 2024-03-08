@@ -147,7 +147,7 @@ namespace MudBlazor
         protected override void OnYearClicked(int year)
         {
             var current = GetMonthStart(0);
-            PickerMonth = new DateTime(year, current.Month, 1);
+            PickerMonth = new DateTime(year, Culture.Calendar.GetMonth(current), 1, Culture.Calendar);
             var nextView = GetNextView();
             if (nextView == null)
             {
@@ -155,7 +155,7 @@ namespace MudBlazor
                     //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
                     new DateTime(_selectedDate.Value.Year, _selectedDate.Value.Month, _selectedDate.Value.Day, _selectedDate.Value.Hour, _selectedDate.Value.Minute, _selectedDate.Value.Second, _selectedDate.Value.Millisecond, _selectedDate.Value.Kind)
                     //We can assume month and day here, as they were not set yet
-                    : new DateTime(year, 1, 1);
+                    : new DateTime(year, 1, 1, Culture.Calendar);
                 SubmitAndClose();
             }
             else
@@ -213,12 +213,13 @@ namespace MudBlazor
             return date.StartOfMonth(Culture);
         }
 
-        protected override int GetCalendarYear(int year)
+        protected override int GetCalendarYear(DateTime yearDate)
         {
             var date = Date ?? DateTime.Today;
-            var diff = date.Year - year;
+            var diff = Culture.Calendar.GetYear(date) - Culture.Calendar.GetYear(yearDate);
             var calenderYear = Culture.Calendar.GetYear(date);
             return calenderYear - diff;
+
         }
 
         //To be completed on next PR
