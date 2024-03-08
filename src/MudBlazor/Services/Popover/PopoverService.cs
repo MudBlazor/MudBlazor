@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using MudBlazor.Interop;
-using MudBlazor.Utilities.AsyncKeyedLocker;
+using MudBlazor.Utilities.AsyncKeyedLock;
 using MudBlazor.Utilities.Background.Batch;
 using MudBlazor.Utilities.ObserverManager;
 

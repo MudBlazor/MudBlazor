@@ -1,12 +1,12 @@
-﻿// Copyright (c) 2023 Mark Cilia Vincenti
+﻿// Copyright (c) 2023 Mark Cilia Vincenti (original source code: https://github.com/MarkCiliaVincenti/AsyncKeyedLock)
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace MudBlazor.Utilities.AsyncKeyedLocker;
+namespace MudBlazor.Utilities.AsyncKeyedLock;
 
 #nullable enable
 /// <summary>
-/// Options for the <see cref="AsyncKeyedLocker"/> constructors
+/// Options for the <see cref="AsyncKeyedLocker{TKey}"/> constructors
 /// </summary>
 internal sealed class AsyncKeyedLockOptions
 {
@@ -28,7 +28,7 @@ internal sealed class AsyncKeyedLockOptions
     public int PoolInitialFill { get; set; }
 
     /// <summary>
-    /// Initializes options for the <see cref="AsyncKeyedLocker"/> constructors
+    /// Initializes options for the <see cref="AsyncKeyedLocker{TKey}"/> constructors
     /// </summary>
     /// <param name="maxCount">The maximum number of requests for the semaphore that can be granted concurrently. Defaults to 1.</param>
     /// <param name="poolSize">The size of the pool to use in order for generated objects to be reused. This is NOT a concurrency limit,

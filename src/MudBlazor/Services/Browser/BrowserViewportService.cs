@@ -12,7 +12,7 @@ using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Interop;
 using MudBlazor.Services;
-using MudBlazor.Utilities.AsyncKeyedLocker;
+using MudBlazor.Utilities.AsyncKeyedLock;
 using MudBlazor.Utilities.ObserverManager;
 
 namespace MudBlazor;
