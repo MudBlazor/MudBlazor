@@ -6,9 +6,10 @@ namespace MudBlazor
 {
     public static class Converters
     {
-        public static CultureInfo DefaultCulture = CultureInfo.CurrentUICulture;
+        public static CultureInfo DefaultCulture = CultureInfo.CurrentCulture;
 
         #region --> Date converters
+
         public static Converter<DateTime> IsoDate
             => new()
             { SetFunc = SetIsoDate, GetFunc = GetIsoDate };
@@ -52,6 +53,6 @@ namespace MudBlazor
             return new DateConverter(format) { Culture = culture };
         }
 
-        #endregion
+        #endregion --> Date converters
     }
 }
