@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2023 Mark Cilia Vincenti
+﻿// Copyright (c) 2023 Mark Cilia Vincenti (original source code: https://github.com/MarkCiliaVincenti/AsyncKeyedLock)
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 
 // ReSharper disable LocalizableElement
-namespace MudBlazor.Utilities.AsyncKeyedLocker;
+namespace MudBlazor.Utilities.AsyncKeyedLock;
 
 #nullable enable
 internal sealed class AsyncKeyedLockDictionary<TKey> : ConcurrentDictionary<TKey, AsyncKeyedLockReleaser<TKey>>, IDisposable where TKey : notnull

@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) 2023 Mark Cilia Vincenti (original source code: https://github.com/MarkCiliaVincenti/AsyncKeyedLock)
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -8,10 +8,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using MudBlazor.Utilities.AsyncKeyedLocker;
+using MudBlazor.Utilities.AsyncKeyedLock;
 using NUnit.Framework;
 
-namespace MudBlazor.UnitTests.Utilities.AsyncKeyedLocker;
+namespace MudBlazor.UnitTests.Utilities.AsyncKeyedLock;
 
 #nullable enable
 [TestFixture]
