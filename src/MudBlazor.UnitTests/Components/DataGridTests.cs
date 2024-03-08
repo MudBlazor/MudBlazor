@@ -3344,5 +3344,37 @@ namespace MudBlazor.UnitTests.Components
             // the action of applying grouping has successfully updated the component's state.
             comp.Instance.IsGenderGrouped.Should().Be(true);
         }
+
+        [Test]
+        public void DataGridSelectColumnTest()
+        {
+            var comp = Context.RenderComponent<DataGridSelectColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<int>>();
+            var rowCheckbox = dataGrid.FindAll("td input");
+            var selectAllCheckboxes = dataGrid.FindComponents<MudCheckBox<bool?>>();
+
+            selectAllCheckboxes[0].Instance.Value.Should().BeFalse();
+            selectAllCheckboxes[1].Instance.Value.Should().BeFalse();
+
+            rowCheckbox[0].Change(true);
+
+            selectAllCheckboxes[0].Instance.Value.Should().Be(default);
+            selectAllCheckboxes[1].Instance.Value.Should().Be(default);
+
+            rowCheckbox[1].Change(true);
+
+            selectAllCheckboxes[0].Instance.Value.Should().BeTrue();
+            selectAllCheckboxes[1].Instance.Value.Should().BeTrue();
+
+            rowCheckbox[1].Change(false);
+
+            selectAllCheckboxes[0].Instance.Value.Should().Be(default);
+            selectAllCheckboxes[1].Instance.Value.Should().Be(default);
+
+            rowCheckbox[0].Change(false);
+
+            selectAllCheckboxes[0].Instance.Value.Should().BeFalse();
+            selectAllCheckboxes[1].Instance.Value.Should().BeFalse();
+        }
     }
 }
