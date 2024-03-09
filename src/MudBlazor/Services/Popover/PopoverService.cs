@@ -172,6 +172,12 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     {
         ArgumentNullException.ThrowIfNull(popover);
 
+        if (_disposed)
+        {
+            // 
+            return false;
+        }
+
         // We initialize the service regardless of whether the popover exists or not.
         // Adding it in an if-clause doesn't provide significant benefits.
         // Instead, we prioritize ensuring that the service is ready for use, as its initialization is a one-time operation.
@@ -323,13 +329,34 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
     private async Task InitializeServiceIfNeededAsync()
     {
-        if (!_isInitializing)
+        if (IsInitialized)
+        {
+            return;
+        }
+
+        if (_isInitializing)
+        {
+            return;
+        }
+
+        try
         {
             _isInitializing = true;
+
+            // Double-check if initialization has been completed by another thread.
+            if (IsInitialized)
+            {
+                return;
+            }
+
             await _popoverJsInterop.Initialize(PopoverOptions.ContainerClass, PopoverOptions.FlipMargin, _cancellationTokenSource.Token);
             // Starts in background
             await _batchExecutor.StartAsync(_cancellationTokenSource.Token);
             IsInitialized = true;
+        }
+        finally
+        {
+            _isInitializing = false;
         }
     }
 }
