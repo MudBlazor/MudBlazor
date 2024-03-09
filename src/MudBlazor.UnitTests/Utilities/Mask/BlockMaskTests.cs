@@ -106,10 +106,10 @@ public class BlockMaskTests
     {
         var mask = new BlockMask(".", new Block('('), new Block('0', 2, 2), new Block(')'));
         mask.Clear(); // make sure it is initialized
-        mask.Mask.Should().Be(@"^\(([\.](\d(\d([\.](\))?)?)?)?)?$");
+        mask.Mask.Should().Be(@"^(\(([\.](\d(\d([\.](\))?)?)?)?)?)?$");
         mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2), new Block('0', 2, 4));
         mask.Clear(); // make sure it is initialized
-        mask.Mask.Should().Be(@"^\d(\d)?([\.](\d(\d)?([\.](\d(\d(\d(\d)?)?)?)?)?)?)?$");
+        mask.Mask.Should().Be(@"^(\d(\d)?([\.](\d(\d)?([\.](\d(\d(\d(\d)?)?)?)?)?)?)?)?$");
         Assert.Throws<ArgumentException>(() => new BlockMask());
     }
 

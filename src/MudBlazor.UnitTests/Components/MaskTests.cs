@@ -766,30 +766,35 @@ namespace MudBlazor.UnitTests.Components
             var textFields = comp.FindComponents<MudTextField<string>>();
             var blockMaskComponent = masks[0];
             var blockMaskField = textFields[0].Instance;
-            var dateMaskComponent = masks[1];
-            var dateMaskField = textFields[1].Instance;
-            var multiMaskComponent = masks[2];
-            var multiMaskField = textFields[2].Instance;
-            var patternMaskComponent = masks[3];
-            var patternMaskField = textFields[3].Instance;
-            var regexMaskComponent = masks[4];
-            var regexMaskField = textFields[4].Instance;
-            
+            var prefixMaskComponent = masks[1];
+            var prefixMaskField = textFields[1].Instance;
+            var dateMaskComponent = masks[2];
+            var dateMaskField = textFields[2].Instance;
+            var multiMaskComponent = masks[3];
+            var multiMaskField = textFields[3].Instance;
+            var patternMaskComponent = masks[4];
+            var patternMaskField = textFields[4].Instance;
+            var regexMaskComponent = masks[5];
+            var regexMaskField = textFields[5].Instance;
+
             // act
-            
+
             // assert
             blockMaskComponent.Markup.Contains(blockMaskComponent.Instance.ClearIcon).Should().BeTrue();
             blockMaskField.Mask.Text.Should().Be(comp.Instance.BlockMaskValue);
-            
+
+            prefixMaskComponent.Markup.Contains(blockMaskComponent.Instance.ClearIcon).Should().BeTrue();
+            prefixMaskField.Mask.Text.Should().Be(comp.Instance.BlockMaskValue);
+
             dateMaskComponent.Markup.Contains(dateMaskComponent.Instance.ClearIcon).Should().BeTrue();
             dateMaskField.Mask.Text.Should().Be(comp.Instance.DateMaskValue);
-            
+
             multiMaskComponent.Markup.Contains(multiMaskComponent.Instance.ClearIcon).Should().BeTrue();
             multiMaskField.Mask.Text.Should().Be(comp.Instance.MultiMaskValue);
-            
+
             patternMaskComponent.Markup.Contains(patternMaskComponent.Instance.ClearIcon).Should().BeTrue();
             patternMaskField.Mask.Text.Should().Be(comp.Instance.PatternMaskValue);
-            
+
             regexMaskComponent.Markup.Contains(regexMaskComponent.Instance.ClearIcon).Should().BeTrue();
             regexMaskField.Mask.Text.Should().Be(comp.Instance.RegexMaskValue);
         }
