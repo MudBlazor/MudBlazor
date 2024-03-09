@@ -138,6 +138,18 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<LineChartWithBigValuesTest>();
         }
 
+        /// <summary>
+        /// Zero values should not case an exception
+        /// this is from issue #8282 "Line chart is not able to plot all zeroes"
+        /// </summary>
+        [Test]
+        public void LineChartWithZeroValues()
+        {
+            var comp = Context.RenderComponent<LineChartWithZeroValuesTest>();
+
+            comp.Markup.Should().NotContain("NaN");
+        }
+
         ///// <summary> 
         ///// Checks if the element is added to the CustomGraphics RenderFragment
         ///// </summary>
