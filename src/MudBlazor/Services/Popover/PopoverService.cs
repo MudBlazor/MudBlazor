@@ -22,10 +22,12 @@ namespace MudBlazor;
 /// </summary>
 internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHolder>
 {
+    private bool _disposed;
     private readonly SemaphoreSlim _initializeSemaphore;
     private readonly PopoverJsInterop _popoverJsInterop;
     private readonly AsyncKeyedLocker<Guid> _popoverSemaphore;
     private readonly Dictionary<Guid, MudPopoverHolder> _holders;
+    private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly BatchPeriodicQueue<MudPopoverHolder> _batchExecutor;
     private readonly ObserverManager<Guid, IPopoverObserver> _observerManager;
 
@@ -70,6 +72,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             lockOptions.PoolInitialFill = PopoverOptions.PoolInitialFill;
         });
         _holders = new Dictionary<Guid, MudPopoverHolder>();
+        _cancellationTokenSource = new CancellationTokenSource();
         _popoverJsInterop = new PopoverJsInterop(jsInterop);
         _batchExecutor = new BatchPeriodicQueue<MudPopoverHolder>(this, PopoverOptions.QueueDelay, tickOnDispose: false);
         _observerManager = new ObserverManager<Guid, IPopoverObserver>(logger);
@@ -78,12 +81,16 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     /// <inheritdoc />
     public void Subscribe(IPopoverObserver observer)
     {
+        ArgumentNullException.ThrowIfNull(observer);
+
         _observerManager.Subscribe(observer.Id, observer);
     }
 
     /// <inheritdoc />
     public void Unsubscribe(IPopoverObserver observer)
     {
+        ArgumentNullException.ThrowIfNull(observer);
+
         _observerManager.Unsubscribe(observer.Id);
     }
 
@@ -91,6 +98,12 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     public async Task CreatePopoverAsync(IPopover popover)
     {
         ArgumentNullException.ThrowIfNull(popover);
+
+        if (_disposed)
+        {
+            // Do not accept new popover when service is disposed, they are getting cleared.
+            return;
+        }
 
         var holder = new MudPopoverHolder(popover.Id)
             .SetFragment(popover.ChildContent)
@@ -101,13 +114,19 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             .SetUserAttributes(popover.UserAttributes);
 
         _holders.TryAdd(holder.Id, holder);
-        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Create, new[] { holder })));
+        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Create, new[] { holder }), _cancellationTokenSource.Token));
     }
 
     /// <inheritdoc />
     public async Task<bool> UpdatePopoverAsync(IPopover popover)
     {
         ArgumentNullException.ThrowIfNull(popover);
+
+        if (_disposed)
+        {
+            // Do not update popover when service is disposed, they are getting cleared.
+            return false;
+        }
 
         // We initialize the service regardless of whether the popover exists or not.
         // Adding it in an if-clause doesn't provide significant benefits.
@@ -118,10 +137,16 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             return false;
         }
 
+        if (holder.IsDetached)
+        {
+            // Unlikely scenario since during DestroyPopoverAsync it's gone from the dictionary
+            return false;
+        }
+
         // Do not put after the semaphore as it can cause deadlock
         await InitializePopoverIfNeededAsync(holder);
 
-        using (await _popoverSemaphore.LockAsync(popover.Id))
+        using (await _popoverSemaphore.LockAsync(popover.Id, _cancellationTokenSource.Token))
         {
             holder
                 .SetFragment(popover.ChildContent)
@@ -131,7 +156,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
                 .SetTag(popover.Tag)
                 .SetUserAttributes(popover.UserAttributes);
 
-            await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Update, new[] { holder })));
+            await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Update, new[] { holder }), _cancellationTokenSource.Token));
 
             return true;
         }
@@ -153,43 +178,67 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     /// <inheritdoc />
     public async ValueTask<int> GetProviderCountAsync()
     {
-        await InitializeServiceIfNeededAsync();
-
-        var (success, value) = await _popoverJsInterop.CountProviders();
+        var (success, value) = await _popoverJsInterop.CountProviders(_cancellationTokenSource.Token);
 
         return success ? value : 0;
     }
 
     /// <inheritdoc />
-    public async ValueTask DisposeAsync()
-    {
-        foreach (var holderKeyValuePair in _holders)
-        {
-            // We just remove them from the dictionary, we don't care to queue for "mudPopover.disconnect" as the "mudPopover.dispose" will do it for us
-            await DestroyPopoverByIdAsync(holderKeyValuePair.Key, queueForDisconnect: false);
-        }
-
-        // BatchPeriodicQueue(tickOnDispose) should be false, since BatchPeriodicQueue.OnBatchTimerElapsedAsync will cause deadlock on WinForm and WPF.
-        // We do not care about guaranteed "mudPopover.disconnect" JS call on all popovers from OnBatchTimerElapsedAsync -> DetachRange as the "mudPopover.dispose" already does it on JS side.
-        await _batchExecutor.DisposeAsync();
-
-        // In case someone has custom implementation and didn't unsubscribe
-        _observerManager.Clear();
-
-        _popoverSemaphore.Dispose();
-        // https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968
-        // Fixed in NET8
-        _ = _popoverJsInterop.Dispose();
-    }
-
-    /// <inheritdoc />
     public virtual Task OnBatchTimerElapsedAsync(IReadOnlyCollection<MudPopoverHolder> items, CancellationToken stoppingToken)
     {
-        // In our case we do not care if the cancellation token in requested, we should not interrupt the process and and just detach to cleanup resources.
+        // In our case we do not care if the cancellation token in requested, we should not interrupt the process and just detach to clean-up resources.
         // In the future, there might be a requirement to split the jobs and introduce a change where instead of using IReadOnlyCollection<MudPopoverHolder>,
         // we would utilize IReadOnlyCollection<PopoverQueueContainer>. This new collection would consist of various operations, such as detaching items, rendering items,
         // and triggering the PopoverCollectionUpdatedNotification, among others.
         return DetachRange(items);
+    }
+
+    /// <inheritdoc />
+    public ValueTask DisposeAsync()
+    {
+        return DisposeAsyncCore();
+    }
+
+    /// <summary>
+    /// Disposes the current <see cref="PopoverService"/> instance.
+    /// </summary>
+    private async ValueTask DisposeAsyncCore()
+    {
+        if (!_disposed)
+        {
+            _disposed = true;
+            // ReSharper disable once MethodHasAsyncOverload - not available in .NET6 & .NET7
+            _cancellationTokenSource.Cancel();
+            await DestroyPopoversQuick();
+
+            // BatchPeriodicQueue(tickOnDispose) should be false, since BatchPeriodicQueue.OnBatchTimerElapsedAsync will cause deadlock on WinForm and WPF.
+            // We do not care about guaranteed "mudPopover.disconnect" JS call on all popovers from OnBatchTimerElapsedAsync -> DetachRange as the "mudPopover.dispose" already does it on JS side.
+            await _batchExecutor.DisposeAsync();
+
+            // In case someone has custom implementation and didn't unsubscribe
+            _observerManager.Clear();
+
+            _popoverSemaphore.Dispose();
+
+            // https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968
+            // Fixed in NET8
+            // Do not send CancellationToken as it was cancelled.
+#pragma warning disable CA2012 // Use ValueTasks correctly
+            _ = _popoverJsInterop.Dispose();
+#pragma warning restore CA2012 // Use ValueTasks correctly
+
+            _cancellationTokenSource.Dispose();
+        }
+    }
+
+    private Task DestroyPopoversQuick()
+    {
+        var holdersListCopy = new List<MudPopoverHolder>(_holders.Values);
+        _holders.Clear();
+
+        holdersListCopy.ForEach(holder => holder.IsDetached = true);
+
+        return _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Remove, holdersListCopy), _cancellationTokenSource.Token));
     }
 
     private async Task<bool> DestroyPopoverByIdAsync(Guid id, bool queueForDisconnect = true)
@@ -209,7 +258,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         // Perhaps we could consider adding a state indicating that the object is queued for detaching instead.
         holder.IsDetached = true;
 
-        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Remove, new[] { holder })));
+        await _observerManager.NotifyAsync(observer => observer.PopoverCollectionUpdatedNotificationAsync(new PopoverHolderContainer(PopoverHolderOperation.Remove, new[] { holder }), _cancellationTokenSource.Token));
 
         return true;
     }
@@ -224,14 +273,14 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
         foreach (var holder in holders)
         {
-            using (await _popoverSemaphore.LockAsync(holder.Id))
+            using (await _popoverSemaphore.LockAsync(holder.Id, _cancellationTokenSource.Token))
             {
                 try
                 {
                     holder.IsDetached = true;
                     if (holder.IsConnected)
                     {
-                        await _popoverJsInterop.Disconnect(holder.Id);
+                        await _popoverJsInterop.Disconnect(holder.Id, _cancellationTokenSource.Token);
                     }
                 }
                 finally
@@ -244,12 +293,12 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
     private async Task InitializePopoverIfNeededAsync(MudPopoverHolder holder)
     {
-        if (holder.IsConnected || holder.IsDetached)
+        if (holder.IsConnected)
         {
             return;
         }
 
-        using (await _popoverSemaphore.LockAsync(holder.Id))
+        using (await _popoverSemaphore.LockAsync(holder.Id, _cancellationTokenSource.Token))
         {
             if (holder.IsConnected || holder.IsDetached)
             {
@@ -265,7 +314,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
                 return;
             }
 
-            holder.IsConnected = await _popoverJsInterop.Connect(holder.Id);
+            holder.IsConnected = await _popoverJsInterop.Connect(holder.Id, _cancellationTokenSource.Token);
         }
     }
 
@@ -278,7 +327,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
         try
         {
-            await _initializeSemaphore.WaitAsync();
+            await _initializeSemaphore.WaitAsync(_cancellationTokenSource.Token);
             if (IsInitialized)
             {
                 // It is not redundant to include a check before and after the semaphore.
@@ -288,9 +337,9 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
                 return;
             }
 
-            await _popoverJsInterop.Initialize(PopoverOptions.ContainerClass, PopoverOptions.FlipMargin);
+            await _popoverJsInterop.Initialize(PopoverOptions.ContainerClass, PopoverOptions.FlipMargin, _cancellationTokenSource.Token);
             // Starts in background
-            await _batchExecutor.StartAsync();
+            await _batchExecutor.StartAsync(_cancellationTokenSource.Token);
             IsInitialized = true;
         }
         finally
