@@ -73,7 +73,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         _holders = new Dictionary<Guid, MudPopoverHolder>();
         _cancellationTokenSource = new CancellationTokenSource();
         _popoverJsInterop = new PopoverJsInterop(jsInterop);
-        _batchExecutor = new BatchPeriodicQueue<MudPopoverHolder>(this, PopoverOptions.QueueDelay, tickOnDispose: false);
+        _batchExecutor = new BatchPeriodicQueue<MudPopoverHolder>(this, PopoverOptions.QueueDelay);
         _observerManager = new ObserverManager<Guid, IPopoverObserver>(logger);
     }
 
@@ -216,9 +216,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             _cancellationTokenSource.Cancel();
             await DestroyPopoversQuick();
 
-            // BatchPeriodicQueue(tickOnDispose) should be false, since BatchPeriodicQueue.OnBatchTimerElapsedAsync will cause deadlock on WinForm and WPF.
-            // We do not care about guaranteed "mudPopover.disconnect" JS call on all popovers from OnBatchTimerElapsedAsync -> DetachRange as the "mudPopover.dispose" already does it on JS side.
-            await _batchExecutor.DisposeAsync();
+            _batchExecutor.Dispose();
 
             // In case someone has custom implementation and didn't unsubscribe
             _observerManager.Clear();
