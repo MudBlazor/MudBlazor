@@ -141,10 +141,9 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             return false;
         }
 
+        // It's a legacy thing that should be removed, new popover doesn't need this.
         if (holder.IsDetached)
         {
-            // Unlikely scenario since during DestroyPopoverAsync it's gone from the dictionary
-            // It's a legacy thing that should be removed, new popover doesn't need this.
             return false;
         }
 
@@ -309,17 +308,9 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
         using (await _popoverSemaphore.LockAsync(holder.Id, _cancellationTokenSource.Token))
         {
+            // Double-check if IsConnected has been completed by another thread.
             if (holder.IsConnected || holder.IsDetached)
             {
-                // It is not redundant to include a check before and after the semaphore.
-                // If we call InitializePopoverIfNeededAsync multiple times in parallel in the background,
-                // it may lead to double connection, which is undesired.
-                // For example if InitializePopoverIfNeededAsync is invoked multiple times asynchronously for a specific popover and AfterFirstRender is not set,
-                // and IsConnected takes a while to resolve, subsequent calls during this period will encounter the semaphore,
-                // awaiting its release from the preceding call.
-                // Once IsConnected is set to true by the previous call, the second if case will be exited.
-                // Subsequent invocations for the same popover will exit the function from the first if case, bypassing the semaphore block.
-                // The initial check helps to prevent double initialization of the popover.
                 return;
             }
 
