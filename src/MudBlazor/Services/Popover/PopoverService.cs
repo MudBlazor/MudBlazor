@@ -23,7 +23,7 @@ namespace MudBlazor;
 internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHolder>
 {
     private bool _disposed;
-    private readonly SemaphoreSlim _initializeSemaphore;
+    private bool _isInitializing;
     private readonly PopoverJsInterop _popoverJsInterop;
     private readonly AsyncKeyedLocker<Guid> _popoverSemaphore;
     private readonly Dictionary<Guid, MudPopoverHolder> _holders;
@@ -65,7 +65,6 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     public PopoverService(ILogger<PopoverService> logger, IJSRuntime jsInterop, IOptions<PopoverOptions>? options = null)
     {
         PopoverOptions = options?.Value ?? new PopoverOptions();
-        _initializeSemaphore = new SemaphoreSlim(1, 1);
         _popoverSemaphore = new AsyncKeyedLocker<Guid>(lockOptions =>
         {
             lockOptions.PoolSize = PopoverOptions.PoolSize;
@@ -82,6 +81,11 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     public void Subscribe(IPopoverObserver observer)
     {
         ArgumentNullException.ThrowIfNull(observer);
+
+        if (_disposed)
+        {
+            return;
+        }
 
         _observerManager.Subscribe(observer.Id, observer);
     }
@@ -140,6 +144,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         if (holder.IsDetached)
         {
             // Unlikely scenario since during DestroyPopoverAsync it's gone from the dictionary
+            // It's a legacy thing that should be removed, new popover doesn't need this.
             return false;
         }
 
@@ -320,31 +325,13 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
     private async Task InitializeServiceIfNeededAsync()
     {
-        if (IsInitialized)
+        if (!_isInitializing)
         {
-            return;
-        }
-
-        try
-        {
-            await _initializeSemaphore.WaitAsync(_cancellationTokenSource.Token);
-            if (IsInitialized)
-            {
-                // It is not redundant to include a check before and after the semaphore.
-                // If we call InitializeServiceIfNeededAsync multiple times in parallel in the background,
-                // it may lead to double initialization, which is undesired.
-                // The initial check helps to prevent unnecessary reinitialization of the service.
-                return;
-            }
-
+            _isInitializing = true;
             await _popoverJsInterop.Initialize(PopoverOptions.ContainerClass, PopoverOptions.FlipMargin, _cancellationTokenSource.Token);
             // Starts in background
             await _batchExecutor.StartAsync(_cancellationTokenSource.Token);
             IsInitialized = true;
-        }
-        finally
-        {
-            _initializeSemaphore.Release();
         }
     }
 }

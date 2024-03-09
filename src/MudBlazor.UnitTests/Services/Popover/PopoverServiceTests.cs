@@ -632,6 +632,22 @@ public class PopoverServiceTests
     }
 
     [Test]
+    public async Task DisposeAsync_ShouldNotAcceptObservers()
+    {
+        // Arrange
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+
+        // Act
+        await service.DisposeAsync();
+        service.Subscribe(new PopoverObserverMock());
+        service.Subscribe(new PopoverObserverMock());
+
+        // Assert
+        service.ObserversCount.Should().Be(0);
+    }
+
+    [Test]
     public async Task DisposeAsync_ShouldNotCreateOrUpdateWhenDisposed()
     {
         // Arrange
