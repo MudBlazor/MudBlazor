@@ -126,6 +126,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Using only one x-axis value should not throw an exception
+        /// this is from issue #7736
+        /// </summary>
+        [Test]
+        public void BarChartWithSingleXAxisValue()
+        {
+            var comp = Context.RenderComponent<BarChartWithSingleXAxisTest>();
+
+            comp.Markup.Should().NotContain("NaN");
+        }
+
+        /// <summary>
         /// High values should not lead to millions of horizontal grid lines
         /// this is from issue #1591 "Line chart is not able to plot big Double values"
         /// </summary>
