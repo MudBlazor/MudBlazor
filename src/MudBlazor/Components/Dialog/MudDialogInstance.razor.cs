@@ -237,6 +237,11 @@ namespace MudBlazor
             return false;
         }
 
+        protected string TitleClassname =>
+            new CssBuilder("mud-dialog-title")
+                .AddClass(_dialog?.ClassTitle)
+                .Build();
+
         protected string Classname =>
             new CssBuilder("mud-dialog")
                 .AddClass(DialogMaxWidth, !FullScreen)

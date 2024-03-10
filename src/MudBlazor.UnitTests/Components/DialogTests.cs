@@ -878,6 +878,41 @@ namespace MudBlazor.UnitTests.Components
             var textField = comp.FindComponent<MudInput<string>>().Instance;
             textField.Text.Should().Be("test");
         }
+
+        [Test]
+        public async Task DialogWithClassTitleValueShouldAddClassnameToDefaultClassname()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBeNull();
+            IDialogReference dialogReference = null;
+
+            var parameters = new DialogParameters<DialogWithClassTitle>
+            {
+                { x => x.ClassTitle, "my-title-class my-second-class" }
+            };
+
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithClassTitle>(string.Empty, parameters));
+            dialogReference.Should().NotBeNull();
+
+            comp.Find("div.mud-dialog-title").GetAttribute("class").Should().Be("mud-dialog-title my-title-class my-second-class");
+        }
+
+        [Test]
+        public async Task DialogWithEmptyClassTitleValueShouldRenderDefaultClassname()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBeNull();
+            IDialogReference dialogReference = null;
+
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithClassTitle>(string.Empty));
+            dialogReference.Should().NotBeNull();
+
+            comp.Find("div.mud-dialog-title").GetAttribute("class").Should().Be("mud-dialog-title");
+        }
     }
 
     internal class CustomDialogService : DialogService

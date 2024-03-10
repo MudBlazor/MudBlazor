@@ -73,6 +73,13 @@ namespace MudBlazor
         public bool DisableSidePadding { get; set; }
 
         /// <summary>
+        /// CSS class that will be applied to the dialog title container
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public string ClassTitle { get; set; }
+
+        /// <summary>
         /// CSS class that will be applied to the dialog content
         /// </summary>
         [Parameter]
@@ -148,6 +155,7 @@ namespace MudBlazor
                 [nameof(DialogContent)] = DialogContent,
                 [nameof(DialogActions)] = DialogActions,
                 [nameof(DisableSidePadding)] = DisableSidePadding,
+                [nameof(ClassTitle)] = ClassTitle,
                 [nameof(ClassContent)] = ClassContent,
                 [nameof(ClassActions)] = ClassActions,
                 [nameof(ContentStyle)] = ContentStyle,
