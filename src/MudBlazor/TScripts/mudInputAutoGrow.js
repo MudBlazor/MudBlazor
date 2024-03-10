@@ -21,8 +21,9 @@ window.mudInputAutoGrow = {
             const scrollTops = [];
             let curElem = elem;
             while (curElem && curElem.parentNode && curElem.parentNode instanceof Element) {
-                if (curElem.parentNode.scrollTop)
+                if (curElem.parentNode.scrollTop) {
                     scrollTops.push([curElem.parentNode, curElem.parentNode.scrollTop]);
+                }
                 curElem = curElem.parentNode;
             }
 
