@@ -28,11 +28,14 @@ window.mudInputAutoGrow = {
 
             elem.style.height = 0;
 
-            let newHeight = Math.max(minHeight, elem.scrollHeight + 1); // 1px is added to beat the rounding that occurs on scaled displays.
-            if (maxHeight > 0) {
-                newHeight = Math.min(newHeight, maxHeight);
+            let newHeight = Math.max(minHeight, elem.scrollHeight);
+            if (maxHeight > 0 && newHeight > maxHeight) {
+                // Content height exceeds the max height so we'll see a scrollbar.
+                elem.style.overflowY = 'auto';
+                newHeight = maxHeight;
             } else {
-                // Scrollbar isn't needed and could cause flashing.
+                // Scrollbar isn't needed and could either flash on resize or could appear
+                // due to rounding inaccuracy in scrollHeight when the display is scaled.
                 elem.style.overflowY = 'hidden';
             }
 
