@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 window.mudInputAutoGrow = {
-
     initAutoGrow: (elem, maxLines) => {
         const compStyle = getComputedStyle(elem);
         const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
@@ -12,7 +11,7 @@ window.mudInputAutoGrow = {
 
         let maxHeight = 0;
         if (maxLines > 0) {
-            // Cap the height to the max number of lines.
+            // Cap the height to the number of lines specified in MudTextField.
             maxHeight = lineHeight * maxLines;
         }
 
@@ -22,20 +21,19 @@ window.mudInputAutoGrow = {
             const scrollTops = [];
             let curElem = elem;
             while (curElem && curElem.parentNode && curElem.parentNode instanceof Element) {
-                if (curElem.parentNode.scrollTop) {
+                if (curElem.parentNode.scrollTop)
                     scrollTops.push([curElem.parentNode, curElem.parentNode.scrollTop]);
-                }
                 curElem = curElem.parentNode;
             }
 
             elem.style.height = 0;
 
-            let newHeight = Math.max(minHeight, elem.scrollHeight);
+            let newHeight = Math.max(minHeight, elem.scrollHeight + 1); // 1px is added to beat the rounding that occurs on scaled displays.
             if (maxHeight > 0) {
                 newHeight = Math.min(newHeight, maxHeight);
             } else {
-                // Hide phantom scrollbars https://github.com/MudBlazor/MudBlazor/pull/8235.
-                elem.style.overflow = 'hidden';
+                // Scrollbar isn't needed and could cause flashing.
+                elem.style.overflowY = 'hidden';
             }
 
             elem.style.height = newHeight + "px";
