@@ -72,6 +72,18 @@ namespace MudBlazor
             }
         }
 
+        protected void InteractionStartHandler()
+        {
+            // Pause snackbar transitions while the user is interacting through hover or touch.
+            Snackbar.SetPaused(true);
+        }
+
+        protected void InteractionEndHandler()
+        {
+            // The user is done and we can now resume transitions.
+            Snackbar.SetPaused(false);
+        }
+
         public void Dispose()
         {
             if (Snackbar != null)
