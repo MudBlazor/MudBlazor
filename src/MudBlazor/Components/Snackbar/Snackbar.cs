@@ -12,7 +12,7 @@ namespace MudBlazor
     {
         private bool _transitionsPaused;
         private bool _transitionCancellable;
-        private bool _pendingHideTransition;
+        private bool _pendingHide;
         private Timer Timer { get; set; }
         internal SnackBarMessageState State { get; }
         public string Message => SnackbarMessage.Text;
@@ -56,7 +56,6 @@ namespace MudBlazor
         {
             // Stop any existing transition.
             StopTimer();
-            _pendingHideTransition = false;
 
             State.SnackbarState = state;
             var options = State.Options;
@@ -86,7 +85,7 @@ namespace MudBlazor
             // Let the transition be triggered after the pause is ended.
             if (_transitionsPaused)
             {
-                _pendingHideTransition = true;
+                _pendingHide = true;
                 return;
             }
 
@@ -125,7 +124,7 @@ namespace MudBlazor
             Timer?.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
-        public void SetPaused(bool pause)
+        public void PauseTransitions(bool pause)
         {
             // Some transitions, like from the close button, can't be canceled or it would restart the transition when the user leaves the snackbar.
             if (!_transitionCancellable)
@@ -148,7 +147,7 @@ namespace MudBlazor
                         break;
                 }
             }
-            else if (_pendingHideTransition)
+            else if (_pendingHide)
             {
                 // The Hiding transition has been pending and we can now complete it.
                 TransitionTo(SnackbarState.Hiding);
