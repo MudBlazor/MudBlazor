@@ -10,9 +10,9 @@ namespace MudBlazor
 {
     public class Snackbar : IDisposable
     {
-        private bool _transitionsPaused;
-        private bool _transitionCancellable;
-        private bool _pendingHide;
+        private bool _transitionsPaused = false;
+        private bool _transitionCancellable = true;
+        private bool _pendingHide = false;
         private Timer Timer { get; set; }
         internal SnackBarMessageState State { get; }
         public string Message => SnackbarMessage.Text;
@@ -43,19 +43,26 @@ namespace MudBlazor
             }
 
             State.UserHasInteracted = true;
-            TransitionTo(SnackbarState.Hiding, cancellable: false);
+            TransitionTo(SnackbarState.Hiding, false);
         }
 
         /// <summary>
         /// Transitions the snackbar to the specified state.
         /// </summary>
         /// <param name="state">The state to transition to</param>
-        /// <param name="animate">Whether the transition should be animated or instant</param>
         /// <param name="cancellable">Whether the transition, if animated, can be cancelled</param>
-        private void TransitionTo(SnackbarState state, bool animate = true, bool cancellable = true)
+        private void TransitionTo(SnackbarState state, bool cancellable = true)
         {
-            // Stop any existing transition.
-            StopTimer();
+            // Stop any existing transition if we're allowed to.
+            if (_transitionCancellable)
+            {
+                StopTimer();
+                _pendingHide = false;
+            }
+            else
+            {
+                return;
+            }
 
             State.SnackbarState = state;
             var options = State.Options;
@@ -63,17 +70,17 @@ namespace MudBlazor
 
             if (state.IsShowing())
             {
-                if (!animate || !StartTimer(options.ShowTransitionDuration))
+                if (!StartTimer(options.ShowTransitionDuration))
                     TransitionTo(SnackbarState.Visible);
             }
             else if (state.IsVisible() && !options.RequireInteraction)
             {
-                if (!animate || !StartTimer(options.VisibleStateDuration))
+                if (!StartTimer(options.VisibleStateDuration))
                     TransitionTo(SnackbarState.Hiding);
             }
             else if (state.IsHiding())
             {
-                if (!animate || !StartTimer(options.HideTransitionDuration))
+                if (!StartTimer(options.HideTransitionDuration))
                     OnClose?.Invoke(this);
             }
 
@@ -104,26 +111,6 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Starts the transition timer that elapses after the specified duration; or return <c>false</c> if the period would be instantaneous.
-        /// </summary>
-        private bool StartTimer(int duration)
-        {
-            if (duration <= 0)
-                return false;
-
-            State.Stopwatch.Restart();
-            Timer?.Change(duration, Timeout.Infinite);
-
-            return true;
-        }
-
-        private void StopTimer()
-        {
-            State.Stopwatch.Stop();
-            Timer?.Change(Timeout.Infinite, Timeout.Infinite);
-        }
-
         public void PauseTransitions(bool pause)
         {
             // Some transitions, like from the close button, can't be canceled or it would restart the transition when the user leaves the snackbar.
@@ -143,7 +130,8 @@ namespace MudBlazor
                 {
                     case SnackbarState.Showing:
                     case SnackbarState.Hiding:
-                        TransitionTo(SnackbarState.Showing, animate: false);
+                        State.SnackbarState = SnackbarState.Visible;
+                        OnUpdate?.Invoke();
                         break;
                 }
             }
@@ -152,6 +140,26 @@ namespace MudBlazor
                 // The Hiding transition has been pending and we can now complete it.
                 TransitionTo(SnackbarState.Hiding);
             }
+        }
+
+        /// <summary>
+        /// Starts the transition timer that elapses after the specified duration; or return <c>false</c> if the period would be instantaneous.
+        /// </summary>
+        private bool StartTimer(int duration)
+        {
+            if (duration <= 0)
+                return false;
+
+            State.Stopwatch.Restart();
+            Timer?.Change(duration, Timeout.Infinite);
+
+            return true;
+        }
+
+        private void StopTimer()
+        {
+            State.Stopwatch.Stop();
+            Timer?.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
         public void Dispose()
