@@ -13,8 +13,6 @@ namespace MudBlazor
 
         public int HideTransitionDuration { get; set; } = 2000;
 
-        public bool UserCanAffectTransitions { get; set; } = true;
-
         public bool ShowCloseIcon { get; set; } = true;
 
         public bool RequireInteraction { get; set; } = false;
@@ -31,7 +29,6 @@ namespace MudBlazor
             ShowTransitionDuration = options.ShowTransitionDuration;
             VisibleStateDuration = options.VisibleStateDuration;
             HideTransitionDuration = options.HideTransitionDuration;
-            UserCanAffectTransitions = options.UserCanAffectTransitions;
             ShowCloseIcon = options.ShowCloseIcon;
             RequireInteraction = options.RequireInteraction;
             BackgroundBlurred = options.BackgroundBlurred;

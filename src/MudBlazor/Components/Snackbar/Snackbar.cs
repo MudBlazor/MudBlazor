@@ -11,8 +11,8 @@ namespace MudBlazor
     public class Snackbar : IDisposable
     {
         private bool _transitionsPaused;
+        private bool _transitionCancellable;
         private bool _pendingHideTransition;
-        private bool _userCanAffectTransition;
         private Timer Timer { get; set; }
         internal SnackBarMessageState State { get; }
         public string Message => SnackbarMessage.Text;
@@ -60,7 +60,7 @@ namespace MudBlazor
 
             State.SnackbarState = state;
             var options = State.Options;
-            _userCanAffectTransition = cancellable && options.UserCanAffectTransitions;
+            _transitionCancellable = cancellable;
 
             if (state.IsShowing())
             {
@@ -128,7 +128,7 @@ namespace MudBlazor
         public void SetPaused(bool pause)
         {
             // Some transitions, like from the close button, can't be canceled or it would restart the transition when the user leaves the snackbar.
-            if (!_userCanAffectTransition)
+            if (!_transitionCancellable)
             {
                 _transitionsPaused = false;
                 return;
