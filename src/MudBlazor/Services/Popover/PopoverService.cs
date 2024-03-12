@@ -199,7 +199,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         // In the future, there might be a requirement to split the jobs and introduce a change where instead of using IReadOnlyCollection<MudPopoverHolder>,
         // we would utilize IReadOnlyCollection<PopoverQueueContainer>. This new collection would consist of various operations, such as detaching items, rendering items,
         // and triggering the PopoverCollectionUpdatedNotification, among others.
-        return DetachRange(items);
+        return DetachRangeAsync(items);
     }
 
     /// <inheritdoc />
@@ -270,7 +270,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         return true;
     }
 
-    private async Task DetachRange(IReadOnlyCollection<MudPopoverHolder> holders)
+    private async Task DetachRangeAsync(IReadOnlyCollection<MudPopoverHolder> holders)
     {
         if (_disposed)
         {
