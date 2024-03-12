@@ -173,7 +173,6 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
         if (_disposed)
         {
-            // 
             return false;
         }
 
@@ -273,14 +272,18 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
     private async Task DetachRange(IReadOnlyCollection<MudPopoverHolder> holders)
     {
-        // Ignore task if zero items in collection to not enter the semaphore
-        if (holders.Count == 0)
+        if (_disposed)
         {
             return;
         }
 
         foreach (var holder in holders)
         {
+            if (_cancellationTokenSource.Token.IsCancellationRequested)
+            {
+                return;
+            }
+
             using (await _popoverSemaphore.LockAsync(holder.Id, _cancellationTokenSource.Token))
             {
                 try
