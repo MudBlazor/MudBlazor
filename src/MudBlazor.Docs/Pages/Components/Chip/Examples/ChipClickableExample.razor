@@ -3,9 +3,9 @@
 <MudChip OnClick="OnChipClicked" Color="Color.Default">Clicked @ClickCount times</MudChip>
 
 @code {
-    int ClickCount { get; set; }
+    private int ClickCount { get; set; }
 
-    void OnChipClicked()
+    private void OnChipClicked()
     {
         ClickCount++;
     }

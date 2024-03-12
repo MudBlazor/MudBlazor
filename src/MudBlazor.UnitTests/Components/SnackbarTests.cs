@@ -36,7 +36,9 @@ namespace MudBlazor.UnitTests.Components
                 var closeButtons = _provider.FindAll("button");
 
                 if (closeButtons.Count == 0)
+                {
                     break;
+                }
 
                 closeButtons[0].Click();
             }
