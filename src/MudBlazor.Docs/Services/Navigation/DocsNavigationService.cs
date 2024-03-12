@@ -96,7 +96,7 @@ namespace MudBlazor.Docs.Services
                 var links = new List<NavigationFooterLink>();
                 foreach (var menuElement in menuElements)
                 {
-                    if (menuElement.Link != null)
+                    if (menuElement.Link is not null)
                     {
                         var link = section == NavigationSection.Api
                             ? ApiLink.GetApiLinkFor(menuElement.Type).Split("/").Last()
@@ -107,7 +107,7 @@ namespace MudBlazor.Docs.Services
                         links.Add(new NavigationFooterLink(name, link));
                     }
 
-                    if (menuElement.GroupComponents != null)
+                    if (menuElement.GroupComponents is not null)
                     {
                         links.AddRange(menuElement.GroupComponents.Select(i => new NavigationFooterLink(i.Name, i.Link))
                             .OrderBy(i => i.Link));
@@ -125,7 +125,7 @@ namespace MudBlazor.Docs.Services
                 _ => Array.Empty<DocsLink>()
             };
 
-            return potentialLinks.Select((x => new NavigationFooterLink(x.Title, x.Href.Split("/").Last())))
+            return potentialLinks.Select(x => new NavigationFooterLink(x.Title, x.Href.Split("/").Last()))
                 .ToList();
         }
 

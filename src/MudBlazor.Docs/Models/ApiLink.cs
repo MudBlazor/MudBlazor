@@ -45,7 +45,8 @@ namespace MudBlazor.Docs.Models
             var assembly = typeof(MudComponentBase).Assembly;
             foreach (var componentType in assembly.GetTypes())
             {
-                if (new string(componentType.Name.ToLowerInvariant().TakeWhile(c => c != '`').ToArray()).Equals($"mud{component}", StringComparison.InvariantCultureIgnoreCase))
+                var typeNameWithoutGenericInfo = new string(componentType.Name.ToLowerInvariant().TakeWhile(c => c != '`').ToArray());
+                if (typeNameWithoutGenericInfo.Equals($"mud{component}", StringComparison.InvariantCultureIgnoreCase))
                 {
                     if (componentType.Name.Contains('`'))
                     {

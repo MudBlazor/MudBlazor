@@ -101,10 +101,10 @@ public partial class Appbar
     private LayoutService LayoutService { get; set; } = null!;
 
     [Parameter]
-    public EventCallback<MouseEventArgs> DrawerToggleCallback { get; set; }
+    public bool DisplaySearchBar { get; set; }
 
     [Parameter]
-    public bool DisplaySearchBar { get; set; }
+    public EventCallback<MouseEventArgs> DrawerToggleCallback { get; set; }
 
     private async void OnSearchResult(ApiLinkServiceEntry entry)
     {
