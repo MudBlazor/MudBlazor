@@ -164,10 +164,12 @@ namespace MudBlazor
             }
         }
 
-        internal Task OnClickHandler(MouseEventArgs e)
+        internal Task OnClickHandler(MouseEventArgs mouseEventArgs)
         {
             if (OnClick.HasDelegate)
-                return OnClick.InvokeAsync(e);
+            {
+                return OnClick.InvokeAsync(mouseEventArgs);
+            }
 
             return Task.CompletedTask;
         }
