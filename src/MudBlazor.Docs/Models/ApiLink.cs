@@ -43,18 +43,18 @@ namespace MudBlazor.Docs.Models
             }
 
             var assembly = typeof(MudComponentBase).Assembly;
-            foreach (var x in assembly.GetTypes())
+            foreach (var componentType in assembly.GetTypes())
             {
-                if (new string(x.Name.ToLowerInvariant().TakeWhile(c => c != '`').ToArray()).Equals($"mud{component}", StringComparison.InvariantCultureIgnoreCase))
+                if (new string(componentType.Name.ToLowerInvariant().TakeWhile(c => c != '`').ToArray()).Equals($"mud{component}", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if (x.Name.Contains('`'))
+                    if (componentType.Name.Contains('`'))
                     {
-                        return x.MakeGenericType(typeof(T));
+                        return componentType.MakeGenericType(typeof(T));
                     }
 
-                    if (string.Equals(x.Name, $"mud{component}", StringComparison.InvariantCultureIgnoreCase))
+                    if (string.Equals(componentType.Name, $"mud{component}", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return x;
+                        return componentType;
                     }
                 }
             }
@@ -66,7 +66,11 @@ namespace MudBlazor.Docs.Models
         {
             if (!SpecialCaseComponents.TryGetValue(type, out var component))
             {
-                component = new string(type.ToString().Replace("MudBlazor.Mud", "").TakeWhile(c => c != '`').ToArray())
+                component = new string(type
+                        .ToString()
+                        .Replace("MudBlazor.Mud", "")
+                        .TakeWhile(c => c != '`')
+                        .ToArray())
                     .ToLowerInvariant();
             }
 

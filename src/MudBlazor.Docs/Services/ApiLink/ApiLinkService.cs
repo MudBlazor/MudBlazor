@@ -21,27 +21,9 @@ namespace MudBlazor.Docs.Services
             RegisterAliases();
         }
 
-        private void RegisterAliases()
-        {
-            // Add search texts here which users might search and direct them to the correct component or page
-            RegisterPage("Backdrop", subtitle: "Go to Overlay", componentType: typeof(MudOverlay));
-            RegisterPage("Box", subtitle: "Go to Paper", componentType: typeof(MudPaper));
-            RegisterPage("ComboBox", subtitle: "Go to Select", componentType: typeof(MudSelect<T>));
-            RegisterPage("Drag & Drop", subtitle: "Go to DropZone", componentType: typeof(MudDropZone<T>));
-            RegisterPage("Dropdown", subtitle: "Go to Select", componentType: typeof(MudSelect<T>));
-            RegisterPage("Harmonica", subtitle: "Go to ExpansionPanels", componentType: typeof(MudExpansionPanels));
-            RegisterPage("Horizontal Line", subtitle: "Go to Divider", componentType: typeof(MudDivider));
-            RegisterPage("Hiliter", subtitle: "Go to Highlighter", componentType: typeof(MudHighlighter));
-            RegisterPage("Notification", subtitle: "Go to Snackbar", componentType: typeof(MudSnackbarProvider));
-            RegisterPage("Popup", subtitle: "Go to Popover", componentType: typeof(MudPopover));
-            RegisterPage("SidePanel", subtitle: "Go to Drawer", componentType: typeof(MudDrawer));
-            RegisterPage("Toast", subtitle: "Go to Snackbar", componentType: typeof(MudSnackbarProvider));
-            RegisterPage("Typeahead", subtitle: "Go to Autocomplete", componentType: typeof(MudAutocomplete<T>));
-        }
-
         public void RegisterPage(string title, string? subtitle, Type? componentType, string? link = null)
         {
-            link ??= ApiLink.GetComponentLinkFor(componentType);
+            link ??= ApiLink.GetComponentLinkFor(componentType!);
             var entry = new ApiLinkServiceEntry
             {
                 Title = title,
@@ -79,6 +61,24 @@ namespace MudBlazor.Docs.Services
                     .OrderByDescending(e => e.Title.StartsWith(textLowerInvariant, StringComparison.InvariantCultureIgnoreCase))
                     .ToArray()
             );
+        }
+
+        private void RegisterAliases()
+        {
+            // Add search texts here which users might search and direct them to the correct component or page
+            RegisterPage("Backdrop", subtitle: "Go to Overlay", componentType: typeof(MudOverlay));
+            RegisterPage("Box", subtitle: "Go to Paper", componentType: typeof(MudPaper));
+            RegisterPage("ComboBox", subtitle: "Go to Select", componentType: typeof(MudSelect<T>));
+            RegisterPage("Drag & Drop", subtitle: "Go to DropZone", componentType: typeof(MudDropZone<T>));
+            RegisterPage("Dropdown", subtitle: "Go to Select", componentType: typeof(MudSelect<T>));
+            RegisterPage("Harmonica", subtitle: "Go to ExpansionPanels", componentType: typeof(MudExpansionPanels));
+            RegisterPage("Horizontal Line", subtitle: "Go to Divider", componentType: typeof(MudDivider));
+            RegisterPage("Hiliter", subtitle: "Go to Highlighter", componentType: typeof(MudHighlighter));
+            RegisterPage("Notification", subtitle: "Go to Snackbar", componentType: typeof(MudSnackbarProvider));
+            RegisterPage("Popup", subtitle: "Go to Popover", componentType: typeof(MudPopover));
+            RegisterPage("SidePanel", subtitle: "Go to Drawer", componentType: typeof(MudDrawer));
+            RegisterPage("Toast", subtitle: "Go to Snackbar", componentType: typeof(MudSnackbarProvider));
+            RegisterPage("Typeahead", subtitle: "Go to Autocomplete", componentType: typeof(MudAutocomplete<T>));
         }
 
         private void Register(IEnumerable<MudComponent> items)
