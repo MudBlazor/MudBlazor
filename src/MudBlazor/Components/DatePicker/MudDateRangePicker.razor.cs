@@ -231,7 +231,7 @@ namespace MudBlazor
             {
                 return b.AddClass("mud-range", _secondDate is null && day != DateTime.Today)
                     .AddClass("mud-range-selection")
-                    .AddClass($"mud-range-selection-{Color.ToDescriptionString()}", _firstDate is { })
+                    .AddClass($"mud-range-selection-{Color.ToDescriptionString()}", _firstDate is not null)
                     .AddClass($"mud-current mud-{Color.ToDescriptionString()}-text mud-button-outlined mud-button-outlined-{Color.ToDescriptionString()}", day == DateTime.Today)
                     .Build();
             }
