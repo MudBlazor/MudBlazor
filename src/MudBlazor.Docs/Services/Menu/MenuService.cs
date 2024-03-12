@@ -193,26 +193,26 @@ namespace MudBlazor.Docs.Services
 
         public MenuService()
         {
-            foreach (var comp in Components)
+            foreach (var component in Components)
             {
-                if (comp.IsNavGroup)
+                if (component.IsNavGroup)
                 {
-                    foreach (var groupComp in comp.GroupComponents)
+                    foreach (var groupComponent in component.GroupComponents)
                     {
-                        _componentLookup.Add(groupComp.Type, groupComp);
-                        _parents.Add(groupComp.Type, comp);
+                        _componentLookup.Add(groupComponent.Type, groupComponent);
+                        _parents.Add(groupComponent.Type, component);
                     }
                 }
                 else
                 {
-                    _componentLookup.Add(comp.Type, comp);
+                    _componentLookup.Add(component.Type, component);
                     // top-level types refer to themself as parent ;)
-                    _parents.Add(comp.Type, comp);
-                    if (comp.ChildTypes is not null)
+                    _parents.Add(component.Type, component);
+                    if (component.ChildTypes is not null)
                     {
-                        foreach (var childType in comp.ChildTypes)
+                        foreach (var childType in component.ChildTypes)
                         {
-                            _parents.Add(childType, comp);
+                            _parents.Add(childType, component);
                         }
                     }
                 }
@@ -256,9 +256,9 @@ namespace MudBlazor.Docs.Services
                 {
                     if (item.IsNavGroup)
                     {
-                        foreach (var groupComp in item.GroupComponents)
+                        foreach (var groupComponent in item.GroupComponents)
                         {
-                            _docsComponentsApi.AddItem(groupComp.Name, groupComp.Type);
+                            _docsComponentsApi.AddItem(groupComponent.Name, groupComponent.Type);
                         }
                     }
                     else
