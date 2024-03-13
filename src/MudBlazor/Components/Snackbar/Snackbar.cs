@@ -54,8 +54,8 @@ namespace MudBlazor
         /// <param name="cancellable">Whether the transition, if animated, can be cancelled</param>
         private void TransitionTo(SnackbarState state, bool animate = true, bool cancellable = true)
         {
-            // Stop any existing transition if we're allowed to.
-            if (_transitionCancellable)
+            // Latest cancellable transition always take priority.
+            if (_transitionCancellable || cancellable)
             {
                 StopTimer();
             }
