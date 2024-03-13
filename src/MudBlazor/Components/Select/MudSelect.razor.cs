@@ -630,14 +630,14 @@ namespace MudBlazor
                 _selectedValues.Add(value);
             }
 
-            HilightItemForValue(value);
+            await HilightItemForValueAsync(value);
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T)(object)Text, updateText: false);
             await InvokeAsync(StateHasChanged);
         }
 
-        private async void HilightItemForValue(T value)
+        private async Task HilightItemForValueAsync(T value)
         {
             if (value == null)
             {
@@ -667,7 +667,7 @@ namespace MudBlazor
             if (MultiSelection)
                 HilightItem(_items.FirstOrDefault(x => !x.Disabled));
             else
-                HilightItemForValue(Value);
+                await HilightItemForValueAsync(Value);
         }
 
         private void UpdateSelectAllChecked()

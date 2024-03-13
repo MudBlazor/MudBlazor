@@ -2,7 +2,7 @@
 @using MudBlazor.Resources
 @using System.Globalization
 @using System.Collections
-@using System.Resources
+@using MudBlazor.Docs.Extensions
 
 <DocsPage>
     <DocsPageHeader Title="Localization" SubTitle="Localization allows to provide custom translations for localizable text in the components." />
@@ -36,8 +36,8 @@
         <DocsPageSection>
             <SectionHeader Title="ResX Example">
                 <Description>
-                    An example <CodeInline>MudLocalizer</CodeInline> implementation using Microsofts default <CodeInline>IStringLocalizer</CodeInline>.
-                    Using ResX, you'll have to leave the default culture translations file empty if you want to use English as the fallback language for missing translations. Otherwise the default culture values will be used as a fallback for all non-English languages.
+                    An example <CodeInline>MudLocalizer</CodeInline> implementation using Microsoft default <CodeInline>IStringLocalizer</CodeInline>.
+                    Using ResX, you'll have to leave the default culture translations file empty if you want to use English as the fallback language for missing translations. Otherwise, the default culture values will be used as a fallback for all non-English languages.
                 </Description>
             </SectionHeader>
             <SectionContent Code="LocalizationResX" />
@@ -65,17 +65,24 @@
                 </Description>
             </SectionHeader>
         </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Customize Translation Interceptor">
+                <Description>
+                    <CodeInline>ILocalizationInterceptor</CodeInline> can be used to fully customize the translations.
+                    For example if you don't need the default English translation, or you want to get the translation from other source.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="LocalizationInterceptor" />
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
 
 @code {
     #nullable enable
 
-    private readonly IEnumerable<DictionaryEntry> _translations = ToEnumerable(LanguageResource.ResourceManager
-        .GetResourceSet(CultureInfo.InvariantCulture, true, true)).OrderBy(x => (string)x.Key, StringComparer.InvariantCultureIgnoreCase);
-    
-    private static IEnumerable<DictionaryEntry> ToEnumerable(ResourceSet? resourceSet)
-    {
-        return resourceSet == null ? new List<DictionaryEntry>() : resourceSet.Cast<DictionaryEntry>();
-    }
+    private readonly IEnumerable<DictionaryEntry> _translations = LanguageResource
+        .ResourceManager
+        .GetResourceSet(CultureInfo.InvariantCulture, true, true)
+        .ToEnumerable()
+        .OrderBy(x => (string)x.Key, StringComparer.InvariantCultureIgnoreCase);
 }

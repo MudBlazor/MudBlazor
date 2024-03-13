@@ -106,8 +106,7 @@ namespace MudBlazor
             }
             else
             {
-                SortDefinition<T> sortDefinition = null;
-                var ok = SortDefinitions.TryGetValue(columnName, out sortDefinition);
+                var ok = SortDefinitions.TryGetValue(columnName, out var sortDefinition);
 
                 if (ok)
                 {
@@ -144,8 +143,8 @@ namespace MudBlazor
         {
             dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
 
-            var dragAndDropSource = RenderedColumns.Where(rc => rc.PropertyName == dropItem.Item.PropertyName).SingleOrDefault();
-            var dragAndDropDestination = RenderedColumns.Where(rc => rc.PropertyName == dropItem.DropzoneIdentifier).SingleOrDefault();
+            var dragAndDropSource = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.Item.PropertyName);
+            var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.DropzoneIdentifier);
             if (dragAndDropSource != null && dragAndDropDestination != null)
             {
                 var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
@@ -177,8 +176,8 @@ namespace MudBlazor
         // converters
         private Converter<bool, bool?> _oppositeBoolConverter = new Converter<bool, bool?>
         {
-            SetFunc = value => value ? false : true,
-            GetFunc = value => value.HasValue ? !value.Value : true,
+            SetFunc = value => !value,
+            GetFunc = value => !value ?? true,
         };
 
         #region Notify Children Delegates
@@ -208,7 +207,7 @@ namespace MudBlazor
         /// Callback is called whenever a row is clicked.
         /// </summary>
         [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowClick { get; set; }
-        
+
         /// <summary>
         /// Callback is called whenever a row is right clicked.
         /// </summary>
@@ -1440,7 +1439,7 @@ namespace MudBlazor
             _columnsPanelDropContainer?.Refresh();
         }
 
-        
+
         public void GroupItems(bool noStateChange = false)
         {
             if (!noStateChange)
@@ -1496,7 +1495,7 @@ namespace MudBlazor
             {
                 _groupExpansionsDict[g.Grouping.Key] = !value;
             }
- 
+
             GroupItems();
         }
 

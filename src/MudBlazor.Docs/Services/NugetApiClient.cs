@@ -26,8 +26,10 @@ namespace MudBlazor.Docs.Services
             {
                 BaseAddress = new Uri("https://azuresearch-usnc.nuget.org/")
             };
-            _jsonSerializerOptions = new JsonSerializerOptions();
-            _jsonSerializerOptions.TypeInfoResolver = JsonTypeInfoResolver.Combine(NugetApiJsonSerializerContext.Default);
+            _jsonSerializerOptions = new JsonSerializerOptions
+            {
+                TypeInfoResolver = JsonTypeInfoResolver.Combine(NugetApiJsonSerializerContext.Default)
+            };
         }
 
         public async Task<NugetPackage?> GetPackageAsync(string packageName)

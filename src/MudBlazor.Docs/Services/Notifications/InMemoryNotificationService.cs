@@ -59,13 +59,13 @@ public class InMemoryNotificationService : INotificationService
     {
         var message = await GetMessageById(id);
         if (message == null) { return; }
-        
+
         var timestamp = await _localStorageService.GetItemAsync<DateTime>(LocalStorageKey);
         if (message.PublishDate > timestamp)
         {
             await _localStorageService.SetItemAsync(LocalStorageKey, message.PublishDate);
         }
-        
+
     }
 
     public Task<NotificationMessage> GetMessageById(string id) =>

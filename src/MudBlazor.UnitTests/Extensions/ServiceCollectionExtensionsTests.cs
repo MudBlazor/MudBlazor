@@ -321,6 +321,8 @@ public class ServiceCollectionExtensionsTests
             options.FlipMargin = 100;
             options.ThrowOnDuplicateProvider = false;
             options.Mode = PopoverMode.Legacy;
+            options.PoolSize = 200;
+            options.PoolInitialFill = 10;
             expectedOptions = options;
         });
         var serviceProvider = services.BuildServiceProvider();
@@ -420,9 +422,11 @@ public class ServiceCollectionExtensionsTests
         services.AddMudLocalization();
         var serviceProvider = services.BuildServiceProvider();
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
+        var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
 
         // Assert
         mudLocalizer.Should().NotBeNull();
+        localizationInterceptor.Should().NotBeNull();
     }
 
     [Test]
@@ -465,6 +469,7 @@ public class ServiceCollectionExtensionsTests
         var eventListener = serviceProvider.GetService<IEventListener>();
         var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
+        var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
 
         // Assert
         dialogService.Should().NotBeNull();
@@ -491,6 +496,7 @@ public class ServiceCollectionExtensionsTests
         eventListener.Should().NotBeNull();
         eventListenerFactory.Should().NotBeNull();
         mudLocalizer.Should().NotBeNull();
+        localizationInterceptor.Should().NotBeNull();
     }
 
     [Test]
@@ -541,6 +547,8 @@ public class ServiceCollectionExtensionsTests
             options.PopoverOptions.FlipMargin = 100;
             options.PopoverOptions.ThrowOnDuplicateProvider = false;
             options.PopoverOptions.Mode = PopoverMode.Legacy;
+            options.PopoverOptions.PoolSize = 300;
+            options.PopoverOptions.PoolInitialFill = 5;
 
             expectedOptions = options;
         });
@@ -573,6 +581,7 @@ public class ServiceCollectionExtensionsTests
         var eventListener = serviceProvider.GetService<IEventListener>();
         var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
+        var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
         var snackBarOptions = serviceProvider.GetRequiredService<IOptions<SnackbarConfiguration>>();
         var resizeOptions = serviceProvider.GetRequiredService<IOptions<ResizeOptions>>();
         var resizeObserverOptions = serviceProvider.GetRequiredService<IOptions<ResizeObserverOptions>>();
@@ -607,6 +616,7 @@ public class ServiceCollectionExtensionsTests
         eventListener.Should().NotBeNull();
         eventListenerFactory.Should().NotBeNull();
         mudLocalizer.Should().NotBeNull();
+        localizationInterceptor.Should().NotBeNull();
 
         // We can't check reference here, instead we need to check each value
         actualPopoverOptions.QueueDelay.Should().Be(expectedOptions!.PopoverOptions.QueueDelay);
@@ -614,6 +624,8 @@ public class ServiceCollectionExtensionsTests
         actualPopoverOptions.FlipMargin.Should().Be(expectedOptions.PopoverOptions.FlipMargin);
         actualPopoverOptions.ThrowOnDuplicateProvider.Should().Be(expectedOptions.PopoverOptions.ThrowOnDuplicateProvider);
         actualPopoverOptions.Mode.Should().Be(expectedOptions.PopoverOptions.Mode);
+        actualPopoverOptions.PoolSize.Should().Be(expectedOptions.PopoverOptions.PoolSize);
+        actualPopoverOptions.PoolInitialFill.Should().Be(expectedOptions.PopoverOptions.PoolInitialFill);
 
         actualResizeObserverOptions.EnableLogging.Should().Be(expectedOptions.ResizeObserverOptions.EnableLogging);
         actualResizeObserverOptions.ReportRate.Should().Be(expectedOptions.ResizeObserverOptions.ReportRate);

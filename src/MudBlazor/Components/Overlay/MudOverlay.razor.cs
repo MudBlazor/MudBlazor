@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -10,7 +11,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     {
-        private bool _visible;
+        private ParameterState<bool> _visibleState;
 
         protected string Classname =>
             new CssBuilder("mud-overlay")
@@ -51,17 +52,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Overlay.Behavior)]
-        public bool Visible
-        {
-            get => _visible;
-            set
-            {
-                if (_visible == value)
-                    return;
-                _visible = value;
-                VisibleChanged.InvokeAsync(_visible);
-            }
-        }
+        public bool Visible { get; set; }
 
         /// <summary>
         /// If true overlay will set Visible false on click.
@@ -134,6 +125,11 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        public MudOverlay()
+        {
+            _visibleState = RegisterParameter(nameof(Visible), () => Visible, () => VisibleChanged, VisibleParameterChangedHandlerAsync);
+        }
+
         protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (AutoClose)
@@ -157,6 +153,11 @@ namespace MudBlazor
                 await BlockScrollAsync();
             else
                 await UnblockScrollAsync();
+        }
+
+        private Task VisibleParameterChangedHandlerAsync()
+        {
+            return VisibleChanged.InvokeAsync(_visibleState.Value);
         }
 
         //locks the scroll attaching a CSS class to the specified element, in this case the body
