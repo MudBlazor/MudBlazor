@@ -331,7 +331,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ClickToCloseWithMouseOver()
+        public async Task OnClickClosesWithMouseOver()
         {
             var config = (SnackbarOptions options) =>
             {
@@ -364,6 +364,35 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task CloseButtonClosesWithMouseOver()
+        {
+            var config = (SnackbarOptions options) =>
+            {
+                options.ShowTransitionDuration = 0;
+                options.HideTransitionDuration = 0;
+                options.VisibleStateDuration = int.MaxValue;
+            };
+
+            // Set up the snackbar.
+
+            Snackbar primary = null;
+
+            await _provider.InvokeAsync(() =>
+                primary = _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, config)
+            );
+
+            primary.Should().NotBeNull();
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
+
+            // Test that clicking the close button will actually close the snackbar with the mouse over.
+
+            _provider.Find(".mud-snackbar").TriggerEvent("onmouseenter", new MouseEventArgs());
+            _provider.FindAll("button").Single().Click();
+
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(0);
+        }
+
+        [Test]
         public async Task CannotStopCloseTransition()
         {
             var config = (SnackbarOptions options) =>
@@ -386,7 +415,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Test that the hide transition from clicking the close button cannot be stopped by hovering back over the snackbar.
 
-            var closeButton = _provider.FindAll("button")[0];
+            var closeButton = _provider.FindAll("button").Single();
             closeButton.Click();
             _provider.Find(".mud-snackbar").TouchStart();
             _provider.Find(".mud-snackbar").TriggerEvent("onmouseenter", new MouseEventArgs());
