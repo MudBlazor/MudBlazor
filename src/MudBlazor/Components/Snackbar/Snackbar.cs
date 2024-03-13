@@ -10,9 +10,9 @@ namespace MudBlazor
 {
     public class Snackbar : IDisposable
     {
-        private bool _transitionsPaused = false;
+        private bool _paused = false;
         private bool _transitionCancellable = true;
-        private bool _pendingHide = false;
+        private bool _hideOnResume = false;
         private Timer Timer { get; set; }
         internal SnackBarMessageState State { get; }
         public string Message => SnackbarMessage.Text;
@@ -57,7 +57,7 @@ namespace MudBlazor
             // Stop any existing transition if we're allowed to.
             if (_transitionCancellable)
             {
-                CancelTransition();
+                StopTimer();
             }
             else
             {
@@ -65,8 +65,8 @@ namespace MudBlazor
             }
 
             State.SnackbarState = state;
-            var options = State.Options;
             _transitionCancellable = cancellable;
+            var options = State.Options;
 
             if (state.IsShowing())
             {
@@ -87,42 +87,40 @@ namespace MudBlazor
             OnUpdate?.Invoke();
         }
 
-        private void CancelTransition()
-        {
-            StopTimer();
-            _pendingHide = false;
-            State.SnackbarState = SnackbarState.Visible;
-            OnUpdate?.Invoke();
-        }
-
         public void PauseTransitions(bool pause)
         {
             // Some transitions, like from the close button, can't be canceled or it would restart the transition when the user leaves the snackbar.
             if (!_transitionCancellable)
             {
-                _transitionsPaused = false;
+                _paused = false;
                 return;
             }
 
             // Pause any transitions and stay visible.
-            _transitionsPaused = pause;
+            _paused = pause;
 
             if (pause)
             {
                 switch (State.SnackbarState)
                 {
                     case SnackbarState.Showing:
+                        // Skip the Showing animation and go straight to Visible.
                         TransitionTo(SnackbarState.Visible);
                         break;
                     case SnackbarState.Hiding:
-                        CancelTransition();
-                        _pendingHide = true;
+                        // Stop the Hiding transition and go to a Visible state with no duration.
+                        // As soon as we resume we will trigger the Hiding transition again.
+                        StopTimer();
+                        State.SnackbarState = SnackbarState.Visible;
+                        _hideOnResume = true;
+                        OnUpdate?.Invoke();
                         break;
                 }
             }
-            else if (_pendingHide)
+            else if (_hideOnResume)
             {
-                // The Hiding transition was pending due to the timer and we can now execute it.
+                // The Hiding transition has been pending and we can now execute it.
+                _hideOnResume = false;
                 TransitionTo(SnackbarState.Hiding);
             }
         }
@@ -130,9 +128,13 @@ namespace MudBlazor
         private void TimerElapsed(object _)
         {
             // Let the transition be triggered after the pause is ended.
-            if (_transitionsPaused)
+            if (_paused)
             {
-                _pendingHide = true;
+                if (State.SnackbarState.IsVisible() || State.SnackbarState.IsHiding())
+                {
+                    _hideOnResume = true;
+                }
+
                 return;
             }
 
