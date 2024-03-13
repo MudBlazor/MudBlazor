@@ -164,6 +164,16 @@ namespace MudBlazor
             }
         }
 
+        internal Task OnClickHandler(MouseEventArgs mouseEventArgs)
+        {
+            if (OnClick.HasDelegate)
+            {
+                return OnClick.InvokeAsync(mouseEventArgs);
+            }
+
+            return Task.CompletedTask;
+        }
+
         /// <summary>
         /// Raised when the alert is clicked
         /// </summary>
