@@ -880,7 +880,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DialogWithClassTitleValueShouldAddClassnameToDefaultClassname()
+        public async Task DialogWithTitleClassValueShouldAddClassnameToDefaultClassname()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -888,19 +888,19 @@ namespace MudBlazor.UnitTests.Components
             service.Should().NotBeNull();
             IDialogReference dialogReference = null;
 
-            var parameters = new DialogParameters<DialogWithClassTitle>
+            var parameters = new DialogParameters<DialogWithTitleClass>
             {
-                { x => x.ClassTitle, "my-title-class my-second-class" }
+                { x => x.TitleClass, "my-title-class my-second-class" }
             };
 
-            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithClassTitle>(string.Empty, parameters));
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithTitleClass>(string.Empty, parameters));
             dialogReference.Should().NotBeNull();
 
             comp.Find("div.mud-dialog-title").GetAttribute("class").Should().Be("mud-dialog-title my-title-class my-second-class");
         }
 
         [Test]
-        public async Task DialogWithEmptyClassTitleValueShouldRenderDefaultClassname()
+        public async Task DialogWithEmptyTitleClassValueShouldRenderDefaultClassname()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -908,7 +908,7 @@ namespace MudBlazor.UnitTests.Components
             service.Should().NotBeNull();
             IDialogReference dialogReference = null;
 
-            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithClassTitle>(string.Empty));
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithTitleClass>(string.Empty));
             dialogReference.Should().NotBeNull();
 
             comp.Find("div.mud-dialog-title").GetAttribute("class").Should().Be("mud-dialog-title");

@@ -239,7 +239,7 @@ namespace MudBlazor
 
         protected string TitleClassname =>
             new CssBuilder("mud-dialog-title")
-                .AddClass(_dialog?.ClassTitle)
+                .AddClass(_dialog?.TitleClass)
                 .Build();
 
         protected string Classname =>

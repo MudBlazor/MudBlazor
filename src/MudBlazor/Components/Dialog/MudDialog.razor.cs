@@ -12,14 +12,20 @@ namespace MudBlazor
 {
     public partial class MudDialog : MudComponentBase
     {
-        protected string ContentClass => new CssBuilder("mud-dialog-content")
-          .AddClass($"mud-dialog-no-side-padding", DisableSidePadding)
-          .AddClass(ClassContent)
-        .Build();
+        [Obsolete($"Use {nameof(ContentClassname)} instead.")]
+        protected string ContentClass => ContentClassname;
 
-        protected string ActionClass => new CssBuilder("mud-dialog-actions")
-          .AddClass(ClassActions)
-        .Build();
+        protected string ContentClassname => new CssBuilder("mud-dialog-content")
+            .AddClass("mud-dialog-no-side-padding", DisableSidePadding)
+            .AddClass(ClassContent)
+            .Build();
+
+        [Obsolete($"Use {nameof(ActionClassname)} instead.")]
+        protected string ActionClass => ActionClassname;
+
+        protected string ActionClassname => new CssBuilder("mud-dialog-actions")
+            .AddClass(ClassActions)
+            .Build();
 
         [CascadingParameter] private MudDialogInstance DialogInstance { get; set; }
         [CascadingParameter(Name = "IsNested")] private bool IsNested { get; set; }
@@ -77,7 +83,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
-        public string ClassTitle { get; set; }
+        public string TitleClass { get; set; }
 
         /// <summary>
         /// CSS class that will be applied to the dialog content
@@ -155,7 +161,7 @@ namespace MudBlazor
                 [nameof(DialogContent)] = DialogContent,
                 [nameof(DialogActions)] = DialogActions,
                 [nameof(DisableSidePadding)] = DisableSidePadding,
-                [nameof(ClassTitle)] = ClassTitle,
+                [nameof(TitleClass)] = TitleClass,
                 [nameof(ClassContent)] = ClassContent,
                 [nameof(ClassActions)] = ClassActions,
                 [nameof(ContentStyle)] = ContentStyle,
