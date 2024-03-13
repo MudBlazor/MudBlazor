@@ -588,6 +588,67 @@ public class PopoverServiceTests
     }
 
     [Test]
+    public async Task DisposeAsync_ShouldCancelDetachRangeAsync()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var popoverTimerMock = new Mock<PopoverServiceMock.IPopoverTimerMock>();
+        var signalBeforeEvent = new ManualResetEventSlim(false);
+        var signalAfterEvent = new ManualResetEventSlim(false);
+        var service = new PopoverServiceMock(NullLogger<PopoverService>.Instance, jsRuntimeMock.Object, popoverTimerMock.Object);
+        var observer = new PopoverObserverMock();
+        var popovers = new[] { new PopoverMock(), new PopoverMock(), new PopoverMock(), new PopoverMock() };
+        service.Subscribe(observer);
+
+        popoverTimerMock
+            .Setup(h => h.OnBatchTimerElapsedBeforeAsync(
+                It.IsAny<IReadOnlyCollection<MudPopoverHolder>>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask)
+            .Callback(signalBeforeEvent.Set);
+
+        popoverTimerMock
+            .Setup(h => h.OnBatchTimerElapsedAfterAsync(
+                It.IsAny<IReadOnlyCollection<MudPopoverHolder>>(),
+                It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask)
+            .Callback(signalAfterEvent.Set);
+
+        // Act
+        foreach (var popover in popovers)
+        {
+            await service.CreatePopoverAsync(popover);
+        }
+
+        foreach (var popover in popovers)
+        {
+            // Necessary to make them connect to check if "mudPopover.disconnect" was invoked otherwise will be skipped.
+            await service.UpdatePopoverAsync(popover);
+        }
+
+        foreach (var popover in popovers)
+        {
+            await service.DestroyPopoverAsync(popover);
+        }
+
+        // Wait for the event to be signaled, consider test failed if we didn't receive signal in period + 2 minutes
+        var signalEventWaitTime = service.PopoverOptions.QueueDelay.Add(TimeSpan.FromMinutes(2));
+        var eventBeforeSignaled = signalBeforeEvent.Wait(signalEventWaitTime);
+        if (eventBeforeSignaled)
+        {
+            // When DetachRangeAsync is about to be called we cancel.
+            await service.DisposeAsync();
+        }
+        // We also need to wait for after the event to make sure disconnect wasn't called, but we need to do it after dispose.
+        var eventAfterSignaled = signalAfterEvent.Wait(signalEventWaitTime);
+
+        // Assert
+        eventBeforeSignaled.Should().BeTrue();
+        eventAfterSignaled.Should().BeTrue();
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudPopover.disconnect", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
+    }
+
+    [Test]
     public async Task DisposeAsync_ShouldClearActivePopovers()
     {
         // Arrange
