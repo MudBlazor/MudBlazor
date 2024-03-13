@@ -1,6 +1,5 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-
 <MudStack AlignItems="AlignItems.Center" Style="width:650px; height:450px">
     <MudDateRangePicker PickerVariant="@_variant" @bind-DateRange="@_dateRange" Margin="Margin.Dense" />
     <MudSpacer />
@@ -11,7 +10,6 @@
         <MudToggleItem Value="@(PickerVariant.Static)" Text="Static" />
     </MudToggleGroup>
 </MudStack>
-
 
 @code {
     private PickerVariant _variant = PickerVariant.Static;
