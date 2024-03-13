@@ -333,6 +333,15 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            if (Text == null && (Value == null && MudTreeRoot?.ServerData != null))
+                throw new InvalidOperationException(
+                    $"'{nameof(MudTreeView<T>)}.{nameof(MudTreeRoot.ServerData)}' requires '{nameof(MudTreeRoot.ItemTemplate)}.{nameof(MudTreeViewItem<T>)}.{nameof(Value)}' to be supplied.");
+        }
+
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             if (parameters.TryGetValue(nameof(Activated), out bool selected) &&

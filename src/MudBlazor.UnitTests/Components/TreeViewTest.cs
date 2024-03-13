@@ -268,8 +268,22 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p.mud-typography")[3].InnerHtml.MarkupMatches("This is item 4");
             comp.FindAll("p.mud-typography")[4].InnerHtml.MarkupMatches("This is item 5");
         }
-        
-        
+
+        [Test]
+        public void TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerdataIsSet_Throw()
+        {
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                var comp = Context.RenderComponent<TreeViewTest8>();
+
+                comp.SetParametersAndRender();
+
+                comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            });
+
+            exception.Message.Should().Be("'MudTreeView.ServerData' requires 'ItemTemplate.MudTreeViewItem.Value' to be supplied.");
+        }
+
         [Test]
         public void TreeView_SetSelectedValue_SetsSelectedValue()
         {
