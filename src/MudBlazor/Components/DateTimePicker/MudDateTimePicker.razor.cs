@@ -33,7 +33,6 @@ namespace MudBlazor
             get => GetDateTimeFormat();
             set => SetDateTimeFormat(value);
         }
-        private bool _cultureDateTimeFormat { get; set; } = true;
 
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -142,9 +141,6 @@ namespace MudBlazor
 
         protected string OnSet(DateTime? value)
         {
-            if (value == null)
-                return null;
-
             return value?.ToString(GetDateTimeFormat()) ?? null;
         }
 

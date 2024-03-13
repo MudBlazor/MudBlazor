@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
-using MudBlazor.UnitTests.TestComponents.DatePicker;
 using NUnit.Framework;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
@@ -43,6 +43,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        // [WIP]
         public void DateTimePickerOpenButtonAriaLabel()
         {
             /*var comp = Context.RenderComponent<DateTimePickerValidationTest>();
@@ -51,7 +52,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [Ignore("Unignore for performance measurements, not needed for code coverage")]
+        /*[Ignore("Unignore for performance measurements, not needed for code coverage")]*/
         public void DatePicker_Render_Performance()
         {
             // warmup
@@ -207,6 +208,23 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be(DateTime.Parse("2024-01-28 10:15:00").ToString("dd/MM/yyyy HH:mm"));
         }
 
+        [Test]
+        public void FirstDayOfWeekTest()
+        {
+            var comp = OpenPicker(Parameter("FirstDayOfWeek", DayOfWeek.Monday));
+            var picker = comp.FindComponent<MudDateTimePicker>();
+            comp.FindAll("div.mud-picker-calendar-header-day > span")[0].TrimmedText().Should().Be("Mon");
+        }
+
+        [Test]
+        public void ShowWeekNumbers()
+        {
+            var comp = Context.RenderComponent<MudDateTimePicker>(parameters => parameters
+                .Add(p => p.ShowWeekNumbers, true)
+            );
+            //comp.
+        }
+
         public IRenderedComponent<SimpleDateTimePickerTest> OpenPicker(ComponentParameter parameter)
         {
             return OpenPicker(new ComponentParameter[] { parameter });
@@ -359,7 +377,5 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-minute")[35].Click();
             picker.Instance.DateTime.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-{DateTime.Now.Month}-23 16:35:00")/*new DateTime(DateTime.Now.Year, DateTime.Now.Month, 23)*/);
         }
-
-
     }
 }

@@ -17,6 +17,8 @@
                        FixYear="@FixYear"
                        MinDateTime="@MinDate"
                        MaxDateTime="@MaxDate"
+                       FirstDayOfWeek="FirstDayOfWeek"
+                       ShowWeekNumbers="ShowWeekNumbers"
                        AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
 }
 else
@@ -32,6 +34,8 @@ else
                        FixYear="@FixYear"
                        MinDateTime="@MinDate"
                        MaxDateTime="@MaxDate"
+                       FirstDayOfWeek="FirstDayOfWeek"
+                       ShowWeekNumbers="ShowWeekNumbers"
                        AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
 }
 
@@ -46,6 +50,8 @@ else
         await DateTimeChanged.InvokeAsync(input);
     }
 
+    [Parameter] public bool ShowWeekNumbers { get; set; } = true;
+    [Parameter] public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Sunday;
     [Parameter] public DateTime? PickerMonth { get; set; }
     [Parameter] public EventCallback<DateTime?> DateTimeChanged { get; set; }
     [Parameter] public bool Readonly { get; set; } = false;
