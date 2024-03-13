@@ -1797,16 +1797,16 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridFiltersTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
-            var filterButton = dataGrid.FindAll(".filter-button")[0];
+            IElement FilterButton() => dataGrid.FindAll(".filter-button")[0];
 
             // click on the filter button
-            filterButton.Click();
+            FilterButton().Click();
 
             // check the number of filters displayed in the filters panel is 1
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
 
             // click again on the filter button
-            filterButton.Click();
+            FilterButton().Click();
 
             // check the number of filters displayed in the filters panel is still 1 (no duplicate filter)
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
