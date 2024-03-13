@@ -56,6 +56,13 @@ namespace MudBlazor
 
                 Touched = true;
 
+                if (range?.Start > range?.End)
+                {
+                    Error = true;
+                    ErrorText = "Start date greater than end date!";
+                    return;
+                }
+
                 _dateRange = range;
                 _value = range?.End;
 

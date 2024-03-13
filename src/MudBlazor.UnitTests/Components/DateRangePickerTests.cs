@@ -496,7 +496,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Change("");
             comp.Instance.DateRange.End.Should().BeNull();
             comp.Instance.DateRange.Start.Should().BeNull();
-
         }
 
         [Test]
@@ -508,7 +507,6 @@ namespace MudBlazor.UnitTests.Components
                     .Add(p=>p.Culture, CultureInfo.CurrentCulture));
             comp.Find("input").Change(dateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern));
             comp.Instance.DateRange.Start.Should().Be(dateTime);
-
         }
 
 
@@ -527,6 +525,25 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(nameof(MudDateRangePicker.DateRange), dr2);
 
             comp.Instance.DateRange.Should().Be(dr2);
+            wasEventCallbackCalled.Should().BeFalse();
+        }
+
+        [Test]
+        public void SetDateRange_InvalidRange_Error()
+        {
+            var dr1 = new DateRange(new DateTime(2024, 01, 01), new DateTime(2024, 01, 10));
+            var dr2 = new DateRange(new DateTime(2024, 10, 01), new DateTime(2024, 01, 10));
+
+            var wasEventCallbackCalled = false;
+
+            var comp = Context.RenderComponent<MudDateRangePicker>(
+                Parameter(nameof(MudDateRangePicker.DateRange), dr1),
+                EventCallback(nameof(MudDateRangePicker.DateRangeChanged), (DateRange _) => wasEventCallbackCalled = true));
+
+            comp.SetParam(nameof(MudDateRangePicker.DateRange), dr2);
+
+            comp.Instance.Error.Should().BeTrue();
+            comp.Instance.ErrorText.Should().Be("Start date greater than end date!");
             wasEventCallbackCalled.Should().BeFalse();
         }
 
