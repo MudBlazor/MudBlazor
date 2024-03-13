@@ -604,7 +604,11 @@ public class PopoverServiceTests
             .Setup(h => h.OnBatchTimerElapsedBeforeAsync(
                 It.IsAny<IReadOnlyCollection<MudPopoverHolder>>(),
                 It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask)
+            .Returns(async () =>
+            {
+                // Call dispose immediately before the DetachRangeAsync about to fire.
+                await service.DisposeAsync();
+            })
             .Callback(signalBeforeEvent.Set);
 
         popoverTimerMock
@@ -634,12 +638,6 @@ public class PopoverServiceTests
         // Wait for the event to be signaled, consider test failed if we didn't receive signal in period + 2 minutes
         var signalEventWaitTime = service.PopoverOptions.QueueDelay.Add(TimeSpan.FromMinutes(2));
         var eventBeforeSignaled = signalBeforeEvent.Wait(signalEventWaitTime);
-        if (eventBeforeSignaled)
-        {
-            // When DetachRangeAsync is about to be called we cancel.
-            await service.DisposeAsync();
-        }
-        // We also need to wait for after the event to make sure disconnect wasn't called, but we need to do it after dispose.
         var eventAfterSignaled = signalAfterEvent.Wait(signalEventWaitTime);
 
         // Assert
