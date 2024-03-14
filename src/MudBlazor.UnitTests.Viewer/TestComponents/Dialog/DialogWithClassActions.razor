@@ -8,7 +8,9 @@
 </MudDialog>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
 
-    [Parameter] public string ClassActions { get; set; } = "";
+    [Parameter]
+    public string ClassActions { get; set; } = string.Empty;
 }

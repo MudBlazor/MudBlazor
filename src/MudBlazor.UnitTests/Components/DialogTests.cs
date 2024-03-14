@@ -897,7 +897,7 @@ namespace MudBlazor.UnitTests.Components
                 { x => x.DisableSidePadding, disablePadding }
             };
 
-            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithClassContent>(string.Empty, parameters));
+            await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithClassContent>(string.Empty, parameters));
             dialogReference.Should().NotBeNull();
 
             comp.Find("div.mud-dialog-content").GetAttribute("class").Should().Be(expectedClassname);
@@ -918,7 +918,7 @@ namespace MudBlazor.UnitTests.Components
                 { x => x.ClassActions, classActions }
             };
 
-            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithClassActions>(string.Empty, parameters));
+            await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithClassActions>(string.Empty, parameters));
             dialogReference.Should().NotBeNull();
 
             comp.Find("div.mud-dialog-actions").GetAttribute("class").Should().Be(expectedClassname);
@@ -939,7 +939,7 @@ namespace MudBlazor.UnitTests.Components
                 { x => x.TitleClass, titleClass }
             };
 
-            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithTitleClass>(string.Empty, parameters));
+            await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithTitleClass>(string.Empty, parameters));
             dialogReference.Should().NotBeNull();
 
             comp.Find("div.mud-dialog-title").GetAttribute("class").Should().Be(expectedClassname);

@@ -6,9 +6,12 @@
 </MudDialog>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
 
-    [Parameter] public string ClassContent { get; set; } = "";
+    [Parameter]
+    public string ClassContent { get; set; } = string.Empty;
     
-    [Parameter] public bool DisableSidePadding { get; set; }
+    [Parameter]
+    public bool DisableSidePadding { get; set; }
 }

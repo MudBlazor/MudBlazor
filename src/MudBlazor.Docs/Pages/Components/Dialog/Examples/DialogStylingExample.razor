@@ -3,16 +3,15 @@
 @inject IDialogService DialogService
 
 
-<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+<MudButton @onclick="OpenDialogAsync" Variant="Variant.Filled" Color="Color.Primary">
     Open Custom Styled Dialog
 </MudButton>
 
 
 @code {
-
-    private void OpenDialog()
+    private Task OpenDialogAsync()
     {
         var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true };
-        DialogService.Show<DialogStylingExample_Dialog>("Styling Example Dialog", options);
+        return DialogService.ShowAsync<DialogStylingExample_Dialog>("Styling Example Dialog", options);
     }
 }
