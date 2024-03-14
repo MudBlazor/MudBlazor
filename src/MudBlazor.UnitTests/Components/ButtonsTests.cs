@@ -1,12 +1,12 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Button;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -462,6 +462,17 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudButton>().Find("button").HasAttribute("disabled").Should().BeTrue();
             comp.FindComponent<MudFab>().Find("button").HasAttribute("disabled").Should().BeTrue();
             comp.FindComponent<MudIconButton>().Find("button").HasAttribute("disabled").Should().BeTrue();
+        }
+
+        [Test]
+        public async Task OnClickErrorContentCaughtException()
+        {
+            var comp = Context.RenderComponent<ButtonErrorContenCaughtException>();
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync(new MouseEventArgs());
+            var mudAlert = comp.FindComponent<MudAlert>();
+            var text = mudAlert.Find("div.mud-alert-message");
+
+            text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
         }
     }
 }

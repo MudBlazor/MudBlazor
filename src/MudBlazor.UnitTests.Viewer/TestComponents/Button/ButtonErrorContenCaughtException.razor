@@ -1,0 +1,18 @@
+﻿<ErrorBoundary>
+    <ChildContent>
+        <MudButton OnClick="HandleClickAsync" Variant="Variant.Filled" Color="Color.Primary">
+            <MudText>Click me</MudText>
+        </MudButton>
+    </ChildContent>
+    <ErrorContent>
+        <MudAlert Severity="Severity.Error">Oh my! We caught an error and handled it!</MudAlert>
+    </ErrorContent>
+</ErrorBoundary>
+
+@code {
+    public async Task HandleClickAsync()
+    {
+        await Task.Delay(100);
+        throw new Exception("Something went wrong...");
+    }
+}
