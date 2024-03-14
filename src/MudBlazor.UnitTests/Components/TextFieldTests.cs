@@ -1082,7 +1082,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
             .Add(p => p.AutoGrow, true));
 
-            comp.FindAll(".mud-input-input-control-auto-grow").Count.Should().Be(1);
+            comp.FindAll(".mud-input-auto-grow").Count.Should().Be(1);
         }
     }
 }
