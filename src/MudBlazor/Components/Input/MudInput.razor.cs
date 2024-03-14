@@ -10,8 +10,12 @@ namespace MudBlazor
 {
     public partial class MudInput<T> : MudBaseInput<T>
     {
-        protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel);
+        protected string Classname =>
+           new CssBuilder(
+               MudInputCssHelper.GetClassname(this,
+                   () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel))
+            .AddClass("mud-input-auto-grow", when: () => AutoGrow)
+            .Build();
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
