@@ -24,7 +24,7 @@
         </MudText>
     }
     
-    @if (!HidePagination)
+    @if (!HideNavigation)
     {
         <div class="mud-table-pagination-actions">
             <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.FirstPage" Disabled="@BackButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.First))" />

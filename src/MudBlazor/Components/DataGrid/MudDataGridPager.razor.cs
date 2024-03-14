@@ -45,7 +45,7 @@ namespace MudBlazor
         /// <summary>
         /// Set true to hide the pagination.
         /// </summary>
-        [Parameter] public bool HidePagination { get; set; }
+        [Parameter] public bool HideNavigation { get; set; }
 
         /// <summary>
         /// Set true to hide the number of pages.
