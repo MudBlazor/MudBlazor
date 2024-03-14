@@ -19,6 +19,6 @@
     {
         Snackbar.Clear();
         Snackbar.Configuration.PositionClass = position;
-        Snackbar.Add(message, Severity.Normal);
+        Snackbar.Add((MarkupString)message, Severity.Normal);
     }
 }
