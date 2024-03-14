@@ -264,6 +264,8 @@ namespace MudBlazor.UnitTests.Components
 
             var mudText = comp.FindAll("p.mud-typography");
             mudText[mudText.Count - 1].InnerHtml.Should().Contain("Not all items are shown"); //ensure the text is shown
+
+            comp.FindAll("div.mud-popover .mud-autocomplete-more-items").Count.Should().Be(1);
         }
 
         /// <summary>
@@ -280,6 +282,8 @@ namespace MudBlazor.UnitTests.Components
 
             var mudText = comp.FindAll("p.mud-typography");
             mudText[mudText.Count - 1].InnerHtml.Should().Contain("No items found, try another search"); //ensure the text is shown
+
+            comp.FindAll("div.mud-popover .mud-autocomplete-no-items").Count.Should().Be(1);
         }
 
         /// <summary>
@@ -1237,6 +1241,8 @@ namespace MudBlazor.UnitTests.Components
 
             var mudText = comp.FindAll("p.mud-typography");
             mudText[0].InnerHtml.Should().Contain("StartList_Content"); //ensure the text is shown
+
+            comp.FindAll("div.mud-popover .mud-autocomplete-before-items").Count.Should().Be(1);
         }
 
         /// <summary>
@@ -1253,6 +1259,8 @@ namespace MudBlazor.UnitTests.Components
 
             var mudText = comp.FindAll("p.mud-typography");
             mudText[mudText.Count - 1].InnerHtml.Should().Contain("EndList_Content"); //ensure the text is shown
+
+            comp.FindAll("div.mud-popover .mud-autocomplete-after-items").Count.Should().Be(1);
         }
 
         /// <summary>
@@ -1301,20 +1309,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TemplateDivClasses()
+        public async Task Autocomplete_FoundItemsCount_Should_Be_Accurate()
         {
+            Task<IEnumerable<string>> search(string value)
+            {
+                var values = new string[] { "Lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit" };
+                return Task.FromResult(values.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+            }
+
             var comp = Context.RenderComponent<MudAutocomplete<string>>();
             comp.SetParametersAndRender(p => p
-                .Add(x => x.AfterItemsTemplate, _ => { })
-                .Add(x => x.BeforeItemsTemplate, _ => { })
-                .Add(x => x.MoreItemsTemplate, _ => { })
-                .Add(x => x.NoItemsTemplate, _ => { })
-            );
+                .Add(x => x.Value, "nothing will ever match this")
+                .Add(x => x.SearchFunc, search)
+                .Add(x => x.DebounceInterval, 0));
 
-            comp.FindAll(".mud-autocomplete>.mud-autocomplete-after-items").Count.Should().Be(1);
-            comp.FindAll(".mud-autocomplete>.mud-autocomplete-before-items").Count.Should().Be(1);
-            comp.FindAll(".mud-autocomplete>.mud-autocomplete-more-items").Count.Should().Be(1);
-            comp.FindAll(".mud-autocomplete>.mud-autocomplete-no-items").Count.Should().Be(1);
+            comp.Instance.FoundItemsCount.Should().Be(0);
+
+            comp.Find("input").Input("Lorem");
+            comp.WaitForAssertion(() => comp.Instance.FoundItemsCount.Should().Be(1));
+            ;
+            comp.Find("input").Input("ip");
+            comp.WaitForAssertion(() => comp.Instance.FoundItemsCount.Should().Be(2));
         }
     }
 }

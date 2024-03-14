@@ -364,7 +364,7 @@ namespace MudBlazor
         /// <para>The number of items that were found by the search query.</para>
         /// <para>
         /// If the number is <c>0</c>, <see cref="NoItemsTemplate"/> will be shown.<br />
-        /// If the number is at least <see cref="MaxItems"/>, <see cref="MoreItemsTemplate"/> will be shown.
+        /// If the number is beyond <see cref="MaxItems"/>, <see cref="MoreItemsTemplate"/> will be shown.
         /// </para>
         /// </summary>
         [Category(CategoryTypes.FormComponent.Behavior)]
