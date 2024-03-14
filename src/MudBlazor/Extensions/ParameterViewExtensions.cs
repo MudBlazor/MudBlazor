@@ -28,5 +28,24 @@ namespace MudBlazor
 
             return false;
         }
+
+        /// <summary>
+        /// Checks if a parameter changed.
+        /// </summary>
+        /// <typeparam name="T">The value type</typeparam>
+        /// <param name="parameters">The parameters.</param>
+        /// <param name="parameterName">Name of the parameter.</param>
+        /// <param name="parameterValue">The parameter value.</param>
+        /// <param name="value">Receives the value, if any.</param>
+        /// <returns><c>true</c> if the parameter value has changed, <c>false</c> otherwise.</returns>
+        public static bool HasParameterChanged<T>(this ParameterView parameters, string parameterName, T parameterValue, out T? value)
+        {
+            if (parameters.TryGetValue(parameterName, out value))
+            {
+                return !EqualityComparer<T>.Default.Equals(value, parameterValue);
+            }
+
+            return false;
+        }
     }
 }
