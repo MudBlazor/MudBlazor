@@ -38,7 +38,7 @@ namespace MudBlazor
         /// <param name="callback">The asynchronous callback to be converted.</param>
         /// <returns>A non-rendering event handler.</returns>
         public static Func<Task> AsNonRenderingEventHandler(Func<Task> callback)
-            => async () => await new AsyncReceiver(callback).Invoke();
+            => async () => await new AsyncReceiver(callback).Invoke(); // https://github.com/dotnet/aspnetcore/issues/54543
 
         /// <summary>
         /// Converts the provided <see cref="Func{TValue, Task}"/> callback into a non-rendering event handler.
@@ -47,7 +47,7 @@ namespace MudBlazor
         /// <param name="callback">The asynchronous callback to be converted.</param>
         /// <returns>A non-rendering event handler.</returns>
         public static Func<TValue, Task> AsNonRenderingEventHandler<TValue>(Func<TValue, Task> callback)
-            => async value => await new AsyncReceiver<TValue>(callback).Invoke(value);
+            => async value => await new AsyncReceiver<TValue>(callback).Invoke(value); // https://github.com/dotnet/aspnetcore/issues/54543
 
         private record SyncReceiver(Action Callback) : ReceiverBase
         {
