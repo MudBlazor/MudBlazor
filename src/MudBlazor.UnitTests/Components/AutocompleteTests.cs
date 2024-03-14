@@ -170,7 +170,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => autocomplete.Value.Should().Be("Austria"));
             autocomplete.Text.Should().Be("Austria");
         }
-        
+
         /// <summary>
         /// Test to cover issue #5993.
         /// </summary>
@@ -189,7 +189,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
             autocompletecomp.SetParam(p => p.Text, "Austria"); // not part of the U.S.
-            
+
             comp.WaitForAssertion(() => autocomplete.Value.Should().Be("Austria"));
             autocomplete.Text.Should().Be("Austria");
         }
@@ -1238,7 +1238,7 @@ namespace MudBlazor.UnitTests.Components
             var mudText = comp.FindAll("p.mud-typography");
             mudText[0].InnerHtml.Should().Contain("StartList_Content"); //ensure the text is shown
         }
-        
+
         /// <summary>
         /// AfterItemsTemplate should render when there are items
         /// </summary>
@@ -1298,6 +1298,23 @@ namespace MudBlazor.UnitTests.Components
             inputControl.Click();
 
             comp.WaitForAssertion(() => comp.Find("div.mud-list-item").ClassList.Should().Contain(listItemClassTest));
+        }
+
+        [Test]
+        public async Task TemplateDivClasses()
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>();
+            comp.SetParametersAndRender(p => p
+                .Add(x => x.AfterItemsTemplate, _ => { })
+                .Add(x => x.BeforeItemsTemplate, _ => { })
+                .Add(x => x.MoreItemsTemplate, _ => { })
+                .Add(x => x.NoItemsTemplate, _ => { })
+            );
+
+            comp.FindAll(".mud-autocomplete>.mud-autocomplete-after-items").Count.Should().Be(1);
+            comp.FindAll(".mud-autocomplete>.mud-autocomplete-before-items").Count.Should().Be(1);
+            comp.FindAll(".mud-autocomplete>.mud-autocomplete-more-items").Count.Should().Be(1);
+            comp.FindAll(".mud-autocomplete>.mud-autocomplete-no-items").Count.Should().Be(1);
         }
     }
 }

@@ -15,6 +15,8 @@ namespace MudBlazor.Docs.Shared;
 public partial class Appbar
 {
     private bool _searchDialogOpen;
+    private bool _searchDialogAutocompleteOpen;
+    private int _searchDialogFoundItemsCount;
     private string _badgeTextSoon = "coming soon";
     private MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete = null!;
     private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true };
@@ -91,6 +93,17 @@ public partial class Appbar
         }
     ];
 
+    public bool IsSearchDialogOpen
+    {
+        get => _searchDialogOpen;
+        set
+        {
+            _searchDialogAutocompleteOpen = default;
+            _searchDialogFoundItemsCount = default;
+            _searchDialogOpen = value;
+        }
+    }
+
     [Inject]
     private NavigationManager NavigationManager { get; set; } = null!;
 
@@ -130,5 +143,5 @@ public partial class Appbar
         return ApiLinkService.Search(text);
     }
 
-    private void OpenSearchDialog() => _searchDialogOpen = true;
+    private void OpenSearchDialog() => IsSearchDialogOpen = true;
 }

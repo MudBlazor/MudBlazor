@@ -355,6 +355,30 @@ namespace MudBlazor
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         /// <summary>
+        /// An event triggered when the number of items returned by the search query has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<int> FoundItemsCountChanged { get; set; }
+
+        /// <summary>
+        /// <para>The number of items that were found by the search query.</para>
+        /// <para>
+        /// If the number is <c>0</c>, <see cref="NoItemsTemplate"/> will be shown.<br />
+        /// If the number is at least <see cref="MaxItems"/>, <see cref="MoreItemsTemplate"/> will be shown.
+        /// </para>
+        /// </summary>
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public int FoundItemsCount
+        {
+            get => _itemsReturned;
+            private set
+            {
+                _itemsReturned = value;
+                FoundItemsCountChanged.InvokeAsync(value).AndForget();
+            }
+        }
+
+        /// <summary>
         /// Returns the open state of the drop-down.
         /// </summary>
         public bool IsOpen
@@ -542,7 +566,7 @@ namespace MudBlazor
                 Logger.LogWarning("The search function failed to return results: " + e.Message);
             }
 
-            _itemsReturned = searchedItems.Length;
+            FoundItemsCount = searchedItems.Length;
             if (MaxItems.HasValue)
             {
                 searchedItems = searchedItems.Take(MaxItems.Value).ToArray();

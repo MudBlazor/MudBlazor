@@ -69,7 +69,9 @@
     <MudSpacer/>
     @if (DisplaySearchBar)
     {
-        <MudAutocomplete AutoFocus="true" @ref="_searchAutocomplete" T="ApiLinkServiceEntry" Placeholder="Search" SearchFunc="async text => await Search(text)" Variant="Variant.Outlined" ValueChanged="OnSearchResult" Class="docs-search-bar mx-4" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search">
+        <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" Class="docs-search-bar mx-4"
+                         AutoFocus="true" Placeholder="Search" Variant="Variant.Outlined"
+                         SearchFunc="async text => await Search(text)" ValueChanged="OnSearchResult" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search">
             <ItemTemplate Context="result">
                 <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
             </ItemTemplate>
@@ -86,16 +88,25 @@
     </MudTooltip>
 </div>
 
-
-<MudDialog @bind-IsVisible="_searchDialogOpen" Options="_dialogOptions" Class="docs-gray-bg" ClassContent="docs-mobile-dialog-search">
+<MudDialog @bind-IsVisible="IsSearchDialogOpen" Options="_dialogOptions" Class="docs-gray-bg" ClassContent="docs-mobile-dialog-search d-flex flex-column">
     <DialogContent>
-        <MudAutocomplete AutoFocus="true" @ref="_searchAutocomplete" T="ApiLinkServiceEntry" PopoverClass="docs-mobile-dialog-search-popover" Placeholder="Search docs" SearchFunc="async text => await Search(text)" ValueChanged="OnSearchResult" Clearable="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search">
+        <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" PopoverClass="docs-mobile-dialog-search-popover"
+                         AutoFocus="true" Placeholder="Search docs" Clearable="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+                         SearchFunc="async text => await Search(text)" ValueChanged="OnSearchResult" IsOpenChanged="o => _searchDialogAutocompleteOpen = o" FoundItemsCountChanged="c => _searchDialogFoundItemsCount = c">
             <ItemTemplate Context="result">
                 <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
             </ItemTemplate>
         </MudAutocomplete>
-        <div class="d-flex justify-center align-center mud-height-full pb-16">
-            <MudText Typo="Typo.body2" Class="mud-text-secondary">Nothing found, do a search</MudText>
-        </div>
+
+        <MudText Typo="Typo.body2" Class="flex-grow-1 mud-text-secondary" Align="Align.Center">
+            @if (!_searchDialogAutocompleteOpen)
+            {
+                @("Use the box above to search the docs")
+            }
+            else if (_searchDialogFoundItemsCount == 0)
+            {
+                @("No results found")
+            }
+        </MudText>
     </DialogContent>
 </MudDialog>
