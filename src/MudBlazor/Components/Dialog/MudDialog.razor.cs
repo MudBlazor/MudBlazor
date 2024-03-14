@@ -121,7 +121,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public DefaultFocus DefaultFocus { get; set; }
+        public DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
 
         private bool IsInline => IsNested || DialogInstance == null;
 
