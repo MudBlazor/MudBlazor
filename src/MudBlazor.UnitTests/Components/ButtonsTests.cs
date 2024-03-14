@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
+using Bunit.Rendering;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
@@ -465,14 +468,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task OnClickErrorContentCaughtException()
+        public async Task ButtonsOnClickErrorContentCaughtException()
         {
             var comp = Context.RenderComponent<ButtonErrorContenCaughtException>();
-            await comp.FindAll("button.mud-button-root")[0].ClickAsync(new MouseEventArgs());
-            var mudAlert = comp.FindComponent<MudAlert>();
-            var text = mudAlert.Find("div.mud-alert-message");
+            var alertTextFunc = () => MudAlert().Find("div.mud-alert-message");
+            IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
+            IRefreshableElementCollection<IElement> Buttons() => comp.FindAll("button.mud-button-root");
+            IElement MudButton() => Buttons()[0];
+            IElement MudFab() => Buttons()[1];
+            IElement MudIconButton() => Buttons()[2];
 
-            text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            // MudButton
+            await MudButton().ClickAsync(new MouseEventArgs());
+            alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            await comp.InvokeAsync(comp.Instance.Recover);
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
+
+            // MudFab
+            await MudFab().ClickAsync(new MouseEventArgs());
+            alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            await comp.InvokeAsync(comp.Instance.Recover);
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
+
+            // MudIconButton
+            await MudIconButton().ClickAsync(new MouseEventArgs());
+            alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            await comp.InvokeAsync(comp.Instance.Recover);
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
         }
     }
 }
