@@ -16,14 +16,23 @@
             }
         </MudSelect>
     }
-    <MudText Typo="Typo.body2" Class="mud-table-pagination-caption">
-        @Info
-    </MudText>
-    <div class="mud-table-pagination-actions">
-        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.FirstPage" Disabled="@BackButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.First))"/>
-        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateBefore" Disabled="@BackButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Previous))"/>
-        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateNext" Disabled="@ForwardButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Next))"/>
-        <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.LastPage" Disabled="@ForwardButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Last))"/>
-    </div>
+
+    @if (!HidePageNumber)
+    {
+        <MudText Typo="Typo.body2" Class="mud-table-pagination-caption">
+            @Info
+        </MudText>
+    }
+    
+    @if (!HidePagination)
+    {
+        <div class="mud-table-pagination-actions">
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.FirstPage" Disabled="@BackButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.First))" />
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateBefore" Disabled="@BackButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Previous))" />
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.NavigateNext" Disabled="@ForwardButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Next))" />
+            <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.LastPage" Disabled="@ForwardButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.Last))" />
+        </div>
+    }
+
 </MudToolBar>
 
