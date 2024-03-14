@@ -5,7 +5,7 @@ using MudBlazor.Charts.SVG.Models;
 
 namespace MudBlazor.Charts
 {
-    partial class StackedBar : MudChartBase
+    partial class StackedBar : MudCategoryChartBase
     {
         [CascadingParameter] public MudChart MudChartParent { get; set; }
 

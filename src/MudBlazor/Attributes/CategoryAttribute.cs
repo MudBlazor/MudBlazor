@@ -151,7 +151,7 @@ namespace MudBlazor
             public const string PickerAppearance = "Picker appearance";
         }
 
-        /// <summary>Used in all charts, that is in <see cref="MudChartBase"/> and all components inheriting from it.</summary>
+        /// <summary>Used in all charts, that is in <see cref="MudCategoryChartBase"/> and all components inheriting from it.</summary>
         public static class Chart
         {
             public const string Behavior = "Behavior";

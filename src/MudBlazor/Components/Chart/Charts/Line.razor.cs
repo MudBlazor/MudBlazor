@@ -9,7 +9,7 @@ using MudBlazor.Components.Chart.Interpolation;
 
 namespace MudBlazor.Charts
 {
-    partial class Line : MudChartBase
+    partial class Line : MudCategoryChartBase
     {
         private const double BoundWidth = 650.0;
         private const double BoundHeight = 350.0;

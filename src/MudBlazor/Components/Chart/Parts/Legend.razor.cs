@@ -6,7 +6,7 @@ namespace MudBlazor.Charts
 {
     public partial class Legend : MudChartBase
     {
-        [CascadingParameter] public MudChart MudChartParent { get; set; }
+        [CascadingParameter] public MudChartBase MudChartParent { get; set; }
         [Parameter] public List<SvgLegend> Data { get; set; } = new List<SvgLegend>();
 
         private string GetCheckBoxStyle(int index)

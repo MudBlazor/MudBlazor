@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public abstract class MudChartBase : MudComponentBase
+    public abstract class MudCategoryChartBase : MudChartBase
     {
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
@@ -26,6 +26,20 @@ namespace MudBlazor
         [Category(CategoryTypes.Chart.Behavior)]
         public List<ChartSeries> ChartSeries { get; set; } = new();
 
+        /// <summary>
+        /// Scales the input data to the range between 0 and 1
+        /// </summary>
+        protected double[] GetNormalizedData()
+        {
+            if (InputData == null)
+                return Array.Empty<double>();
+            var total = InputData.Sum();
+            return InputData.Select(x => Math.Abs(x) / total).ToArray();
+        }
+    }
+
+    public abstract class MudChartBase : MudComponentBase
+    {
         [Parameter]
         [Category(CategoryTypes.Chart.Appearance)]
         public ChartOptions ChartOptions { get; set; } = new();
@@ -103,21 +117,15 @@ namespace MudBlazor
             }
         }
 
+        internal void SetSelectedIndex(int index)
+        {
+            SelectedIndex = index;
+        }
+
         /// <summary>
         /// Selected index of a portion of the chart.
         /// </summary>
         [Parameter] public EventCallback<int> SelectedIndexChanged { get; set; }
-
-        /// <summary>
-        /// Scales the input data to the range between 0 and 1
-        /// </summary>
-        protected double[] GetNormalizedData()
-        {
-            if (InputData == null)
-                return Array.Empty<double>();
-            var total = InputData.Sum();
-            return InputData.Select(x => Math.Abs(x) / total).ToArray();
-        }
 
         protected string ToS(double d, string format = null)
         {
@@ -143,6 +151,7 @@ namespace MudBlazor
         Line,
         Pie,
         Bar,
-        StackedBar
+        StackedBar,
+        Timeseries
     }
 }
