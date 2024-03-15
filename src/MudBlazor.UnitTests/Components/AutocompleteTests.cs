@@ -1309,7 +1309,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Autocomplete_FoundItemsCount_Should_Be_Accurate()
+        public async Task Autocomplete_ReturnedItemsCount_Should_Be_Accurate()
         {
             Task<IEnumerable<string>> search(string value)
             {
@@ -1323,13 +1323,17 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.SearchFunc, search)
                 .Add(x => x.DebounceInterval, 0));
 
-            comp.Instance.FoundItemsCount.Should().Be(0);
+            int? count = null;
+            comp.Instance.ReturnedItemsCountChanged = new EventCallbackFactory().Create<int>(this, v => count = v);
 
             comp.Find("input").Input("Lorem");
-            comp.WaitForAssertion(() => comp.Instance.FoundItemsCount.Should().Be(1));
+            comp.WaitForAssertion(() => count.Should().Be(1));
             ;
             comp.Find("input").Input("ip");
-            comp.WaitForAssertion(() => comp.Instance.FoundItemsCount.Should().Be(2));
+            comp.WaitForAssertion(() => count.Should().Be(2));
+            ;
+            comp.Find("input").Input("wtf");
+            comp.WaitForAssertion(() => count.Should().Be(0));
         }
     }
 }

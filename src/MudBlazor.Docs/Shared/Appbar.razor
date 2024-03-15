@@ -92,7 +92,7 @@
     <DialogContent>
         <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" PopoverClass="docs-mobile-dialog-search-popover"
                          AutoFocus="true" Placeholder="Search docs" Clearable="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
-                         SearchFunc="async text => await Search(text)" ValueChanged="OnSearchResult" IsOpenChanged="o => _searchDialogAutocompleteOpen = o" FoundItemsCountChanged="c => _searchDialogFoundItemsCount = c">
+                         SearchFunc="async text => await Search(text)" ValueChanged="OnSearchResult" IsOpenChanged="o => _searchDialogAutocompleteOpen = o" ReturnedItemsCountChanged="c => _searchDialogReturnedItemsCount = c">
             <ItemTemplate Context="result">
                 <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
             </ItemTemplate>
@@ -104,7 +104,7 @@
             {
                 @("Use the box above to search the docs")
             }
-            else if (_searchDialogFoundItemsCount == 0)
+            else if (_searchDialogReturnedItemsCount == 0)
             {
                 @("No results found")
             }

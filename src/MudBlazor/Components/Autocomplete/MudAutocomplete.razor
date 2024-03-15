@@ -80,7 +80,7 @@
                                     }
                                 </MudListItem>
                             }
-                            @if (MoreItemsTemplate != null && FoundItemsCount > MaxItems)
+                            @if (MoreItemsTemplate != null && _returnedItemsCount > MaxItems)
                             {
                                 <div class="mud-autocomplete-more-items pa-1">
                                     @MoreItemsTemplate

@@ -16,7 +16,7 @@ public partial class Appbar
 {
     private bool _searchDialogOpen;
     private bool _searchDialogAutocompleteOpen;
-    private int _searchDialogFoundItemsCount;
+    private int _searchDialogReturnedItemsCount;
     private string _badgeTextSoon = "coming soon";
     private MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete = null!;
     private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true };
@@ -99,7 +99,7 @@ public partial class Appbar
         set
         {
             _searchDialogAutocompleteOpen = default;
-            _searchDialogFoundItemsCount = default;
+            _searchDialogReturnedItemsCount = default;
             _searchDialogOpen = value;
         }
     }

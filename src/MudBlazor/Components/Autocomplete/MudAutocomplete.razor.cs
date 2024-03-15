@@ -26,7 +26,7 @@ namespace MudBlazor
         private bool _isProcessingValue;
         private int _selectedListItemIndex = 0;
         private int _elementKey = 0;
-        private int _itemsReturned; //the number of items returned by the search function
+        private int _returnedItemsCount;
         private bool _isOpen;
         private MudInput<string> _elementReference;
         private CancellationTokenSource _cancellationTokenSrc;
@@ -355,28 +355,14 @@ namespace MudBlazor
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         /// <summary>
-        /// An event triggered when the number of items returned by the search query has changed.
-        /// </summary>
-        [Parameter]
-        public EventCallback<int> FoundItemsCountChanged { get; set; }
-
-        /// <summary>
-        /// <para>The number of items that were found by the search query.</para>
+        /// <para>An event triggered when the number of items returned by the search query has changed.</para>
         /// <para>
         /// If the number is <c>0</c>, <see cref="NoItemsTemplate"/> will be shown.<br />
         /// If the number is beyond <see cref="MaxItems"/>, <see cref="MoreItemsTemplate"/> will be shown.
         /// </para>
         /// </summary>
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public int FoundItemsCount
-        {
-            get => _itemsReturned;
-            private set
-            {
-                _itemsReturned = value;
-                FoundItemsCountChanged.InvokeAsync(value).AndForget();
-            }
-        }
+        [Parameter]
+        public EventCallback<int> ReturnedItemsCountChanged { get; set; }
 
         /// <summary>
         /// Returns the open state of the drop-down.
@@ -518,6 +504,12 @@ namespace MudBlazor
             }
         }
 
+        private Task SetReturnedItemsCountAsync(int value)
+        {
+            _returnedItemsCount = value;
+            return ReturnedItemsCountChanged.InvokeAsync(value);
+        }
+
         /// <remarks>
         /// This async method needs to return a task and be awaited in order for
         /// unit tests that trigger this method to work correctly.
@@ -566,7 +558,7 @@ namespace MudBlazor
                 Logger.LogWarning("The search function failed to return results: " + e.Message);
             }
 
-            FoundItemsCount = searchedItems.Length;
+            await SetReturnedItemsCountAsync(searchedItems.Length);
             if (MaxItems.HasValue)
             {
                 searchedItems = searchedItems.Take(MaxItems.Value).ToArray();
