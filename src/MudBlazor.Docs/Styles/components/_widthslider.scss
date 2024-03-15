@@ -47,7 +47,7 @@ input.docs-width-slider {
       transition: box-shadow 0.2s;
       box-shadow: var(--mud-elevation-25);
     }
-
+  
       @include slider-track {
         background-color: rgba(0,0,0,0);
       }
@@ -57,14 +57,8 @@ input.docs-width-slider {
       }
 
       @include slider-thumb {
-        @media(hover: hover) and (pointer: fine) {
-          &:hover {
-            cursor: col-resize;
-          }
-        }
-
-        &:active {
-          cursor: col-resize;
+        &:hover {
+          cursor:col-resize;
         }
       }
 }

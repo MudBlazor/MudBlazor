@@ -1,4 +1,4 @@
-﻿
+
 .mud-expansion-panels {
   flex: 0 1 auto;
   position: relative;
@@ -80,10 +80,8 @@
     transition: min-height .3s cubic-bezier(.25,.8,.5,1);
     user-select: none;
 
-    @media(hover: hover) and (pointer: fine) {
-      &:hover {
-        cursor: pointer;
-      }
+    &:hover {
+      cursor: pointer;
     }
 
     & .mud-expand-panel-text {
@@ -120,10 +118,8 @@
   & > .mud-expand-panel-header {
     color: var(--mud-palette-text-disabled);
 
-    @media(hover: hover) and (pointer: fine) {
-      &:hover {
-        cursor: default;
-      }
+    &:hover {
+      cursor: default;
     }
   }
 }

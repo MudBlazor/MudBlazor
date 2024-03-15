@@ -42,14 +42,8 @@
     }
   }
 
-  &.mud-readonly {
+  &.mud-readonly, .mud-readonly:hover {
     cursor: default;
-  }
-
-  @media(hover: hover) and (pointer: fine) {
-    .mud-readonly:hover {
-      cursor: default;
-    }
   }
 
   & .mud-radio-dense {

@@ -1,7 +1,7 @@
-a {
+﻿a {
   text-decoration: none;
 
-  &:focus-visible, &:active {
+  &:focus-visible {
     outline: none;
   }
 }
@@ -32,7 +32,7 @@ button {
 }
 
 
-button:focus, button:active {
+button:focus {
   outline: none;
 }
 

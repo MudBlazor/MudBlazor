@@ -42,10 +42,8 @@
       background-color: var(--mud-palette-overlay-light);
     }
 
-    @media(hover: hover) and (pointer: fine) {
-      &:hover {
-        cursor: default;
-      }
+    &:hover {
+      cursor: default;
     }
   }
 
