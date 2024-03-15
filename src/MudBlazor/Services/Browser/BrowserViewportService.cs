@@ -280,8 +280,6 @@ internal class BrowserViewportService : IBrowserViewportService
                     _dotNetReferenceLazy.Value.Dispose();
                 }
 
-                _semaphore.Dispose();
-
                 // https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968
                 // Fixed in NET8
                 _ = _resizeListenerInterop.Dispose();
