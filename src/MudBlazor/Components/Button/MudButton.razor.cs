@@ -104,7 +104,7 @@ namespace MudBlazor
         /// <remarks>
         /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
         /// <para/>
-        /// Since <see cref="MudFab"/> implents only single <see cref="EventCallback"/> <see cref="MudBaseButton.OnClick"/> this is safe to disable globally withing the component.
+        /// Since <see cref="MudButton"/> implements only single <see cref="EventCallback"/> <see cref="MudBaseButton.OnClick"/> this is safe to disable globally within the component.
         /// </remarks>
         Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
