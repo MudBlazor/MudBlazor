@@ -36,6 +36,7 @@ namespace MudBlazor
             .AddClass("rounded-xl", Rounded)
             .AddClass("mud-toggle-group-rtl", RightToLeft)
             .AddClass($"border mud-border-{Color.ToDescriptionString()} border-solid", Outline)
+            .AddClass("mud-disabled", Disabled)
             .AddClass(Class)
             .Build();
 
@@ -44,6 +45,13 @@ namespace MudBlazor
             .AddStyle("grid-template-rows", $"repeat({_items.Count}, minmax(0, 1fr))", Vertical)
             .AddStyle(Style)
             .Build();
+
+        /// <summary>
+        /// If true, the group will be disabled.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// The selected value in single- and toggle-selection mode.

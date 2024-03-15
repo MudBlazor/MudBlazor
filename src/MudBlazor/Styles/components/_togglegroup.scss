@@ -1,7 +1,13 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-toggle-group {
   display: grid;
+
+  &.mud-disabled {
+    cursor: default;
+    pointer-events: none;
+    color: var(--mud-palette-text-disabled);
+  }
 }
 
 .mud-toggle-group-horizontal {
@@ -81,5 +87,11 @@
 
   &.mud-toggle-item-selected-border {
     border-radius: unset;
+  }
+
+  &.mud-disabled {
+    cursor: default;
+    pointer-events: none;
+    color: var(--mud-palette-text-disabled);
   }
 }
