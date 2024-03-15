@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 window.mudInputAutoGrow = {
-
     initAutoGrow: (elem, maxLines) => {
         const compStyle = getComputedStyle(elem);
         const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
@@ -12,7 +11,7 @@ window.mudInputAutoGrow = {
 
         let maxHeight = 0;
         if (maxLines > 0) {
-            // Cap the height to the max number of lines.
+            // Cap the height to the number of lines specified in MudTextField.
             maxHeight = lineHeight * maxLines;
         }
 
@@ -31,11 +30,14 @@ window.mudInputAutoGrow = {
             elem.style.height = 0;
 
             let newHeight = Math.max(minHeight, elem.scrollHeight);
-            if (maxHeight > 0) {
-                newHeight = Math.min(newHeight, maxHeight);
+            if (maxHeight > 0 && newHeight > maxHeight) {
+                // Content height exceeds the max height so we'll see a scrollbar.
+                elem.style.overflowY = 'auto';
+                newHeight = maxHeight;
             } else {
-                // Hide phantom scrollbars https://github.com/MudBlazor/MudBlazor/pull/8235.
-                elem.style.overflow = 'hidden';
+                // Scrollbar isn't needed and could either flash on resize or could appear
+                // due to rounding inaccuracy in scrollHeight when the display is scaled.
+                elem.style.overflowY = 'hidden';
             }
 
             elem.style.height = newHeight + "px";
