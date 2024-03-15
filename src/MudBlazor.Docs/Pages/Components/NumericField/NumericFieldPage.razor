@@ -45,6 +45,21 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Replacing input characters in real time.">
+                <Description>
+                    If you have an issue with a specific key type not being accepted with your culture, you can override it by setting up some <CodeInline>KeyOptions</CodeInline> to intercept problematic keys and replace them. 
+                    <br/>
+                    <br />
+                    A perfect example is using the French (<CodeInline>fr-FR</CodeInline>) culture, if you input a <CodeInline>.</CodeInline> character while using the numpad <CodeInline>.</CodeInline> key, it will break Validation.  This technique allows you to remove quirks with your
+                    culture of choice when you run across them.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="NumericFieldWithKeyOptionsReplacements" ShowCode="false">
+                <NumericFieldWithKeyOptionsReplacements />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Binding Value Types vs Nullables">
                 <Description>
                     When you bind value types, the numeric field will not be empty even if the user hasn't entered a value yet because a value type always has a value, even when unassigned.

@@ -1,4 +1,5 @@
 ﻿@using System.Globalization
+@using MudBlazor.Services;
 
 <MudText>@English.Text</MudText>
 <MudText>@German.Text</MudText>
@@ -6,7 +7,7 @@
 
 <MudNumericField id="English" @ref="English" T="double?" @bind-Value="_value" Label="English" Format="N2" Culture="_english" />
 <MudNumericField id="German" @ref="German" T="double?" @bind-Value="_value2" Label="German" Format="N2" Culture="_german" />
-<MudNumericField id="French" @ref="French" T="double?" @bind-Value="_value3" Label="French" Format="N2" Culture="_french" />
+<MudNumericField id="French" @ref="French" T="double?" @bind-Value="_value3" Label="French" Format="N2" Culture="_french" LocalKeyOverrides="@_frenchAdditionalKeyOptions" />
 
 @code {
     public CultureInfo _german = CultureInfo.GetCultureInfo("de-DE");
@@ -16,6 +17,12 @@
     public double? _value { get; set; }
     public double? _value2 { get; set; }
     public double? _value3 { get; set; }
+
+    public IList<KeyOptions>? _additionalKeyOptions = null;
+    public IList<KeyOptions>? _frenchAdditionalKeyOptions = new List<KeyOptions>()
+    {
+        new KeyOptions() { Key = ".", Replace = "," }
+    };
 
     public MudNumericField<double?> English { get; set; }
     public MudNumericField<double?> German { get; set; }

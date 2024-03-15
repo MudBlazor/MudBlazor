@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using FluentValidation;
@@ -514,99 +515,195 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// NumericalField Formats input according to culture
         /// </summary>
-        [Test]
-        public async Task NumericFieldTestCultureFormat()
+        [TestCase("English", "1234", "1,234.00", 1234.0)]
+        [TestCase("English", "0", "0.00", 0.0)]
+        [TestCase("English", "", null, null)]
+        [TestCase("German", "1234", "1.234,00", 1234.0)]
+        [TestCase("German", "0", "0,00", 0.0)]
+        [TestCase("German", "", null, null)]
+        [TestCase("French", "1234", "1\u202F234,00", 1234.0)]
+        [TestCase("French", "0", "0,00", 0.0)]
+        [TestCase("French", "", null, null)]
+        public async Task NumericFieldTestCultureFormat(string inputName, string inputText, string expectedText, double? expectedValue)
         {
             var comp = Context.RenderComponent<NumericFieldCultureTest>();
             var inputs = comp.FindAll("input");
-            var immediate = inputs.First();
-            var notImmediate = inputs.Last();
-            //german
-            notImmediate.Change("1234");
-            notImmediate.Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("1.234,00"));
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(1234.0));
-            notImmediate.Change("0");
-            notImmediate.Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("0,00"));
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(0.0));
-            notImmediate.Change("");
-            notImmediate.Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be(null));
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(null));
-            // English
-            immediate.Input("1234");
-            immediate.Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("1,234.00"));
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(1234.0));
-            immediate.Input("0");
-            immediate.Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("0.00"));
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(0.0));
-            immediate.Input("");
-            immediate.Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be(null));
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(null));
+            var inputField = inputs.GetElementById(inputName);
+
+            var propertiesOfTargetObject = comp.Instance.GetType().GetProperties().Where(x => x.Name == inputName).First();
+            var fieldOfInterest = propertiesOfTargetObject.GetValue(comp.Instance);
+
+            inputField.Change(inputText);
+            inputField.Blur();
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Text.Should().Be(expectedText));
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Value.Should().Be(expectedValue));
+        }
+
+        [TestCase("English", "1234", "1,234.00", 1234.0)]
+        [TestCase("English", "0", "0.00", 0.0)]
+        [TestCase("English", "", null, null)]
+        [TestCase("German", "1234", "1.234,00", 1234.0)]
+        [TestCase("German", "0", "0,00", 0.0)]
+        [TestCase("German", "", null, null)]
+        [TestCase("French", "1234", "1\u202F234,00", 1234.0)]
+        [TestCase("French", "0", "0,00", 0.0)]
+        [TestCase("French", "", null, null)]
+        public async Task NumericFieldImmediateTestCultureFormat(string inputName, string inputText, string expectedText, double? expectedValue)
+        {
+            var comp = Context.RenderComponent<NumericFieldImmediateCultureTest>();
+            var inputs = comp.FindAll("input");
+            var inputField = inputs.GetElementById(inputName);
+
+            var propertiesOfTargetObject = comp.Instance.GetType().GetProperties().Where(x => x.Name == inputName).First();
+            var fieldOfInterest = propertiesOfTargetObject.GetValue(comp.Instance);
+
+            inputField.Input(inputText);
+            inputField.Blur();
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Text.Should().Be(expectedText));
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Value.Should().Be(expectedValue));
         }
 
         /// <summary>
         /// NumericalField will not accept illegal chars
         /// </summary>
-        [Test]
-        public async Task NumericField_should_RejectIllegalCharacters()
+        [TestCase("German", "abcd", null, null)]
+        [TestCase("German", "x+17,9y9z", null, null)]
+        [TestCase("German", "17,99", "17,99", 17.99)]
+        [TestCase("English", "abcd", null, null)]
+        [TestCase("English", "-12-34abc.56", null, null)]
+        [TestCase("English", "-1234.56", "-1,234.56", -1234.56)]
+        [TestCase("French", "abcd", null, null)]
+        [TestCase("French", "x+17,9y9z", null, null)]
+        [TestCase("French", "17,99", "17,99", 17.99)]
+        [TestCase("French", "1339,99", "1\u202F339,99", 1339.99)]
+        public async Task NumericField_should_RejectIllegalCharacters(string inputName, string inputString, string? expectedText, double? expectedValue)
         {
             var comp = Context.RenderComponent<NumericFieldCultureTest>();
+            var inputs = comp.FindAll("input");
+            var field = inputs.GetElementById(inputName);
+
+            var propertiesOfTargetObject = comp.Instance.GetType().GetProperties().Where(x => x.Name == inputName).First();
+            var fieldOfInterest = propertiesOfTargetObject.GetValue(comp.Instance);
             //german
-            comp.FindAll("input").Last().Change("abcd");
-            comp.FindAll("input").Last().Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be(null));
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(null));
-            // English
-            comp.FindAll("input").First().Input("abcd");
-            comp.FindAll("input").First().Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be(null));
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(null));
-            // English
-            comp.FindAll("input").First().Input("-12-34abc.56");
-            comp.FindAll("input").First().Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be(null));
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(null));
-            comp.FindAll("input").First().Input("-1234.56");
-            comp.FindAll("input").First().Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("-1,234.56"));
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(-1234.56));
-            comp.FindAll("input").Last().Change("x+17,9y9z");
-            comp.FindAll("input").Last().Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be(null));
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(null));
-            comp.FindAll("input").Last().Change("17,99");
-            comp.FindAll("input").Last().Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("17,99"));
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(17.99));
+            field.Change(inputString);
+            field.Blur();
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Text.Should().Be(expectedText));
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Value.Should().Be(expectedValue));
         }
 
-        [Test]
-        public async Task NumericField_should_ReformatTextOnBlur()
+        [TestCase("German", "abcd", null, null)]
+        [TestCase("German", "x+17,9y9z", null, null)]
+        [TestCase("German", "17,99", "17,99", 17.99)]
+        [TestCase("English", "abcd", null, null)]
+        [TestCase("English", "-12-34abc.56", null, null)]
+        [TestCase("English", "-1234.56", "-1,234.56", -1234.56)]
+        [TestCase("French", "abcd", null, null)]
+        [TestCase("French", "x+17,9y9z", null, null)]
+        [TestCase("French", "100.00", null, null)]
+        [TestCase("French", "100,00", "100,00", 100.00)]
+        [TestCase("French", "17,99", "17,99", 17.99)]
+        [TestCase("French", "1339,99", "1\u202F339,99", 1339.99)]
+        public async Task NumericFieldImmediate_should_RejectIllegalCharacters(string inputName, string inputString, string? expectedText, double? expectedValue)
+        {
+            var comp = Context.RenderComponent<NumericFieldImmediateCultureTest>();
+            var inputs = comp.FindAll("input");
+            var field = inputs.GetElementById(inputName);
+
+            var propertiesOfTargetObject = comp.Instance.GetType().GetProperties().Where(x => x.Name == inputName).First();
+            var fieldOfInterest = propertiesOfTargetObject.GetValue(comp.Instance);
+
+            field.Input(inputString);
+            field.Blur();
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Text.Should().Be(expectedText));
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Value.Should().Be(expectedValue));
+        }
+
+        [TestCase("English", "100.00", "100.00", 100.00)]
+        [TestCase("English", "100,000.00", "100,000.00", 100000.00)]
+        [TestCase("German", "100.000,00", "100.000,00", 100000.00)]
+        [TestCase("German", "100,00", "100,00", 100.00)]
+        [TestCase("French", "100.00", "100,00", 100.00)]
+        [TestCase("French", "100,00", "100,00", 100.00)]
+        [TestCase("French", "100000,00", "100\u202F000,00", 100000.00)]
+        [TestCase("French", "100 000,00", "100\u202F000,00", 100000.00)]
+        public async Task NumericFieldImmediateLocalKeyOverrideCultureTest_should_ConvertIllegalCharacters(string inputName, string inputString, string? expectedText, double? expectedValue)
+        {
+            var comp = Context.RenderComponent<NumericFieldImmediateLocalKeyOverrideCultureTest>();
+            var inputs = comp.FindAll("input");
+            var field = inputs.GetElementById(inputName);
+
+            var propertiesOfTargetObject = comp.Instance.GetType().GetProperties().Where(x => x.Name == inputName).First();
+            var fieldOfInterest = propertiesOfTargetObject.GetValue(comp.Instance);
+
+            field.Input(inputString);
+            field.Blur();
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Text.Should().Be(expectedText));
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Value.Should().Be(expectedValue));
+        }
+
+        [TestCase("English", "100.00", "100.00", 100.00)]
+        [TestCase("English", "100,000.00", "100,000.00", 100000.00)]
+        [TestCase("German", "100.000,00", "100.000,00", 100000.00)]
+        [TestCase("German", "100,00", "100,00", 100.00)]
+        [TestCase("French", "100.00", "100,00", 100.00)]
+        [TestCase("French", "100,00", "100,00", 100.00)]
+        [TestCase("French", "100000,00", "100\u202F000,00", 100000.00)]
+        [TestCase("French", "100 000,00", "100\u202F000,00", 100000.00)]
+        public async Task NumericFieldLocalKeyOverrideCultureTest_should_ConvertIllegalCharacters(string inputName, string inputString, string? expectedText, double? expectedValue)
+        {
+            var comp = Context.RenderComponent<NumericFieldLocalKeyOverrideCultureTest>();
+            var inputs = comp.FindAll("input");
+            var field = inputs.GetElementById(inputName);
+
+            var propertiesOfTargetObject = comp.Instance.GetType().GetProperties().Where(x => x.Name == inputName).First();
+            var fieldOfInterest = propertiesOfTargetObject.GetValue(comp.Instance);
+
+            field.Change(inputString);
+            field.Blur();
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Text.Should().Be(expectedText));
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Value.Should().Be(expectedValue));
+        }
+
+        [TestCase("English", "1,234.56", "1,234.56", 1234.56)]
+        [TestCase("English", "1234.56", "1,234.56", 1234.56)]
+        [TestCase("German", "7.000,99", "7.000,99", 7000.99)]
+        [TestCase("German", "7000,99", "7.000,99", 7000.99)]
+        [TestCase("French", "7\u202F000,99", "7\u202F000,99", 7000.99)]
+        [TestCase("French", "7000,99", "7\u202F000,99", 7000.99)]
+        public async Task NumericField_should_ReformatTextOnBlur(string inputName, string inputString, string? expectedText, double? expectedValue)
         {
             var comp = Context.RenderComponent<NumericFieldCultureTest>();
-            // english
-            comp.FindAll("input").First().Input("1,234.56");
-            comp.FindAll("input").First().Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("1,234.56"));
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(1234.56));
-            comp.FindAll("input").First().Input("1234.56");
-            comp.FindAll("input").First().Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("1,234.56"));
-            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(1234.56));
-            // german
-            comp.FindAll("input").Last().Change("7.000,99");
-            comp.FindAll("input").Last().Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("7.000,99"));
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(7000.99));
-            comp.FindAll("input").Last().Change("7000,99");
-            comp.FindAll("input").Last().Blur();
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("7.000,99"));
-            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(7000.99));
+            var inputs = comp.FindAll("input");
+            var field = inputs.GetElementById(inputName);
+
+            var propertiesOfTargetObject = comp.Instance.GetType().GetProperties().Where(x => x.Name == inputName).First();
+            var fieldOfInterest = propertiesOfTargetObject.GetValue(comp.Instance);
+
+            field.Change(inputString);
+            field.Blur();
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Text.Should().Be(expectedText));
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Value.Should().Be(expectedValue));
+        }
+
+        [TestCase("English", "1,234.56", "1,234.56", 1234.56)]
+        [TestCase("English", "1234.56", "1,234.56", 1234.56)]
+        [TestCase("German", "7.000,99", "7.000,99", 7000.99)]
+        [TestCase("German", "7000,99", "7.000,99", 7000.99)]
+        [TestCase("French", "7\u202F000,99", "7\u202F000,99", 7000.99)]
+        [TestCase("French", "7000,99", "7\u202F000,99", 7000.99)]
+        public async Task NumericFieldImmediate_should_ReformatTextOnBlur(string inputName, string inputString, string? expectedText, double? expectedValue)
+        {
+            var comp = Context.RenderComponent<NumericFieldImmediateCultureTest>();
+            var inputs = comp.FindAll("input");
+            var field = inputs.GetElementById(inputName);
+
+            var propertiesOfTargetObject = comp.Instance.GetType().GetProperties().Where(x => x.Name == inputName).First();
+            var fieldOfInterest = propertiesOfTargetObject.GetValue(comp.Instance);
+
+            field.Input(inputString);
+            field.Blur();
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Text.Should().Be(expectedText));
+            comp.WaitForAssertion(() => (fieldOfInterest as MudNumericField<double?>).Value.Should().Be(expectedValue));
         }
 
         [TestCaseSource(nameof(TypeCases))]

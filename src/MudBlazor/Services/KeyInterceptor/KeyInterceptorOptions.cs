@@ -78,5 +78,10 @@ namespace MudBlazor.Services
         public string PreventUp { get; set; } = "none";
         public string StopDown { get; set; } = "none";
         public string StopUp { get; set; } = "none";
+
+        /// <summary>
+        /// Replaces the Key that was pressed and delivers this value instead.  Overwrites behavior of StopDown.
+        /// </summary>
+        public string Replace { get; set; } = string.Empty;
     }
 }

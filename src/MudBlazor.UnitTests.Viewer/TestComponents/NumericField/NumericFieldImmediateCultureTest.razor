@@ -4,9 +4,9 @@
 <MudText>@German.Text</MudText>
 <MudText>@French.Text</MudText>
 
-<MudNumericField id="English" @ref="English" T="double?" @bind-Value="_value" Label="English" Format="N2" Culture="_english" />
-<MudNumericField id="German" @ref="German" T="double?" @bind-Value="_value2" Label="German" Format="N2" Culture="_german" />
-<MudNumericField id="French" @ref="French" T="double?" @bind-Value="_value3" Label="French" Format="N2" Culture="_french" />
+<MudNumericField id="English" @ref="English" T="double?" @bind-Value="_value" Immediate Label="English" Format="N2" Culture="_english" />
+<MudNumericField id="German" @ref="German" T="double?" @bind-Value="_value2" Immediate Label="German" Format="N2" Culture="_german" />
+<MudNumericField id="French" @ref="French" T="double?" @bind-Value="_value3" Immediate Label="French" Format="N2" Culture="_french" />
 
 @code {
     public CultureInfo _german = CultureInfo.GetCultureInfo("de-DE");

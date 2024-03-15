@@ -4,8 +4,10 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -174,6 +176,13 @@ namespace MudBlazor
         public bool Clearable { get; set; } = false;
 
         /// <summary>
+        /// This allows an injection of new KeyOptions to provide a path to replace problematic characters on a given input.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public IList<KeyOptions> LocalKeyOverrides { get; set; } = null;
+
+        /// <summary>
         /// Decrements or increments depending on factor
         /// </summary>
         /// <param name="factor">Multiplication factor (1 or -1) will be applied to the step</param>
@@ -252,17 +261,24 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                IList<KeyOptions> seededKeyOptions = new List<KeyOptions>();
+
+                seededKeyOptions.Add(new KeyOptions { Key = "ArrowUp", PreventDown = "key+none" }); // prevent scrolling page, instead increment
+                seededKeyOptions.Add(new KeyOptions { Key = "ArrowDown", PreventDown = "key+none" }); // prevent scrolling page, instead decrement
+                seededKeyOptions.Add(new KeyOptions { Key = "Dead", PreventDown = "key+any" }); // prevent dead keys like ^ ` ´ etc
+                seededKeyOptions.Add(new KeyOptions { Key = "/^(?!" + (Pattern ?? "[0-9]").TrimEnd('*') + ").$/", PreventDown = "key+none|key+shift|key+alt" }); // prevent input of all other characters except allowed, like [0-9.,-+]
+
+                //if (AdditionalKeyOptions is not null)
+                //{
+                //    seededKeyOptions = seededKeyOptions.Concat(AdditionalKeyOptions).ToList();
+                //}
+
                 _keyInterceptor = _keyInterceptorFactory.Create();
                 await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                 {
                     //EnableLogging = true,
                     TargetClass = "mud-input-slot",
-                    Keys = {
-                        new KeyOptions { Key="ArrowUp", PreventDown = "key+none" }, // prevent scrolling page, instead increment
-                        new KeyOptions { Key="ArrowDown", PreventDown = "key+none" }, // prevent scrolling page, instead decrement
-                        new KeyOptions { Key="Dead", PreventDown = "key+any" }, // prevent dead keys like ^ ` ´ etc
-                        new KeyOptions { Key="/^(?!"+(Pattern ?? "[0-9]").TrimEnd('*')+").$/", PreventDown = "key+none|key+shift|key+alt" }, // prevent input of all other characters except allowed, like [0-9.,-+]
-                    },
+                    Keys = seededKeyOptions as List<KeyOptions>
                 });
             }
             await base.OnAfterRenderAsync(firstRender);
@@ -406,6 +422,19 @@ namespace MudBlazor
 
         private Task OnInputValueChanged(string text)
         {
+            if (LocalKeyOverrides is not null)
+            {
+                foreach (KeyOptions keyOptions in LocalKeyOverrides)
+                {
+                    int index = text.IndexOf(keyOptions.Key);
+
+                    if (index != -1)
+                    {
+                        text = text.Replace(text[index].ToString(), keyOptions.Replace);
+                    }
+                }
+            }
+
             return SetTextAsync(text);
         }
 
