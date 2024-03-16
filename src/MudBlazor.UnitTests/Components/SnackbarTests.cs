@@ -34,7 +34,7 @@ namespace MudBlazor.UnitTests.Components
             // It affects the layout so we have to keep finding them until they're all gone instead of relying on a cached list.
             while (true)
             {
-                var closeButtons = _provider.FindAll("button");
+                var closeButtons = _provider.FindAll(".mud-snackbar-close-button");
 
                 if (closeButtons.Count == 0)
                 {
@@ -360,7 +360,7 @@ namespace MudBlazor.UnitTests.Components
             _provider.Find(".mud-snackbar").TriggerEvent("onmouseenter", new MouseEventArgs());
             _provider.Find(".mud-snackbar").Click();
 
-            _provider.FindAll(".mud-snackbar").Count.Should().Be(0);
+            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
         [Test]
@@ -384,12 +384,45 @@ namespace MudBlazor.UnitTests.Components
             primary.Should().NotBeNull();
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
 
-            // Test that clicking the close button will actually close the snackbar with the mouse over.
+            // Test that clicking the close button will actually close the snackbar even with the mouse over.
 
             _provider.Find(".mud-snackbar").TriggerEvent("onmouseenter", new MouseEventArgs());
-            _provider.FindAll("button").Single().Click();
+            _provider.FindAll(".mud-snackbar-close-button").Single().Click();
 
-            _provider.FindAll(".mud-snackbar").Count.Should().Be(0);
+            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task ActionButtonClosesWithMouseOver()
+        {
+            var config = (SnackbarOptions options) =>
+            {
+                options.ShowTransitionDuration = 0;
+                options.HideTransitionDuration = 0;
+                options.VisibleStateDuration = int.MaxValue;
+            };
+
+            // Set up the snackbar.
+
+            Snackbar primary = null;
+
+            await _provider.InvokeAsync(() =>
+                primary = _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, config =>
+                {
+                    config.Action = "Close";
+                    config.Onclick = _ => Task.CompletedTask;
+                })
+            );
+
+            primary.Should().NotBeNull();
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
+
+            // Test that clicking the action button will actually close the snackbar even with the mouse over.
+
+            _provider.Find(".mud-snackbar").TriggerEvent("onmouseenter", new MouseEventArgs());
+            _provider.Find(".mud-snackbar-action-button").Click();
+
+            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
         }
 
         [Test]
@@ -415,8 +448,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Test that the hide transition from clicking the close button cannot be stopped by hovering back over the snackbar.
 
-            var closeButton = _provider.FindAll("button").Single();
-            closeButton.Click();
+            _provider.Find(".mud-snackbar-close-button").Click();
             _provider.Find(".mud-snackbar").TouchStart();
             _provider.Find(".mud-snackbar").TriggerEvent("onmouseenter", new MouseEventArgs());
 
@@ -608,6 +640,79 @@ namespace MudBlazor.UnitTests.Components
 
             // It should close within another 20ms if it's behaving correctly; If the duration was reset this assertion will fail.
             _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0), TimeSpan.FromMilliseconds(20));
+        }
+
+        [Test]
+        public async Task OnClickFromActionButtonOnlyOnce()
+        {
+            var config = (SnackbarOptions options) =>
+            {
+                options.ShowTransitionDuration = 0;
+                options.HideTransitionDuration = 100;
+                options.VisibleStateDuration = int.MaxValue;
+            };
+
+            var clickAttempts = 0;
+            var successfulClicks = 0;
+
+            // Set up the snackbar.
+
+            Snackbar primary = null;
+            await _provider.InvokeAsync(() =>
+                primary = _service.Add("It's all just cornflakes", Severity.Normal, config =>
+                {
+                    config.Action = "Click me";
+                    config.Onclick = _ => Task.FromResult(++successfulClicks);
+                })
+            );
+
+            var snackbarElement = _provider.FindComponent<MudSnackbarElement>();
+
+            while (!snackbarElement.IsDisposed)
+            {
+                snackbarElement.Find(".mud-snackbar-action-button").Click();
+                clickAttempts++;
+            }
+
+            successfulClicks.Should().Be(1).And.BeLessThan(clickAttempts);
+        }
+
+        [Test]
+        public async Task OnClickFromBodyOnlyOnce()
+        {
+            var config = (SnackbarOptions options) =>
+            {
+                options.ShowTransitionDuration = 0;
+                options.HideTransitionDuration = 100;
+                options.VisibleStateDuration = int.MaxValue;
+            };
+
+            var clickAttempts = 0;
+            var successfulClicks = 0;
+
+            // Set up the snackbar.
+
+            Snackbar primary = null;
+
+            await _provider.InvokeAsync(() =>
+                primary = _service.Add("It's all just cornflakes", Severity.Normal, config =>
+                {
+                    config.Onclick = _ => Task.FromResult(++successfulClicks);
+                })
+            );
+
+            primary.Should().NotBeNull();
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
+
+            // Keep clicking until vanished.
+            _provider.WaitForAssertion(() =>
+            {
+                _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
+                _provider.Find(".mud-snackbar").Click();
+                clickAttempts++;
+            });
+
+            successfulClicks.Should().Be(1).And.BeLessThan(clickAttempts);
         }
     }
 }
