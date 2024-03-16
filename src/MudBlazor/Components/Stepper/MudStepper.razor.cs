@@ -57,7 +57,7 @@ public partial class MudStepper : MudComponentBase
     /// Class for the navigation bar of the component
     /// </summary>
     [Parameter]
-    public string NavClass { get; set; }
+    public string? NavClass { get; set; }
 
     [Parameter] public bool NonLinear { get; set; }
 
@@ -71,13 +71,13 @@ public partial class MudStepper : MudComponentBase
     /// Sets css class for all steps globally
     /// </summary>
     [Parameter]
-    public string StepClass { get; set; }
+    public string? StepClass { get; set; }
     
     /// <summary>
     /// Sets style for all steps globally
     /// </summary>
     [Parameter]
-    public string StepStyle { get; set; }
+    public string? StepStyle { get; set; }
 
     /// <summary>
     /// Centers the labels for each step below the circle. Applies only to horizontal steppers
@@ -114,7 +114,7 @@ public partial class MudStepper : MudComponentBase
     /// Space for all the MudSteps
     /// </summary>
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     [Parameter] 
     public RenderFragment<MudStep>? TitleTemplate { get; set; }
@@ -139,7 +139,7 @@ public partial class MudStepper : MudComponentBase
         StateHasChanged();
     }
 
-    internal async Task RemovePanel(MudStep step)
+    internal void RemovePanel(MudStep step)
     {
         if (step == ActiveStep)
         {
@@ -150,10 +150,10 @@ public partial class MudStepper : MudComponentBase
         StateHasChanged();
     }
 
-    private async void ProcessStep(MudStep stepToProcess, MouseEventArgs ev,
+    private async void ProcessStep(MudStep? stepToProcess, MouseEventArgs ev,
         StepInteractionType stepInteractionType, bool ignoreDisabledState = false)
     {
-        if (stepToProcess.Disabled && !ignoreDisabledState)
+        if (stepToProcess == null || stepToProcess.Disabled && !ignoreDisabledState)
             return;
 
         var index = _steps.IndexOf(stepToProcess);
@@ -242,7 +242,7 @@ public partial class MudStepper : MudComponentBase
         ProcessStep(_steps[0], new MouseEventArgs(), StepInteractionType.Activate);
     }
 
-    internal async Task Refresh() => StateHasChanged();
+    internal void Refresh() => StateHasChanged();
 
     protected string Classname => new CssBuilder("mud-stepper")
         .AddClass("mud-stepperHorizontal", Vertical == false)
