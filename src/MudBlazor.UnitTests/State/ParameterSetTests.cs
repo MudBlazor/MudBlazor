@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
@@ -15,7 +16,7 @@ namespace MudBlazor.UnitTests.State;
 
 #nullable enable
 [TestFixture]
-internal class ParameterSetTests
+public class ParameterSetTests
 {
     [Test]
     public void Add_AddsParameterSuccessfully()
@@ -37,15 +38,88 @@ internal class ParameterSetTests
     {
         // Arrange
         const int Parameter = 1;
-        var parameterSet = new ParameterSet();
         var parameterState = ParameterState.Attach(nameof(Parameter), () => Parameter, () => (EventCallback<int>)default);
-        parameterSet.Add(parameterState);
+        var parameterSet = new ParameterSet { parameterState };
 
         // Act 
         var addSameParameter = () => parameterSet.Add(parameterState);
 
         // Assert
         addSameParameter.Should().Throw<InvalidOperationException>();
+    }
+
+    [Test]
+    public async Task SetParametersAsync_SameHandlerNamesShouldFireOnce()
+    {
+        var handlerFireCount = 0;
+        const int Parameter1 = 1;
+        const int Parameter2 = 2;
+        const int Parameter3 = 3;
+        const string ParameterName1 = nameof(Parameter1);
+        const string ParameterName2 = nameof(Parameter2);
+        const string ParameterName3 = nameof(Parameter3);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName1, 2 },
+            { ParameterName2, 3 },
+            { ParameterName3, 4 }
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        var parameterState1 = ParameterState.Attach(new ParameterMetadata(ParameterName1, nameof(OnParameterChange)), () => Parameter1, OnParameterChange);
+        var parameterState2 = ParameterState.Attach(new ParameterMetadata(ParameterName2, nameof(OnParameterChange)), () => Parameter2, OnParameterChange);
+        var parameterState3 = ParameterState.Attach(new ParameterMetadata(ParameterName3, nameof(OnParameterChange)), () => Parameter3, OnParameterChange);
+        var parameterSet = new ParameterSet { parameterState1, parameterState2, parameterState3 };
+        void OnParameterChange()
+        {
+            handlerFireCount++;
+        }
+
+        // Act
+        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+
+        // Assert
+        handlerFireCount.Should().Be(1);
+    }
+
+    [Test]
+    public async Task SetParametersAsync_DifferentHandlerNamesShouldFireOnce()
+    {
+        var handlerFireCount = 0;
+        const int Parameter1 = 1;
+        const int Parameter2 = 2;
+        const int Parameter3 = 3;
+        const string ParameterName1 = nameof(Parameter1);
+        const string ParameterName2 = nameof(Parameter2);
+        const string ParameterName3 = nameof(Parameter3);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName1, 2 },
+            { ParameterName2, 3 },
+            { ParameterName3, 4 }
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        var parameterState1 = ParameterState.Attach(new ParameterMetadata(ParameterName1, nameof(OnParameterChange1)), () => Parameter1, OnParameterChange1);
+        var parameterState2 = ParameterState.Attach(new ParameterMetadata(ParameterName2, nameof(OnParameterChange2)), () => Parameter2, OnParameterChange2);
+        var parameterState3 = ParameterState.Attach(new ParameterMetadata(ParameterName3, nameof(OnParameterChange3)), () => Parameter3, OnParameterChange3);
+        var parameterSet = new ParameterSet { parameterState1, parameterState2, parameterState3 };
+        void OnParameterChange1()
+        {
+            handlerFireCount++;
+        }
+        void OnParameterChange2()
+        {
+            handlerFireCount++;
+        }
+        void OnParameterChange3()
+        {
+            handlerFireCount++;
+        }
+
+        // Act
+        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+
+        // Assert
+        handlerFireCount.Should().Be(3);
     }
 
     [Test]

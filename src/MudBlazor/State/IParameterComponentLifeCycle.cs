@@ -14,9 +14,9 @@ namespace MudBlazor.State;
 internal interface IParameterComponentLifeCycle
 {
     /// <summary>
-    /// Gets the associated parameter name of the component's <see cref="ParameterAttribute"/>.
+    /// Gets metadata associated with the parameter, including its name, handler name etc.
     /// </summary>
-    string ParameterName { get; }
+    ParameterMetadata Metadata { get; }
 
     /// <summary>
     /// Indicates whether a <see cref="IParameterChangedHandler"/> is supplied for handling parameter changes.

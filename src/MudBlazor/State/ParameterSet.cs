@@ -32,7 +32,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     {
         if (_parameters.Contains(parameter))
         {
-            throw new InvalidOperationException($"{parameter.ParameterName} is already registered.");
+            throw new InvalidOperationException($"{parameter.Metadata.ParameterName} is already registered.");
         }
 
         _parameters.Add(parameter);
@@ -67,6 +67,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     /// <param name="parameters">The ParameterView coming from Blazor's  <see cref="ComponentBase.SetParametersAsync"/>.</param>
     public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
+        var parameterChangeShouldFire = new HashSet<ParameterMetadata>(ParameterHandlerUniquenessComparer.Default);
         // We check for HasHandler first for performance since we do not need HasParameterChanged if there is nothing to execute.
         // We need to call .ToList() otherwise the IEnumerable will be lazy invoked after the baseSetParametersAsync, but we need before.
         var changedParams = _parameters.Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters)).ToList();
@@ -75,7 +76,10 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
 
         foreach (var changedParam in changedParams)
         {
-            await changedParam.ParameterChangeHandleAsync();
+            if (parameterChangeShouldFire.Add(changedParam.Metadata))
+            {
+                await changedParam.ParameterChangeHandleAsync();
+            }
         }
     }
 
