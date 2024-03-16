@@ -15,80 +15,115 @@ namespace MudBlazor;
 
 public partial class MudStepper : MudComponentBase
 {
+    public MudStepper()
+    {
+        Steps = _steps.AsReadOnly();
+    }
+    
     private List<MudStep> _steps = new();
     private int _activeIndex = -1;
+    private HashSet<MudStep> _skippedSteps = new();
 
     public IReadOnlyList<MudStep> Steps { get; private set; }
-
-    private HashSet<MudStep> _skippedSteps = new();
 
     /// <summary>
     /// Active step of the Stepper, can be not selected
     /// </summary>
     public MudStep? ActiveStep { get; private set; }
 
+    
+    protected string Classname => new CssBuilder("mud-stepper")
+        .AddClass("mud-stepperHorizontal", Vertical == false)
+        .AddClass("mud-stepperVertical", Vertical)
+        .AddClass("mud-stepperAlternateLabel", AlternateLabel && !Vertical)
+        .AddClass(Class)
+        .Build();
+
+    internal string StepClassname => new CssBuilder("mud-stepper-content")
+        .AddClass(StepClass)
+        .Build();
+    
+    protected string NavClassname => new CssBuilder("mud-stepper-nav")
+        .AddClass("mud-stepper-nav-scrollable", ScrollableNavigation)
+        .AddClass(NavClass)
+        .Build();
+    
     /// <summary>
     /// Index of the currently shown step. If set, it doesn't save the position into the history
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.List.Behavior)]
     public int ActiveIndex { get; set; }
 
-    [Parameter] public EventCallback<int> ActiveIndexChanged { get; set; }
+    [Parameter] 
+    [Category(CategoryTypes.List.Behavior)]
+    public EventCallback<int> ActiveIndexChanged { get; set; }
 
     /// <summary>
     /// The color of the completed step. It supports the theme colors.
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public Color CompletedStepColor { get; set; } = Color.Primary;
 
     /// <summary>
     /// The color of the current step. It supports the theme colors.
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public Color CurrentStepColor { get; set; } = Color.Primary;
 
     /// <summary>
     /// The color of the error step. Sets the color globaly for the whole stepper. It supports the theme colors.
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public Color ErrorStepColor { get; set; } = Color.Error;
 
     /// <summary>
     /// Class for the navigation bar of the component
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public string? NavClass { get; set; }
 
-    [Parameter] public bool NonLinear { get; set; }
+    [Parameter] 
+    [Category(CategoryTypes.List.Behavior)]
+    public bool NonLinear { get; set; }
 
     /// <summary>
     /// Renders the component in vertical manner. Each step is collapsible
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public bool Vertical { get; set; }
 
     /// <summary>
     /// Sets css class for all steps globally
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public string? StepClass { get; set; }
     
     /// <summary>
     /// Sets style for all steps globally
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public string? StepStyle { get; set; }
 
     /// <summary>
     /// Centers the labels for each step below the circle. Applies only to horizontal steppers
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public bool AlternateLabel { get; set; }
 
     /// <summary>
     /// If there is too many steps, the navigation becomes scrollable.
     /// </summary>
     [Parameter] 
+    [Category(CategoryTypes.List.Behavior)]
     public bool ScrollableNavigation { get; set; } = true;
 
     /// <summary>
@@ -114,21 +149,26 @@ public partial class MudStepper : MudComponentBase
     /// Space for all the MudSteps
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public RenderFragment? ChildContent { get; set; }
 
     [Parameter] 
+    [Category(CategoryTypes.List.Appearance)]
     public RenderFragment<MudStep>? TitleTemplate { get; set; }
 
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public RenderFragment<MudStep>? LabelTemplate { get; set; }
 
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public RenderFragment<MudStep>? ConnectorTemplate { get; set; }
     
     /// <summary>
     /// This content is displayed when all steps are completed
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public RenderFragment? CompletedContent { get; set; }
 
     internal void AddStep(MudStep step)
@@ -200,12 +240,6 @@ public partial class MudStepper : MudComponentBase
             ActiveStep = _steps[value];
     }
 
-
-    public MudStepper()
-    {
-        Steps = _steps.AsReadOnly();
-    }
-
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
@@ -244,19 +278,4 @@ public partial class MudStepper : MudComponentBase
 
     internal void Refresh() => StateHasChanged();
 
-    protected string Classname => new CssBuilder("mud-stepper")
-        .AddClass("mud-stepperHorizontal", Vertical == false)
-        .AddClass("mud-stepperVertical", Vertical)
-        .AddClass("mud-stepperAlternateLabel", AlternateLabel && !Vertical)
-        .AddClass(Class)
-        .Build();
-
-    internal string StepClassname => new CssBuilder("mud-stepper-content")
-        .AddClass(StepClass)
-        .Build();
-    
-    protected string NavClassname => new CssBuilder("mud-stepper-nav")
-        .AddClass("mud-stepper-nav-scrollable", ScrollableNavigation)
-        .AddClass(NavClass)
-        .Build();
 }

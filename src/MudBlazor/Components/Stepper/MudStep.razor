@@ -6,16 +6,40 @@
 @code {
     private bool _disposed;
 
+    internal string Styles => new StyleBuilder()
+        .AddStyle(Parent?.StepStyle)
+        .AddStyle(Style)
+        .Build();
+
+    internal string LabelIconClassname =>
+        new CssBuilder("mud-stepper-nav-step-label-icon")
+            .AddClass($"mud-{(CompletedStepColor.HasValue ? CompletedStepColor.Value.ToDescriptionString() : Parent?.CompletedStepColor.ToDescriptionString())}", Completed && Parent?.CompletedStepColor != Color.Default && Parent?.ActiveStep != this)
+            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}", !Completed && HasError)
+            .AddClass($"mud-{Parent?.CurrentStepColor.ToDescriptionString()}", Parent?.ActiveStep == this)
+            .Build();
+
+    internal string LabelContentClassname =>
+        new CssBuilder("mud-stepper-nav-step-label-content")
+            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}-text", !Completed && HasError)
+            .Build();
+
+    internal string Classname => new CssBuilder(Parent?.StepClassname)
+        .AddClass(Class)
+        .Build();
+
     [CascadingParameter]
-    private MudStepper Parent { get; set; }
+    internal MudStepper Parent { get; set; }
 
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]    
     public RenderFragment ChildContent { get; set; }
 
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public string Title { get; set; }
 
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public string SecondaryText { get; set; }
 
     /// <summary>
@@ -27,48 +51,58 @@
     /// The color of the completed step. It supports the theme colors.
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public Color? CompletedStepColor { get; set; }
 
     /// <summary>
     /// The color of the error step. It supports the theme colors.
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
     public Color? ErrorStepColor { get; set; }
 
     [Parameter]
+    [Category(CategoryTypes.List.Behavior)]
     public bool Skippable { get; set; }
 
     /// <summary>
     /// Sets whether the step is completed, this can be used for reviving lost position of process. Default is false.
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.List.Behavior)]
     public bool Completed { get; set; }
     
     private bool _completed;
 
     [Parameter]
+    [Category(CategoryTypes.List.Behavior)]
     public EventCallback<bool> CompletedChanged { get; set; }
 
     [Parameter]
+    [Category(CategoryTypes.List.Behavior)]
     public bool Disabled { get; set; }
 
     private bool _disabled;
     
     [Parameter]
+    [Category(CategoryTypes.List.Behavior)]
     public EventCallback<bool> DisabledChanged { get; set; }
 
     [Parameter]
+    [Category(CategoryTypes.List.Behavior)]
     public bool HasError { get; set; }
 
     private bool _hasError;
 
     [Parameter]
+    [Category(CategoryTypes.List.Behavior)]
     public EventCallback<bool> HasErrorChanged { get; set; }
 
     /// <summary>
     /// Raised when tab is clicked TODO: Probably should be called OnActivated or OnCLicked
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.List.Behavior)]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
     protected override void OnInitialized()
@@ -117,27 +151,6 @@
         await DisabledChanged.InvokeAsync(Disabled);
         Parent?.Refresh();
     }
-
-    internal string Styles => new StyleBuilder()
-        .AddStyle(Parent?.StepStyle)
-        .AddStyle(Style)
-        .Build();
-
-    internal string LabelIconClassname =>
-        new CssBuilder("mud-stepper-nav-step-label-icon")
-            .AddClass($"mud-{(CompletedStepColor.HasValue ? CompletedStepColor.Value.ToDescriptionString() : Parent?.CompletedStepColor.ToDescriptionString())}", Completed && Parent?.CompletedStepColor != Color.Default && Parent?.ActiveStep != this)
-            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}", !Completed && HasError)
-            .AddClass($"mud-{Parent?.CurrentStepColor.ToDescriptionString()}", Parent?.ActiveStep == this)
-            .Build();
-
-    internal string LabelContentClassname =>
-        new CssBuilder("mud-stepper-nav-step-label-content")
-            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}-text", !Completed && HasError)
-            .Build();
-
-    internal string Classname => new CssBuilder(Parent?.StepClassname)
-        .AddClass(Class)
-        .Build();
 
 #pragma warning disable CS4008, CS1998
     public async ValueTask DisposeAsync()
