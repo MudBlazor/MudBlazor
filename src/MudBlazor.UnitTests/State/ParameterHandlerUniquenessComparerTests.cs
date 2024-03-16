@@ -32,10 +32,12 @@ public class ParameterHandlerUniquenessComparerTests
         var parameterMetadata1 = new ParameterMetadata("Parameter1", "Handler1");
 
         // Act
-        var result = comparer.Equals(parameterMetadata1, null);
+        var result1 = comparer.Equals(parameterMetadata1, null);
+        var result2 = comparer.Equals(null, parameterMetadata1);
 
         // Assert
-        result.Should().BeFalse();
+        result1.Should().BeFalse();
+        result2.Should().BeFalse();
     }
 
     [Test]
