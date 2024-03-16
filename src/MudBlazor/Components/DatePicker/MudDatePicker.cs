@@ -107,7 +107,7 @@ namespace MudBlazor
             _selectedDate = dateTime;
             if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
             {
-                Submit();
+                await Task.Run(() => Submit());
 
                 if (PickerVariant != PickerVariant.Static)
                 {
