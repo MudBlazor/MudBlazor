@@ -17,9 +17,9 @@
                     background-color: var(--mud-palette-action-default-hover);
                 }
             }
-          
+
           &.mud-stepper-nav-step-disabled {
-            
+
             .mud-stepper-nav-step-label-icon {
               background-color: var(--mud-palette-lines-default) !important;
               color: var(--mud-palette-text-disabled) !important;
@@ -65,13 +65,13 @@
                 }
             }
         }
-      
+
       &.mud-stepper-nav-scrollable {
         overflow: auto;
         .mud-stepper-nav-step {
           min-width: fit-content;
         }
-        
+
         .mud-stepper-nav-connector {
           min-width: 32px;
         }
@@ -175,4 +175,27 @@
             border-inline-start: 1px solid var(--mud-palette-lines-inputs);
         }
     }
+}
+
+.mud-stepper-step-button {
+  display: inline-flex;
+  -moz-box-align: center;
+  align-items: center;
+  -moz-box-pack: center;
+  justify-content: center;
+  position: relative;
+  background-color: transparent;
+  outline: 0px;
+  border: 0px;
+  border-radius: 0px;
+  cursor: pointer;
+  user-select: none;
+  vertical-align: middle;
+  appearance: none;
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+  padding: 24px 16px;
+  margin: -24px -16px;
+  box-sizing: content-box;
 }
