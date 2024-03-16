@@ -2,6 +2,7 @@
 
 .mud-chip {
   border: none;
+  cursor: default;
   display: inline-flex;
   max-width: 100%;
   outline: 0;
@@ -263,26 +264,9 @@
     }
   }
 }
-
-.mud-stepper-step-button {
-    display: inline-flex;
-    -moz-box-align: center;
-    align-items: center;
-    -moz-box-pack: center;
-    justify-content: center;
-    position: relative;
-    background-color: transparent;
-    outline: 0px;
-    border: 0px;
-    border-radius: 0px;
-    cursor: pointer;
-    user-select: none;
-    vertical-align: middle;
-    appearance: none;
-    text-decoration: none;
-    color: inherit;
-    width: 100%;
-    padding: 24px 16px;
-    margin: -24px -16px;
-    box-sizing: content-box;
+      &:hover:not(.mud-disabled), &:focus-visible:not(.mud-disabled) {
+        background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+      }
+    }
+  }
 }
