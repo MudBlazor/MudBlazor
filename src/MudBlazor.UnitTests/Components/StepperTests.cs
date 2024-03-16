@@ -57,6 +57,43 @@ namespace MudBlazor.UnitTests.Components
             stepper.Find(".mud-stepper-content").GetAttribute("style").Should().Contain("fontsize:11px");
             stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 1");
         }
+        
+        [Test]
+        public void Stepper_ShouldDisplayContentOfActiveStepTest()
+        {
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.Add(x => x.NonLinear, true);
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "A");
+                    step.Add(x => x.SecondaryText, "a");
+                    step.Add(x => x.Class, "step-a");
+                    step.Add(x => x.Style, "fontsize:11px");
+                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                });
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "B");
+                    step.Add(x => x.SecondaryText, "b");
+                    step.AddChildContent(text => text.AddMarkupContent(0, "step 2"));
+                    step.Add(x => x.Class, "step-b");
+                    step.Add(x => x.Style, "fontsize:12px");
+                });
+            });
+            // check the stepper content
+            stepper.Find(".mud-stepper-content").GetAttribute("class").Should().Contain("step-a");
+            stepper.Find(".mud-stepper-content").GetAttribute("style").Should().Contain("fontsize:11px");
+            stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 1");
+            stepper.FindAll(".mud-stepper-nav-step")[1].Click();
+            stepper.Find(".mud-stepper-content").GetAttribute("class").Should().Contain("step-b");
+            stepper.Find(".mud-stepper-content").GetAttribute("style").Should().Contain("fontsize:12px");
+            stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 2");
+            stepper.FindAll(".mud-stepper-nav-step")[0].Click();
+            stepper.Find(".mud-stepper-content").GetAttribute("class").Should().Contain("step-a");
+            stepper.Find(".mud-stepper-content").GetAttribute("style").Should().Contain("fontsize:11px");
+            stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("step 1");
+        }
     }
 }
 
