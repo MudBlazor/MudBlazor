@@ -216,7 +216,7 @@ namespace MudBlazor
                 _shouldInitAutoGrow = false;
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
             }
-            else if (!_shouldInitAutoGrow && (oldLines != Lines || oldMaxLines != MaxLines))
+            else if (oldLines != Lines || oldMaxLines != MaxLines)
             {
                 if (AutoGrow && !_shouldInitAutoGrow)
                 {
