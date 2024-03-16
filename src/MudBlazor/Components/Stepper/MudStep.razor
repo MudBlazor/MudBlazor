@@ -139,6 +139,7 @@
         .AddClass(Class)
         .Build();
 
+#pragma warning disable CS4008, CS1998
     public async ValueTask DisposeAsync()
     {
         if (_disposed)
@@ -146,7 +147,8 @@
 
         _disposed = true;
         if (Parent is not null)
-            await Parent.RemovePanel(this);
+            Parent.RemovePanel(this); // this will probably be async later
     }
+#pragma warning restore CS4008, CS1998
 
 }
