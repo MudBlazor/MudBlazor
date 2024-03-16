@@ -37,7 +37,7 @@ namespace MudBlazor
             {
                 date = DateTime.SpecifyKind(date.Value, _value.Value.Kind);
             }
- 
+
             var now = DateTime.UtcNow;
             
             /* See #7866 for more details
@@ -50,7 +50,7 @@ namespace MudBlazor
             }
 
             _lastSetTime = now;
-            
+
             // When the _value is null and an invalid date is entered into the UI, the data value passed to this method
             // will be null. We need to check if the text has been set my the user and if so handle tha validation
             // without this the UI doesn't display a validation error correctly
@@ -107,8 +107,8 @@ namespace MudBlazor
             _selectedDate = dateTime;
             if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
             {
-                await Task.Run(() => Submit());
-
+                await Task.Run(() => InvokeAsync(Submit));
+                
                 if (PickerVariant != PickerVariant.Static)
                 {
                     await Task.Delay(ClosingDelay);
