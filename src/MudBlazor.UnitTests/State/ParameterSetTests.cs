@@ -82,7 +82,40 @@ public class ParameterSetTests
     }
 
     [Test]
-    public async Task SetParametersAsync_DifferentHandlerNamesShouldFireOnce()
+    public async Task SetParametersAsync_NullHandlerNamesShouldFireAll()
+    {
+        var handlerFireCount = 0;
+        const int Parameter1 = 1;
+        const int Parameter2 = 2;
+        const int Parameter3 = 3;
+        const string ParameterName1 = nameof(Parameter1);
+        const string ParameterName2 = nameof(Parameter2);
+        const string ParameterName3 = nameof(Parameter3);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName1, 2 },
+            { ParameterName2, 3 },
+            { ParameterName3, 4 }
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        var parameterState1 = ParameterState.Attach(new ParameterMetadata(ParameterName1, null), () => Parameter1, OnParameterChange);
+        var parameterState2 = ParameterState.Attach(new ParameterMetadata(ParameterName2, null), () => Parameter2, OnParameterChange);
+        var parameterState3 = ParameterState.Attach(new ParameterMetadata(ParameterName3, null), () => Parameter3, OnParameterChange);
+        var parameterSet = new ParameterSet { parameterState1, parameterState2, parameterState3 };
+        void OnParameterChange()
+        {
+            handlerFireCount++;
+        }
+
+        // Act
+        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+
+        // Assert
+        handlerFireCount.Should().Be(3);
+    }
+
+    [Test]
+    public async Task SetParametersAsync_DifferentHandlerNamesShouldFireAll()
     {
         var handlerFireCount = 0;
         const int Parameter1 = 1;
