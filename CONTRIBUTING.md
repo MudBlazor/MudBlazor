@@ -212,7 +212,7 @@ Yes, if you pass them as a method group like in the example below, shared parame
     _param2State = RegisterParameter(nameof(Param2), () => Param2, OnParametersChanged);
 ```
 
-NB: if you pass lambda functions as change handlers they will be called once each for every changed parameter even if they contain the same code!
+**NB**: if you pass lambda functions as change handlers they will be called once each for every changed parameter even if they contain the same code!
 
 ### What about the bad parameters all over the MudBlazor code base?
 
