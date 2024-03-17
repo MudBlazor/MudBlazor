@@ -34,7 +34,7 @@ internal interface IParameterComponentLifeCycle
     /// Called by the <see cref="ParameterState"/> framework when <see cref="IParameterChangedHandler"/> is supplied.
     /// </summary>
     /// <remarks>
-    /// This method should be directly called and is controlled by the <see cref="MudComponentBase"/>.
+    /// This method shouldn't be directly called and is controlled by the <see cref="MudComponentBase"/>.
     /// </remarks>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task ParameterChangeHandleAsync();
@@ -43,7 +43,7 @@ internal interface IParameterComponentLifeCycle
     /// Invoked when <see cref="ComponentBase.OnInitialized"/> is called, used to set the initial parameter value.
     /// </summary>
     /// <remarks>
-    /// This method should be directly called and is controlled by the <see cref="MudComponentBase"/>.
+    /// This method shouldn't be directly called and is controlled by the <see cref="MudComponentBase"/>.
     /// </remarks>
     void OnInitialized();
 
@@ -51,7 +51,7 @@ internal interface IParameterComponentLifeCycle
     /// Invoked when <see cref="ComponentBase.OnParametersSet"/> is called, used to synchronize the parameter value when Blazor updates the parameters.
     /// </summary>
     /// <remarks>
-    /// This method should be directly called and is controlled by the <see cref="MudComponentBase"/>.
+    /// This method shouldn't be directly called and is controlled by the <see cref="MudComponentBase"/>.
     /// </remarks>
     void OnParametersSet();
 }
