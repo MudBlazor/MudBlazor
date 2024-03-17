@@ -19,7 +19,7 @@ window.mudInputAutoGrow = {
         }
 
         // Capture min and max height in closure to trigger height adjustment on element in the input.
-        elem.adjustAutoGrowHeight = function (resetAlign = false) {
+        elem.adjustAutoGrowHeight = function (didReflow = false) {
             // Save scroll positions https://github.com/MudBlazor/MudBlazor/issues/8152.
             const scrollTops = [];
             let curElem = elem;
@@ -32,7 +32,7 @@ window.mudInputAutoGrow = {
 
             elem.style.height = 0;
 
-            if (resetAlign) {
+            if (didReflow) {
                 elem.style.textAlign = null;
             }
 
@@ -58,8 +58,8 @@ window.mudInputAutoGrow = {
                 node.style.scrollBehavior = null;
             });
 
-            // Force another adjustment after the scrollbar is hidden to avoid an extra empty line https://github.com/MudBlazor/MudBlazor/pull/8385.
-            if (!resetAlign && initialOverflowY !== elem.style.overflowY && elem.style.overflowY === 'hidden') {
+            // Force another adjustment after the scrollbar is hidden to avoid an empty line https://github.com/MudBlazor/MudBlazor/pull/8385.
+            if (!didReflow && initialOverflowY !== elem.style.overflowY && elem.style.overflowY === 'hidden') {
                 elem.style.textAlign = 'end'; // Change to something other than the default.
                 elem.adjustAutoGrowHeight(true);
             }
