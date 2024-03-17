@@ -8,6 +8,7 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State;
 
+#nullable enable
 [TestFixture]
 public class ParameterHandlerUniquenessComparerTests
 {
@@ -16,12 +17,18 @@ public class ParameterHandlerUniquenessComparerTests
     {
         // Arrange
         var comparer = ParameterHandlerUniquenessComparer.Default;
+        ParameterMetadata? parameterMetadata1 = null;
+        ParameterMetadata? parameterMetadata2 = null;
+        IParameterComponentLifeCycle? parameterComponentLifeCycle1 = null;
+        IParameterComponentLifeCycle? parameterComponentLifeCycle2 = null;
 
         // Act
-        var result = comparer.Equals(null, null);
+        var result1 = comparer.Equals(parameterMetadata1, parameterMetadata2);
+        var result2 = comparer.Equals(parameterComponentLifeCycle1, parameterComponentLifeCycle2);
 
         // Assert
-        result.Should().BeTrue();
+        result1.Should().BeTrue();
+        result2.Should().BeTrue();
     }
 
     [Test]
@@ -29,15 +36,20 @@ public class ParameterHandlerUniquenessComparerTests
     {
         // Arrange
         var comparer = ParameterHandlerUniquenessComparer.Default;
-        var parameterMetadata1 = new ParameterMetadata("Parameter1", "Handler1");
+        var parameterMetadata = new ParameterMetadata("Parameter1", "Handler1");
+        IParameterComponentLifeCycle parameterState = ParameterState.Attach(parameterMetadata, () => 0, () => {});
 
         // Act
-        var result1 = comparer.Equals(parameterMetadata1, null);
-        var result2 = comparer.Equals(null, parameterMetadata1);
+        var result1 = comparer.Equals(parameterMetadata, null);
+        var result2 = comparer.Equals(null, parameterMetadata);
+        var result3 = comparer.Equals(parameterState, null);
+        var result4 = comparer.Equals(null, parameterState);
 
         // Assert
         result1.Should().BeFalse();
         result2.Should().BeFalse();
+        result3.Should().BeFalse();
+        result4.Should().BeFalse();
     }
 
     [Test]
@@ -47,12 +59,16 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", "Handler1");
         var handler2 = new ParameterMetadata("Parameter2", "Handler1");
+        IParameterComponentLifeCycle parameterState1 = ParameterState.Attach(handler1, () => 0, () => { });
+        IParameterComponentLifeCycle parameterState2 = ParameterState.Attach(handler2, () => 0, () => { });
 
         // Act
-        var result = comparer.Equals(handler1, handler2);
+        var result1 = comparer.Equals(handler1, handler2);
+        var result2 = comparer.Equals(parameterState1, parameterState2);
 
         // Assert
-        result.Should().BeTrue();
+        result1.Should().BeTrue();
+        result2.Should().BeTrue();
     }
 
     [Test]
@@ -62,12 +78,16 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", "Handler1");
         var handler2 = new ParameterMetadata("Parameter2", "Handler2");
+        IParameterComponentLifeCycle parameterState1 = ParameterState.Attach(handler1, () => 0, () => { });
+        IParameterComponentLifeCycle parameterState2 = ParameterState.Attach(handler2, () => 0, () => { });
 
         // Act
-        var result = comparer.Equals(handler1, handler2);
+        var result1 = comparer.Equals(handler1, handler2);
+        var result2 = comparer.Equals(parameterState1, parameterState2);
 
         // Assert
-        result.Should().BeFalse();
+        result1.Should().BeFalse();
+        result2.Should().BeFalse();
     }
 
     [Test]
@@ -77,12 +97,16 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", null);
         var handler2 = new ParameterMetadata("Parameter2", null);
+        IParameterComponentLifeCycle parameterState1 = ParameterState.Attach(handler1, () => 0, () => { });
+        IParameterComponentLifeCycle parameterState2 = ParameterState.Attach(handler2, () => 0, () => { });
 
         // Act
-        var result = comparer.Equals(handler1, handler2);
+        var result1 = comparer.Equals(handler1, handler2);
+        var result2 = comparer.Equals(parameterState1, parameterState2);
 
         // Assert
-        result.Should().BeFalse("If there is no handler name we consider them to be unique.");
+        result1.Should().BeFalse("If there is no handler name we consider them to be unique.");
+        result2.Should().BeFalse("If there is no handler name we consider them to be unique.");
     }
 
     [Test]
@@ -92,14 +116,20 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", "Handler1");
         var handler2 = new ParameterMetadata("Parameter2", "Handler1");
+        IParameterComponentLifeCycle parameterState1 = ParameterState.Attach(handler1, () => 0, () => { });
+        IParameterComponentLifeCycle parameterState2 = ParameterState.Attach(handler2, () => 0, () => { });
 
         // Act
         var handler1HashCode = comparer.GetHashCode(handler1);
         var handler2HashCode = comparer.GetHashCode(handler2);
-        var result = handler1HashCode == handler2HashCode;
+        var parameterState1HashCode = comparer.GetHashCode(parameterState1);
+        var parameterState2HashCode = comparer.GetHashCode(parameterState2);
+        var result1 = handler1HashCode == handler2HashCode;
+        var result2 = parameterState1HashCode == parameterState2HashCode;
 
         // Assert
-        result.Should().BeTrue();
+        result1.Should().BeTrue();
+        result2.Should().BeTrue();
     }
 
     [Test]
@@ -109,14 +139,20 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", "Handler1");
         var handler2 = new ParameterMetadata("Parameter2", "Handler2");
+        IParameterComponentLifeCycle parameterState1 = ParameterState.Attach(handler1, () => 0, () => { });
+        IParameterComponentLifeCycle parameterState2 = ParameterState.Attach(handler2, () => 0, () => { });
 
         // Act
         var handler1HashCode = comparer.GetHashCode(handler1);
         var handler2HashCode = comparer.GetHashCode(handler2);
-        var result = handler1HashCode == handler2HashCode;
+        var parameterState1HashCode = comparer.GetHashCode(parameterState1);
+        var parameterState2HashCode = comparer.GetHashCode(parameterState2);
+        var result1 = handler1HashCode == handler2HashCode;
+        var result2 = parameterState1HashCode == parameterState2HashCode;
 
         // Assert
-        result.Should().BeFalse();
+        result1.Should().BeFalse();
+        result2.Should().BeFalse();
     }
 
     [Test]
@@ -126,13 +162,19 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", null);
         var handler2 = new ParameterMetadata("Parameter2", null);
+        IParameterComponentLifeCycle parameterState1 = ParameterState.Attach(handler1, () => 0, () => { });
+        IParameterComponentLifeCycle parameterState2 = ParameterState.Attach(handler2, () => 0, () => { });
 
         // Act
         var handler1HashCode = comparer.GetHashCode(handler1);
         var handler2HashCode = comparer.GetHashCode(handler2);
-        var result = handler1HashCode == handler2HashCode;
+        var parameterState1HashCode = comparer.GetHashCode(parameterState1);
+        var parameterState2HashCode = comparer.GetHashCode(parameterState2);
+        var result1 = handler1HashCode == handler2HashCode;
+        var result2 = parameterState1HashCode == parameterState2HashCode;
 
         // Assert
-        result.Should().BeFalse("If there is no handler name we consider them to be unique.");
+        result1.Should().BeFalse("If there is no handler name we consider them to be unique.");
+        result2.Should().BeFalse("If there is no handler name we consider them to be unique.");
     }
 }
