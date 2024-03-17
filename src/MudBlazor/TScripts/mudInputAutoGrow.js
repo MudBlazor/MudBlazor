@@ -5,7 +5,6 @@ window.mudInputAutoGrow = {
     initAutoGrow: (elem, maxLines) => {
         const compStyle = getComputedStyle(elem);
         const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
-        const initialOverflowY = elem.style.overflowY;
         const initialHeight = elem.style.height;
 
         let maxHeight = 0;
@@ -21,7 +20,7 @@ window.mudInputAutoGrow = {
         }
 
         // Capture min and max height in closure to trigger height adjustment on element in the input.
-        elem.adjustAutoGrowHeight = function () {
+        elem.adjustAutoGrowHeight = function (setAlign = null) {
             // Save scroll positions https://github.com/MudBlazor/MudBlazor/issues/8152.
             const scrollTops = [];
             let curElem = elem;
@@ -31,6 +30,8 @@ window.mudInputAutoGrow = {
                 }
                 curElem = curElem.parentNode;
             }
+
+            let initialOverflowY = compStyle.overflowY;
 
             elem.style.height = 0;
 
@@ -48,18 +49,33 @@ window.mudInputAutoGrow = {
 
             elem.style.height = newHeight + "px";
 
+            if (setAlign !== null) {
+                elem.style.textAlign = setAlign;
+            }
+
             // Restore scroll positions.
             scrollTops.forEach(([node, scrollTop]) => {
                 node.style.scrollBehavior = 'auto';
                 node.scrollTop = scrollTop;
                 node.style.scrollBehavior = null;
             });
+
+            // Force another adjustment after the scrollbar is hidden to avoid an extra empty line https://github.com/MudBlazor/MudBlazor/pull/8385.
+            if (initialOverflowY !== compStyle.overflowY && setAlign !== null) {
+                let align = compStyle.textAlign;
+
+                if (compStyle.overflowY === 'hidden') {
+                    elem.style.textAlign = textAlign === 'start' ? 'end' : 'start';
+                }
+
+                elem.adjustAutoGrowHeight(align);
+            }
         }
 
         // Terminate the ability to auto-grow and restore the input element back to its original state.
         elem.restoreToInitialState = function () {
             elem.removeEventListener('input', elem.adjustAutoGrowHeight);
-            elem.style.overflowY = initialOverflowY;
+            elem.style.overflowY = null;
             elem.style.height = initialHeight;
         }
 
