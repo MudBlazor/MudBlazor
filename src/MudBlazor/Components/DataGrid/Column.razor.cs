@@ -18,7 +18,7 @@ namespace MudBlazor
     public abstract partial class Column<T> : MudComponentBase
     {
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
-        internal ParameterState<bool> HiddenState { get; }
+        internal IParameterState<bool> HiddenState { get; }
 
         internal readonly Guid uid = Guid.NewGuid();
 

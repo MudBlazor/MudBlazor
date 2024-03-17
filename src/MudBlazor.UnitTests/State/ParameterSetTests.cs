@@ -49,8 +49,183 @@ public class ParameterSetTests
     }
 
     [Test]
+    public async Task SetParametersAsync_ActionHandlerShouldFire()
+    {
+        // Arrange
+        ParameterChangedEventArgs<int>? parameter2ChangedEventArgs = null;
+        var handler1FireCount = 0;
+        var handler2FireCount = 0;
+        const int Parameter1 = 1;
+        const int Parameter2 = 2;
+        const int Parameter1NewValue = 2;
+        const int Parameter2NewValue = 3;
+        const string Parameter1Name = nameof(Parameter1);
+        const string Parameter2Name = nameof(Parameter2);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { Parameter1Name, Parameter1NewValue },
+            { Parameter2Name, Parameter2NewValue }
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        var parameter1State = ParameterState.Attach(Parameter1Name, () => Parameter1, OnParameter1Change);
+        var parameter2State = ParameterState.Attach(Parameter2Name, () => Parameter2, OnParameter2Change);
+        var parameterSet = new ParameterSet { parameter1State, parameter2State };
+        void OnParameter1Change()
+        {
+            handler1FireCount++;
+        }
+        void OnParameter2Change(ParameterChangedEventArgs<int> parameterChangedEventArgs)
+        {
+            parameter2ChangedEventArgs = parameterChangedEventArgs;
+            handler2FireCount++;
+        }
+
+        // Act
+        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+
+        // Assert
+        handler1FireCount.Should().Be(1);
+        handler2FireCount.Should().Be(1);
+        parameter2ChangedEventArgs.Should().NotBeNull();
+        parameter2ChangedEventArgs!.ParameterName.Should().Be(Parameter2Name);
+        parameter2ChangedEventArgs!.LastValue.Should().Be(Parameter2);
+        parameter2ChangedEventArgs!.Value.Should().Be(Parameter2NewValue);
+    }
+
+    [Test]
+    public async Task SetParametersAsync_ActionHandlerShouldNotFire()
+    {
+        // Arrange
+        ParameterChangedEventArgs<int>? parameter2ChangedEventArgs = null;
+        var handler1FireCount = 0;
+        var handler2FireCount = 0;
+        const int Parameter1 = 1;
+        const int Parameter2 = 2;
+        const string Parameter1Name = nameof(Parameter1);
+        const string Parameter2Name = nameof(Parameter2);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { Parameter1Name, Parameter1 },
+            { Parameter2Name, Parameter2 }
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        var parameter1State = ParameterState.Attach(Parameter1Name, () => Parameter1, OnParameter1Change);
+        var parameter2State = ParameterState.Attach(Parameter2Name, () => Parameter2, OnParameter2Change);
+        var parameterSet = new ParameterSet { parameter1State, parameter2State };
+        void OnParameter1Change()
+        {
+            handler1FireCount++;
+        }
+        void OnParameter2Change(ParameterChangedEventArgs<int> parameterChangedEventArgs)
+        {
+            parameter2ChangedEventArgs = parameterChangedEventArgs;
+            handler2FireCount++;
+        }
+
+        // Act
+        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+
+        // Assert
+        handler1FireCount.Should().Be(0);
+        handler2FireCount.Should().Be(0);
+        parameter2ChangedEventArgs.Should().BeNull();
+    }
+
+    [Test]
+    public async Task SetParametersAsync_FuncHandlerShouldFire()
+    {
+        // Arrange
+        ParameterChangedEventArgs<int>? parameter2ChangedEventArgs = null;
+        var handler1FireCount = 0;
+        var handler2FireCount = 0;
+        const int Parameter1 = 1;
+        const int Parameter2 = 2;
+        const int Parameter1NewValue = 2;
+        const int Parameter2NewValue = 3;
+        const string Parameter1Name = nameof(Parameter1);
+        const string Parameter2Name = nameof(Parameter2);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { Parameter1Name, Parameter1NewValue },
+            { Parameter2Name, Parameter2NewValue }
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        var parameter1State = ParameterState.Attach(Parameter1Name, () => Parameter1, OnParameter1ChangeAsync);
+        var parameter2State = ParameterState.Attach(Parameter2Name, () => Parameter2, OnParameter2ChangeAsync);
+        var parameterSet = new ParameterSet { parameter1State, parameter2State };
+        Task OnParameter1ChangeAsync()
+        {
+            handler1FireCount++;
+
+            return Task.CompletedTask;
+        }
+        Task OnParameter2ChangeAsync(ParameterChangedEventArgs<int> parameterChangedEventArgs)
+        {
+            parameter2ChangedEventArgs = parameterChangedEventArgs;
+            handler2FireCount++;
+
+            return Task.CompletedTask;
+        }
+
+        // Act
+        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+
+        // Assert
+        handler1FireCount.Should().Be(1);
+        handler2FireCount.Should().Be(1);
+        parameter2ChangedEventArgs.Should().NotBeNull();
+        parameter2ChangedEventArgs!.ParameterName.Should().Be(Parameter2Name);
+        parameter2ChangedEventArgs!.LastValue.Should().Be(Parameter2);
+        parameter2ChangedEventArgs!.Value.Should().Be(Parameter2NewValue);
+    }
+
+    [Test]
+    public async Task SetParametersAsync_FuncHandlerShouldNotFire()
+    {
+        // Arrange
+        ParameterChangedEventArgs<int>? parameter2ChangedEventArgs = null;
+        var handler1FireCount = 0;
+        var handler2FireCount = 0;
+        const int Parameter1 = 1;
+        const int Parameter2 = 2;
+        const string Parameter1Name = nameof(Parameter1);
+        const string Parameter2Name = nameof(Parameter2);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { Parameter1Name, Parameter1 },
+            { Parameter2Name, Parameter2 }
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        var parameter1State = ParameterState.Attach(Parameter1Name, () => Parameter1, OnParameter1ChangeAsync);
+        var parameter2State = ParameterState.Attach(Parameter2Name, () => Parameter2, OnParameter2ChangeAsync);
+        var parameterSet = new ParameterSet { parameter1State, parameter2State };
+        Task OnParameter1ChangeAsync()
+        {
+            handler1FireCount++;
+
+            return Task.CompletedTask;
+        }
+        Task OnParameter2ChangeAsync(ParameterChangedEventArgs<int> parameterChangedEventArgs)
+        {
+            parameter2ChangedEventArgs = parameterChangedEventArgs;
+            handler2FireCount++;
+
+            return Task.CompletedTask;
+        }
+
+        // Act
+        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+
+        // Assert
+        handler1FireCount.Should().Be(0);
+        handler2FireCount.Should().Be(0);
+        parameter2ChangedEventArgs.Should().BeNull();
+    }
+
+    [Test]
     public async Task SetParametersAsync_SameHandlerNamesShouldFireOnce()
     {
+        // Arrange
         var handlerFireCount = 0;
         const int Parameter1 = 1;
         const int Parameter2 = 2;
@@ -84,6 +259,7 @@ public class ParameterSetTests
     [Test]
     public async Task SetParametersAsync_LambdaHandlerNamesShouldFileAll()
     {
+        // Arrange
         var handlerFireCount = 0;
         const int Parameter1 = 1;
         const int Parameter2 = 2;
@@ -114,6 +290,7 @@ public class ParameterSetTests
     [Test]
     public async Task SetParametersAsync_NullHandlerNamesShouldFireAll()
     {
+        // Arrange
         var handlerFireCount = 0;
         const int Parameter1 = 1;
         const int Parameter2 = 2;
@@ -147,6 +324,7 @@ public class ParameterSetTests
     [Test]
     public async Task SetParametersAsync_DifferentHandlerNamesShouldFireAll()
     {
+        // Arrange
         var handlerFireCount = 0;
         const int Parameter1 = 1;
         const int Parameter2 = 2;

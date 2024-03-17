@@ -150,7 +150,7 @@ public bool Expanded
 
 Note how the setter is invoking async functions which can not be awaited, because property setters can only have synchronous code. As a result, the async 
 functions are invoked and their return value `Task` is discarded. This not only creates hard to test multi-threaded behavior, it also prevents the user of this 
-component from being able to catch any errors in the asnc functions. Any exceptions that happen in these asynchronous functions may or may not bubble up
+component from being able to catch any errors in the async functions. Any exceptions that happen in these asynchronous functions may or may not bubble up
 to the user. In some cases Blazor just catches them and they are silently ignored, in other cases they may cause application crashes that can't be prevented with `try catch`. 
 
 The alternative would be to move the code from the setter into `SetParametersAsync` and depending on the component you would also need code in `OnInitializedAsync`. 
@@ -160,7 +160,7 @@ Using our new `ParameterState` pattern all this is not required.
 
 ### Example of a good Parameter definition
 ```c#
-private ParameterState<bool> _expandedState;
+private IParameterState<bool> _expandedState;
 
 [Parameter]
 public bool Expanded { get; set; }
@@ -241,7 +241,7 @@ private Task ToggleAsync()
 
 ### Example of a good code
 ```c#
-private ParameterState<bool> _expandedState;
+private IParameterState<bool> _expandedState;
 
 [Parameter]
 public bool Expanded { get; set; }

@@ -5,6 +5,7 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State;
 
+#nullable enable
 [TestFixture]
 public class ParameterStateUsageTests : BunitTest
 {
@@ -31,5 +32,18 @@ public class ParameterStateUsageTests : BunitTest
         comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("2");
         comp.Find("span.op").InnerHtml.Trimmed().Should().Be("4");
         comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("2");
+    }
+
+    [Test]
+    public void EventArgsIntegrationTest()
+    {
+        var comp = Context.RenderComponent<ParameterStateEventArgsTestComp>();
+        comp.Find(".parameter-changes").Children.Length.Should().Be(0);
+        comp.Find("button.increment-int-param").Click();
+        comp.Find(".parameter-changes").Children.Length.Should().Be(1);
+        comp.Find(".parameter-changes").FirstChild?.TextContent.Trimmed().Should().Be("IntParam: 0=>1");
+        comp.Find("button.increment-int-param").Click();
+        comp.Find(".parameter-changes").Children.Length.Should().Be(2);
+        comp.Find(".parameter-changes").LastChild?.TextContent.Trimmed().Should().Be("IntParam: 1=>2");
     }
 }

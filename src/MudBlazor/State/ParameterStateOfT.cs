@@ -11,6 +11,7 @@ using MudBlazor.State.Rule;
 
 namespace MudBlazor.State;
 
+#nullable enable
 /// <summary>
 /// The <see cref="ParameterState{T}"/> automatically manages parameter value changes for <see cref="ParameterAttribute"/> as part of
 /// MudBlazor's ParameterState framework. For details and usage please read CONTRIBUTING.md
@@ -20,13 +21,16 @@ namespace MudBlazor.State;
 /// Instead, use the "MudComponentBase.RegisterParameter" method from within the component's constructor.
 /// </remarks>
 /// <typeparam name="T">The type of the component's property value.</typeparam>
-#nullable enable
-internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<ParameterState<T>>
+internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCycle, IEquatable<ParameterState<T>>
 {
     private T? _lastValue;
+    private ParameterChangedEventArgs<T>? _parameterChangedEventArgs;
     private readonly Func<T> _getParameterValueFunc;
     private readonly Func<EventCallback<T>> _eventCallbackFunc;
-    private readonly IParameterChangedHandler? _parameterChangedHandler;
+    private readonly IParameterChangedHandler<T>? _parameterChangedHandler;
+
+    [MemberNotNullWhen(true, nameof(_parameterChangedEventArgs))]
+    private bool HasParameterChangedEventArgs => _parameterChangedEventArgs is not null;
 
     /// <inheritdoc />
     public ParameterMetadata Metadata { get; }
@@ -44,12 +48,10 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     [MemberNotNullWhen(true, nameof(_lastValue), nameof(Value))]
     public bool IsInitialized { get; private set; }
 
-    /// <summary>
-    /// Gets the current value.
-    /// </summary>
+    /// <inheritdoc/>
     public T? Value { get; private set; }
 
-    private ParameterState(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null)
+    private ParameterState(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null)
     {
         Metadata = ParameterMetadataRules.Morph(metadata);
         _getParameterValueFunc = getParameterValueFunc;
@@ -59,15 +61,7 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
         Value = default;
     }
 
-    /// <summary>
-    /// Set the parameter's value. 
-    /// </summary>
-    /// <remarks>
-    /// Note: you should never set the parameter's property directly from within the component. Instead, use SetValueAsync
-    /// on the ParameterState object.
-    /// </remarks>
-    /// <param name="value">New parameter's value.</param>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <inheritdoc/>
     public Task SetValueAsync(T value)
     {
         if (!EqualityComparer<T>.Default.Equals(Value, value))
@@ -108,7 +102,18 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     /// <inheritdoc />
     public Task ParameterChangeHandleAsync()
     {
-        return HasHandler ? _parameterChangedHandler.HandleAsync() : Task.CompletedTask;
+        if (HasHandler)
+        {
+            if (HasParameterChangedEventArgs)
+            {
+                // Since the ParameterSet lifecycles control all operations, it is acceptable to trigger the handler only when
+                // HasParameterChanged has been invoked and stored the ParameterChangedEventArgs.
+                // Direct invocation of this method by external callers is discouraged, so we shouldn't worry about it.
+                return _parameterChangedHandler.HandleAsync(_parameterChangedEventArgs);
+            }
+        }
+
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc />
@@ -116,7 +121,17 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     {
         var currentParameterValue = _getParameterValueFunc();
 
-        return parameters.HasParameterChanged(Metadata.ParameterName, currentParameterValue);
+        var changed = false;
+        _parameterChangedEventArgs = null;
+        // This if construction is to trigger [MaybeNullWhen(false)] for newValue, otherwise it wouldn't if we assign it directly to a variable,
+        // and we'd need to suppress it's nullability.
+        if (parameters.HasParameterChanged(Metadata.ParameterName, currentParameterValue, out var newValue))
+        {
+            changed = true;
+            _parameterChangedEventArgs = new ParameterChangedEventArgs<T>(Metadata.ParameterName, currentParameterValue, newValue);
+        }
+
+        return changed;
     }
 
     ///  <summary>
@@ -134,7 +149,7 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     ///  For details and usage please read CONTRIBUTING.md
     ///  </remarks>
     ///  <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    public static ParameterState<T> Attach(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null, string? handlerName = null)
+    public static ParameterState<T> Attach(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, string? handlerName = null)
     {
         var metadata = new ParameterMetadata(parameterName, handlerName);
 
@@ -155,7 +170,7 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     ///  For details and usage please read CONTRIBUTING.md
     ///  </remarks>
     ///  <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    public static ParameterState<T> Attach(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null)
+    public static ParameterState<T> Attach(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null)
     {
         return new ParameterState<T>(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
     }

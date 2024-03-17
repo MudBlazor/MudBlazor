@@ -10,6 +10,19 @@ namespace MudBlazor.UnitTests.State.Rule;
 [TestFixture]
 public class ParameterMetadataRulesTests
 {
+    [Test]
+    public void Morph_ThrowsException()
+    {
+        // Arrange
+        ParameterMetadata? metadata = null;
+
+        // Act 
+        var addSameParameter = () => ParameterMetadataRules.Morph(metadata!);
+
+        // Assert
+        addSameParameter.Should().Throw<ArgumentNullException>();
+    }
+
     [TestCase(null, false)]
     [TestCase("", false)]
     [TestCase("OnParameterChanged", false)]
