@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
@@ -13,6 +12,7 @@ public class ParameterStateUsageTests : BunitTest
     public void SharedHandlerIntegrationTest()
     {
         var comp = Context.RenderComponent<ParameterStateSharedHandlerTestComp>();
+
         comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("1");
         comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("1");
         comp.Find("button.abc").Click();

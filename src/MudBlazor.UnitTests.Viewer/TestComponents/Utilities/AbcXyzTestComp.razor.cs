@@ -5,15 +5,16 @@ namespace MudBlazor.UnitTests;
 
 public partial class AbcXyzTestComp : MudComponentBase
 {
-    public AbcXyzTestComp() : base() {
+    public AbcXyzTestComp()
+    {
         // abc shared handler group
-        _a=RegisterParameter(nameof(A), ()=>A, OnAbcChanged);
-        _b=RegisterParameter(nameof(B), ()=>B, OnAbcChanged);
-        _c=RegisterParameter(nameof(C), ()=>C, OnAbcChanged);
+        _a = RegisterParameter(nameof(A), () => A, OnAbcChanged);
+        _b = RegisterParameter(nameof(B), () => B, OnAbcChanged);
+        _c = RegisterParameter(nameof(C), () => C, OnAbcChanged);
         // xyz shared handler group
-        _x=RegisterParameter(nameof(X), ()=>X, OnXyzChanged);
-        _y=RegisterParameter(nameof(Y), ()=>Y, OnXyzChanged);
-        _z=RegisterParameter(nameof(Z), ()=>Z, OnXyzChanged);
+        _x = RegisterParameter(nameof(X), () => X, OnXyzChanged);
+        _y = RegisterParameter(nameof(Y), () => Y, OnXyzChanged);
+        _z = RegisterParameter(nameof(Z), () => Z, OnXyzChanged);
     }
 
     private ParameterState<int> _a;
@@ -34,8 +35,9 @@ public partial class AbcXyzTestComp : MudComponentBase
     }
 
     public int AbcHandlerCallCount { get; private set; }
+
     public int XyzHandlerCallCount { get; private set; }
-    
+
     [Parameter]
     public int A { get; set; }
 
@@ -44,7 +46,7 @@ public partial class AbcXyzTestComp : MudComponentBase
 
     [Parameter]
     public int C { get; set; }
-    
+
     [Parameter]
     public int X { get; set; }
 
@@ -53,5 +55,4 @@ public partial class AbcXyzTestComp : MudComponentBase
 
     [Parameter]
     public int Z { get; set; }
-
 }
