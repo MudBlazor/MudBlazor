@@ -3,9 +3,10 @@ using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
+#nullable enable
 public partial class SharedStateHandlerTestComp : MudComponentBase
 {
-    public SharedStateHandlerTestComp() : base()
+    public SharedStateHandlerTestComp()
     {
         // abc shared handler group
         _a = RegisterParameter(nameof(A), () => A, OnAbcChanged);
@@ -43,19 +44,27 @@ public partial class SharedStateHandlerTestComp : MudComponentBase
     public int OpHandlerCallCount { get; private set; }
     public int XyzHandlerCallCount { get; private set; }
 
-    [Parameter] public int A { get; set; }
+    [Parameter]
+    public int A { get; set; }
 
-    [Parameter] public int B { get; set; }
+    [Parameter]
+    public int B { get; set; }
 
-    [Parameter] public int C { get; set; }
+    [Parameter]
+    public int C { get; set; }
 
-    [Parameter] public int O { get; set; }
+    [Parameter]
+    public int O { get; set; }
 
-    [Parameter] public int P { get; set; }
+    [Parameter]
+    public int P { get; set; }
 
-    [Parameter] public int X { get; set; }
+    [Parameter]
+    public int X { get; set; }
 
-    [Parameter] public int Y { get; set; }
+    [Parameter]
+    public int Y { get; set; }
 
-    [Parameter] public int Z { get; set; }
+    [Parameter]
+    public int Z { get; set; }
 }
