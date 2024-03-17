@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State.Rule;
 
 namespace MudBlazor.State;
 
@@ -50,7 +51,7 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
 
     private ParameterState(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null)
     {
-        Metadata = metadata;
+        Metadata = ParameterMetadataRules.Morph(metadata);
         _getParameterValueFunc = getParameterValueFunc;
         _eventCallbackFunc = eventCallbackFunc;
         _parameterChangedHandler = parameterChangedHandler;

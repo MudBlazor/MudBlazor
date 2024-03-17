@@ -4,7 +4,7 @@ namespace MudBlazor.State;
 
 #nullable enable
 /// <summary>
-/// Provides functionality to compare instances of <see cref="ParameterMetadata"/> and <see cref="IParameterComponentLifeCycle.Metadata"/> for equality.
+/// Provides functionality to compare instances of <see cref="ParameterMetadata"/> or <see cref="IParameterComponentLifeCycle.Metadata"/> for equality.
 /// </summary>
 /// <remarks>
 /// This checks only uniqueness of <see cref="ParameterMetadata.HandlerName"/>.
