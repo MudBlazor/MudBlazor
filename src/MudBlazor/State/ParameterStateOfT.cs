@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State.Rule;
 
 namespace MudBlazor.State;
 
@@ -28,7 +29,7 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     private readonly IParameterChangedHandler? _parameterChangedHandler;
 
     /// <inheritdoc />
-    public string ParameterName { get; }
+    public ParameterMetadata Metadata { get; }
 
     /// <inheritdoc />
     [MemberNotNullWhen(true, nameof(_parameterChangedHandler))]
@@ -48,9 +49,9 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     /// </summary>
     public T? Value { get; private set; }
 
-    private ParameterState(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null)
+    private ParameterState(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null)
     {
-        ParameterName = parameterName;
+        Metadata = ParameterMetadataRules.Morph(metadata);
         _getParameterValueFunc = getParameterValueFunc;
         _eventCallbackFunc = eventCallbackFunc;
         _parameterChangedHandler = parameterChangedHandler;
@@ -115,24 +116,49 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
     {
         var currentParameterValue = _getParameterValueFunc();
 
-        return parameters.HasParameterChanged(ParameterName, currentParameterValue);
+        return parameters.HasParameterChanged(Metadata.ParameterName, currentParameterValue);
     }
 
-    /// <summary>
-    /// Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's ParameterState framework.
-    ///<para />
-    /// <b>NB!</b> Usually you don't need to call this directly. Instead, use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
-    /// component's constructor.  
-    /// </summary>
-    /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
-    /// <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
-    /// <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
-    /// <param name="parameterChangedHandler">A change handler containing code that needs to be executed when the parameter value changes/</param>
-    /// <remarks>
-    /// For details and usage please read CONTRIBUTING.md
-    /// </remarks>
-    /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    public static ParameterState<T> Attach(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null) => new(parameterName, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
+    ///  <summary>
+    ///  Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's ParameterState framework.
+    /// <para />
+    ///  <b>NB!</b> Usually you don't need to call this directly. Instead, use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
+    ///  component's constructor.  
+    ///  </summary>
+    ///  <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+    ///  <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
+    ///  <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
+    ///  <param name="parameterChangedHandler">A change handler containing code that needs to be executed when the parameter value changes/</param>
+    /// <param name="handlerName">The handler's name.</param>
+    ///  <remarks>
+    ///  For details and usage please read CONTRIBUTING.md
+    ///  </remarks>
+    ///  <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
+    public static ParameterState<T> Attach(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null, string? handlerName = null)
+    {
+        var metadata = new ParameterMetadata(parameterName, handlerName);
+
+        return Attach(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
+    }
+
+    ///  <summary>
+    ///  Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's ParameterState framework.
+    /// <para />
+    ///  <b>NB!</b> Usually you don't need to call this directly. Instead, use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
+    ///  component's constructor.  
+    ///  </summary>
+    ///  <param name="metadata">The parameter's metadata.</param>
+    ///  <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
+    ///  <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
+    ///  <param name="parameterChangedHandler">A change handler containing code that needs to be executed when the parameter value changes/</param>
+    ///  <remarks>
+    ///  For details and usage please read CONTRIBUTING.md
+    ///  </remarks>
+    ///  <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
+    public static ParameterState<T> Attach(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler? parameterChangedHandler = null)
+    {
+        return new ParameterState<T>(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
+    }
 
     /// <inheritdoc />
     public bool Equals(ParameterState<T>? other)
@@ -150,12 +176,12 @@ internal class ParameterState<T> : IParameterComponentLifeCycle, IEquatable<Para
         // We expect parameter name to be unique within the component (considering inheritance).
         // To ensure uniqueness, the equals method is utilized to prevent registering the same parameter multiple times.
         // Each [Parameter] should have a one-to-one relationship with its corresponding ParameterState.
-        return ParameterName == other.ParameterName;
+        return Metadata.ParameterName == other.Metadata.ParameterName;
     }
 
     /// <inheritdoc />
     public override bool Equals(object? obj) => obj is ParameterState<T> parameterState && Equals(parameterState);
 
     /// <inheritdoc />
-    public override int GetHashCode() => ParameterName.GetHashCode();
+    public override int GetHashCode() => Metadata.ParameterName.GetHashCode();
 }
