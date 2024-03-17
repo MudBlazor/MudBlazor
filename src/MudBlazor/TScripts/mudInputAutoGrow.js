@@ -5,7 +5,6 @@ window.mudInputAutoGrow = {
     initAutoGrow: (elem, maxLines) => {
         const compStyle = getComputedStyle(elem);
         const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
-        const initialHeight = elem.style.height;
 
         let maxHeight = 0;
 
@@ -20,7 +19,7 @@ window.mudInputAutoGrow = {
         }
 
         // Capture min and max height in closure to trigger height adjustment on element in the input.
-        elem.adjustAutoGrowHeight = function (setAlign = null) {
+        elem.adjustAutoGrowHeight = function (resetAlign = false) {
             // Save scroll positions https://github.com/MudBlazor/MudBlazor/issues/8152.
             const scrollTops = [];
             let curElem = elem;
@@ -31,12 +30,15 @@ window.mudInputAutoGrow = {
                 curElem = curElem.parentNode;
             }
 
-            let initialOverflowY = compStyle.overflowY;
-
             elem.style.height = 0;
+
+            if (resetAlign) {
+                elem.style.textAlign = null;
+            }
 
             let minHeight = lineHeight * elem.rows;
             let newHeight = Math.max(minHeight, elem.scrollHeight);
+            let initialOverflowY = elem.style.overflowY;
             if (maxHeight > 0 && newHeight > maxHeight) {
                 // Content height exceeds the max height so we'll see a scrollbar.
                 elem.style.overflowY = 'auto';
@@ -49,10 +51,6 @@ window.mudInputAutoGrow = {
 
             elem.style.height = newHeight + "px";
 
-            if (setAlign !== null) {
-                elem.style.textAlign = setAlign;
-            }
-
             // Restore scroll positions.
             scrollTops.forEach(([node, scrollTop]) => {
                 node.style.scrollBehavior = 'auto';
@@ -61,14 +59,9 @@ window.mudInputAutoGrow = {
             });
 
             // Force another adjustment after the scrollbar is hidden to avoid an extra empty line https://github.com/MudBlazor/MudBlazor/pull/8385.
-            if (initialOverflowY !== compStyle.overflowY && setAlign !== null) {
-                let align = compStyle.textAlign;
-
-                if (compStyle.overflowY === 'hidden') {
-                    elem.style.textAlign = textAlign === 'start' ? 'end' : 'start';
-                }
-
-                elem.adjustAutoGrowHeight(align);
+            if (!resetAlign && initialOverflowY !== elem.style.overflowY && elem.style.overflowY === 'hidden') {
+                elem.style.textAlign = 'end'; // Change to something other than the default.
+                elem.adjustAutoGrowHeight(true);
             }
         }
 
@@ -76,7 +69,7 @@ window.mudInputAutoGrow = {
         elem.restoreToInitialState = function () {
             elem.removeEventListener('input', elem.adjustAutoGrowHeight);
             elem.style.overflowY = null;
-            elem.style.height = initialHeight;
+            elem.style.height = null;
         }
 
         // Adjust height when input happens.
