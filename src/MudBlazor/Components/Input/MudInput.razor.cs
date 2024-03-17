@@ -178,6 +178,7 @@ namespace MudBlazor
             await OnClearButtonClick.InvokeAsync(e);
         }
 
+        private string _oldText = null;
         private string _internalText;
         private bool _shouldInitAutoGrow;
 
@@ -204,31 +205,32 @@ namespace MudBlazor
                 _internalText = Text;
             }
 
-            // AutoGrow:
+            // Flag AutoGrow to be initialized on the next render.
             if (!oldAutoGrow && AutoGrow)
             {
-                // Enable it.
                 _shouldInitAutoGrow = true;
             }
-            else if (oldAutoGrow && !AutoGrow)
+
+            if (IsJSRuntimeAvailable)
             {
-                // Disable it.
-                _shouldInitAutoGrow = false;
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
-            }
-            else if (oldLines != Lines || oldMaxLines != MaxLines)
-            {
-                if (AutoGrow && !_shouldInitAutoGrow)
+                if (oldAutoGrow && !AutoGrow)
                 {
-                    // Update it (if it was already enabled).
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.updateParams", ElementReference, MaxLines);
+                    // Disable AutoGrow.
+                    _shouldInitAutoGrow = false;
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+                }
+                else if (oldLines != Lines || oldMaxLines != MaxLines)
+                {
+                    if (AutoGrow && !_shouldInitAutoGrow)
+                    {
+                        // Update AutoGrow parameters (if it was already enabled).
+                        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.updateParams", ElementReference, MaxLines);
+                    }
                 }
             }
         }
 
         [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
-
-        private string _oldText = null;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -270,7 +272,7 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
-            if (AutoGrow)
+            if (AutoGrow && IsJSRuntimeAvailable)
             {
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
             }
