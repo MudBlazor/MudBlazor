@@ -1,18 +1,19 @@
-﻿.announcement-card{
+﻿.announcement-card {
   transition: background-color 150ms cubic-bezier(.4,0,.2,1) 0ms;
+
   @media(hover: hover) and (pointer: fine) {
-    &:hover{
+    &:hover {
       background-color: var(--mud-palette-action-default-hover);
-      cursor:pointer;
+      cursor: pointer;
     }
   }
 
-  &:active{
+  &:active {
     background-color: var(--mud-palette-action-default-hover);
-    cursor:pointer;
+    cursor: pointer;
   }
 
-  .mud-card-content{
+  .mud-card-content {
     min-height: 172px;
   }
 }
