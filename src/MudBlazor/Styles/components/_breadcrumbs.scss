@@ -39,8 +39,10 @@
   background-color: #EEEEEE;
 }
 
-.mud-breadcrumbs-expander:hover {
-  background-color: #E0E0E0;
+@media(hover: hover) and (pointer: fine) {
+  .mud-breadcrumbs-expander:hover {
+    background-color: #E0E0E0;
+  }
 }
 
 .mud-breadcrumbs-expander > svg {

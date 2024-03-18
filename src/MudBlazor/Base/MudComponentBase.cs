@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
@@ -101,10 +102,11 @@ namespace MudBlazor
         /// <param name="getParameterValueFunc">>A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
         /// <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
         /// <param name="parameterChangedHandler">An action containing code that needs to be executed when the parameter value changes.</param>
+        /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
         /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-        internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Action parameterChangedHandler)
+        internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Action parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
         {
-            var attach = ParameterState.Attach(parameterName, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
+            var attach = ParameterState.Attach(new ParameterMetadata(parameterName, handlerName), getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
             _parameters.Add(attach);
 
             return attach;
@@ -126,10 +128,11 @@ namespace MudBlazor
         /// <param name="getParameterValueFunc">>A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
         /// <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
         /// <param name="parameterChangedHandler">A function containing code that needs to be executed when the parameter value changes.</param>
+        /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
         /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-        internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Func<Task> parameterChangedHandler)
+        internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Func<Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
         {
-            var attach = ParameterState.Attach(parameterName, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
+            var attach = ParameterState.Attach(new ParameterMetadata(parameterName, handlerName), getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
             _parameters.Add(attach);
 
             return attach;
@@ -174,10 +177,11 @@ namespace MudBlazor
         /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
         /// <param name="getParameterValueFunc">>A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
         /// <param name="parameterChangedHandler">An action containing code that needs to be executed when the parameter value changes.</param>
+        /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
         /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-        internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Action parameterChangedHandler)
+        internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Action parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
         {
-            var attach = ParameterState.Attach(parameterName, getParameterValueFunc, parameterChangedHandler);
+            var attach = ParameterState.Attach(new ParameterMetadata(parameterName, handlerName), getParameterValueFunc, parameterChangedHandler);
             _parameters.Add(attach);
 
             return attach;
@@ -198,10 +202,11 @@ namespace MudBlazor
         /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
         /// <param name="getParameterValueFunc">>A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
         /// <param name="parameterChangedHandler">A function containing code that needs to be executed when the parameter value changes.</param>
+        /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
         /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-        internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<Task> parameterChangedHandler)
+        internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
         {
-            var attach = ParameterState.Attach(parameterName, getParameterValueFunc, parameterChangedHandler);
+            var attach = ParameterState.Attach(new ParameterMetadata(parameterName, handlerName), getParameterValueFunc, parameterChangedHandler);
             _parameters.Add(attach);
 
             return attach;

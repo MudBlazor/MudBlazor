@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-radio {
   cursor: pointer;
@@ -12,7 +12,23 @@
     color: var(--mud-palette-text-primary);
   }
 
-  &.mud-disabled, .mud-disabled:hover, .mud-disabled:focus-visible {
+  @media(hover: hover) and (pointer: fine) {
+    .mud-disabled:hover {
+      cursor: default;
+      background-color: transparent !important;
+
+      & > .mud-radio-content {
+        color: var(--mud-palette-text-disabled);
+      }
+
+      & * {
+        cursor: default;
+        color: var(--mud-palette-text-disabled);
+      }
+    }
+  }
+
+  &.mud-disabled, .mud-disabled:focus-visible, .mud-disabled:active {
     cursor: default;
     background-color: transparent !important;
 
@@ -37,8 +53,10 @@
   &.mud-checked {
     color: var(--mud-palette-action-default);
 
-    &:hover {
-      background-color: var(--mud-palette-action-default-hover);
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--mud-palette-action-default-hover);
+      }
     }
   }
 }

@@ -25,14 +25,14 @@
       height: unset;
       padding: 0;
       border-radius: 8px 8px 0 0;
-      
+
       .mud-button {
         text-transform: none;
         font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
         font-size: 14px;
         border-radius: 0;
         padding: 4px 8px;
-        
+
         &.file-button{
           border-color: var(--mud-palette-lines-default);
           letter-spacing: normal;
@@ -41,19 +41,19 @@
             border-top-left-radius: 8px;
           }
         }
-        
+
         &:last-child:not(.file-button){
           border-top-right-radius: 8px;
         }
       }
-      
+
       &.outlined{
         .file-button{
           &:not(.active){
             border: 1px solid var(--mud-palette-lines-default);
             border-top: none;
             border-radius: 0 0 4px 4px;
-            
+
             &:first-child{
               border-top-left-radius: 8px;
               border-bottom-left-radius: 0px;
@@ -66,7 +66,7 @@
           }
         }
       }
-      
+
       &.darken {
         background-color: var(--mud-palette-grey-light);
 
@@ -126,7 +126,16 @@
       transition: color 250ms cubic-bezier(.4, 0, .2, 1) 0ms;
     }
 
-    &:hover {
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        .copy-code-button {
+          color: var(--mud-palette-text-secondary) !important;
+          background-color: transparent;
+        }
+      }
+    }
+
+    &:active {
       .copy-code-button {
         color: var(--mud-palette-text-secondary) !important;
         background-color: transparent;
@@ -138,7 +147,7 @@
       overflow: hidden;
       transition: max-height 0.15s ease-out;
     }
-    
+
     &.show-code{
       .docs-section-source-container {
         overflow: auto;
