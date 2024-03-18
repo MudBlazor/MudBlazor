@@ -17,7 +17,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudToggleGroup<T> : MudComponentBase
     {
-        public MudToggleGroup() : base()
+        public MudToggleGroup()
         {
             _value = RegisterParameter(nameof(Value), () => Value, () => ValueChanged, OnValueChanged);
             _values = RegisterParameter(nameof(Values), () => Values, () => ValuesChanged, OnValuesChanged);
@@ -237,7 +237,7 @@ namespace MudBlazor
                 // Handle multi-selection mode
                 if (values is not null && multiSelection)
                 {
-                    foreach(var item in _items.Where(x => values.Contains(x.Value)).ToList())
+                    foreach (var item in _items.Where(x => values.Contains(x.Value)).ToList())
                         item.SetSelected(true);
                 }
                 StateHasChanged();
@@ -266,7 +266,7 @@ namespace MudBlazor
             DeselectAllItems();
             if (Values is not null)
             {
-                foreach(var item in _items.Where(x => Values.Contains(x.Value)).ToList())
+                foreach (var item in _items.Where(x => Values.Contains(x.Value)).ToList())
                     item.SetSelected(true);
             }
         }
@@ -289,7 +289,7 @@ namespace MudBlazor
                 item.SetSelected(!item.IsSelected);
                 if (item.IsSelected)
                     selectedValues.Add(itemValue);
-                else 
+                else
                     selectedValues.Remove(itemValue);
                 await _values.SetValueAsync(selectedValues);
             }
@@ -300,7 +300,7 @@ namespace MudBlazor
                     item.SetSelected(false);
                     await _value.SetValueAsync(default);
                 }
-                else 
+                else
                 {
                     DeselectAllItems();
                     item.SetSelected(true);
