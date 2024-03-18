@@ -10,7 +10,14 @@
   box-shadow: 2em 4em 6em -2em rgba(0,0,0,.2), 1em 2em 3.5em -2.5em rgba(0,0,0,.1);
   transition: transform .4s ease, box-shadow .4s ease;
 
-  &:hover {
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      cursor: pointer;
+      transform: rotate3d(0,0,0,0deg) rotate(0deg);
+    }
+  }
+
+  &:active {
     cursor: pointer;
     transform: rotate3d(0,0,0,0deg) rotate(0deg);
   }
@@ -58,20 +65,20 @@
   position: relative;
   height: calc(80vh - 124px);
   overflow: hidden;
-  
+
   .wireframe-code-container {
     overflow: auto;
     position: relative;
     height: 100%;
   }
-  
+
   .close-button{
     position: absolute;
     top: 8px;
     right: 8px;
     z-index: 1;
   }
-  
+
   .copy-code-button{
     display: none;
   }

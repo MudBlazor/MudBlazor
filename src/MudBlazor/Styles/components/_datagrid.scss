@@ -77,15 +77,17 @@
         width: 100%;
       }
 
-      &:hover {
-        .column-options .sort-direction-icon, .column-options .column-options-icon, .column-options .drag-icon-options {
-          opacity: 0.8;
-          color: var(--mud-palette-action-default);
-        }
+      @media(hover: hover) and (pointer: fine) {
+        &:hover {
+          .column-options .sort-direction-icon, .column-options .column-options-icon, .column-options .drag-icon-options {
+            opacity: 0.8;
+            color: var(--mud-palette-action-default);
+          }
 
-        .column-options .mud-menu .mud-icon-button-label {
-          opacity: 1.0;
-          color: var(--mud-palette-action-default);
+          .column-options .mud-menu .mud-icon-button-label {
+            opacity: 1.0;
+            color: var(--mud-palette-action-default);
+          }
         }
       }
 
@@ -139,7 +141,12 @@
       user-select: none;
     }
 
-    .mud-resizer:hover,
+    @media(hover: hover) and (pointer: fine) {
+      .mud-resizer:hover {
+        border-right: 2px solid var(--mud-palette-primary);
+      }
+    }
+
     .mud-resizing {
       border-right: 2px solid var(--mud-palette-primary);
     }
@@ -147,15 +154,17 @@
 }
 
 .mud-data-grid-columns-panel {
-  &:hover {
-    .column-options .sort-direction-icon, .column-options .column-options-icon, .column-options .drag-icon-options {
-      opacity: 0.8;
-      color: var(--mud-palette-action-default);
-    }
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      .column-options .sort-direction-icon, .column-options .column-options-icon, .column-options .drag-icon-options {
+        opacity: 0.8;
+        color: var(--mud-palette-action-default);
+      }
 
-    .column-options .mud-menu .mud-icon-button-label {
-      opacity: 1.0;
-      color: var(--mud-palette-action-default);
+      .column-options .mud-menu .mud-icon-button-label {
+        opacity: 1.0;
+        color: var(--mud-palette-action-default);
+      }
     }
   }
 
