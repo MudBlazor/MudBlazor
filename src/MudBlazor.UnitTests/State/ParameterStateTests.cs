@@ -123,11 +123,11 @@ public class ParameterStateTests
         // Arrange
         const int InitialValue = 5;
         const int NewValue = 10;
-        var parameterName = nameof(InitialValue);
-        var parameterState = ParameterState.Attach(parameterName, () => InitialValue, () => (EventCallback<int>)default);
+        const string ParameterName = nameof(InitialValue);
+        var parameterState = ParameterState.Attach(ParameterName, () => InitialValue, () => (EventCallback<int>)default);
         var parametersDictionary = new Dictionary<string, object?>
         {
-            { parameterName, NewValue }
+            { ParameterName, NewValue }
         };
         var parameters = ParameterView.FromDictionary(parametersDictionary);
 
@@ -143,11 +143,11 @@ public class ParameterStateTests
     {
         // Arrange
         const int InitialValue = 5;
-        var parameterName = nameof(InitialValue);
-        var parameterState = ParameterState.Attach(parameterName, () => InitialValue, () => (EventCallback<int>)default);
+        const string ParameterName = nameof(InitialValue);
+        var parameterState = ParameterState.Attach(ParameterName, () => InitialValue, () => (EventCallback<int>)default);
         var parametersDictionary = new Dictionary<string, object?>
         {
-            { parameterName, InitialValue }
+            { ParameterName, InitialValue }
         };
         var parameters = ParameterView.FromDictionary(parametersDictionary);
 
