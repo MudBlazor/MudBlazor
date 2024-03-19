@@ -32,17 +32,17 @@ namespace MudBlazor
             _fixedContent = RegisterParameter(nameof(FixedContent), () => FixedContent, OnParameterChanged);
         }
 
-        private ParameterState<T?> _value;
-        private ParameterState<IEnumerable<T?>?> _values;
-        private ParameterState<Color> _color;
-        private ParameterState<string?> _selectedClass;
-        private ParameterState<bool> _outline;
-        private ParameterState<bool> _delimiters;
-        private ParameterState<bool> _rtl;
-        private ParameterState<bool> _dense;
-        private ParameterState<bool> _rounded;
-        private ParameterState<bool> _checkMark;
-        private ParameterState<bool> _fixedContent;
+        private IParameterState<T?> _value;
+        private IParameterState<IEnumerable<T?>?> _values;
+        private IParameterState<Color> _color;
+        private IParameterState<string?> _selectedClass;
+        private IParameterState<bool> _outline;
+        private IParameterState<bool> _delimiters;
+        private IParameterState<bool> _rtl;
+        private IParameterState<bool> _dense;
+        private IParameterState<bool> _rounded;
+        private IParameterState<bool> _checkMark;
+        private IParameterState<bool> _fixedContent;
         private List<MudToggleItem<T>> _items = new();
 
         protected string Classes => new CssBuilder("mud-toggle-group")

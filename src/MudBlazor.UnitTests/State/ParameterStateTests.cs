@@ -90,19 +90,72 @@ public class ParameterStateTests
     }
 
     [Test]
-    public async Task ParameterChangeHandleAsync_HandlesParameterChangeIfHandlerExists()
+    public async Task ParameterChangeHandleAsync_ShouldFire_WhenParameterChanged()
     {
         // Arrange
         const int InitialValue = 5;
-        var parameterChangedHandlerMock = new ParameterChangedHandlerMock();
-        var parameterState = ParameterState<int>.Attach(nameof(InitialValue), () => InitialValue, () => default, parameterChangedHandlerMock);
+        const int NewValue = 10;
+        const string ParameterName = nameof(InitialValue);
+        var parameterChangedHandlerMock = new ParameterChangedHandlerMock<int>();
+        var parameterState = ParameterState<int>.Attach(ParameterName, () => InitialValue, () => default, parameterChangedHandlerMock);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName, NewValue }
+        };
+        var parameters = ParameterView.FromDictionary(parametersDictionary);
+
+        // Act
+        var changed = parameterState.HasParameterChanged(parameters);
+        await parameterState.ParameterChangeHandleAsync();
+
+        // Assert
+        changed.Should().BeTrue();
+        parameterState.HasHandler.Should().BeTrue();
+        parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
+        {
+            new ParameterChangedEventArgs<int>(ParameterName, InitialValue, NewValue)
+        });
+    }
+
+    [Test]
+    public async Task ParameterChangeHandleAsync_ShouldNotFire_WhenParameterNotChanged()
+    {
+        // Arrange
+        const int InitialValue = 5;
+        const string ParameterName = nameof(InitialValue);
+        var parameterChangedHandlerMock = new ParameterChangedHandlerMock<int>();
+        var parameterState = ParameterState<int>.Attach(ParameterName, () => InitialValue, () => default, parameterChangedHandlerMock);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName, InitialValue }
+        };
+        var parameters = ParameterView.FromDictionary(parametersDictionary);
+
+        // Act
+        var changed = parameterState.HasParameterChanged(parameters);
+        await parameterState.ParameterChangeHandleAsync();
+
+        // Assert
+        changed.Should().BeFalse();
+        parameterState.HasHandler.Should().BeTrue();
+        parameterChangedHandlerMock.Changes.Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task ParameterChangeHandleAsync_ShouldNotFire_WhenHasParameterChangedNotCalled()
+    {
+        // Arrange
+        const int InitialValue = 5;
+        const string ParameterName = nameof(InitialValue);
+        var parameterChangedHandlerMock = new ParameterChangedHandlerMock<int>();
+        var parameterState = ParameterState<int>.Attach(ParameterName, () => InitialValue, () => default, parameterChangedHandlerMock);
 
         // Act
         await parameterState.ParameterChangeHandleAsync();
 
         // Assert
         parameterState.HasHandler.Should().BeTrue();
-        parameterChangedHandlerMock.FireCount.Should().Be(1);
+        parameterChangedHandlerMock.Changes.Should().BeEmpty("HasParameterChanged wasn't called.");
     }
 
     [Test]

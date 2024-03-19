@@ -37,7 +37,7 @@ public class ParameterHandlerUniquenessComparerTests
         // Arrange
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var parameterMetadata = new ParameterMetadata("Parameter1", "Handler1");
-        IParameterComponentLifeCycle parameterState = ParameterState.Attach(parameterMetadata, () => 0, () => {});
+        IParameterComponentLifeCycle parameterState = ParameterState.Attach(parameterMetadata, () => 0, () => { });
 
         // Act
         var result1 = comparer.Equals(parameterMetadata, null);
