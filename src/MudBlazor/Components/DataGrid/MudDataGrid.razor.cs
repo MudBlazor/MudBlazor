@@ -958,6 +958,11 @@ namespace MudBlazor
             }
         }
 
+        internal void RemoveColumn(Column<T> column)
+        {
+            RenderedColumns.Remove(column);
+        }
+
         internal IFilterDefinition<T> CreateFilterDefinitionInstance()
         {
             return _defaultFilterDefinitionFactory();

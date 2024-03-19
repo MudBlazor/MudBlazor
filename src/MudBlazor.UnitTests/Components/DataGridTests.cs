@@ -3362,5 +3362,25 @@ namespace MudBlazor.UnitTests.Components
             // the action of applying grouping has successfully updated the component's state.
             comp.Instance.IsGenderGrouped.Should().Be(true);
         }
+
+        [Test]
+        public async Task DataGridDynamicColumnsTest()
+        {
+            var comp = Context.RenderComponent<DataGridDynamicColumnsTest>();
+
+            comp.Instance.GridRenderedColumnsCount.Should().Be(0);
+
+            comp.Instance.AddColumns();
+
+            comp.Instance.GridRenderedColumnsCount.Should().Be(3);
+
+            comp.Instance.RemoveColumn();
+
+            comp.Instance.GridRenderedColumnsCount.Should().Be(2);
+
+            comp.Instance.RemoveAllColumns();
+
+            comp.Instance.GridRenderedColumnsCount.Should().Be(0);
+        }
     }
 }
