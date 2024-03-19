@@ -128,7 +128,7 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
         _parameterChangedEventArgs = null;
         // This if construction is to trigger [MaybeNullWhen(false)] for newValue, otherwise it wouldn't if we assign it directly to a variable,
         // and we'd need to suppress it's nullability.
-        if (parameters.HasParameterChanged(Metadata.ParameterName, currentParameterValue, out var newValue))
+        if (parameters.HasParameterChanged(Metadata.ParameterName, currentParameterValue, out var newValue, comparer: _comparer))
         {
             changed = true;
             _parameterChangedEventArgs = new ParameterChangedEventArgs<T>(Metadata.ParameterName, currentParameterValue, newValue);
