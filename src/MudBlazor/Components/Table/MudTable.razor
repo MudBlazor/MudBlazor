@@ -8,7 +8,7 @@
 @(ClearFilterCache()) @*Clear filtered items cache for this render*@
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-@if (Items != null || ServerData != null)
+@if (Items != null || ServerData != null || ServerDataWithCancel != null)
 {
     <CascadingValue Value="TableContext" IsFixed="true">
         @if (ToolBarContent != null)

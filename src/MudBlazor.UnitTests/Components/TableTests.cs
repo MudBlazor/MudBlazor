@@ -2,7 +2,9 @@
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
@@ -1222,6 +1224,55 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableServerDataLoadingTest>();
             comp.Instance.NoRecordsHasRendered.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Ensures that multiple calls to reload the table properly flag the CancellationToken.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> object.</returns>
+        [Test]
+        public async Task TableServerDataLoadingTestWithCancel()
+        {
+            // Render the server-side data (with cancellation) test
+            var comp = Context.RenderComponent<TableServerDataLoadingTestWithCancel>();
+            // Get the MudTable<int> component
+            var table = comp.FindComponent<MudTable<int>>();
+
+            // Make a cancellation token we can monitor
+            CancellationToken? cancelToken = null;
+            // Make a task completion source
+            var first = new TaskCompletionSource<TableData<int>>();
+            // Set the ServerDataWithCancel function 
+            table.SetParam(p => p.ServerDataWithCancel, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
+            {
+                // Remember the cancellation token
+                cancelToken = cancellationToken;
+                // Return a task that never completes
+                return first.Task;
+            }));
+
+            await Task.Delay(20);
+
+            // Test
+
+            // Make sure this first request was not canceled
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
+
+            // Arrange a table refresh
+            var second = new TaskCompletionSource<TableData<int>>();
+            // Set the ServerDataWithCancel function to a new method...
+            table.SetParam(p => p.ServerDataWithCancel, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
+            {
+                // ... which returns the second task.
+                return second.Task;
+            }));
+
+            await Task.Delay(20);
+
+            // Test
+
+            // Make sure this second request DID cancel the first request's token
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
         }
 
         /// <summary>

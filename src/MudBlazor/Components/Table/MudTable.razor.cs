@@ -8,13 +8,14 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using System.Threading;
 
 
 namespace MudBlazor
 {
     // note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
 
-    public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase
+    public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase, IDisposable
     {
         /// <summary>
         /// Defines how a table row looks like. Use MudTd to define the table cells and their content.
@@ -556,8 +557,36 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Data)]
         public Func<TableState, Task<TableData<T>>> ServerData { get; set; }
 
-        internal override bool HasServerData => ServerData != null;
+        /// <summary>
+        /// Gets or sets the cancelable function for requesting filtered, paginated, and sorted data from the server.
+        /// </summary>
+        /// <remarks>
+        /// This function behaves like the <see cref="ServerData"/> except that a <see cref="CancellationToken"/> parameter
+        /// is also passed into the function.  Forward this cancellation token to any calls such as API calls using <see cref="System.Net.Http.HttpClient" />
+        /// or functions which query data such as to ensure that operations are
+        /// properly canceled.  Using this function can improve responsiveness by keeping up with frequent table updates.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Data)]
+        public Func<TableState, CancellationToken, Task<TableData<T>>> ServerDataWithCancel { get; set; }
 
+        private CancellationTokenSource _cancellationTokenSrc;
+
+        private void CancelToken()
+        {
+            try
+            {
+                _cancellationTokenSrc?.Cancel();
+            }
+            catch { /*ignored*/ }
+            finally
+            {
+                _cancellationTokenSrc = new CancellationTokenSource();
+            }
+        }
+        
+
+        internal override bool HasServerData => ServerData != null || ServerDataWithCancel != null;
 
         TableData<T> _server_data = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private IEnumerable<T> _items;
@@ -579,7 +608,13 @@ namespace MudBlazor
                 SortLabel = label?.SortLabel
             };
 
-            _server_data = await ServerData(state);
+            // Cancel any prior request
+            CancelToken();
+
+            // Get data via either ServerDataWithCancel or ServerData
+            _server_data = ServerDataWithCancel != null ?
+                    await ServerDataWithCancel(state, _cancellationTokenSrc.Token) :
+                    await ServerData(state);
 
             if (CurrentPage * RowsPerPage > _server_data.TotalItems)
                 CurrentPage = 0;
@@ -673,6 +708,28 @@ namespace MudBlazor
         {
             _currentRenderFilteredItemsCached = false;
             return "";
+        }
+
+        /// <summary>
+        /// Releases resources used by this table.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <inheritdoc />
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_cancellationTokenSrc != null)
+            {
+                try
+                {
+                    _cancellationTokenSrc.Dispose();
+                }
+                catch { /*ignored*/ }
+            }
         }
     }
 }
