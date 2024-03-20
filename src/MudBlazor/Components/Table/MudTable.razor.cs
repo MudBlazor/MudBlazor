@@ -561,10 +561,10 @@ namespace MudBlazor
         /// Gets or sets the cancelable function for requesting filtered, paginated, and sorted data from the server.
         /// </summary>
         /// <remarks>
-        /// This function behaves like the <see cref="ServerData"/> except that a <see cref="CancellationToken"/> parameter
-        /// is also passed into the function.  Forward this cancellation token to any calls such as API calls using <see cref="System.Net.Http.HttpClient" />
-        /// or functions which query data such as to ensure that operations are
-        /// properly canceled.  Using this function can improve responsiveness by keeping up with frequent table updates.
+        /// This function behaves like the <see cref="ServerData"/> property except that a <see cref="CancellationToken"/> parameter
+        /// is passed into the function to allow for cancelation of ongoing functions.  Forward this cancellation token to any calls 
+        /// such as API calls using <see cref="System.Net.Http.HttpClient" /> or functions which query data such as DbContext to ensure 
+        /// that operations are properly canceled.  Using this function can improve responsiveness when a table has frequent updates.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
