@@ -2023,6 +2023,30 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridColReorderRowFiltersTest()
+        {
+            var comp = Context.RenderComponent<DataGridColGroupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColGroupTest.Model>>();
+
+            await comp.InvokeAsync(() =>
+            {
+                var switchButton = dataGrid.Find("button.mud-button-root.mud-button.mud-button-text.mud-button-text-default.mud-button-text-size-medium.mud-ripple switch-button");
+                switchButton.Click();
+
+                var filterHeaders = dataGrid.FindAll("input.mud-input-slot.mud-input-root.mud-input-root-text.mud-input-root-margin-dense");
+                var ageFilter = filterHeaders[0];
+                var nameFilter = filterHeaders[1];
+
+                ageFilter.Input(27);
+                dataGrid.FindAll("tr").Count.Should().Be(4);
+
+                dataGrid.Instance.ClearFiltersAsync();
+                nameFilter.Input("a");
+                dataGrid.FindAll("tr").Count.Should().Be(6);
+            });
+        }
+
+        [Test]
         public async Task DataGridHeaderTemplateTest()
         {
             var comp = Context.RenderComponent<DataGridHeaderTemplateTest>();

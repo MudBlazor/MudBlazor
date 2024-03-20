@@ -1,7 +1,10 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDataGrid Items="@_items" Filterable="true" DragDropColumnReordering="true" FilterMode="DataGridFilterMode.ColumnFilterRow" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+<MudDataGrid @ref="_dataGrid" Items="@_items" Filterable="true" DragDropColumnReordering="true" FilterMode="DataGridFilterMode.ColumnFilterRow" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+    <ToolBarContent>
+        <MudButton OnClick="SwitchNameAgeCols" Class="switch-button">Switch Name and Age</MudButton>
+    </ToolBarContent>
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
@@ -13,6 +16,8 @@
 </MudDataGrid>
 
 @code {
+    MudDataGrid<Model> _dataGrid;
+
     private IEnumerable<Model> _items = new List<Model>()
     {
         new Model("Sam", 56, Severity.Normal, false, null, null),
@@ -22,4 +27,17 @@
     };
 
     public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn, Guid? ApplicationId);
+
+    public void SwitchNameAgeCols()
+    {
+        var nameCol = _dataGrid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Name");
+        var nameIndex = _dataGrid.RenderedColumns.IndexOf(nameCol);
+        var ageCol = _dataGrid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Age");
+        var ageIndex = _dataGrid.RenderedColumns.IndexOf(ageCol);
+
+        _dataGrid.RenderedColumns.Remove(ageCol);
+        _dataGrid.RenderedColumns.Insert(ageIndex, nameCol);
+        _dataGrid.RenderedColumns.RemoveAt(nameIndex);
+        _dataGrid.RenderedColumns.Insert(nameIndex, ageCol);
+    }
 }

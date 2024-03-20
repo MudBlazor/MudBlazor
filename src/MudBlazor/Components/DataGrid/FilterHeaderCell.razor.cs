@@ -98,7 +98,7 @@ namespace MudBlazor
         internal async Task StringValueChangedAsync(string value)
         {
             _valueString = value;
-            CheckOperatorValid();
+            Column.FilterContext.FilterDefinition.Operator = GetValidOperator();
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
@@ -106,7 +106,7 @@ namespace MudBlazor
         internal async Task NumberValueChangedAsync(double? value)
         {
             _valueNumber = value;
-            CheckOperatorValid();
+            Column.FilterContext.FilterDefinition.Operator = GetValidOperator();
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
@@ -114,7 +114,7 @@ namespace MudBlazor
         internal async Task EnumValueChangedAsync(Enum value)
         {
             _valueEnum = value;
-            CheckOperatorValid();
+            Column.FilterContext.FilterDefinition.Operator = GetValidOperator();
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
@@ -122,7 +122,7 @@ namespace MudBlazor
         internal async Task BoolValueChangedAsync(bool? value)
         {
             _valueBool = value;
-            CheckOperatorValid();
+            Column.FilterContext.FilterDefinition.Operator = GetValidOperator();
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
@@ -141,13 +141,13 @@ namespace MudBlazor
                     date.Add(_valueTime.Value);
                 }
 
-                CheckOperatorValid();
+                Column.FilterContext.FilterDefinition.Operator = GetValidOperator();
                 Column.FilterContext.FilterDefinition.Value = date;
                 await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
             else
             {
-                CheckOperatorValid();
+                Column.FilterContext.FilterDefinition.Operator = GetValidOperator();
                 Column.FilterContext.FilterDefinition.Value = value;
                 await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
@@ -167,7 +167,7 @@ namespace MudBlazor
                     date = date.Add(_valueTime.Value);
                 }
 
-                CheckOperatorValid();
+                Column.FilterContext.FilterDefinition.Operator = GetValidOperator();
                 Column.FilterContext.FilterDefinition.Value = date;
                 await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
@@ -208,11 +208,11 @@ namespace MudBlazor
         }
 
         // Check if current operator is valid for the underlying type
-        private void CheckOperatorValid()
+        private string GetValidOperator()
         {
             if (!operators.Contains(_operator))
-                Column.FilterContext.FilterDefinition.Operator = operators.FirstOrDefault();
-            else Column.FilterContext.FilterDefinition.Operator = _operator;
+                return operators.FirstOrDefault();
+            else return _operator;
         }
     
         #endregion
