@@ -27,10 +27,10 @@ namespace MudBlazor
             get => _value;
             set => SetDateAsync(value, true).AndForget();
         }
-        
+
         private DateTime _lastSetTime = DateTime.MinValue;
         private const int DebounceTimeoutMs = 100;
-        
+
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
             if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
@@ -39,7 +39,7 @@ namespace MudBlazor
             }
 
             var now = DateTime.UtcNow;
-            
+
             /* See #7866 for more details
              * When the date is set in the UI, this method gets called with the same value multiple time. This guard
              * debounces the value to the same value in a short time frame is ignored
@@ -108,7 +108,7 @@ namespace MudBlazor
             if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
             {
                 await Task.Run(() => InvokeAsync(Submit));
-                
+
                 if (PickerVariant != PickerVariant.Static)
                 {
                     await Task.Delay(ClosingDelay);
@@ -253,11 +253,11 @@ namespace MudBlazor
                     }
                     else if (obj.ShiftKey == true)
                     {
-                        
+
                     }
                     else
                     {
-                        
+
                     }
                     break;
                 case "ArrowDown":
@@ -267,11 +267,11 @@ namespace MudBlazor
                     }
                     else if (obj.ShiftKey == true)
                     {
-                        
+
                     }
                     else
                     {
-                        
+
                     }
                     break;
                 case "Escape":

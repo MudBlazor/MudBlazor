@@ -124,9 +124,9 @@ namespace MudBlazor.Charts
 
                 var xLabels = i < XAxisLabels.Length ? XAxisLabels[i] : "";
                 var lineValue = new SvgText()
-                { 
-                    X = x, 
-                    Y = BoundHeight - 2, 
+                {
+                    X = x,
+                    Y = BoundHeight - 2,
                     Value = xLabels
                 };
                 _verticalValues.Add(lineValue);
@@ -140,7 +140,7 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < _series.Count; i++)
             {
-                var data = _series[i].Data;  
+                var data = _series[i].Data;
 
                 for (var j = 0; j < data.Length; j++)
                 {

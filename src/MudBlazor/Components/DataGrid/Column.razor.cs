@@ -130,7 +130,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
 
         public string Identifier { get; set; }
-        
+
 
         private CultureInfo _culture;
         /// <summary>

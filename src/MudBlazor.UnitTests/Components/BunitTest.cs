@@ -53,7 +53,7 @@ namespace MudBlazor.UnitTests.Components
                     await testAction();
                     return;
                 }
-                catch(Exception) { /*we don't care here*/ }
+                catch (Exception) { /*we don't care here*/ }
             }
             await testAction();
         }

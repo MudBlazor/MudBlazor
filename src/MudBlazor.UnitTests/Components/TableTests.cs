@@ -1698,10 +1698,10 @@ namespace MudBlazor.UnitTests.Components
             var buttons = comp.FindAll("button");
             buttons[0].Click();
             comp.Instance.LatestButtonClickItem.Should().Be("A");
-            
+
             buttons[1].Click();
             comp.Instance.LatestButtonClickItem.Should().Be("B");
-            
+
             buttons[2].Click();
             comp.Instance.LatestButtonClickItem.Should().Be("C");
         }

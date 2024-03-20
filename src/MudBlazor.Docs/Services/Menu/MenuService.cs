@@ -223,7 +223,7 @@ namespace MudBlazor.Docs.Services
         public MudComponent? GetParent(Type? child)
         {
             return child is not null
-                ? _parents.GetValueOrDefault(child) 
+                ? _parents.GetValueOrDefault(child)
                 : null;
         }
 
@@ -235,7 +235,7 @@ namespace MudBlazor.Docs.Services
             }
 
             return _componentLookup.TryGetValue(type, out var component)
-                ? component 
+                ? component
                 : _parents.GetValueOrDefault(type);
         }
 

@@ -102,7 +102,7 @@ namespace MudBlazor
                 return default;
             }
         }
-        
+
         private EventCallback<MouseEventArgs> RowMouseLeaveEventCallback
         {
             get
@@ -115,7 +115,7 @@ namespace MudBlazor
                 return default;
             }
         }
-        
+
         private void StartEditingItem() => StartEditingItem(buttonClicked: true);
 
         private void StartEditingItem(bool buttonClicked)

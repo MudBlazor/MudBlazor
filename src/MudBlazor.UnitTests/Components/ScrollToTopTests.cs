@@ -1,4 +1,4 @@
-using MudBlazor.UnitTests.TestComponents;
+﻿using MudBlazor.UnitTests.TestComponents;
 using Bunit;
 using NUnit.Framework;
 using FluentAssertions;
