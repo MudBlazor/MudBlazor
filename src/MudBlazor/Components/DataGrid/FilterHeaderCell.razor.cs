@@ -98,7 +98,6 @@ namespace MudBlazor
         internal async Task StringValueChangedAsync(string value)
         {
             _valueString = value;
-            //Column.FilterContext.FilterDefinition.Operator = _operator;
             CheckOperatorValid();
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
