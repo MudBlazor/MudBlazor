@@ -49,24 +49,24 @@ namespace MudBlazor
                 {
                     if (Parent?.Rounded == true)
                         if (Parent?.IsFirstItem(this) == true)
-                            return Parent?.Dense==true ? "px-1 pt-2 pb-1" : "px-2 pt-3 pb-2";
+                            return Parent?.Dense == true ? "px-1 pt-2 pb-1" : "px-2 pt-3 pb-2";
                         else if (Parent?.IsLastItem(this) == true)
-                            return Parent?.Dense==true ? "px-1 pt-1 pb-2" : "px-2 pt-2 pb-3";
+                            return Parent?.Dense == true ? "px-1 pt-1 pb-2" : "px-2 pt-2 pb-3";
                         else
-                            return Parent?.Dense==true ? "px-1 py-1" : "px-2 py-2";
+                            return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
                     // not rounded 
-                    return Parent?.Dense==true ? "px-1 py-1" : "px-2 py-2";
+                    return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
                 }
                 // horizontal
                 if (Parent?.Rounded == true)
                     if (Parent?.IsFirstItem(this) == true)
-                        return Parent?.Dense==true ? "ps-2 pe-1 py-1" : "ps-3 pe-2 py-2";
+                        return Parent?.Dense == true ? "ps-2 pe-1 py-1" : "ps-3 pe-2 py-2";
                     else if (Parent?.IsLastItem(this) == true)
-                        return Parent?.Dense==true ? "ps-1 pe-2 py-1" : "ps-2 pe-3 py-2";
+                        return Parent?.Dense == true ? "ps-1 pe-2 py-1" : "ps-2 pe-3 py-2";
                     else
-                        return Parent?.Dense==true ? "px-1 py-1" : "px-2 py-2";
+                        return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
                 // not rounded 
-                return Parent?.Dense==true ? "px-1 py-1" : "px-2 py-2";
+                return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
             }
         }
 

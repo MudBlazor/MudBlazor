@@ -24,7 +24,7 @@ namespace MudBlazor
         }
 
         [Inject] protected IScrollManager ScrollManager { get; set; }
-        
+
         [Inject] private IJsApiService JsApiService { get; set; }
 
         /// <summary>

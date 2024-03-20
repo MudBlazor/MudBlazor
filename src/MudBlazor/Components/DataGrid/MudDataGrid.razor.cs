@@ -172,7 +172,7 @@ namespace MudBlazor
 
                 StateHasChanged();
             }
-            return Task.CompletedTask;            
+            return Task.CompletedTask;
         }
 
         public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
@@ -1428,7 +1428,7 @@ namespace MudBlazor
             if (index > 0)
             {
                 RenderedColumns.RemoveAt(index);
-                RenderedColumns.Insert(index-1, column);
+                RenderedColumns.Insert(index - 1, column);
             }
             DropContainerHasChanged();
         }
@@ -1483,7 +1483,7 @@ namespace MudBlazor
                 _groupExpansionsDict[x.Key])).ToList();
 
             _allGroups = allGroupings.Select(x => new GroupDefinition<T>(x,
-                _groupExpansionsDict[x.Key])).ToList();                
+                _groupExpansionsDict[x.Key])).ToList();
 
             if ((_isFirstRendered || ServerData != null) && !noStateChange)
                 StateHasChanged();

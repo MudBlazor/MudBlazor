@@ -53,7 +53,7 @@ public class LayoutService
         else
         {
             IsDarkMode = isDarkModeDefaultTheme;
-            _userPreferences = new UserPreferences.UserPreferences {DarkLightTheme = DarkLightMode.System};
+            _userPreferences = new UserPreferences.UserPreferences { DarkLightTheme = DarkLightMode.System };
             await _userPreferencesService.SaveUserPreferences(_userPreferences);
         }
     }

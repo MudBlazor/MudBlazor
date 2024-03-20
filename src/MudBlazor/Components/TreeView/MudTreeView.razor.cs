@@ -187,7 +187,7 @@ namespace MudBlazor
         /// <summary>
         /// Comparer is used to check if two tree items are equal
         /// </summary>
-        [Parameter] 
+        [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public IEqualityComparer<T?> Comparer { get; set; } = EqualityComparer<T?>.Default;
 
@@ -293,7 +293,7 @@ namespace MudBlazor
         ///  <param name="value">The value to be set as the selected value.</param>
         internal async Task SetSelectedValue(T? value)
         {
-            if(Comparer.Equals(value, _previousSelectedValue)) return;
+            if (Comparer.Equals(value, _previousSelectedValue)) return;
 
             await UnSelectAllChildren();
 

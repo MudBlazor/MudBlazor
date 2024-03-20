@@ -170,7 +170,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => autocomplete.Value.Should().Be("Austria"));
             autocomplete.Text.Should().Be("Austria");
         }
-        
+
         /// <summary>
         /// Test to cover issue #5993.
         /// </summary>
@@ -189,7 +189,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
             autocompletecomp.SetParam(p => p.Text, "Austria"); // not part of the U.S.
-            
+
             comp.WaitForAssertion(() => autocomplete.Value.Should().Be("Austria"));
             autocomplete.Text.Should().Be("Austria");
         }
@@ -1238,7 +1238,7 @@ namespace MudBlazor.UnitTests.Components
             var mudText = comp.FindAll("p.mud-typography");
             mudText[0].InnerHtml.Should().Contain("StartList_Content"); //ensure the text is shown
         }
-        
+
         /// <summary>
         /// AfterItemsTemplate should render when there are items
         /// </summary>

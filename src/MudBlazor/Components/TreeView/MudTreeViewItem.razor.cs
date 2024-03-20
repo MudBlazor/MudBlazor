@@ -187,7 +187,7 @@ namespace MudBlazor
             get => _isSelected;
             set
             {
-                if(_isSelected.Equals(value)) return;
+                if (_isSelected.Equals(value)) return;
 
                 _isSelected = value;
             }
