@@ -214,7 +214,7 @@ namespace MudBlazor
                 Column.FilterContext.FilterDefinition.Operator = operators.FirstOrDefault();
             else Column.FilterContext.FilterDefinition.Operator = _operator;
         }
-
+    
         #endregion
     }
 }
