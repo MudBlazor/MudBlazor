@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudInput<T> : MudBaseInput<T>
+    public partial class MudInput<T> : MudBaseInput<T>, IAsyncDisposable
     {
         protected string Classname =>
            new CssBuilder(
@@ -178,11 +178,18 @@ namespace MudBlazor
             await OnClearButtonClick.InvokeAsync(e);
         }
 
+        private string _oldText = null;
         private string _internalText;
+        private bool _shouldInitAutoGrow;
 
         public override async Task SetParametersAsync(ParameterView parameters)
         {
+            var oldLines = Lines;
+            var oldMaxLines = MaxLines;
+            var oldAutoGrow = AutoGrow;
+
             await base.SetParametersAsync(parameters);
+
             //if (!_isFocused || _forceTextUpdate)
             //    _internalText = Text;
             if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
@@ -197,23 +204,49 @@ namespace MudBlazor
                 // in WASM (or in BSS with TextUpdateSuppression==false) we always update
                 _internalText = Text;
             }
+
+            // Flag AutoGrow to be initialized on the next render.
+            if (!oldAutoGrow && AutoGrow)
+            {
+                _shouldInitAutoGrow = true;
+            }
+
+            if (IsJSRuntimeAvailable)
+            {
+                if (oldAutoGrow && !AutoGrow)
+                {
+                    // Disable AutoGrow.
+                    _shouldInitAutoGrow = false;
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+                }
+                else if (oldLines != Lines || oldMaxLines != MaxLines)
+                {
+                    if (AutoGrow && !_shouldInitAutoGrow)
+                    {
+                        // Update AutoGrow parameters (if it was already enabled).
+                        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.updateParams", ElementReference, MaxLines);
+                    }
+                }
+            }
         }
 
         [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
 
-        private string _oldText = null;
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (AutoGrow && firstRender)
+            if (AutoGrow)
             {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.initAutoGrow", ElementReference, MaxLines);
-                _oldText = _internalText;
-            }
-            else if(AutoGrow && _oldText != _internalText)
-            {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.adjustHeight", ElementReference);
-                _oldText = _internalText;
+                if (firstRender || _shouldInitAutoGrow)
+                {
+                    _shouldInitAutoGrow = false;
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.initAutoGrow", ElementReference, MaxLines);
+                    _oldText = _internalText;
+                }
+                else if (_oldText != _internalText)
+                {
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.adjustHeight", ElementReference);
+                    _oldText = _internalText;
+                }
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -235,6 +268,14 @@ namespace MudBlazor
         {
             return GetInputType() is InputType.Color or InputType.Date or InputType.DateTimeLocal or InputType.Month
                 or InputType.Time or InputType.Week;
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (AutoGrow && IsJSRuntimeAvailable)
+            {
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+            }
         }
     }
 
