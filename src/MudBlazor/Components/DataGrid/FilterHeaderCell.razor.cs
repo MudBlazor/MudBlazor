@@ -210,9 +210,11 @@ namespace MudBlazor
         // Check if current operator is valid for the underlying type
         private string GetValidOperator()
         {
-            if (!operators.Contains(_operator))
+            var colOperator = Column.FilterContext.FilterDefinition.Operator;
+
+            if (!operators.Contains(colOperator))
                 return operators.FirstOrDefault();
-            else return _operator;
+            else return colOperator;
         }
     
         #endregion
