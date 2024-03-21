@@ -27,19 +27,19 @@ namespace MudBlazor
             get => _value;
             set => SetDateAsync(value, true).AndForget();
         }
-        
+
         private DateTime _lastSetTime = DateTime.MinValue;
         private const int DebounceTimeoutMs = 100;
-        
+
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
             if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
             {
                 date = DateTime.SpecifyKind(date.Value, _value.Value.Kind);
             }
- 
+
             var now = DateTime.UtcNow;
-            
+
             /* See #7866 for more details
              * When the date is set in the UI, this method gets called with the same value multiple time. This guard
              * debounces the value to the same value in a short time frame is ignored
@@ -50,7 +50,7 @@ namespace MudBlazor
             }
 
             _lastSetTime = now;
-            
+
             // When the _value is null and an invalid date is entered into the UI, the data value passed to this method
             // will be null. We need to check if the text has been set my the user and if so handle tha validation
             // without this the UI doesn't display a validation error correctly
@@ -107,7 +107,7 @@ namespace MudBlazor
             _selectedDate = dateTime;
             if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
             {
-                Submit();
+                await Task.Run(() => InvokeAsync(Submit));
 
                 if (PickerVariant != PickerVariant.Static)
                 {
@@ -253,11 +253,11 @@ namespace MudBlazor
                     }
                     else if (obj.ShiftKey == true)
                     {
-                        
+
                     }
                     else
                     {
-                        
+
                     }
                     break;
                 case "ArrowDown":
@@ -267,11 +267,11 @@ namespace MudBlazor
                     }
                     else if (obj.ShiftKey == true)
                     {
-                        
+
                     }
                     else
                     {
-                        
+
                     }
                     break;
                 case "Escape":

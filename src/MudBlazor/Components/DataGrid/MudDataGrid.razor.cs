@@ -90,11 +90,22 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            if (ServerData != null && QuickFilter != null)
+            if (ServerData != null)
             {
-                throw new InvalidOperationException(
-                    $"Do not supply both '{nameof(ServerData)}' and '{nameof(QuickFilter)}'."
-                );
+                if (Items != null)
+                {
+                    throw new InvalidOperationException(
+                        $"{GetType()} can only accept one item source from its parameters. " +
+                        $"Do not supply both '{nameof(Items)}' and '{nameof(ServerData)}'."
+                    );
+                }
+
+                if (QuickFilter != null)
+                {
+                    throw new InvalidOperationException(
+                        $"Do not supply both '{nameof(ServerData)}' and '{nameof(QuickFilter)}'."
+                    );
+                }
             }
         }
 
@@ -106,8 +117,7 @@ namespace MudBlazor
             }
             else
             {
-                SortDefinition<T> sortDefinition = null;
-                var ok = SortDefinitions.TryGetValue(columnName, out sortDefinition);
+                var ok = SortDefinitions.TryGetValue(columnName, out var sortDefinition);
 
                 if (ok)
                 {
@@ -144,8 +154,8 @@ namespace MudBlazor
         {
             dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
 
-            var dragAndDropSource = RenderedColumns.Where(rc => rc.PropertyName == dropItem.Item.PropertyName).SingleOrDefault();
-            var dragAndDropDestination = RenderedColumns.Where(rc => rc.PropertyName == dropItem.DropzoneIdentifier).SingleOrDefault();
+            var dragAndDropSource = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.Item.PropertyName);
+            var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.DropzoneIdentifier);
             if (dragAndDropSource != null && dragAndDropDestination != null)
             {
                 var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
@@ -162,7 +172,7 @@ namespace MudBlazor
 
                 StateHasChanged();
             }
-            return Task.CompletedTask;            
+            return Task.CompletedTask;
         }
 
         public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
@@ -177,8 +187,8 @@ namespace MudBlazor
         // converters
         private Converter<bool, bool?> _oppositeBoolConverter = new Converter<bool, bool?>
         {
-            SetFunc = value => value ? false : true,
-            GetFunc = value => value.HasValue ? !value.Value : true,
+            SetFunc = value => !value,
+            GetFunc = value => !value ?? true,
         };
 
         #region Notify Children Delegates
@@ -208,7 +218,7 @@ namespace MudBlazor
         /// Callback is called whenever a row is clicked.
         /// </summary>
         [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowClick { get; set; }
-        
+
         /// <summary>
         /// Callback is called whenever a row is right clicked.
         /// </summary>
@@ -948,6 +958,11 @@ namespace MudBlazor
             }
         }
 
+        internal void RemoveColumn(Column<T> column)
+        {
+            RenderedColumns.Remove(column);
+        }
+
         internal IFilterDefinition<T> CreateFilterDefinitionInstance()
         {
             return _defaultFilterDefinitionFactory();
@@ -1413,7 +1428,7 @@ namespace MudBlazor
             if (index > 0)
             {
                 RenderedColumns.RemoveAt(index);
-                RenderedColumns.Insert(index-1, column);
+                RenderedColumns.Insert(index - 1, column);
             }
             DropContainerHasChanged();
         }
@@ -1435,7 +1450,7 @@ namespace MudBlazor
             _columnsPanelDropContainer?.Refresh();
         }
 
-        
+
         public void GroupItems(bool noStateChange = false)
         {
             if (!noStateChange)
@@ -1468,7 +1483,7 @@ namespace MudBlazor
                 _groupExpansionsDict[x.Key])).ToList();
 
             _allGroups = allGroupings.Select(x => new GroupDefinition<T>(x,
-                _groupExpansionsDict[x.Key])).ToList();                
+                _groupExpansionsDict[x.Key])).ToList();
 
             if ((_isFirstRendered || ServerData != null) && !noStateChange)
                 StateHasChanged();
@@ -1491,7 +1506,7 @@ namespace MudBlazor
             {
                 _groupExpansionsDict[g.Grouping.Key] = !value;
             }
- 
+
             GroupItems();
         }
 

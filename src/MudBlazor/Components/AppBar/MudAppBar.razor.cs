@@ -62,7 +62,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.AppBar.Behavior)]
         public bool Fixed { get; set; } = true;
-        
+
         /// <summary>
         /// If true, AppBar is allowed to wrap.
         /// </summary>

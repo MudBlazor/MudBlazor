@@ -98,6 +98,7 @@ namespace MudBlazor.Docs.Services
             //Pickers
             .AddNavGroup("Pickers", false, new DocsComponents()
                 .AddItem("Date Picker", typeof(MudDatePicker))
+                .AddItem("Date Range Picker", typeof(MudDateRangePicker))
                 .AddItem("Time Picker", typeof(MudTimePicker))
                 .AddItem("Color Picker", typeof(MudColorPicker))
             )
@@ -222,7 +223,7 @@ namespace MudBlazor.Docs.Services
         public MudComponent? GetParent(Type? child)
         {
             return child is not null
-                ? _parents.GetValueOrDefault(child) 
+                ? _parents.GetValueOrDefault(child)
                 : null;
         }
 
@@ -234,7 +235,7 @@ namespace MudBlazor.Docs.Services
             }
 
             return _componentLookup.TryGetValue(type, out var component)
-                ? component 
+                ? component
                 : _parents.GetValueOrDefault(type);
         }
 

@@ -304,11 +304,11 @@ namespace MudBlazor.UnitTests.Components
                 }
             };
             var expectedDarkerColor = new MudColor(Colors.Green.Darken1).ColorRgbDarken();
-            var expectedColorHex= expectedDarkerColor.ToString(MudColorOutputFormats.Hex);
+            var expectedColorHex = expectedDarkerColor.ToString(MudColorOutputFormats.Hex);
             Console.WriteLine($@"expecting: {expectedColorHex}");
             myCustomTheme.PaletteDark.Primary.Should().Be(new MudColor(Colors.Green.Darken1));// Set by user
             myCustomTheme.PaletteDark.PrimaryDarken.Should().Be(expectedDarkerColor.ToString(MudColorOutputFormats.RGB));// Set by user
-            
+
         }
 
         [Test]
@@ -382,7 +382,7 @@ namespace MudBlazor.UnitTests.Components
         public void PseudoCssRootColor_Test()
         {
             string scope = ":root";
-            var isDarkMode=true;
+            var isDarkMode = true;
             var mudTheme = new MudTheme
             {
                 PaletteDark = new PaletteDark()
@@ -395,7 +395,7 @@ namespace MudBlazor.UnitTests.Components
                 Scope = scope
             };
             var comp = Context.RenderComponent<MudThemeProvider>(
-                parameters => 
+                parameters =>
                     parameters.Add(p => p.Theme, mudTheme)
                         .Add(p => p.IsDarkMode, isDarkMode)
                     );
@@ -410,7 +410,7 @@ namespace MudBlazor.UnitTests.Components
             styleLines.Should().Contain($"{scope}{{");
 
             var expectedPrimaryColor = Colors.Green.Darken1;
-            var expectedPrimaryColorAsRgba= new MudColor(expectedPrimaryColor).ToString(MudColorOutputFormats.RGBA);
+            var expectedPrimaryColorAsRgba = new MudColor(expectedPrimaryColor).ToString(MudColorOutputFormats.RGBA);
             var expectedPrimaryLine = $"--mud-palette-primary: {expectedPrimaryColorAsRgba};";
             styleLines.Should().Contain(expectedPrimaryLine);
             var expectedPrimaryDarkenColor = new MudColor(expectedPrimaryColor).ColorRgbDarken();

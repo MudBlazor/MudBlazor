@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudFab : MudBaseButton
+    public partial class MudFab : MudBaseButton, IHandleEvent
     {
         protected string Classname =>
             new CssBuilder("mud-button-root mud-fab")
@@ -79,5 +80,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public string? Title { get; set; }
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
+        /// <para/>
+        /// Since <see cref="MudFab"/> implements only single <see cref="EventCallback"/> <see cref="MudBaseButton.OnClick"/> this is safe to disable globally within the component.
+        /// </remarks>
+        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
 }

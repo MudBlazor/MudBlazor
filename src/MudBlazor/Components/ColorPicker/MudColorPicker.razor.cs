@@ -292,19 +292,19 @@ namespace MudBlazor
         private async Task SetColorAsync(MudColor value)
         {
             if (value == null) { return; }
-            
+
             var rgbChanged = value != _value;
             var hslChanged = _value != null && value.HslChanged(_value);
-            var shouldUpdateBinding = _value != null 
+            var shouldUpdateBinding = _value != null
                                       && (rgbChanged || (UpdateBindingIfOnlyHSLChanged && hslChanged));
             _value = value;
-            
+
             if (rgbChanged && _skipFeedback == false)
             {
                 UpdateBaseColor();
                 UpdateColorSelectorBasedOnRgb();
             }
-            
+
             if (shouldUpdateBinding)
             {
                 Touched = true;

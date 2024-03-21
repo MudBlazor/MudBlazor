@@ -91,7 +91,7 @@ namespace MudBlazor
 
         internal void UpdatePanelsOnPanelsChanged(MudExpansionPanel panel)
         {
-            if(!MultiExpansion && panel.IsExpanded)
+            if (!MultiExpansion && panel.IsExpanded)
             {
                 CollapseAllExcept(panel);
                 return;

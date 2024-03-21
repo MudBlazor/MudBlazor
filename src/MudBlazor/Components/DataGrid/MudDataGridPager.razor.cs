@@ -47,9 +47,9 @@ namespace MudBlazor
             .Replace("{last_item}", $"{Math.Min((DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage, DataGrid.GetFilteredItemsCount())}")
             .Replace("{all_items}", $"{DataGrid.GetFilteredItemsCount()}");
 
-        private bool BackButtonsDisabled => Disabled || (DataGrid == null ? false : DataGrid.CurrentPage == 0);
+        private bool BackButtonsDisabled => Disabled || DataGrid is { CurrentPage: 0 };
 
-        private bool ForwardButtonsDisabled => Disabled || (DataGrid == null ? false : (DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage >= DataGrid.GetFilteredItemsCount());
+        private bool ForwardButtonsDisabled => Disabled || (DataGrid != null && (DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage >= DataGrid.GetFilteredItemsCount());
 
         protected string Classname =>
             new CssBuilder("mud-table-pagination-toolbar")
@@ -63,6 +63,7 @@ namespace MudBlazor
 
         protected override async Task OnInitializedAsync()
         {
+            await base.OnInitializedAsync();
             if (DataGrid != null)
             {
                 DataGrid.HasPager = true;

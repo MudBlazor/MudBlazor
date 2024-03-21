@@ -31,11 +31,11 @@ namespace MudBlazor
             .AddClass("mud-toggle-item-delimiter", Parent?.Delimiters == true)
             .AddClass(Class)
             .Build();
-        
+
         protected string TextClassName => new CssBuilder()
             .AddClass(Parent?.TextClass)
             .Build();
-        
+
         protected string CheckMarkClasses => new CssBuilder()
             .AddClass(Parent?.CheckMarkClass)
             .AddClass("me-2")
@@ -49,24 +49,24 @@ namespace MudBlazor
                 {
                     if (Parent?.Rounded == true)
                         if (Parent?.IsFirstItem(this) == true)
-                            return Parent?.Dense==true ? "px-1 pt-2 pb-1" : "px-2 pt-3 pb-2";
+                            return Parent?.Dense == true ? "px-1 pt-2 pb-1" : "px-2 pt-3 pb-2";
                         else if (Parent?.IsLastItem(this) == true)
-                            return Parent?.Dense==true ? "px-1 pt-1 pb-2" : "px-2 pt-2 pb-3";
+                            return Parent?.Dense == true ? "px-1 pt-1 pb-2" : "px-2 pt-2 pb-3";
                         else
-                            return Parent?.Dense==true ? "px-1 py-1" : "px-2 py-2";
+                            return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
                     // not rounded 
-                    return Parent?.Dense==true ? "px-1 py-1" : "px-2 py-2";
+                    return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
                 }
                 // horizontal
                 if (Parent?.Rounded == true)
                     if (Parent?.IsFirstItem(this) == true)
-                        return Parent?.Dense==true ? "ps-2 pe-1 py-1" : "ps-3 pe-2 py-2";
+                        return Parent?.Dense == true ? "ps-2 pe-1 py-1" : "ps-3 pe-2 py-2";
                     else if (Parent?.IsLastItem(this) == true)
-                        return Parent?.Dense==true ? "ps-1 pe-2 py-1" : "ps-2 pe-3 py-2";
+                        return Parent?.Dense == true ? "ps-1 pe-2 py-1" : "ps-2 pe-3 py-2";
                     else
-                        return Parent?.Dense==true ? "px-1 py-1" : "px-2 py-2";
+                        return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
                 // not rounded 
-                return Parent?.Dense==true ? "px-1 py-1" : "px-2 py-2";
+                return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
             }
         }
 
@@ -96,7 +96,7 @@ namespace MudBlazor
         public string? SelectedIcon { get; set; } = Icons.Material.Filled.Check;
 
         private string? CurrentIcon => IsSelected ? SelectedIcon ?? UnselectedIcon : UnselectedIcon;
-        
+
         /// <summary>
         /// The text to show. You need to set this only if you want a text that differs from the Value. If null,
         /// show Value?.ToString().
@@ -136,6 +136,5 @@ namespace MudBlazor
         }
 
         protected internal bool IsEmpty => string.IsNullOrEmpty(Text) && Value is null;
-        
     }
 }

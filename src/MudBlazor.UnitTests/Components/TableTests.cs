@@ -1688,6 +1688,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Row item data should be passed to EditButtonContext 
+        /// </summary>
+        [Test]
+        public async Task TableCustomEditButtonItemContext()
+        {
+            var comp = Context.RenderComponent<TableCustomEditButtonItemContextRenderTest>();
+
+            var buttons = comp.FindAll("button");
+            buttons[0].Click();
+            comp.Instance.LatestButtonClickItem.Should().Be("A");
+
+            buttons[1].Click();
+            comp.Instance.LatestButtonClickItem.Should().Be("B");
+
+            buttons[2].Click();
+            comp.Instance.LatestButtonClickItem.Should().Be("C");
+        }
+
+        /// <summary>
         /// Ensures clicking a different button does not switch the row
         /// </summary>
         [Test]

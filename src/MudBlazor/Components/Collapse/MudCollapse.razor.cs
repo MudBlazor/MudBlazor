@@ -19,7 +19,7 @@ namespace MudBlazor
         }
 
         internal double _height;
-        private ParameterState<bool> _expandedState;
+        private IParameterState<bool> _expandedState;
         private bool _isRendered;
         private bool _updateHeight;
         private ElementReference _wrapper;

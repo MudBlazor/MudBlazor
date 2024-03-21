@@ -78,7 +78,7 @@ namespace MudBlazor.UnitTests.Components
         {
             if (checkInstanceValue == true)
             {
-                comp.WaitForAssertion(()=> comp.Instance.ColorValue.Should().Be(expectedColor));
+                comp.WaitForAssertion(() => comp.Instance.ColorValue.Should().Be(expectedColor));
             }
 
             if (mode is ColorPickerMode.RGB or ColorPickerMode.HSL)

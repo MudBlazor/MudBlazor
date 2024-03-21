@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudLink : MudComponentBase
+    public partial class MudLink : MudComponentBase, IHandleEvent
     {
         protected string Classname =>
             new CssBuilder("mud-typography mud-link")
@@ -94,5 +94,13 @@ namespace MudBlazor
 
             await OnClick.InvokeAsync(ev);
         }
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
+        /// <para/>
+        /// Since <see cref="MudLink"/> implements only single <see cref="EventCallback"/> <see cref="OnClick"/> this is safe to disable globally within the component.
+        /// </remarks>
+        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
 }
