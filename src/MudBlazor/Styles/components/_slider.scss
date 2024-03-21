@@ -5,7 +5,7 @@
   display: inline-block;
   width: 100%;
   user-select: none;
-  touch-action: none;
+  touch-action: pinch-zoom;
 
   & > .mud-typography {
     margin-top: 10px;
