@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -17,6 +18,7 @@ namespace MudBlazor
 
         [Parameter] public Column<T> Column { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter] public bool IsReordered { get; set; }
 
         private string _classname =>
             new CssBuilder(Column?.HeaderClass)
@@ -58,6 +60,23 @@ namespace MudBlazor
 
         private string _operator;
 
+        public FilterHeaderCell()
+        {
+            // Update _operator if underlying column had changed position
+            RegisterParameter(
+                nameof(IsReordered),
+                () => IsReordered,
+                () =>
+                {
+                    if (IsReordered)
+                    {
+                        _operator = Column.FilterContext.FilterDefinition.Operator;
+                        IsReordered = false;
+                    }
+                }
+            );
+        }
+
         private string chosenOperatorStyle(string o)
         {
             return o == _operator ? "color:var(--mud-palette-primary-text);background-color:var(--mud-palette-primary)" : "";
@@ -83,7 +102,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            _operator = operators.FirstOrDefault();
+            _operator = Column.FilterContext.FilterDefinition.Operator;
         }
 
         #region Events
@@ -98,7 +117,7 @@ namespace MudBlazor
         internal async Task StringValueChangedAsync(string value)
         {
             _valueString = value;
-            Column.FilterContext.FilterDefinition.Operator = Column.FilterContext.FilterDefinition.Operator;
+            Column.FilterContext.FilterDefinition.Operator = _operator;
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
@@ -106,7 +125,7 @@ namespace MudBlazor
         internal async Task NumberValueChangedAsync(double? value)
         {
             _valueNumber = value;
-            Column.FilterContext.FilterDefinition.Operator = Column.FilterContext.FilterDefinition.Operator;
+            Column.FilterContext.FilterDefinition.Operator = _operator;
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
@@ -114,7 +133,7 @@ namespace MudBlazor
         internal async Task EnumValueChangedAsync(Enum value)
         {
             _valueEnum = value;
-            Column.FilterContext.FilterDefinition.Operator = Column.FilterContext.FilterDefinition.Operator;
+            Column.FilterContext.FilterDefinition.Operator = _operator;
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
@@ -122,7 +141,7 @@ namespace MudBlazor
         internal async Task BoolValueChangedAsync(bool? value)
         {
             _valueBool = value;
-            Column.FilterContext.FilterDefinition.Operator = Column.FilterContext.FilterDefinition.Operator;
+            Column.FilterContext.FilterDefinition.Operator = _operator;
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
@@ -141,13 +160,13 @@ namespace MudBlazor
                     date.Add(_valueTime.Value);
                 }
 
-                Column.FilterContext.FilterDefinition.Operator = Column.FilterContext.FilterDefinition.Operator;
+                Column.FilterContext.FilterDefinition.Operator = _operator;
                 Column.FilterContext.FilterDefinition.Value = date;
                 await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
             else
             {
-                Column.FilterContext.FilterDefinition.Operator = Column.FilterContext.FilterDefinition.Operator;
+                Column.FilterContext.FilterDefinition.Operator = _operator;
                 Column.FilterContext.FilterDefinition.Value = value;
                 await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
@@ -167,7 +186,7 @@ namespace MudBlazor
                     date = date.Add(_valueTime.Value);
                 }
 
-                Column.FilterContext.FilterDefinition.Operator = Column.FilterContext.FilterDefinition.Operator;
+                Column.FilterContext.FilterDefinition.Operator = _operator;
                 Column.FilterContext.FilterDefinition.Value = date;
                 await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }

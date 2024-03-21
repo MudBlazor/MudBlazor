@@ -63,11 +63,17 @@
                         @if (Filterable && FilterMode == DataGridFilterMode.ColumnFilterRow)
                         {
                             <tr class="mud-table-row">
-                                @foreach (var column in RenderedColumns)
+                                @for (int i = 0; i < RenderedColumns.Count; i++)
                                 {
-                                    <FilterHeaderCell T="T" Column="@column" />
+                                    var prevCol = previousRenderedColumns.ElementAtOrDefault(i);
+                                    var currCol = RenderedColumns.ElementAt(i).uid;
+                                    bool isReordered = prevCol != currCol;
+
+                                    <FilterHeaderCell T="T" Column="@RenderedColumns[i]" IsReordered="isReordered"/>
                                 }
                             </tr>
+                            previousRenderedColumns.Clear();
+                            RenderedColumns.ForEach(c => previousRenderedColumns.Add(c.uid));
                         }
                     </thead>
                     <tbody class="mud-table-body">

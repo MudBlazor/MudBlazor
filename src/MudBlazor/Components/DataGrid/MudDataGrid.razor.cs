@@ -20,6 +20,7 @@ namespace MudBlazor
     [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<T> : MudComponentBase
     {
+        private List<Guid> previousRenderedColumns = new List<Guid>();
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
         private int _currentPage = 0;
         internal int? _rowsPerPage;

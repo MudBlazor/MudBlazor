@@ -2052,6 +2052,46 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridColReorderRowModifiedFiltersTest()
+        {
+            var comp = Context.RenderComponent<DataGridColReorderRowFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColReorderRowFiltersTest.Model>>();
+
+            await comp.InvokeAsync(async () =>
+            {
+                // Should have 4 entries, 2 headers and an extra
+                dataGrid.FindAll("tr").Count.Should().Be(7);
+
+                var ageCol = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Age");
+                var modifiedAgeFilter = ageCol.FilterContext.FilterDefinition;
+                modifiedAgeFilter.Operator = ">";
+
+                var nameCol = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Age");
+                var modifiedNameFilter = nameCol.FilterContext.FilterDefinition;
+                modifiedNameFilter.Operator = "not contains";
+
+                var switchButton = dataGrid.Find("button.switch-button");
+                switchButton.Click();
+
+                var filterHeaders = dataGrid.FindAll("input");
+                var ageFilter = filterHeaders[0];
+                var nameFilter = filterHeaders[1];
+
+                await dataGrid.Instance.AddFilterAsync(modifiedAgeFilter);
+                await dataGrid.Instance.AddFilterAsync(modifiedNameFilter);
+
+                ageFilter.Input(27);
+                // Should have 3 entries + 3
+                dataGrid.FindAll("tr").Count.Should().Be(6);
+
+                await dataGrid.Instance.ClearFiltersAsync();
+                nameFilter.Input("a");
+                // Should have 1 entry + 3
+                dataGrid.FindAll("tr").Count.Should().Be(4);
+            });
+        }
+
+        [Test]
         public async Task DataGridHeaderTemplateTest()
         {
             var comp = Context.RenderComponent<DataGridHeaderTemplateTest>();
