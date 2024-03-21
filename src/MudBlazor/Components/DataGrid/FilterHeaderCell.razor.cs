@@ -102,7 +102,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            _operator = Column.FilterContext.FilterDefinition.Operator;
+            _operator = operators.FirstOrDefault();
         }
 
         #region Events
