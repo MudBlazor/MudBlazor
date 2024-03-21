@@ -58,6 +58,8 @@ namespace MudBlazor
 
         private string _operator;
 
+        private bool _operatorChanged = false;
+
         private string chosenOperatorStyle(string o)
         {
             return o == _operator ? "color:var(--mud-palette-primary-text);background-color:var(--mud-palette-primary)" : "";
@@ -98,7 +100,7 @@ namespace MudBlazor
         internal async Task StringValueChangedAsync(string value)
         {
             _valueString = value;
-            Column.FilterContext.FilterDefinition.Operator = GetValidOperator();
+            Column.FilterContext.FilterDefinition.Operator = Column.FilterContext.FilterDefinition.Operator;
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
@@ -106,7 +108,7 @@ namespace MudBlazor
         internal async Task NumberValueChangedAsync(double? value)
         {
             _valueNumber = value;
-            Column.FilterContext.FilterDefinition.Operator = GetValidOperator();
+            Column.FilterContext.FilterDefinition.Operator = Column.FilterContext.FilterDefinition.Operator;
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
@@ -114,7 +116,7 @@ namespace MudBlazor
         internal async Task EnumValueChangedAsync(Enum value)
         {
             _valueEnum = value;
-            Column.FilterContext.FilterDefinition.Operator = GetValidOperator();
+            Column.FilterContext.FilterDefinition.Operator = Column.FilterContext.FilterDefinition.Operator;
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
@@ -122,7 +124,7 @@ namespace MudBlazor
         internal async Task BoolValueChangedAsync(bool? value)
         {
             _valueBool = value;
-            Column.FilterContext.FilterDefinition.Operator = GetValidOperator();
+            Column.FilterContext.FilterDefinition.Operator = Column.FilterContext.FilterDefinition.Operator;
             Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
@@ -141,13 +143,13 @@ namespace MudBlazor
                     date.Add(_valueTime.Value);
                 }
 
-                Column.FilterContext.FilterDefinition.Operator = GetValidOperator();
+                Column.FilterContext.FilterDefinition.Operator = Column.FilterContext.FilterDefinition.Operator;
                 Column.FilterContext.FilterDefinition.Value = date;
                 await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
             else
             {
-                Column.FilterContext.FilterDefinition.Operator = GetValidOperator();
+                Column.FilterContext.FilterDefinition.Operator = Column.FilterContext.FilterDefinition.Operator;
                 Column.FilterContext.FilterDefinition.Value = value;
                 await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
@@ -167,7 +169,7 @@ namespace MudBlazor
                     date = date.Add(_valueTime.Value);
                 }
 
-                Column.FilterContext.FilterDefinition.Operator = GetValidOperator();
+                Column.FilterContext.FilterDefinition.Operator = Column.FilterContext.FilterDefinition.Operator;
                 Column.FilterContext.FilterDefinition.Value = date;
                 await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
@@ -205,16 +207,6 @@ namespace MudBlazor
         internal async Task ClearFilterAsync(IFilterDefinition<T> filterDefinition)
         {
             await DataGrid.RemoveFilterAsync(filterDefinition.Id);
-        }
-
-        // Check if current operator is valid for the underlying type
-        private string GetValidOperator()
-        {
-            var colOperator = Column.FilterContext.FilterDefinition.Operator;
-
-            if (!operators.Contains(colOperator))
-                return operators.FirstOrDefault();
-            else return colOperator;
         }
     
         #endregion
