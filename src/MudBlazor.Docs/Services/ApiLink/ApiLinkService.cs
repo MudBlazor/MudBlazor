@@ -41,30 +41,21 @@ namespace MudBlazor.Docs.Services
 
                 var bestMatchRatio = 0;
 
-                if (entry.Title.StartsWith(text, StringComparison.InvariantCultureIgnoreCase))
+                // Find the best result for any keyword and the search string.
+                foreach (var keyword in keywords.Where(k => !string.IsNullOrWhiteSpace(k)))
                 {
-                    bestMatchRatio = 100;
-                }
-                else
-                {
-                    // Find the best result for any keyword and the search string.
-                    foreach (var keyword in keywords.Where(k => !string.IsNullOrWhiteSpace(k)))
-                    {
-                        var ratio = Fuzz.Ratio(keyword, text);
-                        var outOfOrderRatio = Fuzz.PartialTokenSortRatio(keyword, text);
+                    var ratio = Fuzz.Ratio(keyword, text);
+                    var partialOutOfOrderRatio = Fuzz.PartialTokenSortRatio(keyword, text);
 
-                        bestMatchRatio = Math.Max(bestMatchRatio, Math.Max(ratio, outOfOrderRatio));
-                    }
+                    bestMatchRatio = Math.Max(bestMatchRatio, Math.Max(ratio, partialOutOfOrderRatio));
                 }
 
-                if (bestMatchRatio > 65)
-                {
-                    ratios.Add(entry, bestMatchRatio);
-                }
+                ratios.Add(entry, bestMatchRatio);
             }
 
             return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(
                 ratios
+                .Where(x => x.Value > 50)
                 .OrderByDescending(x => x.Value)
                 .Select(x => x.Key)
                 .ToList()
