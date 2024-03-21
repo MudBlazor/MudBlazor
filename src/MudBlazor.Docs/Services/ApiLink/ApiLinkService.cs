@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FuzzySharp;
 using MudBlazor.Docs.Models;
-using MudBlazor.Utilities;
 
 namespace MudBlazor.Docs.Services
 {
@@ -28,7 +28,7 @@ namespace MudBlazor.Docs.Services
                 return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>([]);
             }
 
-            var distances = new Dictionary<ApiLinkServiceEntry, int>();
+            var ratios = new Dictionary<ApiLinkServiceEntry, int>();
             foreach (var entry in _entries)
             {
                 // Strings to include in the search.
@@ -39,32 +39,35 @@ namespace MudBlazor.Docs.Services
                     entry.Link
                 };
 
-                var smallestDistance = int.MaxValue;
+                var bestMatchRatio = 0;
 
                 if (entry.Title.StartsWith(text, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    smallestDistance = -1;
+                    bestMatchRatio = 100;
                 }
                 else
                 {
-                    // Find the smallest distance between any keyword and the search string.
+                    // Find the best result for any keyword and the search string.
                     foreach (var keyword in keywords.Where(k => !string.IsNullOrWhiteSpace(k)))
                     {
-                        var keywordDistance = FuzzySearch.LevenshteinDistance(keyword, text);
+                        var ratio = Fuzz.Ratio(keyword, text);
+                        var outOfOrderRatio = Fuzz.PartialTokenSortRatio(keyword, text);
 
-                        smallestDistance = Math.Min(smallestDistance, keywordDistance);
+                        bestMatchRatio = Math.Max(bestMatchRatio, Math.Max(ratio, outOfOrderRatio));
                     }
                 }
 
-                distances.Add(entry, smallestDistance);
+                if (bestMatchRatio > 65)
+                {
+                    ratios.Add(entry, bestMatchRatio);
+                }
             }
 
             return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(
-                distances
-                    .Where(m => m.Value < 5)
-                    .OrderBy(m => m.Value)
-                    .Select(m => m.Key)
-                    .ToList()
+                ratios
+                .OrderByDescending(x => x.Value)
+                .Select(x => x.Key)
+                .ToList()
             );
         }
 
