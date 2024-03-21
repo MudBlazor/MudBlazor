@@ -2078,13 +2078,12 @@ namespace MudBlazor.UnitTests.Components
                 var nameFilter = filterHeaders[1];
 
                 await dataGrid.Instance.AddFilterAsync(modifiedAgeFilter);
-                await dataGrid.Instance.AddFilterAsync(modifiedNameFilter);
-
                 ageFilter.Input(27);
                 // Should have 3 entries + 3
                 dataGrid.FindAll("tr").Count.Should().Be(6);
 
                 await dataGrid.Instance.ClearFiltersAsync();
+                await dataGrid.Instance.AddFilterAsync(modifiedNameFilter);
                 nameFilter.Input("a");
                 // Should have 1 entry + 3
                 dataGrid.FindAll("tr").Count.Should().Be(4);
