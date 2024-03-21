@@ -215,7 +215,7 @@ partial class MudThemingProvider : ComponentBase, IDisposable
 
         theme.AppendLine($"--{Palette}-action-default: {palette.ActionDefault};");
         theme.AppendLine(
-            $"--{Palette}-action-default-hover: {new MudColor(Colors.Shades.Black).SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
+            $"--{Palette}-action-default-hover: {palette.ActionDefault.SetAlpha(palette.HoverOpacity).ToString(MudColorOutputFormats.RGBA)};");
         theme.AppendLine($"--{Palette}-action-disabled: {palette.ActionDisabled};");
         theme.AppendLine(
             $"--{Palette}-action-disabled-background: {palette.ActionDisabledBackground};");
