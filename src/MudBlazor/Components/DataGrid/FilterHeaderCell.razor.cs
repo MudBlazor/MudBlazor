@@ -60,8 +60,6 @@ namespace MudBlazor
 
         private IParameterState<bool> _isReorderedState;
 
-        private EventCallback<bool> _isReorderedChanged { get; set; }
-
         private string _operator;
 
         public FilterHeaderCell()
@@ -70,7 +68,6 @@ namespace MudBlazor
             _isReorderedState = RegisterParameter(
                 nameof(IsReordered),
                 () => IsReordered,
-                () => _isReorderedChanged,
                 IsReorderedChangedHandlerAsync
             );
         }
