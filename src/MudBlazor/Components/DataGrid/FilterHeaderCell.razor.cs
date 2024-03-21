@@ -58,23 +58,27 @@ namespace MudBlazor
             }
         }
 
+        private IParameterState<bool> _isReorderedState;
+
         private string _operator;
 
         public FilterHeaderCell()
         {
             // Update _operator if underlying column had changed position
-            RegisterParameter(
+            _isReorderedState = RegisterParameter(
                 nameof(IsReordered),
                 () => IsReordered,
-                () =>
-                {
-                    if (IsReordered)
-                    {
-                        _operator = Column.FilterContext.FilterDefinition.Operator;
-                        IsReordered = false;
-                    }
-                }
+                () => IsReorderedChangedHandler()
             );
+        }
+
+        private async Task IsReorderedChangedHandler()
+        {
+            if (IsReordered)
+            {
+                _operator = Column.FilterContext.FilterDefinition.Operator;
+                await _isReorderedState.SetValueAsync(false);
+            }
         }
 
         private string chosenOperatorStyle(string o)
