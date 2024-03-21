@@ -58,8 +58,6 @@ namespace MudBlazor
 
         private string _operator;
 
-        private bool _operatorChanged = false;
-
         private string chosenOperatorStyle(string o)
         {
             return o == _operator ? "color:var(--mud-palette-primary-text);background-color:var(--mud-palette-primary)" : "";
