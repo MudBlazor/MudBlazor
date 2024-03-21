@@ -65,11 +65,12 @@
                             <tr class="mud-table-row">
                                 @for (int i = 0; i < RenderedColumns.Count; i++)
                                 {
-                                    var prevCol = previousRenderedColumns.ElementAtOrDefault(i);
-                                    var currCol = RenderedColumns.ElementAt(i).uid;
+                                    var index = i;
+                                    var prevCol = previousRenderedColumns.ElementAtOrDefault(index);
+                                    var currCol = RenderedColumns.ElementAt(index).uid;
                                     bool isReordered = prevCol != currCol;
 
-                                    <FilterHeaderCell T="T" Column="@RenderedColumns[i]" IsReordered="isReordered"/>
+                                            <FilterHeaderCell T="T" Column="@RenderedColumns[index]" IsReordered="isReordered" />
                                 }
                             </tr>
                             previousRenderedColumns.Clear();
