@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MudBlazor.Docs.Models;
+using MudBlazor.Utilities;
 
 namespace MudBlazor.Docs.Services
 {
 #nullable enable
     public class ApiLinkService : IApiLinkService
     {
-        private readonly Dictionary<string, ApiLinkServiceEntry> _lookup = [];
+        private readonly List<ApiLinkServiceEntry> _entries = [];
 
-        //constructor with DI
         public ApiLinkService(IMenuService menuService)
         {
             Register(menuService.Api); // this also registers components
@@ -19,6 +19,53 @@ namespace MudBlazor.Docs.Services
             Register(menuService.Features);
             Register(menuService.Utilities);
             RegisterAliases();
+        }
+
+        public Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>([]);
+            }
+
+            var distances = new Dictionary<ApiLinkServiceEntry, int>();
+            foreach (var entry in _entries)
+            {
+                // Strings to include in the search.
+                var keywords = new[] {
+                    entry.Title,
+                    entry.SubTitle,
+                    entry.ComponentName,
+                    entry.Link
+                };
+
+                var smallestDistance = int.MaxValue;
+
+                if (entry.Title.StartsWith(text, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    smallestDistance = -1;
+                }
+                else
+                {
+                    // Find the smallest distance between any keyword and the search string.
+                    foreach (var keyword in keywords.Where(k => !string.IsNullOrWhiteSpace(k)))
+                    {
+                        var keywordDistance = FuzzySearch.LevenshteinDistance(keyword, text);
+
+                        smallestDistance = Math.Min(smallestDistance, keywordDistance);
+                    }
+                }
+
+                distances.Add(entry, smallestDistance);
+            }
+
+            return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(
+                distances
+                    .Where(m => m.Value < 5)
+                    .OrderBy(m => m.Value)
+                    .Select(m => m.Key)
+                    .ToList()
+            );
         }
 
         public void RegisterPage(string title, string? subtitle, Type? componentType, string? link = null)
@@ -31,41 +78,13 @@ namespace MudBlazor.Docs.Services
                 ComponentType = componentType,
                 Link = link
             };
-            _lookup[title.ToLowerInvariant()] = entry;
 
-            if (componentType is not null)
-            {
-                _lookup[componentType.Name.ToLowerInvariant()] = entry;
-            }
-
-            if (subtitle is not null)
-            {
-                _lookup[subtitle.ToLowerInvariant()] = entry;
-            }
-        }
-
-        public Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text)
-        {
-            if (string.IsNullOrWhiteSpace(text))
-            {
-                return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(Array.Empty<ApiLinkServiceEntry>());
-            }
-
-            var textLowerInvariant = text.ToLowerInvariant();
-
-            return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(
-                _lookup
-                    .Where(x => IsMatch(x, textLowerInvariant))
-                    .Select(x => x.Value)
-                    .Distinct()
-                    .OrderByDescending(e => e.Title.StartsWith(textLowerInvariant, StringComparison.InvariantCultureIgnoreCase))
-                    .ToArray()
-            );
+            _entries.Add(entry);
         }
 
         private void RegisterAliases()
         {
-            // Add search texts here which users might search and direct them to the correct component or page
+            // Add search texts here which users might search and direct them to the correct component or page.
             RegisterPage("Backdrop", subtitle: "Go to Overlay", componentType: typeof(MudOverlay));
             RegisterPage("Box", subtitle: "Go to Paper", componentType: typeof(MudPaper));
             RegisterPage("ComboBox", subtitle: "Go to Select", componentType: typeof(MudSelect<T>));
@@ -85,23 +104,12 @@ namespace MudBlazor.Docs.Services
         {
             foreach (var item in items)
             {
-                // components
                 RegisterPage(
                     title: item.Name,
                     subtitle: $"{item.ComponentName} usage examples",
                     componentType: item.Type,
                     link: $"components/{item.Link}"
                 );
-
-                // ~henon: I removed the API pages from the dropdown as this duplicates the search entries unnecessarily
-                // 99% of all users are searching for the examples and the API is still accessible from the examples page
-                //api
-                //RegisterPage(
-                //    title: $"{item.Name} API" ,
-                //    subtitle: $"{item.ComponentName} API documentation",
-                //    componentType: item.Type,
-                //    link: ApiLink.GetApiLinkFor(item.Type)
-                //    );
             }
         }
 
@@ -116,37 +124,6 @@ namespace MudBlazor.Docs.Services
                     link: link.Href
                 );
             }
-        }
-
-        private static bool IsMatch(in KeyValuePair<string, ApiLinkServiceEntry> keyValuePair, string text)
-        {
-            if (keyValuePair.Key.Contains(text))
-            {
-                return true;
-            }
-
-            var entry = keyValuePair.Value;
-            if (entry.Title.Contains(text, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
-
-            if (entry.SubTitle is not null && entry.SubTitle.Contains(text, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
-
-            if (entry.ComponentName is not null && entry.ComponentName.Contains(text, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
-
-            if (entry.Link.Contains(text, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }
