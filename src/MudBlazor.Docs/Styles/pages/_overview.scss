@@ -6,21 +6,31 @@
 
 .explore-card {
   transition: all .2s ease-in;
-  &:hover{
+
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--mud-palette-primary-hover);
+      cursor: pointer;
+    }
+  }
+
+  &:active {
     background-color: var(--mud-palette-primary-hover);
-    cursor:pointer;
+    cursor: pointer;
   }
 }
 
-.explore-card{
+.explore-card {
   height: 157px;
   width: 157px;
 }
+
 @media (max-width:600px) {
-  .explore-card{
+  .explore-card {
     height: 138px;
     width: 138px;
   }
+
   .explore-mudblazor-items {
     justify-content: center;
   }

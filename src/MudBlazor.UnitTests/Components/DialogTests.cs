@@ -434,13 +434,13 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dialog2.MudDialog.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().NotBeEmpty();
         }
-        
+
         [Test]
         public async Task DialogHandlesOnBackdropClickEvent()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            
+
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
@@ -448,10 +448,10 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithOnBackdropClickEvent>());
             dialogReference.Should().NotBe(null);
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title:");
-            
+
             //Click on backdrop
             comp.Find("div.mud-overlay").Click();
-            
+
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title: Backdrop clicked");
         }
 
@@ -490,7 +490,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            
+
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
@@ -650,7 +650,7 @@ namespace MudBlazor.UnitTests.Components
             parameters.Add("Color_Test", Color.Error); // !! comment me !!
 
             var dialogReferenceLazy = new Lazy<Task<IDialogReference>>(() => service?.ShowAsync<DialogWithParameters>(string.Empty, parameters));
-            await comp.InvokeAsync(()=> dialogReferenceLazy.Value);
+            await comp.InvokeAsync(() => dialogReferenceLazy.Value);
             var dialogReference = await dialogReferenceLazy.Value;
             dialogReference.Should().NotBe(null);
 
@@ -878,6 +878,83 @@ namespace MudBlazor.UnitTests.Components
             var textField = comp.FindComponent<MudInput<string>>().Instance;
             textField.Text.Should().Be("test");
         }
+
+        [TestCase("", false, "mud-dialog-content")]
+        [TestCase("", true, "mud-dialog-content mud-dialog-no-side-padding")]
+        [TestCase("my-class", false, "mud-dialog-content my-class")]
+        [TestCase("my-class", true, "mud-dialog-content mud-dialog-no-side-padding my-class")]
+        public async Task DialogWithClassContentValueShouldRenderExpectedClassname(string classContent, bool disablePadding, string expectedClassname)
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBeNull();
+            IDialogReference dialogReference = null;
+
+            var parameters = new DialogParameters<DialogWithClassContent>
+            {
+                { x => x.ClassContent, classContent },
+                { x => x.DisableSidePadding, disablePadding }
+            };
+
+            await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithClassContent>(string.Empty, parameters));
+            dialogReference.Should().NotBeNull();
+
+            comp.Find("div.mud-dialog-content").GetAttribute("class").Should().Be(expectedClassname);
+        }
+
+        [TestCase("", "mud-dialog-actions")]
+        [TestCase("my-class", "mud-dialog-actions my-class")]
+        public async Task DialogWithClassActionsValueShouldRenderExpectedClassname(string classActions, string expectedClassname)
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBeNull();
+            IDialogReference dialogReference = null;
+
+            var parameters = new DialogParameters<DialogWithClassActions>
+            {
+                { x => x.ClassActions, classActions }
+            };
+
+            await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithClassActions>(string.Empty, parameters));
+            dialogReference.Should().NotBeNull();
+
+            comp.Find("div.mud-dialog-actions").GetAttribute("class").Should().Be(expectedClassname);
+        }
+
+        [TestCase("", "mud-dialog-title")]
+        [TestCase("my-title-class my-second-class", "mud-dialog-title my-title-class my-second-class")]
+        public async Task DialogWithTitleClassValueShouldRenderExpectedClassname(string titleClass, string expectedClassname)
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBeNull();
+            IDialogReference dialogReference = null;
+
+            var parameters = new DialogParameters<DialogWithTitleClass>
+            {
+                { x => x.TitleClass, titleClass }
+            };
+
+            await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithTitleClass>(string.Empty, parameters));
+            dialogReference.Should().NotBeNull();
+
+            comp.Find("div.mud-dialog-title").GetAttribute("class").Should().Be(expectedClassname);
+        }
+
+        [Test]
+        public void DialogObsoletePropertiesShouldReturnCorrectPropertyValue()
+        {
+            // This test will start failing after ClassContent and ClassActions
+            // are renamed to ContentClass and ActionsClass in v7 or higher
+            var dialog = new ObsoletePropertiesDialog();
+
+            dialog.MyCustomContentClass.Should().Be(dialog.MyCustomContentClassname);
+            dialog.MyCustomActionsClass.Should().Be(dialog.MyCustomActionsClassname);
+        }
     }
 
     internal class CustomDialogService : DialogService
@@ -894,6 +971,23 @@ namespace MudBlazor.UnitTests.Components
         public override bool Dismiss(DialogResult result)
         {
             return AllowDismiss;
+        }
+    }
+
+    internal class ObsoletePropertiesDialog : MudDialog
+    {
+#pragma warning disable CS0618 // Type or member is obsolete
+        public string MyCustomContentClass => ContentClass;
+        public string MyCustomActionsClass => ActionClass;
+#pragma warning restore CS0618 // Type or member is obsolete
+
+        public string MyCustomContentClassname => ContentClassname;
+        public string MyCustomActionsClassname => ActionClassname;
+
+        public ObsoletePropertiesDialog()
+        {
+            ClassContent = "class-content";
+            ClassActions = "class-actions";
         }
     }
 }

@@ -7,7 +7,8 @@
 @inherits MudComponentBase
 
 @Css
-<div @attributes="UserAttributes" class="@SnackbarClass" style="@AnimationStyle" @onclick="@SnackbarClicked">
+<div @attributes="UserAttributes" class="@SnackbarClass" style="@AnimationStyle" @onclick="EventUtil.AsNonRenderingEventHandler(SnackbarClicked)"
+     @onmouseenter="InteractionStartHandler" @onmouseleave="InteractionEndHandler" @ontouchstart="InteractionStartHandler" @ontouchend="InteractionEndHandler" @ontouchcancel="InteractionEndHandler">
     @if (!HideIcon)
     {
         <div class="mud-snackbar-icon">

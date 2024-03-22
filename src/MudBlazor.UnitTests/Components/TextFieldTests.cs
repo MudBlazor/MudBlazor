@@ -962,7 +962,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Blur();
             callCounter.Should().Be(1);
         }
-        
+
         /// <summary>
         /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
         /// </summary>
@@ -989,7 +989,8 @@ namespace MudBlazor.UnitTests.Components
             var callCounter = 0;
             var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
                 .Add(p => p.OnlyValidateIfDirty, true)
-                .Add(p => p.Validation, async (string value) => {
+                .Add(p => p.Validation, async (string value) =>
+                {
                     callCounter++;
                     await Task.Delay(TimeSpan.FromMilliseconds(100));
                     return true;
@@ -1021,7 +1022,7 @@ namespace MudBlazor.UnitTests.Components
             var text = mudAlert.Find("div.mud-alert-message");
             text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
         }
-        
+
         /// <summary>
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text.
         /// </summary>
@@ -1051,7 +1052,7 @@ namespace MudBlazor.UnitTests.Components
             textField.Value.Should().Be(currentText);
             textField.Text.Should().Be(currentText);
         }
-        
+
         [Test]
         public async Task DebouncedTextField_Should_RenderDefaultValueTextOnFirstRender()
         {
@@ -1061,7 +1062,7 @@ namespace MudBlazor.UnitTests.Components
             var textfield = comp.FindComponent<MudTextField<string>>().Instance;
             textfield.Text.Should().Be(defaultValue);
         }
-        
+
         /// <summary>
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text while changing format.
         /// </summary>
@@ -1093,6 +1094,18 @@ namespace MudBlazor.UnitTests.Components
             await Task.Delay(comp.Instance.DebounceInterval);
             textField.Value.Should().Be(expectedFinalDateTime);
             textField.Text.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
+        }
+
+        /// <summary>
+        /// A text field with AutoGrow enabled should contain a special class.
+        /// </summary>
+        [Test]
+        public async Task TextFieldAutoGrowHasClass()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+            .Add(p => p.AutoGrow, true));
+
+            comp.Find("div.mud-input").ClassList.Should().Contain("mud-input-auto-grow");
         }
     }
 }

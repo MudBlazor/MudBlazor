@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div tabindex="0" @attributes="UserAttributes" class="@Classname" style="@Style" @onclick="@OnClickHandler">
+<div tabindex="0" @attributes="UserAttributes" class="@Classname" style="@Style" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)">
     @{
         if (AvatarContent is not null)
         {
@@ -35,7 +35,7 @@
         }
         @if (OnClose.HasDelegate || ChipSet?.AllClosable == true)
         {
-            <MudIconButton Class="mud-chip-close-button" Icon="@(String.IsNullOrEmpty(CloseIcon) ? $"{Icons.Material.Filled.Cancel}" : $"{CloseIcon}")" OnClick="OnCloseHandler" Size="Size.Small"/>
+            <MudIconButton Class="mud-chip-close-button" Icon="@(String.IsNullOrEmpty(CloseIcon) ? $"{Icons.Material.Filled.Cancel}" : $"{CloseIcon}")" OnClick="OnCloseHandler" Size="Size.Small" />
         }
     </span>
 </div>

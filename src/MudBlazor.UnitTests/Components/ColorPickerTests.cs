@@ -78,7 +78,7 @@ namespace MudBlazor.UnitTests.Components
         {
             if (checkInstanceValue == true)
             {
-                comp.WaitForAssertion(()=> comp.Instance.ColorValue.Should().Be(expectedColor));
+                comp.WaitForAssertion(() => comp.Instance.ColorValue.Should().Be(expectedColor));
             }
 
             if (mode is ColorPickerMode.RGB or ColorPickerMode.HSL)
@@ -734,7 +734,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.PickerVariant, PickerVariant.Static);
             });
 
-            var buttons = comp.FindAll(_mudToolbarButtonsCssSelector);
+            IRefreshableElementCollection<IElement> Buttons() => comp.FindAll(_mudToolbarButtonsCssSelector);
 
             Dictionary<int, (ColorPickerView, string)> buttonMapper = new()
             {
@@ -745,7 +745,7 @@ namespace MudBlazor.UnitTests.Components
 
             foreach (var item in buttonMapper)
             {
-                buttons[item.Key].Click();
+                Buttons()[item.Key].Click();
 
                 _ = comp.Find(item.Value.Item2);
             }
@@ -1128,18 +1128,18 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.ColorPickerView, ColorPickerView.Spectrum);
             });
 
-            var buttons = comp.FindAll(_mudToolbarButtonsCssSelector);
+            IRefreshableElementCollection<IElement> Buttons() => comp.FindAll(_mudToolbarButtonsCssSelector);
 
             _eventListener.ElementIdMapper.Keys.Should().ContainSingle();
             var value = _eventListener.ElementIdMapper.Values.First();
 
-            buttons[2].Click();
+            Buttons()[2].Click();
             _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
 
-            buttons[1].Click();
+            Buttons()[1].Click();
             _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
 
-            buttons[0].Click();
+            Buttons()[0].Click();
 
             _eventListener.ElementIdMapper.Keys.Should().ContainSingle();
             _eventListener.ElementIdMapper.Values.First().Should().Be(value);
@@ -1156,13 +1156,13 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.DisableDragEffect, true);
             });
 
-            var buttons = comp.FindAll(_mudToolbarButtonsCssSelector);
+            IRefreshableElementCollection<IElement> Buttons() => comp.FindAll(_mudToolbarButtonsCssSelector);
 
             _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
 
             for (var i = 3 - 1; i >= 0; i--)
             {
-                buttons[i].Click();
+                Buttons()[i].Click();
                 _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
             }
         }

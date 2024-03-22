@@ -112,7 +112,7 @@ namespace MudBlazor
         {
             get
             {
-                return Option;
+                return Value;
             }
             set
             {

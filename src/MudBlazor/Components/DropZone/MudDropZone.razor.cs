@@ -264,7 +264,7 @@ namespace MudBlazor
 
             if (e.Success)
             {
-                if (e.OriginatedDropzoneIdentifier== Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
+                if (e.OriginatedDropzoneIdentifier == Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
                 {
                     if (e.Item is not null)
                     {

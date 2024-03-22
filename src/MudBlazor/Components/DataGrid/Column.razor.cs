@@ -15,10 +15,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public abstract partial class Column<T> : MudComponentBase
+    public abstract partial class Column<T> : MudComponentBase, IDisposable
     {
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
-        internal ParameterState<bool> HiddenState { get; }
+        internal IParameterState<bool> HiddenState { get; }
 
         internal readonly Guid uid = Guid.NewGuid();
 
@@ -56,7 +56,7 @@ namespace MudBlazor
         [Parameter] public Func<T, string> HeaderStyleFunc { get; set; }
 
         /// <summary>
-        /// Determines whether this columns data can be sorted. This overrides the Sortable parameter on the DataGrid.
+        /// Determines whether this columns data can be sorted. This overrides the SortMode parameter on the DataGrid.
         /// </summary>
         [Parameter] public bool? Sortable { get; set; }
 
@@ -117,7 +117,7 @@ namespace MudBlazor
         /// <summary>
         /// Specifies whether the column is grouped.
         /// </summary>
-        [Parameter] public bool Grouping { get; set; }        
+        [Parameter] public bool Grouping { get; set; }
         [Parameter] public EventCallback<bool> GroupingChanged { get; set; }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
 
         public string Identifier { get; set; }
-        
+
 
         private CultureInfo _culture;
         /// <summary>
@@ -180,14 +180,6 @@ namespace MudBlazor
                 .AddClass(Class)
             .Build();
 
-        internal string cellClassname;
-        //internal string cellClassname =>
-        //    new CssBuilder("mud-table-cell")
-        //        .AddClass("mud-table-cell-hide", HideSmall)
-        //        .AddClass("sticky-right", StickyRight)
-        //        .AddClass(Class)
-        //    .Build();
-
         internal string footerClassname =>
             new CssBuilder("mud-table-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
@@ -203,32 +195,6 @@ namespace MudBlazor
             get
             {
                 return PropertyType;
-            }
-        }
-
-        // This returns the data type for an object when T is an IDictionary<string, object>.
-        internal Type innerDataType
-        {
-            get
-            {
-                // Handle case where T is IDictionary.
-                if (typeof(T) == typeof(IDictionary<string, object>))
-                {
-                    // We need to get the actual type here so we need to look at actual data.
-                    // get the first item where we have a non-null value in the field to be filtered.
-                    var first = DataGrid.Items.FirstOrDefault(x => ((IDictionary<string, object>)x)[PropertyName] != null);
-
-                    if (first != null)
-                    {
-                        return ((IDictionary<string, object>)first)[PropertyName].GetType();
-                    }
-                    else
-                    {
-                        return typeof(object);
-                    }
-                }
-
-                return dataType;
             }
         }
 
@@ -413,6 +379,12 @@ namespace MudBlazor
         {
             await HiddenState.SetValueAsync(!HiddenState.Value);
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
+        }
+
+        public virtual void Dispose()
+        {
+            if (DataGrid != null)
+                DataGrid.RemoveColumn(this);
         }
 
 

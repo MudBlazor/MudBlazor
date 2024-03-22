@@ -240,6 +240,9 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => radio.Instance.IMudRadioGroup = null);
             await comp.InvokeAsync(() => radio.Instance.OnClickAsync());
+#pragma warning disable CS0618 // Type or member is obsolete
+            comp.WaitForAssertion(() => radio.Instance.Option.Should().Be("1"));
+#pragma warning restore CS0618 // Type or member is obsolete
 #pragma warning disable BL0005
             await comp.InvokeAsync(() => radio.Instance.Disabled = true);
             comp.WaitForAssertion(() => group.Instance.Value.Should().Be(null));

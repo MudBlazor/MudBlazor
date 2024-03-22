@@ -17,8 +17,8 @@ namespace MudBlazor
         /// this flag is set to true by validation in order to prevent multiple invocations of validation after a single
         /// value change. When the value changes _validated is set back to false.
         /// </summary>
-        private bool _validated; 
-        
+        private bool _validated;
+
         protected MudBaseInput() : base(new DefaultConverter<T>()) { }
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace MudBlazor
             if (ReadOnly)
                 return;
             _isFocused = false;
-            
+
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;

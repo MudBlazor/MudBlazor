@@ -245,7 +245,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Menu.PopupBehavior)]
         public RenderFragment ChildContent { get; set; }
-        
+
         /// <summary>
         /// Fired when the menu IsOpen property changes.
         /// </summary>

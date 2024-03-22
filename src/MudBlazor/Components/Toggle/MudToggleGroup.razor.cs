@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Interfaces;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -16,18 +17,33 @@ namespace MudBlazor
 #nullable enable
     public partial class MudToggleGroup<T> : MudComponentBase
     {
-        private T? _value;
-        private Color _color;
-        private IEnumerable<T?>? _values;
-        private string? _selectedClass;
-        private bool _outline = true;
-        private bool _delimiters = true;
-        private bool _rtl;
+        public MudToggleGroup()
+        {
+            _value = RegisterParameter(nameof(Value), () => Value, () => ValueChanged, OnValueChanged);
+            _values = RegisterParameter(nameof(Values), () => Values, () => ValuesChanged, OnValuesChanged);
+            _color = RegisterParameter(nameof(Color), () => Color, OnParameterChanged);
+            _selectedClass = RegisterParameter(nameof(SelectedClass), () => SelectedClass, OnParameterChanged);
+            _outline = RegisterParameter(nameof(Outline), () => Outline, OnParameterChanged);
+            _delimiters = RegisterParameter(nameof(Delimiters), () => Delimiters, OnParameterChanged);
+            _rtl = RegisterParameter(nameof(RightToLeft), () => RightToLeft, OnParameterChanged);
+            _dense = RegisterParameter(nameof(Dense), () => Dense, OnParameterChanged);
+            _rounded = RegisterParameter(nameof(Rounded), () => Rounded, OnParameterChanged);
+            _checkMark = RegisterParameter(nameof(CheckMark), () => CheckMark, OnParameterChanged);
+            _fixedContent = RegisterParameter(nameof(FixedContent), () => FixedContent, OnParameterChanged);
+        }
+
+        private IParameterState<T?> _value;
+        private IParameterState<IEnumerable<T?>?> _values;
+        private IParameterState<Color> _color;
+        private IParameterState<string?> _selectedClass;
+        private IParameterState<bool> _outline;
+        private IParameterState<bool> _delimiters;
+        private IParameterState<bool> _rtl;
+        private IParameterState<bool> _dense;
+        private IParameterState<bool> _rounded;
+        private IParameterState<bool> _checkMark;
+        private IParameterState<bool> _fixedContent;
         private List<MudToggleItem<T>> _items = new();
-        private bool _dense;
-        private bool _rounded;
-        private bool _checkMark = true;
-        private bool _fixedContent = false;
 
         protected string Classes => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)
@@ -71,7 +87,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public EventCallback<IEnumerable<T?>> ValuesChanged { get; set; }
+        public EventCallback<IEnumerable<T?>?> ValuesChanged { get; set; }
 
         /// <summary>
         /// Classes (separated by space) to be applied to the selected items only.
@@ -204,131 +220,98 @@ namespace MudBlazor
             }
         }
 
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-            var multiSelection = SelectionMode == SelectionMode.MultiSelection;
-            // Handle single selection mode
-            if (((_value is null && Value is not null) || (_value is not null && Value is null) || (_value is not null && !_value.Equals(Value))) && !multiSelection)
-            {
-                DeselectAllItems();
-
-                if (Value is not null)
-                {
-                    var selectedItem = _items.FirstOrDefault(x => Value.Equals(x.Value));
-                    selectedItem?.SetSelected(true);
-                }
-
-                _value = Value;
-            }
-
-            // Handle multi-selection mode
-            if (((_values is null && Values is not null) || (_values is not null && !_values.Equals(Values))) && multiSelection)
-            {
-                DeselectAllItems();
-
-                if (Values is not null)
-                {
-                    var selectedItems = _items.Where(x => Values.Contains(x.Value)).ToList();
-                    selectedItems.ForEach(x => x.SetSelected(true));
-                }
-
-                _values = Values;
-            }
-        }
-
         protected override void OnAfterRender(bool firstRender)
         {
             base.OnAfterRender(firstRender);
             if (firstRender)
             {
                 var multiSelection = SelectionMode == SelectionMode.MultiSelection;
-                // Handle single selection mode
-                if (Value is not null && !multiSelection)
+                var value = _value.Value;
+                var values = _values.Value;
+                // Handle single and toggle selection mode
+                if (value is not null && !multiSelection)
                 {
-                    var selectedItem = _items.FirstOrDefault(x => Value.Equals(x.Value));
+                    var selectedItem = _items.FirstOrDefault(x => value.Equals(x.Value));
                     selectedItem?.SetSelected(true);
                 }
-
                 // Handle multi-selection mode
-                if (Values is not null && multiSelection)
+                if (values is not null && multiSelection)
                 {
-                    var selectedItems = _items.Where(x => Values.Contains(x.Value)).ToList();
-                    selectedItems.ForEach(x => x.SetSelected(true));
+                    foreach (var item in _items.Where(x => values.Contains(x.Value)).ToList())
+                        item.SetSelected(true);
                 }
-
-                StateHasChanged();
-            }
-
-            if (Color != _color ||
-                SelectedClass != _selectedClass ||
-                Outline != _outline ||
-                Delimiters != _delimiters ||
-                RightToLeft != _rtl ||
-                Dense != _dense ||
-                Rounded != _rounded ||
-                CheckMark != _checkMark ||
-                FixedContent != _fixedContent
-               )
-            {
-                _color = Color;
-                _selectedClass = SelectedClass;
-                _outline = Outline;
-                _delimiters = Delimiters;
-                _rtl = RightToLeft;
-                _dense = Dense;
-                _rounded = Rounded;
-                _checkMark = CheckMark;
-                _fixedContent = FixedContent;
-                foreach (IMudStateHasChanged mudComponent in _items)
-                {
-                    mudComponent.StateHasChanged();
-                }
-
                 StateHasChanged();
             }
         }
 
-        protected internal async Task ToggleItemAsync(MudToggleItem<T> item)
+        private void OnValueChanged()
         {
             if (SelectionMode == SelectionMode.MultiSelection)
+                return;
+            // Handle single and toggle selection mode 
+            DeselectAllItems();
+            var value = _value.Value;
+            if (value is not null)
             {
-                if (item.IsSelected)
-                {
-                    Values = Values?.Where(x => !Equals(x, item.Value));
-                    await ValuesChanged.InvokeAsync(Values);
-                }
-                else
-                {
-                    Values ??= new HashSet<T>();
-                    Values = Values.Append(item.Value);
-                    await ValuesChanged.InvokeAsync(Values);
-                }
+                var selectedItem = _items.FirstOrDefault(x => value.Equals(x.Value));
+                selectedItem?.SetSelected(true);
+            }
+        }
+
+        private void OnValuesChanged()
+        {
+            if (SelectionMode != SelectionMode.MultiSelection)
+                return;
+            // Handle multi-selection mode
+            DeselectAllItems();
+            if (Values is not null)
+            {
+                foreach (var item in _items.Where(x => Values.Contains(x.Value)).ToList())
+                    item.SetSelected(true);
+            }
+        }
+
+        private void OnParameterChanged()
+        {
+            foreach (IMudStateHasChanged mudComponent in _items)
+            {
+                mudComponent.StateHasChanged();
+            }
+            StateHasChanged();
+        }
+
+        protected internal async Task ToggleItemAsync(MudToggleItem<T> item)
+        {
+            var itemValue = item.Value;
+            if (SelectionMode == SelectionMode.MultiSelection)
+            {
+                var selectedValues = new HashSet<T?>(_values.Value ?? Array.Empty<T?>());
                 item.SetSelected(!item.IsSelected);
+                if (item.IsSelected)
+                    selectedValues.Add(itemValue);
+                else
+                    selectedValues.Remove(itemValue);
+                await _values.SetValueAsync(selectedValues);
             }
             else if (SelectionMode == SelectionMode.ToggleSelection)
             {
-                var selected = item.IsSelected;
-                if (!selected)
+                if (item.IsSelected)
                 {
-                    DeselectAllItems();
-                    item.SetSelected(true);
-                    Value = item.Value;
-                    await ValueChanged.InvokeAsync(Value);
+                    item.SetSelected(false);
+                    await _value.SetValueAsync(default);
                 }
                 else
                 {
-                    item.SetSelected(false);
-                    Value = default(T);
-                    await ValueChanged.InvokeAsync(Value);
+                    DeselectAllItems();
+                    item.SetSelected(true);
+                    await _value.SetValueAsync(itemValue);
                 }
             }
-            else
+            else // SingleSelection
             {
                 DeselectAllItems();
                 item.SetSelected(true);
-                Value = item.Value;
-                await ValueChanged.InvokeAsync(Value);
+                await _value.SetValueAsync(itemValue);
             }
         }
 

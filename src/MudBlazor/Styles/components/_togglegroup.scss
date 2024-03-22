@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-toggle-group {
   display: grid;
@@ -73,7 +73,13 @@
     &.mud-toggle-item-#{$color} {
       color: var(--mud-palette-#{$color});
 
-      &:hover:not(.mud-toggle-item-selected), &:focus-visible:not(.mud-toggle-item-selected) {
+      @media(hover: hover) and (pointer: fine) {
+        &:hover:not(.mud-toggle-item-selected) {
+          background-color: var(--mud-palette-#{$color}-hover);
+        }
+      }
+
+      &:focus-visible:not(.mud-toggle-item-selected), &:active:not(.mud-toggle-item-selected) {
         background-color: var(--mud-palette-#{$color}-hover);
       }
     }

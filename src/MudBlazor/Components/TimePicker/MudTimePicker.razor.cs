@@ -237,7 +237,7 @@ namespace MudBlazor
             if (TimeIntermediate == null)
                 return "--";
             var h = AmPm ? TimeIntermediate.Value.ToAmPmHour() : TimeIntermediate.Value.Hours;
-            return Math.Min(23, Math.Max(0, h)).ToString(CultureInfo.InvariantCulture);
+            return $"{Math.Min(23, Math.Max(0, h)):D2}";
         }
 
         private string GetMinuteString()

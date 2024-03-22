@@ -55,7 +55,7 @@ namespace MudBlazor.UnitTests.Services
         [TestCase(Breakpoint.Xxl, 2560, true)]
         [TestCase(Breakpoint.Xxl, 4000, true)]
         [TestCase(Breakpoint.Xxl, 9999, true)]
-        
+
         // >= 600
         [TestCase(Breakpoint.SmAndUp, 599, false)]
         [TestCase(Breakpoint.SmAndUp, 600, true)]
@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.Services
         [TestCase(Breakpoint.XlAndUp, 1920, true)]
         [TestCase(Breakpoint.XlAndUp, 2560, true)]
         [TestCase(Breakpoint.XlAndUp, 9999, true)]
-        
+
         // < 960
         [TestCase(Breakpoint.SmAndDown, 960, false)]
         [TestCase(Breakpoint.SmAndDown, 959, true)]
@@ -91,7 +91,7 @@ namespace MudBlazor.UnitTests.Services
         [TestCase(Breakpoint.LgAndDown, 1920, false)]
         [TestCase(Breakpoint.LgAndDown, 1919, true)]
         [TestCase(Breakpoint.LgAndDown, 0, true)]
-        
+
         // < 2560
         [TestCase(Breakpoint.XlAndDown, 2560, false)]
         [TestCase(Breakpoint.XlAndDown, 2559, true)]

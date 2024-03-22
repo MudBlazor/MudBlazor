@@ -9,7 +9,7 @@ namespace MudBlazor.Services
 {
 #nullable enable
     [Obsolete("This will be removed in v7.")]
-    public class SubscriptionInfo<TAction,TOption>
+    public class SubscriptionInfo<TAction, TOption>
     {
         private readonly Dictionary<Guid, Action<TAction>> _subscriptions;
         public TOption Option { get; init; }
@@ -49,7 +49,7 @@ namespace MudBlazor.Services
     }
 
     [Obsolete("This will be removed in v7.")]
-    public class ResizeServiceSubscriptionInfo : SubscriptionInfo<BrowserWindowSize,ResizeOptions>
+    public class ResizeServiceSubscriptionInfo : SubscriptionInfo<BrowserWindowSize, ResizeOptions>
     {
         public ResizeServiceSubscriptionInfo(ResizeOptions options) : base(options)
         {

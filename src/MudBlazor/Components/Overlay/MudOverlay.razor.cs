@@ -11,7 +11,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     {
-        private ParameterState<bool> _visibleState;
+        private IParameterState<bool> _visibleState;
 
         protected string Classname =>
             new CssBuilder("mud-overlay")
