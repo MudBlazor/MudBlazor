@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
+using MudBlazor.State.Builder;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State;
@@ -24,7 +25,11 @@ public class ParameterSetTests
         // Arrange
         const int Parameter = 1;
         var parameterSet = new ParameterSet();
-        var parameterState = ParameterState.Attach(nameof(Parameter), () => Parameter, () => (EventCallback<int>)default);
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(nameof(Parameter)))
+            .WithGetParameterValueFunc(() => Parameter)
+            .Attach();
 
         // Act
         parameterSet.Add(parameterState);
@@ -38,7 +43,11 @@ public class ParameterSetTests
     {
         // Arrange
         const int Parameter = 1;
-        var parameterState = ParameterState.Attach(nameof(Parameter), () => Parameter, () => (EventCallback<int>)default);
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(nameof(Parameter)))
+            .WithGetParameterValueFunc(() => Parameter)
+            .Attach();
         var parameterSet = new ParameterSet { parameterState };
 
         // Act 
@@ -67,8 +76,18 @@ public class ParameterSetTests
             { Parameter2Name, Parameter2NewValue }
         };
         var parameterView = ParameterView.FromDictionary(parametersDictionary);
-        var parameter1State = ParameterState.Attach(Parameter1Name, () => Parameter1, OnParameter1Change);
-        var parameter2State = ParameterState.Attach(Parameter2Name, () => Parameter2, OnParameter2Change);
+        var parameter1State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(Parameter1Name))
+            .WithGetParameterValueFunc(() => Parameter1)
+            .WithParameterChangedHandler(OnParameter1Change)
+            .Attach();
+        var parameter2State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(Parameter2Name))
+            .WithGetParameterValueFunc(() => Parameter2)
+            .WithParameterChangedHandler(OnParameter2Change)
+            .Attach();
         var parameterSet = new ParameterSet { parameter1State, parameter2State };
         void OnParameter1Change()
         {
@@ -109,8 +128,18 @@ public class ParameterSetTests
             { Parameter2Name, Parameter2 }
         };
         var parameterView = ParameterView.FromDictionary(parametersDictionary);
-        var parameter1State = ParameterState.Attach(Parameter1Name, () => Parameter1, OnParameter1Change);
-        var parameter2State = ParameterState.Attach(Parameter2Name, () => Parameter2, OnParameter2Change);
+        var parameter1State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(Parameter1Name))
+            .WithGetParameterValueFunc(() => Parameter1)
+            .WithParameterChangedHandler(OnParameter1Change)
+            .Attach();
+        var parameter2State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(Parameter2Name))
+            .WithGetParameterValueFunc(() => Parameter2)
+            .WithParameterChangedHandler(OnParameter2Change)
+            .Attach();
         var parameterSet = new ParameterSet { parameter1State, parameter2State };
         void OnParameter1Change()
         {
@@ -150,8 +179,18 @@ public class ParameterSetTests
             { Parameter2Name, Parameter2NewValue }
         };
         var parameterView = ParameterView.FromDictionary(parametersDictionary);
-        var parameter1State = ParameterState.Attach(Parameter1Name, () => Parameter1, OnParameter1ChangeAsync);
-        var parameter2State = ParameterState.Attach(Parameter2Name, () => Parameter2, OnParameter2ChangeAsync);
+        var parameter1State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(Parameter1Name))
+            .WithGetParameterValueFunc(() => Parameter1)
+            .WithParameterChangedHandler(OnParameter1ChangeAsync)
+            .Attach();
+        var parameter2State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(Parameter2Name))
+            .WithGetParameterValueFunc(() => Parameter2)
+            .WithParameterChangedHandler(OnParameter2ChangeAsync)
+            .Attach();
         var parameterSet = new ParameterSet { parameter1State, parameter2State };
         Task OnParameter1ChangeAsync()
         {
@@ -196,8 +235,18 @@ public class ParameterSetTests
             { Parameter2Name, Parameter2 }
         };
         var parameterView = ParameterView.FromDictionary(parametersDictionary);
-        var parameter1State = ParameterState.Attach(Parameter1Name, () => Parameter1, OnParameter1ChangeAsync);
-        var parameter2State = ParameterState.Attach(Parameter2Name, () => Parameter2, OnParameter2ChangeAsync);
+        var parameter1State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(Parameter1Name))
+            .WithGetParameterValueFunc(() => Parameter1)
+            .WithParameterChangedHandler(OnParameter1ChangeAsync)
+            .Attach();
+        var parameter2State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(Parameter2Name))
+            .WithGetParameterValueFunc(() => Parameter2)
+            .WithParameterChangedHandler(OnParameter2ChangeAsync)
+            .Attach();
         var parameterSet = new ParameterSet { parameter1State, parameter2State };
         Task OnParameter1ChangeAsync()
         {
@@ -240,9 +289,24 @@ public class ParameterSetTests
             { ParameterName3, 4 }
         };
         var parameterView = ParameterView.FromDictionary(parametersDictionary);
-        var parameterState1 = ParameterState.Attach(new ParameterMetadata(ParameterName1, nameof(OnParameterChange)), () => Parameter1, OnParameterChange);
-        var parameterState2 = ParameterState.Attach(new ParameterMetadata(ParameterName2, nameof(OnParameterChange)), () => Parameter2, OnParameterChange);
-        var parameterState3 = ParameterState.Attach(new ParameterMetadata(ParameterName3, nameof(OnParameterChange)), () => Parameter3, OnParameterChange);
+        var parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName1, nameof(OnParameterChange)))
+            .WithGetParameterValueFunc(() => Parameter1)
+            .WithParameterChangedHandler(OnParameterChange)
+            .Attach();
+        var parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName2, nameof(OnParameterChange)))
+            .WithGetParameterValueFunc(() => Parameter2)
+            .WithParameterChangedHandler(OnParameterChange)
+            .Attach();
+        var parameterState3 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName3, nameof(OnParameterChange)))
+            .WithGetParameterValueFunc(() => Parameter3)
+            .WithParameterChangedHandler(OnParameterChange)
+            .Attach();
         var parameterSet = new ParameterSet { parameterState1, parameterState2, parameterState3 };
         void OnParameterChange()
         {
@@ -275,9 +339,24 @@ public class ParameterSetTests
             { ParameterName3, 4 }
         };
         var parameterView = ParameterView.FromDictionary(parametersDictionary);
-        var parameterState1 = ParameterState.Attach(new ParameterMetadata(ParameterName1, HandlerNameExpression), () => Parameter1, () => handlerFireCount++);
-        var parameterState2 = ParameterState.Attach(new ParameterMetadata(ParameterName2, HandlerNameExpression), () => Parameter2, () => handlerFireCount++);
-        var parameterState3 = ParameterState.Attach(new ParameterMetadata(ParameterName3, HandlerNameExpression), () => Parameter3, () => handlerFireCount++);
+        var parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName1, HandlerNameExpression))
+            .WithGetParameterValueFunc(() => Parameter1)
+            .WithParameterChangedHandler(() => handlerFireCount++)
+            .Attach();
+        var parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName2, HandlerNameExpression))
+            .WithGetParameterValueFunc(() => Parameter2)
+            .WithParameterChangedHandler(() => handlerFireCount++)
+            .Attach();
+        var parameterState3 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName3, HandlerNameExpression))
+            .WithGetParameterValueFunc(() => Parameter3)
+            .WithParameterChangedHandler(() => handlerFireCount++)
+            .Attach();
         var parameterSet = new ParameterSet { parameterState1, parameterState2, parameterState3 };
 
         // Act
@@ -305,9 +384,24 @@ public class ParameterSetTests
             { ParameterName3, 4 }
         };
         var parameterView = ParameterView.FromDictionary(parametersDictionary);
-        var parameterState1 = ParameterState.Attach(new ParameterMetadata(ParameterName1, null), () => Parameter1, OnParameterChange);
-        var parameterState2 = ParameterState.Attach(new ParameterMetadata(ParameterName2, null), () => Parameter2, OnParameterChange);
-        var parameterState3 = ParameterState.Attach(new ParameterMetadata(ParameterName3, null), () => Parameter3, OnParameterChange);
+        var parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName1, null))
+            .WithGetParameterValueFunc(() => Parameter1)
+            .WithParameterChangedHandler(OnParameterChange)
+            .Attach();
+        var parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName2, null))
+            .WithGetParameterValueFunc(() => Parameter2)
+            .WithParameterChangedHandler(OnParameterChange)
+            .Attach();
+        var parameterState3 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName3, null))
+            .WithGetParameterValueFunc(() => Parameter3)
+            .WithParameterChangedHandler(OnParameterChange)
+            .Attach();
         var parameterSet = new ParameterSet { parameterState1, parameterState2, parameterState3 };
         void OnParameterChange()
         {
@@ -339,9 +433,24 @@ public class ParameterSetTests
             { ParameterName3, 4 }
         };
         var parameterView = ParameterView.FromDictionary(parametersDictionary);
-        var parameterState1 = ParameterState.Attach(new ParameterMetadata(ParameterName1, nameof(OnParameterChange1)), () => Parameter1, OnParameterChange1);
-        var parameterState2 = ParameterState.Attach(new ParameterMetadata(ParameterName2, nameof(OnParameterChange2)), () => Parameter2, OnParameterChange2);
-        var parameterState3 = ParameterState.Attach(new ParameterMetadata(ParameterName3, nameof(OnParameterChange3)), () => Parameter3, OnParameterChange3);
+        var parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName1, nameof(OnParameterChange1)))
+            .WithGetParameterValueFunc(() => Parameter1)
+            .WithParameterChangedHandler(OnParameterChange1)
+            .Attach();
+        var parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName2, nameof(OnParameterChange2)))
+            .WithGetParameterValueFunc(() => Parameter2)
+            .WithParameterChangedHandler(OnParameterChange2)
+            .Attach();
+        var parameterState3 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName3, nameof(OnParameterChange3)))
+            .WithGetParameterValueFunc(() => Parameter3)
+            .WithParameterChangedHandler(OnParameterChange3)
+            .Attach();
         var parameterSet = new ParameterSet { parameterState1, parameterState2, parameterState3 };
         void OnParameterChange1()
         {
@@ -371,9 +480,21 @@ public class ParameterSetTests
         const int Parameter2 = 2;
         const int Parameter3 = 3;
         var parameters = new ParameterSet();
-        var parameterState1 = ParameterState.Attach(nameof(Parameter1), () => Parameter1, () => (EventCallback<int>)default);
-        var parameterState2 = ParameterState.Attach(nameof(Parameter2), () => Parameter2, () => (EventCallback<int>)default);
-        var parameterState3 = ParameterState.Attach(nameof(Parameter3), () => Parameter3, () => (EventCallback<int>)default);
+        var parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(nameof(Parameter1)))
+            .WithGetParameterValueFunc(() => Parameter1)
+            .Attach();
+        var parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(nameof(Parameter2)))
+            .WithGetParameterValueFunc(() => Parameter2)
+            .Attach();
+        var parameterState3 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(nameof(Parameter3)))
+            .WithGetParameterValueFunc(() => Parameter3)
+            .Attach();
         var expectedParameters = new List<IParameterComponentLifeCycle> { parameterState1, parameterState2, parameterState3 };
 
         foreach (var expectedParameter in expectedParameters)
@@ -404,9 +525,21 @@ public class ParameterSetTests
         const int Parameter2 = 2;
         const int Parameter3 = 3;
         var parameters = new ParameterSet();
-        var parameterState1 = ParameterState.Attach(nameof(Parameter1), () => Parameter1, () => (EventCallback<int>)default);
-        var parameterState2 = ParameterState.Attach(nameof(Parameter2), () => Parameter2, () => (EventCallback<int>)default);
-        var parameterState3 = ParameterState.Attach(nameof(Parameter3), () => Parameter3, () => (EventCallback<int>)default);
+        var parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(nameof(Parameter1)))
+            .WithGetParameterValueFunc(() => Parameter1)
+            .Attach();
+        var parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(nameof(Parameter2)))
+            .WithGetParameterValueFunc(() => Parameter2)
+            .Attach();
+        var parameterState3 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(nameof(Parameter3)))
+            .WithGetParameterValueFunc(() => Parameter3)
+            .Attach();
         var expectedParameters = new List<IParameterComponentLifeCycle> { parameterState1, parameterState2, parameterState3 };
 
         foreach (var expectedParameter in expectedParameters)
