@@ -56,7 +56,7 @@ namespace MudBlazor
         [Parameter] public Func<T, string> HeaderStyleFunc { get; set; }
 
         /// <summary>
-        /// Determines whether this columns data can be sorted. This overrides the Sortable parameter on the DataGrid.
+        /// Determines whether this columns data can be sorted. This overrides the SortMode parameter on the DataGrid.
         /// </summary>
         [Parameter] public bool? Sortable { get; set; }
 
