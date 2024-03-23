@@ -115,12 +115,12 @@
     protected async override Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        await SetHasError(HasError);
-        await SetCompleted(Completed);
-        await SetDisabled(Disabled);
+        await SetHasErrorAsync(HasError);
+        await SetCompletedAsync(Completed);
+        await SetDisabledAsync(Disabled);
     }
     
-    public async Task SetHasError(bool value)
+    public async Task SetHasErrorAsync(bool value)
     {
         if (_hasError == value)
             return;
@@ -128,10 +128,10 @@
         _hasError = value;
         HasError = _hasError;
         await HasErrorChanged.InvokeAsync(HasError);
-        RefreshParent();
+        await RefreshParentAsync();
     }
     
-    public async Task SetCompleted(bool value)
+    public async Task SetCompletedAsync(bool value)
     {
         if (_completed == value)
             return;
@@ -139,10 +139,10 @@
         _completed = value;
         Completed = _completed;
         await CompletedChanged.InvokeAsync(Completed);
-        RefreshParent();
+        await RefreshParentAsync();
     }
 
-    public async Task SetDisabled(bool value)
+    public async Task SetDisabledAsync(bool value)
     {
         if (_disabled == value)
             return;
@@ -150,12 +150,12 @@
         _disabled = value;
         Disabled = _disabled;
         await DisabledChanged.InvokeAsync(Disabled);
-        RefreshParent();
+        await RefreshParentAsync();
     }
 
-    private void RefreshParent()
+    private async Task RefreshParentAsync()
     {
-        (Parent as IMudStateHasChanged)?.StateHasChanged();
+        await InvokeAsync(()=> (Parent as IMudStateHasChanged)?.StateHasChanged());
     }
 
 #pragma warning disable CS4008, CS1998

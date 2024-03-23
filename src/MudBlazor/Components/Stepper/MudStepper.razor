@@ -15,6 +15,8 @@
                 .AddClass("active", isActive)
                 .AddClass("mud-ripple", NonLinear && !step.Disabled)
                 .AddClass("mud-stepper-nav-step-disabled", step.Disabled)
+                .AddClass("mud-stepper-nav-step-error", step.HasError)
+                .AddClass("mud-stepper-nav-step-completed", step.Completed)
                 .Build();
 
             <div class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@(isActive ? "true" : "false")"
