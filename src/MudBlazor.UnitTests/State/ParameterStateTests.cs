@@ -116,7 +116,12 @@ public class ParameterStateTests
         const int NewValue = 10;
         const string ParameterName = nameof(InitialValue);
         var parameterChangedHandlerMock = new ParameterChangedHandlerMock<int>();
-        var parameterState = ParameterState<int>.Attach(ParameterName, () => InitialValue, () => default, parameterChangedHandlerMock);
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName))
+            .WithGetParameterValueFunc(() => InitialValue)
+            .WithParameterChangedHandler(parameterChangedHandlerMock)
+            .Attach();
         var parametersDictionary = new Dictionary<string, object?>
         {
             { ParameterName, NewValue }
@@ -143,7 +148,12 @@ public class ParameterStateTests
         const int InitialValue = 5;
         const string ParameterName = nameof(InitialValue);
         var parameterChangedHandlerMock = new ParameterChangedHandlerMock<int>();
-        var parameterState = ParameterState<int>.Attach(ParameterName, () => InitialValue, () => default, parameterChangedHandlerMock);
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName))
+            .WithGetParameterValueFunc(() => InitialValue)
+            .WithParameterChangedHandler(parameterChangedHandlerMock)
+            .Attach();
         var parametersDictionary = new Dictionary<string, object?>
         {
             { ParameterName, InitialValue }
@@ -167,7 +177,12 @@ public class ParameterStateTests
         const int InitialValue = 5;
         const string ParameterName = nameof(InitialValue);
         var parameterChangedHandlerMock = new ParameterChangedHandlerMock<int>();
-        var parameterState = ParameterState<int>.Attach(ParameterName, () => InitialValue, () => default, parameterChangedHandlerMock);
+        var parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(ParameterName))
+            .WithGetParameterValueFunc(() => InitialValue)
+            .WithParameterChangedHandler(parameterChangedHandlerMock)
+            .Attach();
 
         // Act
         await parameterState.ParameterChangeHandleAsync();

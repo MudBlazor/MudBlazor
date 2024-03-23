@@ -143,29 +143,6 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
     ///  <b>NB!</b> Usually you don't need to call this directly. Instead, use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
     ///  component's constructor.  
     ///  </summary>
-    ///  <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
-    ///  <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
-    ///  <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
-    ///  <param name="parameterChangedHandler">A change handler containing code that needs to be executed when the parameter value changes/</param>
-    ///  <param name="handlerName">The handler's name.</param>
-    ///  <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
-    ///  <remarks>
-    ///  For details and usage please read CONTRIBUTING.md
-    ///  </remarks>
-    ///  <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    public static ParameterState<T> Attach(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, string? handlerName = null, IEqualityComparer<T>? comparer = null)
-    {
-        var metadata = new ParameterMetadata(parameterName, handlerName);
-
-        return Attach(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler, comparer);
-    }
-
-    ///  <summary>
-    ///  Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's ParameterState framework.
-    /// <para />
-    ///  <b>NB!</b> Usually you don't need to call this directly. Instead, use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
-    ///  component's constructor.  
-    ///  </summary>
     ///  <param name="metadata">The parameter's metadata.</param>
     ///  <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
     ///  <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
