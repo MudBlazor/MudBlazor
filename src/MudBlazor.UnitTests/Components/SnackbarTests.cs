@@ -31,8 +31,8 @@ namespace MudBlazor.UnitTests.Components
         public void SnackbarTearDown()
         {
             // Force close all snackbars directly from their class.
-            // We used to simulate the close button but this is quicker.
-            // We keep checking instead of using a cached list because new ones can be spawned from the close event.
+            // We used to simulate clicking the close button but this is quicker because it skips transitions.
+            // We keep checking instead of using a cached list because new snackbars could be spawned from the close event.
             while (_service.ShownSnackbars.Any())
             {
                 _service.ShownSnackbars.First().ForceClose();
@@ -639,24 +639,28 @@ namespace MudBlazor.UnitTests.Components
                 })
             );
 
+            // Click as many times as possible during the hide transition.
             while (true)
             {
                 var clicked = false;
 
+                // Click the action button if one was found.
                 await _provider.InvokeAsync(() =>
                 {
                     if (_provider.FindAll(".mud-snackbar-action-button").Count == 1)
                     {
                         _provider.Find(".mud-snackbar-action-button").Click();
-                        clickAttempts++;
                         clicked = true;
                     }
                 });
 
-                if (!clicked)
+                if (clicked)
+                    clickAttempts++;
+                else
                     break;
             }
 
+            // Only one click should have been successful and multiple clicks should have been attempted.
             successfulClicks.Should().Be(1).And.BeLessThan(clickAttempts);
         }
 
@@ -681,24 +685,28 @@ namespace MudBlazor.UnitTests.Components
                 })
             );
 
+            // Click as many times as possible during the hide transition.
             while (true)
             {
                 var clicked = false;
 
+                // Click the snackbar if one was found.
                 await _provider.InvokeAsync(() =>
                 {
                     if (_provider.FindAll(".mud-snackbar").Count == 1)
                     {
                         _provider.Find(".mud-snackbar").Click();
-                        clickAttempts++;
                         clicked = true;
                     }
                 });
 
-                if (!clicked)
+                if (clicked)
+                    clickAttempts++;
+                else
                     break;
             }
 
+            // Only one click should have been successful and multiple clicks should have been attempted.
             successfulClicks.Should().Be(1).And.BeLessThan(clickAttempts);
         }
     }
