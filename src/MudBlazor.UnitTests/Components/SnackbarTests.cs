@@ -681,10 +681,22 @@ namespace MudBlazor.UnitTests.Components
                 })
             );
 
-            while (_provider.FindAll(".mud-snackbar").Count > 0)
+            while (true)
             {
-                _provider.Find(".mud-snackbar").Click();
-                clickAttempts++;
+                var clicked = false;
+
+                await _provider.InvokeAsync(() =>
+                {
+                    if (_provider.FindAll(".mud-snackbar").Count == 1)
+                    {
+                        _provider.Find(".mud-snackbar").Click();
+                        clickAttempts++;
+                        clicked = true;
+                    }
+                });
+
+                if (!clicked)
+                    break;
             }
 
             successfulClicks.Should().Be(1).And.BeLessThan(clickAttempts);
