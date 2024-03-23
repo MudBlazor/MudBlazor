@@ -1,4 +1,6 @@
-﻿using Bunit;
+﻿using System;
+using AngleSharp.Dom;
+using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
@@ -15,7 +17,7 @@ public class ParameterStateUsageTests : BunitTest
         var comp = Context.RenderComponent<ParameterStateSharedHandlerTestComp>();
 
         // note: the handler for abc and the one for xyz are each called once per click
-        // the handlers for o and p are lambdas which are excluded from this optimization so they
+        // the handlers for o and p are lambdas which are excluded from this optimization, so they
         // are each called per click resulting in an increment of 2 per click for op 
         comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("1");
         comp.Find("span.op").InnerHtml.Trimmed().Should().Be("2");
@@ -45,5 +47,23 @@ public class ParameterStateUsageTests : BunitTest
         comp.Find("button.increment-int-param").Click();
         comp.Find(".parameter-changes").Children.Length.Should().Be(2);
         comp.Find(".parameter-changes").LastChild?.TextContent.Trimmed().Should().Be("IntParam: 1=>2");
+    }
+
+    [Test]
+    public void ComparerIntegrationTest()
+    {
+        var comp = Context.RenderComponent<ParameterStateComparerTestComp>(parameters => parameters
+            .Add(parameter => parameter.DoubleParam, 10000f));
+        IElement ParamChanges() => comp.Find(".parameter-changes");
+        comp.Find(".parameter-changes").Children.Length.Should().Be(1);
+        ParamChanges().Children[0].TextContent.Trimmed().Should().Be("DoubleParam: 0=>10000");
+        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.DoubleParam, 10001f));
+        comp.Find(".parameter-changes").Children.Length.Should().Be(2);
+        ParamChanges().Children[1].TextContent.Trimmed().Should().Be("DoubleParam: 10000=>10001");
+        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.DoubleParam, 1000000f));
+        comp.Find(".parameter-changes").Children.Length.Should().Be(3);
+        ParamChanges().Children[2].TextContent.Trimmed().Should().Be("DoubleParam: 10001=>1000000");
+        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.DoubleParam, 1000001f));
+        comp.Find(".parameter-changes").Children.Length.Should().Be(3, "Within the epsilon tolerance. Therefore, change handler shouldn't fire.");
     }
 }

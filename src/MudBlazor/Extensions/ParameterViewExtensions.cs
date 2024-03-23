@@ -19,15 +19,11 @@ namespace MudBlazor
         /// <param name="parameters">The parameters.</param>
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="parameterValue">The parameter value.</param>
+        /// <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
         /// <returns><c>true</c> if the parameter value has changed, <c>false</c> otherwise.</returns>
-        public static bool HasParameterChanged<T>(this ParameterView parameters, string parameterName, T parameterValue)
+        public static bool HasParameterChanged<T>(this ParameterView parameters, string parameterName, T parameterValue, IEqualityComparer<T>? comparer = null)
         {
-            if (parameters.TryGetValue(parameterName, out T? value))
-            {
-                return !EqualityComparer<T>.Default.Equals(value, parameterValue);
-            }
-
-            return false;
+            return HasParameterChanged(parameters, parameterName, parameterValue, out _, comparer);
         }
 
         /// <summary>
@@ -38,12 +34,13 @@ namespace MudBlazor
         /// <param name="parameterName">Name of the parameter.</param>
         /// <param name="parameterValue">The parameter value.</param>
         /// <param name="value">Receives the value, if any.</param>
+        /// <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
         /// <returns><c>true</c> if the parameter value has changed, <c>false</c> otherwise.</returns>
-        public static bool HasParameterChanged<T>(this ParameterView parameters, string parameterName, T parameterValue, [MaybeNullWhen(false)] out T value)
+        public static bool HasParameterChanged<T>(this ParameterView parameters, string parameterName, T parameterValue, [MaybeNullWhen(false)] out T value, IEqualityComparer<T>? comparer = null)
         {
             if (parameters.TryGetValue(parameterName, out value))
             {
-                return !EqualityComparer<T>.Default.Equals(value, parameterValue);
+                return !comparer?.Equals(value, parameterValue) ?? !EqualityComparer<T>.Default.Equals(value, parameterValue);
             }
 
             return false;

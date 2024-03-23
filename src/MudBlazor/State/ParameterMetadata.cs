@@ -33,4 +33,13 @@ internal class ParameterMetadata
         ParameterName = parameterName;
         HandlerName = handlerName;
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterMetadata"/> class with the specified handler name.
+    /// </summary>
+    /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
+    public ParameterMetadata(string parameterName)
+        : this(parameterName, null)
+    {
+    }
 }

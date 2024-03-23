@@ -31,7 +31,7 @@ internal interface IParameterComponentLifeCycle
     bool HasParameterChanged(ParameterView parameters);
 
     /// <summary>
-    /// Called by the <see cref="ParameterState"/> framework when <see cref="IParameterChangedHandler{T}"/> is supplied.
+    /// Called by the <see cref="ParameterState{T}"/> framework when <see cref="IParameterChangedHandler{T}"/> is supplied.
     /// </summary>
     /// <remarks>
     /// This method is intended for internal use and is controlled by the <see cref="MudComponentBase"/> and <see cref="ParameterSet"/>.
