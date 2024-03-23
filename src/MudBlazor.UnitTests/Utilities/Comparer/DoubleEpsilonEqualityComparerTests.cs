@@ -264,7 +264,7 @@ public class DoubleEpsilonEqualityComparerTests
         var getHasCode1 = comparer.GetHashCode(double1);
         var getHasCode2 = comparer.GetHashCode(double2);
         var result = getHasCode1 == getHasCode2;
-        
+
         // Assert
         result.Should().BeFalse();
     }

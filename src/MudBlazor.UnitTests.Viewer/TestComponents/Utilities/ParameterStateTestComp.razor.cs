@@ -7,7 +7,7 @@ namespace MudBlazor.UnitTests;
 #nullable enable
 public partial class ParameterStateTestComp : MudComponentBase
 {
-    private List<string> _parameterChanges = new();
+    private readonly List<string> _parameterChanges = new();
 
     public ParameterStateTestComp()
     {
