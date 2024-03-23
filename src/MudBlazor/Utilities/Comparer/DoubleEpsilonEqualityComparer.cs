@@ -62,6 +62,9 @@ public class DoubleEpsilonEqualityComparer : IEqualityComparer<double>
     }
 
     /// <inheritdoc/>
+    /// <remarks>
+    /// Same as <see cref="double.GetHashCode"/>.
+    /// </remarks>
     public int GetHashCode(double obj) => obj.GetHashCode();
 
     /// <summary>

@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Comparer;
@@ -6,6 +7,17 @@ namespace MudBlazor.UnitTests.Utilities.Comparer;
 [TestFixture]
 public class DoubleEpsilonEqualityComparerTests
 {
+    [Test]
+    public void Constructor_ShouldThrowArgumentOutOfRangeException()
+    {
+        // Act & Arrange
+        Action<double> construct = epsilon => _ = new DoubleEpsilonEqualityComparer(epsilon);
+
+        // Assert
+        construct.Invoking(ctor => ctor(2)).Should().Throw<ArgumentOutOfRangeException>();
+        construct.Invoking(ctor => ctor(-2)).Should().Throw<ArgumentOutOfRangeException>();
+    }
+
     [TestCase(1000000f, 1000001f, true)]
     [TestCase(1000001f, 1000000f, true)]
     [TestCase(10000f, 10001f, false)]
@@ -221,5 +233,39 @@ public class DoubleEpsilonEqualityComparerTests
 
         // Assert
         result.Should().Be(expected);
+    }
+
+    [Test]
+    public void GetHashCode_Same()
+    {
+        // Arrange
+        var comparer = DoubleEpsilonEqualityComparer.Default;
+        var double1 = 1.1f;
+        var double2 = 1.1f;
+
+        // Act
+        var getHasCode1 = comparer.GetHashCode(double1);
+        var getHasCode2 = comparer.GetHashCode(double2);
+        var result = getHasCode1 == getHasCode2;
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Test]
+    public void GetHashCode_NotSame()
+    {
+        // Arrange
+        var comparer = DoubleEpsilonEqualityComparer.Default;
+        var double1 = 1.1f;
+        var double2 = 1.2f;
+
+        // Act
+        var getHasCode1 = comparer.GetHashCode(double1);
+        var getHasCode2 = comparer.GetHashCode(double2);
+        var result = getHasCode1 == getHasCode2;
+        
+        // Assert
+        result.Should().BeFalse();
     }
 }
