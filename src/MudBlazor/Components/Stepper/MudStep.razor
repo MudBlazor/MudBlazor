@@ -1,5 +1,6 @@
 @namespace MudBlazor
 @using MudBlazor.Utilities
+@using MudBlazor.Interfaces
 @inherits MudComponentBase
 @implements IAsyncDisposable
 
@@ -127,7 +128,7 @@
         _hasError = value;
         HasError = _hasError;
         await HasErrorChanged.InvokeAsync(HasError);
-        Parent?.Refresh();
+        RefreshParent();
     }
     
     public async Task SetCompleted(bool value)
@@ -138,7 +139,7 @@
         _completed = value;
         Completed = _completed;
         await CompletedChanged.InvokeAsync(Completed);
-        Parent?.Refresh();
+        RefreshParent();
     }
 
     public async Task SetDisabled(bool value)
@@ -149,7 +150,12 @@
         _disabled = value;
         Disabled = _disabled;
         await DisabledChanged.InvokeAsync(Disabled);
-        Parent?.Refresh();
+        RefreshParent();
+    }
+
+    private void RefreshParent()
+    {
+        (Parent as IMudStateHasChanged)?.StateHasChanged();
     }
 
 #pragma warning disable CS4008, CS1998

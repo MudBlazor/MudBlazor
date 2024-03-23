@@ -17,21 +17,21 @@ public partial class MudStepper : MudComponentBase
 {
     public MudStepper()
     {
-        Steps = _steps.AsReadOnly();
+        // TODO: RegisterParameters here
     }
-    
+
     private List<MudStep> _steps = new();
     private int _activeIndex = -1;
     private HashSet<MudStep> _skippedSteps = new();
 
-    public IReadOnlyList<MudStep> Steps { get; private set; }
+    internal IReadOnlyList<MudStep> Steps => _steps;
 
     /// <summary>
     /// Active step of the Stepper, can be not selected
     /// </summary>
     public MudStep? ActiveStep { get; private set; }
 
-    
+
     protected string Classname => new CssBuilder("mud-stepper")
         .AddClass("mud-stepperHorizontal", Vertical == false)
         .AddClass("mud-stepperVertical", Vertical)
@@ -42,12 +42,12 @@ public partial class MudStepper : MudComponentBase
     internal string StepClassname => new CssBuilder("mud-stepper-content")
         .AddClass(StepClass)
         .Build();
-    
+
     protected string NavClassname => new CssBuilder("mud-stepper-nav")
         .AddClass("mud-stepper-nav-scrollable", ScrollableNavigation)
         .AddClass(NavClass)
         .Build();
-    
+
     /// <summary>
     /// Index of the currently shown step. If set, it doesn't save the position into the history
     /// </summary>
@@ -55,7 +55,7 @@ public partial class MudStepper : MudComponentBase
     [Category(CategoryTypes.List.Behavior)]
     public int ActiveIndex { get; set; }
 
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.List.Behavior)]
     public EventCallback<int> ActiveIndexChanged { get; set; }
 
@@ -87,7 +87,7 @@ public partial class MudStepper : MudComponentBase
     [Category(CategoryTypes.List.Appearance)]
     public string? NavClass { get; set; }
 
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.List.Behavior)]
     public bool NonLinear { get; set; }
 
@@ -104,7 +104,7 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
     public string? StepClass { get; set; }
-    
+
     /// <summary>
     /// Sets style for all steps globally
     /// </summary>
@@ -122,7 +122,7 @@ public partial class MudStepper : MudComponentBase
     /// <summary>
     /// If there is too many steps, the navigation becomes scrollable.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.List.Behavior)]
     public bool ScrollableNavigation { get; set; } = true;
 
@@ -152,7 +152,7 @@ public partial class MudStepper : MudComponentBase
     [Category(CategoryTypes.List.Appearance)]
     public RenderFragment? ChildContent { get; set; }
 
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.List.Appearance)]
     public RenderFragment<MudStep>? TitleTemplate { get; set; }
 
@@ -163,7 +163,7 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
     public RenderFragment<MudStep>? ConnectorTemplate { get; set; }
-    
+
     /// <summary>
     /// This content is displayed when all steps are completed
     /// </summary>
@@ -275,7 +275,4 @@ public partial class MudStepper : MudComponentBase
 
         ProcessStep(_steps[0], new MouseEventArgs(), StepInteractionType.Activate);
     }
-
-    internal void Refresh() => StateHasChanged();
-
 }
