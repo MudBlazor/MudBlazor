@@ -3,7 +3,7 @@
 <MudSwipeArea @ref="_swipeArea" OnSwipeEnd="HandleSwipeEnd" Style="width: 100%; height: 300px" Sensitivity="_sensitivity" PreventDefault="@_preventDefault">
     <MudText Typo="@Typo.body1">@($"{_swipeDirection} - Swiped: {_swipeDelta}px")</MudText>
 </MudSwipeArea>
-<MudSwitch @bind-Checked="@_preventDefault" Color="Color.Primary">Prevent Default</MudSwitch>
+<MudSwitch @bind-Value="_preventDefault" Color="Color.Primary">Prevent Default</MudSwitch>
 <MudNumericField @bind-Value="_sensitivity" Label="Sensitivity" Min="0" />
 
 @code

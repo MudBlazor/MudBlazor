@@ -7,7 +7,7 @@
         <MudButton Color="Color.Primary" OnClick="@(() => _picker.Close())">Ok</MudButton>
     </PickerActions>
 </MudDatePicker>
-<MudSwitch @bind-Checked="@autoClose" Color="Color.Secondary">AutoClose</MudSwitch>
+<MudSwitch @bind-Value="autoClose" Color="Color.Secondary">AutoClose</MudSwitch>
 
 @code {
     MudDatePicker _picker;
