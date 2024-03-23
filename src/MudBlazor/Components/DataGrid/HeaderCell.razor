@@ -91,11 +91,11 @@ else if (Column != null && !Column.HiddenState.Value)
                 {
                     if (hasFilter)
                     {
-                        <MudIconButton Class="filter-button filtered" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" OnClick="@OpenFilters"></MudIconButton>
+                        <MudIconButton Class="filter-button filtered" Icon="@(Column.FilterAppliedIcon)" Size="@Size.Small" OnClick="@OpenFilters"></MudIconButton>
                     }
                     else if (showFilterIcon)
                     {
-                        <MudIconButton Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" OnClick="@AddFilter"></MudIconButton>
+                        <MudIconButton Class="filter-button" Icon="@Column.FilterIcon" Size="@Size.Small" OnClick="@AddFilter"></MudIconButton>
                     }
                 }
 

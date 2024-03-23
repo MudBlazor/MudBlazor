@@ -3,11 +3,11 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid Items="@Elements" Filterable="true" FilterMode="@_filterMode" FilterCaseSensitivity="@_caseSensitivity">
+<MudDataGrid Items="@Elements" Filterable="true" FilterMode="@_filterMode" FilterCaseSensitivity="@_caseSensitivity" SortIcon="@Icons.Material.Filled.Navigation" FilterIcon="@Icons.Material.Filled.PlaylistAdd" FilterAppliedIcon="@Icons.Material.Filled.PlaylistAddCheck">
     <Columns>
         <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" />
-        <PropertyColumn Property="x => x.Sign" />
-        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Sign" FilterIcon="@Icons.Material.Filled.Notes" FilterAppliedIcon="@Icons.Material.Filled.EditNote" />
+        <PropertyColumn Property="x => x.Name" SortIcon="@Icons.Material.Filled.North" />
         <PropertyColumn Property="x => x.Position" Filterable="false" />
         <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
         <PropertyColumn Property="x => x.Group" Title="Category" />
