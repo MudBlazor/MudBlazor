@@ -111,18 +111,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public bool IsVisible
-        {
-            get => _isVisible;
-            set
-            {
-                if (_isVisible == value)
-                    return;
-                _isVisible = value;
-                IsVisibleChanged.InvokeAsync(value);
-            }
-        }
-        private bool _isVisible;
+        public bool IsVisible { get; set; }
 
         /// <summary>
         /// Raised when the inline dialog's display status changes.
@@ -172,8 +161,8 @@ namespace MudBlazor
             _reference = DialogService.Show<MudDialog>(title, parameters, options ?? Options);
             _reference.Result.ContinueWith(t =>
             {
-                _isVisible = false;
-                InvokeAsync(() => IsVisibleChanged.InvokeAsync(false));
+                IsVisible = false;
+                InvokeAsync(() => IsVisibleChanged.InvokeAsync(IsVisible));
             });
             return _reference;
         }
@@ -182,7 +171,7 @@ namespace MudBlazor
         {
             if (IsInline)
             {
-                if (_isVisible && _reference == null)
+                if (IsVisible && _reference == null)
                 {
                     Show(); // if isVisible and we don't have any reference we need to call Show
                 }
