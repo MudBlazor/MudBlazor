@@ -6,7 +6,8 @@
   &.mud-disabled {
     cursor: default;
     pointer-events: none;
-    color: var(--mud-palette-text-disabled);
+    color: var(--mud-palette-action-disabled) !important;
+    border-color: var(--mud-palette-action-disabled) !important;
   }
 }
 
@@ -92,6 +93,7 @@
   &.mud-disabled {
     cursor: default;
     pointer-events: none;
-    color: var(--mud-palette-text-disabled);
+    color: var(--mud-palette-action-disabled) !important;
+    border-color: inherit !important;
   }
 }

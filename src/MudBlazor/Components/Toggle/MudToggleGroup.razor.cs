@@ -28,6 +28,7 @@ namespace MudBlazor
         private bool _rounded;
         private bool _checkMark = true;
         private bool _fixedContent = false;
+        private bool _disabled = false;
 
         protected string Classes => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)
@@ -276,7 +277,8 @@ namespace MudBlazor
                 Dense != _dense ||
                 Rounded != _rounded ||
                 CheckMark != _checkMark ||
-                FixedContent != _fixedContent
+                FixedContent != _fixedContent ||
+                Disabled != _disabled
                )
             {
                 _color = Color;
@@ -288,6 +290,7 @@ namespace MudBlazor
                 _rounded = Rounded;
                 _checkMark = CheckMark;
                 _fixedContent = FixedContent;
+                _disabled = Disabled;
                 foreach (IMudStateHasChanged mudComponent in _items)
                 {
                     mudComponent.StateHasChanged();
