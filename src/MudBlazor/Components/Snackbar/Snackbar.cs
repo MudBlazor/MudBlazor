@@ -50,6 +50,14 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Forcibly close the snackbar without performing any animations.
+        /// </summary>
+        public void ForceClose()
+        {
+            TransitionTo(SnackbarState.Hiding, false, false);
+        }
+
+        /// <summary>
         /// Transitions the snackbar to the specified state.
         /// </summary>
         /// <param name="state">The state to transition to</param>
