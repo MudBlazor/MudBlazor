@@ -157,14 +157,17 @@ namespace MudBlazor
                 [nameof(Class)] = Class,
                 [nameof(Style)] = Style,
                 [nameof(Tag)] = Tag,
+                [nameof(UserAttributes)] = UserAttributes,
                 [nameof(TitleContent)] = TitleContent,
                 [nameof(DialogContent)] = DialogContent,
                 [nameof(DialogActions)] = DialogActions,
+                [nameof(OnBackdropClick)] = OnBackdropClick,
                 [nameof(DisableSidePadding)] = DisableSidePadding,
                 [nameof(TitleClass)] = TitleClass,
                 [nameof(ClassContent)] = ClassContent,
                 [nameof(ClassActions)] = ClassActions,
                 [nameof(ContentStyle)] = ContentStyle,
+                [nameof(DefaultFocus)] = DefaultFocus,
             };
             _reference = DialogService.Show<MudDialog>(title, parameters, options ?? Options);
             _reference.Result.ContinueWith(t =>
