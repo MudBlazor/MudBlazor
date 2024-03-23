@@ -24,7 +24,10 @@ public partial class MudStepper : MudComponentBase
     private int _activeIndex = -1;
     private HashSet<MudStep> _skippedSteps = new();
 
-    internal IReadOnlyList<MudStep> Steps => _steps;
+    /// <summary>
+    /// The steps that have been defined in razor.
+    /// </summary>
+    public IReadOnlyList<MudStep> Steps => _steps;
 
     /// <summary>
     /// Active step of the Stepper, can be not selected
@@ -210,7 +213,7 @@ public partial class MudStepper : MudComponentBase
         {
             case StepInteractionType.Complete:
                 {
-                    await stepToProcess.SetCompleted(true);
+                    await stepToProcess.SetCompletedAsync(true);
 
                     if (_steps.Count - 1 != index)
                         index++;
@@ -229,15 +232,13 @@ public partial class MudStepper : MudComponentBase
 
     private async void SetActiveIndex(int value)
     {
-        var validPanel = _steps.Count > 0 && value != -1 && value <= _steps.Count - 1;
-
+        var validIndex = Math.Min(Math.Max(0, value), _steps.Count - 1);
         if (_activeIndex != value)
         {
-            ActiveStep = validPanel ? _steps[value] : null;
-            await ActiveIndexChanged.InvokeAsync(_activeIndex = value);
+            _activeIndex = validIndex;
+            ActiveStep = validIndex >= 0 ? _steps[validIndex] : null;
+            await ActiveIndexChanged.InvokeAsync(_activeIndex);
         }
-        else if (validPanel)
-            ActiveStep = _steps[value];
     }
 
     protected override void OnParametersSet()
@@ -270,7 +271,7 @@ public partial class MudStepper : MudComponentBase
 
         foreach (var step in _steps)
         {
-            await step.SetCompleted(false);
+            await step.SetCompletedAsync(false);
         }
 
         ProcessStep(_steps[0], new MouseEventArgs(), StepInteractionType.Activate);
