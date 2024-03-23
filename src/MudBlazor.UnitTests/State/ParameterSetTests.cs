@@ -6,11 +6,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
+using MudBlazor.UnitTests.State.Mocks;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State;
@@ -470,6 +472,69 @@ public class ParameterSetTests
 
         // Assert
         handlerFireCount.Should().Be(3);
+    }
+
+    [Test]
+    public async Task SetParametersAsync_CustomComparer_HandlerShouldFire()
+    {
+        // Arrange
+        var comparer = new DoubleEpsilonEqualityComparer(0.00001f);
+        var parameterChangedHandlerMock = new ParameterChangedHandlerMock<double>();
+        const double Parameter = 10000f;
+        const double ParameterNewValue = 10001f;
+        const string ParameterName = nameof(Parameter);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName, ParameterNewValue },
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        var parameterState = ParameterAttachBuilder
+            .Create<double>()
+            .WithMetadata(new ParameterMetadata(nameof(Parameter)))
+            .WithGetParameterValueFunc(() => Parameter)
+            .WithParameterChangedHandler(parameterChangedHandlerMock)
+            .WithComparer(comparer)
+            .Attach();
+        var parameterSet = new ParameterSet { parameterState };
+
+        // Act
+        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+
+        // Assert
+        parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
+        {
+            new ParameterChangedEventArgs<double>(ParameterName, Parameter, ParameterNewValue)
+        });
+    }
+
+    [Test]
+    public async Task SetParametersAsync_CustomComparer_HandlerShouldNotFire()
+    {
+        // Arrange
+        var comparer = new DoubleEpsilonEqualityComparer(0.00001f);
+        var parameterChangedHandlerMock = new ParameterChangedHandlerMock<double>();
+        const double Parameter = 1000000f;
+        const double ParameterNewValue = 1000001f;
+        const string ParameterName = nameof(Parameter);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName, ParameterNewValue }
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        var parameterState = ParameterAttachBuilder
+            .Create<double>()
+            .WithMetadata(new ParameterMetadata(nameof(Parameter)))
+            .WithGetParameterValueFunc(() => Parameter)
+            .WithParameterChangedHandler(parameterChangedHandlerMock)
+            .WithComparer(comparer)
+            .Attach();
+        var parameterSet = new ParameterSet { parameterState };
+
+        // Act
+        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+
+        // Assert
+        parameterChangedHandlerMock.Changes.Should().BeEmpty("Within the epsilon tolerance.");
     }
 
     [Test]

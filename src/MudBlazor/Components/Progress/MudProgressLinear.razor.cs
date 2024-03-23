@@ -153,7 +153,7 @@ namespace MudBlazor
         private double GetPercentage(double input)
         {
             var total = Math.Abs(_max - _min);
-            if (NumericConverter<double>.AreEqual(0, total))
+            if (DoubleEpsilonEqualityComparer.Default.Equals(0, total))
             {  // numeric instability!
                 return 0.0;
             }
