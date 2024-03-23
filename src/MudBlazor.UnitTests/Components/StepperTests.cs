@@ -179,7 +179,7 @@ namespace MudBlazor.UnitTests.Components
             stepper.FindAll("button")[1].HasAttribute("disabled").Should().Be(false); // skip
             stepper.FindAll("button")[2].HasAttribute("disabled").Should().Be(false); // next
         }
-        
+
         [Test]
         public void ActiveIndex_ShouldBeTwoWayBindable()
         {
@@ -224,7 +224,7 @@ namespace MudBlazor.UnitTests.Components
             stepper.Instance.ActiveStep.Title.Should().Be("0");
             activeIndex.Should().Be(0);
         }
-        
+
         [Test]
         public async Task ManipulatingStepsProgrammatically_ShouldUpdateTheUi()
         {
@@ -264,7 +264,23 @@ namespace MudBlazor.UnitTests.Components
             await stepper.Instance.Steps[2].SetCompletedAsync(true);
             stepper.FindAll(".mud-stepper-nav-step-label-icon")[2].QuerySelectorAll("path").Last().GetAttribute("d").Should().Be("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z");
             stepper.FindAll(".mud-stepper-nav-step")[2].ClassList.Should().Contain("mud-stepper-nav-step-completed");
-
+        }
+        
+        [Test]
+        public async Task RemoveStep_ShouldUpdateActiveIndex()
+        {
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.Add(x => x.ActiveIndex, 2);
+                self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "A"));
+                self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "B"));
+                self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "C"));
+            });
+            stepper.Instance.ActiveStep.Title.Should().Be("C");
+            stepper.Instance.ActiveIndex.Should().Be(2);
+            await stepper.Instance.RemoveStepAsync(stepper.Instance.ActiveStep);
+            stepper.Instance.ActiveStep.Title.Should().Be("B");
+            stepper.Instance.ActiveIndex.Should().Be(1);
         }
     }
 }

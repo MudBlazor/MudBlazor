@@ -4,7 +4,7 @@
 
 namespace MudBlazor;
 
-public enum StepInteractionType
+public enum StepAction
 {
     Activate,
     Complete,

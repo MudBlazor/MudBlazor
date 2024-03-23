@@ -7,6 +7,6 @@ namespace MudBlazor;
 public class StepperInteractionEventArgs
 {
     public int StepIndex { get; init; }
-    public StepInteractionType InteractionType { get; set; }
+    public StepAction Action { get; set; }
     public bool Cancel { get; set; }
 }

@@ -174,63 +174,63 @@ public partial class MudStepper : MudComponentBase
     [Category(CategoryTypes.List.Appearance)]
     public RenderFragment? CompletedContent { get; set; }
 
-    internal void AddStep(MudStep step)
+    internal async Task AddStepAsync(MudStep step)
     {
         _steps.Add(step);
         if (ActiveStep is null)
-            SetActiveIndex(_steps.IndexOf(step));
+            await SetActiveIndexAsync(_steps.IndexOf(step));
         StateHasChanged();
     }
 
-    internal void RemovePanel(MudStep step)
+    internal async Task RemoveStepAsync(MudStep step)
     {
+        _steps.Remove(step);
         if (step == ActiveStep)
         {
-            //TODO: Fiddle with active indexes, this will be async
+            var idx = _activeIndex;
+            _activeIndex = -1;
+            await SetActiveIndexAsync(idx);
         }
-
-        _steps.Remove(step);
         StateHasChanged();
     }
 
-    private async void ProcessStep(MudStep? stepToProcess, MouseEventArgs ev,
-        StepInteractionType stepInteractionType, bool ignoreDisabledState = false)
+    private async Task UpdateStepAsync(MudStep? step, MouseEventArgs ev, StepAction stepAction, bool ignoreDisabledState = false)
     {
-        if (stepToProcess == null || stepToProcess.Disabled && !ignoreDisabledState)
+        if (step == null || step.Disabled && !ignoreDisabledState)
             return;
 
-        var index = _steps.IndexOf(stepToProcess);
+        var index = _steps.IndexOf(step);
 
         var previewArgs =
-            new StepperInteractionEventArgs() { StepIndex = index, InteractionType = stepInteractionType };
+            new StepperInteractionEventArgs() { StepIndex = index, Action = stepAction };
 
         if (OnPreviewInteraction != null)
             await OnPreviewInteraction.Invoke(previewArgs);
 
         if (previewArgs.Cancel) return;
 
-        switch (previewArgs.InteractionType)
+        switch (previewArgs.Action)
         {
-            case StepInteractionType.Complete:
+            case StepAction.Complete:
                 {
-                    await stepToProcess.SetCompletedAsync(true);
+                    await step.SetCompletedAsync(true);
 
                     if (_steps.Count - 1 != index)
                         index++;
                     break;
                 }
-            case StepInteractionType.Skip:
-                if (stepToProcess.Skippable)
+            case StepAction.Skip:
+                if (step.Skippable)
                     index++;
                 break;
         }
 
-        SetActiveIndex(index);
+        await SetActiveIndexAsync(index);
 
         await (ActiveStep?.OnClick.InvokeAsync(ev) ?? Task.CompletedTask);
     }
 
-    private async void SetActiveIndex(int value)
+    private async Task SetActiveIndexAsync(int value)
     {
         var validIndex = Math.Min(Math.Max(0, value), _steps.Count - 1);
         if (_activeIndex != value)
@@ -241,30 +241,33 @@ public partial class MudStepper : MudComponentBase
         }
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         base.OnParametersSet();
 
-        SetActiveIndex(ActiveIndex);
+        await SetActiveIndexAsync(ActiveIndex);
     }
 
-    public void PreviousStep()
+    public async Task PreviousStepAsync()
     {
         if (PreviousStepEnabled)
-            ProcessStep(_steps[_activeIndex - 1], new MouseEventArgs(), StepInteractionType.Activate);
+            await UpdateStepAsync(_steps[_activeIndex - 1], new MouseEventArgs(), StepAction.Activate);
     }
 
-    public void CompleteCurrentStep()
+    public async Task CompleteCurrentStepAsync()
     {
-        ProcessStep(ActiveStep, new MouseEventArgs(), StepInteractionType.Complete);
+        await UpdateStepAsync(ActiveStep, new MouseEventArgs(), StepAction.Complete);
     }
 
-    public void SkipCurrentStep()
+    public async Task SkipCurrentStepAsync()
     {
-        ProcessStep(ActiveStep, new MouseEventArgs(), StepInteractionType.Skip);
+        await UpdateStepAsync(ActiveStep, new MouseEventArgs(), StepAction.Skip);
     }
 
-    public async Task Reset()
+    /// <summary>
+    /// Reset the completed status of all steps and set the first step as the active one.
+    /// </summary>
+    public async Task ResetAsync()
     {
         if (!_steps.Any())
             return;
@@ -274,6 +277,12 @@ public partial class MudStepper : MudComponentBase
             await step.SetCompletedAsync(false);
         }
 
-        ProcessStep(_steps[0], new MouseEventArgs(), StepInteractionType.Activate);
+        await UpdateStepAsync(_steps[0], new MouseEventArgs(), StepAction.Activate);
+    }
+
+    private async Task OnStepClickAsync(MudStep step, MouseEventArgs e)
+    {
+        if (NonLinear)
+            await UpdateStepAsync(step, e, StepAction.Activate);
     }
 }

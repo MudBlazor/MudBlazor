@@ -28,17 +28,25 @@
         .AddClass(Class)
         .Build();
 
-    [CascadingParameter]
-    internal MudStepper Parent { get; set; }
+    [CascadingParameter] internal MudStepper Parent { get; set; }
 
+    /// <summary>
+    /// The content to be shown when the step is active
+    /// </summary>
     [Parameter]
-    [Category(CategoryTypes.List.Appearance)]    
+    [Category(CategoryTypes.List.Appearance)]
     public RenderFragment ChildContent { get; set; }
 
+    /// <summary>
+    /// The title that summarizes the step, shown next to the icon
+    /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
     public string Title { get; set; }
 
+    /// <summary>
+    /// An optional subtitle describing the step
+    /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
     public string SecondaryText { get; set; }
@@ -62,6 +70,9 @@
     [Category(CategoryTypes.List.Appearance)]
     public Color? ErrorStepColor { get; set; }
 
+    /// <summary>
+    /// If set to true this step can be skipped over in a linear stepper using the skip button.
+    /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Behavior)]
     public bool Skippable { get; set; }
@@ -72,29 +83,45 @@
     [Parameter]
     [Category(CategoryTypes.List.Behavior)]
     public bool Completed { get; set; }
-    
+
     private bool _completed;
 
+    /// <summary>
+    /// Raised when Completed changed.
+    /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Behavior)]
     public EventCallback<bool> CompletedChanged { get; set; }
 
+    /// <summary>
+    /// If true, disables the step so that it can not be selected
+    /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Behavior)]
     public bool Disabled { get; set; }
 
     private bool _disabled;
-    
+
+    /// <summary>
+    /// Raised when Disabled changed.
+    /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Behavior)]
     public EventCallback<bool> DisabledChanged { get; set; }
 
+    /// <summary>
+    /// If true, the step will be marked as error. You can use this to show to the user
+    /// that the input data is faulty or insufficient
+    /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Behavior)]
     public bool HasError { get; set; }
 
     private bool _hasError;
 
+    /// <summary>
+    /// Raised when HasError changed.
+    /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Behavior)]
     public EventCallback<bool> HasErrorChanged { get; set; }
@@ -106,10 +133,12 @@
     [Category(CategoryTypes.List.Behavior)]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
-        Parent?.AddStep(this);
+        var p = Parent;
+        if (p is not null)
+            await p.AddStepAsync(this);
     }
 
     protected async override Task OnParametersSetAsync()
@@ -119,7 +148,10 @@
         await SetCompletedAsync(Completed);
         await SetDisabledAsync(Disabled);
     }
-    
+
+    /// <summary>
+    /// Sets HasError
+    /// </summary>
     public async Task SetHasErrorAsync(bool value)
     {
         if (_hasError == value)
@@ -130,7 +162,10 @@
         await HasErrorChanged.InvokeAsync(HasError);
         await RefreshParentAsync();
     }
-    
+
+    /// <summary>
+    /// Sets Completed
+    /// </summary>
     public async Task SetCompletedAsync(bool value)
     {
         if (_completed == value)
@@ -142,6 +177,9 @@
         await RefreshParentAsync();
     }
 
+    /// <summary>
+    /// Sets Disabled
+    /// </summary>
     public async Task SetDisabledAsync(bool value)
     {
         if (_disabled == value)
@@ -155,19 +193,18 @@
 
     private async Task RefreshParentAsync()
     {
-        await InvokeAsync(()=> (Parent as IMudStateHasChanged)?.StateHasChanged());
+        await InvokeAsync(() => (Parent as IMudStateHasChanged)?.StateHasChanged());
     }
 
-#pragma warning disable CS4008, CS1998
     public async ValueTask DisposeAsync()
     {
         if (_disposed)
             return;
 
         _disposed = true;
-        if (Parent is not null)
-            Parent.RemovePanel(this); // this will probably be async later
+        var p = Parent;
+        if (p is not null)
+            await p.RemoveStepAsync(this); // this will probably be async later
     }
-#pragma warning restore CS4008, CS1998
 
 }
