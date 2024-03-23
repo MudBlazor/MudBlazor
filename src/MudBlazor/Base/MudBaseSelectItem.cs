@@ -63,6 +63,9 @@ namespace MudBlazor
         [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
         public ICommand? Command { get; set; }
 
+        /// <summary>
+        /// Click event. Will not be called if <c>Href</c> is also set.
+        /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
