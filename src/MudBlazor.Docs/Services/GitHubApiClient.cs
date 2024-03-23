@@ -46,7 +46,7 @@ namespace MudBlazor.Docs.Services
                 return Array.Empty<GithubContributors>();
             }
         }
-        
+
         public async Task<GitHubReleases[]> GetReleasesAsync()
         {
             try

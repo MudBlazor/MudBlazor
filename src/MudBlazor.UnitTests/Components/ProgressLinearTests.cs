@@ -305,7 +305,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Size.Large,"large")]
+        [TestCase(Size.Large, "large")]
         [TestCase(Size.Medium, "medium")]
         [TestCase(Size.Small, "small")]
         public void TestClassesForSize(Size size, string expectedString)
@@ -313,7 +313,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Size, size));
 
             var container = comp.Find(".mud-progress-linear");
-            
+
             container.ClassList.Should().Contain($"mud-progress-linear-{expectedString}");
         }
 

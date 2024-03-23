@@ -8,6 +8,6 @@ public enum DataGridFilterCaseSensitivity
     Default,
 
     CaseInsensitive,
-    
+
     Ignore
 }

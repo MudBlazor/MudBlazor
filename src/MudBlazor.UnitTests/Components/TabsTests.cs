@@ -179,7 +179,7 @@ namespace MudBlazor.UnitTests.Components
         public void TabHeaderClassPropagated()
         {
             var comp = Context.RenderComponent<MudTabs>();
-            
+
             comp.SetParametersAndRender(builder => builder.Add(tabs => tabs.TabHeaderClass, "testA testB"));
 
             comp.Find(".mud-tabs-toolbar").ClassList.Should().Contain(new[] { "testA", "testB" });
@@ -1166,7 +1166,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TabsWithPrePanelContent>(p => p.Add(x => x.SelectedIndex, 0));
 
-            var content =  comp.Find(".pre-panel-content-custom");
+            var content = comp.Find(".pre-panel-content-custom");
 
             content.TextContent.Should().Be("Selected: Tab One");
 
@@ -1194,7 +1194,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SetPanelActive(2);
             comp.Instance.ActivePanel.Should().NotBe(2);
         }
-        
+
         #region Helper
 
         private static double GetSliderValue(IRenderedComponent<ScrollableTabsTest> comp, string attribute = "left")

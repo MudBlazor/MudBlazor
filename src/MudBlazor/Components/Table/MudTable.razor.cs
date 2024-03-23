@@ -221,9 +221,9 @@ namespace MudBlazor
         /// Row hover stop event.
         /// </summary>
         [Parameter] public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseLeave { get; set; }
-        
+
         internal override bool HasRowMouseLeaveEventHandler => OnRowMouseLeave.HasDelegate;
-        
+
         internal override async Task FireRowMouseLeaveEventAsync(MouseEventArgs args, MudTr row, object o)
         {
             var item = default(T);
@@ -317,7 +317,7 @@ namespace MudBlazor
         /// Checks if the row is selected.
         /// If there is set a Comparer, uses the comparer, otherwise uses a direct contains
         /// </summary>
-        protected bool IsCheckedRow(T item) 
+        protected bool IsCheckedRow(T item)
             => _comparer != null ? Context.Selection.Any(x => _comparer.Equals(x, item)) : Context.Selection.Contains(item);
 
         /// <summary>
@@ -671,8 +671,8 @@ namespace MudBlazor
 
         private string ClearFilterCache()
         {
-            _currentRenderFilteredItemsCached = false; 
-            return ""; 
+            _currentRenderFilteredItemsCached = false;
+            return "";
         }
     }
 }

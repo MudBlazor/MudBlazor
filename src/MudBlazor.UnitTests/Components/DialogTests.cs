@@ -434,13 +434,13 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dialog2.MudDialog.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().NotBeEmpty();
         }
-        
+
         [Test]
         public async Task DialogHandlesOnBackdropClickEvent()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            
+
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
@@ -448,10 +448,10 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithOnBackdropClickEvent>());
             dialogReference.Should().NotBe(null);
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title:");
-            
+
             //Click on backdrop
             comp.Find("div.mud-overlay").Click();
-            
+
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title: Backdrop clicked");
         }
 
@@ -490,7 +490,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            
+
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
@@ -650,7 +650,7 @@ namespace MudBlazor.UnitTests.Components
             parameters.Add("Color_Test", Color.Error); // !! comment me !!
 
             var dialogReferenceLazy = new Lazy<Task<IDialogReference>>(() => service?.ShowAsync<DialogWithParameters>(string.Empty, parameters));
-            await comp.InvokeAsync(()=> dialogReferenceLazy.Value);
+            await comp.InvokeAsync(() => dialogReferenceLazy.Value);
             var dialogReference = await dialogReferenceLazy.Value;
             dialogReference.Should().NotBe(null);
 

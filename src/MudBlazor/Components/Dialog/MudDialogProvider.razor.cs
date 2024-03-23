@@ -20,13 +20,13 @@ namespace MudBlazor
         [Inject] private IDialogService DialogService { get; set; }
         [Inject] private NavigationManager NavigationManager { get; set; }
 
-        [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? NoHeader { get; set; }
-        [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? CloseButton { get; set; }
-        [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? DisableBackdropClick { get; set; }
-        [Parameter] [Category(CategoryTypes.Dialog.Behavior)] public bool? CloseOnEscapeKey { get; set; }
-        [Parameter] [Category(CategoryTypes.Dialog.Appearance)] public bool? FullWidth { get; set; }
-        [Parameter] [Category(CategoryTypes.Dialog.Appearance)] public DialogPosition? Position { get; set; }
-        [Parameter] [Category(CategoryTypes.Dialog.Appearance)] public MaxWidth? MaxWidth { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Behavior)] public bool? NoHeader { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Behavior)] public bool? CloseButton { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Behavior)] public bool? DisableBackdropClick { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Behavior)] public bool? CloseOnEscapeKey { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Appearance)] public bool? FullWidth { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Appearance)] public DialogPosition? Position { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Appearance)] public MaxWidth? MaxWidth { get; set; }
 
         private readonly Collection<IDialogReference> _dialogs = new();
         private readonly DialogOptions _globalDialogOptions = new();

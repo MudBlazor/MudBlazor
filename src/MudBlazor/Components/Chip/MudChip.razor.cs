@@ -92,7 +92,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Chip.Appearance)]
         public Color SelectedColor { get; set; } = Color.Inherit;
-        
+
         [Parameter]
         [Category(CategoryTypes.Chip.Appearance)]
         public RenderFragment AvatarContent { get; set; }

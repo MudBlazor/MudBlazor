@@ -21,7 +21,7 @@ namespace MudBlazor
         /// <summary>
         /// The current text as it is displayed in the component
         /// </summary>
-        string Text { get;  }
+        string Text { get; }
 
         /// <summary>
         /// Get the Text without delimiters or placeholders. Depends on the implementation entirely.

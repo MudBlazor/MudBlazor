@@ -1,129 +1,130 @@
 ﻿
 
 .mud-codeblock {
+  height: 100%;
+  padding: 24px;
+  overflow: auto;
+
+  & pre {
     height: 100%;
-    padding: 24px;
-    overflow: auto;
+    color: var(--mud-palette-text-primary);
+    padding: 0;
+    font-size: 1em;
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    -webkit-font-smoothing: subpixel-antialiased;
+    direction: ltr;
+  }
 
-    & pre {
-        height: 100%;
-        color: var(--mud-palette-text-primary);
-        padding: 0;
-        font-size: 1em;
-        font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-        -webkit-font-smoothing: subpixel-antialiased;
-        direction: ltr;
-    }
-
-    & .html + .csharp {
-        margin-top: 23px;
-    }
+  & .html + .csharp {
+    margin-top: 23px;
+  }
 }
 
 .mud-codeblock {
-    & .html, .codearea {
-        mark {
-          font-weight: 600;
-          color: var(--mud-palette-primary);
-          background-color: var(--mud-palette-action-default-hover);
-          border-radius: 2px;
-          padding: 1px 3px;
-          margin: 0 0 0 2px;
-          user-select: all;
-        }
-        & .htmlTagDelimiter {
-            color: #979797;
-        }
-
-        & .htmlElementName {
-            color: var(--mud-palette-primary);
-            font-weight: 600;
-        }
-
-        & .htmlAttributeName {
-            color: #8323d8;
-        }
-
-        & .htmlOperator, .quot {
-            color: #737373;
-        }
-
-        & .htmlAttributeValue {
-            color: #ff4081;
-        }
-
-        & .htmlLink {
-            color: #ff4081;
-            text-decoration: underline;
-        }
-
-        & .enum {
-            color: #00c853;
-            background-color: var(--mud-palette-grey-light);
-        }
-
-        & .enumValue, .sharpVariable {
-            color: var(--mud-palette-text-primary);
-            background-color: var(--mud-palette-grey-light);
-        }
-
-        & .keyword {
-            color: #2196f3;
-            background-color: var(--mud-palette-grey-light);
-        }
-
-        & .atSign {
-            color: var(--mud-palette-text-primary);
-            background-color: var(--mud-palette-grey-light);
-        }
-
-        & .comment {
-            color: #57a64a;
-        }
+  & .html, .codearea {
+    mark {
+      font-weight: 600;
+      color: var(--mud-palette-primary);
+      background-color: var(--mud-palette-action-default-hover);
+      border-radius: 2px;
+      padding: 1px 3px;
+      margin: 0 0 0 2px;
+      user-select: all;
     }
 
-    & .csharp {
-        & .atSign {
-            color: var(--mud-palette-text-primary);
-            background-color: var(--mud-palette-grey-light);
-        }
-
-        & .keyword {
-            color: var(--mud-palette-primary);
-        }
-
-        & .string {
-            color: #e68c32;
-        }
-
-        & .function {
-            color: #ff9800;
-        }
-
-        & .class {
-            color: #1ec8a5;
-        }
-
-        & .localVar {
-            color: #2196f3;
-        }
-
-        & .interface {
-            color: #ff4081;
-        }
-
-        & .number {
-            color: #b0d7a3;
-        }
-
-        & .enum {
-            color: #b4eb8f;
-        }
-
-        & .comment {
-            color: #57a64a;
-        }
+    & .htmlTagDelimiter {
+      color: #979797;
     }
+
+    & .htmlElementName {
+      color: var(--mud-palette-primary);
+      font-weight: 600;
+    }
+
+    & .htmlAttributeName {
+      color: #8323d8;
+    }
+
+    & .htmlOperator, .quot {
+      color: #737373;
+    }
+
+    & .htmlAttributeValue {
+      color: #ff4081;
+    }
+
+    & .htmlLink {
+      color: #ff4081;
+      text-decoration: underline;
+    }
+
+    & .enum {
+      color: #00c853;
+      background-color: var(--mud-palette-grey-light);
+    }
+
+    & .enumValue, .sharpVariable {
+      color: var(--mud-palette-text-primary);
+      background-color: var(--mud-palette-grey-light);
+    }
+
+    & .keyword {
+      color: #2196f3;
+      background-color: var(--mud-palette-grey-light);
+    }
+
+    & .atSign {
+      color: var(--mud-palette-text-primary);
+      background-color: var(--mud-palette-grey-light);
+    }
+
+    & .comment {
+      color: #57a64a;
+    }
+  }
+
+  & .csharp {
+    & .atSign {
+      color: var(--mud-palette-text-primary);
+      background-color: var(--mud-palette-grey-light);
+    }
+
+    & .keyword {
+      color: var(--mud-palette-primary);
+    }
+
+    & .string {
+      color: #e68c32;
+    }
+
+    & .function {
+      color: #ff9800;
+    }
+
+    & .class {
+      color: #1ec8a5;
+    }
+
+    & .localVar {
+      color: #2196f3;
+    }
+
+    & .interface {
+      color: #ff4081;
+    }
+
+    & .number {
+      color: #b0d7a3;
+    }
+
+    & .enum {
+      color: #b4eb8f;
+    }
+
+    & .comment {
+      color: #57a64a;
+    }
+  }
 }
 
 .mud-landingpage-editor {
@@ -222,4 +223,3 @@
     }
   }
 }
-

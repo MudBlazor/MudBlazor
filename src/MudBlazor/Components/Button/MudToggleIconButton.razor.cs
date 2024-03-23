@@ -103,6 +103,20 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
 
+        /// <summary>
+        /// If true, no drop-shadow will be used.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public bool DisableElevation { get; set; }
+
+        /// <summary>
+        /// If true, the click event bubbles up to the containing/parent component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool ClickPropagation { get; set; }
+
         public Task Toggle()
         {
             return SetToggledAsync(!Toggled);

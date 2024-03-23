@@ -15,10 +15,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public abstract partial class Column<T> : MudComponentBase
+    public abstract partial class Column<T> : MudComponentBase, IDisposable
     {
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
-        internal ParameterState<bool> HiddenState { get; }
+        internal IParameterState<bool> HiddenState { get; }
 
         internal readonly Guid uid = Guid.NewGuid();
 
@@ -56,7 +56,7 @@ namespace MudBlazor
         [Parameter] public Func<T, string> HeaderStyleFunc { get; set; }
 
         /// <summary>
-        /// Determines whether this columns data can be sorted. This overrides the Sortable parameter on the DataGrid.
+        /// Determines whether this columns data can be sorted. This overrides the SortMode parameter on the DataGrid.
         /// </summary>
         [Parameter] public bool? Sortable { get; set; }
 
@@ -130,7 +130,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
 
         public string Identifier { get; set; }
-        
+
 
         private CultureInfo _culture;
         /// <summary>
@@ -379,6 +379,12 @@ namespace MudBlazor
         {
             await HiddenState.SetValueAsync(!HiddenState.Value);
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
+        }
+
+        public virtual void Dispose()
+        {
+            if (DataGrid != null)
+                DataGrid.RemoveColumn(this);
         }
 
 

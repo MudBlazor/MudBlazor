@@ -59,7 +59,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
 
                         await _next(context);
 
-                        if(context.Response.StatusCode != 200)
+                        if (context.Response.StatusCode != 200)
                         {
                             return;
                         }

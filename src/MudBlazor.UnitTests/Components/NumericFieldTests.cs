@@ -832,7 +832,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Text.Should().Be("1000"));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1000));
         }
-        
+
         /// <summary>
         /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text.
         /// </summary>
@@ -865,7 +865,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Value.Should().Be(converter.Get(currentText));
             numericField.Text.Should().Be(currentText);
         }
-        
+
         [Test]
         public async Task DebouncedNumericField_Should_RenderDefaultValueTextOnFirstRender()
         {
@@ -876,7 +876,7 @@ namespace MudBlazor.UnitTests.Components
             var textfield = comp.FindComponent<MudNumericField<int>>().Instance;
             textfield.Text.Should().Be(converter.Set(defaultValue));
         }
-        
+
         /// <summary>
         /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text while changing culture.
         /// </summary>
