@@ -252,20 +252,20 @@ namespace MudBlazor.UnitTests.Components
             
             // disable step 1
             stepper.FindAll(".mud-stepper-nav-step")[0].ClassList.Should().NotContain("mud-stepper-nav-step-disabled");
-            await stepper.Instance.Steps[0].SetDisabledAsync(true);
+            await stepper.InvokeAsync(async () => await stepper.Instance.Steps[0].SetDisabledAsync(true));
             stepper.FindAll(".mud-stepper-nav-step")[0].ClassList.Should().Contain("mud-stepper-nav-step-disabled");
             // fail step 2
             stepper.FindAll(".mud-stepper-nav-step")[1].ClassList.Should().NotContain("mud-stepper-nav-step-error");
             stepper.FindAll(".mud-stepper-nav-step-label-icon")[1].ClassList.Should().NotContain("mud-error");
             stepper.FindAll(".mud-stepper-nav-step-label-content")[1].ClassList.Should().NotContain("mud-error-text");
-            await stepper.Instance.Steps[1].SetHasErrorAsync(true);
+            await stepper.InvokeAsync(async () => await stepper.Instance.Steps[1].SetHasErrorAsync(true));
             stepper.FindAll(".mud-stepper-nav-step")[1].ClassList.Should().Contain("mud-stepper-nav-step-error");
             stepper.FindAll(".mud-stepper-nav-step-label-icon")[1].ClassList.Should().Contain("mud-error");
             stepper.FindAll(".mud-stepper-nav-step-label-content")[1].ClassList.Should().Contain("mud-error-text");
             // complete step 3
             stepper.FindAll(".mud-stepper-nav-step")[2].ClassList.Should().NotContain("mud-stepper-nav-step-completed");
             stepper.FindAll(".mud-stepper-nav-step-label-icon")[2].QuerySelectorAll("path").Should().BeEmpty(); // no svg icon if not completed
-            await stepper.Instance.Steps[2].SetCompletedAsync(true);
+            await stepper.InvokeAsync(async () => await stepper.Instance.Steps[2].SetCompletedAsync(true));
             stepper.FindAll(".mud-stepper-nav-step-label-icon")[2].QuerySelectorAll("path").Last().GetAttribute("d").Should().Be("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z");
             stepper.FindAll(".mud-stepper-nav-step")[2].ClassList.Should().Contain("mud-stepper-nav-step-completed");
         }
