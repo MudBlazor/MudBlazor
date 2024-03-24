@@ -143,10 +143,10 @@ public partial class MudStepper : MudComponentBase
 
     public bool CanGoToNextStep =>
         _steps.Any() && ActiveStep is not null && (_steps.Count - 1 == _activeIndex ||
-                                                   !_steps[_activeIndex + 1].Disabled);
+                                                   !_steps[_activeIndex + 1].DisabledState.Value);
 
     public bool PreviousStepEnabled => _steps.Any() && _activeIndex > 0;
-    public bool IsCompleted => _steps.Any() && _steps.Where(x => !x.Skippable).All(x => x.Completed);
+    public bool IsCompleted => _steps.Any() && _steps.Where(x => !x.Skippable).All(x => x.CompletedState.Value);
 
     /// <summary>
     /// Space for all the MudSteps
@@ -215,7 +215,7 @@ public partial class MudStepper : MudComponentBase
 
     private async Task UpdateStepAsync(MudStep? step, MouseEventArgs ev, StepAction stepAction, bool ignoreDisabledState = false)
     {
-        if (step == null || step.Disabled && !ignoreDisabledState)
+        if (step == null || step.DisabledState.Value && !ignoreDisabledState)
             return;
 
         var index = _steps.IndexOf(step);

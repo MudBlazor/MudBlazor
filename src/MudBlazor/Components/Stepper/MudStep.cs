@@ -2,8 +2,10 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 using MudBlazor.Interfaces;
+using MudBlazor.State;
 
 namespace MudBlazor;
 
@@ -11,13 +13,15 @@ public class MudStep : MudComponentBase, IAsyncDisposable
 {
     public MudStep()
     {
-        
+        CompletedState = RegisterParameter(nameof(Completed), () => Completed, () => CompletedChanged, OnParameterChanged);
+        DisabledState = RegisterParameter(nameof(Disabled), () => Disabled, () => DisabledChanged, OnParameterChanged);
+        HasErrorState = RegisterParameter(nameof(HasError), () => HasError, () => HasErrorChanged, OnParameterChanged);
     }
-    
-    private bool _hasError;
-    private bool _completed;
-    private bool _disabled;
+
     private bool _disposed;
+    internal IParameterState<bool> CompletedState { get; private set; }
+    internal IParameterState<bool> DisabledState { get; private set; }
+    internal IParameterState<bool> HasErrorState { get; private set; }
 
     internal string Styles => new StyleBuilder()
         .AddStyle(Parent?.StepStyle)
@@ -26,14 +30,14 @@ public class MudStep : MudComponentBase, IAsyncDisposable
 
     internal string LabelIconClassname =>
         new CssBuilder("mud-stepper-nav-step-label-icon")
-            .AddClass($"mud-{(CompletedStepColor.HasValue ? CompletedStepColor.Value.ToDescriptionString() : Parent?.CompletedStepColor.ToDescriptionString())}", Completed && Parent?.CompletedStepColor != Color.Default && Parent?.ActiveStep != this)
-            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}", !Completed && HasError)
+            .AddClass($"mud-{(CompletedStepColor.HasValue ? CompletedStepColor.Value.ToDescriptionString() : Parent?.CompletedStepColor.ToDescriptionString())}", CompletedState.Value && Parent?.CompletedStepColor != Color.Default && Parent?.ActiveStep != this)
+            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}", !CompletedState.Value && HasErrorState.Value)
             .AddClass($"mud-{Parent?.CurrentStepColor.ToDescriptionString()}", Parent?.ActiveStep == this)
             .Build();
 
     internal string LabelContentClassname =>
         new CssBuilder("mud-stepper-nav-step-label-content")
-            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}-text", !Completed && HasError)
+            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}-text", !CompletedState.Value && HasErrorState.Value)
             .Build();
 
     internal string Classname => new CssBuilder(Parent?.StepClassname)
@@ -147,12 +151,9 @@ public class MudStep : MudComponentBase, IAsyncDisposable
             await p.AddStepAsync(this);
     }
 
-    protected async override Task OnParametersSetAsync()
+    private void OnParameterChanged()
     {
-        await base.OnParametersSetAsync();
-        await SetHasErrorAsync(HasError);
-        await SetCompletedAsync(Completed);
-        await SetDisabledAsync(Disabled);
+        (Parent as IMudStateHasChanged)?.StateHasChanged();
     }
 
     /// <summary>
@@ -160,12 +161,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// </summary>
     public async Task SetHasErrorAsync(bool value, bool refreshParent=true)
     {
-        if (_hasError == value)
-            return;
-
-        _hasError = value;
-        HasError = _hasError;
-        await HasErrorChanged.InvokeAsync(HasError);
+        await HasErrorState.SetValueAsync(value);
         if (refreshParent)
             RefreshParent();
     }
@@ -175,12 +171,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// </summary>
     public async Task SetCompletedAsync(bool value, bool refreshParent=true)
     {
-        if (_completed == value)
-            return;
-
-        _completed = value;
-        Completed = _completed;
-        await CompletedChanged.InvokeAsync(Completed);
+        await CompletedState.SetValueAsync(value);
         if (refreshParent)
             RefreshParent();
     }
@@ -190,12 +181,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// </summary>
     public async Task SetDisabledAsync(bool value, bool refreshParent=true)
     {
-        if (_disabled == value)
-            return;
-
-        _disabled = value;
-        Disabled = _disabled;
-        await DisabledChanged.InvokeAsync(Disabled);
+        await DisabledState.SetValueAsync(value);
         if (refreshParent)
             RefreshParent();
     }

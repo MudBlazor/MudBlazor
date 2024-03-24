@@ -12,10 +12,10 @@
             string stepClassname = new CssBuilder()
                 .AddClass("mud-stepper-nav-step")
                 .AddClass("active", isActive)
-                .AddClass("mud-ripple", NonLinear && !step.Disabled)
-                .AddClass("mud-stepper-nav-step-disabled", step.Disabled)
-                .AddClass("mud-stepper-nav-step-error", step.HasError)
-                .AddClass("mud-stepper-nav-step-completed", step.Completed)
+            .AddClass("mud-ripple", NonLinear && !step.DisabledState.Value)
+            .AddClass("mud-stepper-nav-step-disabled", step.DisabledState.Value)
+            .AddClass("mud-stepper-nav-step-error", step.HasErrorState.Value)
+            .AddClass("mud-stepper-nav-step-completed", step.CompletedState.Value)
                 .Build();
 
             <div class="@stepClassname" role="tab" aria-controls="@step.Title" aria-selected="@(isActive ? "true" : "false")"
@@ -77,10 +77,10 @@
             }
             else {
                 <div class="@step.LabelIconClassname">
-                    @if (step.Completed) {
+                    @if (step.CompletedState.Value) {
                         <MudIcon Size="Size.Small" Icon="@Icons.Material.Outlined.Done"/>
                     }
-                    else if (step.HasError) {
+                    else if (step.HasErrorState.Value) {
                         <MudIcon Size="Size.Small" Icon="@Icons.Material.Outlined.PriorityHigh"/>
                     }
                     else {

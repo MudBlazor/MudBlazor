@@ -332,9 +332,6 @@ namespace MudBlazor.UnitTests.Components
             var stepper = Context.RenderComponent<MudStepper>(self =>
             {
                 self.Bind(x => x.ActiveIndex, activeIndex, newValue => activeIndex = newValue);
-                // self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "A"));
-                // self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "B"));
-                // self.AddChildContent<MudStep>(step => step.Add(x => x.Title, "C"));
             });
             stepper.WaitForAssertion(() => stepper.RenderCount.Should().Be(1));
             activeIndex.Should().Be(-1);
