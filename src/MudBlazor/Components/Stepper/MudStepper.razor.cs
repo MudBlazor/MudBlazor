@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
@@ -17,11 +18,11 @@ public partial class MudStepper : MudComponentBase
 {
     public MudStepper()
     {
-        // TODO: RegisterParameters here
+        _activeIndex = RegisterParameter(nameof(ActiveIndex), () => ActiveIndex, () => ActiveIndexChanged, async args => await SetActiveIndexAsync(args.Value));
     }
 
     private List<MudStep> _steps = new();
-    private int _activeIndex = -1;
+    private IParameterState<int> _activeIndex;
     private HashSet<MudStep> _skippedSteps = new();
 
     /// <summary>
@@ -56,7 +57,7 @@ public partial class MudStepper : MudComponentBase
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Behavior)]
-    public int ActiveIndex { get; set; }
+    public int ActiveIndex { get; set; } = -1;
 
     [Parameter]
     [Category(CategoryTypes.List.Behavior)]
@@ -142,10 +143,10 @@ public partial class MudStepper : MudComponentBase
     public bool IsCurrentStepSkippable => _steps.Any() && ActiveStep is not null && ActiveStep.Skippable;
 
     public bool CanGoToNextStep =>
-        _steps.Any() && ActiveStep is not null && (_steps.Count - 1 == _activeIndex ||
-                                                   !_steps[_activeIndex + 1].DisabledState.Value);
+        _steps.Any() && ActiveStep is not null && (_steps.Count - 1 == _activeIndex.Value ||
+                                                   !_steps[_activeIndex.Value + 1].DisabledState.Value);
 
-    public bool PreviousStepEnabled => _steps.Any() && _activeIndex > 0;
+    public bool PreviousStepEnabled => _steps.Any() && _activeIndex.Value > 0;
     public bool IsCompleted => _steps.Any() && _steps.Where(x => !x.Skippable).All(x => x.CompletedState.Value);
 
     /// <summary>
@@ -193,8 +194,8 @@ public partial class MudStepper : MudComponentBase
     {
         if (ActiveStep is not null)
             return;
-        if (ActiveIndex >= 0 && ActiveIndex < _steps.Count)
-            ActiveStep = _steps[ActiveIndex];
+        if (_activeIndex.Value >= 0 && _activeIndex.Value < _steps.Count)
+            ActiveStep = _steps[_activeIndex.Value];
     }
 
     internal async Task RemoveStepAsync(MudStep step)
@@ -208,9 +209,7 @@ public partial class MudStepper : MudComponentBase
     /// </summary>
     private async Task ConsolidateActiveIndexAsync()
     {
-        var idx = _activeIndex;
-        _activeIndex = -1;
-        await SetActiveIndexAsync(idx);
+        await SetActiveIndexAsync(_activeIndex.Value);
     }
 
     private async Task UpdateStepAsync(MudStep? step, MouseEventArgs ev, StepAction stepAction, bool ignoreDisabledState = false)
@@ -254,13 +253,9 @@ public partial class MudStepper : MudComponentBase
         if (!_afterFirstRender)
             return;
         var validIndex = Math.Min(Math.Max(0, value), _steps.Count - 1);
-        if (_activeIndex < 0 || _activeIndex != value)
-        {
-            _activeIndex = validIndex;
-            ActiveStep = validIndex >= 0 ? _steps[validIndex] : null;
-            await ActiveIndexChanged.InvokeAsync(_activeIndex);
-            StateHasChanged(); // this is important !
-        }
+        ActiveStep = validIndex >= 0 ? _steps[validIndex] : null;
+        await _activeIndex.SetValueAsync(validIndex);
+        StateHasChanged(); // this is important !
     }
 
     // Keeps track of initialization
@@ -274,13 +269,7 @@ public partial class MudStepper : MudComponentBase
         base.OnAfterRender(firstRender);
         _afterFirstRender = true;
         if (firstRender)
-            await SetActiveIndexAsync(ActiveIndex);
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        base.OnParametersSet();
-        await SetActiveIndexAsync(ActiveIndex);
+            await SetActiveIndexAsync(_activeIndex.Value);
     }
 
     /// <summary>
@@ -289,7 +278,7 @@ public partial class MudStepper : MudComponentBase
     public async Task PreviousStepAsync()
     {
         if (PreviousStepEnabled)
-            await UpdateStepAsync(_steps[_activeIndex - 1], new MouseEventArgs(), StepAction.Activate);
+            await UpdateStepAsync(_steps[_activeIndex.Value - 1], new MouseEventArgs(), StepAction.Activate);
     }
 
     /// <summary>

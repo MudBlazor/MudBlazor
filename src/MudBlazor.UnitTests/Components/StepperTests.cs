@@ -10,6 +10,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Stepper;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -182,46 +183,31 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ActiveIndex_ShouldBeTwoWayBindable()
         {
-            int activeIndex = 0;
-            var stepper = Context.RenderComponent<MudStepper>(self =>
-            {
-                self.Bind(x => x.ActiveIndex, activeIndex, newValue => activeIndex = newValue);
-                self.AddChildContent<MudStep>(step =>
-                {
-                    step.Add(x => x.Title, "0");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "index 0"));
-                });
-                self.AddChildContent<MudStep>(step =>
-                {
-                    step.Add(x => x.Title, "1");
-                    step.AddChildContent(text => text.AddMarkupContent(0, "index 1"));
-                });
-            });
-            // check how the stepper reacts to activeIndex changes
-            activeIndex.Should().Be(0);
-            stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("index 0");
-            stepper.Instance.ActiveStep.Title.Should().Be("0");
-            // goto 1
-            stepper.SetParametersAndRender(Parameter(nameof(MudStepper.ActiveIndex), 1));
-            stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("index 1");
-            activeIndex.Should().Be(1);
-            stepper.Instance.ActiveStep.Title.Should().Be("1");
-            // goto 0
-            stepper.SetParametersAndRender(Parameter(nameof(MudStepper.ActiveIndex), 0));
-            stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("index 0");
-            activeIndex.Should().Be(0);
-            stepper.Instance.ActiveStep.Title.Should().Be("0");
-            // check out-of-range handling
-            // goto 5
-            stepper.SetParametersAndRender(Parameter(nameof(MudStepper.ActiveIndex), 5));
-            stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("index 1");
-            stepper.Instance.ActiveStep.Title.Should().Be("1");
-            activeIndex.Should().Be(1);
-            // goto -69
-            stepper.SetParametersAndRender(Parameter(nameof(MudStepper.ActiveIndex), -69));
-            stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("index 0");
-            stepper.Instance.ActiveStep.Title.Should().Be("0");
-            activeIndex.Should().Be(0);
+            var comp = Context.RenderComponent<StepperTwoWayBindingTestComponent>();
+            var stepper1 = comp.FindComponents<MudStepper>()[0];
+            var stepper2 = comp.FindComponents<MudStepper>()[1];
+            stepper1.Instance.ActiveStep.Title.Should().Be("A");
+            stepper2.Instance.ActiveStep.Title.Should().Be("X");
+            stepper1.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("Step A");
+            stepper2.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("Step X");
+            // next
+            stepper1.Find(".mud-stepper-button-next").Click();
+            stepper1.Instance.ActiveStep.Title.Should().Be("B");
+            stepper2.Instance.ActiveStep.Title.Should().Be("Y");
+            stepper1.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("Step B");
+            stepper2.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("Step Y");
+            // next
+            stepper1.Find(".mud-stepper-button-next").Click();
+            stepper1.Instance.ActiveStep.Title.Should().Be("C");
+            stepper2.Instance.ActiveStep.Title.Should().Be("Z");
+            stepper1.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("Step C");
+            stepper2.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("Step Z");
+            // prev
+            stepper1.Find(".mud-stepper-button-previous").Click();
+            stepper1.Instance.ActiveStep.Title.Should().Be("B");
+            stepper2.Instance.ActiveStep.Title.Should().Be("Y");
+            stepper1.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("Step B");
+            stepper2.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("Step Y");
         }
 
         [Test]
@@ -245,11 +231,11 @@ namespace MudBlazor.UnitTests.Components
                     step.AddChildContent(text => text.AddMarkupContent(0, "step 3"));
                 });
             });
-            
+
             // this doesn't work on CI?
             // check render count. first render is just setup, second render renders the active step 
             // stepper.WaitForAssertion(() => stepper.RenderCount.Should().Be(2));
-            
+
             // disable step 1
             stepper.FindAll(".mud-stepper-nav-step")[0].ClassList.Should().NotContain("mud-stepper-nav-step-disabled");
             await stepper.InvokeAsync(async () => await stepper.Instance.Steps[0].SetDisabledAsync(true));
@@ -398,8 +384,8 @@ namespace MudBlazor.UnitTests.Components
             stepper.FindAll(".mud-stepper-nav-step-label-icon")[0].QuerySelectorAll("path").Last().GetAttribute("d").Should().Be("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z");
             stepper.FindAll(".mud-stepper-nav-step-label-icon")[1].QuerySelectorAll("path").Last().GetAttribute("d").Should().Be("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z");
         }
-        
-         [Test]
+
+        [Test]
         public async Task CompletedContent_ShouldShowUpIfAllStepsAreComplete()
         {
             var stepper = Context.RenderComponent<MudStepper>(self =>
@@ -423,6 +409,75 @@ namespace MudBlazor.UnitTests.Components
             await stepper.InvokeAsync(async () => await stepper.Instance.NextStepAsync()); // next
             // completed content
             stepper.Find(".mud-stepper-content").TextContent.Trimmed().Should().Contain("voilà");
+        }
+
+        [Test]
+        public void UpdatingStepProperties_ShouldUpdateStepper()
+        {
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "A");
+                    step.AddChildContent(text => text.AddMarkupContent(0, "step 1"));
+                });
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "B");
+                    step.AddChildContent(text => text.AddMarkupContent(0, "step 2"));
+                });
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "C");
+                    step.AddChildContent(text => text.AddMarkupContent(0, "step 3"));
+                });
+            });
+
+            // disable step 1
+            stepper.FindAll(".mud-stepper-nav-step")[0].ClassList.Should().NotContain("mud-stepper-nav-step-disabled");
+            stepper.FindComponents<MudStep>()[0].SetParametersAndRender(Parameter(nameof(MudStep.Disabled), true));
+            stepper.FindAll(".mud-stepper-nav-step")[0].ClassList.Should().Contain("mud-stepper-nav-step-disabled");
+            // fail step 2
+            stepper.FindAll(".mud-stepper-nav-step")[1].ClassList.Should().NotContain("mud-stepper-nav-step-error");
+            stepper.FindAll(".mud-stepper-nav-step-label-icon")[1].ClassList.Should().NotContain("mud-error");
+            stepper.FindAll(".mud-stepper-nav-step-label-content")[1].ClassList.Should().NotContain("mud-error-text");
+            stepper.FindComponents<MudStep>()[1].SetParametersAndRender(Parameter(nameof(MudStep.HasError), true));
+            stepper.FindAll(".mud-stepper-nav-step")[1].ClassList.Should().Contain("mud-stepper-nav-step-error");
+            stepper.FindAll(".mud-stepper-nav-step-label-icon")[1].ClassList.Should().Contain("mud-error");
+            stepper.FindAll(".mud-stepper-nav-step-label-content")[1].ClassList.Should().Contain("mud-error-text");
+            // complete step 3
+            stepper.FindAll(".mud-stepper-nav-step")[2].ClassList.Should().NotContain("mud-stepper-nav-step-completed");
+            stepper.FindAll(".mud-stepper-nav-step-label-icon")[2].QuerySelectorAll("path").Should().BeEmpty(); // no svg icon if not completed
+            stepper.FindComponents<MudStep>()[2].SetParametersAndRender(Parameter(nameof(MudStep.Completed), true));
+            stepper.FindAll(".mud-stepper-nav-step-label-icon")[2].QuerySelectorAll("path").Last().GetAttribute("d").Should().Be("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z");
+            stepper.FindAll(".mud-stepper-nav-step")[2].ClassList.Should().Contain("mud-stepper-nav-step-completed");
+        }
+
+        [Test]
+        public void StepOnClick_ShouldFireForNonLinearStepper()
+        {
+            int aClick=0;
+            int bClick=0;
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.Add(x => x.NonLinear, true);
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "A");
+                    step.Add(x => x.OnClick, () => aClick++);
+                });
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "B");
+                    step.Add(x => x.OnClick, () => bClick++);
+                });
+            });
+            stepper.FindAll(".mud-stepper-nav-step")[0].Click();
+            aClick.Should().Be(1);
+            bClick.Should().Be(0);
+            stepper.FindAll(".mud-stepper-nav-step")[1].Click();
+            aClick.Should().Be(1);
+            bClick.Should().Be(1);
         }
     }
 }
