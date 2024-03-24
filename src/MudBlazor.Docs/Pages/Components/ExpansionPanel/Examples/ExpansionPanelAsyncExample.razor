@@ -1,16 +1,18 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudExpansionPanels>
-    <MudExpansionPanel Text="Panel with async loaded contents" MaxHeight="1000" IsExpandedChanged="ExpandedChanged">
+    <MudExpansionPanel Text="Panel with async loaded contents" MaxHeight="1000" IsExpanded="_isExpanded" IsExpandedChanged="ExpandedChanged">
         @_panelContent
     </MudExpansionPanel>
 </MudExpansionPanels>
 
 @code {
     private RenderFragment _panelContent;
+    private bool _isExpanded = false;
 
     private async Task ExpandedChanged(bool newVal)
     {
+        _isExpanded = newVal;
         if (newVal)
         {
             await Task.Delay(600);
