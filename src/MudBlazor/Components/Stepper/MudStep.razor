@@ -161,7 +161,7 @@
         HasError = _hasError;
         await HasErrorChanged.InvokeAsync(HasError);
         if (refreshParent)
-            await RefreshParentAsync();
+            RefreshParent();
     }
 
     /// <summary>
@@ -176,7 +176,7 @@
         Completed = _completed;
         await CompletedChanged.InvokeAsync(Completed);
         if (refreshParent)
-            await RefreshParentAsync();
+            RefreshParent();
     }
 
     /// <summary>
@@ -191,12 +191,12 @@
         Disabled = _disabled;
         await DisabledChanged.InvokeAsync(Disabled);
         if (refreshParent)
-            await RefreshParentAsync();
+            RefreshParent();
     }
 
-    private async Task RefreshParentAsync()
+    private void RefreshParent()
     {
-        await InvokeAsync(() => (Parent as IMudStateHasChanged)?.StateHasChanged());
+        (Parent as IMudStateHasChanged)?.StateHasChanged();
     }
 
     public async ValueTask DisposeAsync()
