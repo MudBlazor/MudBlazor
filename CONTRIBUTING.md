@@ -12,6 +12,7 @@
    * [Parameter Registration or Why we can't have Logic in Parameter Setters](#parameter-registration-or-why-we-cant-have-logic-in-parameter-setters)
       + [Example of a bad Parameter definition](#example-of-a-bad-parameter-definition)
       + [Example of a good Parameter definition](#example-of-a-good-parameter-definition)
+      + [Can I share change handlers between parameters?](#can-i-share-change-handlers-between-parameters)
       + [What about the bad parameters all over the MudBlazor code base?](#what-about-the-bad-parameters-all-over-the-mudblazor-code-base)
    * [Avoid overwriting parameters in Blazor Components](#avoid-overwriting-parameters-in-blazor-components)
       + [Example of a bad code](#example-of-a-bad-code)
@@ -149,7 +150,7 @@ public bool Expanded
 
 Note how the setter is invoking async functions which can not be awaited, because property setters can only have synchronous code. As a result, the async 
 functions are invoked and their return value `Task` is discarded. This not only creates hard to test multi-threaded behavior, it also prevents the user of this 
-component from being able to catch any errors in the asnc functions. Any exceptions that happen in these asynchronous functions may or may not bubble up
+component from being able to catch any errors in the async functions. Any exceptions that happen in these asynchronous functions may or may not bubble up
 to the user. In some cases Blazor just catches them and they are silently ignored, in other cases they may cause application crashes that can't be prevented with `try catch`. 
 
 The alternative would be to move the code from the setter into `SetParametersAsync` and depending on the component you would also need code in `OnInitializedAsync`. 
@@ -159,7 +160,7 @@ Using our new `ParameterState` pattern all this is not required.
 
 ### Example of a good Parameter definition
 ```c#
-private ParameterState<bool> _expandedState;
+private IParameterState<bool> _expandedState;
 
 [Parameter]
 public bool Expanded { get; set; }
@@ -201,12 +202,25 @@ private async Task ExpandedChangedHandlerAsync()
 There are a couple of overloads for the `RegisterParameter` method for different use-cases. For instance, you don't always need an `EventCallback` for every parameter. 
 Some parameters need async logic in their change handler other don't, etc.
 
+### Can I share change handlers between parameters?
+
+Yes, if you pass them as a method group like in the example below, shared parameter change handlers will be called only once, even if multiple parameters change at the same time.
+
+```c#
+    // Param1 and Param2 share the same change handler
+    _param1State = RegisterParameter(nameof(Param1), () => Param1, OnParametersChanged);
+    _param2State = RegisterParameter(nameof(Param2), () => Param2, OnParametersChanged);
+```
+
+**NB**: if you pass lambda functions as change handlers they will be called once each for every changed parameter even if they contain the same code!
+
 ### What about the bad parameters all over the MudBlazor code base?
 
 We are slowly but surely refactoring all of those, you can help if you like.
 
 ## Avoid overwriting parameters in Blazor Components
-This `ParameterState` framework offers a solution to prevent parameter overwriting issues.
+
+The `ParameterState` framework offers a solution to prevent parameter overwriting issues.
 For a detailed explanation of this problem, refer to the [article](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/overwriting-parameters?view=aspnetcore-8.0#overwritten-parameters).
 
 ### Example of a bad code
@@ -227,7 +241,7 @@ private Task ToggleAsync()
 
 ### Example of a good code
 ```c#
-private ParameterState<bool> _expandedState;
+private IParameterState<bool> _expandedState;
 
 [Parameter]
 public bool Expanded { get; set; }

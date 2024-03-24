@@ -1,12 +1,6 @@
 ﻿#pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
@@ -15,6 +9,11 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using NUnit.Framework;
+using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
 using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
@@ -1258,6 +1257,21 @@ namespace MudBlazor.UnitTests.Components
 
             picker.Date.Should().NotBeNull();
             picker.Date!.Value.Kind.Should().Be(oldDate.Kind);
+        }
+
+        [Test]
+        public void Display_SelectedDate_WhenWrapped()
+        {
+            var comp = Context.RenderComponent<WrappedDatePickerTest>();
+
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+            comp.Find(".mud-input-adornment button").Click();
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("15")).First().Click();
+
+            ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().Be(comp.Instance.Picker.Text);
         }
     }
 }

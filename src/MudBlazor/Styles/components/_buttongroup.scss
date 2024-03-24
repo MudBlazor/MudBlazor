@@ -18,7 +18,13 @@
       box-shadow: none;
       border: none;
 
-      &:hover, &:focus-visible {
+      @media(hover: hover) and (pointer: fine) {
+        &:hover {
+          background-color: var(--mud-palette-action-default-hover);
+        }
+      }
+
+      &:focus-visible, &:active {
         background-color: var(--mud-palette-action-default-hover);
       }
     }
@@ -103,7 +109,13 @@
         .mud-button-root {
           color: var(--mud-palette-#{$color});
 
-          &:hover, &:focus-visible {
+          @media(hover: hover) and (pointer: fine) {
+            &:hover {
+              background-color: var(--mud-palette-#{$color}-hover);
+            }
+          }
+
+          &:focus-visible, &:active {
             background-color: var(--mud-palette-#{$color}-hover);
           }
         }
@@ -144,7 +156,13 @@
         color: var(--mud-palette-#{$color});
         border: 1px solid var(--mud-palette-#{$color});
 
-        &:hover, &:focus-visible {
+        @media(hover: hover) and (pointer: fine) {
+          &:hover {
+            background-color: var(--mud-palette-#{$color}-hover);
+          }
+        }
+
+        &:focus-visible, &:active {
           background-color: var(--mud-palette-#{$color}-hover);
         }
       }
@@ -158,7 +176,13 @@
   .mud-button-root {
     box-shadow: none;
 
-    &:hover, &:focus-visible {
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        box-shadow: var(--mud-elevation-4);
+      }
+    }
+
+    &:focus-visible, &:active {
       box-shadow: var(--mud-elevation-4);
     }
   }
@@ -195,7 +219,13 @@
           background-color: var(--mud-palette-#{$color});
           color: var(--mud-palette-#{$color}-text);
 
-          &:hover, &:focus-visible {
+          @media(hover: hover) and (pointer: fine) {
+            &:hover {
+              background-color: var(--mud-palette-#{$color}-darken);
+            }
+          }
+
+          &:focus-visible, &:active {
             background-color: var(--mud-palette-#{$color}-darken);
           }
         }

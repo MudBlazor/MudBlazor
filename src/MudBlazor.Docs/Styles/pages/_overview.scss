@@ -6,7 +6,14 @@
 
 .explore-card {
   transition: all .2s ease-in;
-  &:hover{
+  @media(hover: hover) and (pointer: fine) {
+    &:hover{
+      background-color: var(--mud-palette-primary-hover);
+      cursor:pointer;
+    }
+  }
+
+  &:active{
     background-color: var(--mud-palette-primary-hover);
     cursor:pointer;
   }

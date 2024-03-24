@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-slider {
   color: var(--mud-palette-text-primary);
@@ -64,8 +64,10 @@
         box-shadow: 0 0 0 1px rgb( 255, 255, 255) !important;
         transform: scale(4, 4);
 
-        &:hover {
-          box-shadow: 0 0 0 1px rgb( 255, 255, 255) !important;
+        @media(hover: hover) and (pointer: fine) {
+          &:hover {
+            box-shadow: 0 0 0 1px rgb( 255, 255, 255) !important;
+          }
         }
       }
     }
@@ -98,13 +100,15 @@
         }
 
         @include slider-thumb {
-          &:hover {
-            box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3),0 0 0 1px rgba(var(--mud-palette-#{$color}-rgb), 0.24);
+          @media(hover: hover) and (pointer: fine) {
+            &:hover {
+              box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3),0 0 0 1px rgba(var(--mud-palette-#{$color}-rgb), 0.24);
+            }
           }
         }
 
 
-        &:active, &:focus-visible {
+        &:focus-visible, &:active {
           @include slider-thumb {
             box-shadow: 0px 1px 2px -1px rgba(var(--mud-palette-#{$color}-rgb),0.3),0 0 0 2px rgba(var(--mud-palette-#{$color}-rgb), 0.24);
           }
