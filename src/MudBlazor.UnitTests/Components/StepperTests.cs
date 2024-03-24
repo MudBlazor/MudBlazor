@@ -340,7 +340,9 @@ namespace MudBlazor.UnitTests.Components
             activeIndex.Should().Be(-1);
             // adding a step changes active index to 0
 #pragma warning disable BL0005
-            await stepper.InvokeAsync(async () => await stepper.Instance.AddStepAsync(new MudStep() { Title = "X" }));
+            var step = new MudStep() { Title = "X" };
+            step.IsActive.Should().Be(false); // <-- fight partial line coverage
+            await stepper.InvokeAsync(async () => await stepper.Instance.AddStepAsync(step));
 #pragma warning restore BL0005
             activeIndex.Should().Be(0);
             stepper.Instance.ActiveStep.Title.Should().Be("X");

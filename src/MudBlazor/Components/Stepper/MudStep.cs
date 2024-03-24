@@ -1,10 +1,22 @@
-@namespace MudBlazor
-@using MudBlazor.Utilities
-@using MudBlazor.Interfaces
-@inherits MudComponentBase
-@implements IAsyncDisposable
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
+using MudBlazor.Interfaces;
 
-@code {
+namespace MudBlazor;
+
+public class MudStep : MudComponentBase, IAsyncDisposable
+{
+    public MudStep()
+    {
+        
+    }
+    
+    private bool _hasError;
+    private bool _completed;
+    private bool _disabled;
     private bool _disposed;
 
     internal string Styles => new StyleBuilder()
@@ -84,8 +96,6 @@
     [Category(CategoryTypes.List.Behavior)]
     public bool Completed { get; set; }
 
-    private bool _completed;
-
     /// <summary>
     /// Raised when Completed changed.
     /// </summary>
@@ -99,8 +109,6 @@
     [Parameter]
     [Category(CategoryTypes.List.Behavior)]
     public bool Disabled { get; set; }
-
-    private bool _disabled;
 
     /// <summary>
     /// Raised when Disabled changed.
@@ -116,8 +124,6 @@
     [Parameter]
     [Category(CategoryTypes.List.Behavior)]
     public bool HasError { get; set; }
-
-    private bool _hasError;
 
     /// <summary>
     /// Raised when HasError changed.
@@ -209,5 +215,4 @@
         if (p is not null)
             await p.RemoveStepAsync(this); // this will probably be async later
     }
-
 }
