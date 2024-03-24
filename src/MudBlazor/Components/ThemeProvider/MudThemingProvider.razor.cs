@@ -222,7 +222,7 @@ partial class MudThemingProvider : ComponentBase, IDisposable
 
         theme.AppendLine($"--{Palette}-surface: {palette.Surface};");
         theme.AppendLine($"--{Palette}-background: {palette.Background};");
-        theme.AppendLine($"--{Palette}-background-grey: {palette.BackgroundGrey};");
+        theme.AppendLine($"--{Palette}-background-gray: {palette.BackgroundGray};");
         theme.AppendLine($"--{Palette}-drawer-background: {palette.DrawerBackground};");
         theme.AppendLine($"--{Palette}-drawer-text: {palette.DrawerText};");
         theme.AppendLine($"--{Palette}-drawer-icon: {palette.DrawerIcon};");
@@ -242,11 +242,11 @@ partial class MudThemingProvider : ComponentBase, IDisposable
         theme.AppendLine($"--{Palette}-chip-default: {palette.ChipDefault};");
         theme.AppendLine($"--{Palette}-chip-default-hover: {palette.ChipDefaultHover};");
 
-        theme.AppendLine($"--{Palette}-grey-default: {palette.GrayDefault};");
-        theme.AppendLine($"--{Palette}-grey-light: {palette.GrayLight};");
-        theme.AppendLine($"--{Palette}-grey-lighter: {palette.GrayLighter};");
-        theme.AppendLine($"--{Palette}-grey-dark: {palette.GrayDark};");
-        theme.AppendLine($"--{Palette}-grey-darker: {palette.GrayDarker};");
+        theme.AppendLine($"--{Palette}-gray-default: {palette.GrayDefault};");
+        theme.AppendLine($"--{Palette}-gray-light: {palette.GrayLight};");
+        theme.AppendLine($"--{Palette}-gray-lighter: {palette.GrayLighter};");
+        theme.AppendLine($"--{Palette}-gray-dark: {palette.GrayDark};");
+        theme.AppendLine($"--{Palette}-gray-darker: {palette.GrayDarker};");
 
         theme.AppendLine($"--{Palette}-overlay-dark: {palette.OverlayDark};");
         theme.AppendLine($"--{Palette}-overlay-light: {palette.OverlayLight};");

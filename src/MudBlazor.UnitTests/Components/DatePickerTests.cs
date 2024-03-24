@@ -839,7 +839,7 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        //mud-button-root added for greying out and making buttons not clickable if month is disabled
+        //mud-button-root added for graying out and making buttons not clickable if month is disabled
         public void MonthButtons_ButtonRootClassPresent()
         {
             var comp = OpenPicker(Parameter(nameof(MudDatePicker.FixDay), 1));
