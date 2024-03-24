@@ -120,7 +120,7 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            return ((IExpansionPanelManager)Parent).NotifyPanelsChanged(this);
+            return Parent.NotifyPanelsChanged(this);
         }
 
         public async Task ToggleExpansionAsync()
@@ -133,7 +133,7 @@ namespace MudBlazor
             await _isExpandedState.SetValueAsync(!_isExpandedState.Value);
             if (Parent is not null)
             {
-                await ((IExpansionPanelManager)Parent).NotifyPanelsChanged(this);
+                await Parent.NotifyPanelsChanged(this);
             }
         }
 
@@ -142,7 +142,7 @@ namespace MudBlazor
             await _isExpandedState.SetValueAsync(true);
             if (Parent is not null)
             {
-                await ((IExpansionPanelManager)Parent).NotifyPanelsChanged(this);
+                await Parent.NotifyPanelsChanged(this);
             }
         }
 
@@ -151,7 +151,7 @@ namespace MudBlazor
             await _isExpandedState.SetValueAsync(false);
             if (Parent is not null)
             {
-                await ((IExpansionPanelManager)Parent).NotifyPanelsChanged(this);
+                await Parent.NotifyPanelsChanged(this);
             }
         }
 
@@ -163,7 +163,7 @@ namespace MudBlazor
             await base.OnInitializedAsync();
             if (Parent is not null)
             {
-                await ((IExpansionPanelManager)Parent).AddPanelAsync(this);
+                await Parent.AddPanelAsync(this);
             }
         }
 
@@ -177,7 +177,7 @@ namespace MudBlazor
         {
             if (disposing)
             {
-                ((IExpansionPanelManager?)Parent)?.RemovePanel(this);
+                Parent?.RemovePanel(this);
             }
         }
     }

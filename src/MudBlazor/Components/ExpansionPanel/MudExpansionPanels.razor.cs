@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudExpansionPanels : MudComponentBase, IExpansionPanelManager
+    public partial class MudExpansionPanels : MudComponentBase
     {
         private List<MudExpansionPanel> _panels = new();
 
@@ -67,7 +67,7 @@ namespace MudBlazor
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
-        async Task IExpansionPanelManager.AddPanelAsync(MudExpansionPanel panel)
+        internal async Task AddPanelAsync(MudExpansionPanel panel)
         {
             if (!MultiExpansion && _panels.Any(p => p._isExpandedState.Value))
             {
@@ -77,7 +77,7 @@ namespace MudBlazor
             _panels.Add(panel);
         }
 
-        void IExpansionPanelManager.RemovePanel(MudExpansionPanel panel)
+        internal void RemovePanel(MudExpansionPanel panel)
         {
             _panels.Remove(panel);
             try
@@ -87,7 +87,7 @@ namespace MudBlazor
             catch (InvalidOperationException) { /* this happens on page reload, probably a Blazor bug */ }
         }
 
-        async Task IExpansionPanelManager.NotifyPanelsChanged(MudExpansionPanel panel)
+        internal async Task NotifyPanelsChanged(MudExpansionPanel panel)
         {
             if (!MultiExpansion && panel._isExpandedState.Value)
             {

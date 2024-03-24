@@ -172,9 +172,9 @@ namespace MudBlazor.UnitTests.Components
             var panel1 = new MudExpansionPanel();
             var panel2 = new MudExpansionPanel();
             var panel3 = new MudExpansionPanel();
-            await ((IExpansionPanelManager)panels.Instance).AddPanelAsync(panel1);
-            await ((IExpansionPanelManager)panels.Instance).AddPanelAsync(panel2);
-            await ((IExpansionPanelManager)panels.Instance).AddPanelAsync(panel3);
+            await panels.Instance.AddPanelAsync(panel1);
+            await panels.Instance.AddPanelAsync(panel2);
+            await panels.Instance.AddPanelAsync(panel3);
             // We check _isExpandedState because we do not modify IsExpanded directly, therefore the parameter doesn't change.
             // For parameter to change you need to bind panels IsExpansion it via razor syntax, so that parent would update it.
             panel1._isExpandedState.Value.Should().BeFalse();
@@ -196,9 +196,9 @@ namespace MudBlazor.UnitTests.Components
             var panel1 = new MudExpansionPanel();
             var panel2 = new MudExpansionPanel();
             var panel3 = new MudExpansionPanel();
-            await ((IExpansionPanelManager)panels.Instance).AddPanelAsync(panel1);
-            await ((IExpansionPanelManager)panels.Instance).AddPanelAsync(panel2);
-            await ((IExpansionPanelManager)panels.Instance).AddPanelAsync(panel3);
+            await panels.Instance.AddPanelAsync(panel1);
+            await panels.Instance.AddPanelAsync(panel2);
+            await panels.Instance.AddPanelAsync(panel3);
             await panel1.ExpandAsync();
             await panel2.ExpandAsync();
             await panel3.ExpandAsync();
@@ -223,9 +223,9 @@ namespace MudBlazor.UnitTests.Components
             var panel1 = new MudExpansionPanel();
             var panel2 = new MudExpansionPanel();
             var panel3 = new MudExpansionPanel();
-            await ((IExpansionPanelManager)panels.Instance).AddPanelAsync(panel1);
-            await ((IExpansionPanelManager)panels.Instance).AddPanelAsync(panel2);
-            await ((IExpansionPanelManager)panels.Instance).AddPanelAsync(panel3);
+            await panels.Instance.AddPanelAsync(panel1);
+            await panels.Instance.AddPanelAsync(panel2);
+            await panels.Instance.AddPanelAsync(panel3);
             await panel1.ExpandAsync();
             await panel2.ExpandAsync();
             await panel3.ExpandAsync();
