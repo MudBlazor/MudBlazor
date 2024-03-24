@@ -7,6 +7,7 @@ using MudBlazor.Utilities;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 
+#nullable enable
 namespace MudBlazor;
 
 public class MudStep : MudComponentBase, IAsyncDisposable
@@ -44,28 +45,28 @@ public class MudStep : MudComponentBase, IAsyncDisposable
         .AddClass(Class)
         .Build();
 
-    [CascadingParameter] internal MudStepper Parent { get; set; }
+    [CascadingParameter] internal MudStepper? Parent { get; set; }
 
     /// <summary>
     /// The content to be shown when the step is active
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     /// The title that summarizes the step, shown next to the icon
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
     /// <summary>
     /// An optional subtitle describing the step
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
-    public string SecondaryText { get; set; }
+    public string? SecondaryText { get; set; }
 
     /// <summary>
     /// Returns true if this step is the stepper's ActiveStep
@@ -137,7 +138,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     public EventCallback<bool> HasErrorChanged { get; set; }
 
     /// <summary>
-    /// Raised when tab is clicked TODO: Probably should be called OnActivated or OnCLicked
+    /// Raised when step is clicked
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Behavior)]
@@ -151,10 +152,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
             await p.AddStepAsync(this);
     }
 
-    private void OnParameterChanged()
-    {
-        (Parent as IMudStateHasChanged)?.StateHasChanged();
-    }
+    private void OnParameterChanged() => RefreshParent();
 
     /// <summary>
     /// Sets HasError
