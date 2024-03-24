@@ -4,9 +4,7 @@
 
 <div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
     @{
-#pragma warning disable CS0618
-        if (!OnClick.HasDelegate && Command == null)
-#pragma warning restore CS0618
+        if (!OnClick.HasDelegate)
         { 
             <NavLink @onclick="EventUtil.AsNonRenderingEventHandler(HandleNavigation)" 
                     class="@LinkClassname" 
