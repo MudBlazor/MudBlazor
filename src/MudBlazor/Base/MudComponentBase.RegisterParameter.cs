@@ -42,7 +42,7 @@ public abstract partial class MudComponentBase
             .WithParameterChangedHandler(parameterChangedHandler)
             .WithComparer(comparer)
             .Attach();
-        _parameters.Add(parameterState);
+        Parameters.Add(parameterState);
 
         return parameterState;
     }
@@ -75,7 +75,7 @@ public abstract partial class MudComponentBase
             .WithParameterChangedHandler(parameterChangedHandler)
             .WithComparer(comparer)
             .Attach();
-        _parameters.Add(parameterState);
+        Parameters.Add(parameterState);
 
         return parameterState;
     }
@@ -113,7 +113,7 @@ public abstract partial class MudComponentBase
             .WithParameterChangedHandler(parameterChangedHandler)
             .WithComparer(comparer)
             .Attach();
-        _parameters.Add(parameterState);
+        Parameters.Add(parameterState);
 
         return parameterState;
     }
@@ -147,7 +147,7 @@ public abstract partial class MudComponentBase
             .WithParameterChangedHandler(parameterChangedHandler)
             .WithComparer(comparer)
             .Attach();
-        _parameters.Add(parameterState);
+        Parameters.Add(parameterState);
 
         return parameterState;
     }
@@ -182,7 +182,7 @@ public abstract partial class MudComponentBase
             .WithEventCallbackFunc(eventCallbackFunc)
             .WithComparer(comparer)
             .Attach();
-        _parameters.Add(parameterState);
+        Parameters.Add(parameterState);
 
         return parameterState;
     }
@@ -218,7 +218,7 @@ public abstract partial class MudComponentBase
             .WithParameterChangedHandler(parameterChangedHandler)
             .WithComparer(comparer)
             .Attach();
-        _parameters.Add(parameterState);
+        Parameters.Add(parameterState);
 
         return parameterState;
     }
@@ -250,7 +250,7 @@ public abstract partial class MudComponentBase
             .WithParameterChangedHandler(parameterChangedHandler)
             .WithComparer(comparer)
             .Attach();
-        _parameters.Add(parameterState);
+        Parameters.Add(parameterState);
 
         return parameterState;
     }
@@ -286,7 +286,7 @@ public abstract partial class MudComponentBase
             .WithParameterChangedHandler(parameterChangedHandler)
             .WithComparer(comparer)
             .Attach();
-        _parameters.Add(parameterState);
+        Parameters.Add(parameterState);
 
         return parameterState;
     }
@@ -318,7 +318,7 @@ public abstract partial class MudComponentBase
             .WithParameterChangedHandler(parameterChangedHandler)
             .WithComparer(comparer)
             .Attach();
-        _parameters.Add(parameterState);
+        Parameters.Add(parameterState);
 
         return parameterState;
     }
