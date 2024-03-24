@@ -178,20 +178,39 @@ public partial class MudStepper : MudComponentBase
     {
         _steps.Add(step);
         if (ActiveStep is null)
-            await SetActiveIndexAsync(_steps.IndexOf(step));
-        StateHasChanged();
+        {
+            if (_afterFirstRender)
+                await ConsolidateActiveIndexAsync();
+            else
+                ConsolidateActiveStep();
+        }
+    }
+
+    /// <summary>
+    /// This is only called during step initialization 
+    /// </summary>
+    private void ConsolidateActiveStep()
+    {
+        if (ActiveStep is not null)
+            return;
+        if (ActiveIndex >= 0 && ActiveIndex < _steps.Count)
+            ActiveStep = _steps[ActiveIndex];
     }
 
     internal async Task RemoveStepAsync(MudStep step)
     {
         _steps.Remove(step);
-        if (step == ActiveStep)
-        {
-            var idx = _activeIndex;
-            _activeIndex = -1;
-            await SetActiveIndexAsync(idx);
-        }
-        StateHasChanged();
+        await ConsolidateActiveIndexAsync();
+    }
+
+    /// <summary>
+    /// This is only called after initialization (first render) 
+    /// </summary>
+    private async Task ConsolidateActiveIndexAsync()
+    {
+        var idx = _activeIndex;
+        _activeIndex = -1;
+        await SetActiveIndexAsync(idx);
     }
 
     private async Task UpdateStepAsync(MudStep? step, MouseEventArgs ev, StepAction stepAction, bool ignoreDisabledState = false)
@@ -232,33 +251,58 @@ public partial class MudStepper : MudComponentBase
 
     private async Task SetActiveIndexAsync(int value)
     {
+        if (!_afterFirstRender)
+            return;
         var validIndex = Math.Min(Math.Max(0, value), _steps.Count - 1);
-        if (_activeIndex != value)
+        if (_activeIndex < 0 || _activeIndex != value)
         {
             _activeIndex = validIndex;
             ActiveStep = validIndex >= 0 ? _steps[validIndex] : null;
             await ActiveIndexChanged.InvokeAsync(_activeIndex);
+            StateHasChanged(); // this is important !
         }
+    }
+
+    // Keeps track of initialization
+    // before the first render, inital params are set.
+    // during first render the steps are added from the child content
+    // after first render active step is activated resulting in a second render.
+    private bool _afterFirstRender;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        _afterFirstRender = true;
+        if (firstRender)
+            await SetActiveIndexAsync(ActiveIndex);
     }
 
     protected override async Task OnParametersSetAsync()
     {
         base.OnParametersSet();
-
         await SetActiveIndexAsync(ActiveIndex);
     }
 
+    /// <summary>
+    /// Goes to the previous step
+    /// </summary>
     public async Task PreviousStepAsync()
     {
         if (PreviousStepEnabled)
             await UpdateStepAsync(_steps[_activeIndex - 1], new MouseEventArgs(), StepAction.Activate);
     }
 
-    public async Task CompleteCurrentStepAsync()
+    /// <summary>
+    /// Completes the current step and goes to the next step
+    /// </summary>
+    public async Task NextStepAsync()
     {
         await UpdateStepAsync(ActiveStep, new MouseEventArgs(), StepAction.Complete);
     }
 
+    /// <summary>
+    /// Goes to the next step without completing the current one
+    /// </summary>
     public async Task SkipCurrentStepAsync()
     {
         await UpdateStepAsync(ActiveStep, new MouseEventArgs(), StepAction.Skip);
@@ -267,14 +311,16 @@ public partial class MudStepper : MudComponentBase
     /// <summary>
     /// Reset the completed status of all steps and set the first step as the active one.
     /// </summary>
-    public async Task ResetAsync()
+    public async Task ResetAsync(bool resetErrors = false)
     {
         if (!_steps.Any())
             return;
 
         foreach (var step in _steps)
         {
-            await step.SetCompletedAsync(false);
+            await step.SetCompletedAsync(false, refreshParent: false);
+            if (resetErrors)
+                await step.SetHasErrorAsync(false, refreshParent: false);
         }
 
         await UpdateStepAsync(_steps[0], new MouseEventArgs(), StepAction.Activate);

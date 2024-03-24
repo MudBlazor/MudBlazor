@@ -152,7 +152,7 @@
     /// <summary>
     /// Sets HasError
     /// </summary>
-    public async Task SetHasErrorAsync(bool value)
+    public async Task SetHasErrorAsync(bool value, bool refreshParent=true)
     {
         if (_hasError == value)
             return;
@@ -160,13 +160,14 @@
         _hasError = value;
         HasError = _hasError;
         await HasErrorChanged.InvokeAsync(HasError);
-        await RefreshParentAsync();
+        if (refreshParent)
+            await RefreshParentAsync();
     }
 
     /// <summary>
     /// Sets Completed
     /// </summary>
-    public async Task SetCompletedAsync(bool value)
+    public async Task SetCompletedAsync(bool value, bool refreshParent=true)
     {
         if (_completed == value)
             return;
@@ -174,13 +175,14 @@
         _completed = value;
         Completed = _completed;
         await CompletedChanged.InvokeAsync(Completed);
-        await RefreshParentAsync();
+        if (refreshParent)
+            await RefreshParentAsync();
     }
 
     /// <summary>
     /// Sets Disabled
     /// </summary>
-    public async Task SetDisabledAsync(bool value)
+    public async Task SetDisabledAsync(bool value, bool refreshParent=true)
     {
         if (_disabled == value)
             return;
@@ -188,7 +190,8 @@
         _disabled = value;
         Disabled = _disabled;
         await DisabledChanged.InvokeAsync(Disabled);
-        await RefreshParentAsync();
+        if (refreshParent)
+            await RefreshParentAsync();
     }
 
     private async Task RefreshParentAsync()
