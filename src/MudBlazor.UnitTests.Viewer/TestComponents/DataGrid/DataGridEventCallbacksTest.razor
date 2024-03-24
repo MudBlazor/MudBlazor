@@ -3,6 +3,8 @@
 <MudDataGrid T="Item" Items="@_items" EditMode="@DataGridEditMode.Cell"
     RowClick="@OnRowClick"
     RowContextMenuClick="@OnRowContextMenuClick"
+    RowMouseEnter="@OnRowMouseEnter"
+    RowMouseLeave="@OnRowMouseLeave"
     SelectedItemChanged="@OnSelectedItemChanged"
     CommittedItemChanges="@OnCommittedItemChanges" 
     StartedEditingItem="@OnStartedEditingItem" 
@@ -23,6 +25,8 @@
 
     public bool RowClicked { get; set; }
     public bool RowContextMenuClicked { get; set; }
+    public int? CurrentHoveredRowIndex { get; set; }
+    public int? LastHoveredRowIndex { get; set; }
     public bool SelectedItemChanged { get; set; }
     public bool CommittedItemChanges { get; set; }
     public bool StartedEditingItem { get; set; }
@@ -32,10 +36,21 @@
     {
         RowClicked = true;
     }
-    
+
     private void OnRowContextMenuClick(DataGridRowClickEventArgs<Item> args)
     {
         RowContextMenuClicked = true;
+    }
+
+    private void OnRowMouseEnter(DataGridRowHoverEventArgs<Item> args)
+    {
+        CurrentHoveredRowIndex = args.RowIndex;
+    }
+
+    private void OnRowMouseLeave(DataGridRowHoverEventArgs<Item> args)
+    {
+        LastHoveredRowIndex = args.RowIndex;
+        CurrentHoveredRowIndex = null;
     }
 
     private void OnSelectedItemChanged(Item item)
