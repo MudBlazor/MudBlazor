@@ -56,14 +56,14 @@
 
 
     <MudCardActions>
-        <MudButton OnClick="PreviousStepAsync" Disabled="!PreviousStepEnabled">@Localizer["MudStepper.Previous"]</MudButton>
+        <MudButton OnClick="PreviousStepAsync" Disabled="@(!PreviousStepEnabled)">@Localizer["MudStepper.Previous"]</MudButton>
         <MudSpacer/>
         @if (!IsCompleted) {
-            <MudButton OnClick="SkipCurrentStepAsync" Disabled="!IsCurrentStepSkippable">@Localizer["MudStepper.Skip"]</MudButton>
-            <MudButton OnClick="CompleteCurrentStepAsync" Color="Color.Primary" Disabled="!CanGoToNextStep">@Localizer["MudStepper.Next"]</MudButton>
+            <MudButton OnClick="SkipCurrentStepAsync" Disabled="@(!IsCurrentStepSkippable)">@Localizer["MudStepper.Skip"]</MudButton>
+            <MudButton OnClick="NextStepAsync" Color="Color.Primary" Disabled="@(!CanGoToNextStep)">@Localizer["MudStepper.Next"]</MudButton>
         }
         else {
-            <MudButton OnClick="ResetAsync">Reset</MudButton>
+            <MudButton OnClick="@(async () => await ResetAsync())">Reset</MudButton>
         }
     </MudCardActions>
 </div>
