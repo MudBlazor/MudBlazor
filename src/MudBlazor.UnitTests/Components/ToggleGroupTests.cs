@@ -293,5 +293,37 @@ namespace MudBlazor.UnitTests.Components
             });
             logger.GetEntries().Count.Should().Be(3);
         }
+
+        [Test]
+        public void ToggleGroup_Disabled_Test()
+        {
+            var comp = Context.RenderComponent<ToggleDisabledTest>();
+            var toggleGroups = comp.FindComponents<MudToggleGroup<string>>();
+            var disabledToggleGroup = toggleGroups[0];
+            var enabledToggleGroup = toggleGroups[1];
+
+            disabledToggleGroup.Instance.Disabled.Should().BeTrue();
+            disabledToggleGroup.Find("div.mud-toggle-group").ClassList.Should().Contain("mud-disabled");
+            foreach (var item in disabledToggleGroup.FindComponents<MudToggleItem<string>>())
+            {
+                // If the group is disabled, the group's disabled state overrules the item's disabled state
+                item.Find("div.mud-toggle-item").ClassList.Should().Contain("mud-disabled");
+            }
+
+            enabledToggleGroup.Instance.Disabled.Should().BeFalse();
+            enabledToggleGroup.Find("div.mud-toggle-group").ClassList.Should().NotContain("mud-disabled");
+            foreach (var item in enabledToggleGroup.FindComponents<MudToggleItem<string>>())
+            {
+                // If the group is enabled, the item's disabled state dominates
+                if (item.Instance.Disabled)
+                {
+                    item.Find("div.mud-toggle-item").ClassList.Should().Contain("mud-disabled");
+                }
+                else
+                {
+                    item.Find("div.mud-toggle-item").ClassList.Should().NotContain("mud-disabled");
+                }
+            }
+        }
     }
 }

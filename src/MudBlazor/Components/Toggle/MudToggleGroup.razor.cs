@@ -30,6 +30,7 @@ namespace MudBlazor
             _rounded = RegisterParameter(nameof(Rounded), () => Rounded, OnParameterChanged);
             _checkMark = RegisterParameter(nameof(CheckMark), () => CheckMark, OnParameterChanged);
             _fixedContent = RegisterParameter(nameof(FixedContent), () => FixedContent, OnParameterChanged);
+            _disabled = RegisterParameter(nameof(Disabled), () => Disabled, OnParameterChanged);
         }
 
         private IParameterState<T?> _value;
@@ -43,6 +44,7 @@ namespace MudBlazor
         private IParameterState<bool> _rounded;
         private IParameterState<bool> _checkMark;
         private IParameterState<bool> _fixedContent;
+        private IParameterState<bool> _disabled;
         private List<MudToggleItem<T>> _items = new();
 
         protected string Classes => new CssBuilder("mud-toggle-group")
@@ -52,6 +54,7 @@ namespace MudBlazor
             .AddClass("rounded-xl", Rounded)
             .AddClass("mud-toggle-group-rtl", RightToLeft)
             .AddClass($"border mud-border-{Color.ToDescriptionString()} border-solid", Outline)
+            .AddClass("mud-disabled", Disabled)
             .AddClass(Class)
             .Build();
 
@@ -60,6 +63,13 @@ namespace MudBlazor
             .AddStyle("grid-template-rows", $"repeat({_items.Count}, minmax(0, 1fr))", Vertical)
             .AddStyle(Style)
             .Build();
+
+        /// <summary>
+        /// If true, the group will be disabled.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// The selected value in single- and toggle-selection mode.

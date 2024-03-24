@@ -29,6 +29,7 @@ namespace MudBlazor
             .AddClass(ItemPadding)
             .AddClass("mud-toggle-item-vertical", Parent?.Vertical == true)
             .AddClass("mud-toggle-item-delimiter", Parent?.Delimiters == true)
+            .AddClass("mud-disabled", GetDisabledState())
             .AddClass(Class)
             .Build();
 
@@ -74,6 +75,13 @@ namespace MudBlazor
 
         [CascadingParameter]
         public MudToggleGroup<T>? Parent { get; set; }
+
+        /// <summary>
+        /// If true, the item will be disabled.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool Disabled { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
@@ -136,5 +144,7 @@ namespace MudBlazor
         }
 
         protected internal bool IsEmpty => string.IsNullOrEmpty(Text) && Value is null;
+
+        protected bool GetDisabledState() => Disabled || (Parent?.Disabled ?? false);
     }
 }
