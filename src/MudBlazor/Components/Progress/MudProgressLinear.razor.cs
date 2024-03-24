@@ -121,7 +121,7 @@ namespace MudBlazor
 
         public MudProgressLinear()
         {
-            _valueState = RegisterParameter(nameof(Value), () => Value, OnParameterChangedHandlerShared);
+            _valueState = RegisterParameter(nameof(Value), () => Value, OnParameterChangedHandlerShared, DoubleEpsilonEqualityComparer.Default);
             _minState = RegisterParameter(nameof(Min), () => Min, OnParameterChangedHandlerShared);
             _maxState = RegisterParameter(nameof(Max), () => Max, OnParameterChangedHandlerShared);
             _bufferValueState = RegisterParameter(nameof(BufferValue), () => BufferValue, OnParameterChangedHandlerShared);
