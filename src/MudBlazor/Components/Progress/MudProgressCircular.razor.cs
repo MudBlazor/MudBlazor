@@ -77,10 +77,10 @@ namespace MudBlazor
 
         public MudProgressCircular()
         {
-            _valueState = RegisterParameter(nameof(Value), () => Value, OnValueParameterChangedHandler, DoubleEpsilonEqualityComparer.Default);
+            _valueState = RegisterParameter(nameof(Value), () => Value, OnValueParameterChanged, DoubleEpsilonEqualityComparer.Default);
         }
 
-        private void OnValueParameterChangedHandler(ParameterChangedEventArgs<double> args)
+        private void OnValueParameterChanged(ParameterChangedEventArgs<double> args)
         {
             _svgValue = ToSvgValue(args.Value);
             StateHasChanged();

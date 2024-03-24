@@ -121,13 +121,13 @@ namespace MudBlazor
 
         public MudProgressLinear()
         {
-            _valueState = RegisterParameter(nameof(Value), () => Value, OnParameterChangedHandlerShared, DoubleEpsilonEqualityComparer.Default);
-            _minState = RegisterParameter(nameof(Min), () => Min, OnParameterChangedHandlerShared);
-            _maxState = RegisterParameter(nameof(Max), () => Max, OnParameterChangedHandlerShared);
-            _bufferValueState = RegisterParameter(nameof(BufferValue), () => BufferValue, OnParameterChangedHandlerShared);
+            _valueState = RegisterParameter(nameof(Value), () => Value, OnParameterChangedShared, DoubleEpsilonEqualityComparer.Default);
+            _minState = RegisterParameter(nameof(Min), () => Min, OnParameterChangedShared);
+            _maxState = RegisterParameter(nameof(Max), () => Max, OnParameterChangedShared);
+            _bufferValueState = RegisterParameter(nameof(BufferValue), () => BufferValue, OnParameterChangedShared);
         }
 
-        private void OnParameterChangedHandlerShared() => UpdatePercentages();
+        private void OnParameterChangedShared() => UpdatePercentages();
 
         protected double ValuePercent { get; set; }
 
