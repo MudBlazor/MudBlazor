@@ -43,7 +43,8 @@ internal static class MudComponentExtensions
     {
         if (component.Parameters.TryGetValue(propertyName, out var lifeCycle))
         {
-            var parameterState = Unsafe.As<IReadOnlyParameterState<T>>(lifeCycle);
+            //var parameterState = Unsafe.As<IReadOnlyParameterState<T>>(lifeCycle);
+            var parameterState = lifeCycle.GetState<T>();
 
             return parameterState;
         }

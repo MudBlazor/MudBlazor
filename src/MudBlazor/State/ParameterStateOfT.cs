@@ -100,6 +100,12 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
         }
     }
 
+    public IReadOnlyParameterState<TParameter> GetState<TParameter>()
+    {
+        return (IReadOnlyParameterState<TParameter>)this;
+        //return new ReadOnlyParameterState<TParameter>(Value);
+    }
+
     /// <inheritdoc />
     public Task ParameterChangeHandleAsync()
     {

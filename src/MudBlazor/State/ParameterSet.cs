@@ -130,5 +130,10 @@ internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
         public void OnParametersSet()
         {
         }
+
+        public IReadOnlyParameterState<T> GetState<T>()
+        {
+            return new ReadOnlyParameterState<T>(default!);
+        }
     }
 }
