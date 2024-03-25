@@ -18,14 +18,6 @@ namespace MudBlazor
         [Inject] public IJsApiService JsApiService { get; set; }
 
         /// <summary>
-        /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where (Obsolete replaced by Href)
-        /// </summary>
-        [Obsolete("Use Href Instead.", false)]
-        [Parameter]
-        [Category(CategoryTypes.Menu.ClickAction)]
-        public string Link { get => Href; set => Href = value; }
-
-        /// <summary>
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
         /// </summary>
         [Parameter]
