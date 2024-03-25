@@ -109,7 +109,7 @@
                                                             </MudStack>
                                                         }
 
-                                                        @if (context?.grouping ?? false)
+                                                        @if (context?.GroupingState.Value ?? false)
                                                         {
                                                             <MudIconButton DisableRipple="true" Icon="@Icons.Material.Filled.AccountTree" Size="@Size.Small" Title=@Localizer["MudDataGrid.Ungroup"] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.UngroupColumn())"></MudIconButton>
                                                         }
