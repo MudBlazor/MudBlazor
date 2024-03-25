@@ -338,7 +338,7 @@ resharper_csharp_place_attribute_on_same_line = false
 
 # Unit Test Overrides
 # Rules don't have to be as strict.
-[*UnitTests*/**/*.cs]
+[**UnitTests**/*.cs]
 
 # CA1041: Provide ObsoleteAttribute message
 dotnet_diagnostic.CA1041.severity = suggestion
