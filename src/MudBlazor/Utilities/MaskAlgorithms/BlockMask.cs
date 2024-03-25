@@ -128,7 +128,6 @@ public class BlockMask : RegexMask
             regexBuilder.Append(")?");
     }
 
-
     public override void UpdateFrom(IMask other)
     {
         base.UpdateFrom(other);

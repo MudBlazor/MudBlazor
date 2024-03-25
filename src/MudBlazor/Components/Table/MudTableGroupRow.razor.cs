@@ -141,6 +141,5 @@ namespace MudBlazor
         {
             get => (MudTable<T>)((TableContext<T>)Context)?.Table;
         }
-
     }
 }

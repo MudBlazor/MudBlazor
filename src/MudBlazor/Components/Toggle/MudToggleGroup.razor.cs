@@ -156,7 +156,7 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// The selection behavior of the group. SingleSelection (the default) is a radio-button like exclusive collection. 
+        /// The selection behavior of the group. SingleSelection (the default) is a radio-button like exclusive collection.
         /// MultiSelection behaves like a group of check boxes. ToggleSelection is an exclusive single selection where
         /// you can also select nothing by toggling off the current choice.
         /// </summary>
@@ -173,7 +173,7 @@ namespace MudBlazor
 
         /// <summary>
         /// If true, the items show a check mark next to the text or render fragment. Customize the check mark by setting
-        /// SelectedIcon and UnselectedIcon 
+        /// SelectedIcon and UnselectedIcon
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
@@ -181,7 +181,7 @@ namespace MudBlazor
 
         /// <summary>
         /// If true, the check mark is counter balanced with padding on the right side which makes the content stay always
-        /// centered no matter if the check mark is shown or not. 
+        /// centered no matter if the check mark is shown or not.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]

@@ -9,5 +9,4 @@ namespace MudBlazor.Utilities
         public static bool IsClientSide => RuntimeInformation.OSDescription == "Browser"; // WASM
         public static bool IsServerSide => RuntimeInformation.OSDescription != "Browser";
     }
-
 }

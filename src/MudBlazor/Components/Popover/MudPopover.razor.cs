@@ -87,7 +87,7 @@ namespace MudBlazor
         public double Duration { get; set; } = 251;
 
         /// <summary>
-        /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
+        /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
@@ -96,7 +96,7 @@ namespace MudBlazor
         /// <summary>
         /// Sets the direction the popover will start from relative to its parent.
         /// </summary>
-        /// 
+        ///
         [Obsolete("Use AnchorOrigin and TransformOrigin instead.", true)]
         [Parameter]
         public Direction Direction { get; set; } = Direction.Bottom;
@@ -110,7 +110,7 @@ namespace MudBlazor
         public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
-        /// Sets the intersection point if the anchor element. At this point the popover will lay above the popover. 
+        /// Sets the intersection point if the anchor element. At this point the popover will lay above the popover.
         /// This property in conjunction with AnchorPlacement determinate where the popover will be placed.
         /// </summary>
         [Parameter]

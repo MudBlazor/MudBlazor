@@ -35,7 +35,7 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Note: This is a last resort measure to wrap around the logic of flaky tests which fail often (and
         /// especially on the integration server).
-        /// 
+        ///
         /// It reduces the chance of a perfectly working test to fail due to a race condition in bUnit by running it
         /// multiple times. If it succeeds at least once, the test passes. In the best-case scenario the test will run
         /// only once and pass. If it is particularly flaky it might run a few times until it passes.

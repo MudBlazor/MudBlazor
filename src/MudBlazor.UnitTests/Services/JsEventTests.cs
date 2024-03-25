@@ -17,7 +17,6 @@ namespace MudBlazor.UnitTests.Services
     [TestFixture]
     public class JsEventTests
     {
-
         [Test]
         public async Task NoSubscriptionWithoutConnectTest()
         {

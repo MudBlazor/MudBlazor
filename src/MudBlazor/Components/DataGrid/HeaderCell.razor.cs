@@ -74,7 +74,6 @@ namespace MudBlazor
 
         private ElementReference _headerElement;
 
-
         public double? Width { get; internal set; }
 
         private double? _resizerHeight;
@@ -190,7 +189,6 @@ namespace MudBlazor
                 {
                     Column.FilterContext.HeaderCell = this;
                 }
-
             }
             await base.OnParametersSetAsync();
         }

@@ -53,7 +53,6 @@ namespace MudBlazor.UnitTests.Components
             slider.ClassList.Should().ContainInOrder(new[] { "mud-slider", $"mud-slider-{expectedSizeClass}" });
         }
 
-
         [Test]
         public void CheckVerticalClass()
         {
@@ -110,7 +109,6 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(p => p.Max, 200.0);
                 x.Add(p => p.Step, 10.0);
                 x.Add(p => p.Value, 120.0);
-
             });
 
             comp.Nodes.Should().ContainSingle();
@@ -406,6 +404,3 @@ namespace MudBlazor.UnitTests.Components
         }
     }
 }
-
-
-

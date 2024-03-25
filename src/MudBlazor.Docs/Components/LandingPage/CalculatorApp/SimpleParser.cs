@@ -25,7 +25,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-
 namespace PrimitiveCalculator
 {
     public class SimpleParser
@@ -186,6 +185,4 @@ namespace PrimitiveCalculator
             return false;
         }
     }
-
-
 }

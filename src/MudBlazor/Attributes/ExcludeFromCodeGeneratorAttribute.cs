@@ -12,5 +12,4 @@ namespace MudBlazor;
 [AttributeUsage(AttributeTargets.Enum)]
 internal sealed class ExcludeFromCodeGeneratorAttribute : Attribute
 {
-
 }

@@ -18,7 +18,6 @@ namespace MudBlazor.UnitTests.Mocks
 
         public MockKeyInterceptorServiceFactory()
         {
-
         }
 
         public IKeyInterceptor Create() => _interceptorService ?? new MockKeyInterceptorService();
@@ -28,7 +27,6 @@ namespace MudBlazor.UnitTests.Mocks
     {
         public void Dispose()
         {
-
         }
 
         public Task Connect(string element, KeyInterceptorOptions options)

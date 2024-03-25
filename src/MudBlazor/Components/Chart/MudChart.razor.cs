@@ -128,7 +128,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Indicates whether lines in a LineChart can be individually hidden by the user. 
+        /// Indicates whether lines in a LineChart can be individually hidden by the user.
         /// When set to true, the chart provides a checkboxes
         /// to toggle the visibility of each line.
         /// </summary>

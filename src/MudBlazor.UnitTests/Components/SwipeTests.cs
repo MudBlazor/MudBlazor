@@ -24,7 +24,6 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => swipe.Instance.OnTouchEnd(new TouchEventArgs()));
             comp.WaitForAssertion(() => swipe.Instance._xDown.Should().Be(null));
-
         }
 
         [Test]

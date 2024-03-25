@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace MudBlazor
 {
-
     /// <summary>
     /// Specifies the name of the category in which to group the property of a MudBlazor component when displayed in the API documentation.
     /// </summary>
@@ -113,7 +112,7 @@ namespace MudBlazor
     ///
     ///     <para>Note: If a property qualifies for both the "Appearance" or "Behavior" group, and for some special group, then this special group takes precedence.
     ///           For example, <see cref="MudTableBase.CommitEditIcon"/> could belong to the "Appearance" group, but belongs to the "Editing" group.</para>
-    /// 
+    ///
     ///     <b>Additional information</b>
     ///     <para>The list of categories is inspired by the categories displayed for Windows Forms and Web Forms components in the Visual Studio "Properties" window.</para>
     /// </remarks>

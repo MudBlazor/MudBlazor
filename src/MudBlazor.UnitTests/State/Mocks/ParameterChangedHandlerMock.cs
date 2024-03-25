@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MudBlazor.State;
 
-
 namespace MudBlazor.UnitTests.State.Mocks;
 
 #nullable enable

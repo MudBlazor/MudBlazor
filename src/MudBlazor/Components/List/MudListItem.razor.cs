@@ -318,6 +318,5 @@ namespace MudBlazor
             }
             catch (Exception) { /*ignore*/ }
         }
-
     }
 }

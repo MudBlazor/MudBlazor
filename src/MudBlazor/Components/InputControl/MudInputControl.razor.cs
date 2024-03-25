@@ -40,7 +40,7 @@ namespace MudBlazor
         public RenderFragment? InputContent { get; set; }
 
         /// <summary>
-        ///  Will adjust vertical spacing. 
+        ///  Will adjust vertical spacing.
         /// </summary>
         [Parameter]
         public Margin Margin { get; set; } = Margin.None;

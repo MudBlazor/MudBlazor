@@ -42,5 +42,4 @@ public partial class DocsLayout : LayoutComponentBase
         _drawerOpen = value;
         StateHasChanged();
     }
-
 }

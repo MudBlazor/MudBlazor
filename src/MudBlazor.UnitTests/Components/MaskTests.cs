@@ -335,7 +335,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Note: Keeping positions of input blocks works only with Placeholder, and only in certain scenarios. 
+        /// Note: Keeping positions of input blocks works only with Placeholder, and only in certain scenarios.
         /// </summary>
         /// <returns></returns>
         [Test]

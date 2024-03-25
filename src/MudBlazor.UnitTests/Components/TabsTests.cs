@@ -174,7 +174,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br>Panel 1<br></p>");
         }
 
-
         [Test]
         public void TabHeaderClassPropagated()
         {
@@ -573,7 +572,6 @@ namespace MudBlazor.UnitTests.Components
             scrollButtons[1].Instance.Disabled.Should().BeTrue();
         }
 
-
         [Test]
         public void BackButtonAfterResizing_Without_AlwaysShowScrollButtons()
         {
@@ -589,7 +587,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ScrollableTabsTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.AlwaysShowScrollButtons, false));
             comp.Instance.SetPanelActive(5);
-
 
             observer.UpdateTotalPanelSize(601.0);
 
@@ -623,7 +620,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ScrollableTabsTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.AlwaysShowScrollButtons, false));
             comp.Instance.SetPanelActive(5);
-
 
             observer.UpdateTotalPanelSize(601.0);
             comp.Instance.SetPanelActive(5);
@@ -975,7 +971,6 @@ namespace MudBlazor.UnitTests.Components
             activePanels = comp.FindAll(".mud-tab-active");
             activePanels.Should().HaveCount(1);
             panels[0].ClassList.Contains("mud-tab-active").Should().BeTrue();
-
         }
 
         [Test]
@@ -988,7 +983,6 @@ namespace MudBlazor.UnitTests.Components
 
             tabs.TabPanelHeaderPosition.Should().Be(TabHeaderPosition.After);
             tabs.TabPanelHeader.Should().BeNull();
-
         }
 
         /// <summary>
@@ -1137,7 +1131,6 @@ namespace MudBlazor.UnitTests.Components
             //Check if style respects minimum width from test
             comp.Find(".mud-tab").GetAttribute("style").Contains("min-width").Should().BeTrue();
             comp.Find(".mud-tab").GetAttribute("style").Contains("20px").Should().BeTrue();
-
         }
 
         /// <summary>
@@ -1213,7 +1206,6 @@ namespace MudBlazor.UnitTests.Components
 
         #endregion
 
-
         [Test]
         public async Task DynamicTabs_CollectionRenderSyncTest()
         {
@@ -1253,7 +1245,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.UserIndex.Should().Be(-1);
             mudTabs.ActivePanelIndex.Should().Be(-1);
         }
-
 
         [Test]
         public async Task TabPanel_ShowCloseIconTest()

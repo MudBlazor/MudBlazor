@@ -265,7 +265,7 @@ namespace MudBlazor
         [Parameter] public bool DragDropColumnReordering { get; set; } = false;
 
         /// <summary>
-        /// Custom drag indicator icon in the header which shows up on mouse over. 
+        /// Custom drag indicator icon in the header which shows up on mouse over.
         /// </summary>
         [Parameter] public string DragIndicatorIcon { get; set; } = Icons.Material.Filled.DragIndicator;
 
@@ -275,12 +275,12 @@ namespace MudBlazor
         [Parameter] public Size DragIndicatorSize { get; set; } = Size.Small;
 
         /// <summary>
-        /// Css class that is applied to column headers while dragging to indicate that the dragged column can be dropped on a column. 
+        /// Css class that is applied to column headers while dragging to indicate that the dragged column can be dropped on a column.
         /// </summary>
         [Parameter] public string DropAllowedClass { get; set; } = "drop-allowed";
 
         /// <summary>
-        /// Css class that is applied to column headers while dragging to indicate that the dragged column can not be dropped on a column. 
+        /// Css class that is applied to column headers while dragging to indicate that the dragged column can not be dropped on a column.
         /// </summary>
         [Parameter] public string DropNotAllowedClass { get; set; } = "drop-not-allowed";
 
@@ -289,8 +289,6 @@ namespace MudBlazor
         /// When true the drop classes are applied to all column headers and does not require dragging a column over another column.
         /// </summary>
         [Parameter] public bool ApplyDropClassesOnDragStarted { get; set; } = false;
-
-
 
         /// <summary>
         /// Controls whether data in the DataGrid can be sorted. This is overridable by each column.
@@ -1449,7 +1447,6 @@ namespace MudBlazor
             _dropContainer?.Refresh();
             _columnsPanelDropContainer?.Refresh();
         }
-
 
         public void GroupItems(bool noStateChange = false)
         {

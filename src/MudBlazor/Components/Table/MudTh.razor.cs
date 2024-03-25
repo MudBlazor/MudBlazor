@@ -1,5 +1,4 @@
 ﻿
-
 using Microsoft.AspNetCore.Components;
 
 using MudBlazor.Utilities;
@@ -14,4 +13,3 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
     }
 }
-

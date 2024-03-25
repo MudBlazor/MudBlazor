@@ -57,7 +57,6 @@ namespace MudBlazor
             set
             {
                 _value = value;
-
             }
         }
 

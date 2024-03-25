@@ -14,7 +14,7 @@ namespace MudBlazor
         public bool Toggled { get; set; }
 
         /// <summary>
-        /// Fires whenever toggled is changed. 
+        /// Fires whenever toggled is changed.
         /// </summary>
         [Parameter]
         public EventCallback<bool> ToggledChanged { get; set; }

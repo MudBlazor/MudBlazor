@@ -80,7 +80,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
                 p.Add(x => x.Tag, "my tag");
-
             });
 
             handler.SetComponentBaseParameters(comp.Instance, "my-extra-class", "my-extra-style:2px", true);
@@ -110,7 +109,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
                 p.Add(x => x.Tag, "my tag");
-
             });
 
             RenderFragment newRenderFragement = (tree) => { };
@@ -149,7 +147,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
                 p.Add(x => x.Tag, "my tag");
-
             });
 
             await handler.UpdateFragmentAsync(newRenderFragment, comp.Instance, "my-extra-class", "my-extra-style:2px", true);
@@ -186,7 +183,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
                 p.Add(x => x.Tag, "my tag");
-
             });
 
             await handler.Detach();
@@ -212,12 +208,10 @@ namespace MudBlazor.UnitTests.Components
                 .Returns(new ValueTask<IJSVoidResult>(connectTcs.Task))
                 .Verifiable();
 
-
             var comp = Context.RenderComponent<MudBadge>(p =>
             {
                 p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
                 p.Add(x => x.Tag, "my tag");
-
             });
 
             RenderFragment newRenderFragement = (tree) => { };
@@ -251,12 +245,10 @@ namespace MudBlazor.UnitTests.Components
                 .Returns(new ValueTask<IJSVoidResult>(connectTcs.Task))
                 .Verifiable();
 
-
             var comp = Context.RenderComponent<MudBadge>(p =>
             {
                 p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
                 p.Add(x => x.Tag, "my tag");
-
             });
 
             RenderFragment newRenderFragement = (tree) => { };
@@ -288,7 +280,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
                 p.Add(x => x.Tag, "my tag");
-
             });
 
             RenderFragment newRenderFragement = (tree) => { };
@@ -327,7 +318,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
                 p.Add(x => x.Tag, "my tag");
-
             });
 
             for (int i = 0; i < 4; i++)
@@ -720,7 +710,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
                 p.Add(x => x.Tag, "my tag");
-
             });
             handler.UpdateFragment(changedFragment, comp.Instance, "my-class", "my-style", true);
             // counter doesn't change because UpdateFragment now only re-renders the updated fragment, without raising the FragmentsChanged event
@@ -753,7 +742,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.UserAttributes, new Dictionary<string, object> { { "myprop1", "myValue1" } });
                 p.Add(x => x.Tag, "my tag");
-
             });
             await handler.UpdateFragmentAsync(changedFragment, comp.Instance, "my-class", "my-style", true);
             // counter doesn't change because UpdateFragment now only re-renders the updated fragment, without raising the FragmentsChanged event
@@ -817,7 +805,6 @@ namespace MudBlazor.UnitTests.Components
                         It.Is<object[]>(x => x.Length == 1 && (Guid)x[0] == handlerId)))
                 .ReturnsAsync(Mock.Of<IJSVoidResult>)
                 .Verifiable();
-
 
             var service = new MudPopoverService(mock.Object);
 
@@ -956,7 +943,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.Paper, true);
                 p.Add(x => x.Square, true);
-
             });
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;
@@ -971,7 +957,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.Paper, true);
                 p.Add(x => x.Elevation, 10);
-
             });
 
             var popoverElement = comp.Find(".test-popover-content").ParentElement;

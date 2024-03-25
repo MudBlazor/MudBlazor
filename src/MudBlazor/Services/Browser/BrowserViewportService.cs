@@ -59,7 +59,7 @@ internal class BrowserViewportService : IBrowserViewportService
     }
 
     /// <summary>
-    /// Notifies observers when the browser size has changed and fires this method. 
+    /// Notifies observers when the browser size has changed and fires this method.
     /// This method is invoked from the JavaScript code.
     /// </summary>
     /// <param name="browserWindowSize">The <see cref="BrowserWindowSize"/> representing the updated browser window size.</param>
@@ -291,7 +291,6 @@ internal class BrowserViewportService : IBrowserViewportService
         return ValueTask.CompletedTask;
     }
 
-
     // ReSharper disable once UnusedMember.Global used in tests
     internal BrowserViewportSubscription? GetInternalSubscription(IBrowserViewportObserver observer)
     {
@@ -338,7 +337,6 @@ internal class BrowserViewportService : IBrowserViewportService
 
         // Reuse existing JS listener
         return new BrowserViewportSubscription(javaScriptListenerId, observerId, clonedOptions);
-
     }
 
     private async Task<BrowserViewportSubscription?> RemoveJavaScriptListener(Guid observerId)

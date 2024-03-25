@@ -20,7 +20,7 @@ namespace MudBlazor
         private readonly IJSRuntime _jsRuntime;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="jsRuntime"></param>
         public BrowserWindowSizeProvider(IJSRuntime jsRuntime)

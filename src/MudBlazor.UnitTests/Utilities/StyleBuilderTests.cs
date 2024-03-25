@@ -32,7 +32,6 @@ namespace UtilityTests
         [Test]
         public void ShouldBuildConditionalInlineStylesFromAttributes()
         {
-
             //arrange
             var hasBorder = true;
             var isOnTop = false;
@@ -72,7 +71,6 @@ namespace UtilityTests
             // Trimming is possible, but is it worth the operations for a non-issue?
             styleToRender.Should().Be("background-color:DodgerBlue;;padding:35px;");
             styleToRenderFromDefaultConstructor.Should().Be("background-color:DodgerBlue;;padding:35px;;");
-
         }
 
         [Test]
@@ -81,14 +79,11 @@ namespace UtilityTests
             var styleToRender = StyleBuilder.Empty().AddStyle("");
 
             styleToRender.NullIfEmpty().Should().BeNull();
-
         }
 
         [Test]
         public void ShouldAddNestedStyles()
         {
-
-
             var child = StyleBuilder.Empty()
                 .AddStyle("background-color", "DodgerBlue")
                 .AddStyle("padding", "35px");
@@ -103,7 +98,6 @@ namespace UtilityTests
             // .foo { ;;;display:none;;;color:black;;; }
             // Trimming is possible, but is it worth the operations for a non-issue?
             styleToRender.Should().Be("background-color:DodgerBlue;padding:35px;z-index:-1;");
-
         }
 
         [Test]
@@ -132,7 +126,6 @@ namespace UtilityTests
             // .foo { ;;;display:none;;;color:black;;; }
             // Trimming is possible, but is it worth the operations for a non-issue?
             styleToRender.Should().Be("text-decoration:underline line-through;z-index:-1;");
-
         }
 
         [Test]

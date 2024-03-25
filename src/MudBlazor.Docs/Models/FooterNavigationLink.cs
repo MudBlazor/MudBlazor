@@ -14,6 +14,5 @@ namespace MudBlazor.Docs.Models
             Name = name;
             Link = link;
         }
-
     }
 }

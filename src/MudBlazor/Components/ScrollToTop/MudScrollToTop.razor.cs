@@ -59,7 +59,7 @@ namespace MudBlazor
         public string? HiddenCssClass { get; set; }
 
         /// <summary>
-        /// The distance in pixels scrolled from the top of the selected element from which 
+        /// The distance in pixels scrolled from the top of the selected element from which
         /// the component becomes visible
         /// </summary>
         [Parameter]
@@ -86,7 +86,6 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-
                 var selector = !string.IsNullOrWhiteSpace(Selector)
                     ? Selector
                     : null;// null is defaulted to document element in JS function

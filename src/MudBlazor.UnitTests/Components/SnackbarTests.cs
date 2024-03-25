@@ -140,7 +140,6 @@ namespace MudBlazor.UnitTests.Components
                 builder.OpenElement(0, "span");
                 builder.AddContent(1, "A renderfragment message");
                 builder.CloseElement();
-
             }), Severity.Normal, key: key);
             _service.Add<SnackbarCustomComponent>(null, key: key);
 

@@ -12,7 +12,6 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-
     [TestFixture]
     public class ThemeProviderTests : BunitTest
     {
@@ -308,7 +307,6 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine($@"expecting: {expectedColorHex}");
             myCustomTheme.PaletteDark.Primary.Should().Be(new MudColor(Colors.Green.Darken1));// Set by user
             myCustomTheme.PaletteDark.PrimaryDarken.Should().Be(expectedDarkerColor.ToString(MudColorOutputFormats.RGB));// Set by user
-
         }
 
         [Test]

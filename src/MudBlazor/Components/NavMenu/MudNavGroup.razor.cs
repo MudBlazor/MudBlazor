@@ -66,7 +66,7 @@ namespace MudBlazor
         public bool DisableRipple { get; set; }
 
         /// <summary>
-        /// If true, expands the nav group, otherwise collapse it. 
+        /// If true, expands the nav group, otherwise collapse it.
         /// Two-way bindable
         /// </summary>
         [Parameter]

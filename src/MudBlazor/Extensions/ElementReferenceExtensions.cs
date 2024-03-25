@@ -23,7 +23,6 @@ namespace MudBlazor
             }
 
             return null;
-
         }
 
         public static ValueTask MudFocusFirstAsync(this ElementReference elementReference, int skip = 0, int min = 0) =>

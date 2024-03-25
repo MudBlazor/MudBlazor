@@ -6,7 +6,6 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-
     public delegate void SizeChanged(IDictionary<ElementReference, BoundingClientRect> changes);
 
     public interface IResizeObserver : IAsyncDisposable, IDisposable

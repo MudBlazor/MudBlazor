@@ -59,7 +59,6 @@ namespace MudBlazor.Utilities
         public MudColor(double h, double s, double l, double a)
          : this(h, s, l, (int)((a * 255.0).EnsureRange(255)))
         {
-
         }
 
         public MudColor(double h, double s, double l, int a)
@@ -81,7 +80,6 @@ namespace MudBlazor.Utilities
             }
             else
             {
-
                 var q = l < .5D
                         ? l * (1D + s)
                         : (l + s) - (l * s);
@@ -148,13 +146,11 @@ namespace MudBlazor.Utilities
         public MudColor(int r, int g, int b, double alpha) :
          this(r, g, b, (byte)((alpha * 255.0).EnsureRange(255)))
         {
-
         }
 
         public MudColor(int r, int g, int b, int alpha) :
             this((byte)r.EnsureRange(255), (byte)g.EnsureRange(255), (byte)b.EnsureRange(255), (byte)alpha.EnsureRange(255))
         {
-
         }
 
         public MudColor(string value)
@@ -194,7 +190,6 @@ namespace MudBlazor.Utilities
             }
             else
             {
-
                 if (value.StartsWith("#"))
                 {
                     value = value.Substring(1);
@@ -227,8 +222,6 @@ namespace MudBlazor.Utilities
             }
             CalculateHSL();
         }
-
-
 
         #endregion
 
@@ -378,7 +371,6 @@ namespace MudBlazor.Utilities
         public static bool operator !=(MudColor lhs, MudColor rhs) => !(lhs == rhs);
 
         #endregion
-
 
     }
 }

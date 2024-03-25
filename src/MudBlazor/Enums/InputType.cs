@@ -32,7 +32,5 @@ namespace MudBlazor
         Time,
         [Description("week")]
         Week
-
-
     }
 }

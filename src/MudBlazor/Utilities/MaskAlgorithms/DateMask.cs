@@ -15,7 +15,6 @@ namespace MudBlazor;
 
 public class DateMask : PatternMask
 {
-
     public DateMask(string mask, char year = 'y', char month = 'M', char day = 'd') : base(mask)
     {
         _y = year;
@@ -229,4 +228,3 @@ public class DateMask : PatternMask
         _d = o._d;
     }
 }
-

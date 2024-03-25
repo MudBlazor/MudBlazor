@@ -20,7 +20,6 @@ namespace MudBlazor.UnitTests.Mocks
 
         public MockEventListenerFactory()
         {
-
         }
 
         public IEventListener Create() => _listener ?? new MockEventListener();

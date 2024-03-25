@@ -148,7 +148,7 @@ public class PatternMask : BaseMask
     }
 
     /// <summary>
-    /// Applies the mask to the given text starting at the given offset and returns the masked text. 
+    /// Applies the mask to the given text starting at the given offset and returns the masked text.
     /// </summary>
     /// <param name="text"></param>
     /// <param name="maskOffset"></param>
@@ -206,7 +206,7 @@ public class PatternMask : BaseMask
 
     /// <summary>
     /// If true, all characters which are not defined in the mask (delimiters) are stripped
-    /// from text. 
+    /// from text.
     /// </summary>
     public bool CleanDelimiters { get; set; }
 

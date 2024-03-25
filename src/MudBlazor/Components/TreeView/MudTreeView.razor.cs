@@ -286,7 +286,7 @@ namespace MudBlazor
 
         ///  <summary>
         ///  Sets the selected value of the tree view.
-        ///  If the value is found, the corresponding item is selected; 
+        ///  If the value is found, the corresponding item is selected;
         ///  otherwise, selected value is set null.
         ///  If the selected item is valid it sets the corresponding tree item to selected.
         ///  </summary>
@@ -331,7 +331,6 @@ namespace MudBlazor
 
                 _selectedValues = newSelected;
             }
-
 
             foreach (var unselectedItems in unselectedItem)
             {

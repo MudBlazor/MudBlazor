@@ -108,6 +108,5 @@ namespace MudBlazor.Services
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
     }
 }

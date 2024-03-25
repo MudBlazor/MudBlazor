@@ -53,6 +53,5 @@ namespace MudBlazor.Charts
                 counter += 1;
             }
         }
-
     }
 }

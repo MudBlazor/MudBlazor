@@ -5,7 +5,6 @@ namespace MudBlazor
 {
     public partial class MudTd : MudComponentBase
     {
-
         protected string Classname =>
         new CssBuilder("mud-table-cell")
             .AddClass("mud-table-cell-hide", HideSmall)

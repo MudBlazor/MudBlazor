@@ -48,6 +48,5 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => alert.Instance.OnCloseIconClickAsync());
             comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(1));
         }
-
     }
 }

@@ -38,5 +38,4 @@ public partial class AppbarButtons
 
         await base.OnAfterRenderAsync(firstRender);
     }
-
 }

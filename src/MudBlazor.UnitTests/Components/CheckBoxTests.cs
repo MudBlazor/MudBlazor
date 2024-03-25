@@ -87,7 +87,6 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Check the correct css classes are applied.
         /// </summary>
-
         [Test]
         public void CheckBoxTest4()
         {

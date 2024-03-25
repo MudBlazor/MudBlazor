@@ -122,7 +122,7 @@ namespace MudBlazor
         public bool DisablePreview { get; set; } = false;
 
         /// <summary>
-        /// The initial mode (RGB, HSL or HEX) the picker should open. Defaults to RGB 
+        /// The initial mode (RGB, HSL or HEX) the picker should open. Defaults to RGB
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -132,7 +132,7 @@ namespace MudBlazor
         private ColorPickerView _activeColorPickerView = ColorPickerView.Spectrum;
 
         /// <summary>
-        /// The initial view of the picker. Views can be changed if toolbar is enabled. 
+        /// The initial view of the picker. Views can be changed if toolbar is enabled.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -150,7 +150,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If true, binding changes occurred also when HSL values changed without a corresponding RGB change 
+        /// If true, binding changes occurred also when HSL values changed without a corresponding RGB change
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -199,8 +199,8 @@ namespace MudBlazor
         };
 
         /// <summary>
-        /// When set to true, no mouse move events in the spectrum mode will be captured, so the selector circle won't fellow the mouse. 
-        /// Under some conditions like long latency the visual representation might not reflect the user behaviour anymore. So, it can be disabled 
+        /// When set to true, no mouse move events in the spectrum mode will be captured, so the selector circle won't fellow the mouse.
+        /// Under some conditions like long latency the visual representation might not reflect the user behaviour anymore. So, it can be disabled
         /// Enabled by default
         /// </summary>
         [Parameter]
@@ -272,7 +272,6 @@ namespace MudBlazor
 
         public async Task ChangeView(ColorPickerView value)
         {
-
             var oldValue = _activeColorPickerView;
 
             _activeColorPickerView = value;

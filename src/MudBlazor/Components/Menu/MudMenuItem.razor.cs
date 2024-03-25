@@ -127,7 +127,6 @@ namespace MudBlazor
 
             if (needCall)
                 await OnAction.InvokeAsync(ev);
-
         }
     }
 }

@@ -77,6 +77,5 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudAppBar>();
             comp.FindComponent<MudToolBar>().Instance.WrapContent.Should().Be(false);
         }
-
     }
 }

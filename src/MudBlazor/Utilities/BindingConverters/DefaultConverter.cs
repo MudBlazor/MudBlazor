@@ -3,13 +3,11 @@ using System.Globalization;
 
 namespace MudBlazor
 {
-
     /// <summary>
     /// A universal T to string binding converter
     /// </summary>
     public class DefaultConverter<T> : Converter<T>
     {
-
         public DefaultConverter()
         {
             SetFunc = ConvertToString;

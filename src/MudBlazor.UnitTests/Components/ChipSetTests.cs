@@ -162,7 +162,6 @@ namespace MudBlazor.UnitTests.Components
             string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Corn flakes, Salad");
         }
 
-
         [Test]
         public async Task ChipSet_MultiSelection_LateDefaultChipsShouldBeInitiallySelected()
         {
@@ -272,7 +271,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => chipSet.Instance.SelectedChip = (MudChip)chip.Instance.Value);
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(1));
 
-
             await comp.InvokeAsync(() => chipSet.Instance.OnChipDeletedAsync((MudChip)chip.Instance.Value));
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
 
@@ -331,5 +329,4 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p")[0].TrimmedText().Should().Be("Milk");
         }
     }
-
 }

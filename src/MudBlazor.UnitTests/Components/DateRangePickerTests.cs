@@ -496,7 +496,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Change("");
             comp.Instance.DateRange.End.Should().BeNull();
             comp.Instance.DateRange.Start.Should().BeNull();
-
         }
 
         [Test]
@@ -508,9 +507,7 @@ namespace MudBlazor.UnitTests.Components
                     .Add(p => p.Culture, CultureInfo.CurrentCulture));
             comp.Find("input").Change(dateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern));
             comp.Instance.DateRange.Start.Should().Be(dateTime);
-
         }
-
 
         [Test]
         public void SetDateRange_NoChangedIfSameValues()
@@ -688,8 +685,6 @@ namespace MudBlazor.UnitTests.Components
 
             picker.DateRange.Should().Be(new DateRange(null, null));
         }
-
-
 
         [Test]
         public async Task OnMouseOver_ShouldCallJavaScriptFunction()

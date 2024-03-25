@@ -27,7 +27,6 @@ namespace MudBlazor.UnitTests.Charts
             "#264653", "#2a9d8f", "#e9c46a", "#f4a261", "#e76f51"
         };
 
-
         private readonly string[] _customPalette =
         {
             "#015482", "#CC1512", "#FFE135", "#087830", "#D70040", "#B20931", "#202E54", "#F535AA", "#017B92",
@@ -38,7 +37,6 @@ namespace MudBlazor.UnitTests.Charts
         [SetUp]
         public void Init()
         {
-
         }
 
         [Test]

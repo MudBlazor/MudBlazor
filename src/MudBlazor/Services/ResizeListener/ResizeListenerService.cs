@@ -22,7 +22,7 @@ namespace MudBlazor.Services
         private EventHandler<Breakpoint>? _onBreakpointChanged;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="jsRuntime"></param>
         /// <param name="browserWindowSizeProvider"></param>

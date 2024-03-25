@@ -429,7 +429,6 @@ namespace MudBlazor
             _initialMinute = _timeSet.Minute;
         }
 
-
         private void UpdateTimeSetFromTime()
         {
             if (TimeIntermediate == null)
@@ -728,7 +727,6 @@ namespace MudBlazor
             public int Hour { get; set; }
 
             public int Minute { get; set; }
-
         }
     }
 }

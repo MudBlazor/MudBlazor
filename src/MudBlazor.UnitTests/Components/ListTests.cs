@@ -16,7 +16,7 @@ namespace MudBlazor.UnitTests.Components
     {
         /// <summary>
         /// Clicking the drinks selects them. The child lists are updated accordingly, meaning, only ever 1 list item can have the active class.
-        /// 
+        ///
         /// In this test no item is selected to begin with
         /// </summary>
         [Test]
@@ -47,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// Clicking the drinks selects them. The child lists are updated accordingly, meaning, only ever 1 list item can have the active class.
-        /// 
+        ///
         /// This test starts with a pre-selected item (by value)
         /// </summary>
         [Test]

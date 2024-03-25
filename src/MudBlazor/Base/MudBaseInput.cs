@@ -322,7 +322,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool KeyDownPreventDefault { get; set; }
 
-
         /// <summary>
         /// Fired on the KeyPress event.
         /// </summary>

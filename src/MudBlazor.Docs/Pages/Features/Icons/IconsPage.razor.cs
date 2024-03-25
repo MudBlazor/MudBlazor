@@ -27,7 +27,6 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         private float _iconCardHeight = 144; // single icon card height including margins
         private int CardsPerRow = 0;
 
-
         private ElementReference killZone;
 
         private List<MudIcons> CustomAll { get; set; } = new List<MudIcons>();
@@ -85,7 +84,6 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         {
             if (firstRender)
             {
-
                 await ResizeObserver.Observe(killZone);
 
                 ResizeObserver.OnResized += OnResized;
@@ -164,7 +162,6 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             {
                 CustomUncategorized.Add(new MudIcons(prop.Name, prop.GetRawConstantValue().ToString(), IconType.Uncategorized));
             }
-
 
             CustomAll.AddRange(CustomUncategorized);
 

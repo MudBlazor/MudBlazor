@@ -684,7 +684,6 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Orange"));
             comp.Instance.ChangeCount.Should().Be(1);
-
         }
 
         #region DataAttribute validation

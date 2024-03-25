@@ -101,6 +101,5 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button").Should().BeEmpty();
             yesNoCancel.Result.Should().Be(null);
         }
-
     }
 }

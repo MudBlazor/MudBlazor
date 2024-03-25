@@ -20,7 +20,6 @@ namespace MudBlazor
         protected string ActionsStylename => new StyleBuilder()
             .AddStyle("padding-left", "34px", IsExpandable).Build();
 
-
         [CascadingParameter] public TableContext Context { get; set; }
 
         [Parameter] public RenderFragment ChildContent { get; set; }
@@ -36,7 +35,6 @@ namespace MudBlazor
         [Parameter] public bool IsEditSwitchBlocked { get; set; }
 
         [Parameter] public bool IsExpandable { get; set; }
-
 
         [Parameter]
         public EventCallback<bool> IsCheckedChanged { get; set; }

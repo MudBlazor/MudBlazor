@@ -359,7 +359,6 @@ namespace MudBlazor
             }
         }
 
-
         private Task WaitForRender()
         {
             Task t = null;
@@ -987,7 +986,6 @@ namespace MudBlazor
                     break;
             }
             OnKeyDown.InvokeAsync(obj).AndForget();
-
         }
 
         internal void HandleKeyUp(KeyboardEventArgs obj)
@@ -1126,6 +1124,5 @@ namespace MudBlazor
                 await SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues, _comparer));
             }
         }
-
     }
 }

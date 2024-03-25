@@ -15,7 +15,6 @@ namespace MudBlazor.UnitTests.Utilities
 {
     public class SortingAssistentTests
     {
-
         public class ItemsWithOrder
         {
             public string Name { get; }

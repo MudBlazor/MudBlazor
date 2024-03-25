@@ -71,6 +71,5 @@ namespace MudBlazor
                 return default;
             }
         }
-
     }
 }

@@ -60,7 +60,7 @@ public class MudDragAndDropItemTransaction<T>
     }
 
     /// <summary>
-    /// Cancel the transaction 
+    /// Cancel the transaction
     /// </summary>
     /// <returns></returns>
     public Task Cancel() => _cancelCallback.Invoke();

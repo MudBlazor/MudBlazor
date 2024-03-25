@@ -1,5 +1,4 @@
 ﻿
-
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -17,7 +16,6 @@ namespace MudBlazor.UnitTests.Components
         {
             base.Setup();
             Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), new MockScrollSpyFactory()));
-
         }
 
         [Test]

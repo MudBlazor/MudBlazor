@@ -64,7 +64,7 @@ namespace MudBlazor
 
         /// <summary>
         /// If set this will override the DragDropColumnReordering parameter of MudDataGrid which applies to all columns.
-        /// Set true to enable reordering for this column. Set false to disable it. 
+        /// Set true to enable reordering for this column. Set false to disable it.
         /// </summary>
         [Parameter] public bool? DragAndDropEnabled { get; set; }
         /// <summary>
@@ -130,7 +130,6 @@ namespace MudBlazor
         [Parameter] public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
 
         public string Identifier { get; set; }
-
 
         private CultureInfo _culture;
         /// <summary>
@@ -386,7 +385,6 @@ namespace MudBlazor
             if (DataGrid != null)
                 DataGrid.RemoveColumn(this);
         }
-
 
         #region Abstract Members
 

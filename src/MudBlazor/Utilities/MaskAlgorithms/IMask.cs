@@ -13,7 +13,7 @@ namespace MudBlazor
     public interface IMask
     {
         /// <summary>
-        /// The mask defining the structure of the accepted input. 
+        /// The mask defining the structure of the accepted input.
         /// Its format depends on the implementation.
         /// </summary>
         string Mask { get; }
@@ -25,7 +25,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Get the Text without delimiters or placeholders. Depends on the implementation entirely.
-        /// Clean text will usually be used for the Value property of a mask field. 
+        /// Clean text will usually be used for the Value property of a mask field.
         /// </summary>
         string GetCleanText() => Text;
 
@@ -71,6 +71,5 @@ namespace MudBlazor
         /// </summary>
         /// <param name="other"></param>
         void UpdateFrom(IMask other);
-
     }
 }

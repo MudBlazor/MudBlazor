@@ -229,7 +229,6 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be(null));
         }
 
-
         [Test]
         public async Task TreeViewItem_BodyContent()
         {
@@ -342,7 +341,7 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// This test checks that when multiple values are selected and the compare parameter is updated,
-        /// selected values are updated correctly. 
+        /// selected values are updated correctly.
         /// </summary>
         [Test]
         public async Task TreeView_SelectedValues_ShouldUseCompareParameter()

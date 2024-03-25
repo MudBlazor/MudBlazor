@@ -65,7 +65,6 @@ public class InMemoryNotificationService : INotificationService
         {
             await _localStorageService.SetItemAsync(LocalStorageKey, message.PublishDate);
         }
-
     }
 
     public Task<NotificationMessage> GetMessageById(string id) =>
@@ -83,7 +82,6 @@ public class InMemoryNotificationService : INotificationService
         _messages.Add(message);
         return Task.CompletedTask;
     }
-
 
     public void Preload()
     {

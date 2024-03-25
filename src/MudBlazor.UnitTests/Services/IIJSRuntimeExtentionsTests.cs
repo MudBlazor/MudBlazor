@@ -56,7 +56,6 @@ namespace MudBlazor.UnitTests.Services
             await runtime.InvokeVoidAsyncWithErrorHandling("myMethod", 42, "blub");
 
             runtimeMock.Verify();
-
         }
 
         [Test]
@@ -141,6 +140,5 @@ namespace MudBlazor.UnitTests.Services
             ex.Message.Should().Be("mhh that is odd");
             runtimeMock.Verify();
         }
-
     }
 }

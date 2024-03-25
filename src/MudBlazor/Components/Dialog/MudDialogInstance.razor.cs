@@ -68,7 +68,6 @@ namespace MudBlazor
         private bool FullScreen { get; set; }
         private bool FullWidth { get; set; }
 
-
         protected override void OnInitialized()
         {
             ConfigureInstance();
@@ -123,8 +122,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Close and return null. 
-        /// 
+        /// Close and return null.
+        ///
         /// This is a shorthand of Close(DialogResult.Ok((object)null));
         /// </summary>
         public void Close()
@@ -134,7 +133,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Close with dialog result.
-        /// 
+        ///
         /// Usage: Close(DialogResult.Ok(returnValue))
         /// </summary>
         public void Close(DialogResult dialogResult)
@@ -143,8 +142,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Close and directly pass a return value. 
-        /// 
+        /// Close and directly pass a return value.
+        ///
         /// This is a shorthand for Close(DialogResult.Ok(returnValue))
         /// </summary>
         /// <typeparam name="T"></typeparam>

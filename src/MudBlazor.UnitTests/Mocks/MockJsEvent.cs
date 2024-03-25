@@ -22,7 +22,6 @@ namespace MudBlazor.UnitTests.Mocks
 
         public MockJsEventFactory()
         {
-
         }
 
         public IJsEvent Create() => _jsEvent ?? new MockJsEvent();
@@ -32,7 +31,6 @@ namespace MudBlazor.UnitTests.Mocks
     {
         public void Dispose()
         {
-
         }
 
         public Task Connect(string element, JsEventOptions options)

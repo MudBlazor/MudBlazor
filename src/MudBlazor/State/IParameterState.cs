@@ -21,7 +21,7 @@ internal interface IParameterState<T>
     T? Value { get; }
 
     /// <summary>
-    /// Set the parameter's value. 
+    /// Set the parameter's value.
     /// </summary>
     /// <remarks>
     /// Note: you should never set the parameter's property directly from within the component.

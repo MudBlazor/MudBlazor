@@ -21,7 +21,6 @@ namespace MudBlazor.Services
         private readonly Dictionary<Guid, ElementReference> _cachedValueIds = new();
         private readonly Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();
 
-
         [DynamicDependency(nameof(OnSizeChanged))]
         [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(SizeChangeUpdateInfo))]
         [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(BoundingClientRect))]

@@ -190,7 +190,6 @@ internal class AsyncKeyedLocker<TKey> : IDisposable where TKey : notnull
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void ReleaseWithoutSemaphoreRelease(AsyncKeyedLockReleaser<TKey> releaser) => Dictionary.ReleaseWithoutSemaphoreRelease(releaser);
 
-
     #region Synchronous
     /// <summary>
     /// Synchronously lock based on a key.
@@ -1260,7 +1259,6 @@ internal class AsyncKeyedLocker<TKey> : IDisposable where TKey : notnull
         Monitor.Exit(result);
         return true;
     }
-
 
     /// <summary>
     /// Get the number of requests concurrently locked for a given key.

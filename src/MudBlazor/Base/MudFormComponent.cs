@@ -579,7 +579,6 @@ namespace MudBlazor
 
         #endregion
 
-
         #region --> Blazor EditForm validation support
 
         /// <summary>
@@ -679,7 +678,6 @@ namespace MudBlazor
         }
 
         #endregion
-
 
         protected override Task OnInitializedAsync()
         {

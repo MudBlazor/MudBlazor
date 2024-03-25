@@ -76,7 +76,7 @@ public interface IBrowserViewportService : IAsyncDisposable
     Task UnsubscribeAsync(Guid observerId);
 
     /// <summary>
-    /// Matches if the document currently matches the media query, or false if not. 
+    /// Matches if the document currently matches the media query, or false if not.
     /// </summary>
     /// <param name="mediaQuery">A string specifying the media query.</param>
     /// <returns>A task representing a boolean value that is <c>true</c> if the document currently matches the media query; otherwise, it's <c>false</c>.</returns>

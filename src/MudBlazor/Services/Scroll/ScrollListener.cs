@@ -6,8 +6,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-
-
     public interface IScrollListener : IDisposable
     {
         /// <summary>
@@ -51,7 +49,6 @@ namespace MudBlazor
             remove => Unsubscribe(value);
         }
 
-
         private async void Subscribe(EventHandler<ScrollEventArgs> value)
         {
             if (_onScroll == null)
@@ -82,7 +79,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Subscribe to scroll event in JS
-        /// </summary>        
+        /// </summary>
         private ValueTask<bool> Start()
         {
             _dotNetRef = DotNetObjectReference.Create(this);
@@ -93,7 +90,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Unsubscribe to scroll event in 
+        /// Unsubscribe to scroll event in
         /// </summary>
         private async ValueTask Cancel()
         {

@@ -86,7 +86,6 @@ namespace MudBlazor.UnitTests.Components
                 var expected = XElement.Parse($"<test>{Icons.Material.Filled.AddAlarm}</test>");
 
                 actual.Should().BeEquivalentTo(expected);
-
             }
         }
 
@@ -121,7 +120,6 @@ namespace MudBlazor.UnitTests.Components
                 toolTip.TextContent.Should().Be("close here");
 
                 await item.ParentElement.TriggerEventAsync("onmouseleave", new MouseEventArgs());
-
             }
 
             var addButtons = comp.FindAll(".my-add-icon-class");
@@ -178,7 +176,6 @@ namespace MudBlazor.UnitTests.Components
 
                 comp.Instance.CloseClicked.Should().HaveCount(i + 1);
             }
-
         }
     }
 }

@@ -15,7 +15,6 @@ namespace MudBlazor.Docs.Models
 {
     public static class XmlDocumentation
     {
-
         #region System.Reflection.Assembly
 
         /// <summary>Enumerates through all the events with a custom attribute.</summary>

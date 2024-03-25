@@ -12,7 +12,5 @@ namespace MudBlazor
 #endif
     public static class EventHandlers
     {
-
     }
-
 }

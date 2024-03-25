@@ -90,7 +90,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Defines on which day the week starts. Depends on the value of Culture. 
+        /// Defines on which day the week starts. Depends on the value of Culture.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -144,7 +144,7 @@ namespace MudBlazor
         public int? MaxMonthColumns { get; set; }
 
         /// <summary>
-        /// Start month when opening the picker. 
+        /// Start month when opening the picker.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -158,8 +158,8 @@ namespace MudBlazor
         public bool ShowWeekNumbers { get; set; }
 
         /// <summary>
-        /// Format of the selected date in the title. By default, this is "ddd, dd MMM" which abbreviates day and month names. 
-        /// For instance, display the long names like this "dddd, dd. MMMM". 
+        /// Format of the selected date in the title. By default, this is "ddd, dd MMM" which abbreviates day and month names.
+        /// For instance, display the long names like this "dddd, dd. MMMM".
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -289,7 +289,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets the n-th week of the currently displayed month. 
+        /// Gets the n-th week of the currently displayed month.
         /// </summary>
         /// <param name="month">offset from _picker_month</param>
         /// <param name="index">between 0 and 4</param>
@@ -545,7 +545,6 @@ namespace MudBlazor
         {
             // todo: raise an event the user can handle
         }
-
 
         private IEnumerable<DateTime> GetAllMonths()
         {

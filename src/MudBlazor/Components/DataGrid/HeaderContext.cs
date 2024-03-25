@@ -28,7 +28,6 @@ namespace MudBlazor
         {
             get
             {
-
                 if (_dataGrid.Selection != null && (Items?.Any() ?? false))
                 {
                     return _dataGrid.Selection.Count == Items.Count();
@@ -45,7 +44,6 @@ namespace MudBlazor
             {
                 SetSelectAllAsync = x => _dataGrid.SetSelectAllAsync(x),
             };
-
         }
 
         public class HeaderActions

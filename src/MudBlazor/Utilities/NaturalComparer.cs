@@ -39,7 +39,6 @@ namespace MudBlazor.Utilities
             {
                 return x.ToString().CompareTo(y.ToString());
             }
-
         }
 
         /// <summary>
@@ -162,8 +161,5 @@ namespace MudBlazor.Utilities
             }
             return 0;
         }
-
     }
-
-
 }

@@ -11,7 +11,6 @@ namespace MudBlazor.UnitTests.Utilities.Mask;
 [TestFixture]
 public class BlockMaskTests
 {
-
     [Test]
     public void BlockMask_Insert()
     {

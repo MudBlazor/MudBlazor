@@ -5,7 +5,6 @@ namespace MudBlazor.UnitTests.Mocks
 {
     public class MockScrollListenerFactory : IScrollListenerFactory
     {
-
         public IScrollListener Create(string selector) =>
             new MockScrollListener()
             {
@@ -29,10 +28,8 @@ namespace MudBlazor.UnitTests.Mocks
 
         public void Dispose()
         {
-
         }
     }
-
 
     /// <summary>
     /// Mock for scroll manager

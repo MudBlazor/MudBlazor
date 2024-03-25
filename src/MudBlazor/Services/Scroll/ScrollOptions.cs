@@ -6,12 +6,12 @@ namespace MudBlazor.Services.Scroll
     {
         /// <summary>
         ///the element to be tracked;
-        /// </summary>        
+        /// </summary>
         public ElementReference Element { get; set; }
 
         /// <summary>
-        ///the amount of milliseconds that the event is throttled 
-        /// </summary>        
+        ///the amount of milliseconds that the event is throttled
+        /// </summary>
         public int ReportRate { get; set; } = 300;
 
         /// <summary>

@@ -8,7 +8,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-
 #nullable enable
     public partial class MudToggleItem<T> : MudComponentBase
     {
@@ -107,7 +106,7 @@ namespace MudBlazor
         public string? Text { get; set; }
 
         /// <summary>
-        /// Custom child content which overrides the text. The boolean parameter conveys whether or not the item is selected. 
+        /// Custom child content which overrides the text. The boolean parameter conveys whether or not the item is selected.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]

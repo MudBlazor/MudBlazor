@@ -31,7 +31,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Image_GeneralStructure()
         {
-
             var comp = Context.RenderComponent<MudImage>(p =>
             {
                 p.Add(x => x.Fluid, true);
@@ -64,7 +63,6 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(ObjectFit.ScaleDown, "scale-down")]
         public void Image_ObjectFitToClassMapping(ObjectFit fit, string expectedClass)
         {
-
             var comp = Context.RenderComponent<MudImage>(p =>
             {
                 p.Add(x => x.ObjectFit, fit);
@@ -86,7 +84,6 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(ObjectPosition.Top, "top")]
         public void Image_ObjectPositionToClassMapping(ObjectPosition position, string expectedClass)
         {
-
             var comp = Context.RenderComponent<MudImage>(p =>
             {
                 p.Add(x => x.ObjectPosition, position);
@@ -97,4 +94,3 @@ namespace MudBlazor.UnitTests.Components
         }
     }
 }
-

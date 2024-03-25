@@ -95,13 +95,11 @@ private enum Priority
 
         // Assert
         result.GeneratedTrees.Length.Should().Be(0);
-
     }
 
     [Test]
     public void Initialize_ShouldUseContainingAccessModifier_WhenNestedEnumIsUsed()
     {
-
         // Arrange
         const string SourceCodeToTest = """
 namespace MudBlazor;
