@@ -27,6 +27,7 @@ namespace MudBlazor
         [Parameter][Category(CategoryTypes.Dialog.Appearance)] public bool? FullWidth { get; set; }
         [Parameter][Category(CategoryTypes.Dialog.Appearance)] public DialogPosition? Position { get; set; }
         [Parameter][Category(CategoryTypes.Dialog.Appearance)] public MaxWidth? MaxWidth { get; set; }
+        [Parameter][Category(CategoryTypes.Dialog.Appearance)] public string? ClassBackground { get; set; }
 
         private readonly Collection<IDialogReference> _dialogs = new();
         private readonly DialogOptions _globalDialogOptions = new();
@@ -44,6 +45,7 @@ namespace MudBlazor
             _globalDialogOptions.Position = Position;
             _globalDialogOptions.FullWidth = FullWidth;
             _globalDialogOptions.MaxWidth = MaxWidth;
+            _globalDialogOptions.ClassBackground = ClassBackground;
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
