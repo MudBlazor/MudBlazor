@@ -173,7 +173,7 @@ namespace MudBlazor
             DisableBackdropClick = SetDisableBackdropClick();
             CloseOnEscapeKey = SetCloseOnEscapeKey();
             Class = Classname;
-            BackgroundClassname = new CssBuilder("mud-overlay-dialog").AddClass(Options.ClassBackground).Build();
+            BackgroundClassname = new CssBuilder("mud-overlay-dialog").AddClass(Options.BackgroundClass).Build();
         }
 
         private string SetPosition()

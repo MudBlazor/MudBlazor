@@ -10,6 +10,7 @@ using System.ComponentModel;
 
 namespace MudBlazor
 {
+#nullable enable
     public class DialogOptions
     {
         public DialogPosition? Position { get; set; }
@@ -22,7 +23,7 @@ namespace MudBlazor
         public bool? CloseButton { get; set; }
         public bool? FullScreen { get; set; }
         public bool? FullWidth { get; set; }
-        public string ClassBackground { get; set; }
+        public string? BackgroundClass { get; set; }
     }
 
     public enum DialogPosition

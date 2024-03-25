@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -12,7 +12,7 @@
     <Copyright>Copyright 2024 MudBlazor</Copyright>
     <PackageTags>Blazor, MudBlazor, Material, Material Design, Components, Blazor Components, Blazor Library</PackageTags>
     <Description>MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure. It is perfect for .NET developers who want to rapidly build web applications without having to struggle with CSS and Javascript. MudBlazor, being written entirely in C#, empowers them to adapt, fix or extend the framework and the multitude of examples in the documentation makes learning MudBlazor very easy.</Description>
-    <PackageProjectUrl>http://mudblazor.com/</PackageProjectUrl>
+    <PackageProjectUrl>https://mudblazor.com/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MudBlazor/MudBlazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
@@ -60,13 +60,7 @@
     </ItemGroup>
     <Delete Files="@(FilesToClean)" />
   </Target>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.28" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.28" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.28" />
-  </ItemGroup>
-
+  
   <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.17" />
