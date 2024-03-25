@@ -3408,5 +3408,67 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.GridRenderedColumnsCount.Should().Be(0);
         }
+
+        [Test]
+        public async Task DataGridGroupingTestBoundAndUnboundScenarios()
+        {
+            var comp = Context.RenderComponent<DataGridColumnGroupingTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnGroupingTest.Model>>();
+            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
+
+            // Assert that initially, before any user interaction, IsGenderGrouped and IsAgeGrouped should be false
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+            comp.Instance.IsAgeGrouped.Should().Be(false);
+
+            var ageGrouping = comp.Find(".GroupByAge");
+            ageGrouping.Click();
+            comp.Instance.IsAgeGrouped.Should().Be(true);
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+            var rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
+
+            var genderGrouping = comp.Find(".GroupByGender");
+            genderGrouping.Click();
+            comp.Instance.IsGenderGrouped.Should().Be(true);
+            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
+            rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
+
+            //click age grouping in grid
+            var headerOption = comp.Find("th.age .mud-menu button");
+            headerOption.Click();
+            var listItems = popoverProvider.FindComponents<MudListItem>();
+            listItems.Count.Should().Be(2);
+            var clickablePopover = listItems[1].Find(".mud-list-item");
+            clickablePopover.Click();
+            comp.Instance.IsAgeGrouped.Should().Be(true);
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+            rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
+
+            //click gender grouping in grid
+            headerOption = comp.Find("th.gender .mud-menu button");
+            headerOption.Click();
+            listItems = popoverProvider.FindComponents<MudListItem>();
+            listItems.Count.Should().Be(2);
+            clickablePopover = listItems[1].Find(".mud-list-item");
+            clickablePopover.Click();
+            comp.Instance.IsGenderGrouped.Should().Be(true);
+            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
+            rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
+
+            //click Name grouping in grid
+            headerOption = comp.Find("th.name .mud-menu button");
+            headerOption.Click();
+            listItems = popoverProvider.FindComponents<MudListItem>();
+            listItems.Count.Should().Be(2);
+            clickablePopover = listItems[1].Find(".mud-list-item");
+            clickablePopover.Click();
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
+            rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
+        }
     }
 }
