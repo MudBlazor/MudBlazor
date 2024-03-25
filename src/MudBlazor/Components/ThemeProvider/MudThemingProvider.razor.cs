@@ -36,7 +36,7 @@ partial class MudThemingProvider : ComponentBase, IDisposable
     public MudTheme? Theme { get; set; }
 
     /// <summary>
-    ///  If true, will not apply MudBlazor styled scrollbar and use browser default. 
+    ///  If true, will not apply MudBlazor styled scrollbar and use browser default.
     /// </summary>
     [Parameter]
     public bool DefaultScrollbar { get; set; }

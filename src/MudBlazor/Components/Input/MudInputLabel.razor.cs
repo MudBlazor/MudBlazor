@@ -38,7 +38,7 @@ namespace MudBlazor
         [Parameter] public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        ///  Will adjust vertical spacing. 
+        ///  Will adjust vertical spacing.
         /// </summary>
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 

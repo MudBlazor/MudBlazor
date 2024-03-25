@@ -59,7 +59,7 @@ internal class BrowserViewportService : IBrowserViewportService
     }
 
     /// <summary>
-    /// Notifies observers when the browser size has changed and fires this method. 
+    /// Notifies observers when the browser size has changed and fires this method.
     /// This method is invoked from the JavaScript code.
     /// </summary>
     /// <param name="browserWindowSize">The <see cref="BrowserWindowSize"/> representing the updated browser window size.</param>

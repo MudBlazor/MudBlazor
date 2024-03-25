@@ -45,7 +45,7 @@ public abstract class BaseMask : IMask
     }
 
     /// <summary>
-    /// The mask defining the structure of the accepted input. 
+    /// The mask defining the structure of the accepted input.
     /// The mask format depends on the implementation.
     /// </summary>
     public string Mask { get; protected set; }
@@ -57,7 +57,7 @@ public abstract class BaseMask : IMask
 
     /// <summary>
     /// Get the Text without delimiters or placeholders. Depends on the implementation entirely.
-    /// Clean text will usually be used for the Value property of a mask field. 
+    /// Clean text will usually be used for the Value property of a mask field.
     /// </summary>
     public virtual string GetCleanText() => Text;
 

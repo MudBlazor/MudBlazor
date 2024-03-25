@@ -84,8 +84,8 @@ namespace MudBlazor.Utilities
         /// does not raise exceptions.
         /// </summary>
         /// <param name="hsl">HSL comprising of - </param>
-        /// hsl.H (Hue), must be in [0, 360] - 
-        /// hsl.S (Saturation), must be in [0, 1] - 
+        /// hsl.H (Hue), must be in [0, 360] -
+        /// hsl.S (Saturation), must be in [0, 1] -
         /// hsl.L (Luminance), must be in [0, 1].
         /// <param name="a">Output Alpha, must be in [0, 255].</param>
         public static System.Drawing.Color HsLtoRgb(HSLColor hsl, int a = 255)

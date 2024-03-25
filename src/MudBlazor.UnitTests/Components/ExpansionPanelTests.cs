@@ -53,7 +53,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Multiple expanded expansion panels should not enter an infinite loop 
+        /// Multiple expanded expansion panels should not enter an infinite loop
         /// when MultiExpansionPanel is false
         /// </summary>
         [Test]

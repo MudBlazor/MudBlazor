@@ -13,7 +13,7 @@ namespace MudBlazor
     {
         /// <summary>
         /// Potential activation target for this button. This enables RenderFragments with user-defined
-        /// buttons which will automatically activate the intended functionality. 
+        /// buttons which will automatically activate the intended functionality.
         /// </summary>
         [CascadingParameter]
         protected IActivatable? Activateable { get; set; }

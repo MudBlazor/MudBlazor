@@ -55,7 +55,7 @@ namespace MudBlazor
         public ContentNavigationExpandBehaviour ExpandBehaviour { get; set; } = ContentNavigationExpandBehaviour.Always;
 
         /// <summary>
-        /// If this option is true the first added section will become active when there is no other indication of an active session. Default value is false  
+        /// If this option is true the first added section will become active when there is no other indication of an active session. Default value is false
         /// </summary>
         [Parameter]
         public bool ActivateFirstSectionAsDefault { get; set; } = false;

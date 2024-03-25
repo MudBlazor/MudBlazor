@@ -36,7 +36,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// The unique identifier of this drop zone. It is used within transaction to 
+        /// The unique identifier of this drop zone. It is used within transaction to
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.DropZone.Appearance)]

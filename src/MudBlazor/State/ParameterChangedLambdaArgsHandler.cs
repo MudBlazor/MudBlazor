@@ -5,7 +5,7 @@ namespace MudBlazor.State;
 
 #nullable enable
 /// <summary>
-/// Represents a wrapper class for implementing the <see cref="IParameterChangedHandler{T}"/> interface 
+/// Represents a wrapper class for implementing the <see cref="IParameterChangedHandler{T}"/> interface
 /// using an Action lambda expression instead of directly implementing the interface.
 /// </summary>
 /// <typeparam name="T">The type of the component's property value.</typeparam>

@@ -148,7 +148,7 @@ namespace MudBlazor
         /// <summary>
         /// The data to display in the table. MudTable will render one row per item
         /// </summary>
-        /// 
+        ///
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
         public IEnumerable<T> Items

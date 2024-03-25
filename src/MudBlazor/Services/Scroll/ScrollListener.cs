@@ -79,7 +79,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Subscribe to scroll event in JS
-        /// </summary>        
+        /// </summary>
         private ValueTask<bool> Start()
         {
             _dotNetRef = DotNetObjectReference.Create(this);
@@ -90,7 +90,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Unsubscribe to scroll event in 
+        /// Unsubscribe to scroll event in
         /// </summary>
         private async ValueTask Cancel()
         {

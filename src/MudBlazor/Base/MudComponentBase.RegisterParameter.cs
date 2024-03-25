@@ -22,7 +22,7 @@ public abstract partial class MudComponentBase
     /// <b>NB!</b> This method must be called in the constructor!
     /// </summary>
     /// <remarks>
-    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
+    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered.
     /// </remarks>
     /// <typeparam name="T">The type of the component's property value.</typeparam>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
@@ -55,7 +55,7 @@ public abstract partial class MudComponentBase
     /// <b>NB!</b> This method must be called in the constructor!
     /// </summary>
     /// <remarks>
-    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
+    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered.
     /// </remarks>
     /// <typeparam name="T">The type of the component's property value.</typeparam>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
@@ -93,7 +93,7 @@ public abstract partial class MudComponentBase
     /// <b>NB!</b> This method must be called in the constructor!
     /// </summary>
     /// <remarks>
-    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
+    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered.
     /// </remarks>
     /// <typeparam name="T">The type of the component's property value.</typeparam>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
@@ -127,7 +127,7 @@ public abstract partial class MudComponentBase
     /// <b>NB!</b> This method must be called in the constructor!
     /// </summary>
     /// <remarks>
-    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
+    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered.
     /// </remarks>
     /// <typeparam name="T">The type of the component's property value.</typeparam>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
@@ -165,7 +165,7 @@ public abstract partial class MudComponentBase
     /// <b>NB!</b> This method must be called in the constructor!
     /// </summary>
     /// <remarks>
-    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
+    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered.
     /// </remarks>
     /// <typeparam name="T">The type of the component's property value.</typeparam>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
@@ -200,7 +200,7 @@ public abstract partial class MudComponentBase
     /// <b>NB!</b> This method must be called in the constructor!
     /// </summary>
     /// <remarks>
-    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
+    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered.
     /// </remarks>
     /// <typeparam name="T">The type of the component's property value.</typeparam>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
@@ -232,7 +232,7 @@ public abstract partial class MudComponentBase
     /// <b>NB!</b> This method must be called in the constructor!
     /// </summary>
     /// <remarks>
-    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
+    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered.
     /// </remarks>
     /// <typeparam name="T">The type of the component's property value.</typeparam>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
@@ -268,7 +268,7 @@ public abstract partial class MudComponentBase
     /// <b>NB!</b> This method must be called in the constructor!
     /// </summary>
     /// <remarks>
-    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
+    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered.
     /// </remarks>
     /// <typeparam name="T">The type of the component's property value.</typeparam>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
@@ -300,7 +300,7 @@ public abstract partial class MudComponentBase
     /// <b>NB!</b> This method must be called in the constructor!
     /// </summary>
     /// <remarks>
-    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered. 
+    /// See CONTRIBUTING.md for a more detailed explanation on why MudBlazor parameters have to registered.
     /// </remarks>
     /// <typeparam name="T">The type of the component's property value.</typeparam>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>

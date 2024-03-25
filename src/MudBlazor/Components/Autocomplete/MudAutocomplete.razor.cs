@@ -168,14 +168,14 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Whether to show the progress indicator. 
+        /// Whether to show the progress indicator.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ShowProgressIndicator { get; set; } = false;
 
         /// <summary>
-        /// The color of the progress indicator. 
+        /// The color of the progress indicator.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
@@ -183,7 +183,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Func that returns a list of items matching the typed text. Provides a cancellation token that
-        /// is marked as cancelled when the user changes the search text or selects a value from the list. 
+        /// is marked as cancelled when the user changes the search text or selects a value from the list.
         /// This can be used to cancel expensive asynchronous work occuring within the SearchFunc itself.
         /// </summary>
         [Parameter]

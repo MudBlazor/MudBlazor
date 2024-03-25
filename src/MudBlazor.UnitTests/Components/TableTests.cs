@@ -1548,7 +1548,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// This test validates that when the CanCancel option is set to true and no SelectedItem has been defined, 
+        /// This test validates that when the CanCancel option is set to true and no SelectedItem has been defined,
         /// by clicking on another row, the previous row is no longer editable. Meaning there are always only 2 buttons
         /// </summary>
         [Test]
@@ -1687,7 +1687,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Row item data should be passed to EditButtonContext 
+        /// Row item data should be passed to EditButtonContext
         /// </summary>
         [Test]
         public async Task TableCustomEditButtonItemContext()

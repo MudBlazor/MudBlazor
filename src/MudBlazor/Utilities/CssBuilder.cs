@@ -13,20 +13,20 @@ namespace MudBlazor.Utilities
 
         /// <summary>
         /// Creates a CssBuilder used to define conditional CSS classes used in a component.
-        /// Call Build() to return the completed CSS Classes as a string. 
+        /// Call Build() to return the completed CSS Classes as a string.
         /// </summary>
         /// <param name="value"></param>
         public static CssBuilder Default(string value) => new(value);
 
         /// <summary>
         /// Creates an Empty CssBuilder used to define conditional CSS classes used in a component.
-        /// Call Build() to return the completed CSS Classes as a string. 
+        /// Call Build() to return the completed CSS Classes as a string.
         /// </summary>
         public static CssBuilder Empty() => new();
 
         /// <summary>
         /// Creates a CssBuilder used to define conditional CSS classes used in a component.
-        /// Call Build() to return the completed CSS Classes as a string. 
+        /// Call Build() to return the completed CSS Classes as a string.
         /// </summary>
         /// <param name="value"></param>
         public CssBuilder(string value) => stringBuffer = value;

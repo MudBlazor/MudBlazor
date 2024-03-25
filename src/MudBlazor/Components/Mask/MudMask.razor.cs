@@ -299,7 +299,7 @@ namespace MudBlazor
                 : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
 
         /// <summary>
-        /// Clear the text field. 
+        /// Clear the text field.
         /// </summary>
         /// <returns></returns>
         public Task Clear()

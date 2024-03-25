@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor
 {
     /// <summary>
-    /// Binds an object's property to a column by its property name 
+    /// Binds an object's property to a column by its property name
     /// </summary>
     public partial class MudSortableColumn<T, ModelType> : MudBaseColumn
     {

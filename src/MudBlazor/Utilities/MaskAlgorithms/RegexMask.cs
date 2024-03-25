@@ -17,23 +17,23 @@ public class RegexMask : BaseMask
     private const string WhiteSpaceFilter = "(?!\\s)";
 
     /// <summary>
-    /// Create a mask that uses a regex to restrict input.   
+    /// Create a mask that uses a regex to restrict input.
     /// </summary>
     /// <param name="regex">
     /// The general or progressive regex to be used for input checking.
-    /// 
+    ///
     /// Note: a general regex must match every possible input, i.e. ^[0-9]+$.
     /// Note: a progressive regex must match even partial input successfully! The
     /// progressive regex must start with ^ and end with $ to work correctly!
-    /// 
+    ///
     /// Example: to match input "abc" a progressive regex must match "a" or "ab" or "abc". The
     /// progressive regex would look like this: ^a(b(c)?)?$ or like this ^(a|ab|abc)$
     /// It is best to generate the progressive regex automatically like BlockMask does.
     /// </param>
     /// <param name="mask">
     /// The mask defining the structure of the accepted input.
-    /// 
-    /// Note: if not included the regex will be the mask.   
+    ///
+    /// Note: if not included the regex will be the mask.
     /// </param>
     public RegexMask(string regex, string mask = null)
     {
@@ -46,7 +46,7 @@ public class RegexMask : BaseMask
 
     /// <summary>
     /// Optional delimiter chars which will be jumped over if the caret is
-    /// in front of one and the user inputs the next non-delimiter 
+    /// in front of one and the user inputs the next non-delimiter
     /// </summary>
     public string Delimiters { get; protected set; }
 
@@ -146,7 +146,7 @@ public class RegexMask : BaseMask
     }
 
     /// <summary>
-    /// Applies the mask to the given text starting at the given offset and returns the masked text. 
+    /// Applies the mask to the given text starting at the given offset and returns the masked text.
     /// </summary>
     /// <param name="text"></param>
     protected virtual string AlignAgainstMask(string text)

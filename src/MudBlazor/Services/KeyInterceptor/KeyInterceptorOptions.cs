@@ -35,7 +35,7 @@ namespace MudBlazor.Services
     /// Examples:
     /// For the examples, let's assume the Tab key was pressed.
     /// Note: for combinations of more than one modifier the following order of modifiers must be followed strictly: shift+ctrl+alt+meta
-    /// 
+    ///
     ///  * Don't prevent key down:
     ///          PreventDown=null or PreventDown="none"
     ///  * Prevent key down of unmodified keystrokes such as "Tab":

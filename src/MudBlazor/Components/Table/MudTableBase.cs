@@ -123,7 +123,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
-        /// attribute 'height' accepts, i.e. 500px. 
+        /// attribute 'height' accepts, i.e. 500px.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
@@ -186,7 +186,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Set to true to enable selection of multiple rows with check boxes. 
+        /// Set to true to enable selection of multiple rows with check boxes.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Selecting)]

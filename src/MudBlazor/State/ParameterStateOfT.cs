@@ -141,7 +141,7 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
     ///  Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's ParameterState framework.
     /// <para />
     ///  <b>NB!</b> Usually you don't need to call this directly. Instead, use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
-    ///  component's constructor.  
+    ///  component's constructor.
     ///  </summary>
     ///  <param name="metadata">The parameter's metadata.</param>
     ///  <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>

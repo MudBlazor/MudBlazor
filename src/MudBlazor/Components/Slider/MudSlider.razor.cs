@@ -35,7 +35,7 @@ namespace MudBlazor
         /// <summary>
         /// The maximum allowed value of the slider. Should not be equal to min.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         [Category(CategoryTypes.Slider.Validation)]
         public T? Max
@@ -47,7 +47,7 @@ namespace MudBlazor
         /// <summary>
         /// How many steps the slider should take on each move.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         [Category(CategoryTypes.Slider.Validation)]
         public T? Step
@@ -59,7 +59,7 @@ namespace MudBlazor
         /// <summary>
         /// If true, the slider will be disabled.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         [Category(CategoryTypes.Slider.Behavior)]
         public bool Disabled { get; set; } = false;

@@ -31,7 +31,7 @@ namespace MudBlazor
         public Task StartSpying(string elementsSelector);
 
         /// <summary>
-        /// Center the viewport to DOM element with the given Id 
+        /// Center the viewport to DOM element with the given Id
         /// </summary>
         /// <param name="id">The Id of the DOM element, that should be centered</param>
         /// <returns></returns>

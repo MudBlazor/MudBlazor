@@ -10,7 +10,7 @@ namespace MudBlazor.Components.Chart.Interpolation
     {
         /// <summary>
         /// Natural Spline data interpolator
-        /// </summary>  
+        /// </summary>
         public NaturalSpline(double[] xs, double[] ys, int resolution = 10) : base(xs, ys, resolution)
         {
             m = new Matrix(n - 2);

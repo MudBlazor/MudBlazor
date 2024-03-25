@@ -20,7 +20,7 @@ namespace MudBlazor.Services
         private readonly ResizeOptions _options;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="jsRuntime"></param>
         /// <param name="browserWindowSizeProvider"></param>

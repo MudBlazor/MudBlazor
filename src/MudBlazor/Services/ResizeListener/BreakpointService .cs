@@ -25,7 +25,7 @@ namespace MudBlazor.Services
         private Breakpoint _breakpoint = Breakpoint.None;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="jsRuntime"></param>
         /// <param name="browserWindowSizeProvider"></param>

@@ -31,7 +31,7 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     private readonly ILogger _log;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ObserverManager{TIdentity,TObserver}"/> class. 
+    /// Initializes a new instance of the <see cref="ObserverManager{TIdentity,TObserver}"/> class.
     /// </summary>
     public ObserverManager(ILogger log)
     {
