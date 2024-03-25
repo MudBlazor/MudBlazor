@@ -6,6 +6,7 @@
 // License: MIT
 // See https://github.com/Blazored
 
+#nullable enable
 
 using System.ComponentModel;
 
