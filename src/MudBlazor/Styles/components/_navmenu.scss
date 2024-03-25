@@ -177,6 +177,7 @@
     &.mud-navmenu-#{$color} {
       .mud-nav-link.active:not(.mud-nav-link-disabled) {
         color: var(--mud-palette-#{$color});
+        --mud-ripple-color: var(--mud-palette-#{$color});
         background-color: var(--mud-palette-#{$color}-hover);
 
         @media(hover: hover) and (pointer: fine) {
