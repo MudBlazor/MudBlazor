@@ -33,7 +33,7 @@ namespace MudBlazor
         private Task _currentSearchTask;
         private Timer _timer;
         private T[] _items;
-        private IList<int> _enabledItemIndices = new List<int>();
+        private LinkedList<int> _enabledItemIndicesLinkedList = new();
         private Func<T, string> _toStringFunc;
 
         [Inject]
@@ -565,15 +565,16 @@ namespace MudBlazor
             }
             _items = searchedItems;
 
-            var enabledItems = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).ToList();
-            _enabledItemIndices = enabledItems.Select(tuple => tuple.idx).ToList();
+            var enabledItems = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true);
+            _enabledItemIndicesLinkedList = new LinkedList<int>(enabledItems.Select(tuple => tuple.idx));
+
             if (searchingWhileSelected) //compute the index of the currently select value, if it exists
             {
                 _selectedListItemIndex = Array.IndexOf(_items, Value);
             }
             else
             {
-                _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices.First() : -1;
+                _selectedListItemIndex = _enabledItemIndicesLinkedList.Any() ? _enabledItemIndicesLinkedList.First!.Value : -1;
             }
 
             IsOpen = true;
@@ -674,8 +675,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
-                        await SelectNextItem(increment < 0 ? 1 : increment);
+                        await SelectNextItem();
                     }
                     break;
                 case "ArrowUp":
@@ -689,8 +689,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
-                        await SelectNextItem(-(decrement < 0 ? 1 : decrement));
+                        await SelectNextItem(moveBackwards: true);
                     }
                     break;
                 case "Escape":
@@ -715,12 +714,24 @@ namespace MudBlazor
             await base.InvokeKeyUpAsync(args);
         }
 
-        private ValueTask SelectNextItem(int increment)
+        private ValueTask SelectNextItem(bool moveBackwards = false)
         {
-            if (increment == 0 || _items == null || _items.Length == 0 || !_enabledItemIndices.Any())
+            var curr = _enabledItemIndicesLinkedList.Find(_selectedListItemIndex);
+
+            if (curr == null || _items == null || _items.Length == 0 || _enabledItemIndicesLinkedList == null || !_enabledItemIndicesLinkedList.Any())
+            {
                 return ValueTask.CompletedTask;
-            // if we are at the end, or the beginning we just do an rollover
-            _selectedListItemIndex = Math.Clamp(value: (10 * _items.Length + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length - 1);
+            }
+
+            if (moveBackwards)
+            {
+                _selectedListItemIndex = curr.Previous?.Value ?? _enabledItemIndicesLinkedList.Last();
+            }
+            else
+            {
+               _selectedListItemIndex = curr.Next?.Value ?? _enabledItemIndicesLinkedList.First();
+            }
+
             return ScrollToListItem(_selectedListItemIndex);
         }
 

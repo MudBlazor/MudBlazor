@@ -1,0 +1,32 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudAutocomplete @bind-Value="value" SearchFunc="@Search" ItemDisabledFunc="@(s => s?.ToLower().Contains("m") == true)" Label="DisabledItemsTest" MaxItems="25">
+    <ItemTemplate>
+        @context
+    </ItemTemplate>
+    <ItemDisabledTemplate>
+        @context
+        <MudText Typo="Typo.subtitle2">Disabled as the state contains the letter 'o'</MudText>
+    </ItemDisabledTemplate>
+</MudAutocomplete>
+
+@code
+{
+    public static string __description__ = "The Autocomplete should show states containing 'm' as disabled. They should not be selectable.";
+
+    string value = null;
+
+    private string[] states =
+    {
+        "Alabama", "Alaska", "Arizona",
+        "Delaware", "District of Columbia"
+    };
+
+    private Task<IEnumerable<string>> Search(string value)
+    {
+        var result = string.IsNullOrEmpty(value) ? states : states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        return Task.FromResult(result);
+    }
+}
