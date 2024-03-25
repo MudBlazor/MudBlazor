@@ -276,23 +276,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CustomThemeDarkModeBackwardsCompatibleTest()
-        {
-            // ensure it is backwards compatible by setting Palette() instead of PaletteDark()
-            var myCustomTheme = new MudTheme()
-            {
-                PaletteDark = new PaletteLight()
-                {
-                    Primary = Colors.Blue.Lighten1,
-                    Secondary = "#F50057"
-                }
-            };
-            myCustomTheme.PaletteDark.Primary.Should().Be(new MudColor(Colors.Blue.Lighten1));// Set by user
-            myCustomTheme.PaletteDark.Error.Should().Be(new MudColor(Colors.Red.Default));// Default from light not overwritten by dark theme 
-            myCustomTheme.PaletteDark.White.Should().Be(new MudColor(Colors.Shades.White));// Equal in dark and light.
-            myCustomTheme.PaletteDark.Secondary.Should().Be(new MudColor("#F50057"));// Setting not in PaletteDark()
-        }
-        [Test]
         public void CustomThemeDarkModePrimaryDerivateColorTest()
         {
             // ensure it is backwards compatible by setting Palette() instead of PaletteDark()
