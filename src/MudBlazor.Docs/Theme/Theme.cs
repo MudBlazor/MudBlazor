@@ -16,7 +16,7 @@ namespace MudBlazor.Docs
         {
             var theme = new MudTheme()
             {
-                Palette = LandingPageLightPalette,
+                PaletteLight = LandingPageLightPalette,
                 PaletteDark = LandingPageDarkPalette,
                 Shadows = LandingPageShadows,
                 LayoutProperties = LandingPageLayoutProperties,
@@ -30,7 +30,7 @@ namespace MudBlazor.Docs
         {
             var theme = new MudTheme()
             {
-                Palette = DocsLightPalette,
+                PaletteLight = DocsLightPalette,
                 PaletteDark = DocsDarkPalette,
                 LayoutProperties = new LayoutProperties()
             };

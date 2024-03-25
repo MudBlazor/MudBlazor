@@ -323,13 +323,11 @@ namespace MudBlazor.UnitTests.Components
             DefaultTheme.PaletteDark.White.Should().Be(new MudColor(Colors.Shades.White));
 
             //Light theme
-#pragma warning disable CS0618
             // Note we're testing against the base type
-            DefaultTheme.Palette.Should().BeAssignableTo<Palette>();
-#pragma warning restore CS0618
-            DefaultTheme.Palette.Primary.Should().Be(new MudColor("#594AE2"));
-            DefaultTheme.Palette.Error.Should().Be(new MudColor(Colors.Red.Default));
-            DefaultTheme.Palette.White.Should().Be(new MudColor(Colors.Shades.White));
+            DefaultTheme.PaletteLight.Should().BeAssignableTo<Palette>();
+            DefaultTheme.PaletteLight.Primary.Should().Be(new MudColor("#594AE2"));
+            DefaultTheme.PaletteLight.Error.Should().Be(new MudColor(Colors.Red.Default));
+            DefaultTheme.PaletteLight.White.Should().Be(new MudColor(Colors.Shades.White));
         }
 
         private bool _systemMockValue;

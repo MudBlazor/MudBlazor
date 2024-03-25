@@ -138,7 +138,7 @@ partial class MudThemingProvider : ComponentBase, IDisposable
             return;
         }
 
-        var palette = _isDarkMode == false ? Theme.Palette : Theme.PaletteDark;
+        Palette palette = _isDarkMode ? Theme.PaletteDark : Theme.PaletteLight;
 
         //Palette
         theme.AppendLine($"--{Palette}-black: {palette.Black};");
