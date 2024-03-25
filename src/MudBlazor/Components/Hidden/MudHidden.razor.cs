@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Services;
 
 namespace MudBlazor
 {
@@ -11,10 +10,6 @@ namespace MudBlazor
         private bool _isHidden = true;
         private bool _serviceIsReady = false;
         private Breakpoint _currentBreakpoint = Breakpoint.None;
-
-        [Inject]
-        [Obsolete]
-        public IBreakpointService BreakpointService { get; set; } = null!;
 
         [Inject]
         protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
