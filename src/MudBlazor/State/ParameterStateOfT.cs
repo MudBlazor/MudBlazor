@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Rule;
@@ -100,10 +101,19 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
         }
     }
 
-    public IReadOnlyParameterState<TParameter> GetState<TParameter>()
+    public IReadOnlyParameterState<TParameter> UnsafeGetState<TParameter>()
     {
-        return (IReadOnlyParameterState<TParameter>)this;
-        //return new ReadOnlyParameterState<TParameter>(Value);
+        var outerParameterType = typeof(TParameter);
+        var innerParameterType = typeof(T);
+        if (outerParameterType == innerParameterType)
+        {
+            var source = this;
+            //return (IReadOnlyParameterState<TParameter>)this; alternative
+
+            return Unsafe.As<ParameterState<T>, IReadOnlyParameterState<TParameter>>(ref source);
+        }
+
+        throw new InvalidCastException($"The {outerParameterType} type doesn't match with {innerParameterType} type of the [{Metadata.ParameterName}] parameter.");
     }
 
     /// <inheritdoc />

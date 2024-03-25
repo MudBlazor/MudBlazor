@@ -108,32 +108,20 @@ internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
     /// <summary>
     /// Dummy class to search <see cref="IParameterComponentLifeCycle"/> by <see cref="ParameterMetadata.ParameterName"/> in the <see cref="HashSet{T}"/>.
     /// </summary>
-    private class DummyParameterComponentLifeCycle : IParameterComponentLifeCycle
+    private class DummyParameterComponentLifeCycle(string parameterName) : IParameterComponentLifeCycle
     {
         public bool HasHandler => false;
 
-        public ParameterMetadata Metadata { get; }
-
-        public DummyParameterComponentLifeCycle(string parameterName)
-        {
-            Metadata = new ParameterMetadata(parameterName);
-        }
+        public ParameterMetadata Metadata { get; } = new(parameterName);
 
         public bool HasParameterChanged(ParameterView parameters) => false;
 
         public Task ParameterChangeHandleAsync() => Task.CompletedTask;
 
-        public void OnInitialized()
-        {
-        }
+        public void OnInitialized() => throw new NotImplementedException();
 
-        public void OnParametersSet()
-        {
-        }
+        public void OnParametersSet() => throw new NotImplementedException();
 
-        public IReadOnlyParameterState<T> GetState<T>()
-        {
-            return new ReadOnlyParameterState<T>(default!);
-        }
+        public IReadOnlyParameterState<T> UnsafeGetState<T>() => throw new NotImplementedException();
     }
 }

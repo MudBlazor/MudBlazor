@@ -59,5 +59,5 @@ internal interface IParameterComponentLifeCycle
     /// </remarks>
     void OnParametersSet();
 
-    IReadOnlyParameterState<T> GetState<T>();
+    IReadOnlyParameterState<T> UnsafeGetState<T>();
 }

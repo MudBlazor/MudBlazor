@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using MudBlazor.State;
 
 namespace MudBlazor.Extensions;
@@ -43,8 +42,7 @@ internal static class MudComponentExtensions
     {
         if (component.Parameters.TryGetValue(propertyName, out var lifeCycle))
         {
-            //var parameterState = Unsafe.As<IReadOnlyParameterState<T>>(lifeCycle);
-            var parameterState = lifeCycle.GetState<T>();
+            var parameterState = lifeCycle.UnsafeGetState<T>();
 
             return parameterState;
         }
