@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace MudBlazor
 {
-
     /// <summary>
     /// Specifies the name of the category in which to group the property of a MudBlazor component when displayed in the API documentation.
     /// </summary>

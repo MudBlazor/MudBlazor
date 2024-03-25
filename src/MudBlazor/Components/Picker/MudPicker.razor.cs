@@ -602,7 +602,6 @@ namespace MudBlazor
                         _keyInterceptor.Dispose();
                     }
                 }
-
             }
         }
     }

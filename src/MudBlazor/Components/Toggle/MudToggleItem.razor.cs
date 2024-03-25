@@ -8,7 +8,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-
 #nullable enable
     public partial class MudToggleItem<T> : MudComponentBase
     {

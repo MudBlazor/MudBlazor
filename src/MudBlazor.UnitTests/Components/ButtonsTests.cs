@@ -68,7 +68,6 @@ namespace MudBlazor.UnitTests.Components
 
             comp = Context.RenderComponent<MudButton>(link, target, disabled);
             comp.Instance.HtmlTag.Should().Be("button");
-
         }
 
         /// <summary>

@@ -37,7 +37,6 @@ namespace MudBlazor
                 .AddClass(TextClass)
                 .Build();
 
-
         [CascadingParameter]
         private MudTreeView<T>? MudTreeRoot { get; set; }
 

@@ -10,7 +10,6 @@ using MudBlazor.Docs.Models;
 
 namespace MudBlazor.UnitTests.Extensions
 {
-
     [TestFixture]
     public class TaskExtensionsTests
     {

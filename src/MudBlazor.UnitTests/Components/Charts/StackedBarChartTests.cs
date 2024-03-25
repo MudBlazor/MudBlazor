@@ -37,7 +37,6 @@ namespace MudBlazor.UnitTests.Charts
         [SetUp]
         public void Init()
         {
-
         }
 
         [Test]
@@ -65,7 +64,6 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette })
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.XAxisLabels, xAxisLabels));
-
 
             comp.Instance.ChartSeries.Should().NotBeEmpty();
 

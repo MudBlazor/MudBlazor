@@ -54,7 +54,6 @@ namespace MudBlazor.UnitTests.Services
             info.ContainsSubscription(firstId).Should().BeTrue();
             info.RemoveSubscription(firstId).Should().BeFalse();
             info.ContainsSubscription(firstId).Should().BeFalse();
-
         }
 
         [Test]
@@ -73,6 +72,5 @@ namespace MudBlazor.UnitTests.Services
             info.RemoveSubscription(secondId).Should().BeTrue();
             info.ContainsSubscription(secondId).Should().BeFalse();
         }
-
     }
 }

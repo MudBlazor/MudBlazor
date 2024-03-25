@@ -33,7 +33,6 @@ namespace MudBlazor.UnitTests.Services
             _service = new BreakpointService(_jsRuntimeMock.Object, _browserWindowSizeProvider.Object);
         }
 
-
         private record ListenForResizeCallbackInfo(DotNetObjectReference<BreakpointService> DotnetRef, ResizeOptions Options, Guid ListenerId);
 
         private void SetupJsMockForSubscription(ResizeOptions expectedOptions, bool setBreakpoints, Action<ListenForResizeCallbackInfo> callbackInfo = null)
@@ -87,7 +86,6 @@ namespace MudBlazor.UnitTests.Services
         {
             await CheckSubscriptionOptions(new ResizeOptions(), true);
         }
-
 
         [Test]
         public async Task Subscribe_WithDefaultOptions_SetBreakpoint()
@@ -188,7 +186,6 @@ namespace MudBlazor.UnitTests.Services
                 }
 
                 SetupJsMockForUnsubscription(x.ListenerId);
-
             };
 
             SetupJsMockForSubscription(customResizeOptions, true, feedbackCaller);
@@ -200,7 +197,6 @@ namespace MudBlazor.UnitTests.Services
 
             _browserWindowSizeProvider.Verify(x => x.GetBrowserWindowSize(), Times.Once());
             _jsRuntimeMock.Verify();
-
         }
 
         [Test]
@@ -227,7 +223,6 @@ namespace MudBlazor.UnitTests.Services
                     lastDotnetRefHashCode = x.DotnetRef.GetHashCode();
 
                     SetupJsMockForUnsubscription(x.ListenerId);
-
                 };
 
                 SetupJsMockForSubscription(customResizeOptions, true, feedbackCaller);
@@ -352,7 +347,6 @@ namespace MudBlazor.UnitTests.Services
 
             result.Should().BeFalse();
         }
-
 
         [Test]
         public async Task DisposeAsync_Failed_NoActiveSubscription()
@@ -511,7 +505,6 @@ namespace MudBlazor.UnitTests.Services
 
             _browserWindowSizeProvider.Verify(x => x.GetBrowserWindowSize(), Times.Once());
             _jsRuntimeMock.Verify();
-
         }
 
         [Test]

@@ -448,8 +448,6 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.FindAll("input.mud-checkbox-input")[i].Change(true);
                 dataGrid.Instance.SelectedItems.Count.Should().Be(i);
             }
-
-
         }
 
         public async Task DataGridPaginationTest()
@@ -716,7 +714,6 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.CancelledEditingItem = cancelCallback;
             dataGrid.Instance.CancelledEditingItem.Should().Be(cancelCallback);
 
-
             // Set some parameters manually so that they are covered.
             var parameters = new List<ComponentParameter>();
             parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.MultiSelection), true));
@@ -760,7 +757,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridEditComplexPropertyExpressionTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditComplexPropertyExpressionTest.Item>>();
-
 
             dataGrid.Render();
 
@@ -2187,7 +2183,6 @@ namespace MudBlazor.UnitTests.Components
                 var iconbuttons = comp.FindComponents<MudIconButton>();
                 iconbuttons.Count.Should().Be(29);
 
-
                 var buttons = comp.FindComponents<MudButton>();
                 // this is the show all button
                 buttons[1].Find("button").Click();
@@ -3151,7 +3146,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 3);
 
-
             var column = dataGrid.FindComponent<Column<DataGridSortableTest.Item>>();
             await comp.InvokeAsync(() => column.Instance.SortBy = x => { return x.Name; });
             dataGrid.Render();
@@ -3246,7 +3240,6 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[2].InnerHtml.Should().Be("Age");
             newHeaderValues[3].InnerHtml.Should().Be("Hired");
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
-
         }
         [Test]
         public void DataGridEditFormDialogIsCustomizableTest()

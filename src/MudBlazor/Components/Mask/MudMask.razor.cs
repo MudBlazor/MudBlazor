@@ -62,7 +62,6 @@ namespace MudBlazor
                 .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End)
                 .Build();
 
-
         private ElementReference _elementReference;
         private ElementReference _elementReference1;
         private IJsEvent _jsEvent;

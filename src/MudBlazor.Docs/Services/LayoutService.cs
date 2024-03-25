@@ -24,7 +24,6 @@ public class LayoutService
 
     public MudTheme CurrentTheme { get; private set; }
 
-
     public LayoutService(IUserPreferencesService userPreferencesService)
     {
         _userPreferencesService = userPreferencesService;

@@ -1,5 +1,4 @@
 ﻿
-
 namespace MudBlazor
 {
     public enum Page

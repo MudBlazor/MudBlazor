@@ -53,10 +53,8 @@ namespace MudBlazor.UnitTests.Services
         private record ListenForResizeCallbackInfo(
             DotNetObjectReference<ResizeService> DotnetRef, ResizeOptions options, Guid ListenerId);
 
-
         private void SetupJsMockForSubscription(ResizeOptions expectedOptions, Action<ListenForResizeCallbackInfo> callbackInfo = null)
         {
-
             _jsruntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize",
                It.Is<object[]>(z =>
                    z[0] is DotNetObjectReference<ResizeService> == true &&
@@ -66,7 +64,6 @@ namespace MudBlazor.UnitTests.Services
                     (DotNetObjectReference<ResizeService>)z[0],
                     (ResizeOptions)z[1], (Guid)z[2]
                    ))).Verifiable();
-
         }
 
         private void SetupJsMockForUnsubscription(Guid listenerId)
@@ -142,7 +139,6 @@ namespace MudBlazor.UnitTests.Services
         {
             Assert.ThrowsAsync<ArgumentNullException>(() => _service.SubscribeAsync(null!));
             Assert.ThrowsAsync<ArgumentNullException>(() => _service.SubscribeAsync(null!, new ResizeOptions()));
-
         }
 
         [Test]
@@ -158,7 +154,6 @@ namespace MudBlazor.UnitTests.Services
                 }
 
                 SetupJsMockForUnsubscription(x.ListenerId);
-
             };
 
             SetupJsMockForSubscription(customResizeOptioons, feedbackCaller);
@@ -169,7 +164,6 @@ namespace MudBlazor.UnitTests.Services
             result.Should().BeTrue();
 
             _jsruntimeMock.Verify();
-
         }
 
         [Test]
@@ -196,7 +190,6 @@ namespace MudBlazor.UnitTests.Services
                     lastDotnetRefHashCode = x.DotnetRef.GetHashCode();
 
                     SetupJsMockForUnsubscription(x.ListenerId);
-
                 };
 
                 SetupJsMockForSubscription(customResizeOptioons, feedbackCaller);
@@ -241,7 +234,6 @@ namespace MudBlazor.UnitTests.Services
             subscriptionIds.Should().HaveCount(10);
 
             _jsruntimeMock.Verify();
-
         }
 
         [Test]
@@ -298,7 +290,6 @@ namespace MudBlazor.UnitTests.Services
             callerFeedbacks.Select(x => x.ListenerId).ToHashSet().Should().HaveCount(4);
 
             _jsruntimeMock.Verify();
-
         }
 
         [Test]
@@ -307,7 +298,6 @@ namespace MudBlazor.UnitTests.Services
             var result = await _service.UnsubscribeAsync(Guid.NewGuid());
 
             result.Should().BeFalse();
-
         }
 
         [Test]
@@ -323,12 +313,10 @@ namespace MudBlazor.UnitTests.Services
             result.Should().BeFalse();
         }
 
-
         [Test]
         public async Task DisposeAsync_Failed_NoActiveSubscription()
         {
             await _service.DisposeAsync();
-
         }
 
         [Test]
@@ -388,7 +376,6 @@ namespace MudBlazor.UnitTests.Services
             await _service.DisposeAsync();
 
             _jsruntimeMock.Verify();
-
         }
 
         private class FakeSubscriber
@@ -402,7 +389,6 @@ namespace MudBlazor.UnitTests.Services
                 SubscriptionId = await service.SubscribeAsync((x) => ActualSize = x, options);
             }
         }
-
 
         [Test]
         public async Task RaiseOnResized_MultipleSubscription_WithMultipleOptions()

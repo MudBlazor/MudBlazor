@@ -220,7 +220,6 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be(null);
         }
 
-
         [Test]
         public async Task DataPicker_ShouldDeBounceSetDate_WhenDateSetToTheSameValueQuickly()
         {
@@ -370,7 +369,6 @@ namespace MudBlazor.UnitTests.Components
             // should show years
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
         }
-
 
         [Test]
         public void OpenToMonth_CheckMonthsShown()
@@ -836,8 +834,6 @@ namespace MudBlazor.UnitTests.Components
                 .Should().OnlyContain(disabled => disabled == false);
         }
 
-
-
         [Test]
         //mud-button-root added for greying out and making buttons not clickable if month is disabled
         public void MonthButtons_ButtonRootClassPresent()
@@ -989,7 +985,6 @@ namespace MudBlazor.UnitTests.Components
 
             // Open the datepicker
             await picker.Open();
-
 
             // Clicking a day button to select a date
             if (now.Day != 21)
@@ -1160,7 +1155,6 @@ namespace MudBlazor.UnitTests.Components
 
             datePicker.MinDate = DateTime.Now.AddDays(-1);
             datePicker.MaxDate = DateTime.Now.AddDays(1);
-
 
             // Open the datepicker
             await comp.InvokeAsync(datePicker.Open);

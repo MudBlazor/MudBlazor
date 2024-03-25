@@ -15,7 +15,6 @@ namespace MudBlazor.UnitTests.Mocks
 
         public MockResizeObserverFactory()
         {
-
         }
 
         public MockResizeObserverFactory(MockResizeObserver observer)
@@ -128,7 +127,6 @@ namespace MudBlazor.UnitTests.Mocks
 
         public void Dispose()
         {
-
         }
     }
 }

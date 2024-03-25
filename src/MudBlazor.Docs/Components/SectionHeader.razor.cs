@@ -17,7 +17,6 @@ public partial class SectionHeader
     [CascadingParameter] private SectionSubGroups SubGroup { get; set; }
     [CascadingParameter] private DocsPageSection Section { get; set; }
 
-
     protected string Classname =>
         new CssBuilder("docs-section-header")
             .AddClass(Class)

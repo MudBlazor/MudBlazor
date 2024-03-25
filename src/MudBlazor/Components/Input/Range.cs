@@ -8,7 +8,6 @@
 
         public Range()
         {
-
         }
 
         public Range(T start, T end)

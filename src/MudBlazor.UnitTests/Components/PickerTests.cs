@@ -51,6 +51,5 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudPicker<DateTime?>>(ComponentParameter.CreateParameter("ImmediateText", true));
             comp.Instance.ImmediateText.Should().Be(true);
         }
-
     }
 }

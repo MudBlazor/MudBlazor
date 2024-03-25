@@ -5,6 +5,5 @@ namespace MudExtensions.UnitTests.TestComponents
 {
     public partial class SelectEventCountTest
     {
-
     }
 }

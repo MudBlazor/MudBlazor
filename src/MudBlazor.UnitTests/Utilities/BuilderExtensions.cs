@@ -33,6 +33,5 @@ namespace UtilityTests
         /// <returns>string</returns>
         public static string NullIfEmpty(this string s) =>
             string.IsNullOrEmpty(s) ? null : s;
-
     }
 }

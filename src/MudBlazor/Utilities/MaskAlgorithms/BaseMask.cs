@@ -264,5 +264,4 @@ public abstract class BaseMask : IMask
             return s1 + "[" + s2 + "]" + s3;
         }
     }
-
 }

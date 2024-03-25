@@ -130,6 +130,5 @@ namespace MudBlazor
                 SetRowsPerPage(size);
             }
         }
-
     }
 }

@@ -11,7 +11,6 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-
     public delegate void KeyboardEvent(KeyboardEventArgs args);
 
     public interface IKeyInterceptor : IDisposable
@@ -22,7 +21,5 @@ namespace MudBlazor.Services
 
         event KeyboardEvent KeyDown;
         event KeyboardEvent KeyUp;
-
     }
-
 }

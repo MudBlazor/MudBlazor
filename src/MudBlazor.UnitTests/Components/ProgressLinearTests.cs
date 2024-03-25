@@ -161,7 +161,6 @@ namespace MudBlazor.UnitTests.Components
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
 
-
             container.ChildElementCount.Should().Be(1);
             var barContainer = container.Children[0];
 
@@ -289,7 +288,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 x.Add(y => y.Indeterminate, indeterminate);
                 x.Add(y => y.Buffer, buffer);
-
             });
 
             var container = comp.Find(".mud-progress-linear");
@@ -343,7 +341,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 container.ClassList.Should().Contain("vertical");
                 container.ClassList.Should().NotContain("horizontal");
-
             }
             else
             {

@@ -43,7 +43,6 @@ namespace MudBlazor.UnitTests.Charts
         [SetUp]
         public void Init()
         {
-
         }
 
         [Test]

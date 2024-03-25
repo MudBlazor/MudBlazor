@@ -332,7 +332,6 @@ namespace MudBlazor
                 _selectedValues = newSelected;
             }
 
-
             foreach (var unselectedItems in unselectedItem)
             {
                 await unselectedItems.SelectedChanged.InvokeAsync(false);

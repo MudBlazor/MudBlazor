@@ -10,7 +10,6 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class NavMenuTests : BunitTest
     {
-
         [Test]
         /// <summary>
         /// Change all styling parameters so that all default values have the correct classes.
@@ -53,7 +52,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain("mud-navmenu-margin-dense");
             comp.Markup.Should().Contain("mud-navmenu-rounded");
         }
-
 
         [Test]
         /// <summary>

@@ -77,7 +77,6 @@ namespace MudBlazor.UnitTests.Services.Browser
                     { Breakpoint.Xl, 12 },
                     { Breakpoint.Lg, 24 },
                     { Breakpoint.Md, 36 },
-
                 }
             };
 
@@ -191,7 +190,6 @@ namespace MudBlazor.UnitTests.Services.Browser
             option1.Should().NotBe(option2);
             option2.Should().NotBe(option1);
         }
-
 
         [Test]
         public void Equals_NotTheSame_BreakpointDefinitions_EmptyAndNull()

@@ -68,7 +68,6 @@ namespace MudBlazor
         private bool FullScreen { get; set; }
         private bool FullWidth { get; set; }
 
-
         protected override void OnInitialized()
         {
             ConfigureInstance();

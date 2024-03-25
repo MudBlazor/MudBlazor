@@ -71,6 +71,5 @@ namespace MudBlazor
         /// </summary>
         /// <param name="other"></param>
         void UpdateFrom(IMask other);
-
     }
 }

@@ -4,7 +4,6 @@ using System.Globalization;
 
 namespace MudBlazor
 {
-
     /// <summary>
     /// A universal T to double binding converter
     ///
@@ -14,7 +13,6 @@ namespace MudBlazor
     [ExcludeFromCodeCoverage]
     public class NumericConverter<T> : Converter<T, double>
     {
-
         public NumericConverter()
         {
             SetFunc = OnSet;
@@ -150,7 +148,6 @@ namespace MudBlazor
                 return double.NaN;
             }
         }
-
 
         #region --> Floating Point comparison
 

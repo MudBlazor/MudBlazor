@@ -69,7 +69,6 @@ namespace MudBlazor
                 if (InnerGroup != null)
                     InnerGroup.Indentation = value;
             }
-
         }
 
         private bool _expandable = false;
@@ -98,7 +97,6 @@ namespace MudBlazor
             {
                 _isInitiallyExpanded = value;
             }
-
         }
 
         internal bool IsParentExpandable
@@ -145,9 +143,7 @@ namespace MudBlazor
                 {
                     _innerGroup.Context = _context;
                 }
-
             }
         }
-
     }
 }

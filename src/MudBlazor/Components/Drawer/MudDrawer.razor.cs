@@ -369,7 +369,6 @@ namespace MudBlazor
             };
         }
 
-
         [Obsolete($"Use {nameof(OnMouseEnterAsync)} instead. This will be removed in v7.")]
         public async void OnMouseEnter()
         {

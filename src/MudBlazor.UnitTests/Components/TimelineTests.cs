@@ -26,7 +26,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.TimelineAlign.Should().Be(TimelineAlign.Default);
             comp.Instance.Reverse.Should().Be(false);
             comp.Instance.DisableModifiers.Should().Be(false);
-
         }
 
         /// <summary>
@@ -111,7 +110,6 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.TimelineOrientation, orientation);
                 p.Add(x => x.TimelinePosition, position);
             });
-
 
             timeline.Nodes.Should().ContainSingle();
             timeline.Nodes[0].Should().BeAssignableTo<IHtmlDivElement>();

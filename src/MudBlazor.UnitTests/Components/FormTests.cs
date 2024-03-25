@@ -237,8 +237,6 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().Be(false);
         }
 
-
-
         /// <summary>
         /// Custom validation func should be called to determine whether or not a form value is good
         /// </summary>

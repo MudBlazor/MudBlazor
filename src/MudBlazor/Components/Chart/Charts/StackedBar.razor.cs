@@ -90,7 +90,6 @@ namespace MudBlazor.Charts
             double startGridX = 0;
             for (var counter = 0; counter <= numVerticalLines; counter++)
             {
-
                 var line = new SvgPath()
                 {
                     Index = counter,
@@ -110,7 +109,6 @@ namespace MudBlazor.Charts
                 startGridX += gridXUnits;
                 x += horizontalSpace;
             }
-
 
             //Bars
             var colorcounter = 0;

@@ -121,4 +121,3 @@ public class GitHubReleases
         public bool SiteAdmin { get; set; }
     }
 }
-

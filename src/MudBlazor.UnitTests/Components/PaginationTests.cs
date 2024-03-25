@@ -11,7 +11,6 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class Pagination : BunitTest
     {
-
         /// <summary>
         /// Tests the clicking on control buttons
         /// </summary>
@@ -184,7 +183,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("#mud-pagination-test-selected").TextContent.Should()
                 .Be("Selected: " + expectedSelectedPage);
         }
-
 
         /// <summary>
         /// Tests the NavigateTo(int) method

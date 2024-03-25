@@ -46,7 +46,6 @@ namespace MudBlazor.Docs.Extensions
             services.AddSingleton<IRenderQueueService, RenderQueueService>();
             services.AddScoped<LayoutService>();
             services.AddGoogleAnalytics("G-PRYNCB61NV");
-
         }
     }
 }

@@ -291,7 +291,6 @@ internal class BrowserViewportService : IBrowserViewportService
         return ValueTask.CompletedTask;
     }
 
-
     // ReSharper disable once UnusedMember.Global used in tests
     internal BrowserViewportSubscription? GetInternalSubscription(IBrowserViewportObserver observer)
     {
@@ -338,7 +337,6 @@ internal class BrowserViewportService : IBrowserViewportService
 
         // Reuse existing JS listener
         return new BrowserViewportSubscription(javaScriptListenerId, observerId, clonedOptions);
-
     }
 
     private async Task<BrowserViewportSubscription?> RemoveJavaScriptListener(Guid observerId)

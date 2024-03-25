@@ -276,7 +276,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment NoItemsTemplate { get; set; }
 
-
         /// <summary>
         /// Optional presentation template that is shown at the top of the list. If no items are present, the fragment is hidden.
         /// </summary>

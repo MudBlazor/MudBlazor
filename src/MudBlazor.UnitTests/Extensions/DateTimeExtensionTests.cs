@@ -6,8 +6,6 @@ using FluentAssertions;
 using MudBlazor.Extensions;
 using NUnit.Framework;
 
-
-
 namespace MudBlazor.UnitTests.Extensions
 {
     [TestFixture]

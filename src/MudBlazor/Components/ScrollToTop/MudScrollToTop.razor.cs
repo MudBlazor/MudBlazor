@@ -86,7 +86,6 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-
                 var selector = !string.IsNullOrWhiteSpace(Selector)
                     ? Selector
                     : null;// null is defaulted to document element in JS function

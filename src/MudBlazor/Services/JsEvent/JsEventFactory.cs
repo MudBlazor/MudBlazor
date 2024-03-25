@@ -29,5 +29,4 @@ namespace MudBlazor.Services
         public IJsEvent Create() =>
             new JsEvent(_provider.GetRequiredService<IJSRuntime>());
     }
-
 }

@@ -229,7 +229,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Render();
             comp.Find(".mud-carousel-transition-slide-prev-exit.fake-class-item3");
             comp.Find(".mud-carousel-transition-slide-prev-enter.fake-class-item1");
-
         }
 
         /// <summary>
@@ -302,6 +301,5 @@ namespace MudBlazor.UnitTests.Components
             comp.Render();
             carousel.Items.Count.Should().Be(5);
         }
-
     }
 }

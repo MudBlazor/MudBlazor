@@ -51,7 +51,6 @@ namespace MudBlazor.Utilities
             return $"rgba({color.R},{color.G},{color.B}, {alpha.ToString(CultureInfo.InvariantCulture)})";
         }
 
-
         private static string ToRgbaHex(string hex)
         {
             hex = hex.StartsWith("#") ? hex.Substring(1) : hex;

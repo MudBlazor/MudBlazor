@@ -70,7 +70,6 @@ namespace MudBlazor.Utilities
         /// <returns>StyleBuilder</returns>
         public StyleBuilder AddStyle(string prop, string value, bool when = true) => when ? this.AddStyle(prop, value) : this;
 
-
         /// <summary>
         /// Adds a conditional in-line style to the builder with space separator and closing semicolon..
         /// </summary>
@@ -144,7 +143,6 @@ namespace MudBlazor.Utilities
         public StyleBuilder AddStyleFromAttributes(IReadOnlyDictionary<string, object> additionalAttributes) =>
             additionalAttributes == null ? this :
             additionalAttributes.TryGetValue("style", out var c) ? AddRaw(c.ToString()) : this;
-
 
         /// <summary>
         /// Finalize the completed Style as a string.

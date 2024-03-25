@@ -3,7 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor
 {
-
     [ExcludeFromCodeCoverage]
     public class ScrollManagerException : Exception
     {

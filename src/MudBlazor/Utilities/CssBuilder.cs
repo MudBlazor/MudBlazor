@@ -127,6 +127,5 @@ namespace MudBlazor.Utilities
 
         // ToString should only and always call Build to finalize the rendered string.
         public override string ToString() => Build();
-
     }
 }

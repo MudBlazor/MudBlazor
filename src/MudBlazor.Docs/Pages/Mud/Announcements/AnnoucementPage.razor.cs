@@ -23,7 +23,6 @@ public partial class AnnoucementPage
         _message = await NotificationService.GetMessageById(Id);
         if (_message == null)
         {
-
         }
     }
 

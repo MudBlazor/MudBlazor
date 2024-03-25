@@ -272,7 +272,6 @@ namespace MudBlazor
 
         public async Task ChangeView(ColorPickerView value)
         {
-
             var oldValue = _activeColorPickerView;
 
             _activeColorPickerView = value;

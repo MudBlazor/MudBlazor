@@ -34,7 +34,6 @@ namespace MudBlazor.UnitTests.TestComponents
         [Parameter]
         public EventCallback<int> RowsPerPageChanged { get; set; }
 
-
         private ViewModel viewModel = new ViewModel();
 
         private sealed class Item

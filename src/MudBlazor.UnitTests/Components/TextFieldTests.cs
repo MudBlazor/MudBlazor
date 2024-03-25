@@ -137,7 +137,6 @@ namespace MudBlazor.UnitTests.Components
             textField.Value.Should().Be("Some Value");
         }
 
-
         /// <summary>
         /// Value should not change immediately. Should respect the Debounce Interval
         /// </summary>
@@ -225,7 +224,6 @@ namespace MudBlazor.UnitTests.Components
             textfield.Error.Should().BeTrue(because: "The credit card number is fake");
             textfield.ErrorText.Should().NotBeNullOrEmpty();
         }
-
 
         /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
@@ -332,7 +330,6 @@ namespace MudBlazor.UnitTests.Components
             var textfield = comp.Instance;
             comp.Find("textarea").InnerHtml.Should().Be(text);
         }
-
 
         /// <summary>
         /// Ensures that a text field with both 'Lines' > 1 and 'Mask' parameters generates a 'textarea'.
@@ -540,7 +537,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ValidationErrors[0].Should().Be("Bar");
             comp.Instance.GetErrorText().Should().Be("Bar");
         }
-
 
         public class CustomThrowingValidationAttribute : ValidationAttribute
         {

@@ -20,7 +20,6 @@ builder.Services.AddRazorPages();
 builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.AddHttpContextAccessor();
 
-
 //adding client specific service for prerendering. This service are not used by the WASM app, but for prerending it. Thefore they are different
 builder.Services.AddScoped(sp =>
 {

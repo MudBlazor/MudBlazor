@@ -615,7 +615,6 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(0);
         }
 
-
         [Test]
         public void TableMultiSelection_CheckboxAndRowClickTest()
         {
@@ -1861,7 +1860,6 @@ namespace MudBlazor.UnitTests.Components
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(36);
 
-
             //verify the collapse and expand selection on UI and items
 
             Inputs()[1].Change(false); // LMP1 
@@ -1872,7 +1870,6 @@ namespace MudBlazor.UnitTests.Components
             table.GroupBy.InnerGroup.Indentation = true;
             table.GroupBy.InnerGroup.Expandable = true;
             table.GroupBy.InnerGroup.IsInitiallyExpanded = true;
-
 
             comp.Render();
 
@@ -1895,7 +1892,6 @@ namespace MudBlazor.UnitTests.Components
             table.SelectedItems.Count.Should().Be(0);
 
             Inputs().Where(x => x.IsChecked()).Count().Should().Be(0);
-
         }
 
         /// <summary>
@@ -1940,9 +1936,7 @@ namespace MudBlazor.UnitTests.Components
             table.Context.Rows.Count.Should().Be(1);
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(6); // 01 Table header + 02 Group Headers + 02 Group Footers + 01 Entries
-
         }
-
 
         /// <summary>
         /// Tests the IsInitiallyExpanded grouping behavior.

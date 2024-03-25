@@ -147,7 +147,6 @@ namespace MudBlazor
         /// </summary>
         public virtual MudColor ActionDisabledBackground { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.12).ToString(MudColorOutputFormats.RGBA);
 
-
         /// <summary>
         /// Gets or sets the background color.
         /// </summary>

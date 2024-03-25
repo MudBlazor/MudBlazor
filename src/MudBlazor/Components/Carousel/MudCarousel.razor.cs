@@ -116,7 +116,6 @@ namespace MudBlazor
             }
         }
 
-
         /// <summary>
         /// Gets or Sets the Auto Cycle time
         /// </summary>
@@ -139,7 +138,6 @@ namespace MudBlazor
                 }
             }
         }
-
 
         /// <summary>
         /// Gets or Sets custom class(es) for 'Next' and 'Previous' arrows
@@ -265,7 +263,6 @@ namespace MudBlazor
                 _ => position
             };
         }
-
 
         /// <summary>
         /// Provides Selection changes by horizontal swipe gesture

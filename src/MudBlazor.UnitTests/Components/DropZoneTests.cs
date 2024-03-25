@@ -17,7 +17,6 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class DropZoneTests : BunitTest
     {
-
         [Test]
         public void DropContainer_Defaults()
         {
@@ -564,7 +563,6 @@ namespace MudBlazor.UnitTests.Components
             thirdDropZone.ClassList.Should().NotContain("can-drop-from-container");
             thirdDropZone.ClassList.Should().Contain("no-drop-class-from-container");
 
-
             //enter second drop zone
             await secondDropZone.DragEnterAsync(new DragEventArgs());
 
@@ -733,7 +731,6 @@ namespace MudBlazor.UnitTests.Components
             thirdDropItem.ClassList.Should().NotContain("my-zone-based-custom-disabled");
             thirdDropItem.ClassList.Should().Contain("my-custom-disabled-class-from-container");
             thirdDropItem.GetAttribute("draggable").Should().Be("false");
-
         }
 
         [Test]
@@ -911,7 +908,6 @@ namespace MudBlazor.UnitTests.Components
             firstDropZone.Children[5].TextContent.Should().Be("Item 4");
 
             comp.Instance.IndexHistory.Distinct().Should().ContainSingle().And.Contain(1);
-
         }
 
         [Test]
@@ -949,7 +945,6 @@ namespace MudBlazor.UnitTests.Components
             firstDropZone.Children[5].TextContent.Should().Be("Item 2");
 
             comp.Instance.IndexHistory.Distinct().Should().ContainSingle().And.Contain(3);
-
         }
 
         [Test]
@@ -1129,7 +1124,6 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.IndexHistory.Should().ContainInOrder(
                 new[] { 2, 2, 2, 1 });
-
         }
 
         [Test]

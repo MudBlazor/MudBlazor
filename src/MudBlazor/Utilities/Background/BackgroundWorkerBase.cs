@@ -87,7 +87,6 @@ internal abstract class BackgroundWorkerBase : IDisposable
             // Do not await the _executeTask because cancelling it will throw an OperationCanceledException which we are explicitly ignoring
             await Task.WhenAny(_executeTask, tcs.Task).ConfigureAwait(false);
         }
-
     }
 
     /// <inheritdoc/>

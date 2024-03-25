@@ -289,7 +289,6 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// After press Enter key down, the selected value should be shown in the input value
         /// </summary>
-
         [Test]
         public async Task Autocomplete_after_Enter_Should_show_Selected_Value()
         {
@@ -1270,7 +1269,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task Autocomplete_Should_Not_LoadListStartWhenSet()
         {
             var comp = Context.RenderComponent<AutocompleteListStartRendersTest>();
-
 
             var inputControl = comp.Find("div.mud-input-control");
             inputControl.Click();

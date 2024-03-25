@@ -11,7 +11,6 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class ExpansionPanelTests : BunitTest
     {
-
         [OneTimeSetUp]
         public void Init()
         {

@@ -290,8 +290,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool ApplyDropClassesOnDragStarted { get; set; } = false;
 
-
-
         /// <summary>
         /// Controls whether data in the DataGrid can be sorted. This is overridable by each column.
         /// </summary>
@@ -1449,7 +1447,6 @@ namespace MudBlazor
             _dropContainer?.Refresh();
             _columnsPanelDropContainer?.Refresh();
         }
-
 
         public void GroupItems(bool noStateChange = false)
         {

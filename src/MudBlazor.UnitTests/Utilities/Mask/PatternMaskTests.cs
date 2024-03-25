@@ -11,7 +11,6 @@ namespace MudBlazor.UnitTests.Utilities.Mask;
 [TestFixture]
 public class PatternMaskTests
 {
-
     [Test]
     public void BaseMask_Internals()
     {
@@ -293,5 +292,4 @@ public class PatternMaskTests
         // state should be preserved (Text, Caret/Selection)
         mask.ToString().Should().Be("1[2]#");
     }
-
 }

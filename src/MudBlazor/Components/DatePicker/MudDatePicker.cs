@@ -219,7 +219,6 @@ namespace MudBlazor
             var diff = Culture.Calendar.GetYear(date) - Culture.Calendar.GetYear(yearDate);
             var calenderYear = Culture.Calendar.GetYear(date);
             return calenderYear - diff;
-
         }
 
         //To be completed on next PR
@@ -233,13 +232,11 @@ namespace MudBlazor
                 case "ArrowRight":
                     if (IsOpen)
                     {
-
                     }
                     break;
                 case "ArrowLeft":
                     if (IsOpen)
                     {
-
                     }
                     break;
                 case "ArrowUp":
@@ -253,11 +250,9 @@ namespace MudBlazor
                     }
                     else if (obj.ShiftKey == true)
                     {
-
                     }
                     else
                     {
-
                     }
                     break;
                 case "ArrowDown":
@@ -267,11 +262,9 @@ namespace MudBlazor
                     }
                     else if (obj.ShiftKey == true)
                     {
-
                     }
                     else
                     {
-
                     }
                     break;
                 case "Escape":

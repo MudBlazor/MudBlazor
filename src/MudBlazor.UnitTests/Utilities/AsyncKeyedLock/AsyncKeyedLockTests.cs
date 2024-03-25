@@ -576,7 +576,6 @@ public class AsyncKeyedLockTests
         valid.Should().BeTrue();
     }
 
-
     [Test]
     public async Task BasicTestGenericsPooling50k()
     {

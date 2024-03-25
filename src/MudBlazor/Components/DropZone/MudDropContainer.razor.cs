@@ -128,7 +128,6 @@ namespace MudBlazor
         [Category(CategoryTypes.DropZone.Items)]
         public Func<T, string, string>? ItemsClassSelector { get; set; }
 
-
         public event EventHandler<MudDragAndDropItemTransaction<T>>? TransactionStarted;
         public event EventHandler<MudDragAndDropIndexChangedEventArgs>? TransactionIndexChanged;
 
@@ -143,10 +142,6 @@ namespace MudBlazor
             ItemPicked.InvokeAsync(createTransaction);
         }
 
-
-
-
-
         public T? GetTransactionItem()
         {
             if (_transaction is null)
@@ -156,7 +151,6 @@ namespace MudBlazor
 
             var capturedTransaction = _transaction;
             return capturedTransaction.Item;
-
         }
 
         public bool TransactionInProgress() => _transaction is not null;

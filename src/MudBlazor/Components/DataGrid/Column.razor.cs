@@ -131,7 +131,6 @@ namespace MudBlazor
 
         public string Identifier { get; set; }
 
-
         private CultureInfo _culture;
         /// <summary>
         /// The culture used to represent this column and by the filtering input field.
@@ -386,7 +385,6 @@ namespace MudBlazor
             if (DataGrid != null)
                 DataGrid.RemoveColumn(this);
         }
-
 
         #region Abstract Members
 

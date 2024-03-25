@@ -14,7 +14,6 @@ namespace MudBlazor.UnitTests.Utilities
 {
     public class NaturalComparerTest
     {
-
         Func<string, string> _expand = (s) =>
         {
             int o; while ((o = s.IndexOf('\\')) != -1)
@@ -56,7 +55,6 @@ namespace MudBlazor.UnitTests.Utilities
                 "KndlaXoxKndlaXoyKndlacOfMSp3ZWnDnzIqeSBhMyp5IGE0KnknYTMqeSdhNCp5K2EzKnkrYTQqeS1h" +
                 "Myp5LWE0KnlhMyp5YTQqej96IDA1MD96IDIxP3ohMjE/ejIwP3oyMj96YTIxP3rCqTIxP1sxKl8xKsKt" +
                 "bjEyKsKtbjEzKsSwKg==";
-
 
         private static string[] s_orderedFileNames = new string[]
         {
@@ -402,6 +400,5 @@ namespace MudBlazor.UnitTests.Utilities
             naturalComparer.Compare(null, 1).Should().Be(-1);
             naturalComparer.Compare(1, null).Should().Be(1);
         }
-
     }
 }

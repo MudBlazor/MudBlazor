@@ -91,7 +91,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Menu.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
 
-
         /// <summary>
         /// If true, compact vertical padding will be applied to all menu items.
         /// </summary>

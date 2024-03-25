@@ -342,7 +342,6 @@ public class AsyncKeyedLockNonPooledTests
         maxParallelism.Should().Be(1);
         keyedSemaphores.IsInUse(1).Should().BeFalse();
 
-
         async Task OccupyTheLockALittleBit(int key)
         {
             var currentTaskId = Task.CurrentId ?? -1;
@@ -567,7 +566,6 @@ public class AsyncKeyedLockNonPooledTests
         dictionary.IsInUse("test").Should().BeFalse();
         isLockAcquired.Should().BeTrue();
         isCallbackInvoked.Should().BeTrue();
-
     }
 
     [Test]

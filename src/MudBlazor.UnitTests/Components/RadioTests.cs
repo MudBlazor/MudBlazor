@@ -251,7 +251,6 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => group.Instance.Value.Should().Be(null));
         }
 
-
         [Test]
         public void RadioTest_TypeException()
         {

@@ -119,7 +119,6 @@ namespace MudBlazor
         [Category(CategoryTypes.DropZone.Items)]
         public Func<T, string>? ItemsClassSelector { get; set; }
 
-
         [Parameter]
         [Category(CategoryTypes.DropZone.Behavior)]
         public bool AllowReorder { get; set; }
@@ -199,7 +198,6 @@ namespace MudBlazor
             }
             else return string.Empty;
         }
-
 
         protected string Classname =>
             new CssBuilder("mud-drop-zone")

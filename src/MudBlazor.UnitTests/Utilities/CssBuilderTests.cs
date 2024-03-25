@@ -22,7 +22,6 @@ namespace UtilityTests
             classToRender.Should().Be("item-one");
         }
 
-
         [Test]
         public void ShouldConstructWithEmpty()
         {

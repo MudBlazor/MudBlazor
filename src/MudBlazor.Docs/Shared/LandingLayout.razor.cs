@@ -25,6 +25,5 @@ namespace MudBlazor.Docs.Shared
         {
             _drawerOpen = !_drawerOpen;
         }
-
     }
 }

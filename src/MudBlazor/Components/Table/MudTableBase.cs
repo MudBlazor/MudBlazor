@@ -287,7 +287,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Pagination)]
         public RenderFragment PagerContent { get; set; }
 
-
         /// <summary>
         /// Locks Inline Edit mode, if true.
         /// </summary>
@@ -309,6 +308,22 @@ namespace MudBlazor
         /// Event is called before the item is modified in inline editing.
         /// </summary>
         [Parameter] public EventCallback<object> OnPreviewEditClick { get; set; }
+
+        /// <summary>
+        /// Command executed when the user clicks on the CommitEdit Button.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Editing)]
+        [Obsolete($"Use {nameof(OnCommitEditClick)} instead. This will be removed in v7.")]
+        public ICommand CommitEditCommand { get; set; }
+
+        /// <summary>
+        /// Command parameter for the CommitEdit Button. By default, will be the row level item model, if you won't set anything else.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Editing)]
+        [Obsolete("This will be removed in v7.")]
+        public object CommitEditCommandParameter { get; set; }
 
         /// <summary>
         /// Tooltip for the CommitEdit Button.
@@ -508,6 +523,15 @@ namespace MudBlazor
         internal async Task OnCommitEditHandler(MouseEventArgs ev, object item)
         {
             await OnCommitEditClick.InvokeAsync(ev);
+#pragma warning disable CS0618
+            if (CommitEditCommand?.CanExecute(CommitEditCommandParameter) ?? false)
+            {
+                var parameter = CommitEditCommandParameter;
+                if (parameter == null)
+                    parameter = item;
+                CommitEditCommand.Execute(parameter);
+            }
+#pragma warning restore CS0618
         }
 
         internal Task OnPreviewEditHandler(object item)

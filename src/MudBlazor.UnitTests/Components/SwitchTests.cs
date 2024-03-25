@@ -128,9 +128,6 @@ namespace MudBlazor.UnitTests.Components
             inputs[7].Change(false);
             switches[7].Children[1].ClassList.Should().Contain("mud-switch-label-large");
             switches[7].Children[0].ClassList.Should().Contain("mud-switch-span-large");
-
-
-
         }
     }
 }

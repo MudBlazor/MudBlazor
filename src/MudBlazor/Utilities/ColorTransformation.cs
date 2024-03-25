@@ -139,6 +139,5 @@ namespace MudBlazor.Utilities
                     SystemMath.Max(0, SystemMath.Min(255, (int)Math.Round(T[1] * 255D))),
                     SystemMath.Max(0, SystemMath.Min(255, (int)Math.Round(T[2] * 255D))));
         }
-
     }
 }

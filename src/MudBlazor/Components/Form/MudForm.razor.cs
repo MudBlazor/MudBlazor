@@ -348,7 +348,6 @@ namespace MudBlazor
                     // let's set this right
                     SetIsValid(valid);
                 }
-
             }
             return base.OnAfterRenderAsync(firstRender);
         }

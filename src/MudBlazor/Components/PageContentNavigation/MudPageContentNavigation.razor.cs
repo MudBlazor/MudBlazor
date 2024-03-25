@@ -154,7 +154,6 @@ namespace MudBlazor
             }
         }
 
-
         /// <summary>
         /// Re-render the component
         /// </summary>

@@ -45,7 +45,6 @@ namespace MudBlazor
         /// <summary>
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where (Obsolete replaced by Href)
         /// </summary>
-
         [Obsolete("Use Href Instead.", false)]
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
@@ -98,6 +97,22 @@ namespace MudBlazor
         public bool DisableRipple { get; set; }
 
         /// <summary>
+        /// Command executed when the user clicks on an element.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
+        public ICommand? Command { get; set; }
+
+        /// <summary>
+        /// Command parameter.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        [Obsolete("This will be removed in v7.")]
+        public object? CommandParameter { get; set; }
+
+        /// <summary>
         /// Button click event.
         /// </summary>
         [Parameter]
@@ -110,6 +125,12 @@ namespace MudBlazor
             if (GetDisabledState())
                 return;
             await OnClick.InvokeAsync(ev);
+#pragma warning disable CS0618
+            if (Command?.CanExecute(CommandParameter) ?? false)
+            {
+                Command.Execute(CommandParameter);
+            }
+#pragma warning restore CS0618
             Activateable?.Activate(this, ev);
         }
 

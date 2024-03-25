@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 
-
 namespace MudBlazor
 {
     // note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
@@ -108,7 +107,6 @@ namespace MudBlazor
                             }
                         }
                     }
-
                 };
             }
         }
@@ -557,7 +555,6 @@ namespace MudBlazor
         public Func<TableState, Task<TableData<T>>> ServerData { get; set; }
 
         internal override bool HasServerData => ServerData != null;
-
 
         TableData<T> _server_data = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private IEnumerable<T> _items;

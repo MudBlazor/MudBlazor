@@ -12,7 +12,6 @@ namespace MudBlazor.UnitTests.Utilities.Mask;
 [TestFixture]
 public class DateMaskTests
 {
-
     [Test]
     public void DateMask1()
     {
@@ -269,5 +268,4 @@ public class DateMaskTests
         mask.ToString().Should().Be("0000-03-31|");
         mask.Clear();
     }
-
 }

@@ -86,7 +86,6 @@ namespace MudBlazor
             {
                 PopoverService.Subscribe(this);
             }
-
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

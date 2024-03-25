@@ -15,7 +15,6 @@ namespace MudBlazor.UnitTests.Mocks
 
         public MockScrollSpyFactory()
         {
-
         }
 
         public IScrollSpy Create() => _spy ?? new MockScrollSpy();

@@ -626,7 +626,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.ColorPickerMode, mode);
                 p.Add(x => x.DisableInput, false);
-
             });
 
             _ = comp.Find(_colorInputCssSelector);
@@ -639,7 +638,6 @@ namespace MudBlazor.UnitTests.Components
 
             _ = comp.Find(_colorInputCssSelector);
         }
-
 
         [Test]
         public void Toggle_ModeSwitch()
@@ -850,7 +848,6 @@ namespace MudBlazor.UnitTests.Components
 
                 comp.Instance.ColorValue.Should().Be(expectedColor);
                 comp.Find(".mud-picker-color-view-collection").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
-
             }
         }
 
@@ -1038,7 +1035,6 @@ namespace MudBlazor.UnitTests.Components
 
             item.Click();
 
-
             comp.Instance.ColorValue.Should().NotBe(_defaultColor);
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
@@ -1219,7 +1215,6 @@ namespace MudBlazor.UnitTests.Components
 
             MudColor secondExpectedColor = new MudColor(31, 30, 42, _defaultColor);
             CheckColorRelatedValues(comp, x - 8, y + 7, secondExpectedColor, ColorPickerMode.RGB);
-
         }
 
         [Test]

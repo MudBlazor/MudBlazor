@@ -546,7 +546,6 @@ namespace MudBlazor
             // todo: raise an event the user can handle
         }
 
-
         private IEnumerable<DateTime> GetAllMonths()
         {
             var current = GetMonthStart(0);

@@ -18,7 +18,6 @@ namespace MudBlazor.UnitTests.Services
     {
         private class PseudoElementReferenceContext : ElementReferenceContext
         {
-
         }
 
         private Mock<IJSRuntime> _runtimeMock;
@@ -169,7 +168,6 @@ namespace MudBlazor.UnitTests.Services
                 )
             )).ReturnsAsync(resolvedElements.Values).Callback<String, object[]>((x, y) => { observerId = (Guid)y[0]; ids = new List<Guid>((IEnumerable<Guid>)y[3]); }).Verifiable();
 
-
             foreach (var item in resolvedElements)
             {
                 _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>(
@@ -287,13 +285,11 @@ namespace MudBlazor.UnitTests.Services
         {
             return new BoundingClientRect
             {
-
                 Height = random.Next(10, 200) + random.NextDouble(),
                 Left = random.Next(10, 200) + random.NextDouble(),
 
                 Top = random.Next(10, 200) + random.NextDouble(),
                 Width = random.Next(10, 200) + random.NextDouble(),
-
             };
         }
 

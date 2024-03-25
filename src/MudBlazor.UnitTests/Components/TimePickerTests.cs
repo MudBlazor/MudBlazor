@@ -49,7 +49,6 @@ namespace MudBlazor.UnitTests.Components
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Time Picker");
         }
 
-
         [Test]
         public void TimePicker_Should_Clear()
         {
@@ -307,7 +306,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
-
         [Test]
         public void OpenToMinutes_CheckHoursHidden()
         {
@@ -378,7 +376,6 @@ namespace MudBlazor.UnitTests.Components
 
             // should be 14 hours
             underlyingPicker.TimeIntermediate.Value.Hours.Should().Be(14);
-
         }
 
         [Test]
@@ -390,7 +387,6 @@ namespace MudBlazor.UnitTests.Components
             // Are minutes displayed
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
-
 
         [Test]
         public void DragMouse_SelectHour_CheckMinutesAppear()
@@ -930,7 +926,6 @@ namespace MudBlazor.UnitTests.Components
 
             timePicker.ReadOnly = true;
             await comp.InvokeAsync(() => timePicker.Submit());
-
         }
 
         [Test]
@@ -964,7 +959,6 @@ namespace MudBlazor.UnitTests.Components
 
             // Check that the time have been changed
             comp.WaitForAssertion(() => picker.Time.Should().Be(new TimeSpan(16, 30, 00)));
-
         }
 
         // See #7483 for details

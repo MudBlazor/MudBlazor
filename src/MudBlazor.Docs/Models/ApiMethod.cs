@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 
-
 namespace MudBlazor.Docs.Models
 {
     public class ApiMethod
