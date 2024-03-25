@@ -73,8 +73,6 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
             var eventCallback = _eventCallbackFunc();
             if (eventCallback.HasDelegate)
             {
-                _lastValue = value;
-
                 return eventCallback.InvokeAsync(value);
             }
         }
