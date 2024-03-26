@@ -1,8 +1,12 @@
-﻿.mud-popover {
+.mud-popover {
   outline: 0;
   z-index: calc(var(--mud-zindex-popover) + 1);
   position: absolute;
   opacity: 0;
+
+  * {
+    touch-action: pinch-zoom;
+  }
 
   &.mud-popover-fixed {
     position: fixed;
