@@ -303,7 +303,7 @@ namespace MudBlazor
             }
         }
 
-        public async Task MouseLeave()
+        public async void MouseLeave()
         {
             _isMouseOver = false;
 
