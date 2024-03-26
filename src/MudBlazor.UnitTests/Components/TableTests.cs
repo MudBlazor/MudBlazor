@@ -1242,8 +1242,8 @@ namespace MudBlazor.UnitTests.Components
             CancellationToken? cancelToken = null;
             // Make a task completion source
             var first = new TaskCompletionSource<TableData<int>>();
-            // Set the ServerDataWithCancel function 
-            table.SetParam(p => p.ServerDataWithCancel, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
+            // Set the ServerData function 
+            table.SetParam(p => p.ServerData, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
             {
                 // Remember the cancellation token
                 cancelToken = cancellationToken;
@@ -1260,8 +1260,8 @@ namespace MudBlazor.UnitTests.Components
 
             // Arrange a table refresh
             var second = new TaskCompletionSource<TableData<int>>();
-            // Set the ServerDataWithCancel function to a new method...
-            table.SetParam(p => p.ServerDataWithCancel, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
+            // Set the ServerData function to a new method...
+            table.SetParam(p => p.ServerData, new Func<TableState, CancellationToken, Task<TableData<int>>>((s, cancellationToken) =>
             {
                 // ... which returns the second task.
                 return second.Task;

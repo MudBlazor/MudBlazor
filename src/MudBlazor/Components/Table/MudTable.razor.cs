@@ -551,24 +551,12 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// MudTable will automatically control loading animation visibility if ServerData is set.
-        /// See <see cref="MudTableBase.Loading"/>.
+        /// See <see cref="MudTableBase.Loading"/>.  Forward the provided cancellation token to
+        /// methods which support it.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
-        public Func<TableState, Task<TableData<T>>> ServerData { get; set; }
-
-        /// <summary>
-        /// Gets or sets the cancelable function for requesting filtered, paginated, and sorted data from the server.
-        /// </summary>
-        /// <remarks>
-        /// This function behaves like the <see cref="ServerData"/> property except that a <see cref="CancellationToken"/> parameter
-        /// is passed into the function to allow for cancelation of ongoing functions.  Forward this cancellation token to any calls 
-        /// such as API calls using <see cref="System.Net.Http.HttpClient" /> or functions which query data such as DbContext to ensure 
-        /// that operations are properly canceled.  Using this function can improve responsiveness when a table has frequent updates.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Table.Data)]
-        public Func<TableState, CancellationToken, Task<TableData<T>>> ServerDataWithCancel { get; set; }
+        public Func<TableState, CancellationToken, Task<TableData<T>>> ServerData { get; set; }
 
         private CancellationTokenSource _cancellationTokenSrc;
 
@@ -586,7 +574,7 @@ namespace MudBlazor
         }
         
 
-        internal override bool HasServerData => ServerData != null || ServerDataWithCancel != null;
+        internal override bool HasServerData => ServerData != null;
 
         TableData<T> _server_data = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private IEnumerable<T> _items;
@@ -611,10 +599,8 @@ namespace MudBlazor
             // Cancel any prior request
             CancelToken();
 
-            // Get data via either ServerDataWithCancel or ServerData
-            _server_data = ServerDataWithCancel != null ?
-                    await ServerDataWithCancel(state, _cancellationTokenSrc.Token) :
-                    await ServerData(state);
+            // Get data via the ServerData function
+            _server_data = await ServerData(state, _cancellationTokenSrc.Token);
 
             if (CurrentPage * RowsPerPage > _server_data.TotalItems)
                 CurrentPage = 0;

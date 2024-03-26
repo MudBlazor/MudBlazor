@@ -162,11 +162,10 @@
         <DocsPageSection>
             <SectionHeader Title="Server Side Data With Cancellation">
                 <Description>
-                    Set <CodeInline>ServerDataWithCancel</CodeInline> to load data from the backend just like <CodeInline>ServerData</CodeInline> but with automatic cancellation whenever a new data
-                    request occurs.  Actions such as rapidly changing pages, sorting, filtering, or calls to <CodeInline>ReloadTableData</CodeInline> will cause any in-progress request to be cancelled 
-                    in order to maintain responsiveness.
+                    Use the <CodeInline>CancellationToken</CodeInline> to detect when a request for data has been superceded by a new request.  By forwarding the token to methods which support it,
+                    such as common <CodeInline>HttpClient</CodeInline> or <CodeInline>DbContent</CodeInline> methods, the table can perform well even with frequent updates.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
-                        Note: When using <CodeInline>ServerDataWithCancel</CodeInline>, you don't need <CodeInline>Items</CodeInline> or <CodeInline>Filter</CodeInline>.  Also, <CodeInline>ServerData</CodeInline> will not be called.
+                        Note: When using <CodeInline>ServerData</CodeInline>, you don't need <CodeInline>Items</CodeInline> or <CodeInline>Filter</CodeInline>.
                     </MudAlert>
                 </Description>
             </SectionHeader>

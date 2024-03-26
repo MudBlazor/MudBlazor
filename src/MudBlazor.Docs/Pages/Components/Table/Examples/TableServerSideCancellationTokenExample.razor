@@ -4,8 +4,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable ServerDataWithCancel="@(new Func<TableState, CancellationToken, Task<TableData<Element>>>(ServerReload))"
-          Dense="true" Hover="true">
+<MudTable ServerData="ServerReload" Dense="true" Hover="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
     </ToolBarContent>
@@ -52,5 +51,3 @@
         return new TableData<Element>() { TotalItems = totalItems, Items = pagedData };
     }
 }
-
-
