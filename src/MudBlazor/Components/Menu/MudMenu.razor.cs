@@ -229,14 +229,6 @@ namespace MudBlazor
         [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
         [Parameter] public ButtonType ButtonType { get; set; }
 
-        [ExcludeFromCodeCoverage]
-        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
-        [Parameter] public ICommand Command { get; set; }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
-        [Parameter] public object CommandParameter { get; set; }
-
         #endregion
 
         /// <summary>
@@ -245,7 +237,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Menu.PopupBehavior)]
         public RenderFragment ChildContent { get; set; }
-        
+
         /// <summary>
         /// Fired when the menu IsOpen property changes.
         /// </summary>

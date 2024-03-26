@@ -1,4 +1,4 @@
-﻿@import 'variables';
+@import 'variables';
 
 @each $color in $mud-palette-colors {
   .mud-#{$color} {
@@ -14,7 +14,13 @@
   }
 
   .hover\:mud-#{$color}-hover {
-    &:hover, &:focus-visible {
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--mud-palette-#{$color}-hover) !important;
+      }
+    }
+
+    &:focus-visible, &:active {
       background-color: var(--mud-palette-#{$color}-hover) !important;
     }
   }

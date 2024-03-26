@@ -43,14 +43,14 @@
     </MudSelect>
 </div>
 <div class="d-flex flex-wrap mt-4">
-    <MudTextField Label="RowsPerPageString" @bind-Value="@rowsPerPageString" Immediate/>
-     <MudTextField Class="ml-4" Label="AllItemsText" @bind-Value="@allItemsText" Immediate />
-     <MudTextField Class="ml-4" Label="InfoFormat" @bind-Value="@infoFormat" Immediate />
+    <MudTextField Label="RowsPerPageString" @bind-Value="rowsPerPageString" Immediate/>
+     <MudTextField Class="ml-4" Label="AllItemsText" @bind-Value="allItemsText" Immediate />
+     <MudTextField Class="ml-4" Label="InfoFormat" @bind-Value="infoFormat" Immediate />
 </div>
 <div class="d-flex flex-wrap mt-4">
-     <MudSwitch @bind-Checked="@hideRowsPerPage" Color="Color.Tertiary">HideRowsPerPage</MudSwitch>
-     <MudSwitch @bind-Checked="@hidePageNumber" Color="Color.Primary">HidePageNumber</MudSwitch>
-     <MudSwitch @bind-Checked="@hidePagination" Color="Color.Secondary">HidePagination</MudSwitch>
+     <MudSwitch @bind-Value="hideRowsPerPage" Color="Color.Tertiary">HideRowsPerPage</MudSwitch>
+     <MudSwitch @bind-Value="hidePageNumber" Color="Color.Primary">HidePageNumber</MudSwitch>
+     <MudSwitch @bind-Value="hidePagination" Color="Color.Secondary">HidePagination</MudSwitch>
 </div>
 
 @code {

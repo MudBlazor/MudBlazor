@@ -4,6 +4,9 @@
 
 using System;
 using System.Collections;
+#if NET8_0_OR_GREATER
+using System.Collections.Frozen;
+#endif
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,7 +35,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     {
         if (_parameters.Contains(parameter))
         {
-            throw new InvalidOperationException($"{parameter.ParameterName} is already registered.");
+            throw new InvalidOperationException($"{parameter.Metadata.ParameterName} is already registered.");
         }
 
         _parameters.Add(parameter);
@@ -61,21 +64,27 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     }
 
     /// <summary>
-    /// Determines which <see cref="ParameterState"/> have been changed and calls their respective change handler.
+    /// Determines which <see cref="ParameterState{T}"/> have been changed and calls their respective change handler.
     /// </summary>
     /// <param name="baseSetParametersAsync">A func to call the base class' <see cref="ComponentBase.SetParametersAsync"/>.</param>
     /// <param name="parameters">The ParameterView coming from Blazor's  <see cref="ComponentBase.SetParametersAsync"/>.</param>
     public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
-        // We check for HasHandler first for performance since we do not need HasParameterChanged if there is nothing to execute.
-        // We need to call .ToList() otherwise the IEnumerable will be lazy invoked after the baseSetParametersAsync, but we need before.
-        var changedParams = _parameters.Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters)).ToList();
+#if NET8_0_OR_GREATER
+        var parametersHandlerShouldFire = _parameters
+            .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
+            .ToFrozenSet(ParameterHandlerUniquenessComparer.Default);
+#else
+        var parametersHandlerShouldFire = _parameters
+            .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
+            .ToHashSet(ParameterHandlerUniquenessComparer.Default);
+#endif
 
         await baseSetParametersAsync(parameters);
 
-        foreach (var changedParam in changedParams)
+        foreach (var parameterHandlerShouldFire in parametersHandlerShouldFire)
         {
-            await changedParam.ParameterChangeHandleAsync();
+            await parameterHandlerShouldFire.ParameterChangeHandleAsync();
         }
     }
 

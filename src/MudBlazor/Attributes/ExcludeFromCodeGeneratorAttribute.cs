@@ -10,7 +10,7 @@ namespace MudBlazor;
 /// Attribute to exclude enums from source code generator.
 /// </summary>
 [AttributeUsage(AttributeTargets.Enum)]
-internal sealed class ExcludeFromCodeGeneratorAttribute: Attribute
+internal sealed class ExcludeFromCodeGeneratorAttribute : Attribute
 {
-    
+
 }

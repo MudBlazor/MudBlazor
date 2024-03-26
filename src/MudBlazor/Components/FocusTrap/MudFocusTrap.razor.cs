@@ -170,7 +170,7 @@ namespace MudBlazor
         {
             if (!_disabled)
             {
-                RestoreFocusAsync().AndForget(ignoreExceptions:true);
+                RestoreFocusAsync().AndForget(ignoreExceptions: true);
             }
         }
     }

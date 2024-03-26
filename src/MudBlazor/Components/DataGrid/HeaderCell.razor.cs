@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -124,7 +123,7 @@ namespace MudBlazor
                     return false;
 
                 return Column?.ShowFilterIcon ?? DataGrid?.ShowFilterIcons ?? true;
-            }              
+            }
         }
 
         private bool hideable
@@ -160,18 +159,12 @@ namespace MudBlazor
         {
             get
             {
-                if (_initialDirection == SortDirection.Descending)
+                return _initialDirection switch
                 {
-                    return "sort-direction-icon mud-direction-desc";
-                }
-                else if (_initialDirection == SortDirection.Ascending)
-                {
-                    return "sort-direction-icon mud-direction-asc";
-                }
-                else
-                {
-                    return "sort-direction-icon";
-                }
+                    SortDirection.Descending => "sort-direction-icon mud-direction-desc",
+                    SortDirection.Ascending => "sort-direction-icon mud-direction-asc",
+                    _ => "sort-direction-icon"
+                };
             }
         }
 
@@ -204,6 +197,7 @@ namespace MudBlazor
 
         protected override async Task OnInitializedAsync()
         {
+            await base.OnInitializedAsync();
             _initialDirection = Column?.InitialDirection ?? SortDirection.None;
 
             if (_initialDirection != SortDirection.None)

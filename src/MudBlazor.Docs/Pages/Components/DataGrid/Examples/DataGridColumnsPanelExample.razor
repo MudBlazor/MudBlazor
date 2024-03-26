@@ -21,17 +21,17 @@
 </MudDataGrid>
 
 <div class="d-flex flex-rows flex-wrap mr-4">
-    <MudSwitch @bind-Value="@_dragDropReorderingEnabled" Color="Color.Primary">Drag Drop Column Reordering</MudSwitch>
-    <MudSwitch @bind-Value="@_columnsPanelReorderingEnabled" Color="Color.Primary">Columns Panel Column Reordering</MudSwitch>
-    <MudSwitch @bind-Value="@_hideable" Color="Color.Primary">Hideable</MudSwitch>
-    <MudSwitch @bind-Value="@_filterable" Color="Color.Primary">Filterable</MudSwitch>
-    <MudSwitch @bind-Value="@_groupable" Color="Color.Primary">Groupable</MudSwitch>
-    <MudSwitch @bind-Value="@_hideMolar" Color="Color.Primary" Converter="_oppositeBoolConverter">Molar Mass Visible</MudSwitch>
-    <MudSwitch @bind-Value="@_hideGroup" Color="Color.Primary" Converter="_oppositeBoolConverter">Category Visible</MudSwitch>
+    <MudSwitch @bind-Value="_dragDropReorderingEnabled" Color="Color.Primary">Drag Drop Column Reordering</MudSwitch>
+    <MudSwitch @bind-Value="_columnsPanelReorderingEnabled" Color="Color.Primary">Columns Panel Column Reordering</MudSwitch>
+    <MudSwitch @bind-Value="_hideable" Color="Color.Primary">Hideable</MudSwitch>
+    <MudSwitch @bind-Value="_filterable" Color="Color.Primary">Filterable</MudSwitch>
+    <MudSwitch @bind-Value="_groupable" Color="Color.Primary">Groupable</MudSwitch>
+    <MudSwitch @bind-Value="_hideMolar" Color="Color.Primary" Converter="_oppositeBoolConverter">Molar Mass Visible</MudSwitch>
+    <MudSwitch @bind-Value="_hideGroup" Color="Color.Primary" Converter="_oppositeBoolConverter">Category Visible</MudSwitch>
 </div>
 
 <div class="d-flex flex-wrap mt-4">
-    <MudRadioGroup T="DataGridFilterMode" @bind-Value="@_filterMode">
+    <MudRadioGroup T="DataGridFilterMode" @bind-Value="_filterMode">
         <MudRadio Dense="true" Value="@DataGridFilterMode.Simple" Color="Color.Primary">Simple</MudRadio>
         <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterMenu" Color="Color.Tertiary">Column Menu</MudRadio>
         <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterRow">Column Row</MudRadio>

@@ -4,9 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -15,6 +13,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudFileUpload<T> : MudFormComponent<T, string>
     {
         public MudFileUpload() : base(new DefaultConverter<T>()) { }
@@ -33,7 +32,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
-        public T Files
+        public T? Files
         {
             get => _value;
             set
@@ -49,7 +48,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
-        public EventCallback<T> FilesChanged { get; set; }
+        public EventCallback<T?> FilesChanged { get; set; }
 
         /// <summary>
         /// Called when the internal files are changed
@@ -70,14 +69,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
-        public RenderFragment<FileUploadButtonTemplateContext<T>> ButtonTemplate { get; set; }
+        public RenderFragment<FileUploadButtonTemplateContext<T?>>? ButtonTemplate { get; set; }
 
         /// <summary>
         /// Renders the selected files, if desired.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
-        public RenderFragment<T> SelectedTemplate { get; set; }
+        public RenderFragment<T?>? SelectedTemplate { get; set; }
 
         /// <summary>
         /// If true, OnFilesChanged will not trigger if validation fails
@@ -91,7 +90,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
-        public string Accept { get; set; }
+        public string? Accept { get; set; }
 
         /// <summary>
         /// If false, the inner FileInput will be visible
@@ -105,14 +104,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
-        public string InputClass { get; set; }
+        public string? InputClass { get; set; }
 
         /// <summary>
         /// Style to apply to the internal InputFile
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
-        public string InputStyle { get; set; }
+        public string? InputStyle { get; set; }
 
         /// <summary>
         /// Represents the maximum number of files that can retrieved from the internal call to
@@ -140,15 +139,19 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
 
-        public async Task ClearAsync()
+        public Task ClearAsync()
         {
             _value = default;
-            await NotifyValueChangedAsync();
+            return NotifyValueChangedAsync();
         }
 
-        private async Task OnChange(InputFileChangeEventArgs args)
+        private async Task OnChangeAsync(InputFileChangeEventArgs args)
         {
-            if (GetDisabledState()) return;
+            if (GetDisabledState())
+            {
+                return;
+            }
+
             if (typeof(T) == typeof(IReadOnlyList<IBrowserFile>))
             {
                 var newFiles = args.GetMultipleFiles(MaximumFileCount);
@@ -166,20 +169,25 @@ namespace MudBlazor
             {
                 _value = args.FileCount == 1 ? (T)args.File : default;
             }
-            else return;
+            else
+            {
+                return;
+            }
 
             await NotifyValueChangedAsync();
 
-            if (!Error
-                || !SuppressOnChangeWhenInvalid) // only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
+            if (!Error || !SuppressOnChangeWhenInvalid) // only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
+            {
                 await OnFilesChanged.InvokeAsync(args);
+            }
         }
 
         protected override void OnInitialized()
         {
             if (!(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) || typeof(T) == typeof(IBrowserFile)))
-                Logger.LogWarning("T must be of type {type1} or {type2}", typeof(IReadOnlyList<IBrowserFile>),
-                    typeof(IBrowserFile));
+            {
+                Logger.LogWarning("T must be of type {type1} or {type2}", typeof(IReadOnlyList<IBrowserFile>), typeof(IBrowserFile));
+            }
 
             base.OnInitialized();
         }

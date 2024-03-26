@@ -25,7 +25,7 @@
             <DocsPageSection>
                 <SectionHeader Title="Properties" />
                 <SectionContent Class="docs-content-api" Outlined="false">
-                    <EnumSwitch T="Grouping" @bind-Value="@_propertiesGrouping" />
+                    <EnumSwitch T="Grouping" @bind-Value="_propertiesGrouping" />
                     <MudTable Items="@properties" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm" GroupBy="@PropertiesGroupDefinition">
                         <HeaderContent>
                             <MudTh>Name</MudTh>

@@ -4,11 +4,9 @@
 
 <div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
     @{
-#pragma warning disable CS0618
-        if (!OnClick.HasDelegate && Command == null)
-#pragma warning restore CS0618
+        if (!OnClick.HasDelegate)
         { 
-            <NavLink @onclick="@HandleNavigation" 
+            <NavLink @onclick="EventUtil.AsNonRenderingEventHandler(HandleNavigation)" 
                     class="@LinkClassname" 
                     @attributes="@Attributes"
                     Match="@Match" 
@@ -24,7 +22,7 @@
         }
         else
         {
-            <div @onclick="OnClickHandler"
+            <div @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
                 class="@LinkClassname"
                 ActiveClass="@ActiveClass">
                 @if (!string.IsNullOrEmpty(Icon))

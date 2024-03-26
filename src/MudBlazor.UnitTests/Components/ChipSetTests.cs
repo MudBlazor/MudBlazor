@@ -196,7 +196,7 @@ namespace MudBlazor.UnitTests.Components
 
             //Click test
             comp.FindAll("div.mud-chip")[0].Click();
-            
+
             //Should not throw an error
             comp.FindAll("button.mud-chip-close-button")[0].Click();
 
@@ -280,53 +280,53 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => chipSet.Instance.SetSelectedValuesAsync(null));
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
         }
-        
+
         [Test]
         public async Task ChipSet_MultiSelection_AfterChipArraySetNull_ShouldBeAbleToSelectSameChip()
         {
             var comp = Context.RenderComponent<ChipSetClearSelectionTest>();
             var chipSet = comp.FindComponent<MudChipSet>();
-            
+
             // Select one chip
             comp.FindAll("div.mud-chip")[0].Click();
-            
+
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(1));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Milk");
-            
+
             // Set chip array to null
             comp.FindAll("button")[0].Click();
-            
+
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Nothing selected.");
-            
+
             // Select same chip again
             comp.FindAll("div.mud-chip")[0].Click();
-            
+
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(1));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Milk");
         }
-        
+
         [Test]
         public async Task ChipSet_MultiSelection_AfterChipArraySetEmpty_ShouldBeAbleToSelectSameChip()
         {
             var comp = Context.RenderComponent<ChipSetClearSelectionTest>();
             var chipSet = comp.FindComponent<MudChipSet>();
-    
+
             // Select one chip
             comp.FindAll("div.mud-chip")[0].Click();
-            
+
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(1));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Milk");
 
             // Set chip array to empty
             comp.FindAll("button")[1].Click();
-            
+
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Nothing selected.");
-    
+
             // Select same chip again
             comp.FindAll("div.mud-chip")[0].Click();
-            
+
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(1));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Milk");
         }

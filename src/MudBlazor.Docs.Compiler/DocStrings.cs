@@ -100,7 +100,8 @@ namespace MudBlazor.Docs.Compiler
          */
         private static string convertSeeTags(string doc)
         {
-            return Regex.Replace(doc, "<see cref=\"[TFPME]:(MudBlazor\\.)?([^>]+)\" */>", match => {
+            return Regex.Replace(doc, "<see cref=\"[TFPME]:(MudBlazor\\.)?([^>]+)\" */>", match =>
+            {
                 string result = match.Groups[2].Value;     // get the name of Type or type member (Field, Property, Method, or Event)
                 result = Regex.Replace(result, "`1", "");  // remove `1 from generic type name
                 return result;

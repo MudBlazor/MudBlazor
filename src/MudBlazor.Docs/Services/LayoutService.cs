@@ -4,7 +4,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services.UserPreferences;
 
@@ -18,7 +17,7 @@ public class LayoutService
     private UserPreferences.UserPreferences _userPreferences;
     private bool _systemPreferences;
 
-    public bool IsRTL { get; private set; } = false;
+    public bool IsRTL { get; private set; }
     public DarkLightMode DarkModeToggle = DarkLightMode.System;
 
     public bool IsDarkMode { get; private set; }
@@ -54,7 +53,7 @@ public class LayoutService
         else
         {
             IsDarkMode = isDarkModeDefaultTheme;
-            _userPreferences = new UserPreferences.UserPreferences {DarkLightTheme = DarkLightMode.System};
+            _userPreferences = new UserPreferences.UserPreferences { DarkLightTheme = DarkLightMode.System };
             await _userPreferencesService.SaveUserPreferences(_userPreferences);
         }
     }
@@ -118,17 +117,17 @@ public class LayoutService
         {
             return DocsBasePage.Docs;
         }
-        else if (uri.Contains("/getting-started/"))
+
+        if (uri.Contains("/getting-started/"))
         {
             return DocsBasePage.GettingStarted;
         }
-        else if (uri.Contains("/mud/"))
+
+        if (uri.Contains("/mud/"))
         {
             return DocsBasePage.DiscoverMore;
         }
-        else
-        {
-            return DocsBasePage.None;
-        }
+
+        return DocsBasePage.None;
     }
 }

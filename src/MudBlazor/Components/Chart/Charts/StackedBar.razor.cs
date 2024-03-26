@@ -118,7 +118,7 @@ namespace MudBlazor.Charts
             double[] barValuesOffset = null;
             foreach (var item in _series)
             {
-                double gridValueX = horizontalStartSpace +24;
+                double gridValueX = horizontalStartSpace + 24;
 
                 if (barValuesOffset == null)
                 {

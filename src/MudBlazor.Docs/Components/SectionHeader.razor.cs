@@ -51,7 +51,7 @@ public partial class SectionHeader
 
         var id = (parentTitle + Title).Replace(" ", "-").ToLowerInvariant();
 
-        SectionInfo = new DocsSectionLink {Id = id, Title = Title,};
+        SectionInfo = new DocsSectionLink { Id = id, Title = Title, };
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -1,0 +1,43 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Linq.Expressions
+
+<MudDataGrid @ref="_gridRef" Items="_items">
+    <Columns>
+        @foreach (var propertyColumn in _columnInfos)
+        {
+            <PropertyColumn Property="@propertyColumn.Property" Title="@propertyColumn.Title" />
+        }
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public record Model(string Name, int? Age, Severity? Status);
+    public record ColumnInfo(Expression<Func<Model, object>> Property, string Title);
+
+    private IEnumerable<Model> _items = new List<Model>();
+    private List<ColumnInfo> _columnInfos = [];
+    private MudDataGrid<Model> _gridRef;
+
+    public void AddColumns()
+    {
+        _columnInfos.Add(new ColumnInfo(x => x.Name, "Name"));
+        _columnInfos.Add(new ColumnInfo(x => x.Age, "Age"));
+        _columnInfos.Add(new ColumnInfo(x => x.Status, "Status"));
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void RemoveColumn()
+    {
+        var columnToRemove = _columnInfos.FirstOrDefault(x => x.Title == "Name");
+        _columnInfos.Remove(columnToRemove);
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void RemoveAllColumns()
+    {
+        _columnInfos.Clear();
+        InvokeAsync(StateHasChanged);
+    }
+
+    public int GridRenderedColumnsCount => _gridRef.RenderedColumns.Count;
+}

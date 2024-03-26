@@ -6,7 +6,7 @@
     <MudAppBar Elevation="1" Dense="@dense">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
     </MudAppBar>
     <MudDrawer @bind-Open="@open" ClipMode="clipMode" Elevation="1" Variant="@DrawerVariant.Responsive">
         <MudDrawerHeader>
@@ -25,7 +25,7 @@
                 <MudSelectItem Value="@DrawerClipMode.Docked">Drawer is docked (DrawerClipMode.Docked)</MudSelectItem>
                 <MudSelectItem Value="@DrawerClipMode.Always">Always (DrawerClipMode.Always)</MudSelectItem>
             </MudSelect>
-            <MudSwitch @bind-Checked="@dense" Label="Dense appbar" Color="Color.Primary" Style="width:100%;" />
+            <MudSwitch @bind-Value="dense" Label="Dense appbar" Color="Color.Primary" Style="width:100%;" />
         </MudContainer>
     </MudMainContent>
 </MudLayout>

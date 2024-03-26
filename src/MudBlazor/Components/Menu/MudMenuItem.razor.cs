@@ -11,8 +11,8 @@ namespace MudBlazor
     {
         [CascadingParameter] public MudMenu MudMenu { get; set; }
 
-        [Parameter] [Category(CategoryTypes.Menu.Behavior)] public RenderFragment ChildContent { get; set; }
-        [Parameter] [Category(CategoryTypes.Menu.Behavior)] public bool Disabled { get; set; }
+        [Parameter][Category(CategoryTypes.Menu.Behavior)] public RenderFragment ChildContent { get; set; }
+        [Parameter][Category(CategoryTypes.Menu.Behavior)] public bool Disabled { get; set; }
 
         [Inject] public NavigationManager UriHelper { get; set; }
         [Inject] public IJsApiService JsApiService { get; set; }
@@ -54,22 +54,12 @@ namespace MudBlazor
         /// <summary>
         /// If set to false, clicking the menu item will keep the menu open
         /// </summary>
-        [Parameter] 
-        [Category(CategoryTypes.Menu.ClickAction)] 
+        [Parameter]
+        [Category(CategoryTypes.Menu.ClickAction)]
         public bool AutoClose { get; set; } = true;
 
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Target { get; set; }
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public bool ForceLoad { get; set; }
-
-        [Parameter]
-        [Category(CategoryTypes.Menu.ClickAction)]
-        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
-        public ICommand Command { get; set; }
-
-        [Parameter]
-        [Category(CategoryTypes.Menu.ClickAction)]
-        [Obsolete("This will be removed in v7.")]
-        public object CommandParameter { get; set; }
+        [Parameter][Category(CategoryTypes.Menu.ClickAction)] public string Target { get; set; }
+        [Parameter][Category(CategoryTypes.Menu.ClickAction)] public bool ForceLoad { get; set; }
 
         [Parameter] public EventCallback<EventArgs> OnAction { get; set; }
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
@@ -90,16 +80,10 @@ namespace MudBlazor
             }
             else
             {
-                if(OnClick.HasDelegate)
+                if (OnClick.HasDelegate)
                     await OnClick.InvokeAsync(ev);
-                else 
+                else
                     await OnActionHandlerAsync(ev);
-#pragma warning disable CS0618
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }
-#pragma warning restore CS0618
             }
         }
 
@@ -121,16 +105,10 @@ namespace MudBlazor
             }
             else
             {
-                if(OnTouch.HasDelegate)
+                if (OnTouch.HasDelegate)
                     await OnTouch.InvokeAsync(ev);
-                else 
+                else
                     await OnActionHandlerAsync(ev);
-#pragma warning disable CS0618
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }
-#pragma warning restore CS0618
             }
         }
 

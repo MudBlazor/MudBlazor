@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-treeview {
   margin: 0px;
@@ -60,8 +60,10 @@
   transition: background-color 150ms cubic-bezier(.4,0,.2,1) 0ms;
 }
 
-.mud-treeview-hover .mud-treeview-item-content:hover {
-  background-color: var(--mud-palette-action-default-hover);
+@media(hover: hover) and (pointer: fine) {
+  .mud-treeview-hover .mud-treeview-item-content:hover {
+    background-color: var(--mud-palette-action-default-hover);
+  }
 }
 
 .mud-treeview-item-arrow {

@@ -337,7 +337,7 @@ namespace MudBlazor.UnitTests.Components
             string.Join(",", selectedValues).Should().Be("2");
 
             input.Click();
-            comp.WaitForAssertion(()=>comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             items = comp.FindAll("div.mud-list-item").ToArray();
 
             items[0].Click();
@@ -514,7 +514,7 @@ namespace MudBlazor.UnitTests.Components
             selectAllItem.Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/>");
 
             // Check that all normal select items are actually selected
-            var items = comp.FindComponents<MudSelectItem<string>>().Where(x=>x.Instance.HideContent==false).ToArray();
+            var items = comp.FindComponents<MudSelectItem<string>>().Where(x => x.Instance.HideContent == false).ToArray();
 
             items.Should().HaveCount(7);
             foreach (var item in items)
@@ -568,7 +568,7 @@ namespace MudBlazor.UnitTests.Components
             input.Click();
             menu.ClassList.Should().Contain("mud-popover-open");
             // now click an item and see the value change
-            comp.WaitForAssertion(()=> comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
 
             comp.FindAll("div.mud-list-item")[1].Click();
             // menu should be closed now
@@ -788,7 +788,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-control").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             // Nr 2 should be hilited
-            comp.WaitForAssertion(()=>comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-selected-item").Count.Should().Be(1));
             comp.FindAll("div.mud-list-item")[1].ToMarkup().Should().Contain("mud-selected-item");
             // now click an item and see the value change
             comp.FindAll("div.mud-list-item")[0].Click();
@@ -1129,7 +1129,7 @@ namespace MudBlazor.UnitTests.Components
             items[1].Click();
             await comp.InvokeAsync(() => select.Validate());
             select.ValidationErrors.Count.Should().Be(0);
-            
+
             //2b.
             inputs[1].Click();//selectWithT 
             //wait for render and it will find 5 items from the component

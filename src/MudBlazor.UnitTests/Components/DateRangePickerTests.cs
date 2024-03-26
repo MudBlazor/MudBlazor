@@ -1,15 +1,15 @@
 ﻿#pragma warning disable BL0005 // Set parameter outside component
 
-using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
+using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
 using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
@@ -46,6 +46,24 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudDateRangePicker>();
             var openButton = comp.Find(".mud-input-adornment button");
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Date Range Picker");
+        }
+
+        [Test]
+        public void DateRangePicker_Preset_No_Timestamp()
+        {
+            var comp = Context.RenderComponent<DateRangePickerPresetWithoutTimestampTest>();
+
+            comp.Markup.Should().Contain("mud-range-start-selected");
+            comp.Markup.Should().Contain("mud-range-end-selected");
+        }
+
+        [Test]
+        public void DateRangePicker_Preset_Timestamp()
+        {
+            var comp = Context.RenderComponent<DateRangePickerPresetRangeWithTimestampTest>();
+
+            comp.Markup.Should().Contain("mud-range-start-selected");
+            comp.Markup.Should().Contain("mud-range-end-selected");
         }
 
         [Test]
@@ -452,12 +470,12 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
                 .Should().OnlyContain(disabled => disabled == false);
         }
-        
+
         [Test]
         public void AdditionalDateClassesFunc_ClassIsAdded()
         {
             Func<DateTime, string> additionalDateClassesFunc = date => "__addedtestclass__";
-            
+
             var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.AdditionalDateClassesFunc), additionalDateClassesFunc));
 
             var daysCount = comp.FindAll("button.mud-picker-calendar-day")
@@ -468,13 +486,13 @@ namespace MudBlazor.UnitTests.Components
                 .Where(button => ((IHtmlButtonElement)button).ClassName.Contains("__addedtestclass__"))
                 .Should().HaveCount(daysCount);
         }
-        
+
         [Test]
         public void SetRangeTextFunc_NullInputNoError()
         {
             var comp = Context.RenderComponent<MudDateRangePicker>(parameters =>
                 parameters.Add(p => p.DateRange,
-                    new DateRange(new DateTime(2020, 12, 26),null))); 
+                    new DateRange(new DateTime(2020, 12, 26), null)));
             comp.Find("input").Change("");
             comp.Instance.DateRange.End.Should().BeNull();
             comp.Instance.DateRange.Start.Should().BeNull();
@@ -487,7 +505,7 @@ namespace MudBlazor.UnitTests.Components
             var dateTime = new DateTime(2020, 12, 26);
             var comp = Context.RenderComponent<MudDateRangePicker>(parameters =>
                 parameters.Add(p => p.DateRange, null)
-                    .Add(p=>p.Culture, CultureInfo.CurrentCulture));
+                    .Add(p => p.Culture, CultureInfo.CurrentCulture));
             comp.Find("input").Change(dateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern));
             comp.Instance.DateRange.Start.Should().Be(dateTime);
 
@@ -559,7 +577,7 @@ namespace MudBlazor.UnitTests.Components
             dateRangePickerInstance.DateRange.Should().Be(null);
 
             // validated the picker
-            await dateRangePickerComponent.InvokeAsync(()=> dateRangePickerInstance.Validate());
+            await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Validate());
             dateRangePickerInstance.Error.Should().BeTrue("Value is required and should be handled as invalid");
             dateRangePickerInstance.ErrorText.Should().Be(errorMessage);
 
@@ -670,8 +688,8 @@ namespace MudBlazor.UnitTests.Components
 
             picker.DateRange.Should().Be(new DateRange(null, null));
         }
-        
-        
+
+
 
         [Test]
         public async Task OnMouseOver_ShouldCallJavaScriptFunction()

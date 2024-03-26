@@ -142,7 +142,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TimelineTest>();
             var firstItem = comp.FindComponent<MudTimelineItem>();
             comp.Find("div.mud-timeline-item-dot-inner").GetStyle()["background-color"].Should().Be("");
-            
+
             firstItem.SetParametersAndRender(p =>
             {
                 p.Add(t => t.DotStyle, "background-color: #ff0000");
