@@ -6,7 +6,7 @@
     <div class="mud-table-pagination-spacer"></div>
     @if (!DisableRowsPerPage)
     {
-        <MudText Typo="Typo.body2" Class="mud-table-pagination-caption">
+        <MudText Typo="Typo.Body2" Class="mud-table-pagination-caption">
             @RowsPerPageString
         </MudText>
         <MudSelect T="string" ValueChanged="@SetRowsPerPageAsync" Value="@DataGrid?.RowsPerPage.ToString()" Class="mud-table-pagination-select" DisableUnderLine="true" Dense="true" Disabled="@Disabled">
@@ -16,7 +16,7 @@
             }
         </MudSelect>
     }
-    <MudText Typo="Typo.body2" Class="mud-table-pagination-caption">
+    <MudText Typo="Typo.Body2" Class="mud-table-pagination-caption">
         @Info
     </MudText>
     <div class="mud-table-pagination-actions">

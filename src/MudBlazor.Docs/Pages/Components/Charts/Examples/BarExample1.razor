@@ -3,7 +3,7 @@
 <div>
     <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
 </div>
-<MudText Typo="Typo.h6">Selected portion of the chart: @Index</MudText>
+<MudText Typo="Typo.H6">Selected portion of the chart: @Index</MudText>
 
 @code {
     private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.

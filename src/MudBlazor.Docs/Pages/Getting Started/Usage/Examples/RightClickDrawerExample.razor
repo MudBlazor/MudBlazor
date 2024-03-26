@@ -3,7 +3,7 @@
 <div @oncontextmenu="ClickForDrawer" @oncontextmenu:preventDefault class="d-flex align-center justify-center" style="height: calc(100vh - 64px); background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);">
     <MudDrawer @bind-Open="@drawerOpen" Anchor="@Anchor.Right" Elevation="1" Variant="@DrawerVariant.Temporary" DisableOverlay="true">
         <MudDrawerHeader>
-            <MudText Typo="Typo.h6">My Drawer</MudText>
+            <MudText Typo="Typo.H6">My Drawer</MudText>
         </MudDrawerHeader>
         <MudCard>
             <MudCardContent>
@@ -16,7 +16,7 @@
         </MudList>
     </MudDrawer>
 
-    <MudText Class="white-text" Typo="Typo.h6">Right Click To Somewhere!</MudText>
+    <MudText Class="white-text" Typo="Typo.H6">Right Click To Somewhere!</MudText>
 </div>
 
 @code{

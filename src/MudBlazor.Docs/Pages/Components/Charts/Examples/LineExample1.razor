@@ -4,7 +4,7 @@
     <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" ChartOptions="@Options"/>
     <MudGrid>
         <MudItem xs="6">
-            <MudText Typo="Typo.body1" Class="py-3">Selected: @(Index < 0 ? "None" : Series[Index].Name)</MudText>
+            <MudText Typo="Typo.Body1" Class="py-3">Selected: @(Index < 0 ? "None" : Series[Index].Name)</MudText>
         </MudItem>
         <MudItem xs="6">
             <MudSlider @bind-Value="Options.LineStrokeWidth" Min="1" Max="10" Color="Color.Info">Line Width: @Options.LineStrokeWidth.ToString()</MudSlider>

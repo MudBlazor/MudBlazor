@@ -10,18 +10,18 @@
         {
             <DocsPageHeader Title="@_message.Title" SubTitle="@_message.Except">
                 <SpecialHeaderContent>
-                    <MudText Typo="Typo.h2" Class="docs-title">@_message.Title&nbsp;</MudText>
-                    <MudText Typo="Typo.subtitle1" Class="docs-title-description">@_message.Except</MudText>
+                    <MudText Typo="Typo.H2" Class="docs-title">@_message.Title&nbsp;</MudText>
+                    <MudText Typo="Typo.Subtitle1" Class="docs-title-description">@_message.Except</MudText>
                     <MudToolBar DisableGutters="true">
                         @foreach (var author in _message.Authors)
                         {
                             <div class="d-flex justify-start align-center mx-1">
                                 <MudAvatar Image="@author.AvatarUlr"/>
-                                <MudText Typo="Typo.subtitle2" Class="mx-2">@author.DisplayName</MudText>
+                                <MudText Typo="Typo.Subtitle2" Class="mx-2">@author.DisplayName</MudText>
                             </div>
                         }
                     </MudToolBar>
-                    <MudText Typo="Typo.subtitle2" Class="mud-text-secondary">@_message.PublishDate.ToString("MMM dd, yyyy")</MudText>
+                    <MudText Typo="Typo.Subtitle2" Class="mud-text-secondary">@_message.PublishDate.ToString("MMM dd, yyyy")</MudText>
                 </SpecialHeaderContent>
             </DocsPageHeader>
             <DocsPageContent>

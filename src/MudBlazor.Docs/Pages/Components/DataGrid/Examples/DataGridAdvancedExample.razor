@@ -6,7 +6,7 @@
 <MudDataGrid T="Element" MultiSelection="true" Items="@Elements" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
     Hideable="true" RowClick="@RowClicked" RowContextMenuClick="RowRightClicked" SelectedItemsChanged="@SelectedItemsChanged">
     <ToolBarContent>
-        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudText Typo="Typo.H6">Periodic Elements</MudText>
         <MudSpacer />
         <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
             AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
@@ -33,7 +33,7 @@
     <MudExpansionPanel Text="Show Events">
         @foreach (var message in _events)
         {
-            <MudText Typo="@Typo.body2">@message</MudText>
+            <MudText Typo="@Typo.Body2">@message</MudText>
         }
         @if(_events.Count > 0) 
         {

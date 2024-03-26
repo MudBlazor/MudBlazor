@@ -286,11 +286,11 @@ namespace MudBlazor
         {
             if ((Dense ?? MudList?.Dense) ?? false)
             {
-                _textTypo = Typo.body2;
+                _textTypo = Typo.Body2;
             }
             else if (!((Dense ?? MudList?.Dense) ?? false))
             {
-                _textTypo = Typo.body1;
+                _textTypo = Typo.Body1;
             }
             StateHasChanged();
         }

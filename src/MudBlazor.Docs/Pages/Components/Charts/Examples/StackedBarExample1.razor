@@ -3,7 +3,7 @@
 <div>
     <MudChart ChartType="ChartType.StackedBar" ChartSeries="@Series" @bind-SelectedIndex="Index" LegendPosition="@LegendPosition" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
 </div>
-<MudText Typo="Typo.h6">Selected portion of the chart: @Index</MudText>
+<MudText Typo="Typo.H6">Selected portion of the chart: @Index</MudText>
 
 <div>
     <MudRadioGroup T="Position" @bind-SelectedValue="LegendPosition">

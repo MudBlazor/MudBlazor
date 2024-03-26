@@ -10,7 +10,7 @@
 <div class="@Classname" style="@Style">
 	@if (ChildContent != null)
 	{
-		<MudText Typo="Typo.body1">@ChildContent</MudText>
+		<MudText Typo="Typo.Body1">@ChildContent</MudText>
 	}
 	<div class="mud-slider-container">
 		@if (Variant == Variant.Filled)
@@ -31,7 +31,7 @@
 							<span class="mud-slider-track-tick" />
 							@if (TickMarkLabels != null && current < TickMarkLabels.Length)
 							{
-								<MudText Class="mud-slider-track-tick-label" Typo="Typo.body2">@TickMarkLabels[current]</MudText>
+								<MudText Class="mud-slider-track-tick-label" Typo="Typo.Body2">@TickMarkLabels[current]</MudText>
 							}
 						</div>
 					}
