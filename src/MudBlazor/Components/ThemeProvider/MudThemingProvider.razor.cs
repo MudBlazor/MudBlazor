@@ -15,6 +15,7 @@ partial class MudThemingProvider : ComponentBase, IDisposable
 {
     // private const string Breakpoint = "mud-breakpoint";
     private const string Palette = "mud-palette";
+    private const string Ripple = "mud-ripple";
     private const string Elevation = "mud-elevation";
     private const string Typography = "mud-typography";
     private const string LayoutProperties = "mud";
@@ -250,6 +251,11 @@ partial class MudThemingProvider : ComponentBase, IDisposable
 
         theme.AppendLine($"--{Palette}-overlay-dark: {palette.OverlayDark};");
         theme.AppendLine($"--{Palette}-overlay-light: {palette.OverlayLight};");
+        
+        //Ripple
+        theme.AppendLine($"--{Ripple}-color: var(--{Palette}-text-primary);");
+        theme.AppendLine($"--{Ripple}-opacity: {Theme.Palette.RippleOpacity.ToString(CultureInfo.InvariantCulture)};");
+        theme.AppendLine($"--{Ripple}-opacity-secondary: {Theme.Palette.RippleOpacitySecondary.ToString(CultureInfo.InvariantCulture)};");
 
         //Elevations
         theme.AppendLine($"--{Elevation}-0: {Theme.Shadows.Elevation.GetValue(0)};");

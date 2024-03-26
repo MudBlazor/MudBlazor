@@ -87,7 +87,7 @@
   .mud-fab-#{$color} {
     color: var(--mud-palette-#{$color}-text);
     --mud-ripple-color: var(--mud-palette-#{$color}-text) !important;
-    --mud-ripple-opacity: 0.2 !important;
+    --mud-ripple-opacity: var(--mud-ripple-opacity-secondary) !important;
     background-color: var(--mud-palette-#{$color});
 
     @media(hover: hover) and (pointer: fine) {

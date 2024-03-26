@@ -142,7 +142,7 @@
 .mud-chip-filled {
   color: var(--mud-palette-text-primary);
   background-color: var(--mud-palette-chip-default);
-  --mud-ripple-opacity: 0.2;
+  --mud-ripple-opacity: var(--mud-ripple-opacity-secondary);
 
   @media(hover: hover) and (pointer: fine) {
     &:hover:not(.mud-disabled) {

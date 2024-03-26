@@ -222,7 +222,7 @@
           background-color: var(--mud-palette-#{$color});
           color: var(--mud-palette-#{$color}-text);
           --mud-ripple-color: var(--mud-palette-#{$color}-text);
-          --mud-ripple-opacity: 0.2;
+          --mud-ripple-opacity: var(--mud-ripple-opacity-secondary);
 
           @media(hover: hover) and (pointer: fine) {
             &:hover {
