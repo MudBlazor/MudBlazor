@@ -3,7 +3,7 @@
 @inject IDialogService DialogService
 
 
-<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+<MudButton @onclick="OpenDialogAsync" Variant="Variant.Filled" Color="Color.Primary">
     Open Simple Dialog
 </MudButton>
 
@@ -15,7 +15,7 @@
 
 @code {
 
-    private async Task OpenDialog()
+    private async Task OpenDialogAsync()
     {
         var options = new DialogOptions { BackgroundClass = "my-custom-class" };
         await DialogService.ShowAsync<DialogBlurryExample_Dialog>("Simple Dialog", options);

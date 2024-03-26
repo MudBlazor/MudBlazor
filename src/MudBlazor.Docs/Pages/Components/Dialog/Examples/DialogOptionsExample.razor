@@ -2,12 +2,12 @@
 
 @inject IDialogService Dialog
 
-<MudButton OnClick="@((e) => OpenDialog(maxWidth))">Open MaxWidth Dialog</MudButton>
-<MudButton OnClick="@((e) => OpenDialog(closeButton))" Color="Color.Primary">Close Button Dialog</MudButton>
-<MudButton OnClick="@((e) => OpenDialog(noHeader))" Color="Color.Secondary">No header Dialog</MudButton>
-<MudButton OnClick="@((e) => OpenDialog(disableBackdropClick))" Color="Color.Tertiary">Disable backdrop dialog</MudButton>
-<MudButton OnClick="@((e) => OpenDialog(fullScreen))" Color="Color.Info">Full Screen Dialog</MudButton>
-<MudButton OnClick="@((e) => OpenDialog(topCenter))" Color="Color.Success">Top Center Dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(maxWidth))">Open MaxWidth Dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(closeButton))" Color="Color.Primary">Close Button Dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(noHeader))" Color="Color.Secondary">No header Dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(disableBackdropClick))" Color="Color.Tertiary">Disable backdrop dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(fullScreen))" Color="Color.Info">Full Screen Dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(topCenter))" Color="Color.Success">Top Center Dialog</MudButton>
 
 
 @code {
@@ -18,8 +18,8 @@
     private DialogOptions fullScreen = new DialogOptions() { FullScreen = true, CloseButton = true };
     private DialogOptions topCenter = new DialogOptions() { Position = DialogPosition.TopCenter };
 
-    private void OpenDialog(DialogOptions options)
+    private async Task OpenDialogAsync(DialogOptions options)
     {
-        Dialog.Show<DialogUsageExample_Dialog>("Custom Options Dialog", options);
+        await Dialog.ShowAsync<DialogUsageExample_Dialog>("Custom Options Dialog", options);
     }
 }

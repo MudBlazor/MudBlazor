@@ -3,7 +3,7 @@
 @inject IDialogService DialogService
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Open">Open Inline</MudButton>
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Open2">Open With Show</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Open2Async">Open With Show</MudButton>
 
 @*Outer inline dialog*@
 <MudDialog @bind-IsVisible="visible">
@@ -38,5 +38,5 @@
     private void CloseNested() => nestedVisible = false;
 
     @*Open a non-inline dialog component that nests an inline dialog*@
-    private async Task Open2() => await DialogService.ShowAsync<DialogNestedInlineExample_Dialog>();
+    private async Task Open2Async() => await DialogService.ShowAsync<DialogNestedInlineExample_Dialog>();
 }

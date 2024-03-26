@@ -3,13 +3,13 @@
 @inject IDialogService DialogService
 
 
-<MudButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error">Delete Records</MudButton>
-<MudButton @onclick="Confirm" Variant="Variant.Filled" Color="Color.Success">Remove Email</MudButton>
-<MudButton @onclick="Download" Variant="Variant.Filled" Color="Color.Warning">Slow Computer</MudButton>
+<MudButton @onclick="DeleteUserAsync" Variant="Variant.Filled" Color="Color.Error">Delete Records</MudButton>
+<MudButton @onclick="ConfirmAsync" Variant="Variant.Filled" Color="Color.Success">Remove Email</MudButton>
+<MudButton @onclick="DownloadAsync" Variant="Variant.Filled" Color="Color.Warning">Slow Computer</MudButton>
 
 @code {
 
-    private async Task DeleteUser()
+    private async Task DeleteUserAsync()
     {
         var parameters = new DialogParameters<DialogTemplateExample_Dialog>();
         parameters.Add(x => x.ContentText, "Do you really want to delete these records? This process cannot be undone.");
@@ -21,7 +21,7 @@
         await DialogService.ShowAsync<DialogTemplateExample_Dialog>("Delete", parameters, options);
     }
 
-    private async Task Confirm()
+    private async Task ConfirmAsync()
     {
         var parameters = new DialogParameters<DialogTemplateExample_Dialog>();
         parameters.Add(x => x.ContentText, "Are you sure you want to remove thisguy@emailz.com from this account?");
@@ -31,7 +31,7 @@
         await DialogService.ShowAsync<DialogTemplateExample_Dialog>("Confirm", parameters);
     }
 
-    private async Task Download()
+    private async Task DownloadAsync()
     {
         var parameters = new DialogParameters<DialogTemplateExample_Dialog>();
         parameters.Add(x => x.ContentText, "Your computer seems very slow, click the download button to download free RAM.");

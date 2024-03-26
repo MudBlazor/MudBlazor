@@ -8,7 +8,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="OpenSecondDialog">Open Second Dialog</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OpenSecondDialogAsync">Open Second Dialog</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -19,7 +19,7 @@
 
     private void Cancel() => MudDialog.Cancel();
 
-    private async Task OpenSecondDialog()
+    private async Task OpenSecondDialogAsync()
     {
         await DialogService.ShowAsync<DialogNestedExample_Dialog2>("Second Level Dialog");
     }
