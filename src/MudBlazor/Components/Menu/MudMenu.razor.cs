@@ -211,26 +211,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Menu.Appearance)]
         public bool DisableElevation { get; set; }
 
-        #region Obsolete members from previous MudButtonBase inherited structure
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Linking is not supported. MudMenu is not a MudBaseButton anymore.", true)]
-        [Parameter] public string Link { get; set; }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Linking is not supported. MudMenu is not a MudBaseButton anymore.", true)]
-        [Parameter] public string Target { get; set; }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
-        [Parameter] public string HtmlTag { get; set; } = "button";
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
-        [Parameter] public ButtonType ButtonType { get; set; }
-
-        #endregion
-
         /// <summary>
         /// Add menu items here
         /// </summary>
