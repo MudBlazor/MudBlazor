@@ -88,24 +88,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Cancelled property is obsolete, but it should still be equivalent to Canceled property
-        /// We'll just confirm the equivalence in both states
-        /// </summary>
-        [Test]
-        [Obsolete]
-        public async Task ObsoleteEquivalenceTest()
-        {
-            var value = "Test";
-            var result = new DialogResult(value, value.GetType(), false);
-            result.Canceled.Should().BeFalse();
-            result.Cancelled.Should().Be(result.Canceled);
-
-            result = new DialogResult(value, value.GetType(), true);
-            result.Canceled.Should().BeTrue();
-            result.Cancelled.Should().Be(result.Canceled);
-        }
-
-        /// <summary>
         /// Opening and closing an inline dialog. Click on open will open the inlined dialog.
         ///
         /// Note: this test uses two different components, one containing the dialog provider and
