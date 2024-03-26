@@ -708,7 +708,7 @@ namespace MudBlazor
         /// <inheritdoc />
         protected virtual void Dispose(bool disposing)
         {
-            _cancellationTokenSrc.Dispose();
+            _cancellationTokenSrc?.Dispose();
         }
     }
 }
