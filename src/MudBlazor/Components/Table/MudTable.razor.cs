@@ -572,7 +572,7 @@ namespace MudBlazor
                 _cancellationTokenSrc = new CancellationTokenSource();
             }
         }
-        
+
 
         internal override bool HasServerData => ServerData != null;
 
@@ -708,14 +708,7 @@ namespace MudBlazor
         /// <inheritdoc />
         protected virtual void Dispose(bool disposing)
         {
-            if (_cancellationTokenSrc != null)
-            {
-                try
-                {
-                    _cancellationTokenSrc.Dispose();
-                }
-                catch { /*ignored*/ }
-            }
+            _cancellationTokenSrc.Dispose();
         }
     }
 }
