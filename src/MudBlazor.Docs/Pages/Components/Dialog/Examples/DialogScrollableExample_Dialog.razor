@@ -1,6 +1,4 @@
-﻿@using System.Net
-@using System.Text
-@namespace MudBlazor.Docs.Examples
+﻿@namespace MudBlazor.Docs.Examples
 
 <MudDialog DisableSidePadding="true">
     <DialogContent>
@@ -22,9 +20,11 @@
 
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
 
-    [Inject] HttpClient HttpClient { get; set; }
+    [Inject]
+    HttpClient HttpClient { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -38,8 +38,5 @@
     private string LicenseText;
     private bool Loading = false;
 
-    private void Ok()
-    {
-        MudDialog.Close(DialogResult.Ok(true));
-    }
+    private void Ok() => MudDialog.Close(DialogResult.Ok(true));
 }

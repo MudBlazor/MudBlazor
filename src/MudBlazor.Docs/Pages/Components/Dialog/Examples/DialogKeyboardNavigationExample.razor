@@ -10,10 +10,10 @@
 
 @code {
 
-    private void OpenDialog()
+    private async Task OpenDialog()
     {    
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
-        DialogService.Show<DialogKeyboardNavigationExample_Dialog>("Simple Dialog", closeOnEscapeKey);
+        await DialogService.ShowAsync<DialogKeyboardNavigationExample_Dialog>("Simple Dialog", closeOnEscapeKey);
     }
 }

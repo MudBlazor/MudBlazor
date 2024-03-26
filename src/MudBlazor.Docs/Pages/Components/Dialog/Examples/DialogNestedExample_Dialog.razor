@@ -14,12 +14,13 @@
 
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
 
-    void Cancel() => MudDialog.Cancel();
+    private void Cancel() => MudDialog.Cancel();
 
-    private void OpenSecondDialog()
+    private async Task OpenSecondDialog()
     {
-        DialogService.Show<DialogNestedExample_Dialog2>("Second Level Dialog");
+        await DialogService.ShowAsync<DialogNestedExample_Dialog2>("Second Level Dialog");
     }
 }

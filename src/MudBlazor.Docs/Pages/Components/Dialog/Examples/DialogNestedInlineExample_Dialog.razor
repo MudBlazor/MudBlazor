@@ -22,9 +22,12 @@
 
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
 
     private bool nestedVisible;
+
     private void OpenNested() => nestedVisible = true;
+
     private void CloseNested() => nestedVisible = false;
 }

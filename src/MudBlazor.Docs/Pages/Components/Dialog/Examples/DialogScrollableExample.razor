@@ -7,11 +7,12 @@
 </MudButton>
 
 @code {
-    bool license_accepted = false;
+    private bool license_accepted = false;
 
-    async Task OpenDialog()
+    private async Task OpenDialog()
     {
-        var result = await DialogService.Show<DialogScrollableExample_Dialog>("MudBlazor License").Result;
+        var dialog = await DialogService.ShowAsync<DialogScrollableExample_Dialog>("MudBlazor License");
+        var result = await dialog.Result;
 
         if (!result.Canceled)
         {

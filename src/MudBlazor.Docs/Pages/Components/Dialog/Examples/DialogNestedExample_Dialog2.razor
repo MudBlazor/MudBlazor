@@ -12,13 +12,12 @@
 
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
 
-    private void CancelAll()
-    {
-        MudDialog.CancelAll();
-    }
+    private void Cancel() => MudDialog.Cancel();
+
+    private void CancelAll() => MudDialog.CancelAll();
 }

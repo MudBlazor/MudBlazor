@@ -15,12 +15,12 @@ Clicked: @(clicked ? "Yes" : "No")
     string searchText;
     bool clicked = false;
 
-    private void OpenDialog()
+    private async Task OpenDialog()
     {
-        DialogService.Show<DialogWithEventCallback>("Simple Dialog", 
+        await DialogService.ShowAsync<DialogWithEventCallback>("Simple Dialog", 
             new DialogParameters(){
-                 {"OnSearch",  new EventCallbackFactory().Create(this, new Action<string>(OnSearch)) },
-                 {"OnClick",  new EventCallbackFactory().Create(this, OnClick) },
+                {"OnSearch",  new EventCallbackFactory().Create(this, new Action<string>(OnSearch)) },
+                {"OnClick",  new EventCallbackFactory().Create(this, OnClick) },
             });
     }
 

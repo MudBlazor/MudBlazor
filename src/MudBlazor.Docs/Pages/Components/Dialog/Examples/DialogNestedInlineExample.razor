@@ -30,10 +30,13 @@
     private bool nestedVisible;
 
     private void Open() => visible = true;
+
     private void Close() => visible = false;
+
     private void OpenNested() => nestedVisible = true;
+
     private void CloseNested() => nestedVisible = false;
 
     @*Open a non-inline dialog component that nests an inline dialog*@
-    private void Open2() => DialogService.Show<DialogNestedInlineExample_Dialog>();
+    private async Task Open2() => await DialogService.ShowAsync<DialogNestedInlineExample_Dialog>();
 }

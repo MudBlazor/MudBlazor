@@ -3,7 +3,7 @@
 
 <MudButton Variant="Variant.Filled" OnClick="()=>visible=true">Open</MudButton>
 
-<MudDialog @bind-IsVisible="visible" Options="inlineOptions" Class="test-class" ClassContent="content-class" Style="color: red;" ContentStyle="color: blue;" Tag="@((string)"test-tag")">
+<MudDialog @bind-IsVisible="visible" Options="inlineOptions" Class="test-class" ContentClass="content-class" Style="color: red;" ContentStyle="color: blue;" Tag="@((string)"test-tag")">
     <DialogContent>
         <MudText>Wabalabadubdub!</MudText>
         <MudRating @bind-SelectedValue="rating" Class="mt-3"/>

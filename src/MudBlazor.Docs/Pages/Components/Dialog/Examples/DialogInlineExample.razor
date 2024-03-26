@@ -25,8 +25,10 @@
 @code {
     private bool visible;
     private int rating;
+
     private void OpenDialog() => visible = true;
-    void Submit() => visible = false;
+
+    private void Submit() => visible = false;
 
     private DialogOptions dialogOptions = new() { FullWidth = true };
 }
