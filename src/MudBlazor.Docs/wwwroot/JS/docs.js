@@ -47,6 +47,23 @@ function setThemeForLoader(loadingScreen, observer) {
     observer.disconnect();
 }
 
+// Observes for DOM changes to detect the loading-screen element.
+const loadingScreenObserver = new MutationObserver((mutationsList, observer) => {
+    for (let mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+            let loadingScreen = document.getElementById('loading-screen');
+
+            if (loadingScreen) {
+                setThemeForLoader(loadingScreen, observer);
+                break;
+            }
+        }
+    }
+});
+
+// Start observing the document body for changes in the DOM.
+loadingScreenObserver.observe(document.body, { childList: true, subtree: true });
+
 // Return prerender status
 // For users we serve the wasm app without prerendering for bots we serve a prerendered wasm app
 function getPreRender() {
