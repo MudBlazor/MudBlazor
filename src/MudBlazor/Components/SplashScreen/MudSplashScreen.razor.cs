@@ -65,9 +65,8 @@ public partial class MudSplashScreen
         // Is this the first render?
         if (firstRender)
         {
-#pragma warning disable VSTHRD110 // By NOT awaiting the code below, the page can initialize fully while the loading screen is displayed
             // Yes.  Start a new task which...
-            Task.Run(async () =>
+            _ = Task.Run(async () =>
             {
                 // ... waits for the specified delay
                 await Task.Delay(TimeSpan.FromSeconds(DelaySeconds)).ConfigureAwait(true);
@@ -80,7 +79,6 @@ public partial class MudSplashScreen
                     StateHasChanged();
                 }).ConfigureAwait(true);
             });
-#pragma warning restore VSTHRD110
         }
     }
 }
