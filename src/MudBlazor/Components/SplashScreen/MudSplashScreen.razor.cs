@@ -72,12 +72,12 @@ public partial class MudSplashScreen
                 // ... waits for the specified delay
                 await Task.Delay(TimeSpan.FromSeconds(DelaySeconds)).ConfigureAwait(true);
                 // Then fades out the splash screen
-                await InvokeAsync(async () =>
+                await InvokeAsync(() =>
                 {
                     // We're no longer loading
                     IsLoading = false;
                     // Update the UI
-                    await InvokeAsync(() => StateHasChanged()).ConfigureAwait(true);
+                    StateHasChanged();
                 }).ConfigureAwait(true);
             });
 #pragma warning restore VSTHRD110
