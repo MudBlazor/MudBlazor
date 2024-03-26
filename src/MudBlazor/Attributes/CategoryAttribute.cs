@@ -470,6 +470,10 @@ namespace MudBlazor
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
         }
+        public static class SplashScreen
+        {
+            public const string Behavior = "Behavior";
+        }
 
         public static class SwipeArea
         {
