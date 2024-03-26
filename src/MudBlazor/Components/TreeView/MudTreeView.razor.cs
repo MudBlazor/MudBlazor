@@ -67,10 +67,6 @@ namespace MudBlazor
             set => MultiSelection = value;
         }
 
-        [ExcludeFromCodeCoverage]
-        [Obsolete("MudTreeView now automaticly activates when using SelectedValue.", true)]
-        [Parameter] public bool CanActivate { get; set; }
-
         /// <summary>
         /// If true, clicking anywhere on the item will expand it, if it has children.
         /// </summary>
@@ -91,18 +87,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public bool Hover { get; set; }
-
-        /// <summary>
-        /// Hover effect for item's on mouse-over.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use Hover instead.", true)]
-        [Parameter]
-        public bool CanHover
-        {
-            get => Hover;
-            set => Hover = value;
-        }
 
         /// <summary>
         /// If true, compact vertical padding will be applied to all treeview items.
