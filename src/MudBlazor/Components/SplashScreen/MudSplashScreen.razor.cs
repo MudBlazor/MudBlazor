@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿#nullable enable
+
+using Microsoft.AspNetCore.Components;
 using System;
 using System.Threading.Tasks;
 
@@ -35,13 +37,15 @@ public partial class MudSplashScreen
     /// Gets or sets the content shown when the loading screen completes.
     /// </summary>
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    [Category(CategoryTypes.Slider.Behavior)]
+    public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     /// Gets or sets the content shown in the splash screen.
     /// </summary>
     [Parameter]
-    public RenderFragment SplashContent { get; set; }
+    [Category(CategoryTypes.Slider.Behavior)]
+    public RenderFragment? SplashContent { get; set; }
 
     /// <summary>
     /// Gets or sets the minimum time the splash screen is shown.
@@ -52,7 +56,7 @@ public partial class MudSplashScreen
     /// <summary>
     /// Gets or sets a value indicating whether the splash screen is displayed.
     /// </summary>
-    public bool IsLoading { get; set; } = true;
+    private bool IsLoading { get; set; } = true;
 
     /// <inheritdoc />
     protected override void OnAfterRender(bool firstRender)
