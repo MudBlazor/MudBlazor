@@ -85,7 +85,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
-        public Typo TextTypo { get; set; } = Typo.body1;
+        public Typo TextTypo { get; set; } = Typo.Body1;
 
         /// <summary>
         /// User class names for the text, separated by space.
@@ -106,7 +106,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
-        public Typo EndTextTypo { get; set; } = Typo.body1;
+        public Typo EndTextTypo { get; set; } = Typo.Body1;
 
         /// <summary>
         /// User class names for the endtext, separated by space.

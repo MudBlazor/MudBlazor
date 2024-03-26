@@ -2,7 +2,7 @@
 <MudBadge Color="Color.Secondary" Dot="true" Overlap="true" Visible="_newNotificationsAvailable">
     <MudMenu Icon="@Icons.Material.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter" PopoverClass="docs-layout-menu-shadow" ListClass="pa-2 docs-menu-list" LockScroll="true">
         <div class="d-flex justify-space-between align-center px-2">
-            <MudText Typo="Typo.subtitle2">Notifications</MudText>
+            <MudText Typo="Typo.Subtitle2">Notifications</MudText>
             <MudButton Disabled="@(_newNotificationsAvailable == false)" OnClick="MarkNotificationAsRead" StartIcon="@Icons.Material.Filled.DoneAll" Variant="Variant.Text" Color="Color.Primary" Class="ml-16 mr-n2">Mark as read</MudButton>
         </div>
         @if (_messages != null && _newNotificationsAvailable)
@@ -10,8 +10,8 @@
             @foreach (var (message, isRead) in _messages.Take(5))
             {
                 <MudMenuItem Class="px-2 py-0 rounded" Href="@($"/mud/announcements/{message.Id}")">
-                    <MudText Typo="Typo.subtitle2">@message.Title</MudText>
-                    <MudText Typo="Typo.body2">@($"{message.Authors.FirstOrDefault()?.DisplayName} • {message.PublishDate.ToString("MM/dd/yyyy")}")</MudText>
+                    <MudText Typo="Typo.Subtitle2">@message.Title</MudText>
+                    <MudText Typo="Typo.Body2">@($"{message.Authors.FirstOrDefault()?.DisplayName} • {message.PublishDate.ToString("MM/dd/yyyy")}")</MudText>
                 </MudMenuItem>
                 <MudDivider Class="my-2"/>
             }

@@ -537,8 +537,8 @@ namespace MudBlazor
         private Typo GetYearTypo(int year)
         {
             if (year == Culture.Calendar.GetYear(GetMonthStart(0)))
-                return Typo.h5;
-            return Typo.subtitle1;
+                return Typo.H5;
+            return Typo.Subtitle1;
         }
 
         private void OnFormattedDateClick()
@@ -578,8 +578,8 @@ namespace MudBlazor
         private Typo GetMonthTypo(DateTime month)
         {
             if (Culture.Calendar.GetMonth(GetMonthStart(0)) == Culture.Calendar.GetMonth(month))
-                return Typo.h5;
-            return Typo.subtitle1;
+                return Typo.H5;
+            return Typo.Subtitle1;
         }
         protected override void OnInitialized()
         {

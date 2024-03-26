@@ -5,7 +5,7 @@
 <MudGrid>
     <MudItem md="3">
         <MudPaper Class="pa-4" Elevation="0">
-            <MudText Typo="Typo.h6" GutterBottom="true">Test Options</MudText>
+            <MudText Typo="Typo.H6" GutterBottom="true">Test Options</MudText>
             <MudSelect T="string" Label="Component" Margin="Margin.Dense" Dense="true" Value="@SelectedTestComponent" ValueChanged="OnSelectedTestComponent">
                 <MudSelectItem T="string" Value="@("MudIcon")">MudIcon</MudSelectItem>
                 <MudSelectItem T="string" Value="@("MudButton")">MudButton</MudSelectItem>
@@ -46,7 +46,7 @@
     </MudItem>
     <MudItem md="3">
         <MudPaper Class="pa-4" Elevation="0">
-            <MudText Typo="Typo.h6" GutterBottom="true">Badge Options</MudText>
+            <MudText Typo="Typo.H6" GutterBottom="true">Badge Options</MudText>
             <MudSelect Label="Badge Origin" Margin="Margin.Dense" Dense="true" @bind-Value="Origin">
                 <MudSelectItem Value="Origin.TopLeft">TopLeft</MudSelectItem>
                 <MudSelectItem Value="Origin.TopCenter">TopCenter</MudSelectItem>
@@ -62,7 +62,7 @@
             <MudCheckBox @bind-Value="Overlap" Label="Overlap" Color="Color.Primary" Style="width:100%;" />
             <MudCheckBox @bind-Value="Bordered" Label="Bordered" Color="Color.Primary" Style="width:100%;" />
             <MudCheckBox T="bool" ValueChanged="AddIcon" Label="Icon" Color="Color.Primary" Style="width:100%;" />
-            <MudText Typo="Typo.subtitle2" Class="my-2">Badge Content</MudText>
+            <MudText Typo="Typo.Subtitle2" Class="my-2">Badge Content</MudText>
             <div style="display: flex;">
                 <MudButton OnClick="AddValue" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" FullWidth="true" Class="mr-1">Add @AddNumber</MudButton>
                 <MudButton OnClick="ClearContent" Variant="Variant.Filled" Size="Size.Small" Color="Color.Secondary" FullWidth="true" Class="ml-1">Clear</MudButton>

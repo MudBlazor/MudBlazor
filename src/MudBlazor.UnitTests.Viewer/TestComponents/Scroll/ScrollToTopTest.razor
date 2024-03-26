@@ -6,14 +6,14 @@
 
 <MudStack Row="true">
     <button type="button" @onclick="ScrollBottom">Scroll bottom</button>
-    <MudText id="scroll_on_top_scroll_event_raised" Typo="Typo.subtitle1" Align="Align.Center">@Scrolled</MudText>
-    <MudText id="scroll_on_top_click_event_raised" Typo="Typo.subtitle1" Align="Align.Center">@Clicked</MudText>
+    <MudText id="scroll_on_top_scroll_event_raised" Typo="Typo.Subtitle1" Align="Align.Center">@Scrolled</MudText>
+    <MudText id="scroll_on_top_click_event_raised" Typo="Typo.Subtitle1" Align="Align.Center">@Clicked</MudText>
 </MudStack>
 <div id="unique_id_scroll_section" class="ma-0" style="height:300px;overflow: auto;">
     <MudPaper Elevation="0" Height="1500px" Class="d-flex flex-column justify-space-between py-6">
-        <MudText id="scroll_on_top_text_must_be_in_view" Typo="Typo.h3" Align="Align.Center">@_text</MudText>
-        <MudText Typo="Typo.h3" Align="Align.Center">Middle text</MudText>
-        <MudText id="scroll_to_top_bottom_text" Typo="Typo.h3" Align="Align.Center">Bottom text</MudText>
+        <MudText id="scroll_on_top_text_must_be_in_view" Typo="Typo.H3" Align="Align.Center">@_text</MudText>
+        <MudText Typo="Typo.H3" Align="Align.Center">Middle text</MudText>
+        <MudText id="scroll_to_top_bottom_text" Typo="Typo.H3" Align="Align.Center">Bottom text</MudText>
         <MudScrollToTop Selector="#unique_id_scroll_section" OnClick="@Click" OnScroll="@Scroll">
             <MudFab Color="@Color.Primary" StartIcon="@Icons.Material.Filled.ArrowCircleUp"/>
         </MudScrollToTop>

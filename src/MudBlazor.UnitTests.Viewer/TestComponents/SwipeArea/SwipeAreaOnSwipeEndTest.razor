@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
 <MudSwipeArea @ref="_swipeArea" OnSwipeEnd="HandleSwipeEnd" Style="width: 100%; height: 300px" Sensitivity="_sensitivity" PreventDefault="@_preventDefault">
-    <MudText Typo="@Typo.body1">@($"{SwipeDirection} - Swiped: {SwipeDelta}px")</MudText>
+    <MudText Typo="@Typo.Body1">@($"{SwipeDirection} - Swiped: {SwipeDelta}px")</MudText>
     </MudSwipeArea>
     <MudSwitch @bind-Checked="@_preventDefault" Color="Color.Primary">Prevent Default</MudSwitch>
     <MudNumericField @bind-Value="_sensitivity" Label="Sensitivity" Min="0" />

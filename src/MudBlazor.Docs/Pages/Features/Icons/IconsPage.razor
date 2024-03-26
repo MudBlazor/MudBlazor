@@ -51,7 +51,7 @@
                         {
                             <button class="docs-icon-panel" @onclick="@(() => SetIconDrawer(icon))">
                                 <MudIcon Icon="@icon.Code" Title="@icon.Name" />
-                                <MudText Typo="Typo.caption">
+                                <MudText Typo="Typo.Caption">
                                     @icon.Name
                                 </MudText>
                             </button>
@@ -67,19 +67,19 @@
 <MudDrawer @bind-Open="@iconDrawerOpen" ClipMode="DrawerClipMode.Always" Anchor="Anchor.End" DisableOverlay="true" Elevation="0" Width="260px" Class="mud-icondrawer" Variant="@DrawerVariant.Temporary">
     <MudToolBar Dense="true" DisableGutters="true" Class="pl-4 py-8">
         <MudIcon Size="Size.Large" Icon="@SelectedIcon.Code" Class="mr-4"/>
-        <MudText Typo="Typo.subtitle1">@SelectedIcon.Name</MudText>
+        <MudText Typo="Typo.Subtitle1">@SelectedIcon.Name</MudText>
         <MudSpacer/>
         <MudIconButton OnClick="@(() => CloseIconDrawer())" Icon="@Icons.Material.Filled.Close" Class="pa-2"></MudIconButton>
     </MudToolBar>
     <div class="px-4">
-        <MudText Typo="Typo.subtitle2">Icon Code</MudText>
+        <MudText Typo="Typo.Subtitle2">Icon Code</MudText>
         <MudPaper Class="mud-iconcode pa-2" Elevation="0">
             @IconCodeOutput
             <div class="d-flex justify-end">
                 <MudIconButton OnClick="CopyTextToClipboard" Icon="@Icons.Material.Filled.ContentCopy" Size="Size.Small" Class="pa-1 mb-n1 mr-n1" />
             </div>
         </MudPaper>
-        <MudText Typo="Typo.subtitle2">Icon Preview</MudText>
+        <MudText Typo="Typo.Subtitle2">Icon Preview</MudText>
         <MudPaper Class="d-flex justify-center align-center" Elevation="0" Height="228px">
             <MudIcon Size="@PreviewIconSize" Color="@PreviewIconColor" Icon="@SelectedIcon.Code" />
         </MudPaper>

@@ -21,16 +21,16 @@
         // Just show copyright and version
         <MudContainer MaxWidth="MaxWidth.Large">
             <MudToolBar DisableGutters="true" Dense="true">
-                <MudText Typo="Typo.body1">Copyright © 2020-@DateTime.Now.Year MudBlazor.</MudText>
+                <MudText Typo="Typo.Body1">Copyright © 2020-@DateTime.Now.Year MudBlazor.</MudText>
                 <MudSpacer/>
-                <MudText Typo="Typo.body1">Powered by .NET @Environment.Version.ToString()</MudText>
+                <MudText Typo="Typo.Body1">Powered by .NET @Environment.Version.ToString()</MudText>
             </MudToolBar>
         </MudContainer>
     }
     <MudDrawer Class="docs-page-content-navigation-drawer" @bind-Open="_contentDrawerOpen" Breakpoint="Breakpoint.Lg" Anchor="Anchor.End" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent">
         @if (_displayView)
         {
-            <MudText Typo="Typo.subtitle1" Class="title" GutterBottom="true">
+            <MudText Typo="Typo.Subtitle1" Class="title" GutterBottom="true">
                 Mode
             </MudText>
             <div class="d-flex px-2 mb-2">

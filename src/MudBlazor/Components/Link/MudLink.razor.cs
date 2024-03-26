@@ -42,7 +42,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Link.Appearance)]
-        public Typo Typo { get; set; } = Typo.body1;
+        public Typo Typo { get; set; } = Typo.Body1;
 
         /// <summary>
         /// Controls when the link should have an underline.

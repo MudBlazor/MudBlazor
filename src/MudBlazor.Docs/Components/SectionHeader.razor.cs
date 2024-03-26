@@ -69,9 +69,9 @@ public partial class SectionHeader
     {
         if (Section.Level >= 1)
         {
-            return Typo.h6;
+            return Typo.H6;
         }
 
-        return Typo.h5;
+        return Typo.H5;
     }
 }

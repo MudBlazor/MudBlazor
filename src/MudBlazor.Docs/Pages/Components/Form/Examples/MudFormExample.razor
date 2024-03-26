@@ -36,7 +36,7 @@
     </MudItem>
     <MudItem xs="12" sm="5">
         <MudPaper Class="pa-4 mud-height-full">
-            <MudText Typo="Typo.subtitle2">@($"Errors ({errors.Length})")</MudText>
+            <MudText Typo="Typo.Subtitle2">@($"Errors ({errors.Length})")</MudText>
                 @foreach (var error in errors)
                 {
                     <MudText Color="@Color.Error">@error</MudText>
