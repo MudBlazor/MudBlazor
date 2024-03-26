@@ -85,7 +85,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
-        public Typo TextTypo { get; set; } = Typo.body1;
+        public Typo TextTypo { get; set; } = Typo.Body1;
 
         /// <summary>
         /// User class names for the text, separated by space.
@@ -106,7 +106,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
-        public Typo EndTextTypo { get; set; } = Typo.body1;
+        public Typo EndTextTypo { get; set; } = Typo.Body1;
 
         /// <summary>
         /// User class names for the endtext, separated by space.
@@ -157,6 +157,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public HashSet<T>? Items { get; set; }
+
+        /// <summary>
+        /// Command executed when the user clicks on the CommitEdit Button.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.ClickAction)]
+        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
+        public ICommand? Command { get; set; }
 
         /// <summary>
         /// Expand or collapse treeview item when it has children. Two-way bindable. Note: if you directly set this to
@@ -370,6 +378,12 @@ namespace MudBlazor
             }
 
             await OnClick.InvokeAsync(ev);
+#pragma warning disable CS0618
+            if (Command?.CanExecute(Value) ?? false)
+            {
+                Command.Execute(Value);
+            }
+#pragma warning restore CS0618
         }
 
         protected async Task OnItemDoubleClicked(MouseEventArgs ev)

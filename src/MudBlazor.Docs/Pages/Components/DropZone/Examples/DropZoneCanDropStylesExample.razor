@@ -4,13 +4,13 @@
     <ChildContent>
         <div class="d-flex flex-wrap justify-space-between">
             <MudDropZone T="DropItem" Identifier="Fridge" CanDrop="@((item) => false)" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-6 ma-8">
-                <MudText Typo="Typo.h6" Class="mb-4">Fridge</MudText>
+                <MudText Typo="Typo.H6" Class="mb-4">Fridge</MudText>
             </MudDropZone>
             <MudDropZone T="DropItem" Identifier="Dinner" CanDrop="@((item) => item.IsPicked == false && item.IsRotten == false)" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-6 ma-8 flex-grow-1">
-                <MudText Typo="Typo.h6" Class="mb-4">Soup</MudText>
+                <MudText Typo="Typo.H6" Class="mb-4">Soup</MudText>
             </MudDropZone>
             <MudDropZone T="DropItem" Identifier="Trash" CanDrop="@((item) => item.IsPicked == false && item.IsRotten == true)" Class="rounded-lg border-2 border-dashed mud-border-lines-default pa-6 ma-8 flex-grow-1">
-                <MudText Typo="Typo.h6" Class="mb-4">Trash</MudText>
+                <MudText Typo="Typo.H6" Class="mb-4">Trash</MudText>
             </MudDropZone>
         </div>
         <MudToolBar>

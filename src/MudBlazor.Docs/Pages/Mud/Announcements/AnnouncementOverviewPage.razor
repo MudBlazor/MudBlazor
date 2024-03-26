@@ -3,8 +3,8 @@
 <DocsPage DisplayFooter="true">
     <DocsPageHeader Title="Announcements" SubTitle="Discover articles from MudBlazor team.">
         <SpecialHeaderContent>
-            <MudText Typo="Typo.h2" Class="docs-title">Announcements&nbsp;</MudText>
-            <MudText Typo="Typo.subtitle1" Class="docs-title-description">Discover articles from MudBlazor team.</MudText>
+            <MudText Typo="Typo.H2" Class="docs-title">Announcements&nbsp;</MudText>
+            <MudText Typo="Typo.Subtitle1" Class="docs-title-description">Discover articles from MudBlazor team.</MudText>
         </SpecialHeaderContent>
     </DocsPageHeader>
     <DocsPageContent>
@@ -32,9 +32,9 @@
                             <MudCard Class="announcement-card rounded-lg">
                                 <MudCardMedia Image="@message.ImgUrl" Height="175"/>
                                 <MudCardContent Class="pa-4">
-                                    <MudText Typo="Typo.subtitle2" Class="mud-text-secondary">@message.Category</MudText>
-                                    <MudText Typo="Typo.h6" GutterBottom="true">@message.Title</MudText>
-                                    <MudText Typo="Typo.body2">@message.Except</MudText>
+                                    <MudText Typo="Typo.Subtitle2" Class="mud-text-secondary">@message.Category</MudText>
+                                    <MudText Typo="Typo.H6" GutterBottom="true">@message.Title</MudText>
+                                    <MudText Typo="Typo.Body2">@message.Except</MudText>
                                 </MudCardContent>
                                 <MudCardActions Class="pa-4">
                                     <MudAvatarGroup Max="6" Spacing="3" MaxColor="Color.Primary">
@@ -46,13 +46,13 @@
                                     <div class="mx-4 d-flex flex-column">
                                         @if (message.Authors.Count() > 1)
                                         {
-                                            <MudText Typo="Typo.subtitle2">Multiple Authors</MudText>
-                                            <MudText Typo="Typo.subtitle2" Class="mud-text-secondary">@message.PublishDate.ToString("MMM dd, yyyy")</MudText>
+                                            <MudText Typo="Typo.Subtitle2">Multiple Authors</MudText>
+                                            <MudText Typo="Typo.Subtitle2" Class="mud-text-secondary">@message.PublishDate.ToString("MMM dd, yyyy")</MudText>
                                         }
                                         else
                                         {
-                                            <MudText Typo="Typo.subtitle2">@message.Authors.FirstOrDefault().DisplayName</MudText>
-                                            <MudText Typo="Typo.subtitle2" Class="mud-text-secondary">@message.PublishDate.ToString("MMM dd, yyyy")</MudText>
+                                            <MudText Typo="Typo.Subtitle2">@message.Authors.FirstOrDefault().DisplayName</MudText>
+                                            <MudText Typo="Typo.Subtitle2" Class="mud-text-secondary">@message.PublishDate.ToString("MMM dd, yyyy")</MudText>
                                         }
                                     </div>
                                 </MudCardActions>

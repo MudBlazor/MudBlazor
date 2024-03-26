@@ -6,7 +6,7 @@
         <ChildContent>@Type.GetTypeDisplayName()</ChildContent>
         <TooltipContent>
             enumeration type
-            <MudText Align="Align.Left" Typo="Typo.body2">
+            <MudText Align="Align.Left" Typo="Typo.Body2">
                 @foreach (var name in Enum.GetNames(_nonnullableType))
                 {
                     @(_nonnullableType.Name + "." + name)<br />

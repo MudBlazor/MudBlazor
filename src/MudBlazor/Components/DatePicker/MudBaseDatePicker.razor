@@ -51,13 +51,13 @@
                                     {
                                         <MudIconButton aria-label="@prevLabel" Icon="@PreviousIcon" OnClick="OnPreviousYearClick" Class="mud-flip-x-rtl" />
                                         <button type="button" class="mud-picker-slide-transition mud-picker-calendar-header-transition" @onclick="OnYearClick" @onclick:stopPropagation="true">
-                                            <MudText Typo="Typo.body1" Align="Align.Center">@calendarYear</MudText>
+                                            <MudText Typo="Typo.Body1" Align="Align.Center">@calendarYear</MudText>
                                         </button>
                                         <MudIconButton aria-label="@nextLabel" Icon="@NextIcon" OnClick="OnNextYearClick" Class="mud-flip-x-rtl" />
                                     }
                                     else
                                     {
-                                        <MudText Class="mud-picker-calendar-header-transition" Typo="Typo.body1" Align="Align.Center">@calendarYear</MudText>
+                                        <MudText Class="mud-picker-calendar-header-transition" Typo="Typo.Body1" Align="Align.Center">@calendarYear</MudText>
                                     }
                                 </div>
                             </div>
@@ -82,25 +82,25 @@
                                     {
                                         <MudIconButton aria-label="@prevLabel" Class="mud-picker-nav-button-prev mud-flip-x-rtl" Icon="@PreviousIcon" OnClick="OnPreviousMonthClick" />
                                         <button type="button" class="mud-picker-slide-transition mud-picker-calendar-header-transition mud-button-month" @onclick="(() => OnMonthClicked(tempMonth))" @onclick:stopPropagation="true">
-                                            <MudText Typo="Typo.body1" Align="Align.Center">@GetMonthName(tempMonth)</MudText>
+                                            <MudText Typo="Typo.Body1" Align="Align.Center">@GetMonthName(tempMonth)</MudText>
                                         </button>
                                         <MudIconButton aria-label="@nextLabel" Class="mud-picker-nav-button-next mud-flip-x-rtl" Icon="@NextIcon" OnClick="OnNextMonthClick" />
                                     }
                                     else
                                     {
-                                        <MudText Class="mud-picker-calendar-header-transition" Typo="Typo.body1" Align="Align.Center">@GetMonthName(tempMonth)</MudText>
+                                        <MudText Class="mud-picker-calendar-header-transition" Typo="Typo.Body1" Align="Align.Center">@GetMonthName(tempMonth)</MudText>
                                     }
                                 </div>
                                 <div class="mud-picker-calendar-header-day">
                                     @if (ShowWeekNumbers)
                                     {
                                         <div class="mud-picker-calendar-week">
-                                            <MudText Typo="Typo.caption" Class="mud-picker-calendar-week-text"></MudText>
+                                            <MudText Typo="Typo.Caption" Class="mud-picker-calendar-week-text"></MudText>
                                         </div>
                                     }
                                     @foreach (var dayname in GetAbbreviatedDayNames())
                                     {
-                                        <MudText Typo="Typo.caption" Class="mud-day-label">@dayname</MudText>
+                                        <MudText Typo="Typo.Caption" Class="mud-day-label">@dayname</MudText>
                                     }
                                 </div>
                             </div>
@@ -114,7 +114,7 @@
                                         @if (ShowWeekNumbers)
                                         {
                                             <div class="mud-picker-calendar-week">
-                                                <MudText class="mud-picker-calendar-week-text" Typo="Typo.caption">@GetWeekNumber(tempMonth, tempWeek)</MudText>
+                                                <MudText class="mud-picker-calendar-week-text" Typo="Typo.Caption">@GetWeekNumber(tempMonth, tempWeek)</MudText>
                                             </div>
                                         }
                                         @foreach (var day in GetWeek(tempMonth, tempWeek))

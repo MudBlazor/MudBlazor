@@ -73,7 +73,7 @@
                         {
                             <MudItem md="6" lg="4" xs="12">
                                 <MudPaper Square="true" Elevation="0" Class="@($"pa-4 rounded-t d-flex shades-text text-white {GetColorClass(color.Color.ToLowerInvariant())}")">
-                                    <MudText Typo="Typo.h6">@color.Color</MudText>
+                                    <MudText Typo="Typo.H6">@color.Color</MudText>
                                 </MudPaper>
                                 @foreach (var shade in MaterialColorShades.Where(i => i.Color == color.Color))
                                 {

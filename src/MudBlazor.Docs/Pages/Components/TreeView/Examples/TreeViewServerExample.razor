@@ -3,7 +3,7 @@
 <MudPaper Width="300px" Elevation="0">
     <MudTreeView ServerData="LoadServerData" Items="TreeItems">
         <ItemTemplate>
-            <MudTreeViewItem Value="@context" Icon="@context.Icon" LoadingIconColor="Color.Info" CanExpand="@context.CanExpand" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
+            <MudTreeViewItem Value="@context" Icon="@context.Icon" LoadingIconColor="Color.Info" CanExpand="@context.CanExpand" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.Caption" />
         </ItemTemplate>
     </MudTreeView>
 </MudPaper>

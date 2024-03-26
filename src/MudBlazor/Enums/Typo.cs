@@ -5,32 +5,32 @@ namespace MudBlazor
     public enum Typo
     {
         [Description("inherit")]
-        inherit,
+        Inherit,
         [Description("h1")]
-        h1,
+        H1,
         [Description("h2")]
-        h2,
+        H2,
         [Description("h3")]
-        h3,
+        H3,
         [Description("h4")]
-        h4,
+        H4,
         [Description("h5")]
-        h5,
+        H5,
         [Description("h6")]
-        h6,
+        H6,
         [Description("subtitle1")]
-        subtitle1,
+        Subtitle1,
         [Description("subtitle2")]
-        subtitle2,
+        Subtitle2,
         [Description("body1")]
-        body1,
+        Body1,
         [Description("body2")]
-        body2,
+        Body2,
         [Description("button")]
-        button,
+        Button,
         [Description("caption")]
-        caption,
+        Caption,
         [Description("overline")]
-        overline
+        Overline
     }
 }

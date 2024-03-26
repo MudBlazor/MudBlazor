@@ -42,7 +42,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Link.Appearance)]
-        public Typo Typo { get; set; } = Typo.body1;
+        public Typo Typo { get; set; } = Typo.Body1;
 
         /// <summary>
         /// Controls when the link should have an underline.
@@ -59,7 +59,7 @@ namespace MudBlazor
         public string? Href { get; set; }
 
         /// <summary>
-        /// The target attribute specifies where to open the link, if Href is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Link.Behavior)]

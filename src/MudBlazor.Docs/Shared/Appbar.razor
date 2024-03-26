@@ -3,7 +3,7 @@
     <MudSpacer/>
     <NavLink ActiveClass="d-flex align-center" href="/">
         <MudBlazorLogo Class="docs-mudblazor-logo"/>
-        <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text">MudBlazor</MudText>
+        <MudText Color="Color.Primary" Typo="Typo.H5" Class="docs-brand-text">MudBlazor</MudText>
     </NavLink>
     <MudSpacer/>
     @if (DisplaySearchBar)
@@ -18,7 +18,7 @@
 <div class="d-none d-md-flex align-center flex-grow-1">
     <NavLink ActiveClass="d-flex align-center me-4" href="/">
         <MudBlazorLogo Class="docs-mudblazor-logo"/>
-        <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text">MudBlazor</MudText>
+        <MudText Color="Color.Primary" Typo="Typo.H5" Class="docs-brand-text">MudBlazor</MudText>
     </NavLink>
     <MudButton Href="/docs/overview" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.Docs)">Docs</MudButton>
     <MudButton Href="/getting-started/installation" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.GettingStarted)">Getting Started</MudButton>
@@ -32,25 +32,25 @@
                 <div class="d-flex">
                     <MudText Color="Color.Primary">MudBlazor</MudText>
                 </div>
-                <MudText Typo="Typo.body2">Blazor component library</MudText>
+                <MudText Typo="Typo.Body2">Blazor component library</MudText>
             </MudListItem>
             <MudListItem Href="https://try.mudblazor.com/">
                 <div class="d-flex">
                     <MudText Color="Color.Primary">Try</MudText><MudText>MudBlazor</MudText>
                 </div>
-                <MudText Typo="Typo.body2">Online code editor with Blazor</MudText>
+                <MudText Typo="Typo.Body2">Online code editor with Blazor</MudText>
             </MudListItem>
             <MudListItem Href="https://github.com/MudBlazor/ThemeManager">
                 <div class="d-flex">
                     <MudText>Theme</MudText><MudText Color="Color.Secondary">Manager</MudText>
                 </div>
-                <MudText Typo="Typo.body2">Manage your theme live in your app</MudText>
+                <MudText Typo="Typo.Body2">Manage your theme live in your app</MudText>
             </MudListItem>
             <MudListItem Href="https://github.com/MudBlazor/Templates">
                 <div class="d-flex">
                     <MudText>Templates</MudText>
                 </div>
-                <MudText Typo="Typo.body2">Blazor templates loaded with MudBlazor</MudText>
+                <MudText Typo="Typo.Body2">Blazor templates loaded with MudBlazor</MudText>
             </MudListItem>
         </MudList>
         <MudList Clickable="true" Class="relative">
@@ -62,7 +62,7 @@
                 <MudBadge Class="d-flex mr-16" Content="@_badgeTextSoon" Color="Color.Info" Overlap="true">
                     <MudText>Mud</MudText><MudText Color="Color.Warning">Extensions</MudText>
                 </MudBadge>
-                <MudText Typo="Typo.body2">Official and Community Extensions</MudText>
+                <MudText Typo="Typo.Body2">Official and Community Extensions</MudText>
             </MudListItem>
         </MudList>
     </MudMenu>
@@ -73,7 +73,7 @@
                          AutoFocus="true" Placeholder="Search" Variant="Variant.Outlined"
                          SearchFunc="async text => await Search(text)" ValueChanged="OnSearchResult" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search">
             <ItemTemplate Context="result">
-                <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
+                <MudText>@result.Title</MudText> <MudText Typo="Typo.Body2">@result.SubTitle</MudText>
             </ItemTemplate>
         </MudAutocomplete>
         <MudDivider FlexItem="true" Vertical="true" DividerType="DividerType.Middle" Class="mx-4 my-4"/>
@@ -94,12 +94,12 @@
                          AutoFocus="true" Placeholder="Search docs" Clearable="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
                          SearchFunc="async text => await Search(text)" ValueChanged="OnSearchResult" IsOpenChanged="o => _searchDialogAutocompleteOpen = o" ReturnedItemsCountChanged="c => _searchDialogReturnedItemsCount = c">
             <ItemTemplate Context="result">
-                <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
+                <MudText>@result.Title</MudText> <MudText Typo="Typo.Body2">@result.SubTitle</MudText>
             </ItemTemplate>
         </MudAutocomplete>
 
         @* This text element will always be rendered but it's easier to write it this way *@
-        <MudText Typo="Typo.body2" Class="flex-grow-1 mud-text-secondary" Align="Align.Center">
+        <MudText Typo="Typo.Body2" Class="flex-grow-1 mud-text-secondary" Align="Align.Center">
             @if (!_searchDialogAutocompleteOpen)
             {
                 @("Use the box above to search the docs")
