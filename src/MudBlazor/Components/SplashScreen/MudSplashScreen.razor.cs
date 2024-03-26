@@ -37,21 +37,21 @@ public partial class MudSplashScreen
     /// Gets or sets the content shown when the loading screen completes.
     /// </summary>
     [Parameter]
-    [Category(CategoryTypes.Slider.Behavior)]
+    [Category(CategoryTypes.SplashScreen.Behavior)]
     public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     /// Gets or sets the content shown in the splash screen.
     /// </summary>
     [Parameter]
-    [Category(CategoryTypes.Slider.Behavior)]
+    [Category(CategoryTypes.SplashScreen.Behavior)]
     public RenderFragment? SplashContent { get; set; }
 
     /// <summary>
     /// Gets or sets the minimum time the splash screen is shown.
     /// </summary>
     [Parameter]
-    [Category(CategoryTypes.Slider.Behavior)]
+    [Category(CategoryTypes.SplashScreen.Behavior)]
     public int DelaySeconds { get; set; } = 2;
 
     /// <summary>
