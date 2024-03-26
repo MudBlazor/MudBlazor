@@ -128,4 +128,8 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Styles\components\_splashscreen.scss" />
+  </ItemGroup>
+
 </Project>

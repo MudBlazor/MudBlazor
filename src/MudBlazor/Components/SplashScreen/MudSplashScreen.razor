@@ -1,0 +1,8 @@
+﻿@namespace MudBlazor
+
+<div class="@(IsLoading ? "mud-splash-screen-overlay-loading" : "mud-splash-screen-overlay-loaded")">
+    @SplashContent
+</div>
+<div class="@(IsLoading ? "mud-splash-screen-body-loading" : "mud-splash-screen-body-loaded")">
+    @ChildContent
+</div>
