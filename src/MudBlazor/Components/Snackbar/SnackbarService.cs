@@ -140,13 +140,6 @@ namespace MudBlazor
             );
         }
 
-        [Obsolete("Use Add instead.", true)]
-        [ExcludeFromCodeCoverage]
-        public Snackbar AddNew(Severity severity, string message, Action<SnackbarOptions> configure)
-        {
-            return Add(message, severity, configure);
-        }
-
         public void Clear()
         {
             SnackBarLock.EnterWriteLock();
