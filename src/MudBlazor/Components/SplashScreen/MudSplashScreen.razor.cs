@@ -51,6 +51,7 @@ public partial class MudSplashScreen
     /// Gets or sets the minimum time the splash screen is shown.
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.Slider.Behavior)]
     public int DelaySeconds { get; set; } = 2;
 
     /// <summary>
