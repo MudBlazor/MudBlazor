@@ -11,6 +11,7 @@
   &.mud-button-group-override-styles {
     .mud-button {
       color: var(--mud-palette-text-primary);
+      --mud-ripple-color: var(--mud-palette-text-primary);
     }
 
     .mud-button-root {
@@ -108,6 +109,7 @@
       &.mud-button-group-text-#{$color} {
         .mud-button-root {
           color: var(--mud-palette-#{$color});
+          --mud-ripple-color: var(--mud-palette-#{$color});
 
           @media(hover: hover) and (pointer: fine) {
             &:hover {
@@ -155,6 +157,7 @@
       &.mud-button-group-outlined-#{$color} .mud-button-root {
         color: var(--mud-palette-#{$color});
         border: 1px solid var(--mud-palette-#{$color});
+        --mud-ripple-color: var(--mud-palette-#{$color});
 
         @media(hover: hover) and (pointer: fine) {
           &:hover {
@@ -218,6 +221,8 @@
         .mud-button-root {
           background-color: var(--mud-palette-#{$color});
           color: var(--mud-palette-#{$color}-text);
+          --mud-ripple-color: var(--mud-palette-#{$color}-text);
+          --mud-ripple-opacity: var(--mud-ripple-opacity-secondary);
 
           @media(hover: hover) and (pointer: fine) {
             &:hover {
