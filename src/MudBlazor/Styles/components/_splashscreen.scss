@@ -1,0 +1,32 @@
+.mud-splash-screen-overlay-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  position: fixed;
+}
+
+.mud-splash-screen-overlay-loaded {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  position: fixed;
+  opacity: 0;
+  transition: visibility 1s,opacity 1s linear;
+}
+
+.mud-splash-screen-body-loading {
+  opacity: 0;
+  transition: visibility 1s,opacity 1s linear;
+}
+
+.mud-splash-screen-body-loaded {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 1s linear;
+}
