@@ -15,9 +15,9 @@
 
 @code {
 
-    private async Task OpenDialogAsync()
+    private Task OpenDialogAsync()
     {
         var options = new DialogOptions { BackgroundClass = "my-custom-class" };
-        await DialogService.ShowAsync<DialogBlurryExample_Dialog>("Simple Dialog", options);
+        return DialogService.ShowAsync<DialogBlurryExample_Dialog>("Simple Dialog", options);
     }
 }

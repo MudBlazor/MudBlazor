@@ -8,8 +8,8 @@
 
 @code {
 
-    private async Task OpenDialogAsync()
+    private Task OpenDialogAsync()
     {
-        await DialogService.ShowAsync<DialogSetOptionsExample_Dialog>("Options Dialog");
+        return DialogService.ShowAsync<DialogSetOptionsExample_Dialog>("Options Dialog");
     }
 }

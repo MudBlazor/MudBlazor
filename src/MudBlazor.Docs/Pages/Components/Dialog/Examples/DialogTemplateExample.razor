@@ -9,7 +9,7 @@
 
 @code {
 
-    private async Task DeleteUserAsync()
+    private Task DeleteUserAsync()
     {
         var parameters = new DialogParameters<DialogTemplateExample_Dialog>();
         parameters.Add(x => x.ContentText, "Do you really want to delete these records? This process cannot be undone.");
@@ -18,26 +18,26 @@
 
         var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
 
-        await DialogService.ShowAsync<DialogTemplateExample_Dialog>("Delete", parameters, options);
+        return DialogService.ShowAsync<DialogTemplateExample_Dialog>("Delete", parameters, options);
     }
 
-    private async Task ConfirmAsync()
+    private Task ConfirmAsync()
     {
         var parameters = new DialogParameters<DialogTemplateExample_Dialog>();
         parameters.Add(x => x.ContentText, "Are you sure you want to remove thisguy@emailz.com from this account?");
         parameters.Add(x => x.ButtonText, "Yes");
         parameters.Add(x => x.Color, Color.Success);
 
-        await DialogService.ShowAsync<DialogTemplateExample_Dialog>("Confirm", parameters);
+        return DialogService.ShowAsync<DialogTemplateExample_Dialog>("Confirm", parameters);
     }
 
-    private async Task DownloadAsync()
+    private Task DownloadAsync()
     {
         var parameters = new DialogParameters<DialogTemplateExample_Dialog>();
         parameters.Add(x => x.ContentText, "Your computer seems very slow, click the download button to download free RAM.");
         parameters.Add(x => x.ButtonText, "Download");
         parameters.Add(x => x.Color, Color.Info);
 
-        await DialogService.ShowAsync<DialogTemplateExample_Dialog>("Slow Computer Detected", parameters);
+        return DialogService.ShowAsync<DialogTemplateExample_Dialog>("Slow Computer Detected", parameters);
     }
 }

@@ -24,7 +24,7 @@
     private MudDialogInstance MudDialog { get; set; }
 
     [Inject]
-    HttpClient HttpClient { get; set; }
+    private HttpClient HttpClient { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

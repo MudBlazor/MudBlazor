@@ -19,8 +19,8 @@
 
     private void Cancel() => MudDialog.Cancel();
 
-    private async Task OpenSecondDialogAsync()
+    private Task OpenSecondDialogAsync()
     {
-        await DialogService.ShowAsync<DialogNestedExample_Dialog2>("Second Level Dialog");
+        return DialogService.ShowAsync<DialogNestedExample_Dialog2>("Second Level Dialog");
     }
 }

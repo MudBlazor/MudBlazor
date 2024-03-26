@@ -18,8 +18,8 @@
     private DialogOptions fullScreen = new DialogOptions() { FullScreen = true, CloseButton = true };
     private DialogOptions topCenter = new DialogOptions() { Position = DialogPosition.TopCenter };
 
-    private async Task OpenDialogAsync(DialogOptions options)
+    private Task OpenDialogAsync(DialogOptions options)
     {
-        await Dialog.ShowAsync<DialogUsageExample_Dialog>("Custom Options Dialog", options);
+        return Dialog.ShowAsync<DialogUsageExample_Dialog>("Custom Options Dialog", options);
     }
 }

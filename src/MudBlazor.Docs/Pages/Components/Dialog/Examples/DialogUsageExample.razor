@@ -10,9 +10,9 @@
 
 @code {
 
-    private async Task OpenDialogAsync()
+    private Task OpenDialogAsync()
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
-        await DialogService.ShowAsync<DialogUsageExample_Dialog>("Simple Dialog", options);
+        return DialogService.ShowAsync<DialogUsageExample_Dialog>("Simple Dialog", options);
     }
 }

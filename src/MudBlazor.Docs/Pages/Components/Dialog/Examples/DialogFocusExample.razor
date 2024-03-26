@@ -10,9 +10,9 @@
 
 @code {
 
-    private async Task OpenDialogAsync()
+    private Task OpenDialogAsync()
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
-        await DialogService.ShowAsync<DialogFocusExample_Dialog>("Last element focused", options);
+        return DialogService.ShowAsync<DialogFocusExample_Dialog>("Last element focused", options);
     }
 }

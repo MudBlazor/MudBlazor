@@ -7,9 +7,9 @@
 </MudButton>
 
 @code {
-    private async Task OpenDialogAsync()
+    private Task OpenDialogAsync()
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
-        await DialogService.ShowAsync<DialogNestedExample_Dialog>("First Level Dialog", options);
+        return DialogService.ShowAsync<DialogNestedExample_Dialog>("First Level Dialog", options);
     }
 }
