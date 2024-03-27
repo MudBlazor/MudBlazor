@@ -1311,7 +1311,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_ReturnedItemsCount_Should_Be_Accurate()
         {
-            Task<IEnumerable<string>> search(string value)
+            Task<IEnumerable<string>> search(string value, CancellationToken token)
             {
                 var values = new string[] { "Lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit" };
                 return Task.FromResult(values.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
