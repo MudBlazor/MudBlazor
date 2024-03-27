@@ -6,7 +6,7 @@
 <div @attributes="UserAttributes" Class="@Classname" Style="@Style" 
         @onmouseenter="@MouseEnter"
         @onmouseleave="@MouseLeave"
-        @oncontextmenu="@(ActivationEvent==MouseEvent.RightClick ? ToggleMenu : null)"
+        @oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? ToggleMenu : null)"
         @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick ? true : false)">
     @if (ActivatorContent != null)
     {
@@ -45,5 +45,5 @@
             </MudList>
         </CascadingValue>
     </MudPopover>
-    <MudOverlay Visible="@(_isOpen && ActivationEvent!=MouseEvent.MouseOver)" OnClick="@ToggleMenu" LockScroll="LockScroll" />
+    <MudOverlay Visible="@(_isOpen && ActivationEvent != MouseEvent.MouseOver)" OnClick="@ToggleMenu" LockScroll="LockScroll" />
 </div>
