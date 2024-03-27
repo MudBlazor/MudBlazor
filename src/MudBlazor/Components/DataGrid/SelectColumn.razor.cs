@@ -11,5 +11,13 @@ namespace MudBlazor
         [Parameter] public bool ShowInHeader { get; set; } = true;
         [Parameter] public bool ShowInFooter { get; set; } = true;
         [Parameter] public Size Size { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// Determines whether this column can be hidden. This overrides the Hideable parameter on the DataGrid.
+        /// </summary>
+        [Parameter] public bool? Hideable { get; set; }
+
+        [Parameter] public bool Hidden { get; set; }
+        [Parameter] public EventCallback<bool> HiddenChanged { get; set; }
     }
 }
