@@ -1,9 +1,10 @@
-﻿.docs-title{
+﻿.docs-title {
   font-family: 'Public Sans', 'Roboto','Arial','sans-serif';
   font-weight: 600;
   font-size: 3.75rem;
 }
-.docs-title-description{
+
+.docs-title-description {
   font-family: 'Public Sans', 'Roboto','Arial','sans-serif';
   font-weight: 500;
   line-height: 1.75;
@@ -12,20 +13,21 @@
 }
 
 @media (max-width:600px) {
-  .docs-title{
+  .docs-title {
     font-size: 2.5rem;
   }
-  .docs-title-description{
+
+  .docs-title-description {
     font-size: .875rem;
   }
 }
 
-.docs-sticky-info{
+.docs-sticky-info {
   position: sticky;
   top: 128px;
 
-  &.explore-text{
-    .mud-typography-h5{
+  &.explore-text {
+    .mud-typography-h5 {
       font-weight: 500;
     }
   }
@@ -35,16 +37,17 @@
   z-index: calc(var(--mud-zindex-appbar) + 1);
 }
 
-.docs-appbar-filter{
+.docs-appbar-filter {
   backdrop-filter: blur(12px);
   z-index: calc(var(--mud-zindex-appbar) + 1);
 }
 
-.docs-appbar, .docs-menu-list{
-  .mud-autocomplete{
+.docs-appbar, .docs-menu-list {
+  .mud-autocomplete {
     max-width: 360px;
   }
-  .mud-button{
+
+  .mud-button {
     font-family: 'Public Sans', 'Roboto','Arial','sans-serif';
     font-size: .875rem;
     font-weight: 500;
@@ -55,19 +58,20 @@
 }
 
 .mudblazor-docs, .mudblazor-landingpage {
-  .docs-single-link .mud-nav-link{
+  .docs-single-link .mud-nav-link {
     font-weight: 500 !important;
   }
 }
 
 
-.landing-appbar{
+.landing-appbar {
   position: absolute !important;
 }
 
-.docs-mudblazor-logo{
+.docs-mudblazor-logo {
   width: 40px;
 }
+
 .docs-brand-text {
   letter-spacing: .2rem;
   font-weight: 400;
@@ -77,11 +81,11 @@
   user-select: none;
 }
 
-.docs-text-dec{
+.docs-text-dec {
   text-decoration: underline dotted var(--mud-palette-primary);
 }
 
-.docs-footer{
+.docs-footer {
   .mud-link {
     margin: 8px 0;
     cursor: pointer;
@@ -89,32 +93,45 @@
   }
 }
 
-.docs-mobile-dialog-search{
+.docs-mobile-dialog-search {
   height: 400px;
 }
 
-.docs-mobile-dialog-search-popover{
+.docs-mobile-dialog-search-popover {
   box-shadow: none !important;
   margin-top: 8px;
   background-color: var(--mud-palette-background-grey);
-  
-  .mud-list{
+
+  .mud-list {
     background-color: var(--mud-palette-background-grey);
-    .mud-list-item{
+
+    .mud-list-item {
       background-color: var(--mud-palette-surface);
       margin: 6px 0;
       border-radius: 4px;
 
-      .mud-typography-body2{
+      .mud-typography-body2 {
         font-size: 12px;
         font-weight: 500;
         color: var(--mud-palette-text-secondary);
       }
-      
-      &:hover{
+
+      @media(hover: hover) and (pointer: fine) {
+        &:hover {
+          color: var(--mud-palette-primary-text);
+          background-color: var(--mud-palette-primary);
+
+          .mud-typography-body2 {
+            color: var(--mud-palette-primary-text);
+          }
+        }
+      }
+
+      &:active {
         color: var(--mud-palette-primary-text);
         background-color: var(--mud-palette-primary);
-        .mud-typography-body2{
+
+        .mud-typography-body2 {
           color: var(--mud-palette-primary-text);
         }
       }

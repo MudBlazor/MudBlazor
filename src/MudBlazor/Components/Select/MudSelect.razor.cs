@@ -87,7 +87,7 @@ namespace MudBlazor
             await ScrollToItemAsync(item);
         }
         private ValueTask ScrollToItemAsync(MudSelectItem<T> item)
-            =>item != null? ScrollManager.ScrollToListItemAsync(item.ItemId): ValueTask.CompletedTask;
+            => item != null ? ScrollManager.ScrollToListItemAsync(item.ItemId) : ValueTask.CompletedTask;
         private async Task SelectFirstItem(string startChar = null)
         {
             if (_items == null || _items.Count == 0)
@@ -630,14 +630,14 @@ namespace MudBlazor
                 _selectedValues.Add(value);
             }
 
-            HilightItemForValue(value);
+            await HilightItemForValueAsync(value);
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T)(object)Text, updateText: false);
             await InvokeAsync(StateHasChanged);
         }
 
-        private async void HilightItemForValue(T value)
+        private async Task HilightItemForValueAsync(T value)
         {
             if (value == null)
             {
@@ -667,7 +667,7 @@ namespace MudBlazor
             if (MultiSelection)
                 HilightItem(_items.FirstOrDefault(x => !x.Disabled));
             else
-                HilightItemForValue(Value);
+                await HilightItemForValueAsync(Value);
         }
 
         private void UpdateSelectAllChecked()
@@ -732,7 +732,7 @@ namespace MudBlazor
             {
                 StateHasChanged();
                 await OnBlur.InvokeAsync(new FocusEventArgs());
-                _elementReference.FocusAsync().AndForget(ignoreExceptions:true);
+                _elementReference.FocusAsync().AndForget(ignoreExceptions: true);
                 StateHasChanged();
             }
 

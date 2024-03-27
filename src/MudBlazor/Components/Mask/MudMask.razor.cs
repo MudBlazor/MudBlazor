@@ -149,7 +149,7 @@ namespace MudBlazor
                     new JsEventOptions
                     {
                         //EnableLogging = true,
-                        TargetClass = "mud-input-slot", 
+                        TargetClass = "mud-input-slot",
                         TagName = "INPUT"
                     });
                 _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
@@ -195,7 +195,7 @@ namespace MudBlazor
             try
             {
                 if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || GetReadOnlyState())
-                        return;
+                    return;
                 switch (e.Key)
                 {
                     case "Backspace":
@@ -252,7 +252,7 @@ namespace MudBlazor
             }
         }
 
-        internal async void HandleClearButton(MouseEventArgs e)
+        internal async Task HandleClearButtonAsync(MouseEventArgs e)
         {
             Mask.Clear();
             await Update();
@@ -329,7 +329,7 @@ namespace MudBlazor
             var text = Text;
             if (Mask.Selection != null)
             {
-                (_, text, _)=BaseMask.SplitSelection(text, Mask.Selection.Value);
+                (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
             }
             _jsApiService.CopyToClipboardAsync(text);
         }
@@ -424,7 +424,7 @@ namespace MudBlazor
             if (GetReadOnlyState())
                 return;
 
-            if (_selection!=null)
+            if (_selection != null)
                 Mask.Delete();
             await Update();
         }

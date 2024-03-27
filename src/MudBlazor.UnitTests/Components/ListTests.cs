@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups
             comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
             // set Pu'er, a heavily fermented Chinese tea that tastes like an old leather glove
-            await comp.InvokeAsync(()=>comp.Instance.SetSelecedValue(4));
+            await comp.InvokeAsync(() => comp.Instance.SetSelecedValue(4));
             list.SelectedItem.Text.Should().Be("Pu'er");
             comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
             comp.FindComponents<MudListItem>()[4].Markup.Should().Contain("mud-selected-item");

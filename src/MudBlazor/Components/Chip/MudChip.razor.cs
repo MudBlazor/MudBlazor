@@ -92,7 +92,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Chip.Appearance)]
         public Color SelectedColor { get; set; } = Color.Inherit;
-        
+
         [Parameter]
         [Category(CategoryTypes.Chip.Appearance)]
         public RenderFragment AvatarContent { get; set; }
@@ -170,18 +170,6 @@ namespace MudBlazor
         public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where (Obsolete replaced by Href)
-        /// </summary>
-        [Obsolete("Use Href Instead.", false)]
-        [Parameter]
-        [Category(CategoryTypes.Chip.ClickAction)]
-        public string Link
-        {
-            get => Href;
-            set => Href = value;
-        }
-
-        /// <summary>
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
         /// </summary>
         [Parameter]
@@ -223,22 +211,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Chip.Behavior)]
         public bool? Default { get; set; }
-
-        /// <summary>
-        /// Command executed when the user clicks on an element.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Chip.ClickAction)]
-        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
-        public ICommand Command { get; set; }
-
-        /// <summary>
-        /// Command parameter.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Chip.ClickAction)]
-        [Obsolete("This will be removed in v7.")]
-        public object CommandParameter { get; set; }
 
         /// <summary>
         /// Chip click event, if set the chip focus, hover and click effects are applied.
@@ -308,12 +280,6 @@ namespace MudBlazor
             else
             {
                 await OnClick.InvokeAsync(ev);
-#pragma warning disable CS0618
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }
-#pragma warning restore CS0618
             }
         }
 

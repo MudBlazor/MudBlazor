@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -11,37 +12,24 @@ namespace MudBlazor
         private bool _childrenNeedUpdates = false;
 
         protected string Classname =>
-        new CssBuilder("mud-avatar-group")
-            .AddClass($"mud-avatar-group-outlined", Outlined)
-            .AddClass($"mud-avatar-group-outlined-{OutlineColor.ToDescriptionString()}", Outlined)
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-avatar-group")
+                .AddClass($"mud-avatar-group-outlined", Outlined)
+                .AddClass($"mud-avatar-group-outlined-{OutlineColor.ToDescriptionString()}", Outlined)
+                .AddClass(Class)
+                .Build();
 
         protected string MaxAvatarClassname =>
-        new CssBuilder("mud-avatar-group-max-avatar")
-            .AddClass($"ms-n{Spacing}")
-          .AddClass(MaxAvatarClass)
-        .Build();
-
-        private int _spacing = 3;
+            new CssBuilder("mud-avatar-group-max-avatar")
+                .AddClass($"ms-n{Spacing}")
+                .AddClass(MaxAvatarClass)
+                .Build();
 
         /// <summary>
         /// Spacing between avatars where 0 is none and 16 max.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Behavior)]
-        public int Spacing
-        {
-            get => _spacing;
-            set
-            {
-                if (value != _spacing)
-                {
-                    _spacing = value;
-                    _childrenNeedUpdates = true;
-                }
-            }
-        }
+        public int Spacing { get; set; } = 3;
 
         /// <summary>
         /// Outlines the grouped avatars to distinguish them, useful when avatars are the same color or uses images.
@@ -99,25 +87,12 @@ namespace MudBlazor
         [Category(CategoryTypes.AvatarGroup.Appearance)]
         public Variant MaxVariant { get; set; } = Variant.Filled;
 
-        private int _max = 3;
-
         /// <summary>
         /// Max avatars to show before showing +x avatar, default value 0 has no max.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Behavior)]
-        public int Max
-        {
-            get => _max;
-            set
-            {
-                if (value != _max)
-                {
-                    _max = value;
-                    _childrenNeedUpdates = true;
-                }
-            }
-        }
+        public int Max { get; set; }
 
         /// <summary>
         /// Custom class/classes for MaxAvatar
@@ -142,6 +117,12 @@ namespace MudBlazor
 
         internal List<MudAvatar> _avatars = new();
 
+        public MudAvatarGroup()
+        {
+            RegisterParameter(nameof(Spacing), () => Spacing, () => _childrenNeedUpdates = true);
+            RegisterParameter(nameof(Max), () => Max, () => _childrenNeedUpdates = true);
+        }
+
         internal void AddAvatar(MudAvatar avatar)
         {
             _avatars.Add(avatar);
@@ -154,7 +135,7 @@ namespace MudBlazor
         }
 
         internal CssBuilder GetAvatarSpacing() => new CssBuilder()
-          .AddClass($"ms-n{Spacing}");
+            .AddClass($"ms-n{Spacing}");
 
         internal StyleBuilder GetAvatarZindex(MudAvatar avatar) => new StyleBuilder()
             .AddStyle("z-index", $"{_avatars.Count - _avatars.IndexOf(avatar)}");
@@ -168,7 +149,7 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-            if (_childrenNeedUpdates == true)
+            if (_childrenNeedUpdates)
             {
                 foreach (IMudStateHasChanged avatar in _avatars)
                 {

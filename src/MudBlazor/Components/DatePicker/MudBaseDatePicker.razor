@@ -34,14 +34,14 @@
                                 {
                                     var year = i;
                                     <div class="mud-picker-year" id="@(_componentId + year)" @onclick="(() => OnYearClicked(year))" @onclick:stopPropagation="true">
-                                        <MudText Typo="@GetYearTypo(year)" Class="@GetYearClasses(year)">@GetCalendarYear(year)</MudText>
+                                        <MudText Typo="@GetYearTypo(year)" Class="@GetYearClasses(year)">@year</MudText>
                                     </div>
                                 }
                             </div>
                         }
                         else if (tempMonth == 0 && CurrentView == OpenTo.Month)
                         {
-                            var calendarYear = GetCalendarYear(PickerMonth?.Year ?? DateTime.Today.Year);
+                            var calendarYear = GetCalendarYear(PickerMonth ?? DateTime.Today);
                             var prevLabel = $"Go to previous year {calendarYear - 1}";
                             var nextLabel = $"Go to next year {calendarYear + 1}";
 

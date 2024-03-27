@@ -1,0 +1,53 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid T="Item" Items="Items" EditMode="@DataGridEditMode.Cell" ReadOnly="false">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.SubItem.SubProperty" />
+        <PropertyColumn Property="x => x.SubItem.SubItem2.SubProperty2" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public List<Item> Items = new List<Item>()
+    {
+        new Item("A", "A-D", "A-D-E"), 
+        new Item("B", "B-D", "B-D-E"), 
+        new Item("C", "C-D", "C-D-E")
+    };
+
+    public class SubItem
+    {
+        public SubItem(string subProperty, string subProperty2)
+        {
+            SubProperty = subProperty;
+            SubItem2 = new SubItem2(subProperty2);
+        }
+
+        public SubItem2 SubItem2 { get; set; }
+
+        public string SubProperty { get; set; }
+    }
+    public class SubItem2
+    {
+        public SubItem2(string subProperty)
+        {
+            SubProperty2 = subProperty;
+        }
+
+        public string SubProperty2 { get; set; }
+    }
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public SubItem SubItem { get; set; }
+
+        public Item(string name, string subProperty, string subProperty2)
+        {
+            Name = name;
+            SubItem = new SubItem(subProperty, subProperty2);
+        }
+    }
+
+}

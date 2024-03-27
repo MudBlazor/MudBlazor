@@ -24,7 +24,7 @@ namespace MudBlazor
         }
 
         [Inject] protected IScrollManager ScrollManager { get; set; }
-        
+
         [Inject] private IJsApiService JsApiService { get; set; }
 
         /// <summary>
@@ -376,7 +376,7 @@ namespace MudBlazor
         protected virtual void OnYearClicked(int year)
         {
             var current = GetMonthStart(0);
-            PickerMonth = new DateTime(year, current.Month, 1);
+            PickerMonth = new DateTime(year, current.Month, 1, Culture.Calendar);
             var nextView = GetNextView();
             if (nextView != null)
             {
@@ -500,7 +500,7 @@ namespace MudBlazor
         public async void ScrollToYear()
         {
             _scrollToYearAfterRender = false;
-            var id = $"{_componentId}{GetMonthStart(0).Year}";
+            var id = $"{_componentId}{Culture.Calendar.GetYear(GetMonthStart(0))}";
             await ScrollManager.ScrollToYearAsync(id);
             StateHasChanged();
         }
@@ -508,20 +508,20 @@ namespace MudBlazor
         private int GetMinYear()
         {
             if (MinDate.HasValue)
-                return MinDate.Value.Year;
-            return DateTime.Today.Year - 100;
+                return Culture.Calendar.GetYear(MinDate.Value);
+            return Culture.Calendar.GetYear(DateTime.Today) - 100;
         }
 
         private int GetMaxYear()
         {
             if (MaxDate.HasValue)
-                return MaxDate.Value.Year;
-            return DateTime.Today.Year + 100;
+                return Culture.Calendar.GetYear(MaxDate.Value);
+            return Culture.Calendar.GetYear(DateTime.Today) + 100;
         }
 
         private string GetYearClasses(int year)
         {
-            if (year == GetMonthStart(0).Year)
+            if (year == Culture.Calendar.GetYear(GetMonthStart(0)))
                 return $"mud-picker-year-selected mud-{Color.ToDescriptionString()}-text";
             return null;
         }
@@ -536,7 +536,7 @@ namespace MudBlazor
 
         private Typo GetYearTypo(int year)
         {
-            if (year == GetMonthStart(0).Year)
+            if (year == Culture.Calendar.GetYear(GetMonthStart(0)))
                 return Typo.h5;
             return Typo.subtitle1;
         }
@@ -570,14 +570,14 @@ namespace MudBlazor
 
         private string GetMonthClasses(DateTime month)
         {
-            if (GetMonthStart(0) == month && !IsMonthDisabled(month))
+            if (Culture.Calendar.GetMonth(GetMonthStart(0)) == Culture.Calendar.GetMonth(month) && !IsMonthDisabled(month))
                 return $"mud-picker-month-selected mud-{Color.ToDescriptionString()}-text";
             return null;
         }
 
         private Typo GetMonthTypo(DateTime month)
         {
-            if (GetMonthStart(0) == month)
+            if (Culture.Calendar.GetMonth(GetMonthStart(0)) == Culture.Calendar.GetMonth(month))
                 return Typo.h5;
             return Typo.subtitle1;
         }
@@ -614,11 +614,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Converts gregorian year into whatever year it is in the provided culture
+        /// Converts gregorian date into whatever year it is in the provided culture
         /// </summary>
-        /// <param name="year">Gregorian year</param>
+        /// <param name="yearDate">Gregorian Date</param>
         /// <returns>Year according to culture</returns>
-        protected abstract int GetCalendarYear(int year);
+        protected abstract int GetCalendarYear(DateTime yearDate);
 
         private ValueTask HandleMouseoverOnPickerCalendarDayButton(int tempId)
         {

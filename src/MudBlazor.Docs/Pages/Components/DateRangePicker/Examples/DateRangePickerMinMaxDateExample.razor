@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack>
+    <MudDateRangePicker @bind-DateRange="@_dateRange" MinDate="_minDate" MaxDate="@_maxDate" Margin="Margin.Dense" HelperText="@HelperText"/>
+</MudStack>
+
+@code {
+    private DateRange _dateRange { get; set; }
+    private DateTime _minDate = DateTime.Now.Date;
+    private DateTime _maxDate = DateTime.Now.Date.AddMonths(1);
+
+    private string HelperText => $"Range: {_minDate:M} to {_maxDate:M}";
+}

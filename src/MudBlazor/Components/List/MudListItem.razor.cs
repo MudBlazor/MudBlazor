@@ -180,21 +180,6 @@ namespace MudBlazor
         public bool InitiallyExpanded { get; set; }
 
         /// <summary>
-        /// Command parameter.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.ClickAction)]
-        public object CommandParameter { get; set; }
-
-        /// <summary>
-        /// Command executed when the user clicks on an element.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.ClickAction)]
-        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
-        public ICommand Command { get; set; }
-
-        /// <summary>
         /// Display content of this list item. If set, this overrides Text
         /// </summary>
         [Parameter]
@@ -248,12 +233,6 @@ namespace MudBlazor
                         await MudList.SetSelectedValueAsync(Value);
                     }
                     await OnClick.InvokeAsync(eventArgs);
-#pragma warning disable CS0618
-                    if (Command?.CanExecute(CommandParameter) ?? false)
-                    {
-                        Command.Execute(CommandParameter);
-                    }
-#pragma warning restore CS0618
                 }
             }
             else
@@ -283,10 +262,6 @@ namespace MudBlazor
                 {
                     MudList?.SetSelectedValueAsync(this.Value);
                     OnClick.InvokeAsync(ev);
-                    if (Command?.CanExecute(CommandParameter) ?? false)
-                    {
-                        Command.Execute(CommandParameter);
-                    }
                 }
             }
             else

@@ -21,6 +21,7 @@
                           OnKeyUp="@this.OnInputKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
                           InputMode="@InputMode" Pattern="@Pattern"
+                          ShrinkLabel="@ShrinkLabel"
                           T="string" />
 
                 @if (ShowProgressIndicator && IsLoading)
@@ -47,7 +48,7 @@
                         <MudList Class="@ListClass" Clickable="true" Dense="@Dense">
                             @if (BeforeItemsTemplate != null)
                             {
-                                <div class="pa-1">
+                                <div class="mud-autocomplete-before-items pa-1">
                                     @BeforeItemsTemplate
                                 </div>
                             }
@@ -79,15 +80,15 @@
                                     }
                                 </MudListItem>
                             }
-                            @if (MoreItemsTemplate != null && _itemsReturned > MaxItems)
+                            @if (MoreItemsTemplate != null && _returnedItemsCount > MaxItems)
                             {
-                                <div class="pa-1">
+                                <div class="mud-autocomplete-more-items pa-1">
                                     @MoreItemsTemplate
                                 </div>
                             }
                             @if (AfterItemsTemplate != null)
                             {
-                                <div class="pa-1">
+                                <div class="mud-autocomplete-after-items pa-1">
                                     @AfterItemsTemplate
                                 </div>
                             }
@@ -95,7 +96,7 @@
                     }
                     else if (NoItemsTemplate != null)
                     {
-                        <div class="pa-1">
+                        <div class="mud-autocomplete-no-items pa-1">
                             @NoItemsTemplate
                         </div>
                     }

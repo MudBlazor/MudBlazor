@@ -9,13 +9,13 @@
     <MudItem md="4">
         <MudPaper Height="400px" Class="px-4 pt-2 pb-4">
             <MudText Typo="Typo.h6">Options</MudText>
-            <MudCheckBox @bind-Checked="@DisableToolbar" Label="Disable Toolbar" Color="Color.Primary" Dense="true" />
-            <MudCheckBox @bind-Checked="@DisableAlpha" Label="Disable Alpha" Color="Color.Primary" Dense="true" />
-            <MudCheckBox @bind-Checked="@DisableColorField" Label="Disable Color Field" Color="Color.Primary" Dense="true" />
-            <MudCheckBox @bind-Checked="@DisablePreview" Label="Disable Preview" Color="Color.Primary" Dense="true" />
-            <MudCheckBox @bind-Checked="@DisableSliders" Label="Disable Sliders" Color="Color.Primary" Dense="true" />
-            <MudCheckBox @bind-Checked="@DisableInputs" Label="Disable Inputs" Color="Color.Primary" Dense="true" />
-            <MudCheckBox @bind-Checked="@DisableModeSwitch" Label="Disable Mode Switch" Color="Color.Primary" Dense="true" />
+            <MudCheckBox @bind-Value="DisableToolbar" Label="Disable Toolbar" Color="Color.Primary" Dense="true" />
+            <MudCheckBox @bind-Value="DisableAlpha" Label="Disable Alpha" Color="Color.Primary" Dense="true" />
+            <MudCheckBox @bind-Value="DisableColorField" Label="Disable Color Field" Color="Color.Primary" Dense="true" />
+            <MudCheckBox @bind-Value="DisablePreview" Label="Disable Preview" Color="Color.Primary" Dense="true" />
+            <MudCheckBox @bind-Value="DisableSliders" Label="Disable Sliders" Color="Color.Primary" Dense="true" />
+            <MudCheckBox @bind-Value="DisableInputs" Label="Disable Inputs" Color="Color.Primary" Dense="true" />
+            <MudCheckBox @bind-Value="DisableModeSwitch" Label="Disable Mode Switch" Color="Color.Primary" Dense="true" />
             <MudSelect Label="Color Picker Mode" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" @bind-Value="ColorPickerMode" Class="mt-4">
                 <MudSelectItem T="ColorPickerMode" Value="ColorPickerMode.RGB">RGB</MudSelectItem>
                 <MudSelectItem T="ColorPickerMode" Value="ColorPickerMode.HSL">HSL</MudSelectItem>

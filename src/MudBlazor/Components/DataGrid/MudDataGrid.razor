@@ -117,7 +117,7 @@
                                                         {
                                                             <MudIconButton DisableRipple="true" Icon="@Icons.Material.Filled.TableRows" Size="@Size.Small" Title=@Localizer["MudDataGrid.Group"] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.GroupColumn())"></MudIconButton>
                                                         }
-                                                        <MudSwitch T="bool" DisableRipple="true" Class="flex-grow-1" Color="Color.Primary" Disabled="@(!context.hideable)" Checked="@context.hidden" CheckedChanged="@context.ToggleAsync" Converter="_oppositeBoolConverter" Label="@context.Title" />
+                                                        <MudSwitch T="bool" DisableRipple="true" Class="flex-grow-1" Color="Color.Primary" Disabled="@(!context.hideable)" Checked="@context.HiddenState.Value" CheckedChanged="@context.ToggleAsync" Converter="_oppositeBoolConverter" Label="@context.Title" />
                                                         <MudSpacer />
 
                                                         <div>
@@ -141,7 +141,7 @@
                                                         }
                                                         else
                                                         {
-                                                            <MudIconButton DisableRipple="true" Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" Title=@Localizer["MudDataGrid.Filter"] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.AddFilterAsync())"></MudIconButton>
+                                                            <MudIconButton DisableRipple="true" Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" Title=@Localizer["MudDataGrid.Filter"] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.AddFilter())"></MudIconButton>
                                                         }
 
                                                         @if (ColumnsPanelReordering)
@@ -241,7 +241,7 @@
                                                 <CascadingValue Value="@Validator" IsFixed="true">
                                                     @foreach (var column in RenderedColumns)
                                                     {
-                                                        if (!column.hidden)
+                                                        if (!column.HiddenState.Value)
                                                         {
                                                             @Cell(column, item)
                                                         }
@@ -279,7 +279,7 @@
                                         <CascadingValue Value="@Validator" IsFixed="true">
                                             @foreach (var column in RenderedColumns)
                                             {
-                                                if (!column.hidden)
+                                                if (!column.HiddenState.Value)
                                                 {
                                                     @Cell(column, item)
                                                 }
@@ -398,7 +398,7 @@
             {
                 foreach (var column in RenderedColumns)
                 {
-                    if (!column.hidden)
+                    if (!column.HiddenState.Value)
                     {
                         if (column.AggregateDefinition is not null || column.FooterTemplate is not null || hasFooter)
                         {

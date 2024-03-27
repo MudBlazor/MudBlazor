@@ -6,28 +6,26 @@ using System.Threading.Tasks;
 
 namespace MudBlazor;
 
+#nullable enable
 public class FileUploadButtonTemplateContext<T>
 {
     public string Id { get; }
-    public FileUploadButtonTemplateActions Actions { get; }
 
-    private readonly MudFileUpload<T> _fileUpload;
+    public FileUploadButtonTemplateActions Actions { get; }
 
     public FileUploadButtonTemplateContext(MudFileUpload<T> fileUpload, string id)
     {
-        _fileUpload = fileUpload;
         Id = id;
         Actions = new FileUploadButtonTemplateActions
         {
-            ClearAsync = async () => await _fileUpload.ClearAsync()
+            ClearAsync = fileUpload.ClearAsync
         };
     }
+
+    public override string ToString() => Id;
 
     public class FileUploadButtonTemplateActions
     {
         public Func<Task> ClearAsync { get; init; } = null!;
     }
-
-    public override string ToString()
-        => Id;
 }

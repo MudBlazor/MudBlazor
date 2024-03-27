@@ -48,21 +48,8 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Command parameter.
+        /// Click event. Will not be called if <c>Href</c> is also set.
         /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.General.ClickAction)]
-        [Obsolete("This will be removed in v7.")]
-        public object? CommandParameter { get; set; }
-
-        /// <summary>
-        /// Command executed when the user clicks on an element.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.General.ClickAction)]
-        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
-        public ICommand? Command { get; set; }
-
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
@@ -77,12 +64,6 @@ namespace MudBlazor
             else
             {
                 await OnClick.InvokeAsync(ev);
-#pragma warning disable CS0618
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }
-#pragma warning restore CS0618
             }
         }
     }

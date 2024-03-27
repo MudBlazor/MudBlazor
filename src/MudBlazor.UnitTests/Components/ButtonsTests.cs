@@ -4,9 +4,12 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
+using Bunit.Rendering;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Button;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -462,6 +465,36 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudButton>().Find("button").HasAttribute("disabled").Should().BeTrue();
             comp.FindComponent<MudFab>().Find("button").HasAttribute("disabled").Should().BeTrue();
             comp.FindComponent<MudIconButton>().Find("button").HasAttribute("disabled").Should().BeTrue();
+        }
+
+        [Test]
+        public async Task ButtonsOnClickErrorContentCaughtException()
+        {
+            var comp = Context.RenderComponent<ButtonErrorContenCaughtException>();
+            var alertTextFunc = () => MudAlert().Find("div.mud-alert-message");
+            IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
+            IRefreshableElementCollection<IElement> Buttons() => comp.FindAll("button.mud-button-root");
+            IElement MudButton() => Buttons()[0];
+            IElement MudFab() => Buttons()[1];
+            IElement MudIconButton() => Buttons()[2];
+
+            // MudButton
+            await MudButton().ClickAsync(new MouseEventArgs());
+            alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            await comp.InvokeAsync(comp.Instance.Recover);
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
+
+            // MudFab
+            await MudFab().ClickAsync(new MouseEventArgs());
+            alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            await comp.InvokeAsync(comp.Instance.Recover);
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
+
+            // MudIconButton
+            await MudIconButton().ClickAsync(new MouseEventArgs());
+            alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            await comp.InvokeAsync(comp.Instance.Recover);
+            alertTextFunc.Should().Throw<ComponentNotFoundException>();
         }
     }
 }

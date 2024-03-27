@@ -137,7 +137,7 @@ namespace MudBlazor
         internal async Task RegisterAsync(MudListItem item)
         {
             _items.Add(item);
-            if (CanSelect && SelectedValue!=null && object.Equals(item.Value, SelectedValue))
+            if (CanSelect && SelectedValue != null && object.Equals(item.Value, SelectedValue))
             {
                 item.SetSelected(true);
                 _selectedItem = item;
@@ -180,7 +180,7 @@ namespace MudBlazor
             {
                 await childList.SetSelectedValueAsync(value);
                 if (childList.SelectedItem != null)
-                    _selectedItem= childList.SelectedItem;
+                    _selectedItem = childList.SelectedItem;
             }
 
             await SelectedItemChanged.InvokeAsync(_selectedItem);

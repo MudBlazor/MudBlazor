@@ -1,5 +1,4 @@
-﻿@using System.Collections
-@namespace MudBlazor.UnitTests.TestComponents
+﻿@namespace MudBlazor.UnitTests.TestComponents
 
 <MudTreeView T="string" MultiSelection="false" @bind-SelectedValue="SelectedValue"
              Comparer="Compare">
@@ -36,6 +35,4 @@
                 return obj.GetHashCode();
             }
         );
-
-
 }

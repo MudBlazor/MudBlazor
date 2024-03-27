@@ -9,8 +9,8 @@
 </MudPaper>
 
 <MudStack Row="true" AlignItems="AlignItems.Center">
-    <MudSwitch @bind-Checked="@_row" Label="Row" Color="Color.Primary" />
-    <MudSwitch @bind-Checked="@_reverse" Label="Reverse" Color="Color.Primary" />
+    <MudSwitch @bind-Value="_row" Label="Row" Color="Color.Primary" />
+    <MudSwitch @bind-Value="_reverse" Label="Reverse" Color="Color.Primary" />
     <MudText>Spacing:</MudText>
     <MudSlider @bind-Value="_spacing" Min="0" Max="16"/>
 </MudStack>

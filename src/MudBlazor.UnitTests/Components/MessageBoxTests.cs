@@ -30,6 +30,7 @@ namespace MudBlazor.UnitTests.Components
                 yesNoCancel = service?.ShowMessageBox("Boom!", "I'm a pickle. What do you make of that?", "Great",
                     "Whatever", "Go away!");
             });
+            comp.Find("div.mud-message-box").Should().NotBe(null);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
             comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
@@ -57,9 +58,10 @@ namespace MudBlazor.UnitTests.Components
             Task<bool?> yesNoCancel = null;
             await comp.InvokeAsync(() =>
             {
-                yesNoCancel = service?.ShowMessageBox("Boom!", (MarkupString) $"I'm a pickle. What do you make of that?", "Great",
+                yesNoCancel = service?.ShowMessageBox("Boom!", (MarkupString)$"I'm a pickle. What do you make of that?", "Great",
                     "Whatever", "Go away!");
             });
+            comp.Find("div.mud-message-box").Should().NotBe(null);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
             comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
@@ -87,6 +89,7 @@ namespace MudBlazor.UnitTests.Components
                 yesNoCancel = service?.ShowMessageBox("Boom!", (MarkupString)$"I'm a pickle. What do you make of that?", "Great",
                     "Whatever", "Go away!");
             });
+            comp.Find("div.mud-message-box").Should().NotBe(null);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
             comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");

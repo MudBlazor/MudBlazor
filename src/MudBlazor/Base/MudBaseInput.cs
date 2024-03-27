@@ -17,8 +17,8 @@ namespace MudBlazor
         /// this flag is set to true by validation in order to prevent multiple invocations of validation after a single
         /// value change. When the value changes _validated is set back to false.
         /// </summary>
-        private bool _validated; 
-        
+        private bool _validated;
+
         protected MudBaseInput() : base(new DefaultConverter<T>()) { }
 
         /// <summary>
@@ -218,6 +218,13 @@ namespace MudBlazor
         public virtual string Pattern { get; set; }
 
         /// <summary>
+        /// ShrinkLabel prevents the label from moving down into the field when the field is empty.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool ShrinkLabel { get; set; } = false;
+
+        /// <summary>
         /// Derived classes need to override this if they can be something other than text
         /// </summary>
         internal virtual InputType GetInputType() { return InputType.Text; }
@@ -279,7 +286,7 @@ namespace MudBlazor
             if (ReadOnly)
                 return;
             _isFocused = false;
-            
+
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;
@@ -473,9 +480,10 @@ namespace MudBlazor
 
         protected override async Task ValidateValue()
         {
-            if (SubscribeToParentForm) {
-                await base.ValidateValue();
+            if (SubscribeToParentForm)
+            {
                 _validated = true;
+                await base.ValidateValue();
             }
         }
 

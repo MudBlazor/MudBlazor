@@ -112,7 +112,7 @@ public class BackgroundWorkerTests
 
         await worker.StartAsync(CancellationToken.None);
 
-        await worker.DisposeAsync();
+        worker.Dispose();
     }
 
     [Test]
@@ -124,16 +124,16 @@ public class BackgroundWorkerTests
 
         await worker.StartAsync(tokenSource.Token);
 
-        tokenSource.Cancel();
+        await tokenSource.CancelAsync();
 
         Assert.ThrowsAsync<TaskCanceledException>(() => worker.ExecutingTask);
     }
 
     [Test]
-    public async Task DisposeAsync_ShouldNotThrow()
+    public void Dispose_ShouldNotThrow()
     {
         var worker = new WaitForCancelledTokenWorkerMock();
 
-        await worker.DisposeAsync();
+        worker.Dispose();
     }
 }

@@ -6,7 +6,7 @@
 		  <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems">
 			  <Content>
 				  <MudTreeViewItemToggleButton @bind-Expanded="@context.IsExpanded" Visible="@context.HasChild" />
-				  <MudCheckBox T="bool?" Checked="@(context.HasPartialChildSelection() ? null : context.IsChecked)" CheckedChanged="@((e) => CheckedChanged(context))"></MudCheckBox>
+				  <MudCheckBox T="bool?" Value="@(context.HasPartialChildSelection() ? null : context.IsChecked)" ValueChanged="@((e) => CheckedChanged(context))"></MudCheckBox>
 				  <MudText>@context.Text</MudText>
 			  </Content>
 		  </MudTreeViewItem>

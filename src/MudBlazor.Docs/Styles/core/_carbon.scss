@@ -1,6 +1,6 @@
 ﻿#carbonads * {
-    margin: initial;
-    padding: initial;
+  margin: initial;
+  padding: initial;
 }
 
 #carbonads {
@@ -18,33 +18,33 @@
 
 // hide doubled ad
 #carbonads_1 {
-    display: none;
+  display: none;
 }
 
 #carbonads a {
-    color: inherit;
-    text-decoration: none;
+  color: inherit;
+  text-decoration: none;
 }
 
 #carbonads a:hover {
-    color: inherit;
+  color: inherit;
 }
 
 #carbonads span {
-    position: relative;
-    display: block;
-    overflow: hidden;
+  position: relative;
+  display: block;
+  overflow: hidden;
 }
 
 #carbonads .carbon-wrap {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 #carbonads .carbon-img {
-    display: block;
-    line-height: 1;
-    margin-bottom: .5rem;
+  display: block;
+  line-height: 1;
+  margin-bottom: .5rem;
 }
 
 #carbonads .carbon-img img {
@@ -65,7 +65,7 @@
   width: 100%;
 }
 
-#carbonads .carbon-text:hover{
+#carbonads .carbon-text:hover {
   color: #000;
 }
 

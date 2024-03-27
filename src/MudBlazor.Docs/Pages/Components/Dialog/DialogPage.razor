@@ -45,7 +45,7 @@
                     <SectionHeader Title="Global Settings">
                         <Description>In the file where you added <CodeInline>&lt;MudDialogProvider/&gt;</CodeInline>, we can pass down different options as parameters. See <MudLink Href="/getting-started/installation">installation page</MudLink> for more information regarding this.</Description>
                     </SectionHeader>
-                    <SectionContent Code="DialogConfigurationExample" />
+                    <SectionContent Code="@nameof(DialogConfigurationExample)" />
                 </DocsPageSection>
 
                 <DocsPageSection>
@@ -102,7 +102,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Blurry Dialog">
-                <Description>Dialog background can be changed via <CodeInline>ClassBackground</CodeInline> dialog option.</Description>
+                <Description>Dialog background can be changed via <CodeInline>BackgroundClass</CodeInline> dialog option.</Description>
             </SectionHeader>
             <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogBlurryExample"), new CodeFile("Dialog.razor", "DialogBlurryExample_Dialog")})">
                 <DialogBlurryExample />
@@ -118,7 +118,7 @@
                     This example also shows how to override the dialog title with a render fragment.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="DialogInlineExample">
+            <SectionContent Code="@nameof(DialogInlineExample)">
                 <DialogInlineExample />
             </SectionContent>
         </DocsPageSection>
@@ -169,6 +169,17 @@
             </SectionHeader>
             <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "DialogFocusExample"), new CodeFile("Dialog.razor","DialogFocusExample_Dialog")})">
                 <DialogFocusExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Styling">
+                <Description>
+                    Additional classes can be applied to the title, content and the action buttons section.
+                </Description>
+            </SectionHeader>
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", nameof(DialogStylingExample)), new CodeFile("Dialog.razor", nameof(DialogStylingExample_Dialog))})">
+                <DialogStylingExample />
             </SectionContent>
         </DocsPageSection>
 
