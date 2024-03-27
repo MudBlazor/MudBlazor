@@ -149,6 +149,60 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Default_Disabled_CheckDisabled()
+        {
+            var comp = Context.RenderComponent<MenuTest1>();
+
+            var menu = comp.FindComponent<MudMenu>();
+
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
+            menu.Instance.Disabled = true;
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+
+            var button = comp.Find("button.mud-button-root");
+            button.Click();
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task ToggleEventArgs()
+        {
+            var comp = Context.RenderComponent<MenuTest1>();
+            var menu = comp.FindComponent<MudMenu>();
+
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenu(new MouseEventArgs()));
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenu(new MouseEventArgs()));
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenu(new TouchEventArgs()));
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
+            await comp.InvokeAsync(() => menu.Instance.ToggleMenu(new TouchEventArgs()));
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void ToggleMenuDoesNotWorkIfDisabled()
+        {
+            var comp = Context.RenderComponent<MenuTest1>();
+            var menu = comp.FindComponent<MudMenu>();
+
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
+            menu.Instance.Disabled = true;
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+
+            menu.Instance.ToggleMenu(new MouseEventArgs());
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+
+            menu.Instance.ToggleMenu(new TouchEventArgs());
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+        }
+
+        [Test]
         public void MenuTest_LeftAndRightClick_CheckClosed()
         {
             //Standart button menu -- left click
