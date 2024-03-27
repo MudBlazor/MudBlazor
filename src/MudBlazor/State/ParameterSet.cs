@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Frozen;
 #endif
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -22,9 +23,12 @@ namespace MudBlazor.State;
 /// <remarks>
 /// For details and usage please read CONTRIBUTING.md
 /// </remarks>
-internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
+internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
 {
-    private readonly List<IParameterComponentLifeCycle> _parameters = new();
+    private readonly HashSet<IParameterComponentLifeCycle> _parameters = new(ParameterNameUniquenessComparer.Default);
+
+    /// <inheritdoc/>
+    public int Count => _parameters.Count;
 
     /// <summary>
     /// Adds a parameter to the parameter set.
@@ -33,12 +37,10 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     /// <exception cref="InvalidOperationException">Thrown when the parameter is already registered.</exception>
     public void Add(IParameterComponentLifeCycle parameter)
     {
-        if (_parameters.Contains(parameter))
+        if (!_parameters.Add(parameter))
         {
             throw new InvalidOperationException($"{parameter.Metadata.ParameterName} is already registered.");
         }
-
-        _parameters.Add(parameter);
     }
 
     /// <summary>
@@ -88,9 +90,45 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
         }
     }
 
+    /// <summary>Searches the set for a given value and returns the equal value it finds, if any.</summary>
+    /// <param name="parameterName">The value to search for.</param>
+    /// <param name="parameterComponentLifeCycle">The value from the set that the search found, or the default value when the search yielded no match.</param>
+    /// <returns>A value indicating whether the search was successful.</returns>
+    public bool TryGetValue(string parameterName, [MaybeNullWhen(false)] out IParameterComponentLifeCycle parameterComponentLifeCycle)
+    {
+        return _parameters.TryGetValue(new DummyParameterComponentLifeCycle(parameterName), out parameterComponentLifeCycle);
+    }
+
     /// <inheritdoc/>
     public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => _parameters.GetEnumerator();
 
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    /// <summary>
+    /// Dummy class to search <see cref="IParameterComponentLifeCycle"/> by <see cref="ParameterMetadata.ParameterName"/> in the <see cref="HashSet{T}"/>.
+    /// </summary>
+    private class DummyParameterComponentLifeCycle : IParameterComponentLifeCycle
+    {
+        public bool HasHandler => false;
+
+        public ParameterMetadata Metadata { get; }
+
+        public DummyParameterComponentLifeCycle(string parameterName)
+        {
+            Metadata = new ParameterMetadata(parameterName);
+        }
+
+        public bool HasParameterChanged(ParameterView parameters) => false;
+
+        public Task ParameterChangeHandleAsync() => Task.CompletedTask;
+
+        public void OnInitialized()
+        {
+        }
+
+        public void OnParametersSet()
+        {
+        }
+    }
 }
