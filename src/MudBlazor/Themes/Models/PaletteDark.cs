@@ -53,7 +53,7 @@ namespace MudBlazor
         public override MudColor Background { get; set; } = "#32333d";
 
         /// <inheritdoc />
-        public override MudColor BackgroundGrey { get; set; } = "#27272f";
+        public override MudColor BackgroundGray { get; set; } = "#27272f";
 
         /// <inheritdoc />
         public override MudColor Surface { get; set; } = "#373740";
