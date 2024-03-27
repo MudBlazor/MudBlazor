@@ -56,7 +56,7 @@ Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 - If there are new changes in the main repo, you should either merge the main repo's (upstream) dev or rebase your branch onto it.
 - Before working on a large change, it is recommended to first open an issue to discuss it with others
 - If your Pull Request is still in progress, convert it to a draft Pull Request
-- Your commit messages should follow the following format: 
+- The PR Title should follow the following format: 
 ```
 <component name>: <short description of changes in imperative> (<linked issue>)
 ```
@@ -64,7 +64,7 @@ For example:
 ```
  DateRangePicker: Fix initializing DateRange with null values (#1997)
 ```
-
+- To keep your branch up to date with the `dev` branch simply merge `dev`, don't rebase because if you rebase the wrong direction your PR will include unrelated commits from dev.
 - Your Pull Request should not include any unnecessary refactoring
 - If there are visual changes, you should include a screenshot, gif or video
 - If there are any coresponding issues, link them to the Pull Request. Include `Fixes #<issue nr>` for bug fixes and `Closes #<issue nr>` for other issues in the description ([Link issues guide](https://docs.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword)) 
