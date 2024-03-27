@@ -151,10 +151,7 @@ namespace MudBlazor
             return SetDateRangeAsync(ParseDateRangeValue(value), false);
         }
 
-        protected override bool HasValue(DateTime? value)
-        {
-            return null != value && value.HasValue;
-        }
+        protected override bool HasValue(DateTime? value) => value is not null;
 
         private DateRange ParseDateRangeValue(string value)
         {
@@ -166,10 +163,11 @@ namespace MudBlazor
             return DateRange.TryParse(start, end, Converter, out var dateRange) ? dateRange : null;
         }
 
-        protected override void OnPickerClosed()
+        protected override Task OnPickerClosedAsync()
         {
             _firstDate = null;
-            base.OnPickerClosed();
+
+            return base.OnPickerClosedAsync();
         }
 
         private bool CheckDateRange(DateTime day, Func<DateTime, DateTime, bool> compareStart, Func<DateTime, DateTime, bool> compareEnd)
@@ -247,7 +245,7 @@ namespace MudBlazor
             return b.Build();
         }
 
-        protected override async void OnDayClicked(DateTime dateTime)
+        protected override async Task OnDayClickedAsync(DateTime dateTime)
         {
             if (_firstDate == null || _firstDate > dateTime || _secondDate != null)
             {
@@ -259,23 +257,23 @@ namespace MudBlazor
             _secondDate = dateTime;
             if (PickerActions == null || AutoClose)
             {
-                Submit();
+                await SubmitAsync();
 
                 if (PickerVariant != PickerVariant.Static)
                 {
                     await Task.Delay(ClosingDelay);
-                    Close(false);
+                    await CloseAsync(false);
                 }
             }
         }
 
-        protected override void OnOpened()
+        protected override Task OnOpenedAsync()
         {
             _secondDate = null;
-            base.OnOpened();
+            return base.OnOpenedAsync();
         }
 
-        protected internal override async void Submit()
+        protected internal override async Task SubmitAsync()
         {
             if (GetReadOnlyState())
                 return;
@@ -288,11 +286,11 @@ namespace MudBlazor
             _secondDate = null;
         }
 
-        public override void Clear(bool close = true)
+        public override Task ClearAsync(bool close = true)
         {
             DateRange = null;
             _firstDate = _secondDate = null;
-            base.Clear();
+            return base.ClearAsync(close);
         }
 
         protected override string GetTitleDateString()
@@ -317,8 +315,6 @@ namespace MudBlazor
             var diff = Culture.Calendar.GetYear(date) - Culture.Calendar.GetYear(yearDate);
             var calenderYear = Culture.Calendar.GetYear(date);
             return calenderYear - diff;
-
         }
-
     }
 }
