@@ -1,7 +1,4 @@
-﻿
-#pragma warning disable CS1998 // async without await
-
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
@@ -29,11 +26,11 @@ namespace MudBlazor.UnitTests.Components
             IDialogReference dialogReference = null;
             await comp.InvokeAsync(async () =>
             {
-                dialogReference = service?.Show<DialogRender>();
+                dialogReference = await service?.ShowAsync<DialogRender>();
                 var result1 = await dialogReference.Result;
                 //The second Dialog is added here, but the first dialog is still in the _dialogs collection of the dialogprovider, as only the result task was set to completion.
                 //So DialogProvider will render again with 2 dialogs, but 1 is completed. This one needs to be excluded from rendering to prevent double initialize with no params.
-                dialogReference = service?.Show<DialogRender>();
+                dialogReference = await service?.ShowAsync<DialogRender>();
                 var result2 = await dialogReference.Result;
             });
             DialogRender.OnInitializedCount.Should().Be(2);
@@ -92,7 +89,7 @@ namespace MudBlazor.UnitTests.Components
         /// one containing the open button and the inline dialog
         /// </summary>
         [Test]
-        public async Task InlineDialogTest()
+        public void InlineDialogTest()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -117,7 +114,7 @@ namespace MudBlazor.UnitTests.Components
         /// Nested dialogs should not appear unless manually shown
         /// </summary>
         [Test]
-        public async Task NestedInlineDialogTest()
+        public void NestedInlineDialogTest()
         {
             var provider = Context.RenderComponent<MudDialogProvider>();
             provider.Markup.Trim().Should().BeEmpty();
@@ -150,7 +147,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InlineDialog_Should_UpdateIsVisibleOnClose()
         {
-            await ImproveChanceOfSuccess(async () =>
+            await ImproveChanceOfSuccess(() =>
             {
                 var comp = Context.RenderComponent<MudDialogProvider>();
                 comp.Markup.Trim().Should().BeEmpty();
@@ -172,6 +169,8 @@ namespace MudBlazor.UnitTests.Components
                 comp.WaitForAssertion(() => comp.Find("div.mud-overlay").Should().NotBeNull());
                 comp.Find("div.mud-overlay").Click();
                 comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+
+                return Task.CompletedTask;
             });
         }
 
@@ -206,7 +205,7 @@ namespace MudBlazor.UnitTests.Components
         /// Dialog inline should not be closed after any event inside
         /// </summary>
         [Test]
-        public async Task InlineDialogShouldNotCloseAfterStateHasChanged()
+        public void InlineDialogShouldNotCloseAfterStateHasChanged()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -260,9 +259,11 @@ namespace MudBlazor.UnitTests.Components
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
 
-            var parameters = new DialogParameters();
-            parameters.Add("TestValue", "test");
-            parameters.Add("Color_Test", Color.Error); // !! comment me !!
+            var parameters = new DialogParameters<DialogWithParameters>
+            {
+                { x => x.TestValue, "test" },
+                { x => x.ColorTest, Color.Error } // !! comment me !!
+            };
 
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithParameters>(string.Empty, parameters));
             dialogReference.Should().NotBe(null);
@@ -277,7 +278,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[0].Click();
 
             ((DialogWithParameters)dialogReference.Dialog).TestValue.Should().Be("new_test");
-            ((DialogWithParameters)dialogReference.Dialog).ParamtersSetCounter.Should().Be(1);
+            ((DialogWithParameters)dialogReference.Dialog).ParametersSetCounter.Should().Be(1);
             textField.Text.Should().Be("new_test");
         }
 
@@ -304,7 +305,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task PassingEventCallbackToDialogViaParameters()
+        public void PassingEventCallbackToDialogViaParameters()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -441,7 +442,7 @@ namespace MudBlazor.UnitTests.Components
         /// https://github.com/MudBlazor/MudBlazor/issues/4871
         /// </summary>
         [Test]
-        public async Task InlineDialogBug4871Test()
+        public void InlineDialogBug4871Test()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -625,9 +626,11 @@ namespace MudBlazor.UnitTests.Components
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
 
-            var parameters = new DialogParameters();
-            parameters.Add("TestValue", "test");
-            parameters.Add("Color_Test", Color.Error); // !! comment me !!
+            var parameters = new DialogParameters<DialogWithParameters>
+            {
+                { x => x.TestValue, "test" },
+                { x => x.ColorTest, Color.Error } // !! comment me !!
+            };
 
             var dialogReferenceLazy = new Lazy<Task<IDialogReference>>(() => service?.ShowAsync<DialogWithParameters>(string.Empty, parameters));
             await comp.InvokeAsync(() => dialogReferenceLazy.Value);
@@ -644,7 +647,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[0].Click();
 
             ((DialogWithParameters)dialogReference.Dialog).TestValue.Should().Be("new_test");
-            ((DialogWithParameters)dialogReference.Dialog).ParamtersSetCounter.Should().Be(1);
+            ((DialogWithParameters)dialogReference.Dialog).ParametersSetCounter.Should().Be(1);
             textField.Text.Should().Be("new_test");
         }
 
@@ -849,7 +852,7 @@ namespace MudBlazor.UnitTests.Components
             var parameters = new DialogParameters<DialogWithParameters>
             {
                 { x => x.TestValue, "test" },
-                { x => x.Color_Test, Color.Error }
+                { x => x.ColorTest, Color.Error }
             };
 
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithParameters>(string.Empty, parameters));

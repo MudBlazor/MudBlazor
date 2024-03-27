@@ -7,7 +7,7 @@
 </MudButton>
 
 @code {
-    private bool license_accepted = false;
+    private bool _licenseAccepted = false;
 
     private async Task OpenDialogAsync()
     {
@@ -16,7 +16,7 @@
 
         if (!result.Canceled)
         {
-            license_accepted = (bool)(result.Data ?? false);
+            _licenseAccepted = (bool)(result.Data ?? false);
         }
     }
 }

@@ -7,12 +7,12 @@
     Open Dialog
 </MudButton>
 
-
 @code {
 
     private Task OpenDialogAsync()
     {    
         var options = new DialogOptions { CloseOnEscapeKey = true };
+
         return DialogService.ShowAsync<DialogKeyboardNavigationExample_Dialog>("Simple Dialog", options);
     }
 }

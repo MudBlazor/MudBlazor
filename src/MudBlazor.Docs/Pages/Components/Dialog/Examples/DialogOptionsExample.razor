@@ -2,21 +2,21 @@
 
 @inject IDialogService Dialog
 
-<MudButton OnClick="@(() => OpenDialogAsync(maxWidth))">Open MaxWidth Dialog</MudButton>
-<MudButton OnClick="@(() => OpenDialogAsync(closeButton))" Color="Color.Primary">Close Button Dialog</MudButton>
-<MudButton OnClick="@(() => OpenDialogAsync(noHeader))" Color="Color.Secondary">No header Dialog</MudButton>
-<MudButton OnClick="@(() => OpenDialogAsync(disableBackdropClick))" Color="Color.Tertiary">Disable backdrop dialog</MudButton>
-<MudButton OnClick="@(() => OpenDialogAsync(fullScreen))" Color="Color.Info">Full Screen Dialog</MudButton>
-<MudButton OnClick="@(() => OpenDialogAsync(topCenter))" Color="Color.Success">Top Center Dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(_maxWidth))">Open MaxWidth Dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(_closeButton))" Color="Color.Primary">Close Button Dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(_noHeader))" Color="Color.Secondary">No header Dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(_disableBackdropClick))" Color="Color.Tertiary">Disable backdrop dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(_fullScreen))" Color="Color.Info">Full Screen Dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(_topCenter))" Color="Color.Success">Top Center Dialog</MudButton>
 
 
 @code {
-    private DialogOptions maxWidth = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
-    private DialogOptions closeButton = new DialogOptions() { CloseButton = true };
-    private DialogOptions noHeader = new DialogOptions() {  NoHeader = true };
-    private DialogOptions disableBackdropClick = new DialogOptions() { DisableBackdropClick = true };
-    private DialogOptions fullScreen = new DialogOptions() { FullScreen = true, CloseButton = true };
-    private DialogOptions topCenter = new DialogOptions() { Position = DialogPosition.TopCenter };
+    private readonly DialogOptions _maxWidth = new() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+    private readonly DialogOptions _closeButton = new() { CloseButton = true };
+    private readonly DialogOptions _noHeader = new() { NoHeader = true };
+    private readonly DialogOptions _disableBackdropClick = new() { DisableBackdropClick = true };
+    private readonly DialogOptions _fullScreen = new() { FullScreen = true, CloseButton = true };
+    private readonly DialogOptions _topCenter = new() { Position = DialogPosition.TopCenter };
 
     private Task OpenDialogAsync(DialogOptions options)
     {

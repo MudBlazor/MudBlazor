@@ -11,10 +11,12 @@
 
     private Task DeleteUserAsync()
     {
-        var parameters = new DialogParameters<DialogTemplateExample_Dialog>();
-        parameters.Add(x => x.ContentText, "Do you really want to delete these records? This process cannot be undone.");
-        parameters.Add(x => x.ButtonText, "Delete");
-        parameters.Add(x => x.Color, Color.Error);
+        var parameters = new DialogParameters<DialogTemplateExample_Dialog>
+        {
+            { x => x.ContentText, "Do you really want to delete these records? This process cannot be undone." },
+            { x => x.ButtonText, "Delete" },
+            { x => x.Color, Color.Error }
+        };
 
         var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
 
@@ -23,20 +25,24 @@
 
     private Task ConfirmAsync()
     {
-        var parameters = new DialogParameters<DialogTemplateExample_Dialog>();
-        parameters.Add(x => x.ContentText, "Are you sure you want to remove thisguy@emailz.com from this account?");
-        parameters.Add(x => x.ButtonText, "Yes");
-        parameters.Add(x => x.Color, Color.Success);
+        var parameters = new DialogParameters<DialogTemplateExample_Dialog>
+        {
+            { x => x.ContentText, "Are you sure you want to remove thisguy@emailz.com from this account?" },
+            { x => x.ButtonText, "Yes" },
+            { x => x.Color, Color.Success }
+        };
 
         return DialogService.ShowAsync<DialogTemplateExample_Dialog>("Confirm", parameters);
     }
 
     private Task DownloadAsync()
     {
-        var parameters = new DialogParameters<DialogTemplateExample_Dialog>();
-        parameters.Add(x => x.ContentText, "Your computer seems very slow, click the download button to download free RAM.");
-        parameters.Add(x => x.ButtonText, "Download");
-        parameters.Add(x => x.Color, Color.Info);
+        var parameters = new DialogParameters<DialogTemplateExample_Dialog>
+        {
+            { x => x.ContentText, "Your computer seems very slow, click the download button to download free RAM." },
+            { x => x.ButtonText, "Download" },
+            { x => x.Color, Color.Info }
+        };
 
         return DialogService.ShowAsync<DialogTemplateExample_Dialog>("Slow Computer Detected", parameters);
     }
