@@ -1,10 +1,5 @@
-﻿
-#pragma warning disable CS1998 // async without await
-
-using System;
+﻿using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -31,11 +26,11 @@ namespace MudBlazor.UnitTests.Components
             IDialogReference dialogReference = null;
             await comp.InvokeAsync(async () =>
             {
-                dialogReference = service?.Show<DialogRender>();
+                dialogReference = await service?.ShowAsync<DialogRender>();
                 var result1 = await dialogReference.Result;
                 //The second Dialog is added here, but the first dialog is still in the _dialogs collection of the dialogprovider, as only the result task was set to completion.
                 //So DialogProvider will render again with 2 dialogs, but 1 is completed. This one needs to be excluded from rendering to prevent double initialize with no params.
-                dialogReference = service?.Show<DialogRender>();
+                dialogReference = await service?.ShowAsync<DialogRender>();
                 var result2 = await dialogReference.Result;
             });
             DialogRender.OnInitializedCount.Should().Be(2);
@@ -94,7 +89,7 @@ namespace MudBlazor.UnitTests.Components
         /// one containing the open button and the inline dialog
         /// </summary>
         [Test]
-        public async Task InlineDialogTest()
+        public void InlineDialogTest()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -119,7 +114,7 @@ namespace MudBlazor.UnitTests.Components
         /// Nested dialogs should not appear unless manually shown
         /// </summary>
         [Test]
-        public async Task NestedInlineDialogTest()
+        public void NestedInlineDialogTest()
         {
             var provider = Context.RenderComponent<MudDialogProvider>();
             provider.Markup.Trim().Should().BeEmpty();
@@ -152,7 +147,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InlineDialog_Should_UpdateIsVisibleOnClose()
         {
-            await ImproveChanceOfSuccess(async () =>
+            await ImproveChanceOfSuccess(() =>
             {
                 var comp = Context.RenderComponent<MudDialogProvider>();
                 comp.Markup.Trim().Should().BeEmpty();
@@ -174,6 +169,8 @@ namespace MudBlazor.UnitTests.Components
                 comp.WaitForAssertion(() => comp.Find("div.mud-overlay").Should().NotBeNull());
                 comp.Find("div.mud-overlay").Click();
                 comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(5));
+
+                return Task.CompletedTask;
             });
         }
 
@@ -208,7 +205,7 @@ namespace MudBlazor.UnitTests.Components
         /// Dialog inline should not be closed after any event inside
         /// </summary>
         [Test]
-        public async Task InlineDialogShouldNotCloseAfterStateHasChanged()
+        public void InlineDialogShouldNotCloseAfterStateHasChanged()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -262,9 +259,11 @@ namespace MudBlazor.UnitTests.Components
             service.Should().NotBe(null);
             IDialogReference dialogReference = null;
 
-            var parameters = new DialogParameters();
-            parameters.Add("TestValue", "test");
-            parameters.Add("Color_Test", Color.Error); // !! comment me !!
+            var parameters = new DialogParameters<DialogWithParameters>
+            {
+                { x => x.TestValue, "test" },
+                { x => x.ColorTest, Color.Error } // !! comment me !!
+            };
 
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithParameters>(string.Empty, parameters));
             dialogReference.Should().NotBe(null);
@@ -279,7 +278,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[0].Click();
 
             ((DialogWithParameters)dialogReference.Dialog).TestValue.Should().Be("new_test");
-            ((DialogWithParameters)dialogReference.Dialog).ParamtersSetCounter.Should().Be(1);
+            ((DialogWithParameters)dialogReference.Dialog).ParametersSetCounter.Should().Be(1);
             textField.Text.Should().Be("new_test");
         }
 
@@ -306,7 +305,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task PassingEventCallbackToDialogViaParameters()
+        public void PassingEventCallbackToDialogViaParameters()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -443,7 +442,7 @@ namespace MudBlazor.UnitTests.Components
         /// https://github.com/MudBlazor/MudBlazor/issues/4871
         /// </summary>
         [Test]
-        public async Task InlineDialogBug4871Test()
+        public void InlineDialogBug4871Test()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -627,9 +626,11 @@ namespace MudBlazor.UnitTests.Components
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
 
-            var parameters = new DialogParameters();
-            parameters.Add("TestValue", "test");
-            parameters.Add("Color_Test", Color.Error); // !! comment me !!
+            var parameters = new DialogParameters<DialogWithParameters>
+            {
+                { x => x.TestValue, "test" },
+                { x => x.ColorTest, Color.Error } // !! comment me !!
+            };
 
             var dialogReferenceLazy = new Lazy<Task<IDialogReference>>(() => service?.ShowAsync<DialogWithParameters>(string.Empty, parameters));
             await comp.InvokeAsync(() => dialogReferenceLazy.Value);
@@ -646,7 +647,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[0].Click();
 
             ((DialogWithParameters)dialogReference.Dialog).TestValue.Should().Be("new_test");
-            ((DialogWithParameters)dialogReference.Dialog).ParamtersSetCounter.Should().Be(1);
+            ((DialogWithParameters)dialogReference.Dialog).ParametersSetCounter.Should().Be(1);
             textField.Text.Should().Be("new_test");
         }
 
@@ -851,7 +852,7 @@ namespace MudBlazor.UnitTests.Components
             var parameters = new DialogParameters<DialogWithParameters>
             {
                 { x => x.TestValue, "test" },
-                { x => x.Color_Test, Color.Error }
+                { x => x.ColorTest, Color.Error }
             };
 
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithParameters>(string.Empty, parameters));
@@ -865,7 +866,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("", true, "mud-dialog-content mud-dialog-no-side-padding")]
         [TestCase("my-class", false, "mud-dialog-content my-class")]
         [TestCase("my-class", true, "mud-dialog-content mud-dialog-no-side-padding my-class")]
-        public async Task DialogWithClassContentValueShouldRenderExpectedClassname(string classContent, bool disablePadding, string expectedClassname)
+        public async Task DialogWithContentClassValueShouldRenderExpectedClassname(string contentClass, bool disablePadding, string expectedClassname)
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -873,13 +874,13 @@ namespace MudBlazor.UnitTests.Components
             service.Should().NotBeNull();
             IDialogReference dialogReference = null;
 
-            var parameters = new DialogParameters<DialogWithClassContent>
+            var parameters = new DialogParameters<DialogWithContentClass>
             {
-                { x => x.ClassContent, classContent },
+                { x => x.ContentClass, contentClass },
                 { x => x.DisableSidePadding, disablePadding }
             };
 
-            await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithClassContent>(string.Empty, parameters));
+            await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithContentClass>(string.Empty, parameters));
             dialogReference.Should().NotBeNull();
 
             comp.Find("div.mud-dialog-content").GetAttribute("class").Should().Be(expectedClassname);
@@ -887,7 +888,7 @@ namespace MudBlazor.UnitTests.Components
 
         [TestCase("", "mud-dialog-actions")]
         [TestCase("my-class", "mud-dialog-actions my-class")]
-        public async Task DialogWithClassActionsValueShouldRenderExpectedClassname(string classActions, string expectedClassname)
+        public async Task DialogWithActionsClassValueShouldRenderExpectedClassname(string actionsClass, string expectedClassname)
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -895,12 +896,12 @@ namespace MudBlazor.UnitTests.Components
             service.Should().NotBeNull();
             IDialogReference dialogReference = null;
 
-            var parameters = new DialogParameters<DialogWithClassActions>
+            var parameters = new DialogParameters<DialogWithActionsClass>
             {
-                { x => x.ClassActions, classActions }
+                { x => x.ActionsClass, actionsClass }
             };
 
-            await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithClassActions>(string.Empty, parameters));
+            await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithActionsClass>(string.Empty, parameters));
             dialogReference.Should().NotBeNull();
 
             comp.Find("div.mud-dialog-actions").GetAttribute("class").Should().Be(expectedClassname);
@@ -926,17 +927,6 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("div.mud-dialog-title").GetAttribute("class").Should().Be(expectedClassname);
         }
-
-        [Test]
-        public void DialogObsoletePropertiesShouldReturnCorrectPropertyValue()
-        {
-            // This test will start failing after ClassContent and ClassActions
-            // are renamed to ContentClass and ActionsClass in v7 or higher
-            var dialog = new ObsoletePropertiesDialog();
-
-            dialog.MyCustomContentClass.Should().Be(dialog.MyCustomContentClassname);
-            dialog.MyCustomActionsClass.Should().Be(dialog.MyCustomActionsClassname);
-        }
     }
 
     internal class CustomDialogService : DialogService
@@ -953,23 +943,6 @@ namespace MudBlazor.UnitTests.Components
         public override bool Dismiss(DialogResult result)
         {
             return AllowDismiss;
-        }
-    }
-
-    internal class ObsoletePropertiesDialog : MudDialog
-    {
-#pragma warning disable CS0618 // Type or member is obsolete
-        public string MyCustomContentClass => ContentClass;
-        public string MyCustomActionsClass => ActionClass;
-#pragma warning restore CS0618 // Type or member is obsolete
-
-        public string MyCustomContentClassname => ContentClassname;
-        public string MyCustomActionsClassname => ActionClassname;
-
-        public ObsoletePropertiesDialog()
-        {
-            ClassContent = "class-content";
-            ClassActions = "class-actions";
         }
     }
 }
