@@ -8,13 +8,14 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using System.Threading;
 
 
 namespace MudBlazor
 {
     // note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
 
-    public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase
+    public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase, IDisposable
     {
         /// <summary>
         /// Defines how a table row looks like. Use MudTd to define the table cells and their content.
@@ -550,14 +551,30 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// MudTable will automatically control loading animation visibility if ServerData is set.
-        /// See <see cref="MudTableBase.Loading"/>.
+        /// See <see cref="MudTableBase.Loading"/>.  Forward the provided cancellation token to
+        /// methods which support it.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
-        public Func<TableState, Task<TableData<T>>> ServerData { get; set; }
+        public Func<TableState, CancellationToken, Task<TableData<T>>> ServerData { get; set; }
+
+        private CancellationTokenSource _cancellationTokenSrc;
+
+        private void CancelToken()
+        {
+            try
+            {
+                _cancellationTokenSrc?.Cancel();
+            }
+            catch { /*ignored*/ }
+            finally
+            {
+                _cancellationTokenSrc = new CancellationTokenSource();
+            }
+        }
+
 
         internal override bool HasServerData => ServerData != null;
-
 
         TableData<T> _server_data = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private IEnumerable<T> _items;
@@ -579,7 +596,11 @@ namespace MudBlazor
                 SortLabel = label?.SortLabel
             };
 
-            _server_data = await ServerData(state);
+            // Cancel any prior request
+            CancelToken();
+
+            // Get data via the ServerData function
+            _server_data = await ServerData(state, _cancellationTokenSrc.Token);
 
             if (CurrentPage * RowsPerPage > _server_data.TotalItems)
                 CurrentPage = 0;
@@ -673,6 +694,21 @@ namespace MudBlazor
         {
             _currentRenderFilteredItemsCached = false;
             return "";
+        }
+
+        /// <summary>
+        /// Releases resources used by this table.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <inheritdoc />
+        protected virtual void Dispose(bool disposing)
+        {
+            _cancellationTokenSrc?.Dispose();
         }
     }
 }
