@@ -64,7 +64,7 @@ For example:
 ```
  DateRangePicker: Fix initializing DateRange with null values (#1997)
 ```
-- To keep your branch up to date with the `dev` branch simply merge `dev`, don't rebase because if you rebase the wrong direction your PR will include unrelated commits from dev.
+- To keep your branch up to date with the `dev` branch simply merge `dev`. **Don't rebase** because if you rebase the wrong direction your PR will include tons of unrelated commits from dev.
 - Your Pull Request should not include any unnecessary refactoring
 - If there are visual changes, you should include a screenshot, gif or video
 - If there are any coresponding issues, link them to the Pull Request. Include `Fixes #<issue nr>` for bug fixes and `Closes #<issue nr>` for other issues in the description ([Link issues guide](https://docs.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword)) 
