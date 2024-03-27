@@ -151,13 +151,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Default_Disabled_CheckDisabled()
         {
-            var comp = Context.RenderComponent<MenuTest1>();
-
-            var menu = comp.FindComponent<MudMenu>();
-
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            menu.Instance.Disabled = true;
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+            var comp = Context.RenderComponent<MenuTest1>(x =>
+                x.Add(p => p.DisableMenu, true)
+            );
 
             var button = comp.Find("button.mud-button-root");
             button.Click();
@@ -186,14 +182,13 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToggleMenuDoesNotWorkIfDisabled()
         {
-            var comp = Context.RenderComponent<MenuTest1>();
-            var menu = comp.FindComponent<MudMenu>();
-
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            menu.Instance.Disabled = true;
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+            var comp = Context.RenderComponent<MenuTest1>(x =>
+                x.Add(p => p.DisableMenu, true)
+            );
 
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+
+            var menu = comp.FindComponent<MudMenu>();
 
             menu.Instance.ToggleMenu(new MouseEventArgs());
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
