@@ -290,8 +290,6 @@ namespace MudBlazor.UnitTests.Components
                 }
             };
             var expectedDarkerColor = new MudColor(Colors.Green.Darken1).ColorRgbDarken();
-            var expectedColorHex = expectedDarkerColor.ToString(MudColorOutputFormats.Hex);
-            Console.WriteLine($@"expecting: {expectedColorHex}");
             myCustomTheme.PaletteDark.Primary.Should().Be(new MudColor(Colors.Green.Darken1));// Set by user
             myCustomTheme.PaletteDark.PrimaryDarken.Should().Be(expectedDarkerColor.ToString(MudColorOutputFormats.RGB));// Set by user
 
