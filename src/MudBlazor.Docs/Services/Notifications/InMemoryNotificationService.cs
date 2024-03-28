@@ -90,7 +90,7 @@ public class InMemoryNotificationService : INotificationService
         _messages.Add(new NotificationMessage(
             typeof(Announcement_v7_Started_Development).Name,
             "v7 is Coming!",
-            "Learn about our plans for the upcoming major version",
+            "Learn about the upcoming major version",
             "Announcement",
             new DateTime(2024, 03, 28),
             "https://github.com/MudBlazor/MudBlazor/blob/f979c2c84e3ddd5f01a20ebc1102838d32a4b01b/content/Nuget.png",
