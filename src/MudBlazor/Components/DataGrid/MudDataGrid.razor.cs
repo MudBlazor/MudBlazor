@@ -749,9 +749,9 @@ namespace MudBlazor
         [Parameter] public bool ShowMenuIcon { get; set; } = false;
         
         /// <summary>
-        /// Variant to use.
+        /// Variant to use for all inputs, for example the filters, etc.
         /// </summary>
-        [Parameter] public Variant Variant { get; set; } = Variant.Text;
+        [Parameter] public Variant FilterVariant { get; set; } = Variant.Text;
 
         #endregion
 
