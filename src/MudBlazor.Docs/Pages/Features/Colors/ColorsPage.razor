@@ -21,7 +21,7 @@
             <SectionSubGroups>
                 <DocsPageSection>
                     <SectionHeader Title="CSS and Theme colors">
-                        <Description>Here we add each class to the divs to change the background color, text color and both background and text color with one class only one class.</Description>
+                        <Description>Here we add each class to the divs to change the background color, text color and both background and text color with one class only.</Description>
                     </SectionHeader>
                     <SectionContent DarkenBackground="true" ShowCode="true" Code="ColorsMudBlazorExample">
                         <ColorsMudBlazorExample />
@@ -48,7 +48,7 @@
                 
                 <DocsPageSection>
                     <SectionHeader Title="CSS and Material colors">
-                        <Description>Here we add each class to the divs to change the background color, text color and both background and text color with one class only one class.</Description>
+                        <Description>Here we add each class to the divs to change the background color, text color and both background and text color with one class only.</Description>
                     </SectionHeader>
                     <SectionContent DarkenBackground="true" ShowCode="false" Code="ColorsMaterialExample">
                         <ColorsMaterialExample/>
@@ -82,7 +82,7 @@
                                     {
                                         IsLightColor = true;
                                     }
-                                    <MudPaper Square="true" Elevation="0" Class="@($"pa-4 d-flex align-center justify-space-between {GetColorClass(color.Color.ToLowerInvariant())} {GetShadeClass(shade.Name.ToLowerInvariant())} {(IsLightColor ? "grey-text text-darken-3" : "shades-text text-white")}")">
+                                    <MudPaper Square="true" Elevation="0" Class="@($"pa-4 d-flex align-center justify-space-between {GetColorClass(color.Color.ToLowerInvariant())} {GetShadeClass(shade.Name.ToLowerInvariant())} {(IsLightColor ? "gray-text text-darken-3" : "shades-text text-white")}")">
                                         <MudText>@shade.Name</MudText>
                                         <MudText>@shade.Value</MudText>
                                     </MudPaper>
@@ -118,9 +118,9 @@
         {
             return value.Replace("light", "light-");
         }
-        else if(value.StartsWith("bluegrey"))
+        else if(value.StartsWith("bluegray"))
         {
-            return value.Replace("bluegrey", "blue-grey");
+            return value.Replace("bluegray", "blue-gray");
         }
         else if(value.StartsWith("shades"))
         {

@@ -12,8 +12,6 @@ namespace MudBlazor
 #nullable enable
     public partial class MudBreakpointProvider : IBrowserViewportObserver, IAsyncDisposable
     {
-        private Guid _breakPointListenerSubscriptionId;
-
         public Breakpoint Breakpoint { get; private set; } = Breakpoint.Always;
 
         [Parameter]
@@ -21,10 +19,6 @@ namespace MudBlazor
 
         [Inject]
         protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
-
-        [Inject]
-        [Obsolete]
-        public IBreakpointService Service { get; set; } = null!;
 
         [Parameter]
         [Category(CategoryTypes.BreakpointProvider.Behavior)]
@@ -42,7 +36,10 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
-            await BrowserViewportService.UnsubscribeAsync(this);
+            if (IsJSRuntimeAvailable)
+            {
+                await BrowserViewportService.UnsubscribeAsync(this);
+            }
         }
 
         Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();

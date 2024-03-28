@@ -1,0 +1,43 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudFileUpload T="IBrowserFile"
+               @bind-Files="File"
+               Hidden="@false"
+               InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
+               InputStyle="opacity:0"
+               @ondragenter="@SetDragClass"
+               @ondragleave="@ClearDragClass"
+               @ondragend="@ClearDragClass">
+    <ButtonTemplate>
+        <MudPaper Height="300px" Outlined="true" Class="@_dragClass">
+            <MudText Typo="Typo.h6">Drag and drop files here or click</MudText>
+            <MudChip Color="Color.Dark" Text="@File?.Name" />
+        </MudPaper>
+        <MudToolBar DisableGutters="true"
+                    Class="relative d-flex justify-end gap-4 z-30">
+            <MudButton HtmlTag="label"
+                       for="@context.Id">
+                Upload
+            </MudButton>
+            <MudButton Id="clear-button"
+                       OnClick="@context.Actions.ClearAsync">
+                Clear
+            </MudButton>
+        </MudToolBar>
+    </ButtonTemplate>
+</MudFileUpload>
+
+@code {
+#nullable enable
+    [Parameter]
+    public IBrowserFile? File { get; set; }
+
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
+    private string _dragClass = DefaultDragClass;
+
+    private void SetDragClass()
+        => _dragClass = $"{DefaultDragClass} mud-border-primary";
+
+    private void ClearDragClass()
+        => _dragClass = DefaultDragClass;
+}

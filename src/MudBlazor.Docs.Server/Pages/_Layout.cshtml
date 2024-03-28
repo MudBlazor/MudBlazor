@@ -48,6 +48,7 @@
                              *.fontawesome.com
                              https://fonts.gstatic.com;
                    connect-src 'self'
+                               https://*.carbonads.net
                                https://api.github.com
                                https://azuresearch-usnc.nuget.org
                                https://discord.com
@@ -69,6 +70,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
     <link href="_content/MudBlazor/MudBlazor.min.css?v=#{CACHE_TOKEN}#" rel="stylesheet" />
     <link href="_content/MudBlazor.Docs/MudBlazorDocs.min.css?v=#{CACHE_TOKEN}#" rel="stylesheet" />
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
 
 <body>

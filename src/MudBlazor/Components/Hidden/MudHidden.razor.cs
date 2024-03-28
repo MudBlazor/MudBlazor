@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Services;
 
 namespace MudBlazor
 {
@@ -10,12 +9,7 @@ namespace MudBlazor
     {
         private bool _isHidden = true;
         private bool _serviceIsReady = false;
-        private Guid _breakpointServiceSubscriptionId;
         private Breakpoint _currentBreakpoint = Breakpoint.None;
-
-        [Inject]
-        [Obsolete]
-        public IBreakpointService BreakpointService { get; set; } = null!;
 
         [Inject]
         protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
@@ -94,7 +88,10 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
-            await BrowserViewportService.UnsubscribeAsync(this);
+            if (IsJSRuntimeAvailable)
+            {
+                await BrowserViewportService.UnsubscribeAsync(this);
+            }
         }
 
         Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();

@@ -4,11 +4,21 @@
 @if (MudChartParent?.ChartOptions.DisableLegend != true)
 {
     <div @attributes="UserAttributes" class="mud-chart-legend">
-        @foreach (var item in Data)
+        @foreach (var item in Data)        
         {
-            <div class="mud-chart-legend-item" @onclick=@(()=>{ if (MudChartParent!=null) { MudChartParent.SelectedIndex=item.Index; }}) @onclick:stopPropagation=@(MudChartParent!=null)>
-                <span class="mud-chart-legend-marker" style="@($"background-color:{MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count())}")"></span>
-                <MudText Typo="Typo.body2" Inline="true">@item.Labels</MudText>
+            <div class="mud-chart-legend-item" @onclick=@(()=>{ if (MudChartParent!=null) { MudChartParent.SelectedIndex=item.Index; }}) @onclick:stopPropagation=@(MudChartParent!=null) >
+                @if(MudChartParent?.CanHideSeries == false)
+                {
+                    <span class="mud-chart-legend-marker" style="@($"background-color:{MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % MudChartParent.ChartOptions.ChartPalette.Count())}")"></span>
+                    <MudText Typo="Typo.body2" Inline="true">@item.Labels</MudText>
+                }
+                else
+                {   
+                    <div class="mud-chart-legend-checkbox" style="@GetCheckBoxStyle(item.Index)">    
+                        <MudCheckBox Checked="@item.IsVisible" CheckedChanged="@((bool value) => item.HandleCheckboxChangeAsync())"></MudCheckBox>               
+                        <MudText Typo="Typo.body2" Class="ml-1" Inline="true">@item.Labels</MudText>
+                    </div> 
+                }                 
             </div>
         }
     </div>

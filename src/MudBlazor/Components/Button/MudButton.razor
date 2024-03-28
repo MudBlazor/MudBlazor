@@ -11,7 +11,8 @@
             href="@Href" 
             target="@Target"
             rel="@GetRel()"
-            disabled="@GetDisabledState()">
+            disabled="@GetDisabledState()"
+            ClickPropagation="@ClickPropagation">
     <span class="mud-button-label">
         @if (!string.IsNullOrWhiteSpace(StartIcon))
         {
@@ -20,7 +21,7 @@
             </span>
         }
         @ChildContent
-        @if (!string.IsNullOrWhiteSpace(@EndIcon))
+        @if (!string.IsNullOrWhiteSpace(EndIcon))
         {
             <span class="@EndIconClass">
                 <MudIcon Icon="@EndIcon" Size="@(IconSize ?? Size)" Color="@IconColor" />

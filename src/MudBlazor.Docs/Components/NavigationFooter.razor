@@ -4,7 +4,7 @@
         <MudButton Color="Color.Primary"
                    Style="text-transform:none;"
                    StartIcon="@Icons.Material.Filled.NavigateBefore"
-                   Link="@($"{Section.ToDescriptionString()}/{Previous.Link}")">
+                   Href="@($"{Section.ToDescriptionString()}/{Previous.Link}")">
             @Previous.Name
         </MudButton>
     }
@@ -14,7 +14,7 @@
         <MudButton Color="Color.Primary"
                    Style="float:right;text-transform:none;"
                    EndIcon="@Icons.Material.Filled.NavigateNext"
-                   Link="@($"{Section.ToDescriptionString()}/{Next.Link}")">
+                   Href="@($"{Section.ToDescriptionString()}/{Next.Link}")">
             @Next.Name
         </MudButton>
     }

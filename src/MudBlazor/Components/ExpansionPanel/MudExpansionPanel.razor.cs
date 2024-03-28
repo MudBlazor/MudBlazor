@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -7,15 +9,14 @@ namespace MudBlazor
 #nullable enable
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
-        private bool _isExpanded;
-        private bool _collapseIsExpanded;
+        internal IParameterState<bool> _isExpandedState;
 
         [CascadingParameter]
         private MudExpansionPanels? Parent { get; set; }
 
         protected string Classname =>
             new CssBuilder("mud-expand-panel")
-                .AddClass("mud-panel-expanded", IsExpanded)
+                .AddClass("mud-panel-expanded", _isExpandedState.Value)
                 .AddClass("mud-panel-next-expanded", NextPanelExpanded)
                 .AddClass("mud-disabled", Disabled)
                 .AddClass($"mud-elevation-{Parent?.Elevation.ToString()}")
@@ -84,40 +85,12 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<bool> IsExpandedChanged { get; set; }
 
-        internal event Action<MudExpansionPanel>? NotifyIsExpandedChanged;
         /// <summary>
         /// Expansion state of the panel (two-way bindable)
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
-        public bool IsExpanded
-        {
-            get => _isExpanded;
-            set
-            {
-                if (_isExpanded == value)
-                    return;
-                _isExpanded = value;
-
-                NotifyIsExpandedChanged?.Invoke(this);
-                IsExpandedChanged.InvokeAsync(_isExpanded).ContinueWith(t =>
-                {
-                    if (_collapseIsExpanded != _isExpanded)
-                    {
-                        _collapseIsExpanded = _isExpanded;
-                        InvokeAsync(StateHasChanged);
-                    }
-                });
-            }
-        }
-
-        /// <summary>
-        /// Sets the initial expansion state. Do not use in combination with IsExpanded.
-        /// Combine with MultiExpansion to have more than one panel start open.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.ExpansionPanel.Behavior)]
-        public bool IsInitiallyExpanded { get; set; }
+        public bool IsExpanded { get; set; }
 
         /// <summary>
         /// If true, the component will be disabled.
@@ -135,58 +108,77 @@ namespace MudBlazor
 
         public bool NextPanelExpanded { get; set; }
 
-        public void ToggleExpansion()
+        public MudExpansionPanel()
+        {
+            _isExpandedState = RegisterParameter(nameof(IsExpanded), () => IsExpanded, () => IsExpandedChanged, IsExpandedParameterChangedAsync);
+        }
+
+        private Task IsExpandedParameterChangedAsync(ParameterChangedEventArgs<bool> args)
+        {
+            if (Parent is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            return Parent.NotifyPanelsChanged(this);
+        }
+
+        public async Task ToggleExpansionAsync()
         {
             if (Disabled)
             {
                 return;
             }
 
-            IsExpanded = !IsExpanded;
-        }
-
-        public void Expand(bool updateParent = true)
-        {
-            if (updateParent)
-                IsExpanded = true;
-            else
+            await _isExpandedState.SetValueAsync(!_isExpandedState.Value);
+            if (Parent is not null)
             {
-                _isExpanded = true;
-                _collapseIsExpanded = true;
-                IsExpandedChanged.InvokeAsync(_isExpanded);
+                await Parent.NotifyPanelsChanged(this);
             }
         }
 
-        public void Collapse(bool updateParent = true)
+        public async Task ExpandAsync()
         {
-            if (updateParent)
-                IsExpanded = false;
-            else
+            await _isExpandedState.SetValueAsync(true);
+            if (Parent is not null)
             {
-                _isExpanded = false;
-                _collapseIsExpanded = false;
-                IsExpandedChanged.InvokeAsync(_isExpanded);
+                await Parent.NotifyPanelsChanged(this);
             }
         }
 
-        protected override void OnInitialized()
+        public async Task CollapseAsync()
+        {
+            await _isExpandedState.SetValueAsync(false);
+            if (Parent is not null)
+            {
+                await Parent.NotifyPanelsChanged(this);
+            }
+        }
+
+        protected override async Task OnInitializedAsync()
         {
             // NOTE: we can't throw here because we need to be able to instantiate the type for the API Docs to infer default values
             //if (Parent == null)
             //    throw new ArgumentNullException(nameof(Parent), "ExpansionPanel must exist within a ExpansionPanels component");
-            base.OnInitialized();
-            if (!IsExpanded && IsInitiallyExpanded)
+            await base.OnInitializedAsync();
+            if (Parent is not null)
             {
-                _isExpanded = true;
-                _collapseIsExpanded = true;
+                await Parent.AddPanelAsync(this);
             }
-
-            Parent?.AddPanel(this);
         }
 
         public void Dispose()
         {
-            Parent?.RemovePanel(this);
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Parent?.RemovePanel(this);
+            }
         }
     }
 }

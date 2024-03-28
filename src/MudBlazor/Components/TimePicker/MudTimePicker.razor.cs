@@ -108,6 +108,13 @@ namespace MudBlazor
         public bool AutoClose { get; set; }
 
         /// <summary>
+        /// Sets the number interval for minutes.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public int MinuteSelectionStep { get; set; } = 1;
+
+        /// <summary>
         /// If true, sets 12 hour selection clock.
         /// </summary>
         [Parameter]
@@ -230,7 +237,7 @@ namespace MudBlazor
             if (TimeIntermediate == null)
                 return "--";
             var h = AmPm ? TimeIntermediate.Value.ToAmPmHour() : TimeIntermediate.Value.Hours;
-            return Math.Min(23, Math.Max(0, h)).ToString(CultureInfo.InvariantCulture);
+            return $"{Math.Min(23, Math.Max(0, h)):D2}";
         }
 
         private string GetMinuteString()
@@ -242,6 +249,7 @@ namespace MudBlazor
 
         private void UpdateTime()
         {
+            _lastSelectedHour = _timeSet.Hour;
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
             if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
@@ -317,8 +325,8 @@ namespace MudBlazor
           .AddClass($"mud-time-picker-dial-hidden", _currentView != OpenTo.Minutes)
         .Build();
 
-        private bool IsAm => _timeSet.Hour >= 00 && _timeSet.Hour < 12; // am is 00:00 to 11:59 
-        private bool IsPm => _timeSet.Hour >= 12 && _timeSet.Hour < 24; // pm is 12:00 to 23:59 
+        private bool IsAm => _timeSet.Hour >= 00 && _timeSet.Hour < 12; // am is 00:00 to 11:59
+        private bool IsPm => _timeSet.Hour >= 12 && _timeSet.Hour < 24; // pm is 12:00 to 23:59
 
         private string GetClockPinColor()
         {
@@ -408,6 +416,7 @@ namespace MudBlazor
 
         private readonly SetTime _timeSet = new();
         private int _initialHour;
+        private int _lastSelectedHour;
         private int _initialMinute;
 
         protected override void OnInitialized()
@@ -416,6 +425,7 @@ namespace MudBlazor
             UpdateTimeSetFromTime();
             _currentView = OpenTo;
             _initialHour = _timeSet.Hour;
+            _lastSelectedHour = _timeSet.Hour;
             _initialMinute = _timeSet.Minute;
         }
 
@@ -461,6 +471,18 @@ namespace MudBlazor
             }
         }
 
+        private int HourAmPm(int value)
+        {
+            if (AmPm)
+            {
+                if (IsAm && value == 12)
+                    return 0;
+                else if (IsPm && value < 12)
+                    return value + 12;
+            }
+            return value;
+        }
+
         /// <summary>
         /// If MouseDown is true enables "dragging" effect on the clock pin/stick.
         /// </summary>
@@ -468,7 +490,7 @@ namespace MudBlazor
         {
             if (MouseDown)
             {
-                _timeSet.Hour = value;
+                _timeSet.Hour = HourAmPm(value);
                 UpdateTime();
             }
         }
@@ -478,17 +500,10 @@ namespace MudBlazor
         /// </summary>
         private void OnMouseClickHour(int value)
         {
-            var h = value;
-            if (AmPm)
-            {
-                if (IsAm && value == 12)
-                    h = 0;
-                else if (IsPm && value < 12)
-                    h = value + 12;
-            }
-            _timeSet.Hour = h;
+            _timeSet.Hour = HourAmPm(value);
 
-            if (_currentView == OpenTo.Hours)
+            if (_currentView == OpenTo.Hours
+                || _timeSet.Hour != _lastSelectedHour)
             {
                 UpdateTime();
             }
@@ -510,6 +525,7 @@ namespace MudBlazor
         {
             if (MouseDown)
             {
+                value = RoundToStepInterval(value);
                 _timeSet.Minute = value;
                 UpdateTime();
             }
@@ -520,9 +536,24 @@ namespace MudBlazor
         /// </summary>
         private void OnMouseClickMinute(int value)
         {
+            value = RoundToStepInterval(value);
             _timeSet.Minute = value;
             UpdateTime();
             SubmitAndClose();
+        }
+
+        private int RoundToStepInterval(int value)
+        {
+            if (MinuteSelectionStep > 1) // Ignore if step is less than or equal to 1
+            {
+                var interval = MinuteSelectionStep % 60;
+                value = (value + interval / 2) / interval * interval;
+                if (value == 60) // For when it rounds up to 60
+                {
+                    value = 0;
+                }
+            }
+            return value;
         }
 
         protected async void SubmitAndClose()

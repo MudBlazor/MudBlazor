@@ -23,7 +23,6 @@ namespace MudBlazor.Components.Chart
             h = new double[n];
 
             CalcParameters(firstSlopeDegrees, lastSlopeDegrees);
-            Integrate();
             Interpolate();
         }
 

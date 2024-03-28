@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDialog ActionsClass="@ActionsClass">
+    <DialogContent>
+    </DialogContent>
+    <DialogActions>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public string ActionsClass { get; set; } = string.Empty;
+}

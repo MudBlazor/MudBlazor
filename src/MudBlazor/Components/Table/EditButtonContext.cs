@@ -10,11 +10,13 @@ namespace MudBlazorFix // A bug in Blazor requires a different namespace in some
     {
         public Action ButtonAction { get; }
         public bool ButtonDisabled { get; }
+        public object Item { get; }
 
-        public EditButtonContext(Action buttonAction, bool buttonDisabled)
+        public EditButtonContext(Action buttonAction, bool buttonDisabled, object item)
         {
             ButtonAction = buttonAction;
             ButtonDisabled = buttonDisabled;
+            Item = item;
         }
     }
 }

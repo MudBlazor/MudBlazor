@@ -53,7 +53,7 @@ namespace MudBlazor
         public override MudColor Background { get; set; } = "#32333d";
 
         /// <inheritdoc />
-        public override MudColor BackgroundGrey { get; set; } = "#27272f";
+        public override MudColor BackgroundGray { get; set; } = "#27272f";
 
         /// <inheritdoc />
         public override MudColor Surface { get; set; } = "#373740";
@@ -90,5 +90,11 @@ namespace MudBlazor
 
         /// <inheritdoc />
         public override MudColor DividerLight { get; set; } = "rgba(255,255,255, 0.06)";
+
+        /// <inheritdoc />
+        public override MudColor ChipDefault { get; set; } = "rgba(255,255,255, 0.16)";
+
+        /// <inheritdoc />
+        public override MudColor ChipDefaultHover { get; set; } = "rgba(255,255,255, 0.24)";
     }
 }

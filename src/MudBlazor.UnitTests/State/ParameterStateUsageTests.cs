@@ -1,0 +1,350 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AngleSharp.Dom;
+using Bunit;
+using Bunit.Rendering;
+using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.UnitTests.Components;
+using NUnit.Framework;
+
+namespace MudBlazor.UnitTests.State;
+
+#nullable enable
+[TestFixture]
+public class ParameterStateUsageTests : BunitTest
+{
+    [Test]
+    public void SharedHandlerIntegrationTest()
+    {
+        var comp = Context.RenderComponent<ParameterStateSharedHandlerTestComp>();
+
+        // note: the handler for abc and the one for xyz are each called once per click
+        // the handlers for o and p are lambdas which are excluded from this optimization, so they
+        // are each called per click resulting in an increment of 2 per click for op 
+        comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("1");
+        comp.Find("span.op").InnerHtml.Trimmed().Should().Be("2");
+        comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("1");
+        comp.Find("button.abc").Click();
+        comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("2");
+        comp.Find("span.op").InnerHtml.Trimmed().Should().Be("2");
+        comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("1");
+        comp.Find("button.xyz").Click();
+        comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("2");
+        comp.Find("span.op").InnerHtml.Trimmed().Should().Be("2");
+        comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("2");
+        comp.Find("button.op").Click();
+        comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("2");
+        comp.Find("span.op").InnerHtml.Trimmed().Should().Be("4");
+        comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("2");
+    }
+
+    [Test]
+    public void EventArgsIntegrationTest()
+    {
+        var comp = Context.RenderComponent<ParameterStateEventArgsTestComp>();
+        comp.Find(".parameter-changes").Children.Length.Should().Be(0);
+        comp.Find("button.increment-int-param").Click();
+        comp.Find(".parameter-changes").Children.Length.Should().Be(1);
+        comp.Find(".parameter-changes").FirstChild?.TextContent.Trimmed().Should().Be("IntParam: 0=>1");
+        comp.Find("button.increment-int-param").Click();
+        comp.Find(".parameter-changes").Children.Length.Should().Be(2);
+        comp.Find(".parameter-changes").LastChild?.TextContent.Trimmed().Should().Be("IntParam: 1=>2");
+    }
+
+    [Test]
+    public void ComparerIntegrationTest()
+    {
+        var comp = Context.RenderComponent<ParameterStateComparerTestComp>(parameters => parameters
+            .Add(parameter => parameter.DoubleParam, 10000f));
+        IElement ParamChanges() => comp.Find(".parameter-changes");
+        comp.Find(".parameter-changes").Children.Length.Should().Be(1);
+        ParamChanges().Children[0].TextContent.Trimmed().Should().Be("DoubleParam: 0=>10000");
+        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.DoubleParam, 10001f));
+        comp.Find(".parameter-changes").Children.Length.Should().Be(2);
+        ParamChanges().Children[1].TextContent.Trimmed().Should().Be("DoubleParam: 10000=>10001");
+        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.DoubleParam, 1000000f));
+        comp.Find(".parameter-changes").Children.Length.Should().Be(3);
+        ParamChanges().Children[2].TextContent.Trimmed().Should().Be("DoubleParam: 10001=>1000000");
+        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.DoubleParam, 1000001f));
+        comp.Find(".parameter-changes").Children.Length.Should().Be(3, "Within the epsilon tolerance. Therefore, change handler shouldn't fire.");
+    }
+
+    [Test]
+    public async Task Child_TwoWayBinding_Test()
+    {
+        var isExpanded = false;
+
+        var comp = Context.RenderComponent<ParameterStateChildBindingTestComp>(parameters =>
+            parameters.Bind(parameter => parameter.IsExpanded, isExpanded, newValue => isExpanded = newValue));
+
+        var alertTextFunc = () => MudAlert().Find("div.mud-alert-message");
+        IElement Button() => comp.Find("#childBtn");
+        IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
+
+        // Inner modifications
+
+        // Initial
+        isExpanded.Should().BeFalse("Initial value is false.");
+        comp.Instance.IsExpanded.Should().BeFalse();
+        comp.Instance.IsExpandedStateValue.Should().BeFalse();
+        comp.Instance.ParameterChangedEvents.Should().BeEmpty();
+
+        // Show
+        await Button().ClickAsync(new MouseEventArgs());
+        alertTextFunc().InnerHtml.Should().Be("Oh my! We got secret content!");
+        isExpanded.Should().BeTrue("Two way binding must change when inner modification happen.");
+        comp.Instance.IsExpanded.Should().BeFalse("We do not write to parameter directly.");
+        comp.Instance.IsExpandedStateValue.Should().BeTrue("We do write to state, it should change.");
+        comp.Instance.ParameterChangedEvents.Should().BeEmpty();
+
+        // Hide
+        await Button().ClickAsync(new MouseEventArgs());
+        alertTextFunc.Should().Throw<ComponentNotFoundException>();
+        isExpanded.Should().BeFalse("Two way binding must change when inner modification happen.");
+        comp.Instance.IsExpanded.Should().BeFalse("We do not write to parameter directly.");
+        comp.Instance.IsExpandedStateValue.Should().BeFalse("We do write to state, it should change.");
+        comp.Instance.ParameterChangedEvents.Should().BeEmpty();
+
+        // Outer modifications
+
+        // Show
+        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.IsExpanded, true));
+        alertTextFunc().InnerHtml.Should().Be("Oh my! We got secret content!");
+        comp.Instance.IsExpanded.Should().BeTrue("We changed the parameter directly, must change.");
+        comp.Instance.IsExpandedStateValue.Should().BeTrue("We sync on OnInitialized, must be same as IsExpanded.");
+        comp.Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[]
+        {
+            (false, true)
+        });
+
+        // Hide
+        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.IsExpanded, false));
+        alertTextFunc.Should().Throw<ComponentNotFoundException>();
+        comp.Instance.IsExpanded.Should().BeFalse("We changed the parameter directly, must change.");
+        comp.Instance.IsExpandedStateValue.Should().BeFalse("We sync on OnInitialized, must be same as IsExpanded.");
+        comp.Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[]
+        {
+            (false, true),
+            (true, false)
+        });
+    }
+
+    [Test]
+    public async Task Child_EventCallBackOnly_Test()
+    {
+        var callBackEvents = new List<bool>();
+        Action<bool> isExpandedCallBack = value => { callBackEvents.Add(value); };
+
+        var comp = Context.RenderComponent<ParameterStateChildBindingTestComp>(parameters =>
+            parameters.Add(parameter => parameter.IsExpandedChanged, isExpandedCallBack));
+
+        var alertTextFunc = () => MudAlert().Find("div.mud-alert-message");
+        IElement Button() => comp.Find("#childBtn");
+        IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
+
+        // Inner modifications
+
+        // Initial
+        comp.Instance.ParameterChangedEvents.Should().BeEmpty();
+        callBackEvents.Should().BeEmpty();
+
+        // Show
+        await Button().ClickAsync(new MouseEventArgs());
+        alertTextFunc().InnerHtml.Should().Be("Oh my! We got secret content!");
+        comp.Instance.ParameterChangedEvents.Should().BeEmpty();
+        callBackEvents.Should().BeEquivalentTo(new[] { true });
+
+        // Hide
+        await Button().ClickAsync(new MouseEventArgs());
+        alertTextFunc.Should().Throw<ComponentNotFoundException>();
+        comp.Instance.ParameterChangedEvents.Should().BeEmpty();
+        callBackEvents.Should().BeEquivalentTo(new[] { true, false });
+
+        // Outer modifications
+
+        // Show
+        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.IsExpanded, true));
+        alertTextFunc().InnerHtml.Should().Be("Oh my! We got secret content!");
+        comp.Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[]
+        {
+            (false, true)
+        });
+        callBackEvents.Should().BeEquivalentTo(new[] { true, false });
+
+        // Hide
+        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.IsExpanded, false));
+        alertTextFunc.Should().Throw<ComponentNotFoundException>();
+        comp.Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[]
+        {
+            (false, true),
+            (true, false)
+        });
+        callBackEvents.Should().BeEquivalentTo(new[] { true, false });
+    }
+
+    [Test]
+    public async Task Parent_TwoWayBinding_Test()
+    {
+        var comp = Context.RenderComponent<ParameterStateParentBindingTestComp>();
+
+        var alertChild1TextFunc = () => comp.Find("#childAlert1 div.mud-alert-message");
+        var alertChild2TextFunc = () => comp.Find("#childAlert2 div.mud-alert-message");
+        var alertChild3TextFunc = () => comp.Find("#childAlert3 div.mud-alert-message");
+        var alertChild4TextFunc = () => comp.Find("#childAlert4 div.mud-alert-message");
+        IElement ButtonChild1() => comp.Find("#childBtn1");
+        IElement ButtonChild2() => comp.Find("#childBtn2");
+        IElement ButtonChild3() => comp.Find("#childBtn3");
+        IElement ButtonChild4() => comp.Find("#childBtn4");
+        IElement ButtonParent1() => comp.Find("#parentBtn1");
+        IElement ButtonParent2() => comp.Find("#parentBtn2");
+        IElement ButtonParent4() => comp.Find("#parentBtn4");
+
+        // Child modifications
+
+        // Initial
+        comp.Instance.Child1Instance.ParameterChangedEvents.Should().BeEmpty();
+        comp.Instance.Child2Instance.ParameterChangedEvents.Should().BeEmpty();
+        comp.Instance.Child3Instance.ParameterChangedEvents.Should().BeEmpty();
+        comp.Instance.Child4Instance.ParameterChangedEvents.Should().BeEmpty();
+
+        comp.Instance.Child1Instance.IsExpanded.Should().BeFalse();
+        comp.Instance.Child2Instance.IsExpanded.Should().BeFalse();
+        comp.Instance.Child3Instance.IsExpanded.Should().BeFalse();
+        comp.Instance.Child4Instance.IsExpanded.Should().BeFalse();
+
+        comp.Instance.Child1Instance.IsExpandedStateValue.Should().BeFalse();
+        comp.Instance.Child2Instance.IsExpandedStateValue.Should().BeFalse();
+        comp.Instance.Child3Instance.IsExpandedStateValue.Should().BeFalse();
+        comp.Instance.Child4Instance.IsExpandedStateValue.Should().BeFalse();
+
+        comp.Instance.IsExpandedChild1BindSyntax.Should().BeFalse();
+        comp.Instance.IsExpandedChild2VariableAndCallback.Should().BeFalse();
+        comp.Instance.IsExpandedChild4OneWay.Should().BeFalse();
+
+        // Show
+        // Trigger button on a child component
+        await ButtonChild1().ClickAsync(new MouseEventArgs());
+        await ButtonChild2().ClickAsync(new MouseEventArgs());
+        await ButtonChild3().ClickAsync(new MouseEventArgs());
+        await ButtonChild4().ClickAsync(new MouseEventArgs());
+
+        alertChild1TextFunc().InnerHtml.Should().Be("Oh my! We got secret content1!");
+        alertChild2TextFunc().InnerHtml.Should().Be("Oh my! We got secret content2!");
+        alertChild3TextFunc().InnerHtml.Should().Be("Oh my! We got secret content3!");
+        alertChild4TextFunc().InnerHtml.Should().Be("Oh my! We got secret content4!");
+
+        comp.Instance.Child1Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[] { (false, true) });
+        comp.Instance.Child2Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[] { (false, true) });
+        comp.Instance.Child3Instance.ParameterChangedEvents.Should().BeEmpty();
+        comp.Instance.Child4Instance.ParameterChangedEvents.Should().BeEmpty();
+
+        comp.Instance.Child1Instance.IsExpanded.Should().BeTrue();
+        comp.Instance.Child2Instance.IsExpanded.Should().BeTrue();
+        comp.Instance.Child3Instance.IsExpanded.Should().BeFalse();
+        comp.Instance.Child4Instance.IsExpanded.Should().BeFalse();
+
+        comp.Instance.Child1Instance.IsExpandedStateValue.Should().BeTrue();
+        comp.Instance.Child2Instance.IsExpandedStateValue.Should().BeTrue();
+        comp.Instance.Child3Instance.IsExpandedStateValue.Should().BeTrue();
+        comp.Instance.Child4Instance.IsExpandedStateValue.Should().BeTrue();
+
+        comp.Instance.IsExpandedChild1BindSyntax.Should().BeTrue();
+        comp.Instance.IsExpandedChild2VariableAndCallback.Should().BeTrue();
+        comp.Instance.IsExpandedChild4OneWay.Should().BeFalse("One way do not change, when child is being modified.");
+
+        // Hide
+        // Trigger button on a child component
+        await ButtonChild1().ClickAsync(new MouseEventArgs());
+        await ButtonChild2().ClickAsync(new MouseEventArgs());
+        await ButtonChild3().ClickAsync(new MouseEventArgs());
+        await ButtonChild4().ClickAsync(new MouseEventArgs());
+
+        alertChild1TextFunc.Should().Throw<ElementNotFoundException>();
+        alertChild2TextFunc.Should().Throw<ElementNotFoundException>();
+        alertChild3TextFunc.Should().Throw<ElementNotFoundException>();
+        alertChild4TextFunc.Should().Throw<ElementNotFoundException>();
+
+        comp.Instance.Child1Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[] { (false, true), (true, false) });
+        comp.Instance.Child2Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[] { (false, true), (true, false) });
+        comp.Instance.Child3Instance.ParameterChangedEvents.Should().BeEmpty();
+        comp.Instance.Child4Instance.ParameterChangedEvents.Should().BeEmpty();
+
+        comp.Instance.Child1Instance.IsExpanded.Should().BeFalse();
+        comp.Instance.Child2Instance.IsExpanded.Should().BeFalse();
+        comp.Instance.Child3Instance.IsExpanded.Should().BeFalse();
+        comp.Instance.Child4Instance.IsExpanded.Should().BeFalse();
+
+        comp.Instance.Child1Instance.IsExpandedStateValue.Should().BeFalse();
+        comp.Instance.Child2Instance.IsExpandedStateValue.Should().BeFalse();
+        comp.Instance.Child3Instance.IsExpandedStateValue.Should().BeFalse();
+        comp.Instance.Child4Instance.IsExpandedStateValue.Should().BeFalse();
+
+        comp.Instance.IsExpandedChild1BindSyntax.Should().BeFalse();
+        comp.Instance.IsExpandedChild2VariableAndCallback.Should().BeFalse();
+        comp.Instance.IsExpandedChild4OneWay.Should().BeFalse();
+
+        // Parent modifications
+
+        // Show
+        // Trigger button on a parent component
+        await ButtonParent1().ClickAsync(new MouseEventArgs());
+        await ButtonParent2().ClickAsync(new MouseEventArgs());
+        await ButtonParent4().ClickAsync(new MouseEventArgs());
+
+        alertChild1TextFunc().InnerHtml.Should().Be("Oh my! We got secret content1!");
+        alertChild2TextFunc().InnerHtml.Should().Be("Oh my! We got secret content2!");
+        alertChild3TextFunc.Should().Throw<ElementNotFoundException>();
+        alertChild4TextFunc().InnerHtml.Should().Be("Oh my! We got secret content4!");
+
+        comp.Instance.Child1Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[] { (false, true), (true, false), (false, true) });
+        comp.Instance.Child2Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[] { (false, true), (true, false), (false, true) });
+        comp.Instance.Child3Instance.ParameterChangedEvents.Should().BeEmpty();
+        comp.Instance.Child4Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[] { (false, true) });
+
+        comp.Instance.Child1Instance.IsExpanded.Should().BeTrue();
+        comp.Instance.Child2Instance.IsExpanded.Should().BeTrue();
+        comp.Instance.Child3Instance.IsExpanded.Should().BeFalse();
+        comp.Instance.Child4Instance.IsExpanded.Should().BeTrue();
+
+        comp.Instance.Child1Instance.IsExpandedStateValue.Should().BeTrue();
+        comp.Instance.Child2Instance.IsExpandedStateValue.Should().BeTrue();
+        comp.Instance.Child3Instance.IsExpandedStateValue.Should().BeFalse();
+        comp.Instance.Child4Instance.IsExpandedStateValue.Should().BeTrue();
+
+        comp.Instance.IsExpandedChild1BindSyntax.Should().BeTrue();
+        comp.Instance.IsExpandedChild2VariableAndCallback.Should().BeTrue();
+        comp.Instance.IsExpandedChild4OneWay.Should().BeTrue("Now it must change since changed by parent.");
+
+        // Hide
+        // Trigger button on a parent component
+        await ButtonParent1().ClickAsync(new MouseEventArgs());
+        await ButtonParent2().ClickAsync(new MouseEventArgs());
+        await ButtonParent4().ClickAsync(new MouseEventArgs());
+
+        alertChild1TextFunc.Should().Throw<ElementNotFoundException>();
+        alertChild2TextFunc.Should().Throw<ElementNotFoundException>();
+        alertChild3TextFunc.Should().Throw<ElementNotFoundException>();
+        alertChild4TextFunc.Should().Throw<ElementNotFoundException>();
+
+        comp.Instance.Child1Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[] { (false, true), (true, false), (false, true), (true, false) });
+        comp.Instance.Child2Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[] { (false, true), (true, false), (false, true), (true, false) });
+        comp.Instance.Child3Instance.ParameterChangedEvents.Should().BeEmpty();
+        comp.Instance.Child4Instance.ParameterChangedEvents.Should().BeEquivalentTo(new[] { (false, true), (true, false) });
+
+        comp.Instance.Child1Instance.IsExpanded.Should().BeFalse();
+        comp.Instance.Child2Instance.IsExpanded.Should().BeFalse();
+        comp.Instance.Child3Instance.IsExpanded.Should().BeFalse();
+        comp.Instance.Child4Instance.IsExpanded.Should().BeFalse();
+
+        comp.Instance.Child1Instance.IsExpandedStateValue.Should().BeFalse();
+        comp.Instance.Child2Instance.IsExpandedStateValue.Should().BeFalse();
+        comp.Instance.Child3Instance.IsExpandedStateValue.Should().BeFalse();
+        comp.Instance.Child4Instance.IsExpandedStateValue.Should().BeFalse();
+
+        comp.Instance.IsExpandedChild1BindSyntax.Should().BeFalse();
+        comp.Instance.IsExpandedChild2VariableAndCallback.Should().BeFalse();
+        comp.Instance.IsExpandedChild4OneWay.Should().BeFalse();
+    }
+}

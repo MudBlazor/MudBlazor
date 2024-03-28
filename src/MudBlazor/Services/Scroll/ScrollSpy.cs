@@ -11,16 +11,18 @@ namespace MudBlazor
 {
     public class ScrollSectionCenteredEventArgs
     {
+        public string Id { get; }
+
         public ScrollSectionCenteredEventArgs(string id)
         {
             Id = id;
         }
-
-        public string Id { get; init; }
     }
 
     public interface IScrollSpy : IAsyncDisposable
     {
+        event EventHandler<ScrollSectionCenteredEventArgs> ScrollSectionSectionCentered;
+
         /// <summary>
         /// Start spying for scroll events for elements with the specified classes
         /// </summary>
@@ -41,14 +43,13 @@ namespace MudBlazor
         /// <param name="uri">The uri which contains the fragment. If no fragment it scrolls to the top of the page</param>
         /// <returns></returns>
         Task ScrollToSection(Uri uri);
-        event EventHandler<ScrollSectionCenteredEventArgs> ScrollSectionSectionCentered;
 
         /// <summary>
         /// Does the same as ScrollToSection but without the scrolling. This can be used to initially set an value
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task SetSectionAsActive(String id);
+        Task SetSectionAsActive(string id);
 
         /// <summary>
         /// Get the current position of the centered section
@@ -60,7 +61,7 @@ namespace MudBlazor
     {
         public string CenteredSection { get; private set; }
         private readonly IJSRuntime _js;
-        private DotNetObjectReference<ScrollSpy> _dotNetRef;
+        private readonly DotNetObjectReference<ScrollSpy> _dotNetRef;
 
         [DynamicDependency(nameof(SectionChangeOccured))]
         public ScrollSpy(IJSRuntime js)
@@ -69,8 +70,7 @@ namespace MudBlazor
             _dotNetRef = DotNetObjectReference.Create(this);
         }
 
-        public async Task StartSpying(string containerSelector) => await _js.InvokeVoidAsync
-            ("mudScrollSpy.spying", containerSelector, _dotNetRef);
+        public async Task StartSpying(string containerSelector) => await _js.InvokeVoidAsync("mudScrollSpy.spying", containerSelector, _dotNetRef);
 
         [JSInvokable]
         public void SectionChangeOccured(string id)
@@ -84,15 +84,13 @@ namespace MudBlazor
         public async Task ScrollToSection(string id)
         {
             CenteredSection = id;
-            await _js.InvokeVoidAsyncWithErrorHandling
-            ("mudScrollSpy.scrollToSection", id.Trim('#'));
+            await _js.InvokeVoidAsyncWithErrorHandling("mudScrollSpy.scrollToSection", id.Trim('#'));
         }
 
         public async Task SetSectionAsActive(string id)
         {
             CenteredSection = id;
-            await _js.InvokeVoidAsyncWithErrorHandling
-            ("mudScrollSpy.activateSection", id.Trim('#'));
+            await _js.InvokeVoidAsyncWithErrorHandling("mudScrollSpy.activateSection", id.Trim('#'));
         }
 
         public async Task ScrollToSection(Uri uri) => await ScrollToSection(uri.Fragment);
@@ -101,11 +99,12 @@ namespace MudBlazor
         {
             try
             {
-                _dotNetRef?.Dispose();
                 await _js.InvokeVoidAsyncWithErrorHandling("mudScrollSpy.unspy");
+                _dotNetRef?.Dispose();
             }
             catch (Exception)
             {
+                // ignored
             }
         }
     }

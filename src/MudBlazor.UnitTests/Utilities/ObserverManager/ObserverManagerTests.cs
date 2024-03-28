@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
@@ -39,8 +40,8 @@ public class ObserverManagerTests
         _observerManager.Subscribe(id, observer);
 
         // Assert
-        Assert.AreEqual(1, _observerManager.Count);
-        Assert.AreEqual(observer, _observerManager.Observers[id]);
+        _observerManager.Count.Should().Be(1);
+        _observerManager.Observers[id].Should().Be(observer);
     }
 
     [Test]
@@ -56,8 +57,8 @@ public class ObserverManagerTests
         _observerManager.Subscribe(id, observer2);
 
         // Assert
-        Assert.AreEqual(1, _observerManager.Count);
-        Assert.AreEqual(observer2, _observerManager.Observers[id]);
+        _observerManager.Count.Should().Be(1);
+        _observerManager.Observers[id].Should().Be(observer2);
     }
 
     [Test]
@@ -72,8 +73,8 @@ public class ObserverManagerTests
         _observerManager.Unsubscribe(id);
 
         // Assert
-        Assert.AreEqual(0, _observerManager.Count);
-        Assert.IsFalse(_observerManager.Observers.ContainsKey(id));
+        _observerManager.Count.Should().Be(0);
+        _observerManager.Observers.ContainsKey(id).Should().BeFalse();
     }
 
     [Test]
@@ -97,7 +98,7 @@ public class ObserverManagerTests
         await _observerManager.NotifyAsync(NotificationAsync);
 
         // Assert
-        Assert.AreEqual(2, notificationCalledCount);
+        notificationCalledCount.Should().Be(2);
     }
 
     [Test]
@@ -126,10 +127,10 @@ public class ObserverManagerTests
         await _observerManager.NotifyAsync(NotificationAsync);
 
         // Assert
-        Assert.AreEqual(2, _observerManager.Count);
-        Assert.IsTrue(_observerManager.Observers.ContainsKey(1));
-        Assert.IsTrue(_observerManager.Observers.ContainsKey(3));
-        Assert.IsFalse(_observerManager.Observers.ContainsKey(2));
+        _observerManager.Count.Should().Be(2);
+        _observerManager.Observers.ContainsKey(1).Should().BeTrue();
+        _observerManager.Observers.ContainsKey(3).Should().BeTrue();
+        _observerManager.Observers.ContainsKey(2).Should().BeFalse();
     }
 
     [Test]
@@ -144,8 +145,8 @@ public class ObserverManagerTests
         _observerManager.Clear();
 
         // Assert
-        Assert.AreEqual(0, _observerManager.Count, "Count should be 0 after clearing.");
-        CollectionAssert.IsEmpty(_observerManager.Observers, "Observers collection should be empty after clearing.");
+        _observerManager.Count.Should().Be(0);
+        _observerManager.Observers.Should().BeEmpty();
     }
 
     [Test]
@@ -171,7 +172,7 @@ public class ObserverManagerTests
         }
 
         // Assert
-        CollectionAssert.AreEqual(expectedObservers, actualObservers, "Enumerated observers should match the expected observers.");
+        actualObservers.Should().BeEquivalentTo(expectedObservers);
     }
 
     [Test]
@@ -198,7 +199,7 @@ public class ObserverManagerTests
         }
 
         // Assert
-        CollectionAssert.AreEqual(expectedObservers, actualObservers, "Enumerated observers should match the expected observers.");
+        actualObservers.Should().BeEquivalentTo(expectedObservers);
     }
 
     [Test]
@@ -217,7 +218,7 @@ public class ObserverManagerTests
         var actualObservers = _observerManager.ToList();
 
         // Assert
-        CollectionAssert.AreEqual(expectedObservers, actualObservers, "Enumerated observers should match the expected observers.");
+        actualObservers.Should().BeEquivalentTo(expectedObservers);
     }
 
 
@@ -274,5 +275,35 @@ public class ObserverManagerTests
         loggerMock
             .VerifyLogging($"Adding entry for {DefunctObserverId}/{DefunctObserver}. 1 total observers after add.")
             .VerifyLogging($"Removing defunct entry for {DefunctObserverId}. 0 total observers after remove.");
+    }
+
+    [Test]
+    public void CollectionModified()
+    {
+        // Arrange
+        var observerManager = new ObserverManager<int, int>(NullLogger.Instance);
+
+        for (var i = 0; i < 1000; i++)
+        {
+            observerManager.Subscribe(i, i);
+        }
+
+        bool Predicate(int id, int observer)
+        {
+            if (id == 500)
+            {
+                observerManager.Subscribe(1001, 1001);
+            }
+
+            return true;
+        }
+
+        Task NotificationAsync(int observer)
+        {
+            return Task.CompletedTask;
+        }
+
+        // Act & Assert
+        Assert.DoesNotThrowAsync(() => observerManager.NotifyAsync(NotificationAsync, Predicate));
     }
 }

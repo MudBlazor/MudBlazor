@@ -1,0 +1,43 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudText>Priority: Href > (OnClick and OnTouch) > OnAction</MudText>
+<MudText>OnAction is a fallback for OnClick and for OnTouch.</MudText>
+<MudText>@Count Invokes</MudText>
+<MudText>Callers: @Callers</MudText>
+
+<MudMenu Label="Menu">
+    <MudMenuItem id="id_on_action" OnAction="IncrementByAction" AutoClose="false" IconSize="Size.Large" IconColor="Color.Secondary">OnAction</MudMenuItem>
+    <MudMenuItem OnClick="IncrementByClick" AutoClose="false" IconSize="Size.Large" IconColor="Color.Secondary">OnClick</MudMenuItem>
+    <MudMenuItem OnTouch="IncrementByTouch" AutoClose="false" IconSize="Size.Large" IconColor="Color.Secondary">OnTouch</MudMenuItem>
+    <MudMenuItem OnClick="IncrementByClick" OnTouch="IncrementByTouch" AutoClose="false" IconSize="Size.Large" IconColor="Color.Secondary">OnClick + OnTouch</MudMenuItem>
+    <MudMenuItem id="id_on_action_on_touch" OnAction="IncrementByAction" OnTouch="IncrementByTouch" AutoClose="false" IconSize="Size.Large" IconColor="Color.Secondary">OnAction + OnTouch</MudMenuItem>
+    <MudMenuItem id="id_on_action_on_click" OnAction="IncrementByAction" OnClick="IncrementByClick" AutoClose="false" IconSize="Size.Large" IconColor="Color.Secondary">OnAction + OnClick</MudMenuItem>
+</MudMenu>
+
+@code
+{
+    public static string __description__ = "Test OnAction behavior on MudMenuItem.";
+
+    public int Count { get; set; } = 0;
+    public string Callers { get; set; } = "";
+
+    private void IncrementByAction()
+    {
+        Callers += "A";
+        Count++;
+    }
+
+    private void IncrementByTouch()
+    {
+        Callers += "T";
+        Count++;
+    }
+
+    private void IncrementByClick()
+    {
+        Callers += "C";
+        Count++;
+    }
+}

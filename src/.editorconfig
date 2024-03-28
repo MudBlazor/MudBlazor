@@ -38,6 +38,14 @@ indent_size = 2
 end_of_line = lf
 indent_size = 2
 
+# Sassy CSS - CSS preprocessor
+[*.scss]
+charset = utf-8
+indent_size = 2
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
 # Dotnet code style settings:
 [*.{cs,vb}]
 

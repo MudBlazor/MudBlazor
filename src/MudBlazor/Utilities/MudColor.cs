@@ -140,7 +140,7 @@ namespace MudBlazor.Utilities
         /// <param name="g">G</param>
         /// <param name="b">B</param>
         /// <param name="color">Existing color to copy hue value from </param>
-        public MudColor(byte r, byte g, byte b, MudColor color) : this(r,g,b,color.A)
+        public MudColor(byte r, byte g, byte b, MudColor color) : this(r, g, b, color.A)
         {
             H = color.H;
         }
@@ -224,9 +224,8 @@ namespace MudBlazor.Utilities
                     GetByteFromValuePart(value,4),
                     GetByteFromValuePart(value,6),
                 };
-
-                CalculateHSL();
             }
+            CalculateHSL();
         }
 
 
@@ -328,7 +327,7 @@ namespace MudBlazor.Utilities
 
         public static explicit operator string(MudColor color) => color == null ? string.Empty : color.Value;
 
-        public override string ToString() => ToString(MudColorOutputFormats.HexA);
+        public override string ToString() => ToString(MudColorOutputFormats.RGBA);
 
         public string ToString(MudColorOutputFormats format) => format switch
         {

@@ -18,13 +18,12 @@ namespace MudBlazor
             .Build();
 
         protected string Classname => new CssBuilder("mud-tooltip")
+            .AddClass("d-flex")
             .AddClass($"mud-tooltip-default", Color == Color.Default)
             .AddClass($"mud-tooltip-{ConvertPlacement().ToDescriptionString()}")
             .AddClass($"mud-tooltip-arrow", Arrow)
             .AddClass($"mud-border-{Color.ToDescriptionString()}", Arrow && Color != Color.Default)
             .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
-            .AddClass($"d-block", TooltipContent is not null)
-            .AddClass($"d-flex", !string.IsNullOrEmpty(Text))
             .AddClass(Class)
             .Build();
 
@@ -65,18 +64,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public double Delay { get; set; } = 0;
-
-        /// <summary>
-        /// Changes the default transition delay in seconds.
-        /// </summary>
-        [Obsolete("Use Delay instead.", true)]
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        public double Delayed
-        {
-            get { return Delay / 1000; }
-            set { Delay = value * 1000; }
-        }
 
         /// <summary>
         /// Tooltip placement.

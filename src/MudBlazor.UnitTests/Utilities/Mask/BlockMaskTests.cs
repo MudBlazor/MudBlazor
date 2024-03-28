@@ -106,10 +106,10 @@ public class BlockMaskTests
     {
         var mask = new BlockMask(".", new Block('('), new Block('0', 2, 2), new Block(')'));
         mask.Clear(); // make sure it is initialized
-        mask.Mask.Should().Be(@"^\(([\.](\d(\d([\.](\))?)?)?)?)?$");
+        mask.Mask.Should().Be(@"^(\(([\.](\d(\d([\.](\))?)?)?)?)?)?$");
         mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2), new Block('0', 2, 4));
         mask.Clear(); // make sure it is initialized
-        mask.Mask.Should().Be(@"^\d(\d)?([\.](\d(\d)?([\.](\d(\d(\d(\d)?)?)?)?)?)?)?$");
+        mask.Mask.Should().Be(@"^(\d(\d)?([\.](\d(\d)?([\.](\d(\d(\d(\d)?)?)?)?)?)?)?)?$");
         Assert.Throws<ArgumentException>(() => new BlockMask());
     }
 
@@ -117,12 +117,12 @@ public class BlockMaskTests
     public void BlockMask_UpdateFrom()
     {
         var mask = new BlockMask(".", new Block('('), new Block('0', 2, 2), new Block(')'));
-        mask.Blocks.Length.Should().Be(3); 
+        mask.Blocks.Length.Should().Be(3);
         mask.Delimiters.Should().Be(".");
         mask.SetText("(1234)");
         mask.ToString().Should().Be("(.12.)|");
         mask.CaretPos = 1;
-        mask.UpdateFrom(new BlockMask(":", new Block('0', 1,1), new Block('0', 1, 1)));
+        mask.UpdateFrom(new BlockMask(":", new Block('0', 1, 1), new Block('0', 1, 1)));
         mask.Blocks.Length.Should().Be(2);
         mask.Delimiters.Should().Be(":");
         // state should be preserved (Text, Caret/Selection)

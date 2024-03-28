@@ -21,6 +21,7 @@ namespace MudBlazor
         internal bool? _valueBool;
         internal DateTime? _valueDate;
         internal TimeSpan? _valueTime;
+        internal Guid? _valueGuid;
 
         internal Column<T>? FilterColumn =>
             _column ?? (_dataGrid.RenderedColumns?.FirstOrDefault(c => c.PropertyName == _filterDefinition.Column?.PropertyName));
@@ -47,6 +48,8 @@ namespace MudBlazor
                 _valueDate = _filterDefinition.Value == null ? null : dateTime;
                 _valueTime = _filterDefinition.Value == null ? null : dateTime.TimeOfDay;
             }
+            else if (fieldType.IsGuid)
+                _valueGuid = _filterDefinition.Value as Guid?;
         }
 
         internal async Task RemoveFilterAsync()
@@ -59,6 +62,7 @@ namespace MudBlazor
             _filterDefinition.Column = column;
             var operators = FilterOperator.GetOperatorByDataType(column.PropertyType);
             _filterDefinition.Operator = operators.FirstOrDefault();
+            _filterDefinition.Title = column.Title;
             _filterDefinition.Value = null;
         }
 
@@ -129,6 +133,13 @@ namespace MudBlazor
                 _filterDefinition.Value = date;
             }
 
+            _dataGrid.GroupItems();
+        }
+
+        internal void GuidValueChanged(Guid? value)
+        {
+            _valueGuid = value;
+            _filterDefinition.Value = _valueGuid;
             _dataGrid.GroupItems();
         }
     }

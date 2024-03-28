@@ -4,12 +4,12 @@
 <MudForm Model="@Model" @ref="@Form" Validation="@(ValidationRules.ValidateValue)" ValidationDelay="0">
     <MudFileUpload T="IBrowserFile" For="@(() => Model.File)" @bind-Files="Model.File">
         <ButtonTemplate>
-            <MudButton HtmlTag="label" for="@context"></MudButton>
+            <MudButton HtmlTag="label" for="@context.Id"></MudButton>
         </ButtonTemplate>
     </MudFileUpload>
     <MudFileUpload T="IReadOnlyList<IBrowserFile>" For="@(() => Model.Files)" @bind-Files="Model.Files">
         <ButtonTemplate>
-            <MudButton HtmlTag="label" for="@context"></MudButton>
+            <MudButton HtmlTag="label" for="@context.Id"></MudButton>
         </ButtonTemplate>
     </MudFileUpload>
 </MudForm>

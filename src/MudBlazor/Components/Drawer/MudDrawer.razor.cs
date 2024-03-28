@@ -60,10 +60,6 @@ namespace MudBlazor
                 .Build();
 
         [Inject]
-        [Obsolete]
-        public IBreakpointService Breakpointistener { get; set; } = null!;
-
-        [Inject]
         protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
 
         [CascadingParameter]
@@ -298,7 +294,10 @@ namespace MudBlazor
                 {
                     DrawerContainer?.Remove(this);
 
-                    BrowserViewportService.UnsubscribeAsync(this).AndForget();
+                    if (IsJSRuntimeAvailable)
+                    {
+                        BrowserViewportService.UnsubscribeAsync(this).AndForget();
+                    }
                 }
             }
         }

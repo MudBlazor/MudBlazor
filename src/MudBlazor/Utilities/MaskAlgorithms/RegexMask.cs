@@ -42,8 +42,8 @@ public class RegexMask : BaseMask
     }
 
     protected string _regexPattern;
-    protected Regex  _regex; 
-    
+    protected Regex _regex;
+
     /// <summary>
     /// Optional delimiter chars which will be jumped over if the caret is
     /// in front of one and the user inputs the next non-delimiter 
@@ -112,7 +112,7 @@ public class RegexMask : BaseMask
         (var beforeText, var afterText) = SplitAt(text, pos);
         // delete as many delimiters as there are plus one char
         var restText = new string(afterText.SkipWhile(IsDelimiter).Skip(1).ToArray());
-        UpdateText( AlignAgainstMask(beforeText + restText));
+        UpdateText(AlignAgainstMask(beforeText + restText));
         var numDeleted = afterText.Length - restText.Length;
         if (numDeleted > 1)
         {
@@ -144,7 +144,7 @@ public class RegexMask : BaseMask
         CaretPos -= numDeleted;
         UpdateText(AlignAgainstMask(restText + afterText));
     }
-    
+
     /// <summary>
     /// Applies the mask to the given text starting at the given offset and returns the masked text. 
     /// </summary>
@@ -175,7 +175,7 @@ public class RegexMask : BaseMask
         }
         return alignedText;
     }
-    
+
     public override void UpdateFrom(IMask other)
     {
         base.UpdateFrom(other);

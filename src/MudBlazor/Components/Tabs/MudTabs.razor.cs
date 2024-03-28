@@ -282,14 +282,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
-        
+
         /// <summary>
         /// Fired when a panel gets activated. Returned Task will be awaited.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public Func<TabInteractionEventArgs, Task> OnPreviewInteraction { get; set; }
-        
+
         /// <summary>
         /// Can be used in derived class to add a class to the main container. If not overwritten return an empty string
         /// </summary>
@@ -350,7 +350,10 @@ namespace MudBlazor
                 return;
             _isDisposed = true;
             _resizeObserver.OnResized -= OnResized;
-            await _resizeObserver.DisposeAsync();
+            if (IsJSRuntimeAvailable)
+            {
+                await _resizeObserver.DisposeAsync();
+            }
         }
 
         #endregion
@@ -408,13 +411,14 @@ namespace MudBlazor
 
         public void ActivatePanel(MudTabPanel panel, bool ignoreDisabledState = false)
         {
-            ActivatePanel(panel, null, ignoreDisabledState);
+            if (panel is not null && _panels.IndexOf(panel) > -1)
+                ActivatePanel(panel, null, ignoreDisabledState);
         }
 
         public void ActivatePanel(int index, bool ignoreDisabledState = false)
         {
-            var panel = _panels[index];
-            ActivatePanel(panel, null, ignoreDisabledState);
+            if (index > -1 && index <= _panels.Count - 1)
+                ActivatePanel(_panels[index], null, ignoreDisabledState);
         }
 
         public void ActivatePanel(object id, bool ignoreDisabledState = false)
@@ -435,11 +439,12 @@ namespace MudBlazor
                     await OnPreviewInteraction.Invoke(previewArgs);
 
                 if (previewArgs.Cancel) return;
-                
+
                 ActivePanelIndex = previewArgs.PanelIndex;
                 await ActivePanel?.OnClick.InvokeAsync(ev);
 
                 CenterScrollPositionAroundSelectedItem();
+                SetScrollabilityStates();
                 SetSliderState();
                 SetScrollButtonVisibility();
                 SetScrollabilityStates();
@@ -481,8 +486,8 @@ namespace MudBlazor
 
         protected string WrapperScrollStyle =>
         new StyleBuilder()
-            .AddStyle("transform", $"translateX({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position is Position.Top or Position.Bottom)
-            .AddStyle("transform", $"translateY({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
+            .AddStyle("transform", $"translateX({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position is Position.Top or Position.Bottom)
+            .AddStyle("transform", $"translateY({(-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
             .Build();
 
         protected string PanelsClassnames =>
@@ -682,7 +687,7 @@ namespace MudBlazor
         {
             var x = 0D;
             var count = 0;
-            
+
             var toolbarContentSize = GetRelevantSize(_tabsContentSize);
 
             foreach (var panel in _panels)
@@ -702,10 +707,23 @@ namespace MudBlazor
             return count;
         }
 
-        private void ScrollToItem(MudTabPanel panel)
+        private bool ScrollToItem(MudTabPanel panel, bool isLast = false)
         {
-            var position = GetLengthOfPanelItems(panel);
+            var position = GetLengthOfPanelItems(panel, isLast);
+            if (isLast)
+            {
+                var compare = _toolbarContentSize;
+                if (position - compare > 0)
+                {
+                    if (!AlwaysShowScrollButtons && _showScrollButtons)
+                        compare -= 48 * 2;
+                    position -= compare;
+                }
+                else
+                    return false;
+            }
             _scrollPosition = RightToLeft ? -position : position;
+            return true;
         }
 
         private bool IsAfterLastPanelIndex(int index) => index >= _panels.Count;
@@ -713,6 +731,17 @@ namespace MudBlazor
 
         private void CenterScrollPositionAroundSelectedItem()
         {
+            if (_showScrollButtons && ActivePanelIndex + 1 == _panels.Count)
+            {
+                var lastPannel = _panels.Last();
+                var isScrolled = ScrollToItem(lastPannel, true);
+                if (isScrolled)
+                {
+                    _scrollIndex = _panels.IndexOf(lastPannel);
+                    return;
+                }
+            }
+
             MudTabPanel panelToStart = ActivePanel;
             var length = GetPanelLength(panelToStart);
             if (length >= _toolbarContentSize)
@@ -734,7 +763,6 @@ namespace MudBlazor
                 if (length >= _toolbarContentSize)
                 {
                     _scrollIndex = _panels.IndexOf(panelToStart);
-                    ScrollToItem(panelToStart);
                     break;
                 }
 
@@ -753,7 +781,6 @@ namespace MudBlazor
                 if (length < 0)
                 {
                     _scrollIndex = _panels.IndexOf(panelToStart);
-                    ScrollToItem(panelToStart);
                     break;
                 }
 
@@ -765,8 +792,6 @@ namespace MudBlazor
 
             _scrollIndex = _panels.IndexOf(panelToStart);
             ScrollToItem(panelToStart);
-
-            SetScrollabilityStates();
         }
 
         private void SetScrollabilityStates()

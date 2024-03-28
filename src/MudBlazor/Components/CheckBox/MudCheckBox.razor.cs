@@ -246,7 +246,10 @@ namespace MudBlazor
                 if (_keyInterceptor is not null)
                 {
                     _keyInterceptor.KeyDown -= HandleKeyDown;
-                    _keyInterceptor.Dispose();
+                    if (IsJSRuntimeAvailable)
+                    {
+                        _keyInterceptor.Dispose();
+                    }
                 }
             }
         }

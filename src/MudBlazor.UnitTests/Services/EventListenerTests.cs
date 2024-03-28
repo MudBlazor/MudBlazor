@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Services
             _runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
             _service = new EventListener(_runtimeMock.Object);
 #if NET7_0_OR_GREATER
-            _expectedProperties  = new[] {
+            _expectedProperties = new[] {
              "detail", "screenX", "screenY", "clientX", "clientY", "offsetX", "offsetY", "pageX", "pageY",
              "movementX", "movementY", "button", "buttons", "ctrlKey", "shiftKey", "altKey", "metaKey", "type"
             };
@@ -43,7 +43,7 @@ namespace MudBlazor.UnitTests.Services
         {
             try
             {
-                CollectionAssert.AreEqual(firstColl, secondColl);
+                secondColl.Should().BeEquivalentTo(firstColl);
                 return true;
             }
             catch (Exception)

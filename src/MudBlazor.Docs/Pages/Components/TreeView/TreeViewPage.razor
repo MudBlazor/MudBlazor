@@ -1,7 +1,7 @@
 ﻿@page "/components/treeview"
 
 <DocsPage>
-    <DocsPageHeader Title="TreeView">
+    <DocsPageHeader Title="Tree View">
         <Description>Easily customizable tree view.</Description>
     </DocsPageHeader>
     <DocsPageContent>
@@ -10,25 +10,25 @@
             <SectionHeader Title="Basic">
                 <Description>Basic TreeView, icon button with hover and click to expand sub items.</Description>
             </SectionHeader>
-            <SectionContent Code="TreeViewBasicExample">
+            <SectionContent Code="@nameof(TreeViewBasicExample)">
                 <TreeViewBasicExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Hoverable">
-                <Description></Description>
+                <Description>If <CodeInline>Hover</CodeInline> is set to true, all treeview items will have a hover effect on mouse-over.</Description>
             </SectionHeader>
-            <SectionContent Code="TreeViewHoverExample" ShowCode="false">
+            <SectionContent Code="@nameof(TreeViewHoverExample)" ShowCode="false">
                 <TreeViewHoverExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Dense">
-                <Description></Description>
+                <Description>If <CodeInline>Dense</CodeInline> is set to true, compact vertical padding will be applied to all treeview items.</Description>
             </SectionHeader>
-            <SectionContent Code="TreeViewDenseExample" ShowCode="false">
+            <SectionContent Code="@nameof(TreeViewDenseExample)" ShowCode="false">
                 <TreeViewDenseExample />
             </SectionContent>
         </DocsPageSection>
@@ -37,7 +37,7 @@
             <SectionHeader Title="Expand">
                 <Description>With <CodeInline>ExpandOnClick</CodeInline> bool the whole item row can be clicked to expand/collapse the sub trees.</Description>
             </SectionHeader>
-            <SectionContent Code="TreeViewExpandOnClickExample" ShowCode="false">
+            <SectionContent Code="@nameof(TreeViewExpandOnClickExample)" ShowCode="false">
                 <TreeViewExpandOnClickExample />
             </SectionContent>
         </DocsPageSection>
@@ -47,16 +47,16 @@
                 <Description>With <CodeInline>ExpandOnDoubleClick</CodeInline>, similar to ExpandOnClick, double clicking on the whole item row will expand/collapse the sub trees.
                 Additionally, <CodeInline>OnDoubleClick</CodeInline> callback can be assigned to set a custom double click behaviour. </Description>
             </SectionHeader>
-            <SectionContent Code="TreeViewExpandOnDoubleClickExample" ShowCode="false">
+            <SectionContent Code="@nameof(TreeViewExpandOnDoubleClickExample)" ShowCode="false">
                 <TreeViewExpandOnDoubleClickExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Icons">
-                <Description>The icons and the color of the icon can be changed individualy per item.</Description>
+                <Description>The icons and the color of the icon can be changed individually per item.</Description>
             </SectionHeader>
-            <SectionContent Code="TreeViewIconExample" ShowCode="false">
+            <SectionContent Code="@nameof(TreeViewIconExample)" ShowCode="false">
                 <TreeViewIconExample />
             </SectionContent>
         </DocsPageSection>
@@ -65,7 +65,7 @@
             <SectionHeader Title="Selection">
                 <Description>Use <CodeInline>@@bind-SelectedValue</CodeInline> on the TreeView to select a single item.</Description>
             </SectionHeader>
-            <SectionContent Code="TreeViewSelectedExample" ShowCode="false">
+            <SectionContent Code="@nameof(TreeViewSelectedExample)" ShowCode="false">
                 <TreeViewSelectedExample />
             </SectionContent>
         </DocsPageSection>
@@ -74,7 +74,7 @@
             <SectionHeader Title="Selected Color">
                 <Description>The color of the selected item can be changed with <CodeInline>Color</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionContent Code="TreeViewSelectedColorExample" ShowCode="false">
+            <SectionContent Code="@nameof(TreeViewSelectedColorExample)" ShowCode="false">
                 <TreeViewSelectedColorExample />
             </SectionContent>
         </DocsPageSection>
@@ -83,7 +83,7 @@
             <SectionHeader Title="Multiselect">
                 <Description>If you set <CodeInline>MultiSelection</CodeInline> to true, you can select multiple values and they are returned as <CodeInline>HashSet&lt;T></CodeInline> via SelectedValues.</Description>
             </SectionHeader>
-            <SectionContent Code="TreeViewMultiSelectionExample" ShowCode="false">
+            <SectionContent Code="@nameof(TreeViewMultiSelectionExample)" ShowCode="false">
                 <TreeViewMultiSelectionExample />
             </SectionContent>
         </DocsPageSection>
@@ -92,7 +92,7 @@
             <SectionHeader Title="Multiselect Color">
                 <Description>The color of the checkboxes when <CodeInline>MultiSelection</CodeInline> is set to true can be changed with <CodeInline>CheckBoxColor</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionContent Code="TreeViewMultiSelecttionColorExample" ShowCode="false">
+            <SectionContent Code="@nameof(TreeViewMultiSelecttionColorExample)" ShowCode="false">
                 <TreeViewMultiSelecttionColorExample />
             </SectionContent>
         </DocsPageSection>
@@ -101,7 +101,7 @@
             <SectionHeader Title="ItemTemplate">
                 <Description>This example shows how to use ItemTemplate to automatically build the tree items according to a hierarchical data structure.</Description>
             </SectionHeader>
-            <SectionContent Code="TreeViewItemTemplateExample" ShowCode="false">
+            <SectionContent Code="@nameof(TreeViewItemTemplateExample)" ShowCode="false">
                 <TreeViewItemTemplateExample />
             </SectionContent>
         </DocsPageSection>
@@ -112,7 +112,7 @@
                     It can also be disabled for certain items with the <CodeInline>CanExpand</CodeInline> property.
                     </Description>
             </SectionHeader>
-            <SectionContent Code="TreeViewServerExample" ShowCode="false">
+            <SectionContent Code="@nameof(TreeViewServerExample)" ShowCode="false">
                 <TreeViewServerExample />
             </SectionContent>
         </DocsPageSection>
@@ -124,7 +124,7 @@
                     Use the <CodeInline>Height</CodeInline> or <CodeInline>MaxHeight</CodeInline> parameters to scroll the treeview.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="TreeViewCustomExample" ShowCode="false">
+            <SectionContent Code="@nameof(TreeViewCustomExample)" ShowCode="false">
                 <TreeViewCustomExample />
             </SectionContent>
         </DocsPageSection>
