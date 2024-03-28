@@ -279,23 +279,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CustomThemeDarkModeBackwardsCompatibleTest()
-        {
-            // ensure it is backwards compatible by setting Palette() instead of PaletteDark()
-            var myCustomTheme = new MudTheme()
-            {
-                PaletteDark = new PaletteLight()
-                {
-                    Primary = Colors.Blue.Lighten1,
-                    Secondary = "#F50057"
-                }
-            };
-            myCustomTheme.PaletteDark.Primary.Should().Be(new MudColor(Colors.Blue.Lighten1));// Set by user
-            myCustomTheme.PaletteDark.Error.Should().Be(new MudColor(Colors.Red.Default));// Default from light not overwritten by dark theme 
-            myCustomTheme.PaletteDark.White.Should().Be(new MudColor(Colors.Shades.White));// Equal in dark and light.
-            myCustomTheme.PaletteDark.Secondary.Should().Be(new MudColor("#F50057"));// Setting not in PaletteDark()
-        }
-        [Test]
         public void CustomThemeDarkModePrimaryDerivateColorTest()
         {
             // ensure it is backwards compatible by setting Palette() instead of PaletteDark()
@@ -326,13 +309,11 @@ namespace MudBlazor.UnitTests.Components
             DefaultTheme.PaletteDark.White.Should().Be(new MudColor(Colors.Shades.White));
 
             //Light theme
-#pragma warning disable CS0618
             // Note we're testing against the base type
-            DefaultTheme.Palette.Should().BeAssignableTo<Palette>();
-#pragma warning restore CS0618
-            DefaultTheme.Palette.Primary.Should().Be(new MudColor("#594AE2"));
-            DefaultTheme.Palette.Error.Should().Be(new MudColor(Colors.Red.Default));
-            DefaultTheme.Palette.White.Should().Be(new MudColor(Colors.Shades.White));
+            DefaultTheme.PaletteLight.Should().BeAssignableTo<Palette>();
+            DefaultTheme.PaletteLight.Primary.Should().Be(new MudColor("#594AE2"));
+            DefaultTheme.PaletteLight.Error.Should().Be(new MudColor(Colors.Red.Default));
+            DefaultTheme.PaletteLight.White.Should().Be(new MudColor(Colors.Shades.White));
         }
 
         private bool _systemMockValue;

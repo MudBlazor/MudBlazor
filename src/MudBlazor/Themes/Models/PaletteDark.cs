@@ -3,12 +3,10 @@
 namespace MudBlazor
 {
 #nullable enable
-#pragma warning disable CS0618
     /// <summary>
     /// Represents a dark color palette.
     /// </summary>
     public class PaletteDark : Palette
-#pragma warning restore CS0618
     {
         /// <inheritdoc />
         public override MudColor Black { get; set; } = "#27272f";
