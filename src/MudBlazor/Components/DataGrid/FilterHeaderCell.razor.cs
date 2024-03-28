@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -17,6 +18,7 @@ namespace MudBlazor
 
         [Parameter] public Column<T> Column { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter] public bool IsReordered { get; set; }
 
         private string _classname =>
             new CssBuilder(Column?.HeaderClass)
@@ -56,7 +58,28 @@ namespace MudBlazor
             }
         }
 
+        private IParameterState<bool> _isReorderedState;
+
         private string _operator;
+
+        public FilterHeaderCell()
+        {
+            // Update _operator if underlying column had changed position
+            _isReorderedState = RegisterParameter(
+                nameof(IsReordered),
+                () => IsReordered,
+                IsReorderedChangedHandlerAsync
+            );
+        }
+
+        private async Task IsReorderedChangedHandlerAsync(ParameterChangedEventArgs<bool> args)
+        {
+            if (args.Value)
+            {
+                _operator = Column.FilterContext.FilterDefinition.Operator;
+                await _isReorderedState.SetValueAsync(false);
+            }
+        }
 
         private string chosenOperatorStyle(string o)
         {
@@ -206,7 +229,7 @@ namespace MudBlazor
         {
             await DataGrid.RemoveFilterAsync(filterDefinition.Id);
         }
-
+    
         #endregion
     }
 }
