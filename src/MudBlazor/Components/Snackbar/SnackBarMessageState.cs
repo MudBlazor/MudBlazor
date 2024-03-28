@@ -69,7 +69,14 @@ namespace MudBlazor
         {
             get
             {
-                var result = $"mud-snackbar {Options.SnackbarTypeClass}";
+                var baseTypeClass = $"mud-alert-{Options.SnackbarVariant.ToDescriptionString()}-{Options.Severity.ToDescriptionString()}";
+
+                if (Options.SnackbarVariant != Variant.Filled)
+                {
+                    baseTypeClass += Options.BackgroundBlurred ? " mud-snackbar-blurred" : " mud-snackbar-surface";
+                }
+
+                var result = $"mud-snackbar {baseTypeClass} {Options.SnackbarTypeClass}";
 
                 if (Options.Onclick != null && !ShowActionButton)
                     result += " force-cursor";

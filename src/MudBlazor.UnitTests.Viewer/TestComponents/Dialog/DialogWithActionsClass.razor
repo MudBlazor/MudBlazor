@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDialog ClassActions="@ClassActions">
+<MudDialog ActionsClass="@ActionsClass">
     <DialogContent>
     </DialogContent>
     <DialogActions>
@@ -12,5 +12,5 @@
     private MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
-    public string ClassActions { get; set; } = string.Empty;
+    public string ActionsClass { get; set; } = string.Empty;
 }

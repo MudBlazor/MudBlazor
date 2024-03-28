@@ -995,10 +995,6 @@ namespace MudBlazor
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use Clear instead.", true)]
-        public Task ClearAsync() => Clear();
-
         /// <summary>
         /// Clear the selection
         /// </summary>

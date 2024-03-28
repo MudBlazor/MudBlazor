@@ -251,6 +251,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task PerSnackbarClassTypes()
+        {
+            // https://github.com/MudBlazor/MudBlazor/issues/5027.
+
+            await _provider.InvokeAsync(() =>
+                _service.Add("Boom, big reveal. Im a pickle!",
+                    Severity.Success,
+                    c =>
+                    {
+                        // Non-default settings.
+                        c.SnackbarVariant = Variant.Outlined;
+                        c.BackgroundBlurred = true;
+                    }
+                )
+            );
+
+            var snackbarClassList = _provider.Find(".mud-snackbar").ClassList;
+            snackbarClassList.Should().Contain("mud-snackbar-blurred");
+            snackbarClassList.Should().Contain("mud-alert-outlined-success");
+        }
+
+        [Test]
         public async Task DisposeTest()
         {
             // shoot out a snackbar

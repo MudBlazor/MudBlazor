@@ -188,14 +188,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public Func<string, CancellationToken, Task<IEnumerable<T>>> SearchFuncWithCancel { get; set; }
-
-        /// <summary>
-        /// The SearchFunc returns a list of items matching the typed text
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public Func<string, Task<IEnumerable<T>>> SearchFunc { get; set; }
+        public Func<string, CancellationToken, Task<IEnumerable<T>>> SearchFunc { get; set; }
 
         /// <summary>
         /// Maximum items to display, defaults to 10.
@@ -537,9 +530,7 @@ namespace MudBlazor
                 searchingWhileSelected = !Strict && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text)); //search while selected if enabled and the Text is equivalent to the Value
                 var searchText = searchingWhileSelected ? string.Empty : Text;
 
-                var searchTask = SearchFuncWithCancel != null ?
-                    SearchFuncWithCancel(searchText, _cancellationTokenSrc.Token) :
-                    SearchFunc(searchText);
+                var searchTask = SearchFunc(searchText, _cancellationTokenSrc.Token);
 
                 _currentSearchTask = searchTask;
 
@@ -615,10 +606,6 @@ namespace MudBlazor
                 _isClearing = false;
             }
         }
-
-        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
-        [ExcludeFromCodeCoverage]
-        protected override async void ResetValue() => await Clear();
 
         protected override Task ResetValueAsync() => Clear();
 
@@ -723,16 +710,6 @@ namespace MudBlazor
             _selectedListItemIndex = Math.Clamp(value: (10 * _items.Length + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length - 1);
             return ScrollToListItem(_selectedListItemIndex);
         }
-
-        /// <summary>
-        /// Scroll to a specific item index in the Autocomplete list of items.
-        /// </summary>
-        /// <param name="index">the index to scroll to</param>
-        /// <param name="increment">not used</param>
-        /// <returns>ValueTask</returns>
-        [Obsolete("Use ScrollToListItem without increment parameter instead")]
-        public Task ScrollToListItem(int index, int increment)
-            => ScrollToListItem(index).AsTask();
 
         /// <summary>
         /// Scroll to a specific item index in the Autocomplete list of items.

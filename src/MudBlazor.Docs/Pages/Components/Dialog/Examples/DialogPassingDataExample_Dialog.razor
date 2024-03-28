@@ -11,10 +11,10 @@
         </MudText>
     </TitleContent>
     <DialogContent>
-        <MudTextField Value="@server.Id.ToString()" Label="Server ID" ReadOnly="true"/>
-        <MudTextField Value="@server.Name" Label="Server Name" ReadOnly="true"/>
-        <MudTextField Value="@server.Location" Label="Location" ReadOnly="true"/>
-        <MudTextField Value="@server.IpAddress" Label="IP Address" ReadOnly="true"/>
+        <MudTextField Value="@Server.Id.ToString()" Label="Server ID" ReadOnly="true"/>
+        <MudTextField Value="@Server.Name" Label="Server Name" ReadOnly="true"/>
+        <MudTextField Value="@Server.Location" Label="Location" ReadOnly="true"/>
+        <MudTextField Value="@Server.IpAddress" Label="IP Address" ReadOnly="true"/>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -22,21 +22,19 @@
     </DialogActions>
 </MudDialog>
 
-
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
 
-    [Parameter] public Server server { get; set; } = new Server();
+    [Parameter]
+    public Server Server { get; set; } = new Server();
 
-    private void Cancel()
-    {
-        MudDialog.Cancel();
-    }
+    private void Cancel() => MudDialog.Cancel();
 
     private void DeleteServer()
     {
         //In a real world scenario this bool would probably be a service to delete the item from api/database
         Snackbar.Add("Server Deleted", Severity.Success);
-        MudDialog.Close(DialogResult.Ok(server.Id));
+        MudDialog.Close(DialogResult.Ok(Server.Id));
     }
 }

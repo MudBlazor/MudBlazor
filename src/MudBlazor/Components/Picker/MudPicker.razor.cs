@@ -369,52 +369,49 @@ namespace MudBlazor
 
         protected bool IsOpen { get; set; }
 
-        public void ToggleOpen()
+        public async Task ToggleOpenAsync()
         {
             if (IsOpen)
-                Close();
+            {
+                await CloseAsync();
+            }
             else
-                Open();
+            {
+                await OpenAsync();
+            }
         }
 
-        public void Close(bool submit = true)
+        public async Task CloseAsync(bool submit = true)
         {
             IsOpen = false;
 
             if (submit)
             {
-                Submit();
+                await SubmitAsync();
             }
 
-            OnClosed();
+            await OnClosedAsync();
             StateHasChanged();
         }
 
-        public void Open()
+        public Task OpenAsync()
         {
             IsOpen = true;
             StateHasChanged();
-            OnOpened();
+
+            return OnOpenedAsync();
         }
 
-        private void CloseOverlay() => Close(PickerActions == null);
+        private Task CloseOverlayAsync() => CloseAsync(PickerActions == null);
 
-        protected internal virtual void Submit() { }
+        protected internal virtual Task SubmitAsync() => Task.CompletedTask;
 
-        public virtual void Clear(bool close = true)
+        public virtual async Task ClearAsync(bool close = true)
         {
             if (close && PickerVariant != PickerVariant.Static)
             {
-                Close(false);
+                await CloseAsync(false);
             }
-        }
-
-        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
-        [ExcludeFromCodeCoverage]
-        protected override void ResetValue()
-        {
-            _inputReference?.Reset();
-            base.ResetValue();
         }
 
         protected override async Task ResetValueAsync()
@@ -443,6 +440,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
             if (PickerVariant == PickerVariant.Static)
             {
                 IsOpen = true;
@@ -497,15 +495,19 @@ namespace MudBlazor
         private async Task OnClickAsync(MouseEventArgs args)
         {
             if (!Editable)
-                ToggleState();
+            {
+                await ToggleStateAsync();
+            }
 
             if (OnClick.HasDelegate)
+            {
                 await OnClick.InvokeAsync(args);
+            }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender == true)
+            if (firstRender)
             {
                 await EnsureKeyInterceptor();
             }
@@ -513,26 +515,26 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected internal void ToggleState()
+        protected internal async Task ToggleStateAsync()
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
             if (IsOpen)
             {
                 IsOpen = false;
-                OnClosed();
+                await OnClosedAsync();
             }
             else
             {
                 IsOpen = true;
-                OnOpened();
-                FocusAsync();
+                await OnOpenedAsync();
+                await FocusAsync();
             }
         }
 
-        protected virtual async void OnOpened()
+        protected virtual async Task OnOpenedAsync()
         {
-            OnPickerOpened();
+            await OnPickerOpenedAsync();
 
             if (PickerVariant == PickerVariant.Inline)
             {
@@ -543,25 +545,19 @@ namespace MudBlazor
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "key+none" });
         }
 
-        protected virtual async void OnClosed()
+        protected virtual async Task OnClosedAsync()
         {
-            OnPickerClosed();
+            await OnPickerClosedAsync();
 
             await EnsureKeyInterceptor();
             await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
         }
 
-        protected virtual void OnPickerOpened()
-        {
-            PickerOpened.InvokeAsync(this);
-        }
+        protected virtual Task OnPickerOpenedAsync() => PickerOpened.InvokeAsync(this);
 
-        protected virtual void OnPickerClosed()
-        {
-            PickerClosed.InvokeAsync(this);
-        }
+        protected virtual Task OnPickerClosedAsync() => PickerClosed.InvokeAsync(this);
 
-        protected internal virtual void HandleKeyDown(KeyboardEventArgs obj)
+        protected internal virtual async void HandleKeyDown(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
@@ -570,20 +566,18 @@ namespace MudBlazor
                 case "Backspace":
                     if (obj.CtrlKey == true && obj.ShiftKey == true)
                     {
-                        Clear();
+                        await ClearAsync();
                         _value = default(T);
 
                         // TODO: Probably need to  create a HandleKeyDownAsync that awaits ResetValueAsync()
                         // Simply replacing Reset() with ResetValueAsync().AndForget() may cause issues in BSS
-#pragma warning disable CS0618
-                        Reset();
-#pragma warning disable CS0618
+                        await ResetAsync();
                     }
 
                     break;
                 case "Escape":
                 case "Tab":
-                    Close(false);
+                    await CloseAsync(false);
                     break;
             }
         }
@@ -592,7 +586,7 @@ namespace MudBlazor
         {
             base.Dispose(disposing);
 
-            if (disposing == true)
+            if (disposing)
             {
                 if (_keyInterceptor != null)
                 {
@@ -602,7 +596,6 @@ namespace MudBlazor
                         _keyInterceptor.Dispose();
                     }
                 }
-
             }
         }
     }

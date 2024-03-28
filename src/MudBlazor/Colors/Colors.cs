@@ -307,7 +307,7 @@ namespace MudBlazor
             public static string Darken4 { get; } = "#3E2723";
         }
 
-        public static class BlueGrey
+        public static class BlueGray
         {
             public static string Default { get; } = "#607D8B";
             public static string Lighten5 { get; } = "#ECEFF1";
@@ -320,7 +320,7 @@ namespace MudBlazor
             public static string Darken3 { get; } = "#37474F";
             public static string Darken4 { get; } = "#263238";
         }
-        public static class Grey
+        public static class Gray
         {
             public static string Default { get; } = "#9E9E9E";
             public static string Lighten5 { get; } = "#FAFAFA";

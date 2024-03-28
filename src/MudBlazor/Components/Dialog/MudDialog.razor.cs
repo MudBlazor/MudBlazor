@@ -12,19 +12,13 @@ namespace MudBlazor
 {
     public partial class MudDialog : MudComponentBase
     {
-        [Obsolete($"Use {nameof(ContentClassname)} instead.")]
-        protected string ContentClass => ContentClassname;
-
         protected string ContentClassname => new CssBuilder("mud-dialog-content")
             .AddClass("mud-dialog-no-side-padding", DisableSidePadding)
-            .AddClass(ClassContent)
+            .AddClass(ContentClass)
             .Build();
 
-        [Obsolete($"Use {nameof(ActionClassname)} instead.")]
-        protected string ActionClass => ActionClassname;
-
-        protected string ActionClassname => new CssBuilder("mud-dialog-actions")
-            .AddClass(ClassActions)
+        protected string ActionsClassname => new CssBuilder("mud-dialog-actions")
+            .AddClass(ActionsClass)
             .Build();
 
         [CascadingParameter] private MudDialogInstance DialogInstance { get; set; }
@@ -90,14 +84,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
-        public string ClassContent { get; set; }
+        public string ContentClass { get; set; }
 
         /// <summary>
         /// CSS class that will be applied to the action buttons container
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
-        public string ClassActions { get; set; }
+        public string ActionsClass { get; set; }
 
         /// <summary>
         /// CSS styles to be applied to the dialog content
@@ -164,8 +158,8 @@ namespace MudBlazor
                 [nameof(OnBackdropClick)] = OnBackdropClick,
                 [nameof(DisableSidePadding)] = DisableSidePadding,
                 [nameof(TitleClass)] = TitleClass,
-                [nameof(ClassContent)] = ClassContent,
-                [nameof(ClassActions)] = ClassActions,
+                [nameof(ContentClass)] = ContentClass,
+                [nameof(ActionsClass)] = ActionsClass,
                 [nameof(ContentStyle)] = ContentStyle,
                 [nameof(DefaultFocus)] = DefaultFocus,
             };

@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
 <MudPopoverProvider></MudPopoverProvider>
 
 <MudAutocomplete Label="State" SearchFunc="@SearchStateAsync" 
@@ -15,17 +16,17 @@
     public State StateDetails { get; set; }
     public State StateDetails2 { get; set; }
 
-    public async Task<IEnumerable<State>> SearchStateAsync(string value)
+    public async Task<IEnumerable<State>> SearchStateAsync(string value, CancellationToken token)
     {
-        await Task.Delay(5);
+        await Task.Delay(5, token);
         if (string.IsNullOrEmpty(value))
             return states.Select(x => new State(x));
         return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)).Select(x => new State(x));
     }
 
-    public async Task<IEnumerable<State>> SearchStateToStringAsync(string value)
+    public async Task<IEnumerable<State>> SearchStateToStringAsync(string value, CancellationToken token)
     {
-        await Task.Delay(5);
+        await Task.Delay(5, token);
         if (string.IsNullOrEmpty(value))
             return states.Select(x => new StateToString(x));
         return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)).Select(x => new StateToString(x));

@@ -56,12 +56,6 @@ namespace MudBlazor
             }
         }
 
-        [Obsolete($"Use {nameof(OnRowClickedAsync)} instead.")]
-        public async void OnRowClicked(MouseEventArgs args)
-        {
-            await OnRowClickedAsync(args);
-        }
-
         public async Task OnRowClickedAsync(MouseEventArgs args)
         {
             var table = Context?.Table;

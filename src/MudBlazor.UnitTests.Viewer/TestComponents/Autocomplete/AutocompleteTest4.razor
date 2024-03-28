@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
 <MudPopoverProvider></MudPopoverProvider>
 
 <MudAutocomplete Label="State" SearchFunc="@SearchStateAsync" 
@@ -10,10 +11,10 @@
     public IEnumerable<State> StateList { get; set; }
     public State StateDetails { get; set; } = new State() { StateName = "Assam"};
 
-    public async Task<IEnumerable<State>> SearchStateAsync(string value)
+    public async Task<IEnumerable<State>> SearchStateAsync(string value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5);
+        await Task.Delay(5, token);
 
         return new State[0];
     }

@@ -728,7 +728,7 @@ namespace MudBlazor.UnitTests.Components
             var timePicker = comp.FindComponent<MudTimePicker>();
 
             // Open the timepicker
-            await comp.InvokeAsync(() => timePicker.Instance.Open());
+            await comp.InvokeAsync(() => timePicker.Instance.OpenAsync());
             var picker = timePicker.Instance;
 
             // Select 16 hours
@@ -746,17 +746,17 @@ namespace MudBlazor.UnitTests.Components
             // and there are actions which are defined
             picker.Time.Should().Be(new TimeSpan(00, 45, 00));
 
-            await comp.InvokeAsync(() => timePicker.Instance.Open());
+            await comp.InvokeAsync(() => timePicker.Instance.OpenAsync());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
-            await comp.InvokeAsync(() => timePicker.Instance.Clear());
+            await comp.InvokeAsync(() => timePicker.Instance.ClearAsync());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
-            await comp.InvokeAsync(() => timePicker.Instance.Close(false));
+            await comp.InvokeAsync(() => timePicker.Instance.CloseAsync(false));
             // Change the value of autoclose
             timePicker.Instance.AutoClose = true;
 
             // Open the timepicker
-            await comp.InvokeAsync(() => timePicker.Instance.Open());
+            await comp.InvokeAsync(() => timePicker.Instance.OpenAsync());
             picker = timePicker.Instance;
 
             // Select 16 hours
@@ -773,10 +773,10 @@ namespace MudBlazor.UnitTests.Components
             // Check that the time should be equal to the selection this time!
             picker.Time.Should().Be(new TimeSpan(16, 30, 00));
 
-            await comp.InvokeAsync(() => timePicker.Instance.Open());
+            await comp.InvokeAsync(() => timePicker.Instance.OpenAsync());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
-            await comp.InvokeAsync(() => timePicker.Instance.Clear());
+            await comp.InvokeAsync(() => timePicker.Instance.ClearAsync());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
         }
@@ -789,7 +789,7 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.FindComponent<MudTimePicker>().Instance;
             comp.WaitForAssertion(() => picker.Time.Should().Be(null));
             // Open the timepicker
-            await comp.InvokeAsync(() => picker.Open());
+            await comp.InvokeAsync(() => picker.OpenAsync());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
 
             // Select 16 hours
@@ -810,7 +810,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => picker.ReadOnly = true);
 
             // Open the timepicker
-            await comp.InvokeAsync(() => picker.Open());
+            await comp.InvokeAsync(() => picker.OpenAsync());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
 
             // Select 17 hours
@@ -929,7 +929,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => timePicker.TimeFormat = "hhmm");
 
             timePicker.ReadOnly = true;
-            await comp.InvokeAsync(() => timePicker.Submit());
+            await comp.InvokeAsync(() => timePicker.SubmitAsync());
 
         }
 
@@ -941,7 +941,7 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.FindComponent<MudTimePicker>().Instance;
             comp.WaitForAssertion(() => picker.Time.Should().Be(null));
             // Open the timepicker
-            await comp.InvokeAsync(() => picker.Open());
+            await comp.InvokeAsync(() => picker.OpenAsync());
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
 
             var count = 0;

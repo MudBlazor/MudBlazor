@@ -1,9 +1,10 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
 
 <span id="counter">@reloadCounter</span>
 <button id="reseter" @onclick="() => reloadCounter = 0">Reset</button>
 
-<MudTable ServerData="@(new Func<TableState, Task<TableData<int>>>(ServerReload))">
+<MudTable ServerData="ServerReload">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="No." InitialDirection="SortDirection.Descending" T="int">Nr</MudTableSortLabel></MudTh>
     </HeaderContent>
@@ -25,7 +26,7 @@
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
     /// </summary>
-    private async Task<TableData<int>> ServerReload(TableState state)
+    private async Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
     {
 
         ++reloadCounter;

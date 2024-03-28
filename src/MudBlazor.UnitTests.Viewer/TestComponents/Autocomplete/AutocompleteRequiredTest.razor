@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
 
 <MudPopoverProvider></MudPopoverProvider>
 
@@ -29,7 +30,7 @@
         "Washington", "West Virginia", "Wisconsin", "Wyoming",
     };
 
-    private Task<IEnumerable<string>> Search(string value)
+    private Task<IEnumerable<string>> Search(string value, CancellationToken token)
     {
         var result = string.IsNullOrEmpty(value) ? states : states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
         return Task.FromResult(result);

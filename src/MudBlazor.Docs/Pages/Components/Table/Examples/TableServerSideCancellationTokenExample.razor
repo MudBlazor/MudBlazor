@@ -1,0 +1,53 @@
+﻿@using MudBlazor.Examples.Data.Models
+@using System.Net.Http.Json
+@using System.Threading
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudTable ServerData="ServerReload" Dense="true" Hover="true">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="nr_field" T="Element">Nr</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="sign_field" T="Element">Sign</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="name_field" T="Element">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="position_field" T="Element">Position</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="mass_field" T="Element">Molar mass</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No matching records found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    /// <summary>
+    /// Here we simulate getting the paged, filtered and ordered data from the server, with a token for canceling this request
+    /// </summary>
+    private async Task<TableData<Element>> ServerReload(TableState state, CancellationToken token)
+    {
+        // Forward the provided token to methods which support it
+        var data = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable", token);
+        // Simulate a long-running operation
+        await Task.Delay(300, token);
+        // Get the total count
+        var totalItems = data.Count();
+        // Get the paged data
+        var pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToList();
+        // Return the data
+        return new TableData<Element>() { TotalItems = totalItems, Items = pagedData };
+    }
+}

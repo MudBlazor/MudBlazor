@@ -18,6 +18,6 @@
 	[Parameter] public int MinuteSelectionStep { get; set; } = 1;
 
 
-	public async Task Open() => await InvokeAsync(() => _picker.Open());
-	public async Task Close() => await InvokeAsync(() => _picker.Close());
+    public async Task Open() => await InvokeAsync(() => _picker.OpenAsync());
+    public async Task Close() => await InvokeAsync(() => _picker.CloseAsync());
 }

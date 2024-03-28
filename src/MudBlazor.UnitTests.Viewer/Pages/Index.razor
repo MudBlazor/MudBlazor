@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using System.Reflection
+@using System.Threading
 
 <MudLayout>
     <MudAppBar Elevation="0">
@@ -107,7 +108,7 @@
         return (string)field.GetValue(null);
     }
 
-    private Task<IEnumerable<Type>> Search(string text)
+    private Task<IEnumerable<Type>> Search(string text, CancellationToken token)
     {
         if (string.IsNullOrWhiteSpace(text))
             return Task.FromResult<IEnumerable<Type>>(new Type[0]);

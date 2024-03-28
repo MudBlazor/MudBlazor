@@ -15,28 +15,29 @@
 </MudDialog>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
 
-    void Close() => MudDialog.Close(DialogResult.Ok(true));
+    private void Close() => MudDialog.Close(DialogResult.Ok(true));
 
-    void ChangeTitle()
+    private void ChangeTitle()
     {
-        MudDialog.SetTitle("Current time is: " + DateTime.Now);
+        MudDialog.SetTitle($"Current time is: {DateTime.Now}");
     }
 
-    void ToggleCloseButton()
+    private void ToggleCloseButton()
     {
         MudDialog.Options.CloseButton = !(MudDialog.Options.CloseButton ?? false);
         MudDialog.SetOptions(MudDialog.Options);
     }
 
-    void ToggleFullWidth()
+    private void ToggleFullWidth()
     {
         MudDialog.Options.FullWidth = !(MudDialog.Options.FullWidth ?? true);
         MudDialog.SetOptions(MudDialog.Options);
     }
 
-    void ToggleHeader()
+    private void ToggleHeader()
     {
         MudDialog.Options.NoHeader = !(MudDialog.Options.NoHeader ?? false);
         MudDialog.SetOptions(MudDialog.Options);

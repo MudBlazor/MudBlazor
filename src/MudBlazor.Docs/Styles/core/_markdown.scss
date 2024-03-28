@@ -60,22 +60,22 @@
 
     & .enum {
       color: #00c853;
-      background-color: var(--mud-palette-grey-light);
+      background-color: var(--mud-palette-gray-light);
     }
 
     & .enumValue, .sharpVariable {
       color: var(--mud-palette-text-primary);
-      background-color: var(--mud-palette-grey-light);
+      background-color: var(--mud-palette-gray-light);
     }
 
     & .keyword {
       color: #2196f3;
-      background-color: var(--mud-palette-grey-light);
+      background-color: var(--mud-palette-gray-light);
     }
 
     & .atSign {
       color: var(--mud-palette-text-primary);
-      background-color: var(--mud-palette-grey-light);
+      background-color: var(--mud-palette-gray-light);
     }
 
     & .comment {
@@ -86,7 +86,7 @@
   & .csharp {
     & .atSign {
       color: var(--mud-palette-text-primary);
-      background-color: var(--mud-palette-grey-light);
+      background-color: var(--mud-palette-gray-light);
     }
 
     & .keyword {

@@ -241,35 +241,6 @@ namespace MudBlazor
             }
         }
 
-        [Obsolete($"Use {nameof(OnClickHandlerAsync)} instead. This will be removed in v7")]
-        protected void OnClickHandler(MouseEventArgs ev)
-        {
-            if (Disabled)
-                return;
-            if (!_onClickHandlerPreventDefault)
-            {
-                if (NestedList != null)
-                {
-                    Expanded = !Expanded;
-                }
-                else if (Href != null)
-                {
-                    MudList?.SetSelectedValueAsync(this.Value);
-                    OnClick.InvokeAsync(ev);
-                    UriHelper.NavigateTo(Href, ForceLoad);
-                }
-                else
-                {
-                    MudList?.SetSelectedValueAsync(this.Value);
-                    OnClick.InvokeAsync(ev);
-                }
-            }
-            else
-            {
-                OnClick.InvokeAsync(ev);
-            }
-        }
-
         protected override async Task OnInitializedAsync()
         {
             _expanded = InitiallyExpanded;

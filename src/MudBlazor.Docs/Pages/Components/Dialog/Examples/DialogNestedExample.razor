@@ -2,14 +2,15 @@
 
 @inject IDialogService DialogService
 
-<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+<MudButton @onclick="OpenDialogAsync" Variant="Variant.Filled" Color="Color.Primary">
     Open Simple Dialog
 </MudButton>
 
 @code {
-    private void OpenDialog()
+    private Task OpenDialogAsync()
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
-        var dialog = DialogService.Show<DialogNestedExample_Dialog>("First Level Dialog", options);
+
+        return DialogService.ShowAsync<DialogNestedExample_Dialog>("First Level Dialog", options);
     }
 }

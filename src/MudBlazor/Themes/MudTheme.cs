@@ -6,17 +6,15 @@
     /// </summary>
     public class MudTheme
     {
-#pragma warning disable CS0618
         /// <summary>
         /// Gets or sets the palette for the light theme.
         /// </summary>
-        public Palette Palette { get; set; }
+        public PaletteLight PaletteLight { get; set; }
 
         /// <summary>
         /// Gets or sets the palette for the dark theme.
         /// </summary>
-        public Palette PaletteDark { get; set; }
-#pragma warning restore CS0618
+        public PaletteDark PaletteDark { get; set; }
 
         /// <summary>
         /// Gets or sets the shadow settings.
@@ -48,7 +46,7 @@
         /// </summary>
         public MudTheme()
         {
-            Palette = new PaletteLight();
+            PaletteLight = new PaletteLight();
             PaletteDark = new PaletteDark();
             Shadows = new Shadow();
             Typography = new Typography();

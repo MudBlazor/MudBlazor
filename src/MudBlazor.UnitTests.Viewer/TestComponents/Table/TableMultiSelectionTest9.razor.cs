@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.TestComponents
@@ -32,7 +33,7 @@ namespace MudBlazor.UnitTests.TestComponents
         private HashSet<ComplexObject> _selectedItems = new();
         private ElementComparer Comparer = new();
 
-        protected async Task<TableData<ComplexObject>> ServerData(TableState state)
+        protected async Task<TableData<ComplexObject>> ServerData(TableState state, CancellationToken token)
         {
             try
             {
