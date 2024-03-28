@@ -71,12 +71,12 @@ dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity:sug
 dotnet_style_require_accessibility_modifiers = always:warning
 
 # Expression-level preferences
-dotnet_style_coalesce_expression = true
-dotnet_style_collection_initializer = true
+dotnet_style_coalesce_expression = true:suggestion
+dotnet_style_collection_initializer = true:suggestion
 dotnet_style_explicit_tuple_names = true:suggestion
 dotnet_style_namespace_match_folder = true
-dotnet_style_null_propagation = true
-dotnet_style_object_initializer = true
+dotnet_style_null_propagation = true:suggestion
+dotnet_style_object_initializer = true:suggestion
 dotnet_style_operator_placement_when_wrapping = beginning_of_line
 dotnet_style_prefer_auto_properties = true:suggestion
 dotnet_style_prefer_collection_expression = when_types_loosely_match
@@ -116,8 +116,8 @@ csharp_style_expression_bodied_constructors = false:suggestion
 csharp_style_expression_bodied_indexers = true
 csharp_style_expression_bodied_lambdas = true
 csharp_style_expression_bodied_local_functions = true
-csharp_style_expression_bodied_methods = true
-csharp_style_expression_bodied_operators = true
+csharp_style_expression_bodied_methods = false
+csharp_style_expression_bodied_operators = false
 csharp_style_expression_bodied_properties = true
 
 # Pattern matching preferences
@@ -129,7 +129,7 @@ csharp_style_prefer_pattern_matching = false
 csharp_style_prefer_switch_expression = true
 
 # Null-checking preferences
-csharp_style_conditional_delegate_call = true
+csharp_style_conditional_delegate_call = true:suggestion
 
 # Modifier preferences
 csharp_prefer_static_local_function = true:suggestion
@@ -156,7 +156,7 @@ csharp_style_prefer_null_check_over_type_check = true:suggestion
 csharp_style_prefer_range_operator = false
 csharp_style_prefer_tuple_swap = true:suggestion
 csharp_style_prefer_utf8_string_literals = true
-csharp_style_throw_expression = false
+csharp_style_throw_expression = true:suggestion
 csharp_style_unused_value_assignment_preference = discard_variable:warning
 csharp_style_unused_value_expression_statement_preference = discard_variable
 
