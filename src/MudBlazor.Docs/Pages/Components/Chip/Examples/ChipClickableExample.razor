@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudChip OnClick="OnChipClicked" Color="Color.Default">Clicked @ClickCount times</MudChip>
+<MudChip T="string" OnClick="OnChipClicked" Color="Color.Default">Clicked @ClickCount times</MudChip>
 
 @code {
     private int ClickCount { get; set; }

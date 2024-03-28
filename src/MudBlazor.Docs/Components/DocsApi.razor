@@ -52,7 +52,7 @@
                                 <CodeInline>@context.Name</CodeInline>
                                 @if (_propertiesGrouping == Grouping.Inheritance && IsOverridden(context.PropertyInfo))
                                 {
-                                    <MudChip Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small">overridden</MudChip>
+                                    <MudChip T="string" Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small">overridden</MudChip>
                                 }
                             </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Type">

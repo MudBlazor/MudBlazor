@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor
+@typeparam T
 @inherits MudComponentBase
 
 <div tabindex="0" @attributes="UserAttributes" class="@Classname" style="@Style" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)">
@@ -7,15 +8,7 @@
         {
             @AvatarContent
         }
-#pragma warning disable CS0618
-        else if (!String.IsNullOrEmpty(Avatar))
-        {
-            <MudAvatar Class="@AvatarClass" Color="@Color">
-                <MudIcon Icon="@Avatar" />
-            </MudAvatar>
-        }
-#pragma warning restore CS0618
-        else if (!String.IsNullOrEmpty(Icon) && !IsChecked)
+        else if (!string.IsNullOrEmpty(Icon) && !IsChecked)
         {
             <MudIcon Icon="@Icon" Class="mud-chip-icon" Size="Size.Small" Color="@IconColor" />
         }
@@ -25,9 +18,14 @@
         }
     }
     <span class="mud-chip-content">
-        @if (ChildContent == null)
+        @if (ChildContent is null)
         {
-            @Text
+            @if(Text is null) {
+                @($"{Value}")
+            }
+            else {
+                @Text
+            }
         }
         else
         {

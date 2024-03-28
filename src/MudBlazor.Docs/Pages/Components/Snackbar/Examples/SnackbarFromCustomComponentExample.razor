@@ -7,7 +7,7 @@
 @code {
     private void OnClick()
     {
-        SnackbarService.Add<MudChip>(new Dictionary<string, object>() {
+        SnackbarService.Add<MudChip<T>>(new Dictionary<string, object>() {
             { "Text", "This is a snackbar with a chip!" },
             { "Color", Color.Primary }
         });
