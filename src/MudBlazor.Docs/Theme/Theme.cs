@@ -163,6 +163,8 @@ namespace MudBlazor.Docs
             Background = "#151521",
             Dark = "#111019",
             DarkLighten = "#1A1643",
+            GrayLight = "#2a2833",
+            GrayLighter = "#1e1e2d",
             TextPrimary = "#ffffff",
             TextSecondary = "#92929f",
             TextDisabled = "#ffffff33",
