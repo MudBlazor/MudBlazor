@@ -133,7 +133,7 @@ namespace MudBlazor
 
             var componentParams = new Dictionary<string, object>() { { "Message", new MarkupString(message) } };
 
-            return Add<SnackbarMessageText>(message, componentParams, severity, configure, string.IsNullOrEmpty(key) ? message : key);
+            return AddCore<SnackbarMessageText>(message, componentParams, severity, configure, string.IsNullOrEmpty(key) ? message : key);
         }
 
         public void Clear()
@@ -192,7 +192,7 @@ namespace MudBlazor
             OnSnackbarsUpdated?.Invoke();
         }
 
-        private Snackbar Add<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string text, Dictionary<string, object> componentParameters = null, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "") where T : IComponent
+        private Snackbar AddCore<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string text, Dictionary<string, object> componentParameters = null, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "") where T : IComponent
         {
             var type = typeof(T);
             var message = new SnackbarMessage(type, componentParameters, key) { Text = text };
