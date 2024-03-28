@@ -17,9 +17,6 @@ namespace MudBlazor
 
         RenderFragment RenderFragment { get; set; }
 
-        [Obsolete("This will always return true"), ExcludeFromCodeCoverage]
-        bool AreParametersRendered { get => true; set { } }
-
         Task<DialogResult> Result { get; }
 
         TaskCompletionSource<bool> RenderCompleteTaskCompletionSource { get; }

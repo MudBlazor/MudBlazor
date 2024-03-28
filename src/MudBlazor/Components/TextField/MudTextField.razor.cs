@@ -181,7 +181,4 @@ namespace MudBlazor
         [Category(CategoryTypes.General.Behavior)]
         public int MaxLines { get; set; }
     }
-
-    [Obsolete("MudTextFieldString is no longer available.", true)]
-    public class MudTextFieldString : MudTextField<string> { }
 }

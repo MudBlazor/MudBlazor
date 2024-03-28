@@ -38,7 +38,7 @@
     width: 100%;
     height: calc(100vw / 5);
     min-height: 200px;
-    background-color: var(--mud-palette-background-grey);
+    background-color: var(--mud-palette-background-gray);
     top: 0;
     left: 0;
     position: absolute;
@@ -51,7 +51,7 @@
     height: 100%;
     min-height: 200px;
     max-height: 384px;
-    background-color: var(--mud-palette-background-grey);
+    background-color: var(--mud-palette-background-gray);
     bottom: 0;
     left: 0;
     position: absolute;
@@ -295,18 +295,18 @@
 
   .mud-link {
     margin: 8px 0px;
-    color: var(--mud-palette-grey-default);
+    color: var(--mud-palette-gray-default);
     cursor: pointer;
     transition: color 200ms cubic-bezier(.4,0,.2,1) 0ms;
 
     @media(hover: hover) and (pointer: fine) {
       &:hover {
-        color: var(--mud-palette-grey-light);
+        color: var(--mud-palette-gray-light);
       }
     }
 
     &:active {
-      color: var(--mud-palette-grey-light);
+      color: var(--mud-palette-gray-light);
     }
   }
 
@@ -390,7 +390,7 @@
       }
 
       &.sweet {
-        background-color: var(--mud-palette-background-grey);
+        background-color: var(--mud-palette-background-gray);
       }
     }
 
@@ -423,7 +423,7 @@
         }
 
         &.sweet {
-          background-color: var(--mud-palette-background-grey);
+          background-color: var(--mud-palette-background-gray);
         }
 
         &.background {
@@ -564,7 +564,7 @@
   }
 
   .dark-section-text {
-    color: var(--mud-palette-grey-lighter);
+    color: var(--mud-palette-gray-lighter);
   }
 
   .world-map {
@@ -658,7 +658,7 @@
         bottom: -100%;
         width: 100%;
         height: 150%;
-        background: linear-gradient(0deg, var(--mud-palette-background-grey) 0%, rgba(249,250,252,0) 100%);
+        background: linear-gradient(0deg, var(--mud-palette-background-gray) 0%, rgba(249,250,252,0) 100%);
       }
     }
 

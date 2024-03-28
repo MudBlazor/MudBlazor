@@ -7,6 +7,7 @@
 
   .mud-#{$color}-text {
     color: var(--mud-palette-#{$color}) !important;
+    --mud-ripple-color: var(--mud-palette-#{$color}) !important;
   }
 
   .mud-#{$color}-hover {
@@ -48,7 +49,7 @@
 }
 
 .mud-background-gray {
-  background-color: var(--mud-palette-background-grey) !important;
+  background-color: var(--mud-palette-background-gray) !important;
 }
 
 .mud-theme-transparent {

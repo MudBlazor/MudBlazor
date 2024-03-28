@@ -1,20 +1,19 @@
 ﻿@namespace MudBlazor.Docs.Examples
-
-<MudChipSet @bind-SelectedChip="selected" Filter="true" Mandatory="@mandatory">
-    <MudChip Text="grey" Value="0">Default</MudChip>
-    <MudChip Text="purple" Color="Color.Primary" Value="1">Primary</MudChip>
-    <MudChip Text="pink" Color="Color.Secondary" Value="2">Secondary</MudChip>
-    <MudChip Text="blue" Color="Color.Info" Value="3">Info</MudChip>
-    <MudChip Text="green" Color="Color.Success" Value="4">Success</MudChip>
-    <MudChip Text="orange" Color="Color.Warning" Value="5">Warning</MudChip>
-    <MudChip Text="red" Color="Color.Error" Value="6">Error</MudChip>
-    <MudChip Text="black" Color="Color.Dark" Value="7">Dark</MudChip>
+V
+<MudChipSet @bind-SelectedValue="_selected" Filter="true" Mandatory="@mandatory">
+    <MudChip Text="purple" Color="Color.Primary" Value="@Color.Primary">Primary</MudChip>
+    <MudChip Text="pink" Color="Color.Secondary" Value="@Color.Secondary">Secondary</MudChip>
+    <MudChip Text="blue" Color="Color.Info" Value="@Color.Info">Info</MudChip>
+    <MudChip Text="green" Color="Color.Success" Value="@Color.Success">Success</MudChip>
+    <MudChip Text="orange" Color="Color.Warning" Value="@Color.Warning">Warning</MudChip>
+    <MudChip Text="red" Color="Color.Error" Value="@Color.Error">Error</MudChip>
+    <MudChip Text="black" Color="Color.Dark" Value="@Color.Dark">Dark</MudChip>
 </MudChipSet>
 
 <div class="d-flex flex-column align-center">
     @if (selected != null)
     {
-        <MudText>You selected the <MudText Color="@selected.Color" Inline="true">@selected.Text</MudText> chip.</MudText>
+        <MudText>You selected the <MudText Color="@_selected" Inline="true">@selected.Text</MudText> chip.</MudText>
     }
     <MudCheckBox @bind-Value="mandatory">Mandatory</MudCheckBox>
 </div>
@@ -22,6 +21,6 @@
 @code
 {
     bool mandatory = true;
-    MudChip<int> selected;
+    Color _selected;
 }
 

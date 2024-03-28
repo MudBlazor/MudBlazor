@@ -61,7 +61,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     }
 
     [CascadingParameter]
-    MudChipSet<T> ChipSet { get; set; }
+    private MudChipSet<T> ChipSet { get; set; }
 
     /// <summary>
     /// The color of the component.
