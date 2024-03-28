@@ -254,8 +254,8 @@ partial class MudThemingProvider : ComponentBase, IDisposable
         
         //Ripple
         theme.AppendLine($"--{Ripple}-color: var(--{Palette}-text-primary);");
-        theme.AppendLine($"--{Ripple}-opacity: {Theme.Palette.RippleOpacity.ToString(CultureInfo.InvariantCulture)};");
-        theme.AppendLine($"--{Ripple}-opacity-secondary: {Theme.Palette.RippleOpacitySecondary.ToString(CultureInfo.InvariantCulture)};");
+        theme.AppendLine($"--{Ripple}-opacity: {Theme.PaletteLight.RippleOpacity.ToString(CultureInfo.InvariantCulture)};");
+        theme.AppendLine($"--{Ripple}-opacity-secondary: {Theme.PaletteLight.RippleOpacitySecondary.ToString(CultureInfo.InvariantCulture)};");
 
         //Elevations
         theme.AppendLine($"--{Elevation}-0: {Theme.Shadows.Elevation.GetValue(0)};");
