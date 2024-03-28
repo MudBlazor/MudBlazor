@@ -178,12 +178,15 @@
                                                     @Filter(f, null)
                                                 }
                                             </MudStack>
-                                            <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary" Variant="Variant">@Localizer["MudDataGrid.AddFilter"]</MudButton>
-                                            @if (ServerData != null)
-                                            {
-                                                <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary" Variant="Variant">@Localizer["MudDataGrid.Apply"]</MudButton>
-                                            }
-                                            <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary" Variant="Variant">@Localizer["MudDataGrid.Clear"]</MudButton>
+                                            
+                                            <MudButtonGroup OverrideStyles="false">
+                                                <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary" Variant="Variant">@Localizer["MudDataGrid.AddFilter"]</MudButton>
+                                                @if (ServerData != null)
+                                                {
+                                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary" Variant="Variant">@Localizer["MudDataGrid.Apply"]</MudButton>
+                                                }
+                                                <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary" Variant="Variant">@Localizer["MudDataGrid.Clear"]</MudButton>
+                                            </MudButtonGroup>
                                         }
                                         else
                                         {
