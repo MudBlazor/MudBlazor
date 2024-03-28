@@ -6,14 +6,7 @@
         <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text">MudBlazor</MudText>
     </NavLink>
     <MudSpacer/>
-    @if (DisplaySearchBar)
-    {
-        <MudIconButton Icon="@Icons.Material.Rounded.Search" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => OpenSearchDialog())"/>
-    }
-    else
-    {
-        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Edge="Edge.End" Href="https://github.com/MudBlazor/MudBlazor/"/>
-    }
+    <MudIconButton Icon="@Icons.Material.Rounded.Search" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => OpenSearchDialog())"/>
 </div>
 <div class="d-none d-md-flex align-center flex-grow-1">
     <NavLink ActiveClass="d-flex align-center me-4" href="/">
@@ -67,25 +60,15 @@
         </MudList>
     </MudMenu>
     <MudSpacer/>
-    @if (DisplaySearchBar)
-    {
-        <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" Class="docs-search-bar mx-4"
-                         AutoFocus="true" Placeholder="Search" Variant="Variant.Outlined"
-                         SearchFunc="async text => await Search(text)" ValueChanged="OnSearchResult" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search">
-            <ItemTemplate Context="result">
-                <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
-            </ItemTemplate>
-        </MudAutocomplete>
-        <MudDivider FlexItem="true" Vertical="true" DividerType="DividerType.Middle" Class="mx-4 my-4"/>
-    }
-    else
-    {
-        <MudIconButton Class="mr-0" Icon="@Icons.Material.Rounded.Search" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => OpenSearchDialog())"/>
-    }
+    <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" Class="docs-search-bar ml-4"
+                        AutoFocus="true" Placeholder="Search" Variant="Variant.Outlined"
+                        SearchFunc="async text => await Search(text)" ValueChanged="OnSearchResult" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search">
+        <ItemTemplate Context="result">
+            <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
+        </ItemTemplate>
+    </MudAutocomplete>
+    <MudDivider FlexItem="true" Vertical="true" DividerType="DividerType.Middle" Class="mx-4 my-4"/>
     <AppbarButtons/>
-    <MudTooltip Duration="1000" Text="GitHub Repository" ShowOnFocus="false">
-        <MudIconButton Href="https://github.com/MudBlazor/MudBlazor/" Target="_blank" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Edge="Edge.End"/>
-    </MudTooltip>
 </div>
 
 <MudDialog @bind-IsVisible="IsSearchDialogOpen" Options="_dialogOptions" Class="docs-gray-bg" ClassContent="docs-mobile-dialog-search d-flex flex-column" DefaultFocus="DefaultFocus.FirstChild">
