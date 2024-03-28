@@ -193,7 +193,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<TimeSpan?> TimeChanged { get; set; }
 
-        protected override Task StringValueChanged(string value)
+        protected override Task StringValueChangedAsync(string value)
         {
             Touched = true;
             // Update the time property (without updating back the Value property)
@@ -575,11 +575,11 @@ namespace MudBlazor
             }
         }
 
-        protected internal override async void HandleKeyDown(KeyboardEventArgs obj)
+        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
-            base.HandleKeyDown(obj);
+            await base.OnHandleKeyDownAsync(obj);
             switch (obj.Key)
             {
                 case "ArrowRight":

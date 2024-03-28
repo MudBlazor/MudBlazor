@@ -1,16 +1,26 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
 
-<div class="@Classnames" @onclick:stopPropagation="true">
+<div class="@Classname" @onclick:stopPropagation="true">
     @ChildContent
 </div>
 
-@code {
-    protected string Classnames =>
-    new CssBuilder("mud-picker-content")
-      .AddClass(Class)
-    .Build();
 
-    [Parameter] public string Class { get; set; }
-    [Parameter] public RenderFragment ChildContent { get; set; }
+@code {
+    protected string Classname =>
+        new CssBuilder("mud-picker-content")
+          .AddClass(Class)
+        .Build();
+
+    /// <summary>
+    /// CSS class that will be applied to the content container
+    /// </summary>
+    [Parameter]
+    public string Class { get; set; }
+
+    /// <summary>
+    /// Child content of component.
+    /// </summary>
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
 }
