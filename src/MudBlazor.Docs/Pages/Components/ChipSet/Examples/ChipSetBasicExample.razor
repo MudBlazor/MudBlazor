@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
-V
-<MudChipSet @bind-SelectedValue="_selected" Filter="true" Mandatory="@mandatory">
+
+<MudChipSet T="Color" @bind-SelectedValue="_selected" Filter="true" Mandatory="@mandatory">
     <MudChip Text="purple" Color="Color.Primary" Value="@Color.Primary">Primary</MudChip>
     <MudChip Text="pink" Color="Color.Secondary" Value="@Color.Secondary">Secondary</MudChip>
     <MudChip Text="blue" Color="Color.Info" Value="@Color.Info">Info</MudChip>
@@ -11,9 +11,9 @@ V
 </MudChipSet>
 
 <div class="d-flex flex-column align-center">
-    @if (selected != null)
+    @if (_selected != default)
     {
-        <MudText>You selected the <MudText Color="@_selected" Inline="true">@selected.Text</MudText> chip.</MudText>
+        <MudText>You selected the <MudText Color="@_selected" Inline="true">@_selected.ToDescriptionString()</MudText> chip.</MudText>
     }
     <MudCheckBox @bind-Value="mandatory">Mandatory</MudCheckBox>
 </div>
