@@ -263,7 +263,7 @@ namespace MudBlazor
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
         }
-        
+
         public static class DropZone
         {
             public const string Appearance = "Appearance";
@@ -290,6 +290,12 @@ namespace MudBlazor
         {
             public const string Data = "Data";
             public const string Validation = "Validation";
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
+        public static class FileUpload
+        {
             public const string Behavior = "Behavior";
             public const string Appearance = "Appearance";
         }

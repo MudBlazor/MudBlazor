@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="9" Class="d-flex flex-column align-center justify-center">
+        <MudButton Class="mb-4" tabindex="-1" Variant="Variant.Outlined" OnClick="@(async() => await _iconButton1.FocusAsync())">Focus The Element</MudButton>
+        <MudTooltip ShowOnClick="_click" ShowOnFocus="_focus" ShowOnHover="_hover" Text="Im Mud Tooltip">
+            <MudIconButton @ref="_iconButton1" Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Primary" Size="Size.Large" />
+        </MudTooltip>
+    </MudItem>
+
+    <MudItem xs="12" sm="6" md="3">
+        <MudCheckBox @bind-Value="_focus" Label="Show On Focus" Color="Color.Primary" />
+        <MudCheckBox @bind-Value="_hover" Label="Show On Hover" Color="Color.Primary" />
+        <MudCheckBox @bind-Value="_click" Label="Click" Color="Color.Primary" />
+    </MudItem>
+</MudGrid>
+
+
+@code {
+
+    bool _click = false;
+    bool _hover = true;
+    bool _focus = true;
+
+    MudIconButton _iconButton1;
+}

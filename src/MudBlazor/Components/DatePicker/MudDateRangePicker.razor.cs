@@ -54,6 +54,8 @@ namespace MudBlazor
                     return;
                 }
 
+                Touched = true;
+
                 _dateRange = range;
                 _value = range?.End;
 
@@ -75,7 +77,8 @@ namespace MudBlazor
                 }
 
                 await DateRangeChanged.InvokeAsync(_dateRange);
-                BeginValidate();
+                await BeginValidateAsync();
+                FieldChanged(_value);
             }
         }
 
@@ -169,25 +172,39 @@ namespace MudBlazor
             base.OnPickerClosed();
         }
 
+        private bool CheckDateRange(DateTime day, Func<DateTime, DateTime, bool> compareStart, Func<DateTime, DateTime, bool> compareEnd)
+        {
+            return _firstDate is null
+                && _dateRange is { Start: { } start, End: { } end }
+                && compareStart(start.Date, day)
+                && compareEnd(end.Date, day);
+        }
+
         protected override string GetDayClasses(int month, DateTime day)
         {
             var b = new CssBuilder("mud-day");
+            b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
             if (day < GetMonthStart(month) || day > GetMonthEnd(month))
             {
                 return b.AddClass("mud-hidden").Build();
             }
 
-            if ((_firstDate != null && _secondDate != null && _firstDate < day && _secondDate > day) ||
-                (_firstDate == null && _dateRange != null && _dateRange.Start < day && _dateRange.End > day))
+            static bool isLessThan(DateTime date1, DateTime date2) => date1 < date2;
+            static bool isGreaterThan(DateTime date1, DateTime date2) => date1 > date2;
+            static bool isEqualTo(DateTime date1, DateTime date2) => date1 == date2;
+            static bool isNotEqualTo(DateTime date1, DateTime date2) => date1 != date2;
+
+
+            if ((_firstDate?.Date < day && _secondDate?.Date > day) || CheckDateRange(day, compareStart: isLessThan, compareEnd: isGreaterThan))
             {
                 return b
                     .AddClass("mud-range")
                     .AddClass("mud-range-between")
+                    .AddClass($"mud-current mud-{Color.ToDescriptionString()}-text mud-button-outlined mud-button-outlined-{Color.ToDescriptionString()}", day == DateTime.Today)
                     .Build();
             }
 
-            if ((_firstDate != null && day == _firstDate) ||
-                (_firstDate == null && _dateRange != null && _dateRange.Start == day && DateRange.End != day))
+            if (_firstDate?.Date == day || CheckDateRange(day, compareStart: isEqualTo, compareEnd: isNotEqualTo))
             {
                 return b.AddClass("mud-selected")
                     .AddClass("mud-range")
@@ -197,8 +214,7 @@ namespace MudBlazor
                     .Build();
             }
 
-            if ((_firstDate != null && _secondDate != null && day == _secondDate) ||
-                (_firstDate == null && _dateRange != null && _dateRange.Start != day && _dateRange.End == day))
+            if ((_firstDate is { } && _secondDate?.Date == day) || CheckDateRange(day, compareStart: isNotEqualTo, compareEnd: isEqualTo))
             {
                 return b.AddClass("mud-selected")
                     .AddClass("mud-range")
@@ -207,24 +223,23 @@ namespace MudBlazor
                     .Build();
             }
 
-            if (_firstDate == null && _dateRange != null && _dateRange.Start == _dateRange.End && _dateRange.Start == day)
+            if (CheckDateRange(day, compareStart: isEqualTo, compareEnd: isEqualTo))
             {
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
             }
-            else if (_firstDate != null && day > _firstDate)
+            else if (_firstDate?.Date < day)
             {
-                return b.AddClass("mud-range")
-                    .AddClass("mud-range-selection", _secondDate == null)
-                    .AddClass($"mud-range-selection-{Color.ToDescriptionString()}", _firstDate != null)
+                return b.AddClass("mud-range", _secondDate is null && day != DateTime.Today)
+                    .AddClass("mud-range-selection")
+                    .AddClass($"mud-range-selection-{Color.ToDescriptionString()}", _firstDate is not null)
+                    .AddClass($"mud-current mud-{Color.ToDescriptionString()}-text mud-button-outlined mud-button-outlined-{Color.ToDescriptionString()}", day == DateTime.Today)
                     .Build();
             }
 
             if (day == DateTime.Today)
             {
                 return b.AddClass("mud-current")
-                    .AddClass("mud-range", _firstDate != null && day > _firstDate)
-                    .AddClass("mud-range-selection", _firstDate != null && day > _firstDate)
-                    .AddClass($"mud-range-selection-{Color.ToDescriptionString()}", _firstDate != null && day > _firstDate)
+                    .AddClass($"mud-button-outlined mud-button-outlined-{Color.ToDescriptionString()}")
                     .AddClass($"mud-{Color.ToDescriptionString()}-text")
                     .Build();
             }
@@ -242,7 +257,7 @@ namespace MudBlazor
             }
 
             _secondDate = dateTime;
-            if (PickerActions == null)
+            if (PickerActions == null || AutoClose)
             {
                 Submit();
 
@@ -262,7 +277,7 @@ namespace MudBlazor
 
         protected internal override async void Submit()
         {
-            if (ReadOnly)
+            if (GetReadOnlyState())
                 return;
             if (_firstDate == null || _secondDate == null)
                 return;
@@ -296,12 +311,14 @@ namespace MudBlazor
             return date.StartOfMonth(Culture);
         }
 
-        protected override int GetCalendarYear(int year)
+        protected override int GetCalendarYear(DateTime yearDate)
         {
             var date = DateRange?.Start ?? DateTime.Today;
-            var diff = date.Year - year;
+            var diff = Culture.Calendar.GetYear(date) - Culture.Calendar.GetYear(yearDate);
             var calenderYear = Culture.Calendar.GetYear(date);
             return calenderYear - diff;
+
         }
+
     }
 }

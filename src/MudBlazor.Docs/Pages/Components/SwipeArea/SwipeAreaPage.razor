@@ -1,7 +1,7 @@
 ﻿@page "/components/swipearea"
 
 <DocsPage>
-    <DocsPageHeader Title="Swipe area">
+    <DocsPageHeader Title="Swipe Area">
         <Description>Note: these examples only work on devices where touch events are supported.</Description>
     </DocsPageHeader>
     <DocsPageContent>
@@ -12,6 +12,15 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="SwipeDirectionsExample">
                 <SwipeDirectionsExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Prevent default browser behavior">
+                <Description>Browser will not scroll when <CodeInline>PreventDefault</CodeInline> is set to <CodeInline>true</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="SwipeDirectionsPreventDefaultExample">
+                <SwipeDirectionsPreventDefaultExample />
             </SectionContent>
         </DocsPageSection>
 

@@ -2,15 +2,20 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudInput<T> : MudBaseInput<T>
+    public partial class MudInput<T> : MudBaseInput<T>, IAsyncDisposable
     {
-        protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder));
+        protected string Classname =>
+           new CssBuilder(
+               MudInputCssHelper.GetClassname(this,
+                   () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel))
+            .AddClass("mud-input-auto-grow", when: () => AutoGrow)
+            .Build();
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
@@ -86,6 +91,11 @@ namespace MudBlazor
             }
         }
 
+        public override ValueTask BlurAsync()
+        {
+            return ElementReference.MudBlurAsync();
+        }
+
         public override ValueTask SelectAsync()
         {
             return ElementReference.MudSelectAsync();
@@ -143,42 +153,43 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string NumericDownIcon { get; set; } = Icons.Material.Filled.KeyboardArrowDown;
 
+        /// <summary>
+        /// If true the input element will grow automatically with the text.
+        /// </summary>
+        [Parameter] public bool AutoGrow { get; set; }
+
+        /// <summary>
+        /// If AutoGrow is set to true, the input element will not grow bigger than MaxLines lines. If MaxLines is set to 0
+        /// or less, the property will be ignored.
+        /// </summary>
+        [Parameter] public int MaxLines { get; set; }
+
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
-        private bool _showClearable;
-
-        private void UpdateClearable(object value)
-        {
-            var showClearable = Clearable && ((value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (value is not string && value is not null));
-            if (_showClearable != showClearable)
-                _showClearable = showClearable;
-        }
-
-        protected override async Task UpdateTextPropertyAsync(bool updateValue)
-        {
-            await base.UpdateTextPropertyAsync(updateValue);
-            if (Clearable)
-                UpdateClearable(Text);
-        }
-
-        protected override async Task UpdateValuePropertyAsync(bool updateText)
-        {
-            await base.UpdateValuePropertyAsync(updateText);
-            if (Clearable)
-                UpdateClearable(Value);
-        }
+        /// <summary>
+        /// If true, Clearable is true and there is a non null value (non-string for string values)
+        /// </summary>
+        private bool GetClearable() => Clearable && ((Value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (Value is not string && Value is not null));
 
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
         {
             await SetTextAsync(string.Empty, updateValue: true);
+            await ElementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
 
+        private string _oldText = null;
         private string _internalText;
+        private bool _shouldInitAutoGrow;
 
         public override async Task SetParametersAsync(ParameterView parameters)
         {
+            var oldLines = Lines;
+            var oldMaxLines = MaxLines;
+            var oldAutoGrow = AutoGrow;
+
             await base.SetParametersAsync(parameters);
+
             //if (!_isFocused || _forceTextUpdate)
             //    _internalText = Text;
             if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
@@ -193,6 +204,52 @@ namespace MudBlazor
                 // in WASM (or in BSS with TextUpdateSuppression==false) we always update
                 _internalText = Text;
             }
+
+            // Flag AutoGrow to be initialized on the next render.
+            if (!oldAutoGrow && AutoGrow)
+            {
+                _shouldInitAutoGrow = true;
+            }
+
+            if (IsJSRuntimeAvailable)
+            {
+                if (oldAutoGrow && !AutoGrow)
+                {
+                    // Disable AutoGrow.
+                    _shouldInitAutoGrow = false;
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+                }
+                else if (oldLines != Lines || oldMaxLines != MaxLines)
+                {
+                    if (AutoGrow && !_shouldInitAutoGrow)
+                    {
+                        // Update AutoGrow parameters (if it was already enabled).
+                        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.updateParams", ElementReference, MaxLines);
+                    }
+                }
+            }
+        }
+
+        [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (AutoGrow)
+            {
+                if (firstRender || _shouldInitAutoGrow)
+                {
+                    _shouldInitAutoGrow = false;
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.initAutoGrow", ElementReference, MaxLines);
+                    _oldText = _internalText;
+                }
+                else if (_oldText != _internalText)
+                {
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.adjustHeight", ElementReference);
+                    _oldText = _internalText;
+                }
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         /// <summary>
@@ -206,12 +263,19 @@ namespace MudBlazor
             return SetTextAsync(text);
         }
 
-
         // Certain HTML5 inputs (dates and color) have a native placeholder
         private bool HasNativeHtmlPlaceholder()
         {
             return GetInputType() is InputType.Color or InputType.Date or InputType.DateTimeLocal or InputType.Month
                 or InputType.Time or InputType.Week;
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (AutoGrow && IsJSRuntimeAvailable)
+            {
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+            }
         }
     }
 

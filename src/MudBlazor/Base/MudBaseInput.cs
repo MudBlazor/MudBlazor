@@ -1,14 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>
     {
+        private bool _isDirty;
+        /// <summary>
+        /// this flag is set to true by validation in order to prevent multiple invocations of validation after a single
+        /// value change. When the value changes _validated is set back to false.
+        /// </summary>
+        private bool _validated;
+
         protected MudBaseInput() : base(new DefaultConverter<T>()) { }
 
         /// <summary>
@@ -17,6 +27,8 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
+        [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
+        protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         /// <summary>
         /// If true, the input will be read-only.
@@ -24,6 +36,8 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
+        [CascadingParameter(Name = "ParentReadOnly")] private bool ParentReadOnly { get; set; }
+        protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         /// <summary>
         /// If true, the input will take up the full width of its container.
@@ -81,6 +95,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public Adornment Adornment { get; set; } = Adornment.None;
+
+        /// <summary>
+        /// The validation is only triggered if the user has changed the input value at least once. By default, it is false
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool OnlyValidateIfDirty { get; set; } = false;
 
         /// <summary>
         /// The color of the adornment if used. It supports the theme colors.
@@ -197,6 +218,13 @@ namespace MudBlazor
         public virtual string Pattern { get; set; }
 
         /// <summary>
+        /// ShrinkLabel prevents the label from moving down into the field when the field is empty.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool ShrinkLabel { get; set; } = false;
+
+        /// <summary>
         /// Derived classes need to override this if they can be something other than text
         /// </summary>
         internal virtual InputType GetInputType() { return InputType.Text; }
@@ -206,6 +234,7 @@ namespace MudBlazor
             if (Text != text)
             {
                 Text = text;
+                _validated = false;
                 if (!string.IsNullOrWhiteSpace(Text))
                     Touched = true;
                 if (updateValue)
@@ -227,6 +256,8 @@ namespace MudBlazor
         /// </summary>
         /// <returns>The ValueTask</returns>
         public virtual ValueTask FocusAsync() { return new ValueTask(); }
+
+        public virtual ValueTask BlurAsync() { return new ValueTask(); }
 
         public virtual ValueTask SelectAsync() { return new ValueTask(); }
 
@@ -250,11 +281,20 @@ namespace MudBlazor
 
         protected bool _isFocused;
 
-        protected internal virtual void OnBlurred(FocusEventArgs obj)
+        protected internal virtual async Task OnBlurredAsync(FocusEventArgs obj)
         {
+            if (ReadOnly)
+                return;
             _isFocused = false;
-            Touched = true;
-            BeginValidateAfter(OnBlur.InvokeAsync(obj));
+
+            if (!OnlyValidateIfDirty || _isDirty)
+            {
+                Touched = true;
+                if (_validated)
+                    await OnBlur.InvokeAsync(obj);
+                else
+                    await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
+            }
         }
 
         /// <summary>
@@ -262,10 +302,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
+        [Obsolete($"Use {nameof(InvokeKeyDownAsync)} instead, this will be removed in v7.")]
         protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
         {
             _isFocused = true;
             OnKeyDown.InvokeAsync(obj).AndForget();
+        }
+
+        protected virtual Task InvokeKeyDownAsync(KeyboardEventArgs obj)
+        {
+            _isFocused = true;
+            return OnKeyDown.InvokeAsync(obj);
         }
 
         /// <summary>
@@ -279,11 +326,20 @@ namespace MudBlazor
         /// <summary>
         /// Fired on the KeyPress event.
         /// </summary>
+        [Obsolete("This will be removed in v7")]
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
 
+        [Obsolete("This will be removed in v7")]
         protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
         {
             OnKeyPress.InvokeAsync(obj).AndForget();
+        }
+
+        protected internal virtual void InvokeKeyPressObsolete(KeyboardEventArgs obj)
+        {
+#pragma warning disable CS0618
+            InvokeKeyPress(obj);
+#pragma warning restore CS0618
         }
 
         /// <summary>
@@ -291,17 +347,39 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
+        [Obsolete("This will be removed in v7")]
         public bool KeyPressPreventDefault { get; set; }
+
+        internal bool KeyPressPreventDefaultObsolete
+        {
+#pragma warning disable CS0618
+            get
+            {
+                return KeyPressPreventDefault;
+            }
+            set
+            {
+                KeyPressPreventDefault = value;
+            }
+#pragma warning restore CS0618
+        }
 
         /// <summary>
         /// Fired on the KeyUp event.
         /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
+        [Obsolete($"Use {nameof(InvokeKeyUpAsync)} instead. This will be removed in v7")]
         protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
         {
             _isFocused = true;
             OnKeyUp.InvokeAsync(obj).AndForget();
+        }
+
+        protected virtual Task InvokeKeyUpAsync(KeyboardEventArgs obj)
+        {
+            _isFocused = true;
+            return OnKeyUp.InvokeAsync(obj);
         }
 
         /// <summary>
@@ -328,16 +406,28 @@ namespace MudBlazor
             set => _value = value;
         }
 
-        protected virtual async Task SetValueAsync(T value, bool updateText = true)
+        protected virtual async Task SetValueAsync(T value, bool updateText = true, bool force = false)
         {
-            if (!EqualityComparer<T>.Default.Equals(Value, value))
+            if (!EqualityComparer<T>.Default.Equals(Value, value) || force == true)
             {
+                _isDirty = true;
+                _validated = false;
                 Value = value;
+                await ValueChanged.InvokeAsync(Value);
                 if (updateText)
                     await UpdateTextPropertyAsync(false);
-                await ValueChanged.InvokeAsync(Value);
-                BeginValidate();
+                FieldChanged(Value);
+                await BeginValidateAsync();
             }
+        }
+
+        /// <summary>
+        /// Sync the value, values and text, calls validation manually. Useful to call after user changes value or text programmatically.
+        /// </summary>
+        /// <returns></returns>
+        public virtual async Task ForceUpdate()
+        {
+            await SetValueAsync(Value, force: true);
         }
 
         /// <summary>
@@ -388,12 +478,13 @@ namespace MudBlazor
             return changed;
         }
 
-        protected override Task ValidateValue()
+        protected override async Task ValidateValue()
         {
-            if (Standalone)
-                return base.ValidateValue();
-
-            return Task.CompletedTask;
+            if (SubscribeToParentForm)
+            {
+                _validated = true;
+                await base.ValidateValue();
+            }
         }
 
         protected override async Task OnInitializedAsync()
@@ -404,6 +495,9 @@ namespace MudBlazor
             // equal to the initial value. This is why we force an update to the Text property here.
             if (typeof(T) != typeof(string))
                 await UpdateTextPropertyAsync(false);
+
+            if (Label == null && For != null)
+                Label = For.GetLabelString();
         }
 
         public virtual void ForceRender(bool forceTextUpdate)
@@ -456,14 +550,26 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            if (Standalone)
+            if (SubscribeToParentForm)
                 base.OnParametersSet();
         }
 
+        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
+        [ExcludeFromCodeCoverage]
         protected override void ResetValue()
         {
             SetTextAsync(null, updateValue: true).AndForget();
+            this._isDirty = false;
+            this._validated = false;
             base.ResetValue();
+        }
+
+        protected override async Task ResetValueAsync()
+        {
+            await SetTextAsync(null, updateValue: true);
+            this._isDirty = false;
+            this._validated = false;
+            await base.ResetValueAsync();
         }
     }
 }

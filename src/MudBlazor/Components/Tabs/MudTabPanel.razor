@@ -26,7 +26,8 @@ else
 
 
     /// <summary>
-    /// Text will be displayed in the TabPanel as TabTitle.
+    /// Text will be displayed in the TabPanel as TabTitle. Text is no longer rendered
+    /// as a MarkupString, so use the TabContent RenderFragment instead for HTML content.
     /// </summary>
     [Parameter] 
     [Category(CategoryTypes.Tabs.Behavior)]
@@ -45,6 +46,13 @@ else
     [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
     public bool Disabled { get; set; }
+
+    /// <summary>
+    /// MudDynamicTabs: If true, shows the close icon in the TabPanel.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public bool ShowCloseIcon { get; set; } = true;
 
     /// <summary>
     /// Optional information to be showed into a badge
@@ -87,7 +95,23 @@ else
     public RenderFragment ChildContent { get; set; }
 
     /// <summary>
-    /// TabPanel Tooltip
+    /// Tab content of component.
+    /// </summary>
+    [Parameter] 
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public RenderFragment TabContent { get; set; }
+
+    /// <summary>
+    /// Tab content wrapper of component. It is used to wrap the content of a tab heading in a user supplied div or component. 
+    /// Use @context in the TabWrapperContent to render the tab header within your custom wrapper. 
+    /// This is most useful with tooltips, which must wrap the entire content they refer to.
+    /// </summary>
+    [Parameter] 
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public RenderFragment<RenderFragment> TabWrapperContent { get; set; }
+
+    /// <summary>
+    /// TabPanel Tooltip. It will be ignored if TabContent is provided.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
@@ -117,7 +141,7 @@ else
         if(_disposed == true) { return;  }
 
         _disposed = true;
-        await Parent?.RemovePanel(this);
-
+        if (Parent is not null)
+            await Parent.RemovePanel(this);
     }
 }

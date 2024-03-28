@@ -2,8 +2,12 @@
 @typeparam T
 @inherits MudFormComponent<T, T>
 
-<CascadingValue Value="@((IMudRadioGroup)this)" IsFixed="true">
-    <div role="radiogroup" @attributes="UserAttributes" class=@Class style="@Style">
-        @ChildContent
-    </div>
-</CascadingValue>
+<MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorText="@GetErrorText()" Required="@Required">
+    <InputContent>
+        <CascadingValue Value="@((IMudRadioGroup)this)" IsFixed="false">
+            <div role="radiogroup" @attributes="UserAttributes" class="@GetInputClass()" style="@InputStyle">
+                @ChildContent
+            </div>
+        </CascadingValue>
+    </InputContent>
+</MudInputControl>

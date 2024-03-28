@@ -19,7 +19,8 @@
           GroupBy="@_groupDefinition"
           GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
           GroupFooterClass="mb-4"
-          Dense="true">
+          Dense="true"
+          @ref="_tableRef">
     <ColGroup>
         <col style="width: 60px;" />
         <col />
@@ -36,7 +37,7 @@
         <MudTh>Molar mass</MudTh>
     </HeaderContent>
     <GroupHeaderTemplate>
-        <MudTh Class="mud-table-cell-custom-group" colspan="5">@($"{context.GroupName}: {context.Key}")</MudTh>
+        <MudTh Class="mud-table-cell-custom-group" colspan="5">@($"{context.GroupName}: {context.Key}") </MudTh>
     </GroupHeaderTemplate>
     <RowTemplate>
         <MudTd DataLabel="Nr">@context.Number</MudTd>
@@ -50,15 +51,20 @@
     </GroupFooterTemplate>
 </MudTable>
 
-@code { 
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="@((args) => _tableRef?.ExpandAllGroups())">Expand all groups</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-3 ml-3" OnClick="@((args) => _tableRef?.CollapseAllGroups())">Collapse all groups</MudButton>
+
+@code {
+    private MudTable<Element> _tableRef;
+
     private TableGroupDefinition<Element> _groupDefinition = new()
-    {
-        GroupName = "Group",
-        Indentation = false,
-        Expandable = true,
-        IsInitiallyExpanded = false,
-        Selector = (e) => e.Group
-    };
+        {
+            GroupName = "Group",
+            Indentation = false,
+            Expandable = true,
+            IsInitiallyExpanded = false,
+            Selector = (e) => e.Group
+        };
 
     private IEnumerable<Element> Elements = new List<Element>();
 

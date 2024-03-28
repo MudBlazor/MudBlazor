@@ -1,12 +1,17 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
+#nullable enable
     public abstract class MudBaseSelectItem : MudComponentBase
     {
+        [Inject]
+        private NavigationManager UriHelper { get; set; } = null!;
+
         /// <summary>
         /// If true, the input element will be disabled.
         /// </summary>
@@ -26,7 +31,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.ClickAction)]
-        public string Href { get; set; }
+        public string? Href { get; set; }
 
         /// <summary>
         /// If true, force browser to redirect outside component router-space.
@@ -40,24 +45,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Command parameter.
+        /// Click event. Will not be called if <c>Href</c> is also set.
         /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.General.ClickAction)]
-        public object CommandParameter { get; set; }
-
-        /// <summary>
-        /// Command executed when the user clicks on an element.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.General.ClickAction)]
-        public ICommand Command { get; set; }
-
-        [Inject] private NavigationManager UriHelper { get; set; }
-
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
@@ -72,10 +64,6 @@ namespace MudBlazor
             else
             {
                 await OnClick.InvokeAsync(ev);
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }
             }
         }
     }

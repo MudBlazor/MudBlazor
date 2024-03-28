@@ -19,14 +19,13 @@ namespace MudBlazor.UnitTests.Components
         public void RatingTest1()
         {
             var comp = Context.RenderComponent<MudRating>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             var inputs = comp.FindAll("input[type=\"radio\"].mud-rating-input").ToArray();
             // check initial state
             comp.Instance.SelectedValue.Should().Be(0);
-            Assert.AreEqual(ratingItemsSpans.Length, 5);
-            Assert.AreEqual(inputs.Length, 5);
+            ratingItemsSpans.Length.Should().Be(5);
+            inputs.Length.Should().Be(5);
 
             // click first rating item
             ratingItemsSpans[0].Click();
@@ -59,12 +58,11 @@ namespace MudBlazor.UnitTests.Components
         public void RatingTest2()
         {
             var comp = Context.RenderComponent<MudRating>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             // check initial state
             comp.Instance.SelectedValue.Should().Be(0);
-            Assert.AreEqual(ratingItemsSpans.Length, 5);
+            ratingItemsSpans.Length.Should().Be(5);
 
             // click 2nd rating item
             ratingItemsSpans[1].Click();
@@ -99,7 +97,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudRating>(("SelectedValue", 3));
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // check initial state
             comp.Instance.SelectedValue.Should().Be(3);
         }
@@ -112,12 +109,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudRating>(("Disabled", true), ("SelectedValue", 2));
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             // check initial state
             comp.Instance.SelectedValue.Should().Be(2);
-            Assert.AreEqual(ratingItemsSpans.Length, 5);
+            ratingItemsSpans.Length.Should().Be(5);
 
             // click first rating item
             ratingItemsSpans[0].Click();
@@ -148,12 +144,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudRating>(("MaxValue", 12));
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
             // check initial state
             comp.Instance.SelectedValue.Should().Be(0);
-            Assert.AreEqual(ratingItemsSpans.Length, 12);
+            ratingItemsSpans.Length.Should().Be(12);
 
             comp.Instance.HandleItemHovered(6);
             comp.Instance.HoveredValue.Should().Be(6);
@@ -174,7 +169,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudRating>(("MaxValue", 12));
             var item = comp.FindComponent<MudRatingItem>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
 
             await comp.InvokeAsync(() => item.Instance.HandleMouseOut(new MouseEventArgs()));
             await comp.InvokeAsync(() => item.Instance.HandleMouseOver(new MouseEventArgs()));

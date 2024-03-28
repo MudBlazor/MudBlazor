@@ -71,7 +71,7 @@ using (var scope = app.Services.CreateScope())
     }
 
     var crawlerIdentifier = scope.ServiceProvider.GetRequiredService<ICrawlerIdentifier>();
-    await crawlerIdentifier.Initilize();
+    await crawlerIdentifier.Initialize();
 }
 
 app.Run();

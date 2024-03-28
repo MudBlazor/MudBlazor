@@ -11,11 +11,28 @@ namespace MudBlazor.UnitTests.Mocks
 {
 #pragma warning disable CS1998
 #pragma warning disable CS0067
+    public class MockJsEventFactory : IJsEventFactory
+    {
+        private readonly MockJsEvent _jsEvent;
+
+        public MockJsEventFactory(MockJsEvent jsEvent)
+        {
+            _jsEvent = jsEvent;
+        }
+
+        public MockJsEventFactory()
+        {
+
+        }
+
+        public IJsEvent Create() => _jsEvent ?? new MockJsEvent();
+    }
+
     public class MockJsEvent : IJsEvent
     {
         public void Dispose()
         {
-            
+
         }
 
         public Task Connect(string element, JsEventOptions options)

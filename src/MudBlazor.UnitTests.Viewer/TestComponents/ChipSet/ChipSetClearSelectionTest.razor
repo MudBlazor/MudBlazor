@@ -1,0 +1,37 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudChipSet @bind-SelectedChips="selected" MultiSelection="true">
+    <MudChip Text="Milk"></MudChip>
+    <MudChip Text="Eggs"></MudChip>
+    <MudChip Text="Soap"></MudChip>
+    <MudChip Text="Corn flakes"></MudChip>
+    <MudChip Text="Salad"></MudChip>
+    <MudChip Text="Apples"></MudChip>
+    <MudChip Text="Red wine"></MudChip>
+</MudChipSet>
+
+
+@if (selected != null && selected.Length>0)
+{
+    <MudText>@string.Join(", ", selected.Select(chip=>chip.Text).OrderBy(x => x))</MudText>
+}
+else
+{
+    <MudText>Nothing selected.</MudText>
+}
+<MudButton OnClick="SetNull">Set Null</MudButton>
+<MudButton OnClick="SetEmpty">Set Empty</MudButton>
+@code
+{
+    MudChip[] selected;
+
+    void SetNull()
+    {
+        selected = null;
+    }
+    
+    void SetEmpty()
+    {
+        selected = new MudChip[]{};
+    }
+}

@@ -1,0 +1,87 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar Snackbar
+
+<MudStack Style="width: 100%">
+    <MudFileUpload T="IReadOnlyList<IBrowserFile>"
+                   AppendMultipleFiles
+                   OnFilesChanged="OnInputFileChanged"
+                   Hidden="@false"
+                   InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
+                   InputStyle="opacity:0"
+                   @ondragenter="@SetDragClass"
+                   @ondragleave="@ClearDragClass"
+                   @ondragend="@ClearDragClass">
+        <ButtonTemplate>
+            <MudPaper Height="300px"
+                      Outlined="true"
+                      Class="@_dragClass">
+                <MudText Typo="Typo.h6">
+                    Drag and drop files here or click
+                </MudText>
+                @foreach (var file in _fileNames)
+                {
+                    <MudChip Color="Color.Dark" Text="@file" />
+                }
+            </MudPaper>
+            <MudToolBar DisableGutters="true"
+                        Class="relative d-flex justify-end gap-4 z-30">
+                <MudButton HtmlTag="label"
+                           Color="Color.Primary"
+                           for="@context.Id"
+                           Variant="Variant.Filled">
+                    Open file picker
+                </MudButton>
+                <MudButton OnClick="@Upload"
+                           Color="Color.Primary"
+                           Disabled="@(!_fileNames.Any())"
+                           Variant="Variant.Filled">
+                    Upload
+                </MudButton>
+                <MudButton OnClick="@Clear"
+                           Color="Color.Error"
+                           Disabled="@(!_fileNames.Any())"
+                           Variant="Variant.Filled">
+                    Clear
+                </MudButton>
+            </MudToolBar>
+        </ButtonTemplate>
+    </MudFileUpload>
+</MudStack>
+
+@code {
+#nullable enable
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
+    private string _dragClass = DefaultDragClass;
+    private readonly List<string> _fileNames = new();
+
+    private async Task Clear()
+    {
+        _fileNames.Clear();
+        ClearDragClass();
+        await Task.Delay(100);
+    }
+
+    private void OnInputFileChanged(InputFileChangeEventArgs e)
+    {
+        ClearDragClass();
+        var files = e.GetMultipleFiles();
+        foreach (var file in files)
+        {
+            _fileNames.Add(file.Name);
+        }
+    }
+
+    private void Upload()
+    {
+        // Upload the files here
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+        Snackbar.Add("TODO: Upload your files!");
+    }
+
+    private void SetDragClass()
+        => _dragClass = $"{DefaultDragClass} mud-border-primary";
+
+    private void ClearDragClass()
+        => _dragClass = DefaultDragClass;
+}

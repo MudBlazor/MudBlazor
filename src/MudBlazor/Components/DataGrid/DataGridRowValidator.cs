@@ -27,10 +27,16 @@ namespace MudBlazor
 
 #nullable enable
         [ExcludeFromCodeCoverage]
-        public object? Model { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public virtual object? Model { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 #nullable disable
 
         protected HashSet<string> _errors = new HashSet<string>();
+
+
+        void IForm.FieldChanged(IFormComponent formControl, object newValue)
+        {
+            //implement in future for DataGrid
+        }
 
         void IForm.Add(IFormComponent formControl)
         {

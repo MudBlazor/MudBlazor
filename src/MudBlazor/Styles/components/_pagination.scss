@@ -1,97 +1,97 @@
 ﻿@import '../abstracts/variables';
 
 .mud-pagination {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
-    margin: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin: 0;
 
+  .mud-pagination-item {
+    & > * {
+      height: 32px;
+      min-width: 32px;
+      margin: 0 3px;
+      padding: 0 6px;
+      text-align: center;
+      border-radius: 16px;
+    }
+
+    :not(mud-pagination-item-selected) > * {
+      box-shadow: none;
+    }
+
+    .mud-button {
+      line-height: normal;
+    }
+
+    .mud-icon-button {
+      padding: 0;
+    }
+
+    &-rectangular .mud-button {
+      border-radius: var(--mud-default-borderradius);
+    }
+
+    .mud-typography[disabled] {
+      color: var(--mud-palette-action-disabled) !important;
+    }
+  }
+
+  &-outlined {
+    .mud-pagination-item-selected {
+      .mud-button-outlined-default {
+        background-color: var(--mud-palette-action-default-hover)
+      }
+
+      @each $color in $mud-palette-colors {
+        .mud-button-outlined-#{$color} {
+          background-color: var(--mud-palette-#{$color}-hover);
+        }
+      }
+    }
+  }
+
+  &-filled {
     .mud-pagination-item {
-        & > * {
-            height: 32px;
-            min-width: 32px;
-            margin: 0 3px;
-            padding: 0 6px;
-            text-align: center;
-            border-radius: 16px;
-        }
+      &:not(.mud-pagination-item-selected) .mud-button {
+        background-color: var(--mud-palette-surface);
+      }
 
-        :not(mud-pagination-item-selected) > * {
-            box-shadow: none;
-        }
-
-        .mud-button {
-            line-height: normal;
-        }
-
-        .mud-icon-button {
-            padding: 0;
-        }
-
-        &-rectangular .mud-button {
-            border-radius: var(--mud-default-borderradius);
-        }
-
-        .mud-typography[disabled] {
-            color: var(--mud-palette-action-disabled) !important;
-        }
+      .mud-button {
+        box-shadow: var(--mud-elevation-1);
+      }
     }
+  }
 
-    &-outlined {
-        .mud-pagination-item-selected {
-            .mud-button-outlined-default {
-                background-color: var(--mud-palette-action-default-hover)
-            }
-
-            @each $color in $mud-palette-colors {
-                .mud-button-outlined-#{$color} {
-                    background-color: var(--mud-palette-#{$color}-hover);
-                }
-            }
-        }
+  &-small {
+    .mud-pagination-item {
+      & > * {
+        height: 26px;
+        min-width: 26px;
+        margin: 0 1px;
+        padding: 0 4px;
+        border-radius: 13px;
+      }
     }
+  }
 
-    &-filled {
-        .mud-pagination-item {
-            &:not(.mud-pagination-item-selected) .mud-button {
-                background-color: var(--mud-palette-surface);
-            }
-
-            .mud-button {
-                box-shadow: var(--mud-elevation-1);
-            }
-        }
+  &-large {
+    .mud-pagination-item {
+      & > * {
+        height: 40px;
+        min-width: 40px;
+        padding: 0 10px;
+        border-radius: 20px;
+      }
     }
+  }
 
-    &-small {
-        .mud-pagination-item {
-            & > * {
-                height: 26px;
-                min-width: 26px;
-                margin: 0 1px;
-                padding: 0 4px;
-                border-radius: 13px;
-            }
-        }
-    }
+  &-disable-elevation .mud-pagination-item .mud-button {
+    box-shadow: none;
+  }
 
-    &-large {
-        .mud-pagination-item {
-            & > * {
-                height: 40px;
-                min-width: 40px;
-                padding: 0 10px;
-                border-radius: 20px;
-            }
-        }
-    }
-
-    &-disable-elevation .mud-pagination-item .mud-button {
-        box-shadow: none;
-    }
-
-    &-rtl .mud-pagination-item .mud-icon-root {
-        transform: scaleX(-1);
-    }
+  &-rtl .mud-pagination-item .mud-icon-root {
+    transform: scaleX(-1);
+  }
 }

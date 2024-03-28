@@ -2,7 +2,7 @@
 @typeparam T
 @inherits MudDebouncedInput<T>
 
-<CascadingValue Name="Standalone" Value="@Standalone" IsFixed="true">
+<CascadingValue Name="SubscribeToParentForm" Value="@SubscribeToParentForm" IsFixed="true">
     <MudInputControl Label="@Label"
                      Variant="@Variant"
                      HelperText="@HelperText"
@@ -12,28 +12,32 @@
                      Class="@Classname"
                      Error="@HasErrors"
                      ErrorText="@GetErrorText()"
-                     Disabled="@Disabled"
+                     ErrorId="@ErrorId"
+                     Disabled="@GetDisabledState()"
                      Margin="@Margin"
                      Required="@Required"
                      ForId="@FieldId">
         <InputContent>
-            <CascadingValue Name="Standalone" Value="false" IsFixed="true">
+            <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 @if (_mask == null)
                 {
                     <MudInput T="string"
                               @ref="InputReference"
                               @attributes="UserAttributes"
                               InputType="@InputType"
+                              InputMode="@InputMode"
                               Lines="@Lines"
+                              MaxLines="@MaxLines"
+                              AutoGrow="@AutoGrow"
                               Style="@Style"
                               Variant="@Variant"
                               TextUpdateSuppression="@TextUpdateSuppression"
                               Value="@Text"
                               ValueChanged="(s) => SetTextAsync(s)"
                               Placeholder="@Placeholder"
-                              Disabled=@Disabled
+                              Disabled=@GetDisabledState()
                               DisableUnderLine="@DisableUnderLine"
-                              ReadOnly="@ReadOnly"
+                              ReadOnly="@GetReadOnlyState()"
                               MaxLength="@MaxLength"
                               Adornment="@Adornment"
                               AdornmentText="@AdornmentText"
@@ -43,20 +47,22 @@
                               IconSize="@IconSize"
                               OnAdornmentClick="@OnAdornmentClick"
                               Error="@Error"
+                              ErrorId="@ErrorId"
                               Immediate="@Immediate"
                               Margin="@Margin"
-                              OnBlur="@OnBlurred"
-                              OnKeyDown="@InvokeKeyDown"
+                              OnBlur="@OnBlurredAsync"
+                              OnKeyDown="@InvokeKeyDownAsync"
                               OnInternalInputChanged="OnChange"
-                              OnKeyPress="@InvokeKeyPress"
-                              OnKeyUp="@InvokeKeyUp"
+                              OnKeyPress="@InvokeKeyPressObsolete"
+                              OnKeyUp="@InvokeKeyUpAsync"
                               KeyDownPreventDefault="KeyDownPreventDefault"
-                              KeyPressPreventDefault="KeyPressPreventDefault"
+                              KeyPressPreventDefault="KeyPressPreventDefaultObsolete"
                               KeyUpPreventDefault="KeyUpPreventDefault"
                               HideSpinButtons="true"
                               Clearable="@Clearable"
                               OnClearButtonClick="@OnClearButtonClick"
-                              Pattern="@Pattern"/>
+                              Pattern="@Pattern"
+                              ShrinkLabel="@ShrinkLabel"/>
                 }
                 else
                 {
@@ -64,6 +70,7 @@
                              @attributes="UserAttributes"
                              Mask="@_mask"
                              InputType="@InputType"
+                             InputMode="@InputMode"
                              Lines="@Lines"
                              Style="@Style"
                              Variant="@Variant"
@@ -71,9 +78,9 @@
                              Value="@Text"
                              ValueChanged="OnMaskedValueChanged"
                              Placeholder="@Placeholder"
-                             Disabled=@Disabled
+                             Disabled=@GetDisabledState()
                              DisableUnderLine="@DisableUnderLine"
-                             ReadOnly="@ReadOnly"
+                             ReadOnly="@GetReadOnlyState()"
                              MaxLength="@MaxLength"
                              Adornment="@Adornment"
                              AdornmentText="@AdornmentText"
@@ -83,7 +90,7 @@
                              OnAdornmentClick="@OnAdornmentClick"
                              Error="@Error"
                              Immediate="@Immediate"
-                             Margin="@Margin" OnBlur="@OnBlurred"
+                             Margin="@Margin" OnBlur="@OnBlurredAsync"
                              Clearable="@Clearable"
                              OnClearButtonClick="@OnClearButtonClick"/>
                 }

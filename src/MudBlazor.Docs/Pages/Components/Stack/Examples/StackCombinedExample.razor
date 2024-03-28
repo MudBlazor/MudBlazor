@@ -9,9 +9,9 @@
 </MudPaper>
 
 <MudStack Row="true" Justify="Justify.Center">
-    <MudRadioGroup @bind-SelectedOption="@_row">
-        <MudRadio Option="false" Dense="true">Column</MudRadio>
-        <MudRadio Option="true" Dense="true">Row</MudRadio>
+    <MudRadioGroup T="bool" @bind-SelectedValue="@_row">
+        <MudRadio Value="false" Dense="true">Column</MudRadio>
+        <MudRadio Value="true" Dense="true">Row</MudRadio>
     </MudRadioGroup>
 </MudStack>
 

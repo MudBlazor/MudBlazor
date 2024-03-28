@@ -70,7 +70,7 @@ body:
     attributes:
       label: Version (bug)
       description: With which version are you experiencing the issue?
-      placeholder: 5.X.X
+      placeholder: 6.X.X
     validations:
       required: true
   - type: input
@@ -78,7 +78,7 @@ body:
     attributes:
       label: Version (working)
       description: Did it work on a previous version? If so, which version?
-      placeholder: 5.X.X
+      placeholder: 6.X.X
   - type: dropdown
     id: browsers
     attributes:

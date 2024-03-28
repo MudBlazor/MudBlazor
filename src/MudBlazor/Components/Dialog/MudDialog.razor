@@ -7,13 +7,15 @@
 {
     <MudFocusTrap DefaultFocus="DefaultFocus">
 
-        <div @attributes="UserAttributes" class="@ContentClass" style="@ContentStyle">
-            @DialogContent
+        <div @attributes="UserAttributes" class="@ContentClassname" style="@ContentStyle">
+            <CascadingValue Value="true" IsFixed Name="IsNested">
+                @DialogContent
+            </CascadingValue>
         </div>
 
         @if (DialogActions != null)
         {
-            <div class="@ActionClass">
+            <div class="@ActionClassname">
                 @DialogActions
             </div>
         }

@@ -16,7 +16,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
 {
     public interface ICrawlerIdentifier
     {
-        Task Initilize();
+        Task Initialize();
         Task<bool> IsRequestByCrawler(HttpContext context);
     }
 
@@ -25,7 +25,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
         private record CrawlerEntry(string Pattern, string Url, IEnumerable<String> Instances);
 
         private readonly string _filename;
-        private LimitedConcurrentDictionary<string, bool> _cache = new(1_000); 
+        private LimitedConcurrentDictionary<string, bool> _cache = new(1_000);
 
         private IEnumerable<Regex> _patterns;
 
@@ -34,7 +34,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
             _filename = filename;
         }
 
-        public async Task Initilize()
+        public async Task Initialize()
         {
             var content = await File.ReadAllTextAsync(_filename);
 

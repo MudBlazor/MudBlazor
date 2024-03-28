@@ -11,13 +11,15 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDialogInstance : MudComponentBase
+    public partial class MudDialogInstance : MudComponentBase, IDisposable
     {
         private DialogOptions _options = new();
         private string _elementId = "dialog_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private IKeyInterceptor _keyInterceptor;
 
-        [Inject] private IKeyInterceptor _keyInterceptor { get; set; }
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
+
+        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
 
@@ -79,6 +81,8 @@ namespace MudBlazor
                 //Since CloseOnEscapeKey is the only thing to be handled, turn interceptor off
                 if (CloseOnEscapeKey)
                 {
+                    _keyInterceptor = _keyInterceptorFactory.Create();
+
                     await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
                     {
                         TargetClass = "mud-dialog",
@@ -94,7 +98,7 @@ namespace MudBlazor
 
         internal void HandleKeyDown(KeyboardEventArgs args)
         {
-             switch (args.Key)
+            switch (args.Key)
             {
                 case "Escape":
                     if (CloseOnEscapeKey)
@@ -152,7 +156,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Cancel the dialog. DialogResult.Cancelled will be set to true
+        /// Cancel the dialog. DialogResult.Canceled will be set to true
         /// </summary>
         public void Cancel()
         {
@@ -163,13 +167,14 @@ namespace MudBlazor
         {
             Position = SetPosition();
             DialogMaxWidth = SetMaxWidth();
-            Class = Classname;
             NoHeader = SetHideHeader();
             CloseButton = SetCloseButton();
             FullWidth = SetFullWidth();
             FullScreen = SetFulScreen();
             DisableBackdropClick = SetDisableBackdropClick();
             CloseOnEscapeKey = SetCloseOnEscapeKey();
+            Class = Classname;
+            BackgroundClassname = new CssBuilder("mud-overlay-dialog").AddClass(Options.BackgroundClass).Build();
         }
 
         private string SetPosition()
@@ -232,14 +237,21 @@ namespace MudBlazor
             return false;
         }
 
+        protected string TitleClassname =>
+            new CssBuilder("mud-dialog-title")
+                .AddClass(_dialog?.TitleClass)
+                .Build();
+
         protected string Classname =>
             new CssBuilder("mud-dialog")
                 .AddClass(DialogMaxWidth, !FullScreen)
                 .AddClass("mud-dialog-width-full", FullWidth && !FullScreen)
                 .AddClass("mud-dialog-fullscreen", FullScreen)
                 .AddClass("mud-dialog-rtl", RightToLeft)
-                .AddClass(Class)
+                .AddClass(_dialog?.Class)
             .Build();
+
+        protected string BackgroundClassname { get; set; } = "mud-overlay-dialog";
 
         private bool SetHideHeader()
         {
@@ -285,14 +297,23 @@ namespace MudBlazor
             return false;
         }
 
-        private void HandleBackgroundClick()
+        private async Task HandleBackgroundClickAsync(MouseEventArgs args)
         {
             if (DisableBackdropClick)
                 return;
-            Cancel();
+
+            if (_dialog is null || !_dialog.OnBackdropClick.HasDelegate)
+            {
+                Cancel();
+                return;
+            }
+
+            await _dialog.OnBackdropClick.InvokeAsync(args);
         }
 
         private MudDialog _dialog;
+        private bool _disposedValue;
+
         public void Register(MudDialog dialog)
         {
             if (dialog == null)
@@ -304,9 +325,43 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public void ForceRender()
+        [Obsolete($"Use {nameof(StateHasChanged)}. This method will be removed in v7.")]
+        public void ForceRender() => StateHasChanged();
+
+        public new void StateHasChanged() => base.StateHasChanged();
+
+        /// <summary>
+        /// Cancels all dialogs in dialog provider collection.
+        /// </summary>
+        public void CancelAll()
         {
-            StateHasChanged();
+            Parent?.DismissAll();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    if (_keyInterceptor != null)
+                    {
+                        _keyInterceptor.KeyDown -= HandleKeyDown;
+                        if (IsJSRuntimeAvailable)
+                        {
+                            _keyInterceptor.Dispose();
+                        }
+                    }
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

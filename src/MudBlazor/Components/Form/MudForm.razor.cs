@@ -63,6 +63,18 @@ namespace MudBlazor
 
         private bool _touched = false;
 
+        [Parameter]
+        [Category(CategoryTypes.Form.Behavior)]
+        public bool Disabled { get; set; }
+        [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
+        protected bool GetDisabledState() => Disabled || ParentDisabled;
+
+        [Parameter]
+        [Category(CategoryTypes.Form.Behavior)]
+        public bool ReadOnly { get; set; }
+        [CascadingParameter(Name = "ParentReadOnly")] private bool ParentReadOnly { get; set; }
+        protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
+
         /// <summary>
         /// Validation debounce delay in milliseconds. This can help improve rendering performance of forms with real-time validation of inputs
         /// i.e. when textfields have Immediate="true".
@@ -100,6 +112,11 @@ namespace MudBlazor
         /// Raised when IsTouched changes.
         /// </summary>
         [Parameter] public EventCallback<bool> IsTouchedChanged { get; set; }
+
+        /// <summary>
+        /// Raised when a contained IFormComponent changes its value
+        /// </summary>
+        [Parameter] public EventCallback<FormFieldChangedEventArgs> FieldChanged { get; set; }
 
         // keeps track of validation. if the input was validated at least once the value will be true
         protected HashSet<IFormComponent> _formControls = new();
@@ -155,11 +172,17 @@ namespace MudBlazor
 
         [CascadingParameter] private MudForm ParentMudForm { get; set; }
 
+        void IForm.FieldChanged(IFormComponent formControl, object newValue)
+        {
+            FieldChanged.InvokeAsync(new FormFieldChangedEventArgs { Field = formControl, NewValue = newValue }).AndForget();
+        }
+
         void IForm.Add(IFormComponent formControl)
         {
             if (formControl.Required)
                 SetIsValid(false);
             _formControls.Add(formControl);
+            SetDefaultControlValidation(formControl);
         }
 
         void IForm.Remove(IFormComponent formControl)
@@ -187,7 +210,17 @@ namespace MudBlazor
                 _ = OnEvaluateForm();
         }
 
-        private void OnTimerComplete(object stateInfo) => InvokeAsync(OnEvaluateForm);
+        private void OnTimerComplete(object stateInfo)
+        {
+            try
+            {
+                InvokeAsync(OnEvaluateForm);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"An error occured while executing {nameof(OnEvaluateForm)}: {e.Message}");
+            }
+        }
 
         private bool _shouldRender = true; // <-- default is true, we need the form children to render
 
@@ -244,6 +277,7 @@ namespace MudBlazor
         /// <summary>
         /// Reset all form controls and reset their validation state.
         /// </summary>
+        [Obsolete($"Use {nameof(ResetAsync)} instead. This will ve removed in v7")]
         public void Reset()
         {
             foreach (var control in _formControls.ToArray())
@@ -254,6 +288,24 @@ namespace MudBlazor
             foreach (var form in ChildForms)
             {
                 form.Reset();
+            }
+
+            EvaluateForm(debounce: false);
+        }
+
+        /// <summary>
+        /// Reset all form controls and reset their validation state.
+        /// </summary>
+        public async Task ResetAsync()
+        {
+            foreach (var control in _formControls.ToArray())
+            {
+                await control.ResetAsync();
+            }
+
+            foreach (var form in ChildForms)
+            {
+                await form.ResetAsync();
             }
 
             EvaluateForm(debounce: false);
@@ -277,6 +329,14 @@ namespace MudBlazor
             EvaluateForm(debounce: false);
         }
 
+        /// <summary>
+        /// Reset the isTouched property
+        /// </summary>
+        public void ResetTouched()
+        {
+            this._touched = false;
+        }
+
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -289,24 +349,17 @@ namespace MudBlazor
                     SetIsValid(valid);
                 }
 
-                SetDefaultControlValidation(Validation, OverrideFieldValidation ?? true);
             }
             return base.OnAfterRenderAsync(firstRender);
         }
 
-        private void SetDefaultControlValidation(object validation, bool overrideFieldValidation)
+        private void SetDefaultControlValidation(IFormComponent formComponent)
         {
-            if (validation == null)
+            if (Validation == null) return;
+
+            if (!formComponent.IsForNull && (formComponent.Validation == null || (OverrideFieldValidation ?? true)))
             {
-                return;
-            }
-            
-            foreach (var formControl in _formControls)
-            {
-                if (formControl.Validation == null || overrideFieldValidation)
-                {
-                    formControl.Validation = validation;
-                }
+                formComponent.Validation = Validation;
             }
         }
 
@@ -323,6 +376,11 @@ namespace MudBlazor
         public void Dispose()
         {
             _timer?.Dispose();
+            if (ParentMudForm != null)
+            {
+                ParentMudForm.ChildForms.Remove(this);
+                ParentMudForm.EvaluateForm(); // Need this to refresh the form state
+            }
         }
     }
 }

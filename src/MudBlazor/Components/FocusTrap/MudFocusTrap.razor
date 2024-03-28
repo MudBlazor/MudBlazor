@@ -19,7 +19,9 @@
          tabindex="-1">
     </div>
 
-    @ChildContent
+    <div tabindex="-1">
+        @ChildContent
+    </div>
 
     <div @ref="_lastBumper"
          class="fixed pointer-events-none"
@@ -27,13 +29,9 @@
          @onfocus="OnBumperFocusAsync">
     </div>
 
-    <div sclass="fixed pointer-events-none"
+    <div class="fixed pointer-events-none"
          tabindex="@TrapTabIndex"
          @onfocus="OnBottomFocusAsync">
     </div>
 
 </div>
-
-@code {
-    string TrapTabIndex => (Disabled? "-1" : "0");
-}

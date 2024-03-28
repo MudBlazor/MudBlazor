@@ -21,7 +21,6 @@ namespace MudBlazor.Components.Chart
             h = new double[n];
 
             CalcParameters();
-            Integrate();
             Interpolate();
         }
 

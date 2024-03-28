@@ -7,19 +7,25 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor
 {
     public interface IDialogReference
     {
         Guid Id { get; }
+
         RenderFragment RenderFragment { get; set; }
 
-        bool AreParametersRendered { get; set; }
+        [Obsolete("This will always return true"), ExcludeFromCodeCoverage]
+        bool AreParametersRendered { get => true; set { } }
 
         Task<DialogResult> Result { get; }
 
+        TaskCompletionSource<bool> RenderCompleteTaskCompletionSource { get; }
+
         void Close();
+
         void Close(DialogResult result);
 
         bool Dismiss(DialogResult result);
@@ -30,6 +36,6 @@ namespace MudBlazor
 
         void InjectDialog(object inst);
 
-        Task<T> GetReturnValueAsync<T>();
+        Task<T> GetReturnValueAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>();
     }
 }

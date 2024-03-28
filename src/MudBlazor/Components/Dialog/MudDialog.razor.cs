@@ -4,22 +4,31 @@
 
 using System;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudDialog : MudComponentBase
     {
-        protected string ContentClass => new CssBuilder("mud-dialog-content")
-          .AddClass($"mud-dialog-no-side-padding", DisableSidePadding)
-          .AddClass(ClassContent)
-        .Build();
+        [Obsolete($"Use {nameof(ContentClassname)} instead.")]
+        protected string ContentClass => ContentClassname;
 
-        protected string ActionClass => new CssBuilder("mud-dialog-actions")
-          .AddClass(ClassActions)
-        .Build();
+        protected string ContentClassname => new CssBuilder("mud-dialog-content")
+            .AddClass("mud-dialog-no-side-padding", DisableSidePadding)
+            .AddClass(ClassContent)
+            .Build();
+
+        [Obsolete($"Use {nameof(ActionClassname)} instead.")]
+        protected string ActionClass => ActionClassname;
+
+        protected string ActionClassname => new CssBuilder("mud-dialog-actions")
+            .AddClass(ClassActions)
+            .Build();
 
         [CascadingParameter] private MudDialogInstance DialogInstance { get; set; }
+        [CascadingParameter(Name = "IsNested")] private bool IsNested { get; set; }
 
         [Inject] public IDialogService DialogService { get; set; }
 
@@ -53,11 +62,28 @@ namespace MudBlazor
         public DialogOptions Options { get; set; }
 
         /// <summary>
+        /// Defines delegate with custom logic when user clicks overlay behind dialogue.
+        /// Is being invoked instead of default "Backdrop Click" logic.
+        /// Setting DisableBackdropClick to "true" disables both - OnBackdropClick as well
+        /// as the default logic.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public EventCallback<MouseEventArgs> OnBackdropClick { get; set; }
+
+        /// <summary>
         /// No padding at the sides
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
         public bool DisableSidePadding { get; set; }
+
+        /// <summary>
+        /// CSS class that will be applied to the dialog title container
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public string TitleClass { get; set; }
 
         /// <summary>
         /// CSS class that will be applied to the dialog content
@@ -103,15 +129,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
 
-
         /// <summary>
-        /// Define the dialog title as a renderfragment (overrides Title)
+        /// Define the element that will receive the focus when the dialog is opened
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public DefaultFocus DefaultFocus { get; set; }
+        public DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
 
-        private bool IsInline => DialogInstance == null;
+        private bool IsInline => IsNested || DialogInstance == null;
 
         private IDialogReference _reference;
 
@@ -132,13 +157,17 @@ namespace MudBlazor
                 [nameof(Class)] = Class,
                 [nameof(Style)] = Style,
                 [nameof(Tag)] = Tag,
+                [nameof(UserAttributes)] = UserAttributes,
                 [nameof(TitleContent)] = TitleContent,
                 [nameof(DialogContent)] = DialogContent,
                 [nameof(DialogActions)] = DialogActions,
+                [nameof(OnBackdropClick)] = OnBackdropClick,
                 [nameof(DisableSidePadding)] = DisableSidePadding,
+                [nameof(TitleClass)] = TitleClass,
                 [nameof(ClassContent)] = ClassContent,
                 [nameof(ClassActions)] = ClassActions,
                 [nameof(ContentStyle)] = ContentStyle,
+                [nameof(DefaultFocus)] = DefaultFocus,
             };
             _reference = DialogService.Show<MudDialog>(title, parameters, options ?? Options);
             _reference.Result.ContinueWith(t =>
@@ -160,20 +189,12 @@ namespace MudBlazor
                 else if (_reference != null)
                 {
                     if (IsVisible)
-                        (_reference.Dialog as MudDialog)?.ForceUpdate(); // forward render update to instance
+                        (_reference.Dialog as IMudStateHasChanged)?.StateHasChanged(); // forward render update to instance
                     else
                         Close(); // if we still have reference but it's not visible call Close
                 }
             }
             base.OnAfterRender(firstRender);
-        }
-
-        /// <summary>
-        /// Used for forwarding state changes from inlined dialog to its instance
-        /// </summary>
-        internal void ForceUpdate()
-        {
-            StateHasChanged();
         }
 
         /// <summary>
@@ -191,7 +212,8 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            DialogInstance?.Register(this);
+            if (!IsNested)
+                DialogInstance?.Register(this);
         }
     }
 }

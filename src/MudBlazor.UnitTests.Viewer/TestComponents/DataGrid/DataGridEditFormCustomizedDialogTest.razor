@@ -1,0 +1,32 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDialogProvider />
+
+<MudDataGrid T="Model" Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Form" EditDialogOptions="Options" EditTrigger="@DataGridEditTrigger.OnRowClick">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <TemplateColumn>
+            <CellTemplate>
+                snakex64
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private DialogOptions Options = new DialogOptions() { CloseButton = true };
+    private IEnumerable<Model> _items = new List<Model>()
+{
+        new Model{ Name= "John", Age= 45 },
+        new Model{ Name= "Johanna", Age= 23 },
+        new Model{ Name= "Steve", Age= 32 }
+    };
+
+    public class Model
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public string GetOnly => "snakex64";
+    }
+}

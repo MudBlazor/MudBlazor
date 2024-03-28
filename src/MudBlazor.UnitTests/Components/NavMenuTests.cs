@@ -10,7 +10,7 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class NavMenuTests : BunitTest
     {
-        
+
         [Test]
         /// <summary>
         /// Change all styling parameters so that all default values have the correct classes.
@@ -18,21 +18,20 @@ namespace MudBlazor.UnitTests.Components
         public void NavMenuTests_DefaultValues()
         {
             var comp = Context.RenderComponent<MudNavMenu>();
-            //Console.WriteLine(comp.Markup);
 
             comp.Instance.Bordered.Should().Be(false);
             comp.Instance.Color.Should().Be(Color.Default);
             comp.Instance.Dense.Should().Be(false);
             comp.Instance.Margin.Should().Be(Margin.None);
             comp.Instance.Rounded.Should().Be(false);
-            
+
             comp.FindAll("mud-navmenu-bordered").Count.Should().Be(0);
             comp.FindAll("mud-navmenu-success").Count.Should().Be(0);
             comp.FindAll("mud-navmenu-dense").Count.Should().Be(0);
             comp.FindAll("mud-navmenu-margin-dense").Count.Should().Be(0);
             comp.FindAll("mud-navmenu-rounded").Count.Should().Be(0);
         }
-        
+
         [Test]
         /// <summary>
         /// Change all styling parameters from its default values and check that the correct classes are added.
@@ -47,8 +46,6 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(p => p.Margin, Margin.Dense);
                 x.Add(p => p.Rounded, true);
             });
-            
-            //Console.WriteLine(comp.Markup);
 
             comp.Markup.Should().Contain("mud-navmenu-bordered");
             comp.Markup.Should().Contain("mud-navmenu-success");
@@ -57,7 +54,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain("mud-navmenu-rounded");
         }
 
-        
+
         [Test]
         /// <summary>
         /// This component is initially Expanded with the property Expand set to imutable true <c>Expand=true</c>

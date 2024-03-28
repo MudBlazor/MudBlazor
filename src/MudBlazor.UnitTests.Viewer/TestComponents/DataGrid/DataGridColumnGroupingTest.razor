@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Collections.ObjectModel
+
+<MudPopoverProvider />
+<MudDataGrid T="Model" ShowMenuIcon="true" Items="@_items" Groupable="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Title="Name" />
+        <PropertyColumn Property="x => x.Age" Title="Age" />
+        <PropertyColumn Property="x => x.Gender" Title="Gender" @bind-Grouping="@IsGenderGrouped" HeaderClass="gender"/>
+    </Columns>
+</MudDataGrid>
+
+@code {
+
+    public bool IsGenderGrouped { get; set; } = false;
+
+    private List<Model> _items = new List<Model>()
+    {
+        new Model("John", 45, "Male"), 
+        new Model("Johanna", 23, "Female"), 
+        new Model("Steve", 32, "Male")
+    };
+
+    public record Model(string Name, int Age, string Gender);
+}

@@ -10,6 +10,7 @@ namespace MudBlazor
 {
     public abstract partial class MudBaseDatePicker : MudPicker<DateTime?>
     {
+        private readonly string _mudPickerCalendarContentElementId;
         private bool _dateFormatTouched;
 
         protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>
@@ -19,9 +20,12 @@ namespace MudBlazor
         })
         {
             AdornmentAriaLabel = "Open Date Picker";
+            _mudPickerCalendarContentElementId = Guid.NewGuid().ToString();
         }
 
         [Inject] protected IScrollManager ScrollManager { get; set; }
+
+        [Inject] private IJsApiService JsApiService { get; set; }
 
         /// <summary>
         /// Max selectable date.
@@ -31,7 +35,7 @@ namespace MudBlazor
         public DateTime? MaxDate { get; set; }
 
         /// <summary>
-        /// Max selectable date.
+        /// Min selectable date.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
@@ -119,7 +123,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<DateTime?> PickerMonthChanged { get; set; }
 
         /// <summary>
-        /// Milliseconds to wait before closing the picker. This helps the user see that the date was selected before the popover disappears.
+        /// Sets the amount of time in milliseconds to wait before closing the picker. This helps the user see that the date was selected before the popover disappears.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -162,6 +166,13 @@ namespace MudBlazor
         public string TitleDateFormat { get; set; } = "ddd, dd MMM";
 
         /// <summary>
+        /// If AutoClose is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool AutoClose { get; set; }
+
+        /// <summary>
         /// Function to determine whether a date is disabled
         /// </summary>
         [Parameter]
@@ -175,6 +186,13 @@ namespace MudBlazor
             }
         }
         private Func<DateTime, bool> _isDateDisabledFunc = _ => false;
+
+        /// <summary>
+        /// Function to conditionally apply new classes to specific days
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
 
         /// <summary>
         /// Custom previous icon.
@@ -358,7 +376,7 @@ namespace MudBlazor
         protected virtual void OnYearClicked(int year)
         {
             var current = GetMonthStart(0);
-            PickerMonth = new DateTime(year, current.Month, 1);
+            PickerMonth = new DateTime(year, current.Month, 1, Culture.Calendar);
             var nextView = GetNextView();
             if (nextView != null)
             {
@@ -374,6 +392,25 @@ namespace MudBlazor
             CurrentView = OpenTo.Month;
             _picker_month = _picker_month?.AddMonths(month);
             StateHasChanged();
+        }
+
+        /// <summary>
+        /// Check if month is disabled
+        /// </summary>
+        /// <param name="month">Month given with first day of the month</param>
+        /// <returns>True if month should be disabled, false otherwise</returns>
+        private bool IsMonthDisabled(DateTime month)
+        {
+            if (!FixDay.HasValue)
+            {
+                return month.EndOfMonth(Culture) < MinDate || month > MaxDate;
+            }
+            if (DateTime.DaysInMonth(month.Year, month.Month) < FixDay!.Value)
+            {
+                return true;
+            }
+            var day = new DateTime(month.Year, month.Month, FixDay!.Value);
+            return day < MinDate || day > MaxDate || IsDateDisabledFunc(day);
         }
 
         /// <summary>
@@ -442,9 +479,12 @@ namespace MudBlazor
 
         private void OnYearClick()
         {
-            CurrentView = OpenTo.Year;
-            StateHasChanged();
-            _scrollToYearAfterRender = true;
+            if (!FixYear.HasValue)
+            {
+                CurrentView = OpenTo.Year;
+                StateHasChanged();
+                _scrollToYearAfterRender = true;
+            }
         }
 
         /// <summary>
@@ -460,7 +500,7 @@ namespace MudBlazor
         public async void ScrollToYear()
         {
             _scrollToYearAfterRender = false;
-            var id = $"{_componentId}{GetMonthStart(0).Year}";
+            var id = $"{_componentId}{Culture.Calendar.GetYear(GetMonthStart(0))}";
             await ScrollManager.ScrollToYearAsync(id);
             StateHasChanged();
         }
@@ -468,20 +508,20 @@ namespace MudBlazor
         private int GetMinYear()
         {
             if (MinDate.HasValue)
-                return MinDate.Value.Year;
-            return DateTime.Today.Year - 100;
+                return Culture.Calendar.GetYear(MinDate.Value);
+            return Culture.Calendar.GetYear(DateTime.Today) - 100;
         }
 
         private int GetMaxYear()
         {
             if (MaxDate.HasValue)
-                return MaxDate.Value.Year;
-            return DateTime.Today.Year + 100;
+                return Culture.Calendar.GetYear(MaxDate.Value);
+            return Culture.Calendar.GetYear(DateTime.Today) + 100;
         }
 
         private string GetYearClasses(int year)
         {
-            if (year == GetMonthStart(0).Year)
+            if (year == Culture.Calendar.GetYear(GetMonthStart(0)))
                 return $"mud-picker-year-selected mud-{Color.ToDescriptionString()}-text";
             return null;
         }
@@ -496,7 +536,7 @@ namespace MudBlazor
 
         private Typo GetYearTypo(int year)
         {
-            if (year == GetMonthStart(0).Year)
+            if (year == Culture.Calendar.GetYear(GetMonthStart(0)))
                 return Typo.h5;
             return Typo.subtitle1;
         }
@@ -530,20 +570,17 @@ namespace MudBlazor
 
         private string GetMonthClasses(DateTime month)
         {
-            if (GetMonthStart(0) == month)
+            if (Culture.Calendar.GetMonth(GetMonthStart(0)) == Culture.Calendar.GetMonth(month) && !IsMonthDisabled(month))
                 return $"mud-picker-month-selected mud-{Color.ToDescriptionString()}-text";
             return null;
         }
 
         private Typo GetMonthTypo(DateTime month)
         {
-            if (GetMonthStart(0) == month)
+            if (Culture.Calendar.GetMonth(GetMonthStart(0)) == Culture.Calendar.GetMonth(month))
                 return Typo.h5;
             return Typo.subtitle1;
         }
-
-        
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -552,6 +589,8 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            await base.OnAfterRenderAsync(firstRender);
+
             if (firstRender)
             {
                 _picker_month ??= GetCalendarStartOfMonth();
@@ -565,7 +604,6 @@ namespace MudBlazor
 
             if (_scrollToYearAfterRender)
                 ScrollToYear();
-            await base.OnAfterRenderAsync(firstRender);
         }
 
         protected abstract DateTime GetCalendarStartOfMonth();
@@ -576,10 +614,15 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Converts gregorian year into whatever year it is in the provided culture
+        /// Converts gregorian date into whatever year it is in the provided culture
         /// </summary>
-        /// <param name="year">Gregorian year</param>
+        /// <param name="yearDate">Gregorian Date</param>
         /// <returns>Year according to culture</returns>
-        protected abstract int GetCalendarYear(int year);
+        protected abstract int GetCalendarYear(DateTime yearDate);
+
+        private ValueTask HandleMouseoverOnPickerCalendarDayButton(int tempId)
+        {
+            return this.JsApiService.UpdateStyleProperty(_mudPickerCalendarContentElementId, "--selected-day", tempId);
+        }
     }
 }

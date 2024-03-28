@@ -4,20 +4,21 @@
 
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
-using MudBlazor.Extensions;
 
 namespace MudBlazor;
 
+#nullable enable
 public partial class MudStack : MudComponentBase
 {
     protected string Classname =>
-    new CssBuilder("d-flex")
-      .AddClass($"flex-{(Row ? "row" : "column")}{(Reverse ? "-reverse" : string.Empty)}")
-      .AddClass($"justify-{Justify?.ToDescriptionString()}", Justify != null)
-      .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems != null)
-      .AddClass($"gap-{Spacing}")
-      .AddClass(Class)
-    .Build();
+        new CssBuilder("d-flex")
+            .AddClass($"flex-{(Row ? "row" : "column")}{(Reverse ? "-reverse" : string.Empty)}")
+            .AddClass($"justify-{Justify?.ToDescriptionString()}", Justify != null)
+            .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems != null)
+            .AddClass($"flex-{Wrap?.ToDescriptionString()}", Wrap != null)
+            .AddClass($"gap-{Spacing}")
+            .AddClass(Class)
+            .Build();
 
     /// <summary>
     /// If true, items will be placed horizontally in a row instead of vertically.
@@ -55,10 +56,16 @@ public partial class MudStack : MudComponentBase
     public AlignItems? AlignItems { get; set; }
 
     /// <summary>
+    /// Defines the flexbox wrapping behavior of its items.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Stack.Behavior)]
+    public Wrap? Wrap { get; set; }
+
+    /// <summary>
     /// Child content of the component.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 }
-

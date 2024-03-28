@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace MudBlazor
 {
+#nullable enable
     public class GroupDefinition<T>
     {
         public IGrouping<object, T> Grouping { get; set; }

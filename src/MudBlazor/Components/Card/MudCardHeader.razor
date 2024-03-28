@@ -2,19 +2,19 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-    @if (CardHeaderAvatar != null)
+    @if (CardHeaderAvatar is not null)
     {
         <div class="mud-card-header-avatar">@CardHeaderAvatar</div>
     }
-    @if (CardHeaderContent != null)
+    @if (CardHeaderContent is not null)
     {
         <div class="mud-card-header-content">@CardHeaderContent</div>
     }
-    @if (CardHeaderActions != null)
+    @if (CardHeaderActions is not null)
     {
         <div class="mud-card-header-actions">@CardHeaderActions</div>
     }
-    @if (ChildContent != null)
+    @if (ChildContent is not null)
     {
         @ChildContent
     }

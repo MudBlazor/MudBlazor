@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using FluentValidation;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -14,43 +16,60 @@ namespace MudBlazor.UnitTests.Components
     public class RadioTests : BunitTest
     {
         [Test]
+        public void RadiGroup_CheckClassTest()
+        {
+            var comp = Context.RenderComponent<RadioGroupTest1>();
+
+            var inputControl = comp.FindComponent<MudInputControl>();
+            inputControl.Instance.InputContent.Should().NotBeNull();
+
+            comp.FindAll("div.mud-radio-group").Should().ContainSingle();
+            comp.FindAll("div.some-main-class").Should().ContainSingle();
+            comp.FindAll("div.some-input-class").Should().ContainSingle();
+            comp.FindAll(".some-main-class .some-input-class").Should().ContainSingle();
+            comp.FindAll(".mud-radio").Count.Should().Be(3);
+            // Input content should not have main class (Classname), but should have input class (InputClass)
+            comp.FindAll(".mud-radio-group.some-main-class").Should().BeEmpty();
+            comp.FindAll(".mud-radio-group.some-input-class").Should().ContainSingle();
+        }
+
+        [Test]
         public void RadioGroupTest1()
         {
             var comp = Context.RenderComponent<RadioGroupTest1>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
             var spans = comp.FindAll("span.mud-radio-icons").ToArray();
             // check initial state
-            group.Instance.SelectedOption.Should().Be(null);
+            group.Instance.Value.Should().Be(null);
             spans[0].ClassList.Should().NotContain("mud-checked");
             spans[1].ClassList.Should().NotContain("mud-checked");
             spans[2].ClassList.Should().NotContain("mud-checked");
             // click radio 1
             inputs[0].Click();
-            group.Instance.SelectedOption.Should().Be("1");
+            group.Instance.Value.Should().Be("1");
             spans = comp.FindAll("span.mud-radio-icons").ToArray();
             spans[0].ClassList.Should().Contain("mud-checked");
             spans[1].ClassList.Should().NotContain("mud-checked");
             spans[2].ClassList.Should().NotContain("mud-checked");
             // click radio 2
             inputs[1].Click();
-            group.Instance.SelectedOption.Should().Be("2");
+            group.Instance.Value.Should().Be("2");
             spans = comp.FindAll("span.mud-radio-icons").ToArray();
             spans[0].ClassList.Should().NotContain("mud-checked");
             spans[1].ClassList.Should().Contain("mud-checked");
             spans[2].ClassList.Should().NotContain("mud-checked");
             // click radio 3
             inputs[2].Click();
-            group.Instance.SelectedOption.Should().Be("3");
+            group.Instance.Value.Should().Be("3");
             spans = comp.FindAll("span.mud-radio-icons").ToArray();
             spans[0].ClassList.Should().NotContain("mud-checked");
             spans[1].ClassList.Should().NotContain("mud-checked");
             spans[2].ClassList.Should().Contain("mud-checked");
             // click radio 1
             inputs[0].Click();
-            group.Instance.SelectedOption.Should().Be("1");
+            group.Instance.Value.Should().Be("1");
             spans = comp.FindAll("span.mud-radio-icons").ToArray();
             spans[0].ClassList.Should().Contain("mud-checked");
             spans[1].ClassList.Should().NotContain("mud-checked");
@@ -61,12 +80,11 @@ namespace MudBlazor.UnitTests.Components
         public void RadioGroupTest2()
         {
             var comp = Context.RenderComponent<RadioGroupTest2>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var spans = comp.FindAll("span.mud-radio-icons").ToArray();
             // check initial state, should be initialized to second radio by default
-            group.Instance.SelectedOption.Should().Be("2");
+            group.Instance.Value.Should().Be("2");
             spans[0].ClassList.Should().NotContain("mud-checked");
             spans[1].ClassList.Should().Contain("mud-checked");
             spans[2].ClassList.Should().NotContain("mud-checked");
@@ -76,14 +94,13 @@ namespace MudBlazor.UnitTests.Components
         public void RadioGroupTest3()
         {
             var comp = Context.RenderComponent<RadioGroupTest3>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var groups = comp.FindComponents<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
             var spans = comp.FindAll("span.mud-radio-icons").ToArray();
             // check initial state, should be initialized to second radio by default for both groups
-            groups[0].Instance.SelectedOption.Should().Be("2");
-            groups[1].Instance.SelectedOption.Should().Be("2");
+            groups[0].Instance.Value.Should().Be("2");
+            groups[1].Instance.Value.Should().Be("2");
             spans[0].ClassList.Should().NotContain("mud-checked");
             spans[1].ClassList.Should().Contain("mud-checked");
             spans[2].ClassList.Should().NotContain("mud-checked");
@@ -91,8 +108,8 @@ namespace MudBlazor.UnitTests.Components
             // click first radio of second group - they should both switch to L1
             inputs[2].Click();
             spans = comp.FindAll("span.mud-radio-icons").ToArray();
-            groups[0].Instance.SelectedOption.Should().Be("1");
-            groups[1].Instance.SelectedOption.Should().Be("1");
+            groups[0].Instance.Value.Should().Be("1");
+            groups[1].Instance.Value.Should().Be("1");
             spans[0].ClassList.Should().Contain("mud-checked");
             spans[1].ClassList.Should().NotContain("mud-checked");
             spans[2].ClassList.Should().Contain("mud-checked");
@@ -100,8 +117,8 @@ namespace MudBlazor.UnitTests.Components
             // click second radio of first group - they should both switch to L1
             inputs[1].Click();
             spans = comp.FindAll("span.mud-radio-icons").ToArray();
-            groups[0].Instance.SelectedOption.Should().Be("2");
-            groups[1].Instance.SelectedOption.Should().Be("2");
+            groups[0].Instance.Value.Should().Be("2");
+            groups[1].Instance.Value.Should().Be("2");
             spans[0].ClassList.Should().NotContain("mud-checked");
             spans[1].ClassList.Should().Contain("mud-checked");
             spans[2].ClassList.Should().NotContain("mud-checked");
@@ -112,14 +129,13 @@ namespace MudBlazor.UnitTests.Components
         public void RadioGroupTest4()
         {
             var comp = Context.RenderComponent<RadioGroupTest4>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var groups = comp.FindComponents<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
             var spans = comp.FindAll("span.mud-radio-icons").ToArray();
             // check initial state, should be uninitialized
-            groups[0].Instance.SelectedOption.Should().Be(null);
-            groups[1].Instance.SelectedOption.Should().Be(null);
+            groups[0].Instance.Value.Should().Be(null);
+            groups[1].Instance.Value.Should().Be(null);
             spans[0].ClassList.Should().NotContain("mud-checked");
             spans[1].ClassList.Should().NotContain("mud-checked");
             spans[2].ClassList.Should().NotContain("mud-checked");
@@ -127,8 +143,8 @@ namespace MudBlazor.UnitTests.Components
             // click first radio of second group - only second group should switch to L1
             inputs[2].Click();
             spans = comp.FindAll("span.mud-radio-icons").ToArray();
-            groups[0].Instance.SelectedOption.Should().Be(null);
-            groups[1].Instance.SelectedOption.Should().Be("x");
+            groups[0].Instance.Value.Should().Be(null);
+            groups[1].Instance.Value.Should().Be("x");
             spans[0].ClassList.Should().NotContain("mud-checked");
             spans[1].ClassList.Should().NotContain("mud-checked");
             spans[2].ClassList.Should().Contain("mud-checked");
@@ -136,8 +152,8 @@ namespace MudBlazor.UnitTests.Components
             // click second radio of first group - only first group should switch to L1
             inputs[1].Click();
             spans = comp.FindAll("span.mud-radio-icons").ToArray();
-            groups[0].Instance.SelectedOption.Should().Be("2");
-            groups[1].Instance.SelectedOption.Should().Be("x");
+            groups[0].Instance.Value.Should().Be("2");
+            groups[1].Instance.Value.Should().Be("x");
             spans[0].ClassList.Should().NotContain("mud-checked");
             spans[1].ClassList.Should().Contain("mud-checked");
             spans[2].ClassList.Should().Contain("mud-checked");
@@ -148,26 +164,25 @@ namespace MudBlazor.UnitTests.Components
         public void RadioGroupTest5()
         {
             var comp = Context.RenderComponent<RadioGroupTest5>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
             var spans = comp.FindAll("span.mud-radio-icons").ToArray();
             // check initial state
-            group.Instance.SelectedOption.Should().Be(null);
+            group.Instance.Value.Should().Be(null);
             spans[0].ClassList.Should().NotContain("mud-checked");
             spans[1].ClassList.Should().NotContain("mud-checked");
             spans[2].ClassList.Should().NotContain("mud-checked");
             // click radio 1
             inputs[0].Click();
-            group.Instance.SelectedOption.Should().Be("1");
+            group.Instance.Value.Should().Be("1");
             spans = comp.FindAll("span.mud-radio-icons").ToArray();
             spans[0].ClassList.Should().Contain("mud-checked");
             spans[1].ClassList.Should().NotContain("mud-checked");
             spans[2].ClassList.Should().NotContain("mud-checked");
             // click reset button
             comp.Find("button").Click();
-            group.Instance.SelectedOption.Should().Be(null);
+            group.Instance.Value.Should().Be(null);
             spans = comp.FindAll("span.mud-radio-icons").ToArray();
             spans[0].ClassList.Should().NotContain("mud-checked");
             spans[1].ClassList.Should().NotContain("mud-checked");
@@ -178,7 +193,6 @@ namespace MudBlazor.UnitTests.Components
         public void RadioGroupTest6()
         {
             var comp = Context.RenderComponent<RadioGroupTest6>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var buttons = comp.FindAll("label > span").ToArray();
@@ -204,16 +218,15 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<RadioGroupTest1>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var radio = comp.FindComponent<MudRadioGroup<string>>();
-            radio.Instance.SelectedOption.Should().Be(null);
+            radio.Instance.Value.Should().Be(null);
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
-            comp.WaitForAssertion(() => radio.Instance.SelectedOption.Should().Be("1"));
+            comp.WaitForAssertion(() => radio.Instance.Value.Should().Be("1"));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
-            comp.WaitForAssertion(() => radio.Instance.SelectedOption.Should().Be(null));
+            comp.WaitForAssertion(() => radio.Instance.Value.Should().Be(null));
 
             //Can't tabbed around the radios in test.
         }
@@ -226,13 +239,16 @@ namespace MudBlazor.UnitTests.Components
             var radio = comp.FindComponent<MudRadio<string>>();
 
             await comp.InvokeAsync(() => radio.Instance.IMudRadioGroup = null);
-            await comp.InvokeAsync(() => radio.Instance.OnClick());
+            await comp.InvokeAsync(() => radio.Instance.OnClickAsync());
+#pragma warning disable CS0618 // Type or member is obsolete
+            comp.WaitForAssertion(() => radio.Instance.Option.Should().Be("1"));
+#pragma warning restore CS0618 // Type or member is obsolete
 #pragma warning disable BL0005
             await comp.InvokeAsync(() => radio.Instance.Disabled = true);
-            comp.WaitForAssertion(() => group.Instance.SelectedOption.Should().Be(null));
+            comp.WaitForAssertion(() => group.Instance.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
-            comp.WaitForAssertion(() => group.Instance.SelectedOption.Should().Be(null));
+            comp.WaitForAssertion(() => group.Instance.Value.Should().Be(null));
         }
 
 
@@ -245,8 +261,61 @@ namespace MudBlazor.UnitTests.Components
             }
             catch (Exception ex)
             {
-                ex.Message.Should().Be("Unable to set property 'IMudRadioGroup' on object of type 'MudBlazor.MudRadio`1[[System.String, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'. The error was: MudRadioGroup<Char> has a child MudRadio<System.String> with mismatching generic type.");
+                typeof(MudBlazor.Utilities.Exceptions.GenericTypeMismatchException).Should().Be(ex.InnerException.GetType());
             }
+        }
+
+        /// <summary>
+        /// Tests the Disabled property of the MudRadio
+        /// </summary>
+        [Test]
+        public void RadioDisabledTest()
+        {
+            var comp = Context.RenderComponent<RadioGroupExample>();
+            comp.Instance.SelectedOption.Should().BeNull();
+
+            var inputs = comp.FindAll("input");
+            inputs[2].Click(); //click enabled radio
+            comp.Instance.SelectedOption.Should().Be("Radio 3");
+            inputs[3].Click(); //click disable radio
+            comp.Instance.SelectedOption.Should().Be("Radio 3");
+
+            var labels = comp.FindAll("label");
+            labels[3].ClassList.Contains("mud-disabled").Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Tests the Disabled property of the MudRadioGroup
+        /// </summary>
+        [Test]
+        public void RadioGroupDisabledTest()
+        {
+            var comp = Context.RenderComponent<RadioReadOnlyDisabledExample>();
+            var radioGroup = comp.FindComponents<MudRadioGroup<string>>()[1];
+
+            var radios = radioGroup.FindComponents<MudRadio<string>>();
+            radios.Count.Should().Be(4);
+            radioGroup.FindAll(".mud-radio.mud-disabled").Count.Should().Be(0);
+
+            comp.FindAll(".mud-switch-button > input")[1].Change(true);
+            radioGroup.FindAll(".mud-radio.mud-disabled").Count.Should().Be(4);
+        }
+
+        /// <summary>
+        /// Tests the Readonly property of the MudRadioGroup
+        /// </summary>
+        [Test]
+        public void RadioGroupReadOnlyTest()
+        {
+            var comp = Context.RenderComponent<RadioReadOnlyDisabledExample>();
+            var radioGroup = comp.FindComponents<MudRadioGroup<string>>()[0];
+
+            var radios = radioGroup.FindComponents<MudRadio<string>>();
+            radios.Count.Should().Be(4);
+            radioGroup.FindAll(".mud-radio.mud-readonly").Count.Should().Be(0);
+
+            comp.FindAll(".mud-switch-button > input")[0].Change(true);
+            radioGroup.FindAll(".mud-radio.mud-readonly").Count.Should().Be(4);
         }
     }
 }

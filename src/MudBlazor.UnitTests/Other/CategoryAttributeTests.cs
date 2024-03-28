@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using NUnit.Framework;
 
@@ -10,7 +11,6 @@ namespace MudBlazor.UnitTests.Other
     [TestFixture]
     public class CategoryAttributeTests
     {
-
         [Test]
         public void CategoryTypesClassConstantsAreCorrect()
         {
@@ -27,12 +27,13 @@ namespace MudBlazor.UnitTests.Other
         [Test]
         public void AllComponentPropertiesHaveCategories()
         {
-
             // Currently, these classes inheriting from MudComponentBase have uncategorized properties.
             // If you want you can categorize them, and then remove from this list.
             Type[] exceptions = {
                 typeof(MudDataGrid<>),  // TODO: remove it later
+                typeof(FilterHeaderCell<>),
                 typeof(Column<>),
+                typeof(PropertyColumn<,>),
                 typeof(Row),
                 typeof(HeaderCell<>),
                 typeof(FooterCell<>),
@@ -42,6 +43,7 @@ namespace MudBlazor.UnitTests.Other
                 typeof(CellContext<>),
                 typeof(MudDataGridPager<>),
                 typeof(SelectColumn<>),
+                typeof(HierarchyColumn<>),
 
                 typeof(MudTHeadRow),
                 typeof(MudTFootRow),
@@ -83,12 +85,12 @@ namespace MudBlazor.UnitTests.Other
                         property.GetCustomAttribute<CategoryAttribute>() == null)     // property doesn't have a category
                     {
                         isTestOK = false;
-                        Console.WriteLine($"{component}.{property.Name} property doesn't have a category");
                     }
                 }
             }
 
-            Assert.True(isTestOK, "Some component properties don't have categories.");
+            // If this fails some component properties don't have categories.
+            isTestOK.Should().BeTrue();
         }
 
         // Returns the class that declares the specified method.

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -15,6 +16,13 @@ namespace MudBlazor
         .Build();
 
         [CascadingParameter] protected MudList ParentList { get; set; }
+
+        /// <summary>
+        /// The color of the selected List Item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
         /// Child content of component.
@@ -71,7 +79,7 @@ namespace MudBlazor
             {
                 if (_selectedItem == value)
                     return;
-                SetSelectedValue(_selectedItem?.Value, force: true);
+                SetSelectedValueAsync(_selectedItem?.Value, force: true).AndForget();
             }
         }
 
@@ -91,7 +99,7 @@ namespace MudBlazor
             get => _selectedValue;
             set
             {
-                SetSelectedValue(value, force: true);
+                SetSelectedValueAsync(value, force: true).AndForget();
             }
         }
 
@@ -126,14 +134,14 @@ namespace MudBlazor
         private MudListItem _selectedItem;
         private object _selectedValue;
 
-        internal void Register(MudListItem item)
+        internal async Task RegisterAsync(MudListItem item)
         {
             _items.Add(item);
-            if (CanSelect && SelectedValue!=null && object.Equals(item.Value, SelectedValue))
+            if (CanSelect && SelectedValue != null && object.Equals(item.Value, SelectedValue))
             {
                 item.SetSelected(true);
                 _selectedItem = item;
-                SelectedItemChanged.InvokeAsync(item);
+                await SelectedItemChanged.InvokeAsync(item);
             }
         }
 
@@ -152,30 +160,34 @@ namespace MudBlazor
             _childLists.Remove(child);
         }
 
-        internal void SetSelectedValue(object value, bool force = false)
+        internal async Task SetSelectedValueAsync(object value, bool force = false)
         {
             if ((!CanSelect || !Clickable) && !force)
                 return;
             if (object.Equals(_selectedValue, value))
                 return;
             _selectedValue = value;
-            SelectedValueChanged.InvokeAsync(value).AndForget();
+            await SelectedValueChanged.InvokeAsync(value);
             _selectedItem = null; // <-- for now, we'll see which item matches the value below
             foreach (var listItem in _items.ToArray())
             {
-                var isSelected = value!=null && object.Equals(value, listItem.Value);
+                var isSelected = value != null && object.Equals(value, listItem.Value);
                 listItem.SetSelected(isSelected);
                 if (isSelected)
                     _selectedItem = listItem;
             }
             foreach (var childList in _childLists.ToArray())
             {
-                childList.SetSelectedValue(value);
+                await childList.SetSelectedValueAsync(value);
                 if (childList.SelectedItem != null)
-                    _selectedItem= childList.SelectedItem;
+                    _selectedItem = childList.SelectedItem;
             }
-            SelectedItemChanged.InvokeAsync(_selectedItem).AndForget();
-            ParentList?.SetSelectedValue(value);
+
+            await SelectedItemChanged.InvokeAsync(_selectedItem);
+            if (ParentList is not null)
+            {
+                await ParentList.SetSelectedValueAsync(value);
+            }
         }
 
         internal bool CanSelect { get; private set; }
@@ -185,6 +197,5 @@ namespace MudBlazor
             ParametersChanged = null;
             ParentList?.Unregister(this);
         }
-
     }
 }

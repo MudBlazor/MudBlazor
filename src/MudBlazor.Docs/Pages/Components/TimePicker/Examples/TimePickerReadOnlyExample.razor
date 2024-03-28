@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudTimePicker Label="12 hours" AmPm="true" @bind-Time="time" ReadOnly="@readOnly" />
-<MudSwitch @bind-Checked="@readOnly" Color="Color.Tertiary">ReadOnly</MudSwitch>
+<MudSwitch @bind-Value="readOnly" Color="Color.Tertiary">ReadOnly</MudSwitch>
 
 @code{
     TimeSpan? time = new TimeSpan(00, 45, 00);

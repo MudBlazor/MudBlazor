@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudForm ValidationDelay="0">
+    <MudFileUpload T="IBrowserFile"
+                   @bind-Files="File"
+                   Required="@Required"
+                   Validation="@Validation">
+    </MudFileUpload>
+</MudForm>
+
+@code {
+#nullable enable
+    public static string __description__ = "Form should validate file uploader's file.";
+
+    [Parameter]
+    public IBrowserFile? File { get; set; }
+
+    [Parameter]
+    public bool Required { get; set; } = true;
+
+    [Parameter]
+    public Func<IBrowserFile, string?>? Validation { get; set; }
+}

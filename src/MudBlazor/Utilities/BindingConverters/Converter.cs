@@ -1,25 +1,34 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace MudBlazor
 {
+#nullable enable
     public class Converter<T, U>
     {
-        public Func<T, U> SetFunc { get; set; }
-        public Func<U, T> GetFunc { get; set; }
+        public Func<T?, U?>? SetFunc { get; set; }
+
+        public Func<U?, T?>? GetFunc { get; set; }
 
         /// <summary>
         /// The culture info being used for decimal points, date and time format, etc.
         /// </summary>
         public CultureInfo Culture { get; set; } = Converters.DefaultCulture;
 
-        public Action<string> OnError { get; set; }
-        public bool SetError { get; set; }
-        public bool GetError { get; set; }
-        public string SetErrorMessage { get; set; }
-        public string GetErrorMessage { get; set; }
+        public Action<string>? OnError { get; set; }
 
-        public U Set(T value)
+        [MemberNotNullWhen(true, nameof(SetErrorMessage))]
+        public bool SetError { get; set; }
+
+        [MemberNotNullWhen(true, nameof(GetErrorMessage))]
+        public bool GetError { get; set; }
+
+        public string? SetErrorMessage { get; set; }
+
+        public string? GetErrorMessage { get; set; }
+
+        public U? Set(T? value)
         {
             SetError = false;
             SetErrorMessage = null;
@@ -37,7 +46,7 @@ namespace MudBlazor
             return default(U);
         }
 
-        public T Get(U value)
+        public T? Get(U? value)
         {
             GetError = false;
             GetErrorMessage = null;
@@ -78,11 +87,9 @@ namespace MudBlazor
     /// </summary>
     public class Converter<T> : Converter<T, string>
     {
-
         /// <summary>
         /// Custom Format to be applied on bidirectional way.
         /// </summary>
-        public string Format { get; set; } = null;
-
+        public string? Format { get; set; } = null;
     }
 }

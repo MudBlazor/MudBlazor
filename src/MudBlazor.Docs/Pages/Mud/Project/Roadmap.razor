@@ -1,27 +1,38 @@
 ﻿@page "/mud/project/roadmap"
+@using System.Text.RegularExpressions
 
 <PageTitle>Roadmap - MudBlazor</PageTitle>
 
-<DocsPage>
+<DocsPage DisplayFooter="true">
+    <DocsPageHeader Title="Roadmap" />
     <DocsPageContent>
-        <DocsPageSection>
-            <div class="docs-roadmap-container d-flex justify-center">
-                <div class="d-flex justify-center flex-column align-center docs-roadmap-2022">
-                    <img src="_content/MudBlazor.Docs/images/roadmap2022.png" alt="Roadmap 2022">
-                    <MudText Typo="Typo.subtitle1" Align="Align.Center" Class="my-6">
-                        The roadmap is still in the making as we want to get some feedback from you and made the survey.<br>
-                        Once the survey is closed and the data collected the team will piece everything together.
-                    </MudText>
-                </div>
-                <div class="roadmap-world">
-                    <div class="roadmap-grid">
-                        @for (int i = 0; i < 100; i++)
-                        {
-                            <div class="roadmap-grid-item"></div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </DocsPageSection>
+        @if (string.IsNullOrEmpty(_roadMap))
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        }
+        else
+        {
+            <MudStack Spacing="2" Class="mud-typography mud-typography-body1">
+                @((MarkupString)GetBody(_roadMap))
+            </MudStack>
+        }
     </DocsPageContent>
 </DocsPage>
+
+@code {
+    private string _roadMap;
+    [Inject] HttpClient HttpClient { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await HttpClient.GetAsync("https://raw.githubusercontent.com/MudBlazor/MudBlazor/dev/ROADMAP.md");
+        _roadMap = await response.Content.ReadAsStringAsync();
+    }
+
+    private string GetBody(string value)
+    {
+        value = Regex.Replace(value, @"(##\s)(?<title>.+)", "<h5 class=\"mud-typography mud-typography-h5 mt-3\"><b>${title}</b></h5><hr class=\"mud-divider mud-divider-fullwidth\">");
+        value = Regex.Replace(value, @"(#\s)(?<title>.+)", "<h4 class=\"mud-typography mud-typography-h4\"><b>${title}</b></h4><hr class=\"mud-divider mud-divider-fullwidth\">");
+        return value;
+    }
+}

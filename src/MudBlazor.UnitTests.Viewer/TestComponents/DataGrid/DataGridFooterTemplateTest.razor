@@ -2,14 +2,14 @@
 
 <MudDataGrid Items="@_items">
     <Columns>
-        <Column T="Model" Field="@nameof(Model.Name)">
+        <PropertyColumn Property="x => x.Name">
             <FooterTemplate>
                 Names: @(string.Join(", ", @context.Items.Select(x => x.Name)))
             </FooterTemplate>
-        </Column>
-        <Column T="Model" Field="@nameof(Model.Age)" AggregateDefinition="_ageAggregation" />
-        <Column T="Model" Field="@nameof(Model.Status)" AggregateDefinition="AggregateDefinition<Model>.SimpleCount()"></Column>
-        <Column T="Model" Field="@nameof(Model.Salary)" AggregateDefinition="_salaryAggregation" />
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Age" AggregateDefinition="_ageAggregation" />
+        <PropertyColumn Property="x => x.Status" AggregateDefinition="AggregateDefinition<Model>.SimpleCount()" />
+        <PropertyColumn Property="x => x.Salary" AggregateDefinition="_salaryAggregation" />
     </Columns>
 </MudDataGrid>
 

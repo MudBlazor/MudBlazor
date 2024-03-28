@@ -4,6 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Components.Snackbar;
 using MudBlazor.Extensions;
 
 namespace MudBlazor
@@ -27,31 +28,35 @@ namespace MudBlazor
         public bool HideIcon { get; set; }
 
         public string Icon { get; set; }
+        public Color IconColor { get; set; } = Color.Inherit;
+        public Size IconSize { get; set; } = Size.Medium;
+
+        public SnackbarDuplicatesBehavior DuplicatesBehavior { get; set; } = SnackbarDuplicatesBehavior.GlobalDefault;
 
         /// <summary>
         /// Custom normal icon.
         /// </summary>
-        [Parameter] public string NormalIcon { get; set; } = Icons.Material.Outlined.EventNote;
+        public string NormalIcon { get; set; } = Icons.Material.Outlined.EventNote;
 
         /// <summary>
         /// Custom info icon.
         /// </summary>
-        [Parameter] public string InfoIcon { get; set; } = Icons.Material.Outlined.Info;
+        public string InfoIcon { get; set; } = Icons.Material.Outlined.Info;
 
         /// <summary>
         /// Custom success icon.
         /// </summary>
-        [Parameter] public string SuccessIcon { get; set; } = Icons.Custom.Uncategorized.AlertSuccess;
+        public string SuccessIcon { get; set; } = Icons.Custom.Uncategorized.AlertSuccess;
 
         /// <summary>
         /// Custom warning icon.
         /// </summary>
-        [Parameter] public string WarningIcon { get; set; } = Icons.Material.Outlined.ReportProblem;
+        public string WarningIcon { get; set; } = Icons.Material.Outlined.ReportProblem;
 
         /// <summary>
         /// Custom error icon.
         /// </summary>
-        [Parameter] public string ErrorIcon { get; set; } = Icons.Material.Filled.ErrorOutline;
+        public string ErrorIcon { get; set; } = Icons.Material.Filled.ErrorOutline;
 
         public SnackbarOptions(Severity severity, CommonSnackbarOptions options) : base(options)
         {

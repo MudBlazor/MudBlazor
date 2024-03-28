@@ -8,13 +8,16 @@ using Moq;
 namespace MudBlazor.UnitTests.Mocks
 {
     /// <summary>
-    /// Mock for scroll spy
+    /// Mock for popover
     /// </summary>
+    [Obsolete($"Use {nameof(MockPopoverServiceV2)}. This will be removed in v7.")]
     public class MockPopoverService : IMudPopoverService
     {
         private List<MudPopoverHandler> _handlers = new();
         private static RenderFragment DefaultFragment = (builder) => { };
         public IEnumerable<MudPopoverHandler> Handlers => _handlers;
+
+        public bool ThrowOnDuplicateProvider => false;
 
         public event EventHandler FragmentsChanged;
 
@@ -26,5 +29,7 @@ namespace MudBlazor.UnitTests.Mocks
         });
 
         public Task<bool> Unregister(MudPopoverHandler handler) => Task.FromResult(true);
+
+        public ValueTask<int> CountProviders() => ValueTask.FromResult(0);
     }
 }

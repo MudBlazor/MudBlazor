@@ -1,12 +1,12 @@
 ﻿@page "/customization/typography"
 
 <DocsPage>
-    <DocsPageHeader Title="Typography" SubTitle="Typography controls the text trough out the theme, like font-family, size, and other settings." DisableApiHeader="true" />
+    <DocsPageHeader Title="Typography" SubTitle="Typography controls the text throughout the theme, like font-family, size, and other settings." DisableApiHeader="true" />
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader Title="How it works">
                 <Description>
-                   <MudText>It's possible to change the following typography types in the theme and effects all text accross the library.</MudText>
+                   <MudText>It's possible to change the following typography types in the theme, which affects all text across the library.</MudText>
                 </Description>
             </SectionHeader>
             <MudGrid>
@@ -47,7 +47,7 @@
                     To change the default font for all available typography change <CodeInline>FontFamily</CodeInline> for the <CodeInline>Default</CodeInline> typography.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="TypographyDefaultFontExample" />
+            <SectionContent Code="@nameof(TypographyDefaultFontExample)" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader Title="Typography Settings">
@@ -55,7 +55,7 @@
                     Each typography can be configured with five different settings.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="TypographySettingsExample" />
+            <SectionContent Code="@nameof(TypographySettingsExample)" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

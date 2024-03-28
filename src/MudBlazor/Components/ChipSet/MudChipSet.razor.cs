@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudChipSet<T> : MudComponentBase, IDisposable
     {
-
         protected string Classname =>
-        new CssBuilder("mud-chipset")
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-chipset")
+                .AddClass(Class)
+                .Build();
 
         /// <summary>
         /// Child content of component.
@@ -57,8 +57,8 @@ namespace MudBlazor
                     return;
                 _filter = value;
                 StateHasChanged();
-                foreach (var chip in _chips)
-                    chip.ForceRerender();
+                foreach (IMudStateHasChanged chip in _chips)
+                    chip.StateHasChanged();
             }
         }
 
@@ -119,6 +119,7 @@ namespace MudBlazor
                     {
                         chip.IsSelected = false;
                     }
+                    _lastSelectedValues = null;
                 }
                 else
                 {
@@ -179,22 +180,23 @@ namespace MudBlazor
             set
             {
                 if (value == null)
-                    SetSelectedValues(new T[0]);
+                    SetSelectedValuesAsync(Array.Empty<T>());
                 else
-                    SetSelectedValues(value.ToArray()).AndForget();
+                    SetSelectedValuesAsync(value.ToArray()).AndForget();
             }
         }
 
         /// <summary>
         /// Called whenever the selection changed
         /// </summary>
-        [Parameter] public EventCallback<ICollection<T>> SelectedValuesChanged { get; set; }
+        [Parameter]
+        public EventCallback<ICollection<T>> SelectedValuesChanged { get; set; }
 
-        internal Task SetSelectedValues(T[] values)
+        internal Task SetSelectedValuesAsync(T[] values)
         {
             HashSet<T> newValues = null;
             if (values == null)
-                values = new T[0];
+                values = Array.Empty<T>();
             if (MultiSelection)
                 newValues = new HashSet<T>(values, _comparer);
             else
@@ -212,7 +214,7 @@ namespace MudBlazor
                 var isSelected = _selectedValues.Contains(chip.Value);
                 chip.IsSelected = isSelected;
             }
-            return NotifySelection();
+            return NotifySelectionAsync();
         }
 
         /// <summary>
@@ -221,25 +223,26 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MudChip<T>> OnClose { get; set; }
 
-        internal Task Add(MudChip<T> chip)
+        internal Task AddAsync(MudChip<T> chip)
         {
             _chips.Add(chip);
             if (_selectedValues.Contains(chip.Value))
                 chip.IsSelected = true;
-            return CheckDefault(chip);
+            return CheckDefaultAsync(chip);
         }
 
-        internal void Remove(MudChip<T> chip)
+        internal Task RemoveAsync(MudChip<T> chip)
         {
             _chips.Remove(chip);
             if (chip.IsSelected)
             {
                 _selectedValues.Remove(chip.Value);
-                NotifySelection().AndForget();
+                return NotifySelectionAsync();
             }
+            return Task.CompletedTask;
         }
 
-        private async Task CheckDefault(MudChip<T> chip)
+        private async Task CheckDefaultAsync(MudChip<T> chip)
         {
             if (!MultiSelection)
                 return;
@@ -256,14 +259,14 @@ namespace MudBlazor
                     _selectedValues.Add(chip.Value);
                 else
                     _selectedValues.Remove(chip.Value);
-                await NotifySelection();
+                await NotifySelectionAsync();
             }
         }
 
         private HashSet<MudChip<T>> _chips = new();
         private bool _filter;
 
-        internal Task OnChipClicked(MudChip<T> chip)
+        internal Task OnChipClickedAsync(MudChip<T> chip)
         {
             var wasSelected = chip.IsSelected;
             if (MultiSelection)
@@ -280,7 +283,7 @@ namespace MudBlazor
                     chip.IsSelected = !wasSelected;
             }
             UpdateSelectedValues();
-            return NotifySelection();
+            return NotifySelectionAsync();
         }
 
         private void UpdateSelectedValues()
@@ -290,7 +293,7 @@ namespace MudBlazor
 
         private T[] _lastSelectedValues = null;
 
-        private async Task NotifySelection()
+        private async Task NotifySelectionAsync()
         {
             if (_disposed)
                 return;
@@ -304,20 +307,20 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public void OnChipDeleted(MudChip<T> chip)
+        public async Task OnChipDeletedAsync(MudChip<T> chip)
         {
-            Remove(chip);
-            OnClose.InvokeAsync(chip);
+            await RemoveAsync(chip);
+            await OnClose.InvokeAsync(chip);
         }
 
-        protected override async void OnAfterRender(bool firstRender)
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
-                await SelectDefaultChips();
-            base.OnAfterRender(firstRender);
+                await SelectDefaultChipsAsync();
+            await base.OnAfterRenderAsync(firstRender);
         }
 
-        private async Task SelectDefaultChips()
+        private async Task SelectDefaultChipsAsync()
         {
             if (!MultiSelection)
             {
@@ -331,7 +334,7 @@ namespace MudBlazor
                 if (anySelected)
                 {
                     UpdateSelectedValues();
-                    await NotifySelection();
+                    await NotifySelectionAsync();
                 }
             }
         }
