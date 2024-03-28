@@ -2470,9 +2470,9 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.FindAll("tbody tr").Count.Should().Be(4);
 
-            await comp.InvokeAsync(() =>
+            await comp.InvokeAsync(async () =>
             {
-                comp.Instance.FilterHiredToggled(true, dataGrid.Instance);
+                await comp.Instance.FilterHiredToggled(true, dataGrid.Instance);
             });
 
             dataGrid.Render();

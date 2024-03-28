@@ -138,8 +138,8 @@ namespace MudBlazor.UnitTests.Components
             var watch = Stopwatch.StartNew();
             for (var i = 0; i < 10000; i++)
             {
-                await comp.InvokeAsync(() => datepicker.Open());
-                await comp.InvokeAsync(() => datepicker.Close());
+                await comp.InvokeAsync(() => datepicker.OpenAsync());
+                await comp.InvokeAsync(() => datepicker.CloseAsync());
             }
             watch.Stop();
             watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
@@ -630,7 +630,7 @@ namespace MudBlazor.UnitTests.Components
             dateRangePickerInstance.ErrorText.Should().BeNullOrWhiteSpace();
 
             // reset value
-            await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Clear());
+            await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.ClearAsync());
 
             // assert values have benn nulled
             dateRangePickerInstance.Text.Should().BeNullOrEmpty();
