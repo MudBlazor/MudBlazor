@@ -3,25 +3,59 @@
 
 @if (!DisableToolbar)
 {
-    <MudToolBar Class="@Classnames" Style="@Style">
+    <MudToolBar Class="@Classname" Style="@Style">
         @ChildContent
     </MudToolBar>
 }
 
 
 @code {
-    protected string Classnames =>
-    new CssBuilder("mud-picker-toolbar")
-      .AddClass($"mud-theme-{Color.ToDescriptionString()}")
-      .AddClass("mud-picker-toolbar-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
-      .AddClass(Class)
-    .Build();
+    protected string Classname =>
+        new CssBuilder("mud-picker-toolbar")
+          .AddClass($"mud-theme-{Color.ToDescriptionString()}")
+          .AddClass("mud-picker-toolbar-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
+          .AddClass(Class)
+        .Build();
 
-    [Parameter] public string Class { get; set; }
-    [Parameter] public string Style { get; set; }
-    [Parameter] public bool DisableToolbar { get; set; }
-    [Parameter] public Orientation Orientation { get; set; }
-    [Parameter] public PickerVariant PickerVariant { get; set; }
-    [Parameter] public Color Color { get; set; }
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    /// <summary>
+    /// CSS class that will be applied to the toolbar
+    /// </summary>
+    [Parameter]
+    public string Class { get; set; }
+
+    /// <summary>
+    /// CSS style that will be applied to the toolbar
+    /// </summary>
+    [Parameter]
+    public string Style { get; set; }
+    
+    /// <summary>
+    /// Hide toolbar
+    /// </summary>
+    [Parameter]
+    public bool DisableToolbar { get; set; }
+
+    /// <summary>
+    /// Sets the orientation of the toolbar
+    /// </summary>
+    [Parameter]
+    public Orientation Orientation { get; set; }
+    
+    /// <summary>
+    /// Picker container option
+    /// </summary>
+    [Parameter]
+    public PickerVariant PickerVariant { get; set; }
+    
+    /// <summary>
+    /// The color of the toolbar, selected and active. It supports the theme colors
+    /// </summary>
+    [Parameter]
+    public Color Color { get; set; }
+    
+    /// <summary>
+    /// Child content of toolbar
+    /// </summary>
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
 }
