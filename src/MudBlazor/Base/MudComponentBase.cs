@@ -47,7 +47,7 @@ namespace MudBlazor
         [Parameter(CaptureUnmatchedValues = true)]
         [Category(CategoryTypes.ComponentBase.Common)]
         public Dictionary<string, object?> UserAttributes { get; set; } = new Dictionary<string, object?>();
-
+        
         /// <summary>
         /// Gets or sets a value indicating whether <see cref="JSRuntime" /> is available.
         /// </summary>

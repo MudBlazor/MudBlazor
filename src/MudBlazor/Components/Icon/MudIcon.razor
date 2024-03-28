@@ -1,18 +1,19 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@using MudBlazor.Extensions;
 
-@if (!string.IsNullOrEmpty(Icon) && Icon.Trim().StartsWith("<"))
+@if (_iconProperties.IsSvg())
 {
-    <svg @attributes="UserAttributes" class="@Classname" style="@Style" focusable="false" viewBox="@ViewBox" aria-hidden="true">
-        @if (Title != null)
-        {
-            <title>@Title</title>
-        }
+   <svg @attributes="UserAttributes" class="@Classname" style="@_iconProperties.Style" focusable="@_iconProperties.Focusable" viewBox="@_iconProperties.ViewBox" aria-hidden="@_iconProperties.AriaHidden">
+      @if (_iconProperties.HasTitle())
+      {
+         <title>@_iconProperties.Title</title>
+      }
 
-        @((MarkupString)Icon)
-    </svg>
+      @((MarkupString)_iconProperties.Icon)
+   </svg>
 }
 else
 {
-    <span @attributes="UserAttributes" class="@($"{Classname} {Icon}")" style="@Style" title="@Title" />
+   <span @attributes="UserAttributes" class="@($"{Classname} {_iconProperties.Icon}")" style="@_iconProperties.Style" title="@_iconProperties.Title" />
 }

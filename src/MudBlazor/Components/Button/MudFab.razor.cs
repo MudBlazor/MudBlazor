@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -17,6 +18,47 @@ namespace MudBlazor
                 .AddClass($"mud-fab-disable-elevation", DisableElevation)
                 .AddClass(Class)
                 .Build();
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            var hasStartIcon = StartIcon?.AsSpan().Trim().Length > 0;
+            var hasEndIcon = EndIcon.AsSpan().Trim().Length > 0;
+
+            if (IconProperties is not null)
+            {
+                _iconProperties = IconProperties;
+                if (_iconProperties.HasIcon())
+                {
+                    // Backwards compatibility
+
+                    if (hasStartIcon) StartIcon = _iconProperties.Icon;
+                    else if (hasEndIcon) EndIcon = _iconProperties.Icon;
+                }
+
+                if (_iconProperties.HasTitle()) Title = _iconProperties.Title;
+            }
+            else
+            {
+                _iconProperties.Icon = hasStartIcon ? StartIcon : hasEndIcon ? EndIcon : string.Empty;
+                _iconProperties.Title = Title;
+                _iconProperties.Size = IconSize;
+                _iconProperties.Color = IconColor;
+            }
+
+            _iconProperties.Position = hasStartIcon ? Position.Start : hasEndIcon ? Position.End : null;
+        }
+
+
+        IconProperties _iconProperties = new();
+
+        /// <summary>
+        /// The icon properties.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Icon.Behavior)]
+        public IconProperties? IconProperties { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
