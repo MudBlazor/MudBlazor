@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
@@ -133,7 +132,10 @@ namespace MudBlazor
         protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (AutoClose)
-                Visible = false;
+            {
+                await _visibleState.SetValueAsync(false);
+            }
+
             await OnClick.InvokeAsync(ev);
 #pragma warning disable CS0618
             if (Command?.CanExecute(CommandParameter) ?? false)
@@ -147,12 +149,18 @@ namespace MudBlazor
         protected override async Task OnAfterRenderAsync(bool firstTime)
         {
             if (!LockScroll || Absolute)
+            {
                 return;
+            }
 
             if (Visible)
+            {
                 await BlockScrollAsync();
+            }
             else
+            {
                 await UnblockScrollAsync();
+            }
         }
 
         private Task VisibleParameterChangedHandlerAsync()
