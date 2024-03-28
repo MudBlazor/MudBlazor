@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudChip<T> : MudComponentBase, IDisposable
+    public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     {
         private bool _isSelected;
 

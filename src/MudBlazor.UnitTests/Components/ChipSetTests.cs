@@ -273,7 +273,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(1));
 
 
-            await comp.InvokeAsync(() => chipSet.Instance.OnChipDeletedAsync((MudChip)chip.Instance.Value));
+            await comp.InvokeAsync(() => chipSet.Instance.OnChipDeletedAsync(chip.Instance));
             comp.WaitForAssertion(() => chipSet.Instance.SelectedChips.Length.Should().Be(0));
 
             await comp.InvokeAsync(() => chipSet.Instance.SelectedChip = null);
@@ -285,7 +285,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task ChipSet_MultiSelection_AfterChipArraySetNull_ShouldBeAbleToSelectSameChip()
         {
             var comp = Context.RenderComponent<ChipSetClearSelectionTest>();
-            var chipSet = comp.FindComponent<MudChipSet>();
+            var chipSet = comp.FindComponent<MudChipSet<string>>();
 
             // Select one chip
             comp.FindAll("div.mud-chip")[0].Click();
@@ -310,7 +310,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task ChipSet_MultiSelection_AfterChipArraySetEmpty_ShouldBeAbleToSelectSameChip()
         {
             var comp = Context.RenderComponent<ChipSetClearSelectionTest>();
-            var chipSet = comp.FindComponent<MudChipSet>();
+            var chipSet = comp.FindComponent<MudChipSet<string>>();
 
             // Select one chip
             comp.FindAll("div.mud-chip")[0].Click();
