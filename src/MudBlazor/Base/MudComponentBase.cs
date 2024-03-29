@@ -56,8 +56,21 @@ namespace MudBlazor
         /// <summary>
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
         /// </summary>
-        public string FieldId => (UserAttributes?.ContainsKey("id") == true ? UserAttributes["id"]?.ToString() ?? $"mudinput-{Guid.NewGuid()}" : $"mudinput-{Guid.NewGuid()}");
+        public string FieldId
+        {
+            get
+            {
+                // Is an "id" attribute specified?
+                if (UserAttributes != null && UserAttributes.TryGetValue("id", out var id) && id != null)
+                {
+                    // Yes.  Use it, or fall back to a new ID
+                    return id.ToString() ?? $"mudinput-{Guid.NewGuid()}";
+                }
 
+                // Use a new ID
+                return $"mudinput-{Guid.NewGuid()}";
+            }
+        }
         /// <inheritdoc />
         protected override void OnAfterRender(bool firstRender)
         {
