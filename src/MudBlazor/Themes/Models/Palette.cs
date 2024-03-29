@@ -380,7 +380,7 @@ namespace MudBlazor
         /// Gets or sets the opacity value for hover effect.
         /// </summary>
         public double HoverOpacity { get; set; } = 0.06;
-        
+
         /// <summary>
         /// Gets or sets the opacity for the ripple effect.
         /// </summary>
@@ -390,7 +390,7 @@ namespace MudBlazor
         /// Gets or sets the opacity for the ripple effect on specific elements like filled buttons.
         /// </summary>
         public double RippleOpacitySecondary { get; set; } = 0.2;
-        
+
         /// <summary>
         /// Gets or sets the default gray color.
         /// </summary>
