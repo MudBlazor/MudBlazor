@@ -16,7 +16,6 @@
   border-radius: 50%;
   color: var(--mud-palette-text-primary);
   --mud-ripple-color: var(--mud-palette-text-primary);
-  background-color: var(--mud-palette-action-default-hover);
 
   @media(hover: hover) and (pointer: fine) {
     &:hover {
