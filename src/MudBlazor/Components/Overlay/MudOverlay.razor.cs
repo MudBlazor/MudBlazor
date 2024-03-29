@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
@@ -104,22 +103,6 @@ namespace MudBlazor
         public int ZIndex { get; set; } = 5;
 
         /// <summary>
-        /// Command parameter.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.ClickAction)]
-        [Obsolete($"This will be removed in v7.")]
-        public object? CommandParameter { get; set; }
-
-        /// <summary>
-        /// Command executed when the user clicks on an element.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.ClickAction)]
-        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
-        public ICommand? Command { get; set; }
-
-        /// <summary>
         /// Fired when the overlay is clicked
         /// </summary>
         [Parameter]
@@ -133,26 +116,29 @@ namespace MudBlazor
         protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (AutoClose)
-                Visible = false;
-            await OnClick.InvokeAsync(ev);
-#pragma warning disable CS0618
-            if (Command?.CanExecute(CommandParameter) ?? false)
             {
-                Command.Execute(CommandParameter);
+                await _visibleState.SetValueAsync(false);
             }
-#pragma warning restore CS0618
+
+            await OnClick.InvokeAsync(ev);
         }
 
         //if not visible or CSS `position:absolute`, don't lock scroll
         protected override async Task OnAfterRenderAsync(bool firstTime)
         {
             if (!LockScroll || Absolute)
+            {
                 return;
+            }
 
             if (Visible)
+            {
                 await BlockScrollAsync();
+            }
             else
+            {
                 await UnblockScrollAsync();
+            }
         }
 
         private Task VisibleParameterChangedHandlerAsync()

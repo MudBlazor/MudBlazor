@@ -21,9 +21,6 @@ namespace MudBlazor;
 /// <summary>
 /// Represents a service that serves to listen to browser window size changes and breakpoints.
 /// </summary>
-/// <remarks>
-/// This service replaces <see cref="IBreakpointService"/>, <see cref="IResizeService"/> and <see cref="IResizeListenerService"/>.
-/// </remarks>
 internal class BrowserViewportService : IBrowserViewportService
 {
     private bool _disposed;

@@ -20,10 +20,10 @@
 
   &.mud-tooltip-default {
     color: var(--mud-palette-dark-text);
-    background-color: var(--mud-palette-grey-darker);
+    background-color: var(--mud-palette-gray-darker);
 
     &.mud-tooltip-arrow::after {
-      border-color: var(--mud-palette-grey-darker) transparent transparent transparent;
+      border-color: var(--mud-palette-gray-darker) transparent transparent transparent;
     }
   }
 

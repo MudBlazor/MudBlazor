@@ -18,14 +18,6 @@ namespace MudBlazor
         [Inject] public IJsApiService JsApiService { get; set; }
 
         /// <summary>
-        /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where (Obsolete replaced by Href)
-        /// </summary>
-        [Obsolete("Use Href Instead.", false)]
-        [Parameter]
-        [Category(CategoryTypes.Menu.ClickAction)]
-        public string Link { get => Href; set => Href = value; }
-
-        /// <summary>
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
         /// </summary>
         [Parameter]
@@ -61,16 +53,6 @@ namespace MudBlazor
         [Parameter][Category(CategoryTypes.Menu.ClickAction)] public string Target { get; set; }
         [Parameter][Category(CategoryTypes.Menu.ClickAction)] public bool ForceLoad { get; set; }
 
-        [Parameter]
-        [Category(CategoryTypes.Menu.ClickAction)]
-        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
-        public ICommand Command { get; set; }
-
-        [Parameter]
-        [Category(CategoryTypes.Menu.ClickAction)]
-        [Obsolete("This will be removed in v7.")]
-        public object CommandParameter { get; set; }
-
         [Parameter] public EventCallback<EventArgs> OnAction { get; set; }
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
         [Parameter] public EventCallback<TouchEventArgs> OnTouch { get; set; }
@@ -94,12 +76,6 @@ namespace MudBlazor
                     await OnClick.InvokeAsync(ev);
                 else
                     await OnActionHandlerAsync(ev);
-#pragma warning disable CS0618
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }
-#pragma warning restore CS0618
             }
         }
 
@@ -125,12 +101,6 @@ namespace MudBlazor
                     await OnTouch.InvokeAsync(ev);
                 else
                     await OnActionHandlerAsync(ev);
-#pragma warning disable CS0618
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }
-#pragma warning restore CS0618
             }
         }
 

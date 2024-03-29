@@ -25,6 +25,8 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
 {
     private T? _lastValue;
     private ParameterChangedEventArgs<T>? _parameterChangedEventArgs;
+
+    private readonly IEqualityComparer<T> _comparer;
     private readonly Func<T> _getParameterValueFunc;
     private readonly Func<EventCallback<T>> _eventCallbackFunc;
     private readonly IParameterChangedHandler<T>? _parameterChangedHandler;
@@ -51,12 +53,13 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
     /// <inheritdoc/>
     public T? Value { get; private set; }
 
-    private ParameterState(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null)
+    private ParameterState(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, IEqualityComparer<T>? comparer = null)
     {
-        Metadata = ParameterMetadataRules.Morph(metadata);
+        Metadata = metadata;
         _getParameterValueFunc = getParameterValueFunc;
         _eventCallbackFunc = eventCallbackFunc;
         _parameterChangedHandler = parameterChangedHandler;
+        _comparer = comparer ?? EqualityComparer<T>.Default;
         _lastValue = default;
         Value = default;
     }
@@ -64,14 +67,12 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
     /// <inheritdoc/>
     public Task SetValueAsync(T value)
     {
-        if (!EqualityComparer<T>.Default.Equals(Value, value))
+        if (!_comparer.Equals(Value, value))
         {
             Value = value;
             var eventCallback = _eventCallbackFunc();
             if (eventCallback.HasDelegate)
             {
-                _lastValue = value;
-
                 return eventCallback.InvokeAsync(value);
             }
         }
@@ -92,7 +93,7 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
     public void OnParametersSet()
     {
         var currentParameterValue = _getParameterValueFunc();
-        if (!EqualityComparer<T>.Default.Equals(_lastValue, currentParameterValue))
+        if (!_comparer.Equals(_lastValue, currentParameterValue))
         {
             Value = currentParameterValue;
             _lastValue = currentParameterValue;
@@ -125,7 +126,7 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
         _parameterChangedEventArgs = null;
         // This if construction is to trigger [MaybeNullWhen(false)] for newValue, otherwise it wouldn't if we assign it directly to a variable,
         // and we'd need to suppress it's nullability.
-        if (parameters.HasParameterChanged(Metadata.ParameterName, currentParameterValue, out var newValue))
+        if (parameters.HasParameterChanged(Metadata.ParameterName, currentParameterValue, out var newValue, comparer: _comparer))
         {
             changed = true;
             _parameterChangedEventArgs = new ParameterChangedEventArgs<T>(Metadata.ParameterName, currentParameterValue, newValue);
@@ -140,39 +141,20 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
     ///  <b>NB!</b> Usually you don't need to call this directly. Instead, use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
     ///  component's constructor.  
     ///  </summary>
-    ///  <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
-    ///  <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
-    ///  <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
-    ///  <param name="parameterChangedHandler">A change handler containing code that needs to be executed when the parameter value changes/</param>
-    /// <param name="handlerName">The handler's name.</param>
-    ///  <remarks>
-    ///  For details and usage please read CONTRIBUTING.md
-    ///  </remarks>
-    ///  <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    public static ParameterState<T> Attach(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, string? handlerName = null)
-    {
-        var metadata = new ParameterMetadata(parameterName, handlerName);
-
-        return Attach(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
-    }
-
-    ///  <summary>
-    ///  Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's ParameterState framework.
-    /// <para />
-    ///  <b>NB!</b> Usually you don't need to call this directly. Instead, use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
-    ///  component's constructor.  
-    ///  </summary>
     ///  <param name="metadata">The parameter's metadata.</param>
     ///  <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>
     ///  <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
     ///  <param name="parameterChangedHandler">A change handler containing code that needs to be executed when the parameter value changes/</param>
+    ///  <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
     ///  <remarks>
     ///  For details and usage please read CONTRIBUTING.md
     ///  </remarks>
     ///  <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    public static ParameterState<T> Attach(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null)
+    public static ParameterState<T> Attach(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, IEqualityComparer<T>? comparer = null)
     {
-        return new ParameterState<T>(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler);
+        metadata = ParameterMetadataRules.Morph(metadata);
+
+        return new ParameterState<T>(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler, comparer);
     }
 
     /// <inheritdoc />

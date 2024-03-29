@@ -32,6 +32,9 @@ namespace MudBlazor
 
         internal void Clicked(bool fromCloseIcon)
         {
+            if (State.UserHasInteracted)
+                return; // You should only be able to interact with the snackbar once.
+
             if (!fromCloseIcon)
             {
                 // Do not start the hiding transition if no click action
@@ -44,6 +47,14 @@ namespace MudBlazor
 
             State.UserHasInteracted = true;
             TransitionTo(SnackbarState.Hiding, cancellable: false);
+        }
+
+        /// <summary>
+        /// Forcibly close the snackbar without performing any animations.
+        /// </summary>
+        public void ForceClose()
+        {
+            TransitionTo(SnackbarState.Hiding, false, false);
         }
 
         /// <summary>

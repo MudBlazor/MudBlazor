@@ -3,60 +3,53 @@
 <MudStack>
     <MudStack Row Class="flex-wrap">
         <MudStack Spacing="16" AlignItems="@AlignItems.Start">
-            <MudToggleGroup T="string" Style="width: 300px;" Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_groupDisabled">
-                <MudToggleItem Value="@("One")" Disabled="@_1stItemDisabled"/>
-                <MudToggleItem Value="@("Two")" Disabled="@_2ndItemDisabled"/>
-                <MudToggleItem Value="@("Three")" Disabled="@_3rdItemDisabled"/>
-                <MudToggleItem Value="@("Four")" Disabled="@_4thItemDisabled"/>
+            <MudToggleGroup T="string" Style="width: 300px;" Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_disabled">
+                <MudToggleItem Value="@("One")"/>
+                <MudToggleItem Value="@("Two")"/>
+                <MudToggleItem Value="@("Three")"/>
+                <MudToggleItem Value="@("Four")"/>
             </MudToggleGroup>
 
-            <MudToggleGroup T="string" Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_groupDisabled">
-                <MudToggleItem Value="@("left")" Disabled="@_1stItemDisabled">
+            <MudToggleGroup T="string" Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_disabled">
+                <MudToggleItem Value="@("left")">
                     <MudIcon Icon="@Icons.Material.Filled.FormatAlignLeft"/>
                 </MudToggleItem>
-                <MudToggleItem Value="@("center")" Disabled="@_2ndItemDisabled">
+                <MudToggleItem Value="@("center")">
                     <MudIcon Icon="@Icons.Material.Filled.FormatAlignCenter"/>
                 </MudToggleItem>
-                <MudToggleItem Value="@("right")" Disabled="@_3rdItemDisabled">
+                <MudToggleItem Value="@("right")">
                     <MudIcon Icon="@Icons.Material.Filled.FormatAlignRight"/>
                 </MudToggleItem>
-                <MudToggleItem Value="@("justify")" Disabled="@_4thItemDisabled">
+                <MudToggleItem Value="@("justify")">
                     <MudIcon Icon="@Icons.Material.Filled.FormatAlignJustify"/>
                 </MudToggleItem>
             </MudToggleGroup>
         </MudStack>
         <MudSpacer/>
-        <MudToggleGroup T="string" Vertical  Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_groupDisabled">
-                <MudToggleItem Value="@("left")" Disabled="@_1stItemDisabled">
+        <MudToggleGroup T="string" Vertical  Outline="@_outline" Delimiters="@_delimiters" Dense="@_dense" Rounded="@_rounded" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_disabled">
+                <MudToggleItem Value="@("left")">
                     <MudIcon Icon="@Icons.Material.Filled.FormatAlignLeft"/>
                 </MudToggleItem>
-                <MudToggleItem Value="@("center")" Disabled="@_2ndItemDisabled">
+                <MudToggleItem Value="@("center")">
                     <MudIcon Icon="@Icons.Material.Filled.FormatAlignCenter"/>
                 </MudToggleItem>
-                <MudToggleItem Value="@("right")" Disabled="@_3rdItemDisabled">
+                <MudToggleItem Value="@("right")">
                     <MudIcon Icon="@Icons.Material.Filled.FormatAlignRight"/>
                 </MudToggleItem>
-                <MudToggleItem Value="@("justify")" Disabled="@_4thItemDisabled">
+                <MudToggleItem Value="@("justify")">
                     <MudIcon Icon="@Icons.Material.Filled.FormatAlignJustify"/>
                 </MudToggleItem>
         </MudToggleGroup>
     </MudStack>
 
     <MudStack Row Class="flex-wrap">
-        <MudCheckBox @bind-Checked="@_dense" Label="Dense"/>
-        <MudCheckBox @bind-Checked="@_rounded" Label="Rounded"/>
-        <MudCheckBox @bind-Checked="@_checkMark" Label="CheckMark"/>
-        <MudCheckBox @bind-Checked="@_fixedContent" Label="FixedContent"/>
-        <MudCheckBox @bind-Checked="@_outline" Label="Outline"/>
-        <MudCheckBox @bind-Checked="@_delimiters" Label="Delimiters" />
-        <MudCheckBox @bind-Checked="@_groupDisabled" Label="Disabled" />
-    </MudStack>
-
-    <MudStack Row Class="flex-wrap">
-        <MudCheckBox @bind-Checked="@_1stItemDisabled" Label="1st Item Disabled" />
-        <MudCheckBox @bind-Checked="@_2ndItemDisabled" Label="2nd Item Disabled" />
-        <MudCheckBox @bind-Checked="@_3rdItemDisabled" Label="3rd Item Disabled" />
-        <MudCheckBox @bind-Checked="@_4thItemDisabled" Label="4th Item Disabled" />
+        <MudCheckBox @bind-Value="_dense" Label="Dense"/>
+        <MudCheckBox @bind-Value="_rounded" Label="Rounded"/>
+        <MudCheckBox @bind-Value="_checkMark" Label="CheckMark"/>
+        <MudCheckBox @bind-Value="_fixedContent" Label="FixedContent"/>
+        <MudCheckBox @bind-Value="_outline" Label="Outline"/>
+        <MudCheckBox @bind-Value="_delimiters" Label="Delimiters" />
+        <MudCheckBox @bind-Value="_disabled" Label="Disabled" />
     </MudStack>
 </MudStack>
 
@@ -67,9 +60,5 @@
     bool _outline = true;
     bool _delimiters = true;
     bool _fixedContent = false;
-    bool _groupDisabled = false;
-    bool _1stItemDisabled = false;
-    bool _2ndItemDisabled = false;
-    bool _3rdItemDisabled = false;
-    bool _4thItemDisabled = false;
+    bool _disabled = false;
 }

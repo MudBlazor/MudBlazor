@@ -43,8 +43,7 @@ Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 
 ## Minimal Prerequisites to Compile from Source
 
-- [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
-- [.NET 7.0 SDK](https://dotnet.microsoft.com/download/dotnet/7.0)
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 
 ## Pull Requests
 - Your Pull Request (PR) must only consist of one topic. It is better to split Pull Requests with more than one feature or bug fix in seperate Pull Requests
@@ -57,7 +56,7 @@ Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 - If there are new changes in the main repo, you should either merge the main repo's (upstream) dev or rebase your branch onto it.
 - Before working on a large change, it is recommended to first open an issue to discuss it with others
 - If your Pull Request is still in progress, convert it to a draft Pull Request
-- Your commit messages should follow the following format: 
+- The PR Title should follow the following format: 
 ```
 <component name>: <short description of changes in imperative> (<linked issue>)
 ```
@@ -65,7 +64,7 @@ For example:
 ```
  DateRangePicker: Fix initializing DateRange with null values (#1997)
 ```
-
+- To keep your branch up to date with the `dev` branch simply merge `dev`. **Don't rebase** because if you rebase the wrong direction your PR will include tons of unrelated commits from dev.
 - Your Pull Request should not include any unnecessary refactoring
 - If there are visual changes, you should include a screenshot, gif or video
 - If there are any coresponding issues, link them to the Pull Request. Include `Fixes #<issue nr>` for bug fixes and `Closes #<issue nr>` for other issues in the description ([Link issues guide](https://docs.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword)) 

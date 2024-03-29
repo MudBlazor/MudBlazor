@@ -64,7 +64,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     }
 
     /// <summary>
-    /// Determines which <see cref="ParameterState"/> have been changed and calls their respective change handler.
+    /// Determines which <see cref="ParameterState{T}"/> have been changed and calls their respective change handler.
     /// </summary>
     /// <param name="baseSetParametersAsync">A func to call the base class' <see cref="ComponentBase.SetParametersAsync"/>.</param>
     /// <param name="parameters">The ParameterView coming from Blazor's  <see cref="ComponentBase.SetParametersAsync"/>.</param>

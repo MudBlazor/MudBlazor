@@ -4,6 +4,7 @@
 
 using FluentAssertions;
 using MudBlazor.State;
+using MudBlazor.State.Builder;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State;
@@ -37,7 +38,11 @@ public class ParameterHandlerUniquenessComparerTests
         // Arrange
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var parameterMetadata = new ParameterMetadata("Parameter1", "Handler1");
-        IParameterComponentLifeCycle parameterState = ParameterState.Attach(parameterMetadata, () => 0, () => { });
+        IParameterComponentLifeCycle parameterState = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(parameterMetadata)
+            .WithGetParameterValueFunc(() => 0)
+            .Attach();
 
         // Act
         var result1 = comparer.Equals(parameterMetadata, null);
@@ -59,8 +64,16 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", "Handler1");
         var handler2 = new ParameterMetadata("Parameter2", "Handler1");
-        IParameterComponentLifeCycle parameterState1 = ParameterState.Attach(handler1, () => 0, () => { });
-        IParameterComponentLifeCycle parameterState2 = ParameterState.Attach(handler2, () => 0, () => { });
+        IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(handler1)
+            .WithGetParameterValueFunc(() => 0)
+            .Attach();
+        IParameterComponentLifeCycle parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(handler2)
+            .WithGetParameterValueFunc(() => 0)
+            .Attach();
 
         // Act
         var result1 = comparer.Equals(handler1, handler2);
@@ -78,8 +91,16 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", "Handler1");
         var handler2 = new ParameterMetadata("Parameter2", "Handler2");
-        IParameterComponentLifeCycle parameterState1 = ParameterState.Attach(handler1, () => 0, () => { });
-        IParameterComponentLifeCycle parameterState2 = ParameterState.Attach(handler2, () => 0, () => { });
+        IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(handler1)
+            .WithGetParameterValueFunc(() => 0)
+            .Attach();
+        IParameterComponentLifeCycle parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(handler2)
+            .WithGetParameterValueFunc(() => 0)
+            .Attach();
 
         // Act
         var result1 = comparer.Equals(handler1, handler2);
@@ -97,8 +118,16 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", null);
         var handler2 = new ParameterMetadata("Parameter2", null);
-        IParameterComponentLifeCycle parameterState1 = ParameterState.Attach(handler1, () => 0, () => { });
-        IParameterComponentLifeCycle parameterState2 = ParameterState.Attach(handler2, () => 0, () => { });
+        IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(handler1)
+            .WithGetParameterValueFunc(() => 0)
+            .Attach();
+        IParameterComponentLifeCycle parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(handler2)
+            .WithGetParameterValueFunc(() => 0)
+            .Attach();
 
         // Act
         var result1 = comparer.Equals(handler1, handler2);
@@ -116,8 +145,16 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", "Handler1");
         var handler2 = new ParameterMetadata("Parameter2", "Handler1");
-        IParameterComponentLifeCycle parameterState1 = ParameterState.Attach(handler1, () => 0, () => { });
-        IParameterComponentLifeCycle parameterState2 = ParameterState.Attach(handler2, () => 0, () => { });
+        IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(handler1)
+            .WithGetParameterValueFunc(() => 0)
+            .Attach();
+        IParameterComponentLifeCycle parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(handler2)
+            .WithGetParameterValueFunc(() => 0)
+            .Attach();
 
         // Act
         var handler1HashCode = comparer.GetHashCode(handler1);
@@ -139,8 +176,16 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", "Handler1");
         var handler2 = new ParameterMetadata("Parameter2", "Handler2");
-        IParameterComponentLifeCycle parameterState1 = ParameterState.Attach(handler1, () => 0, () => { });
-        IParameterComponentLifeCycle parameterState2 = ParameterState.Attach(handler2, () => 0, () => { });
+        IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(handler1)
+            .WithGetParameterValueFunc(() => 0)
+            .Attach();
+        IParameterComponentLifeCycle parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(handler2)
+            .WithGetParameterValueFunc(() => 0)
+            .Attach();
 
         // Act
         var handler1HashCode = comparer.GetHashCode(handler1);
@@ -162,8 +207,16 @@ public class ParameterHandlerUniquenessComparerTests
         var comparer = ParameterHandlerUniquenessComparer.Default;
         var handler1 = new ParameterMetadata("Parameter1", null);
         var handler2 = new ParameterMetadata("Parameter2", null);
-        IParameterComponentLifeCycle parameterState1 = ParameterState.Attach(handler1, () => 0, () => { });
-        IParameterComponentLifeCycle parameterState2 = ParameterState.Attach(handler2, () => 0, () => { });
+        IParameterComponentLifeCycle parameterState1 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(handler1)
+            .WithGetParameterValueFunc(() => 0)
+            .Attach();
+        IParameterComponentLifeCycle parameterState2 = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(handler2)
+            .WithGetParameterValueFunc(() => 0)
+            .Attach();
 
         // Act
         var handler1HashCode = comparer.GetHashCode(handler1);

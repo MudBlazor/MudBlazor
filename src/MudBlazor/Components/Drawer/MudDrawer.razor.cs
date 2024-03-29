@@ -60,10 +60,6 @@ namespace MudBlazor
                 .Build();
 
         [Inject]
-        [Obsolete]
-        public IBreakpointService Breakpointistener { get; set; } = null!;
-
-        [Inject]
         protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
 
         [CascadingParameter]
