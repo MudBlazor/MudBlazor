@@ -1,12 +1,12 @@
-﻿using FluentAssertions;
-using MudBlazor;
-using NUnit.Framework;
-using System.Linq.Expressions;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using FluentAssertions;
+using MudBlazor;
 using MudBlazor.Docs.Models;
+using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions
 {
