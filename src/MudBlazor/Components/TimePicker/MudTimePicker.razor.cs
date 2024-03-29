@@ -258,7 +258,7 @@ namespace MudBlazor
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
             if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
-               await SubmitAsync();
+                await SubmitAsync();
             }
         }
 
@@ -519,7 +519,7 @@ namespace MudBlazor
             }
             else if (TimeEditMode == TimeEditMode.OnlyHours)
             {
-               await SubmitAndCloseAsync();
+                await SubmitAndCloseAsync();
             }
         }
 
@@ -601,7 +601,7 @@ namespace MudBlazor
                         {
                             if (_timeSet.Minute == 59)
                             {
-                               await ChangeHourAsync(1);
+                                await ChangeHourAsync(1);
                             }
                             await ChangeMinuteAsync(1);
                         }
@@ -647,7 +647,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                       await ChangeHourAsync(1);
+                        await ChangeHourAsync(1);
                     }
                     break;
                 case "ArrowDown":
@@ -657,11 +657,11 @@ namespace MudBlazor
                     }
                     else if (obj.ShiftKey == true)
                     {
-                       await ChangeHourAsync(-5);
+                        await ChangeHourAsync(-5);
                     }
                     else
                     {
-                       await ChangeHourAsync(-1);
+                        await ChangeHourAsync(-1);
                     }
                     break;
                 case "Escape":

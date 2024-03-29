@@ -3,13 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
-using MudBlazor.UnitTests.Components;
 using System.Linq;
+using Bunit;
 using FluentAssertions;
 using MudBlazor.Charts;
-using NUnit.Framework;
-using Bunit;
+using MudBlazor.UnitTests.Components;
 using MudBlazor.UnitTests.Utilities;
+using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts
 {
