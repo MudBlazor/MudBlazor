@@ -8,11 +8,11 @@
         {
             @AvatarContent
         }
-        else if (!string.IsNullOrEmpty(Icon) && !IsChecked)
+        else if (!string.IsNullOrEmpty(Icon) && !ShowCheckMark)
         {
             <MudIcon Icon="@Icon" Class="mud-chip-icon" Size="Size.Small" Color="@IconColor" />
         }
-        else if (IsChecked)
+        else if (ShowCheckMark)
         {
             <MudIcon Icon="@CheckedIcon" Class="mud-chip-icon" Size="Size.Small" />
         }

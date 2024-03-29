@@ -1,22 +1,21 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
+#nullable enable
 
 public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 {
     private bool _isSelected;
 
     [Inject]
-    public NavigationManager UriHelper { get; set; }
+    public NavigationManager? UriHelper { get; set; }
 
     [Inject]
-    public IJsApiService JsApiService { get; set; }
+    public IJsApiService? JsApiService { get; set; }
 
     protected string Classname =>
         new CssBuilder("mud-chip")
@@ -61,7 +60,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     }
 
     [CascadingParameter]
-    private MudChipSet<T> ChipSet { get; set; }
+    private MudChipSet<T>? ChipSet { get; set; }
 
     /// <summary>
     /// The color of the component.
@@ -93,7 +92,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
-    public RenderFragment AvatarContent { get; set; }
+    public RenderFragment? AvatarContent { get; set; }
 
     /// <summary>
     /// Removes circle edges and applies theme default.
@@ -114,7 +113,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Behavior)]
-    public string Icon { get; set; }
+    public string? Icon { get; set; }
 
     /// <summary>
     /// Custom checked icon.
@@ -135,7 +134,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
-    public string CloseIcon { get; set; }
+    public string? CloseIcon { get; set; }
 
     /// <summary>
     /// If true, disables ripple effect, ripple effect is only applied to clickable chips.
@@ -149,28 +148,28 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Behavior)]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.ClickAction)]
-    public string Href { get; set; }
+    public string? Href { get; set; }
 
     /// <summary>
     /// The target attribute specifies where to open the link, if Href is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.ClickAction)]
-    public string Target { get; set; }
+    public string? Target { get; set; }
 
     /// <summary>
     /// A string you want to associate with the chip. If the ChildContent is not set this will be shown as chip text.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Behavior)]
-    public string Text { get; set; }
+    public string? Text { get; set; }
 
     /// <summary>
     /// A value that should be managed in the SelectedValues collection.
@@ -178,10 +177,10 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Behavior)]
-    public T Value { get; set; }
+    public T? Value { get; set; }
 
     /// <summary>
-    /// If true, force browser to redirect outside component router-space.
+    /// This concerns only chips with Href set to a hyperlink. If ForceLoad is true, the browser will follow the link outside of Blazor routing.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.ClickAction)]
@@ -206,23 +205,12 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     [Parameter]
     public EventCallback<MudChip<T>> OnClose { get; set; }
 
-    /// <summary>
-    /// Set by MudChipSet
-    /// </summary>
-    public bool IsChecked
-    {
-        get => _isSelected && ChipSet?.Filter == true;
-    }
-
-    /// <summary>
-    /// If false, this chip has not been seen before
-    /// </summary>
-    public bool DefaultProcessed { get; set; }
+    private bool ShowCheckMark => _isSelected && ChipSet?.CheckMark == true;
 
     /// <summary>
     /// Set by MudChipSet
     /// </summary>
-    public bool IsSelected
+    internal bool IsSelected
     {
         get => _isSelected;
         set
@@ -234,9 +222,17 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         }
     }
 
+    internal T? GetValue()
+    {
+        if (typeof(T) == typeof(string) && Value is null && Text is not null)
+            return (T)(object)Text;
+        return Value;
+    }
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        ChipSet?.AddAsync(this);
     }
 
     protected internal async Task OnClickHandler(MouseEventArgs ev)
@@ -253,8 +249,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         {
             // TODO: use MudElement to render <a> and this code can be removed. we know that it has potential problems on iOS
             if (string.IsNullOrWhiteSpace(Target))
-                UriHelper.NavigateTo(Href, ForceLoad);
-            else
+                UriHelper?.NavigateTo(Href, ForceLoad);
+            else if (JsApiService != null)
                 await JsApiService.Open(Href, Target);
         }
         else
@@ -278,23 +274,13 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         StateHasChanged();
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        if (ChipSet is not null)
-        {
-            await ChipSet.AddAsync(this);
-        }
-        await base.OnInitializedAsync();
-    }
-
     public async ValueTask DisposeAsync()
     {
         try
         {
-            if (ChipSet is not null)
-            {
-                await ChipSet.RemoveAsync(this);
-            }
+            if (ChipSet is null)
+                return;
+            await ChipSet.RemoveAsync(this);
         }
         catch (Exception)
         {

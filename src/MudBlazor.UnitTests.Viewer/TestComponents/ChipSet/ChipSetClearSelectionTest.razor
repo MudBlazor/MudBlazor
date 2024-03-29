@@ -1,13 +1,13 @@
 @namespace MudBlazor.UnitTests.TestComponents
 
 <MudChipSet @bind-SelectedValues="_selected" MultiSelection="true">
-    <MudChip Value="@("Milk")"></MudChip>
-    <MudChip Value="@("Eggs")"></MudChip>
-    <MudChip Value="@("Soap")"></MudChip>
-    <MudChip Value="@("Corn flakes")"></MudChip>
-    <MudChip Value="@("Salad")"></MudChip>
-    <MudChip Value="@("Apples")"></MudChip>
-    <MudChip Value="@("Red wine")"></MudChip>
+    <MudChip Value="@("Milk")"/>
+    <MudChip Value="@("Eggs")"/>
+    <MudChip Value="@("Soap")"/>
+    <MudChip Value="@("Corn flakes")"/>
+    <MudChip Value="@("Salad")"/>
+    <MudChip Value="@("Apples")"/>
+    <MudChip Value="@("Red wine")"/>
 </MudChipSet>
 
 
@@ -21,7 +21,7 @@ else {
 <MudButton OnClick="SetEmpty">Set Empty</MudButton>
 @code
 {
-    private ICollection<string> _selected;
+    private IReadOnlyCollection<string> _selected;
 
     private void SetNull()
     {

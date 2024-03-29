@@ -4,346 +4,284 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
-namespace MudBlazor
+namespace MudBlazor;
+#nullable enable
+
+public partial class MudChipSet<T> : MudComponentBase, IDisposable
 {
-    public partial class MudChipSet<T> : MudComponentBase, IDisposable
+    public MudChipSet()
     {
-        protected string Classname =>
-            new CssBuilder("mud-chipset")
-                .AddClass(Class)
-                .Build();
+        _selectedValue = RegisterParameter(nameof(SelectedValue), () => SelectedValue, () => SelectedValueChanged, OnSelectedValueChanged);
+        _selectedValues = RegisterParameter(nameof(SelectedValues), () => SelectedValues, () => SelectedValuesChanged, OnSelectedValuesChanged);
+        _comparer = RegisterParameter(nameof(Comparer), () => Comparer, OnComparerChanged);
+        RegisterParameter(nameof(CheckMark), () => CheckMark, OnCheckMarkChanged);
+    }
 
-        /// <summary>
-        /// Child content of component.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.ChipSet.Behavior)]
-        public RenderFragment ChildContent { get; set; }
 
-        /// <summary>
-        /// Allows to select more than one chip.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.ChipSet.Behavior)]
-        public bool MultiSelection { get; set; } = false;
+    private IParameterState<T?> _selectedValue;
+    private IParameterState<IReadOnlyCollection<T?>?> _selectedValues;
+    private IParameterState<IEqualityComparer<T>?> _comparer;
 
-        /// <summary>
-        /// Will not allow to deselect the selected chip in single selection mode.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.ChipSet.Behavior)]
-        public bool Mandatory { get; set; } = false;
+    private HashSet<T> _selection = new();
+    private HashSet<MudChip<T>> _chips = new();
 
-        /// <summary>
-        /// Will make all chips closable.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.ChipSet.Behavior)]
-        public bool AllClosable { get; set; } = false;
+    protected string Classname =>
+        new CssBuilder("mud-chipset")
+            .AddClass(Class)
+            .Build();
 
-        /// <summary>
-        ///  Will show a check-mark for the selected components.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.ChipSet.Appearance)]
-        public bool Filter
+    /// <summary>
+    /// Child content of component.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.ChipSet.Behavior)]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Allows selecting more than one chip.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.ChipSet.Behavior)]
+    public bool MultiSelection { get; set; } = false;
+
+    /// <summary>
+    /// Will not allow to deselect the selected chip in single selection mode.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.ChipSet.Behavior)]
+    public bool Mandatory { get; set; } = false;
+
+    /// <summary>
+    /// Will make all chips closable.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.ChipSet.Behavior)]
+    public bool AllClosable { get; set; } = false;
+
+    /// <summary>
+    ///  Will show a check-mark for the selected components.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.ChipSet.Appearance)]
+    public bool CheckMark { get; set; }
+
+    [Parameter]
+    [Obsolete("Use CheckMark instead. This will be removed in v8")]
+    [Category(CategoryTypes.ChipSet.Appearance)]
+    public bool Filter
+    {
+        get => CheckMark;
+        set
         {
-            get => _filter;
-            set
-            {
-                if (_filter == value)
-                    return;
-                _filter = value;
-                StateHasChanged();
-                foreach (IMudStateHasChanged chip in _chips)
-                    chip.StateHasChanged();
-            }
+            var oldValue=CheckMark;
+            CheckMark = value;
+            OnCheckMarkChanged(new ParameterChangedEventArgs<bool>(nameof(CheckMark), oldValue, value));
         }
+    }
 
-        /// <summary>
-        ///  Will make all chips read only.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.ChipSet.Behavior)]
-        public bool ReadOnly { get; set; } = false;
+    /// <summary>
+    ///  Will make all chips read only.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.ChipSet.Behavior)]
+    public bool ReadOnly { get; set; } = false;
 
-        /// <summary>
-        /// The currently selected chip in Choice mode
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.ChipSet.Behavior)]
-        public MudChip<T> SelectedChip
+    /// <summary>
+    /// The Comparer to use for comparing selected values internally.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.ChipSet.Behavior)]
+    public IEqualityComparer<T>? Comparer { get; set; }
+
+    /// <summary>
+    /// The currently selected value.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.ChipSet.Behavior)]
+    public T? SelectedValue { get; set; }
+
+    /// <summary>
+    /// Called whenever SelectedValue changes
+    /// </summary>
+    [Parameter]
+    public EventCallback<T?> SelectedValueChanged { get; set; }
+
+    /// <summary>
+    /// The currently selected values if MultiSelection="true".
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.ChipSet.Behavior)]
+    public IReadOnlyCollection<T?>? SelectedValues { get; set; }
+
+    /// <summary>
+    /// Called whenever SelectedValues changes
+    /// </summary>
+    [Parameter]
+    public EventCallback<IReadOnlyCollection<T?>?> SelectedValuesChanged { get; set; }
+
+    /// <summary>
+    /// Called when a Chip was deleted (by click on the close icon)
+    /// </summary>
+    [Parameter]
+    public EventCallback<MudChip<T>> OnClose { get; set; }
+
+    private async Task OnSelectedValueChanged(ParameterChangedEventArgs<T?> args)
+    {
+        await UpdateSelection(new T?[] { args.Value });
+    }
+
+    private async Task OnSelectedValuesChanged(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> args)
+    {
+        await UpdateSelection(args.Value);
+    }
+
+    private async Task OnComparerChanged(ParameterChangedEventArgs<IEqualityComparer<T>?> args)
+    {
+        await UpdateSelection(_selectedValues.Value);
+    }
+
+    private void OnCheckMarkChanged(ParameterChangedEventArgs<bool> args)
+    {
+        foreach (IMudStateHasChanged chip in _chips)
+            chip.StateHasChanged();
+    }
+
+    private async Task UpdateSelection(IReadOnlyCollection<T?>? newValues, bool updateChips = true)
+    {
+        var comparer = _comparer.Value;
+        var selectedValues = newValues ?? Array.Empty<T>();
+        HashSet<T> newSelection;
+        if (MultiSelection)
         {
-            get { return _chips.OfType<MudChip<T>>().FirstOrDefault(x => x.IsSelected); }
-            set
-            {
-                if (value == null)
-                {
-                    foreach (var chip in _chips)
-                    {
-                        chip.IsSelected = false;
-                    }
-                }
-                else
-                {
-                    foreach (var chip in _chips)
-                    {
-                        chip.IsSelected = (chip == value);
-                    }
-                }
-                this.InvokeAsync(StateHasChanged);
-            }
+            newSelection = comparer is null ? new HashSet<T>(selectedValues.OfType<T>()) : new HashSet<T>(selectedValues.OfType<T>(), comparer);
         }
-
-        /// <summary>
-        /// Called when the selected chip changes, in Choice mode
-        /// </summary>
-        [Parameter]
-        public EventCallback<MudChip<T>> SelectedChipChanged { get; set; }
-
-        /// <summary>
-        /// The currently selected chips in Filter mode
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.ChipSet.Behavior)]
-        public MudChip<T>[] SelectedChips
+        else
         {
-            get { return _chips.OfType<MudChip<T>>().Where(x => x.IsSelected).ToArray(); }
-            set
-            {
-                if (value == null || value.Length == 0)
-                {
-                    foreach (var chip in _chips)
-                    {
-                        chip.IsSelected = false;
-                    }
-                    _lastSelectedValues = null;
-                }
-                else
-                {
-                    var selected = new HashSet<MudChip<T>>(value);
-                    foreach (var chip in _chips)
-                    {
-                        chip.IsSelected = selected.Contains(chip);
-                    }
-                }
-                StateHasChanged();
-            }
+            newSelection = new HashSet<T>(_comparer.Value);
+            var first = selectedValues.FirstOrDefault();
+            if (first is not null)
+                newSelection.Add(first);
         }
-
-        protected override void OnInitialized()
+        if (_selection.IsEqualTo(newSelection))
+            return;
+        _selection = newSelection;
+        if (updateChips)
         {
-            base.OnInitialized();
-            if (_selectedValues == null)
-                _selectedValues = new HashSet<T>(_comparer);
-            _initialSelectedValues = new HashSet<T>(_selectedValues, _comparer);
-        }
-
-        private IEqualityComparer<T> _comparer;
-        private HashSet<T> _selectedValues;
-        private HashSet<T> _initialSelectedValues;
-
-        /// <summary>
-        /// The Comparer to use for comparing selected values internally.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.ChipSet.Behavior)]
-        public IEqualityComparer<T> Comparer
-        {
-            get => _comparer;
-            set
-            {
-                _comparer = value;
-                // Apply comparer and refresh selected values
-                _selectedValues = new HashSet<T>(_selectedValues, _comparer);
-                SelectedValues = _selectedValues;
-            }
-        }
-
-        /// <summary>
-        /// Called when the selection changed, in Filter mode
-        /// </summary>
-        [Parameter]
-        public EventCallback<MudChip<T>[]> SelectedChipsChanged { get; set; }
-
-        /// <summary>
-        /// The current selected value.
-        /// Note: make the list Clickable for item selection to work.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.ChipSet.Behavior)]
-        public ICollection<T> SelectedValues
-        {
-            get => _selectedValues;
-            set
-            {
-                if (value == null)
-                    SetSelectedValuesAsync(Array.Empty<T>());
-                else
-                    SetSelectedValuesAsync(value.ToArray()).AndForget();
-            }
-        }
-
-        /// <summary>
-        /// Called whenever the selection changed
-        /// </summary>
-        [Parameter]
-        public EventCallback<ICollection<T>> SelectedValuesChanged { get; set; }
-
-        internal Task SetSelectedValuesAsync(T[] values)
-        {
-            HashSet<T> newValues = null;
-            if (values == null)
-                values = Array.Empty<T>();
-            if (MultiSelection)
-                newValues = new HashSet<T>(values, _comparer);
-            else
-            {
-                newValues = new HashSet<T>(_comparer);
-                if (values.Length > 0)
-                    newValues.Add(values.First());
-            }
-            // avoid update with same values
-            if (_selectedValues.IsEqualTo(newValues))
-                return Task.CompletedTask;
-            _selectedValues = newValues;
             foreach (var chip in _chips.ToArray())
             {
-                var isSelected = _selectedValues.Contains(chip.Value);
+                var value = chip.GetValue();
+                var isSelected = value is not null && newSelection.Contains(value);
                 chip.IsSelected = isSelected;
             }
-            return NotifySelectionAsync();
         }
+        await _selectedValue.SetValueAsync(newSelection.OrderBy(SafeOrder).FirstOrDefault());
+        await _selectedValues.SetValueAsync(newSelection.ToArray());
+    }
 
-        /// <summary>
-        /// Called when a Chip was deleted (by click on the close icon)
-        /// </summary>
-        [Parameter]
-        public EventCallback<MudChip<T>> OnClose { get; set; }
+    /// <summary>
+    /// This guarantees that any type can be ordered. Of course the order is meaningless if the type doesn't
+    /// implement IComparable but at least we don't crash while sorting.
+    /// We need to sort for predictable test results but if the user doesn't care about the SelectedValue in a
+    /// MultiSelection scenario then we won't impose that his T implement IComparable
+    /// </summary>
+    private IComparable SafeOrder(T? arg)
+    {
+        if (arg is IComparable comparable)
+            return comparable;
+        return arg?.GetHashCode() ?? 0;
+    }
 
-        internal Task AddAsync(MudChip<T> chip)
+    internal async Task AddAsync(MudChip<T> chip)
+    {
+        if (!_chips.Add(chip))
+            return;
+        var value = chip.GetValue();
+        if (value is not null && (chip.Default == true && !_selection.Contains(value) || (chip.Default == false && _selection.Contains(value))))
         {
-            _chips.Add(chip);
-            if (_selectedValues.Contains(chip.Value))
-                chip.IsSelected = true;
-            return CheckDefaultAsync(chip);
-        }
-
-        internal Task RemoveAsync(MudChip<T> chip)
-        {
-            _chips.Remove(chip);
-            if (chip.IsSelected)
+            var newSelection = MultiSelection ? new HashSet<T>(_selection, _comparer.Value) : new HashSet<T>(_comparer.Value);
+            if (chip.Default == true)
             {
-                _selectedValues.Remove(chip.Value);
-                return NotifySelectionAsync();
-            }
-            return Task.CompletedTask;
-        }
-
-        private async Task CheckDefaultAsync(MudChip<T> chip)
-        {
-            if (!MultiSelection)
-                return;
-            if (chip.DefaultProcessed)
-                return;
-            chip.DefaultProcessed = true;
-            if (chip.Default == null)
-                return;
-            var oldSelected = chip.IsSelected;
-            chip.IsSelected = chip.Default == true;
-            if (chip.IsSelected != oldSelected)
-            {
-                if (chip.IsSelected)
-                    _selectedValues.Add(chip.Value);
-                else
-                    _selectedValues.Remove(chip.Value);
-                await NotifySelectionAsync();
-            }
-        }
-
-        private HashSet<MudChip<T>> _chips = new();
-        private bool _filter;
-
-        internal Task OnChipClickedAsync(MudChip<T> chip)
-        {
-            var wasSelected = chip.IsSelected;
-            if (MultiSelection)
-            {
-                chip.IsSelected = !chip.IsSelected;
+                newSelection.Add(value);
             }
             else
             {
-                foreach (var ch in _chips)
-                {
-                    ch.IsSelected = (ch == chip); // <-- exclusively select the one chip only, thus all others must be deselected
-                }
-                if (!Mandatory)
-                    chip.IsSelected = !wasSelected;
+                newSelection.Remove(value);
             }
-            UpdateSelectedValues();
-            return NotifySelectionAsync();
+            await UpdateSelection(newSelection, updateChips: !MultiSelection);
         }
+        if (value is not null && _selection.Contains(value))
+            chip.IsSelected = true;
+    }
 
-        private void UpdateSelectedValues()
+    internal Task RemoveAsync(MudChip<T> chip)
+    {
+        if (!_chips.Remove(chip))
+            return Task.CompletedTask;
+        if (_disposed)
+            return Task.CompletedTask; // don't raise any events if we are already disposed
+        var value = chip.GetValue();
+        if (chip.IsSelected && value is not null)
         {
-            _selectedValues = new HashSet<T>(_chips.Where(x => x.IsSelected).Select(x => x.Value), _comparer);
+            return UpdateSelection(_selection.Where(x => !AreValuesEqual(x, value)).ToArray());
         }
+        return Task.CompletedTask;
+    }
 
-        private T[] _lastSelectedValues = null;
+    internal async Task OnChipClickedAsync(MudChip<T> chip)
+    {
+        var value = chip.GetValue();
+        var wasSelected = chip.IsSelected;
+        HashSet<T> newSelection;
 
-        private async Task NotifySelectionAsync()
+        // Single Selection
+        if (!MultiSelection)
         {
-            if (_disposed)
-                return;
-            // to avoid endless notification loops we check if selection has really changed
-            if (_selectedValues.IsEqualTo(_lastSelectedValues))
-                return;
-            _lastSelectedValues = _selectedValues.ToArray();
-            await SelectedChipChanged.InvokeAsync(SelectedChip);
-            await SelectedChipsChanged.InvokeAsync(SelectedChips);
-            await SelectedValuesChanged.InvokeAsync(SelectedValues);
-            StateHasChanged();
-        }
-
-        public async Task OnChipDeletedAsync(MudChip<T> chip)
-        {
-            await RemoveAsync(chip);
-            await OnClose.InvokeAsync(chip);
-        }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-                await SelectDefaultChipsAsync();
-            await base.OnAfterRenderAsync(firstRender);
-        }
-
-        private async Task SelectDefaultChipsAsync()
-        {
-            if (!MultiSelection)
+            if (value is null)
             {
-                var anySelected = false;
-                var defaultChip = _chips.LastOrDefault(chip => chip.Default == true);
-                if (defaultChip != null)
-                {
-                    defaultChip.IsSelected = true;
-                    anySelected = true;
-                }
-                if (anySelected)
-                {
-                    UpdateSelectedValues();
-                    await NotifySelectionAsync();
-                }
+                await UpdateSelection(Array.Empty<T>());
+                return;
+            }
+            newSelection = new HashSet<T>(_comparer.Value);
+            if (Mandatory || !wasSelected)
+                newSelection.Add(value);
+        }
+        // Multi Selection
+        else
+        {
+            if (value is null)
+                return;
+            newSelection = new HashSet<T>(_selection, _comparer.Value);
+            if (wasSelected)
+            {
+                newSelection.Remove(value);
+            }
+            else
+            {
+                newSelection.Add(value);
             }
         }
+        await UpdateSelection(newSelection);
+    }
 
-        private bool _disposed;
+    public async Task OnChipDeletedAsync(MudChip<T> chip)
+    {
+        await RemoveAsync(chip);
+        await OnClose.InvokeAsync(chip);
+    }
 
-        public void Dispose()
-        {
-            _disposed = true;
-        }
+    private bool AreValuesEqual(T? a, T? b)
+    {
+        var comparer = _comparer.Value;
+        return comparer?.Equals(a, b) ?? object.Equals(a, b);
+    }
+
+    private bool _disposed;
+
+    public void Dispose()
+    {
+        _disposed = true;
     }
 }
