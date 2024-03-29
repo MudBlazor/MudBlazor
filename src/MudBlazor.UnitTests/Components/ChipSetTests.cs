@@ -369,7 +369,7 @@ namespace MudBlazor.UnitTests.Components
             // for coverage
             new MudChip<int>().ShowCheckMark.Should().Be(false);
             var chip = Context.RenderComponent<MudChip<string>>().Instance;
-            await comp.InvokeAsync(() => chip.IsSelected = true);
+            await comp.InvokeAsync(() => chip.UpdateSelectionState( true));
             chip.ShowCheckMark.Should().Be(false); // because not in a chipset
             new MudChip<int>() { Variant = (Variant)69 }.GetVariant().Should().Be(Variant.Outlined); // falls back to outlined
         }
@@ -385,7 +385,7 @@ namespace MudBlazor.UnitTests.Components
                 .AddChildContent<MudChip<string>>(chip => chip.Add(x => x.Value, "y"))
                 .AddChildContent<MudChip<string>>(chip => chip.Add(x => x.Value, "z"))
             );
-            await comp.Instance.RemoveAsync(comp.FindComponent<MudChip<string>>().Instance);
+            await comp.InvokeAsync(() => comp.Instance.RemoveAsync(comp.FindComponent<MudChip<string>>().Instance));
             string.Join(", ", selectedValues).Should().Be("y, z");
             // removing a foreign chip doesn't do anything
             await comp.Instance.RemoveAsync(Context.RenderComponent<MudChip<string>>(chip => chip.Add(x => x.Value, "y")).Instance);

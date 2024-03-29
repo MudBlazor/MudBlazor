@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
@@ -9,7 +10,25 @@ namespace MudBlazor;
 
 public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 {
-    private bool _isSelected;
+    public MudChip()
+    {
+        IsSelectedState = RegisterParameter(nameof(IsSelected), () => IsSelected, () => IsSelectedChanged, OnIsSelectedChanged);
+    }
+
+    private Task OnIsSelectedChanged(ParameterChangedEventArgs<bool> args)
+    {
+        if (ChipSet == null)
+            return Task.CompletedTask;
+        return ChipSet.OnChipIsSelectedChangedAsync(this, args.Value);
+    }
+
+    internal async Task UpdateSelectionState(bool isSelected)
+    {
+        await IsSelectedState.SetValueAsync(isSelected);
+        StateHasChanged();
+    }
+
+    internal IParameterState<bool> IsSelectedState;
 
     [Inject]
     public NavigationManager? UriHelper { get; set; }
@@ -26,7 +45,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
             .AddClass("mud-ripple", IsClickable && !DisableRipple)
             .AddClass("mud-chip-label", Label)
             .AddClass("mud-disabled", Disabled)
-            .AddClass("mud-chip-selected", IsSelected)
+            .AddClass("mud-chip-selected", IsSelectedState.Value)
             .AddClass(Class)
             .Build();
 
@@ -35,28 +54,29 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     internal Variant GetVariant()
     {
-        return Variant switch
+        var chipSetVariant = ChipSet?.Variant ?? MudBlazor.Variant.Filled;
+        var variant = Variant ?? chipSetVariant;
+        return variant switch
         {
-            Variant.Text => IsSelected ? Variant.Filled : Variant.Text,
-            Variant.Filled => IsSelected ? Variant.Text : Variant.Filled,
-            Variant.Outlined => Variant.Outlined,
-            _ => Variant.Outlined
+            MudBlazor.Variant.Text => IsSelectedState.Value ? MudBlazor.Variant.Filled : MudBlazor.Variant.Text,
+            MudBlazor.Variant.Filled => IsSelectedState.Value ? MudBlazor.Variant.Text : MudBlazor.Variant.Filled,
+            MudBlazor.Variant.Outlined => MudBlazor.Variant.Outlined,
+            _ => MudBlazor.Variant.Outlined
         };
     }
 
     private Color GetColor()
     {
-        if (IsSelected && SelectedColor != Color.Inherit)
+        if (IsSelectedState.Value && SelectedColor != MudBlazor.Color.Inherit)
         {
             return SelectedColor;
         }
-
-        if (IsSelected && SelectedColor == Color.Inherit)
-        {
-            return Color;
-        }
-
-        return Color;
+        var color = Color ?? ChipSet?.Color ?? MudBlazor.Color.Default;
+        //if (IsSelectedState.Value && SelectedColor == MudBlazor.Color.Inherit)
+        //{
+        //    return color;
+        //}
+        return color;
     }
 
     [CascadingParameter]
@@ -67,7 +87,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
-    public Color Color { get; set; } = Color.Default;
+    public Color? Color { get; set; }
 
     /// <summary>
     /// The size of the button. small is equivalent to the dense button styling.
@@ -81,14 +101,14 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
-    public Variant Variant { get; set; } = Variant.Filled;
+    public Variant? Variant { get; set; }
 
     /// <summary>
     /// The selected color to use when selected, only works together with ChipSet, Color.Inherit for default value.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
-    public Color SelectedColor { get; set; } = Color.Inherit;
+    public Color SelectedColor { get; set; } = MudBlazor.Color.Inherit;
 
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
@@ -127,7 +147,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
-    public Color IconColor { get; set; } = Color.Inherit;
+    public Color IconColor { get; set; } = MudBlazor.Color.Inherit;
 
     /// <summary>
     /// Overrides the default close icon, only shown if OnClose is set.
@@ -205,22 +225,20 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     [Parameter]
     public EventCallback<MudChip<T>> OnClose { get; set; }
 
-    internal bool ShowCheckMark => _isSelected && ChipSet?.CheckMark == true;
+    internal bool ShowCheckMark => IsSelectedState.Value && ChipSet?.CheckMark == true;
 
     /// <summary>
-    /// Set by MudChipSet
+    /// True if the chip is selected. Bind this to manipulate the chip's selection state.
     /// </summary>
-    internal bool IsSelected
-    {
-        get => _isSelected;
-        set
-        {
-            if (_isSelected == value)
-                return;
-            _isSelected = value;
-            StateHasChanged();
-        }
-    }
+    [Parameter]
+    [Category(CategoryTypes.Chip.Behavior)]
+    public bool IsSelected { get; set; }
+
+    /// <summary>
+    /// Raised when IsSelected changes
+    /// </summary>
+    [Parameter]
+    public EventCallback<bool> IsSelectedChanged { get; set; }
 
     internal T? GetValue()
     {
@@ -243,7 +261,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         }
         if (ChipSet != null)
         {
-            await ChipSet.OnChipClickedAsync(this);
+            await IsSelectedState.SetValueAsync(!IsSelectedState.Value);
+            await ChipSet.OnChipIsSelectedChangedAsync(this, IsSelectedState.Value);
         }
         if (Href != null)
         {
