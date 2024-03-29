@@ -16,7 +16,7 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
-        protected string ToolBarClassname =>
+         protected string ToolBarClassname =>
             new CssBuilder("mud-toolbar-appbar")
                 .AddClass(ToolBarClass)
                 .Build();
