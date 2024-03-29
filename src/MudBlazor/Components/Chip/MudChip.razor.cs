@@ -33,14 +33,14 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     private bool IsClickable =>
         !ChipSet?.ReadOnly ?? (OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
 
-    private Variant GetVariant()
+    internal Variant GetVariant()
     {
         return Variant switch
         {
             Variant.Text => IsSelected ? Variant.Filled : Variant.Text,
             Variant.Filled => IsSelected ? Variant.Text : Variant.Filled,
             Variant.Outlined => Variant.Outlined,
-            _ => Variant
+            _ => Variant.Outlined
         };
     }
 
@@ -205,7 +205,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     [Parameter]
     public EventCallback<MudChip<T>> OnClose { get; set; }
 
-    private bool ShowCheckMark => _isSelected && ChipSet?.CheckMark == true;
+    internal bool ShowCheckMark => _isSelected && ChipSet?.CheckMark == true;
 
     /// <summary>
     /// Set by MudChipSet

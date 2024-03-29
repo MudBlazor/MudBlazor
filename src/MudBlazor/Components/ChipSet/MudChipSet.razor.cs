@@ -68,20 +68,6 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     [Category(CategoryTypes.ChipSet.Appearance)]
     public bool CheckMark { get; set; }
 
-    [Parameter]
-    [Obsolete("Use CheckMark instead. This will be removed in v8")]
-    [Category(CategoryTypes.ChipSet.Appearance)]
-    public bool Filter
-    {
-        get => CheckMark;
-        set
-        {
-            var oldValue=CheckMark;
-            CheckMark = value;
-            OnCheckMarkChanged(new ParameterChangedEventArgs<bool>(nameof(CheckMark), oldValue, value));
-        }
-    }
-
     /// <summary>
     ///  Will make all chips read only.
     /// </summary>
