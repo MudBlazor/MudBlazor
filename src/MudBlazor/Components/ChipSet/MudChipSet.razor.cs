@@ -173,7 +173,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
             {
                 var value = chip.GetValue();
                 var isSelected = value is not null && newSelection.Contains(value);
-                await chip.UpdateSelectionState( isSelected);
+                await chip.UpdateSelectionState(isSelected);
             }
         }
         await _selectedValue.SetValueAsync(newSelection.OrderBy(SafeOrder).FirstOrDefault());
@@ -212,7 +212,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
             await UpdateSelection(newSelection, updateChips: !MultiSelection);
         }
         if (value is not null && _selection.Contains(value))
-            await chip.UpdateSelectionState( true);
+            await chip.UpdateSelectionState(true);
     }
 
     internal Task RemoveAsync(MudChip<T> chip)
@@ -228,7 +228,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         }
         return Task.CompletedTask;
     }
-    
+
     internal async Task OnChipIsSelectedChangedAsync(MudChip<T> chip, bool isSelected)
     {
         var value = chip.GetValue();
