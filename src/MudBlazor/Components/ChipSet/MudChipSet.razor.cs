@@ -228,43 +228,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         }
         return Task.CompletedTask;
     }
-
-    //internal async Task OnChipClickedAsync(MudChip<T> chip)
-    //{
-    //    var value = chip.GetValue();
-    //    var wasSelected = chip.IsSelectedState.Value;
-    //    HashSet<T> newSelection;
-
-    //    // Single Selection
-    //    if (!MultiSelection)
-    //    {
-    //        if (value is null)
-    //        {
-    //            await UpdateSelection(Array.Empty<T>());
-    //            return;
-    //        }
-    //        newSelection = new HashSet<T>(_comparer.Value);
-    //        if (Mandatory || !wasSelected)
-    //            newSelection.Add(value);
-    //    }
-    //    // Multi Selection
-    //    else
-    //    {
-    //        if (value is null)
-    //            return;
-    //        newSelection = new HashSet<T>(_selection, _comparer.Value);
-    //        if (wasSelected)
-    //        {
-    //            newSelection.Remove(value);
-    //        }
-    //        else
-    //        {
-    //            newSelection.Add(value);
-    //        }
-    //    }
-    //    await UpdateSelection(newSelection);
-    //}
-
+    
     internal async Task OnChipIsSelectedChangedAsync(MudChip<T> chip, bool isSelected)
     {
         var value = chip.GetValue();

@@ -369,7 +369,7 @@ namespace MudBlazor.UnitTests.Components
             // for coverage
             new MudChip<int>().ShowCheckMark.Should().Be(false);
             var chip = Context.RenderComponent<MudChip<string>>().Instance;
-            await comp.InvokeAsync(() => chip.UpdateSelectionState( true));
+            await comp.InvokeAsync(() => chip.UpdateSelectionState(true));
             chip.ShowCheckMark.Should().Be(false); // because not in a chipset
             new MudChip<int>() { Variant = (Variant)69 }.GetVariant().Should().Be(Variant.Outlined); // falls back to outlined
         }
