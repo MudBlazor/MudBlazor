@@ -60,15 +60,12 @@ namespace MudBlazor
         {
             get
             {
-                // Is an "id" attribute specified?
-                if (UserAttributes != null && UserAttributes.TryGetValue("id", out var id) && id != null)
-                {
+                // Is a non-null "id" attribute specified?
+                return (UserAttributes != null && UserAttributes.TryGetValue("id", out var id) && id != null)
                     // Yes.  Use it, or fall back to a new ID
-                    return id.ToString() ?? $"mudinput-{Guid.NewGuid()}";
-                }
-
-                // Use a new ID
-                return $"mudinput-{Guid.NewGuid()}";
+                    ? (id.ToString() ?? $"mudinput-{Guid.NewGuid()}")
+                    // Use a new ID
+                    : $"mudinput-{Guid.NewGuid()}";
             }
         }
         /// <inheritdoc />
