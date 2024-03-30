@@ -174,7 +174,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
-        
+
         [CascadingParameter(Name = "ParentReadOnly")]
         private bool ParentReadOnly { get; set; }
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
