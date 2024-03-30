@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.ChipSet;
 using NUnit.Framework;
@@ -356,8 +357,11 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudChipSet<string>>(self => self
                 .Add(x => x.CheckMark, true)
                 .Add(x => x.SelectedValue, "x")
-                .AddChildContent<MudChip<string>>(chip => chip.Add(x => x.Value, "x")
-                )
+                .AddChildContent<MudChip<string>>(chip => chip.Add(x => x.Value, "x"))
+                .Add(x => x.CheckedIcon, Icons.Material.Filled.Cake)
+                .Add(x => x.CloseIcon, Icons.Material.Filled.Plagiarism)
+                .Add(x => x.Ripple, false)
+                .Add(x => x.IconColor, Color.Error)
             );
             comp.FindAll("svg").Count.Should().Be(1);
             comp.Instance.CheckMark.Should().Be(true);
@@ -368,7 +372,13 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.CheckMark.Should().Be(false);
             // for coverage
             new MudChip<int>().ShowCheckMark.Should().Be(false);
-            var chip = Context.RenderComponent<MudChip<string>>().Instance;
+            var chip = Context.RenderComponent<MudChip<string>>(chip => chip
+                .Add(x => x.CheckedIcon, Icons.Material.Filled.Cake)
+                .Add(x => x.CloseIcon, Icons.Material.Filled.Plagiarism)
+                .Add(x => x.Ripple, false)
+                .Add(x => x.IconColor, Color.Error)
+                .Add(x => x.IsSelected, true)
+            ).Instance;
             await comp.InvokeAsync(() => chip.UpdateSelectionStateAsync(true));
             chip.ShowCheckMark.Should().Be(false); // because not in a chipset
             new MudChip<int>() { Variant = (Variant)69 }.GetVariant().Should().Be(Variant.Outlined); // falls back to outlined
@@ -417,7 +427,43 @@ namespace MudBlazor.UnitTests.Components
             selectedValues.Should().NotContain(a).And.Contain(b);
         }
 
+        [Test]
+        public async Task Chip_TwoWayBinding_ShouldUpdateSelection()
+        {
+            var checkedIcon = "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z";
+            var uncheckedIcon = "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z";
+            var comp = Context.RenderComponent<ChipSetChipBindingTest>();
+            comp.Find("div.selection").TrimmedText().Should().Be("Add ingredients to your coctail.");
+            // initial state
+            comp.FindAll("div.mud-chip")[0].ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindAll("div.mud-chip")[2].ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindAll("label.mud-checkbox")[0].InnerHtml.Should().Contain(uncheckedIcon);
+            comp.FindAll("label.mud-checkbox")[2].InnerHtml.Should().Contain(uncheckedIcon);
 
+            // click Vodka chip
+            comp.FindAll("div.mud-chip")[0].Click();
+            comp.Find("div.selection").TrimmedText().Should().Be("Vodka");
+            comp.FindAll("div.mud-chip")[0].ClassList.Should().Contain("mud-chip-selected");
+            comp.FindAll("div.mud-chip")[2].ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindAll("label.mud-checkbox")[0].InnerHtml.Should().Contain(checkedIcon);
+            comp.FindAll("label.mud-checkbox")[2].InnerHtml.Should().Contain(uncheckedIcon);
+
+            // click Olive checkbox
+            comp.FindAll("input.mud-checkbox-input")[2].Change(true);
+            comp.Find("div.selection").TrimmedText().Should().Be("Olive, Vodka");
+            comp.FindAll("div.mud-chip")[0].ClassList.Should().Contain("mud-chip-selected");
+            comp.FindAll("div.mud-chip")[2].ClassList.Should().Contain("mud-chip-selected");
+            comp.FindAll("label.mud-checkbox")[0].InnerHtml.Should().Contain(checkedIcon);
+            comp.FindAll("label.mud-checkbox")[2].InnerHtml.Should().Contain(checkedIcon);
+
+            // click Vodka checkbox
+            comp.FindAll("input.mud-checkbox-input")[0].Change(false);
+            comp.Find("div.selection").TrimmedText().Should().Be("Olive");
+            comp.FindAll("div.mud-chip")[0].ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindAll("div.mud-chip")[2].ClassList.Should().Contain("mud-chip-selected");
+            comp.FindAll("label.mud-checkbox")[0].InnerHtml.Should().Contain(uncheckedIcon);
+            comp.FindAll("label.mud-checkbox")[2].InnerHtml.Should().Contain(checkedIcon);
+        }
     }
 
 }
