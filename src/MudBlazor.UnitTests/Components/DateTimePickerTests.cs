@@ -33,7 +33,6 @@ namespace MudBlazor.UnitTests.Components
             picker.DateOpenTo.Should().Be(OpenTo.Date);
             picker.TimeOpenTo.Should().Be(OpenTo.Hours);
             picker.FirstDayOfWeek.Should().Be(DayOfWeek.Sunday);
-            picker.MaxMonthColumns.Should().Be(null);
             picker.StartMonth.Should().Be(null);
             picker.ShowWeekNumbers.Should().BeFalse();
             picker.AutoClose.Should().BeFalse();
@@ -356,7 +355,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             comp.FindAll("button.mud-picker-month")[3].Click();
             comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().Click();
-            // Console.WriteLine(string.Join(",", comp.FindAll("button.mud-picker-calendar-day").Select(x => x.TrimmedText())));
             // Click on external dial (16 hours) and then click on 35 minutes
             comp.FindAll("div.mud-hour")[7].Click();
             comp.FindAll("div.mud-minute")[35].Click();
@@ -365,7 +363,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         // [WIP]: DatePickerStaticWithPickerActionsDayClick_Test
-        public void DatePickerStaticWithPickerActionsDayAndTimeClick_Test()
+        public void DateTimePickerStaticWithPickerActionsDayAndTimeClick_Test()
         {
             var comp = Context.RenderComponent<DateTimePickerStaticTest>();
             var picker = comp.FindComponent<MudDateTimePicker>();
@@ -375,7 +373,65 @@ namespace MudBlazor.UnitTests.Components
             // Click on external dial (16 hours) and then click on 35 minutes
             comp.FindAll("div.mud-hour")[7].Click();
             comp.FindAll("div.mud-minute")[35].Click();
-            picker.Instance.DateTime.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-{DateTime.Now.Month}-23 16:35:00")/*new DateTime(DateTime.Now.Year, DateTime.Now.Month, 23)*/);
+            picker.Instance.DateTime.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-{DateTime.Now.Month}-23 16:35:00"));
+        }
+
+        [Test]
+        public void DateTimePickerAutoclose_OpenSelectShouldClose_Test()
+        {
+            var comp = OpenPicker(Parameter("AutoClose", true));
+            var picker = comp.FindComponent<MudDateTimePicker>();
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+            // click the day 23
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().Click();
+            // Click on external dial (16 hours) and then click on 35 minutes
+            comp.FindAll("div.mud-hour")[7].Click();
+            comp.FindAll("div.mud-minute")[35].Click();
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void DateTimePickerAutoclose_RepeatSelection_ShouldNotClose_Test()
+        {
+            var comp = OpenPicker(Parameter("AutoClose", true));
+            var picker = comp.FindComponent<MudDateTimePicker>();
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+            // Click on external dial (16 hours) and then click on 35 minutes
+            comp.FindAll("div.mud-hour")[7].Click();
+            comp.FindAll("div.mud-minute")[35].Click();
+            picker.Instance.DateTime.Should().Be(null);
+            // Click on external dial (16 hours) and then click on 33 minutes
+            comp.FindAll("div.mud-hour")[7].Click();
+            comp.FindAll("div.mud-minute")[33].Click();
+            picker.Instance.DateTime.Should().Be(null);
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+            // click the day 23
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().Click();
+            picker.Instance.DateTime.Should().Be(DateTime.Parse($"{DateTime.Now.Year}-{DateTime.Now.Month}-23 16:33:00"));
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void DateTimePicker_ClickOnYear_ShouldShowYears_Test()
+        {
+            var comp = OpenPicker();
+            comp.FindAll("div.mud-picker-year-container").Count.Should().Be(0);
+            comp.FindAll("div.mud-picker-datepicker-toolbar button.mud-button-year")[0].Click();
+            comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
+            comp.Find("button.mud-button-date").Click();
+        }
+
+        [Test]
+        public void DateTimePicker_SetPickerMonth_Test()
+        {
+            var comp = OpenPicker([
+                    Parameter("PickerMonth", DateTime.Parse("2024-02-01")),
+                    Parameter("IsDateTimeDisabledFunc", (DateTime dateTime) => dateTime.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                ]);
+            var picker = comp.FindComponent<MudDateTimePicker>();
+            comp.Find("button.mud-button-month").TextContent.Should().Be("February 2024");
+            string[] lockedDays = ["28", "3", "4", "10", "11", "17", "18", "24", "25", "2", "3", "9"];
+            comp.FindAll("button.mud-picker-calendar-day.mud-day[disabled]").All(x => lockedDays.Contains(x.TextContent)).Should().Be(true);
         }
     }
 }

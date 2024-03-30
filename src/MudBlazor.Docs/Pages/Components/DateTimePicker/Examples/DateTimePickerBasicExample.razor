@@ -5,7 +5,7 @@
 <MudDateTimePicker Label="No header" @bind-DateTime="dateTime" DisableToolbar="true" />
 <MudDateTimePicker Label="DateTime Format" @bind-DateTime="dateTime" DateTimeFormat="dd.MM.yyyy HH:mm" />
 <MudDateTimePicker Label="Show week number" ShowWeekNumbers="true" @bind-DateTime="dateTime" />
-<MudDateTimePicker Label="Clearable" Clearable="true" TitleDateFormat="dddd, dd MMMM" @bind-DateTime="dateTime" />
+<MudDateTimePicker Label="Clearable" Clearable="true" TitleDateTimeFormat="dddd, dd MMMM" @bind-DateTime="dateTime" />
 
 @code {
     DateTime? dateTime = DateTime.Now;

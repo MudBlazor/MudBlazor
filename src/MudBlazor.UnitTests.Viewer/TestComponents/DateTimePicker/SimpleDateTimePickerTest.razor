@@ -3,39 +3,43 @@
 
 <MudPopoverProvider></MudPopoverProvider>
 
-@if (IsDateDisabledFunc != null)
+@if (IsDateTimeDisabledFunc != null)
 {
     <MudDateTimePicker @ref="_picker"
                        DateTime="@DateTime"
-                       DateTimeChanged="HandleDateChanged"
-                       ReadOnly="Readonly"
-                       @bind-PickerMonth="PickerMonth"
-                       IsDateTimeDisabledFunc="IsDateDisabledFunc"
+                       DateTimeChanged="DateTimeChanged"
+                       ReadOnly="@Readonly"
+                       PickerMonth="@PickerMonth"
+                       PickerMonthChanged="PickerMonthChanged"
+                       IsDateTimeDisabledFunc="@IsDateTimeDisabledFunc"
                        DateOpenTo="@DateOpenTo"
                        FixDay="@FixDay"
                        FixMonth="@FixMonth"
                        FixYear="@FixYear"
                        MinDateTime="@MinDate"
                        MaxDateTime="@MaxDate"
-                       FirstDayOfWeek="FirstDayOfWeek"
-                       ShowWeekNumbers="ShowWeekNumbers"
+                       FirstDayOfWeek="@FirstDayOfWeek"
+                       ShowWeekNumbers="@ShowWeekNumbers"
+                       AutoClose="@AutoClose"
                        AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
 }
 else
 {
     <MudDateTimePicker @ref="_picker"
                        DateTime="@DateTime"
-                       DateTimeChanged="HandleDateChanged"
-                       ReadOnly="Readonly"
-                       @bind-PickerMonth="PickerMonth"
+                       DateTimeChanged="DateTimeChanged"
+                       ReadOnly="@Readonly"
+                       PickerMonth="@PickerMonth"
+                       PickerMonthChanged="PickerMonthChanged"
                        DateOpenTo="@DateOpenTo"
                        FixDay="@FixDay"
                        FixMonth="@FixMonth"
                        FixYear="@FixYear"
                        MinDateTime="@MinDate"
                        MaxDateTime="@MaxDate"
-                       FirstDayOfWeek="FirstDayOfWeek"
-                       ShowWeekNumbers="ShowWeekNumbers"
+                       FirstDayOfWeek="@FirstDayOfWeek"
+                       ShowWeekNumbers="@ShowWeekNumbers"
+                       AutoClose="@AutoClose"
                        AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
 }
 
@@ -44,18 +48,21 @@ else
 
     public DateTime? DateTime { get; set; }
 
-    private async Task HandleDateChanged(DateTime? input)
+    public void DateTimeChanged(DateTime? datetime)
     {
-        DateTime = input;
-        await DateTimeChanged.InvokeAsync(input);
+        DateTime = datetime;
+    }
+
+    public void PickerMonthChanged(DateTime? month)
+    {
+        PickerMonth = month;
     }
 
     [Parameter] public bool ShowWeekNumbers { get; set; } = true;
     [Parameter] public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Sunday;
     [Parameter] public DateTime? PickerMonth { get; set; }
-    [Parameter] public EventCallback<DateTime?> DateTimeChanged { get; set; }
     [Parameter] public bool Readonly { get; set; } = false;
-    [Parameter] public Func<DateTime, bool> IsDateDisabledFunc { get; set; }
+    [Parameter] public Func<DateTime, bool> IsDateTimeDisabledFunc { get; set; }
     [Parameter] public OpenTo DateOpenTo { get; set; } = OpenTo.Date;
     [Parameter] public int? FixDay { get; set; }
     [Parameter] public int? FixMonth { get; set; }
@@ -63,7 +70,9 @@ else
     [Parameter] public DateTime? MinDate { get; set; }
     [Parameter] public DateTime? MaxDate { get; set; }
     [Parameter] public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
+    [Parameter] public bool AutoClose { get; set; } = false;
 
     public async Task Open() => await InvokeAsync(() => _picker.Open());
     public async Task Close() => await InvokeAsync(() => _picker.Close());
+    public new void StateHasChanged() => base.StateHasChanged();
 }

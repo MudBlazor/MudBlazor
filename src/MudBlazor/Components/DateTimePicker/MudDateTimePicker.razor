@@ -15,9 +15,9 @@
             <div class="mud-picker-datetime-layout">
                 <MudDatePicker @ref="_datePickerRef" PickerVariant="PickerVariant.Static" Date="@_datePicked" DateChanged="DateSelected" Disabled="@Disabled"
                                FirstDayOfWeek="@FirstDayOfWeek" FixDay="@FixDay" FixMonth="@FixMonth" FixYear="@FixYear" DisableToolbar="true" Culture="@Culture"
-                               OpenTo="@DateOpenTo" PickerMonth="@PickerMonth" ShowWeekNumbers="@ShowWeekNumbers" StartMonth="@StartMonth" TitleDateFormat="@TitleDateFormat"
-                               MaxMonthColumns="@MaxMonthColumns" NextIcon="@NextIcon" PreviousIcon="@PreviousIcon" IsDateDisabledFunc="@IsDateTimeDisabledFunc" AdditionalDateClassesFunc="AdditionalDateClassesFunc"
-                               PickerMonthChanged="@(value => { PickerMonth = value; PickerMonthChanged.InvokeAsync(value).AndForget();})" />
+                               OpenTo="@DateOpenTo" ShowWeekNumbers="@ShowWeekNumbers" StartMonth="@StartMonth" TitleDateFormat="@TitleDateTimeFormat"
+                               NextIcon="@DateNextIcon" PreviousIcon="@DatePreviousIcon" IsDateDisabledFunc="@IsDateTimeDisabledFunc" AdditionalDateClassesFunc="AdditionalDateClassesFunc"
+                               PickerMonth="@_pickerMonth" PickerMonthChanged="@OnPickerMonthChanged" />
                 <MudTimePicker @ref="_timePickerRef" PickerVariant="PickerVariant.Static" Time="_timePicked" TimeChanged="TimeSelected" Disabled="@Disabled" Culture="@Culture"
                                DisableToolbar="true" OpenTo="@TimeOpenTo" MinuteSelectionStep="@MinuteSelectionStep" TimeEditMode="@TimeEditMode" />
             </div>
