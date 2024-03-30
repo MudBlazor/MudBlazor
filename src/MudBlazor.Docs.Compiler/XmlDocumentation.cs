@@ -440,7 +440,7 @@ namespace MudBlazor.Docs.Compiler
                     : type.Namespace + ".";
 
                 string typeNameString = isMethodParameter
-                    ? typeNameString = Regex.Replace(type.Name, @"`\d+", string.Empty)
+                    ? typeNameString = TypeNameRegularExpression().Replace(type.Name, string.Empty)
                     : typeNameString = type.Name;
 
                 var genericArgumentsString = type.IsGenericType && isMethodParameter
@@ -498,7 +498,7 @@ namespace MudBlazor.Docs.Compiler
 
         public static string XmlDocumentationKeyHelper(string typeFullNameString, string memberNameString)
         {
-            var key = Regex.Replace(typeFullNameString, @"\[.*\]", string.Empty).Replace('+', '.');
+            var key = MyRegex().Replace(typeFullNameString, string.Empty).Replace('+', '.');
             if (!(memberNameString is null))
             {
                 key += "." + memberNameString;
@@ -580,6 +580,10 @@ namespace MudBlazor.Docs.Compiler
 
         [GeneratedRegex("`.*")]
         private static partial Regex BacktickRegularExpression();
+        [GeneratedRegex(@"`\d+")]
+        private static partial Regex TypeNameRegularExpression();
+        [GeneratedRegex(@"\[.*\]")]
+        private static partial Regex MyRegex();
 
         #endregion
 

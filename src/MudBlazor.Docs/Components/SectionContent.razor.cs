@@ -176,13 +176,13 @@ public partial class SectionContent
         // Data models
         if (codeFiles.Contains("MudBlazor.Examples.Data.Models"))
         {
-            if (Regex.Match(codeFiles, @"\bElement\b").Success)
+            if (ElementRegularExpression().Match(codeFiles).Success)
             {
                 var elementCodeFile = "Element.cs" + (char)31 + Snippets.GetCode("Element");
                 codeFiles = codeFiles + (char)31 + elementCodeFile;
             }
 
-            if (Regex.Match(codeFiles, @"\bServer\b").Success)
+            if (ServerRegularExpression().Match(codeFiles).Success)
             {
                 var serverCodeFile = "Server.cs" + (char)31 + Snippets.GetCode("Server");
                 codeFiles = codeFiles + (char)31 + serverCodeFile;
@@ -198,4 +198,8 @@ public partial class SectionContent
 
     [GeneratedRegex(@"\Show<(Dialog.*?_Dialog)\>")]
     private static partial Regex ShowDialogRegularExpression();
+    [GeneratedRegex(@"\bElement\b")]
+    private static partial Regex ElementRegularExpression();
+    [GeneratedRegex(@"\bServer\b")]
+    private static partial Regex ServerRegularExpression();
 }

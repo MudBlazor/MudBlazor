@@ -83,7 +83,7 @@ namespace MudBlazor.Docs.Compiler
             return success;
         }
 
-        private static string GetSaveTypename(Type t) => Regex.Replace(t.ConvertToCSharpSource(), @"[\.,<>]", "_").TrimEnd('_');
+        private static string GetSaveTypename(Type t) => SaveTypenameRegularExpression().Replace(t.ConvertToCSharpSource(), "_").TrimEnd('_');
 
         /* Methods can be overloaded so the method name doesn't identify it uniquely. Instead of method name we need the method signature.
          * Currently the return type of a method is also used, but probably it can be removed.
@@ -91,7 +91,7 @@ namespace MudBlazor.Docs.Compiler
          * Alternatively we could use the format similar to this used in XML documentation - it will be even better because I think it is
          * less likely to be changed in the future. See XmlDocumentation.cs for a method computing identifiers.
          */
-        private static string GetSaveMethodIdentifier(MethodInfo method) => Regex.Replace(method.ToString(), "[^A-Za-z0-9_]", "_");
+        private static string GetSaveMethodIdentifier(MethodInfo method) => MyRegex().Replace(method.ToString(), "_");
 
         private static Type GetBaseDefinitionClass(MethodInfo m) => m.GetBaseDefinition().DeclaringType;
 
@@ -100,10 +100,10 @@ namespace MudBlazor.Docs.Compiler
          */
         private static string convertSeeTags(string doc)
         {
-            return Regex.Replace(doc, "<see cref=\"[TFPME]:(MudBlazor\\.)?([^>]+)\" */>", match =>
+            return SeeCrefRegularExpression().Replace(doc, match =>
             {
                 string result = match.Groups[2].Value;     // get the name of Type or type member (Field, Property, Method, or Event)
-                result = Regex.Replace(result, "`1", "");  // remove `1 from generic type name
+                result = BacktickRegularExpression().Replace(result, "");  // remove `1 from generic type name
                 return result;
             });
         }
@@ -115,5 +115,13 @@ namespace MudBlazor.Docs.Compiler
 
         [GeneratedRegex(@"</?.+?>")]
         private static partial Regex XmlTagRegularExpression();
+        [GeneratedRegex(@"[\.,<>]")]
+        private static partial Regex SaveTypenameRegularExpression();
+        [GeneratedRegex("[^A-Za-z0-9_]")]
+        private static partial Regex MyRegex();
+        [GeneratedRegex("<see cref=\"[TFPME]:(MudBlazor\\.)?([^>]+)\" */>")]
+        private static partial Regex SeeCrefRegularExpression();
+        [GeneratedRegex("`1")]
+        private static partial Regex BacktickRegularExpression();
     }
 }

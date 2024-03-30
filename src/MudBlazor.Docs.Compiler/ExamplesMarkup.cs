@@ -110,16 +110,13 @@ namespace MudBlazor.Docs.Compiler
         private static string StripComponentSource(string path)
         {
             var source = File.ReadAllText(path, Encoding.UTF8);
-            source = Regex.Replace(source, "@(namespace|layout|page) .+?\n", string.Empty);
+            source = NamespaceLayoutOrPage().Replace(source, string.Empty);
             return source.Trim();
         }
 
         public static string AttributePostprocessing(string html)
         {
-            return Regex.Replace(
-                html,
-                @"<span class=""htmlAttributeValue"">&quot;(?'value'.*?)&quot;</span>",
-                new MatchEvaluator(m =>
+            return HtmlAttributeValueSpanRegularExpression().Replace(html, new MatchEvaluator(m =>
                     {
                         var value = m.Groups["value"].Value;
                         return
@@ -133,13 +130,13 @@ namespace MudBlazor.Docs.Compiler
                 return value;
             if (value is "true" or "false")
                 return $"<span class=\"keyword\">{value}</span>";
-            if (Regex.IsMatch(value, "^[A-Z][A-Za-z0-9]+[.][A-Za-z][A-Za-z0-9]+$"))
+            if (AlphanumericDotAlphanumericRegularExpression().IsMatch(value))
             {
                 var tokens = value.Split('.');
                 return $"<span class=\"enum\">{tokens[0]}</span><span class=\"enumValue\">.{tokens[1]}</span>";
             }
 
-            if (Regex.IsMatch(value, "^@[A-Za-z0-9]+$"))
+            if (AlphanumericRegularExpression().IsMatch(value))
             {
                 return $"<span class=\"sharpVariable\">{value}</span>";
             }
@@ -149,5 +146,13 @@ namespace MudBlazor.Docs.Compiler
 
         [GeneratedRegex(@"</?DocsFrame>")]
         private static partial Regex DocsFrameEndTagRegularExpression();
+        [GeneratedRegex("@(namespace|layout|page) .+?\n")]
+        private static partial Regex NamespaceLayoutOrPage();
+        [GeneratedRegex(@"<span class=""htmlAttributeValue"">&quot;(?'value'.*?)&quot;</span>")]
+        private static partial Regex HtmlAttributeValueSpanRegularExpression();
+        [GeneratedRegex("^[A-Z][A-Za-z0-9]+[.][A-Za-z][A-Za-z0-9]+$")]
+        private static partial Regex AlphanumericDotAlphanumericRegularExpression();
+        [GeneratedRegex("^@[A-Za-z0-9]+$")]
+        private static partial Regex AlphanumericRegularExpression();
     }
 }
