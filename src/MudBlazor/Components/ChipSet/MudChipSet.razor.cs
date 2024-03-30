@@ -141,7 +141,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
 
     /// <summary>
     /// If true, all chips will be disabled.
-    /// Chips may override this.
+    /// Although chips have their own setting they can NOT override this.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Behavior)]

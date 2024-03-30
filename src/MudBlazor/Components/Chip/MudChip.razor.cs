@@ -80,7 +80,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private Size GetSize() => Size ?? ChipSet?.Size ?? MudBlazor.Size.Medium;
 
-    private bool GetDisabled() => Disabled ?? ChipSet?.Disabled ?? false;
+    private bool GetDisabled() => Disabled || (ChipSet?.Disabled ?? false);
 
     private bool GetRipple() => Ripple ?? ChipSet?.Ripple ?? true;
 
@@ -134,10 +134,11 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     /// <summary>
     /// If true, the chip will be visibly disabled and interaction is disabled as well.
+    /// Note, if the ChipSet is disabled this setting is overruled.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Behavior)]
-    public bool? Disabled { get; set; }
+    public bool Disabled { get; set; }
 
     /// <summary>
     /// Sets the Icon to use.
