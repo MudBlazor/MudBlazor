@@ -10,7 +10,7 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class MenuTests : BunitTest
+    public partial class MenuTests : BunitTest
     {
         [Test]
         public async Task OpenMenu_ClickFirstItem_CheckClosed()
@@ -226,7 +226,7 @@ namespace MudBlazor.UnitTests.Components
             svg.ClassList.Should().Contain("mud-icon-size-medium");
             // Ensure no color classes are present, like "mud-primary-text", "mud-error-text", etc.
             foreach (var className in svg.ClassList)
-                Regex.IsMatch(className, "^mud-[a-z]+-text$", RegexOptions.IgnoreCase).Should().BeFalse();
+                ColorClassRegularExpression().IsMatch(className).Should().BeFalse();
 
             // 3rd MenuItem
             svg = listItems[2].QuerySelector("svg");
@@ -335,5 +335,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Count.Should().Be(0);
             comp.Instance.Callers.Should().Be(string.Empty);
         }
+
+        [GeneratedRegex("^mud-[a-z]+-text$", RegexOptions.IgnoreCase, "en-US")]
+        private static partial Regex ColorClassRegularExpression();
     }
 }

@@ -6,7 +6,7 @@ using ColorCode;
 
 namespace MudBlazor.Docs.Compiler
 {
-    public class ExamplesMarkup
+    public partial class ExamplesMarkup
     {
         public bool Execute()
         {
@@ -50,7 +50,7 @@ namespace MudBlazor.Docs.Compiler
 
                     var src = StripComponentSource(entry.FullName);
                     var blocks = src.Split("@code");
-                    var blocks0 = Regex.Replace(blocks[0], @"</?DocsFrame>", string.Empty)
+                    var blocks0 = DocsFrameEndTagRegularExpression().Replace(blocks[0], string.Empty)
                         .Replace("@", "PlaceholdeR")
                         .Trim();
 
@@ -146,5 +146,8 @@ namespace MudBlazor.Docs.Compiler
 
             return $"<span class=\"htmlAttributeValue\">{value}</span>";
         }
+
+        [GeneratedRegex(@"</?DocsFrame>")]
+        private static partial Regex DocsFrameEndTagRegularExpression();
     }
 }

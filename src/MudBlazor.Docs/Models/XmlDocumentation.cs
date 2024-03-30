@@ -13,7 +13,7 @@ using System.Xml;
 
 namespace MudBlazor.Docs.Models
 {
-    public static class XmlDocumentation
+    public static partial class XmlDocumentation
     {
 
         #region System.Reflection.Assembly
@@ -208,7 +208,7 @@ namespace MudBlazor.Docs.Models
                 var result = type.IsNested
                     ? ConvertToCsharpSource(type.DeclaringType) + "."
                     : ""; //: type.Namespace + ".";
-                result += Regex.Replace(type.Name, "`.*", string.Empty);
+                result += BacktickRegularExpression().Replace(type.Name, string.Empty);
                 if (type.IsGenericType)
                 {
                     result += "<";
@@ -586,6 +586,9 @@ namespace MudBlazor.Docs.Models
             }
             return null;
         }
+
+        [GeneratedRegex("`.*")]
+        private static partial Regex BacktickRegularExpression();
 
         #endregion
 

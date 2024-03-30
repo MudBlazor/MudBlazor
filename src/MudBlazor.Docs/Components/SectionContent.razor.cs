@@ -164,7 +164,7 @@ public partial class SectionContent
         // Add dialogs for dialog examples
         if (firstFile.StartsWith("Dialog"))
         {
-            var regex = new Regex(@"\Show<(Dialog.*?_Dialog)\>");
+            var regex = ShowDialogRegularExpression();
             var dialogCodeName = regex.Match(codeFiles).Groups[1].Value;
             if (dialogCodeName != string.Empty)
             {
@@ -195,4 +195,7 @@ public partial class SectionContent
         var url = $"{tryMudBlazorLocation}snippet/{codeFileEncoded}";
         await JsApiService.OpenInNewTabAsync(url);
     }
+
+    [GeneratedRegex(@"\Show<(Dialog.*?_Dialog)\>")]
+    private static partial Regex ShowDialogRegularExpression();
 }

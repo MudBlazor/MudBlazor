@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 namespace MudBlazor.Docs.Compiler
 {
-    public class DocStrings
+    public partial class DocStrings
     {
         private static string[] hiddenMethods = { "ToString", "GetType", "GetHashCode", "Equals", "SetParametersAsync", "ReferenceEquals" };
 
@@ -38,7 +38,7 @@ namespace MudBlazor.Docs.Compiler
                     {
                         var doc = property.GetDocumentation() ?? "";
                         doc = convertSeeTags(doc);
-                        doc = Regex.Replace(doc, @"</?.+?>", "");  // remove all other XML tags
+                        doc = XmlTagRegularExpression().Replace(doc, "");  // remove all other XML tags
                         cb.AddLine($"public const string {GetSaveTypename(type)}_{property.Name} = @\"{EscapeDescription(doc).Trim()}\";\n");
                     }
 
@@ -112,5 +112,8 @@ namespace MudBlazor.Docs.Compiler
         {
             return doc.Replace("\"", "\"\"");
         }
+
+        [GeneratedRegex(@"</?.+?>")]
+        private static partial Regex XmlTagRegularExpression();
     }
 }

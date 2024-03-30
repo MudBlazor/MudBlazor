@@ -43,7 +43,7 @@ namespace MudBlazor
                 return time.TimeOfDay;
             }
 
-            var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
+            var m = AmPmRegularExpression().Match(value);
             if (m.Success)
             {
                 if (DateTime.TryParseExact(value, format12Hours, CultureInfo.InvariantCulture, DateTimeStyles.None,
@@ -738,5 +738,8 @@ namespace MudBlazor
             public int Minute { get; set; }
 
         }
+
+        [GeneratedRegex("AM|PM", RegexOptions.IgnoreCase, "en-US")]
+        private static partial Regex AmPmRegularExpression();
     }
 }
