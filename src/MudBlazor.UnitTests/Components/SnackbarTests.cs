@@ -14,7 +14,7 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public partial class SnackbarTests : BunitTest
+    public class SnackbarTests : BunitTest
     {
         private IRenderedComponent<MudSnackbarProvider> _provider;
         private ISnackbar _service;
@@ -247,7 +247,7 @@ namespace MudBlazor.UnitTests.Components
             // Ensure no color classes are present, like "mud-primary-text", "mud-error-text", etc.
             var classNames = svgClassNames.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             foreach (var className in classNames)
-                ColorClassRegularExpression().IsMatch(className).Should().BeFalse();
+                Regex.IsMatch(className, "^mud-[a-z]+-text$", RegexOptions.IgnoreCase).Should().BeFalse();
         }
 
         [Test]
@@ -731,8 +731,5 @@ namespace MudBlazor.UnitTests.Components
             // Only one click should have been successful and multiple clicks should have been attempted.
             successfulClicks.Should().Be(1).And.BeLessThan(clickAttempts);
         }
-
-        [GeneratedRegex("^mud-[a-z]+-text$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
-        private static partial Regex ColorClassRegularExpression();
     }
 }
