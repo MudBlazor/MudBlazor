@@ -6,7 +6,7 @@ namespace MudBlazor
     public partial class MudAppBar : MudComponentBase
     {
 #nullable enable
-        protected string Classname =>
+         protected string Classname =>
             new CssBuilder("mud-appbar")
                 .AddClass($"mud-appbar-dense", Dense)
                 .AddClass($"mud-appbar-fixed-top", Fixed && !Bottom)
