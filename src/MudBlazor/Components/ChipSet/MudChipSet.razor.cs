@@ -62,6 +62,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
 
     /// <summary>
     /// The default chip variant if they don't set their own.
+    /// Chips may override this.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
@@ -69,10 +70,35 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
 
     /// <summary>
     /// The default chip color if they don't set their own.
+    /// Chips may override this.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
     public Color Color { get; set; } = Color.Default;
+
+    /// <summary>
+    /// The default selected chip color. Color.Inherit for default value.
+    /// Chips may override this.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chip.Appearance)]
+    public Color SelectedColor { get; set; } = MudBlazor.Color.Inherit;
+
+    /// <summary>
+    /// The default icon color for all chips.
+    /// Chips may override this.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chip.Appearance)]
+    public Color IconColor { get; set; } = MudBlazor.Color.Inherit;
+
+    /// <summary>
+    /// The default chip size.
+    /// Chips may override this.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chip.Appearance)]
+    public Size Size { get; set; } = Size.Medium;
 
     /// <summary>
     ///  Will show a check-mark for the selected components.
@@ -80,6 +106,46 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     [Parameter]
     [Category(CategoryTypes.ChipSet.Appearance)]
     public bool CheckMark { get; set; }
+
+    /// <summary>
+    /// The default checked icon for all chips.
+    /// Chips may override this.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chip.Appearance)]
+    public string CheckedIcon { get; set; } = Icons.Material.Filled.Check;
+
+    /// <summary>
+    /// Rhe default close icon for all chips, only shown if OnClose is set.
+    /// Chips may override this.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chip.Appearance)]
+    public string CloseIcon { get; set; } = Icons.Material.Filled.Cancel;
+
+    /// <summary>
+    /// Ripple default setting for all chips. If true, a ripple effect is applied to clickable chips.
+    /// Chips may override this.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chip.Appearance)]
+    public bool Ripple { get; set; } = true;
+
+    /// <summary>
+    /// Removes circle edges and applies theme default. This setting is for all chips,
+    /// unless they override it.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chip.Appearance)]
+    public bool Label { get; set; }
+
+    /// <summary>
+    /// If true, all chips will be disabled.
+    /// Chips may override this.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chip.Behavior)]
+    public bool Disabled { get; set; }
 
     /// <summary>
     ///  Will make all chips read only.

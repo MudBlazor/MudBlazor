@@ -39,18 +39,17 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     protected string Classname =>
         new CssBuilder("mud-chip")
             .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
-            .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
+            .AddClass($"mud-chip-size-{GetSize().ToDescriptionString()}")
             .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
             .AddClass("mud-clickable", IsClickable)
-            .AddClass("mud-ripple", IsClickable && !DisableRipple)
-            .AddClass("mud-chip-label", Label)
-            .AddClass("mud-disabled", Disabled)
+            .AddClass("mud-ripple", IsClickable && GetRipple())
+            .AddClass("mud-chip-label", GetLabel())
+            .AddClass("mud-disabled", GetDisabled())
             .AddClass("mud-chip-selected", IsSelectedState.Value)
             .AddClass(Class)
             .Build();
 
-    private bool IsClickable =>
-        !ChipSet?.ReadOnly ?? (OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
+    private bool IsClickable => !ChipSet?.ReadOnly ?? (OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
 
     internal Variant GetVariant()
     {
@@ -67,48 +66,60 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private Color GetColor()
     {
-        if (IsSelectedState.Value && SelectedColor != MudBlazor.Color.Inherit)
+        var selectedColor = GetSelectedColor();
+        if (IsSelectedState.Value && selectedColor != MudBlazor.Color.Inherit)
         {
-            return SelectedColor;
+            return selectedColor;
         }
-        var color = Color ?? ChipSet?.Color ?? MudBlazor.Color.Default;
-        //if (IsSelectedState.Value && SelectedColor == MudBlazor.Color.Inherit)
-        //{
-        //    return color;
-        //}
-        return color;
+        return Color ?? ChipSet?.Color ?? MudBlazor.Color.Default;
     }
+
+    private Color GetSelectedColor() => SelectedColor ?? ChipSet?.SelectedColor ?? MudBlazor.Color.Inherit;
+
+    private Color GetIconColor() => IconColor ?? ChipSet?.IconColor ?? MudBlazor.Color.Inherit;
+
+    private Size GetSize() => Size ?? ChipSet?.Size ?? MudBlazor.Size.Medium;
+
+    private bool GetDisabled() => Disabled ?? ChipSet?.Disabled ?? false;
+
+    private bool GetRipple() => Ripple ?? ChipSet?.Ripple ?? true;
+
+    private bool GetLabel() => Label ?? ChipSet?.Label ?? false;
+
+    private string GetCheckedIcon() => CheckedIcon ?? ChipSet?.CheckedIcon ?? Icons.Material.Filled.Check;
+
+    private string GetCloseIcon() => CloseIcon ?? ChipSet?.CloseIcon ?? Icons.Material.Filled.Cancel;
 
     [CascadingParameter]
     private MudChipSet<T>? ChipSet { get; set; }
 
     /// <summary>
-    /// The color of the component.
+    /// The chip color when not selected.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
     public Color? Color { get; set; }
 
     /// <summary>
-    /// The size of the button. small is equivalent to the dense button styling.
+    /// The chip color to use when selected, only works together with ChipSet, Color.Inherit for default value.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
-    public Size Size { get; set; } = Size.Medium;
+    public Color? SelectedColor { get; set; }
 
     /// <summary>
-    /// The variant to use.
+    /// The chip size.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chip.Appearance)]
+    public Size? Size { get; set; }
+
+    /// <summary>
+    /// The chip variant.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
     public Variant? Variant { get; set; }
-
-    /// <summary>
-    /// The selected color to use when selected, only works together with ChipSet, Color.Inherit for default value.
-    /// </summary>
-    [Parameter]
-    [Category(CategoryTypes.Chip.Appearance)]
-    public Color SelectedColor { get; set; } = MudBlazor.Color.Inherit;
 
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
@@ -119,14 +130,14 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
-    public bool Label { get; set; }
+    public bool? Label { get; set; }
 
     /// <summary>
-    /// If true, the chip will be displayed in disabled state and no events possible.
+    /// If true, the chip will be visibly disabled and interaction is disabled as well.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Behavior)]
-    public bool Disabled { get; set; }
+    public bool? Disabled { get; set; }
 
     /// <summary>
     /// Sets the Icon to use.
@@ -140,14 +151,14 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
-    public string CheckedIcon { get; set; } = Icons.Material.Filled.Check;
+    public string? CheckedIcon { get; set; }
 
     /// <summary>
     /// The color of the icon.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
-    public Color IconColor { get; set; } = MudBlazor.Color.Inherit;
+    public Color? IconColor { get; set; }
 
     /// <summary>
     /// Overrides the default close icon, only shown if OnClose is set.
@@ -157,11 +168,11 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public string? CloseIcon { get; set; }
 
     /// <summary>
-    /// If true, disables ripple effect, ripple effect is only applied to clickable chips.
+    /// If true, a ripple effect is applied to clickable chips.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chip.Appearance)]
-    public bool DisableRipple { get; set; }
+    public bool? Ripple { get; set; }
 
     /// <summary>
     /// Child content of component.
