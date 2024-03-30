@@ -146,12 +146,16 @@ namespace MudBlazor.Docs.Compiler
 
         [GeneratedRegex(@"</?DocsFrame>")]
         private static partial Regex DocsFrameEndTagRegularExpression();
+
         [GeneratedRegex("@(namespace|layout|page) .+?\n")]
         private static partial Regex NamespaceLayoutOrPage();
+
         [GeneratedRegex(@"<span class=""htmlAttributeValue"">&quot;(?'value'.*?)&quot;</span>")]
         private static partial Regex HtmlAttributeValueSpanRegularExpression();
+
         [GeneratedRegex("^[A-Z][A-Za-z0-9]+[.][A-Za-z][A-Za-z0-9]+$")]
         private static partial Regex AlphanumericDotAlphanumericRegularExpression();
+
         [GeneratedRegex("^@[A-Za-z0-9]+$")]
         private static partial Regex AlphanumericRegularExpression();
     }

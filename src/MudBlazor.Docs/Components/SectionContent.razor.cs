@@ -198,8 +198,10 @@ public partial class SectionContent
 
     [GeneratedRegex(@"\Show<(Dialog.*?_Dialog)\>")]
     private static partial Regex ShowDialogRegularExpression();
+
     [GeneratedRegex(@"\bElement\b")]
     private static partial Regex ElementRegularExpression();
+
     [GeneratedRegex(@"\bServer\b")]
     private static partial Regex ServerRegularExpression();
 }

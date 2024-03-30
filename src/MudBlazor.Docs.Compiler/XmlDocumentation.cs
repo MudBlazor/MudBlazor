@@ -580,8 +580,10 @@ namespace MudBlazor.Docs.Compiler
 
         [GeneratedRegex("`.*")]
         private static partial Regex BacktickRegularExpression();
+        
         [GeneratedRegex(@"`\d+")]
         private static partial Regex TypeNameRegularExpression();
+        
         [GeneratedRegex(@"\[.*\]")]
         private static partial Regex MyRegex();
 

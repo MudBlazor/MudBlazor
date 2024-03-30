@@ -589,8 +589,10 @@ namespace MudBlazor.Docs.Models
 
         [GeneratedRegex("`.*")]
         private static partial Regex BacktickRegularExpression();
+
         [GeneratedRegex(@"`\d+")]
         private static partial Regex TypeNameRegularExpression();
+
         [GeneratedRegex(@"\[.*\]")]
         private static partial Regex DocumentationKeyRegularExpression();
 

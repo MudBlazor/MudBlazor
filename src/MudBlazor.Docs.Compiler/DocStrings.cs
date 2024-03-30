@@ -115,12 +115,16 @@ namespace MudBlazor.Docs.Compiler
 
         [GeneratedRegex(@"</?.+?>")]
         private static partial Regex XmlTagRegularExpression();
+
         [GeneratedRegex(@"[\.,<>]")]
         private static partial Regex SaveTypenameRegularExpression();
+
         [GeneratedRegex("[^A-Za-z0-9_]")]
         private static partial Regex AlphanumericUnderscoreRegularExpression();
+
         [GeneratedRegex("<see cref=\"[TFPME]:(MudBlazor\\.)?([^>]+)\" */>")]
         private static partial Regex SeeCrefRegularExpression();
+
         [GeneratedRegex("`1")]
         private static partial Regex BacktickRegularExpression();
     }
