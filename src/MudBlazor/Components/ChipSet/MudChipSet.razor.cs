@@ -14,9 +14,9 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
 {
     public MudChipSet()
     {
-        _selectedValue = RegisterParameter(nameof(SelectedValue), () => SelectedValue, () => SelectedValueChanged, OnSelectedValueChanged);
-        _selectedValues = RegisterParameter(nameof(SelectedValues), () => SelectedValues, () => SelectedValuesChanged, OnSelectedValuesChanged);
-        _comparer = RegisterParameter(nameof(Comparer), () => Comparer, OnComparerChanged);
+        _selectedValue = RegisterParameter(nameof(SelectedValue), () => SelectedValue, () => SelectedValueChanged, OnSelectedValueChangedAsync);
+        _selectedValues = RegisterParameter(nameof(SelectedValues), () => SelectedValues, () => SelectedValuesChanged, OnSelectedValuesChangedAsync);
+        _comparer = RegisterParameter(nameof(Comparer), () => Comparer, OnComparerChangedAsync);
         RegisterParameter(nameof(CheckMark), () => CheckMark, OnCheckMarkChanged);
     }
 
@@ -127,19 +127,19 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     [Parameter]
     public EventCallback<MudChip<T>> OnClose { get; set; }
 
-    private async Task OnSelectedValueChanged(ParameterChangedEventArgs<T?> args)
+    private Task OnSelectedValueChangedAsync(ParameterChangedEventArgs<T?> args)
     {
-        await UpdateSelection(new T?[] { args.Value });
+        return UpdateSelectionAsync(new[] { args.Value });
     }
 
-    private async Task OnSelectedValuesChanged(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> args)
+    private Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> args)
     {
-        await UpdateSelection(args.Value);
+        return UpdateSelectionAsync(args.Value);
     }
 
-    private async Task OnComparerChanged(ParameterChangedEventArgs<IEqualityComparer<T>?> args)
+    private Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T>?> args)
     {
-        await UpdateSelection(_selectedValues.Value);
+        return UpdateSelectionAsync(_selectedValues.Value);
     }
 
     private void OnCheckMarkChanged(ParameterChangedEventArgs<bool> args)
@@ -148,7 +148,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
             chip.StateHasChanged();
     }
 
-    private async Task UpdateSelection(IReadOnlyCollection<T?>? newValues, bool updateChips = true)
+    private async Task UpdateSelectionAsync(IReadOnlyCollection<T?>? newValues, bool updateChips = true)
     {
         var comparer = _comparer.Value;
         var selectedValues = newValues ?? Array.Empty<T>();
@@ -173,7 +173,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
             {
                 var value = chip.GetValue();
                 var isSelected = value is not null && newSelection.Contains(value);
-                await chip.UpdateSelectionState(isSelected);
+                await chip.UpdateSelectionStateAsync(isSelected);
             }
         }
         await _selectedValue.SetValueAsync(newSelection.OrderBy(SafeOrder).FirstOrDefault());
@@ -209,24 +209,25 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
             {
                 newSelection.Remove(value);
             }
-            await UpdateSelection(newSelection, updateChips: !MultiSelection);
+            await UpdateSelectionAsync(newSelection, updateChips: !MultiSelection);
         }
         if (value is not null && _selection.Contains(value))
-            await chip.UpdateSelectionState(true);
+            await chip.UpdateSelectionStateAsync(true);
     }
 
-    internal Task RemoveAsync(MudChip<T> chip)
+    internal async Task RemoveAsync(MudChip<T> chip)
     {
         if (!_chips.Remove(chip))
-            return Task.CompletedTask;
+            return;
         if (_disposed)
-            return Task.CompletedTask; // don't raise any events if we are already disposed
+            return; // don't raise any events if we are already disposed
         var value = chip.GetValue();
-        if (chip.IsSelectedState.Value && value is not null)
-        {
-            return UpdateSelection(_selection.Where(x => !AreValuesEqual(x, value)).ToArray());
-        }
-        return Task.CompletedTask;
+        //if (chip.IsSelectedState.Value && value is not null)
+        //{
+            await UpdateSelectionAsync(_selection.Where(x => !AreValuesEqual(x, value)).ToArray());
+        //}
+       // return Task.CompletedTask;
+       StateHasChanged();
     }
 
     internal async Task OnChipIsSelectedChangedAsync(MudChip<T> chip, bool isSelected)
@@ -238,7 +239,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         {
             if (value is null && isSelected)
             {
-                await UpdateSelection(Array.Empty<T>());
+                await UpdateSelectionAsync(Array.Empty<T>());
                 return;
             }
             newSelection = new HashSet<T>(_comparer.Value);
@@ -260,7 +261,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
                 newSelection.Remove(value);
             }
         }
-        await UpdateSelection(newSelection);
+        await UpdateSelectionAsync(newSelection);
     }
 
     internal async Task OnChipDeletedAsync(MudChip<T> chip)

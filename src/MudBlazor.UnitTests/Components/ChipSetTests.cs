@@ -369,7 +369,7 @@ namespace MudBlazor.UnitTests.Components
             // for coverage
             new MudChip<int>().ShowCheckMark.Should().Be(false);
             var chip = Context.RenderComponent<MudChip<string>>().Instance;
-            await comp.InvokeAsync(() => chip.UpdateSelectionState(true));
+            await comp.InvokeAsync(() => chip.UpdateSelectionStateAsync(true));
             chip.ShowCheckMark.Should().Be(false); // because not in a chipset
             new MudChip<int>() { Variant = (Variant)69 }.GetVariant().Should().Be(Variant.Outlined); // falls back to outlined
         }
@@ -397,7 +397,6 @@ namespace MudBlazor.UnitTests.Components
             string.Join(", ", selectedValues).Should().Be("y, z");
         }
 
-
         [Test]
         public async Task ChipSet_With_NonValueTypes_DoesntCrash()
         {
@@ -417,6 +416,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-chip")[0].Click();
             selectedValues.Should().NotContain(a).And.Contain(b);
         }
+
+
     }
 
 }

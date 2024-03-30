@@ -12,17 +12,17 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 {
     public MudChip()
     {
-        IsSelectedState = RegisterParameter(nameof(IsSelected), () => IsSelected, () => IsSelectedChanged, OnIsSelectedChanged);
+        IsSelectedState = RegisterParameter(nameof(IsSelected), () => IsSelected, () => IsSelectedChanged, OnIsSelectedChangedAsync);
     }
 
-    private Task OnIsSelectedChanged(ParameterChangedEventArgs<bool> args)
+    private Task OnIsSelectedChangedAsync(ParameterChangedEventArgs<bool> args)
     {
         if (ChipSet == null)
             return Task.CompletedTask;
         return ChipSet.OnChipIsSelectedChangedAsync(this, args.Value);
     }
 
-    internal async Task UpdateSelectionState(bool isSelected)
+    internal async Task UpdateSelectionStateAsync(bool isSelected)
     {
         await IsSelectedState.SetValueAsync(isSelected);
         StateHasChanged();
@@ -247,13 +247,15 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         return Value;
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-        ChipSet?.AddAsync(this);
+        await base.OnInitializedAsync();
+        if (ChipSet is null)
+            return;
+        await ChipSet.AddAsync(this);
     }
 
-    protected internal async Task OnClickHandler(MouseEventArgs ev)
+    protected internal async Task OnClickAsync(MouseEventArgs ev)
     {
         if (ChipSet?.ReadOnly == true)
         {
@@ -278,7 +280,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         }
     }
 
-    protected async Task OnCloseHandler(MouseEventArgs ev)
+    protected async Task OnCloseAsync(MouseEventArgs ev)
     {
         if (ChipSet?.ReadOnly == true)
         {
