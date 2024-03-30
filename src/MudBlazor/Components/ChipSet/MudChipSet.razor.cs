@@ -224,10 +224,10 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         var value = chip.GetValue();
         //if (chip.IsSelectedState.Value && value is not null)
         //{
-            await UpdateSelectionAsync(_selection.Where(x => !AreValuesEqual(x, value)).ToArray());
+        await UpdateSelectionAsync(_selection.Where(x => !AreValuesEqual(x, value)).ToArray());
         //}
-       // return Task.CompletedTask;
-       StateHasChanged();
+        // return Task.CompletedTask;
+        StateHasChanged();
     }
 
     internal async Task OnChipIsSelectedChangedAsync(MudChip<T> chip, bool isSelected)
