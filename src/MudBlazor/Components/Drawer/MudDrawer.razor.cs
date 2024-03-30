@@ -365,33 +365,12 @@ namespace MudBlazor
             };
         }
 
-
-        [Obsolete($"Use {nameof(OnMouseEnterAsync)} instead. This will be removed in v7.")]
-        public async void OnMouseEnter()
-        {
-            if (Variant == DrawerVariant.Mini && !Open && OpenMiniOnHover)
-            {
-                _closeOnMouseLeave = true;
-                await OpenChanged.InvokeAsync(true);
-            }
-        }
-
         public async Task OnMouseEnterAsync()
         {
             if (Variant == DrawerVariant.Mini && !Open && OpenMiniOnHover)
             {
                 _closeOnMouseLeave = true;
                 await OpenChanged.InvokeAsync(true);
-            }
-        }
-
-        [Obsolete($"Use {nameof(OnMouseLeaveAsync)} instead. This will be removed in v7.")]
-        public async void OnMouseLeave()
-        {
-            if (Variant == DrawerVariant.Mini && Open && _closeOnMouseLeave)
-            {
-                _closeOnMouseLeave = false;
-                await OpenChanged.InvokeAsync(false);
             }
         }
 

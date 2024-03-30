@@ -65,16 +65,6 @@ namespace MudBlazor
         [Category(CategoryTypes.ProgressCircular.Appearance)]
         public int StrokeWidth { get; set; } = 3;
 
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use Min instead.", true)]
-        [Parameter]
-        public double Minimum { get => Min; set => Min = value; }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use Max instead.", true)]
-        [Parameter]
-        public double Maximum { get => Max; set => Max = value; }
-
         public MudProgressCircular()
         {
             _valueState = RegisterParameter(nameof(Value), () => Value, OnValueParameterChanged, DoubleEpsilonEqualityComparer.Default);

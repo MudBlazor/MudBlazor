@@ -307,13 +307,6 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        [Obsolete($"Use {nameof(OnChipDeletedAsync)} instead. This will be removed in v7.")]
-        public void OnChipDeleted(MudChip chip)
-        {
-            RemoveAsync(chip).AndForget();
-            OnClose.InvokeAsync(chip);
-        }
-
         public async Task OnChipDeletedAsync(MudChip chip)
         {
             await RemoveAsync(chip);
