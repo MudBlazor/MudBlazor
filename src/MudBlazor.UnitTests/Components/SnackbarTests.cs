@@ -732,7 +732,7 @@ namespace MudBlazor.UnitTests.Components
             successfulClicks.Should().Be(1).And.BeLessThan(clickAttempts);
         }
 
-        [GeneratedRegex("^mud-[a-z]+-text$", RegexOptions.IgnoreCase, "en-US")]
+        [GeneratedRegex("^mud-[a-z]+-text$", RegexOptions.IgnoreCase, "")]
         private static partial Regex MyRegex();
     }
 }

@@ -336,7 +336,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Callers.Should().Be(string.Empty);
         }
 
-        [GeneratedRegex("^mud-[a-z]+-text$", RegexOptions.IgnoreCase, "en-US")]
+        [GeneratedRegex("^mud-[a-z]+-text$", RegexOptions.IgnoreCase, "")]
         private static partial Regex ColorClassRegularExpression();
     }
 }
