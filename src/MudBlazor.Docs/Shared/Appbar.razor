@@ -6,7 +6,9 @@
         <MudText Color="Color.Primary" Typo="Typo.h5" Class="docs-brand-text">MudBlazor</MudText>
     </NavLink>
     <MudSpacer />
-    <MudIconButton Icon="@Icons.Material.Rounded.Search" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => OpenSearchDialog())" />
+    <MudTooltip Duration="1000" Text="Search">
+        <MudIconButton Icon="@Icons.Material.Rounded.Search" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => OpenSearchDialog())" />
+    </MudTooltip>
 </div>
 <div class="d-none d-md-flex align-center flex-grow-1">
     <NavLink ActiveClass="d-flex align-center me-4" href="/">
@@ -67,7 +69,7 @@
             <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
         </ItemTemplate>
     </MudAutocomplete>
-    <MudDivider FlexItem="true" Vertical="true" DividerType="DividerType.Middle" Class="mx-4 my-4" />
+    <MudDivider FlexItem="true" Vertical="true" DividerType="DividerType.Middle" Class="my-4" />
     <AppbarButtons />
 </div>
 
