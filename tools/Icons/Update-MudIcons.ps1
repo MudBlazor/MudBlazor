@@ -120,12 +120,13 @@ namespace MudBlazor
 
 "@.Replace("`r`n", "`n") }
 
-    ## The END just closes up braces for now
+    ## The END just closes up braces and adds a newline for now
     $csFileEpilogue = { @"
             }
         }
     }
 }
+
 "@.Replace("`r`n", "`n") }
 	
     ## Pull into scope
