@@ -214,7 +214,7 @@ namespace MudBlazor
                         return;
                 }
 
-                if (Regex.IsMatch(e.Key, @"^.$"))
+                if (ValidCharacterRegEx().IsMatch(e.Key))
                 {
                     Mask.Insert(e.Key);
                     await Update();
@@ -447,5 +447,8 @@ namespace MudBlazor
                 }
             }
         }
+
+        [GeneratedRegex(@"^.$")]
+        private static partial Regex ValidCharacterRegEx();
     }
 }
