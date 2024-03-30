@@ -139,7 +139,7 @@ namespace MudBlazor
             {
                 return index;
             }
-            
+
             var newIndex = _indices.Count;
             _indices.Add(item, newIndex);
             return newIndex;

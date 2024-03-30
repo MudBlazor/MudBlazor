@@ -71,7 +71,7 @@ namespace MudBlazor
 
         private Dictionary<Guid, (Type eventType, Func<object, Task> callback)> _callbackResolver = new();
 
-        internal readonly static JsonSerializerOptions s_defaultJsonSerializerOptions = new()
+        internal static readonly JsonSerializerOptions s_defaultJsonSerializerOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             PropertyNameCaseInsensitive = true,
