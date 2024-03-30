@@ -91,7 +91,7 @@ namespace MudBlazor.Docs.Compiler
          * Alternatively we could use the format similar to this used in XML documentation - it will be even better because I think it is
          * less likely to be changed in the future. See XmlDocumentation.cs for a method computing identifiers.
          */
-        private static string GetSaveMethodIdentifier(MethodInfo method) => MyRegex().Replace(method.ToString(), "_");
+        private static string GetSaveMethodIdentifier(MethodInfo method) => AlphanumericUnderscoreRegularExpression().Replace(method.ToString(), "_");
 
         private static Type GetBaseDefinitionClass(MethodInfo m) => m.GetBaseDefinition().DeclaringType;
 
@@ -118,7 +118,7 @@ namespace MudBlazor.Docs.Compiler
         [GeneratedRegex(@"[\.,<>]")]
         private static partial Regex SaveTypenameRegularExpression();
         [GeneratedRegex("[^A-Za-z0-9_]")]
-        private static partial Regex MyRegex();
+        private static partial Regex AlphanumericUnderscoreRegularExpression();
         [GeneratedRegex("<see cref=\"[TFPME]:(MudBlazor\\.)?([^>]+)\" */>")]
         private static partial Regex SeeCrefRegularExpression();
         [GeneratedRegex("`1")]
