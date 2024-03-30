@@ -247,7 +247,7 @@ namespace MudBlazor.UnitTests.Components
             // Ensure no color classes are present, like "mud-primary-text", "mud-error-text", etc.
             var classNames = svgClassNames.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             foreach (var className in classNames)
-                MyRegex().IsMatch(className).Should().BeFalse();
+                ColorClassRegularExpression().IsMatch(className).Should().BeFalse();
         }
 
         [Test]
@@ -733,6 +733,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [GeneratedRegex("^mud-[a-z]+-text$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
-        private static partial Regex MyRegex();
+        private static partial Regex ColorClassRegularExpression();
     }
 }
