@@ -957,14 +957,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Changing page should retain the selected items
+        /// Changing page should retain the selected items using ServerData
         /// </summary>
         [Test]
-        public void TableMultiSelectionTest9()
+        public void TableMultiSelectionServerDataTest()
         {
-            var comp = Context.RenderComponent<TableMultiSelectionTest9>();
+            var comp = Context.RenderComponent<TableMultiSelectionServerDataTest>();
             // select elements needed for the test
-            var table = comp.FindComponent<MudTable<MudBlazor.UnitTests.TestComponents.TableMultiSelectionTest9.ComplexObject>>().Instance;
+            var table = comp.FindComponent<MudTable<TableMultiSelectionServerDataTest.ComplexObject>>().Instance;
             var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
             // click header checkbox and verify selection text
@@ -996,6 +996,104 @@ namespace MudBlazor.UnitTests.Components
 
             // Click the checkbox of the row with id 12
             inputs2[2].Change(true);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12 }");
+            // One checkbox of the current page should be checked
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(1);
+        }
+
+        /// <summary>
+        /// Changing page should retain the selected items using Items (not ServerData)
+        /// </summary>
+        [Test]
+        public void TableMultiSelectionItemsTest1_PageChange()
+        {
+            var comp = Context.RenderComponent<TableMultiSelectionItemsTest1>();
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<TableMultiSelectionItemsTest1.ComplexObject>>().Instance;
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // Skip first two inputs (date filters)
+            var inputs = comp.FindAll("input").Skip(3);
+            foreach (var input in inputs)
+            {
+                input.Change(true);
+            }
+            table.SelectedItems.Count.Should().Be(10);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(10);
+
+            // click next page button
+            var buttons = comp.FindAll("button[aria-label=\"Next page\"]");
+            buttons[0].Click();
+
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // verify table markup
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(11); // <-- one header, ten rows
+            var td = comp.FindAll("td").ToArray();
+            td.Length.Should().Be(10 * 6); // six td per row for multi selection
+            // Find checkboxes, and skip date filter and table header checkbox
+            var inputs2 = comp.FindAll("input").Skip(3);
+            inputs2.Count().Should().Be(10); // one checkbox per row + one for the header + two date filters
+
+            // verify selection - All items should remain selected
+            table.SelectedItems.Count.Should().Be(10);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
+            // No item from current page should be checked
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(0);
+
+            // Click the checkbox of the row with id 12
+            inputs2.ElementAt(1).Change(true);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12 }");
+            // One checkbox of the current page should be checked
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(1);
+        }
+
+        /// <summary>
+        /// Changing filters should retain the selected items using Items (not ServerData)
+        /// </summary>
+        [Test]
+        public void TableMultiSelectionItemsTest1_FilterChange()
+        {
+            var comp = Context.RenderComponent<TableMultiSelectionItemsTest1>();
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<TableMultiSelectionItemsTest1.ComplexObject>>().Instance;
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // Skip first two inputs (date filters)
+            var inputs = comp.FindAll("input").Skip(3);
+            foreach (var input in inputs)
+            {
+                input.Change(true);
+            }
+            table.SelectedItems.Count.Should().Be(10);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(10);
+
+            comp.Instance.StartDate = DateTime.Parse("2024-03-28 00:00:00");
+            comp.Instance.EndDate = DateTime.Parse("2024-03-30 00:00:00");
+            comp.Instance.StateHasChanged();
+
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // verify table markup
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(11); // <-- one header, ten rows
+            var td = comp.FindAll("td").ToArray();
+            td.Length.Should().Be(10 * 6); // six td per row for multi selection
+            // Find checkboxes, and skip date filter and table header checkbox
+            var inputs2 = comp.FindAll("input").Skip(3);
+            inputs2.Count().Should().Be(10); // one checkbox per row + one for the header + two date filters
+
+            // verify selection - All items should remain selected
+            table.SelectedItems.Count.Should().Be(10);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
+            // No item from current page should be checked
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(0);
+
+            // Click the checkbox of the row with id 12
+            inputs2.ElementAt(1).Change(true);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12 }");
             // One checkbox of the current page should be checked
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(1);

@@ -499,7 +499,7 @@ namespace MudBlazor
             var t = item.As<T>();
             if (t is null)
                 return false;
-            return FilteredItems?.Contains(t) ?? false;
+            return Items?.Contains(t) ?? false;
         }
 
         public override void UpdateSelection() => SelectedItemsChanged.InvokeAsync(SelectedItems);
