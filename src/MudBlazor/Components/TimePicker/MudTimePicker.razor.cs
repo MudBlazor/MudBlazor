@@ -739,7 +739,7 @@ namespace MudBlazor
 
         }
 
-        [GeneratedRegex("AM|PM", RegexOptions.IgnoreCase, "")]
+        [GeneratedRegex("AM|PM", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
         private static partial Regex AmPmRegularExpression();
     }
 }
