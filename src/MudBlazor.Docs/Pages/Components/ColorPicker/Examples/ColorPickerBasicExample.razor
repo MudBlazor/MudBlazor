@@ -1,7 +1,8 @@
-﻿@namespace MudBlazor.Docs.Examples
+﻿@using MudBlazor.Utilities
+@namespace MudBlazor.Docs.Examples
 
 <MudColorPicker Label="Basic Color Picker" @bind-Text="_colorValue" Style="@($"color: {_colorValue};")" Placeholder="Select Color" />
 
 @code {
-    private string _colorValue;
+    private string _colorValue = "#000000";
 }
