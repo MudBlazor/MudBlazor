@@ -9,6 +9,7 @@
 			<InputContent>
                 <MudInput @ref="_elementReference" InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
                           Class="@InputClassname" Margin="@Margin" Placeholder="@Placeholder"
+                          Label="@Label"
                           Variant="@Variant"
                           TextUpdateSuppression="false"
                           Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine"
