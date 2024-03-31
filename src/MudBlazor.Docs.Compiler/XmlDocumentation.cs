@@ -498,7 +498,7 @@ namespace MudBlazor.Docs.Compiler
 
         public static string XmlDocumentationKeyHelper(string typeFullNameString, string memberNameString)
         {
-            var key = MyRegex().Replace(typeFullNameString, string.Empty).Replace('+', '.');
+            var key = DocumentationKeyRegularExpression().Replace(typeFullNameString, string.Empty).Replace('+', '.');
             if (!(memberNameString is null))
             {
                 key += "." + memberNameString;
@@ -585,7 +585,7 @@ namespace MudBlazor.Docs.Compiler
         private static partial Regex TypeNameRegularExpression();
 
         [GeneratedRegex(@"\[.*\]")]
-        private static partial Regex MyRegex();
+        private static partial Regex DocumentationKeyRegularExpression();
 
         #endregion
 
