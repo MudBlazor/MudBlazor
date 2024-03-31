@@ -52,6 +52,26 @@
     <MudRadio Value="@("3")">With Content</MudRadio>
 </MudRadioGroup>
 
+<MudDivider Class="my-6" />
+
+<MudSwitch T="bool" />
+<MudSwitch T="bool" Label="With Label" />
+
+<MudDivider Class="my-6" />
+
+<MudText>Using a MudStack to align items that have no label</MudText>
+
+<MudStack Row AlignItems="AlignItems.Center">
+    <MudTextField T="string" />
+    <MudDatePicker />
+    <MudNumericField T="int" />
+    <MudSelect T="string"></MudSelect>
+    <MudColorPicker />
+    <MudCheckBox T="bool" />
+    <MudRadio Value="@("1")" Placement="Placement.Left" />
+    <MudSwitch T="bool" />
+</MudStack>
+
 @code {
     public static string __description__ = "Test used to validate any inputs leyout in a single place.";
 }
