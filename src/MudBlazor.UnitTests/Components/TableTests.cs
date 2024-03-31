@@ -1071,32 +1071,33 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
             checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(10);
 
-            comp.Instance.StartDate = DateTime.Parse("2024-03-28 00:00:00");
-            comp.Instance.EndDate = DateTime.Parse("2024-03-30 00:00:00");
-            comp.Instance.StateHasChanged();
+            // Change filter
+            comp.Instance.StartDate = DateTime.Parse("2024-04-07 00:00:00");
+            comp.Instance.EndDate = DateTime.Parse("2024-04-13 00:00:00");
+            comp.Render();
 
             checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
 
-            // verify table markup
-            var tr = comp.FindAll("tr").ToArray();
-            tr.Length.Should().Be(11); // <-- one header, ten rows
-            var td = comp.FindAll("td").ToArray();
-            td.Length.Should().Be(10 * 6); // six td per row for multi selection
             // Find checkboxes, and skip date filter and table header checkbox
-            var inputs2 = comp.FindAll("input").Skip(3);
-            inputs2.Count().Should().Be(10); // one checkbox per row + one for the header + two date filters
-
-            // verify selection - All items should remain selected
-            table.SelectedItems.Count.Should().Be(10);
+            inputs = comp.FindAll("input").Skip(3);
+            inputs.Count().Should().Be(5); // one checkbox per row + one for the header + two date filters
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(2);
+            // Selection should remain intact
             comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
-            // No item from current page should be checked
-            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(0);
 
-            // Click the checkbox of the row with id 12
-            inputs2.ElementAt(1).Change(true);
-            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12 }");
-            // One checkbox of the current page should be checked
-            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(1);
+            // Clear filters
+            comp.Instance.StartDate = null;
+            comp.Instance.EndDate = null;
+            comp.Render();
+
+            checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+
+            // Find checkboxes, and skip date filter and table header checkbox
+            inputs = comp.FindAll("input").Skip(3);
+            inputs.Count().Should().Be(10); // one checkbox per row + one for the header + two date filters
+            checkboxes.Sum(x => x.Value ? 1 : 0).Should().Be(10);
+            // Selection should remain intact
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }");
         }
 
         /// <summary>
