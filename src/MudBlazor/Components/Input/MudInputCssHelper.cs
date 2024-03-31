@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Reflection.Emit;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor

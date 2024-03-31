@@ -42,9 +42,13 @@
       }
 
       &.mud-input.mud-input-filled {
+        &.mud-input-text-with-label {
+        }
       }
 
       &.mud-input.mud-input-outlined {
+        &.mud-input-text-with-label {
+        }
       }
     }
   }
