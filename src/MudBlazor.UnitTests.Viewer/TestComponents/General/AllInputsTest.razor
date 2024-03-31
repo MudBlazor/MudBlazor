@@ -3,25 +3,54 @@
 <MudTextField T="string" Label="With Label" />
 <MudTextField T="string" HelperText="With Label" />
 
+<MudDivider Class="my-6" />
+
 <MudDatePicker />
 <MudDatePicker Label="With Label" />
 <MudDatePicker HelperText="With Helper" />
+
+<MudDivider Class="my-6" />
 
 <MudTimePicker />
 <MudTimePicker Label="With Label" />
 <MudTimePicker HelperText="With Helper" />
 
+<MudDivider Class="my-6" />
+
 <MudNumericField T="int" />
 <MudNumericField T="int" Label="With Label" />
 <MudNumericField T="int" HelperText="With Helper" />
+
+<MudDivider Class="my-6" />
 
 <MudSelect T="string"></MudSelect>
 <MudSelect T="string" Label="With Label"></MudSelect>
 <MudSelect T="string" HelperText="With Helper" />
 
+<MudDivider Class="my-6" />
+
 <MudColorPicker />
 <MudColorPicker Label="With Label" />
 <MudColorPicker HelperText="With Helper" />
+
+<MudDivider Class="my-6" />
+
+<MudCheckBox T="bool" />
+<MudCheckBox T="bool" Label="With Label" />
+
+<MudDivider Class="my-6" />
+
+<MudRadioGroup T="string" Class="some-main-class" InputClass="some-input-class">
+    <MudRadio Value="@("1")" Placement="Placement.Left" />
+    <MudRadio Value="@("2")" Placement="Placement.Top" />
+    <MudRadio Value="@("3")" />
+</MudRadioGroup>
+
+<MudRadioGroup T="string" Class="some-main-class" InputClass="some-input-class">
+    <MudRadio Value="@("1")" Placement="Placement.Left">With Content</MudRadio>
+    <MudRadio Value="@("2")" Placement="Placement.Top">With Content</MudRadio>
+    <MudRadio Value="@("3")">With Content</MudRadio>
+</MudRadioGroup>
 
 @code {
     public static string __description__ = "Test used to validate any inputs leyout in a single place.";

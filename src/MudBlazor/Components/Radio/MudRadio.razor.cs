@@ -19,6 +19,7 @@ namespace MudBlazor
                 .AddClass($"mud-disabled", IsDisabled)
                 .AddClass($"mud-readonly", MudRadioGroup?.GetReadOnlyState())
                 .AddClass($"mud-radio-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
+                .AddClass("mud-radio-with-content", ChildContent is not null)
                 .AddClass(Class)
                 .Build();
 
