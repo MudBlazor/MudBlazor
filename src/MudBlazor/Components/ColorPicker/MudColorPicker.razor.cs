@@ -502,7 +502,7 @@ namespace MudBlazor
             Value = color;
         }
 
-        protected override Task StringValueChanged(string value)
+        protected override Task StringValueChangedAsync(string value)
         {
             SetInputString(value);
             return Task.CompletedTask;
@@ -551,18 +551,18 @@ namespace MudBlazor
             {
                 if (PickerVariant == PickerVariant.Static)
                 {
-                    await AddMouseOverEvent();
+                    await AddMouseOverEventAsync();
                 }
             }
 
             if (_attachedMouseEvent == true)
             {
                 _attachedMouseEvent = false;
-                await AddMouseOverEvent();
+                await AddMouseOverEventAsync();
             }
         }
 
-        private async Task AddMouseOverEvent()
+        private async Task AddMouseOverEventAsync()
         {
             if (DisableDragEffect == true) { return; }
 
