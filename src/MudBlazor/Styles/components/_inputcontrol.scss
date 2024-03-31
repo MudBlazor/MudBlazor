@@ -36,7 +36,9 @@
 
     & > div {
       &.mud-input.mud-input-text {
-        margin-top: 16px;
+        &.mud-input-text-with-label {
+          margin-top: 16px;
+        }
       }
 
       &.mud-input.mud-input-filled {

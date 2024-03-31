@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Emit;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -9,6 +10,7 @@ namespace MudBlazor
         public static string GetClassname<T>(MudBaseInput<T> baseInput, Func<bool> shrinkWhen) =>
             new CssBuilder("mud-input")
                 .AddClass($"mud-input-{baseInput.Variant.ToDescriptionString()}")
+                .AddClass($"mud-input-{baseInput.Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(baseInput.Label))
                 .AddClass($"mud-input-adorned-{baseInput.Adornment.ToDescriptionString()}", baseInput.Adornment != Adornment.None)
                 .AddClass($"mud-input-margin-{baseInput.Margin.ToDescriptionString()}", when: () => baseInput.Margin != Margin.None)
                 .AddClass("mud-input-underline", when: () => baseInput.DisableUnderLine == false && baseInput.Variant != Variant.Outlined)
