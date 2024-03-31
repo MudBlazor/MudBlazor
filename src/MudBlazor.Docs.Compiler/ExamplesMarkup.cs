@@ -110,7 +110,7 @@ namespace MudBlazor.Docs.Compiler
         private static string StripComponentSource(string path)
         {
             var source = File.ReadAllText(path, Encoding.UTF8);
-            source = NamespaceLayoutOrPage().Replace(source, string.Empty);
+            source = NamespaceLayoutOrPageRegularExpression().Replace(source, string.Empty);
             return source.Trim();
         }
 
@@ -148,7 +148,7 @@ namespace MudBlazor.Docs.Compiler
         private static partial Regex DocsFrameEndTagRegularExpression();
 
         [GeneratedRegex("@(namespace|layout|page) .+?\n")]
-        private static partial Regex NamespaceLayoutOrPage();
+        private static partial Regex NamespaceLayoutOrPageRegularExpression();
 
         [GeneratedRegex(@"<span class=""htmlAttributeValue"">&quot;(?'value'.*?)&quot;</span>")]
         private static partial Regex HtmlAttributeValueSpanRegularExpression();
