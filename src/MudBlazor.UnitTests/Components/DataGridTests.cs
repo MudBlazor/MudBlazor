@@ -926,7 +926,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.Contains,
                 Value = "Joe"
             };
-            dataGrid.SetParametersAndRender(parameters=> parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
