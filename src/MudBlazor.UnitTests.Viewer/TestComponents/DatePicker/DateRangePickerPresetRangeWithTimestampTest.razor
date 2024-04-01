@@ -9,7 +9,7 @@
 
     protected override Task OnInitializedAsync()
     {
-        DateTimeRange = new DateRange(DateTime.Now.AddDays(-7), DateTime.Now);
+        DateTimeRange = new DateRange(DateTime.Now.AddDays(1), DateTime.Now.AddDays(5));
 
         return base.OnInitializedAsync();
     }
