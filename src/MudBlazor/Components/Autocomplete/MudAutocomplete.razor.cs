@@ -98,28 +98,6 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
-        /// Set the anchor origin point to determen where the popover will open from.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter]
-        public Direction Direction { get; set; } = Direction.Bottom;
-
-        /// <summary>
-        /// If true, the Autocomplete menu will open either before or after the input (left/right).
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetX { get; set; }
-
-        /// <summary>
-        /// If true, the Autocomplete menu will open either before or after the input (top/bottom).
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetY { get; set; }
-
-        /// <summary>
         /// If true, compact vertical padding will be applied to all Autocomplete items.
         /// </summary>
         [Parameter]
