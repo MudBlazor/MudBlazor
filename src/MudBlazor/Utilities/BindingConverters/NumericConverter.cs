@@ -150,25 +150,6 @@ namespace MudBlazor
                 return double.NaN;
             }
         }
-
-
-        #region --> Floating Point comparison
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete($"Use {nameof(DoubleEpsilonEqualityComparer)} instead.")]
-        public static bool AreEqual(double a, double b)
-        {
-            return DoubleEpsilonEqualityComparer.Default.Equals(a, b);
-        }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete($"Use {nameof(DoubleEpsilonEqualityComparer)} instead.")]
-        public static bool AreEqual(double a, double b, double epsilon)
-        {
-            return new DoubleEpsilonEqualityComparer(epsilon).Equals(a, b);
-        }
-
-        #endregion
     }
 
     [ExcludeFromCodeCoverage]

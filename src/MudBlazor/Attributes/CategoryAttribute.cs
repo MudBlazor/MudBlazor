@@ -408,6 +408,12 @@ namespace MudBlazor
             public const string Appearance = "Appearance";
         }
 
+        public static class Picker
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
         public static class Popover
         {
             public const string Behavior = "Behavior";

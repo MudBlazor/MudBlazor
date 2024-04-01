@@ -2,14 +2,17 @@
 
 namespace MudBlazor.Docs.Compiler
 {
-    public static class StringExtensions
+    public static partial class StringExtensions
     {
 
         public static string ToLfLineEndings(this string self)
         {
             if (self == null)
                 return null;
-            return Regex.Replace(self, @"\r?\n", "\n");
+            return NewLineRegularExpression().Replace(self, "\n");
         }
+
+        [GeneratedRegex(@"\r?\n")]
+        private static partial Regex NewLineRegularExpression();
     }
 }
