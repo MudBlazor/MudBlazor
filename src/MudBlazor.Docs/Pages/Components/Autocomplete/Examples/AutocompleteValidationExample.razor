@@ -53,7 +53,7 @@
 	</MudItem>
     <MudItem xs="12" md="12">
         <MudText Class="mb-n3" Typo="Typo.body2">
-            <MudChip>@(choice1.State ?? "Not selected")</MudChip><MudChip>@(choice2.State ?? "Not selected")</MudChip><MudChip>@(choice3.State ?? "Not selected")</MudChip>
+            <MudChip T="string">@(choice1.State ?? "Not selected")</MudChip><MudChip T="string">@(choice2.State ?? "Not selected")</MudChip><MudChip T="string">@(choice3.State ?? "Not selected")</MudChip>
         </MudText>
     </MudItem>
     <MudItem xs="12" md="12" class="flex-column">
