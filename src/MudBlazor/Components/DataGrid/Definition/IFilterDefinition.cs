@@ -4,25 +4,24 @@
 
 using System;
 
-namespace MudBlazor
-{
+namespace MudBlazor;
+
 #nullable enable
-    public interface IFilterDefinition<T>
-    {
-        Guid Id { get; set; }
+public interface IFilterDefinition<T>
+{
+    Guid Id { get; set; }
 
-        Column<T>? Column { get; set; }
+    Column<T>? Column { get; set; }
 
-        string? Title { get; set; }
+    string? Title { get; set; }
 
-        string? Operator { get; set; }
+    string? Operator { get; set; }
 
-        object? Value { get; set; }
+    object? Value { get; set; }
 
-        FieldType FieldType => FieldType.Identify(Column?.PropertyType);
+    FieldType FieldType => FieldType.Identify(Column?.PropertyType);
 
-        Func<T, bool> GenerateFilterFunction(FilterOptions? filterOptions = null);
+    Func<T, bool> GenerateFilterFunction(FilterOptions? filterOptions = null);
 
-        IFilterDefinition<T> Clone();
-    }
+    IFilterDefinition<T> Clone();
 }

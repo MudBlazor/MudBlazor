@@ -49,7 +49,7 @@ namespace MudBlazor
 
         public class FooterActions
         {
-            public Func<bool, Task> SetSelectAllAsync { get; init; } = null!;
+            public required Func<bool, Task> SetSelectAllAsync { get; init; }
         }
     }
 }
