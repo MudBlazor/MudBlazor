@@ -439,15 +439,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Behavior)]
         public float ItemSize { get; set; } = 50f;
 
-        #region --> Obsolete Forwarders for Backwards-Compatiblilty
-        /// <summary>
-        /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("This property is not needed anymore, the cells width/alignment is done automatically.", true)]
-        [Parameter] public bool RightAlignSmall { get; set; } = true;
-        #endregion
-
         public abstract TableContext TableContext { get; }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
