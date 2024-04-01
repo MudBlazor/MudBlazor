@@ -138,6 +138,7 @@ namespace MudBlazor.Services
         {
             services.TryAddTransient<IKeyInterceptor, KeyInterceptor>();
             services.TryAddScoped<IKeyInterceptorFactory, KeyInterceptorFactory>();
+            services.TryAddScoped<IKeyInterceptorService, KeyInterceptorService>();
 
             return services;
         }

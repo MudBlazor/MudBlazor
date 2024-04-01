@@ -216,6 +216,7 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection()
+            .AddLogging()
             .AddSingleton<IJSRuntime, MockJsRuntime>();
 
         // Act
@@ -223,10 +224,12 @@ public class ServiceCollectionExtensionsTests
         var serviceProvider = services.BuildServiceProvider();
         var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
         var keyInterceptorFactory = serviceProvider.GetService<IKeyInterceptorFactory>();
+        var keyInterceptorService = serviceProvider.GetService<IKeyInterceptorService>();
 
         // Assert
         keyInterceptor.Should().NotBeNull();
         keyInterceptorFactory.Should().NotBeNull();
+        keyInterceptorService.Should().NotBeNull();
     }
 
     [Test]
@@ -530,6 +533,7 @@ public class ServiceCollectionExtensionsTests
         var resizeObserverFactory = serviceProvider.GetService<IResizeObserverFactory>();
         var keyInterceptor = serviceProvider.GetService<IKeyInterceptor>();
         var keyInterceptorFactory = serviceProvider.GetService<IKeyInterceptorFactory>();
+        var keyInterceptorService = serviceProvider.GetService<IKeyInterceptorService>();
         var jsEvent = serviceProvider.GetService<IJsEvent>();
         var jsEventFactory = serviceProvider.GetService<IJsEventFactory>();
         var scrollManager = serviceProvider.GetService<IScrollManager>();
@@ -563,6 +567,7 @@ public class ServiceCollectionExtensionsTests
         resizeObserverFactory.Should().NotBeNull();
         keyInterceptor.Should().NotBeNull();
         keyInterceptorFactory.Should().NotBeNull();
+        keyInterceptorService.Should().NotBeNull();
         jsEvent.Should().NotBeNull();
         jsEventFactory.Should().NotBeNull();
         scrollManager.Should().NotBeNull();

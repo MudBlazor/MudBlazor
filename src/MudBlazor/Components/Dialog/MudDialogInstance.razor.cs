@@ -13,10 +13,10 @@ namespace MudBlazor
     public partial class MudDialogInstance : MudComponentBase, IDisposable
     {
         private DialogOptions _options = new();
-        private string _elementId = "dialog_" + Guid.NewGuid().ToString().Substring(0, 8);
-        private IKeyInterceptor _keyInterceptor;
+        private readonly string _elementId = $"dialog_{Guid.NewGuid().ToString().Substring(0, 8)}";
 
-        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; }
 
         [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
@@ -67,10 +67,10 @@ namespace MudBlazor
         private bool FullScreen { get; set; }
         private bool FullWidth { get; set; }
 
-
         protected override void OnInitialized()
         {
             ConfigureInstance();
+            base.OnInitialized();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -80,16 +80,12 @@ namespace MudBlazor
                 //Since CloseOnEscapeKey is the only thing to be handled, turn interceptor off
                 if (CloseOnEscapeKey)
                 {
-                    _keyInterceptor = _keyInterceptorFactory.Create();
-
-                    await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
+                    var keyInterceptorOptions = new KeyInterceptorOptions
                     {
                         TargetClass = "mud-dialog",
-                        Keys = {
-                            new KeyOptions { Key="Escape", SubscribeDown = true },
-                        },
-                    });
-                    _keyInterceptor.KeyDown += HandleKeyDown;
+                        Keys = { new KeyOptions { Key = "Escape", SubscribeDown = true } }
+                    };
+                    await KeyInterceptorService.SubscribeAsync(_elementId, keyInterceptorOptions, keyDown: HandleKeyDown);
                 }
             }
             await base.OnAfterRenderAsync(firstRender);
@@ -337,13 +333,9 @@ namespace MudBlazor
             {
                 if (disposing)
                 {
-                    if (_keyInterceptor != null)
+                    if (IsJSRuntimeAvailable)
                     {
-                        _keyInterceptor.KeyDown -= HandleKeyDown;
-                        if (IsJSRuntimeAvailable)
-                        {
-                            _keyInterceptor.Dispose();
-                        }
+                        KeyInterceptorService.UnsubscribeAsync(_elementId);
                     }
                 }
 
