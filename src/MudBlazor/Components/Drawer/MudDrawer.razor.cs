@@ -304,7 +304,7 @@ namespace MudBlazor
 
         private Task CloseDrawerAsync() => Open ? OpenChanged.InvokeAsync(false) : Task.CompletedTask;
 
-        public async Task OnNavigation()
+        async Task INavigationEventReceiver.OnNavigation()
         {
             if (Variant == DrawerVariant.Temporary ||
                 (Variant == DrawerVariant.Responsive && await BrowserViewportService.GetCurrentBreakpointAsync() < Breakpoint))
@@ -365,7 +365,7 @@ namespace MudBlazor
             };
         }
 
-        public async Task OnMouseEnterAsync()
+        private async Task OnMouseEnterAsync()
         {
             if (Variant == DrawerVariant.Mini && !Open && OpenMiniOnHover)
             {
@@ -374,7 +374,7 @@ namespace MudBlazor
             }
         }
 
-        public async Task OnMouseLeaveAsync()
+        private async Task OnMouseLeaveAsync()
         {
             if (Variant == DrawerVariant.Mini && Open && _closeOnMouseLeave)
             {
