@@ -13,10 +13,11 @@ public partial class MudStack : MudComponentBase
     protected string Classname =>
         new CssBuilder("d-flex")
             .AddClass($"flex-{(Row ? "row" : "column")}{(Reverse ? "-reverse" : string.Empty)}")
-            .AddClass($"justify-{Justify?.ToDescriptionString()}", Justify != null)
-            .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems != null)
-            .AddClass($"flex-{Wrap?.ToDescriptionString()}", Wrap != null)
+            .AddClass($"justify-{Justify?.ToDescriptionString()}", Justify is not null)
+            .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems is not null)
+            .AddClass($"flex-{Wrap?.ToDescriptionString()}", Wrap is not null)
             .AddClass($"gap-{Spacing}")
+            .AddClass($"flex-grow-{StretchChildren?.ToDescriptionString()}", StretchChildren is not null and not MudBlazor.StretchChildren.None)
             .AddClass(Class)
             .Build();
 
@@ -54,6 +55,22 @@ public partial class MudStack : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
     public AlignItems? AlignItems { get; set; }
+
+    /// <summary>
+    /// Defines the stretching behaviour of children within a <see cref="MudStack"/>,
+    /// based on the selected <see cref="MudBlazor.StretchChildren"/> value.
+    /// </summary>
+    /// <remarks>
+    /// Note: This property affects children of the <see cref="MudStack"/> component.
+    /// -----
+    /// If there is only one child, <see cref="StretchChildren.FirstChild"/> and
+    /// <see cref="StretchChildren.LastChild"/> will have the same effect, and the child will be stretched.
+    /// <see cref="StretchChildren.MiddleChildren"/> stretches all children except the first and last child.
+    /// If there are two or fewer elements, <see cref="StretchChildren.MiddleChildren"/> will have no effect.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Stack.Behavior)]
+    public StretchChildren? StretchChildren { get; set; }
 
     /// <summary>
     /// Defines the flexbox wrapping behavior of its items.
