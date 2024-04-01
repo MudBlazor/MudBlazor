@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -348,4 +348,5 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     {
         _disposed = true;
     }
+
 }
