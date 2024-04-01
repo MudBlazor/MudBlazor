@@ -11,7 +11,7 @@
         <PropertyColumn Property="x => x.Sign" Hidden="true" DragAndDropEnabled="false" Groupable="false" Sortable="false" Filterable="false" />
         <PropertyColumn Property="x => x.Name" Title="Name" Hidden="false" DragAndDropEnabled="true" Groupable="true" Sortable="true" Filterable="true" Grouping="false" />
         <PropertyColumn Property="x => x.Position" Filterable="false" Hideable="false" />
-        <PropertyColumn Property="x => x.Molar" Title="Molar mass" @bind-Hidden="_hideMolar" @bind-Grouping="_groupMolar"  Hideable="true" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" @bind-Hidden="_hideMolar" @bind-Grouping="_groupMolar" Hideable="true" />
         <PropertyColumn Property="x => x.Group" Hidden="_hideCategory" Grouping="_groupCategory" Title="Category" />
         <TemplateColumn Title="Template" />
     </Columns>
