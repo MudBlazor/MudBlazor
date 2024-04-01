@@ -348,5 +348,4 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     {
         _disposed = true;
     }
-
 }
