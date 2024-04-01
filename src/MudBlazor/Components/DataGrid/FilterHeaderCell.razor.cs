@@ -23,13 +23,13 @@ namespace MudBlazor
                 .AddClass(Column?.headerClassname)
                 .AddClass(Class)
                 .AddClass("filter-header-cell")
-            .Build();
+                .Build();
 
         private string _style =>
             new StyleBuilder()
                 .AddStyle(Column?.HeaderStyle)
                 .AddStyle(Style)
-            .Build();
+                .Build();
 
         private string _valueString;
         private double? _valueNumber;
@@ -39,18 +39,6 @@ namespace MudBlazor
         private TimeSpan? _valueTime;
 
         #region Computed Properties and Functions
-
-        private bool hasFilter
-        {
-            get
-            {
-                if (DataGrid == null)
-                    return false;
-
-                return false;
-                //return DataGrid.FilterDefinitions.Any(x => x.Field == Column.Field && x.Operator != null && x.Value != null);
-            }
-        }
 
         private Type dataType
         {

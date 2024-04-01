@@ -29,7 +29,7 @@ namespace MudBlazor.UnitTests.Mocks
 
         public void Dispose()
         {
-           
+
         }
     }
 
@@ -56,7 +56,7 @@ namespace MudBlazor.UnitTests.Mocks
         public ValueTask ScrollToListItemAsync(string elementId) => ValueTask.CompletedTask;
 
         public Task ScrollToTop(ScrollBehavior scrollBehavior = ScrollBehavior.Auto) => Task.CompletedTask;
-        
+
         public ValueTask ScrollToTopAsync(string id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) => ValueTask.CompletedTask;
 
         public ValueTask ScrollToBottomAsync(string id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) => ValueTask.CompletedTask;

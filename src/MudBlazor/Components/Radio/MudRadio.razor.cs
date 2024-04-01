@@ -112,7 +112,7 @@ namespace MudBlazor
         {
             get
             {
-                return Option;
+                return Value;
             }
             set
             {
@@ -180,12 +180,6 @@ namespace MudBlazor
             }
         }
 
-        [Obsolete($"Use {nameof(SelectAsync)} instead. This method will be removed in v7")]
-        public void Select()
-        {
-            MudRadioGroup?.SetSelectedRadioAsync(this).AndForget();
-        }
-
         public Task SelectAsync()
         {
             if (MudRadioGroup is not null)
@@ -209,25 +203,6 @@ namespace MudBlazor
             }
 
             return Task.CompletedTask;
-        }
-
-        [Obsolete($"Use {nameof(HandleKeyDownAsync)} instead. This method will be removed in v7")]
-        protected internal void HandleKeyDown(KeyboardEventArgs obj)
-        {
-            if (IsDisabled || (MudRadioGroup?.GetReadOnlyState() ?? false))
-            {
-                return;
-            }
-
-            switch (obj.Key)
-            {
-                case "Enter" or "NumpadEnter" or " ":
-                    Select();
-                    break;
-                case "Backspace":
-                    MudRadioGroup?.Reset();
-                    break;
-            }
         }
 
         protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)

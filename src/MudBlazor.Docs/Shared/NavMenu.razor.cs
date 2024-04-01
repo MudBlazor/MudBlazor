@@ -8,7 +8,7 @@ namespace MudBlazor.Docs.Shared
 {
     public partial class NavMenu
     {
-        [Inject] IMenuService MenuService { get; set; } 
+        [Inject] IMenuService MenuService { get; set; }
         [Inject] NavigationManager NavMan { get; set; }
 
         //sections are "getting-started","components", "api", ...

@@ -289,7 +289,6 @@ public class BrowserViewportServiceTests
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<object[]>()), Times.Exactly(2));
     }
 
-
     [Test]
     public async Task SubscribeAsync_RaiseOnResized_FireImmediately()
     {

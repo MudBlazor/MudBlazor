@@ -17,7 +17,7 @@ namespace MudBlazor.Utilities.Background;
 /// in a background worker. It simplifies the implementation of scenarios where you need to execute asynchronous
 /// operations in the background. It also provides built-in support for graceful shutdown.
 /// </remarks>
-internal abstract class BackgroundWorkerBase : IAsyncDisposable
+internal abstract class BackgroundWorkerBase : IDisposable
 {
     private Task? _executeTask;
     private CancellationTokenSource? _stoppingCts;
@@ -91,10 +91,8 @@ internal abstract class BackgroundWorkerBase : IAsyncDisposable
     }
 
     /// <inheritdoc/>
-    public virtual ValueTask DisposeAsync()
+    public virtual void Dispose()
     {
         _stoppingCts?.Cancel();
-
-        return ValueTask.CompletedTask;
     }
 }

@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
+using MudBlazor.State;
 
 namespace MudBlazor
 {
 #nullable enable
-    public abstract class MudComponentBase : ComponentBase, IMudStateHasChanged
+    public abstract partial class MudComponentBase : ComponentBase, IMudStateHasChanged
     {
+        private readonly ParameterSet _parameters = new();
+
         [Inject]
         private ILoggerFactory LoggerFactory { get; set; } = null!;
         private ILogger? _logger;
@@ -59,6 +63,26 @@ namespace MudBlazor
         {
             IsJSRuntimeAvailable = true;
             base.OnAfterRender(firstRender);
+        }
+
+        /// <inheritdoc />
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            _parameters.OnInitialized();
+        }
+
+        /// <inheritdoc />
+        public override Task SetParametersAsync(ParameterView parameters)
+        {
+            return _parameters.SetParametersAsync(base.SetParametersAsync, parameters);
+        }
+
+        /// <inheritdoc />
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            _parameters.OnParametersSet();
         }
 
         /// <inheritdoc />

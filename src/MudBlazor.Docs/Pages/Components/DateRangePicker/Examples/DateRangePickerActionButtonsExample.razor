@@ -1,0 +1,19 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack>
+    <MudDateRangePicker @ref="_picker" Label="With action buttons" @bind-DateRange="_dateRange" 
+                        AutoClose="@_autoClose" PickerVariant="PickerVariant.Dialog">
+        <PickerActions>
+            <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.ClearAsync())">Clear</MudButton>
+            <MudButton OnClick="@(() => _picker.CloseAsync(false))">Cancel</MudButton>
+            <MudButton Color="Color.Primary" OnClick="@(() => _picker.CloseAsync())">Ok</MudButton>
+        </PickerActions>
+    </MudDateRangePicker>
+    <MudSwitch @bind-Value="_autoClose" Color="Color.Secondary">AutoClose</MudSwitch>
+</MudStack>
+
+@code {
+    private MudDateRangePicker _picker;
+    private DateRange _dateRange = new DateRange(DateTime.Now.Date, DateTime.Now.AddDays(5).Date);
+    private bool _autoClose;
+}

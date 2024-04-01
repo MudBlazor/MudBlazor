@@ -17,8 +17,8 @@ namespace MudBlazor
         /// this flag is set to true by validation in order to prevent multiple invocations of validation after a single
         /// value change. When the value changes _validated is set back to false.
         /// </summary>
-        private bool _validated; 
-        
+        private bool _validated;
+
         protected MudBaseInput() : base(new DefaultConverter<T>()) { }
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace MudBlazor
             if (ReadOnly)
                 return;
             _isFocused = false;
-            
+
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;
@@ -302,13 +302,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
-        [Obsolete($"Use {nameof(InvokeKeyDownAsync)} instead, this will be removed in v7.")]
-        protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
-        {
-            _isFocused = true;
-            OnKeyDown.InvokeAsync(obj).AndForget();
-        }
-
         protected virtual Task InvokeKeyDownAsync(KeyboardEventArgs obj)
         {
             _isFocused = true;
@@ -322,59 +315,10 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool KeyDownPreventDefault { get; set; }
 
-
-        /// <summary>
-        /// Fired on the KeyPress event.
-        /// </summary>
-        [Obsolete("This will be removed in v7")]
-        [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
-
-        [Obsolete("This will be removed in v7")]
-        protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
-        {
-            OnKeyPress.InvokeAsync(obj).AndForget();
-        }
-
-        protected internal virtual void InvokeKeyPressObsolete(KeyboardEventArgs obj)
-        {
-#pragma warning disable CS0618
-            InvokeKeyPress(obj);
-#pragma warning restore CS0618
-        }
-
-        /// <summary>
-        /// Prevent the default action for the KeyPress event.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        [Obsolete("This will be removed in v7")]
-        public bool KeyPressPreventDefault { get; set; }
-
-        internal bool KeyPressPreventDefaultObsolete
-        {
-#pragma warning disable CS0618
-            get
-            {
-                return KeyPressPreventDefault;
-            }
-            set
-            {
-                KeyPressPreventDefault = value;
-            }
-#pragma warning restore CS0618
-        }
-
         /// <summary>
         /// Fired on the KeyUp event.
         /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
-
-        [Obsolete($"Use {nameof(InvokeKeyUpAsync)} instead. This will be removed in v7")]
-        protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
-        {
-            _isFocused = true;
-            OnKeyUp.InvokeAsync(obj).AndForget();
-        }
 
         protected virtual Task InvokeKeyUpAsync(KeyboardEventArgs obj)
         {
@@ -552,16 +496,6 @@ namespace MudBlazor
         {
             if (SubscribeToParentForm)
                 base.OnParametersSet();
-        }
-
-        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
-        [ExcludeFromCodeCoverage]
-        protected override void ResetValue()
-        {
-            SetTextAsync(null, updateValue: true).AndForget();
-            this._isDirty = false;
-            this._validated = false;
-            base.ResetValue();
         }
 
         protected override async Task ResetValueAsync()

@@ -3,7 +3,6 @@ name: build-test-mudblazor
 on:
   workflow_dispatch:
   push:
-    branches: [ dev ]
   pull_request:
 
 jobs:

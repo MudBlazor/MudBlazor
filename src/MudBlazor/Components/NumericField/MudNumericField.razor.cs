@@ -181,14 +181,14 @@ namespace MudBlazor
         {
             try
             {
-                var nextValue = GetNextValue(factor);
+                var nextValue = GetNextValue(factor) ?? Num.To<T>(0);
 
                 // validate that the data type is a value type before we compare them
-                if (typeof(T).IsValueType)
+                if (typeof(T).IsValueType && Value is not null)
                 {
                     if (factor > 0 && _comparer.Compare(nextValue, Value) < 0)
                         nextValue = Max;
-                    else if (factor < 0 && (_comparer.Compare(nextValue, Value) > 0 || nextValue is null))
+                    else if (factor < 0 && _comparer.Compare(nextValue, Value) > 0)
                         nextValue = Min;
                 }
 

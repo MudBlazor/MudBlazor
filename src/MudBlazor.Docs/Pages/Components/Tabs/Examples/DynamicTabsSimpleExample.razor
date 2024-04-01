@@ -10,7 +10,7 @@
     }
 </MudDynamicTabs>
 <MudButton OnClick="@RestoreUserTabs">Restore</MudButton>
-<MudSwitch T="bool" Color="Color.Primary" Checked="@_showCloseIcon" CheckedChanged="@ToggleShowCloseIcon">@($"Show {_closeToggableTab}'s close icon")</MudSwitch>
+<MudSwitch T="bool" Color="Color.Primary" Value="@_showCloseIcon" ValueChanged="@ToggleShowCloseIcon">@($"Show {_closeToggableTab}'s close icon")</MudSwitch>
 <MudText>UserTabs index: @UserIndex / DynamicTabs ActivePanelIndex: @DynamicTabs.ActivePanelIndex</MudText>
 <MudText>UserTabs.Count: @UserTabs.Count / DynamicTabs Panels.Count: @DynamicTabs.Panels.Count</MudText>
 

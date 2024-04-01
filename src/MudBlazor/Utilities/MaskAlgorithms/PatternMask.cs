@@ -45,11 +45,11 @@ public class PatternMask : BaseMask
         if (Placeholder != null)
         {
             var p = Placeholder.Value;
-            if (afterText.Take(alignedInput.Length).All(c => IsDelimiter(c) || c==p))
+            if (afterText.Take(alignedInput.Length).All(c => IsDelimiter(c) || c == p))
                 afterText = new string(afterText.Skip(alignedInput.Length).ToArray());
         }
         var alignedAfter = AlignAgainstMask(afterText, pos);
-        UpdateText( FillWithPlaceholder(alignedBefore + alignedInput + alignedAfter));
+        UpdateText(FillWithPlaceholder(alignedBefore + alignedInput + alignedAfter));
     }
 
     protected override void DeleteSelection(bool align)
@@ -62,9 +62,9 @@ public class PatternMask : BaseMask
         Selection = null;
         CaretPos = sel.Item1;
         if (!align)
-            UpdateText( s1 + s3);
+            UpdateText(s1 + s3);
         else
-            UpdateText( FillWithPlaceholder( s1 + AlignAgainstMask(s3, CaretPos)));
+            UpdateText(FillWithPlaceholder(s1 + AlignAgainstMask(s3, CaretPos)));
     }
 
     /// <summary>
@@ -93,7 +93,7 @@ public class PatternMask : BaseMask
             // adjust the cursor position to after the delimiters
             CaretPos += (numDeleted - 1);
         }
-        UpdateText( FillWithPlaceholder(beforeText + alignedAfter));
+        UpdateText(FillWithPlaceholder(beforeText + alignedAfter));
     }
 
     /// <summary>
@@ -117,7 +117,7 @@ public class PatternMask : BaseMask
         var numDeleted = beforeText.Length - restText.Length;
         CaretPos -= numDeleted;
         var alignedAfter = AlignAgainstMask(afterText, CaretPos);
-        UpdateText( FillWithPlaceholder(restText + alignedAfter));
+        UpdateText(FillWithPlaceholder(restText + alignedAfter));
     }
 
     /// <summary>
@@ -208,8 +208,8 @@ public class PatternMask : BaseMask
     /// If true, all characters which are not defined in the mask (delimiters) are stripped
     /// from text. 
     /// </summary>
-    public bool CleanDelimiters { get; set; } 
-    
+    public bool CleanDelimiters { get; set; }
+
     /// <summary>
     /// Return the Text without Placeholders. If CleanDelimiters is enabled, then also strip all
     /// undefined characters. For instance, for a mask "0000 0000 0000 0000" the space would be
@@ -222,7 +222,7 @@ public class PatternMask : BaseMask
         if (string.IsNullOrEmpty(cleanText))
             return cleanText;
         if (CleanDelimiters)
-            cleanText=new string(cleanText.Where((c,i)=>_maskDict.ContainsKey(Mask[i])).ToArray());
+            cleanText = new string(cleanText.Where((c, i) => _maskDict.ContainsKey(Mask[i])).ToArray());
         if (Placeholder != null)
             cleanText = cleanText.Replace(Placeholder.Value.ToString(), "");
         return cleanText;
@@ -231,14 +231,14 @@ public class PatternMask : BaseMask
     protected override void InitInternals()
     {
         base.InitInternals();
-        if (Placeholder!=null)
+        if (Placeholder != null)
             _delimiters.Add(Placeholder.Value);
     }
 
     protected override void UpdateText(string text)
     {
         // don't show a text consisting only of delimiters and placeholders (no actual input)
-        if (text.All(c => _delimiters.Contains(c) || (Placeholder!=null && c==Placeholder.Value)))
+        if (text.All(c => _delimiters.Contains(c) || (Placeholder != null && c == Placeholder.Value)))
         {
             Text = "";
             CaretPos = 0;

@@ -268,7 +268,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.TrueInvocationCount.Should().Be(1);
             comp.Instance.FalseInvocationCount.Should().Be(0);
         }
-        
+
         [Test]
         public async Task IsOpenChanged_InvokedWhenClosed_CheckTrueInvocationCountIsOneClickFalseInvocationCountIsOne()
         {

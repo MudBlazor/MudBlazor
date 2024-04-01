@@ -46,5 +46,29 @@ namespace MudBlazor
         /// for backward compatibility.
         /// </remarks>
         public PopoverMode Mode { get; set; } = PopoverMode.Default;
+
+        /// <summary>
+        /// The size of the pool to use in order for generated objects to be reused. This is NOT a concurrency limit,
+        /// but if the pool is empty then a new object will be created rather than waiting for an object to return to
+        /// the pool.
+        /// Defaults to 3000.
+        /// <para/>
+        /// <b>NB!</b> This setting is ignored in <see cref="PopoverMode.Default"/>.
+        /// </summary>
+        /// <remarks>
+        /// For more info please visit: <see href="https://github.com/MarkCiliaVincenti/AsyncKeyedLock/wiki/How-to-use-AsyncKeyedLocker#pooling">AsyncKeyedLocker</see>.
+        /// </remarks>
+        public int PoolSize { get; set; } = 3000;
+
+        /// <summary>
+        /// The number of items to fill the pool with during initialization.
+        /// Defaults to 100.
+        /// <para/>
+        /// <b>NB!</b> This setting is ignored in <see cref="PopoverMode.Default"/>.
+        /// </summary>
+        /// <remarks>
+        /// For more info please visit: <see href="https://github.com/MarkCiliaVincenti/AsyncKeyedLock/wiki/How-to-use-AsyncKeyedLocker#pooling">AsyncKeyedLocker</see>.
+        /// </remarks>
+        public int PoolInitialFill { get; set; } = 100;
     }
 }

@@ -1,8 +1,8 @@
-﻿.mud-rating-root {
+.mud-rating-root {
   display: inline-flex;
   color: #ffb400;
 
-  &:focus-visible {
+  &:focus-visible, &:active {
     outline: none;
 
     &:not(.mud-disabled) {
@@ -19,13 +19,25 @@
     transform: scale(1.2);
   }
 
-  &.mud-disabled, .mud-disabled:hover {
+  &.mud-disabled {
     cursor: default;
     pointer-events: none;
 
     & * {
       cursor: default;
       color: var(--mud-palette-text-disabled);
+    }
+  }
+
+  @media(hover: hover) and (pointer: fine) {
+    .mud-disabled:hover {
+      cursor: default;
+      pointer-events: none;
+
+      & * {
+        cursor: default;
+        color: var(--mud-palette-text-disabled);
+      }
     }
   }
 

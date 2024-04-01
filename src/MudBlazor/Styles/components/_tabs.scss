@@ -10,6 +10,10 @@
 
   &.mud-tabs-vertical {
     flex-direction: row;
+
+    .mud-tooltip-root {
+      width: auto;
+    }
   }
 
   &.mud-tabs-vertical-reverse {
@@ -139,16 +143,20 @@
   justify-content: center;
   transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
-  &:hover {
-    cursor: pointer;
-    background-color: var(--mud-palette-action-default-hover);
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      cursor: pointer;
+      background-color: var(--mud-palette-action-default-hover);
+    }
   }
 
   &.mud-tab-active {
     color: var(--mud-palette-primary);
 
-    &:hover {
-      background-color: var(--mud-palette-primary-hover);
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--mud-palette-primary-hover);
+      }
     }
   }
 
@@ -213,8 +221,10 @@
       &.mud-tab-active {
         color: var(--mud-palette-#{$color}-text);
 
-        &:hover {
-          background-color: var(--mud-palette-#{$color}-lighten);
+        @media(hover: hover) and (pointer: fine) {
+          &:hover {
+            background-color: var(--mud-palette-#{$color}-lighten);
+          }
         }
       }
     }

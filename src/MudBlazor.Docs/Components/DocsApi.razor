@@ -25,7 +25,7 @@
             <DocsPageSection>
                 <SectionHeader Title="Properties" />
                 <SectionContent Class="docs-content-api" Outlined="false">
-                    <EnumSwitch T="Grouping" @bind-Value="@_propertiesGrouping" />
+                    <EnumSwitch T="Grouping" @bind-Value="_propertiesGrouping" />
                     <MudTable Items="@properties" Elevation="0" Class="ma-0 mud-width-full" Breakpoint="@Breakpoint.Sm" GroupBy="@PropertiesGroupDefinition">
                         <HeaderContent>
                             <MudTh>Name</MudTh>
@@ -52,7 +52,7 @@
                                 <CodeInline>@context.Name</CodeInline>
                                 @if (_propertiesGrouping == Grouping.Inheritance && IsOverridden(context.PropertyInfo))
                                 {
-                                    <MudChip Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small">overridden</MudChip>
+                                    <MudChip T="string" Variant="Variant.Outlined" Color="Color.Secondary" Size="Size.Small">overridden</MudChip>
                                 }
                             </MudTd>
                             <MudTd Class="docs-content-api-cell" DataLabel="Type">

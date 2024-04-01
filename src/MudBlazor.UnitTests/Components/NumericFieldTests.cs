@@ -708,6 +708,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [TestCaseSource(nameof(TypeCases))]
+        public async Task NumericFieldNullable_NoMinMax_Increment_Decrement<T>(T value) where T : struct
+        {
+            var comp = Context.RenderComponent<MudNumericField<T?>>();
+            comp.SetParam(x => x.Step, value);
+
+            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            comp.Instance.Value.Should().Be(value);
+
+            comp.Find("input").Change("");
+
+            if (typeof(T) == typeof(byte) || typeof(T) == typeof(ushort) || typeof(T) == typeof(uint) || typeof(T) == typeof(ulong))
+                value = Num.To<T>(0);
+            else
+                value = (T)Convert.ChangeType(-Convert.ToDouble(value), typeof(T));
+
+            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            comp.Instance.Value.Should().Be(value);
+        }
+
+        [TestCaseSource(nameof(TypeCases))]
         public async Task NumericField_Increment_Decrement_OverflowHandled<T>(T value)
         {
             var comp = Context.RenderComponent<MudNumericField<T>>();
@@ -812,7 +832,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Text.Should().Be("1000"));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1000));
         }
-        
+
         /// <summary>
         /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text.
         /// </summary>
@@ -845,7 +865,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Value.Should().Be(converter.Get(currentText));
             numericField.Text.Should().Be(currentText);
         }
-        
+
         [Test]
         public async Task DebouncedNumericField_Should_RenderDefaultValueTextOnFirstRender()
         {
@@ -856,7 +876,7 @@ namespace MudBlazor.UnitTests.Components
             var textfield = comp.FindComponent<MudNumericField<int>>().Instance;
             textfield.Text.Should().Be(converter.Set(defaultValue));
         }
-        
+
         /// <summary>
         /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text while changing culture.
         /// </summary>

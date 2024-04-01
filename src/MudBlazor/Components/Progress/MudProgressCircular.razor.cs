@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -8,21 +9,23 @@ namespace MudBlazor
 #nullable enable
     public partial class MudProgressCircular : MudComponentBase
     {
+        private int _svgValue;
+        private IParameterState<double> _valueState;
         private const int _magicNumber = 126; // weird, but required for the SVG to work
 
         protected string DivClassname =>
             new CssBuilder("mud-progress-circular")
                 .AddClass($"mud-{Color.ToDescriptionString()}-text")
                 .AddClass($"mud-progress-{Size.ToDescriptionString()}")
-                .AddClass($"mud-progress-indeterminate", Indeterminate)
-                .AddClass($"mud-progress-static", !Indeterminate)
+                .AddClass("mud-progress-indeterminate", Indeterminate)
+                .AddClass("mud-progress-static", !Indeterminate)
                 .AddClass(Class)
                 .Build();
 
         protected string SvgClassname =>
             new CssBuilder("mud-progress-circular-circle")
-                .AddClass($"mud-progress-indeterminate", Indeterminate)
-                .AddClass($"mud-progress-static", !Indeterminate)
+                .AddClass("mud-progress-indeterminate", Indeterminate)
+                .AddClass("mud-progress-static", !Indeterminate)
                 .Build();
 
         /// <summary>
@@ -54,45 +57,13 @@ namespace MudBlazor
         [Category(CategoryTypes.ProgressCircular.Behavior)]
         public double Max { get; set; } = 100.0;
 
-        private int _svgValue;
-        private double _value;
-
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Behavior)]
-        public double Value
-        {
-            get => _value;
-            set
-            {
-                if (!NumericConverter<double>.AreEqual(_value, value))
-                {
-                    _value = value;
-                    _svgValue = ToSvgValue(_value);
-                    StateHasChanged();
-                }
-            }
-        }
-
-        private int ToSvgValue(double value)
-        {
-            var minValue = Math.Min(Math.Max(Min, value), Max);
-            // calculate fraction, which is a value between 0 and 1
-            var fraction = (minValue - Min) / (Max - Min);
-            // now project into the range of the SVG value (126 .. 0)
-            return (int)Math.Round(_magicNumber - _magicNumber * fraction);
-        }
+        public double Value { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Appearance)]
         public int StrokeWidth { get; set; } = 3;
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            _svgValue = ToSvgValue(_value);
-        }
-
-        #region --> Obsolete Forwarders for Backwards-Compatiblilty
 
         [ExcludeFromCodeCoverage]
         [Obsolete("Use Min instead.", true)]
@@ -104,6 +75,30 @@ namespace MudBlazor
         [Parameter]
         public double Maximum { get => Max; set => Max = value; }
 
-        #endregion
+        public MudProgressCircular()
+        {
+            _valueState = RegisterParameter(nameof(Value), () => Value, OnValueParameterChanged, DoubleEpsilonEqualityComparer.Default);
+        }
+
+        private void OnValueParameterChanged(ParameterChangedEventArgs<double> args)
+        {
+            _svgValue = ToSvgValue(args.Value);
+            StateHasChanged();
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            _svgValue = ToSvgValue(_valueState.Value);
+        }
+
+        private int ToSvgValue(double value)
+        {
+            var minValue = Math.Min(Math.Max(Min, value), Max);
+            // calculate fraction, which is a value between 0 and 1
+            var fraction = (minValue - Min) / (Max - Min);
+            // now project into the range of the SVG value (126 .. 0)
+            return (int)Math.Round(_magicNumber - _magicNumber * fraction);
+        }
     }
 }

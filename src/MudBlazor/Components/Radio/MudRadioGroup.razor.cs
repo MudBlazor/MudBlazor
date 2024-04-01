@@ -176,19 +176,6 @@ namespace MudBlazor
             }
         }
 
-        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
-        [ExcludeFromCodeCoverage]
-        protected override void ResetValue()
-        {
-            if (_selectedRadio is not null)
-            {
-                _selectedRadio.SetChecked(false);
-                _selectedRadio = null;
-            }
-
-            base.ResetValue();
-        }
-
         protected override Task ResetValueAsync()
         {
             if (_selectedRadio is not null)
