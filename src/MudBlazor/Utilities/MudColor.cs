@@ -316,7 +316,7 @@ namespace MudBlazor.Utilities
 
         private byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new char[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
-        public bool HslChanged(MudColor value) => this.H != value.H || this.S != value.S || this.L != value.L;
+        public bool HslChanged(MudColor value) => H != value.H || S != value.S || L != value.L;
 
         #endregion
 

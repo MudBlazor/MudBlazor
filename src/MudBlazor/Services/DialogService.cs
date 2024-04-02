@@ -190,7 +190,7 @@ namespace MudBlazor
         public Task<bool?> ShowMessageBox(string title, string message, string yesText = "OK",
             string noText = null, string cancelText = null, DialogOptions options = null)
         {
-            return this.ShowMessageBox(new MessageBoxOptions
+            return ShowMessageBox(new MessageBoxOptions
             {
                 Title = title,
                 Message = message,
@@ -203,7 +203,7 @@ namespace MudBlazor
         public Task<bool?> ShowMessageBox(string title, MarkupString markupMessage, string yesText = "OK",
             string noText = null, string cancelText = null, DialogOptions options = null)
         {
-            return this.ShowMessageBox(new MessageBoxOptions
+            return ShowMessageBox(new MessageBoxOptions
             {
                 Title = title,
                 MarkupMessage = markupMessage,

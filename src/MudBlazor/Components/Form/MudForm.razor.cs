@@ -315,7 +315,7 @@ namespace MudBlazor
         /// </summary>
         public void ResetTouched()
         {
-            this._touched = false;
+            _touched = false;
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)

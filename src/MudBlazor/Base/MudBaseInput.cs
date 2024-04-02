@@ -501,8 +501,8 @@ namespace MudBlazor
         protected override async Task ResetValueAsync()
         {
             await SetTextAsync(null, updateValue: true);
-            this._isDirty = false;
-            this._validated = false;
+            _isDirty = false;
+            _validated = false;
             await base.ResetValueAsync();
         }
     }

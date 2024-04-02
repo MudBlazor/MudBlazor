@@ -626,7 +626,7 @@ namespace MudBlazor
 
         private ValueTask HandleMouseoverOnPickerCalendarDayButton(int tempId)
         {
-            return this.JsApiService.UpdateStyleProperty(_mudPickerCalendarContentElementId, "--selected-day", tempId);
+            return JsApiService.UpdateStyleProperty(_mudPickerCalendarContentElementId, "--selected-day", tempId);
         }
     }
 }
