@@ -1566,7 +1566,7 @@ namespace MudBlazor.UnitTests.Components
             trs[2].Click();
 
             // Change row two data
-            var input = comp.Find(("#Id1"));
+            var input = comp.Find("#Id1");
             input.Change("D");
 
             // Check row two is still in position 2 of the data rows
@@ -2302,7 +2302,7 @@ namespace MudBlazor.UnitTests.Components
             trs[2].Click();
 
             // Change row two data
-            var input = comp.Find(("#Id2"));
+            var input = comp.Find("#Id2");
             input.Change("Change");
 
             table.SelectedItems.Count.Should().Be(3);

@@ -46,7 +46,7 @@ namespace MudBlazor.Utilities
         public byte G => _valuesAsByte[1];
         public byte B => _valuesAsByte[2];
         public byte A => _valuesAsByte[3];
-        public double APercentage => Math.Round((A / 255.0), 2);
+        public double APercentage => Math.Round(A / 255.0, 2);
 
         public double H { get; private set; }
         public double L { get; private set; }
