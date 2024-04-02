@@ -11,7 +11,7 @@ namespace MudBlazor
     /// </summary>
     public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
     {
-        private String GetCssClasses() => new CssBuilder()
+        private string GetCssClasses() => new CssBuilder()
             .AddClass(Class)
             .Build();
 

@@ -22,7 +22,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
 
     public class FileBasedCrawlerIdentifier : ICrawlerIdentifier
     {
-        private record CrawlerEntry(string Pattern, string Url, IEnumerable<String> Instances);
+        private record CrawlerEntry(string Pattern, string Url, IEnumerable<string> Instances);
 
         private readonly string _filename;
         private LimitedConcurrentDictionary<string, bool> _cache = new(1_000);

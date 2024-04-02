@@ -21,7 +21,7 @@ namespace MudBlazor.UnitTests.Utilities
             {
                 int p = o + 1;
                 int z = 1; while (s[p] == '0') { z++; p++; }
-                int c = Int32.Parse(s.Substring(p, z));
+                int c = int.Parse(s.Substring(p, z));
                 s = s.Substring(0, o) + new string(s[o - 1], c) + s.Substring(p + z);
             }
             return s;

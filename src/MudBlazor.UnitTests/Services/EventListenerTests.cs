@@ -39,7 +39,7 @@ namespace MudBlazor.UnitTests.Services
 #endif
         }
 
-        private bool ContainsEqual(IEnumerable<String> firstColl, IEnumerable<string> secondColl)
+        private bool ContainsEqual(IEnumerable<string> firstColl, IEnumerable<string> secondColl)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamespace.myfunction";
 
-            Func<Object, Task> callback = (x) => Task.Delay(10);
+            Func<object, Task> callback = (x) => Task.Delay(10);
 
             _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                     (string)z[0] == eventName &&
@@ -95,7 +95,7 @@ namespace MudBlazor.UnitTests.Services
             var offsetX = 200.24;
             var offsetY = 12425.2;
 
-            Func<Object, Task> callback = (x) =>
+            Func<object, Task> callback = (x) =>
             {
                 try
                 {
@@ -152,7 +152,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             string projectionName = null;
 
-            Func<Object, Task> callback = (x) => Task.Delay(10);
+            Func<object, Task> callback = (x) => Task.Delay(10);
 
             _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                     z.Length == 7 &&
@@ -187,7 +187,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamspace.something.somethingelse";
 
-            Func<Object, Task> callback = (x) => Task.Delay(10);
+            Func<object, Task> callback = (x) => Task.Delay(10);
 
             _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudThrottledEventManager.subscribe", It.Is<object[]>(z =>
                     z.Length == 7 &&
@@ -222,7 +222,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamspace.something.somethingelse";
 
-            Func<Object, Task> callback = (x) => Task.Delay(10);
+            Func<object, Task> callback = (x) => Task.Delay(10);
 
             for (var i = 0; i < 10; i++)
             {
@@ -277,7 +277,7 @@ namespace MudBlazor.UnitTests.Services
             var throttleInterval = 20;
             var projectionName = "mynamspace.something.somethingelse";
 
-            Func<Object, Task> callback = (x) => Task.Delay(10);
+            Func<object, Task> callback = (x) => Task.Delay(10);
 
             for (var i = 0; i < 10; i++)
             {
