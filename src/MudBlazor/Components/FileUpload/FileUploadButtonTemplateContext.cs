@@ -26,6 +26,6 @@ public class FileUploadButtonTemplateContext<T>
 
     public class FileUploadButtonTemplateActions
     {
-        public Func<Task> ClearAsync { get; init; } = null!;
+        public required Func<Task> ClearAsync { get; init; }
     }
 }

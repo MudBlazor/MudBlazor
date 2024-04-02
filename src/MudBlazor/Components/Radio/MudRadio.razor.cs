@@ -19,6 +19,7 @@ namespace MudBlazor
                 .AddClass($"mud-disabled", IsDisabled)
                 .AddClass($"mud-readonly", MudRadioGroup?.GetReadOnlyState())
                 .AddClass($"mud-radio-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
+                .AddClass("mud-radio-with-content", ChildContent is not null)
                 .AddClass(Class)
                 .Build();
 
@@ -101,24 +102,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Radio.Behavior)]
         public T? Value { get; set; }
-
-        /// <summary>
-        /// The value to associate to the button.
-        /// </summary>
-        [Obsolete("Use Value instead.")]
-        [Parameter]
-        [Category(CategoryTypes.Radio.Behavior)]
-        public T? Option
-        {
-            get
-            {
-                return Value;
-            }
-            set
-            {
-                Value = value;
-            }
-        }
 
         /// <summary>
         /// If true, compact padding will be applied.

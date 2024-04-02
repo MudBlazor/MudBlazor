@@ -112,13 +112,6 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
-        [Obsolete($"Use {nameof(ExpandedToggleAsync)} instead. This will be removed in v7.")]
-        protected void ExpandedToggle()
-        {
-            _expanded = !Expanded;
-            ExpandedChanged.InvokeAsync(_expanded);
-        }
-
         protected Task ExpandedToggleAsync()
         {
             _expanded = !Expanded;

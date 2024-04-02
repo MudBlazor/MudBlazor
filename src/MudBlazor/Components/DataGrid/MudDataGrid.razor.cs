@@ -827,7 +827,7 @@ namespace MudBlazor
         {
             get
             {
-                return RenderedColumns.FirstOrDefault(x => x.grouping);
+                return RenderedColumns.FirstOrDefault(x => x.GroupingState.Value);
             }
         }
 

@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.TestComponents
 {
 #pragma warning disable CS1998 // async without await
 
-    public partial class TableMultiSelectionTest9
+    public partial class TableMultiSelectionServerDataTest
     {
         public static string __description__ = "The selected items should not be cleared when the page changes or filters are applied.";
         private List<ComplexObject> _simulatedServerData = Enumerable
