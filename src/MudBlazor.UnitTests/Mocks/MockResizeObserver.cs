@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Mocks
         public IResizeObserver Create() => Create(new ResizeObserverOptions());
     }
 
-    public class MockResizeObserver : IResizeObserver, IDisposable
+    public class MockResizeObserver : IResizeObserver
     {
         private Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();
 

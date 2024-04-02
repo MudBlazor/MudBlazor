@@ -10,7 +10,7 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-    public class ResizeObserver : IResizeObserver, IDisposable, IAsyncDisposable
+    public class ResizeObserver : IResizeObserver, IAsyncDisposable
     {
         private bool _isDisposed = false;
 

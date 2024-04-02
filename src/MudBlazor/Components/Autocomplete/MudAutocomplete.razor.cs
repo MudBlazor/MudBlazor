@@ -11,7 +11,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudAutocomplete<T> : MudBaseInput<T>, IDisposable
+    public partial class MudAutocomplete<T> : MudBaseInput<T>
     {
         /// <summary>
         /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.

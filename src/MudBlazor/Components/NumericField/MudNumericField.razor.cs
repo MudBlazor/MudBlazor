@@ -20,7 +20,7 @@ namespace MudBlazor
         private IKeyInterceptor _keyInterceptor;
         private Comparer _comparer = new(CultureInfo.InvariantCulture);
 
-        public MudNumericField() : base()
+        public MudNumericField()
         {
             Validation = new Func<T, Task<bool>>(ValidateInput);
             #region parameters default depending on T
