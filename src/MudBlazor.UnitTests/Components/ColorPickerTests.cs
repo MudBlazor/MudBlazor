@@ -1,5 +1,4 @@
-﻿
-#pragma warning disable CS1998 // async without await
+﻿#pragma warning disable CS1998 // async without await
 #pragma warning disable IDE1006 // leading underscore
 
 using System;
@@ -90,14 +89,14 @@ namespace MudBlazor.UnitTests.Components
                     castedInputs[0].Value.Should().Be(expectedColor.R.ToString());
                     castedInputs[1].Value.Should().Be(expectedColor.G.ToString());
                     castedInputs[2].Value.Should().Be(expectedColor.B.ToString());
-                    castedInputs[3].Value.Should().Be(expectedColor.APercentage.ToString(CultureInfo.CurrentUICulture));
+                    castedInputs[3].Value.Should().Be(expectedColor.APercentage.ToString(CultureInfo.CurrentCulture));
                 }
                 else
                 {
-                    castedInputs[0].Value.Should().Be(expectedColor.H.ToString(CultureInfo.CurrentUICulture));
-                    castedInputs[1].Value.Should().Be(expectedColor.S.ToString(CultureInfo.CurrentUICulture));
-                    castedInputs[2].Value.Should().Be(expectedColor.L.ToString(CultureInfo.CurrentUICulture));
-                    castedInputs[3].Value.Should().Match(x => double.Parse(x, CultureInfo.CurrentUICulture) == Math.Round((expectedColor.A / 255.0), 2));
+                    castedInputs[0].Value.Should().Be(expectedColor.H.ToString(CultureInfo.CurrentCulture));
+                    castedInputs[1].Value.Should().Be(expectedColor.S.ToString(CultureInfo.CurrentCulture));
+                    castedInputs[2].Value.Should().Be(expectedColor.L.ToString(CultureInfo.CurrentCulture));
+                    castedInputs[3].Value.Should().Match(x => double.Parse(x, CultureInfo.CurrentCulture) == Math.Round((expectedColor.A / 255.0), 2));
                 }
             }
             else if (mode == ColorPickerMode.HEX)
@@ -231,7 +230,7 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColor = comp.Instance.ColorValue.SetAlpha(a);
 
-            aInput.Change(a.ToString(CultureInfo.CurrentUICulture));
+            aInput.Change(a.ToString(CultureInfo.CurrentCulture));
 
             CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.RGB);
         }
@@ -261,7 +260,7 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedColor = comp.Instance.ColorValue.SetS(s);
 
-            sColor.Change(expectedColor.S.ToString(CultureInfo.CurrentUICulture));
+            sColor.Change(expectedColor.S.ToString(CultureInfo.CurrentCulture));
 
             CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
@@ -275,7 +274,7 @@ namespace MudBlazor.UnitTests.Components
             var lColor = GetColorInput(comp, 2);
 
             var expectedColor = comp.Instance.ColorValue.SetL(l);
-            lColor.Change(expectedColor.L.ToString(CultureInfo.CurrentUICulture));
+            lColor.Change(expectedColor.L.ToString(CultureInfo.CurrentCulture));
 
             CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
@@ -289,7 +288,7 @@ namespace MudBlazor.UnitTests.Components
             var lColor = GetColorInput(comp, 3);
 
             var expectedColor = comp.Instance.ColorValue.SetAlpha(a);
-            lColor.Change(a.ToString(CultureInfo.CurrentUICulture));
+            lColor.Change(a.ToString(CultureInfo.CurrentCulture));
 
             CheckColorRelatedValues(comp, selectorXPosition, selectorYPosition, expectedColor, ColorPickerMode.HSL);
         }
@@ -626,7 +625,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.ColorPickerMode, mode);
                 p.Add(x => x.DisableInput, false);
-
             });
 
             _ = comp.Find(_colorInputCssSelector);
@@ -639,7 +637,6 @@ namespace MudBlazor.UnitTests.Components
 
             _ = comp.Find(_colorInputCssSelector);
         }
-
 
         [Test]
         public void Toggle_ModeSwitch()
@@ -850,7 +847,6 @@ namespace MudBlazor.UnitTests.Components
 
                 comp.Instance.ColorValue.Should().Be(expectedColor);
                 comp.Find(".mud-picker-color-view-collection").Children[i].ClassList.Should().BeEquivalentTo("mud-picker-color-dot", "selected");
-
             }
         }
 
@@ -1038,7 +1034,6 @@ namespace MudBlazor.UnitTests.Components
 
             item.Click();
 
-
             comp.Instance.ColorValue.Should().NotBe(_defaultColor);
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
@@ -1098,7 +1093,7 @@ namespace MudBlazor.UnitTests.Components
             CheckColorRelatedValues(comp, 11.37, 7.84, comp.Instance.ColorValue, ColorPickerMode.HSL);
 
             var expectedColor = comp.Instance.ColorValue.SetS(comp.Instance.ColorValue.S - 0.01);
-            sColor.Change(expectedColor.S.ToString(CultureInfo.CurrentUICulture));
+            sColor.Change(expectedColor.S.ToString(CultureInfo.CurrentCulture));
 
             CheckColorRelatedValues(comp, 11.37, 7.84, expectedColor, ColorPickerMode.HSL);
             var colorValueAfterChange = comp.Instance.ColorValue.ToString(MudColorOutputFormats.HexA);
@@ -1219,7 +1214,6 @@ namespace MudBlazor.UnitTests.Components
 
             MudColor secondExpectedColor = new MudColor(31, 30, 42, _defaultColor);
             CheckColorRelatedValues(comp, x - 8, y + 7, secondExpectedColor, ColorPickerMode.RGB);
-
         }
 
         [Test]
