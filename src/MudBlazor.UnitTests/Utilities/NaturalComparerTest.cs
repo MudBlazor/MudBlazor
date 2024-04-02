@@ -15,7 +15,8 @@ namespace MudBlazor.UnitTests.Utilities
     public class NaturalComparerTest
     {
 
-        Func<string, string> _expand = (s) => {
+        Func<string, string> _expand = (s) =>
+        {
             int o; while ((o = s.IndexOf('\\')) != -1)
             {
                 int p = o + 1;
@@ -343,7 +344,7 @@ namespace MudBlazor.UnitTests.Utilities
                 .Select(n => _expand(n)).ToArray();
 
             string[] orderedFiles = fileNames.OrderBy(x => x, new NaturalComparer()).ToArray();
-            
+
             orderedFiles.Should().NotBeEmpty();
             orderedFiles.Should().ContainInOrder(s_orderedFileNames);
         }

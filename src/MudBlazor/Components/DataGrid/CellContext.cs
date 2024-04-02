@@ -27,6 +27,14 @@ namespace MudBlazor
             }
         }
 
+        public bool IsOpened
+        {
+            get
+            {
+                return OpenHierarchies.Contains(Item);
+            }
+        }
+
         public CellContext(MudDataGrid<T> dataGrid, T item)
         {
             _selection = dataGrid.Selection;

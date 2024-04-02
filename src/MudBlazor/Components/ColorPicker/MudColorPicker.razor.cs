@@ -249,7 +249,7 @@ namespace MudBlazor
             _collectionOpen = !_collectionOpen;
         }
 
-        private void SelectPaletteColor(MudColor color)
+        private async Task SelectPaletteColorAsync(MudColor color)
         {
             Value = color;
             _collectionOpen = false;
@@ -257,7 +257,7 @@ namespace MudBlazor
             if (
                 IsAnyControlVisible() == false || _activeColorPickerView is ColorPickerView.GridCompact or ColorPickerView.Palette)
             {
-                Close();
+                await CloseAsync();
             }
         }
 
@@ -272,7 +272,6 @@ namespace MudBlazor
 
         public async Task ChangeView(ColorPickerView value)
         {
-
             var oldValue = _activeColorPickerView;
 
             _activeColorPickerView = value;
@@ -280,7 +279,7 @@ namespace MudBlazor
 
             if (oldValue == ColorPickerView.Spectrum)
             {
-                await RemoveMouseOverEvent();
+                await RemoveMouseOverEventAsync();
             }
 
             if (value == ColorPickerView.Spectrum)
@@ -292,19 +291,19 @@ namespace MudBlazor
         private async Task SetColorAsync(MudColor value)
         {
             if (value == null) { return; }
-            
+
             var rgbChanged = value != _value;
             var hslChanged = _value != null && value.HslChanged(_value);
-            var shouldUpdateBinding = _value != null 
+            var shouldUpdateBinding = _value != null
                                       && (rgbChanged || (UpdateBindingIfOnlyHSLChanged && hslChanged));
             _value = value;
-            
+
             if (rgbChanged && _skipFeedback == false)
             {
                 UpdateBaseColor();
                 UpdateColorSelectorBasedOnRgb();
             }
-            
+
             if (shouldUpdateBinding)
             {
                 Touched = true;
@@ -393,26 +392,28 @@ namespace MudBlazor
 
         #region mouse interactions
 
-        private void HandleColorOverlayClicked()
+        private async Task HandleColorOverlayClickedAsync()
         {
             UpdateColorBaseOnSelection();
 
             if (IsAnyControlVisible() == false)
             {
-                Close();
+                await CloseAsync();
             }
         }
 
-        private void OnSelectorClicked(MouseEventArgs e)
+        private Task OnSelectorClickedAsync(MouseEventArgs e)
         {
             SetSelectorBasedOnMouseEvents(e, false);
-            HandleColorOverlayClicked();
+
+            return HandleColorOverlayClickedAsync();
         }
 
-        private void OnColorOverlayClick(MouseEventArgs e)
+        private Task OnColorOverlayClick(MouseEventArgs e)
         {
             SetSelectorBasedOnMouseEvents(e, true);
-            HandleColorOverlayClicked();
+
+            return HandleColorOverlayClickedAsync();
         }
 
         private void OnMouseOver(MouseEventArgs e)
@@ -501,7 +502,7 @@ namespace MudBlazor
             Value = color;
         }
 
-        protected override Task StringValueChanged(string value)
+        protected override Task StringValueChangedAsync(string value)
         {
             SetInputString(value);
             return Task.CompletedTask;
@@ -509,17 +510,17 @@ namespace MudBlazor
 
         private bool _attachedMouseEvent = false;
 
-        protected override void OnPickerOpened()
+        protected override async Task OnPickerOpenedAsync()
         {
-            base.OnPickerOpened();
+            await base.OnPickerOpenedAsync();
             _attachedMouseEvent = true;
             StateHasChanged();
         }
 
-        protected override void OnPickerClosed()
+        protected override async Task OnPickerClosedAsync()
         {
-            base.OnPickerClosed();
-            RemoveMouseOverEvent().AndForget();
+            await base.OnPickerClosedAsync();
+            await RemoveMouseOverEventAsync();
         }
 
         #endregion
@@ -530,9 +531,9 @@ namespace MudBlazor
         private string GetColorTextValue() => (DisableAlpha == true || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _value.ToString(MudColorOutputFormats.Hex) : _value.ToString(MudColorOutputFormats.HexA);
         private int GetHexColorInputMaxLength() => DisableAlpha ? 7 : 9;
 
-        private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => Close());
+        private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => CloseAsync());
         private bool IsAnyControlVisible() => !(DisablePreview && DisableSliders && DisableInputs);
-        private EventCallback<MouseEventArgs> GetSelectPaletteColorCallback(MudColor color) => new EventCallbackFactory().Create(this, (MouseEventArgs e) => SelectPaletteColor(color));
+        private EventCallback<MouseEventArgs> GetSelectPaletteColorCallback(MudColor color) => new EventCallbackFactory().Create(this, (MouseEventArgs _) => SelectPaletteColorAsync(color));
 
         private Color GetButtonColor(ColorPickerView view) => _activeColorPickerView == view ? Color.Primary : Color.Inherit;
         private string GetColorDotClass(MudColor color) => new CssBuilder("mud-picker-color-dot").AddClass("selected", color == Value).ToString();
@@ -550,18 +551,18 @@ namespace MudBlazor
             {
                 if (PickerVariant == PickerVariant.Static)
                 {
-                    await AddMouseOverEvent();
+                    await AddMouseOverEventAsync();
                 }
             }
 
             if (_attachedMouseEvent == true)
             {
                 _attachedMouseEvent = false;
-                await AddMouseOverEvent();
+                await AddMouseOverEventAsync();
             }
         }
 
-        private async Task AddMouseOverEvent()
+        private async Task AddMouseOverEventAsync()
         {
             if (DisableDragEffect == true) { return; }
 
@@ -579,9 +580,12 @@ namespace MudBlazor
                 });
         }
 
-        private Task RemoveMouseOverEvent()
+        private Task RemoveMouseOverEventAsync()
         {
-            if (_throttledMouseOverEventId == default) { return Task.CompletedTask; }
+            if (_throttledMouseOverEventId == default)
+            {
+                return Task.CompletedTask;
+            }
 
             return _throttledEventManager.Unsubscribe(_throttledMouseOverEventId);
         }
@@ -590,7 +594,10 @@ namespace MudBlazor
         {
             if (_throttledEventManager == null) { return; }
 
-            await _throttledEventManager.DisposeAsync();
+            if (IsJSRuntimeAvailable)
+            {
+                await _throttledEventManager.DisposeAsync();
+            }
         }
 
         #endregion

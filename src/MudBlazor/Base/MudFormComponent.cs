@@ -621,6 +621,10 @@ namespace MudBlazor
                 var errorMessages = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
                 Error = errorMessages.Length > 0;
                 ErrorText = Error ? errorMessages[0] : null;
+
+                ValidationErrors.Clear();
+                ValidationErrors.AddRange(errorMessages);
+
                 StateHasChanged();
             }
         }
@@ -645,10 +649,15 @@ namespace MudBlazor
             if (For is not null && For != _currentFor)
             {
                 // Extract validation attributes
-                // Sourced from https://stackoverflow.com/a/43076222/4839162 
+                // Sourced from https://stackoverflow.com/a/43076222/4839162
                 // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
                 var expression = (MemberExpression)For.Body;
+
+                // Currently we have no solution for this which is trimming incompatible
+                // A possible solution is to use source gen
+#pragma warning disable IL2075
                 var propertyInfo = expression.Expression?.Type.GetProperty(expression.Member.Name);
+#pragma warning restore IL2075                
                 _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
 
                 _fieldIdentifier = FieldIdentifier.Create(For);

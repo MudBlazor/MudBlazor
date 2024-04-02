@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -30,13 +30,6 @@ namespace MudBlazor
         /// Set true to hide the part of the pager which allows to change the page size.
         /// </summary>
         [Parameter] public bool HideRowsPerPage { get; set; }
-
-        /// <summary>
-        /// Set true to hide the part of the pager which allows to change the page size.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use HideRowsPerPage instead.", true)]
-        [Parameter] public bool DisableRowsPerPage { get => HideRowsPerPage; set => HideRowsPerPage = value; }
 
         /// <summary>
         /// Set true to hide the number of pages.

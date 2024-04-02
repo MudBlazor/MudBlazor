@@ -67,7 +67,7 @@ namespace MudBlazor
         private ElementReference _elementReference1;
         private IJsEvent _jsEvent;
         private IKeyInterceptor _keyInterceptor;
-        
+
         [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
 
         [Inject] private IJsEventFactory _jsEventFactory { get; set; }
@@ -149,7 +149,7 @@ namespace MudBlazor
                     new JsEventOptions
                     {
                         //EnableLogging = true,
-                        TargetClass = "mud-input-slot", 
+                        TargetClass = "mud-input-slot",
                         TagName = "INPUT"
                     });
                 _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
@@ -195,7 +195,7 @@ namespace MudBlazor
             try
             {
                 if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || GetReadOnlyState())
-                        return;
+                    return;
                 switch (e.Key)
                 {
                     case "Backspace":
@@ -214,7 +214,7 @@ namespace MudBlazor
                         return;
                 }
 
-                if (Regex.IsMatch(e.Key, @"^.$"))
+                if (ValidCharacterRegularExpression().IsMatch(e.Key))
                 {
                     Mask.Insert(e.Key);
                     await Update();
@@ -252,7 +252,7 @@ namespace MudBlazor
             }
         }
 
-        internal async void HandleClearButton(MouseEventArgs e)
+        internal async Task HandleClearButtonAsync(MouseEventArgs e)
         {
             Mask.Clear();
             await Update();
@@ -329,7 +329,7 @@ namespace MudBlazor
             var text = Text;
             if (Mask.Selection != null)
             {
-                (_, text, _)=BaseMask.SplitSelection(text, Mask.Selection.Value);
+                (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
             }
             _jsApiService.CopyToClipboardAsync(text);
         }
@@ -396,7 +396,7 @@ namespace MudBlazor
             Mask.Selection = null;
             Mask.CaretPos = pos;
         }
-        
+
         private void SetMask(IMask other)
         {
             if (other == null)
@@ -405,14 +405,14 @@ namespace MudBlazor
                 _mask = new PatternMask("null ********");
                 return;
             }
-            
+
             if (_mask.GetType() == other.GetType())
             {
                 // update mask while retaining current state
                 _mask.UpdateFrom(other);
                 return;
             }
-           
+
             // swap masks while retaining text
             // note: this is required for `BaseMask` instances other than `PatternMask` to work as expected
             other.SetText(Text);
@@ -423,8 +423,8 @@ namespace MudBlazor
         {
             if (GetReadOnlyState())
                 return;
-            
-            if (_selection!=null)
+
+            if (_selection != null)
                 Mask.Delete();
             await Update();
         }
@@ -435,16 +435,20 @@ namespace MudBlazor
 
             if (disposing == true)
             {
-                _jsEvent?.Dispose();
-
                 if (_keyInterceptor != null)
                 {
                     _keyInterceptor.KeyDown -= HandleKeyDownInternally;
-                    _keyInterceptor.Dispose();
                 }
 
-                _keyInterceptor?.Dispose();
+                if (IsJSRuntimeAvailable)
+                {
+                    _jsEvent?.Dispose();
+                    _keyInterceptor?.Dispose();
+                }
             }
         }
+
+        [GeneratedRegex(@"^.$")]
+        private static partial Regex ValidCharacterRegularExpression();
     }
 }

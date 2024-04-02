@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using FluentValidation
-@using Severity = MudBlazor.Severity;
+@using Severity = MudBlazor.Severity
 @inject ISnackbar Snackbar
 
 <MudCard>
@@ -16,14 +16,20 @@
                                Variant="Variant.Filled"
                                Color="Color.Primary"
                                StartIcon="@Icons.Material.Filled.CloudUpload"
-                               for="@context">
+                               for="@context.Id">
                         Upload Files
+                    </MudButton>
+                    <MudButton OnClick="@context.Actions.ClearAsync"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.Clear">
+                        Clear Files
                     </MudButton>
                 </ButtonTemplate>
             </MudFileUpload>
         </MudCardContent>
         <MudCardActions>
-            <MudSwitch Color="Color.Primary" @bind-Checked="SuppressOnChangeWhenInvalid">Suppress OnChange When Invalid</MudSwitch>
+            <MudSwitch Color="Color.Primary" @bind-Value="SuppressOnChangeWhenInvalid">Suppress OnChange When Invalid</MudSwitch>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await Submit())">Submit</MudButton>
         </MudCardActions>
     </MudForm>
@@ -51,7 +57,7 @@
 
         if (form.IsValid)
         {
-            Snackbar.Add("Submited!");
+            Snackbar.Add("Submitted!");
         }
     }
 

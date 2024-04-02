@@ -25,7 +25,10 @@
                               @ref="InputReference"
                               @attributes="UserAttributes"
                               InputType="@InputType"
+                              InputMode="@InputMode"
                               Lines="@Lines"
+                              MaxLines="@MaxLines"
+                              AutoGrow="@AutoGrow"
                               Style="@Style"
                               Variant="@Variant"
                               TextUpdateSuppression="@TextUpdateSuppression"
@@ -50,15 +53,14 @@
                               OnBlur="@OnBlurredAsync"
                               OnKeyDown="@InvokeKeyDownAsync"
                               OnInternalInputChanged="OnChange"
-                              OnKeyPress="@InvokeKeyPress"
                               OnKeyUp="@InvokeKeyUpAsync"
                               KeyDownPreventDefault="KeyDownPreventDefault"
-                              KeyPressPreventDefault="KeyPressPreventDefault"
                               KeyUpPreventDefault="KeyUpPreventDefault"
                               HideSpinButtons="true"
                               Clearable="@Clearable"
                               OnClearButtonClick="@OnClearButtonClick"
-                              Pattern="@Pattern"/>
+                              Pattern="@Pattern"
+                              ShrinkLabel="@ShrinkLabel"/>
                 }
                 else
                 {
@@ -66,6 +68,7 @@
                              @attributes="UserAttributes"
                              Mask="@_mask"
                              InputType="@InputType"
+                             InputMode="@InputMode"
                              Lines="@Lines"
                              Style="@Style"
                              Variant="@Variant"

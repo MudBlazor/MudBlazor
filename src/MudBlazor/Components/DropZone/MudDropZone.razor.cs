@@ -13,7 +13,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudDropZone<T> : MudComponentBase, IDisposable
+    public partial class MudDropZone<T> : MudComponentBase, IDisposable where T : notnull
     {
         private bool _containerIsInitialized = false;
         private bool _canDrop = false;
@@ -112,6 +112,14 @@ namespace MudBlazor
         [Category(CategoryTypes.DropZone.DraggingClass)]
         public string? ItemDraggingClass { get; set; }
 
+        /// <summary>
+        /// The method is used to determinate item class to be rendered in a drop zone.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DropZone.Items)]
+        public Func<T, string>? ItemsClassSelector { get; set; }
+
+
         [Parameter]
         [Category(CategoryTypes.DropZone.Behavior)]
         public bool AllowReorder { get; set; }
@@ -179,6 +187,20 @@ namespace MudBlazor
             return result;
         }
 
+        private string GetItemClassUsingSelector(T item)
+        {
+            if (ItemsClassSelector is not null)
+            {
+                return ItemsClassSelector(item);
+            }
+            else if (Container is not null && Container.ItemsClassSelector is not null)
+            {
+                return Container.ItemsClassSelector(item, Identifier);
+            }
+            else return string.Empty;
+        }
+
+
         protected string Classname =>
             new CssBuilder("mud-drop-zone")
                 //.AddClass("mud-drop-zone-drag-block", Container?.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier)
@@ -242,7 +264,7 @@ namespace MudBlazor
 
             if (e.Success)
             {
-                if (e.OriginatedDropzoneIdentifier== Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
+                if (e.OriginatedDropzoneIdentifier == Identifier && e.DestinationDropzoneIdentifier != e.OriginatedDropzoneIdentifier)
                 {
                     if (e.Item is not null)
                     {

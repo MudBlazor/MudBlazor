@@ -30,7 +30,7 @@
                     Be sure to set the button's ID using the <CodeInline>&#64;context</CodeInline> parameter. <br />
                     A <CodeInline>MudFileUpload</CodeInline> can be <CodeInline>Disabled</CodeInline> and it will Disable its child button automatically.
                 </Description>
-            </SectionHeader> 
+            </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadButtonExample">
                 <FileUploadButtonExample />
             </SectionContent>
@@ -53,6 +53,7 @@
                 <Description>
                     Use the <CodeInline>For</CodeInline> property to validate your files within a form, and bind your files to your model class using <CodeInline>&#64;bind-Files</CodeInline>.
                     You can then handle the file upload logic within your <CodeInline>MudForm</CodeInline> submit method.
+                    The <CodeInline>ButtonTemplate</CodeInline> property provides the <CodeInline>&#64;context.Actions.ClearAsync</CodeInline> action that you can bind to a button to clear files and update the form state.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadValidationExample">
@@ -84,7 +85,7 @@
                 <FileUploadSelectedTemplateExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Append Multiple Files">
                 <Description>
@@ -98,11 +99,26 @@
 
         <DocsPageSection>
             <SectionHeader Title="Drag and Drop Example">
-                <Description>Using the example below, you can compose a drag-and-drop uploader.</Description>
+                <Description>Using the examples below, you can compose a drag-and-drop uploader.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="FileUploadDragAndDropExample">
-                <FileUploadDragAndDropExample />
-            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Custom Scenario">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadDragAndDropCustomScenarioExample)">
+                        <FileUploadDragAndDropCustomScenarioExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="With Form Validation">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadDragAndDropWithFormValidationExample)">
+                        <FileUploadDragAndDropWithFormValidationExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
 
     </DocsPageContent>

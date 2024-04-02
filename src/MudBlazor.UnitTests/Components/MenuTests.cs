@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -80,6 +81,21 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MenuTest1>();
             comp.Find("div.mud-popover").ClassList.Should().Contain("menu-popover-class");
+        }
+
+        [Test]
+        public async Task IsOpen_CheckState()
+        {
+            var comp = Context.RenderComponent<MenuTest1>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+            menu.IsOpen.Should().BeFalse();
+
+            var args = new MouseEventArgs { OffsetX = 1.0, OffsetY = 1.0 };
+            await comp.InvokeAsync(() => menu.OpenMenu(args));
+            menu.IsOpen.Should().BeTrue();
+
+            await comp.InvokeAsync(() => menu.CloseMenu());
+            menu.IsOpen.Should().BeFalse();
         }
 
         [Test]
@@ -242,6 +258,82 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item").Count.Should().Be(4);
             comp.FindAll("div.mud-list-item")[3].Click();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
+        }
+
+        [Test]
+        public async Task IsOpenChanged_InvokedWhenOpened_CheckTrueInvocationCountIsOne()
+        {
+            var comp = Context.RenderComponent<MenuIsOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Menu.OpenMenu(EventArgs.Empty));
+            comp.Instance.TrueInvocationCount.Should().Be(1);
+            comp.Instance.FalseInvocationCount.Should().Be(0);
+        }
+
+        [Test]
+        public async Task IsOpenChanged_InvokedWhenClosed_CheckTrueInvocationCountIsOneClickFalseInvocationCountIsOne()
+        {
+            var comp = Context.RenderComponent<MenuIsOpenChangedTest>();
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Menu.OpenMenu(EventArgs.Empty));
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Menu.CloseMenu());
+            comp.Instance.TrueInvocationCount.Should().Be(1);
+            comp.Instance.FalseInvocationCount.Should().Be(1);
+        }
+
+        [Test]
+        public void OnAction_WhenClick_OnActionInvoked()
+        {
+            var comp = Context.RenderComponent<MenuItemActionTest>();
+            comp.Find("button.mud-button-root").Click();
+            comp.Find("#id_on_action").Click();
+            comp.Instance.Count.Should().Be(1);
+            comp.Instance.Callers.Should().Be("A");
+        }
+
+        [Test]
+        public void OnActionAndOnClick_WhenClick_JustOnClickInvoked()
+        {
+            var comp = Context.RenderComponent<MenuItemActionTest>();
+            comp.Find("button.mud-button-root").Click();
+            comp.Find("#id_on_action_on_click").Click();
+            comp.Instance.Count.Should().Be(1);
+            comp.Instance.Callers.Should().Be("C");
+        }
+
+        [Test]
+        public void OnActionAndOnTouch_WhenTouch_JustOnTouchInvoked()
+        {
+            var comp = Context.RenderComponent<MenuItemActionTest>();
+            comp.Find("button.mud-button-root").Click();
+            var item = comp.Find("#id_on_action_on_touch");
+            item.TouchEnd();
+            comp.Instance.Count.Should().Be(1);
+            comp.Instance.Callers.Should().Be("T");
+        }
+
+        [Test]
+        public void OnActionAndOnTouch_WhenTouchMove_NoneInvoked()
+        {
+            var comp = Context.RenderComponent<MenuItemActionTest>();
+            comp.Find("button.mud-button-root").Click();
+            var item = comp.Find("#id_on_action_on_touch");
+            item.TouchStart();
+            item.TouchMove();
+            item.TouchEnd();
+            comp.Instance.Count.Should().Be(0);
+            comp.Instance.Callers.Should().Be(string.Empty);
+        }
+
+        [Test]
+        public void OnActionAndOnClick_WhenTouchMove_NoneInvoked()
+        {
+            var comp = Context.RenderComponent<MenuItemActionTest>();
+            comp.Find("button.mud-button-root").Click();
+            var item = comp.Find("#id_on_action_on_click");
+            item.TouchStart();
+            item.TouchMove();
+            item.TouchEnd();
+            comp.Instance.Count.Should().Be(0);
+            comp.Instance.Callers.Should().Be(string.Empty);
         }
     }
 }

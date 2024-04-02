@@ -25,7 +25,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
         private record CrawlerEntry(string Pattern, string Url, IEnumerable<String> Instances);
 
         private readonly string _filename;
-        private LimitedConcurrentDictionary<string, bool> _cache = new(1_000); 
+        private LimitedConcurrentDictionary<string, bool> _cache = new(1_000);
 
         private IEnumerable<Regex> _patterns;
 

@@ -1,58 +1,58 @@
 ﻿.mud-popover {
-    outline: 0;
-    z-index: calc(var(--mud-zindex-popover) + 1);
-    position: absolute;
-    opacity: 0;
+  outline: 0;
+  z-index: calc(var(--mud-zindex-popover) + 1);
+  position: absolute;
+  opacity: 0;
 
-    &.mud-popover-fixed {
-        position: fixed;
-    }
+  &.mud-popover-fixed {
+    position: fixed;
+  }
 
-    &.mud-popover-relative-width {
-        width: 100%;
-    }
+  &.mud-popover-relative-width {
+    width: 100%;
+  }
 
-    &.mud-popover-open {
-        opacity: 1;
-        transition: opacity;
-    }
+  &.mud-popover-open {
+    opacity: 1;
+    transition: opacity;
+  }
 
-    &:not(.mud-popover-open ) {
-        pointer-events: none;
-        transition-duration:0ms !important;
-        transition-delay:0ms !important;
-    }
+  &:not(.mud-popover-open ) {
+    pointer-events: none;
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+  }
 }
 
 .mud-appbar {
-    .mud-popover-cascading-value {
-        z-index: calc(var(--mud-zindex-appbar) + 2);
-    }
+  .mud-popover-cascading-value {
+    z-index: calc(var(--mud-zindex-appbar) + 2);
+  }
 }
 
 .mud-drawer {
-    &:not(.mud-drawer-temporary) {
-        .mud-popover-cascading-value {
-            z-index: calc(var(--mud-zindex-drawer) + 2);
-        }
+  &:not(.mud-drawer-temporary) {
+    .mud-popover-cascading-value {
+      z-index: calc(var(--mud-zindex-drawer) + 2);
     }
+  }
 
-    &.mud-drawer-temporary, &.mud-drawer-responsive {
-        .mud-popover-cascading-value {
-            z-index: calc(var(--mud-zindex-appbar) + 4);
-        }
+  &.mud-drawer-temporary, &.mud-drawer-responsive {
+    .mud-popover-cascading-value {
+      z-index: calc(var(--mud-zindex-appbar) + 4);
     }
+  }
 }
 
 .mud-dialog {
-    .mud-popover-cascading-value {
-        z-index: calc(var(--mud-zindex-dialog) + 3);
-    }
+  .mud-popover-cascading-value {
+    z-index: calc(var(--mud-zindex-dialog) + 3);
+  }
 }
 
 .mud-popover {
-    .mud-list {
-        max-height: inherit;
-        overflow-y: auto;
-    }
+  .mud-list {
+    max-height: inherit;
+    overflow-y: auto;
+  }
 }

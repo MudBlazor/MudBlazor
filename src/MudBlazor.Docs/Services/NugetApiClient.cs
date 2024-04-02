@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Models.Context;
@@ -25,8 +26,10 @@ namespace MudBlazor.Docs.Services
             {
                 BaseAddress = new Uri("https://azuresearch-usnc.nuget.org/")
             };
-            _jsonSerializerOptions = new JsonSerializerOptions();
-            _jsonSerializerOptions.AddContext<NugetApiJsonSerializerContext>();
+            _jsonSerializerOptions = new JsonSerializerOptions
+            {
+                TypeInfoResolver = JsonTypeInfoResolver.Combine(NugetApiJsonSerializerContext.Default)
+            };
         }
 
         public async Task<NugetPackage?> GetPackageAsync(string packageName)

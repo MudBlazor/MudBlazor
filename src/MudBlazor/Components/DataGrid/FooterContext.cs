@@ -28,7 +28,7 @@ namespace MudBlazor
         {
             get
             {
-                
+
                 if (_dataGrid.Selection is not null && (Items?.Any() ?? false))
                 {
                     return _dataGrid.Selection.Count == Items.Count();
@@ -49,7 +49,7 @@ namespace MudBlazor
 
         public class FooterActions
         {
-            public Func<bool, Task> SetSelectAllAsync { get; init; } = null!;
+            public required Func<bool, Task> SetSelectAllAsync { get; init; }
         }
     }
 }

@@ -1,0 +1,47 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudTable T="Element" Items="@elements.Take(3)" Hover="true" OnRowMouseEnter="RowMouseEnterEvent" OnRowMouseLeave="RowMouseLeaveEvent" Breakpoint="Breakpoint.Sm">
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+</MudTable>
+
+<MudText>Currently hovered: @(currentlyHoveredElement)</MudText>
+<MudText>Last hovered: @(lastHoveredElement)</MudText>
+
+@code {
+    private IEnumerable<Element> elements = new List<Element>();
+
+    private string currentlyHoveredElement;
+    private string lastHoveredElement;
+
+    protected override async Task OnInitializedAsync()
+    {
+        elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+
+    private void RowMouseEnterEvent(TableRowHoverEventArgs<Element> eventArgs)
+    {
+        currentlyHoveredElement = eventArgs.Item.Name;
+    }
+
+    private void RowMouseLeaveEvent(TableRowHoverEventArgs<Element> eventArgs)
+    {
+        currentlyHoveredElement = "";
+        lastHoveredElement = eventArgs.Item.Name;
+    }
+}

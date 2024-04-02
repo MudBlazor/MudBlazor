@@ -2,7 +2,7 @@
 @inherits MudComponentBase
 
 @{
-    var ariaPressedValue = @Toggled ? "true" : "false";
+    var ariaPressedValue = Toggled ? "true" : "false";
 }
 
 <MudIconButton Icon="@(Toggled ? ToggledIcon : Icon)"
@@ -16,5 +16,7 @@
                OnClick="Toggle"
                Class="@Class"
                Style="@Style"
+               DisableElevation="DisableElevation"
+               ClickPropagation="ClickPropagation"
                aria-pressed="@ariaPressedValue"
                @attributes="UserAttributes" />

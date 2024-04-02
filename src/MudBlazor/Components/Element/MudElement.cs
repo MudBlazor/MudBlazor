@@ -36,6 +36,10 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<ElementReference> RefChanged { get; set; }
 
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public bool ClickPropagation { get; set; } = false;
+
         /// <summary>
         /// Calling StateHasChanged to refresh the component's state
         /// </summary>
@@ -64,7 +68,7 @@ namespace MudBlazor
 
             // StopPropagation
             // the order matters. This has to be before content is added
-            if (HtmlTag == "button")
+            if (HtmlTag == "button" && ClickPropagation == false)
                 builder.AddEventStopPropagationAttribute(5, "onclick", true);
 
             //Reference capture

@@ -1,6 +1,8 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTable Items="@Elements" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" Filter="new Func<Element, bool>(FilterFunc)">
+<MudTable Items="@Elements" Hover="true" Breakpoint="Breakpoint.Sm"
+          Loading="@isLoading" Filter="new Func<Element, bool>(FilterFunc)" Striped
+          MultiSelection="@isMultiSelectionEnabled">
     <ToolBarContent>
         <MudTextField id="searchString" @bind-Value="searchString" Placeholder="Search"></MudTextField>
     </ToolBarContent>
@@ -18,16 +20,29 @@
         <MudTd DataLabel="Position">@context.Position</MudTd>
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
+     <RowEditingTemplate>
+         <MudTd DataLabel="Nr">@context.Number</MudTd>
+         <MudTd DataLabel="Sign">@context.Sign</MudTd>
+         <MudTd DataLabel="Name">@context.Name</MudTd>
+         <MudTd DataLabel="Position">@context.Position</MudTd>
+         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+     </RowEditingTemplate>
     <NoRecordsContent>No matching records found</NoRecordsContent>
     <LoadingContent>Loading...</LoadingContent>
 </MudTable>
 
-<MudSwitch id="switch" @bind-Checked="_loading">Show Loading</MudSwitch>
+<MudSwitch id="switch" @bind-Checked="isLoading">Show Loading</MudSwitch>
+<MudSwitch id="multi-selection" @bind-Checked="isMultiSelectionEnabled">Enable Multi-selection</MudSwitch>
 
-@code {
-    public static string __description__ = "When loading is true a progress bar should appear";
+ @code {
+    public static string __description__ = @"
+        When loading is set to true, a progress bar should appear in the table header,
+        which would not affect the striped table.
+        Dynamically added columns should not affect number of cells in the loader row.
+        ";
 
-    private bool _loading = false;
+    private bool isLoading = false;
+    private bool isMultiSelectionEnabled = false;
     private IEnumerable<Element> Elements = new List<Element>();
     private string searchString;
 

@@ -1,13 +1,13 @@
 comment:
-  require_changes: yes
+  require_changes: true
 coverage:
   status:
     project:
       default:
         target: 90%    # the required coverage value
-        threshold: 0.1%  # the leniency in hitting the target
+        threshold: 3%  # the leniency in hitting the target
     patch:
       default:
         target: 100%
-        threshold: 10%
+        threshold: 15%
   

@@ -23,7 +23,7 @@ public partial class AnnoucementPage
         _message = await NotificationService.GetMessageById(Id);
         if (_message == null)
         {
-            
+
         }
     }
 
@@ -33,7 +33,7 @@ public partial class AnnoucementPage
         {
             await NotificationService.MarkNotificationsAsRead(Id);
         }
-        
+
         await base.OnAfterRenderAsync(firstRender);
     }
 }

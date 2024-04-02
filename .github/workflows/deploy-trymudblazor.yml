@@ -13,7 +13,7 @@ jobs:
     steps:
     - name: Wait for nuget
       if: ${{ github.ref_type == 'tag' }}
-      run: sleep 300s
+      run: sleep 600s
 
 
   deploy-web-app:

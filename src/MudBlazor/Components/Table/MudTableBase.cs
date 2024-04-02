@@ -311,22 +311,6 @@ namespace MudBlazor
         [Parameter] public EventCallback<object> OnPreviewEditClick { get; set; }
 
         /// <summary>
-        /// Command executed when the user clicks on the CommitEdit Button.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Table.Editing)]
-        [Obsolete($"Use {nameof(OnCommitEditClick)} instead. This will be removed in v7.")]
-        public ICommand CommitEditCommand { get; set; }
-
-        /// <summary>
-        /// Command parameter for the CommitEdit Button. By default, will be the row level item model, if you won't set anything else.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Table.Editing)]
-        [Obsolete("This will be removed in v7.")]
-        public object CommitEditCommandParameter { get; set; }
-
-        /// <summary>
         /// Tooltip for the CommitEdit Button.
         /// </summary>
         [Parameter]
@@ -455,15 +439,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Behavior)]
         public float ItemSize { get; set; } = 50f;
 
-        #region --> Obsolete Forwarders for Backwards-Compatiblilty
-        /// <summary>
-        /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("This property is not needed anymore, the cells width/alignment is done automatically.", true)]
-        [Parameter] public bool RightAlignSmall { get; set; } = true;
-        #endregion
-
         public abstract TableContext TableContext { get; }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
@@ -524,15 +499,6 @@ namespace MudBlazor
         internal async Task OnCommitEditHandler(MouseEventArgs ev, object item)
         {
             await OnCommitEditClick.InvokeAsync(ev);
-#pragma warning disable CS0618
-            if (CommitEditCommand?.CanExecute(CommitEditCommandParameter) ?? false)
-            {
-                var parameter = CommitEditCommandParameter;
-                if (parameter == null)
-                    parameter = item;
-                CommitEditCommand.Execute(parameter);
-            }
-#pragma warning restore CS0618
         }
 
         internal Task OnPreviewEditHandler(object item)
@@ -554,10 +520,15 @@ namespace MudBlazor
 
         internal abstract Task InvokeServerLoadFunc();
 
-        internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
+        internal abstract Task FireRowClickEventAsync(MouseEventArgs args, MudTr mudTr, object item);
+
+        internal abstract Task FireRowMouseEnterEventAsync(MouseEventArgs args, MudTr mudTr, object item);
+
+        internal abstract Task FireRowMouseLeaveEventAsync(MouseEventArgs args, MudTr mudTr, object item);
 
         internal abstract void OnHeaderCheckboxClicked(bool checkedState);
-
+        internal abstract bool HasRowMouseEnterEventHandler { get; }
+        internal abstract bool HasRowMouseLeaveEventHandler { get; }
         internal abstract bool IsEditable { get; }
 
         public abstract bool ContainsItem(object item);
