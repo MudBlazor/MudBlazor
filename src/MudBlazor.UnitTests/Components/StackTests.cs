@@ -113,12 +113,12 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        [TestCase(Stretch.Start, "start")]
-        [TestCase(Stretch.End, "end")]
-        [TestCase(Stretch.StartAndEnd, "start-and-end")]
-        [TestCase(Stretch.Middle, "middle")]
-        [TestCase(Stretch.All, "all")]
-        public void CheckStretchItemsClass(Stretch stretch, string expectedClass)
+        [TestCase(StretchItems.Start, "start")]
+        [TestCase(StretchItems.End, "end")]
+        [TestCase(StretchItems.StartAndEnd, "start-and-end")]
+        [TestCase(StretchItems.Middle, "middle")]
+        [TestCase(StretchItems.All, "all")]
+        public void CheckStretchItemsClass(StretchItems stretch, string expectedClass)
         {
             var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.StretchItems, stretch));
 
@@ -129,7 +129,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckStretchItemsNoneClass()
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.StretchItems, Stretch.None));
+            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.StretchItems, StretchItems.None));
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().NotContain(["flex-grow-start", "flex-grow-end", "flex-grow-start-and-end", "flex-grow-all"]);

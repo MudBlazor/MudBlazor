@@ -34,19 +34,19 @@
     </MudChipSet>
 
     <MudChipSet @bind-SelectedValue="@stretch" Mandatory="true">
-        <MudChip Value="Stretch.None" Text="Do Not Stretch" SelectedColor="Color.Tertiary" Variant="Variant.Text" Default="true" />
-        <MudChip Value="Stretch.Start" Text="Stretch First" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
-        <MudChip Value="Stretch.End" Text="Stretch Last" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
-        <MudChip Value="Stretch.StartAndEnd" Text="Stretch First and Last" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
-        <MudChip Value="Stretch.Middle" Text="Stretch Middle" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
-        <MudChip Value="Stretch.All" Text="Stretch All" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
+        <MudChip Value="StretchItems.None" Text="Do Not Stretch" SelectedColor="Color.Tertiary" Variant="Variant.Text" Default="true" />
+        <MudChip Value="StretchItems.Start" Text="Stretch First" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
+        <MudChip Value="StretchItems.End" Text="Stretch Last" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
+        <MudChip Value="StretchItems.StartAndEnd" Text="Stretch First and Last" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
+        <MudChip Value="StretchItems.Middle" Text="Stretch Middle" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
+        <MudChip Value="StretchItems.All" Text="Stretch All" SelectedColor="Color.Tertiary" Variant="Variant.Text" />
     </MudChipSet>
 </MudStack>
 
 @code {
     Justify justify = Justify.Center;
     AlignItems align = AlignItems.Center;
-    Stretch stretch = Stretch.None;
+    StretchItems stretch = StretchItems.None;
     bool row = false;
     bool reverse = false;
     int spacing = 3;

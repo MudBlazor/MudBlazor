@@ -17,7 +17,7 @@ public partial class MudStack : MudComponentBase
             .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems is not null)
             .AddClass($"flex-{Wrap?.ToDescriptionString()}", Wrap is not null)
             .AddClass($"gap-{Spacing}")
-            .AddClass($"flex-grow-{StretchItems?.ToDescriptionString()}", StretchItems is not null and not Stretch.None)
+            .AddClass($"flex-grow-{StretchItems?.ToDescriptionString()}", StretchItems is not null and not MudBlazor.StretchItems.None)
             .AddClass(Class)
             .Build();
 
@@ -61,14 +61,14 @@ public partial class MudStack : MudComponentBase
     /// </summary>
     /// <remarks>
     /// Note: This property affects children of the <see cref="MudStack"/> component.
-    /// If there is only one child, <see cref="Stretch.Start"/> and <see cref="Stretch.End"/>
+    /// If there is only one child, <see cref="StretchItems.Start"/> and <see cref="StretchItems.End"/>
     /// will have the same effect, and the child will be stretched.
-    /// <see cref="Stretch.Middle"/> stretches all children except the first and last child.
-    /// If there are two or fewer elements, <see cref="Stretch.Middle"/> will have no effect.
+    /// <see cref="StretchItems.Middle"/> stretches all children except the first and last child.
+    /// If there are two or fewer elements, <see cref="StretchItems.Middle"/> will have no effect.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
-    public Stretch? StretchItems { get; set; }
+    public StretchItems? StretchItems { get; set; }
 
     /// <summary>
     /// Defines the flexbox wrapping behavior of its items.

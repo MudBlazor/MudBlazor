@@ -9,7 +9,7 @@ namespace MudBlazor;
 /// <summary>
 /// Specifies how children of a flex container are stretched along the main axis.
 /// </summary>
-public enum Stretch
+public enum StretchItems
 {
     /// <summary>
     /// No stretching is applied to children.
