@@ -617,7 +617,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div input")[0].Change("Galadriel");
             comp.FindAll("div input")[1].Change(1);
 
-            comp.Find(".mud-dialog-actions .mud-button-filled-primary").Click();
+            comp.Find(".mud-dialog-actions .mud-button").Click();
 
             //verify values after saving dialog
             dataGrid.FindAll("td")[0].Html().Trim().Should().Be("John");
