@@ -2,6 +2,13 @@
 
 .mud-toggle-group {
   display: grid;
+
+  &.mud-disabled {
+    cursor: default;
+    pointer-events: none;
+    color: var(--mud-palette-action-disabled) !important;
+    border-color: var(--mud-palette-action-disabled) !important;
+  }
 }
 
 .mud-toggle-group-horizontal {
@@ -87,5 +94,12 @@
 
   &.mud-toggle-item-selected-border {
     border-radius: unset;
+  }
+
+  &.mud-disabled {
+    cursor: default;
+    pointer-events: none;
+    color: var(--mud-palette-action-disabled) !important;
+    border-color: inherit !important;
   }
 }

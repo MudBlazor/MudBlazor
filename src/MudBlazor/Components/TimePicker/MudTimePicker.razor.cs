@@ -43,7 +43,7 @@ namespace MudBlazor
                 return time.TimeOfDay;
             }
 
-            var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
+            var m = AmPmRegularExpression().Match(value);
             if (m.Success)
             {
                 if (DateTime.TryParseExact(value, format12Hours, CultureInfo.InvariantCulture, DateTimeStyles.None,
@@ -193,7 +193,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<TimeSpan?> TimeChanged { get; set; }
 
-        protected override Task StringValueChanged(string value)
+        protected override Task StringValueChangedAsync(string value)
         {
             Touched = true;
             // Update the time property (without updating back the Value property)
@@ -258,7 +258,7 @@ namespace MudBlazor
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
             if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
-               await SubmitAsync();
+                await SubmitAsync();
             }
         }
 
@@ -519,7 +519,7 @@ namespace MudBlazor
             }
             else if (TimeEditMode == TimeEditMode.OnlyHours)
             {
-               await SubmitAndCloseAsync();
+                await SubmitAndCloseAsync();
             }
         }
 
@@ -575,11 +575,11 @@ namespace MudBlazor
             }
         }
 
-        protected internal override async void HandleKeyDown(KeyboardEventArgs obj)
+        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
-            base.HandleKeyDown(obj);
+            await base.OnHandleKeyDownAsync(obj);
             switch (obj.Key)
             {
                 case "ArrowRight":
@@ -601,7 +601,7 @@ namespace MudBlazor
                         {
                             if (_timeSet.Minute == 59)
                             {
-                               await ChangeHourAsync(1);
+                                await ChangeHourAsync(1);
                             }
                             await ChangeMinuteAsync(1);
                         }
@@ -647,7 +647,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                       await ChangeHourAsync(1);
+                        await ChangeHourAsync(1);
                     }
                     break;
                 case "ArrowDown":
@@ -657,11 +657,11 @@ namespace MudBlazor
                     }
                     else if (obj.ShiftKey == true)
                     {
-                       await ChangeHourAsync(-5);
+                        await ChangeHourAsync(-5);
                     }
                     else
                     {
-                       await ChangeHourAsync(-1);
+                        await ChangeHourAsync(-1);
                     }
                     break;
                 case "Escape":
@@ -738,5 +738,8 @@ namespace MudBlazor
             public int Minute { get; set; }
 
         }
+
+        [GeneratedRegex("AM|PM", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+        private static partial Regex AmPmRegularExpression();
     }
 }

@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudToggleGroup @bind-Value="_value" T="string" Color="Color.Primary" Disabled="true">
+    <MudToggleItem T="string" Value="@("Enabled 1")" Text="Enabled Item 1" />
+    <MudToggleItem T="string" Value="@("Enabled 2")" Text="Enabled Item 2" />
+    <MudToggleItem T="string" Value="@("Disabled")" Text="Disabled Item" Disabled="true" />
+</MudToggleGroup>
+
+<MudToggleGroup @bind-Value="_value" T="string" Color="Color.Primary">
+    <MudToggleItem T="string" Value="@("Enabled 1")" Text="Enabled Item 1" />
+    <MudToggleItem T="string" Value="@("Enabled 2")" Text="Enabled Item 2" />
+    <MudToggleItem T="string" Value="@("Disabled")" Text="Disabled Item" Disabled="true" />
+</MudToggleGroup>
+
+@code {
+    public static string __description__ = "It should be possible to disable whole toggle groups and/or toggle items";
+    private string _value;
+}

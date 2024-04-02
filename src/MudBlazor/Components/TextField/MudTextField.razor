@@ -24,6 +24,7 @@
                     <MudInput T="string"
                               @ref="InputReference"
                               @attributes="UserAttributes"
+                              Label="@Label"
                               InputType="@InputType"
                               InputMode="@InputMode"
                               Lines="@Lines"
@@ -55,7 +56,6 @@
                               OnInternalInputChanged="OnChange"
                               OnKeyUp="@InvokeKeyUpAsync"
                               KeyDownPreventDefault="KeyDownPreventDefault"
-                              KeyPressPreventDefault="KeyPressPreventDefaultObsolete"
                               KeyUpPreventDefault="KeyUpPreventDefault"
                               HideSpinButtons="true"
                               Clearable="@Clearable"
@@ -67,6 +67,7 @@
                 {
                     <MudMask @ref="_maskReference"
                              @attributes="UserAttributes"
+                             Label="@Label"
                              Mask="@_mask"
                              InputType="@InputType"
                              InputMode="@InputMode"

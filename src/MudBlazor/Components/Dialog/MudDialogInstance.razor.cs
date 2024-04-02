@@ -325,9 +325,6 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        [Obsolete($"Use {nameof(StateHasChanged)}. This method will be removed in v7.")]
-        public void ForceRender() => StateHasChanged();
-
         public new void StateHasChanged() => base.StateHasChanged();
 
         /// <summary>
