@@ -25,7 +25,7 @@ namespace MudBlazor.State;
 /// </remarks>
 internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
 {
-    private readonly HashSet<IParameterComponentLifeCycle> _parameters = new(ParameterNameUniquenessComparer.Default);
+    private readonly Dictionary<string, IParameterComponentLifeCycle> _parameters = new();
 
     /// <inheritdoc/>
     public int Count => _parameters.Count;
@@ -37,7 +37,7 @@ internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
     /// <exception cref="InvalidOperationException">Thrown when the parameter is already registered.</exception>
     public void Add(IParameterComponentLifeCycle parameter)
     {
-        if (!_parameters.Add(parameter))
+        if (!_parameters.TryAdd(parameter.Metadata.ParameterName, parameter))
         {
             throw new InvalidOperationException($"{parameter.Metadata.ParameterName} is already registered.");
         }
@@ -48,7 +48,7 @@ internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
     /// </summary>
     public void OnInitialized()
     {
-        foreach (var parameter in _parameters)
+        foreach (var parameter in _parameters.Values)
         {
             parameter.OnInitialized();
         }
@@ -59,7 +59,7 @@ internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
     /// </summary>
     public void OnParametersSet()
     {
-        foreach (var parameter in _parameters)
+        foreach (var parameter in _parameters.Values)
         {
             parameter.OnParametersSet();
         }
@@ -73,7 +73,7 @@ internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
     public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
 #if NET8_0_OR_GREATER
-        var parametersHandlerShouldFire = _parameters
+        var parametersHandlerShouldFire = _parameters.Values
             .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
             .ToFrozenSet(ParameterHandlerUniquenessComparer.Default);
 #else
@@ -96,32 +96,12 @@ internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
     /// <returns>A value indicating whether the search was successful.</returns>
     public bool TryGetValue(string parameterName, [MaybeNullWhen(false)] out IParameterComponentLifeCycle parameterComponentLifeCycle)
     {
-        return _parameters.TryGetValue(new DummyParameterComponentLifeCycle(parameterName), out parameterComponentLifeCycle);
+        return _parameters.TryGetValue(parameterName, out parameterComponentLifeCycle);
     }
 
     /// <inheritdoc/>
-    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => _parameters.GetEnumerator();
+    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => _parameters.Values.GetEnumerator();
 
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    /// <summary>
-    /// Dummy class to search <see cref="IParameterComponentLifeCycle"/> by <see cref="ParameterMetadata.ParameterName"/> in the <see cref="HashSet{T}"/>.
-    /// </summary>
-    private class DummyParameterComponentLifeCycle(string parameterName) : IParameterComponentLifeCycle
-    {
-        public bool HasHandler => false;
-
-        public ParameterMetadata Metadata { get; } = new(parameterName);
-
-        public bool HasParameterChanged(ParameterView parameters) => false;
-
-        public Task ParameterChangeHandleAsync() => Task.CompletedTask;
-
-        public void OnInitialized() => throw new NotImplementedException();
-
-        public void OnParametersSet() => throw new NotImplementedException();
-
-        public IReadOnlyParameterState<T> UnsafeGetState<T>() => throw new NotImplementedException();
-    }
 }

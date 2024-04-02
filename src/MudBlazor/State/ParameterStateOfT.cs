@@ -101,21 +101,6 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
         }
     }
 
-    public IReadOnlyParameterState<TParameter> UnsafeGetState<TParameter>()
-    {
-        var outerParameterType = typeof(TParameter);
-        var innerParameterType = typeof(T);
-        if (outerParameterType == innerParameterType)
-        {
-            var source = this;
-            //return (IReadOnlyParameterState<TParameter>)this; alternative
-
-            return Unsafe.As<ParameterState<T>, IReadOnlyParameterState<TParameter>>(ref source);
-        }
-
-        throw new InvalidCastException($"The {outerParameterType} type doesn't match with {innerParameterType} type of the [{Metadata.ParameterName}] parameter.");
-    }
-
     /// <inheritdoc />
     public Task ParameterChangeHandleAsync()
     {
@@ -171,6 +156,18 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
         metadata = ParameterMetadataRules.Morph(metadata);
 
         return new ParameterState<T>(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler, comparer);
+    }
+
+    IReadOnlyParameterState<TParameter> IParameterComponentLifeCycle.UnsafeGetState<TParameter>()
+    {
+        var outerParameterType = typeof(TParameter);
+        var innerParameterType = typeof(T);
+        if (outerParameterType == innerParameterType)
+        {
+            return Unsafe.As<ParameterState<TParameter>>(this);
+        }
+
+        throw new InvalidCastException($"The {outerParameterType} type doesn't match with {innerParameterType} type of the [{Metadata.ParameterName}] parameter.");
     }
 
     /// <inheritdoc />
