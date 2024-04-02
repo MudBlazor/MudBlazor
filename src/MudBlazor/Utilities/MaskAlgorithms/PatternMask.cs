@@ -257,8 +257,7 @@ public class PatternMask : BaseMask
     public override void UpdateFrom(IMask other)
     {
         base.UpdateFrom(other);
-        var o = other as PatternMask;
-        if (o == null)
+        if (other is not PatternMask o)
             return;
         Placeholder = o.Placeholder;
         CleanDelimiters = o.CleanDelimiters;
