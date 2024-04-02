@@ -91,7 +91,7 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < numHorizontalLines; i++)
             {
-                var y = VerticalStartSpace + i * verticalSpace;
+                var y = VerticalStartSpace + (i * verticalSpace);
                 var line = new SvgPath()
                 {
                     Index = i,
@@ -117,7 +117,7 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < numVerticalLines; i++)
             {
-                var x = HorizontalStartSpace + i * horizontalSpace;
+                var x = HorizontalStartSpace + (i * horizontalSpace);
                 var line = new SvgPath()
                 {
                     Index = i,
@@ -149,8 +149,8 @@ namespace MudBlazor.Charts
 
                 (double x, double y) GetXYForDataPoint(int index)
                 {
-                    var x = HorizontalStartSpace + index * horizontalSpace;
-                    var gridValue = (data[index] / gridYUnits - lowestHorizontalLine) * verticalSpace;
+                    var x = HorizontalStartSpace + (index * horizontalSpace);
+                    var gridValue = ((data[index] / gridYUnits) - lowestHorizontalLine) * verticalSpace;
                     var y = BoundHeight - VerticalStartSpace - gridValue;
                     return (x, y);
                 }
@@ -180,7 +180,7 @@ namespace MudBlazor.Charts
                         else
                             chartLine.Append(" L ");
 
-                        var x = HorizontalStartSpace + j * horizontalSpace;
+                        var x = HorizontalStartSpace + (j * horizontalSpace);
                         var y = interpolator.InterpolatedYs[j];
                         chartLine.Append(ToS(x));
                         chartLine.Append(' ');

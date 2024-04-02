@@ -345,7 +345,7 @@ namespace MudBlazor
             var g_x = 255 - (int)((255 - _baseColor.G) * x);
             var b_x = 255 - (int)((255 - _baseColor.B) * x);
 
-            var y = 1.0 - _selectorY / _maxY;
+            var y = 1.0 - (_selectorY / _maxY);
 
             var r = r_x * y;
             var g = g_x * y;
@@ -427,8 +427,8 @@ namespace MudBlazor
 
         private void SetSelectorBasedOnMouseEvents(MouseEventArgs e, bool offsetIsAbsolute)
         {
-            _selectorX = (offsetIsAbsolute == true ? e.OffsetX : (e.OffsetX - _selctorSize / 2.0) + _selectorX).EnsureRange(_maxX);
-            _selectorY = (offsetIsAbsolute == true ? e.OffsetY : (e.OffsetY - _selctorSize / 2.0) + _selectorY).EnsureRange(_maxY);
+            _selectorX = (offsetIsAbsolute == true ? e.OffsetX : (e.OffsetX - (_selctorSize / 2.0)) + _selectorX).EnsureRange(_maxX);
+            _selectorY = (offsetIsAbsolute == true ? e.OffsetY : (e.OffsetY - (_selctorSize / 2.0)) + _selectorY).EnsureRange(_maxY);
         }
 
         #endregion

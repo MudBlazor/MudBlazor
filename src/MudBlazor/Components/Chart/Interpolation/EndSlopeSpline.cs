@@ -36,7 +36,7 @@ namespace MudBlazor.Components.Chart
 
             m.a[0, 0] = 2.0 * h[0];
             m.a[0, 1] = h[0];
-            m.y[0] = 3 * ((a[1] - a[0]) / h[0] - Math.Tan(alpha * Math.PI / 180));
+            m.y[0] = 3 * (((a[1] - a[0]) / h[0]) - Math.Tan(alpha * Math.PI / 180));
 
             for (int i = 0; i < n - 2; i++)
             {
@@ -46,14 +46,14 @@ namespace MudBlazor.Components.Chart
                     m.a[i + 1, i + 2] = h[i + 1];
 
                 if ((h[i] != 0.0) && (h[i + 1] != 0.0))
-                    m.y[i + 1] = ((a[i + 2] - a[i + 1]) / h[i + 1] - (a[i + 1] - a[i]) / h[i]) * 3.0;
+                    m.y[i + 1] = (((a[i + 2] - a[i + 1]) / h[i + 1]) - ((a[i + 1] - a[i]) / h[i])) * 3.0;
                 else
                     m.y[i + 1] = 0.0;
             }
 
             m.a[n - 1, n - 2] = h[n - 2];
             m.a[n - 1, n - 1] = 2.0 * h[n - 2];
-            m.y[n - 1] = 3.0 * (Math.Tan(beta * Math.PI / 180) - (a[n - 1] - a[n - 2]) / h[n - 2]);
+            m.y[n - 1] = 3.0 * (Math.Tan(beta * Math.PI / 180) - ((a[n - 1] - a[n - 2]) / h[n - 2]));
 
             if (gauss.Eliminate() == false)
                 throw new InvalidOperationException();
@@ -69,7 +69,7 @@ namespace MudBlazor.Components.Chart
                 if (h[i] != 0.0)
                 {
                     d[i] = 1.0 / 3.0 / h[i] * (c[i + 1] - c[i]);
-                    b[i] = 1.0 / h[i] * (a[i + 1] - a[i]) - h[i] / 3.0 * (c[i + 1] + 2 * c[i]);
+                    b[i] = (1.0 / h[i] * (a[i + 1] - a[i])) - (h[i] / 3.0 * (c[i + 1] + (2 * c[i])));
                 }
             }
         }

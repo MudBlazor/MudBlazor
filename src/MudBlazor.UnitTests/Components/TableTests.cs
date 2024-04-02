@@ -1434,7 +1434,7 @@ namespace MudBlazor.UnitTests.Components
             validator.ControlCount.Should().Be(1);
             for (var i = 0; i < 10; ++i)
             {
-                trs[i % 3 + 1].Click();
+                trs[(i % 3) + 1].Click();
             }
             validator.ControlCount.Should().Be(1);
         }

@@ -73,7 +73,7 @@ namespace MudBlazor
                 return Table == null
                     ? "Table==null"
                     : InfoFormat
-                        .Replace("{first_item}", $"{(filteredItemsCount == 0 ? 0 : Table?.CurrentPage * Table.RowsPerPage + 1)}")
+                        .Replace("{first_item}", $"{(filteredItemsCount == 0 ? 0 : (Table?.CurrentPage * Table.RowsPerPage) + 1)}")
                         .Replace("{last_item}", $"{Math.Min((Table.CurrentPage + 1) * Table.RowsPerPage, filteredItemsCount)}")
                         .Replace("{all_items}", $"{filteredItemsCount}");
             }

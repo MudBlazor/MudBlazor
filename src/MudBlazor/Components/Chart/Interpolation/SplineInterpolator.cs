@@ -50,7 +50,7 @@ namespace MudBlazor.Components.Chart
                     double termB = b[i] * deltaX;
                     double termC = c[i] * deltaX * deltaX;
                     double termD = d[i] * deltaX * deltaX * deltaX;
-                    int interpolatedIndex = i * resolution + k;
+                    int interpolatedIndex = (i * resolution) + k;
                     InterpolatedXs[interpolatedIndex] = deltaX + GivenXs[i];
                     InterpolatedYs[interpolatedIndex] = termA + termB + termC + termD;
                 }
@@ -59,7 +59,7 @@ namespace MudBlazor.Components.Chart
             // After interpolation the last several values of the interpolated arrays
             // contain uninitialized data. This section identifies the values which are
             // populated with values and copies just the useful data into new arrays.
-            int pointsToKeep = resolution * (n - 1) + 1;
+            int pointsToKeep = (resolution * (n - 1)) + 1;
             double[] interpolatedXsCopy = new double[pointsToKeep];
             double[] interpolatedYsCopy = new double[pointsToKeep];
             Array.Copy(InterpolatedXs, 0, interpolatedXsCopy, 0, pointsToKeep - 1);

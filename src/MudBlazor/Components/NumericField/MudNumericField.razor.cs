@@ -205,12 +205,12 @@ namespace MudBlazor
         private T GetNextValue(double factor)
         {
             if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
-                return (T)(object)Convert.ToDecimal(FromDecimal(Value) + FromDecimal(Step) * (decimal)factor);
+                return (T)(object)Convert.ToDecimal(FromDecimal(Value) + (FromDecimal(Step) * (decimal)factor));
             if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
-                return (T)(object)Convert.ToInt64(FromInt64(Value) + FromInt64(Step) * factor);
+                return (T)(object)Convert.ToInt64(FromInt64(Value) + (FromInt64(Step) * factor));
             if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
-                return (T)(object)Convert.ToUInt64(FromUInt64(Value) + FromUInt64(Step) * factor);
-            return Num.To<T>(Num.From(Value) + Num.From(Step) * factor);
+                return (T)(object)Convert.ToUInt64(FromUInt64(Value) + (FromUInt64(Step) * factor));
+            return Num.To<T>(Num.From(Value) + (Num.From(Step) * factor));
         }
 
         /// <summary>

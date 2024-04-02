@@ -88,7 +88,7 @@ namespace MudBlazor
             // calculate fraction, which is a value between 0 and 1
             var fraction = (minValue - Min) / (Max - Min);
             // now project into the range of the SVG value (126 .. 0)
-            return (int)Math.Round(_magicNumber - _magicNumber * fraction);
+            return (int)Math.Round(_magicNumber - (_magicNumber * fraction));
         }
     }
 }

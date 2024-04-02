@@ -88,7 +88,7 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < numHorizontalLines; i++)
             {
-                var y = VerticalStartSpace + i * verticalSpace;
+                var y = VerticalStartSpace + (i * verticalSpace);
                 var line = new SvgPath()
                 {
                     Index = i,
@@ -114,7 +114,7 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < numVerticalLines; i++)
             {
-                var x = HorizontalStartSpace + i * horizontalSpace;
+                var x = HorizontalStartSpace + (i * horizontalSpace);
                 var line = new SvgPath()
                 {
                     Index = i,
@@ -144,9 +144,9 @@ namespace MudBlazor.Charts
 
                 for (var j = 0; j < data.Length; j++)
                 {
-                    var gridValueX = HorizontalStartSpace + i * 10 + j * horizontalSpace;
-                    var gridValueY = BoundHeight - VerticalStartSpace + lowestHorizontalLine * verticalSpace;
-                    var dataValue = (data[j] / gridYUnits - lowestHorizontalLine) * verticalSpace;
+                    var gridValueX = HorizontalStartSpace + (i * 10) + (j * horizontalSpace);
+                    var gridValueY = BoundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
+                    var dataValue = ((data[j] / gridYUnits) - lowestHorizontalLine) * verticalSpace;
                     var gridValue = BoundHeight - VerticalStartSpace - dataValue;
 
                     var bar = new SvgPath()

@@ -60,7 +60,7 @@ namespace MudBlazor.Components.Chart.Interpolation
                 }
 
                 if ((h[i] != 0.0) && (h[i + 1] != 0.0))
-                    m.y[i] = ((a[i + 2] - a[i + 1]) / h[i + 1] - (a[i + 1] - a[i]) / h[i]) * 3.0;
+                    m.y[i] = (((a[i + 2] - a[i + 1]) / h[i + 1]) - ((a[i + 1] - a[i]) / h[i])) * 3.0;
                 else
                     m.y[i] = 0.0;
             }
@@ -81,7 +81,7 @@ namespace MudBlazor.Components.Chart.Interpolation
                 if (h[i] != 0.0)
                 {
                     d[i] = 1.0 / 3.0 / h[i] * (c[i + 1] - c[i]);
-                    b[i] = 1.0 / h[i] * (a[i + 1] - a[i]) - h[i] / 3.0 * (c[i + 1] + 2 * c[i]);
+                    b[i] = (1.0 / h[i] * (a[i + 1] - a[i])) - (h[i] / 3.0 * (c[i + 1] + (2 * c[i])));
                 }
             }
         }
