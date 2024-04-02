@@ -102,7 +102,7 @@ namespace MudBlazor.Docs.Compiler
         {
             return SeeCrefRegularExpression().Replace(doc, match =>
             {
-                string result = match.Groups[2].Value;     // get the name of Type or type member (Field, Property, Method, or Event)
+                var result = match.Groups[2].Value;     // get the name of Type or type member (Field, Property, Method, or Event)
                 result = BacktickRegularExpression().Replace(result, "");  // remove `1 from generic type name
                 return result;
             });

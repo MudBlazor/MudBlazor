@@ -145,7 +145,7 @@ namespace MudBlazor
 
         private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
         {
-            TItem tmp = list[indexA];
+            var tmp = list[indexA];
             list[indexA] = list[indexB];
             list[indexB] = tmp;
         }

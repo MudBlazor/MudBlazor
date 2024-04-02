@@ -36,10 +36,10 @@ namespace MudBlazor.Charts
             var maxY = 0.0;
             var numXLabels = XAxisLabels.Length;
             var numValues = _series.Any() ? _series.Max(x => x.Data.Length) : 0;
-            double[] barTopValues = new double[numValues];
+            var barTopValues = new double[numValues];
             foreach (var item in _series)
             {
-                int dataNumber = 0;
+                var dataNumber = 0;
                 foreach (int i in item.Data)
                 {
                     barTopValues[dataNumber] += i;
@@ -118,18 +118,18 @@ namespace MudBlazor.Charts
             double[] barValuesOffset = null;
             foreach (var item in _series)
             {
-                double gridValueX = horizontalStartSpace + 24;
+                var gridValueX = horizontalStartSpace + 24;
 
                 if (barValuesOffset == null)
                 {
                     barValuesOffset = new double[item.Data.Length];
-                    for (int i = 0; i < item.Data.Length; i++)
+                    for (var i = 0; i < item.Data.Length; i++)
                     {
                         barValuesOffset[i] = boundHeight - verticalStartSpace;
                     }
                 }
 
-                int dataNumber = 0;
+                var dataNumber = 0;
                 foreach (var dataLine in item.Data)
                 {
                     var dataValue = dataLine * verticalSpace / gridYUnits;

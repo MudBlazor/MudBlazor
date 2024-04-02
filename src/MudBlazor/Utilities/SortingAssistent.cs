@@ -27,7 +27,7 @@ namespace MudBlazor.Utilities
 
             var item = dropInfo.Item;
 
-            int index = 0;
+            var index = 0;
             foreach (var _item in items.OrderBy(x => (int)property.GetValue(x)))
             {
                 if (_item.Equals(item))

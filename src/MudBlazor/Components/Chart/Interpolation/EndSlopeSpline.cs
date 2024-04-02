@@ -28,17 +28,17 @@ namespace MudBlazor.Components.Chart
 
         public void CalcParameters(double alpha, double beta)
         {
-            for (int i = 0; i < n; i++)
+            for (var i = 0; i < n; i++)
                 a[i] = GivenYs[i];
 
-            for (int i = 0; i < n - 1; i++)
+            for (var i = 0; i < n - 1; i++)
                 h[i] = GivenXs[i + 1] - GivenXs[i];
 
             m.a[0, 0] = 2.0 * h[0];
             m.a[0, 1] = h[0];
             m.y[0] = 3 * (((a[1] - a[0]) / h[0]) - Math.Tan(alpha * Math.PI / 180));
 
-            for (int i = 0; i < n - 2; i++)
+            for (var i = 0; i < n - 2; i++)
             {
                 m.a[i + 1, i] = h[i];
                 m.a[i + 1, i + 1] = 2.0 * (h[i] + h[i + 1]);
@@ -60,11 +60,11 @@ namespace MudBlazor.Components.Chart
 
             gauss.Solve();
 
-            for (int i = 0; i < n; i++)
+            for (var i = 0; i < n; i++)
             {
                 c[i] = m.x[i];
             }
-            for (int i = 0; i < n; i++)
+            for (var i = 0; i < n; i++)
             {
                 if (h[i] != 0.0)
                 {

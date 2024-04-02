@@ -57,7 +57,7 @@ namespace MudBlazor
                 index = 0;
             MudSelectItem<T> item = null;
             // the loop allows us to jump over disabled items until we reach the next non-disabled one
-            for (int i = 0; i < _items.Count; i++)
+            for (var i = 0; i < _items.Count; i++)
             {
                 index += direction;
                 if (index < 0)

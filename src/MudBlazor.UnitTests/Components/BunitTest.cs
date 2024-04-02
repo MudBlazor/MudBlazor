@@ -46,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         protected async Task ImproveChanceOfSuccess(Func<Task> testAction)
         {
-            for (int i = 0; i < 10; i++)
+            for (var i = 0; i < 10; i++)
             {
                 try
                 {

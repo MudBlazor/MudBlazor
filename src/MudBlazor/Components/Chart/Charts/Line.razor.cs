@@ -38,7 +38,7 @@ namespace MudBlazor.Charts
             if (MudChartParent != null)
                 _series = MudChartParent.ChartSeries;
 
-            ComputeUnitsAndNumberOfLines(out double gridXUnits, out double gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines);
+            ComputeUnitsAndNumberOfLines(out var gridXUnits, out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
 
             var horizontalSpace = (BoundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, numVerticalLines - 1);
             var verticalSpace = (BoundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
@@ -65,7 +65,7 @@ namespace MudBlazor.Charts
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
 
                 // this is a safeguard against millions of gridlines which might arise with very high values
-                int maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
+                var maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
                 while (numHorizontalLines > maxYTicks)
                 {
                     gridYUnits *= 2;
@@ -143,7 +143,7 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < _series.Count; i++)
             {
-                StringBuilder chartLine = new StringBuilder();
+                var chartLine = new StringBuilder();
 
                 var data = _series[i].Data;
 
@@ -155,11 +155,11 @@ namespace MudBlazor.Charts
                     return (x, y);
                 }
 
-                bool interpolationEnabled = MudChartParent != null && MudChartParent.ChartOptions.InterpolationOption != InterpolationOption.Straight;
+                var interpolationEnabled = MudChartParent != null && MudChartParent.ChartOptions.InterpolationOption != InterpolationOption.Straight;
                 if (interpolationEnabled)
                 {
-                    double[] XValues = new double[data.Length];
-                    double[] YValues = new double[data.Length];
+                    var XValues = new double[data.Length];
+                    var YValues = new double[data.Length];
                     for (var j = 0; j < data.Length; j++)
                         (XValues[j], YValues[j]) = GetXYForDataPoint(j);
 

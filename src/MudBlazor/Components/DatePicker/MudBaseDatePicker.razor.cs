@@ -236,7 +236,7 @@ namespace MudBlazor
             await base.OnPickerOpenedAsync();
             if (Editable && Text != null)
             {
-                DateTime? a = Converter.Get(Text);
+                var a = Converter.Get(Text);
                 if (a.HasValue)
                 {
                     a = new DateTime(a.Value.Year, a.Value.Month, 1);

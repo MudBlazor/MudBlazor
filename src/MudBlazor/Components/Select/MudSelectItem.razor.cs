@@ -33,7 +33,7 @@ namespace MudBlazor
                 _parent.CheckGenericTypeMatch(this);
                 if (MudSelect == null)
                     return;
-                bool isSelected = MudSelect.Add(this);
+                var isSelected = MudSelect.Add(this);
                 if (_parent.MultiSelection)
                 {
                     MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;

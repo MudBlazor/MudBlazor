@@ -2208,8 +2208,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task RowsPerPageParameterTwoWayBinding()
         {
-            int rowsPerPage = 5;
-            int newRowsPerPage = 25;
+            var rowsPerPage = 5;
+            var newRowsPerPage = 25;
             var comp = Context.RenderComponent<TableRowsPerPageTwoWayBindingTest>(parameters => parameters
                 .Add(p => p.RowsPerPage, rowsPerPage)
                 .Add(p => p.RowsPerPageChanged, (s) =>

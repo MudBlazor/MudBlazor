@@ -742,7 +742,7 @@ namespace MudBlazor
                 }
             }
 
-            MudTabPanel panelToStart = ActivePanel;
+            var panelToStart = ActivePanel;
             var length = GetPanelLength(panelToStart);
             if (length >= _toolbarContentSize)
             {
