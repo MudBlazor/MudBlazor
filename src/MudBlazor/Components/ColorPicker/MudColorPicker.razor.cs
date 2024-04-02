@@ -76,7 +76,7 @@ namespace MudBlazor
                 {
                     _disableAlpha = value;
 
-                    if (value == true)
+                    if (value)
                     {
                         Value = Value.SetAlpha(1.0);
                     }
@@ -427,8 +427,8 @@ namespace MudBlazor
 
         private void SetSelectorBasedOnMouseEvents(MouseEventArgs e, bool offsetIsAbsolute)
         {
-            _selectorX = (offsetIsAbsolute == true ? e.OffsetX : (e.OffsetX - (_selctorSize / 2.0)) + _selectorX).EnsureRange(_maxX);
-            _selectorY = (offsetIsAbsolute == true ? e.OffsetY : (e.OffsetY - (_selctorSize / 2.0)) + _selectorY).EnsureRange(_maxY);
+            _selectorX = (offsetIsAbsolute ? e.OffsetX : (e.OffsetX - (_selctorSize / 2.0)) + _selectorX).EnsureRange(_maxX);
+            _selectorY = (offsetIsAbsolute ? e.OffsetY : (e.OffsetY - (_selctorSize / 2.0)) + _selectorY).EnsureRange(_maxY);
         }
 
         #endregion
@@ -528,7 +528,7 @@ namespace MudBlazor
         #region helper
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
-        private string GetColorTextValue() => (DisableAlpha == true || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _value.ToString(MudColorOutputFormats.Hex) : _value.ToString(MudColorOutputFormats.HexA);
+        private string GetColorTextValue() => (DisableAlpha || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _value.ToString(MudColorOutputFormats.Hex) : _value.ToString(MudColorOutputFormats.HexA);
         private int GetHexColorInputMaxLength() => DisableAlpha ? 7 : 9;
 
         private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => CloseAsync());
@@ -547,7 +547,7 @@ namespace MudBlazor
         {
             await base.OnAfterRenderAsync(firstRender);
 
-            if (firstRender == true)
+            if (firstRender)
             {
                 if (PickerVariant == PickerVariant.Static)
                 {
@@ -555,7 +555,7 @@ namespace MudBlazor
                 }
             }
 
-            if (_attachedMouseEvent == true)
+            if (_attachedMouseEvent)
             {
                 _attachedMouseEvent = false;
                 await AddMouseOverEventAsync();
@@ -564,7 +564,7 @@ namespace MudBlazor
 
         private async Task AddMouseOverEventAsync()
         {
-            if (DisableDragEffect == true) { return; }
+            if (DisableDragEffect) { return; }
 
             if (_throttledEventManager == null)
             {

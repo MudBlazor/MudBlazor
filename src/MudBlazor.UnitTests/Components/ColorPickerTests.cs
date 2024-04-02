@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.Components
 
         private void CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool checkInstanceValue = true, bool isRtl = false)
         {
-            if (checkInstanceValue == true)
+            if (checkInstanceValue)
             {
                 comp.WaitForAssertion(() => comp.Instance.ColorValue.Should().Be(expectedColor));
             }

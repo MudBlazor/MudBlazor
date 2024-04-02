@@ -234,7 +234,7 @@ namespace MudBlazor
         protected override async Task OnPickerOpenedAsync()
         {
             await base.OnPickerOpenedAsync();
-            if (Editable == true && Text != null)
+            if (Editable && Text != null)
             {
                 DateTime? a = Converter.Get(Text);
                 if (a.HasValue)

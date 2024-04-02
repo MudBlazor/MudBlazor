@@ -352,7 +352,7 @@ namespace MudBlazor
 
         protected virtual async Task SetValueAsync(T value, bool updateText = true, bool force = false)
         {
-            if (!EqualityComparer<T>.Default.Equals(Value, value) || force == true)
+            if (!EqualityComparer<T>.Default.Equals(Value, value) || force)
             {
                 _isDirty = true;
                 _validated = false;

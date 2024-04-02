@@ -131,7 +131,7 @@ namespace MudBlazor.Services
 
         public async ValueTask DisposeAsync()
         {
-            if (_isDisposed == true) { return; }
+            if (_isDisposed) { return; }
 
             _isDisposed = true;
 

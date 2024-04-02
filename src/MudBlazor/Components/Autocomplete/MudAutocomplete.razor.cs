@@ -644,7 +644,7 @@ namespace MudBlazor
                     }
                     break;
                 case "ArrowUp":
-                    if (args.AltKey == true)
+                    if (args.AltKey)
                     {
                         await ChangeMenu(open: false);
                     }
@@ -671,7 +671,7 @@ namespace MudBlazor
                         await ToggleMenu();
                     break;
                 case "Backspace":
-                    if (args.CtrlKey == true && args.ShiftKey == true)
+                    if (args.CtrlKey && args.ShiftKey)
                     {
                         await ResetAsync();
                     }

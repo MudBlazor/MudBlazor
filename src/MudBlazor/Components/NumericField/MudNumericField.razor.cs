@@ -432,7 +432,7 @@ namespace MudBlazor
         {
             base.Dispose(disposing);
 
-            if (disposing == true)
+            if (disposing)
             {
                 _keyInterceptor?.Dispose();
             }

@@ -707,7 +707,7 @@ namespace MudBlazor
         {
             _isOpen = false;
             UpdateIcon();
-            if (focusAgain == true)
+            if (focusAgain)
             {
                 StateHasChanged();
                 await OnBlur.InvokeAsync(new FocusEventArgs());
@@ -877,7 +877,7 @@ namespace MudBlazor
                     await CloseMenu(false);
                     break;
                 case "ArrowUp":
-                    if (obj.AltKey == true)
+                    if (obj.AltKey)
                     {
                         await CloseMenu();
                         break;
@@ -893,7 +893,7 @@ namespace MudBlazor
                         break;
                     }
                 case "ArrowDown":
-                    if (obj.AltKey == true)
+                    if (obj.AltKey)
                     {
                         await OpenMenu();
                         break;
@@ -950,7 +950,7 @@ namespace MudBlazor
                     }
                 case "a":
                 case "A":
-                    if (obj.CtrlKey == true)
+                    if (obj.CtrlKey)
                     {
                         if (MultiSelection)
                         {
@@ -997,7 +997,7 @@ namespace MudBlazor
             else
                 _selectAllChecked = true;
             // Define the items selection
-            if (_selectAllChecked.Value == true)
+            if (_selectAllChecked.Value)
                 await SelectAllItems();
             else
                 await Clear();
@@ -1060,7 +1060,7 @@ namespace MudBlazor
         {
             base.Dispose(disposing);
 
-            if (disposing == true)
+            if (disposing)
             {
                 if (_keyInterceptor != null)
                 {

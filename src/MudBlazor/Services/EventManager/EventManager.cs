@@ -152,7 +152,7 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
-            if (_disposed == true) { return; }
+            if (_disposed) { return; }
 
             foreach (var item in _callbackResolver)
             {

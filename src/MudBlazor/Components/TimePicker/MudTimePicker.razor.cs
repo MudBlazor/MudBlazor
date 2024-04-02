@@ -585,11 +585,11 @@ namespace MudBlazor
                 case "ArrowRight":
                     if (IsOpen)
                     {
-                        if (obj.CtrlKey == true)
+                        if (obj.CtrlKey)
                         {
                             await ChangeHourAsync(1);
                         }
-                        else if (obj.ShiftKey == true)
+                        else if (obj.ShiftKey)
                         {
                             if (_timeSet.Minute > 55)
                             {
@@ -610,11 +610,11 @@ namespace MudBlazor
                 case "ArrowLeft":
                     if (IsOpen)
                     {
-                        if (obj.CtrlKey == true)
+                        if (obj.CtrlKey)
                         {
                             await ChangeHourAsync(-1);
                         }
-                        else if (obj.ShiftKey == true)
+                        else if (obj.ShiftKey)
                         {
                             if (_timeSet.Minute < 5)
                             {
@@ -637,11 +637,11 @@ namespace MudBlazor
                     {
                         IsOpen = true;
                     }
-                    else if (obj.AltKey == true)
+                    else if (obj.AltKey)
                     {
                         IsOpen = false;
                     }
-                    else if (obj.ShiftKey == true)
+                    else if (obj.ShiftKey)
                     {
                         await ChangeHourAsync(5);
                     }
@@ -655,7 +655,7 @@ namespace MudBlazor
                     {
                         IsOpen = true;
                     }
-                    else if (obj.ShiftKey == true)
+                    else if (obj.ShiftKey)
                     {
                         await ChangeHourAsync(-5);
                     }

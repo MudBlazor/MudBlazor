@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests.Mocks
                     size = PanelTotalSize;
                 }
                 var rect = new BoundingClientRect { Width = size };
-                if (IsVertical == true)
+                if (IsVertical)
                 {
                     rect = new BoundingClientRect { Height = size };
                 }

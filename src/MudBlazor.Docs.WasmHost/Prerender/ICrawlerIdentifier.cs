@@ -49,11 +49,11 @@ namespace MudBlazor.Docs.WasmHost.Prerender
             if (userAgentHeader.Any() == false) { return Task.FromResult(false); }
 
             var value = userAgentHeader.First();
-            if (_cache.ContainsKey(value) == true) { return Task.FromResult(_cache[value]); }
+            if (_cache.ContainsKey(value)) { return Task.FromResult(_cache[value]); }
 
             foreach (var item in _patterns)
             {
-                if (item.IsMatch(value) == true)
+                if (item.IsMatch(value))
                 {
                     _cache.TryAdd(value, true);
                     return Task.FromResult(true);
