@@ -1,0 +1,67 @@
+﻿
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudTextField</MudText>
+<MudTextField T="string" />
+<MudTextField T="string" Label="With Label" />
+<MudTextField T="string" HelperText="With Label" />
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudDatePicker</MudText>
+<MudDatePicker />
+<MudDatePicker Label="With Label" />
+<MudDatePicker HelperText="With Helper" />
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudTimePicker</MudText>
+<MudTimePicker />
+<MudTimePicker Label="With Label" />
+<MudTimePicker HelperText="With Helper" />
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudNumericField</MudText>
+<MudNumericField T="int" />
+<MudNumericField T="int" Label="With Label" />
+<MudNumericField T="int" HelperText="With Helper" />
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudSelect</MudText>
+<MudSelect T="string"></MudSelect>
+<MudSelect T="string" Label="With Label"></MudSelect>
+<MudSelect T="string" HelperText="With Helper" />
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudColorPicker</MudText>
+<MudColorPicker />
+<MudColorPicker Label="With Label" />
+<MudColorPicker HelperText="With Helper" />
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudCheckBox</MudText>
+<MudCheckBox T="bool" />
+<MudCheckBox T="bool" Label="With Label" />
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudRadio</MudText>
+<MudRadioGroup T="string" Class="some-main-class" InputClass="some-input-class">
+    <MudRadio Value="@("1")" Placement="Placement.Left" />
+    <MudRadio Value="@("2")" Placement="Placement.Top" />
+    <MudRadio Value="@("3")" />
+</MudRadioGroup>
+<MudRadioGroup T="string" Class="some-main-class" InputClass="some-input-class">
+    <MudRadio Value="@("1")" Placement="Placement.Left">With Content</MudRadio>
+    <MudRadio Value="@("2")" Placement="Placement.Top">With Content</MudRadio>
+    <MudRadio Value="@("3")">With Content</MudRadio>
+</MudRadioGroup>
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">MudSwitch</MudText>
+<MudSwitch T="bool" />
+<MudSwitch T="bool" Label="With Label" />
+
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">Using a MudStack to align items that have no label</MudText>
+<MudStack Row AlignItems="AlignItems.Center">
+    <MudTextField T="string" />
+    <MudDatePicker />
+    <MudNumericField T="int" />
+    <MudSelect T="string"></MudSelect>
+    <MudColorPicker />
+    <MudCheckBox T="bool" />
+    <MudRadio Value="@("1")" Placement="Placement.Left" />
+    <MudSwitch T="bool" />
+    <MudButton Variant="Variant.Filled">Text</MudButton>
+</MudStack>
+
+@code {
+    public static string __description__ = "Test used to validate any inputs leyout in a single place.";
+}
