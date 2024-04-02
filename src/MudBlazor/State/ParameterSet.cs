@@ -77,7 +77,7 @@ internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
             .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
             .ToFrozenSet(ParameterHandlerUniquenessComparer.Default);
 #else
-        var parametersHandlerShouldFire = _parameters
+        var parametersHandlerShouldFire = _parameters.Values
             .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
             .ToHashSet(ParameterHandlerUniquenessComparer.Default);
 #endif
