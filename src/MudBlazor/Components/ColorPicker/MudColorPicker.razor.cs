@@ -332,9 +332,9 @@ namespace MudBlazor
 
             var valueInDeg = (int)_value.H - (index * 60);
             var value = (int)(MathExtensions.Map(0, 60, 0, 255, valueInDeg));
-            var section = _rgbToHueMapper[index];
+            var (r, g, b, dominantColorPart) = _rgbToHueMapper[index];
 
-            _baseColor = new(section.r(value), section.g(value), section.b(value), 255);
+            _baseColor = new(r(value), g(value), b(value), 255);
         }
 
         private void UpdateColorBaseOnSelection()
@@ -366,9 +366,9 @@ namespace MudBlazor
                 index = 5;
             }
 
-            var section = _rgbToHueMapper[index];
+            var (r, g, b, dominantColorPart) = _rgbToHueMapper[index];
 
-            var colorValues = section.dominantColorPart switch
+            var colorValues = dominantColorPart switch
             {
                 "rb" => (_value.R, _value.B),
                 "rg" => (_value.R, _value.G),

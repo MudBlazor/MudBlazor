@@ -83,17 +83,17 @@ namespace MudBlazor
         {
             if (_callbackResolver.ContainsKey(key) == false) { return; }
 
-            var element = _callbackResolver[key];
+            var (eventType, callback) = _callbackResolver[key];
 
-            var @event = JsonSerializer.Deserialize(eventData, element.eventType, new WebEventJsonContext(new JsonSerializerOptions
+            var @event = JsonSerializer.Deserialize(eventData, eventType, new WebEventJsonContext(new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNameCaseInsensitive = true,
             }));
 
-            if (element.callback != null)
+            if (callback != null)
             {
-                await element.callback.Invoke(@event);
+                await callback.Invoke(@event);
             }
         }
 
