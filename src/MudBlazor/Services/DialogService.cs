@@ -224,7 +224,7 @@ namespace MudBlazor
                 [nameof(MessageBoxOptions.NoText)] = messageBoxOptions.NoText,
                 [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText,
             };
-            var reference = await ShowAsync<MudMessageBox>(parameters: parameters, options: options, title: messageBoxOptions.Title);
+            var reference = await ShowAsync<MudMessageBox>(title: messageBoxOptions.Title, parameters: parameters, options: options);
             var result = await reference.Result;
             if (result.Canceled || result.Data is not bool data)
                 return null;
