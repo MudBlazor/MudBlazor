@@ -72,7 +72,7 @@ else
     [Parameter] public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
     [Parameter] public bool AutoClose { get; set; } = false;
 
-    public async Task Open() => await InvokeAsync(() => _picker.Open());
-    public async Task Close() => await InvokeAsync(() => _picker.Close());
+    public async Task Open() => await InvokeAsync(() => _picker.OpenAsync());
+    public async Task Close() => await InvokeAsync(() => _picker.CloseAsync());
     public new void StateHasChanged() => base.StateHasChanged();
 }

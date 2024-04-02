@@ -129,11 +129,6 @@ namespace MudBlazor
         private TimeSpan? _timePicked { get; set; }
         private DateTime? _pickerMonth { get; set; }
 
-        private int _dateInstanceSelectionCount = 0;
-        private int _timeInstanceSelectionCount = 0;
-        private bool _dateInstanceSelectionReady => _dateInstanceSelectionCount >= 1; 
-        private bool _timeInstanceSelectionReady => _timeInstanceSelectionCount >= 2;
-
         private MudDatePicker _datePickerRef { get; set; }
         private MudTimePicker _timePickerRef { get; set; }
 
@@ -182,18 +177,12 @@ namespace MudBlazor
             Converter.OnError?.Invoke(ParsingErrorMessage);
         }
 
-        protected override void OnPickerOpened()
-        {
-            _dateInstanceSelectionCount = _timeInstanceSelectionCount = 0;
-            base.OnPickerOpened();
-        }
-
-        protected override Task StringValueChanged(string value)
+        protected override Task StringValueChangedAsync(string value)
         {
             Touched = true;
             if (string.IsNullOrEmpty(value))
             {
-                Clear(false);
+                ClearAsync(false).AndForget();
             }
             else
             {
@@ -203,7 +192,7 @@ namespace MudBlazor
                     SetDateTime(dateTime, false);
                 }
             }
-            return base.StringValueChanged(value);
+            return base.StringValueChangedAsync(value);
         }
 
         protected void SetDateTimeFormat(string format)
@@ -264,7 +253,6 @@ namespace MudBlazor
         protected void DateSelected(DateTime? date)
         {
             _datePicked = date;
-            _dateInstanceSelectionCount = 1;
             SubmitAndClose();
         }
 
@@ -273,21 +261,6 @@ namespace MudBlazor
         /// </summary>
         protected void TimeSelected(TimeSpan? time)
         {
-            if (time is not null && _timePicked is null)
-            {
-                _timeInstanceSelectionCount = 1;
-            }
-            else
-            {
-                if (time?.Hours != _timePicked?.Hours)
-                {
-                    _timeInstanceSelectionCount = 1;
-                }
-                else if (time?.Minutes != _timePicked?.Minutes)
-                {
-                    _timeInstanceSelectionCount = 2;
-                }
-            }
             _timePicked = time;
             SubmitAndClose();
         }
@@ -338,21 +311,21 @@ namespace MudBlazor
         private void SubmitAndClose()
         {
             // Only autoclose if both date and time where clicked after this instance of the dialog was opened
-            if (AutoClose && PickerVariant is not PickerVariant.Static && _dateInstanceSelectionReady && _timeInstanceSelectionReady)
+            if (AutoClose && PickerVariant is not PickerVariant.Static)
             {
-                Close(_datePicked is not null && _timePicked is not null);
+                CloseAsync(_datePicked is not null && _timePicked is not null).AndForget();
             }
         }
 
-        protected internal override void Submit()
+        protected internal override async Task SubmitAsync()
         {
-            base.Submit();
+            await base.SubmitAsync();
             SetDateTimeAsync(GetDateTime(), true).AndForget();
         }
 
-        protected override void OnClosed()
+        protected override async Task OnClosedAsync()
         {
-            base.OnClosed();
+            await base.OnClosedAsync();
             _datePicked = _value?.Date;
             _timePicked = _value?.TimeOfDay;
             StateHasChanged();
@@ -361,10 +334,10 @@ namespace MudBlazor
         /// <summary>
         /// Clears the date and time selection
         /// </summary>
-        public override void Clear(bool close = true)
+        public override async Task ClearAsync(bool close = true)
         {
             SetDateTimeAsync(null, close).AndForget();
-            base.Clear(close);
+            await base.ClearAsync(close);
         }
     }
 }
