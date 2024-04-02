@@ -13,8 +13,13 @@ namespace MudBlazor.State;
 /// Instead, use the "MudComponentBase.RegisterParameter" method from within the component's constructor.
 /// </remarks>
 /// <typeparam name="T">The type of the component's property value.</typeparam>
-internal interface IParameterState<T> : IReadOnlyParameterState<T>
+internal interface IParameterState<T>
 {
+    /// <summary>
+    /// Gets the current value.
+    /// </summary>
+    T? Value { get; }
+
     /// <summary>
     /// Set the parameter's value. 
     /// </summary>
