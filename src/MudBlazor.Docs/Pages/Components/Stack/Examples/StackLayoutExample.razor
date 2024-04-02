@@ -2,7 +2,7 @@
 
 <MudStack AlignItems="AlignItems.Center">
 
-    <MudStack Spacing="0" StretchChildren="StretchChildren.MiddleChildren" Class="stack-main mud-elevation-25 stack-adorner">
+    <MudStack Spacing="0" StretchItems="Stretch.Middle" Class="stack-main mud-elevation-25 stack-adorner">
 
         @* Title Bar *@
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mud-paper mud-paper-square stack-adorner">
@@ -12,7 +12,7 @@
         </MudStack>
 
         @* Middle Section *@
-        <MudStack Row StretchChildren="StretchChildren.LastChild" AlignItems="AlignItems.Stretch" Spacing="0" Style="height: 0px;" Class="stack-adorner">
+        <MudStack Row StretchItems="Stretch.End" AlignItems="AlignItems.Stretch" Spacing="0" Style="height: 0px;" Class="stack-adorner">
             @* Side Menu *@
             <MudStack Justify="Justify.SpaceBetween" Spacing="0" Class="mud-theme-dark stack-adorner">
                 <MudStack Spacing="0" Class="stack-adorner">
@@ -47,8 +47,8 @@
     </MudStack>
 
     <MudStack Row>
-        <MudSwitch @bind-Checked="showAdorners" Color="Color.Primary">Inspect MudStacks</MudSwitch>
-        <MudSwitch @bind-Checked="hideContent" Color="Color.Primary">Hide content</MudSwitch>
+        <MudSwitch @bind-Value="showAdorners" Color="Color.Primary">Inspect MudStacks</MudSwitch>
+        <MudSwitch @bind-Value="hideContent" Color="Color.Primary">Hide content</MudSwitch>
     </MudStack>
 
 </MudStack>

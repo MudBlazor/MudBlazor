@@ -9,7 +9,7 @@ namespace MudBlazor;
 /// <summary>
 /// Specifies how children of a flex container are stretched along the main axis.
 /// </summary>
-public enum StretchChildren
+public enum Stretch
 {
     /// <summary>
     /// No stretching is applied to children.
@@ -20,24 +20,30 @@ public enum StretchChildren
     /// <summary>
     /// The first child is stretched.
     /// </summary>
-    [Description("first-child")]
-    FirstChild,
+    [Description("start")]
+    Start,
 
     /// <summary>
     /// The last child is stretched.
     /// </summary>
-    [Description("last-child")]
-    LastChild,
+    [Description("end")]
+    End,
+
+    /// <summary>
+    /// The first and last children are stretched.
+    /// </summary>
+    [Description("start-and-end")]
+    StartAndEnd,
 
     /// <summary>
     /// All children except for the first and last are stretched.
     /// </summary>
-    [Description("middle-children")]
-    MiddleChildren,
+    [Description("middle")]
+    Middle,
 
     /// <summary>
     /// All children are stretched.
     /// </summary>
-    [Description("all-children")]
-    AllChildren,
+    [Description("all")]
+    All,
 }

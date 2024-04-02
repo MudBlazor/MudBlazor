@@ -26,7 +26,7 @@ namespace MudBlazor.UnitTests.Components
             stack.Spacing.Should().Be(3);
             stack.Justify.Should().BeNull();
             stack.AlignItems.Should().BeNull();
-            stack.StretchChildren.Should().BeNull();
+            stack.StretchItems.Should().BeNull();
         }
 
         [Test]
@@ -113,25 +113,26 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        [TestCase(StretchChildren.FirstChild, "first-child")]
-        [TestCase(StretchChildren.LastChild, "last-child")]
-        [TestCase(StretchChildren.MiddleChildren, "middle-children")]
-        [TestCase(StretchChildren.AllChildren, "all-children")]
-        public void CheckStretchChildrenClass(StretchChildren stretch, string expectedClass)
+        [TestCase(Stretch.Start, "start")]
+        [TestCase(Stretch.End, "end")]
+        [TestCase(Stretch.StartAndEnd, "start-and-end")]
+        [TestCase(Stretch.Middle, "middle")]
+        [TestCase(Stretch.All, "all")]
+        public void CheckStretchItemsClass(Stretch stretch, string expectedClass)
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.StretchChildren, stretch));
+            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.StretchItems, stretch));
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().Contain(["d-flex", $"flex-grow-{expectedClass}"]);
         }
 
         [Test]
-        public void CheckStretchChildrenNoneClass()
+        public void CheckStretchItemsNoneClass()
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.StretchChildren, StretchChildren.None));
+            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.StretchItems, Stretch.None));
 
             var stackClass = stack.Find(".d-flex");
-            stackClass.ClassList.Should().NotContain(["flex-grow-first-child", "flex-grow-last-child", "flex-grow-all-children"]);
+            stackClass.ClassList.Should().NotContain(["flex-grow-start", "flex-grow-end", "flex-grow-start-and-end", "flex-grow-all"]);
         }
 
         [Test]

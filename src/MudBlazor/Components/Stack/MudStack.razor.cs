@@ -17,7 +17,7 @@ public partial class MudStack : MudComponentBase
             .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems is not null)
             .AddClass($"flex-{Wrap?.ToDescriptionString()}", Wrap is not null)
             .AddClass($"gap-{Spacing}")
-            .AddClass($"flex-grow-{StretchChildren?.ToDescriptionString()}", StretchChildren is not null and not MudBlazor.StretchChildren.None)
+            .AddClass($"flex-grow-{StretchItems?.ToDescriptionString()}", StretchItems is not null and not Stretch.None)
             .AddClass(Class)
             .Build();
 
@@ -43,34 +43,32 @@ public partial class MudStack : MudComponentBase
     public int Spacing { get; set; } = 3;
 
     /// <summary>
-    /// Defines the spacing between its items.
+    /// Defines the distribution of children along the main axis within a <see cref="MudStack"/> component.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
     public Justify? Justify { get; set; }
 
     /// <summary>
-    /// Defines the spacing between its items.
+    /// Defines the alignment of children along the cross axis within a <see cref="MudStack"/> component.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
     public AlignItems? AlignItems { get; set; }
 
     /// <summary>
-    /// Defines the stretching behaviour of children within a <see cref="MudStack"/>,
-    /// based on the selected <see cref="MudBlazor.StretchChildren"/> value.
+    /// Defines the stretching behaviour of children along the main axis within a <see cref="MudStack"/> component.
     /// </summary>
     /// <remarks>
     /// Note: This property affects children of the <see cref="MudStack"/> component.
-    /// -----
-    /// If there is only one child, <see cref="StretchChildren.FirstChild"/> and
-    /// <see cref="StretchChildren.LastChild"/> will have the same effect, and the child will be stretched.
-    /// <see cref="StretchChildren.MiddleChildren"/> stretches all children except the first and last child.
-    /// If there are two or fewer elements, <see cref="StretchChildren.MiddleChildren"/> will have no effect.
+    /// If there is only one child, <see cref="Stretch.Start"/> and <see cref="Stretch.End"/>
+    /// will have the same effect, and the child will be stretched.
+    /// <see cref="Stretch.Middle"/> stretches all children except the first and last child.
+    /// If there are two or fewer elements, <see cref="Stretch.Middle"/> will have no effect.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
-    public StretchChildren? StretchChildren { get; set; }
+    public Stretch? StretchItems { get; set; }
 
     /// <summary>
     /// Defines the flexbox wrapping behavior of its items.
