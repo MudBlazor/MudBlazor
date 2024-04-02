@@ -58,6 +58,4 @@ internal interface IParameterComponentLifeCycle
     /// Direct invocation of this method by external code is discouraged.
     /// </remarks>
     void OnParametersSet();
-
-    IReadOnlyParameterState<T> UnsafeGetState<T>();
 }

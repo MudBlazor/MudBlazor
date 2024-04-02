@@ -158,18 +158,6 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
         return new ParameterState<T>(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler, comparer);
     }
 
-    IReadOnlyParameterState<TParameter> IParameterComponentLifeCycle.UnsafeGetState<TParameter>()
-    {
-        var outerParameterType = typeof(TParameter);
-        var innerParameterType = typeof(T);
-        if (outerParameterType == innerParameterType)
-        {
-            return Unsafe.As<ParameterState<TParameter>>(this);
-        }
-
-        throw new InvalidCastException($"The {outerParameterType} type doesn't match with {innerParameterType} type of the [{Metadata.ParameterName}] parameter.");
-    }
-
     /// <inheritdoc />
     public bool Equals(ParameterState<T>? other)
     {

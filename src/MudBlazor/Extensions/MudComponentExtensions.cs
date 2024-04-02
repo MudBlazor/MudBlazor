@@ -22,7 +22,7 @@ internal static class MudComponentExtensions
     /// <returns>The read-only parameter state of the specified property.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="propertyExpression"/> is null.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="propertyExpression"/> does not represent a property.</exception>
-    public static IReadOnlyParameterState<T> GetSate<TComponent, T>(this TComponent component, Expression<Func<TComponent, T>> propertyExpression) where TComponent : MudComponentBase
+    public static T? GetSate<TComponent, T>(this TComponent component, Expression<Func<TComponent, T>> propertyExpression) where TComponent : MudComponentBase
     {
         var propertyName = GetPropertyName(propertyExpression);
 
@@ -38,16 +38,17 @@ internal static class MudComponentExtensions
     /// <param name="propertyName">The name of the property whose parameter state needs to be accessed.</param>
     /// <returns>The read-only parameter state of the specified property.</returns>
     /// <exception cref="KeyNotFoundException">Thrown when the parameter state with <paramref name="propertyName"/> is not found.</exception>
-    public static IReadOnlyParameterState<T> GetSate<TComponent, T>(this TComponent component, string propertyName) where TComponent : MudComponentBase
+    public static T? GetSate<TComponent, T>(this TComponent component, string propertyName) where TComponent : MudComponentBase
     {
         if (component.Parameters.TryGetValue(propertyName, out var lifeCycle))
         {
-            var parameterState = lifeCycle.UnsafeGetState<T>();
-
-            return parameterState;
+            if (lifeCycle is ParameterState<T> parameterState)
+            {
+                return parameterState.Value;
+            }
         }
 
-        throw new KeyNotFoundException($"ParameterState with {propertyName} was not found!");
+        throw new KeyNotFoundException($"ParameterState<{typeof(T).Name}> with {propertyName} was not found!");
     }
 
     private static string GetPropertyName<TComponent, T>(Expression<Func<TComponent, T>> propertyExpression) where TComponent : MudComponentBase
