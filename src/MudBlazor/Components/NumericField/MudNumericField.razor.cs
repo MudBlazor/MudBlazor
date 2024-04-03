@@ -393,11 +393,12 @@ namespace MudBlazor
         public override InputMode InputMode { get; set; } = InputMode.numeric;
 
         /// <summary>
+        /// <para>
         /// The pattern attribute, when specified, is a regular expression which the input's value must match in order for the value to pass constraint validation. It must be a valid JavaScript regular expression
         /// Defaults to [0-9,.\-]
         /// To get a numerical keyboard on safari, use the pattern. The default pattern should achieve numerical keyboard.
-        ///
-        /// Note: this pattern is also used to prevent all input except numbers and allowed characters. So for instance to allow only numbers, no signs and no commas you might change it to to [0-9.]
+        /// </para>
+        /// <para>Note: this pattern is also used to prevent all input except numbers and allowed characters. So for instance to allow only numbers, no signs and no commas you might change it to [0-9.]</para>
         /// </summary>
         [Parameter]
         public override string Pattern { get; set; } = @"[0-9,.\-]";

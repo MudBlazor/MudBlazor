@@ -160,11 +160,14 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// <para>
         /// This manages the state of having been "touched" by the user. A form control always starts out untouched
         /// but becomes touched when the user performed input or the blur event was raised.
-        ///
+        /// </para>
+        /// <para>
         /// The touched state is only relevant for inputs that have no value (i.e. empty text fields). Being untouched will
         /// suppress RequiredError
+        /// </para>
         /// </summary>
         public bool Touched { get; protected set; }
 
