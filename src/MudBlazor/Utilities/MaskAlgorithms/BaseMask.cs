@@ -161,7 +161,7 @@ public abstract class BaseMask : IMask
         }
         if (other.MaskChars != null)
         {
-            var maskChars = new HashSet<MaskChar>(_maskChars ?? new MaskChar[0]);
+            var maskChars = new HashSet<MaskChar>(_maskChars ?? System.Array.Empty<MaskChar>());
             if (other.MaskChars.Length != MaskChars.Length || other.MaskChars.Any(x => !maskChars.Contains(x)))
             {
                 _maskChars = other.MaskChars;
