@@ -3672,6 +3672,7 @@ namespace MudBlazor.UnitTests.Components
             selectAllCheckboxes[1].Instance.Value.Should().BeFalse();
         }
 
+        [Test]
         public async Task DataGridGroupingTestBoundAndUnboundScenarios()
         {
             var comp = Context.RenderComponent<DataGridColumnGroupingTest>();
