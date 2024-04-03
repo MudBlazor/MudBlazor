@@ -327,7 +327,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var items = _panels.ConvertAll(x => x.PanelRef);
+                var items = _panels.Select(x => x.PanelRef).ToList();
                 items.Add(_tabsContentSize);
 
                 if (_activePanelIndex != -1 && _panels.Count > 0)
@@ -423,7 +423,7 @@ namespace MudBlazor
 
         public void ActivatePanel(object id, bool ignoreDisabledState = false)
         {
-            var panel = _panels.FirstOrDefault((p) => Equals(p.ID, id));
+            var panel = _panels.Find((p) => Equals(p.ID, id));
             if (panel != null)
                 ActivatePanel(panel, null, ignoreDisabledState);
         }
