@@ -19,7 +19,7 @@
                 {
                     @foreach (var codefile in Codes)
                     {
-                        <MudButton Class="@GetActiveCode(codefile.code)" OnClick="@(() => SetActiveCode(codefile.code))" Size="Size.Small">@codefile.title</MudButton>
+                        <MudButton Class="@GetActiveCode(codefile.Code)" OnClick="@(() => SetActiveCode(codefile.Code))" Size="Size.Small">@codefile.Title</MudButton>
                     }
                 }
                 <MudSpacer/>

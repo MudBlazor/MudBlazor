@@ -70,7 +70,7 @@ public partial class SectionContent
         if (Codes != null)
         {
             _hasCode = true;
-            _activeCode = Codes.FirstOrDefault()?.code;
+            _activeCode = Codes.FirstOrDefault()?.Code;
         }
         else if (!string.IsNullOrWhiteSpace(Code))
         {
@@ -151,7 +151,7 @@ public partial class SectionContent
 
         if (Codes != null)
         {
-            firstFile = Codes.FirstOrDefault().code;
+            firstFile = Codes.FirstOrDefault().Code;
         }
         else
         {
