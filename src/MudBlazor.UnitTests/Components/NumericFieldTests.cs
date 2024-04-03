@@ -557,32 +557,30 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<NumericFieldCultureTest>();
             //german
-            comp.FindAll("input")[
-            //german
-            comp.FindAll("input").Count - 1].Change("abcd");
-            comp.FindAll("input")[comp.FindAll("input").Count - 1].Blur();
+            comp.FindAll("input").Last().Change("abcd");
+            comp.FindAll("input").Last().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be(null));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(null));
             // English
-            comp.FindAll("input")[0].Input("abcd");
-            comp.FindAll("input")[0].Blur();
+            comp.FindAll("input").First().Input("abcd");
+            comp.FindAll("input").First().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be(null));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(null));
             // English
-            comp.FindAll("input")[0].Input("-12-34abc.56");
-            comp.FindAll("input")[0].Blur();
+            comp.FindAll("input").First().Input("-12-34abc.56");
+            comp.FindAll("input").First().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be(null));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(null));
-            comp.FindAll("input")[0].Input("-1234.56");
-            comp.FindAll("input")[0].Blur();
+            comp.FindAll("input").First().Input("-1234.56");
+            comp.FindAll("input").First().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("-1,234.56"));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(-1234.56));
-            comp.FindAll("input")[comp.FindAll("input").Count - 1].Change("x+17,9y9z");
-            comp.FindAll("input")[comp.FindAll("input").Count - 1].Blur();
+            comp.FindAll("input").Last().Change("x+17,9y9z");
+            comp.FindAll("input").Last().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be(null));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(null));
-            comp.FindAll("input")[comp.FindAll("input").Count - 1].Change("17,99");
-            comp.FindAll("input")[comp.FindAll("input").Count - 1].Blur();
+            comp.FindAll("input").Last().Change("17,99");
+            comp.FindAll("input").Last().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("17,99"));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(17.99));
         }
@@ -592,23 +590,21 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<NumericFieldCultureTest>();
             // english
-            comp.FindAll("input")[0].Input("1,234.56");
-            comp.FindAll("input")[0].Blur();
+            comp.FindAll("input").First().Input("1,234.56");
+            comp.FindAll("input").First().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("1,234.56"));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(1234.56));
-            comp.FindAll("input")[0].Input("1234.56");
-            comp.FindAll("input")[0].Blur();
+            comp.FindAll("input").First().Input("1234.56");
+            comp.FindAll("input").First().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("1,234.56"));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(1234.56));
             // german
-            comp.FindAll("input")[
-            // german
-            comp.FindAll("input").Count - 1].Change("7.000,99");
-            comp.FindAll("input")[comp.FindAll("input").Count - 1].Blur();
+            comp.FindAll("input").Last().Change("7.000,99");
+            comp.FindAll("input").Last().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("7.000,99"));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(7000.99));
-            comp.FindAll("input")[comp.FindAll("input").Count - 1].Change("7000,99");
-            comp.FindAll("input")[comp.FindAll("input").Count - 1].Blur();
+            comp.FindAll("input").Last().Change("7000,99");
+            comp.FindAll("input").Last().Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("7.000,99"));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(7000.99));
         }

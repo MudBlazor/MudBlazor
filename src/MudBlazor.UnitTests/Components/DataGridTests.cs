@@ -2372,7 +2372,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFooterTemplateTest.Model>>();
 
             dataGrid.FindAll("tfoot td")[0].TextContent.Trim().Should().Be("Names: Sam, Alicia, Ira, John");
-            dataGrid.FindAll("tfoot td")[dataGrid.FindAll("tfoot td").Count - 1].TextContent.Trim().Should().Be($"Highest: {132000:C0} | 2 Over {100000:C0}");
+            dataGrid.FindAll("tfoot td").Last().TextContent.Trim().Should().Be($"Highest: {132000:C0} | 2 Over {100000:C0}");
         }
 
         [Test]
@@ -2793,7 +2793,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridStickyColumnsTest.Model>>();
 
             dataGrid.Find("th").ClassList.Should().Contain("sticky-left");
-            dataGrid.FindAll("th")[dataGrid.FindAll("th").Count - 1].ClassList.Should().Contain("sticky-right");
+            dataGrid.FindAll("th").Last().ClassList.Should().Contain("sticky-right");
         }
 
         [Test]
@@ -2815,7 +2815,7 @@ namespace MudBlazor.UnitTests.Components
             body.GetAttribute("style").Should().Contain("overflow:clip");
 
             dataGrid.Find("th").ClassList.Should().Contain("sticky-left");
-            dataGrid.FindAll("th")[dataGrid.FindAll("th").Count - 1].ClassList.Should().Contain("sticky-right");
+            dataGrid.FindAll("th").Last().ClassList.Should().Contain("sticky-right");
         }
 
         [Test]

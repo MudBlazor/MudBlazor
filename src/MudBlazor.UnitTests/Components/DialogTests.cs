@@ -460,9 +460,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
             comp.Find("div.mud-dialog").GetAttribute("class").Should().Contain("mud-dialog-width-full");
             // close by click on ok button
-            comp.FindAll("button")[
-            // close by click on ok button
-            comp.FindAll("button").Count - 1].Click();
+            comp.FindAll("button").Last().Click();
             comp.WaitForAssertion(() => comp.FindComponent<MudMessageBox>());
             var messageBox = comp.FindComponent<MudMessageBox>();
             messageBox.Should().NotBeNull();
