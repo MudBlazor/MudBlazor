@@ -327,7 +327,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var items = _panels.ConvertAll(x => x.PanelRef);
+                var items = _panels.Select(x => x.PanelRef).ToList();
                 items.Add(_tabsContentSize);
 
                 if (_activePanelIndex != -1 && _panels.Count > 0)
