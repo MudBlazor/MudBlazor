@@ -36,6 +36,7 @@ public class ParameterSetTests
         parameterSet.Add(parameterState);
 
         // Assert
+        parameterSet.Count.Should().Be(1);
         parameterSet.Contains(parameterState).Should().BeTrue();
     }
 
@@ -56,6 +57,7 @@ public class ParameterSetTests
 
         // Assert
         addSameParameter.Should().Throw<InvalidOperationException>();
+        parameterSet.Count.Should().Be(1);
     }
 
     [Test]
@@ -104,6 +106,7 @@ public class ParameterSetTests
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
+        parameterSet.Count.Should().Be(2);
         handler1FireCount.Should().Be(1);
         handler2FireCount.Should().Be(1);
         parameter2ChangedEventArgs.Should().NotBeNull();
@@ -156,6 +159,7 @@ public class ParameterSetTests
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
+        parameterSet.Count.Should().Be(2);
         handler1FireCount.Should().Be(0);
         handler2FireCount.Should().Be(0);
         parameter2ChangedEventArgs.Should().BeNull();
@@ -211,6 +215,7 @@ public class ParameterSetTests
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
+        parameterSet.Count.Should().Be(2);
         handler1FireCount.Should().Be(1);
         handler2FireCount.Should().Be(1);
         parameter2ChangedEventArgs.Should().NotBeNull();
@@ -267,6 +272,7 @@ public class ParameterSetTests
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
+        parameterSet.Count.Should().Be(2);
         handler1FireCount.Should().Be(0);
         handler2FireCount.Should().Be(0);
         parameter2ChangedEventArgs.Should().BeNull();
@@ -318,6 +324,7 @@ public class ParameterSetTests
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
+        parameterSet.Count.Should().Be(3);
         handlerFireCount.Should().Be(1);
     }
 
@@ -364,6 +371,7 @@ public class ParameterSetTests
         await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
 
         // Assert
+        parameterSet.Count.Should().Be(3);
         handlerFireCount.Should().Be(3);
     }
 
@@ -578,6 +586,7 @@ public class ParameterSetTests
         }
 
         // Assert
+        parameters.Count.Should().Be(3);
         actualParameters.Should().BeEquivalentTo(expectedParameters);
     }
 
@@ -615,6 +624,7 @@ public class ParameterSetTests
         var actualParameters = expectedParameters.ToList();
 
         // Assert
+        parameters.Count.Should().Be(3);
         actualParameters.Should().BeEquivalentTo(expectedParameters);
     }
 }

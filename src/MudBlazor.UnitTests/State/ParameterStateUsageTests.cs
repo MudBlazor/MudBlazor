@@ -6,6 +6,7 @@ using Bunit;
 using Bunit.Rendering;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 
@@ -69,6 +70,52 @@ public class ParameterStateUsageTests : BunitTest
         ParamChanges().Children[2].TextContent.Trimmed().Should().Be("DoubleParam: 10001=>1000000");
         comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.DoubleParam, 1000001f));
         comp.Find(".parameter-changes").Children.Length.Should().Be(3, "Within the epsilon tolerance. Therefore, change handler shouldn't fire.");
+    }
+
+    [Test]
+    public void GetStateTestIntegrationTest()
+    {
+        var comp = Context.RenderComponent<ParameterStateEventArgsTestComp>();
+        IElement IncrementButton() => comp.Find("button.increment-int-param");
+        IRenderedComponent<ParameterStateTestComp> StateComponent() => comp.FindComponent<ParameterStateTestComp>();
+
+        StateComponent().Instance.GetState(x => x.IntParam).Should().Be(0);
+        StateComponent().Instance.GetState<int>(nameof(ParameterStateTestComp.IntParam)).Should().Be(0);
+
+        IncrementButton().Click();
+
+        StateComponent().Instance.GetState(x => x.IntParam).Should().Be(1);
+        StateComponent().Instance.GetState<int>(nameof(ParameterStateTestComp.IntParam)).Should().Be(1);
+
+        IncrementButton().Click();
+
+        StateComponent().Instance.GetState(x => x.IntParam).Should().Be(2);
+        StateComponent().Instance.GetState<int>(nameof(ParameterStateTestComp.IntParam)).Should().Be(2);
+    }
+
+    [Test]
+    public void GetStateTestFailureIntegrationTest()
+    {
+        var comp = Context.RenderComponent<ParameterStateEventArgsTestComp>();
+        IRenderedComponent<ParameterStateTestComp> StateComponent() => comp.FindComponent<ParameterStateTestComp>();
+
+        Action keyNotFoundAct1 = () => StateComponent().Instance.GetState(x => x.NonStateDummyIntParam);
+        Action keyNotFoundAct2 = () => StateComponent().Instance.GetState<int>(nameof(ParameterStateTestComp.NonStateDummyIntParam));
+
+        keyNotFoundAct1.Should().Throw<KeyNotFoundException>();
+        keyNotFoundAct2.Should().Throw<KeyNotFoundException>();
+
+        Action argumentNullException1 = () => StateComponent().Instance.GetState((Func<MudComponentBase, int>)null!);
+        Action argumentNullException2 = () => StateComponent().Instance.GetState(x => x.NonStateDummyIntParam, null);
+        Action argumentNullException3 = () => StateComponent().Instance.GetState<int>(null!);
+
+        argumentNullException1.Should().Throw<ArgumentNullException>();
+        argumentNullException2.Should().Throw<ArgumentNullException>();
+        argumentNullException3.Should().Throw<ArgumentNullException>();
+
+        Action argumentException = () => StateComponent().Instance.GetState(x => x.NonStateDummyIntParam, "overrideName");
+
+        argumentException.Should().Throw<ArgumentException>();
     }
 
     [Test]
