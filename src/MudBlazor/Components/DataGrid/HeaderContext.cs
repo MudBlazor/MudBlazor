@@ -28,14 +28,14 @@ namespace MudBlazor
         {
             get
             {
-
-                if (_dataGrid.Selection != null && (Items?.Any() ?? false))
+                if (_dataGrid.Selection is not null && (Items?.Any() ?? false))
                 {
                     if (_dataGrid.Selection.Count == Items.Count())
                     {
                         return true;
                     }
-                    else if (_dataGrid.Selection.Count == 0)
+
+                    if (_dataGrid.Selection.Count == 0)
                     {
                         return false;
                     }
@@ -59,7 +59,7 @@ namespace MudBlazor
 
         public class HeaderActions
         {
-            public Func<bool?, Task> SetSelectAllAsync { get; init; } = null!;
+            public required Func<bool?, Task> SetSelectAllAsync { get; init; }
         }
     }
 }
