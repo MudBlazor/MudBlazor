@@ -1434,7 +1434,7 @@ namespace MudBlazor.UnitTests.Components
             validator.ControlCount.Should().Be(1);
             for (var i = 0; i < 10; ++i)
             {
-                trs[i % 3 + 1].Click();
+                trs[(i % 3) + 1].Click();
             }
             validator.ControlCount.Should().Be(1);
         }
@@ -1566,7 +1566,7 @@ namespace MudBlazor.UnitTests.Components
             trs[2].Click();
 
             // Change row two data
-            var input = comp.Find(("#Id1"));
+            var input = comp.Find("#Id1");
             input.Change("D");
 
             // Check row two is still in position 2 of the data rows
@@ -2208,8 +2208,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task RowsPerPageParameterTwoWayBinding()
         {
-            int rowsPerPage = 5;
-            int newRowsPerPage = 25;
+            var rowsPerPage = 5;
+            var newRowsPerPage = 25;
             var comp = Context.RenderComponent<TableRowsPerPageTwoWayBindingTest>(parameters => parameters
                 .Add(p => p.RowsPerPage, rowsPerPage)
                 .Add(p => p.RowsPerPageChanged, (s) =>
@@ -2302,7 +2302,7 @@ namespace MudBlazor.UnitTests.Components
             trs[2].Click();
 
             // Change row two data
-            var input = comp.Find(("#Id2"));
+            var input = comp.Find("#Id2");
             input.Change("Change");
 
             table.SelectedItems.Count.Should().Be(3);

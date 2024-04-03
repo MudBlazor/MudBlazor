@@ -26,7 +26,7 @@ namespace MudBlazor
         protected string ButtonClassname =>
             new CssBuilder("mud-button-root mud-icon-button")
                 .AddClass($"mud-ripple mud-ripple-radio", !DisableRipple && !Disabled && !(MudRadioGroup?.GetDisabledState() ?? false) && !(MudRadioGroup?.GetReadOnlyState() ?? false))
-                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", UnCheckedColor == null || (UnCheckedColor != null && Checked == true))
+                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", UnCheckedColor == null || (UnCheckedColor != null && Checked))
                 .AddClass($"mud-{UnCheckedColor?.ToDescriptionString()}-text hover:mud-{UnCheckedColor?.ToDescriptionString()}-hover", UnCheckedColor != null && Checked == false)
                 .AddClass($"mud-radio-dense", Dense)
                 .AddClass($"mud-disabled", IsDisabled)

@@ -509,7 +509,7 @@ namespace MudBlazor
             get
             {
                 Context.Table = this;
-                Context.TableStateHasChanged = this.StateHasChanged;
+                Context.TableStateHasChanged = StateHasChanged;
                 return Context;
             }
         }

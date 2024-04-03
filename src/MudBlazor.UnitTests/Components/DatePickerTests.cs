@@ -206,7 +206,7 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be(null);
             picker.Date.Should().Be(null);
 
-            string invalid = "INVALID_DATE";
+            var invalid = "INVALID_DATE";
             comp.SetParam(p => p.Text, "INVALID_DATE");
 
             picker.Date.Should().Be(null);
@@ -230,7 +230,7 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be(null);
             picker.Date.Should().Be(null);
 
-            string invalid = "INVALID_DATE";
+            var invalid = "INVALID_DATE";
             comp.SetParam(p => p.Text, "INVALID_DATE");
 
             picker.Date.Should().Be(null);
@@ -614,7 +614,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.IsDateDisabledFunc.Should().Be(isDisabledFunc);
             comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
-                .Should().OnlyContain(disabled => disabled == true);
+                .Should().OnlyContain(disabled => disabled);
         }
 
         [Test]
@@ -630,7 +630,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.IsDateDisabledFunc.Should().Be(isDisabledFunc);
             comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
-                .Should().OnlyContain(disabled => disabled == true);
+                .Should().OnlyContain(disabled => disabled);
 
             // None should be selected
             comp.FindAll("button.mud-picker-month > .mud-typography").Select(
@@ -1065,7 +1065,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SimpleMudDatePickerTest>();
 
-            CultureInfo cultureInfo = new CultureInfo("en-US");
+            var cultureInfo = new CultureInfo("en-US");
 
             var datePicker = comp.FindComponent<MudDatePicker>().Instance;
             datePicker.Editable = true;

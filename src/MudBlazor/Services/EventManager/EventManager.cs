@@ -63,7 +63,7 @@ namespace MudBlazor
         Task<bool> Unsubscribe(Guid key);
     }
 
-    public class EventListener : IEventListener, IAsyncDisposable, IDisposable
+    public class EventListener : IEventListener, IDisposable
     {
         private readonly IJSRuntime _jsRuntime;
         private readonly DotNetObjectReference<EventListener> _dotNetRef;
@@ -83,17 +83,17 @@ namespace MudBlazor
         {
             if (_callbackResolver.ContainsKey(key) == false) { return; }
 
-            var element = _callbackResolver[key];
+            var (eventType, callback) = _callbackResolver[key];
 
-            var @event = JsonSerializer.Deserialize(eventData, element.eventType, new WebEventJsonContext(new JsonSerializerOptions
+            var @event = JsonSerializer.Deserialize(eventData, eventType, new WebEventJsonContext(new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNameCaseInsensitive = true,
             }));
 
-            if (element.callback != null)
+            if (callback != null)
             {
-                await element.callback.Invoke(@event);
+                await callback.Invoke(@event);
             }
         }
 
@@ -152,7 +152,7 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
-            if (_disposed == true) { return; }
+            if (_disposed) { return; }
 
             foreach (var item in _callbackResolver)
             {

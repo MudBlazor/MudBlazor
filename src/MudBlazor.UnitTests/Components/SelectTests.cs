@@ -524,7 +524,7 @@ namespace MudBlazor.UnitTests.Components
             }
 
             // Check shadow items
-            var shadowItems = comp.FindComponents<MudSelectItem<string>>().Where(x => x.Instance.HideContent == true).ToArray();
+            var shadowItems = comp.FindComponents<MudSelectItem<string>>().Where(x => x.Instance.HideContent).ToArray();
             foreach (var item in shadowItems)
             {
                 // shadow items don't render, their state is irrelevant, all they do is provide render fragments to the select

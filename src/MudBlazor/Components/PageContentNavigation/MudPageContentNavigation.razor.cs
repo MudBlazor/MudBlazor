@@ -130,8 +130,8 @@ namespace MudBlazor
         {
             _sections.Add(section);
 
-            int diffRootLevel = 1_000_000;
-            int counter = 0;
+            var diffRootLevel = 1_000_000;
+            var counter = 0;
             foreach (var item in _sections.Where(x => x.Parent is null))
             {
                 item.SetLevelStructure(counter, diffRootLevel);

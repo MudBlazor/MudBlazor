@@ -152,8 +152,7 @@ public abstract class BaseMask : IMask
 
     public virtual void UpdateFrom(IMask o)
     {
-        var other = o as BaseMask;
-        if (other == null)
+        if (o is not BaseMask other)
             return;
         if (other.Mask != Mask)
         {

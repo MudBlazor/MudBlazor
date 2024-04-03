@@ -475,11 +475,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// <para>
         /// When selecting a value by clicking on it in the list the input will blur. However, this
         /// must not cause the dropdown to close or else the click on the item will not be possible!
-        ///
+        /// </para>
+        /// <para>
         /// If this test fails it means the dropdown has closed before we can even click any value in the list.
         /// Such a regression happened and caused PR #1807 to be reverted
+        /// </para>
         /// </summary>
         [Test]
         public async Task Autocomplete_Should_NotCloseDropdownOnInputBlur()

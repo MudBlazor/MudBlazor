@@ -15,7 +15,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudMask : MudBaseInput<string>, IDisposable
+    public partial class MudMask : MudBaseInput<string>
     {
         public MudMask()
         {
@@ -434,7 +434,7 @@ namespace MudBlazor
         {
             base.Dispose(disposing);
 
-            if (disposing == true)
+            if (disposing)
             {
                 if (_keyInterceptor != null)
                 {

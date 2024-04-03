@@ -9,9 +9,8 @@ namespace MudBlazor.Services
     public class KeyInterceptorOptions
     {
         /// <summary>
-        /// Class of the target node which should be observed for keyboard events
-        ///
-        /// Note: this must be a single class
+        /// <para>Class of the target node which should be observed for keyboard events</para>
+        /// <para>Note: this must be a single class</para>
         /// </summary>
         public string TargetClass { get; set; }
 
@@ -27,15 +26,17 @@ namespace MudBlazor.Services
     }
 
     /// <summary>
-    /// Configuration for preventDefault() and stopPropagation() control
-    ///
+    /// <para>Configuration for preventDefault() and stopPropagation() control</para>
+    /// <para>
     /// For PreventDown, PreventUp, StopDown and StopUp the configuration which key combinations should match
     /// is a Javascript boolean expression.
-    ///
+    /// </para>
+    /// <para>
     /// Examples:
     /// For the examples, let's assume the Tab key was pressed.
     /// Note: for combinations of more than one modifier the following order of modifiers must be followed strictly: shift+ctrl+alt+meta
-    /// 
+    /// </para>
+    /// <para>
     ///  * Don't prevent key down:
     ///          PreventDown=null or PreventDown="none"
     ///  * Prevent key down of unmodified keystrokes such as "Tab":
@@ -52,15 +53,17 @@ namespace MudBlazor.Services
     ///          PreventDown="key+any"
     ///  * Prevent any combination of key and modifiers, even the unmodified key:
     ///          PreventDown="any"
+    /// </para>
     /// </summary>
     public class KeyOptions
     {
         /// <summary>
-        /// Javascript keyboard event.key
-        ///
+        /// <para>Javascript keyboard event.key</para>
+        /// <para>
         /// Examples: " " for space, "Tab" for tab, "a" for lowercase A-key.
         /// Also allowed: JS regex such as "/[a-z]/" or "/a|b/" but NOT "/[a-z]/g" or "/[a-z]/i"
         ///      regex must be enclosed in two forward slashes!
+        /// </para>
         /// </summary>
         public string Key { get; set; }
 

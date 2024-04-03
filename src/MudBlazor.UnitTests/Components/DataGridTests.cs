@@ -469,7 +469,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("input.mud-checkbox-input")[^1].Change(false);
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
             //test that changing value in each row selects an item in grid
-            for (int i = 1; i < dataGrid.Instance.Items.Count(); i++)
+            for (var i = 1; i < dataGrid.Instance.Items.Count(); i++)
             {
                 dataGrid.FindAll("input.mud-checkbox-input")[i].Change(true);
                 dataGrid.Instance.SelectedItems.Count.Should().Be(i);

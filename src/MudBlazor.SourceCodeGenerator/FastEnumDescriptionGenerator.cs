@@ -15,8 +15,8 @@ public sealed class FastEnumDescriptionGenerator : IIncrementalGenerator
     {
         var enums =
             context.SyntaxProvider.CreateSyntaxProvider(
-                    transform: GetEnumData,
-                    predicate: (syntaxNode, _) => syntaxNode is EnumDeclarationSyntax)
+                    predicate: (syntaxNode, _) => syntaxNode is EnumDeclarationSyntax,
+                    transform: GetEnumData)
                 .Where(static enumData => enumData is not null);
         context.RegisterSourceOutput(enums, Build);
     }

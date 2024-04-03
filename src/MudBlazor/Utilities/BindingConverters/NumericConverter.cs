@@ -6,10 +6,11 @@ namespace MudBlazor
 {
 
     /// <summary>
-    /// A universal T to double binding converter
-    ///
+    /// <para>A universal T to double binding converter</para>
+    /// <para>
     /// Note: currently not in use. Should we ever use it, remove
     /// the  [ExcludeFromCodeCoverage] attribute
+    /// </para>
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class NumericConverter<T> : Converter<T, double>

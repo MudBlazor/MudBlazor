@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.TestComponents
                 TableData<ComplexObject> data = new();
                 data.TotalItems = _simulatedServerData.Count;
                 // Serialize & deserialize to test a more real scenario where the references to the objects changes
-                string jsonData = JsonSerializer.Serialize(_simulatedServerData);
+                var jsonData = JsonSerializer.Serialize(_simulatedServerData);
                 data.Items = JsonSerializer.Deserialize<List<ComplexObject>>(jsonData).Skip(state.PageSize * state.Page).Take(state.PageSize);
                 return data;
             }
