@@ -762,6 +762,56 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await comp.Instance.SelectRangeAsync(0, 1));
             comp.WaitForAssertion(() => comp.Instance.ValidationErrors.Should().HaveCount(0));
         }
+        
+        [Test]
+        public async Task TextField_ShouldCallOnValidValueSet_WithValidValue()
+        {
+            var validValue = "";
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                ComponentParameter.CreateParameter("Value", ""),
+                ComponentParameter.CreateParameter("Required", true),
+                EventCallback<string>("OnValidValueSet", x => validValue = x));
+            
+            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Text", "A"));
+            await comp.InvokeAsync(() => { comp.Instance.Validate(); });
+            comp.Instance.Error.Should().BeFalse();
+            validValue.Should().BeEquivalentTo("A");
+
+            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Text", ""));
+            await comp.InvokeAsync(() => { comp.Instance.Validate(); });
+            comp.Instance.Error.Should().BeTrue();
+            validValue.Should().BeEquivalentTo("A");
+        }
+        
+        [Test]
+        public async Task TextField_ShouldSetErrorText_WhenManualOverRideTrue()
+        {
+            var errorText = Guid.NewGuid().ToString();
+            
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                ComponentParameter.CreateParameter("UseManualErrorMessage", true),
+                ComponentParameter.CreateParameter("Error", true),
+                ComponentParameter.CreateParameter("ErrorText", errorText));
+
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            
+            comp.Instance.ErrorText.Should().Be(errorText);
+        }
+        
+        [Test]
+        public async Task TextField_ShouldNotSetErrorText_WhenManualOverRideFalse()
+        {
+            var errorText = Guid.NewGuid().ToString();
+            
+            var comp = Context.RenderComponent<MudTextField<string>>(
+                ComponentParameter.CreateParameter("UseManualErrorMessage", false),
+                ComponentParameter.CreateParameter("Error", true),
+                ComponentParameter.CreateParameter("ErrorText", errorText));
+
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            
+            comp.Instance.ErrorText.Should().BeNullOrEmpty();
+        }
 
         [Test]
         public async Task InputMode_DefaultValue_IsText()

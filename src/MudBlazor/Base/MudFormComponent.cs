@@ -55,6 +55,21 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Validation)]
         public string? ErrorText { get; set; }
 
+
+        /// <summary>
+        /// If true, all validation will be overridden with the given ErrorText, still requires error to be set true.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public bool UseManualErrorMessage { get; set; } = false;
+        
+        /// <summary>
+        /// Callback method that will be called when the value is set and is valid
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public EventCallback<T> OnValidValueSet { get; set; }
+        
         /// <summary>
         /// If true, the label will be displayed in an error state.
         /// </summary>
@@ -289,9 +304,18 @@ namespace MudBlazor
             var errors = new List<string>();
             try
             {
+                if (UseManualErrorMessage)
+                {
+                    if (Error && !string.IsNullOrWhiteSpace(ErrorText))
+                        errors.Add(ErrorText);
+                    
+                    return;
+                }
+                
                 // conversion error
                 if (ConversionError)
                     errors.Add(ConversionErrorMessage);
+                
                 // validation errors
                 if (Validation is ValidationAttribute validationAttribute)
                     ValidateWithAttribute(validationAttribute, _value, errors);
@@ -348,6 +372,9 @@ namespace MudBlazor
                     ErrorText = errors.FirstOrDefault();
                     ErrorId = HasErrors ? Guid.NewGuid().ToString() : null;
                     Form?.Update(this);
+
+                    if (!Error) await OnValidValueSet.InvokeAsync(_value);
+
                     StateHasChanged();
                 }
             }
