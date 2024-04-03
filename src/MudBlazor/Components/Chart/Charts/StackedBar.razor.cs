@@ -40,7 +40,7 @@ namespace MudBlazor.Charts
             foreach (var item in _series)
             {
                 var dataNumber = 0;
-                foreach (int i in item.Data)
+                foreach (var i in item.Data.Select(v => (int)v))
                 {
                     barTopValues[dataNumber] += i;
                     dataNumber++;
