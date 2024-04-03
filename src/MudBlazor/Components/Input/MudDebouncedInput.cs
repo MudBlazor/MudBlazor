@@ -6,7 +6,7 @@ namespace MudBlazor
 {
     public abstract class MudDebouncedInput<T> : MudBaseInput<T>
     {
-        private System.Timers.Timer _timer;
+        private Timer _timer;
         private double _debounceInterval;
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace MudBlazor
         {
             if (_timer == null)
             {
-                _timer = new System.Timers.Timer();
+                _timer = new Timer();
                 _timer.Elapsed += OnTimerTick;
                 _timer.AutoReset = false;
             }

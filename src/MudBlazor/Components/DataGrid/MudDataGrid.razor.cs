@@ -161,7 +161,7 @@ namespace MudBlazor
                 var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
                 var dragAndDropDestinationIndex = RenderedColumns.IndexOf(dragAndDropDestination);
 
-                Swap<Column<T>>(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
+                Swap(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
 
                 // swap source / destination
                 var dest = dragAndDropDestination.HeaderCell.Width;

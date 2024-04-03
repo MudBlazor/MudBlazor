@@ -589,7 +589,7 @@ namespace MudBlazor
         /// This is the form validation context for Blazor's <EditForm></EditForm> component
         /// </summary>
         [CascadingParameter]
-        private EditContext? EditContext { get; set; } = default!;
+        private EditContext? EditContext { get; set; }
 
         /// <summary>
         /// Triggers field to be validated.

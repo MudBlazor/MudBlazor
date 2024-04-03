@@ -148,7 +148,7 @@ namespace MudBlazor
         /// <param name="returnValue"></param>
         public void Close<T>(T returnValue)
         {
-            var dialogResult = DialogResult.Ok<T>(returnValue);
+            var dialogResult = DialogResult.Ok(returnValue);
             Parent.DismissInstance(Id, dialogResult);
         }
 

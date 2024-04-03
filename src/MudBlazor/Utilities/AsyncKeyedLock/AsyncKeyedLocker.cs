@@ -301,7 +301,7 @@ internal class AsyncKeyedLocker<TKey> : IDisposable where TKey : notnull
     }
 
     /// <summary>
-    /// Synchronously lock based on a key, setting a limit for the <see cref="System.TimeSpan"/> to wait, while observing a <see cref="CancellationToken"/>.
+    /// Synchronously lock based on a key, setting a limit for the <see cref="TimeSpan"/> to wait, while observing a <see cref="CancellationToken"/>.
     /// </summary>
     /// <param name="key">The key to lock on.</param>
     /// <param name="timeout">A <see cref="TimeSpan"/> that represents the number of milliseconds to wait, a <see cref="TimeSpan"/> that represents -1 milliseconds to wait indefinitely, or a <see cref="TimeSpan"/> that represents 0 milliseconds to test the wait handle and return immediately.</param>
@@ -362,7 +362,7 @@ internal class AsyncKeyedLocker<TKey> : IDisposable where TKey : notnull
     }
 
     /// <summary>
-    /// Synchronously lock based on a key, setting a limit for the <see cref="System.TimeSpan"/> to wait, and if not timed out, scynchronously execute an action and release.
+    /// Synchronously lock based on a key, setting a limit for the <see cref="TimeSpan"/> to wait, and if not timed out, scynchronously execute an action and release.
     /// </summary>
     /// <param name="key">The key to lock on.</param>
     /// <param name="action">The synchronous action.</param>
@@ -427,7 +427,7 @@ internal class AsyncKeyedLocker<TKey> : IDisposable where TKey : notnull
     }
 
     /// <summary>
-    /// Synchronously lock based on a key, setting a limit for the <see cref="System.TimeSpan"/> to wait, and if not timed out, scynchronously execute an action and release, while observing a <see cref="CancellationToken"/>.
+    /// Synchronously lock based on a key, setting a limit for the <see cref="TimeSpan"/> to wait, and if not timed out, scynchronously execute an action and release, while observing a <see cref="CancellationToken"/>.
     /// </summary>
     /// <param name="key">The key to lock on.</param>
     /// <param name="action">The synchronous action.</param>
@@ -524,7 +524,7 @@ internal class AsyncKeyedLocker<TKey> : IDisposable where TKey : notnull
     }
 
     /// <summary>
-    /// Asynchronously lock based on a key, setting a limit for the <see cref="System.TimeSpan"/> to wait, and if not timed out, scynchronously execute an action and release.
+    /// Asynchronously lock based on a key, setting a limit for the <see cref="TimeSpan"/> to wait, and if not timed out, scynchronously execute an action and release.
     /// </summary>
     /// <param name="key">The key to lock on.</param>
     /// <param name="action">The synchronous action.</param>
@@ -553,7 +553,7 @@ internal class AsyncKeyedLocker<TKey> : IDisposable where TKey : notnull
     }
 
     /// <summary>
-    /// Asynchronously lock based on a key, setting a limit for the <see cref="System.TimeSpan"/> to wait, and if not timed out, ascynchronously execute a <see cref="Func{Task}"/> and release.
+    /// Asynchronously lock based on a key, setting a limit for the <see cref="TimeSpan"/> to wait, and if not timed out, ascynchronously execute a <see cref="Func{Task}"/> and release.
     /// </summary>
     /// <param name="key">The key to lock on.</param>
     /// <param name="task">The asynchronous task.</param>
@@ -658,7 +658,7 @@ internal class AsyncKeyedLocker<TKey> : IDisposable where TKey : notnull
     }
 
     /// <summary>
-    /// Asynchronously lock based on a key, setting a limit for the <see cref="System.TimeSpan"/> to wait, and if not timed out, scynchronously execute an action and release, while observing a <see cref="CancellationToken"/>.
+    /// Asynchronously lock based on a key, setting a limit for the <see cref="TimeSpan"/> to wait, and if not timed out, scynchronously execute an action and release, while observing a <see cref="CancellationToken"/>.
     /// </summary>
     /// <param name="key">The key to lock on.</param>
     /// <param name="action">The synchronous action.</param>
@@ -696,7 +696,7 @@ internal class AsyncKeyedLocker<TKey> : IDisposable where TKey : notnull
     }
 
     /// <summary>
-    /// Asynchronously lock based on a key, setting a limit for the <see cref="System.TimeSpan"/> to wait, and if not timed out, ascynchronously execute a <see cref="Func{Task}"/> and release, while observing a <see cref="CancellationToken"/>.
+    /// Asynchronously lock based on a key, setting a limit for the <see cref="TimeSpan"/> to wait, and if not timed out, ascynchronously execute a <see cref="Func{Task}"/> and release, while observing a <see cref="CancellationToken"/>.
     /// </summary>
     /// <param name="key">The key to lock on.</param>
     /// <param name="task">The asynchronous task.</param>
@@ -795,7 +795,7 @@ internal class AsyncKeyedLocker<TKey> : IDisposable where TKey : notnull
     }
 
     /// <summary>
-    /// Asynchronously lock based on a key, setting a limit for the <see cref="System.TimeSpan"/> to wait, and if not timed out, scynchronously execute an action and release.
+    /// Asynchronously lock based on a key, setting a limit for the <see cref="TimeSpan"/> to wait, and if not timed out, scynchronously execute an action and release.
     /// </summary>
     /// <param name="key">The key to lock on.</param>
     /// <param name="action">The synchronous action.</param>
@@ -824,7 +824,7 @@ internal class AsyncKeyedLocker<TKey> : IDisposable where TKey : notnull
     }
 
     /// <summary>
-    /// Asynchronously lock based on a key, setting a limit for the <see cref="System.TimeSpan"/> to wait, and if not timed out, ascynchronously execute a <see cref="Func{Task}"/> and release.
+    /// Asynchronously lock based on a key, setting a limit for the <see cref="TimeSpan"/> to wait, and if not timed out, ascynchronously execute a <see cref="Func{Task}"/> and release.
     /// </summary>
     /// <param name="key">The key to lock on.</param>
     /// <param name="task">The asynchronous task.</param>
@@ -929,7 +929,7 @@ internal class AsyncKeyedLocker<TKey> : IDisposable where TKey : notnull
     }
 
     /// <summary>
-    /// Asynchronously lock based on a key, setting a limit for the <see cref="System.TimeSpan"/> to wait, and if not timed out, scynchronously execute an action and release, while observing a <see cref="CancellationToken"/>.
+    /// Asynchronously lock based on a key, setting a limit for the <see cref="TimeSpan"/> to wait, and if not timed out, scynchronously execute an action and release, while observing a <see cref="CancellationToken"/>.
     /// </summary>
     /// <param name="key">The key to lock on.</param>
     /// <param name="action">The synchronous action.</param>
@@ -967,7 +967,7 @@ internal class AsyncKeyedLocker<TKey> : IDisposable where TKey : notnull
     }
 
     /// <summary>
-    /// Asynchronously lock based on a key, setting a limit for the <see cref="System.TimeSpan"/> to wait, and if not timed out, ascynchronously execute a <see cref="Func{Task}"/> and release, while observing a <see cref="CancellationToken"/>.
+    /// Asynchronously lock based on a key, setting a limit for the <see cref="TimeSpan"/> to wait, and if not timed out, ascynchronously execute a <see cref="Func{Task}"/> and release, while observing a <see cref="CancellationToken"/>.
     /// </summary>
     /// <param name="key">The key to lock on.</param>
     /// <param name="task">The asynchronous task.</param>
@@ -1096,7 +1096,7 @@ internal class AsyncKeyedLocker<TKey> : IDisposable where TKey : notnull
     }
 
     /// <summary>
-    /// Asynchronously lock based on a key, setting a limit for the <see cref="System.TimeSpan"/> to wait, while observing a <see cref="CancellationToken"/>.
+    /// Asynchronously lock based on a key, setting a limit for the <see cref="TimeSpan"/> to wait, while observing a <see cref="CancellationToken"/>.
     /// </summary>
     /// <param name="key">The key to lock on.</param>
     /// <param name="timeout">A <see cref="TimeSpan"/> that represents the number of milliseconds to wait, a <see cref="TimeSpan"/> that represents -1 milliseconds to wait indefinitely, or a <see cref="TimeSpan"/> that represents 0 milliseconds to test the wait handle and return immediately.</param>
@@ -1210,7 +1210,7 @@ internal class AsyncKeyedLocker<TKey> : IDisposable where TKey : notnull
     }
 
     /// <summary>
-    /// Asynchronously lock based on a key, setting a limit for the <see cref="System.TimeSpan"/> to wait, while observing a <see cref="CancellationToken"/>.
+    /// Asynchronously lock based on a key, setting a limit for the <see cref="TimeSpan"/> to wait, while observing a <see cref="CancellationToken"/>.
     /// </summary>
     /// <param name="key">The key to lock on.</param>
     /// <param name="timeout">A <see cref="TimeSpan"/> that represents the number of milliseconds to wait, a <see cref="TimeSpan"/> that represents -1 milliseconds to wait indefinitely, or a <see cref="TimeSpan"/> that represents 0 milliseconds to test the wait handle and return immediately.</param>

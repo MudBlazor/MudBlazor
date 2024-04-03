@@ -191,10 +191,10 @@ namespace MudBlazor.Docs.Compiler
 
         #region System.Type.ConvertToCSharpSource
 
-        /// <summary>Converts a <see cref="System.Type"/> into a <see cref="string"/> as it would appear in C# source code.</summary>
-        /// <param name="type">The <see cref="System.Type"/> to convert to a <see cref="string"/>.</param>
+        /// <summary>Converts a <see cref="Type"/> into a <see cref="string"/> as it would appear in C# source code.</summary>
+        /// <param name="type">The <see cref="Type"/> to convert to a <see cref="string"/>.</param>
         /// <param name="showGenericParameters">If the generic parameters are the generic types, whether they should be shown or not.</param>
-        /// <returns>The <see cref="string"/> as the <see cref="System.Type"/> would appear in C# source code.</returns>
+        /// <returns>The <see cref="string"/> as the <see cref="Type"/> would appear in C# source code.</returns>
         public static string ConvertToCSharpSource(this Type type, bool showGenericParameters = false)
         {
             var genericParameters = new Queue<Type>();

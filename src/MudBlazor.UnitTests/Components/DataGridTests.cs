@@ -111,7 +111,7 @@ namespace MudBlazor.UnitTests.Components
 
             // test other sort methods
             var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableTest.Item>>();
-            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs()));
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
             await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
@@ -2921,14 +2921,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TableFilterNullableGuid()
         {
-            var comp = Context.RenderComponent<DataGridFilterGuid<Nullable<Guid>>>();
+            var comp = Context.RenderComponent<DataGridFilterGuid<Guid?>>();
             var grid = comp.Instance.MudGridRef;
 
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
             var guidColumn = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Id");
 
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast>()
             {
                 Column = guidColumn,
                 Operator = "equals",
@@ -2939,7 +2939,7 @@ namespace MudBlazor.UnitTests.Components
             grid.FilteredItems.Count().Should().Be(0);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast>()
             {
                 Column = guidColumn,
                 Operator = "equals",
@@ -2950,7 +2950,7 @@ namespace MudBlazor.UnitTests.Components
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast>()
             {
                 Column = guidColumn,
                 Operator = "not equals",
@@ -3420,7 +3420,7 @@ namespace MudBlazor.UnitTests.Components
 
             // test other sort methods
             var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableTest.Item>>();
-            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs()));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 6);
 
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
