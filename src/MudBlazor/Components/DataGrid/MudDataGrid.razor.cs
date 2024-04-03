@@ -747,6 +747,11 @@ namespace MudBlazor
         /// When true, displays the built-in menu icon in the header of the data grid.
         /// </summary>
         [Parameter] public bool ShowMenuIcon { get; set; } = false;
+        
+        /// <summary>
+        /// Variant to use for all inputs, for example the filters, etc.
+        /// </summary>
+        [Parameter] public Variant FilterVariant { get; set; } = Variant.Text;
 
         #endregion
 
