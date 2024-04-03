@@ -380,7 +380,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.Instance.SetPanelActive(i);
 
                 var shouldBeDisabled = i == 0;
-                scrollButtons.First().Instance.Disabled.Should().Be(shouldBeDisabled);
+                scrollButtons[0].Instance.Disabled.Should().Be(shouldBeDisabled);
             }
         }
 
@@ -441,7 +441,7 @@ namespace MudBlazor.UnitTests.Components
 
             for (var i = 0; i < 2; i++)
             {
-                scrollButtons.First().Find("button").Click();
+                scrollButtons[0].Find("button").Click();
                 expectedTranslation -= observer.PanelSize;
 
                 var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
@@ -472,12 +472,12 @@ namespace MudBlazor.UnitTests.Components
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
 
-            scrollButtons.First().Instance.Disabled.Should().BeTrue();
+            scrollButtons[0].Instance.Disabled.Should().BeTrue();
             GetSliderValue(comp).Should().Be(1 * 100.0);
 
             observer.UpdateTotalPanelSize(200.0);
 
-            scrollButtons.First().Instance.Disabled.Should().BeTrue();
+            scrollButtons[0].Instance.Disabled.Should().BeTrue();
             GetSliderValue(comp).Should().Be(1 * 100.0);
         }
 
@@ -656,12 +656,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SetPanelActive(1);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
-            scrollButtons.First().Instance.Disabled.Should().BeTrue();
+            scrollButtons[0].Instance.Disabled.Should().BeTrue();
             GetSliderValue(comp).Should().Be(1 * 100.0);
 
             observer.UpdatePanelSize(0, 200.0);
 
-            scrollButtons.First().Instance.Disabled.Should().BeTrue();
+            scrollButtons[0].Instance.Disabled.Should().BeTrue();
             GetSliderValue(comp).Should().Be(200.0);
         }
 
@@ -723,11 +723,11 @@ namespace MudBlazor.UnitTests.Components
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
 
-            scrollButtons.First().Instance.Disabled.Should().BeFalse();
+            scrollButtons[0].Instance.Disabled.Should().BeFalse();
 
             await comp.Instance.RemovePanel(0);
 
-            scrollButtons.First().Instance.Disabled.Should().BeFalse();
+            scrollButtons[0].Instance.Disabled.Should().BeFalse();
 
             var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
@@ -757,7 +757,7 @@ namespace MudBlazor.UnitTests.Components
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
 
-            scrollButtons.First().Instance.Disabled.Should().BeFalse();
+            scrollButtons[0].Instance.Disabled.Should().BeFalse();
             {
                 var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
                 toolbarWrapper.Should().NotBeNull();
@@ -769,7 +769,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.Instance.RemovePanel(5);
 
-            scrollButtons.First().Instance.Disabled.Should().BeFalse();
+            scrollButtons[0].Instance.Disabled.Should().BeFalse();
 
             {
                 var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");

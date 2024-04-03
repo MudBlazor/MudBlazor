@@ -600,7 +600,7 @@ namespace MudBlazor.UnitTests.Components
             // select the input of the select
             var input = comp.Find("input");
             //the value of the input
-            var value = input.Attributes.Where(a => a.LocalName == "value").First().Value;
+            var value = input.Attributes.First(a => a.LocalName == "value").Value;
             value.Should().Be("FirstA, SecondA");
         }
 
@@ -618,7 +618,7 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("input");
 
             // The value of the input
-            var value = input.Attributes.Where(a => a.LocalName == "value").First().Value;
+            var value = input.Attributes.First(a => a.LocalName == "value").Value;
 
             // Value is equal to the customized values returned by the method
             value.Should().Be("Selected values: FirstA, SecondA");
@@ -733,7 +733,7 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<string>>().Instance;
             select.Required.Should().BeTrue();
             await comp.InvokeAsync(() => select.Validate());
-            select.ValidationErrors.First().Should().Be("Required");
+            select.ValidationErrors[0].Should().Be("Required");
         }
 
         /// <summary>
@@ -1114,13 +1114,13 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<string>>().Instance;
             select.Required.Should().BeTrue();
             await comp.InvokeAsync(() => select.Validate());
-            select.ValidationErrors.First().Should().Be("Required");
+            select.ValidationErrors[0].Should().Be("Required");
 
             //1b. Check on T type - MultiSelect of T(e.g. class object) 
             var selectWithT = comp.FindComponent<MudSelect<MultiSelectTestRequiredValue.TestClass>>().Instance;
             selectWithT.Required.Should().BeTrue();
             await comp.InvokeAsync(() => selectWithT.Validate());
-            selectWithT.ValidationErrors.First().Should().Be("Required");
+            selectWithT.ValidationErrors[0].Should().Be("Required");
 
             //2a. Now check when SelectedItems is greater than one - Validation Should Pass
             var inputs = comp.FindAll("div.mud-input-control");

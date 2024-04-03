@@ -650,13 +650,13 @@ namespace MudBlazor.UnitTests.Components
             mudTable.Context.Rows.Count(r => r.Value.IsChecked).Should().Be(0);
 
             // All grouprow checkbox states must be false.
-            mudTable.Context.GroupRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(14);
+            mudTable.Context.GroupRows.Count(r => r.IsChecked == false).Should().Be(14);
 
             // The headerrow checkbox state must be false.
-            mudTable.Context.HeaderRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(1);
+            mudTable.Context.HeaderRows.Count(r => r.IsChecked == false).Should().Be(1);
 
             // The footerrow checkbox state must be false.
-            mudTable.Context.FooterRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(0);
+            mudTable.Context.FooterRows.Count(r => r.IsChecked == false).Should().Be(0);
         }
 
         /// <summary>
@@ -1109,7 +1109,7 @@ namespace MudBlazor.UnitTests.Components
             var inputs = comp.FindAll("input").ToArray();
             table.SelectedItems.Count.Should().Be(0); // selected items should be empty
             Action onclick = () => inputs[1].Click(); // OnRowClick is not called anymore, neither .GotClicked<>(), so selectedItems didn't add any element.
-            onclick.Should().Throw<Bunit.MissingEventHandlerException>().WithMessage("The element does not have an event handler for the event 'onclick'. It does however have an event handler for the 'onchange' event.");
+            onclick.Should().Throw<MissingEventHandlerException>().WithMessage("The element does not have an event handler for the event 'onclick'. It does however have an event handler for the 'onchange' event.");
             table.SelectedItems.Count.Should().Be(0);
         }
 
@@ -2024,24 +2024,24 @@ namespace MudBlazor.UnitTests.Components
             comp.Render();
 
             table.SelectedItems.Count.Should().Be(0);
-            Inputs().Where(x => x.IsChecked()).Count().Should().Be(0);
+            Inputs().Count(x => x.IsChecked()).Should().Be(0);
 
             Inputs()[1].Change(true); // LMP1            
             table.SelectedItems.Count.Should().Be(2);
 
-            Inputs().Where(x => x.IsChecked()).Count().Should().Be(5);
+            Inputs().Count(x => x.IsChecked()).Should().Be(5);
 
             Buttons()[0].Click(); //collapse            
             Buttons()[0].Click(); //expand            
             //selected item should persist
             table.SelectedItems.Count.Should().Be(2);
 
-            Inputs().Where(x => x.IsChecked()).Count().Should().Be(5);
+            Inputs().Count(x => x.IsChecked()).Should().Be(5);
 
             Inputs()[1].Change(false);
             table.SelectedItems.Count.Should().Be(0);
 
-            Inputs().Where(x => x.IsChecked()).Count().Should().Be(0);
+            Inputs().Count(x => x.IsChecked()).Should().Be(0);
 
         }
 

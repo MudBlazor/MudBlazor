@@ -1177,7 +1177,7 @@ namespace MudBlazor.UnitTests.Components
 
             var message = comp.FindAll(".mud-typography")
                 .Select(c => c.TextContent)
-                .Where(t => t.Contains("Draging Started")).FirstOrDefault();
+                .FirstOrDefault(t => t.Contains("Draging Started"));
             message.Should().Be("Draging Started for [Item 2]");
         }
 

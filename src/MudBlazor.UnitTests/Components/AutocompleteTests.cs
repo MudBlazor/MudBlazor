@@ -50,7 +50,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             var items = comp.FindComponents<MudListItem>().ToArray();
             items.Length.Should().Be(1);
-            items.First().Markup.Should().Contain("California");
+            items[0].Markup.Should().Contain("California");
             // click on California!
             comp.Find("div.mud-list-item").Click();
             // check popover class
@@ -419,7 +419,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => autocomplete.Validate());
 
-            autocomplete.ValidationErrors.First().Should().Be("Required");
+            autocomplete.ValidationErrors[0].Should().Be("Required");
         }
 
         /// <summary>
@@ -504,7 +504,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             var items = comp.FindComponents<MudListItem>().ToArray();
             items.Length.Should().Be(1);
-            items.First().Markup.Should().Contain("California");
+            items[0].Markup.Should().Contain("California");
 
             // now, we blur the input and assert that the popover is still open.
             autocompletecomp.Find("input").Blur();
@@ -542,7 +542,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             var items = comp.FindComponents<MudListItem>().ToArray();
             items.Length.Should().Be(1);
-            items.First().Markup.Should().Contain("California");
+            items[0].Markup.Should().Contain("California");
 
             // Clearing it and check the close status text and value again
             await comp.InvokeAsync(() => autocomplete.Clear().Wait());
@@ -621,7 +621,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             var items = comp.FindComponents<MudListItem>().ToArray();
             items.Length.Should().Be(1);
-            items.First().Markup.Should().Contain("California");
+            items[0].Markup.Should().Contain("California");
 
             // Reseting it should close popover and set Text and Value to null again
             await comp.InvokeAsync(() => autocomplete.ResetAsync());

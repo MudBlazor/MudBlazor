@@ -25,7 +25,7 @@ namespace MudBlazor.UnitTests.Components
     public class NumericFieldTests : BunitTest
     {
         // TestCaseSource does not know about "Nullable<T>" so having values as Nullable<T> does not make sense here
-        static object[] TypeCases =
+        static readonly object[] TypeCases =
         {
             new object[] { (byte)5 },
             new object[] { (sbyte)5 },
@@ -519,8 +519,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<NumericFieldCultureTest>();
             var inputs = comp.FindAll("input");
-            var immediate = inputs.First();
-            var notImmediate = inputs.Last();
+            var immediate = inputs[0];
+            var notImmediate = inputs[inputs.Count - 1];
             //german
             notImmediate.Change("1234");
             notImmediate.Blur();
@@ -800,8 +800,8 @@ namespace MudBlazor.UnitTests.Components
             conv.Culture = CultureInfo.InvariantCulture;
             conv.Set(77).Should().Be("€77");
             //
-            comp.FindAll("input").First().Change("1234");
-            comp.FindAll("input").First().Blur();
+            comp.FindAll("input")[0].Change("1234");
+            comp.FindAll("input")[0].Blur();
             comp.WaitForAssertion(() => numericField.Text.Should().Be("€1234"));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234));
         }
@@ -820,15 +820,15 @@ namespace MudBlazor.UnitTests.Components
 
             // comma separator
             comp.SetParam(x => x.Culture, CultureInfo.InvariantCulture);
-            comp.FindAll("input").First().Change("1,000");
-            comp.FindAll("input").First().Blur();
+            comp.FindAll("input")[0].Change("1,000");
+            comp.FindAll("input")[0].Blur();
             comp.WaitForAssertion(() => numericField.Text.Should().Be("1000"));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1000));
 
             // period separator
             comp.SetParam(x => x.Culture, new CultureInfo("de-DE", false));
-            comp.FindAll("input").First().Change("1.000");
-            comp.FindAll("input").First().Blur();
+            comp.FindAll("input")[0].Change("1.000");
+            comp.FindAll("input")[0].Blur();
             comp.WaitForAssertion(() => numericField.Text.Should().Be("1000"));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1000));
         }
