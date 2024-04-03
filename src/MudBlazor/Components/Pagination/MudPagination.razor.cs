@@ -224,7 +224,7 @@ namespace MudBlazor
         /*generates an array representing the pagination numbers, e.g. for Count==11, MiddleCount==3, BoundaryCount==1,
          Selected==6 the output will be the int array [1, 2, -1, 5, 6, 7, -1, 10, 11]
          -1 is displayed as "..." in the ui*/
-        private IEnumerable<int> GeneratePagination()
+        private int[] GeneratePagination()
         {
             //return array {1, ..., Count} if Count is small 
             if (Count <= 4 || Count <= (2 * BoundaryCount) + MiddleCount + 2)

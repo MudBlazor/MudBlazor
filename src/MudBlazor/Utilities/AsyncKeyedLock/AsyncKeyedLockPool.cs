@@ -13,7 +13,7 @@ namespace MudBlazor.Utilities.AsyncKeyedLock;
 internal sealed class AsyncKeyedLockPool<TKey> : IDisposable where TKey : notnull
 {
     private readonly int _capacity;
-    private readonly IList<AsyncKeyedLockReleaser<TKey>> _objects;
+    private readonly List<AsyncKeyedLockReleaser<TKey>> _objects;
     private readonly Func<TKey, AsyncKeyedLockReleaser<TKey>> _objectGenerator;
 
     public AsyncKeyedLockPool(AsyncKeyedLockDictionary<TKey> asyncKeyedLockDictionary, int capacity, int initialFill = -1)
