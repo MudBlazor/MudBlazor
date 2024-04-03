@@ -86,9 +86,9 @@ namespace MudBlazor
                         return null;
                     case string stringValue when bool.TryParse(stringValue, out var flag):
                         return flag;
-                    case string stringValue when stringValue.ToLowerInvariant() == "on":
+                    case string stringValue when string.Equals(stringValue, "on", StringComparison.InvariantCultureIgnoreCase):
                         return true;
-                    case string stringValue when stringValue.ToLowerInvariant() == "off":
+                    case string stringValue when string.Equals(stringValue, "off", StringComparison.InvariantCultureIgnoreCase):
                         return false;
                     case string:
                         return null;
