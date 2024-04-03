@@ -6,7 +6,7 @@
     <HeaderTemplate>
         @if (ShowInHeader)
         {
-            <MudCheckBox T="bool" Size="@Size" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAllAsync" />
+            <MudCheckBox T="bool?" Size="@Size" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAllAsync" />
         }
     </HeaderTemplate>
     <CellTemplate>
@@ -15,7 +15,7 @@
     <FooterTemplate>
         @if (ShowInFooter)
         {
-            <MudCheckBox T="bool" Size="@Size" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAllAsync" />
+            <MudCheckBox T="bool?" Size="@Size" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAllAsync" />
         }
     </FooterTemplate>
 </TemplateColumn>
