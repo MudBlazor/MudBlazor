@@ -11,7 +11,7 @@ namespace MudBlazor.UnitTests.Mocks
 {
     public class MockResizeObserverFactory : IResizeObserverFactory
     {
-        private MockResizeObserver _observer;
+        private readonly MockResizeObserver _observer;
 
         public MockResizeObserverFactory()
         {
@@ -29,7 +29,7 @@ namespace MudBlazor.UnitTests.Mocks
 
     public class MockResizeObserver : IResizeObserver
     {
-        private Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();
+        private readonly Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();
 
         public bool IsVertical { get; set; } = false;
 

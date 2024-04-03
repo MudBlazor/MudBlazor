@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.UserAttributes
                 .ToArray();
         }
 
-        private static ConcurrentBag<Type> _excludedComponents = new();
+        private static readonly ConcurrentBag<Type> _excludedComponents = new();
         private static void Exclude(Type componentType) => _excludedComponents.Add(componentType);
     }
 }

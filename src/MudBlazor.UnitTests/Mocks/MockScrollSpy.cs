@@ -29,7 +29,7 @@ namespace MudBlazor.UnitTests.Mocks
         public bool SpyingInitiated { get; private set; }
         public string SpyingClassSelector { get; private set; }
 
-        private List<string> _scrollHistory = new();
+        private readonly List<string> _scrollHistory = new();
         public IReadOnlyList<string> ScrollHistory => _scrollHistory.AsReadOnly();
 
         public string CenteredSection { get; set; } = "my-item";

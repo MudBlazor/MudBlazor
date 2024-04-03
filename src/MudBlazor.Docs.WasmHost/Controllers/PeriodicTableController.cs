@@ -11,7 +11,7 @@ namespace Server.Controllers
     [ApiController]
     public class PeriodicTableController : ControllerBase
     {
-        private IPeriodicTableService _periodicTableService;
+        private readonly IPeriodicTableService _periodicTableService;
 
         public PeriodicTableController(IPeriodicTableService periodicTableService)
         {

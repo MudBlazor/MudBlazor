@@ -13,8 +13,8 @@ namespace MudBlazor.UnitTests.Mocks
     [Obsolete($"Use {nameof(MockPopoverServiceV2)}. This will be removed in v7.")]
     public class MockPopoverService : IMudPopoverService
     {
-        private List<MudPopoverHandler> _handlers = new();
-        private static RenderFragment DefaultFragment = (builder) => { };
+        private readonly List<MudPopoverHandler> _handlers = new();
+        private static readonly RenderFragment DefaultFragment = (builder) => { };
         public IEnumerable<MudPopoverHandler> Handlers => _handlers;
 
         public bool ThrowOnDuplicateProvider => false;

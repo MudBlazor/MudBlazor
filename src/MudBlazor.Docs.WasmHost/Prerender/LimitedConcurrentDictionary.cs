@@ -10,7 +10,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
 {
     public class LimitedConcurrentDictionary<TKey, TValue>
     {
-        private ConcurrentDictionary<TKey, TValue> _dict = new();
+        private readonly ConcurrentDictionary<TKey, TValue> _dict = new();
         private int MaxCapacity { get; init; }
 
         public LimitedConcurrentDictionary(int maxCapacity)

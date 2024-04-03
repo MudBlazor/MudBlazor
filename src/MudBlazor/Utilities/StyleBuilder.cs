@@ -150,7 +150,7 @@ namespace MudBlazor.Utilities
         /// Finalize the completed Style as a string.
         /// </summary>
         /// <returns>string</returns>
-        public string Build()
+        public readonly string Build()
         {
             // String buffer finalization code
             return stringBuffer != null ? stringBuffer.Trim() : string.Empty;

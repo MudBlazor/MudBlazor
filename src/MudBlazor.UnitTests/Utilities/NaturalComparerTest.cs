@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Utilities
     public class NaturalComparerTest
     {
 
-        Func<string, string> _expand = (s) =>
+        readonly Func<string, string> _expand = (s) =>
         {
             int o; while ((o = s.IndexOf('\\')) != -1)
             {
@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Utilities
             return s;
         };
 
-        private static string s_encodedFileNames =
+        private static readonly string s_encodedFileNames =
                 "KDEqLW4xMiotbjEzKjAwMDFcMDY2KjAwMlwwMTcqMDA5XDAxNyowMlwwMTcqMDlcMDE3KjEhKjEtISox" +
                 "LWEqMS4yNT8xLjI1KjEuNT8xLjUqMSoxXDAxNyoxXDAxOCoxXDAxOSoxXDA2NioxXDA2NyoxYSoyXDAx" +
                 "NyoyXDAxOCo5XDAxNyo5XDAxOCo5XDA2Nio9MSphMDAxdGVzdDAxKmEwMDF0ZXN0aW5nYTBcMzEqYTAw" +
@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Utilities
                 "bjEyKsKtbjEzKsSwKg==";
 
 
-        private static string[] s_orderedFileNames = new string[]
+        private static readonly string[] s_orderedFileNames = new string[]
         {
             "_1.txt"
             ,"-n12.txt"

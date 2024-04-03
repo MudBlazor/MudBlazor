@@ -12,7 +12,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
 {
     public class PrerenderMiddleware
     {
-        private static LimitedConcurrentDictionary<string, byte[]> _responseCache = new(1_000);
+        private static readonly LimitedConcurrentDictionary<string, byte[]> _responseCache = new(1_000);
         private readonly RequestDelegate _next;
         private readonly ICrawlerIdentifier _crawlerIdentifier;
 

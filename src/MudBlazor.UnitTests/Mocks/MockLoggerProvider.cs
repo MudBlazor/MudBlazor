@@ -29,7 +29,7 @@ namespace MudBlazor.UnitTests.Mocks
             CategoryName = categoryName;
         }
 
-        private List<(LogLevel Level, string Message)> _entries = new();
+        private readonly List<(LogLevel Level, string Message)> _entries = new();
 
         public string CategoryName { get; private set; }
 

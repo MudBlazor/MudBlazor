@@ -20,7 +20,7 @@ namespace MudBlazor
         public SnackbarConfiguration Configuration { get; }
         public event Action OnSnackbarsUpdated;
 
-        private NavigationManager _navigationManager;
+        private readonly NavigationManager _navigationManager;
         private ReaderWriterLockSlim SnackBarLock { get; }
         private IList<Snackbar> SnackBarList { get; }
 
