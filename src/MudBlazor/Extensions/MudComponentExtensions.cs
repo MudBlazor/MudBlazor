@@ -21,26 +21,25 @@ internal static class MudComponentExtensions
     /// <param name="propertyNameCallerArgumentExpression">The property name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The <see cref="IParameterState{T}.Value"/> of the specified property.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="propertyExpression"/> is null.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="propertyExpression"/> does not represent a property.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="propertyExpression"/> is invalid.</exception>
     /// <exception cref="KeyNotFoundException">Thrown when the parameter state with <paramref name="propertyExpression"/> is not found.</exception>
     public static T? GetState<TComponent, T>(this TComponent component, Func<TComponent, T> propertyExpression, [CallerArgumentExpression(nameof(propertyExpression))] string? propertyNameCallerArgumentExpression = null) where TComponent : MudComponentBase
     {
         ArgumentNullException.ThrowIfNull(propertyExpression);
         var propertyName = GetPropertyFromFuncLambda(propertyNameCallerArgumentExpression);
 
-        return GetState<TComponent, T>(component, propertyName);
+        return GetState<T>(component, propertyName);
     }
 
     /// <summary>
     /// Gets the read-only parameter state of a specified property in the component.
     /// </summary>
-    /// <typeparam name="TComponent">The type of the MudBlazor component.</typeparam>
     /// <typeparam name="T">The type of the parameter.</typeparam>
     /// <param name="component">The MudBlazor component instance.</param>
     /// <param name="propertyName">The name of the property whose parameter state needs to be accessed. Use nameof(...) to get the property name.</param>
     /// <returns>The <see cref="IParameterState{T}.Value"/> of the specified property.</returns>
     /// <exception cref="KeyNotFoundException">Thrown when the parameter state with <paramref name="propertyName"/> is not found.</exception>
-    public static T? GetState<TComponent, T>(this TComponent component, string propertyName) where TComponent : MudComponentBase
+    public static T? GetState<T>(this MudComponentBase component, string propertyName)
     {
         if (component.Parameters.TryGetValue(propertyName, out var lifeCycle))
         {
@@ -63,9 +62,9 @@ internal static class MudComponentExtensions
         {
             var propertyName = propertyNameExpression[(lastDotIndex + 1)..];
 
-            return propertyName[(lastDotIndex + 1)..];
+            return propertyName;
         }
 
-        throw new ArgumentException("Invalid property expression ()!");
+        throw new ArgumentException($"Invalid property expression ({propertyNameExpression})!");
     }
 }
