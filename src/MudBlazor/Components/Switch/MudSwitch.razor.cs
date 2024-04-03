@@ -10,7 +10,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudSwitch<T> : MudBooleanInput<T>
     {
-        private string _elementId = "switch_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = $"switch_{Guid.NewGuid().ToString().AsSpan(0, 8)}";
         private IKeyInterceptor? _keyInterceptor;
 
         [Inject]

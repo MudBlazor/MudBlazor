@@ -17,7 +17,7 @@ namespace MudBlazor
         [Inject]
         private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
 
-        private string _elementId = "picker" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = $"picker{Guid.NewGuid().ToString().AsSpan(0, 8)}";
 
         protected string PickerClassname =>
             new CssBuilder("mud-picker")

@@ -74,7 +74,7 @@ namespace MudBlazor
         [Inject] private IJsEventFactory _jsEventFactory { get; set; }
         [Inject] private IJsApiService _jsApiService { get; set; }
 
-        private string _elementId = "mask_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = $"mask_{Guid.NewGuid().ToString().AsSpan(0, 8)}";
 
         private IMask _mask = new PatternMask("** **-** **");
 

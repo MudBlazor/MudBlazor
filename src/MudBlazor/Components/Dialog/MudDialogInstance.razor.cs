@@ -14,7 +14,7 @@ namespace MudBlazor
     public partial class MudDialogInstance : MudComponentBase, IDisposable
     {
         private DialogOptions _options = new();
-        private string _elementId = "dialog_" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = $"dialog_{Guid.NewGuid().ToString().AsSpan(0, 8)}";
         private IKeyInterceptor _keyInterceptor;
 
         [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }

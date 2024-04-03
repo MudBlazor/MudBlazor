@@ -22,7 +22,7 @@ namespace MudBlazor.UnitTests.Utilities
                 var p = o + 1;
                 var z = 1; while (s[p] == '0') { z++; p++; }
                 var c = int.Parse(s.Substring(p, z));
-                s = s.Substring(0, o) + new string(s[o - 1], c) + s.Substring(p + z);
+                s = string.Concat(s.AsSpan(0, o), new string(s[o - 1], c), s.AsSpan(p + z));
             }
             return s;
         };

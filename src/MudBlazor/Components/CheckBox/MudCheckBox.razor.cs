@@ -11,7 +11,7 @@ namespace MudBlazor
     public partial class MudCheckBox<T> : MudBooleanInput<T>
     {
         private IKeyInterceptor? _keyInterceptor;
-        private string _elementId = "checkbox" + Guid.NewGuid().ToString().Substring(0, 8);
+        private string _elementId = $"checkbox{Guid.NewGuid().ToString().AsSpan(0, 8)}";
 
         [Inject]
         private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
