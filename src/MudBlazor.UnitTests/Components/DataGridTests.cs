@@ -111,7 +111,7 @@ namespace MudBlazor.UnitTests.Components
 
             // test other sort methods
             var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableTest.Item>>();
-            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs()));
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
             await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
@@ -244,7 +244,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableTest.Item>
                 {
-                    Column = dataGrid.Instance.RenderedColumns[0],
+                    Column = dataGrid.Instance.RenderedColumns.First(),
                     Operator = FilterOperator.String.Equal,
                     Value = "C"
                 });
@@ -394,7 +394,7 @@ namespace MudBlazor.UnitTests.Components
 
             var twoBFilter = new FilterDefinition<DataGridMultiSelectionTest.Item>
             {
-                Column = dataGrid.Instance.RenderedColumns.Find(c => c.PropertyName == "Name"),
+                Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(c => c.PropertyName == "Name"),
                 Operator = FilterOperator.String.Equal,
                 Value = "B"
             };
@@ -459,7 +459,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditableWithSelectColumnTest.Item>>();
 
             // test that all rows, header and footer have cell with a checkbox
-            dataGrid.FindAll("input.mud-checkbox-input").Count.Should().Be(dataGrid.Instance.Items.Count() + 2);
+            dataGrid.FindAll("input.mud-checkbox-input").Count().Should().Be(dataGrid.Instance.Items.Count() + 2);
 
             //test that changing header sets all items selected
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
@@ -2095,7 +2095,7 @@ namespace MudBlazor.UnitTests.Components
             //await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(Guid.NewGuid(), "Status"));
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFiltersTest.Model>
             {
-                Column = dataGrid.Instance.RenderedColumns.Find(x => x.PropertyName == "Status")
+                Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Status")
             }));
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
@@ -2371,7 +2371,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridFooterTemplateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFooterTemplateTest.Model>>();
 
-            dataGrid.FindAll("tfoot td")[0].TextContent.Trim().Should().Be("Names: Sam, Alicia, Ira, John");
+            dataGrid.FindAll("tfoot td").First().TextContent.Trim().Should().Be("Names: Sam, Alicia, Ira, John");
             dataGrid.FindAll("tfoot td").Last().TextContent.Trim().Should().Be($"Highest: {132000:C0} | 2 Over {100000:C0}");
         }
 
@@ -2653,7 +2653,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridColumnPopupFilteringTest.Model>
                 {
-                    Column = dataGrid.Instance.RenderedColumns[0],
+                    Column = dataGrid.Instance.RenderedColumns.First(),
                     Operator = FilterOperator.String.Contains,
                     Value = "test"
                 });
@@ -2826,7 +2826,7 @@ namespace MudBlazor.UnitTests.Components
 
             var item = dataGrid.Instance.Items.FirstOrDefault();
 
-            var column = dataGrid.Instance.RenderedColumns[0];
+            var column = dataGrid.Instance.RenderedColumns.First();
             var cell = new Cell<DataGridCellContextTest.Model>(dataGrid.Instance, column, item);
 
             cell._cellContext.IsSelected.Should().Be(false);
@@ -2887,7 +2887,7 @@ namespace MudBlazor.UnitTests.Components
 
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
-            var guidColumn = grid.RenderedColumns.Find(x => x.PropertyName == "Id");
+            var guidColumn = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Id");
 
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
             {
@@ -2921,14 +2921,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TableFilterNullableGuid()
         {
-            var comp = Context.RenderComponent<DataGridFilterGuid<Guid?>>();
+            var comp = Context.RenderComponent<DataGridFilterGuid<Nullable<Guid>>>();
             var grid = comp.Instance.MudGridRef;
 
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
-            var guidColumn = grid.RenderedColumns.Find(x => x.PropertyName == "Id");
+            var guidColumn = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Id");
 
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
             {
                 Column = guidColumn,
                 Operator = "equals",
@@ -2939,7 +2939,7 @@ namespace MudBlazor.UnitTests.Components
             grid.FilteredItems.Count().Should().Be(0);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
             {
                 Column = guidColumn,
                 Operator = "equals",
@@ -2950,7 +2950,7 @@ namespace MudBlazor.UnitTests.Components
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Nullable<Guid>>.WeatherForecast>()
             {
                 Column = guidColumn,
                 Operator = "not equals",
@@ -3420,7 +3420,7 @@ namespace MudBlazor.UnitTests.Components
 
             // test other sort methods
             var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableTest.Item>>();
-            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs()));
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 6);
 
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
