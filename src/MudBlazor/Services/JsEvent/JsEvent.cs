@@ -116,7 +116,7 @@ namespace MudBlazor.Services
             _subscribedEvents.Clear();
         }
 
-        readonly List<Action<int>> _caretPositionChangedHandlers = new List<Action<int>>();
+        private readonly List<Action<int>> _caretPositionChangedHandlers = new List<Action<int>>();
 
         /// <summary>
         /// Subscribe this event to get notified about caret changes in an input on click and on keyup
@@ -157,7 +157,7 @@ namespace MudBlazor.Services
             }
         }
 
-        readonly List<Action<string>> _pasteHandlers = new List<Action<string>>();
+        private readonly List<Action<string>> _pasteHandlers = new List<Action<string>>();
 
         /// <summary>
         /// Subscribe this event to get notified about paste actions
@@ -192,7 +192,7 @@ namespace MudBlazor.Services
             }
         }
 
-        readonly List<Action<int, int>> _selectHandlers = new List<Action<int, int>>();
+        private readonly List<Action<int, int>> _selectHandlers = new List<Action<int, int>>();
 
         /// <summary>
         /// Subscribe this event to get notified about paste actions
