@@ -8,18 +8,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
 using static Bunit.ComponentParameterFactory;
-using Microsoft.AspNetCore.Components;
-using System.Threading;
+using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -220,11 +220,11 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudAutocomplete<string>>((a) =>
             {
                 a.Add(x => x.DebounceInterval, 0);
-                a.Add(x => x.SearchFunc, new Func<string, Task<IEnumerable<string>>>(async s => null)); // <--- searchfunc returns null instead of sequence
+                a.Add(x => x.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>(async (s, token) => null)); // <--- searchfunc returns null instead of sequence
             });
             // enter a text so the search func will return null, and it shouldn't throw an exception
             comp.SetParam(a => a.Text, "Do not throw");
-            comp.SetParam(x => x.SearchFunc, new Func<string, Task<IEnumerable<string>>>(s => null)); // <-- search func returns null instead of task!
+            comp.SetParam(x => x.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, token) => null)); // <-- search func returns null instead of task!
             comp.SetParam(a => a.Text, "Don't throw here neither");
         }
 
@@ -475,11 +475,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// <para>
         /// When selecting a value by clicking on it in the list the input will blur. However, this
         /// must not cause the dropdown to close or else the click on the item will not be possible!
-        ///
+        /// </para>
+        /// <para>
         /// If this test fails it means the dropdown has closed before we can even click any value in the list.
         /// Such a regression happened and caused PR #1807 to be reverted
+        /// </para>
         /// </summary>
         [Test]
         public async Task Autocomplete_Should_NotCloseDropdownOnInputBlur()
@@ -1000,7 +1003,7 @@ namespace MudBlazor.UnitTests.Components
 
             var first = new TaskCompletionSource<IEnumerable<string>>();
 
-            autocompletecomp.SetParam(p => p.SearchFuncWithCancel, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
+            autocompletecomp.SetParam(p => p.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
             {
                 cancelToken = cancellationToken;
                 // Return task that never completes.
@@ -1019,7 +1022,7 @@ namespace MudBlazor.UnitTests.Components
 
             var second = new TaskCompletionSource<IEnumerable<string>>();
 
-            autocompletecomp.SetParam(p => p.SearchFuncWithCancel, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
+            autocompletecomp.SetParam(p => p.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
             {
                 return second.Task;
             }));
@@ -1311,7 +1314,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_ReturnedItemsCount_Should_Be_Accurate()
         {
-            Task<IEnumerable<string>> search(string value)
+            Task<IEnumerable<string>> search(string value, CancellationToken token)
             {
                 var values = new string[] { "Lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit" };
                 return Task.FromResult(values.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));

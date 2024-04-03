@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -114,9 +115,6 @@ public partial class Appbar
     private LayoutService LayoutService { get; set; } = null!;
 
     [Parameter]
-    public bool DisplaySearchBar { get; set; }
-
-    [Parameter]
     public EventCallback<MouseEventArgs> DrawerToggleCallback { get; set; }
 
     private async void OnSearchResult(ApiLinkServiceEntry entry)
@@ -131,7 +129,7 @@ public partial class Appbar
         return page == LayoutService.GetDocsBasePage(NavigationManager.Uri) ? "mud-chip-text mud-chip-color-primary mx-1 px-3" : "mx-1 px-3";
     }
 
-    private Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text)
+    private Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text, CancellationToken token)
     {
         if (string.IsNullOrWhiteSpace(text))
         {

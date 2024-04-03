@@ -346,7 +346,7 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
-            if (_isDisposed == true)
+            if (_isDisposed)
                 return;
             _isDisposed = true;
             _resizeObserver.OnResized -= OnResized;
@@ -370,7 +370,7 @@ namespace MudBlazor
 
         internal async Task SetPanelRef(ElementReference reference)
         {
-            if (_isRendered == true && _resizeObserver.IsElementObserved(reference) == false)
+            if (_isRendered && _resizeObserver.IsElementObserved(reference) == false)
             {
                 await _resizeObserver.Observe(reference);
                 Rerender();
@@ -742,7 +742,7 @@ namespace MudBlazor
                 }
             }
 
-            MudTabPanel panelToStart = ActivePanel;
+            var panelToStart = ActivePanel;
             var length = GetPanelLength(panelToStart);
             if (length >= _toolbarContentSize)
             {

@@ -3,11 +3,11 @@
 <MudGrid>
     <MudItem xs="12" md="3">
         <MudText Typo="Typo.h6">Anchor Origin</MudText>
-        <MudRadioGroup T="Origin" @bind-SelectedValue="AnchorOrigin" Class="d-flex flex-column  my-2">
+        <MudRadioGroup T="Origin" @bind-Value="AnchorOrigin" Class="d-flex flex-column  my-2">
             <MudRadio Color="Color.Primary" Dense="true" Value="Origin.TopLeft" Disabled="true">Top-Left</MudRadio>
         </MudRadioGroup>
         <MudText Typo="Typo.h6">Transform Origin</MudText>
-        <MudRadioGroup T="Origin" @bind-SelectedValue="TransformOrigin" Class="d-flex flex-column  my-2">
+        <MudRadioGroup T="Origin" @bind-Value="TransformOrigin" Class="d-flex flex-column  my-2">
             <MudRadio Color="Color.Primary" Dense="true" Value="Origin.TopLeft">Top-Left</MudRadio>
             <MudRadio Color="Color.Primary" Dense="true" Value="Origin.TopRight">Top-Right</MudRadio>
         </MudRadioGroup>

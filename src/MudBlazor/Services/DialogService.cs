@@ -190,7 +190,7 @@ namespace MudBlazor
         public Task<bool?> ShowMessageBox(string title, string message, string yesText = "OK",
             string noText = null, string cancelText = null, DialogOptions options = null)
         {
-            return this.ShowMessageBox(new MessageBoxOptions
+            return ShowMessageBox(new MessageBoxOptions
             {
                 Title = title,
                 Message = message,
@@ -203,7 +203,7 @@ namespace MudBlazor
         public Task<bool?> ShowMessageBox(string title, MarkupString markupMessage, string yesText = "OK",
             string noText = null, string cancelText = null, DialogOptions options = null)
         {
-            return this.ShowMessageBox(new MessageBoxOptions
+            return ShowMessageBox(new MessageBoxOptions
             {
                 Title = title,
                 MarkupMessage = markupMessage,
@@ -224,7 +224,7 @@ namespace MudBlazor
                 [nameof(MessageBoxOptions.NoText)] = messageBoxOptions.NoText,
                 [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText,
             };
-            var reference = await ShowAsync<MudMessageBox>(parameters: parameters, options: options, title: messageBoxOptions.Title);
+            var reference = await ShowAsync<MudMessageBox>(title: messageBoxOptions.Title, parameters: parameters, options: options);
             var result = await reference.Result;
             if (result.Canceled || result.Data is not bool data)
                 return null;

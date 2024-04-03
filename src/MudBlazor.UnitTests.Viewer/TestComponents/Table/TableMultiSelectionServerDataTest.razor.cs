@@ -6,13 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.TestComponents
 {
 #pragma warning disable CS1998 // async without await
 
-    public partial class TableMultiSelectionTest9
+    public partial class TableMultiSelectionServerDataTest
     {
         public static string __description__ = "The selected items should not be cleared when the page changes or filters are applied.";
         private List<ComplexObject> _simulatedServerData = Enumerable
@@ -32,14 +33,14 @@ namespace MudBlazor.UnitTests.TestComponents
         private HashSet<ComplexObject> _selectedItems = new();
         private ElementComparer Comparer = new();
 
-        protected async Task<TableData<ComplexObject>> ServerData(TableState state)
+        protected async Task<TableData<ComplexObject>> ServerData(TableState state, CancellationToken token)
         {
             try
             {
                 TableData<ComplexObject> data = new();
                 data.TotalItems = _simulatedServerData.Count;
                 // Serialize & deserialize to test a more real scenario where the references to the objects changes
-                string jsonData = JsonSerializer.Serialize(_simulatedServerData);
+                var jsonData = JsonSerializer.Serialize(_simulatedServerData);
                 data.Items = JsonSerializer.Deserialize<List<ComplexObject>>(jsonData).Skip(state.PageSize * state.Page).Take(state.PageSize);
                 return data;
             }

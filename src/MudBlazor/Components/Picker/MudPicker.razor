@@ -1,4 +1,3 @@
-@using MudBlazor.Internal
 @namespace MudBlazor
 @inherits MudFormComponent<T, string>
 @typeparam T
@@ -25,7 +24,7 @@
              ReadOnly="@(!Editable || GetReadOnlyState())" 
              Disabled="@GetDisabledState()"
              DisableUnderLine="@DisableUnderLine"
-             OnAdornmentClick="ToggleState" 
+             OnAdornmentClick="ToggleStateAsync" 
              Adornment="@Adornment"
              AdornmentIcon="@AdornmentIcon" 
              AdornmentColor="@AdornmentColor" 
@@ -37,14 +36,14 @@
              Error="@Error" 
              ErrorText="@ErrorText"
              Clearable="@(GetReadOnlyState() ? false : Clearable)"
-             OnClearButtonClick="@(() => Clear())"
+             OnClearButtonClick="@(async () => await ClearAsync())"
              @onclick="OnClickAsync" />;
 
     protected virtual RenderFragment PickerContent => null;
 
     protected virtual RenderFragment Render =>
     @<CascadingValue Value="@this" IsFixed="true">
-        <div class="@PickerClass" id="@_elementId">
+        <div class="@PickerClassname" id="@_elementId">
             @if (PickerVariant != PickerVariant.Static)
             {
                 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
@@ -56,16 +55,16 @@
             @if (PickerVariant == PickerVariant.Inline)
             {
 				<MudPopover Open="IsOpen" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" OverflowBehavior="OverflowBehavior.FlipOnOpen" Paper="false">
-				   <div @ref="_pickerInlineRef" class="@PickerInlineClass">
-					   <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
-						   <div class="@PickerContainerClass">
+				   <div @ref="_pickerInlineRef" class="@PickerInlineClassname">
+					   <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Elevation="@_pickerElevation" Square="@_pickerSquare">
+						   <div class="@PickerContainerClassname">
 							   @if(PickerContent != null){
 								   @PickerContent
 							   }
 						   </div>
 							@if (PickerActions != null)
 							{
-								<div class="@ActionClass">
+								<div class="@ActionsClassname">
 									@PickerActions(this)
 								</div>
 							}
@@ -75,15 +74,15 @@
             }
             else if (PickerVariant == PickerVariant.Static)
             {
-               <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
-                   <div class="@PickerContainerClass">
+               <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Elevation="@_pickerElevation" Square="@_pickerSquare">
+                   <div class="@PickerContainerClassname">
 					   @if(PickerContent != null){
 						   @PickerContent
 					   }
                    </div>
                     @if (PickerActions != null)
                     {
-                        <div class="@ActionClass">
+                        <div class="@ActionsClassname">
                             @PickerActions(this)
                         </div>
                     }
@@ -91,16 +90,16 @@
             }
             else if(IsOpen && PickerVariant == PickerVariant.Dialog)
             {
-               <MudOverlay Visible="IsOpen" OnClick="CloseOverlay" DarkBackground="true" Class="mud-overlay-dialog">
-                   <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
-                       <div class="@PickerContainerClass">
+               <MudOverlay Visible="IsOpen" OnClick="CloseOverlayAsync" DarkBackground="true" Class="mud-overlay-dialog">
+                   <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Elevation="@_pickerElevation" Square="@_pickerSquare">
+                       <div class="@PickerContainerClassname">
 							@if(PickerContent != null){
 								@PickerContent
 							}
                        </div>
                         @if (PickerActions != null)
                         {
-                            <div class="@ActionClass">
+                            <div class="@ActionsClassname">
                                 @PickerActions(this)
                             </div>
                         }
@@ -110,9 +109,7 @@
         </div>
         @if (PickerVariant == PickerVariant.Inline)
         {
-            <MudOverlay Visible="IsOpen" OnClick="CloseOverlay" LockScroll="false" />
+            <MudOverlay Visible="IsOpen" OnClick="CloseOverlayAsync" LockScroll="false" />
         }
     </CascadingValue>;
 }
-
-

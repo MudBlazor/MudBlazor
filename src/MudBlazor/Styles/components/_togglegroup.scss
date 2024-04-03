@@ -2,6 +2,13 @@
 
 .mud-toggle-group {
   display: grid;
+
+  &.mud-disabled {
+    cursor: default;
+    pointer-events: none;
+    color: var(--mud-palette-action-disabled) !important;
+    border-color: var(--mud-palette-action-disabled) !important;
+  }
 }
 
 .mud-toggle-group-horizontal {
@@ -21,7 +28,7 @@
       }
 
       &.mud-toggle-delimiter-alternative {
-        border-left-color: var(--mud-palette-background-grey) !important;
+        border-left-color: var(--mud-palette-background-gray) !important;
       }
     }
   }
@@ -59,7 +66,7 @@
     }
 
     &.mud-toggle-delimiter-alternative {
-      border-top-color: var(--mud-palette-background-grey) !important;
+      border-top-color: var(--mud-palette-background-gray) !important;
     }
   }
 }
@@ -87,5 +94,12 @@
 
   &.mud-toggle-item-selected-border {
     border-radius: unset;
+  }
+
+  &.mud-disabled {
+    cursor: default;
+    pointer-events: none;
+    color: var(--mud-palette-action-disabled) !important;
+    border-color: inherit !important;
   }
 }

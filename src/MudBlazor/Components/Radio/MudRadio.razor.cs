@@ -19,13 +19,14 @@ namespace MudBlazor
                 .AddClass($"mud-disabled", IsDisabled)
                 .AddClass($"mud-readonly", MudRadioGroup?.GetReadOnlyState())
                 .AddClass($"mud-radio-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
+                .AddClass("mud-radio-with-content", ChildContent is not null)
                 .AddClass(Class)
                 .Build();
 
         protected string ButtonClassname =>
             new CssBuilder("mud-button-root mud-icon-button")
                 .AddClass($"mud-ripple mud-ripple-radio", !DisableRipple && !Disabled && !(MudRadioGroup?.GetDisabledState() ?? false) && !(MudRadioGroup?.GetReadOnlyState() ?? false))
-                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", UnCheckedColor == null || (UnCheckedColor != null && Checked == true))
+                .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", UnCheckedColor == null || (UnCheckedColor != null && Checked))
                 .AddClass($"mud-{UnCheckedColor?.ToDescriptionString()}-text hover:mud-{UnCheckedColor?.ToDescriptionString()}-hover", UnCheckedColor != null && Checked == false)
                 .AddClass($"mud-radio-dense", Dense)
                 .AddClass($"mud-disabled", IsDisabled)
@@ -103,24 +104,6 @@ namespace MudBlazor
         public T? Value { get; set; }
 
         /// <summary>
-        /// The value to associate to the button.
-        /// </summary>
-        [Obsolete("Use Value instead.")]
-        [Parameter]
-        [Category(CategoryTypes.Radio.Behavior)]
-        public T? Option
-        {
-            get
-            {
-                return Value;
-            }
-            set
-            {
-                Value = value;
-            }
-        }
-
-        /// <summary>
         /// If true, compact padding will be applied.
         /// </summary>
         [Parameter]
@@ -180,12 +163,6 @@ namespace MudBlazor
             }
         }
 
-        [Obsolete($"Use {nameof(SelectAsync)} instead. This method will be removed in v7")]
-        public void Select()
-        {
-            MudRadioGroup?.SetSelectedRadioAsync(this).AndForget();
-        }
-
         public Task SelectAsync()
         {
             if (MudRadioGroup is not null)
@@ -209,25 +186,6 @@ namespace MudBlazor
             }
 
             return Task.CompletedTask;
-        }
-
-        [Obsolete($"Use {nameof(HandleKeyDownAsync)} instead. This method will be removed in v7")]
-        protected internal void HandleKeyDown(KeyboardEventArgs obj)
-        {
-            if (IsDisabled || (MudRadioGroup?.GetReadOnlyState() ?? false))
-            {
-                return;
-            }
-
-            switch (obj.Key)
-            {
-                case "Enter" or "NumpadEnter" or " ":
-                    Select();
-                    break;
-                case "Backspace":
-                    MudRadioGroup?.Reset();
-                    break;
-            }
         }
 
         protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)

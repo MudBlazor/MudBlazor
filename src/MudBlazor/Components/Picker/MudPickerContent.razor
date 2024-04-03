@@ -1,16 +1,6 @@
 ﻿@namespace MudBlazor
-@using MudBlazor.Utilities
+@inherits MudComponentBase
 
-<div class="@Classnames" @onclick:stopPropagation="true">
+<div @attributes="UserAttributes" class="@Classname" Style="@Style" @onclick:stopPropagation="true">
     @ChildContent
 </div>
-
-@code {
-    protected string Classnames =>
-    new CssBuilder("mud-picker-content")
-      .AddClass(Class)
-    .Build();
-
-    [Parameter] public string Class { get; set; }
-    [Parameter] public RenderFragment ChildContent { get; set; }
-}

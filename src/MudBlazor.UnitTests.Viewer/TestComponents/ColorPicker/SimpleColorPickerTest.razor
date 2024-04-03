@@ -44,17 +44,16 @@
     {
         await InvokeAsync(() =>
         {
-            _picker.Open();
+            _picker.OpenAsync();
         });
     }
 
     public async Task ClosePicker()
     {
-        await InvokeAsync(() =>
+        await InvokeAsync(async () =>
         {
-            _picker.Close();
+            await _picker.CloseAsync();
         });
     }
-
 }
 

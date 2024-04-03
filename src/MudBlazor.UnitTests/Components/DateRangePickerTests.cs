@@ -1,15 +1,15 @@
 ﻿#pragma warning disable BL0005 // Set parameter outside component
 
-using AngleSharp.Html.Dom;
-using Bunit;
-using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
-using NUnit.Framework;
 using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
+using Bunit;
+using FluentAssertions;
+using MudBlazor.UnitTests.TestComponents;
+using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
@@ -38,6 +38,45 @@ namespace MudBlazor.UnitTests.Components
             picker.FixYear.Should().Be(null);
             picker.FixMonth.Should().Be(null);
             picker.FixDay.Should().Be(null);
+            picker.PlaceholderStart.Should().Be(null);
+            picker.PlaceholderEnd.Should().Be(null);
+            picker.SeparatorIcon.Should().Be(Icons.Material.Filled.ArrowRightAlt);
+        }
+
+        [Test]
+        public void DateRangePickerPlaceHolders()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>();
+            comp.SetParametersAndRender(
+                parameters =>
+                parameters
+                .Add(picker => picker.PlaceholderStart, "Start")
+                .Add(picker => picker.PlaceholderEnd, "End")
+                );
+
+            var startInput = comp.Find("input").Attributes["placeholder"].Value.Should().Be("Start");
+            var endInput = comp.FindAll("input").Skip(1).First().Attributes["placeholder"].Value.Should().Be("End");
+        }
+
+        [Test]
+        public void DateRangePickerSeparatorIcon()
+        {
+            var newIcon = Icons.Material.Filled.Star;
+            var comp = Context.RenderComponent<MudDateRangePicker>();
+            comp.SetParametersAndRender(
+                parameters =>
+                parameters
+                .Add(picker => picker.SeparatorIcon, newIcon)
+                );
+            var markup = comp.Markup;
+
+            // Only check first svg section
+            string startText = "<svg", endText = "</svg>";
+            var sectionStart = markup.IndexOf(startText);
+            var length = markup.IndexOf(endText) - sectionStart + endText.Length;
+            var section = markup.Substring(sectionStart, length);
+
+            section.Should().Contain(newIcon);
         }
 
         [Test]
@@ -99,8 +138,8 @@ namespace MudBlazor.UnitTests.Components
             var watch = Stopwatch.StartNew();
             for (var i = 0; i < 10000; i++)
             {
-                await comp.InvokeAsync(() => datepicker.Open());
-                await comp.InvokeAsync(() => datepicker.Close());
+                await comp.InvokeAsync(() => datepicker.OpenAsync());
+                await comp.InvokeAsync(() => datepicker.CloseAsync());
             }
             watch.Stop();
             watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
@@ -419,7 +458,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.IsDateDisabledFunc.Should().Be(isDisabledFunc);
             comp.FindAll("button.mud-picker-calendar-day").Select(button => ((IHtmlButtonElement)button).IsDisabled)
-                .Should().OnlyContain(disabled => disabled == true);
+                .Should().OnlyContain(disabled => disabled);
         }
 
         [Test]
@@ -591,7 +630,7 @@ namespace MudBlazor.UnitTests.Components
             dateRangePickerInstance.ErrorText.Should().BeNullOrWhiteSpace();
 
             // reset value
-            await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.Clear());
+            await dateRangePickerComponent.InvokeAsync(() => dateRangePickerInstance.ClearAsync());
 
             // assert values have benn nulled
             dateRangePickerInstance.Text.Should().BeNullOrEmpty();

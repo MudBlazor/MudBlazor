@@ -123,9 +123,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Close and return null. 
-        /// 
-        /// This is a shorthand of Close(DialogResult.Ok((object)null));
+        /// <para>Close and return null. </para>
+        /// <para>This is a shorthand of Close(DialogResult.Ok((object)null));</para>
         /// </summary>
         public void Close()
         {
@@ -133,9 +132,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Close with dialog result.
-        /// 
-        /// Usage: Close(DialogResult.Ok(returnValue))
+        /// <para>Close with dialog result.</para>
+        /// <para>Usage: Close(DialogResult.Ok(returnValue))</para>
         /// </summary>
         public void Close(DialogResult dialogResult)
         {
@@ -143,9 +141,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Close and directly pass a return value. 
-        /// 
-        /// This is a shorthand for Close(DialogResult.Ok(returnValue))
+        /// <para>Close and directly pass a return value. </para>
+        /// <para>This is a shorthand for Close(DialogResult.Ok(returnValue))</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="returnValue"></param>
@@ -324,9 +321,6 @@ namespace MudBlazor
             TitleContent = dialog.TitleContent;
             StateHasChanged();
         }
-
-        [Obsolete($"Use {nameof(StateHasChanged)}. This method will be removed in v7.")]
-        public void ForceRender() => StateHasChanged();
 
         public new void StateHasChanged() => base.StateHasChanged();
 

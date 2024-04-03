@@ -35,13 +35,6 @@ namespace MudBlazor
         /// <summary>
         /// If applied Icon will be added at the start of the component.
         /// </summary>
-        [Obsolete("This property is obsolete. Use StartIcon instead.")]
-        [Parameter]
-        public string? Icon { get => StartIcon; set => StartIcon = value; }
-
-        /// <summary>
-        /// If applied Icon will be added at the start of the component.
-        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public string? StartIcon { get; set; }

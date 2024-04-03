@@ -142,6 +142,7 @@
 .mud-chip-filled {
   color: var(--mud-palette-text-primary);
   background-color: var(--mud-palette-chip-default);
+  --mud-ripple-opacity: var(--mud-ripple-opacity-secondary);
 
   @media(hover: hover) and (pointer: fine) {
     &:hover:not(.mud-disabled) {
@@ -156,6 +157,7 @@
   @each $color in $mud-palette-colors {
     &.mud-chip-color-#{$color} {
       color: var(--mud-palette-#{$color}-text);
+      --mud-ripple-color: var(--mud-palette-#{$color}-text) !important;
       background-color: var(--mud-palette-#{$color});
 
       @media(hover: hover) and (pointer: fine) {
@@ -188,6 +190,7 @@
   @each $color in $mud-palette-colors {
     &.mud-chip-color-#{$color} {
       color: var(--mud-palette-#{$color});
+      --mud-ripple-color: var(--mud-palette-#{$color}) !important;
       border: 1px solid var(--mud-palette-#{$color});
 
       @media(hover: hover) and (pointer: fine) {
@@ -234,6 +237,7 @@
   @each $color in $mud-palette-colors {
     &.mud-chip-color-#{$color} {
       color: var(--mud-palette-#{$color});
+      --mud-ripple-color: var(--mud-palette-#{$color}) !important;
       background-color: var(--mud-palette-#{$color}-hover);
 
       @media(hover: hover) and (pointer: fine) {

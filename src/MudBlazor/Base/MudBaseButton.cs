@@ -42,21 +42,9 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
         public string? Href { get; set; }
-        /// <summary>
-        /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where (Obsolete replaced by Href)
-        /// </summary>
-
-        [Obsolete("Use Href Instead.", false)]
-        [Parameter]
-        [Category(CategoryTypes.Button.ClickAction)]
-        public string? Link
-        {
-            get => Href;
-            set => Href = value;
-        }
 
         /// <summary>
-        /// The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// The target attribute specifies where to open the link, if Href is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]
@@ -124,7 +112,7 @@ namespace MudBlazor
             SetDefaultValues();
         }
 
-        //Set the default value for HtmlTag, Link and Target 
+        //Set the default value for HtmlTag, Href and Target 
         private void SetDefaultValues()
         {
             if (GetDisabledState())
@@ -135,7 +123,7 @@ namespace MudBlazor
                 return;
             }
 
-            // Render an anchor element if Link property is set and is not disabled
+            // Render an anchor element if Href property is set and is not disabled
             if (!IsNullOrWhiteSpace(Href))
             {
                 HtmlTag = "a";

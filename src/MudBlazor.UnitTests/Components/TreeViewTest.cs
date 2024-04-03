@@ -179,7 +179,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TreeViewItem_DoubleClick_CheckExpanded()
         {
             var comp = Context.RenderComponent<TreeViewTest3>();
-            bool itemIsExpanded = false;
+            var itemIsExpanded = false;
 
             var item = comp.FindComponent<MudTreeViewItem<string>>();
             await item.InvokeAsync(() =>

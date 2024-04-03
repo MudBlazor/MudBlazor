@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
-using NUnit.Framework;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.Mocks;
+using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions;
 

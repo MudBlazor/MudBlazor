@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Xml;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -76,13 +75,13 @@ namespace MudBlazor
             }
         }
 
-        protected override Task DateFormatChanged(string newFormat)
+        protected override Task DateFormatChangedAsync(string newFormat)
         {
             Touched = true;
             return SetTextAsync(Converter.Set(_value), false);
         }
 
-        protected override Task StringValueChanged(string value)
+        protected override Task StringValueChangedAsync(string value)
         {
             Touched = true;
             // Update the date property (without updating back the Value property)
@@ -102,17 +101,17 @@ namespace MudBlazor
             return b.Build();
         }
 
-        protected override async void OnDayClicked(DateTime dateTime)
+        protected override async Task OnDayClickedAsync(DateTime dateTime)
         {
             _selectedDate = dateTime;
             if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
             {
-                await Task.Run(() => InvokeAsync(Submit));
+                await Task.Run(() => InvokeAsync(SubmitAsync));
 
                 if (PickerVariant != PickerVariant.Static)
                 {
                     await Task.Delay(ClosingDelay);
-                    Close(false);
+                    await CloseAsync(false);
                 }
             }
         }
@@ -121,7 +120,7 @@ namespace MudBlazor
         /// user clicked on a month
         /// </summary>
         /// <param name="month"></param>
-        protected override void OnMonthSelected(DateTime month)
+        protected override async Task OnMonthSelectedAsync(DateTime month)
         {
             PickerMonth = month;
             var nextView = GetNextView();
@@ -132,7 +131,7 @@ namespace MudBlazor
                     new DateTime(month.Year, month.Month, _selectedDate.Value.Day, _selectedDate.Value.Hour, _selectedDate.Value.Minute, _selectedDate.Value.Second, _selectedDate.Value.Millisecond, _selectedDate.Value.Kind)
                     //We can assume day here, as it was not set yet. If a fix value is set, it will be overriden in Submit
                     : new DateTime(month.Year, month.Month, 1);
-                SubmitAndClose();
+                await SubmitAndCloseAsync();
             }
             else
             {
@@ -144,7 +143,7 @@ namespace MudBlazor
         /// user clicked on a year
         /// </summary>
         /// <param name="year"></param>
-        protected override void OnYearClicked(int year)
+        protected override async Task OnYearClickedAsync(int year)
         {
             var current = GetMonthStart(0);
             PickerMonth = new DateTime(year, Culture.Calendar.GetMonth(current), 1, Culture.Calendar);
@@ -156,7 +155,7 @@ namespace MudBlazor
                     new DateTime(_selectedDate.Value.Year, _selectedDate.Value.Month, _selectedDate.Value.Day, _selectedDate.Value.Hour, _selectedDate.Value.Minute, _selectedDate.Value.Second, _selectedDate.Value.Millisecond, _selectedDate.Value.Kind)
                     //We can assume month and day here, as they were not set yet
                     : new DateTime(year, 1, 1, Culture.Calendar);
-                SubmitAndClose();
+                await SubmitAndCloseAsync();
             }
             else
             {
@@ -164,14 +163,14 @@ namespace MudBlazor
             }
         }
 
-        protected override void OnOpened()
+        protected override Task OnOpenedAsync()
         {
             _selectedDate = null;
 
-            base.OnOpened();
+            return base.OnOpenedAsync();
         }
 
-        protected internal override async void Submit()
+        protected internal override async Task SubmitAsync()
         {
             if (GetReadOnlyState())
                 return;
@@ -191,14 +190,14 @@ namespace MudBlazor
             _selectedDate = null;
         }
 
-        public override async void Clear(bool close = true)
+        public override async Task ClearAsync(bool close = true)
         {
             _selectedDate = null;
             await SetDateAsync(null, true);
 
-            if (AutoClose == true)
+            if (AutoClose)
             {
-                Close(false);
+                await CloseAsync(false);
             }
         }
 
@@ -219,16 +218,15 @@ namespace MudBlazor
             var diff = Culture.Calendar.GetYear(date) - Culture.Calendar.GetYear(yearDate);
             var calenderYear = Culture.Calendar.GetYear(date);
             return calenderYear - diff;
-
         }
 
         //To be completed on next PR
-        protected internal override void HandleKeyDown(KeyboardEventArgs obj)
+        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
-            base.HandleKeyDown(obj);
-            switch (obj.Key)
+            await base.OnHandleKeyDownAsync(args);
+            switch (args.Key)
             {
                 case "ArrowRight":
                     if (IsOpen)
@@ -247,11 +245,11 @@ namespace MudBlazor
                     {
                         IsOpen = true;
                     }
-                    else if (obj.AltKey == true)
+                    else if (args.AltKey)
                     {
                         IsOpen = false;
                     }
-                    else if (obj.ShiftKey == true)
+                    else if (args.ShiftKey)
                     {
 
                     }
@@ -265,7 +263,7 @@ namespace MudBlazor
                     {
                         IsOpen = true;
                     }
-                    else if (obj.ShiftKey == true)
+                    else if (args.ShiftKey)
                     {
 
                     }
@@ -275,18 +273,18 @@ namespace MudBlazor
                     }
                     break;
                 case "Escape":
-                    ReturnDateBackUp();
+                    await ReturnDateBackUpAsync();
                     break;
                 case "Enter":
                 case "NumpadEnter":
                     if (!IsOpen)
                     {
-                        Open();
+                        await OpenAsync();
                     }
                     else
                     {
-                        Submit();
-                        Close();
+                        await SubmitAsync();
+                        await CloseAsync();
                         _inputReference?.SetText(Text);
                     }
                     break;
@@ -295,12 +293,12 @@ namespace MudBlazor
                     {
                         if (!IsOpen)
                         {
-                            Open();
+                            await OpenAsync();
                         }
                         else
                         {
-                            Submit();
-                            Close();
+                            await SubmitAsync();
+                            await CloseAsync();
                             _inputReference?.SetText(Text);
                         }
                     }
@@ -310,10 +308,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private void ReturnDateBackUp()
-        {
-            Close();
-        }
+        private Task ReturnDateBackUpAsync() => CloseAsync();
 
         /// <summary>
         /// Scrolls to the date.

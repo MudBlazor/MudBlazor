@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
 using System.Collections.Generic;
-using System;
-using System.Threading.Tasks;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State.Builder;
 

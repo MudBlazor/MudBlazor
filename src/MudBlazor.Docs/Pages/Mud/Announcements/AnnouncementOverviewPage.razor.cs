@@ -23,7 +23,7 @@ public partial class AnnouncementOverviewPage
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender == true)
+        if (firstRender)
         {
             await NotificationService.MarkNotificationsAsRead();
         }
