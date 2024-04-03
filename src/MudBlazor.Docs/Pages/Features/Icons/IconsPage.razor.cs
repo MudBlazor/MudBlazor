@@ -19,16 +19,16 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         [Inject] IResizeObserver ResizeObserver { get; set; }
         [Inject] protected IJsApiService JsApiService { get; set; }
 
-        bool iconDrawerOpen;
-        List<MudIcons> DisplayedIcons;
+        bool _iconDrawerOpen;
+        List<MudIcons> _displayedIcons;
         private IconOrigin SelectedIconOrigin { get; set; } = IconOrigin.Material;
         private string SearchText { get; set; } = string.Empty;
         private double _iconCardWidth = 136.88; // single icon card width including margins
         private float _iconCardHeight = 144; // single icon card height including margins
-        private int CardsPerRow = 0;
+        private int _cardsPerRow = 0;
 
 
-        private ElementReference killZone;
+        private ElementReference _killZone;
 
         private List<MudIcons> CustomAll { get; set; } = new List<MudIcons>();
         private List<MudIcons> CustomBrands { get; set; } = new List<MudIcons>();
@@ -46,17 +46,17 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         private Size PreviewIconSize { get; set; } = Size.Medium;
         private Color PreviewIconColor { get; set; } = Color.Dark;
         private List<MudVirtualizedIcons> SelectedIcons => string.IsNullOrWhiteSpace(SearchText)
-            ? GetVirtualizedIcons(DisplayedIcons)
-            : GetVirtualizedIcons(DisplayedIcons.Where(m => m.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList());
+            ? GetVirtualizedIcons(_displayedIcons)
+            : GetVirtualizedIcons(_displayedIcons.Where(m => m.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList());
 
         private List<MudVirtualizedIcons> GetVirtualizedIcons(List<MudIcons> iconlist)
         {
-            if (CardsPerRow <= 0)
+            if (_cardsPerRow <= 0)
                 return new List<MudVirtualizedIcons>();
-            return iconlist.Chunk(CardsPerRow).Select(row => new MudVirtualizedIcons(row)).ToList();
+            return iconlist.Chunk(_cardsPerRow).Select(row => new MudVirtualizedIcons(row)).ToList();
         }
 
-        private readonly IconStorage IconTypes = new()
+        private readonly IconStorage _iconTypes = new()
         {
             { IconType.Filled, typeof(MudBlazor.Icons.Material.Filled) },
             { IconType.Outlined, typeof(MudBlazor.Icons.Material.Outlined) },
@@ -71,7 +71,7 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         protected override async Task OnInitializedAsync()
         {
             MaterialFilled = await LoadMaterialIcons(IconType.Filled);
-            DisplayedIcons = MaterialFilled;
+            _displayedIcons = MaterialFilled;
 
             MaterialOutlined = await LoadMaterialIcons(IconType.Outlined);
             MaterialRounded = await LoadMaterialIcons(IconType.Rounded);
@@ -86,7 +86,7 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             if (firstRender)
             {
 
-                await ResizeObserver.Observe(killZone);
+                await ResizeObserver.Observe(_killZone);
 
                 ResizeObserver.OnResized += OnResized;
 
@@ -103,13 +103,13 @@ namespace MudBlazor.Docs.Pages.Features.Icons
 
         private void SetCardsPerRow()
         {
-            CardsPerRow = Convert.ToInt32(ResizeObserver.GetWidth(killZone) / _iconCardWidth);
+            _cardsPerRow = Convert.ToInt32(ResizeObserver.GetWidth(_killZone) / _iconCardWidth);
         }
 
         public async Task<List<MudIcons>> LoadMaterialIcons(string type)
         {
             var result = new List<MudIcons>();
-            var icons = IconTypes[type];
+            var icons = _iconTypes[type];
             var iconsInstance = Activator.CreateInstance(icons);
 
             foreach (var prop in icons.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
@@ -176,31 +176,31 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             switch (type)
             {
                 case IconType.Filled:
-                    DisplayedIcons = MaterialFilled;
+                    _displayedIcons = MaterialFilled;
                     break;
                 case IconType.Outlined:
-                    DisplayedIcons = MaterialOutlined;
+                    _displayedIcons = MaterialOutlined;
                     break;
                 case IconType.Rounded:
-                    DisplayedIcons = MaterialRounded;
+                    _displayedIcons = MaterialRounded;
                     break;
                 case IconType.Sharp:
-                    DisplayedIcons = MaterialSharp;
+                    _displayedIcons = MaterialSharp;
                     break;
                 case IconType.TwoTone:
-                    DisplayedIcons = MaterialTwoTone;
+                    _displayedIcons = MaterialTwoTone;
                     break;
                 case IconType.All:
-                    DisplayedIcons = CustomAll;
+                    _displayedIcons = CustomAll;
                     break;
                 case IconType.Brands:
-                    DisplayedIcons = CustomBrands;
+                    _displayedIcons = CustomBrands;
                     break;
                 case IconType.FileFormats:
-                    DisplayedIcons = CustomFileFormats;
+                    _displayedIcons = CustomFileFormats;
                     break;
                 case IconType.Uncategorized:
-                    DisplayedIcons = CustomUncategorized;
+                    _displayedIcons = CustomUncategorized;
                     break;
             };
         }
@@ -221,13 +221,13 @@ namespace MudBlazor.Docs.Pages.Features.Icons
 
         void SetIconDrawer(MudIcons icon)
         {
-            iconDrawerOpen = true;
+            _iconDrawerOpen = true;
             SelectedIcon = new MudIcons(icon.Name, icon.Code, icon.Category);
             IconCodeOutput = $"@Icons{(SelectedIconOrigin == IconOrigin.Material ? ".Material" : ".Custom")}.{icon.Category}.{icon.Name}";
         }
         void CloseIconDrawer()
         {
-            iconDrawerOpen = false;
+            _iconDrawerOpen = false;
         }
 
         private async Task CopyTextToClipboard()

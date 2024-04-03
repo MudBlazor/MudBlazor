@@ -8,7 +8,7 @@ namespace MudBlazor.Docs.Compiler
 {
     public partial class DocStrings
     {
-        private static string[] hiddenMethods = { "ToString", "GetType", "GetHashCode", "Equals", "SetParametersAsync", "ReferenceEquals" };
+        private static string[] _hiddenMethods = { "ToString", "GetType", "GetHashCode", "Equals", "SetParametersAsync", "ReferenceEquals" };
 
         public bool Execute()
         {
@@ -37,7 +37,7 @@ namespace MudBlazor.Docs.Compiler
                     foreach (var property in type.GetPropertyInfosWithAttribute<ParameterAttribute>())
                     {
                         var doc = property.GetDocumentation() ?? "";
-                        doc = convertSeeTags(doc);
+                        doc = ConvertSeeTags(doc);
                         doc = XmlTagRegularExpression().Replace(doc, "");  // remove all other XML tags
                         cb.AddLine($"public const string {GetSaveTypename(type)}_{property.Name} = @\"{EscapeDescription(doc).Trim()}\";\n");
                     }
@@ -52,7 +52,7 @@ namespace MudBlazor.Docs.Compiler
 
                     foreach (var method in type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy | (declaredOnly ? BindingFlags.DeclaredOnly : BindingFlags.Default)))
                     {
-                        if (!hiddenMethods.Any(x => x.Contains(method.Name)) && !method.Name.StartsWith("get_") && !method.Name.StartsWith("set_"))
+                        if (!_hiddenMethods.Any(x => x.Contains(method.Name)) && !method.Name.StartsWith("get_") && !method.Name.StartsWith("set_"))
                         {
                             // omit methods defined in System.Enum
                             if (GetBaseDefinitionClass(method) == typeof(Enum))
@@ -98,7 +98,7 @@ namespace MudBlazor.Docs.Compiler
         /* Replace <see cref="TYPE_OR_MEMBER_QUALIFIED_NAME"/> tags by TYPE_OR_MEMBER_QUALIFIED_NAME without "MudBlazor." at the beginning.
          * It is a quick fix. It should be rather represented by <a href="...">...</a> but it is more difficult.
          */
-        private static string convertSeeTags(string doc)
+        private static string ConvertSeeTags(string doc)
         {
             return SeeCrefRegularExpression().Replace(doc, match =>
             {

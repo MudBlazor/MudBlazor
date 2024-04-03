@@ -84,7 +84,7 @@ namespace MudBlazor
         public string ListItemClass { get; set; }
 
         /// <summary>
-        /// Set the anchor origin point to determen where the popover will open from.
+        /// Set the anchor origin point to determine where the popover will open from.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
@@ -161,8 +161,8 @@ namespace MudBlazor
 
         /// <summary>
         /// Func that returns a list of items matching the typed text. Provides a cancellation token that
-        /// is marked as cancelled when the user changes the search text or selects a value from the list. 
-        /// This can be used to cancel expensive asynchronous work occuring within the SearchFunc itself.
+        /// is marked as cancelled when the user changes the search text or selects a value from the list.
+        /// This can be used to cancel expensive asynchronous work occurring within the SearchFunc itself.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]

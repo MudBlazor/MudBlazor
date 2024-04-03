@@ -13,7 +13,7 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities
 {
-    public class SortingAssistentTests
+    public class SortingAssistantTests
     {
 
         public class ItemsWithOrder

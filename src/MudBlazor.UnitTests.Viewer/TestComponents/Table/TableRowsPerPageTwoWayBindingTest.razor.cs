@@ -16,17 +16,17 @@ namespace MudBlazor.UnitTests.TestComponents
     {
         public static string __description__ = "Test Two-Way Binding of RowsPerPage Parameter.";
 
-        private int _RowsPerPage = 3;
+        private int _rowsPerPage = 3;
 
         [Parameter]
         public int RowsPerPage
         {
-            get => _RowsPerPage;
+            get => _rowsPerPage;
             set
             {
-                if (_RowsPerPage == value)
+                if (_rowsPerPage == value)
                     return;
-                _RowsPerPage = value;
+                _rowsPerPage = value;
                 RowsPerPageChanged.InvokeAsync(value);
             }
         }
@@ -35,7 +35,7 @@ namespace MudBlazor.UnitTests.TestComponents
         public EventCallback<int> RowsPerPageChanged { get; set; }
 
 
-        private ViewModel viewModel = new ViewModel();
+        private ViewModel _viewModel = new ViewModel();
 
         private sealed class Item
         {
@@ -44,8 +44,8 @@ namespace MudBlazor.UnitTests.TestComponents
 
         protected override async Task OnInitializedAsync()
         {
-            viewModel.PropertyChanged += (sender, args) => InvokeAsync(StateHasChanged).ConfigureAwait(false);
-            await viewModel.LoadItemsAsync().ConfigureAwait(false);
+            _viewModel.PropertyChanged += (sender, args) => InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await _viewModel.LoadItemsAsync().ConfigureAwait(false);
             await base.OnInitializedAsync();
         }
 
