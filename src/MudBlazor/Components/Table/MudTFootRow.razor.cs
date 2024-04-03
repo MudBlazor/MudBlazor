@@ -46,7 +46,7 @@ namespace MudBlazor
                 {
                     _checked = value;
                     if (IsCheckable)
-                        Context.Table.OnHeaderCheckboxClicked(_checked.HasValue && _checked.Value);
+                        Context.Table.OnHeaderCheckboxClicked(_checked == true);
                 }
             }
         }

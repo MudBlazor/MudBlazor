@@ -93,7 +93,7 @@ namespace MudBlazor
                 return null;
             }
 
-            if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value >= ItemValue)
+            if (Rating.HoveredValue >= ItemValue)
             {
                 // full icon when @RatingItem hovered
                 return Rating.FullIcon;
@@ -101,7 +101,7 @@ namespace MudBlazor
 
             if (Rating.SelectedValue >= ItemValue)
             {
-                if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value < ItemValue)
+                if (Rating.HoveredValue < ItemValue)
                 {
                     // empty icon when equal or higher RatingItem value clicked, but less value hovered 
                     return Rating.EmptyIcon;

@@ -91,7 +91,7 @@ namespace MudBlazor
                 {
                     _checked = value;
                     if (IsCheckable)
-                        Table.OnGroupHeaderCheckboxClicked(_checked.HasValue && _checked.Value, Items.ToList());
+                        Table.OnGroupHeaderCheckboxClicked(_checked == true, Items.ToList());
                 }
             }
         }
