@@ -542,7 +542,7 @@ namespace MudBlazor
             }
             else
             {
-                _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices.First() : -1;
+                _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices[0] : -1;
             }
 
             IsOpen = true;

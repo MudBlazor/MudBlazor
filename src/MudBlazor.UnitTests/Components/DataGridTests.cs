@@ -244,7 +244,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterableTest.Item>
                 {
-                    Column = dataGrid.Instance.RenderedColumns.First(),
+                    Column = dataGrid.Instance.RenderedColumns[0],
                     Operator = FilterOperator.String.Equal,
                     Value = "C"
                 });
@@ -2653,7 +2653,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 return dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridColumnPopupFilteringTest.Model>
                 {
-                    Column = dataGrid.Instance.RenderedColumns.First(),
+                    Column = dataGrid.Instance.RenderedColumns[0],
                     Operator = FilterOperator.String.Contains,
                     Value = "test"
                 });
@@ -2826,7 +2826,7 @@ namespace MudBlazor.UnitTests.Components
 
             var item = dataGrid.Instance.Items.FirstOrDefault();
 
-            var column = dataGrid.Instance.RenderedColumns.First();
+            var column = dataGrid.Instance.RenderedColumns[0];
             var cell = new Cell<DataGridCellContextTest.Model>(dataGrid.Instance, column, item);
 
             cell._cellContext.IsSelected.Should().Be(false);

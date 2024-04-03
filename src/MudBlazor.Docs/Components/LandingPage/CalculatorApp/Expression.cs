@@ -97,7 +97,7 @@ namespace PrimitiveCalculator
             }
             if (!_operations.Any())
                 return double.NaN;
-            var first_op = _operations.First();
+            var first_op = _operations[0];
             if (string.IsNullOrEmpty(first_op.Operator))
                 first_op.Operator = "+";
             else if (first_op.Operator == "-")

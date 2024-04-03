@@ -48,7 +48,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
             var userAgentHeader = context.Request.Headers.UserAgent;
             if (userAgentHeader.Any() == false) { return Task.FromResult(false); }
 
-            var value = userAgentHeader.First();
+            var value = userAgentHeader[0];
             if (_cache.ContainsKey(value)) { return Task.FromResult(_cache[value]); }
 
             foreach (var item in _patterns)

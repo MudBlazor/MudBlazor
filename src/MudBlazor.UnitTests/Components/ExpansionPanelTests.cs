@@ -73,7 +73,7 @@ namespace MudBlazor.UnitTests.Components
 
             var expandedPanels = comp.FindAll(".mud-panel-expanded").ToList();
             expandedPanels.Count.Should().Be(1);
-            expandedPanels.First().Should().Be(allPanels.First());
+            expandedPanels[0].Should().Be(allPanels[0]);
         }
 
         /// <summary>
