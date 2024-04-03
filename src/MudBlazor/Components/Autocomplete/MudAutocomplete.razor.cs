@@ -535,7 +535,7 @@ namespace MudBlazor
             _items = searchedItems;
 
             var enabledItems = _items.Select((item, idx) => (item, idx)).Where(tuple => ItemDisabledFunc?.Invoke(tuple.item) != true).ToList();
-            _enabledItemIndices = enabledItems.Select(tuple => tuple.idx).ToList();
+            _enabledItemIndices = enabledItems.ConvertAll(tuple => tuple.idx);
             if (searchingWhileSelected) //compute the index of the currently select value, if it exists
             {
                 _selectedListItemIndex = Array.IndexOf(_items, Value);

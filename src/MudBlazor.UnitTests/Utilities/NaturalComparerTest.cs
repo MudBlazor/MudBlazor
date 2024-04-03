@@ -15,19 +15,19 @@ namespace MudBlazor.UnitTests.Utilities
     public class NaturalComparerTest
     {
 
-        Func<string, string> _expand = (s) =>
+        readonly Func<string, string> _expand = (s) =>
         {
             int o; while ((o = s.IndexOf('\\')) != -1)
             {
                 var p = o + 1;
                 var z = 1; while (s[p] == '0') { z++; p++; }
                 var c = int.Parse(s.Substring(p, z));
-                s = s.Substring(0, o) + new string(s[o - 1], c) + s.Substring(p + z);
+                s = string.Concat(s.AsSpan(0, o), new string(s[o - 1], c), s.AsSpan(p + z));
             }
             return s;
         };
 
-        private static string s_encodedFileNames =
+        private static readonly string s_encodedFileNames =
                 "KDEqLW4xMiotbjEzKjAwMDFcMDY2KjAwMlwwMTcqMDA5XDAxNyowMlwwMTcqMDlcMDE3KjEhKjEtISox" +
                 "LWEqMS4yNT8xLjI1KjEuNT8xLjUqMSoxXDAxNyoxXDAxOCoxXDAxOSoxXDA2NioxXDA2NyoxYSoyXDAx" +
                 "NyoyXDAxOCo5XDAxNyo5XDAxOCo5XDA2Nio9MSphMDAxdGVzdDAxKmEwMDF0ZXN0aW5nYTBcMzEqYTAw" +
@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Utilities
                 "bjEyKsKtbjEzKsSwKg==";
 
 
-        private static string[] s_orderedFileNames = new string[]
+        private static readonly string[] s_orderedFileNames = new string[]
         {
             "_1.txt"
             ,"-n12.txt"

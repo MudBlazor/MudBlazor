@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests.Services
 {
     public class IIJSRuntimeExtentionsTests
     {
-        static object[] CatchedExceptions =
+        static readonly object[] CatchedExceptions =
         {
             #if DEBUG
 #else
@@ -119,7 +119,7 @@ namespace MudBlazor.UnitTests.Services
 
             var runtime = runtimeMock.Object;
 
-            var (success, value) = await runtime.InvokeAsyncWithErrorHandling<double>(37.5, "myMethod", 42, "blub");
+            var (success, value) = await runtime.InvokeAsyncWithErrorHandling(37.5, "myMethod", 42, "blub");
 
             success.Should().Be(false);
             value.Should().Be(37.5);
