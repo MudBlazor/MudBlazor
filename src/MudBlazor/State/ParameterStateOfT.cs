@@ -22,7 +22,7 @@ namespace MudBlazor.State;
 /// Instead, use the "MudComponentBase.RegisterParameter" method from within the component's constructor.
 /// </remarks>
 /// <typeparam name="T">The type of the component's property value.</typeparam>
-internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCycle, IEquatable<ParameterState<T>>
+internal sealed class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCycle, IEquatable<ParameterState<T>>
 {
     private T? _lastValue;
     private ParameterChangedEventArgs<T>? _parameterChangedEventArgs;

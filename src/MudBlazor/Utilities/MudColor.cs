@@ -195,7 +195,7 @@ namespace MudBlazor.Utilities
             else
             {
 
-                if (value.StartsWith("#"))
+                if (value.StartsWith('#'))
                 {
                     value = value.Substring(1);
                 }
