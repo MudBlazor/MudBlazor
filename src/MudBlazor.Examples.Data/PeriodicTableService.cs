@@ -10,6 +10,8 @@ namespace MudBlazor.Examples.Data
 {
     public class PeriodicTableService : IPeriodicTableService
     {
+        private readonly JsonSerializerOptions _tableSerializationOptions = new() { PropertyNameCaseInsensitive = true };
+
         public Task<IEnumerable<Element>> GetElements()
         {
             return GetElements(string.Empty);
@@ -20,7 +22,7 @@ namespace MudBlazor.Examples.Data
             var elements = new List<Element>();
             var key = GetResourceKey(typeof(PeriodicTableService).Assembly, "Elements.json");
             using var stream = typeof(PeriodicTableService).Assembly.GetManifestResourceStream(key);
-            var table = await JsonSerializer.DeserializeAsync<Table>(stream, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            var table = await JsonSerializer.DeserializeAsync<Table>(stream, _tableSerializationOptions);
             foreach (var elementGroup in table.ElementGroups)
             {
                 elements = elements.Concat(elementGroup.Elements).ToList();
