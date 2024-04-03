@@ -14,7 +14,6 @@ namespace MudBlazor.UnitTests.Utilities
 {
     public class NaturalComparerTest
     {
-        
         private readonly Func<string, string> _expand = (s) =>
         {
             int o; while ((o = s.IndexOf('\\')) != -1)
