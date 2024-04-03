@@ -394,7 +394,7 @@ namespace MudBlazor.UnitTests.Components
 
             var twoBFilter = new FilterDefinition<DataGridMultiSelectionTest.Item>
             {
-                Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(c => c.PropertyName == "Name"),
+                Column = dataGrid.Instance.RenderedColumns.Find(c => c.PropertyName == "Name"),
                 Operator = FilterOperator.String.Equal,
                 Value = "B"
             };
@@ -2095,7 +2095,7 @@ namespace MudBlazor.UnitTests.Components
             //await comp.InvokeAsync(() => dataGrid.Instance.AddFilter(Guid.NewGuid(), "Status"));
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFiltersTest.Model>
             {
-                Column = dataGrid.Instance.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Status")
+                Column = dataGrid.Instance.RenderedColumns.Find(x => x.PropertyName == "Status")
             }));
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
@@ -2887,7 +2887,7 @@ namespace MudBlazor.UnitTests.Components
 
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
-            var guidColumn = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Id");
+            var guidColumn = grid.RenderedColumns.Find(x => x.PropertyName == "Id");
 
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
             {
@@ -2926,7 +2926,7 @@ namespace MudBlazor.UnitTests.Components
 
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
-            var guidColumn = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Id");
+            var guidColumn = grid.RenderedColumns.Find(x => x.PropertyName == "Id");
 
             grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast>()
             {

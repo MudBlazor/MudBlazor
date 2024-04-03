@@ -241,7 +241,7 @@ namespace MudBlazor
                 // Handle single and toggle selection mode
                 if (value is not null && !multiSelection)
                 {
-                    var selectedItem = _items.FirstOrDefault(x => value.Equals(x.Value));
+                    var selectedItem = _items.Find(x => value.Equals(x.Value));
                     selectedItem?.SetSelected(true);
                 }
                 // Handle multi-selection mode
@@ -263,7 +263,7 @@ namespace MudBlazor
             var value = _value.Value;
             if (value is not null)
             {
-                var selectedItem = _items.FirstOrDefault(x => value.Equals(x.Value));
+                var selectedItem = _items.Find(x => value.Equals(x.Value));
                 selectedItem?.SetSelected(true);
             }
         }

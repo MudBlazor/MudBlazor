@@ -118,11 +118,11 @@ namespace MudBlazor.UnitTests.Components
             var valueCount = aggregateDefinitionCount.GetValue(propertyExpression, _accountingModels);
             var valueSum = aggregateDefinitionSum.GetValue(propertyExpression, _accountingModels);
 
-            var expectedAverage = _accountingModels.Select(x => x.Salary).Average();
-            var expectedMin = _accountingModels.Select(x => x.Salary).Min();
-            var expectedMax = _accountingModels.Select(x => x.Salary).Max();
+            var expectedAverage = _accountingModels.Average(x => x.Salary);
+            var expectedMin = _accountingModels.Min(x => x.Salary);
+            var expectedMax = _accountingModels.Max(x => x.Salary);
             var expectedCount = _accountingModels.Select(x => x.Salary).Count();
-            var expectedSum = _accountingModels.Select(x => x.Salary).Sum();
+            var expectedSum = _accountingModels.Sum(x => x.Salary);
 
             valueAverage.Should().Be($"Average {expectedAverage}");
             valueMin.Should().Be($"Min {expectedMin}");
@@ -148,11 +148,11 @@ namespace MudBlazor.UnitTests.Components
             var valueCount = aggregateDefinitionCount.GetValue(propertyExpression, _accountingNullableModels);
             var valueSum = aggregateDefinitionSum.GetValue(propertyExpression, _accountingNullableModels);
 
-            var expectedAverage = _accountingNullableModels.Select(x => x.Salary).Average();
-            var expectedMin = _accountingNullableModels.Select(x => x.Salary).Min();
-            var expectedMax = _accountingNullableModels.Select(x => x.Salary).Max();
+            var expectedAverage = _accountingNullableModels.Average(x => x.Salary);
+            var expectedMin = _accountingNullableModels.Min(x => x.Salary);
+            var expectedMax = _accountingNullableModels.Max(x => x.Salary);
             var expectedCount = _accountingNullableModels.Select(x => x.Salary).Count();
-            var expectedSum = _accountingNullableModels.Select(x => x.Salary).Sum();
+            var expectedSum = _accountingNullableModels.Sum(x => x.Salary);
 
             valueAverage.Should().Be($"Average {expectedAverage}");
             valueMin.Should().Be($"Min {expectedMin}");
@@ -179,11 +179,11 @@ namespace MudBlazor.UnitTests.Components
             var valueSum = aggregateDefinitionSum.GetValue(propertyExpression, _accountingModels);
 
             //Need to cast to get decimal precision, inside AggregateDefinition.GetValue casts to decimal 
-            var expectedAverage = _accountingModels.Select(x => (decimal)x.Position).Average();
-            var expectedMin = _accountingModels.Select(x => x.Position).Min();
-            var expectedMax = _accountingModels.Select(x => x.Position).Max();
+            var expectedAverage = _accountingModels.Average(x => (decimal)x.Position);
+            var expectedMin = _accountingModels.Min(x => x.Position);
+            var expectedMax = _accountingModels.Max(x => x.Position);
             var expectedCount = _accountingModels.Select(x => x.Position).Count();
-            var expectedSum = _accountingModels.Select(x => x.Position).Sum();
+            var expectedSum = _accountingModels.Sum(x => x.Position);
 
             valueAverage.Should().Be($"Average {expectedAverage}");
             valueMin.Should().Be($"Min {expectedMin}");
@@ -210,11 +210,11 @@ namespace MudBlazor.UnitTests.Components
             var valueSum = aggregateDefinitionSum.GetValue(propertyExpression, _accountingNullableModels);
 
             //Need to cast to get decimal precision, inside AggregateDefinition.GetValue casts to decimal 
-            var expectedAverage = _accountingNullableModels.Select(x => (decimal?)x.Position).Average();
-            var expectedMin = _accountingNullableModels.Select(x => x.Position).Min();
-            var expectedMax = _accountingNullableModels.Select(x => x.Position).Max();
+            var expectedAverage = _accountingNullableModels.Average(x => (decimal?)x.Position);
+            var expectedMin = _accountingNullableModels.Min(x => x.Position);
+            var expectedMax = _accountingNullableModels.Max(x => x.Position);
             var expectedCount = _accountingNullableModels.Select(x => x.Position).Count();
-            var expectedSum = _accountingNullableModels.Select(x => x.Position).Sum();
+            var expectedSum = _accountingNullableModels.Sum(x => x.Position);
 
             valueAverage.Should().Be($"Average {expectedAverage}");
             valueMin.Should().Be($"Min {expectedMin}");
@@ -241,11 +241,11 @@ namespace MudBlazor.UnitTests.Components
             var valueSum = aggregateDefinitionSum.GetValue(propertyExpression, _accountingModels);
 
             //Need to cast to get decimal precision, inside AggregateDefinition.GetValue casts to decimal 
-            var expectedAverage = _accountingModels.Select(x => (decimal)x.Id).Average();
-            var expectedMin = _accountingModels.Select(x => x.Id).Min();
-            var expectedMax = _accountingModels.Select(x => x.Id).Max();
+            var expectedAverage = _accountingModels.Average(x => (decimal)x.Id);
+            var expectedMin = _accountingModels.Min(x => x.Id);
+            var expectedMax = _accountingModels.Max(x => x.Id);
             var expectedCount = _accountingModels.Select(x => x.Id).Count();
-            var expectedSum = _accountingModels.Select(x => x.Id).Sum();
+            var expectedSum = _accountingModels.Sum(x => x.Id);
 
             valueAverage.Should().Be($"Average {expectedAverage}");
             valueMin.Should().Be($"Min {expectedMin}");
@@ -272,11 +272,11 @@ namespace MudBlazor.UnitTests.Components
             var valueSum = aggregateDefinitionSum.GetValue(propertyExpression, _accountingNullableModels);
 
             //Need to cast to get decimal precision, inside AggregateDefinition.GetValue casts to decimal 
-            var expectedAverage = _accountingNullableModels.Select(x => (decimal?)x.Id).Average();
-            var expectedMin = _accountingNullableModels.Select(x => x.Id).Min();
-            var expectedMax = _accountingNullableModels.Select(x => x.Id).Max();
+            var expectedAverage = _accountingNullableModels.Average(x => (decimal?)x.Id);
+            var expectedMin = _accountingNullableModels.Min(x => x.Id);
+            var expectedMax = _accountingNullableModels.Max(x => x.Id);
             var expectedCount = _accountingNullableModels.Select(x => x.Id).Count();
-            var expectedSum = _accountingNullableModels.Select(x => x.Id).Sum();
+            var expectedSum = _accountingNullableModels.Sum(x => x.Id);
 
             valueAverage.Should().Be($"Average {expectedAverage}");
             valueMin.Should().Be($"Min {expectedMin}");
@@ -328,8 +328,8 @@ namespace MudBlazor.UnitTests.Components
 
             var aggregateDefinitionAverage = AggregateDefinition<AccountingModel>.SimpleMin();
 
-            var expectedIdMin = _accountingModels.Select(x => x.Id).Min();
-            var expectedSalaryMin = _accountingModels.Select(x => x.Salary).Min();
+            var expectedIdMin = _accountingModels.Min(x => x.Id);
+            var expectedSalaryMin = _accountingModels.Min(x => x.Salary);
 
             var valueIdMin = aggregateDefinitionAverage.GetValue(propertyExpressionId, _accountingModels);
             var valueSalaryMin = aggregateDefinitionAverage.GetValue(propertyExpressionSalary, _accountingModels);

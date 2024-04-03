@@ -2024,24 +2024,24 @@ namespace MudBlazor.UnitTests.Components
             comp.Render();
 
             table.SelectedItems.Count.Should().Be(0);
-            Inputs().Where(x => x.IsChecked()).Count().Should().Be(0);
+            Inputs().Count(x => x.IsChecked()).Should().Be(0);
 
             Inputs()[1].Change(true); // LMP1            
             table.SelectedItems.Count.Should().Be(2);
 
-            Inputs().Where(x => x.IsChecked()).Count().Should().Be(5);
+            Inputs().Count(x => x.IsChecked()).Should().Be(5);
 
             Buttons()[0].Click(); //collapse            
             Buttons()[0].Click(); //expand            
             //selected item should persist
             table.SelectedItems.Count.Should().Be(2);
 
-            Inputs().Where(x => x.IsChecked()).Count().Should().Be(5);
+            Inputs().Count(x => x.IsChecked()).Should().Be(5);
 
             Inputs()[1].Change(false);
             table.SelectedItems.Count.Should().Be(0);
 
-            Inputs().Where(x => x.IsChecked()).Count().Should().Be(0);
+            Inputs().Count(x => x.IsChecked()).Should().Be(0);
 
         }
 

@@ -600,7 +600,7 @@ namespace MudBlazor.UnitTests.Components
             // select the input of the select
             var input = comp.Find("input");
             //the value of the input
-            var value = input.Attributes.Where(a => a.LocalName == "value").First().Value;
+            var value = input.Attributes.First(a => a.LocalName == "value").Value;
             value.Should().Be("FirstA, SecondA");
         }
 
@@ -618,7 +618,7 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("input");
 
             // The value of the input
-            var value = input.Attributes.Where(a => a.LocalName == "value").First().Value;
+            var value = input.Attributes.First(a => a.LocalName == "value").Value;
 
             // Value is equal to the customized values returned by the method
             value.Should().Be("Selected values: FirstA, SecondA");

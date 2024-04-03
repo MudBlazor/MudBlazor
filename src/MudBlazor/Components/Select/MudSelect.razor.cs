@@ -644,7 +644,7 @@ namespace MudBlazor
         {
             await WaitForRender();
             if (MultiSelection)
-                HilightItem(_items.FirstOrDefault(x => !x.Disabled));
+                HilightItem(_items.Find(x => !x.Disabled));
             else
                 await HilightItemForValueAsync(Value);
         }

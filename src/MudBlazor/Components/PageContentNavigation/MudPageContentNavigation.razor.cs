@@ -28,7 +28,7 @@ namespace MudBlazor
         /// <summary>
         /// The currently active session. null if there is no section selected
         /// </summary>
-        public MudPageContentSection? ActiveSection => _sections.FirstOrDefault(x => x.IsActive);
+        public MudPageContentSection? ActiveSection => _sections.Find(x => x.IsActive);
 
         /// <summary>
         /// The text displayed about the section links. Defaults to "Contents"
@@ -79,7 +79,7 @@ namespace MudBlazor
                 return;
             }
 
-            var activeLink = _sections.FirstOrDefault(x => x.Id == id);
+            var activeLink = _sections.Find(x => x.Id == id);
             if (activeLink == null)
             {
                 return;

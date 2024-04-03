@@ -49,7 +49,7 @@ namespace MudBlazor
 
         public static Column<T>? GetColumnByPropertyName<T>(this MudDataGrid<T> dataGrid, string propertyName)
         {
-            return dataGrid.RenderedColumns.FirstOrDefault(x => x.PropertyName == propertyName);
+            return dataGrid.RenderedColumns.Find(x => x.PropertyName == propertyName);
         }
     }
 }

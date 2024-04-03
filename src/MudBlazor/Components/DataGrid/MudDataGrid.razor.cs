@@ -827,7 +827,7 @@ namespace MudBlazor
         {
             get
             {
-                return RenderedColumns.FirstOrDefault(x => x.GroupingState.Value);
+                return RenderedColumns.Find(x => x.GroupingState.Value);
             }
         }
 
@@ -990,7 +990,7 @@ namespace MudBlazor
         /// </summary>
         public void AddFilter()
         {
-            var column = RenderedColumns.FirstOrDefault(x => x.filterable);
+            var column = RenderedColumns.Find(x => x.filterable);
             var filterDefinition = CreateFilterDefinitionInstance();
             filterDefinition.Id = Guid.NewGuid();
             filterDefinition.Title = column?.Title;
