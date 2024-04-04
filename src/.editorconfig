@@ -303,7 +303,8 @@ dotnet_naming_style.pascal_case_style.capitalization = pascal_case
 dotnet_diagnostic.BL0007.severity = suggestion
 
 # CA1041: Provide ObsoleteAttribute message
-dotnet_diagnostic.CA1041.severity = warning
+# Disabled due to https://github.com/dotnet/roslyn/discussions/72726
+# dotnet_diagnostic.CA1041.severity = warning
 
 # CA1822: Make member static
 dotnet_diagnostic.CA1822.severity = none
@@ -337,7 +338,8 @@ resharper_csharp_place_attribute_on_same_line = false
 [**UnitTests**/*.cs]
 
 # CA1041: Provide ObsoleteAttribute message
-dotnet_diagnostic.CA1041.severity = suggestion
+# Disabled due to https://github.com/dotnet/roslyn/discussions/72726
+# dotnet_diagnostic.CA1041.severity = suggestion
 
 # CA1861: Avoid constant arrays as arguments
 dotnet_diagnostic.CA1861.severity = none
