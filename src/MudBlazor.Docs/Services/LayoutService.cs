@@ -63,14 +63,14 @@ public class LayoutService
         if (DarkModeToggle == DarkLightMode.System)
         {
             IsDarkMode = newValue;
-            OnMajorUpdateOccured();
+            OnMajorUpdateOccurred();
         }
         return Task.CompletedTask;
     }
 
-    public event EventHandler MajorUpdateOccured;
+    public event EventHandler MajorUpdateOccurred;
 
-    private void OnMajorUpdateOccured() => MajorUpdateOccured?.Invoke(this, EventArgs.Empty);
+    private void OnMajorUpdateOccurred() => MajorUpdateOccurred?.Invoke(this, EventArgs.Empty);
 
     public async Task ToggleDarkMode()
     {
@@ -92,7 +92,7 @@ public class LayoutService
 
         _userPreferences.DarkLightTheme = DarkModeToggle;
         await _userPreferencesService.SaveUserPreferences(_userPreferences);
-        OnMajorUpdateOccured();
+        OnMajorUpdateOccurred();
     }
 
     public async Task ToggleRightToLeft()
@@ -100,13 +100,13 @@ public class LayoutService
         IsRTL = !IsRTL;
         _userPreferences.RightToLeft = IsRTL;
         await _userPreferencesService.SaveUserPreferences(_userPreferences);
-        OnMajorUpdateOccured();
+        OnMajorUpdateOccurred();
     }
 
     public void SetBaseTheme(MudTheme theme)
     {
         CurrentTheme = theme;
-        OnMajorUpdateOccured();
+        OnMajorUpdateOccurred();
     }
 
     public DocsBasePage GetDocsBasePage(string uri)
