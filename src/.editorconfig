@@ -36,13 +36,10 @@ trim_trailing_whitespace = true
 
 #### Core EditorConfig Options ####
 
-# Indentation and spacing
 indent_size = 4
-indent_style = space
 tab_width = 4
-
-# New line preferences
-insert_final_newline = false
+insert_final_newline = true
+charset = utf-8-bom
 
 #### .NET Coding Conventions ####
 
@@ -186,7 +183,7 @@ csharp_indent_block_contents = true
 csharp_indent_braces = false
 csharp_indent_case_contents = true
 csharp_indent_case_contents_when_block = true
-csharp_indent_labels = one_less_than_current
+csharp_indent_labels = flush_left
 csharp_indent_switch_labels = true
 
 # Space preferences
@@ -320,6 +317,9 @@ dotnet_diagnostic.IDE0035.severity = warning
 
 # IDE0043: Format string contains invalid placeholder
 dotnet_diagnostic.IDE0043.severity = warning
+
+# IDE0073: File header
+dotnet_diagnostic.IDE0073.severity = warning
 
 # RS0016: Only enable if API files are present
 dotnet_public_api_analyzer.require_api_files = true
