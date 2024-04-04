@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -78,7 +81,10 @@ namespace MudBlazor
         protected async Task SetCheckedAsync(T? value)
         {
             if (GetDisabledState())
+            {
                 return;
+            }
+
             if (!EqualityComparer<T>.Default.Equals(Value, value))
             {
                 Value = value;
@@ -92,7 +98,9 @@ namespace MudBlazor
         {
             var changed = base.SetConverter(value);
             if (changed)
+            {
                 SetBoolValueAsync(Converter.Set(Value)).AndForget();
+            }
 
             return changed;
         }

@@ -1,12 +1,14 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
-using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
     /// <summary>
-    /// Inject with the AddMudBlazorScrollServices extension
+    /// Inject with the AddMudBlazorScrollServices extension.
     /// </summary>
     public interface IScrollManager
     {
@@ -30,7 +32,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Scrolls to the coordinates of the element
+        /// Scrolls to the coordinates of the element.
         /// </summary>
         /// <param name="id">id of element</param>
         /// <param name="left">x coordinate</param>
@@ -41,7 +43,7 @@ namespace MudBlazor
             _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollTo", id, left, top, behavior.ToDescriptionString());
 
         /// <summary>
-        /// Scrolls the first instance of the selector into view
+        /// Scrolls the first instance of the selector into view.
         /// </summary>
         /// <param name="selector"></param>
         /// <param name="behavior"></param>
@@ -50,7 +52,7 @@ namespace MudBlazor
             _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollIntoView", selector, behavior.ToDescriptionString());
 
         /// <summary>
-        /// Scrolls to the top of the element
+        /// Scrolls to the top of the element.
         /// </summary>
         /// <param name="id">id of element</param>
         /// <param name="scrollBehavior">smooth or auto</param>
@@ -59,7 +61,7 @@ namespace MudBlazor
             ScrollToAsync(id, 0, 0, scrollBehavior);
 
         /// <summary>
-        /// Scroll to the bottom of the element (or if not found to the bottom of the page)
+        /// Scroll to the bottom of the element (or if not found to the bottom of the page).
         /// </summary>
         /// <param name="id">id of element of null to scroll to page bottom</param>
         /// <param name="behavior">smooth or auto</param>

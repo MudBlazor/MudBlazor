@@ -20,9 +20,9 @@ namespace MudBlazor
         /// </summary>
         private class DialogHelperComponent : IComponent
         {
-            const string ChildContent = nameof(ChildContent);
-            RenderFragment _renderFragment;
-            RenderHandle _renderHandle;
+            private const string ChildContent = nameof(ChildContent);
+            private RenderFragment _renderFragment;
+            private RenderHandle _renderHandle;
             void IComponent.Attach(RenderHandle renderHandle) => _renderHandle = renderHandle;
             Task IComponent.SetParametersAsync(ParameterView parameters)
             {
@@ -33,10 +33,11 @@ namespace MudBlazor
                         _renderHandle.Render(_renderFragment);
                     }
                 }
+
                 return Task.CompletedTask;
             }
             public static RenderFragment Wrap(RenderFragment renderFragment)
-                => new RenderFragment(builder =>
+                => new(builder =>
                 {
                     builder.OpenComponent<DialogHelperComponent>(1);
                     builder.AddAttribute(2, ChildContent, renderFragment);
@@ -98,6 +99,7 @@ namespace MudBlazor
             {
                 throw new ArgumentException($"{contentComponent?.FullName} must be a Blazor IComponent");
             }
+
             var dialogReference = CreateReference();
 
             var dialogContent = DialogHelperComponent.Wrap(new RenderFragment(builder =>
@@ -108,6 +110,7 @@ namespace MudBlazor
                 {
                     builder.AddAttribute(i++, parameter.Key, parameter.Value);
                 }
+
                 builder.AddComponentReferenceCapture(i++, inst => { dialogReference.InjectDialog(inst); });
                 builder.CloseComponent();
             }));
@@ -227,7 +230,10 @@ namespace MudBlazor
             var reference = await ShowAsync<MudMessageBox>(title: messageBoxOptions.Title, parameters: parameters, options: options);
             var result = await reference.Result;
             if (result.Canceled || result.Data is not bool data)
+            {
                 return null;
+            }
+
             return data;
         }
 
