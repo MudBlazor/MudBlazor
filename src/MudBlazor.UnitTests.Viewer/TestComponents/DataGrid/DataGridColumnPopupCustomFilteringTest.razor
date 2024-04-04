@@ -9,7 +9,7 @@
         <PropertyColumn Property="x => x.Hired">
             <FilterTemplate>
                 <MudStack>
-                    <MudSwitch T="bool" Color="@Color.Primary" @bind-Checked="FilterHired" Label="Show Hired"></MudSwitch>
+                    <MudSwitch T="bool" Color="@Color.Primary" @bind-Value="FilterHired" Label="Show Hired"></MudSwitch>
                     <MudButton Class="align-self-end" Color="@Color.Primary" OnClick="@(() => ApplyFilterAsync(context))">@(FilterHired ? "Filter" : "Remove Filter")</MudButton>
                 </MudStack>
             </FilterTemplate>
