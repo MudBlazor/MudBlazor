@@ -6,10 +6,9 @@ using System;
 using System.Threading.Tasks;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services.UserPreferences;
+using MudBlazor.Docs.Enums;
 
 namespace MudBlazor.Docs.Services;
-
-using MudBlazor.Docs.Enums;
 
 public class LayoutService
 {
