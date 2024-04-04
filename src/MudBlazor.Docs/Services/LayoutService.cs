@@ -4,9 +4,9 @@
 
 using System;
 using System.Threading.Tasks;
+using MudBlazor.Docs.Enums;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services.UserPreferences;
-using MudBlazor.Docs.Enums;
 
 namespace MudBlazor.Docs.Services;
 
@@ -63,14 +63,14 @@ public class LayoutService
         if (DarkModeToggle == DarkLightMode.System)
         {
             IsDarkMode = newValue;
-            OnMajorUpdateOccurred();
+            OnMajorUpdateOccured();
         }
         return Task.CompletedTask;
     }
 
-    public event EventHandler MajorUpdateOccurred;
+    public event EventHandler MajorUpdateOccured;
 
-    private void OnMajorUpdateOccurred() => MajorUpdateOccurred?.Invoke(this, EventArgs.Empty);
+    private void OnMajorUpdateOccured() => MajorUpdateOccured?.Invoke(this, EventArgs.Empty);
 
     public async Task ToggleDarkMode()
     {
@@ -92,7 +92,7 @@ public class LayoutService
 
         _userPreferences.DarkLightTheme = DarkModeToggle;
         await _userPreferencesService.SaveUserPreferences(_userPreferences);
-        OnMajorUpdateOccurred();
+        OnMajorUpdateOccured();
     }
 
     public async Task ToggleRightToLeft()
@@ -100,13 +100,13 @@ public class LayoutService
         IsRTL = !IsRTL;
         _userPreferences.RightToLeft = IsRTL;
         await _userPreferencesService.SaveUserPreferences(_userPreferences);
-        OnMajorUpdateOccurred();
+        OnMajorUpdateOccured();
     }
 
     public void SetBaseTheme(MudTheme theme)
     {
         CurrentTheme = theme;
-        OnMajorUpdateOccurred();
+        OnMajorUpdateOccured();
     }
 
     public DocsBasePage GetDocsBasePage(string uri)
