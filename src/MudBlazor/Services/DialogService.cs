@@ -16,7 +16,7 @@ namespace MudBlazor
     {
         /// <summary>
         /// This internal wrapper components prevents overwriting parameters of once
-        /// instanciated dialog instances
+        /// instantiated dialog instances
         /// </summary>
         private class DialogHelperComponent : IComponent
         {
@@ -256,16 +256,5 @@ namespace MudBlazor
         public string YesText { get; set; } = "OK";
         public string NoText { get; set; }
         public string CancelText { get; set; }
-    }
-
-    // MudBlazor.Dialog is obsolete but kept here for backwards compatibility reasons.
-    // Don't remove, it will cause massive breakages in user code
-    namespace Dialog
-    {
-        // Inside at least one Class needs to be kept or it will be stripped from assembly
-        public class ObsoleteNamespace
-        {
-            public const string DoNotRemove = "because of backwards compatibility";
-        }
     }
 }

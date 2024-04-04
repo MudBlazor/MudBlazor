@@ -6,14 +6,14 @@
                         Filterable="false">
             <HeaderTemplate>
 
-                    <MudCheckBox T="bool" Size="Size.Small" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAll" />
+                    <MudCheckBox T="bool" Size="Size.Small" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAll" />
                 
             </HeaderTemplate>
             <CellTemplate>
-                <MudCheckBox T="bool" Size="Size.Small" Checked="@context.IsSelected" CheckedChanged="@context.Actions.SetSelectedItem" />
+                <MudCheckBox T="bool" Size="Size.Small" Value="@context.IsSelected" ValueChanged="@context.Actions.SetSelectedItem" />
             </CellTemplate>
             <FooterTemplate>
-                    <MudCheckBox T="bool" Size="Size.Small" Checked="@context.IsAllSelected" CheckedChanged="@context.Actions.SetSelectAll" />
+                    <MudCheckBox T="bool" Size="Size.Small" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAll" />
             </FooterTemplate>
         </TemplateColumn>*@
         <SelectColumn />

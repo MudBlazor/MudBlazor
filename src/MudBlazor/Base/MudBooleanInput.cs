@@ -37,18 +37,6 @@ namespace MudBlazor
         /// <summary>
         /// The state of the component
         /// </summary>
-        [Obsolete("Use Value instead.")]
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Data)]
-        public T? Checked
-        {
-            get => _value;
-            set => _value = value;
-        }
-
-        /// <summary>
-        /// The state of the component
-        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
         public T? Value
@@ -74,13 +62,6 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<T?> ValueChanged { get; set; }
 
-        /// <summary>
-        /// Fired when Checked changes.
-        /// </summary>
-        [Obsolete("Use ValueChanged instead.")]
-        [Parameter]
-        public EventCallback<T?> CheckedChanged { get; set; }
-
         protected bool? BoolValue => Converter.Set(Value);
 
         protected virtual Task OnChange(ChangeEventArgs args)
@@ -102,10 +83,6 @@ namespace MudBlazor
             {
                 Value = value;
                 await ValueChanged.InvokeAsync(value);
-#pragma warning disable CS0618
-                Checked = value;
-                await CheckedChanged.InvokeAsync(value);
-#pragma warning restore CS0618
                 await BeginValidateAsync();
                 FieldChanged(Value);
             }
