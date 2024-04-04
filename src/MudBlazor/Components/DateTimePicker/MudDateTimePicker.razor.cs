@@ -6,11 +6,15 @@ using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MudBlazor
 {
     public partial class MudDateTimePicker : MudPicker<DateTime?>
     {
+        /// <summary>
+        /// The currently selected datetime (two-way bindable). If null, then nothing was selected.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
         public DateTime? DateTime
@@ -19,13 +23,22 @@ namespace MudBlazor
             set => SetDateTime(value, true);
         }
 
+        /// <summary>
+        /// Fired when the DateTime changes.
+        /// </summary>
         [Parameter]
         public EventCallback<DateTime?> DateTimeChanged { get; set; }
 
+        /// <summary>
+        /// If AutoClose is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool AutoClose { get; set; } = false;
 
+        /// <summary>
+        /// String Format for selected datetime view
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public string DateTimeFormat
@@ -34,30 +47,51 @@ namespace MudBlazor
             set => SetDateTimeFormat(value);
         }
 
+        /// <summary>
+        /// The min selectable date for the picker. If null, there is no minimum.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public DateTime? MinDateTime { get; set; }
 
+        /// <summary>
+        /// The max selectable date for the picker. If null, there is no maximum.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public DateTime? MaxDateTime { get; set; }
 
+        /// <summary>
+        /// Defines on which day the week starts. Depends on the value of Culture. 
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public DayOfWeek FirstDayOfWeek { get; set; }
 
+        /// <summary>
+        /// Set a predefined fix day - no day can be selected
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int? FixDay { get; set; }
 
+        /// <summary>
+        /// Set a predefined fix month - no month can be selected
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int? FixMonth { get; set; }
 
+        /// <summary>
+        /// Set a predefined fix year - no year can be selected
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int? FixYear { get; set; }
 
+        /// <summary>
+        /// First view to show in the MudDatePicker.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public OpenTo DateOpenTo { get; set; } = OpenTo.Date;
@@ -74,53 +108,87 @@ namespace MudBlazor
             set => _pickerMonth = value;
         }
 
+        /// <summary>
+        /// Fired when the month changes.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public EventCallback<DateTime?> PickerMonthChanged { get; set; }
 
+        /// <summary>
+        /// Display week numbers according to the Culture parameter. If no culture is defined, CultureInfo.CurrentCulture will be used.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool ShowWeekNumbers { get; set; } = false;
 
+        /// <summary>
+        /// Start month when opening the picker. 
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public DateTime? StartMonth { get; set; }
 
+        /// <summary>
+        /// Format of the selected date in the title. By default, this is "ddd, dd MMM" which abbreviates day and month names. 
+        /// For instance, display the long names like this "dddd, dd. MMMM". 
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public string TitleDateTimeFormat { get; set; } = "ddd, dd MMM HH:mm";
 
+        /// <summary>
+        /// Custom next icon for the date.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public string DateNextIcon { get; set; } = Icons.Material.Filled.NavigateNext;
 
+        /// <summary>
+        /// Custom previous icon for the date.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public string DatePreviousIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
 
+        /// <summary>
+        /// First view to show in the Picker for the time.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public OpenTo TimeOpenTo { get; set; } = OpenTo.Hours;
 
+        /// <summary>
+        /// Sets the number interval for minutes.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int MinuteSelectionStep { get; set; } = 1;
 
+        /// <summary>
+        /// Choose the edition mode. By default, you can edit hours and minutes.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
 
+        /// <summary>
+        /// Function to determine whether a date is disabled
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public Func<DateTime, bool> IsDateTimeDisabledFunc { get; set; }
 
         /// <summary>
-        /// Function to conditionally apply new classes to specific days
+        /// Function to conditionally apply new classes to specific days.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
 
+        /// <summary>
+        /// Called when the title date is clicked.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public EventCallback<DateTime> FormattedDateClick { get; set; }
@@ -215,17 +283,39 @@ namespace MudBlazor
 
         protected DateTime? GetDateTime()
         {
-            return _datePicked == null || _timePicked == null ? null : _datePicked?.Add((TimeSpan) _timePicked);
+            return _value;
+        }
+
+        protected DateTime? GetPartialDateTime()
+        {
+            return _datePicked == null || _timePicked == null ? null : _datePicked?.Add((TimeSpan)_timePicked);
         }
 
         protected string GetFormattedYearString()
         {
-            return (GetDateTime() ?? System.DateTime.Today).ToString("yyyy");
+            return (_pickerMonth ?? System.DateTime.Today).ToString("yyyy");
         }
 
         protected string GetTitleDateString()
         {
-            return GetDateTime()?.ToString(TitleDateTimeFormat, Culture);
+            string dateTimeFormat = TitleDateTimeFormat;
+            if (_datePicked is null)
+            {
+                dateTimeFormat = dateTimeFormat
+                    .Replace("y", "-")
+                    .Replace("Y", "-")
+                    .Replace("M", "-")
+                    .Replace("d", "-");
+            }
+            if (_timePicked is null)
+            {
+                dateTimeFormat = dateTimeFormat
+                    .Replace("h", "-")
+                    .Replace("H", "-")
+                    .Replace("m", "-")
+                    .Replace("s", "-");
+            }
+            return (_datePicked?.Add(_timePicked ?? TimeSpan.Zero) ?? System.DateTime.MinValue.Add(_timePicked ?? TimeSpan.Zero)).ToString(dateTimeFormat, Culture);
         }
 
         protected virtual void OnFormattedDateClick()
@@ -252,6 +342,7 @@ namespace MudBlazor
         /// </summary>
         protected void DateSelected(DateTime? date)
         {
+            // Console.WriteLine(date?.ToString("s") ?? "DATE NULL");
             _datePicked = date;
             SubmitAndClose();
         }
@@ -261,6 +352,7 @@ namespace MudBlazor
         /// </summary>
         protected void TimeSelected(TimeSpan? time)
         {
+            // Console.WriteLine(time?.ToString() ?? "DATE NULL");
             _timePicked = time;
             SubmitAndClose();
         }
@@ -310,6 +402,7 @@ namespace MudBlazor
 
         private void SubmitAndClose()
         {
+            StateHasChanged();
             // Only autoclose if both date and time where clicked after this instance of the dialog was opened
             if (AutoClose && PickerVariant is not PickerVariant.Static)
             {
@@ -319,16 +412,14 @@ namespace MudBlazor
 
         protected internal override async Task SubmitAsync()
         {
-            await base.SubmitAsync();
-            SetDateTimeAsync(GetDateTime(), true).AndForget();
+            // Save the current partial date to the current value date
+            await SetDateTimeAsync(GetPartialDateTime(), true);
         }
 
         protected override async Task OnClosedAsync()
         {
+            await SubmitAsync();
             await base.OnClosedAsync();
-            _datePicked = _value?.Date;
-            _timePicked = _value?.TimeOfDay;
-            StateHasChanged();
         }
 
         /// <summary>
