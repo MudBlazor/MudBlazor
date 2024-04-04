@@ -4,9 +4,9 @@
 
 using System;
 using System.Threading.Tasks;
+using MudBlazor.Docs.Enums;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services.UserPreferences;
-using MudBlazor.Docs.Enums;
 
 namespace MudBlazor.Docs.Services;
 
