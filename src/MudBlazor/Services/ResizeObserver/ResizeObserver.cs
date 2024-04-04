@@ -55,7 +55,7 @@ namespace MudBlazor.Services
             var counter = 0;
             foreach (var item in result)
             {
-                _cachedValues.Add(filteredElements.ElementAt(counter), item);
+                _cachedValues.Add(filteredElements[counter], item);
                 counter++;
             }
 

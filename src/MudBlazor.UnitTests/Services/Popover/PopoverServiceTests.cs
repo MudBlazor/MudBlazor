@@ -434,9 +434,9 @@ public class PopoverServiceTests
         await service.DestroyPopoverAsync(popover);
 
         // Assert
-        var firstNotification = containerNotificationList.ElementAt(0);
-        var secondNotification = containerNotificationList.ElementAt(1);
-        var thirdNotification = containerNotificationList.ElementAt(2);
+        var firstNotification = containerNotificationList[0];
+        var secondNotification = containerNotificationList[1];
+        var thirdNotification = containerNotificationList[2];
         containerNotificationList.Count.Should().Be(3);
         firstNotification.Operation.Should().Be(PopoverHolderOperation.Create);
         secondNotification.Operation.Should().Be(PopoverHolderOperation.Update);

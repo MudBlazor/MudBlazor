@@ -78,7 +78,7 @@ namespace MudBlazor.Docs.Services
                 return null;
             }
 
-            var navigationLink = orderedLinks.ElementAt(position);
+            var navigationLink = orderedLinks[position];
             return navigationLink;
         }
 
