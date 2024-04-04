@@ -5,7 +5,7 @@
 <section @attributes="UserAttributes" aria-roledescription="carousel" class="@Classname" style="@Style">
     <CascadingValue Value="this">
 
-        <MudSwipeArea OnSwipe="OnSwipe" Class="mud-carousel-swipe">
+        <MudSwipeArea OnSwipeEnd="OnSwipeEnd" Class="mud-carousel-swipe">
             @*Selected Content*@
             @if (ItemsSource is null)
             {
