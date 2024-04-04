@@ -182,7 +182,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.SetParametersAndRender(builder => builder.Add(tabs => tabs.TabHeaderClass, "testA testB"));
 
-            comp.Find(".mud-tabs-toolbar").ClassList.Should().Contain(new[] { "testA", "testB" });
+            comp.Find(".mud-tabs-tabbar").ClassList.Should().Contain(new[] { "testA", "testB" });
         }
 
         [Test]
@@ -194,7 +194,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 comp.Instance.SetPanelActive(i);
 
-                var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+                var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
 
                 toolbarWrapper.Should().NotBeNull();
 
@@ -228,7 +228,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.SetPanelActive(2);
 
-            var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+            var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
 
             toolbarWrapper.Should().NotBeNull();
 
@@ -262,7 +262,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.SetPanelActive(2);
 
-            var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+            var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
 
             toolbarWrapper.Should().NotBeNull();
 
@@ -302,7 +302,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 comp.Instance.SetPanelActive(i);
 
-                var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+                var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
 
                 toolbarWrapper.Should().NotBeNull();
 
@@ -408,7 +408,7 @@ namespace MudBlazor.UnitTests.Components
                 scrollButtons.Last().Find("button").Click();
                 expectedTranslation += observer.PanelSize;
 
-                var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+                var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
                 toolbarWrapper.Should().NotBeNull();
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
                 var styleAttr = toolbarWrapper.GetAttribute("style");
@@ -444,7 +444,7 @@ namespace MudBlazor.UnitTests.Components
                 scrollButtons.First().Find("button").Click();
                 expectedTranslation -= observer.PanelSize;
 
-                var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+                var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
                 toolbarWrapper.Should().NotBeNull();
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
                 var styleAttr = toolbarWrapper.GetAttribute("style");
@@ -504,7 +504,7 @@ namespace MudBlazor.UnitTests.Components
             var expectedTranslation = 0.0;
             scrollButtons[0].Find("button").Click();
 
-            var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+            var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
@@ -534,7 +534,7 @@ namespace MudBlazor.UnitTests.Components
             scrollButtons[0].Find("button").Click();
             var expectedTranslation = 0.0;
 
-            var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+            var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
@@ -564,7 +564,7 @@ namespace MudBlazor.UnitTests.Components
             scrollButtons[1].Find("button").Click();
             var expectedTranslation = 500.0;
 
-            var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+            var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
@@ -599,7 +599,7 @@ namespace MudBlazor.UnitTests.Components
             var expectedTranslation = 0.0;
             scrollButtons[0].Find("button").Click();
 
-            var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+            var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
@@ -630,7 +630,7 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedTranslation = 0.0;
 
-            var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+            var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
@@ -695,7 +695,7 @@ namespace MudBlazor.UnitTests.Components
             scrollButtons.Last().Instance.Disabled.Should().BeTrue();
             comp.Instance.SetPanelActive(6);
 
-            var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+            var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
@@ -729,7 +729,7 @@ namespace MudBlazor.UnitTests.Components
 
             scrollButtons.First().Instance.Disabled.Should().BeFalse();
 
-            var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+            var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
             toolbarWrapper.Should().NotBeNull();
             toolbarWrapper.HasAttribute("style").Should().Be(true);
             var styleAttr = toolbarWrapper.GetAttribute("style");
@@ -759,7 +759,7 @@ namespace MudBlazor.UnitTests.Components
 
             scrollButtons.First().Instance.Disabled.Should().BeFalse();
             {
-                var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+                var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
                 toolbarWrapper.Should().NotBeNull();
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
                 var styleAttr = toolbarWrapper.GetAttribute("style");
@@ -772,7 +772,7 @@ namespace MudBlazor.UnitTests.Components
             scrollButtons.First().Instance.Disabled.Should().BeFalse();
 
             {
-                var toolbarWrapper = comp.Find(".mud-tabs-toolbar-wrapper");
+                var toolbarWrapper = comp.Find(".mud-tabs-tabbar-wrapper");
                 toolbarWrapper.Should().NotBeNull();
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
                 var styleAttr = toolbarWrapper.GetAttribute("style");
@@ -1010,7 +1010,7 @@ namespace MudBlazor.UnitTests.Components
             var additionalClass = position == TabHeaderPosition.After ? "mud-tabs-header-after" : "mud-tabs-header-before";
             headerPanel.ClassList.Should().BeEquivalentTo("mud-tabs-header", additionalClass);
 
-            var tabInnerHeader = comp.Find(".mud-tabs-toolbar-inner");
+            var tabInnerHeader = comp.Find(".mud-tabs-tabbar-inner");
 
             tabInnerHeader.Children.Should().Contain(headerPanel);
             if (position == TabHeaderPosition.After)
@@ -1170,7 +1170,7 @@ namespace MudBlazor.UnitTests.Components
 
             content.TextContent.Should().Be("Selected: Tab One");
 
-            content.PreviousElementSibling.ClassList.Should().Contain("mud-tabs-toolbar");
+            content.PreviousElementSibling.ClassList.Should().Contain("mud-tabs-tabbar");
             content.NextElementSibling.ClassList.Should().Contain("mud-tabs-panels");
 
             comp.SetParametersAndRender(p => p.Add(x => x.SelectedIndex, 1));
@@ -1179,7 +1179,7 @@ namespace MudBlazor.UnitTests.Components
 
             content.TextContent.Should().Be("Selected: Tab Two");
 
-            content.PreviousElementSibling.ClassList.Should().Contain("mud-tabs-toolbar");
+            content.PreviousElementSibling.ClassList.Should().Contain("mud-tabs-tabbar");
             content.NextElementSibling.ClassList.Should().Contain("mud-tabs-panels");
         }
 
