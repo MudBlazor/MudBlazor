@@ -26,6 +26,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
 
         private readonly string _filename;
         private readonly LimitedConcurrentDictionary<string, bool> _cache = new(1_000);
+        private readonly JsonSerializerOptions _crawlerEntrySerializerOptions = new() { PropertyNameCaseInsensitive = true };
 
         private IEnumerable<Regex> _patterns;
 
@@ -37,8 +38,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
         public async Task Initialize()
         {
             var content = await File.ReadAllTextAsync(_filename);
-
-            var crawlers = JsonSerializer.Deserialize<IEnumerable<CrawlerEntry>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var crawlers = JsonSerializer.Deserialize<IEnumerable<CrawlerEntry>>(content, _crawlerEntrySerializerOptions);
 
             _patterns = crawlers.Select(x => new Regex(x.Pattern, RegexOptions.Compiled)).ToArray();
         }

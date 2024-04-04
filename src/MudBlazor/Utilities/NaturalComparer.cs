@@ -31,9 +31,9 @@ namespace MudBlazor.Utilities
             {
                 return CompareNatural(xString, yString);
             }
-            else if (x is IComparable && y is IComparable)
+            else if (x is IComparable comparableX && y is IComparable)
             {
-                return ((IComparable)x).CompareTo(y);
+                return comparableX.CompareTo(y);
             }
             else
             {
