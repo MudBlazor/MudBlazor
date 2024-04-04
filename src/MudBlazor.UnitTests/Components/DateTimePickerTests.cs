@@ -226,7 +226,7 @@ namespace MudBlazor.UnitTests.Components
 
         public IRenderedComponent<SimpleDateTimePickerTest> OpenPicker(ComponentParameter parameter)
         {
-            return OpenPicker(new ComponentParameter[] { parameter });
+            return OpenPicker([ parameter ]);
         }
 
         public IRenderedComponent<SimpleDateTimePickerTest> OpenPicker(ComponentParameter[] parameters = null)
@@ -368,8 +368,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DateTimePickerStaticTest>();
             var picker = comp.FindComponent<MudDateTimePicker>();
             // click the day 23
-            comp.FindAll("button.mud-picker-calendar-day")
-                .Where(x => x.TrimmedText().Equals("23")).First().Click();
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().Click();
             // Click on external dial (16 hours) and then click on 35 minutes
             comp.FindAll("div.mud-hour")[7].Click();
             comp.FindAll("div.mud-minute")[35].Click();

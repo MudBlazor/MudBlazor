@@ -288,7 +288,7 @@ namespace MudBlazor
 
         protected DateTime? GetPartialDateTime()
         {
-            return _datePicked == null || _timePicked == null ? null : _datePicked?.Add((TimeSpan)_timePicked);
+            return _datePicked is null || _timePicked is null ? null : _datePicked?.Add((TimeSpan)_timePicked);
         }
 
         protected string GetFormattedYearString()
@@ -342,7 +342,6 @@ namespace MudBlazor
         /// </summary>
         protected void DateSelected(DateTime? date)
         {
-            // Console.WriteLine(date?.ToString("s") ?? "DATE NULL");
             _datePicked = date;
             SubmitAndClose();
         }
@@ -352,7 +351,6 @@ namespace MudBlazor
         /// </summary>
         protected void TimeSelected(TimeSpan? time)
         {
-            // Console.WriteLine(time?.ToString() ?? "DATE NULL");
             _timePicked = time;
             SubmitAndClose();
         }
@@ -402,11 +400,9 @@ namespace MudBlazor
 
         private void SubmitAndClose()
         {
-            StateHasChanged();
-            // Only autoclose if both date and time where clicked after this instance of the dialog was opened
-            if (AutoClose && PickerVariant is not PickerVariant.Static)
+            if (AutoClose && PickerVariant is not PickerVariant.Static && GetPartialDateTime() is not null)
             {
-                CloseAsync(_datePicked is not null && _timePicked is not null).AndForget();
+                CloseAsync().AndForget();
             }
         }
 
