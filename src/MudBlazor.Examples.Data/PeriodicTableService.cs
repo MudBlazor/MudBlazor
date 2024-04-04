@@ -21,7 +21,7 @@ namespace MudBlazor.Examples.Data
         {
             var elements = new List<Element>();
             var key = GetResourceKey(typeof(PeriodicTableService).Assembly, "Elements.json");
-            using var stream = typeof(PeriodicTableService).Assembly.GetManifestResourceStream(key);
+            await using var stream = typeof(PeriodicTableService).Assembly.GetManifestResourceStream(key);
             var table = await JsonSerializer.DeserializeAsync<Table>(stream, _tableSerializationOptions);
             foreach (var elementGroup in table.ElementGroups)
             {

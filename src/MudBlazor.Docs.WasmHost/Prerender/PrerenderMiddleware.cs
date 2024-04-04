@@ -53,7 +53,7 @@ namespace MudBlazor.Docs.WasmHost.Prerender
 
                     byte[] cachedValue;
 
-                    using (var responseBody = new MemoryStream())
+                    await using (var responseBody = new MemoryStream())
                     {
                         context.Response.Body = responseBody;
 
