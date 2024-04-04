@@ -34,7 +34,7 @@ namespace MudBlazor
 
         protected string SwitchClassname =>
             new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
-                .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple && !GetReadOnlyState() && !GetDisabledState())
+                .AddClass($"mud-ripple mud-ripple-switch", Ripple && !GetReadOnlyState() && !GetDisabledState())
                 .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", BoolValue == true)
                 .AddClass($"mud-{UnCheckedColor.ToDescriptionString()}-text hover:mud-{UnCheckedColor.ToDescriptionString()}-hover", BoolValue == false)
                 .AddClass($"mud-switch-disabled", GetDisabledState())
@@ -102,11 +102,11 @@ namespace MudBlazor
         public Color ThumbIconColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// If true, disables ripple effect.
+        /// If false, disables ripple effect. Default = true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
         /// The Size of the switch.

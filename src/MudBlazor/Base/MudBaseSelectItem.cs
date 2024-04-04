@@ -20,11 +20,11 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, disables ripple effect.
+        /// If false, disables ripple effect. Default = true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Appearance)]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
         /// Link to a URL when clicked.

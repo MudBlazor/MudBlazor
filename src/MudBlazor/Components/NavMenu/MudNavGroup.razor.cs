@@ -18,7 +18,7 @@ namespace MudBlazor
 
         protected string ButtonClassname =>
             new CssBuilder("mud-nav-link")
-                .AddClass($"mud-ripple", !DisableRipple)
+                .AddClass($"mud-ripple", Ripple)
                 .AddClass("mud-expanded", Expanded)
                 .Build();
 
@@ -59,11 +59,11 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, disables ripple effect.
+        /// If false, disables ripple effect. Default = true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
         /// If true, expands the nav group, otherwise collapse it. 
