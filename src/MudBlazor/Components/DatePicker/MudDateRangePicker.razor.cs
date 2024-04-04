@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDateRangePicker : MudBaseDatePicker
+    public partial class MudDateRangePicker : MudBaseDatePicker<DateTime>
     {
         private DateTime? _firstDate = null, _secondDate;
         private DateRange _dateRange;
