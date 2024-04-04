@@ -41,7 +41,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("public partial class ApiDocsTests");
                 cb.AddLine("{");
                 cb.IndentLevel++;
-                var mudBlazorComponents = typeof(MudAlert).Assembly.GetTypes().OrderBy(t => t.FullName).Where(t => t.IsSubclassOf(typeof(ComponentBase)));
+                var mudBlazorComponents = typeof(MudAlert).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(ComponentBase))).OrderBy(t => t.FullName);
                 foreach (var type in mudBlazorComponents)
                 {
                     if (type.IsAbstract)
