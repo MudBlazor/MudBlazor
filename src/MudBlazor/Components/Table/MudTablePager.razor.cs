@@ -106,9 +106,9 @@ namespace MudBlazor
 
         private void SetRowsPerPage(int size) => Table?.SetRowsPerPage(size);
 
-        private bool BackButtonsDisabled => Table == null ? false : Table.CurrentPage == 0;
+        private bool BackButtonsDisabled => Table != null && Table.CurrentPage == 0;
 
-        private bool ForwardButtonsDisabled => Table == null ? false : (Table.CurrentPage + 1) * Table.RowsPerPage >= Table.GetFilteredItemsCount();
+        private bool ForwardButtonsDisabled => Table != null && (Table.CurrentPage + 1) * Table.RowsPerPage >= Table.GetFilteredItemsCount();
 
         public MudTableBase Table => Context?.Table;
 
