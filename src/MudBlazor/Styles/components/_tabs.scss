@@ -22,6 +22,7 @@
 
   &.mud-tabs-rounded {
     border-radius: var(--mud-default-borderradius);
+    overflow: hidden;
 
     .mud-tabs-toolbar {
       border-radius: var(--mud-default-borderradius);
