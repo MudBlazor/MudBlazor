@@ -52,7 +52,7 @@ namespace MudBlazor
         private Guid _throttledMouseOverEventId;
 
         private IEventListener _throttledEventManager;
-        [Inject] IEventListenerFactory ThrottledEventManagerFactory { get; set; }
+        [Inject] private IEventListenerFactory ThrottledEventManagerFactory { get; set; }
 
         #endregion
 

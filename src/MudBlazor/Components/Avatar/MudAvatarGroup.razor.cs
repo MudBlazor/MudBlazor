@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    partial class MudAvatarGroup : MudComponentBase
+    public partial class MudAvatarGroup : MudComponentBase
     {
         private bool _childrenNeedUpdates = false;
 

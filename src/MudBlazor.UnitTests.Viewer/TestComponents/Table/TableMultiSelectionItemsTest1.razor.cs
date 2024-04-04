@@ -39,7 +39,7 @@ namespace MudBlazor.UnitTests.TestComponents
         protected bool Filter(ComplexObject item)
             => (StartDate is null || item.DateTime > StartDate) && (EndDate is null || item.DateTime < EndDate);
 
-        class ElementComparer : IEqualityComparer<ComplexObject>
+        private class ElementComparer : IEqualityComparer<ComplexObject>
         {
             public bool Equals(ComplexObject a, ComplexObject b) => a?.Id == b?.Id;
             public int GetHashCode(ComplexObject x) => HashCode.Combine(x?.Id);

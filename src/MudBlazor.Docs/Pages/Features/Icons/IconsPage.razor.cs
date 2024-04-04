@@ -16,11 +16,11 @@ namespace MudBlazor.Docs.Pages.Features.Icons
 {
     public partial class IconsPage
     {
-        [Inject] IResizeObserver ResizeObserver { get; set; }
+        [Inject] private IResizeObserver ResizeObserver { get; set; }
         [Inject] protected IJsApiService JsApiService { get; set; }
 
-        bool _iconDrawerOpen;
-        List<MudIcons> _displayedIcons;
+        private bool _iconDrawerOpen;
+        private List<MudIcons> _displayedIcons;
         private IconOrigin SelectedIconOrigin { get; set; } = IconOrigin.Material;
         private string SearchText { get; set; } = string.Empty;
         private double _iconCardWidth = 136.88; // single icon card width including margins
@@ -219,13 +219,14 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             SelectedIconOrigin = origin;
         }
 
-        void SetIconDrawer(MudIcons icon)
+        private void SetIconDrawer(MudIcons icon)
         {
             _iconDrawerOpen = true;
             SelectedIcon = new MudIcons(icon.Name, icon.Code, icon.Category);
             IconCodeOutput = $"@Icons{(SelectedIconOrigin == IconOrigin.Material ? ".Material" : ".Custom")}.{icon.Category}.{icon.Name}";
         }
-        void CloseIconDrawer()
+
+        private void CloseIconDrawer()
         {
             _iconDrawerOpen = false;
         }

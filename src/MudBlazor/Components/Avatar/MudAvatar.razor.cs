@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    partial class MudAvatar : MudComponentBase, IDisposable
+    public partial class MudAvatar : MudComponentBase, IDisposable
     {
         [CascadingParameter] protected MudAvatarGroup? AvatarGroup { get; set; }
         protected string Classname =>

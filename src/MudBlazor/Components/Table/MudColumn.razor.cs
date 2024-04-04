@@ -8,7 +8,7 @@ namespace MudBlazor
     /// </summary>
     public partial class MudColumn<T> : MudBaseColumn
     {
-        T InternalValue
+        private T InternalValue
         {
             get => Value;
             set

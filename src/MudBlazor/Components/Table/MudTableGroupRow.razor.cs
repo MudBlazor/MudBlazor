@@ -30,7 +30,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public TableGroupDefinition<T> GroupDefinition { get; set; }
 
-        IGrouping<object, T> _items = null;
+        private IGrouping<object, T> _items = null;
         /// <summary>
         /// Inner Items List for the Group
         /// </summary>

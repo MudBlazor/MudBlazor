@@ -9,7 +9,7 @@ namespace MudBlazor
     /// </summary>
     public partial class MudSortableColumn<T, ModelType> : MudBaseColumn
     {
-        T InternalValue
+        private T InternalValue
         {
             get => Value;
             set

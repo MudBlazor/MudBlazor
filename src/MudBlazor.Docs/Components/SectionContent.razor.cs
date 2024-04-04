@@ -109,7 +109,7 @@ public partial class SectionContent
         await JsApiService.CopyToClipboardAsync(code ?? $"Snippet '{Code}' not found!");
     }
 
-    RenderFragment CodeComponent(string code) => builder =>
+    private RenderFragment CodeComponent(string code) => builder =>
     {
         try
         {

@@ -576,7 +576,7 @@ namespace MudBlazor
 
         internal override bool HasServerData => ServerData != null;
 
-        TableData<T> _server_data = new() { TotalItems = 0, Items = Array.Empty<T>() };
+        private TableData<T> _server_data = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private IEnumerable<T> _items;
 
         internal override async Task InvokeServerLoadFunc()

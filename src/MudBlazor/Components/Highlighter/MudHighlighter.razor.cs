@@ -68,9 +68,9 @@ public partial class MudHighlighter : MudComponentBase
         _fragments = GetFragments(Text, HighlightedText, HighlightedTexts, out _regex, CaseSensitive, UntilNextBoundary);
     }
 
-    bool IsMatch(string fragment) => !string.IsNullOrWhiteSpace(fragment) &&
+    private bool IsMatch(string fragment) => !string.IsNullOrWhiteSpace(fragment) &&
                                      !string.IsNullOrWhiteSpace(_regex) &&
                                      Regex.IsMatch(fragment, _regex, CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase);
 
-    static RenderFragment ToRenderFragment(string markupContent) => builder => { builder.AddMarkupContent(0, markupContent); };
+    private static RenderFragment ToRenderFragment(string markupContent) => builder => { builder.AddMarkupContent(0, markupContent); };
 }

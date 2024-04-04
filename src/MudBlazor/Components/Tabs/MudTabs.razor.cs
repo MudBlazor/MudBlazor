@@ -542,7 +542,7 @@ namespace MudBlazor
             };
         }
 
-        string GetTabClass(MudTabPanel panel)
+        private string GetTabClass(MudTabPanel panel)
         {
             var tabClass = new CssBuilder("mud-tab")
               .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
@@ -567,7 +567,7 @@ namespace MudBlazor
                 return Placement.Bottom;
         }
 
-        string GetTabStyle(MudTabPanel panel)
+        private string GetTabStyle(MudTabPanel panel)
         {
             var tabStyle = new StyleBuilder()
             .AddStyle("min-width", MinimumTabWidth)

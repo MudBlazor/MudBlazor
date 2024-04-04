@@ -4,7 +4,7 @@ namespace MudBlazor
 {
     public class RangeConverter<T> : Converter<Range<T>>
     {
-        readonly DefaultConverter<T> _converter;
+        private readonly DefaultConverter<T> _converter;
 
         public RangeConverter()
         {

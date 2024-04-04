@@ -11,7 +11,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-partial class MudThemingProvider : ComponentBase, IDisposable
+public partial class MudThemingProvider : ComponentBase, IDisposable
 {
     // private const string Breakpoint = "mud-breakpoint";
     private const string Palette = "mud-palette";

@@ -6,7 +6,7 @@ using MudBlazor.Charts.SVG.Models;
 
 namespace MudBlazor.Charts
 {
-    partial class Bar : MudChartBase
+    public partial class Bar : MudChartBase
     {
         private const double BoundWidth = 650.0;
         private const double BoundHeight = 350.0;

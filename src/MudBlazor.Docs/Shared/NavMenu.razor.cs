@@ -8,14 +8,14 @@ namespace MudBlazor.Docs.Shared
 {
     public partial class NavMenu
     {
-        [Inject] IMenuService MenuService { get; set; }
-        [Inject] NavigationManager NavMan { get; set; }
+        [Inject] private IMenuService MenuService { get; set; }
+        [Inject] private NavigationManager NavMan { get; set; }
 
         //sections are "getting-started","components", "api", ...
-        string _section;
+        private string _section;
 
         //component links are the part of the url that tells us what component is featured
-        string _componentLink;
+        private string _componentLink;
 
         protected override void OnInitialized()
         {
@@ -30,7 +30,7 @@ namespace MudBlazor.Docs.Shared
             StateHasChanged();
         }
 
-        bool IsSubGroupExpanded(MudComponent item)
+        private bool IsSubGroupExpanded(MudComponent item)
         {
             #region comment about is subgroup expanded
             //if the route contains any of the links of the subgroup, then the subgroup

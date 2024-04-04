@@ -15,7 +15,7 @@ namespace MudBlazor.Docs.Models
         /// </summary>
         public List<MudComponent> GroupComponents { get; set; }
 
-        Type _type;
+        private Type _type;
         public Type Type
         {
             get => _type;

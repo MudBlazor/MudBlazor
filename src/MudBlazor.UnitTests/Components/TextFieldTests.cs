@@ -500,7 +500,8 @@ namespace MudBlazor.UnitTests.Components
                 return new ValidationResult(ErrorMessage);
             }
         }
-        class TestFailingModel
+
+        private class TestFailingModel
         {
             [CustomFailingValidation(ErrorMessage = "Foo")]
             public virtual string Foo { get; set; }
@@ -517,7 +518,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetErrorText().Should().Be("Foo");
         }
 
-        class TestFailingModel2 : TestFailingModel
+        private class TestFailingModel2 : TestFailingModel
         {
             [CustomFailingValidation(ErrorMessage = "Bar")]
             public override string Foo { get; set; }
@@ -549,7 +550,8 @@ namespace MudBlazor.UnitTests.Components
                 throw new Exception("This is a test exception");
             }
         }
-        class TestThrowingModel
+
+        private class TestThrowingModel
         {
             [CustomThrowingValidation]
             public string Foo { get; set; }
@@ -692,7 +694,7 @@ namespace MudBlazor.UnitTests.Components
             inputId.Should().NotBeEmpty();
         }
 
-        class TestDataAnnotationModel
+        private class TestDataAnnotationModel
         {
             [Required(ErrorMessage = "The {0} field is required.")]
             public string Foo1 { get; set; }

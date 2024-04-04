@@ -25,7 +25,7 @@ namespace MudBlazor.UnitTests.Components
     public class NumericFieldTests : BunitTest
     {
         // TestCaseSource does not know about "Nullable<T>" so having values as Nullable<T> does not make sense here
-        static readonly object[] TypeCases =
+        private static readonly object[] TypeCases =
         {
             new object[] { (byte)5 },
             new object[] { (sbyte)5 },

@@ -50,7 +50,7 @@ namespace MudBlazor.UnitTests.TestComponents
             }
         }
 
-        class ElementComparer : IEqualityComparer<ComplexObject>
+        private class ElementComparer : IEqualityComparer<ComplexObject>
         {
             public bool Equals(ComplexObject a, ComplexObject b) => a?.Id == b?.Id;
             public int GetHashCode(ComplexObject x) => HashCode.Combine(x?.Id);

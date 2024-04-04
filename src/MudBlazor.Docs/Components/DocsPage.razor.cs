@@ -28,7 +28,7 @@ namespace MudBlazor.Docs.Components
         private bool _displayView;
         private string _componentName;
         private bool _renderAds;
-        [Inject] NavigationManager NavigationManager { get; set; }
+        [Inject] private NavigationManager NavigationManager { get; set; }
 
         [Inject] private IDocsNavigationService DocsService { get; set; }
         [Inject] private IRenderQueueService RenderQueue { get; set; }

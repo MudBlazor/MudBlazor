@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests.Services
 {
     public class IIJSRuntimeExtentionsTests
     {
-        static readonly object[] CatchedExceptions =
+        private static readonly object[] CatchedExceptions =
         {
             #if DEBUG
 #else

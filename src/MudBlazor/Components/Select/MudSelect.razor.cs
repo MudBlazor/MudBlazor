@@ -40,7 +40,7 @@ namespace MudBlazor
             .Build();
 
         [Inject] private IKeyInterceptorFactory KeyInterceptorFactory { get; set; }
-        [Inject] IScrollManager ScrollManager { get; set; }
+        [Inject] private IScrollManager ScrollManager { get; set; }
 
         private string _elementId = $"select_{Guid.NewGuid().ToString().AsSpan(0, 8)}";
 

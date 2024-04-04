@@ -10,7 +10,7 @@ namespace MudBlazor.Docs.Components;
 
 public partial class DocsPageSection
 {
-    [CascadingParameter] DocsPage DocsPage { get; set; }
+    [CascadingParameter] private DocsPage DocsPage { get; set; }
 
     [CascadingParameter] public DocsPageSection ParentSection { get; protected set; }
 
@@ -22,7 +22,7 @@ public partial class DocsPageSection
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
 
-    bool _renderImmediately = false;
+    private bool _renderImmediately = false;
 
     public int Level { get; private set; }
 
