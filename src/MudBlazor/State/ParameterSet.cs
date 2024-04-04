@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Frozen;
 #endif
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -22,9 +23,12 @@ namespace MudBlazor.State;
 /// <remarks>
 /// For details and usage please read CONTRIBUTING.md
 /// </remarks>
-internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
+internal class ParameterSet : IReadOnlyCollection<IParameterComponentLifeCycle>
 {
-    private readonly List<IParameterComponentLifeCycle> _parameters = new();
+    private readonly Dictionary<string, IParameterComponentLifeCycle> _parameters = new();
+
+    /// <inheritdoc/>
+    public int Count => _parameters.Count;
 
     /// <summary>
     /// Adds a parameter to the parameter set.
@@ -33,12 +37,10 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     /// <exception cref="InvalidOperationException">Thrown when the parameter is already registered.</exception>
     public void Add(IParameterComponentLifeCycle parameter)
     {
-        if (_parameters.Contains(parameter))
+        if (!_parameters.TryAdd(parameter.Metadata.ParameterName, parameter))
         {
             throw new InvalidOperationException($"{parameter.Metadata.ParameterName} is already registered.");
         }
-
-        _parameters.Add(parameter);
     }
 
     /// <summary>
@@ -46,7 +48,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     /// </summary>
     public void OnInitialized()
     {
-        foreach (var parameter in _parameters)
+        foreach (var parameter in _parameters.Values)
         {
             parameter.OnInitialized();
         }
@@ -57,7 +59,7 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     /// </summary>
     public void OnParametersSet()
     {
-        foreach (var parameter in _parameters)
+        foreach (var parameter in _parameters.Values)
         {
             parameter.OnParametersSet();
         }
@@ -71,11 +73,11 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
     public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
 #if NET8_0_OR_GREATER
-        var parametersHandlerShouldFire = _parameters
+        var parametersHandlerShouldFire = _parameters.Values
             .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
             .ToFrozenSet(ParameterHandlerUniquenessComparer.Default);
 #else
-        var parametersHandlerShouldFire = _parameters
+        var parametersHandlerShouldFire = _parameters.Values
             .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
             .ToHashSet(ParameterHandlerUniquenessComparer.Default);
 #endif
@@ -88,8 +90,17 @@ internal class ParameterSet : IEnumerable<IParameterComponentLifeCycle>
         }
     }
 
+    /// <summary>Searches the set for a given value and returns the equal value it finds, if any.</summary>
+    /// <param name="parameterName">The value to search for.</param>
+    /// <param name="parameterComponentLifeCycle">The value from the set that the search found, or the default value when the search yielded no match.</param>
+    /// <returns>A value indicating whether the search was successful.</returns>
+    public bool TryGetValue(string parameterName, [MaybeNullWhen(false)] out IParameterComponentLifeCycle parameterComponentLifeCycle)
+    {
+        return _parameters.TryGetValue(parameterName, out parameterComponentLifeCycle);
+    }
+
     /// <inheritdoc/>
-    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => _parameters.GetEnumerator();
+    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => _parameters.Values.GetEnumerator();
 
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

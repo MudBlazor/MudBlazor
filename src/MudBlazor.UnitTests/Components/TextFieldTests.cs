@@ -364,9 +364,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// This is based on a bug reported by a user
-        ///
-        /// After editing the second (multi-line) tf it would not accept any updates from the first tf.
+        /// <para>This is based on a bug reported by a user</para>
+        /// <para>After editing the second (multi-line) tf it would not accept any updates from the first tf.</para>
         /// </summary>
         [Test]
         public async Task MultiLineTextField_ShouldBe_TwoWayBindable()

@@ -12,7 +12,7 @@ namespace MudBlazor
 #nullable enable
     public abstract partial class MudComponentBase : ComponentBase, IMudStateHasChanged
     {
-        private readonly ParameterSet _parameters = new();
+        internal readonly ParameterSet Parameters = new();
 
         [Inject]
         private ILoggerFactory LoggerFactory { get; set; } = null!;
@@ -56,7 +56,7 @@ namespace MudBlazor
         /// <summary>
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
         /// </summary>
-        public string FieldId => (UserAttributes?.ContainsKey("id") == true ? UserAttributes["id"]?.ToString() ?? $"mudinput-{Guid.NewGuid()}" : $"mudinput-{Guid.NewGuid()}");
+        public string FieldId => UserAttributes?.ContainsKey("id") == true ? UserAttributes["id"]?.ToString() ?? $"mudinput-{Guid.NewGuid()}" : $"mudinput-{Guid.NewGuid()}";
 
         /// <inheritdoc />
         protected override void OnAfterRender(bool firstRender)
@@ -69,20 +69,20 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            _parameters.OnInitialized();
+            Parameters.OnInitialized();
         }
 
         /// <inheritdoc />
         public override Task SetParametersAsync(ParameterView parameters)
         {
-            return _parameters.SetParametersAsync(base.SetParametersAsync, parameters);
+            return Parameters.SetParametersAsync(base.SetParametersAsync, parameters);
         }
 
         /// <inheritdoc />
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            _parameters.OnParametersSet();
+            Parameters.OnParametersSet();
         }
 
         /// <inheritdoc />

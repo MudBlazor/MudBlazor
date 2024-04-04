@@ -10,7 +10,7 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-    public class ResizeObserver : IResizeObserver, IDisposable, IAsyncDisposable
+    public class ResizeObserver : IResizeObserver, IAsyncDisposable
     {
         private bool _isDisposed = false;
 
@@ -131,7 +131,7 @@ namespace MudBlazor.Services
 
         public async ValueTask DisposeAsync()
         {
-            if (_isDisposed == true) { return; }
+            if (_isDisposed) { return; }
 
             _isDisposed = true;
 

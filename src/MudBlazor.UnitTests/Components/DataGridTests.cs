@@ -469,7 +469,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("input.mud-checkbox-input")[^1].Change(false);
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
             //test that changing value in each row selects an item in grid
-            for (int i = 1; i < dataGrid.Instance.Items.Count(); i++)
+            for (var i = 1; i < dataGrid.Instance.Items.Count(); i++)
             {
                 dataGrid.FindAll("input.mud-checkbox-input")[i].Change(true);
                 dataGrid.Instance.SelectedItems.Count.Should().Be(i);
@@ -2212,6 +2212,74 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridColReorderRowFiltersTest()
+        {
+            var comp = Context.RenderComponent<DataGridColReorderRowFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColReorderRowFiltersTest.Model>>();
+
+            await comp.InvokeAsync(() =>
+            {
+                // Should have 4 entries, 2 headers and an extra
+                dataGrid.FindAll("tr").Count.Should().Be(7);
+
+                var switchButton = dataGrid.Find("button.switch-button");
+                switchButton.Click();
+
+                var filterHeaders = dataGrid.FindAll("input");
+                var ageFilter = filterHeaders[0];
+                var nameFilter = filterHeaders[1];
+
+                ageFilter.Input(27);
+                // Should have 1 entry + 3
+                dataGrid.FindAll("tr").Count.Should().Be(4);
+
+                dataGrid.Instance.ClearFiltersAsync();
+                nameFilter.Input("a");
+                // Should have 3 entries + 3
+                dataGrid.FindAll("tr").Count.Should().Be(6);
+            });
+        }
+
+        [Test]
+        public async Task DataGridColReorderRowModifiedFiltersTest()
+        {
+            var comp = Context.RenderComponent<DataGridColReorderRowFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColReorderRowFiltersTest.Model>>();
+
+            await comp.InvokeAsync(async () =>
+            {
+                // Should have 4 entries, 2 headers and an extra
+                dataGrid.FindAll("tr").Count.Should().Be(7);
+
+                var ageCol = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Age");
+                var modifiedAgeFilter = ageCol.FilterContext.FilterDefinition;
+                modifiedAgeFilter.Operator = ">";
+
+                var nameCol = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Name");
+                var modifiedNameFilter = nameCol.FilterContext.FilterDefinition;
+                modifiedNameFilter.Operator = "not contains";
+
+                await dataGrid.Instance.AddFilterAsync(modifiedAgeFilter);
+                await dataGrid.Instance.AddFilterAsync(modifiedNameFilter);
+
+                var switchButton = dataGrid.Find("button.switch-button");
+                switchButton.Click();
+
+                var filterHeaders = dataGrid.FindAll("input");
+                var ageFilter = filterHeaders[0];
+                var nameFilter = filterHeaders[1];
+
+                ageFilter.Input(27);
+                // Should have 3 entries + 3
+                dataGrid.FindAll("tr").Count.Should().Be(6);
+
+                nameFilter.Input("a");
+                // Should have 1 entry + 3
+                dataGrid.FindAll("tr").Count.Should().Be(4);
+            });
+        }
+
+        [Test]
         public async Task DataGridHeaderTemplateTest()
         {
             var comp = Context.RenderComponent<DataGridHeaderTemplateTest>();
@@ -3570,6 +3638,38 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.RemoveAllColumns();
 
             comp.Instance.GridRenderedColumnsCount.Should().Be(0);
+        }
+
+        [Test]
+        public void DataGridSelectColumnTest()
+        {
+            var comp = Context.RenderComponent<DataGridSelectColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<int>>();
+            var rowCheckbox = dataGrid.FindAll("td input");
+            var selectAllCheckboxes = dataGrid.FindComponents<MudCheckBox<bool?>>();
+
+            selectAllCheckboxes[0].Instance.Value.Should().BeFalse();
+            selectAllCheckboxes[1].Instance.Value.Should().BeFalse();
+
+            rowCheckbox[0].Change(true);
+
+            selectAllCheckboxes[0].Instance.Value.Should().Be(default);
+            selectAllCheckboxes[1].Instance.Value.Should().Be(default);
+
+            rowCheckbox[1].Change(true);
+
+            selectAllCheckboxes[0].Instance.Value.Should().BeTrue();
+            selectAllCheckboxes[1].Instance.Value.Should().BeTrue();
+
+            rowCheckbox[1].Change(false);
+
+            selectAllCheckboxes[0].Instance.Value.Should().Be(default);
+            selectAllCheckboxes[1].Instance.Value.Should().Be(default);
+
+            rowCheckbox[0].Change(false);
+
+            selectAllCheckboxes[0].Instance.Value.Should().BeFalse();
+            selectAllCheckboxes[1].Instance.Value.Should().BeFalse();
         }
 
         [Test]

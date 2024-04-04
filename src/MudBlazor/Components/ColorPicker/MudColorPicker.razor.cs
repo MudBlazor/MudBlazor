@@ -76,7 +76,7 @@ namespace MudBlazor
                 {
                     _disableAlpha = value;
 
-                    if (value == true)
+                    if (value)
                     {
                         Value = Value.SetAlpha(1.0);
                     }
@@ -332,9 +332,9 @@ namespace MudBlazor
 
             var valueInDeg = (int)_value.H - (index * 60);
             var value = (int)(MathExtensions.Map(0, 60, 0, 255, valueInDeg));
-            var section = _rgbToHueMapper[index];
+            var (r, g, b, dominantColorPart) = _rgbToHueMapper[index];
 
-            _baseColor = new(section.r(value), section.g(value), section.b(value), 255);
+            _baseColor = new(r(value), g(value), b(value), 255);
         }
 
         private void UpdateColorBaseOnSelection()
@@ -345,7 +345,7 @@ namespace MudBlazor
             var g_x = 255 - (int)((255 - _baseColor.G) * x);
             var b_x = 255 - (int)((255 - _baseColor.B) * x);
 
-            var y = 1.0 - _selectorY / _maxY;
+            var y = 1.0 - (_selectorY / _maxY);
 
             var r = r_x * y;
             var g = g_x * y;
@@ -366,9 +366,9 @@ namespace MudBlazor
                 index = 5;
             }
 
-            var section = _rgbToHueMapper[index];
+            var (r, g, b, dominantColorPart) = _rgbToHueMapper[index];
 
-            var colorValues = section.dominantColorPart switch
+            var colorValues = dominantColorPart switch
             {
                 "rb" => (_value.R, _value.B),
                 "rg" => (_value.R, _value.G),
@@ -427,8 +427,8 @@ namespace MudBlazor
 
         private void SetSelectorBasedOnMouseEvents(MouseEventArgs e, bool offsetIsAbsolute)
         {
-            _selectorX = (offsetIsAbsolute == true ? e.OffsetX : (e.OffsetX - _selctorSize / 2.0) + _selectorX).EnsureRange(_maxX);
-            _selectorY = (offsetIsAbsolute == true ? e.OffsetY : (e.OffsetY - _selctorSize / 2.0) + _selectorY).EnsureRange(_maxY);
+            _selectorX = (offsetIsAbsolute ? e.OffsetX : (e.OffsetX - (_selctorSize / 2.0)) + _selectorX).EnsureRange(_maxX);
+            _selectorY = (offsetIsAbsolute ? e.OffsetY : (e.OffsetY - (_selctorSize / 2.0)) + _selectorY).EnsureRange(_maxY);
         }
 
         #endregion
@@ -528,7 +528,7 @@ namespace MudBlazor
         #region helper
 
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
-        private string GetColorTextValue() => (DisableAlpha == true || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _value.ToString(MudColorOutputFormats.Hex) : _value.ToString(MudColorOutputFormats.HexA);
+        private string GetColorTextValue() => (DisableAlpha || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _value.ToString(MudColorOutputFormats.Hex) : _value.ToString(MudColorOutputFormats.HexA);
         private int GetHexColorInputMaxLength() => DisableAlpha ? 7 : 9;
 
         private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => CloseAsync());
@@ -547,7 +547,7 @@ namespace MudBlazor
         {
             await base.OnAfterRenderAsync(firstRender);
 
-            if (firstRender == true)
+            if (firstRender)
             {
                 if (PickerVariant == PickerVariant.Static)
                 {
@@ -555,7 +555,7 @@ namespace MudBlazor
                 }
             }
 
-            if (_attachedMouseEvent == true)
+            if (_attachedMouseEvent)
             {
                 _attachedMouseEvent = false;
                 await AddMouseOverEventAsync();
@@ -564,7 +564,7 @@ namespace MudBlazor
 
         private async Task AddMouseOverEventAsync()
         {
-            if (DisableDragEffect == true) { return; }
+            if (DisableDragEffect) { return; }
 
             if (_throttledEventManager == null)
             {

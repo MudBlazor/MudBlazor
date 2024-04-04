@@ -363,7 +363,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PseudoCssRootColor_Test()
         {
-            string scope = ":root";
+            var scope = ":root";
             var isDarkMode = true;
             var mudTheme = new MudTheme
             {

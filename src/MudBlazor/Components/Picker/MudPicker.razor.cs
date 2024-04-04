@@ -553,7 +553,7 @@ namespace MudBlazor
             switch (args.Key)
             {
                 case "Backspace":
-                    if (args.CtrlKey == true && args.ShiftKey == true)
+                    if (args.CtrlKey && args.ShiftKey)
                     {
                         await ClearAsync();
                         _value = default;

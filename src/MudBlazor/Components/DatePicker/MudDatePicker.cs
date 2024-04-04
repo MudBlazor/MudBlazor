@@ -195,7 +195,7 @@ namespace MudBlazor
             _selectedDate = null;
             await SetDateAsync(null, true);
 
-            if (AutoClose == true)
+            if (AutoClose)
             {
                 await CloseAsync(false);
             }
@@ -245,11 +245,11 @@ namespace MudBlazor
                     {
                         IsOpen = true;
                     }
-                    else if (args.AltKey == true)
+                    else if (args.AltKey)
                     {
                         IsOpen = false;
                     }
-                    else if (args.ShiftKey == true)
+                    else if (args.ShiftKey)
                     {
 
                     }
@@ -263,7 +263,7 @@ namespace MudBlazor
                     {
                         IsOpen = true;
                     }
-                    else if (args.ShiftKey == true)
+                    else if (args.ShiftKey)
                     {
 
                     }

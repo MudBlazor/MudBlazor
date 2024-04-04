@@ -11,7 +11,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudAutocomplete<T> : MudBaseInput<T>, IDisposable
+    public partial class MudAutocomplete<T> : MudBaseInput<T>
     {
         /// <summary>
         /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
@@ -644,7 +644,7 @@ namespace MudBlazor
                     }
                     break;
                 case "ArrowUp":
-                    if (args.AltKey == true)
+                    if (args.AltKey)
                     {
                         await ChangeMenu(open: false);
                     }
@@ -671,7 +671,7 @@ namespace MudBlazor
                         await ToggleMenu();
                     break;
                 case "Backspace":
-                    if (args.CtrlKey == true && args.ShiftKey == true)
+                    if (args.CtrlKey && args.ShiftKey)
                     {
                         await ResetAsync();
                     }
@@ -685,7 +685,7 @@ namespace MudBlazor
             if (increment == 0 || _items == null || _items.Length == 0 || !_enabledItemIndices.Any())
                 return ValueTask.CompletedTask;
             // if we are at the end, or the beginning we just do an rollover
-            _selectedListItemIndex = Math.Clamp(value: (10 * _items.Length + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length - 1);
+            _selectedListItemIndex = Math.Clamp(value: ((10 * _items.Length) + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length - 1);
             return ScrollToListItem(_selectedListItemIndex);
         }
 

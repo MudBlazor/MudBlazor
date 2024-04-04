@@ -43,7 +43,7 @@ namespace MudBlazor
         [Parameter] public string RowsPerPageString { get; set; } = "Rows per page:";
 
         private string Info => DataGrid == null ? "DataGrid==null" : InfoFormat
-            .Replace("{first_item}", $"{DataGrid?.CurrentPage * DataGrid.RowsPerPage + 1}")
+            .Replace("{first_item}", $"{(DataGrid?.CurrentPage * DataGrid.RowsPerPage) + 1}")
             .Replace("{last_item}", $"{Math.Min((DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage, DataGrid.GetFilteredItemsCount())}")
             .Replace("{all_items}", $"{DataGrid.GetFilteredItemsCount()}");
 

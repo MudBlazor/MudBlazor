@@ -57,7 +57,7 @@ namespace MudBlazor.UnitTests.Charts
         [TestCaseSource("GetInterpolationOptions")]
         public void LineChartExampleData(InterpolationOption opt)
         {
-            List<ChartSeries> chartSeries = new List<ChartSeries>()
+            var chartSeries = new List<ChartSeries>()
             {
                 new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, -72, 69, 62, 62, -55, 65, 70 } },
                 new ChartSeries() { Name = "Series 2", Data = new double[] { 10, 41, 35, 51, 49, 62, -69, 91, -148 } },
@@ -152,7 +152,7 @@ namespace MudBlazor.UnitTests.Charts
         [TestCaseSource("GetInterpolationOptions")]
         public void LineChartExampleZeroValues(InterpolationOption opt)
         {
-            List<ChartSeries> chartSeries = new List<ChartSeries>()
+            var chartSeries = new List<ChartSeries>()
             {
                 new ChartSeries() { Name = "Series 1", Data = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
             };
@@ -201,7 +201,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void LineChartColoring()
         {
-            List<ChartSeries> chartSeries = new List<ChartSeries>()
+            var chartSeries = new List<ChartSeries>()
             {
                 new ChartSeries() { Name = "Deep Sea Blue", Data = new double[] { 40, 20, 25, 27, 46 } },
                 new ChartSeries() { Name = "Venetian Red", Data = new double[] { 19, 24, 35, 13, 28 } },

@@ -508,7 +508,7 @@ namespace MudBlazor.Docs.Models
         public static string XmlDocumentationKeyHelper(string typeFullNameString, string memberNameString)
         {
             var key = DocumentationKeyRegularExpression().Replace(typeFullNameString, string.Empty).Replace('+', '.');
-            if (!(memberNameString is null))
+            if (memberNameString is not null)
             {
                 key += "." + memberNameString;
             }
@@ -571,7 +571,7 @@ namespace MudBlazor.Docs.Models
         public static string GetDocumentation(this ParameterInfo parameterInfo)
         {
             var memberDocumentation = parameterInfo.Member.GetDocumentation();
-            if (!(memberDocumentation is null))
+            if (memberDocumentation is not null)
             {
                 var regexPattern =
                     Regex.Escape(@"<param name=" + "\"" + parameterInfo.Name + "\"" + @">") +

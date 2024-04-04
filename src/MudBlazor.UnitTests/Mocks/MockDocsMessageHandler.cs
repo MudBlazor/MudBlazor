@@ -5,7 +5,7 @@ namespace MudBlazor.UnitTests.Mocks
 {
     public class MockDocsMessageHandler : MockHttpMessageHandler
     {
-        public MockDocsMessageHandler() : base()
+        public MockDocsMessageHandler()
         {
             // Periodic table api
             this.When("https://localhost/webapi/periodictable")

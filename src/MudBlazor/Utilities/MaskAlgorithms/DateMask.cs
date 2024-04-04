@@ -221,8 +221,7 @@ public partial class DateMask : PatternMask
     public override void UpdateFrom(IMask other)
     {
         base.UpdateFrom(other);
-        var o = other as DateMask;
-        if (o == null)
+        if (other is not DateMask o)
             return;
         _y = o._y;
         _M = o._M;

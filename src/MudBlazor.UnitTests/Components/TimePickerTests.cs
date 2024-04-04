@@ -346,7 +346,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimeEditModeHours_CheckSelection()
         {
-            var comp = Context.RenderComponent<SimpleTimePickerTest>((Parameter("TimeEditMode", TimeEditMode.OnlyHours)));
+            var comp = Context.RenderComponent<SimpleTimePickerTest>(Parameter("TimeEditMode", TimeEditMode.OnlyHours));
             var underlyingPicker = comp.FindComponent<MudTimePicker>().Instance;
 
             // click to to open picker
