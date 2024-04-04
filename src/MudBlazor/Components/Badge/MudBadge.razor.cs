@@ -25,7 +25,7 @@ namespace MudBlazor
             .AddClass("mud-badge-bordered", Bordered)
             .AddClass("mud-badge-icon", !string.IsNullOrEmpty(Icon) && !Dot)
             .AddClass($"mud-badge-{Origin.ToDescriptionString().Replace("-", " ")}")
-            .AddClass($"mud-elevation-{Elevation.ToString()}")
+            .AddClass($"mud-elevation-{Elevation}")
             .AddClass("mud-theme-" + Color.ToDescriptionString(), Color != Color.Default)
             .AddClass("mud-badge-default", Color == Color.Default)
             .AddClass("mud-badge-overlap", Overlap)

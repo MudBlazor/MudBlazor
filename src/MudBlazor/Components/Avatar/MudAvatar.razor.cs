@@ -15,7 +15,7 @@ namespace MudBlazor
           .AddClass($"mud-avatar-square", Square)
           .AddClass($"mud-avatar-{Variant.ToDescriptionString()}")
           .AddClass($"mud-avatar-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
-          .AddClass($"mud-elevation-{Elevation.ToString()}")
+          .AddClass($"mud-elevation-{Elevation}")
           .AddClass(AvatarGroup?.GetAvatarSpacing() ?? new CssBuilder(), AvatarGroup != null)
           .AddClass(Class)
         .Build();
