@@ -14,6 +14,7 @@
                 DisableInputs="DisableInput"
                 DisableModeSwitch="DisableModeSwitch"
                 DisableAlpha="DisableAlpha"
+                DisableDragEffect="DisableDragEffect"
                 ColorPickerView="@ViewMode"
                 ColorPickerMode="ColorPickerMode" PickerVariant="Variant" />
 
@@ -35,9 +36,9 @@
     [Parameter] public bool DisableInput { get; set; } = false;
     [Parameter] public bool DisableModeSwitch { get; set; } = false;
     [Parameter] public bool DisableAlpha { get; set; } = false;
+    [Parameter] public bool DisableDragEffect { get; set; } = false;
     [Parameter] public ColorPickerView ViewMode { get; set; } = ColorPickerView.Spectrum;
     [Parameter] public PickerVariant Variant { get; set; } = PickerVariant.Static;
-    [Parameter] public bool AlwaysUpdateBinding { get; set; } = false;
 
     public async Task OpenPicker()
     {
