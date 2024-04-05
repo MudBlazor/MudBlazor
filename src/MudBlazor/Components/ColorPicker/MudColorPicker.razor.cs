@@ -5,16 +5,17 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Background.Periodic;
 
 namespace MudBlazor
 {
-    public partial class MudColorPicker : MudPicker<MudColor>
+    public partial class MudColorPicker : MudPicker<MudColor>, IPeriodicTimerElapsedHandler
     {
         public MudColorPicker() : base(new DefaultConverter<MudColor>())
         {
@@ -50,7 +51,8 @@ namespace MudBlazor
         private bool _collectionOpen;
 
         private readonly Guid _id = Guid.NewGuid();
-        private readonly Timer _debounceTimer = new();
+
+        private PeriodicWorker _periodicWorker;
 
         #endregion
 
@@ -417,22 +419,26 @@ namespace MudBlazor
 
         private void SetDebounceTimer()
         {
-            _debounceTimer.AutoReset = false;
-            _debounceTimer.Interval = DebounceInterval.TotalMilliseconds;
-            _debounceTimer.Elapsed += OnDebounceTimerTick;
+            _periodicWorker ??= new PeriodicWorker(this, DebounceInterval);
+            // Since Period is only available in .NET8 we need to initialize it here instead of constructor
+            //_periodicWorker.Period = DebounceInterval;
         }
 
-        private async void OnDebounceTimerTick(object sender, ElapsedEventArgs e)
+        Task IPeriodicTimerElapsedHandler.OnPeriodicTimerElapsedAsync(CancellationToken stoppingToken)
         {
-            await InvokeAsync(UpdateColorBaseOnSelection);
+            return InvokeAsync(UpdateColorBaseOnSelection);
         }
 
-        private void OnPointerMove(PointerEventArgs e)
+        private async Task OnPointerMoveAsync(PointerEventArgs e)
         {
             if (e.Buttons == 1 && !DisableDragEffect)
             {
                 SetSelectorBasedOnPointerEvents(e, true);
-                _debounceTimer.Start();
+                // Consider adding cancellation token if you need to abort;
+                if (_periodicWorker is not null)
+                {
+                    await _periodicWorker.StartAsync();
+                }
             }
         }
 
@@ -517,6 +523,12 @@ namespace MudBlazor
         {
             SetInputString(value);
             return Task.CompletedTask;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _periodicWorker.Dispose();
+            base.Dispose(disposing);
         }
 
         #endregion
