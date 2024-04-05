@@ -403,9 +403,9 @@ namespace MudBlazor
             }
         }
 
-        private Task OnColorOverlayClick(MouseEventArgs e)
+        private Task OnColorOverlayClick(PointerEventArgs e)
         {
-            SetSelectorBasedOnMouseEvents(e, true);
+            SetSelectorBasedOnPointerEvents(e, true);
 
             return HandleColorOverlayClickedAsync();
         }
@@ -422,19 +422,19 @@ namespace MudBlazor
             await InvokeAsync(UpdateColorBaseOnSelection);
         }
 
-        private void OnMouseOver(MouseEventArgs e)
+        private void OnPointerMove(PointerEventArgs e)
         {
             if (e.Buttons == 1)
             {
-                SetSelectorBasedOnMouseEvents(e, true);
+                SetSelectorBasedOnPointerEvents(e, true);
                 _debounceTimer.Start();
             }
         }
 
-        private void SetSelectorBasedOnMouseEvents(MouseEventArgs e, bool offsetIsAbsolute)
+        private void SetSelectorBasedOnPointerEvents(PointerEventArgs e, bool offsetIsAbsolute)
         {
-            _selectorX = (offsetIsAbsolute ? e.OffsetX : (e.OffsetX - (_selctorSize / 2.0)) + _selectorX).EnsureRange(_maxX);
-            _selectorY = (offsetIsAbsolute ? e.OffsetY : (e.OffsetY - (_selctorSize / 2.0)) + _selectorY).EnsureRange(_maxY);
+            _selectorX = (offsetIsAbsolute ? e.OffsetX : e.OffsetX - (_selctorSize / 2.0) + _selectorX).EnsureRange(_maxX);
+            _selectorY = (offsetIsAbsolute ? e.OffsetY : e.OffsetY - (_selctorSize / 2.0) + _selectorY).EnsureRange(_maxY);
         }
 
         #endregion
