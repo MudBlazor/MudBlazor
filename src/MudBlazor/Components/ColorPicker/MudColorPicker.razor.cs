@@ -39,11 +39,11 @@ namespace MudBlazor
 
         private const double _maxY = 250;
         private const double _maxX = 312;
-        private const double _selctorSize = 26.0;
+        private const double _selectorSize = 26.0;
 
         private double _selectorX;
         private double _selectorY;
-        private bool _skipFeedback = false;
+        private bool _skipFeedback;
 
         private MudColor _baseColor;
 
@@ -58,7 +58,7 @@ namespace MudBlazor
 
         [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 
-        private bool _disableAlpha = false;
+        private bool _disableAlpha;
 
         /// <summary>
         /// If true, Alpha options will not be displayed and color output will be RGB, HSL or HEX and not RGBA, HSLA or HEXA.
@@ -120,7 +120,7 @@ namespace MudBlazor
         public bool DisablePreview { get; set; } = false;
 
         /// <summary>
-        /// The initial mode (RGB, HSL or HEX) the picker should open. Defaults to RGB 
+        /// The initial mode (RGB, HSL or HEX) the picker should open. Defaults to RGB
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -130,7 +130,7 @@ namespace MudBlazor
         private ColorPickerView _activeColorPickerView = ColorPickerView.Spectrum;
 
         /// <summary>
-        /// The initial view of the picker. Views can be changed if toolbar is enabled. 
+        /// The initial view of the picker. Views can be changed if toolbar is enabled.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -148,7 +148,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If true, binding changes occurred also when HSL values changed without a corresponding RGB change 
+        /// If true, binding changes occurred also when HSL values changed without a corresponding RGB change
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -197,8 +197,8 @@ namespace MudBlazor
         };
 
         /// <summary>
-        /// When set to true, no mouse move events in the spectrum mode will be captured, so the selector circle won't fellow the mouse. 
-        /// Under some conditions like long latency the visual representation might not reflect the user behaviour anymore. So, it can be disabled 
+        /// When set to true, no mouse move events in the spectrum mode will be captured, so the selector circle won't fellow the mouse.
+        /// Under some conditions like long latency the visual representation might not reflect the user behaviour anymore. So, it can be disabled
         /// Enabled by default
         /// </summary>
         [Parameter]
@@ -234,7 +234,7 @@ namespace MudBlazor
         public string PaletteIcon { get; set; } = Icons.Material.Filled.Palette;
 
         /// <summary>
-        /// Custom import/export icont.
+        /// Custom import/export icon.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
@@ -284,8 +284,6 @@ namespace MudBlazor
 
         public void ChangeView(ColorPickerView value)
         {
-            var oldValue = _activeColorPickerView;
-
             _activeColorPickerView = value;
             Text = GetColorTextValue();
         }
@@ -440,8 +438,8 @@ namespace MudBlazor
 
         private void SetSelectorBasedOnPointerEvents(PointerEventArgs e, bool offsetIsAbsolute)
         {
-            _selectorX = (offsetIsAbsolute ? e.OffsetX : e.OffsetX - (_selctorSize / 2.0) + _selectorX).EnsureRange(_maxX);
-            _selectorY = (offsetIsAbsolute ? e.OffsetY : e.OffsetY - (_selctorSize / 2.0) + _selectorY).EnsureRange(_maxY);
+            _selectorX = (offsetIsAbsolute ? e.OffsetX : e.OffsetX - (_selectorSize / 2.0) + _selectorX).EnsureRange(_maxX);
+            _selectorY = (offsetIsAbsolute ? e.OffsetY : e.OffsetY - (_selectorSize / 2.0) + _selectorY).EnsureRange(_maxY);
         }
 
         #endregion
