@@ -49,6 +49,7 @@ namespace MudBlazor
 
         private bool _collectionOpen;
 
+        private readonly Guid _id = Guid.NewGuid();
         private readonly Timer _debounceTimer = new();
 
         #endregion
@@ -291,7 +292,10 @@ namespace MudBlazor
 
         private async Task SetColorAsync(MudColor value)
         {
-            if (value == null) { return; }
+            if (value == null)
+            {
+                return;
+            }
 
             var rgbChanged = value != _value;
             var hslChanged = _value != null && value.HslChanged(_value);
@@ -318,7 +322,10 @@ namespace MudBlazor
         private void UpdateBaseColorSlider(int value)
         {
             var diff = Math.Abs(value - (int)Value.H);
-            if (diff == 0) { return; }
+            if (diff == 0)
+            {
+                return;
+            }
 
             Value = Value.SetH(value);
         }
@@ -332,7 +339,7 @@ namespace MudBlazor
             }
 
             var valueInDeg = (int)_value.H - (index * 60);
-            var value = (int)(MathExtensions.Map(0, 60, 0, 255, valueInDeg));
+            var value = (int)MathExtensions.Map(0, 60, 0, 255, valueInDeg);
             var (r, g, b, dominantColorPart) = _rgbToHueMapper[index];
 
             _baseColor = new(r(value), g(value), b(value), 255);
