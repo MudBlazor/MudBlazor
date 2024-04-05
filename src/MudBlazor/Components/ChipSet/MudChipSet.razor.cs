@@ -124,7 +124,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public string CloseIcon { get; set; } = Icons.Material.Filled.Cancel;
 
     /// <summary>
-    /// Ripple default setting for all chips. If true, a ripple effect is applied to clickable chips.
+    /// Ripple default setting for all chips. If true, a ripple effect is applied to clickable chips on click.
     /// Chips may override this.
     /// </summary>
     [Parameter]

@@ -79,7 +79,7 @@ namespace MudBlazor
         public bool DisableElevation { get; set; }
 
         /// <summary>
-        /// If false, disables ripple effect. Default=true
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
