@@ -378,6 +378,10 @@ namespace MudBlazor
 
         [Parameter] public bool ShowFilterIcons { get; set; } = true;
 
+        [Parameter] public string SortIcon { get; set; }
+        [Parameter] public string FilterIcon { get; set; }
+        [Parameter] public string FilterAppliedIcon { get; set; }
+
         [Parameter] public DataGridFilterMode FilterMode { get; set; }
 
         [Parameter] public DataGridFilterCaseSensitivity FilterCaseSensitivity { get; set; }

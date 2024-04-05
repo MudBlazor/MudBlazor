@@ -108,7 +108,9 @@ namespace MudBlazor
             }
         }
         [Parameter] public SortDirection InitialDirection { get; set; } = SortDirection.None;
-        [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+        [Parameter] public string SortIcon { get; set; }
+        [Parameter] public string FilterIcon { get; set; }
+        [Parameter] public string FilterAppliedIcon { get; set; }
 
         /// <summary>
         /// Specifies whether the column can be grouped.
@@ -282,6 +284,13 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            SortIcon ??= DataGrid?.SortIcon ?? Icons.Material.Filled.ArrowUpward;
+            FilterIcon ??= DataGrid?.FilterIcon ?? Icons.Material.Outlined.FilterAlt;
+            FilterAppliedIcon ??= DataGrid?.FilterAppliedIcon ?? Icons.Material.Filled.FilterAlt;
+
+            if (!Hideable.HasValue)
+                Hideable = DataGrid?.Hideable;
+
             base.OnInitialized();
             groupBy = GroupBy;
 
