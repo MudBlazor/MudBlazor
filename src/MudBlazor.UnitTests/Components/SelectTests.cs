@@ -553,27 +553,24 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MultiSelectTest7>();
             // select element needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
-            string validatedValue = null;
-            select.SetParam(x => x.Validation, (object)new Func<string, bool>(value =>
-            {
-                validatedValue = value; // NOTE: select does only update the value for T string
-                return true;
-            }));
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // Open the menu
             input.Click();
             menu.ClassList.Should().Contain("mud-popover-open");
-            // now click the first checkbox
-            comp.FindAll("div.mud-list-item")[0].Click();
-            // validate the result. all items should be selected
-            comp.WaitForAssertion(() => select.Instance.Text.Should().Be("FirstA^SecondA^ThirdA"));
-            validatedValue.Should().Be("FirstA^SecondA^ThirdA");
-            // now click the first checkbox
-            comp.FindAll("div.mud-list-item")[0].Click();
+            // now click the first checkbox to select all
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            select.Instance.SelectedValues.Should().HaveCount(0);
+            items[0].Click();
+            // validate the result. all items that are not disabled should be selected
+            comp.WaitForAssertion(() => select.Instance.SelectedValues.Should().HaveCount(3));
+            select.Instance.SelectedValues.ElementAt(0).Should().Be("FirstA");
+            select.Instance.SelectedValues.ElementAt(1).Should().Be("SecondA");
+            select.Instance.SelectedValues.ElementAt(2).Should().Be("ThirdA");
+            // now click the first checkbox again to unselect all
+            items[0].Click();
             // validate the result. all items should be un-selected
-            comp.WaitForAssertion(() => select.Instance.Text.Should().Be(""));
-            validatedValue.Should().Be("");
+            comp.WaitForAssertion(() => select.Instance.SelectedValues.Should().HaveCount(0));
         }
 
         [Test]
