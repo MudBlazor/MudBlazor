@@ -164,11 +164,11 @@ namespace MudBlazor
         public bool ApplyEffectsToContainer { get; set; }
 
         /// <summary>
-        /// If true, disables ripple effect.
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
         /// If true, disables slider animation
@@ -547,7 +547,7 @@ namespace MudBlazor
             var tabClass = new CssBuilder("mud-tab")
               .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
               .AddClass($"mud-disabled", panel.Disabled)
-              .AddClass($"mud-ripple", !DisableRipple)
+              .AddClass($"mud-ripple", !Ripple)
               .AddClass(TabPanelClass)
               .AddClass(panel.Class)
               .Build();

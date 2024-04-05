@@ -18,7 +18,7 @@ namespace MudBlazor
         protected string LinkClassname =>
             new CssBuilder("mud-nav-link")
                 .AddClass($"mud-nav-link-disabled", Disabled)
-                .AddClass($"mud-ripple", !DisableRipple && !Disabled)
+                .AddClass($"mud-ripple", Ripple && !Disabled)
                 .Build();
 
         protected string IconClassname =>
