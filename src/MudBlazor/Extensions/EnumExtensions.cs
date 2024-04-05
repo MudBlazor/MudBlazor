@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 
 namespace MudBlazor.Extensions
 {
@@ -32,5 +34,19 @@ namespace MudBlazor.Extensions
 
             return Enumerable.Empty<Enum>();
         }
+        
+        /// <summary>
+        /// Get string from [Display(Name = "Value")] atrribute from enum
+        /// </summary>
+        /// <param name="enumType"></param>
+        /// <returns>String value from [Display]</returns>
+        public static string GetEnumDisplayName(Enum enumType)
+        {
+            return enumType.GetType().GetMember(enumType.ToString())
+                .First()
+                .GetCustomAttribute<DisplayAttribute>()
+                ?.Name ?? enumType.ToString();
+        }
+        
     }
 }
