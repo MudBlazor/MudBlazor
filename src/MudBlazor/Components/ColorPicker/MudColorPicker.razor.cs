@@ -431,7 +431,7 @@ namespace MudBlazor
 
         private void OnPointerMove(PointerEventArgs e)
         {
-            if (e.Buttons == 1)
+            if (e.Buttons == 1 && !DisableDragEffect)
             {
                 SetSelectorBasedOnPointerEvents(e, true);
                 _debounceTimer.Start();

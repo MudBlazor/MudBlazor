@@ -1124,6 +1124,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DisableDragEffect()
+        {
+            false.Should().BeTrue();
+        }
+
+        [Test]
         public void EventListenerNotAttachedWhenEnableDragEffectIsDisabled()
         {
             var comp = Context.RenderComponent<MudColorPicker>(p =>
@@ -1180,6 +1186,7 @@ namespace MudBlazor.UnitTests.Components
             var y = 200.98;
 
             overlay.PointerDown(new PointerEventArgs { OffsetX = x, OffsetY = y });
+            overlay.PointerUp(new PointerEventArgs { OffsetX = x, OffsetY = y });
 
             MudColor color = "#232232ff";
             var expectedColor = new MudColor(color.R, color.G, color.B, _defaultColor);
@@ -1189,11 +1196,13 @@ namespace MudBlazor.UnitTests.Components
             var selector = comp.Find(".mud-picker-color-selector");
 
             //a click in the center of the selector shouldn't change something
-            selector.PointerDown(new PointerEventArgs { OffsetX = 13, OffsetY = 13 }, );
+            selector.PointerDown(new PointerEventArgs { OffsetX = 13, OffsetY = 13 });
+            selector.PointerUp(new PointerEventArgs { OffsetX = 13, OffsetY = 13 });
 
             CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
 
             selector.PointerDown(new PointerEventArgs { OffsetX = 5, OffsetY = 20 });
+            selector.PointerUp(new PointerEventArgs { OffsetX = 5, OffsetY = 20 });
 
             var secondExpectedColor = new MudColor(31, 30, 42, _defaultColor);
             CheckColorRelatedValues(comp, x - 8, y + 7, secondExpectedColor, ColorPickerMode.RGB);
