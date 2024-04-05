@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @implements IDisposable
 @inherits MudComponentBase
 
@@ -15,7 +15,7 @@
                 }
                 else
                 {
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context.EditButtonDisabled(Item)" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context.EditButtonDisabled(Item)" />
                 }
             }
             else if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.ApplyButtonPosition.DisplayTableButtonAtStart() == true)
@@ -40,7 +40,7 @@
             <div class="d-flex" style="@ActionsStylename">
                 @if (IsCheckable)
                 {
-                    <MudCheckBox @bind-Checked="IsChecked" StopClickPropagation="true" Class="mud-table-cell-checkbox"></MudCheckBox>
+                    <MudCheckBox @bind-Value="IsChecked" StopClickPropagation="true" Class="mud-table-cell-checkbox"></MudCheckBox>
                 }
             </div>
         </MudElement>
@@ -58,7 +58,7 @@
                 }
                 else
                 {
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context.EditButtonDisabled(Item)" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context.EditButtonDisabled(Item)" />
                 }
             }
             else if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.ApplyButtonPosition.DisplayTableButtonAtEnd() == true)

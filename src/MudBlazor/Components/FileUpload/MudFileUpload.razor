@@ -1,14 +1,17 @@
-﻿@inherits MudFormComponent<T, string>;
-@typeparam T;
+﻿@inherits MudFormComponent<T, string>
+@typeparam T
 @namespace MudBlazor
 @using Microsoft.AspNetCore.Components.Forms
 
 <MudInputControl Class="@Classname" Style="@Style" Error="HasErrors" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
-        <InputFile OnChange="OnChange" id="@_id" class="@InputClass" style="@InputStyle" hidden="@(Hidden ? "" : null)" multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)" accept="@Accept" @attributes="UserAttributes" />
+        <InputFile OnChange="OnChangeAsync" id="@_id" class="@InputClass" style="@InputStyle" hidden="@(Hidden ? "" : null)" multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
+            accept="@Accept" disabled="@(GetDisabledState())" @attributes="UserAttributes" />
         @if (ButtonTemplate != null)
         {
-            @ButtonTemplate(_id)
+            <CascadingValue Name="ParentDisabled" Value="GetDisabledState()">
+                @ButtonTemplate(new FileUploadButtonTemplateContext<T>(this, _id))
+            </CascadingValue>
         }
         @if (SelectedTemplate != null)
         {

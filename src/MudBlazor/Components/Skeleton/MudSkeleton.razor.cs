@@ -4,6 +4,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudSkeleton : MudComponentBase
     {
         protected string Classname =>
@@ -13,19 +14,26 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+        protected string Stylename =>
+            new StyleBuilder()
+                .AddStyle("height", $"{Height}", !string.IsNullOrEmpty(Height))
+                .AddStyle("width", $"{Width}", !string.IsNullOrEmpty(Width))
+                .AddStyle(Style)
+                .Build();
+
         /// <summary>
         /// With defined in string, needs px or % or equal prefix.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Skeleton.Appearance)]
-        public string Width { set; get; }
+        public string? Width { set; get; }
 
         /// <summary>
         /// Height defined in string, needs px or % or equal prefix.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Skeleton.Appearance)]
-        public string Height { set; get; }
+        public string? Height { set; get; }
 
         /// <summary>
         /// Shape of the skeleton that will be rendered.
@@ -40,24 +48,5 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Skeleton.Appearance)]
         public Animation Animation { set; get; } = Animation.Pulse;
-
-        private string _width;
-        private string _height;
-        private string _styleString;
-
-        protected override void OnInitialized()
-        {
-            if (!string.IsNullOrEmpty(Width))
-            {
-                _width = $"width:{Width};";
-            }
-
-            if (!string.IsNullOrEmpty(Height))
-            {
-                _height = $"height:{Height};";
-            }
-
-            _styleString = $"{_width}{_height}{Style}";
-        }
     }
 }

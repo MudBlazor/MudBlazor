@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Mocks
         public IResizeObserver Create() => Create(new ResizeObserverOptions());
     }
 
-    public class MockResizeObserver : IResizeObserver, IDisposable
+    public class MockResizeObserver : IResizeObserver
     {
         private Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();
 
@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.Mocks
 
         public async Task<BoundingClientRect> Observe(ElementReference element) => (await Observe(new[] { element })).FirstOrDefault();
 
-        private Boolean _firstBatchProcessed = false;
+        private bool _firstBatchProcessed = false;
 
         public Task<IEnumerable<BoundingClientRect>> Observe(IEnumerable<ElementReference> elements)
         {
@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests.Mocks
                     size = PanelTotalSize;
                 }
                 var rect = new BoundingClientRect { Width = size };
-                if (IsVertical == true)
+                if (IsVertical)
                 {
                     rect = new BoundingClientRect { Height = size };
                 }

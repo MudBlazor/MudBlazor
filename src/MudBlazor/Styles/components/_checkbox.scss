@@ -1,45 +1,60 @@
-﻿.mud-checkbox {
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    vertical-align: middle;
-    -webkit-tap-highlight-color: transparent;
+.mud-checkbox {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  -webkit-tap-highlight-color: transparent;
 
-    &.mud-disabled, .mud-disabled:hover, .mud-disabled:focus-visible {
+  @media(hover: hover) and (pointer: fine) {
+    .mud-disabled:hover {
+      cursor: default;
+      background-color: transparent !important;
+
+      & * {
         cursor: default;
-        background-color: transparent !important;
-
-        & * {
-            cursor: default;
-            color: var(--mud-palette-text-disabled);
-        }
+        color: var(--mud-palette-text-disabled);
+      }
     }
+  }
 
-    &.mud-readonly, .mud-readonly:hover {
-        cursor: default;
-    }
+  .mud-disabled:focus-visible, .mud-disabled:active {
+    cursor: default;
+    background-color: transparent !important;
 
-    & .mud-checkbox-dense {
-        padding: 4px;
+    & * {
+      cursor: default;
+      color: var(--mud-palette-text-disabled);
     }
+  }
+
+  &.mud-readonly, .mud-readonly:hover {
+    cursor: default;
+  }
+
+  & .mud-checkbox-dense {
+    padding: 4px;
+  }
 }
 
 .mud-checkbox-input {
-    top: 0;
-    left: 0;
-    width: 100%;
-    cursor: inherit;
-    height: 100%;
-    margin: 0;
-    opacity: 0;
-    padding: 0;
-    z-index: 1;
-    position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  cursor: inherit;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  padding: 0;
+  z-index: 1;
+  position: absolute;
 }
 
 .mud-checkbox-span {
-    display: inline-block;
-    width: 100%;
-    cursor: pointer;
+  display: inline-block;
+  width: 100%;
+  cursor: pointer;
 }
 
+.mud-chart-legend-checkbox .mud-checkbox svg path:last-child {
+  fill: var(--checkbox-color) !important;
+}

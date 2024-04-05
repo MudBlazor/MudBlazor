@@ -5,12 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Reflection;
-using MudBlazor.Docs.Models;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Services;
+using MudBlazor.Docs.Models;
 using MudBlazor.Interop;
+using MudBlazor.Services;
 
 namespace MudBlazor.Docs.Pages.Features.Icons
 {
@@ -23,8 +23,8 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         List<MudIcons> DisplayedIcons;
         private IconOrigin SelectedIconOrigin { get; set; } = IconOrigin.Material;
         private string SearchText { get; set; } = string.Empty;
-        private double _iconCardWidth = 136.88; // single icon card width includin margins
-        private float _iconCardHeight = 144; // single icon card height includin margins
+        private double _iconCardWidth = 136.88; // single icon card width including margins
+        private float _iconCardHeight = 144; // single icon card height including margins
         private int CardsPerRow = 0;
 
 
@@ -223,7 +223,7 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         {
             iconDrawerOpen = true;
             SelectedIcon = new MudIcons(icon.Name, icon.Code, icon.Category);
-            IconCodeOutput = $"@Icons{(SelectedIconOrigin == IconOrigin.Material ? "" : ".Custom")}.{icon.Category}.{icon.Name}";
+            IconCodeOutput = $"@Icons{(SelectedIconOrigin == IconOrigin.Material ? ".Material" : ".Custom")}.{icon.Category}.{icon.Name}";
         }
         void CloseIconDrawer()
         {

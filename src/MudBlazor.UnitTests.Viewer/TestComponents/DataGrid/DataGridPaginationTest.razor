@@ -2,10 +2,10 @@
 
 <MudDataGrid Items="@_items">
     <Columns>
-        <Column T="Item" Field="@nameof(Item.Name)" />
+        <PropertyColumn Property="x => x.Name" />
     </Columns>
     <PagerContent>
-        <MudDataGridPager T="Item" />
+        <MudDataGridPager />
     </PagerContent>
 </MudDataGrid>
 

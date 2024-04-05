@@ -1,26 +1,25 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
-@using MudBlazor.Extensions 
 @inherits MudComponentBase
 
 <hr @attributes="UserAttributes" class="@Classname" style="@Style"/>
 
 @code {
-
+#nullable enable
     protected string Classname =>
-    new CssBuilder("mud-divider")
-      .AddClass($"mud-divider-absolute" , Absolute)
-      .AddClass($"mud-divider-flexitem", FlexItem)
-      .AddClass($"mud-divider-light", Light)
-      .AddClass($"mud-divider-vertical", Vertical)
-      .AddClass($"mud-divider-{DividerType.ToDescriptionString()}", when: () => DividerType != DividerType.FullWidth)
-      .AddClass(Class)
-    .Build();
+        new CssBuilder("mud-divider")
+            .AddClass("mud-divider-absolute", Absolute)
+            .AddClass("mud-divider-flexitem", FlexItem)
+            .AddClass("mud-divider-light", Light)
+            .AddClass("mud-divider-vertical", Vertical)
+            .AddClass($"mud-divider-{DividerType.ToDescriptionString()}", DividerType != DividerType.FullWidth || (DividerType == DividerType.FullWidth && Vertical == false))
+            .AddClass(Class)
+            .Build();
 
     /// <summary>
     /// Sets absolute position to the component.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.Divider.Appearance)]
     public bool Absolute { get; set; }
 
@@ -34,7 +33,7 @@
     /// <summary>
     /// If true, the divider will have a lighter color.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     [Category(CategoryTypes.Divider.Appearance)]
     public bool Light { get; set; }
 

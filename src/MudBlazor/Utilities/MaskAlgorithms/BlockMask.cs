@@ -3,8 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -32,7 +30,7 @@ public class BlockMask : RegexMask
     protected override void InitInternals()
     {
         base.InitInternals();
-        Blocks ??= new Block[0];
+        Blocks ??= Array.Empty<Block>();
         Mask = BuildRegex(Blocks);
         _regex = new Regex(Mask);
     }
@@ -52,65 +50,94 @@ public class BlockMask : RegexMask
     /// <returns></returns>
     protected virtual string BuildRegex(Block[] blocks)
     {
-        var s = new StringBuilder();
-        int i = 0;
-        int blockIndex = 0;
-        s.Append("^");
-        foreach (var b in blocks)
+        var regexBuilder = new StringBuilder();
+        var openParenthesisCount = 0;
+        regexBuilder.Append('^');
+
+        for (var i = 0; i < blocks.Length; i++)
         {
-            for (int j = 0; j < b.Min; j++)
-            {
-                if (i > 0)
-                    s.Append("(");
-                if (_maskDict.TryGetValue(b.MaskChar, out var maskDef))
-                    s.Append(maskDef.Regex);
-                else
-                    s.Append(Regex.Escape(b.MaskChar.ToString()));
-            }
-
-            i += b.Min;
-            if (b.Max > b.Min)
-            {
-                for (int j = b.Min; j < b.Max; j++)
-                {
-                    s.Append("(");
-                    if (_maskDict.TryGetValue(b.MaskChar, out var maskDef))
-                        s.Append(maskDef.Regex);
-                    else
-                        s.Append(Regex.Escape(b.MaskChar.ToString()));
-                }
-
-                for (int j = b.Min; j < b.Max; j++)
-                    s.Append(")?");
-            }
-
-            if (_delimiters.Count > 0 && blockIndex < blocks.Length - 1)
-            {
-                s.Append("([");
-                foreach (var d in _delimiters)
-                    s.Append(Regex.Escape(d.ToString()));
-                s.Append("]");
-                i++;
-            }
-
-            blockIndex++;
+            var block = blocks[i];
+            AddRequiredCharacters(regexBuilder, block, ref openParenthesisCount);
+            AddOptionalCharacters(regexBuilder, block, ref openParenthesisCount);
+            AddDelimiter(regexBuilder, i, blocks, ref openParenthesisCount);
         }
 
-        for (int j = 0; j < i - 1; j++)
-            s.Append(")?");
-        s.Append("$");
-        return s.ToString();
+        CloseOpenParentheses(regexBuilder, openParenthesisCount);
+        regexBuilder.Append('$');
+        return regexBuilder.ToString();
     }
+
+    // Helper method to add required characters for the block
+    private void AddRequiredCharacters(StringBuilder regexBuilder, Block block, ref int openParenthesisCount)
+    {
+        for (var i = 0; i < block.Min; i++)
+        {
+            regexBuilder.Append('(');
+            openParenthesisCount++;
+
+            if (_maskDict.TryGetValue(block.MaskChar, out var maskDef))
+                regexBuilder.Append(maskDef.Regex);
+            else
+                regexBuilder.Append(Regex.Escape(block.MaskChar.ToString()));
+        }
+    }
+
+    // Helper method to add optional characters for the block
+    private void AddOptionalCharacters(StringBuilder regexBuilder, Block block, ref int openParenthesisCount)
+    {
+        if (block.Max > block.Min)
+        {
+            for (var i = block.Min; i < block.Max; i++)
+            {
+                regexBuilder.Append('(');
+                openParenthesisCount++;
+
+                if (_maskDict.TryGetValue(block.MaskChar, out var maskDef))
+                    regexBuilder.Append(maskDef.Regex);
+                else
+                    regexBuilder.Append(Regex.Escape(block.MaskChar.ToString()));
+            }
+
+            for (var i = block.Min; i < block.Max; i++)
+            {
+                regexBuilder.Append(")?");
+                openParenthesisCount--;
+            }
+        }
+    }
+
+    // Helper method to add delimiter if there are more blocks to process
+    private void AddDelimiter(StringBuilder regexBuilder, int index, Block[] blocks, ref int openParenthesisCount)
+    {
+        if (_delimiters.Count > 0 && index < blocks.Length - 1)
+        {
+            regexBuilder.Append("([");
+            openParenthesisCount++;
+
+            foreach (var delimiter in _delimiters)
+                regexBuilder.Append(Regex.Escape(delimiter.ToString()));
+
+            regexBuilder.Append(']');
+        }
+    }
+
+    // Helper method to close any open parentheses
+    private static void CloseOpenParentheses(StringBuilder regexBuilder, int openParenthesisCount)
+    {
+        for (var i = 0; i < openParenthesisCount; i++)
+            regexBuilder.Append(")?");
+    }
+
 
     public override void UpdateFrom(IMask other)
     {
         base.UpdateFrom(other);
-        var o = other as BlockMask;
-        if (o == null)
-            return;
-        Blocks = o.Blocks ?? new Block[0];
-        Delimiters = o.Delimiters;
-        _initialized = false;
-        Refresh();
+        if (other is BlockMask o)
+        {
+            Blocks = o.Blocks ?? Array.Empty<Block>();
+            Delimiters = o.Delimiters;
+            _initialized = false;
+            Refresh();
+        }
     }
 }

@@ -25,10 +25,10 @@
                 <MudSpacer/>
                 @if (_hasCode && ChildContent != null)
                 {
-                    <MudTooltip Text="Online Playground" Arrow="true" Color="Color.Dark" Placement="Placement.Top" Delay="300" Duration="500">
-                        <MudButton OnClick="RunOnTryMudBlazor" StartIcon="@Icons.Rounded.PlayArrow" IconColor="Color.Success" Color="Color.Default" Size="Size.Small">Run</MudButton>
+                    <MudTooltip Text="Online Playground" Arrow="true" Color="Color.Dark" Placement="Placement.Top" Delay="300" Duration="500" ShowOnFocus="false">
+                        <MudButton OnClick="RunOnTryMudBlazor" StartIcon="@Icons.Material.Rounded.PlayArrow" IconColor="Color.Success" Color="Color.Default" Size="Size.Small">Run</MudButton>
                     </MudTooltip>
-                    <MudButton OnClick="OnShowCode" StartIcon="@(ShowCode ? @Icons.Rounded.CodeOff : Icons.Rounded.Code)" Color="Color.Default" Size="Size.Small">
+                    <MudButton OnClick="OnShowCode" StartIcon="@(ShowCode ? @Icons.Material.Rounded.CodeOff : Icons.Material.Rounded.Code)" Color="Color.Default" Size="Size.Small">
                         @(ShowCode ? "Hide code" : "Show code")
                     </MudButton>
                 }
@@ -45,7 +45,7 @@
 @if (_hasCode)
 {
     <div class="@SourceClassname">
-        <div class="docs-section-source-container">
+        <div class="docs-section-source-container" id="@_snippetId">
             @CodeComponent(_activeCode)
         </div>
         <MudIconButton Icon="@Icons.Material.Outlined.FileCopy" Size="Size.Small" Class="copy-code-button" @onclick="CopyTextToClipboard" />

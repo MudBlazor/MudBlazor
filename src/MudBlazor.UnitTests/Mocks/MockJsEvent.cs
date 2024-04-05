@@ -32,7 +32,7 @@ namespace MudBlazor.UnitTests.Mocks
     {
         public void Dispose()
         {
-            
+
         }
 
         public Task Connect(string element, JsEventOptions options)

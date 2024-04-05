@@ -1,11 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSwitch @bind-Checked="boolean">bool: @boolean</MudSwitch>
-<MudSwitch @bind-Checked="nullable" Color="Color.Primary">bool?: @nullable</MudSwitch>
-<MudSwitch @bind-Checked="integer" Color="Color.Secondary">int: @integer</MudSwitch>
-<MudSwitch @bind-Checked="str" Color="Color.Tertiary">string: "@(str)"</MudSwitch>
-<MudSwitch @bind-Checked="customstr" Color="Color.Error" Converter="@(new CustomStringToBoolConverter())"> custom string: "@(customstr)"</MudSwitch>
-<MudSwitch @bind-Checked="customobj" Color="Color.Dark" Converter="@(new ObjectToBoolConverter())">object: "@(customobj.ToString())"</MudSwitch>
+<MudSwitch @bind-Value="boolean">bool: @boolean</MudSwitch>
+<MudSwitch @bind-Value="nullable" Color="Color.Primary">bool?: @nullable</MudSwitch>
+<MudSwitch @bind-Value="integer" Color="Color.Secondary">int: @integer</MudSwitch>
+<MudSwitch @bind-Value="str" Color="Color.Tertiary">string: "@(str)"</MudSwitch>
+<MudSwitch @bind-Value="customstr" Color="Color.Error" Converter="@(new CustomStringToBoolConverter())"> custom string: "@(customstr)"</MudSwitch>
+<MudSwitch @bind-Value="customobj" Color="Color.Dark" Converter="@(new ObjectToBoolConverter())">object: "@(customobj.ToString())"</MudSwitch>
 
 @code{
     public bool boolean { get; set; } = true;

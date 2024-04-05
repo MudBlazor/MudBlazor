@@ -1,0 +1,34 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@employees" Filterable="false" SortMode="@SortMode.None" Groupable="false"
+    Culture="@(new System.Globalization.CultureInfo("en-US"))">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Position" />
+        <PropertyColumn Property="x => x.YearsEmployed" Title="Years Employed" />
+        <PropertyColumn Property="x => x.Salary" Format="@(noDecimals ? "C0" : "C")" />
+        <PropertyColumn Property="x => x.Salary * x.YearsEmployed" Title="Total Earned" Format="@(noDecimals ? "C0" : "C")" />
+        <PropertyColumn Property="x => x.BirthDate" Title="Birth Date" Format="d" />
+    </Columns>
+</MudDataGrid>
+
+<MudSwitch @bind-Value="noDecimals" />
+
+@code {
+    public record Employee(string Name, string Position, int YearsEmployed, int Salary, int Rating,
+        DateTime? BirthDate);
+    public IEnumerable<Employee> employees;
+    private bool noDecimals;
+
+    protected override void OnInitialized()
+    {
+        employees = new List<Employee>
+        {
+            new Employee("Sam", "CPA", 23, 87_000, 4, null),
+            new Employee("Alicia", "Product Manager", 11, 143_000, 5, null),
+            new Employee("Ira", "Developer", 4, 92_000, 3, null),
+            new Employee("John", "IT Director", 17, 229_000, 4, null),
+            new Employee("Alice", "HR", 17, 229_000, 4, new DateTime(1980, 01, 01))
+        };
+    }
+}

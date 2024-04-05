@@ -1,0 +1,88 @@
+﻿@page "/features/localization"
+@using MudBlazor.Resources
+@using System.Globalization
+@using System.Collections
+@using MudBlazor.Docs.Extensions
+
+<DocsPage>
+    <DocsPageHeader Title="Localization" SubTitle="Localization allows to provide custom translations for localizable text in the components." />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Explanation">
+                <Description>
+                    MudBlazor itself provides English language strings for texts found in e.g. the <CodeInline>MudDataGrid</CodeInline> filter options.
+                    By registering a custom <CodeInline>MudLocalizer</CodeInline> implementation as a Service, you can provide custom translations.
+                    
+                    <MudAlert Severity="Severity.Info" Class="mt-3" >
+                        Note: if <CodeInline>Thread.CurrentThread.CurrentUICulture</CodeInline> is English, the included English translations will be used.
+                    </MudAlert>
+
+                    <MudAlert Severity="Severity.Warning" Class="mt-3" >
+                        Note: Currently not yet all components support localization. Contributions are welcome!
+                    </MudAlert>
+
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Register Service">
+                <Description>
+                    Add the following in <CodeInline>Program.cs</CodeInline> to register your custom localization service.
+                    <CodeInline>AddTransient</CodeInline> can be replaced with <CodeInline>TryAddTransient</CodeInline> and the scope can be changed to <CodeInline>Scoped</CodeInline> or <CodeInline>Singleton</CodeInline> depending on your exact implementation.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(LocalizationServiceRegistration)" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="ResX Example">
+                <Description>
+                    An example <CodeInline>MudLocalizer</CodeInline> implementation using Microsoft default <CodeInline>IStringLocalizer</CodeInline>.
+                    Using ResX, you'll have to leave the default culture translations file empty if you want to use English as the fallback language for missing translations. Otherwise, the default culture values will be used as a fallback for all non-English languages.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(LocalizationResX)" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Dictionary based Example">
+                <Description>
+                    An example implementing <CodeInline>MudLocalizer</CodeInline> using a hardcoded dictionary for the translations.
+                    Note that <CodeInline>LocalizedString.ResourceNotFound</CodeInline> should be true, if there is no custom translation for a given key.
+                    If <CodeInline>LocalizedString.ResourceNotFound</CodeInline> is true, the included English localization will be used.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(LocalizationDictionary)" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Translation Keys">
+                <Description>
+                    The current default English language localization strings:
+                    <MudDataGrid T="DictionaryEntry" Items="@_translations" FixedHeader="true" Height="500px" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
+                        <Columns>
+                            <PropertyColumn Property="x => x.Key as string" Title="Translation Key" InitialDirection="SortDirection.Ascending" />
+                            <PropertyColumn Property="x => x.Value as string" Title="English Translation"/>
+                        </Columns>
+                    </MudDataGrid>
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Customize Translation Interceptor">
+                <Description>
+                    <CodeInline>ILocalizationInterceptor</CodeInline> can be used to fully customize the translations.
+                    For example if you don't need the default English translation, or you want to get the translation from other source.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(LocalizationInterceptor)" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+
+@code {
+    #nullable enable
+
+    private readonly IEnumerable<DictionaryEntry> _translations = LanguageResource
+        .ResourceManager
+        .GetResourceSet(CultureInfo.InvariantCulture, true, true)
+        .ToEnumerable()
+        .OrderBy(x => (string)x.Key, StringComparer.InvariantCultureIgnoreCase);
+}

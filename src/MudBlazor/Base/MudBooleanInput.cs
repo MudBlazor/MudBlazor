@@ -1,19 +1,29 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public class MudBooleanInput<T> : MudFormComponent<T, bool?>
+#nullable enable
+    public class MudBooleanInput<T> : MudFormComponent<T?, bool?>
     {
-        public MudBooleanInput() : base(new BoolConverter<T>()) { }
+        public MudBooleanInput() : base(new BoolConverter<T?>()) { }
 
         /// <summary>
-        /// If true, the input will be disabled.
+        /// If true, the input element will be disabled.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
+
+        [CascadingParameter(Name = "ParentDisabled")]
+        private bool ParentDisabled { get; set; }
+
+        protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         /// <summary>
         /// If true, the input will be read-only.
@@ -22,15 +32,24 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
 
+        [CascadingParameter(Name = "ParentReadOnly")]
+        private bool ParentReadOnly { get; set; }
+
+        protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
+
         /// <summary>
         /// The state of the component
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public T Checked
+        public T? Value
         {
             get => _value;
-            set => _value = value;
+            set
+            {
+                _value = value;
+
+            }
         }
 
         /// <summary>
@@ -41,11 +60,12 @@ namespace MudBlazor
         public bool StopClickPropagation { get; set; } = true;
 
         /// <summary>
-        /// Fired when Checked changes.
+        /// Fired when Value changes.
         /// </summary>
-        [Parameter] public EventCallback<T> CheckedChanged { get; set; }
+        [Parameter]
+        public EventCallback<T?> ValueChanged { get; set; }
 
-        protected bool? BoolValue => Converter.Set(Checked);
+        protected bool? BoolValue => Converter.Set(Value);
 
         protected virtual Task OnChange(ChangeEventArgs args)
         {
@@ -58,24 +78,29 @@ namespace MudBlazor
             return SetCheckedAsync(Converter.Get(value));
         }
 
-        protected async Task SetCheckedAsync(T value)
+        protected async Task SetCheckedAsync(T? value)
         {
-            if (Disabled)
-                return;
-            if (!EqualityComparer<T>.Default.Equals(Checked, value))
+            if (GetDisabledState())
             {
-                Checked = value;
-                await CheckedChanged.InvokeAsync(value);
-                BeginValidate();
-                FieldChanged(Checked);
+                return;
+            }
+
+            if (!EqualityComparer<T>.Default.Equals(Value, value))
+            {
+                Value = value;
+                await ValueChanged.InvokeAsync(value);
+                await BeginValidateAsync();
+                FieldChanged(Value);
             }
         }
 
-        protected override bool SetConverter(Converter<T, bool?> value)
+        protected override bool SetConverter(Converter<T?, bool?> value)
         {
             var changed = base.SetConverter(value);
             if (changed)
-                SetBoolValueAsync(Converter.Set(Checked)).AndForget();
+            {
+                SetBoolValueAsync(Converter.Set(Value)).AndForget();
+            }
 
             return changed;
         }
@@ -83,9 +108,9 @@ namespace MudBlazor
         /// <summary>
         /// A value is required, so if not checked we return ERROR.
         /// </summary>
-        protected override bool HasValue(T value)
+        protected override bool HasValue(T? value)
         {
-            return (BoolValue == true);
+            return BoolValue == true;
         }
     }
 }

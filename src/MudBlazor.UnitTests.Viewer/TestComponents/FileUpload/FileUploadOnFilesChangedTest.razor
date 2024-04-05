@@ -5,14 +5,14 @@
         <MudButton HtmlTag="label"
                    Variant="Variant.Filled"
                    Color="Color.Primary"
-                   StartIcon="@Icons.Filled.CloudUpload"
-                   for="@context">
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   for="@context.Id">
             Upload using OnFilesChanged
         </MudButton>
     </ButtonTemplate>
 </MudFileUpload>
 
-@code{ 
+@code{
 
     public IBrowserFile File { get; private set; }
     private void UploadFiles(InputFileChangeEventArgs args)

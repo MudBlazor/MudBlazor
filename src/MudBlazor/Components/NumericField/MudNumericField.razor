@@ -14,7 +14,7 @@
                      Class="@Classname"
                      Error="@HasErrors"
                      ErrorText="@GetErrorText()"
-                     Disabled="@Disabled"
+                     Disabled="@GetDisabledState()"
                      Margin="@Margin"
                      Required="@Required"
                      CounterText="@GetCounterText()"
@@ -27,13 +27,14 @@
                           InputType="@InputType.Text"
                           Style="@Style"
                           Variant="@Variant"
+                          Label="@Label"
                           TextUpdateSuppression="@TextUpdateSuppression"
                           Value="@Text"
                           ValueChanged="@OnInputValueChanged"
                           Placeholder="@Placeholder"
-                          Disabled="@Disabled"
+                          Disabled="@GetDisabledState()"
                           DisableUnderLine="@DisableUnderLine"
-                          ReadOnly="@ReadOnly"
+                          ReadOnly="@GetReadOnlyState()"
                           Adornment="@Adornment"
                           AdornmentText="@AdornmentText"
                           AdornmentIcon="@AdornmentIcon"
@@ -50,13 +51,14 @@
                           InputMode="@InputMode"
                           Pattern="@((Pattern ?? "[0-9]").TrimEnd('*')+"*")"
                           OnAdornmentClick="@OnAdornmentClick"
-                          OnBlur="@OnBlurred"
+                          OnBlur="@OnBlurredAsync"
                           OnKeyDown="@HandleKeydown"
                           OnKeyUp="@HandleKeyUp"
                           OnIncrement="@Increment"
                           OnDecrement="@Decrement"
                           OnMouseWheel="@OnMouseWheel"
-                          Clearable="@Clearable" />
+                          Clearable="@Clearable"
+                          ShrinkLabel="@ShrinkLabel" />
             </CascadingValue>
         </InputContent>
     </MudInputControl>

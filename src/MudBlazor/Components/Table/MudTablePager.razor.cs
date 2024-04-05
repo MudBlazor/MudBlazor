@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -31,13 +32,6 @@ namespace MudBlazor
         [Parameter] public bool HideRowsPerPage { get; set; }
 
         /// <summary>
-        /// Set true to hide the part of the pager which allows to change the page size.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use HideRowsPerPage instead.", true)]
-        [Parameter] public bool DisableRowsPerPage { get => HideRowsPerPage; set => HideRowsPerPage = value; }
-
-        /// <summary>
         /// Set true to hide the number of pages.
         /// </summary>
         [Parameter] public bool HidePageNumber { get; set; }
@@ -64,6 +58,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string InfoFormat { get; set; } = "{first_item}-{last_item} of {all_items}";
 
+        /// <summary>
+        /// Defines the text shown in the items per page dropdown when a user provides int.MaxValue as an option
+        /// </summary>
+        [Parameter] public string AllItemsText { get; set; } = "All";
+
         private string Info
         {
             get
@@ -74,7 +73,7 @@ namespace MudBlazor
                 return Table == null
                     ? "Table==null"
                     : InfoFormat
-                        .Replace("{first_item}", $"{(filteredItemsCount == 0 ? 0 : Table?.CurrentPage * Table.RowsPerPage + 1)}")
+                        .Replace("{first_item}", $"{(filteredItemsCount == 0 ? 0 : (Table?.CurrentPage * Table.RowsPerPage) + 1)}")
                         .Replace("{last_item}", $"{Math.Min((Table.CurrentPage + 1) * Table.RowsPerPage, filteredItemsCount)}")
                         .Replace("{all_items}", $"{filteredItemsCount}");
             }
@@ -105,10 +104,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string LastIcon { get; set; } = Icons.Material.Filled.LastPage;
 
-        private void SetRowsPerPage(string size)
-        {
-            Table?.SetRowsPerPage(int.Parse(size));
-        }
+        private void SetRowsPerPage(int size) => Table?.SetRowsPerPage(size);
 
         private bool BackButtonsDisabled => Table == null ? false : Table.CurrentPage == 0;
 
@@ -123,6 +119,8 @@ namespace MudBlazor
             {
                 Context.HasPager = true;
                 Context.PagerStateHasChanged = StateHasChanged;
+                var size = Table._rowsPerPage ?? PageSizeOptions.FirstOrDefault();
+                SetRowsPerPage(size);
             }
         }
 

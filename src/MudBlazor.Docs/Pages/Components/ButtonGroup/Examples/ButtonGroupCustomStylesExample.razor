@@ -6,7 +6,7 @@
     <MudButton Color="Color.Secondary" Variant="Variant.Outlined">Three</MudButton>
 </MudButtonGroup>
 
-<MudSwitch @bind-Checked="@_overrideStyles" Label="Override styles" Color="Color.Primary" />
+<MudSwitch @bind-Value="_overrideStyles" Label="Override styles" Color="Color.Primary" />
 
 @code {
     private bool _overrideStyles;

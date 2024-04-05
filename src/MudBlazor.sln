@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31423.177
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.SourceCodeGenerator", "MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj", "{CDE02174-96AB-4E97-AFA8-391C0FF98225}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor", "MudBlazor\MudBlazor.csproj", "{FE5531F3-55F6-403D-BF48-3C904089B91D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs.WasmHost", "MudBlazor.Docs.WasmHost\MudBlazor.Docs.WasmHost.csproj", "{C6E907FB-1958-44CE-A525-16E50EE8D199}"
@@ -69,6 +71,10 @@ Global
 		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDE02174-96AB-4E97-AFA8-391C0FF98225}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDE02174-96AB-4E97-AFA8-391C0FF98225}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDE02174-96AB-4E97-AFA8-391C0FF98225}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDE02174-96AB-4E97-AFA8-391C0FF98225}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

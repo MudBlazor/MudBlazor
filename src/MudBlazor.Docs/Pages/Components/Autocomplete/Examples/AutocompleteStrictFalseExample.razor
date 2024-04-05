@@ -1,0 +1,27 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@using System.Threading
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudAutocomplete T="Element" Label="Strict false with ToString" @bind-Value="value1"
+                         SearchFunc="@Search" Strict="false">
+        </MudAutocomplete>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudAutocomplete T="Element" Label="Strict false with ToStringFunc" @bind-Value="value2"
+                         SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")" Strict="false">
+        </MudAutocomplete>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private Element value1, value2;
+
+    private async Task<IEnumerable<Element>> Search(string value, CancellationToken token)
+    {
+        return await httpClient.GetFromJsonAsync<List<Element>>($"webapi/periodictable/{value}", token);
+    }
+}

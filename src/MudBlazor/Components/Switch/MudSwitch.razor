@@ -2,37 +2,35 @@
 @inherits MudBooleanInput<T>
 @typeparam T
 
-<label class="@Classname" style="@Style" @onkeydown="@HandleKeyDown" id="@_elementId">
-    <span class="mud-switch-span mud-flip-x-rtl">
-        <span tabindex="0" class="@SwitchClassname">
-            <span class="mud-switch-button">
-                <input tabindex="-1" @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(Disabled.ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@Disabled" @onclick:preventDefault="@ReadOnly"/>
-                <span class="mud-switch-thumb d-flex align-center justify-center">
-                    @if (!string.IsNullOrEmpty(ThumbIcon))
-                    {
-                        <MudIcon Color="@ThumbIconColor" Icon="@ThumbIcon" Style=" height:16px; width:16px;" />
-                    }
+<MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorText="@GetErrorText()" Required="@Required">
+    <InputContent>
+        <label class="@LabelClassname" style="@Style" @onkeydown="@HandleKeyDown" id="@_elementId">
+            <span class="@SpanClassname">
+                <span tabindex="0" class="@SwitchClassname">
+                    <span class="mud-switch-button">
+                        <input tabindex="-1" @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(GetDisabledState().ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()"/>
+                        <span class="@ThumbClassname">
+                            @if (!string.IsNullOrEmpty(ThumbIcon))
+                            {
+                                <MudIcon Color="@ThumbIconColor" Icon="@ThumbIcon" Style="padding: 2px; height:inherit; width: inherit;" />
+                            }
+                        </span>
+                    </span>
                 </span>
+                <span class="@TrackClassname"></span>
             </span>
-        </span>
-        <span class="@TrackClassname"></span>
-    </span>
-    @if (!String.IsNullOrEmpty(Label))
-    {
-        <MudText>@Label</MudText>
-    }
-    @if (ChildContent != null)
-    {
-        <MudText>
-            @ChildContent
-        </MudText>
-    }
-</label>
-
-@code
-{
-    [Parameter]
-    [Category(CategoryTypes.FormComponent.Behavior)]
-    public RenderFragment ChildContent { get; set; }
-}
-
+            @if (!string.IsNullOrEmpty(Label))
+            {
+                <MudText Class="@SwitchLabelClassname" Color="HasErrors ? Color.Error : Color.Inherit">
+                    @Label
+                </MudText>
+            }
+            @if (ChildContent != null)
+            {
+                <MudText Class="@SwitchLabelClassname" Color="HasErrors ? Color.Error : Color.Inherit">
+                    @ChildContent
+                </MudText>
+            }
+        </label>
+    </InputContent>
+</MudInputControl>

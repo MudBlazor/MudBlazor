@@ -3,14 +3,14 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid T="Element" Items="@Elements" Filterable="true" FilterMode="@_filterMode" FilterCaseSensitivity="@_caseSensitivity">
+<MudDataGrid Items="@Elements" Filterable="true" FilterMode="@_filterMode" FilterCaseSensitivity="@_caseSensitivity">
     <Columns>
-        <Column T="Element" Field="Number" Title="Nr" Filterable="false" />
-        <Column T="Element" Field="Sign" />
-        <Column T="Element" Field="Name" />
-        <Column T="Element" Field="Position" />
-        <Column T="Element" Field="Molar" Title="Molar mass" />
-        <Column T="Element" Field="Group" Title="Category" />
+        <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" />
+        <PropertyColumn Property="x => x.Sign" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Position" Filterable="false" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <PropertyColumn Property="x => x.Group" Title="Category" />
     </Columns>
     <PagerContent>
         <MudDataGridPager T="Element" />
@@ -18,17 +18,17 @@
 </MudDataGrid>
 
 <div class="d-flex flex-wrap mt-4">
-    <MudRadioGroup T="DataGridFilterMode" @bind-SelectedOption="@_filterMode">
-        <MudRadio Dense="true" Option="@DataGridFilterMode.Simple" Color="Color.Primary">Simple</MudRadio>
-        <MudRadio Dense="true" Option="@DataGridFilterMode.ColumnFilterMenu" Color="Color.Tertiary">Column Menu</MudRadio>
-        <MudRadio Dense="true" Option="@DataGridFilterMode.ColumnFilterRow">Column Row</MudRadio>
+    <MudRadioGroup T="DataGridFilterMode" @bind-Value="@_filterMode">
+        <MudRadio Dense="true" Value="@DataGridFilterMode.Simple" Color="Color.Primary">Simple</MudRadio>
+        <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterMenu" Color="Color.Tertiary">Column Menu</MudRadio>
+        <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterRow">Column Row</MudRadio>
     </MudRadioGroup>
 </div>
 
 <div class="d-flex flex-wrap mt-4">
-    <MudRadioGroup T="DataGridFilterCaseSensitivity" @bind-SelectedOption="@_caseSensitivity">
-        <MudRadio Dense="true" Option="@DataGridFilterCaseSensitivity.Default" Color="Color.Primary">Default Case Sensitivity</MudRadio>
-        <MudRadio Dense="true" Option="@DataGridFilterCaseSensitivity.CaseInsensitive" Color="Color.Tertiary">Case Insensitive</MudRadio>
+    <MudRadioGroup T="DataGridFilterCaseSensitivity" @bind-Value="@_caseSensitivity">
+        <MudRadio Dense="true" Value="@DataGridFilterCaseSensitivity.Default" Color="Color.Primary">Default Case Sensitivity</MudRadio>
+        <MudRadio Dense="true" Value="@DataGridFilterCaseSensitivity.CaseInsensitive" Color="Color.Tertiary">Case Insensitive</MudRadio>
     </MudRadioGroup>
 </div>
 

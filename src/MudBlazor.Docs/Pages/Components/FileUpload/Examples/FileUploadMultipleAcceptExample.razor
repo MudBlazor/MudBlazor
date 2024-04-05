@@ -5,21 +5,34 @@
         <MudButton HtmlTag="label"
                    Variant="Variant.Filled"
                    Color="Color.Primary"
-                   StartIcon="@Icons.Filled.CloudUpload"
-                   for="@context">
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   for="@context.Id">
             Multiple Files
         </MudButton>
     </ButtonTemplate>
 </MudFileUpload>
 
-<MudFileUpload T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFiles2">
+<MudFileUpload T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFiles2" MaximumFileCount="100">
     <ButtonTemplate>
         <MudButton HtmlTag="label"
                    Variant="Variant.Filled"
                    Color="Color.Primary"
-                   StartIcon="@Icons.Filled.CloudUpload"
-                   for="@context">
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   for="@context.Id">
             Only .pdf files
+        </MudButton>
+    </ButtonTemplate>
+</MudFileUpload>
+
+
+<MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFiles2" MaximumFileCount="100">
+    <ButtonTemplate>
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   for="@context.Id">
+            Only image files
         </MudButton>
     </ButtonTemplate>
 </MudFileUpload>
@@ -29,7 +42,7 @@
     <MudList>
         @foreach (var file in files)
         {
-            <MudListItem Icon="@Icons.Filled.AttachFile">
+            <MudListItem Icon="@Icons.Material.Filled.AttachFile">
                 @file.Name <code>@file.Size bytes</code>
             </MudListItem>
         }

@@ -5,17 +5,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public partial class MudPopoverProvider : IDisposable
+#nullable enable
+    public partial class MudPopoverProvider : IDisposable, IPopoverObserver
     {
         private bool _isConnectedToService = false;
 
-        [Inject] public IMudPopoverService Service { get; set; }
+        [Inject]
+        [Obsolete($"Use {nameof(PopoverService)} instead. This will be removed in v7")]
+        public IMudPopoverService Service { get; set; } = null!;
+
+        [Inject]
+        internal IPopoverService PopoverService { get; set; } = null!;
 
         /// <summary>
         /// In some scenarios we need more than one ThemeProvider but we must not have more than one
@@ -24,10 +30,13 @@ namespace MudBlazor
         [CascadingParameter(Name = "UsePopoverProvider")]
         public bool IsEnabled { get; set; } = true;
 
-
         public void Dispose()
         {
+#pragma warning disable CS0618
+            //TODO: For backward compatibility with old service. Should be removed in v7
             Service.FragmentsChanged -= Service_FragmentsChanged;
+#pragma warning restore CS0618
+            PopoverService.Unsubscribe(this);
         }
 
         protected override void OnInitialized()
@@ -37,7 +46,11 @@ namespace MudBlazor
                 return;
             }
 
+#pragma warning disable CS0618
+            //TODO: For backward compatibility with old service. Should be removed in v7
             Service.FragmentsChanged += Service_FragmentsChanged;
+#pragma warning restore CS0618
+            PopoverService.Subscribe(this);
             _isConnectedToService = true;
         }
 
@@ -45,25 +58,42 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-            if (IsEnabled == false && _isConnectedToService == true)
+            if (!IsEnabled && _isConnectedToService)
             {
+#pragma warning disable CS0618
+                //TODO: For backward compatibility with old service. Should be removed in v7 with the _isConnectedToService
                 Service.FragmentsChanged -= Service_FragmentsChanged;
+#pragma warning restore CS0618
+                PopoverService.Unsubscribe(this);
                 _isConnectedToService = false;
+
+                return;
             }
-            else if (IsEnabled == true && _isConnectedToService == false)
+
+#pragma warning disable CS0618
+            //TODO: For backward compatibility with old service. Whole block should be removed in v7
+            if (IsEnabled && !_isConnectedToService)
             {
                 Service.FragmentsChanged -= Service_FragmentsChanged; // make sure to avoid multiple registration
                 Service.FragmentsChanged += Service_FragmentsChanged;
                 _isConnectedToService = true;
             }
+#pragma warning restore CS0618
+
+            // Let's in our new case ignore _isConnectedToService and always update the subscription except IsEnabled = false. The manager is specifically designed for it.
+            // The reason is because If an observer throws an exception during the PopoverCollectionUpdatedNotification, indicating a malfunction, it will be automatically unsubscribed.
+            if (IsEnabled)
+            {
+                PopoverService.Subscribe(this);
+            }
+
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender && IsEnabled && Service.ThrowOnDuplicateProvider)
+            if (firstRender && IsEnabled && PopoverService.PopoverOptions.ThrowOnDuplicateProvider)
             {
-                await Service.InitializeIfNeeded();
-                if (await Service.CountProviders() > 1)
+                if (await PopoverService.GetProviderCountAsync() > 1)
                 {
                     throw new InvalidOperationException("Duplicate MudPopoverProvider detected. Please ensure there is only one provider, or disable this warning with PopoverOptions.ThrowOnDuplicateProvider.");
                 }
@@ -71,10 +101,52 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        private void Service_FragmentsChanged(object sender, EventArgs e)
+        //TODO: For backward compatibility with old service. Should be removed in v7
+        private void Service_FragmentsChanged(object? sender, EventArgs e)
         {
             InvokeAsync(StateHasChanged);
         }
 
+        //TODO: For backward compatibility with old service. Should be removed in v7
+#pragma warning disable CS0618
+        private IEnumerable<IMudPopoverHolder> GetActivePopovers()
+        {
+            return PopoverService.ActivePopovers.Concat(Service.Handlers);
+        }
+#pragma warning restore CS0618
+
+        /// <inheritdoc />
+        Guid IPopoverObserver.Id { get; } = Guid.NewGuid();
+
+        /// <inheritdoc />
+        async Task IPopoverObserver.PopoverCollectionUpdatedNotificationAsync(PopoverHolderContainer container, CancellationToken cancellationToken)
+        {
+            switch (container.Operation)
+            {
+                // Update popover individually
+                case PopoverHolderOperation.Update:
+                    {
+                        foreach (var holder in container.Holders)
+                        {
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                return;
+                            }
+
+                            if (holder.ElementReference is not null)
+                            {
+                                await InvokeAsync(holder.ElementReference.StateHasChanged);
+                            }
+                        }
+
+                        break;
+                    }
+                // Update whole MudPopoverProvider
+                case PopoverHolderOperation.Create:
+                case PopoverHolderOperation.Remove:
+                    await InvokeAsync(StateHasChanged);
+                    break;
+            }
+        }
     }
 }

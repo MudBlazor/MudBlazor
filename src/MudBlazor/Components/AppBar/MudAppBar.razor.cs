@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudAppBar : MudComponentBase
     {
+#nullable enable
         protected string Classname =>
             new CssBuilder("mud-appbar")
                 .AddClass($"mud-appbar-dense", Dense)
@@ -43,7 +43,7 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, the left and right padding is removed from from the appbar.
+        /// If true, the left and right padding is removed from the appbar.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AppBar.Appearance)]
@@ -64,17 +64,24 @@ namespace MudBlazor
         public bool Fixed { get; set; } = true;
 
         /// <summary>
+        /// If true, AppBar is allowed to wrap.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.AppBar.Behavior)]
+        public bool WrapContent { get; set; } = false;
+
+        /// <summary>
         /// User class names, separated by spaces for the nested toolbar.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AppBar.Appearance)]
-        public string ToolBarClass { get; set; }
+        public string? ToolBarClass { get; set; }
 
         /// <summary>
         /// Child content of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AppBar.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
     }
 }

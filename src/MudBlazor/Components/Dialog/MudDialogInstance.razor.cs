@@ -98,7 +98,7 @@ namespace MudBlazor
 
         internal void HandleKeyDown(KeyboardEventArgs args)
         {
-             switch (args.Key)
+            switch (args.Key)
             {
                 case "Escape":
                     if (CloseOnEscapeKey)
@@ -123,9 +123,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Close and return null. 
-        /// 
-        /// This is a shorthand of Close(DialogResult.Ok((object)null));
+        /// <para>Close and return null. </para>
+        /// <para>This is a shorthand of Close(DialogResult.Ok((object)null));</para>
         /// </summary>
         public void Close()
         {
@@ -133,9 +132,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Close with dialog result.
-        /// 
-        /// Usage: Close(DialogResult.Ok(returnValue))
+        /// <para>Close with dialog result.</para>
+        /// <para>Usage: Close(DialogResult.Ok(returnValue))</para>
         /// </summary>
         public void Close(DialogResult dialogResult)
         {
@@ -143,9 +141,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Close and directly pass a return value. 
-        /// 
-        /// This is a shorthand for Close(DialogResult.Ok(returnValue))
+        /// <para>Close and directly pass a return value. </para>
+        /// <para>This is a shorthand for Close(DialogResult.Ok(returnValue))</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="returnValue"></param>
@@ -156,7 +153,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Cancel the dialog. DialogResult.Cancelled will be set to true
+        /// Cancel the dialog. DialogResult.Canceled will be set to true
         /// </summary>
         public void Cancel()
         {
@@ -174,6 +171,7 @@ namespace MudBlazor
             DisableBackdropClick = SetDisableBackdropClick();
             CloseOnEscapeKey = SetCloseOnEscapeKey();
             Class = Classname;
+            BackgroundClassname = new CssBuilder("mud-overlay-dialog").AddClass(Options.BackgroundClass).Build();
         }
 
         private string SetPosition()
@@ -236,6 +234,11 @@ namespace MudBlazor
             return false;
         }
 
+        protected string TitleClassname =>
+            new CssBuilder("mud-dialog-title")
+                .AddClass(_dialog?.TitleClass)
+                .Build();
+
         protected string Classname =>
             new CssBuilder("mud-dialog")
                 .AddClass(DialogMaxWidth, !FullScreen)
@@ -244,6 +247,8 @@ namespace MudBlazor
                 .AddClass("mud-dialog-rtl", RightToLeft)
                 .AddClass(_dialog?.Class)
             .Build();
+
+        protected string BackgroundClassname { get; set; } = "mud-overlay-dialog";
 
         private bool SetHideHeader()
         {
@@ -289,18 +294,18 @@ namespace MudBlazor
             return false;
         }
 
-        private void HandleBackgroundClick()
+        private async Task HandleBackgroundClickAsync(MouseEventArgs args)
         {
             if (DisableBackdropClick)
                 return;
 
-            if (_dialog?.OnBackdropClick == null)
+            if (_dialog is null || !_dialog.OnBackdropClick.HasDelegate)
             {
                 Cancel();
                 return;
             }
 
-            _dialog?.OnBackdropClick.Invoke();
+            await _dialog.OnBackdropClick.InvokeAsync(args);
         }
 
         private MudDialog _dialog;
@@ -317,10 +322,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public void ForceRender()
-        {
-            StateHasChanged();
-        }
+        public new void StateHasChanged() => base.StateHasChanged();
 
         /// <summary>
         /// Cancels all dialogs in dialog provider collection.
@@ -339,7 +341,10 @@ namespace MudBlazor
                     if (_keyInterceptor != null)
                     {
                         _keyInterceptor.KeyDown -= HandleKeyDown;
-                        _keyInterceptor.Dispose();
+                        if (IsJSRuntimeAvailable)
+                        {
+                            _keyInterceptor.Dispose();
+                        }
                     }
                 }
 

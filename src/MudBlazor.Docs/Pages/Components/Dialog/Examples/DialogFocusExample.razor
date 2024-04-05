@@ -3,16 +3,16 @@
 @inject IDialogService DialogService
 
 
-<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+<MudButton @onclick="OpenDialogAsync" Variant="Variant.Filled" Color="Color.Primary">
     Open Dialog
 </MudButton>
 
-
 @code {
 
-    private void OpenDialog()
+    private Task OpenDialogAsync()
     {
-		var options = new DialogOptions { CloseOnEscapeKey = true };
-        DialogService.Show<DialogFocusExample_Dialog>("Last element focused", options);
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        return DialogService.ShowAsync<DialogFocusExample_Dialog>("Last element focused", options);
     }
 }

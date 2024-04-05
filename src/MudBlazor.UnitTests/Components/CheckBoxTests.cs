@@ -22,17 +22,16 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudCheckBox<bool>>();
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var box = comp.Instance;
             var input = comp.Find("input");
             // check initial state
-            box.Checked.Should().Be(false);
+            box.Value.Should().Be(false);
             // click and check if it has toggled
             input.Change(true);
-            box.Checked.Should().Be(true);
+            box.Value.Should().Be(true);
             input.Change(false);
-            box.Checked.Should().Be(false);
+            box.Value.Should().Be(false);
         }
 
         /// <summary>
@@ -41,18 +40,17 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckBoxTest2()
         {
-            var comp = Context.RenderComponent<MudCheckBox<bool>>(ComponentParameter.CreateParameter("Checked", true));
-            //Console.WriteLine(comp.Markup);
+            var comp = Context.RenderComponent<MudCheckBox<bool>>(ComponentParameter.CreateParameter("Value", true));
             // select elements needed for the test
             var box = comp.Instance;
             var input = comp.Find("input");
             // check initial state
-            box.Checked.Should().Be(true);
+            box.Value.Should().Be(true);
             // click and check if it has toggled
             input.Change(false);
-            box.Checked.Should().Be(false);
+            box.Value.Should().Be(false);
             input.Change(true);
-            box.Checked.Should().Be(true);
+            box.Value.Should().Be(true);
         }
 
         /// <summary>
@@ -62,29 +60,28 @@ namespace MudBlazor.UnitTests.Components
         public void CheckBoxTest3()
         {
             var comp = Context.RenderComponent<CheckBoxTest3>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var boxes = comp.FindComponents<MudCheckBox<bool>>();
             var inputs = comp.FindAll("input");
             // check initial state
-            boxes[0].Instance.Checked.Should().Be(true);
-            boxes[1].Instance.Checked.Should().Be(true);
+            boxes[0].Instance.Value.Should().Be(true);
+            boxes[1].Instance.Value.Should().Be(true);
             // click and check if it has toggled
             inputs[0].Change(false);
-            boxes[0].Instance.Checked.Should().Be(false);
-            boxes[1].Instance.Checked.Should().Be(false);
+            boxes[0].Instance.Value.Should().Be(false);
+            boxes[1].Instance.Value.Should().Be(false);
             inputs = comp.FindAll("input");
             inputs[0].Change(true);
-            boxes[0].Instance.Checked.Should().Be(true);
-            boxes[1].Instance.Checked.Should().Be(true);
+            boxes[0].Instance.Value.Should().Be(true);
+            boxes[1].Instance.Value.Should().Be(true);
             inputs = comp.FindAll("input");
             inputs[1].Change(false);
-            boxes[0].Instance.Checked.Should().Be(false);
-            boxes[1].Instance.Checked.Should().Be(false);
+            boxes[0].Instance.Value.Should().Be(false);
+            boxes[1].Instance.Value.Should().Be(false);
             inputs = comp.FindAll("input");
             inputs[1].Change(true);
-            boxes[0].Instance.Checked.Should().Be(true);
-            boxes[1].Instance.Checked.Should().Be(true);
+            boxes[0].Instance.Value.Should().Be(true);
+            boxes[1].Instance.Value.Should().Be(true);
         }
 
         /// <summary>
@@ -95,7 +92,6 @@ namespace MudBlazor.UnitTests.Components
         public void CheckBoxTest4()
         {
             var comp = Context.RenderComponent<CheckBoxTest4>();
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var spans = comp.FindAll("span").ToArray();
             var svgs = comp.FindAll("svg").ToArray();
@@ -119,27 +115,22 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudCheckBox<bool?>>(ComponentParameter.CreateParameter("TriState", true));
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var box = comp.Instance;
             var input = comp.Find("input");
             // check initial state
-            box.Checked.Should().Be(default);
+            box.Value.Should().Be(default);
             // click and check if it has toggled
             input.Change(true);
-            box.Checked.Should().Be(true);
-            //Console.WriteLine(comp.Markup);
+            box.Value.Should().Be(true);
             input.Change(false);
-            box.Checked.Should().Be(false);
-            //Console.WriteLine(comp.Markup);
+            box.Value.Should().Be(false);
             // click and check if this is the indeterminate value
             input.Change(false);
-            box.Checked.Should().Be(default);
-            //Console.WriteLine(comp.Markup);
+            box.Value.Should().Be(default);
             // click and check if this is the true value
             input.Change(true);
-            box.Checked.Should().Be(true);
-            //Console.WriteLine(comp.Markup);
+            box.Value.Should().Be(true);
         }
 
         /// <summary>
@@ -149,7 +140,6 @@ namespace MudBlazor.UnitTests.Components
         public void CheckBoxFormTest1()
         {
             var comp = Context.RenderComponent<CheckBoxFormTest1>();
-            //Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             form.IsValid.Should().BeFalse();
             form.Errors.Length.Should().Be(0);
@@ -178,7 +168,6 @@ namespace MudBlazor.UnitTests.Components
         public void CheckBoxesBindAgainstArrayTest()
         {
             var comp = Context.RenderComponent<CheckBoxesBindAgainstArrayTest>();
-            //Console.WriteLine(comp.Markup);
             comp.FindAll("p")[^1].TrimmedText().Should().Be("A=True, B=False, C=True, D=False, E=True");
             comp.FindAll("input")[0].Change(false);
             comp.FindAll("p")[^1].TrimmedText().Should().Be("A=False, B=False, C=True, D=False, E=True");
@@ -203,46 +192,45 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudCheckBox<bool?>>();
             comp.SetParam(x => x.TriState, true);
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var checkbox = comp.Instance;
-            checkbox.Checked.Should().Be(null);
+            checkbox.Value.Should().Be(null);
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(false));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(false));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Delete", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(false));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(false));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
 
             //Backspace should not change state on non-tristate checkbox
             comp.SetParam(x => x.TriState, false);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
             //Check tristate space key
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(false));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(false));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
 
             comp.SetParam("Disabled", true);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(true));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(true));
         }
         /// <summary>
         /// Test if the keyboard-disabling switch works
@@ -254,46 +242,45 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(x => x.TriState, true);
             comp.SetParam(x => x.KeyboardEnabled, false);
             // print the generated html
-            //Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var checkbox = comp.Instance;
-            checkbox.Checked.Should().Be(null);
+            checkbox.Value.Should().Be(null);
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Delete", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "NumpadEnter", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
             //Backspace should not change state on non-tristate checkbox
             comp.SetParam(x => x.TriState, null);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
             //Check tristate space key
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
 
             comp.SetParam("Disabled", true);
             comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = " ", Type = "keydown", });
-            comp.WaitForAssertion(() => checkbox.Checked.Should().Be(null));
+            comp.WaitForAssertion(() => checkbox.Value.Should().Be(null));
         }
 
         [Test]
@@ -315,12 +302,12 @@ namespace MudBlazor.UnitTests.Components
 
             var checkboxClasses = comp.Find(".mud-button-root.mud-icon-button");
             // check initial state
-            box.Checked.Should().Be(false);
+            box.Value.Should().Be(false);
             checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });
 
             // click and check if it has new color
             input.Change(true);
-            box.Checked.Should().Be(true);
+            box.Value.Should().Be(true);
             checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
         }
 
@@ -336,11 +323,9 @@ namespace MudBlazor.UnitTests.Components
         public void CheckBoxLabelPositionTest()
         {
             var comp = Context.RenderComponent<CheckboxLabelExample>();
-            //Console.WriteLine(comp.Markup);
             var checkboxes = comp.FindAll("label.mud-checkbox");
 
-            checkboxes[0].ClassList.Should().Contain("mud-ltr"); // 1st checkbox: (default) LabelPosition.End
-            checkboxes[2].ClassList.Should().Contain("mud-rtl"); // 3rd checkbox: LabelPosition.Start
+            checkboxes[2].ClassList.Should().Contain("flex-row-reverse"); // 3rd checkbox: LabelPosition.Start
         }
 
         [Test]

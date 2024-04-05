@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTreeView T="string" MultiSelection="false" @bind-SelectedValue="SelectedValue">
+    <MudTreeViewItem Value='"content"' @bind-Activated="Item1Activated" @bind-Selected="ParentItemSelected">
+        <MudTreeViewItem Value='"logo.png"' />
+        <MudTreeViewItem Value='"MudBlazor.svg"' @bind-Selected="SubItemSelected" />
+        <MudTreeViewItem Value='"Nuget.png"' />
+    </MudTreeViewItem>
+    <MudTreeViewItem Value='"src"' @bind-Activated="Item2Activated">
+        <MudTreeViewItem Value='"MudBlazor"' />
+        <MudTreeViewItem Value='"MudBlazor.Docs"'>
+            <MudTreeViewItem Value='"wwwroot"'>
+                <MudTreeViewItem Value='"MudAppbarCorner.svg"' />
+                <MudTreeViewItem Value='"MudBlazorDocs.min.css"' />
+            </MudTreeViewItem>
+        </MudTreeViewItem>
+    </MudTreeViewItem>
+</MudTreeView>
+
+@code{
+    public string SelectedValue { get; set; }
+    public bool SubItemSelected { get; set; }
+
+    public bool ParentItemSelected { get; set; }
+
+    public bool Item1Activated { get; set; }
+
+    public bool Item2Activated { get; set; }
+}

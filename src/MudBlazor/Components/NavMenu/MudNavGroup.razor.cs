@@ -1,43 +1,48 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudNavGroup : MudComponentBase
     {
+        private bool _expanded;
+
         protected string Classname =>
-        new CssBuilder("mud-nav-group")
-          .AddClass(Class)
-          .AddClass($"mud-nav-group-disabled", Disabled)
-          .Build();
+            new CssBuilder("mud-nav-group")
+                .AddClass(Class)
+                .AddClass($"mud-nav-group-disabled", Disabled)
+                .Build();
 
         protected string ButtonClassname =>
-        new CssBuilder("mud-nav-link")
-          .AddClass($"mud-ripple", !DisableRipple)
-          .AddClass("mud-expanded", Expanded)
-          .Build();
+            new CssBuilder("mud-nav-link")
+                .AddClass($"mud-ripple", Ripple)
+                .AddClass("mud-expanded", Expanded)
+                .Build();
 
         protected string IconClassname =>
-        new CssBuilder("mud-nav-link-icon")
-          .AddClass($"mud-nav-link-icon-default", IconColor == Color.Default)
-          .Build();
+            new CssBuilder("mud-nav-link-icon")
+                .AddClass($"mud-nav-link-icon-default", IconColor == Color.Default)
+                .Build();
 
         protected string ExpandIconClassname =>
-        new CssBuilder("mud-nav-link-expand-icon")
-          .AddClass($"mud-transform", Expanded && !Disabled)
-          .AddClass($"mud-transform-disabled", Expanded && Disabled)
-          .Build();
+            new CssBuilder("mud-nav-link-expand-icon")
+                .AddClass($"mud-transform", Expanded && !Disabled)
+                .AddClass($"mud-transform-disabled", Expanded && Disabled)
+                .Build();
 
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// Icon to use if set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
 
         /// <summary>
         /// The color of the icon. It supports the theme colors, default value uses the themes drawer icon color.
@@ -54,13 +59,12 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, disables ripple effect.
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
 
-        private bool _expanded;
         /// <summary>
         /// If true, expands the nav group, otherwise collapse it. 
         /// Two-way bindable
@@ -79,8 +83,6 @@ namespace MudBlazor
                 ExpandedChanged.InvokeAsync(_expanded);
             }
         }
-
-        [Parameter] public EventCallback<bool> ExpandedChanged { get; set; }
 
         /// <summary>
         /// If true, hides expand-icon at the end of the NavGroup.
@@ -101,16 +103,20 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-        public string ExpandIcon { get; set; } = @Icons.Filled.ArrowDropDown;
-        
+        public string ExpandIcon { get; set; } = @Icons.Material.Filled.ArrowDropDown;
+
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
-        protected void ExpandedToggle()
+        [Parameter]
+        public EventCallback<bool> ExpandedChanged { get; set; }
+
+        protected Task ExpandedToggleAsync()
         {
             _expanded = !Expanded;
-            ExpandedChanged.InvokeAsync(_expanded);
+
+            return ExpandedChanged.InvokeAsync(_expanded);
         }
     }
 }

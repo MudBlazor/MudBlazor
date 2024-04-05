@@ -30,17 +30,15 @@ namespace MudBlazor.UnitTests.Components
             int initiallySelectedPage, int expectedSelectedPage, bool expectedDisabled)
         {
             var comp = Context.RenderComponent<PaginationButtonTest>();
-            //Console.WriteLine(comp.Markup);
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
             //navigate to the specified page
             await comp.InvokeAsync(() => { pagination.NavigateTo(initiallySelectedPage - 1); });
 
-            var button = FindControlButton(comp, controlButton);
-
             //Click numberOfClicks times on the control button
             for (var i = 0; i < numberOfClicks; i++)
             {
+                var button = FindControlButton(comp, controlButton);
                 button.Click();
             }
 
@@ -64,7 +62,6 @@ namespace MudBlazor.UnitTests.Components
         public void PaginationControlButtonAriaLabelTest(Page controlButton, string expectedButtonAriaLabel)
         {
             var comp = Context.RenderComponent<PaginationButtonTest>();
-            //Console.WriteLine(comp.Markup);
 
             //get control button
             var button = FindControlButton(comp, controlButton);
@@ -95,7 +92,7 @@ namespace MudBlazor.UnitTests.Components
                 button.Attributes.GetNamedItem("aria-current")?.Value.Should().Be("page");
             }
         }
-        
+
         /// <summary>
         /// Tests the event callbacks of control button click events
         /// </summary>
@@ -109,7 +106,6 @@ namespace MudBlazor.UnitTests.Components
         public void PaginationControlButtonEventCallbackTest(Page controlButton, int expectedButtonClickedValue)
         {
             var comp = Context.RenderComponent<PaginationButtonTest>();
-            //Console.WriteLine(comp.Markup);
 
             //Click control button
             FindControlButton(comp, controlButton).Click();
@@ -134,7 +130,6 @@ namespace MudBlazor.UnitTests.Components
             int expectedSelectedPage)
         {
             var comp = Context.RenderComponent<PaginationButtonTest>();
-            //Console.WriteLine(comp.Markup);
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
             //navigate to the specified page
@@ -178,7 +173,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task PaginationNavigateToPageTest(Page page, int expectedSelectedPage)
         {
             var comp = Context.RenderComponent<PaginationButtonTest>();
-            //Console.WriteLine(comp.Markup);
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
 
@@ -205,7 +199,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task PaginationNavigateToPageTest(int page, int expectedSelectedPage)
         {
             var comp = Context.RenderComponent<PaginationButtonTest>();
-            //Console.WriteLine(comp.Markup);
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
 
@@ -233,7 +226,6 @@ namespace MudBlazor.UnitTests.Components
         public void PaginationCountWithoutEllipsisTest(int count, int middleCount, int boundaryCount)
         {
             var comp = Context.RenderComponent<PaginationCountTest>();
-            //Console.WriteLine(comp.Markup);
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
             comp.Find(".mud-pagination-test-middle-count input").Change(middleCount.ToString());
@@ -279,7 +271,6 @@ namespace MudBlazor.UnitTests.Components
             int boundaryCount, string[] expectedValues)
         {
             var comp = Context.RenderComponent<PaginationCountTest>();
-            //Console.WriteLine(comp.Markup);
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
             //set count variables
@@ -292,7 +283,7 @@ namespace MudBlazor.UnitTests.Components
 
             //Expected values
             var items = comp.FindAll(".mud-pagination-item");
-            items.Count.Should().Be(middleCount + 2 * boundaryCount + 2);
+            items.Count.Should().Be(middleCount + (2 * boundaryCount) + 2);
             for (var j = 0; j < items.Count; j++)
             {
                 items[j].TextContent.Should().Be(expectedValues[j]);
@@ -306,7 +297,6 @@ namespace MudBlazor.UnitTests.Components
         public void PaginationStylesTest()
         {
             var comp = Context.RenderComponent<PaginationStylesTest>();
-            //Console.WriteLine(comp.Markup);
 
             var buttons = comp.FindAll(".mud-pagination-item button");
             var pagination = comp.Find("ul.mud-pagination");

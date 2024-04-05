@@ -3,12 +3,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
-
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudAlert : MudComponentBase
     {
         protected string Classname =>
@@ -43,18 +42,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
         public HorizontalAlignment ContentAlignment { get; set; } = HorizontalAlignment.Left;
-
-        /// <summary>
-        /// Sets the position of the text to the start (Left in LTR and right in RTL).
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use ContentAlignment instead.", true)]
-        [Parameter]
-        public AlertTextPosition AlertTextPosition
-        {
-            get => (AlertTextPosition)ContentAlignment;
-            set => ContentAlignment = (HorizontalAlignment)value;
-        }
 
         /// <summary>
         /// The callback, when the close button has been clicked.
@@ -122,16 +109,16 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Alert.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// Custom icon, leave unset to use the standard icon which depends on the Severity
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
 
-        protected string _icon;
+        protected string? _icon;
 
         internal Task OnCloseIconClickAsync()
         {
@@ -165,11 +152,19 @@ namespace MudBlazor
             }
         }
 
+        internal Task OnClickHandler(MouseEventArgs mouseEventArgs)
+        {
+            if (OnClick.HasDelegate)
+            {
+                return OnClick.InvokeAsync(mouseEventArgs);
+            }
+
+            return Task.CompletedTask;
+        }
+
         /// <summary>
         /// Raised when the alert is clicked
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
     }
 }
-
-
