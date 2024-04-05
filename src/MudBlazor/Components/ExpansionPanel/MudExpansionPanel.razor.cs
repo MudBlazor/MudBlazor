@@ -26,7 +26,7 @@ namespace MudBlazor
 
         protected string PanelContentClassname =>
             new CssBuilder("mud-expand-panel-content")
-                .AddClass("mud-expand-panel-gutters", DisableGutters || Parent?.DisableGutters == true)
+                .AddClass("mud-expand-panel-disable-gutters", !Gutters && Parent?.Gutters != true)
                 .AddClass("mud-expand-panel-dense", Dense || Parent?.Dense == true)
                 .Build();
 
@@ -73,11 +73,11 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, the left and right padding is removed from <see cref="ChildContent"/>.
+        /// If true, left and right padding is added to the <see cref="ChildContent"/>. Default is true .
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
-        public bool DisableGutters { get; set; }
+        public bool Gutters { get; set; } = true;
 
         /// <summary>
         /// Raised when IsExpanded changes.

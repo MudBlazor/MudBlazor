@@ -47,11 +47,11 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, the left and right padding is removed from all panels' <see cref="ChildContent"/>.
+        /// If true, left and right padding is added to all panels' <see cref="ChildContent"/>. Default is true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
-        public bool DisableGutters { get; set; }
+        public bool Gutters { get; set; } = true;
 
         /// <summary>
         /// If true, the borders around each panel will be removed.
