@@ -547,6 +547,34 @@ namespace MudBlazor.UnitTests.Components
             var mudListItem = comp.FindComponent<MudListItem>();
             mudListItem.Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z\"/>");
         }
+        [Test]
+        public void MultiSelect_SelectAll4()
+        {
+            var comp = Context.RenderComponent<MultiSelectTest7>();
+            // select element needed for the test
+            var select = comp.FindComponent<MudSelect<string>>();
+            string validatedValue = null;
+            select.SetParam(x => x.Validation, (object)new Func<string, bool>(value =>
+            {
+                validatedValue = value; // NOTE: select does only update the value for T string
+                return true;
+            }));
+            var menu = comp.Find("div.mud-popover");
+            var input = comp.Find("div.mud-input-control");
+            // Open the menu
+            input.Click();
+            menu.ClassList.Should().Contain("mud-popover-open");
+            // now click the first checkbox
+            comp.FindAll("div.mud-list-item")[0].Click();
+            // validate the result. all items should be selected
+            comp.WaitForAssertion(() => select.Instance.Text.Should().Be("FirstA^SecondA^ThirdA"));
+            validatedValue.Should().Be("FirstA^SecondA^ThirdA");
+            // now click the first checkbox
+            comp.FindAll("div.mud-list-item")[0].Click();
+            // validate the result. all items should be un-selected
+            comp.WaitForAssertion(() => select.Instance.Text.Should().Be(""));
+            validatedValue.Should().Be("");
+        }
 
         [Test]
         public void SingleSelect_Should_CallValidationFunc()
