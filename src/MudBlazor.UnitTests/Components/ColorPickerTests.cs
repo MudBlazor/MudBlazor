@@ -37,8 +37,8 @@ namespace MudBlazor.UnitTests.Components
         private const string CssSelector = ".mud-picker-color-overlay-black .mud-picker-color-overlay";
         private const string _mudToolbarButtonsCssSelector = ".mud-toolbar button";
 
-        private static readonly MudColor[] _mudGridDefaultColors =
-            [
+        private static MudColor[] _mudGridDefaultColors = new MudColor[]
+                        {
                 "#FFFFFF","#ebebeb","#d6d6d6","#c2c2c2","#adadad","#999999","#858586","#707070","#5c5c5c","#474747","#333333","#000000",
                 "#133648","#071d53","#0f0638","#2a093b","#370c1b","#541107","#532009","#53350d","#523e0f","#65611b","#505518","#2b3d16",
                 "#1e4c63","#0f2e76","#180b4e","#3f1256","#4e1629","#781e0e","#722f10","#734c16","#73591a","#8c8629","#707625","#3f5623",
@@ -49,18 +49,18 @@ namespace MudBlazor.UnitTests.Components
                 "#78d3f8","#7fa6f8","#7e52f5","#c45ff6","#de789d","#f09286","#f2a984","#f6c983","#f9da85","#fef9a1","#ebf29b","#badc94",
                 "#a5e1fa","#adc5fa","#ab8df7","#d696f8","#e8a7bf","#f4b8b1","#f6c7af","#f9daae","#fae5af","#fefbc0","#f3f7be","#d2e7ba",
                 "#d2effd","#d6e1fc","#d6c9fa","#e9cbfb","#f3d4df","#f9dcd9","#fae3d8","#fcecd7","#fdf2d8","#fefce0","#f7fade","#e3edd6"
-            ];
+                        };
 
-        private static readonly MudColor[] _mudGridPaletteDefaultColors =
-            [
-                "#424242", "#2196f3", "#00c853", "#ff9800", "#f44336",
-                "#f6f9fb", "#9df1fa", "#bdffcf", "#fff0a3", "#ffd254",
-                "#e6e9eb", "#27dbf5", "#7ef7a0", "#ffe273", "#ffb31f",
-                "#c9cccf", "#13b8e8", "#14dc71", "#fdd22f", "#ff9102",
-                "#858791", "#0989c2", "#1bbd66", "#ebb323", "#fe6800",
-                "#585b62", "#17698e", "#17a258", "#d9980d", "#dc3f11",
-                "#353940", "#113b53", "#127942", "#bf7d11", "#aa0000"
-            ];
+        private static MudColor[] _mudGridPaletteDefaultColors = new MudColor[]
+                {
+                   "#424242", "#2196f3", "#00c853", "#ff9800", "#f44336",
+                  "#f6f9fb", "#9df1fa", "#bdffcf", "#fff0a3", "#ffd254",
+                  "#e6e9eb", "#27dbf5", "#7ef7a0", "#ffe273", "#ffb31f",
+                  "#c9cccf", "#13b8e8", "#14dc71", "#fdd22f", "#ff9102",
+                  "#858791", "#0989c2", "#1bbd66", "#ebb323", "#fe6800",
+                  "#585b62", "#17698e", "#17a258", "#d9980d", "#dc3f11",
+                  "#353940", "#113b53", "#127942", "#bf7d11", "#aa0000"
+                };
 
         private void CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool checkInstanceValue = true, bool isRtl = false)
         {
@@ -1062,7 +1062,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [Ignore("https://github.com/bUnit-dev/bUnit/discussions/1435")]
         [TestCase(false)]
         [TestCase(true)]
         public void Spectrum_DragPointer(bool disableDragEffect)
@@ -1088,7 +1087,7 @@ namespace MudBlazor.UnitTests.Components
             const double y2 = 140.0;
             var expectedColor2 = new MudColor(74, 70, 112, 255);
 
-            overlay.PointerMove(new PointerEventArgs { MovementX = x2, MovementY = y2 });
+            overlay.PointerMove(new PointerEventArgs { OffsetX = x2, OffsetY = y2, Buttons = 1 });
 
             // Color shouldn't update if the drag effect is disabled.
             if (disableDragEffect)
@@ -1127,40 +1126,6 @@ namespace MudBlazor.UnitTests.Components
                     comp.Instance.Value.H.Should().Be(expectedHue);
                 }
             }
-        }
-
-        [Test]
-        [Ignore("Selector offset is wrong")]
-        public void Click_Selector_ColorPanel()
-        {
-            var comp = Context.RenderComponent<SimpleColorPickerTest>();
-
-            var overlay = comp.Find(CssSelector);
-
-            const double x = 99.2;
-            const double y = 200.98;
-
-            overlay.PointerDown(new PointerEventArgs { OffsetX = x, OffsetY = y });
-            overlay.PointerUp(new PointerEventArgs { OffsetX = x, OffsetY = y });
-
-            MudColor color = "#232232ff";
-            var expectedColor = new MudColor(color.R, color.G, color.B, _defaultColor);
-
-            CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
-
-            var selector = comp.Find(".mud-picker-color-selector");
-
-            // A click in the center of the selector shouldn't change anything.
-            selector.PointerDown(new PointerEventArgs { OffsetX = 13, OffsetY = 13 });
-            selector.PointerUp(new PointerEventArgs { OffsetX = 13, OffsetY = 13 });
-
-            CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
-
-            selector.PointerDown(new PointerEventArgs { OffsetX = 5, OffsetY = 20 });
-            selector.PointerUp(new PointerEventArgs { OffsetX = 5, OffsetY = 20 });
-
-            var secondExpectedColor = new MudColor(31, 30, 42, _defaultColor);
-            CheckColorRelatedValues(comp, x - 8, y + 7, secondExpectedColor, ColorPickerMode.RGB);
         }
 
         [Test]
