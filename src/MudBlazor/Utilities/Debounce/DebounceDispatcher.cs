@@ -82,11 +82,13 @@ internal class DebounceDispatcher
                 {
                     // Ignore
                 }
-
-                // Clear the waiting task
-                lock (_locker)
+                finally
                 {
-                    _waitingTask = null;
+                    // Clear the waiting task
+                    lock (_locker)
+                    {
+                        _waitingTask = null;
+                    }
                 }
             }, cancellationToken);
 
