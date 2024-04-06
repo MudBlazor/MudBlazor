@@ -12,7 +12,7 @@
     {
         Snackbar.Add("I got a message for you", Severity.Normal, config =>
         {
-            config.Onclick = snackbar =>
+            config.OnClick = snackbar =>
             {
                 SayHello();
                 return Task.CompletedTask;

@@ -3,6 +3,7 @@
 // Changes and improvements Copyright (c) The MudBlazor Team
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Components.Snackbar;
 using static System.String;
@@ -36,14 +37,15 @@ namespace MudBlazor
         private Size IconSize => Snackbar?.State.Options.IconSize ?? Size.Medium;
 
         // behavior
-        private void ActionClicked() => Snackbar?.Clicked(false);
-        private void CloseIconClicked() => Snackbar?.Clicked(true);
+        private async Task ActionClickedAsync() => await Snackbar?.ClickedAsync(false);
+        private async Task CloseIconClickedAsync() => await Snackbar?.ClickedAsync(true);
+        
         private SnackbarMessage Message => Snackbar?.SnackbarMessage;
 
         private void SnackbarClicked()
         {
             if (!ShowActionButton)
-                Snackbar?.Clicked(false);
+                Snackbar?.ClickedAsync(false);
         }
 
         private void SnackbarUpdated()

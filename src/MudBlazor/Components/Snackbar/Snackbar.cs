@@ -3,8 +3,8 @@
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using MudBlazor.Components.Snackbar;
-using MudBlazor.Components.Snackbar.InternalComponents;
 
 namespace MudBlazor
 {
@@ -30,19 +30,26 @@ namespace MudBlazor
 
         internal void Init() => TransitionTo(SnackbarState.Showing);
 
-        internal void Clicked(bool fromCloseIcon)
+        internal async Task ClickedAsync(bool fromCloseIcon)
         {
             if (State.UserHasInteracted)
                 return; // You should only be able to interact with the snackbar once.
 
-            if (!fromCloseIcon)
+            if (fromCloseIcon)
+            {
+                // Invoke user-defined task when close button is clicked
+                if (State.Options.OnCloseButtonClick is not null)
+                {
+                    await State.Options.OnCloseButtonClick.Invoke(this);
+                }
+            }
+            else
             {
                 // Do not start the hiding transition if no click action
-                if (State.Options.Onclick == null)
-                    return;
+                if (State.Options.OnClick is null) return;
 
                 // Click action is executed only if it's not from the close icon
-                State.Options.Onclick.Invoke(this);
+                await State.Options.OnClick.Invoke(this);
             }
 
             State.UserHasInteracted = true;

@@ -8,7 +8,8 @@ namespace MudBlazor
 {
     public class SnackbarOptions : CommonSnackbarOptions
     {
-        public Func<Snackbar, Task> Onclick { get; set; }
+        public Func<Snackbar, Task> OnClick { get; set; }
+        public Func<Snackbar, Task> OnCloseButtonClick { get; set; }
 
         public string Action { get; set; }
 
