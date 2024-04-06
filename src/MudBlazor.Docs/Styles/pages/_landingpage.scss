@@ -1,4 +1,4 @@
-﻿@property --rotate {
+@property --rotate {
   syntax: "<angle>";
   initial-value: 132deg;
   inherits: false;
@@ -564,7 +564,7 @@
   }
 
   .dark-section-text {
-    color: var(--mud-palette-gray-lighter);
+    color: var(--mud-palette-text-secondary);
   }
 
   .world-map {
