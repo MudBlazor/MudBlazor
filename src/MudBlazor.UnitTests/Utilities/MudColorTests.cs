@@ -13,6 +13,30 @@ namespace MudBlazor.UnitTests.Utilities
     public class MudColorTests
     {
         [Test]
+        public void MudColor_STJ_Serialization()
+        {
+            var originalMudColor = new MudColor("#f6f9fb");
+
+            var jsonString = System.Text.Json.JsonSerializer.Serialize(originalMudColor);
+            var deserializeMudColor = System.Text.Json.JsonSerializer.Deserialize<MudColor>(jsonString);
+
+            jsonString.Should().Be("{\"R\":246,\"G\":249,\"B\":251,\"A\":255}");
+            deserializeMudColor.Should().Be(originalMudColor);
+        }
+
+        [Test]
+        public void MudColor_Newtonsoft_Serialization()
+        {
+            var originalMudColor = new MudColor("#f6f9fb");
+
+            var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(originalMudColor);
+            var deserializeMudColor = Newtonsoft.Json.JsonConvert.DeserializeObject<MudColor>(jsonString);
+
+            jsonString.Should().Be("{\"R\":246,\"G\":249,\"B\":251,\"A\":255}");
+            deserializeMudColor.Should().Be(originalMudColor);
+        }
+
+        [Test]
         [TestCase("12315aca", 18, 49, 90, 202)]
         [TestCase("12315a", 18, 49, 90, 255)]
         [TestCase("#12315a", 18, 49, 90, 255)]

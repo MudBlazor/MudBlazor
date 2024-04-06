@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
@@ -150,18 +149,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         private IHtmlInputElement GetColorInput(IRenderedComponent<SimpleColorPickerTest> comp, int index, int expectedCount = 4) => GetColorInputs(comp, expectedCount)[index];
-
-
-        [Test]
-        public void MudColor_Serialization()
-        {
-            var originalMudColor = new MudColor("#f6f9fb");
-
-            var jsonString = JsonSerializer.Serialize(originalMudColor);
-            var deserializeMudColor = JsonSerializer.Deserialize<MudColor>(jsonString);
-
-            deserializeMudColor.Should().Be(originalMudColor);
-        }
 
         [Test]
         public void ColorPickerOpenButtonAriaLabel()

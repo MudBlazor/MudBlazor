@@ -4,7 +4,9 @@
 
 using System;
 using System.Globalization;
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
+using System.Xml.Linq;
 using MudBlazor.Extensions;
 
 namespace MudBlazor.Utilities
@@ -39,7 +41,8 @@ namespace MudBlazor.Utilities
     /// <summary>
     /// Represents a color with methods to manipulate color values.
     /// </summary>
-    public class MudColor : IEquatable<MudColor>
+    [Serializable]
+    public class MudColor : ISerializable, IEquatable<MudColor>
     {
         private const double Epsilon = 0.000000000000001;
         private readonly byte[] _valuesAsByte;
@@ -94,6 +97,16 @@ namespace MudBlazor.Utilities
         /// </summary>
         [JsonIgnore]
         public double S { get; private set; }
+
+        /// <summary>
+        /// Deserialization constructor for <see cref="MudColor"/>.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/>> containing the serialized data.</param>
+        /// <param name="context">The <see cref="StreamingContext"/>>.</param>
+        protected MudColor(SerializationInfo info, StreamingContext context) :
+            this(info.GetByte(nameof(R)), info.GetByte(nameof(G)), info.GetByte(nameof(B)), info.GetByte(nameof(A)))
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MudColor"/> class with the specified hue, saturation, luminance, and alpha values.
@@ -249,7 +262,7 @@ namespace MudBlazor.Utilities
                 var parts = SplitInputIntoParts(value);
                 if (parts.Length != 4)
                 {
-                    throw new ArgumentException("invalid color format");
+                    throw new ArgumentException("Invalid color format.");
                 }
 
                 _valuesAsByte = new byte[]
@@ -265,7 +278,7 @@ namespace MudBlazor.Utilities
                 var parts = SplitInputIntoParts(value);
                 if (parts.Length != 3)
                 {
-                    throw new ArgumentException("invalid color format");
+                    throw new ArgumentException("Invalid color format.");
                 }
 
                 _valuesAsByte = new byte[]
@@ -297,7 +310,7 @@ namespace MudBlazor.Utilities
                     case 8:
                         break;
                     default:
-                        throw new ArgumentException(@"Not a valid color", nameof(value));
+                        throw new ArgumentException(@"Not a valid color.", nameof(value));
                 }
 
                 _valuesAsByte = new byte[]
@@ -572,6 +585,15 @@ namespace MudBlazor.Utilities
             H = Math.Round(h.EnsureRange(360), 0);
             S = Math.Round(s.EnsureRange(1), 2);
             L = Math.Round(l.EnsureRange(1), 2);
+        }
+
+        /// <inheritdoc />
+        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(nameof(R), R);
+            info.AddValue(nameof(G), G);
+            info.AddValue(nameof(B), B);
+            info.AddValue(nameof(A), A);
         }
     }
 }
