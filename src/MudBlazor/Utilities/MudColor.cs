@@ -6,7 +6,6 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
-using System.Xml.Linq;
 using MudBlazor.Extensions;
 
 namespace MudBlazor.Utilities
