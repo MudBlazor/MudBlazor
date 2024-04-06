@@ -67,7 +67,7 @@ namespace MudBlazor.UnitTests.Mocks
             return Task.FromResult(result);
         }
 
-        internal void FireEvent(PointerEventArgs args)
+        internal void FireEvent(MouseEventArgs args)
         {
             foreach (var item in Callbacks.Values)
             {

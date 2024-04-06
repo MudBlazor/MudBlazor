@@ -141,7 +141,7 @@ namespace MudBlazor
             get => _colorPickerView;
             set
             {
-                if (value != _colorPickerView)
+                if (_colorPickerView != value)
                 {
                     _colorPickerView = value;
                     ChangeView(value);
@@ -243,19 +243,34 @@ namespace MudBlazor
         public string ImportExportIcon { get; set; } = Icons.Material.Filled.ImportExport;
 
         /// <summary>
-        /// The time before the color updates after moving the pointer.
+        /// The time (in milliseconds) before the color updates after moving the pointer.
         /// This is used to avoid flooding events.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public TimeSpan DebounceInterval { get; set; } = TimeSpan.FromMilliseconds(100);
+        public double DebounceInterval { get; set; } = 100;
 
         #endregion
 
-        protected override void OnInitialized()
+        public override async Task SetParametersAsync(ParameterView parameters)
         {
-            base.OnInitialized();
-            SetDebounceTimer();
+            var lastDebounceInterval = DebounceInterval;
+
+            await base.SetParametersAsync(parameters);
+
+            if (lastDebounceInterval != DebounceInterval)
+            {
+                _periodicWorker?.Dispose();
+
+                if (DebounceInterval > 0)
+                {
+                    _periodicWorker = new PeriodicWorker(this, TimeSpan.FromMilliseconds(DebounceInterval));
+                }
+                else
+                {
+                    _periodicWorker = null;
+                }
+            }
         }
 
         private void ToggleCollection()
@@ -417,13 +432,6 @@ namespace MudBlazor
             return HandleColorOverlayClickedAsync();
         }
 
-        private void SetDebounceTimer()
-        {
-            _periodicWorker ??= new PeriodicWorker(this, DebounceInterval);
-            // Since Period is only available in .NET8 we need to initialize it here instead of constructor
-            //_periodicWorker.Period = DebounceInterval;
-        }
-
         Task IPeriodicTimerElapsedHandler.OnPeriodicTimerElapsedAsync(CancellationToken stoppingToken)
         {
             return InvokeAsync(UpdateColorBaseOnSelection);
@@ -434,9 +442,15 @@ namespace MudBlazor
             if (e.Buttons == 1 && !DisableDragEffect)
             {
                 SetSelectorBasedOnPointerEvents(e, true);
-                // Consider adding cancellation token if you need to abort;
-                if (_periodicWorker is not null)
+
+                if (_periodicWorker is null)
                 {
+                    // Update instantly because the debounce is not enabled.
+                    UpdateColorBaseOnSelection();
+                }
+                else
+                {
+                    // Consider adding cancellation token if you need to abort.
                     await _periodicWorker.StartAsync();
                 }
             }
