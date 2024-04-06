@@ -62,17 +62,6 @@ internal class DebounceDispatcher
                 // Wait for the initial delay
                 await Task.Delay(initialDelay, cancellationToken);
 
-                lock (_locker)
-                {
-                    if (_funcToInvoke != function)
-                    {
-                        // Another call was made within the debounce interval, so cancel this execution
-                        _waitingTask = null;
-
-                        return;
-                    }
-                }
-
                 // Perform the function invocation
                 try
                 {
