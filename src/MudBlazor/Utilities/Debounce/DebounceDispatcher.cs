@@ -34,6 +34,9 @@ internal class DebounceDispatcher
     /// Debounce the execution of asynchronous tasks.
     /// Ensures that a function is invoked only once within a specified interval, even if multiple invocations are requested.
     /// </summary>
+    /// <remarks>
+    /// This implementation will swallow any exceptions that is thrown by <see cref="function"/>.
+    /// </remarks>
     /// <param name="function">The function that returns a Task to be invoked asynchronously.</param>
     /// <param name="cancellationToken">An optional CancellationToken.</param>
     /// <returns>A Task representing the asynchronous operation with minimal delay.</returns>
@@ -42,40 +45,52 @@ internal class DebounceDispatcher
         lock (_locker)
         {
             _funcToInvoke = function;
-
             _lastInvokeTime = DateTime.UtcNow;
 
-            if (_waitingTask != null)
+            // If there's already a waiting task, return it
+            if (_waitingTask is not null)
             {
                 return _waitingTask;
             }
 
+            var initialDelay = (int)(_interval - (DateTime.UtcNow - _lastInvokeTime).TotalMilliseconds);
+            // Ensure delay is non-negative
+            initialDelay = Math.Max(initialDelay, 0);
+
             _waitingTask = Task.Run(async () =>
             {
-                do
-                {
-                    var delay = _interval - (DateTime.UtcNow - _lastInvokeTime).TotalMilliseconds;
-                    await Task.Delay((int)(delay < 0 ? 0 : delay), cancellationToken);
-                }
-                while (DelayCondition());
+                // Wait for the initial delay
+                await Task.Delay(initialDelay, cancellationToken);
 
+                lock (_locker)
+                {
+                    if (_funcToInvoke != function)
+                    {
+                        // Another call was made within the debounce interval, so cancel this execution
+                        _waitingTask = null;
+
+                        return;
+                    }
+                }
+
+                // Perform the function invocation
                 try
                 {
                     await _funcToInvoke.Invoke();
                 }
-                finally
+                catch (Exception)
                 {
-                    lock (_locker)
-                    {
-                        _waitingTask = null;
-                    }
+                    // Ignore
                 }
 
+                // Clear the waiting task
+                lock (_locker)
+                {
+                    _waitingTask = null;
+                }
             }, cancellationToken);
 
             return _waitingTask;
         }
     }
-
-    private bool DelayCondition() => (DateTime.UtcNow - _lastInvokeTime).TotalMilliseconds < _interval;
 }
