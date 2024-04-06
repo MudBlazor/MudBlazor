@@ -199,9 +199,11 @@ namespace MudBlazor
         };
 
         /// <summary>
+        /// <para>
         /// When set to true, no mouse move events in the spectrum mode will be captured, so the selector circle won't fellow the mouse.
-        /// Under some conditions like long latency the visual representation might not reflect the user behaviour anymore. So, it can be disabled
-        /// Enabled by default
+        /// Under some conditions like long latency the visual representation might not reflect the user behaviour anymore. So, it can be disabled.
+        /// </para>
+        /// <para>Enabled by default</para>
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -243,8 +245,8 @@ namespace MudBlazor
         public string ImportExportIcon { get; set; } = Icons.Material.Filled.ImportExport;
 
         /// <summary>
-        /// The time (in milliseconds) before the color updates after moving the pointer.
-        /// This is used to avoid flooding events.
+        /// <para>The delay (in milliseconds) after dragging the pointer before the color binding updates.</para>
+        /// <para>Updates are instant if the debounce interval is <c>0</c> or lower.</para>
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -541,7 +543,7 @@ namespace MudBlazor
 
         protected override void Dispose(bool disposing)
         {
-            _periodicWorker.Dispose();
+            _periodicWorker?.Dispose();
             base.Dispose(disposing);
         }
 
