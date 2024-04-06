@@ -172,11 +172,11 @@ namespace MudBlazor
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// If true, no drop-shadow will be used.
+        /// Determines whether the component has a drop-shadow. Default is true
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.Appearance)]
-        public bool DisableElevation { get; set; }
+        public bool DropShadow { get; set; } = true;
 
         /// <summary>
         /// Add menu items here
