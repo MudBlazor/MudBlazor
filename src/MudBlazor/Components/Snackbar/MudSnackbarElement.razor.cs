@@ -39,7 +39,7 @@ namespace MudBlazor
         // behavior
         private async Task ActionClickedAsync() => await Snackbar?.ClickedAsync(false);
         private async Task CloseIconClickedAsync() => await Snackbar?.ClickedAsync(true);
-        
+
         private SnackbarMessage Message => Snackbar?.SnackbarMessage;
 
         private void SnackbarClicked()

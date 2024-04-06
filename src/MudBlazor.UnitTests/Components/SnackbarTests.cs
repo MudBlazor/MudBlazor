@@ -436,7 +436,7 @@ namespace MudBlazor.UnitTests.Components
             );
 
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
-            
+
             counter.Should().Be(0);
 
             _provider.FindAll(".mud-snackbar-close-button").Single().Click();
