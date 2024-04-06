@@ -11,12 +11,13 @@ namespace MudBlazor.Examples.Data
     public class PeriodicTableService : IPeriodicTableService
     {
         private static readonly Table s_table = null;
+        private static readonly JsonSerializerOptions s_serializerOptions = new() { PropertyNameCaseInsensitive = true };
 
         static PeriodicTableService()
         {
             var key = GetResourceKey(typeof(PeriodicTableService).Assembly, "Elements.json");
             using var stream = typeof(PeriodicTableService).Assembly.GetManifestResourceStream(key);
-            s_table = JsonSerializer.Deserialize<Table>(stream, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            s_table = JsonSerializer.Deserialize<Table>(stream, s_serializerOptions);
         }
 
         public static string GetResourceKey(Assembly assembly, string embeddedFile)
