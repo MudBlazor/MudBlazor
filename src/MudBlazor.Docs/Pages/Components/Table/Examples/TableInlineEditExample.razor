@@ -1,4 +1,4 @@
-@using System.Net.Http.Json
+﻿@using System.Net.Http.Json
 @using MudBlazor
 @using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
@@ -81,18 +81,18 @@
     @if (editTrigger == TableEditTrigger.EditButton)
     {
         <MudItem xs="12" md="4">
-            <MudSelect Label="Edit Button Position" T="TableEditButtonPosition" @bind-Value="editButtonPosition">
-                <MudSelectItem Value="TableEditButtonPosition.Start">Start</MudSelectItem>
-                <MudSelectItem Value="TableEditButtonPosition.End">End</MudSelectItem>
-                <MudSelectItem Value="TableEditButtonPosition.StartAndEnd">Start and End</MudSelectItem>
+            <MudSelect Label="Edit Button Position" T="TableButtonPosition" @bind-Value="editButtonPosition">
+                <MudSelectItem Value="TableButtonPosition.Start">Start</MudSelectItem>
+                <MudSelectItem Value="TableButtonPosition.End">End</MudSelectItem>
+                <MudSelectItem Value="TableButtonPosition.StartAndEnd">Start and End</MudSelectItem>
             </MudSelect>
         </MudItem>
     }
     <MudItem xs="12" md="4">
-        <MudSelect Label="Apply Button Position" T="TableApplyButtonPosition" @bind-Value="applyButtonPosition">
-            <MudSelectItem Value="TableApplyButtonPosition.Start">Start</MudSelectItem>
-            <MudSelectItem Value="TableApplyButtonPosition.End">End</MudSelectItem>
-            <MudSelectItem Value="TableApplyButtonPosition.StartAndEnd">Start and End</MudSelectItem>
+        <MudSelect Label="Apply Button Position" T="TableButtonPosition" @bind-Value="applyButtonPosition">
+            <MudSelectItem Value="TableButtonPosition.Start">Start</MudSelectItem>
+            <MudSelectItem Value="TableButtonPosition.End">End</MudSelectItem>
+            <MudSelectItem Value="TableButtonPosition.StartAndEnd">Start and End</MudSelectItem>
         </MudSelect>
     </MudItem>
 </MudGrid>
