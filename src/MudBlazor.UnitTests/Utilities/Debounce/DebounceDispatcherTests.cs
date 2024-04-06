@@ -41,6 +41,7 @@ public class DebounceDispatcherTests
     [Test]
     public async Task DebounceAsync_MultipleCallsOutsideInterval_ExecutesMultipleTimes()
     {
+        // Arrange
         var debounceDispatcher = new DebounceDispatcher(100);
         var counter = 0;
         Task Invoke()
@@ -55,6 +56,7 @@ public class DebounceDispatcherTests
             await debounceDispatcher.DebounceAsync(Invoke);
         };
 
+        // Act
         var tasks = new[]
         {
             debounceDispatcher.DebounceAsync(Invoke),
@@ -62,6 +64,7 @@ public class DebounceDispatcherTests
             CallDebounceAsyncAfterDelay(300)
         };
 
+        // Assert
         await Task.WhenAll(tasks);
         counter.Should().Be(3);
     }
