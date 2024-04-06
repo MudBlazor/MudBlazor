@@ -9,6 +9,7 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Debounce;
 
+#nullable enable
 [TestFixture]
 public class DebounceDispatcherTests
 {
