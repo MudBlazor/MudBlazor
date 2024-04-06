@@ -27,7 +27,7 @@ namespace MudBlazor.Charts
             {
                 var percent = data * 100;
                 var reversePercent = 100 - percent;
-                double offset = 100 - totalPercent + counterClockwiseOffset;
+                var offset = 100 - totalPercent + counterClockwiseOffset;
                 totalPercent += percent;
 
                 var circle = new SvgCircle()

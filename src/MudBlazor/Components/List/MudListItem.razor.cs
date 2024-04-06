@@ -15,7 +15,7 @@ namespace MudBlazor
           .AddClass("mud-list-item-dense", (Dense ?? MudList?.Dense) ?? false)
           .AddClass("mud-list-item-gutters", !DisableGutters && !(MudList?.DisableGutters == true))
           .AddClass("mud-list-item-clickable", MudList?.Clickable)
-          .AddClass("mud-ripple", MudList?.Clickable == true && !DisableRipple && !Disabled)
+          .AddClass("mud-ripple", MudList?.Clickable == true && Ripple && !Disabled)
           .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !Disabled)
           .AddClass("mud-list-item-disabled", Disabled)
           .AddClass(Class)
@@ -80,11 +80,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If true, disables ripple effect.
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
         /// Icon to use if set.

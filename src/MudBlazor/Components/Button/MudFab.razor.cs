@@ -13,7 +13,7 @@ namespace MudBlazor
                 .AddClass($"mud-fab-extended", !string.IsNullOrEmpty(Label))
                 .AddClass($"mud-fab-{Color.ToDescriptionString()}")
                 .AddClass($"mud-fab-size-{Size.ToDescriptionString()}")
-                .AddClass($"mud-ripple", !DisableRipple && !GetDisabledState())
+                .AddClass($"mud-ripple", Ripple && !GetDisabledState())
                 .AddClass($"mud-fab-disable-elevation", DisableElevation)
                 .AddClass(Class)
                 .Build();
@@ -31,13 +31,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public Size Size { get; set; } = Size.Large;
-
-        /// <summary>
-        /// If applied Icon will be added at the start of the component.
-        /// </summary>
-        [Obsolete("This property is obsolete. Use StartIcon instead.")]
-        [Parameter]
-        public string? Icon { get => StartIcon; set => StartIcon = value; }
 
         /// <summary>
         /// If applied Icon will be added at the start of the component.

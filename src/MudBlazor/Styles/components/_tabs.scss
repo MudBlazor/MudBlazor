@@ -22,8 +22,9 @@
 
   &.mud-tabs-rounded {
     border-radius: var(--mud-default-borderradius);
+    overflow: hidden;
 
-    .mud-tabs-toolbar {
+    .mud-tabs-tabbar {
       border-radius: var(--mud-default-borderradius);
     }
 
@@ -33,7 +34,7 @@
   }
 }
 
-.mud-tabs-toolbar {
+.mud-tabs-tabbar {
   position: relative;
   background-color: var(--mud-palette-surface);
 
@@ -66,7 +67,7 @@
   }
 
   &.mud-tabs-vertical {
-    .mud-tabs-toolbar-inner {
+    .mud-tabs-tabbar-inner {
       flex-direction: column;
 
       .mud-tabs-scroll-button {
@@ -85,14 +86,14 @@
     }
   }
 
-  & .mud-tabs-toolbar-inner {
+  & .mud-tabs-tabbar-inner {
     display: flex;
     min-height: 48px;
   }
 }
 
 
-.mud-tabs-toolbar-content {
+.mud-tabs-tabbar-content {
   width: 100%;
   flex: 1 1 auto;
   display: inline-block;
@@ -100,7 +101,7 @@
   white-space: nowrap;
   overflow: hidden;
 
-  & .mud-tabs-toolbar-wrapper {
+  & .mud-tabs-tabbar-wrapper {
     width: max-content;
     position: inherit;
     display: flex;
@@ -209,7 +210,7 @@
 }
 
 @each $color in $mud-palette-colors {
-  .mud-tabs-toolbar-#{$color} {
+  .mud-tabs-tabbar-#{$color} {
     background-color: var(--mud-palette-#{$color});
     color: var(--mud-palette-#{$color}-text);
 
@@ -261,7 +262,7 @@
 }
 
 .mud-dynamic-tabs {
-  .mud-tabs-toolbar {
+  .mud-tabs-tabbar {
     .mud-tab {
       padding: 6px 14px;
 

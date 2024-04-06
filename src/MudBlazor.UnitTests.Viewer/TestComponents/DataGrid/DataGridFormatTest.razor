@@ -12,7 +12,7 @@
     </Columns>
 </MudDataGrid>
 
-<MudSwitch @bind-Checked="noDecimals" />
+<MudSwitch @bind-Value="noDecimals" />
 
 @code {
     public record Employee(string Name, string Position, int YearsEmployed, int Salary, int Rating,

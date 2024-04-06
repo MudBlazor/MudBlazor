@@ -1,13 +1,13 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudChipSet ReadOnly="true">
-    <MudChip OnClose="Close" Text="Milk"></MudChip>
-    <MudChip Text="Eggs"></MudChip>
-    <MudChip Text="Soap"></MudChip>
-    <MudChip Text="Corn flakes"></MudChip>
-    <MudChip Text="Salad"></MudChip>
-    <MudChip Text="Apples"></MudChip>
-    <MudChip Text="Red wine"></MudChip>
+<MudChipSet T="string" ReadOnly>
+    <MudChip T="string" OnClose="Close" Text="Milk"/>
+    <MudChip T="string" Text="Eggs"/>
+    <MudChip T="string" Text="Soap"/>
+    <MudChip T="string" Text="Corn flakes"/>
+    <MudChip T="string" Text="Salad"/>
+    <MudChip T="string" Text="Apples"/>
+    <MudChip T="string" Text="Red wine"/>
 </MudChipSet>
 
 @code

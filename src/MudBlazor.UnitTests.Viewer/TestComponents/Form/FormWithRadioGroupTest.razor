@@ -1,9 +1,9 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
 <MudForm ValidationDelay="0">
-    <MudRadioGroup T="string" Required="true" @bind-SelectedOption="Selected">
-        <MudRadio Option="@("A")">Option A</MudRadio>
-        <MudRadio Option="@("B")">Option B</MudRadio>
+    <MudRadioGroup T="string" Required="true" @bind-Value="Selected">
+        <MudRadio Value="@("A")">Option A</MudRadio>
+        <MudRadio Value="@("B")">Option B</MudRadio>
     </MudRadioGroup>
 </MudForm>
 

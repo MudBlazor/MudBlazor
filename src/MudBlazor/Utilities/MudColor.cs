@@ -46,7 +46,7 @@ namespace MudBlazor.Utilities
         public byte G => _valuesAsByte[1];
         public byte B => _valuesAsByte[2];
         public byte A => _valuesAsByte[3];
-        public double APercentage => Math.Round((A / 255.0), 2);
+        public double APercentage => Math.Round(A / 255.0, 2);
 
         public double H { get; private set; }
         public double L { get; private set; }
@@ -161,7 +161,7 @@ namespace MudBlazor.Utilities
         {
             value = value.Trim().ToLower();
 
-            if (value.StartsWith("rgba") == true)
+            if (value.StartsWith("rgba"))
             {
                 var parts = SplitInputIntoParts(value);
                 if (parts.Length != 4)
@@ -177,7 +177,7 @@ namespace MudBlazor.Utilities
                     (byte)Math.Max(0, Math.Min(255, 255 * double.Parse(parts[3],CultureInfo.InvariantCulture))),
                 };
             }
-            else if (value.StartsWith("rgb") == true)
+            else if (value.StartsWith("rgb"))
             {
                 var parts = SplitInputIntoParts(value);
                 if (parts.Length != 3)
@@ -316,7 +316,7 @@ namespace MudBlazor.Utilities
 
         private byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new char[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
-        public bool HslChanged(MudColor value) => this.H != value.H || this.S != value.S || this.L != value.L;
+        public bool HslChanged(MudColor value) => H != value.H || S != value.S || L != value.L;
 
         #endregion
 
@@ -343,7 +343,7 @@ namespace MudBlazor.Utilities
 
         public bool Equals(MudColor other)
         {
-            if (ReferenceEquals(other, null) == true) { return false; }
+            if (ReferenceEquals(other, null)) { return false; }
 
             return
                 _valuesAsByte[0] == other._valuesAsByte[0] &&
@@ -358,13 +358,13 @@ namespace MudBlazor.Utilities
         {
             var lhsIsNull = ReferenceEquals(null, lhs);
             var rhsIsNull = ReferenceEquals(null, rhs);
-            if (lhsIsNull == true && rhsIsNull == true)
+            if (lhsIsNull && rhsIsNull)
             {
                 return true;
             }
             else
             {
-                if ((lhsIsNull || rhsIsNull) == true)
+                if ((lhsIsNull || rhsIsNull))
                 {
                     return false;
                 }

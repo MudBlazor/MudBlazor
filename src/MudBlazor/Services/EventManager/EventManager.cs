@@ -63,7 +63,7 @@ namespace MudBlazor
         Task<bool> Unsubscribe(Guid key);
     }
 
-    public class EventListener : IEventListener, IAsyncDisposable, IDisposable
+    public class EventListener : IEventListener, IDisposable
     {
         private readonly IJSRuntime _jsRuntime;
         private readonly DotNetObjectReference<EventListener> _dotNetRef;
@@ -149,7 +149,7 @@ namespace MudBlazor
 
         public async ValueTask DisposeAsync()
         {
-            if (_disposed == true) { return; }
+            if (_disposed) { return; }
 
             foreach (var item in _callbackResolver)
             {

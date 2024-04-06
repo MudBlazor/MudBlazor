@@ -21,7 +21,7 @@ namespace MudBlazor.UnitTests.Utilities
             public string Name { get; }
             public int Prio { get; set; }
 
-            public ItemsWithOrder(String name, int priority)
+            public ItemsWithOrder(string name, int priority)
             {
                 Name = name;
                 Prio = priority;

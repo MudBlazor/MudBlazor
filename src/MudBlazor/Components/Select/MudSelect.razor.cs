@@ -57,7 +57,7 @@ namespace MudBlazor
                 index = 0;
             MudSelectItem<T> item = null;
             // the loop allows us to jump over disabled items until we reach the next non-disabled one
-            for (int i = 0; i < _items.Count; i++)
+            for (var i = 0; i < _items.Count; i++)
             {
                 index += direction;
                 if (index < 0)
@@ -387,7 +387,7 @@ namespace MudBlazor
                     return false;
                 if (!_shadowLookup.TryGetValue(Value, out var item))
                     return false;
-                return (item.ChildContent != null);
+                return item.ChildContent != null;
             }
         }
 
@@ -524,27 +524,6 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopCenter;
 
         /// <summary>
-        /// Sets the direction the Select menu should open.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
-
-        /// <summary>
-        /// If true, the Select menu will open either before or after the input (left/right).
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetX { get; set; }
-
-        /// <summary>
-        /// If true, the Select menu will open either before or after the input (top/bottom).
-        /// </summary>
-        /// [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetY { get; set; }
-
-        /// <summary>
         /// If true, the Select's input will not show any values that are not defined in the dropdown.
         /// This can be useful if Value is bound to a variable which is initialized to a value which is not in the list
         /// and you want the Select to show the label / placeholder instead.
@@ -679,7 +658,7 @@ namespace MudBlazor
                 {
                     _selectAllChecked = false;
                 }
-                else if (_items.Count == _selectedValues.Count)
+                else if (_items.Count(x => !x.Disabled) == _selectedValues.Count)
                 {
                     _selectAllChecked = true;
                 }
@@ -728,7 +707,7 @@ namespace MudBlazor
         {
             _isOpen = false;
             UpdateIcon();
-            if (focusAgain == true)
+            if (focusAgain)
             {
                 StateHasChanged();
                 await OnBlur.InvokeAsync(new FocusEventArgs());
@@ -898,7 +877,7 @@ namespace MudBlazor
                     await CloseMenu(false);
                     break;
                 case "ArrowUp":
-                    if (obj.AltKey == true)
+                    if (obj.AltKey)
                     {
                         await CloseMenu();
                         break;
@@ -914,7 +893,7 @@ namespace MudBlazor
                         break;
                     }
                 case "ArrowDown":
-                    if (obj.AltKey == true)
+                    if (obj.AltKey)
                     {
                         await OpenMenu();
                         break;
@@ -971,7 +950,7 @@ namespace MudBlazor
                     }
                 case "a":
                 case "A":
-                    if (obj.CtrlKey == true)
+                    if (obj.CtrlKey)
                     {
                         if (MultiSelection)
                         {
@@ -1018,7 +997,7 @@ namespace MudBlazor
             else
                 _selectAllChecked = true;
             // Define the items selection
-            if (_selectAllChecked.Value == true)
+            if (_selectAllChecked.Value)
                 await SelectAllItems();
             else
                 await Clear();
@@ -1081,7 +1060,7 @@ namespace MudBlazor
         {
             base.Dispose(disposing);
 
-            if (disposing == true)
+            if (disposing)
             {
                 if (_keyInterceptor != null)
                 {

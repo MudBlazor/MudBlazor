@@ -109,16 +109,6 @@ namespace MudBlazor
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double BufferValue { get; set; }
 
-        [Obsolete("Use Min instead.", true)]
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        public double Minimum { get => Min; set => Min = value; }
-
-        [Obsolete("Use Max instead.", true)]
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        public double Maximum { get => Max; set => Max = value; }
-
         public MudProgressLinear()
         {
             _valueState = RegisterParameter(nameof(Value), () => Value, OnParameterChangedShared, DoubleEpsilonEqualityComparer.Default);
