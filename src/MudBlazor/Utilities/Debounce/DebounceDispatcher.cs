@@ -35,7 +35,7 @@ internal class DebounceDispatcher
     /// Ensures that a function is invoked only once within a specified interval, even if multiple invocations are requested.
     /// </summary>
     /// <remarks>
-    /// This implementation will swallow any exceptions that is thrown by <see cref="function"/>.
+    /// This implementation will swallow any exceptions that is thrown by the invoked task.
     /// </remarks>
     /// <param name="function">The function that returns a Task to be invoked asynchronously.</param>
     /// <param name="cancellationToken">An optional CancellationToken.</param>
