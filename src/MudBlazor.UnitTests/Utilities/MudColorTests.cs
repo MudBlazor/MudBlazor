@@ -566,16 +566,20 @@ namespace MudBlazor.UnitTests.Utilities
         {
             MudColor color1 = new(10, 20, 50, 255);
             MudColor color2 = new(10, 20, 50, 255);
+            MudColor color3 = null;
+            MudColor color4 = null;
 
             (color1 == color1).Should().BeTrue();
             (color2 == color2).Should().BeTrue();
             (color1 == color2).Should().BeTrue();
             (color2 == color1).Should().BeTrue();
+            (color3 == color4).Should().BeTrue();
 
             color1.Equals(color1).Should().BeTrue();
             color2.Equals(color2).Should().BeTrue();
             color1.Equals(color2).Should().BeTrue();
             color2.Equals(color1).Should().BeTrue();
+            Equals(color3, color4).Should().BeTrue();
         }
 
         [Test]
@@ -583,12 +587,18 @@ namespace MudBlazor.UnitTests.Utilities
         {
             MudColor color1 = new(10, 20, 50, 255);
             MudColor color2 = new(10, 20, 50, 10);
+            MudColor color3 = null;
 
             (color1 != color2).Should().BeTrue();
             (color2 != color1).Should().BeTrue();
+            (color2 != color3).Should().BeTrue();
+            (color3 != color2).Should().BeTrue();
 
             color1.Equals(color2).Should().BeFalse();
             color2.Equals(color1).Should().BeFalse();
+            color2.Equals(color3).Should().BeFalse();
+            Equals(color3, color2).Should().BeFalse();
+            Equals(color2, color3).Should().BeFalse();
         }
 
 #pragma warning restore CS1718 // Comparison made to same variable

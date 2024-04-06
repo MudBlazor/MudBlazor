@@ -6,10 +6,14 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 using MudBlazor.Extensions;
 
 namespace MudBlazor.Utilities
 {
+#nullable enable
     /// <summary>
     /// Specifies different output formats for <seealso cref="MudColor"/>.
     /// </summary>
@@ -426,14 +430,14 @@ namespace MudBlazor.Utilities
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is MudColor color && Equals(color);
+        public override bool Equals(object? obj) => obj is MudColor color && Equals(color);
 
         /// <summary>
         /// Determines whether this <see cref="MudColor"/> instance is equal to another <see cref="MudColor"/> instance.
         /// </summary>
         /// <param name="other">The <see cref="MudColor"/> instance to compare.</param>
         /// <returns>True if the instances are equal; otherwise, false.</returns>
-        public bool Equals(MudColor other)
+        public bool Equals(MudColor? other)
         {
             if (ReferenceEquals(other, null))
             {
@@ -453,16 +457,19 @@ namespace MudBlazor.Utilities
         /// <param name="lhs">The first <see cref="MudColor"/> instance to compare.</param>
         /// <param name="rhs">The second <see cref="MudColor"/> instance to compare.</param>
         /// <returns>True if the instances are equal; otherwise, false.</returns>
-        public static bool operator ==(MudColor lhs, MudColor rhs)
+        public static bool operator ==(MudColor? lhs, MudColor? rhs)
         {
-            var lhsIsNull = ReferenceEquals(null, lhs);
-            var rhsIsNull = ReferenceEquals(null, rhs);
-            if (lhsIsNull && rhsIsNull)
+            if (lhs is null && rhs is null)
             {
                 return true;
             }
 
-            if (lhsIsNull || rhsIsNull)
+            if (ReferenceEquals(lhs, rhs))
+            {
+                return true;
+            }
+
+            if (lhs is null || rhs is null)
             {
                 return false;
             }
@@ -511,7 +518,7 @@ namespace MudBlazor.Utilities
         /// </summary>
         /// <param name="color">The MudColor instance to convert.</param>
         /// <returns>The string representation of the color.</returns>
-        public static explicit operator string(MudColor color) => color == null ? string.Empty : color.Value;
+        public static explicit operator string(MudColor? color) => color == null ? string.Empty : color.Value;
 
         private byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new char[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
