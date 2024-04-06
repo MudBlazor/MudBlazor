@@ -19,14 +19,6 @@ internal class PeriodicWorker : BackgroundWorkerBase
     private bool _isInitialized;
     private bool _isInitializing;
 
-    //#if NET8_0_OR_GREATER
-    //    public TimeSpan Period
-    //    {
-    //        get => _periodicTimer.Period;
-    //        set => _periodicTimer.Period = value;
-    //    }
-    //#endif
-
     /// <summary>
     /// Initializes a new instance of the <see cref="PeriodicWorker"/> class with the specified periodic timer handler and interval.
     /// </summary>
@@ -41,9 +33,6 @@ internal class PeriodicWorker : BackgroundWorkerBase
     /// <inheritdoc/>
     public override async Task StartAsync(CancellationToken cancellationToken = default)
     {
-        // We must make sure this is started only once and ignored when StartAsync is called multiple times.
-        // We could make the logic also in the MudColorPicker, but I think it's better to embed it on the StartAsync level
-
         if (_isInitialized)
         {
             return;
