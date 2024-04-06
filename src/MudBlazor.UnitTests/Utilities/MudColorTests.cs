@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
+using System.IO;
+using System.Text;
 using FluentAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -33,6 +35,53 @@ namespace MudBlazor.UnitTests.Utilities
             var deserializeMudColor = Newtonsoft.Json.JsonConvert.DeserializeObject<MudColor>(jsonString);
 
             jsonString.Should().Be("{\"R\":246,\"G\":249,\"B\":251,\"A\":255}");
+            deserializeMudColor.Should().Be(originalMudColor);
+        }
+
+        [Test]
+        public void MudColor_Default_Ctor()
+        {
+            var defaultMudColor = new MudColor();
+            var blackMudColor = new MudColor("#000000ff");
+
+            defaultMudColor.R.Should().Be(0);
+            defaultMudColor.G.Should().Be(0);
+            defaultMudColor.B.Should().Be(0);
+            defaultMudColor.A.Should().Be(255);
+            defaultMudColor.H.Should().Be(0);
+            defaultMudColor.L.Should().Be(0);
+            defaultMudColor.S.Should().Be(0);
+            defaultMudColor.APercentage.Should().Be(1);
+            blackMudColor.Should().Be(defaultMudColor);
+        }
+
+        [Test]
+        public void MudColor_XMLDataContract_Serialization()
+        {
+            var dataContractSerializer = new System.Runtime.Serialization.DataContractSerializer(typeof(MudColor));
+
+            MudColor DeserializeXml(string toDeserialize)
+            {
+                using var textReader = new StringReader(toDeserialize);
+                using var reader = System.Xml.XmlReader.Create(textReader);
+
+                return (MudColor)dataContractSerializer.ReadObject(reader);
+            }
+
+            string SerializeXml(MudColor mudColorObject)
+            {
+                using var memoryStream = new MemoryStream();
+                dataContractSerializer.WriteObject(memoryStream, mudColorObject);
+
+                return Encoding.UTF8.GetString(memoryStream.ToArray());
+            }
+
+            var originalMudColor = new MudColor("#f6f9fb");
+
+            var xmlString = SerializeXml(originalMudColor);
+            var deserializeMudColor = DeserializeXml(xmlString);
+
+            xmlString.Should().Be("<MudColor xmlns=\"http://schemas.datacontract.org/2004/07/MudBlazor.Utilities\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:x=\"http://www.w3.org/2001/XMLSchema\"><R i:type=\"x:unsignedByte\" xmlns=\"\">246</R><G i:type=\"x:unsignedByte\" xmlns=\"\">249</G><B i:type=\"x:unsignedByte\" xmlns=\"\">251</B><A i:type=\"x:unsignedByte\" xmlns=\"\">255</A></MudColor>");
             deserializeMudColor.Should().Be(originalMudColor);
         }
 

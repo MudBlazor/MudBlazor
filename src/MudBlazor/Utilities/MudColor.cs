@@ -6,9 +6,6 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 using MudBlazor.Extensions;
 
 namespace MudBlazor.Utilities
@@ -109,6 +106,18 @@ namespace MudBlazor.Utilities
         protected MudColor(SerializationInfo info, StreamingContext context) :
             this(info.GetByte(nameof(R)), info.GetByte(nameof(G)), info.GetByte(nameof(B)), info.GetByte(nameof(A)))
         {
+        }
+
+        /// <summary>
+        /// Constructs a default instance of <see cref="MudColor"/> with default values (black with full opacity).
+        /// </summary>
+        public MudColor()
+        {
+            _valuesAsByte = new byte[4];
+            _valuesAsByte[0] = 0;
+            _valuesAsByte[1] = 0;
+            _valuesAsByte[2] = 0;
+            _valuesAsByte[3] = 255;
         }
 
         /// <summary>
