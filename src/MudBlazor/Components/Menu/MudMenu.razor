@@ -25,7 +25,7 @@
                 Size="@Size"
                 Variant="@Variant"
                 Disabled="@Disabled"
-                DisableRipple="@DisableRipple"
+                Ripple="@Ripple"
                 DisableElevation="@DisableElevation"
                 OnClick="@ToggleMenu">
             @Label
@@ -33,7 +33,7 @@
     }
     else
     {
-        <MudIconButton Variant="@Variant" Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" DisableRipple="@DisableRipple" DisableElevation="@DisableElevation" @onclick="@ToggleMenu" />
+        <MudIconButton Variant="@Variant" Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" Ripple="@Ripple" DisableElevation="@DisableElevation" @onclick="@ToggleMenu" />
     }
     @* The portal has to include  the cascading values inside, because it's not able to teletransport the cascade *@
     <MudPopover Open="@_isOpen" Class="@PopoverClass" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" RelativeWidth="@FullWidth" Style="@PopoverStyle" @ontouchend:preventDefault>

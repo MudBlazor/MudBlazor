@@ -152,11 +152,11 @@ namespace MudBlazor
         public bool Delimiters { get; set; } = true;
 
         /// <summary>
-        /// If true, disables the ripple effect.
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
         /// If true, the component's padding is reduced so it takes up less space.

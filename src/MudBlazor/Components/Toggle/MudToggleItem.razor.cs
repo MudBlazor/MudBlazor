@@ -19,7 +19,7 @@ namespace MudBlazor
             .AddClass("mud-toggle-item-selected-border", _selected && Parent?.Outline == true)
             .AddClass(Parent?.SelectedClass, _selected && !string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
-            .AddClass("mud-ripple", Parent?.DisableRipple == false)
+            .AddClass("mud-ripple", Parent?.Ripple == true)
             .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
             .AddClass("mud-toggle-delimiter-alternative", Parent?.SelectionMode == SelectionMode.MultiSelection && IsSelected && Parent?.Color != Color.Default)
             .AddClass("rounded-l-xl", Parent is { Rounded: true, Vertical: false } && Parent?.IsFirstItem(this) == true)

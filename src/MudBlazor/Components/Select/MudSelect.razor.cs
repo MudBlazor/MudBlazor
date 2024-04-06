@@ -658,7 +658,7 @@ namespace MudBlazor
                 {
                     _selectAllChecked = false;
                 }
-                else if (_items.Count == _selectedValues.Count)
+                else if (_items.Count(x => !x.Disabled) == _selectedValues.Count)
                 {
                     _selectAllChecked = true;
                 }
