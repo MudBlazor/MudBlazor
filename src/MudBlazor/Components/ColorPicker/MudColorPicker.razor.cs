@@ -10,13 +10,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.State;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Background.Periodic;
+using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor
 {
-    public partial class MudColorPicker : MudPicker<MudColor>, IPeriodicTimerElapsedHandler
+    public partial class MudColorPicker : MudPicker<MudColor>
     {
+        private readonly IParameterState<int> _debounceIntervalState;
+
         public MudColorPicker() : base(new DefaultConverter<MudColor>())
         {
             AdornmentIcon = Icons.Material.Outlined.Palette;
@@ -24,6 +27,7 @@ namespace MudBlazor
             Value = "#594ae2"; // MudBlazor Blue
             Text = GetColorTextValue();
             AdornmentAriaLabel = "Open Color Picker";
+            _debounceIntervalState = RegisterParameter(nameof(DebounceInterval), () => DebounceInterval, OnDebounceIntervalParameterChanged);
         }
 
         #region Fields
@@ -52,7 +56,7 @@ namespace MudBlazor
 
         private readonly Guid _id = Guid.NewGuid();
 
-        private PeriodicWorker _periodicWorker;
+        private DebounceDispatcher _debounceDispatcher;
 
         #endregion
 
@@ -246,33 +250,31 @@ namespace MudBlazor
 
         /// <summary>
         /// <para>The delay (in milliseconds) after dragging the pointer before the color binding updates.</para>
-        /// <para>Updates are instant if the debounce interval is <c>0</c> or lower.</para>
+        /// <para>Updates are instant if the debounce interval is <c>0</c>.</para>
+        /// <para>Default interval is <c>100ms</c>.</para>
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public double DebounceInterval { get; set; } = 100;
+        public int DebounceInterval { get; set; } = 100;
 
         #endregion
 
-        public override async Task SetParametersAsync(ParameterView parameters)
+        protected override void OnInitialized()
         {
-            var lastDebounceInterval = DebounceInterval;
+            base.OnInitialized();
+            SetDebounce(_debounceIntervalState.Value);
+        }
 
-            await base.SetParametersAsync(parameters);
+        private void OnDebounceIntervalParameterChanged(ParameterChangedEventArgs<int> args)
+        {
+            SetDebounce(args.Value);
+        }
 
-            if (lastDebounceInterval != DebounceInterval)
-            {
-                _periodicWorker?.Dispose();
-
-                if (DebounceInterval > 0)
-                {
-                    _periodicWorker = new PeriodicWorker(this, TimeSpan.FromMilliseconds(DebounceInterval));
-                }
-                else
-                {
-                    _periodicWorker = null;
-                }
-            }
+        private void SetDebounce(int interval)
+        {
+            _debounceDispatcher = interval > 0
+                ? new DebounceDispatcher(interval)
+                : null;
         }
 
         private void ToggleCollection()
@@ -434,26 +436,20 @@ namespace MudBlazor
             return HandleColorOverlayClickedAsync();
         }
 
-        Task IPeriodicTimerElapsedHandler.OnPeriodicTimerElapsedAsync(CancellationToken stoppingToken)
-        {
-            return InvokeAsync(UpdateColorBaseOnSelection);
-        }
-
         private async Task OnPointerMoveAsync(PointerEventArgs e)
         {
             if (e.Buttons == 1 && !DisableDragEffect)
             {
                 SetSelectorBasedOnPointerEvents(e, true);
 
-                if (_periodicWorker is null)
+                if (_debounceDispatcher is null)
                 {
-                    // Update instantly because the debounce is not enabled.
+                    // Update instantly because debounce is not enabled.
                     UpdateColorBaseOnSelection();
                 }
                 else
                 {
-                    // Consider adding cancellation token if you need to abort.
-                    await _periodicWorker.StartAsync();
+                    await _debounceDispatcher.DebounceAsync(() => InvokeAsync(UpdateColorBaseOnSelection));
                 }
             }
         }
@@ -539,12 +535,6 @@ namespace MudBlazor
         {
             SetInputString(value);
             return Task.CompletedTask;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            _periodicWorker?.Dispose();
-            base.Dispose(disposing);
         }
 
         #endregion

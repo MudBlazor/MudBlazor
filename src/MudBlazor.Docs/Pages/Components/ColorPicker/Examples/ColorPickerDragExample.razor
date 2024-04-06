@@ -3,12 +3,12 @@
 <MudStack>
     <MudColorPicker DebounceInterval="Interval" DisableDragEffect="!Draggable" PickerVariant="PickerVariant.Static" />
 
-    <MudNumericField T="double" @bind-Value="Interval" Label="Debounce interval" />
+    <MudNumericField T="int" @bind-Value="Interval" Label="Debounce interval" />
 
     <MudCheckBox T="bool" @bind-Value="Draggable" Label="Allow dragging the pointer" />
 </MudStack>
 
 @code {
-    public double Interval { get; set; } = 100;
+    public int Interval { get; set; } = 100;
     public bool Draggable { get; set; } = true;
 }
