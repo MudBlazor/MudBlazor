@@ -403,7 +403,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
         public RenderFragment<TableGroupData<object, T>> GroupFooterTemplate { get; set; }
-        
+
         /// <summary>
         /// If true, the table will be striped per group. Use instead of Striped.
         /// </summary>

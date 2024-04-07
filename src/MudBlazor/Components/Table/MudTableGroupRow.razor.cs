@@ -66,7 +66,6 @@ namespace MudBlazor
 
         [Parameter] public string HeaderStyle { get; set; }
         [Parameter] public string FooterStyle { get; set; }
-
         [Parameter] public string StripedGroup { get; set; } = "";
 
         /// <summary>
