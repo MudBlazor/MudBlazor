@@ -11,13 +11,13 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Debounce;
+using MudBlazor.Utilities.Throttle;
 
 namespace MudBlazor
 {
     public partial class MudColorPicker : MudPicker<MudColor>
     {
-        private readonly IParameterState<int> _debounceIntervalState;
+        private readonly IParameterState<int> _throttleIntervalState;
 
         public MudColorPicker() : base(new DefaultConverter<MudColor>())
         {
@@ -26,7 +26,7 @@ namespace MudBlazor
             Value = "#594ae2"; // MudBlazor Blue
             Text = GetColorTextValue();
             AdornmentAriaLabel = "Open Color Picker";
-            _debounceIntervalState = RegisterParameter(nameof(DebounceInterval), () => DebounceInterval, OnDebounceIntervalParameterChanged);
+            _throttleIntervalState = RegisterParameter(nameof(ThrottleInterval), () => ThrottleInterval, OnThrottleIntervalParameterChanged);
         }
 
         #region Fields
@@ -55,7 +55,7 @@ namespace MudBlazor
 
         private readonly Guid _id = Guid.NewGuid();
 
-        private DebounceDispatcher _debounceDispatcher;
+        private ThrottleDispatcher _throttleDispatcher;
 
         #endregion
 
@@ -254,25 +254,25 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public int DebounceInterval { get; set; } = 100;
+        public int ThrottleInterval { get; set; } = 100;
 
         #endregion
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            SetDebounce(_debounceIntervalState.Value);
+            SetThrottle(_throttleIntervalState.Value);
         }
 
-        private void OnDebounceIntervalParameterChanged(ParameterChangedEventArgs<int> args)
+        private void OnThrottleIntervalParameterChanged(ParameterChangedEventArgs<int> args)
         {
-            SetDebounce(args.Value);
+            SetThrottle(args.Value);
         }
 
-        private void SetDebounce(int interval)
+        private void SetThrottle(int interval)
         {
-            _debounceDispatcher = interval > 0
-                ? new DebounceDispatcher(interval)
+            _throttleDispatcher = interval > 0
+                ? new ThrottleDispatcher(interval)
                 : null;
         }
 
@@ -441,14 +441,14 @@ namespace MudBlazor
             {
                 SetSelectorBasedOnPointerEvents(e, true);
 
-                if (_debounceDispatcher is null)
+                if (_throttleDispatcher is null)
                 {
                     // Update instantly because debounce is not enabled.
                     UpdateColorBaseOnSelection();
                 }
                 else
                 {
-                    await _debounceDispatcher.DebounceAsync(() => InvokeAsync(UpdateColorBaseOnSelection));
+                    await _throttleDispatcher.ThrottleAsync(() => InvokeAsync(UpdateColorBaseOnSelection));
                 }
             }
         }

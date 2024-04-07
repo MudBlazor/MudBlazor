@@ -15,11 +15,8 @@ namespace MudBlazor.Utilities.Debounce;
 /// </summary>
 internal class DebounceDispatcher
 {
-    private Task? _waitingTask;
-    private DateTime _lastInvokeTime;
-    private Func<Task>? _funcToInvoke;
     private readonly int _interval;
-    private readonly object _locker = new();
+    private CancellationTokenSource? _cancellationTokenSource;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DebounceDispatcher"/> class with the specified interval.
@@ -37,51 +34,31 @@ internal class DebounceDispatcher
     /// <remarks>
     /// This implementation will swallow any exceptions that is thrown by the invoked task.
     /// </remarks>
-    /// <param name="function">The function that returns a Task to be invoked asynchronously.</param>
+    /// <param name="action">The function that returns a Task to be invoked asynchronously.</param>
     /// <param name="cancellationToken">An optional CancellationToken.</param>
     /// <returns>A Task representing the asynchronous operation with minimal delay.</returns>
-    public Task DebounceAsync(Func<Task> function, CancellationToken cancellationToken = default)
+    public async Task DebounceAsync(Func<Task> action, CancellationToken cancellationToken = default)
     {
-        lock (_locker)
+        // Cancel the previous debounce task if it exists
+        // ReSharper disable MethodHasAsyncOverload (not available in .net7)
+        _cancellationTokenSource?.Cancel();
+        // ReSharper restore MethodHasAsyncOverload
+
+        // Create a new cancellation token source linked with provided token
+        _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        cancellationToken = _cancellationTokenSource.Token;
+
+        try
         {
-            _funcToInvoke = function;
-            _lastInvokeTime = DateTime.UtcNow;
+            // Wait for the debounce interval
+            await Task.Delay(_interval, cancellationToken);
 
-            // If there's already a waiting task, return it
-            if (_waitingTask is not null)
-            {
-                return _waitingTask;
-            }
-
-            var initialDelay = (int)(_interval - (DateTime.UtcNow - _lastInvokeTime).TotalMilliseconds);
-            // Ensure delay is non-negative
-            initialDelay = Math.Max(initialDelay, 0);
-
-            _waitingTask = Task.Run(async () =>
-            {
-                // Wait for the initial delay
-                await Task.Delay(initialDelay, cancellationToken);
-
-                // Perform the function invocation
-                try
-                {
-                    await _funcToInvoke.Invoke();
-                }
-                catch (Exception)
-                {
-                    // Ignore
-                }
-                finally
-                {
-                    // Clear the waiting task
-                    lock (_locker)
-                    {
-                        _waitingTask = null;
-                    }
-                }
-            }, cancellationToken);
-
-            return _waitingTask;
+            // Execute the action
+            await action();
+        }
+        catch (TaskCanceledException)
+        {
+            // If the task was canceled, ignore it
         }
     }
 }

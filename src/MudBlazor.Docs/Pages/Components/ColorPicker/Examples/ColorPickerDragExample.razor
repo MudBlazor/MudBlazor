@@ -1,9 +1,9 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudStack>
-    <MudColorPicker DebounceInterval="Interval" DisableDragEffect="!Draggable" PickerVariant="PickerVariant.Static" />
+    <MudColorPicker ThrottleInterval="Interval" DisableDragEffect="!Draggable" PickerVariant="PickerVariant.Static" />
 
-    <MudNumericField T="int" @bind-Value="Interval" Label="Debounce interval" />
+    <MudNumericField T="int" @bind-Value="Interval" Label="Throttle interval" />
 
     <MudCheckBox T="bool" @bind-Value="Draggable" Label="Allow dragging the pointer" />
 </MudStack>
