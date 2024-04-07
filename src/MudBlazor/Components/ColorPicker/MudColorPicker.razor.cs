@@ -249,12 +249,12 @@ namespace MudBlazor
 
         /// <summary>
         /// <para>The delay (in milliseconds) after dragging the pointer before the color binding updates.</para>
-        /// <para>Updates are instant if the debounce interval is <c>0</c>.</para>
-        /// <para>Default interval is <c>100ms</c>.</para>
+        /// <para>Updates are instant if the throttling interval is <c>0</c>.</para>
+        /// <para>Default interval is <c>300ms</c>.</para>
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public int ThrottleInterval { get; set; } = 100;
+        public int ThrottleInterval { get; set; } = 300;
 
         #endregion
 
