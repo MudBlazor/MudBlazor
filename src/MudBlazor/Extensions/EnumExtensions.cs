@@ -34,12 +34,12 @@ namespace MudBlazor.Extensions
 
             return Enumerable.Empty<Enum>();
         }
-        
+
         /// <summary>
-        /// Get string from [Display(Name = "Value")] atrribute from enum
+        /// Returns the name of the enumeration if attributes are set DisplayName in enum
         /// </summary>
-        /// <param name="currentEnum"></param>
-        /// <returns>String value from [Display]</returns>
+        /// <param name="currentEnum">Current enum</param>
+        /// <returns>Get value Name of Display attribute or default value if non exist</returns>
         public static string GetEnumDisplayName(this Enum currentEnum)
         {
             return currentEnum.GetType().GetMember(currentEnum.ToString())
@@ -47,6 +47,5 @@ namespace MudBlazor.Extensions
                 .GetCustomAttribute<DisplayAttribute>()
                 ?.Name ?? currentEnum.ToString();
         }
-        
     }
 }
