@@ -43,7 +43,7 @@ namespace MudBlazor.Docs.Extensions
             services.AddScoped<IUserPreferencesService, UserPreferencesService>();
             services.AddScoped<INotificationService, InMemoryNotificationService>();
             services.AddSingleton<IPeriodicTableService, PeriodicTableService>();
-            services.AddSingleton<IRenderQueueService, RenderQueueService>();
+            services.AddScoped<IRenderQueueService, RenderQueueService>();
             services.AddScoped<LayoutService>();
             services.AddGoogleAnalytics("G-PRYNCB61NV");
 

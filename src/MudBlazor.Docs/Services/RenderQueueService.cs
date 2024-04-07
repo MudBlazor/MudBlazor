@@ -37,22 +37,22 @@ namespace MudBlazor.Docs.Services
         public async ValueTask Enqueue(QueuedContent component)
         {
             _queue.Enqueue(component);
-            component.Rendered = EventCallback.Factory.Create(this, RenderNext);
-            component.Disposed = EventCallback.Factory.Create(this, RenderNext);
+            component.Rendered = EventCallback.Factory.Create(this, async () => await RenderNext());
+            component.Disposed = EventCallback.Factory.Create(this, async () => await RenderNext());
             if (_queue.Count <= Capacity)
                 await component.RenderAsync();
         }
 
-        private async Task RenderNext()
+        private async ValueTask RenderNext()
         {
             QueuedContent component;
             while (_queue.TryDequeue(out component) && (component.IsDisposed || component.IsRendered))
             {
-                // Move on to the next component
+                // Continue looking for an unrendered component
             }
             if (component != null)
             {
-                await Task.Delay(20); // Wait for the page to render
+                await Task.Delay(20); // Wait a moment for prior renders to complete
                 await component.RenderAsync();
             }
             if (_emptyQueueTcs != null && _queue.IsEmpty)
