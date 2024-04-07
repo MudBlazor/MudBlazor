@@ -17,7 +17,7 @@ namespace MudBlazor.Utilities.Throttle;
 /// Throttling ensures that a function is invoked no more than once within a defined time interval,
 /// regardless of how many times it is called.
 /// </remarks>
-public class ThrottleDispatcher
+internal class ThrottleDispatcher
 {
     private readonly int _interval;
     private readonly object _locker = new();

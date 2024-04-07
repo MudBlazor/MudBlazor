@@ -51,6 +51,7 @@ public class DebounceDispatcherTests
 
             return Task.CompletedTask;
         }
+
         async Task CallDebounceAsyncAfterDelay(int delay)
         {
             await Task.Delay(delay).ConfigureAwait(false);
