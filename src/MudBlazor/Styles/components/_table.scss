@@ -59,11 +59,13 @@
   flex-direction: inherit;
   justify-content: flex-start;
 
-  &:hover {
-    color: var(--mud-palette-action-default);
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--mud-palette-action-default);
 
-    .mud-table-sort-label-icon {
-      opacity: 0.8;
+      .mud-table-sort-label-icon {
+        opacity: 0.8;
+      }
     }
   }
 
@@ -292,8 +294,10 @@
 
 .mud-table-hover {
   & .mud-table-container .mud-table-root .mud-table-body {
-    & .mud-table-row:hover {
-      background-color: var(--mud-palette-table-hover);
+    @media(hover: hover) and (pointer: fine) {
+      & .mud-table-row:hover {
+        background-color: var(--mud-palette-table-hover);
+      }
     }
   }
 }
@@ -308,8 +312,10 @@
 
 .mud-table-hover.mud-table-striped {
   & .mud-table-container .mud-table-root .mud-table-body {
-    & .mud-table-row:nth-of-type(odd):hover {
-      background-color: var(--mud-palette-table-hover);
+    @media(hover: hover) and (pointer: fine) {
+      & .mud-table-row:nth-of-type(odd):hover {
+        background-color: var(--mud-palette-table-hover);
+      }
     }
   }
 }
@@ -583,7 +589,6 @@
     }
   }
 }
-
 // Table Pagination Flex Wrapper on old phones
 @media (max-width:360px) {
   .mud-table {

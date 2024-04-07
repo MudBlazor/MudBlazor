@@ -236,6 +236,6 @@ public class RegexMaskIPv6Tests
         mask.SetText("2001db8::34f400000000f3dd34f4:24524");
         mask.CaretPos = 2;
         mask.UpdateFrom(null);
-        mask.ToString().Should().Be("[2|001:db8::34f4:0000:0000:f3dd:34f4]:24524");        
+        mask.ToString().Should().Be("[2|001:db8::34f4:0000:0000:f3dd:34f4]:24524");
     }
 }

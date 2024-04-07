@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Utilities;
 using MudBlazor.Interfaces;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -159,14 +159,6 @@ namespace MudBlazor
         public HashSet<T>? Items { get; set; }
 
         /// <summary>
-        /// Command executed when the user clicks on the CommitEdit Button.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.TreeView.ClickAction)]
-        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
-        public ICommand? Command { get; set; }
-
-        /// <summary>
         /// Expand or collapse treeview item when it has children. Two-way bindable. Note: if you directly set this to
         /// true or false (instead of using two-way binding) it will force the item's expansion state.
         /// </summary>
@@ -187,7 +179,7 @@ namespace MudBlazor
             get => _isSelected;
             set
             {
-                if(_isSelected.Equals(value)) return;
+                if (_isSelected.Equals(value)) return;
 
                 _isSelected = value;
             }
@@ -378,12 +370,6 @@ namespace MudBlazor
             }
 
             await OnClick.InvokeAsync(ev);
-#pragma warning disable CS0618
-            if (Command?.CanExecute(Value) ?? false)
-            {
-                Command.Execute(Value);
-            }
-#pragma warning restore CS0618
         }
 
         protected async Task OnItemDoubleClicked(MouseEventArgs ev)

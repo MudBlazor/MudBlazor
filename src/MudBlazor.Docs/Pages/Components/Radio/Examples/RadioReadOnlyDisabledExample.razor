@@ -2,7 +2,7 @@
 
 <MudGrid>
     <MudItem sm="12" md="6">
-        <MudRadioGroup @bind-Value="@SelectedOption1" ReadOnly="ReadOnly">
+        <MudRadioGroup @bind-Value="SelectedOption1" ReadOnly="ReadOnly">
             <MudRadio Value="@("Radio 1")">Radio 1</MudRadio>
             <MudRadio Value="@("Radio 2")">Radio 2</MudRadio>
             <MudRadio Value="@("Radio 3")">Radio 3</MudRadio>
@@ -12,7 +12,7 @@
         <MudText>Selected Option 1: @SelectedOption1</MudText>
     </MudItem>
     <MudItem sm="12" md="6">
-        <MudRadioGroup @bind-Value="@SelectedOption2" Disabled="Disabled">
+        <MudRadioGroup @bind-Value="SelectedOption2" Disabled="Disabled">
             <MudRadio Value="@("Radio 1")">Radio 1</MudRadio>
             <MudRadio Value="@("Radio 2")">Radio 2</MudRadio>
             <MudRadio Value="@("Radio 3")">Radio 3</MudRadio>

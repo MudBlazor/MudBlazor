@@ -15,9 +15,8 @@ namespace MudBlazor.UnitTests.Components
     public class ListTests : BunitTest
     {
         /// <summary>
-        /// Clicking the drinks selects them. The child lists are updated accordingly, meaning, only ever 1 list item can have the active class.
-        /// 
-        /// In this test no item is selected to begin with
+        /// <para>Clicking the drinks selects them. The child lists are updated accordingly, meaning, only ever 1 list item can have the active class.</para>
+        /// <para>In this test no item is selected to begin with</para>
         /// </summary>
         [Test]
         public async Task ListSelectionTest()
@@ -46,9 +45,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Clicking the drinks selects them. The child lists are updated accordingly, meaning, only ever 1 list item can have the active class.
-        /// 
-        /// This test starts with a pre-selected item (by value)
+        /// <para>Clicking the drinks selects them. The child lists are updated accordingly, meaning, only ever 1 list item can have the active class.</para>
+        /// <para>This test starts with a pre-selected item (by value)</para>
         /// </summary>
         [Test]
         public async Task ListWithPreSelectedValueTest()
@@ -60,7 +58,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups
             comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
             // set Pu'er, a heavily fermented Chinese tea that tastes like an old leather glove
-            await comp.InvokeAsync(()=>comp.Instance.SetSelecedValue(4));
+            await comp.InvokeAsync(() => comp.Instance.SetSelecedValue(4));
             list.SelectedItem.Text.Should().Be("Pu'er");
             comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
             comp.FindComponents<MudListItem>()[4].Markup.Should().Contain("mud-selected-item");

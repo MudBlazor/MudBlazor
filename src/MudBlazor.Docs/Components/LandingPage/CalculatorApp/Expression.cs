@@ -42,7 +42,7 @@ namespace PrimitiveCalculator
 
         public Expression(SimpleParser parser)
         {
-            this._parser = parser;
+            _parser = parser;
         }
 
         public Expression(double nr)

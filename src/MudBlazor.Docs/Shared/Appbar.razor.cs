@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -15,6 +16,8 @@ namespace MudBlazor.Docs.Shared;
 public partial class Appbar
 {
     private bool _searchDialogOpen;
+    private bool _searchDialogAutocompleteOpen;
+    private int _searchDialogReturnedItemsCount;
     private string _badgeTextSoon = "coming soon";
     private MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete = null!;
     private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true };
@@ -91,6 +94,17 @@ public partial class Appbar
         }
     ];
 
+    public bool IsSearchDialogOpen
+    {
+        get => _searchDialogOpen;
+        set
+        {
+            _searchDialogAutocompleteOpen = default;
+            _searchDialogReturnedItemsCount = default;
+            _searchDialogOpen = value;
+        }
+    }
+
     [Inject]
     private NavigationManager NavigationManager { get; set; } = null!;
 
@@ -99,9 +113,6 @@ public partial class Appbar
 
     [Inject]
     private LayoutService LayoutService { get; set; } = null!;
-
-    [Parameter]
-    public bool DisplaySearchBar { get; set; }
 
     [Parameter]
     public EventCallback<MouseEventArgs> DrawerToggleCallback { get; set; }
@@ -118,7 +129,7 @@ public partial class Appbar
         return page == LayoutService.GetDocsBasePage(NavigationManager.Uri) ? "mud-chip-text mud-chip-color-primary mx-1 px-3" : "mx-1 px-3";
     }
 
-    private Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text)
+    private Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text, CancellationToken token)
     {
         if (string.IsNullOrWhiteSpace(text))
         {
@@ -130,5 +141,5 @@ public partial class Appbar
         return ApiLinkService.Search(text);
     }
 
-    private void OpenSearchDialog() => _searchDialogOpen = true;
+    private void OpenSearchDialog() => IsSearchDialogOpen = true;
 }

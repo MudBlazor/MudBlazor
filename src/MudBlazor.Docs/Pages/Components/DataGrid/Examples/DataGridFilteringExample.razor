@@ -18,17 +18,17 @@
 </MudDataGrid>
 
 <div class="d-flex flex-wrap mt-4">
-    <MudRadioGroup T="DataGridFilterMode" @bind-SelectedOption="@_filterMode">
-        <MudRadio Dense="true" Option="@DataGridFilterMode.Simple" Color="Color.Primary">Simple</MudRadio>
-        <MudRadio Dense="true" Option="@DataGridFilterMode.ColumnFilterMenu" Color="Color.Tertiary">Column Menu</MudRadio>
-        <MudRadio Dense="true" Option="@DataGridFilterMode.ColumnFilterRow">Column Row</MudRadio>
+    <MudRadioGroup T="DataGridFilterMode" @bind-Value="@_filterMode">
+        <MudRadio Dense="true" Value="@DataGridFilterMode.Simple" Color="Color.Primary">Simple</MudRadio>
+        <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterMenu" Color="Color.Tertiary">Column Menu</MudRadio>
+        <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterRow">Column Row</MudRadio>
     </MudRadioGroup>
 </div>
 
 <div class="d-flex flex-wrap mt-4">
-    <MudRadioGroup T="DataGridFilterCaseSensitivity" @bind-SelectedOption="@_caseSensitivity">
-        <MudRadio Dense="true" Option="@DataGridFilterCaseSensitivity.Default" Color="Color.Primary">Default Case Sensitivity</MudRadio>
-        <MudRadio Dense="true" Option="@DataGridFilterCaseSensitivity.CaseInsensitive" Color="Color.Tertiary">Case Insensitive</MudRadio>
+    <MudRadioGroup T="DataGridFilterCaseSensitivity" @bind-Value="@_caseSensitivity">
+        <MudRadio Dense="true" Value="@DataGridFilterCaseSensitivity.Default" Color="Color.Primary">Default Case Sensitivity</MudRadio>
+        <MudRadio Dense="true" Value="@DataGridFilterCaseSensitivity.CaseInsensitive" Color="Color.Tertiary">Case Insensitive</MudRadio>
     </MudRadioGroup>
 </div>
 

@@ -43,7 +43,7 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, the left and right padding is removed from from the appbar.
+        /// If true, the left and right padding is removed from the appbar.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.AppBar.Appearance)]
@@ -62,7 +62,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.AppBar.Behavior)]
         public bool Fixed { get; set; } = true;
-        
+
         /// <summary>
         /// If true, AppBar is allowed to wrap.
         /// </summary>

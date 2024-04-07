@@ -42,10 +42,16 @@
     </div>
     <div class="@ContentClassNames">
         <MudToolBar DisableGutters="true" Class="mud-text-secondary">
-            <MudIconButton OnClick="@(() => ToggleMiniDrawer())" Icon="@GetIcon()" Color="Color.Inherit"/>
-            <MudIconButton Icon="@Icons.Material.Outlined.Search" Color="Color.Inherit"/>
-            <MudSpacer/>
-            <MudIconButton Class="mud-text-secondary" Icon="@Icons.Material.Outlined.Notifications"/>
+            <MudTooltip Duration="1000" Text="Toggle Drawer">
+                <MudIconButton OnClick="@(() => ToggleMiniDrawer())" Icon="@GetIcon()" Color="Color.Inherit" />
+            </MudTooltip>
+            <MudTooltip Duration="1000" Text="Search">
+                <MudIconButton Icon="@Icons.Material.Outlined.Search" Color="Color.Inherit" />
+            </MudTooltip>
+            <MudSpacer />
+            <MudTooltip Duration="1000" Text="Notifications">
+                <MudIconButton Class="mud-text-secondary" Icon="@Icons.Material.Outlined.Notifications"/>
+            </MudTooltip>
             <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" PopoverClass="mudblazor-landingpage-scaled-menu mud-elevation-1">
                 <ActivatorContent>
                     <MiniAppAvatar />
@@ -147,7 +153,7 @@
                     <MudDivider Class="my-3"/>
                     <MudText Typo="Typo.subtitle2" GutterBottom="true">Reactor Type</MudText>
                     <div class="mx-n2 mb-2">
-                        <MudChip Color="Color.Primary">RBMK-1000</MudChip><MudChip>RBMK-1500</MudChip><MudChip>RBMKP-2400</MudChip>
+                        <MudChip T="string" Color="Color.Primary">RBMK-1000</MudChip><MudChip T="string">RBMK-1500</MudChip><MudChip T="string">RBMKP-2400</MudChip>
                     </div>
                     <div>
                         <MudButton Variant="Variant.Text" Color="Color.Primary" Class="ml-n2 mb-n2">Read More</MudButton>

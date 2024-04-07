@@ -2,7 +2,7 @@
 
 #nullable enable
 /// <summary>
-/// Breakpoints describe certain user interfaces sizes or ranges. Use them in conjunction with MudHidden or ResizeListenerService
+/// Breakpoints describe certain user interfaces sizes or ranges. Use them in conjunction with <see cref="MudHidden"/> or <see cref="IBrowserViewportService"/>.
 /// </summary>
 public enum Breakpoint
 {

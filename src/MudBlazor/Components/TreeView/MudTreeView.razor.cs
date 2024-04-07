@@ -56,22 +56,6 @@ namespace MudBlazor
         public bool MultiSelection { get; set; }
 
         /// <summary>
-        /// if true, multiple values can be selected via checkboxes which are automatically shown in the tree view.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use MultiSelection instead.", true)]
-        [Parameter]
-        public bool CanSelect
-        {
-            get => MultiSelection;
-            set => MultiSelection = value;
-        }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("MudTreeView now automaticly activates when using SelectedValue.", true)]
-        [Parameter] public bool CanActivate { get; set; }
-
-        /// <summary>
         /// If true, clicking anywhere on the item will expand it, if it has children.
         /// </summary>
         [Parameter]
@@ -91,18 +75,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public bool Hover { get; set; }
-
-        /// <summary>
-        /// Hover effect for item's on mouse-over.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use Hover instead.", true)]
-        [Parameter]
-        public bool CanHover
-        {
-            get => Hover;
-            set => Hover = value;
-        }
 
         /// <summary>
         /// If true, compact vertical padding will be applied to all treeview items.
@@ -145,15 +117,6 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Data)]
         public HashSet<T> Items { get; set; } = new();
 
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use SelectedValueChanged instead.", true)]
-        [Parameter]
-        public EventCallback<T?> ActivatedValueChanged
-        {
-            get => SelectedValueChanged;
-            set => SelectedValueChanged = value;
-        }
-
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public T? SelectedValue { get; set; }
@@ -187,7 +150,7 @@ namespace MudBlazor
         /// <summary>
         /// Comparer is used to check if two tree items are equal
         /// </summary>
-        [Parameter] 
+        [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public IEqualityComparer<T?> Comparer { get; set; } = EqualityComparer<T?>.Default;
 
@@ -293,7 +256,7 @@ namespace MudBlazor
         ///  <param name="value">The value to be set as the selected value.</param>
         internal async Task SetSelectedValue(T? value)
         {
-            if(Comparer.Equals(value, _previousSelectedValue)) return;
+            if (Comparer.Equals(value, _previousSelectedValue)) return;
 
             await UnSelectAllChildren();
 

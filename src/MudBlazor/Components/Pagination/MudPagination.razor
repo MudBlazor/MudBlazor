@@ -27,12 +27,12 @@
         else if (currentPage == Selected)
         {
             <li class="@SelectedItemClassname">
-                <MudButton Variant="@(Variant == Variant.Outlined ? Variant.Outlined : Variant.Filled)" Size="@Size" DisableRipple="true" Disabled="@Disabled" Color="@Color" aria-current="page" aria-label="@($"Current page {currentPage}")">@currentPage</MudButton>
+                <MudButton Variant="@(Variant == Variant.Outlined ? Variant.Outlined : Variant.Filled)" Size="@Size" Ripple="false" Disabled="@Disabled" Color="@Color" aria-current="page" aria-label="@($"Current page {currentPage}")">@currentPage</MudButton>
             </li>
         }
         else {
             <li class="@ItemClassname">
-                <MudButton OnClick="@(() => Selected = currentPage)" Variant="@Variant" Size="@Size" DisableRipple="true" Disabled="@Disabled" aria-label="@($"Page {currentPage}")">@currentPage</MudButton>
+                <MudButton OnClick="@(() => Selected = currentPage)" Variant="@Variant" Size="@Size" Ripple="false" Disabled="@Disabled" aria-label="@($"Page {currentPage}")">@currentPage</MudButton>
             </li>
         }
     }
