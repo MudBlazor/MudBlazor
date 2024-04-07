@@ -2,6 +2,8 @@
 using Blazored.LocalStorage;
 using BytexDigital.Blazor.Components.CookieConsent;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Docs.Pages.Consent.Modal;
+using MudBlazor.Docs.Pages.Consent.Prompt;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
 using MudBlazor.Docs.Services.UserPreferences;
@@ -55,12 +57,14 @@ namespace MudBlazor.Docs.Extensions
                 // Call optional
                 options.UseDefaultConsentPrompt(prompt =>
                 {
-                    prompt.Position = ConsentModalPosition.BottomRight;
-                    prompt.Layout = ConsentModalLayout.Bar;
+                    prompt.Position = ConsentModalPosition.BottomCenter;
+                    prompt.Layout = ConsentModalLayout.Cloud;
                     prompt.SecondaryActionOpensSettings = false;
                     prompt.AcceptAllButtonDisplaysFirst = false;
                 });
 
+                options.ConsentPromptVariant = new MudCookieConsentPromptVariant();
+                options.SettingsModalVariant = new MudCookieConsentDefaultSettingsModalVariant();
                 options.Categories.Add(new CookieCategory
                 {
                     TitleText = new()
