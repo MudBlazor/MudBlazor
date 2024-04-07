@@ -259,7 +259,7 @@ public MudTreeViewItemToggleButton()
 
 private Task ToggleAsync()
 {
-	return _expanded.SetValueAsync(!_expanded.Value);
+	return _expandedState.SetValueAsync(!_expandedState.Value);
 }
 ```
 
