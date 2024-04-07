@@ -654,14 +654,5 @@ namespace MudBlazor.UnitTests.Utilities
 
             palette.Should().NotBeNull();
         }
-
-        [Test]
-        public void NullIsTreatedLikeEmptyString()
-        {
-            var nullColor = new MudColor(null);
-            var emptyColor = new MudColor(null);
-
-            nullColor.Should().Be(emptyColor);
-        }
     }
 }

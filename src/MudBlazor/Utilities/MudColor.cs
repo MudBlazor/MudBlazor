@@ -159,7 +159,11 @@ namespace MudBlazor.Utilities
 
         public MudColor(string value)
         {
-            value ??= string.Empty;
+            if (string.IsNullOrEmpty(value))
+            {
+                throw new ArgumentException("not a valid color", nameof(value));
+            }
+
             value = value.Trim().ToLowerInvariant();
 
             if (value.StartsWith("rgba"))
