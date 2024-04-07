@@ -16,16 +16,12 @@
 
 @code {
 #nullable enable
-
     private RenderFragment<FooterContext<T>>? GetFooterTemplate()
         => ShowInFooter ? FooterTemplate : null;
 
-    // ReSharper disable once InconsistentNaming, UnusedParameter.Local
-    private RenderFragment<FooterContext<T>> FooterTemplate => context => __builder =>
-    {
-        <MudCheckBox T="bool?"
-                     Size="@Size"
-                     Value="@context.IsAllSelected"
-                     ValueChanged="@context.Actions.SetSelectAllAsync" />
-    };
+    private RenderFragment<FooterContext<T>> FooterTemplate => context => 
+        @<MudCheckBox T="bool?"
+                      Size="@Size"
+                      Value="@context.IsAllSelected"
+                      ValueChanged="@context.Actions.SetSelectAllAsync" />
 }
