@@ -19,9 +19,9 @@
     private RenderFragment<FooterContext<T>>? GetFooterTemplate()
         => ShowInFooter ? FooterTemplate : null;
 
-    private RenderFragment<FooterContext<T>> FooterTemplate => context => 
+    private RenderFragment<FooterContext<T>> FooterTemplate => context =>
         @<MudCheckBox T="bool?"
                       Size="@Size"
                       Value="@context.IsAllSelected"
-                      ValueChanged="@context.Actions.SetSelectAllAsync" />
+                      ValueChanged="@context.Actions.SetSelectAllAsync"/>;
 }
