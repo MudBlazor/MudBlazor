@@ -2,10 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using BytexDigital.Blazor.Components.CookieConsent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BytexDigital.Blazor.Components.CookieConsent;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 

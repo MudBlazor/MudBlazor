@@ -3,11 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Linq;
-using BytexDigital.Blazor.Components.CookieConsent.Dialogs.Prompt.Default;
+using System.Threading.Tasks;
 using BytexDigital.Blazor.Components.CookieConsent;
+using BytexDigital.Blazor.Components.CookieConsent.Dialogs.Prompt.Default;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
 
 namespace MudBlazor.Docs.Pages.Consent.Prompt;
 
