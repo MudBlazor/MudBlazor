@@ -98,6 +98,7 @@
 
   &.mud-clickable {
     cursor: pointer;
+    user-select: none;
   }
 
   .mud-chip-icon {
@@ -135,7 +136,6 @@
     display: inline-flex;
     height: 100%;
     max-width: 100%;
-    user-select: none;
   }
 }
 
@@ -144,9 +144,11 @@
   background-color: var(--mud-palette-chip-default);
   --mud-ripple-opacity: var(--mud-ripple-opacity-secondary);
 
-  @media(hover: hover) and (pointer: fine) {
-    &:hover:not(.mud-disabled) {
-      background-color: var(--mud-palette-chip-default-hover);
+  &.mud-clickable {
+    @media(hover: hover) and (pointer: fine) {
+      &:hover:not(.mud-disabled) {
+        background-color: var(--mud-palette-chip-default-hover);
+      }
     }
   }
 
@@ -160,9 +162,11 @@
       --mud-ripple-color: var(--mud-palette-#{$color}-text) !important;
       background-color: var(--mud-palette-#{$color});
 
-      @media(hover: hover) and (pointer: fine) {
-        &:hover:not(.mud-disabled) {
-          background-color: var(--mud-palette-#{$color}-darken);
+      &.mud-clickable {
+        @media(hover: hover) and (pointer: fine) {
+          &:hover:not(.mud-disabled) {
+            background-color: var(--mud-palette-#{$color}-darken);
+          }
         }
       }
 
@@ -177,9 +181,11 @@
   color: var(--mud-palette-text-primary);
   border: 1px solid var(--mud-palette-lines-inputs);
 
-  @media(hover: hover) and (pointer: fine) {
-    &:hover:not(.mud-disabled) {
-      background-color: var(--mud-palette-action-default-hover);
+  &.mud-clickable {
+    @media(hover: hover) and (pointer: fine) {
+      &:hover:not(.mud-disabled) {
+        background-color: var(--mud-palette-action-default-hover);
+      }
     }
   }
 
@@ -193,9 +199,11 @@
       --mud-ripple-color: var(--mud-palette-#{$color}) !important;
       border: 1px solid var(--mud-palette-#{$color});
 
-      @media(hover: hover) and (pointer: fine) {
-        &:hover:not(.mud-disabled) {
-          background-color: var(--mud-palette-#{$color}-hover);
+      &.mud-clickable {
+        @media(hover: hover) and (pointer: fine) {
+          &:hover:not(.mud-disabled) {
+            background-color: var(--mud-palette-#{$color}-hover);
+          }
         }
       }
 
@@ -224,9 +232,11 @@
   color: var(--mud-palette-text-primary);
   background-color: var(--mud-palette-chip-default);
 
-  @media(hover: hover) and (pointer: fine) {
-    &:hover:not(.mud-disabled) {
-      background-color: var(--mud-palette-chip-default-hover);
+  &.mud-clickable {
+    @media(hover: hover) and (pointer: fine) {
+      &:hover:not(.mud-disabled) {
+        background-color: var(--mud-palette-chip-default-hover);
+      }
     }
   }
 
@@ -240,9 +250,11 @@
       --mud-ripple-color: var(--mud-palette-#{$color}) !important;
       background-color: var(--mud-palette-#{$color}-hover);
 
-      @media(hover: hover) and (pointer: fine) {
-        &:hover:not(.mud-disabled) {
-          background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+      &.mud-clickable {
+        @media(hover: hover) and (pointer: fine) {
+          &:hover:not(.mud-disabled) {
+            background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+          }
         }
       }
 
