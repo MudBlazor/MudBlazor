@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
@@ -29,9 +30,7 @@ namespace MudBlazor.Docs.Components
         private string _componentName;
         private bool _renderAds;
         [Inject] NavigationManager NavigationManager { get; set; }
-
         [Inject] private IDocsNavigationService DocsService { get; set; }
-        [Inject] private IRenderQueueService RenderQueue { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private bool _contentDrawerOpen = true;
@@ -44,21 +43,19 @@ namespace MudBlazor.Docs.Components
         {
             get
             {
-                lock (this)
-                    return _sectionCount;
+                return _sectionCount;
             }
         }
 
         public int IncrementSectionCount()
         {
-            lock (this)
-                return _sectionCount++;
+            Interlocked.Increment(ref _sectionCount);
+            return _sectionCount;
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            RenderQueue.Clear();
             var relativePath = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
             if (relativePath.Contains("#"))
             {

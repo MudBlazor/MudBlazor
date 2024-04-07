@@ -2,8 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Components;
 
 namespace MudBlazor.Docs.Services
@@ -12,7 +15,7 @@ namespace MudBlazor.Docs.Services
     {
         int Capacity { get; }
 
-        void Enqueue(QueuedContent component);
+        ValueTask Enqueue(QueuedContent component);
 
         Task WaitUntilEmpty();
 
@@ -21,88 +24,51 @@ namespace MudBlazor.Docs.Services
 
     public class RenderQueueService : IRenderQueueService
     {
-        private TaskCompletionSource _tcs;
-        private readonly Queue<QueuedContent> _queue = new();
+        private TaskCompletionSource _emptyQueueTcs;
+        private readonly ConcurrentQueue<QueuedContent> _queue = new();
 
-        public int Capacity { get; init; }
-
-        public RenderQueueService()
-        {
-            Capacity = 3;
-        }
+        public int Capacity { get; init; } = 3;
 
         public void Clear()
         {
-            lock (_queue)
-            {
-                _queue.Clear();
-                _tcs?.TrySetResult();
-                _tcs = null;
-            }
+            _queue.Clear();
+            _emptyQueueTcs?.TrySetResult();
+            _emptyQueueTcs = null;
         }
 
-        void IRenderQueueService.Enqueue(QueuedContent component)
+        public async ValueTask Enqueue(QueuedContent component)
         {
-            bool renderImmediately;
-            lock (_queue)
-            {
-                renderImmediately = _queue.Count == 0;
-                _queue.Enqueue(component);
-                component.Rendered += OnComponentRendered;
-                component.Disposed += OnComponentDisposed;
-            }
+            var renderImmediately = _queue.IsEmpty;
+            _queue.Enqueue(component);
+            component.Rendered = EventCallback.Factory.Create(this, RenderNext);
+            component.Disposed = EventCallback.Factory.Create(this, RenderNext);
             if (renderImmediately)
-                component.Render();
+                await component.RenderAsync();
         }
 
-        private async void RenderNext()
+        private async Task RenderNext()
         {
-            QueuedContent componentToRender = null;
-            lock (_queue)
+            while (_queue.TryDequeue(out var component))
             {
-                while (_queue.Count > 0)
+                if (component.IsDisposed || component.IsRendered)
                 {
-                    var component = _queue.Dequeue();
-                    if (component.IsDisposed || component.IsRendered)
-                    {
-                        component.Rendered -= OnComponentRendered;
-                        component.Disposed -= OnComponentDisposed;
-                        continue;
-                    }
-                    componentToRender = component;
-                    break;
+                    continue;
                 }
-                if (componentToRender == null)
-                {
-                    _tcs?.TrySetResult();
-                    _tcs = null;
-                    return;
-                }
+                await component.RenderAsync();
             }
-            await Task.Delay(1);
-            componentToRender.Render();
-        }
-
-        private void OnComponentRendered(QueuedContent component)
-        {
-            RenderNext();
-        }
-
-        private void OnComponentDisposed(QueuedContent component)
-        {
-            RenderNext();
+            if (_queue.IsEmpty)
+            {
+                _emptyQueueTcs?.TrySetResult();
+                _emptyQueueTcs = null;
+            }
         }
 
         public Task WaitUntilEmpty()
         {
-            lock (_queue)
-            {
-                if (_queue.Count == 0)
-                    return Task.CompletedTask;
-                if (_tcs == null)
-                    _tcs = new TaskCompletionSource();
-                return _tcs.Task;
-            }
+            if (_queue.IsEmpty)
+                return Task.CompletedTask;
+            _emptyQueueTcs ??= new TaskCompletionSource();
+            return _emptyQueueTcs.Task;
         }
     }
 }
