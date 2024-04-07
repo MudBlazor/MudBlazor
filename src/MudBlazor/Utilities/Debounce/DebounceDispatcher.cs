@@ -39,8 +39,8 @@ internal class DebounceDispatcher
     /// <returns>A Task representing the asynchronous operation with minimal delay.</returns>
     public async Task DebounceAsync(Func<Task> action, CancellationToken cancellationToken = default)
     {
-        // Cancel the previous debounce task if it exists
         // ReSharper disable MethodHasAsyncOverload (not available in .net7)
+        // Cancel the previous debounce task if it exists
         _cancellationTokenSource?.Cancel();
         // ReSharper restore MethodHasAsyncOverload
 
@@ -50,10 +50,8 @@ internal class DebounceDispatcher
 
         try
         {
-            // Wait for the debounce interval
             await Task.Delay(_interval, cancellationToken);
 
-            // Execute the action
             await action();
         }
         catch (TaskCanceledException)
