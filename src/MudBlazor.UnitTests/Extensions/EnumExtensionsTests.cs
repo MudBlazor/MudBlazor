@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using FluentAssertions;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using NUnit.Framework;
 
@@ -27,5 +28,18 @@ namespace MudBlazor.UnitTests.Extensions
             Align.Inherit.ToDescriptionString().Should().Be("inherit");
             Breakpoint.Sm.ToDescriptionString().Should().Be("sm");
         }
+        
+        [Test]
+        [TestCase(typeof(Adornment), new[] { "None", "start", "end" })]
+        public void GetEnumDisplayName_Test(Type type, string[] expectedNames)
+        {
+            foreach (var expectedName in expectedNames)
+            {
+                var enumValue = Enum.Parse(type, expectedName, true) as Enum;
+                var displayName = enumValue?.GetEnumDisplayName();
+                displayName.Should().Be(expectedName);
+            }
+        }
+        
     }
 }

@@ -38,14 +38,14 @@ namespace MudBlazor.Extensions
         /// <summary>
         /// Get string from [Display(Name = "Value")] atrribute from enum
         /// </summary>
-        /// <param name="enumType"></param>
+        /// <param name="currentEnum"></param>
         /// <returns>String value from [Display]</returns>
-        public static string GetEnumDisplayName(Enum enumType)
+        public static string GetEnumDisplayName(this Enum currentEnum)
         {
-            return enumType.GetType().GetMember(enumType.ToString())
+            return currentEnum.GetType().GetMember(currentEnum.ToString())
                 .First()
                 .GetCustomAttribute<DisplayAttribute>()
-                ?.Name ?? enumType.ToString();
+                ?.Name ?? currentEnum.ToString();
         }
         
     }

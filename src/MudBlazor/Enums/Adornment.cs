@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace MudBlazor
 {
@@ -6,8 +7,10 @@ namespace MudBlazor
     {
         [Description("none")]
         None,
+        [Display(Name = "start")]
         [Description("start")]
         Start,
+        [Display(Name = "end")]
         [Description("end")]
         End
     }
