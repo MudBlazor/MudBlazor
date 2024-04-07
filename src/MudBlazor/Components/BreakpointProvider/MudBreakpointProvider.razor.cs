@@ -20,10 +20,6 @@ namespace MudBlazor
         [Inject]
         protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
 
-        [Inject]
-        [Obsolete]
-        public IBreakpointService Service { get; set; } = null!;
-
         [Parameter]
         [Category(CategoryTypes.BreakpointProvider.Behavior)]
         public RenderFragment? ChildContent { get; set; }

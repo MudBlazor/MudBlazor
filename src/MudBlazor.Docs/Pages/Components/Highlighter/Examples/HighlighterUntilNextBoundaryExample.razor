@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTextField Style="max-width:250px" @bind-Value="@highlightedText" Immediate="true" Label="Highlighted Text" />
+<MudTextField Style="max-width:250px" @bind-Value="highlightedText" Immediate="true" Label="Highlighted Text" />
 <MudPaper Class="pa-4 mt-4" Elevation="0">
     @foreach (var paragraph in paragraphs)
     {
@@ -15,9 +15,9 @@
     }
 
 </MudPaper>
-<MudSwitch @bind-Checked="@untilNextBoundary" Label="UntilNextBoundary" Color="Color.Primary" />
-<MudSwitch @bind-Checked="@caseSensitive" Label="CaseSensitive" Color="Color.Primary" />
-<MudSwitch @bind-Checked="@markup" Label="Markup" Color="Color.Primary" />
+<MudSwitch @bind-Value="untilNextBoundary" Label="UntilNextBoundary" Color="Color.Primary" />
+<MudSwitch @bind-Value="caseSensitive" Label="CaseSensitive" Color="Color.Primary" />
+<MudSwitch @bind-Value="markup" Label="Markup" Color="Color.Primary" />
 
 @code{
    string highlightedText = "mud";

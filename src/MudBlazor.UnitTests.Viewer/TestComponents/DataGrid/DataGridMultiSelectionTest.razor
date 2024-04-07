@@ -2,6 +2,20 @@
 
 <MudDataGrid Items="@_items" MultiSelection @bind-SelectedItems="_selectedItems" Filterable Bordered>
     <Columns>
+        @*<TemplateColumn Title="Select Template Column" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
+                        Filterable="false">
+            <HeaderTemplate>
+
+                    <MudCheckBox T="bool" Size="Size.Small" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAll" />
+
+            </HeaderTemplate>
+            <CellTemplate>
+                <MudCheckBox T="bool" Size="Size.Small" Value="@context.IsSelected" ValueChanged="@context.Actions.SetSelectedItem" />
+            </CellTemplate>
+            <FooterTemplate>
+                    <MudCheckBox T="bool" Size="Size.Small" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAll" />
+            </FooterTemplate>
+        </TemplateColumn>*@
         <SelectColumn ShowInFooter="@ShowInFooter" />
         <PropertyColumn Property="x => x.Name" />
     </Columns>

@@ -12,13 +12,13 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-nav-item")
-                .AddClass($"mud-ripple", !DisableRipple && !Disabled)
                 .AddClass(Class)
                 .Build();
 
         protected string LinkClassname =>
             new CssBuilder("mud-nav-link")
                 .AddClass($"mud-nav-link-disabled", Disabled)
+                .AddClass($"mud-ripple", Ripple && !Disabled)
                 .Build();
 
         protected string IconClassname =>

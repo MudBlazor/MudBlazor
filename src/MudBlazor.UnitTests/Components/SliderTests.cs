@@ -276,7 +276,7 @@ namespace MudBlazor.UnitTests.Components
             tickMarks.ClassList.Should().Contain("mud-slider-tickmarks");
             tickMarks.Children.Should().HaveCount(5);
 
-            Int32 itemCounter = 0;
+            var itemCounter = 0;
             foreach (var item in tickMarks.Children)
             {
                 item.ClassList.Should().Contain(new[] { "d-flex", "flex-column", "relative" });

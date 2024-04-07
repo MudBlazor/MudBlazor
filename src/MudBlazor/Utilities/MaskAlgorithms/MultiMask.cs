@@ -87,8 +87,7 @@ namespace MudBlazor
         public override void UpdateFrom(IMask other)
         {
             base.UpdateFrom(other);
-            var o = other as MultiMask;
-            if (o == null)
+            if (other is not MultiMask o)
                 return;
             // no need to re-initialize, just update the options
             _defaultMask = o._defaultMask;

@@ -20,9 +20,6 @@ namespace MudBlazor
         Snackbar Add(RenderFragment message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "");
         Snackbar Add<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(Dictionary<string, object> componentParameters = null, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null, string key = "") where T : IComponent;
 
-        [Obsolete("Use Add instead.", true)]
-        Snackbar AddNew(Severity severity, string message, Action<SnackbarOptions> configure);
-
         void Clear();
 
         void Remove(Snackbar snackbar);

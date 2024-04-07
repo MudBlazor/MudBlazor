@@ -8,18 +8,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
 using static Bunit.ComponentParameterFactory;
-using Microsoft.AspNetCore.Components;
-using System.Threading;
+using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -170,7 +170,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => autocomplete.Value.Should().Be("Austria"));
             autocomplete.Text.Should().Be("Austria");
         }
-        
+
         /// <summary>
         /// Test to cover issue #5993.
         /// </summary>
@@ -189,7 +189,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
             autocompletecomp.SetParam(p => p.Text, "Austria"); // not part of the U.S.
-            
+
             comp.WaitForAssertion(() => autocomplete.Value.Should().Be("Austria"));
             autocomplete.Text.Should().Be("Austria");
         }
@@ -220,11 +220,11 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudAutocomplete<string>>((a) =>
             {
                 a.Add(x => x.DebounceInterval, 0);
-                a.Add(x => x.SearchFunc, new Func<string, Task<IEnumerable<string>>>(async s => null)); // <--- searchfunc returns null instead of sequence
+                a.Add(x => x.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>(async (s, token) => null)); // <--- searchfunc returns null instead of sequence
             });
             // enter a text so the search func will return null, and it shouldn't throw an exception
             comp.SetParam(a => a.Text, "Do not throw");
-            comp.SetParam(x => x.SearchFunc, new Func<string, Task<IEnumerable<string>>>(s => null)); // <-- search func returns null instead of task!
+            comp.SetParam(x => x.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, token) => null)); // <-- search func returns null instead of task!
             comp.SetParam(a => a.Text, "Don't throw here neither");
         }
 
@@ -264,6 +264,8 @@ namespace MudBlazor.UnitTests.Components
 
             var mudText = comp.FindAll("p.mud-typography");
             mudText[mudText.Count - 1].InnerHtml.Should().Contain("Not all items are shown"); //ensure the text is shown
+
+            comp.FindAll("div.mud-popover .mud-autocomplete-more-items").Count.Should().Be(1);
         }
 
         /// <summary>
@@ -280,6 +282,8 @@ namespace MudBlazor.UnitTests.Components
 
             var mudText = comp.FindAll("p.mud-typography");
             mudText[mudText.Count - 1].InnerHtml.Should().Contain("No items found, try another search"); //ensure the text is shown
+
+            comp.FindAll("div.mud-popover .mud-autocomplete-no-items").Count.Should().Be(1);
         }
 
         /// <summary>
@@ -321,13 +325,7 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             await Task.Delay(100);
             var autocompletecomp = comp.FindComponent<MudAutocomplete<ExternalList>>();
-            var input = autocompletecomp.Find("input");
-
-            var wrappedElement = ((dynamic)input).WrappedElement;
-            var value = ((IHtmlInputElement)wrappedElement).Value;
-
-            //The value of the input should be California
-            value.Should().Be("One");
+            autocompletecomp.Find("input").GetAttribute("value").Should().Be("One");
         }
 
         /// <summary>
@@ -477,11 +475,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// <para>
         /// When selecting a value by clicking on it in the list the input will blur. However, this
         /// must not cause the dropdown to close or else the click on the item will not be possible!
-        ///
+        /// </para>
+        /// <para>
         /// If this test fails it means the dropdown has closed before we can even click any value in the list.
         /// Such a regression happened and caused PR #1807 to be reverted
+        /// </para>
         /// </summary>
         [Test]
         public async Task Autocomplete_Should_NotCloseDropdownOnInputBlur()
@@ -1002,7 +1003,7 @@ namespace MudBlazor.UnitTests.Components
 
             var first = new TaskCompletionSource<IEnumerable<string>>();
 
-            autocompletecomp.SetParam(p => p.SearchFuncWithCancel, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
+            autocompletecomp.SetParam(p => p.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
             {
                 cancelToken = cancellationToken;
                 // Return task that never completes.
@@ -1015,13 +1016,13 @@ namespace MudBlazor.UnitTests.Components
 
             // Test
 
-            comp.WaitForAssertion(() => Assert.IsFalse(cancelToken?.IsCancellationRequested));
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
 
             // Arrange second call
 
             var second = new TaskCompletionSource<IEnumerable<string>>();
 
-            autocompletecomp.SetParam(p => p.SearchFuncWithCancel, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
+            autocompletecomp.SetParam(p => p.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
             {
                 return second.Task;
             }));
@@ -1032,7 +1033,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Test
 
-            comp.WaitForAssertion(() => Assert.IsTrue(cancelToken?.IsCancellationRequested));
+            comp.WaitForAssertion(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
 
             first.SetCanceled();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ToMarkup().Should().NotContain("Foo"));
@@ -1075,7 +1076,7 @@ namespace MudBlazor.UnitTests.Components
             autocompletecomp.SetParam(a => a.Text, testText);
 
             // Assert
-            autocompletecomp.WaitForAssertion(() => Assert.AreEqual(testText, eventText));
+            autocompletecomp.WaitForAssertion(() => eventText.Should().Be(testText));
         }
 
         [Test]
@@ -1243,8 +1244,10 @@ namespace MudBlazor.UnitTests.Components
 
             var mudText = comp.FindAll("p.mud-typography");
             mudText[0].InnerHtml.Should().Contain("StartList_Content"); //ensure the text is shown
+
+            comp.FindAll("div.mud-popover .mud-autocomplete-before-items").Count.Should().Be(1);
         }
-        
+
         /// <summary>
         /// AfterItemsTemplate should render when there are items
         /// </summary>
@@ -1259,6 +1262,8 @@ namespace MudBlazor.UnitTests.Components
 
             var mudText = comp.FindAll("p.mud-typography");
             mudText[mudText.Count - 1].InnerHtml.Should().Contain("EndList_Content"); //ensure the text is shown
+
+            comp.FindAll("div.mud-popover .mud-autocomplete-after-items").Count.Should().Be(1);
         }
 
         /// <summary>
@@ -1304,6 +1309,34 @@ namespace MudBlazor.UnitTests.Components
             inputControl.Click();
 
             comp.WaitForAssertion(() => comp.Find("div.mud-list-item").ClassList.Should().Contain(listItemClassTest));
+        }
+
+        [Test]
+        public async Task Autocomplete_ReturnedItemsCount_Should_Be_Accurate()
+        {
+            Task<IEnumerable<string>> search(string value, CancellationToken token)
+            {
+                var values = new string[] { "Lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit" };
+                return Task.FromResult(values.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+            }
+
+            var comp = Context.RenderComponent<MudAutocomplete<string>>();
+            comp.SetParametersAndRender(p => p
+                .Add(x => x.Value, "nothing will ever match this")
+                .Add(x => x.SearchFunc, search)
+                .Add(x => x.DebounceInterval, 0));
+
+            int? count = null;
+            comp.Instance.ReturnedItemsCountChanged = new EventCallbackFactory().Create<int>(this, v => count = v);
+
+            comp.Find("input").Input("Lorem");
+            comp.WaitForAssertion(() => count.Should().Be(1));
+            ;
+            comp.Find("input").Input("ip");
+            comp.WaitForAssertion(() => count.Should().Be(2));
+            ;
+            comp.Find("input").Input("wtf");
+            comp.WaitForAssertion(() => count.Should().Be(0));
         }
     }
 }

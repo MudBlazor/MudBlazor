@@ -44,18 +44,6 @@ namespace MudBlazor
         public HorizontalAlignment ContentAlignment { get; set; } = HorizontalAlignment.Left;
 
         /// <summary>
-        /// Sets the position of the text to the start (Left in LTR and right in RTL).
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use ContentAlignment instead.", true)]
-        [Parameter]
-        public AlertTextPosition AlertTextPosition
-        {
-            get => (AlertTextPosition)ContentAlignment;
-            set => ContentAlignment = (HorizontalAlignment)value;
-        }
-
-        /// <summary>
         /// The callback, when the close button has been clicked.
         /// </summary>
         [Parameter] public EventCallback<MudAlert> CloseIconClicked { get; set; }
@@ -162,6 +150,16 @@ namespace MudBlazor
                     _ => throw new ArgumentOutOfRangeException(nameof(Severity)),
                 };
             }
+        }
+
+        internal Task OnClickHandler(MouseEventArgs mouseEventArgs)
+        {
+            if (OnClick.HasDelegate)
+            {
+                return OnClick.InvokeAsync(mouseEventArgs);
+            }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>

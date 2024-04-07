@@ -240,6 +240,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => radio.Instance.IMudRadioGroup = null);
             await comp.InvokeAsync(() => radio.Instance.OnClickAsync());
+            comp.WaitForAssertion(() => radio.Instance.Value.Should().Be("1"));
 #pragma warning disable BL0005
             await comp.InvokeAsync(() => radio.Instance.Disabled = true);
             comp.WaitForAssertion(() => group.Instance.Value.Should().Be(null));
@@ -258,7 +259,7 @@ namespace MudBlazor.UnitTests.Components
             }
             catch (Exception ex)
             {
-                Assert.AreEqual(ex.InnerException.GetType(), typeof(MudBlazor.Utilities.Exceptions.GenericTypeMismatchException));
+                typeof(MudBlazor.Utilities.Exceptions.GenericTypeMismatchException).Should().Be(ex.InnerException.GetType());
             }
         }
 

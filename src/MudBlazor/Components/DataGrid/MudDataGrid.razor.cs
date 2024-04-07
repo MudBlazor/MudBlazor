@@ -67,7 +67,7 @@ namespace MudBlazor
         protected string _tableStyle =>
             new StyleBuilder()
                 .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
-                .AddStyle("width", "max-content", when: (HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container))
+                .AddStyle("width", "max-content", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
                 .AddStyle("overflow", "clip", when: (HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container) && hasStickyColumns)
                 .AddStyle("display", "block", when: HorizontalScrollbar)
             .Build();
@@ -87,6 +87,28 @@ namespace MudBlazor
                 .AddStyle("left", "0px", when: hasStickyColumns)
             .Build();
 
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            if (ServerData != null)
+            {
+                if (Items != null)
+                {
+                    throw new InvalidOperationException(
+                        $"{GetType()} can only accept one item source from its parameters. " +
+                        $"Do not supply both '{nameof(Items)}' and '{nameof(ServerData)}'."
+                    );
+                }
+
+                if (QuickFilter != null)
+                {
+                    throw new InvalidOperationException(
+                        $"Do not supply both '{nameof(ServerData)}' and '{nameof(QuickFilter)}'."
+                    );
+                }
+            }
+        }
+
         internal SortDirection GetColumnSortDirection(string columnName)
         {
             if (columnName == null)
@@ -95,8 +117,7 @@ namespace MudBlazor
             }
             else
             {
-                SortDefinition<T> sortDefinition = null;
-                var ok = SortDefinitions.TryGetValue(columnName, out sortDefinition);
+                var ok = SortDefinitions.TryGetValue(columnName, out var sortDefinition);
 
                 if (ok)
                 {
@@ -124,7 +145,7 @@ namespace MudBlazor
 
         private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
         {
-            TItem tmp = list[indexA];
+            var tmp = list[indexA];
             list[indexA] = list[indexB];
             list[indexB] = tmp;
         }
@@ -133,8 +154,8 @@ namespace MudBlazor
         {
             dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
 
-            var dragAndDropSource = RenderedColumns.Where(rc => rc.PropertyName == dropItem.Item.PropertyName).SingleOrDefault();
-            var dragAndDropDestination = RenderedColumns.Where(rc => rc.PropertyName == dropItem.DropzoneIdentifier).SingleOrDefault();
+            var dragAndDropSource = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.Item.PropertyName);
+            var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.DropzoneIdentifier);
             if (dragAndDropSource != null && dragAndDropDestination != null)
             {
                 var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
@@ -151,7 +172,7 @@ namespace MudBlazor
 
                 StateHasChanged();
             }
-            return Task.CompletedTask;            
+            return Task.CompletedTask;
         }
 
         public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
@@ -166,8 +187,8 @@ namespace MudBlazor
         // converters
         private Converter<bool, bool?> _oppositeBoolConverter = new Converter<bool, bool?>
         {
-            SetFunc = value => value ? false : true,
-            GetFunc = value => value.HasValue ? !value.Value : true,
+            SetFunc = value => !value,
+            GetFunc = value => !value ?? true,
         };
 
         #region Notify Children Delegates
@@ -197,7 +218,7 @@ namespace MudBlazor
         /// Callback is called whenever a row is clicked.
         /// </summary>
         [Parameter] public EventCallback<DataGridRowClickEventArgs<T>> RowClick { get; set; }
-        
+
         /// <summary>
         /// Callback is called whenever a row is right clicked.
         /// </summary>
@@ -590,6 +611,11 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Rows Per Page two-way bindable parameter
+        /// </summary>
+        [Parameter] public EventCallback<int> RowsPerPageChanged { get; set; }
+
+        /// <summary>
         /// The page index of the currently displayed page (Zero based). Usually called by MudTablePager.
         /// Note: requires a MudTablePager in PagerContent.
         /// </summary>
@@ -684,7 +710,7 @@ namespace MudBlazor
                         _groupExpansionsDict.Clear();
 
                         foreach (var column in RenderedColumns)
-                            column.RemoveGrouping();
+                            column.RemoveGrouping().AndForget();
                     }
                 }
             }
@@ -801,7 +827,7 @@ namespace MudBlazor
         {
             get
             {
-                return RenderedColumns.FirstOrDefault(x => x.grouping);
+                return RenderedColumns.FirstOrDefault(x => x.GroupingState.Value);
             }
         }
 
@@ -930,6 +956,11 @@ namespace MudBlazor
             {
                 RenderedColumns.Add(column);
             }
+        }
+
+        internal void RemoveColumn(Column<T> column)
+        {
+            RenderedColumns.Remove(column);
         }
 
         internal IFilterDefinition<T> CreateFilterDefinitionInstance()
@@ -1180,6 +1211,8 @@ namespace MudBlazor
             if (resetPage)
                 CurrentPage = 0;
 
+            await RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
+
             StateHasChanged();
 
             if (_isFirstRendered)
@@ -1395,7 +1428,7 @@ namespace MudBlazor
             if (index > 0)
             {
                 RenderedColumns.RemoveAt(index);
-                RenderedColumns.Insert(index-1, column);
+                RenderedColumns.Insert(index - 1, column);
             }
             DropContainerHasChanged();
         }
@@ -1417,7 +1450,7 @@ namespace MudBlazor
             _columnsPanelDropContainer?.Refresh();
         }
 
-        
+
         public void GroupItems(bool noStateChange = false)
         {
             if (!noStateChange)
@@ -1450,18 +1483,18 @@ namespace MudBlazor
                 _groupExpansionsDict[x.Key])).ToList();
 
             _allGroups = allGroupings.Select(x => new GroupDefinition<T>(x,
-                _groupExpansionsDict[x.Key])).ToList();                
+                _groupExpansionsDict[x.Key])).ToList();
 
             if ((_isFirstRendered || ServerData != null) && !noStateChange)
                 StateHasChanged();
         }
 
-        internal void ChangedGrouping(Column<T> column)
+        internal async Task ChangedGrouping(Column<T> column)
         {
             foreach (var c in RenderedColumns)
             {
                 if (c.PropertyName != column.PropertyName)
-                    c.RemoveGrouping();
+                    await c.RemoveGrouping();
             }
 
             GroupItems();
@@ -1473,7 +1506,7 @@ namespace MudBlazor
             {
                 _groupExpansionsDict[g.Grouping.Key] = !value;
             }
- 
+
             GroupItems();
         }
 

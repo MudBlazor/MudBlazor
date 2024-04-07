@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services.Browser;
@@ -22,7 +23,7 @@ public class BrowserViewportSubscriptionTests
         var result = subscription1.Equals(subscription2);
 
         // Assert
-        Assert.IsTrue(result);
+        result.Should().BeTrue();
     }
 
     [Test]
@@ -36,7 +37,7 @@ public class BrowserViewportSubscriptionTests
         var result = subscription1.Equals(subscription2);
 
         // Assert
-        Assert.IsFalse(result);
+        result.Should().BeFalse();
     }
 
     [Test]
@@ -50,7 +51,7 @@ public class BrowserViewportSubscriptionTests
         var result = subscription.Equals(obj);
 
         // Assert
-        Assert.IsTrue(result);
+        result.Should().BeTrue();
     }
 
     [Test]
@@ -65,7 +66,7 @@ public class BrowserViewportSubscriptionTests
         var result = subscription1.Equals(obj);
 
         // Assert
-        Assert.IsFalse(result);
+        result.Should().BeFalse();
     }
 
     [Test]
@@ -79,7 +80,7 @@ public class BrowserViewportSubscriptionTests
         var result = subscription.Equals(obj);
 
         // Assert
-        Assert.IsFalse(result);
+        result.Should().BeFalse();
     }
 
     [Test]
@@ -93,7 +94,7 @@ public class BrowserViewportSubscriptionTests
         var result = subscription.Equals(other);
 
         // Assert
-        Assert.IsFalse(result);
+        result.Should().BeFalse();
     }
 
     [Test]
@@ -108,7 +109,7 @@ public class BrowserViewportSubscriptionTests
         var hashCode2 = subscription2.GetHashCode();
 
         // Assert
-        Assert.AreEqual(hashCode1, hashCode2);
+        hashCode2.Should().Be(hashCode1);
     }
 
     [Test]
@@ -123,6 +124,6 @@ public class BrowserViewportSubscriptionTests
         var hashCode2 = subscription2.GetHashCode();
 
         // Assert
-        Assert.AreNotEqual(hashCode1, hashCode2);
+        hashCode2.Should().NotBe(hashCode1);
     }
 }

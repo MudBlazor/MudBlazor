@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Docs.Components;

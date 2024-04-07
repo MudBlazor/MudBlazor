@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -123,18 +122,6 @@ namespace MudBlazor
         public bool PositionAtCursor { get; set; }
 
         /// <summary>
-        /// If true, instead of positioning the menu at the left upper corner, position at the exact cursor location.
-        /// This makes sense for larger activators
-        /// </summary>
-        [Obsolete("Use PositionAtCursor instead.", true)]
-        [Parameter]
-        public bool PositionAtCurser
-        {
-            get => PositionAtCursor;
-            set => PositionAtCursor = value;
-        }
-
-        /// <summary>
         /// Place a MudButton, a MudIconButton or any other component capable of acting as an activator. This will
         /// override the standard button and all parameters which concern it.
         /// </summary>
@@ -164,27 +151,6 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
-        /// Sets the direction the select menu will start from relative to its parent.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
-
-        /// <summary>
-        /// If true, the select menu will open either before or after the input depending on the direction.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetY { get; set; }
-
-        /// <summary>
-        /// If true, the select menu will open either above or bellow the input depending on the direction.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use AnchorOrigin or TransformOrigin instead.", true)]
-        [Parameter] public bool OffsetX { get; set; }
-
-        /// <summary>
         /// Set to true if you want to prevent page from scrolling when the menu is open
         /// </summary>
         [Parameter]
@@ -199,11 +165,11 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, disables ripple effect.
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.Appearance)]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
         /// If true, no drop-shadow will be used.
@@ -212,41 +178,13 @@ namespace MudBlazor
         [Category(CategoryTypes.Menu.Appearance)]
         public bool DisableElevation { get; set; }
 
-        #region Obsolete members from previous MudButtonBase inherited structure
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Linking is not supported. MudMenu is not a MudBaseButton anymore.", true)]
-        [Parameter] public string Link { get; set; }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Linking is not supported. MudMenu is not a MudBaseButton anymore.", true)]
-        [Parameter] public string Target { get; set; }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
-        [Parameter] public string HtmlTag { get; set; } = "button";
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
-        [Parameter] public ButtonType ButtonType { get; set; }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
-        [Parameter] public ICommand Command { get; set; }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("MudMenu is not a MudBaseButton anymore.", true)]
-        [Parameter] public object CommandParameter { get; set; }
-
-        #endregion
-
         /// <summary>
         /// Add menu items here
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupBehavior)]
         public RenderFragment ChildContent { get; set; }
-        
+
         /// <summary>
         /// Fired when the menu IsOpen property changes.
         /// </summary>
@@ -285,39 +223,48 @@ namespace MudBlazor
         public void OpenMenu(EventArgs args)
         {
             if (Disabled)
+            {
                 return;
-            if (PositionAtCursor) SetPopoverStyle((MouseEventArgs)args);
+            }
+
+            if (PositionAtCursor)
+            {
+                if (args is MouseEventArgs mouseEventArgs)
+                {
+                    SetPopoverStyle(mouseEventArgs);
+                }
+            }
+
             _isOpen = true;
             StateHasChanged();
             IsOpenChanged.InvokeAsync(_isOpen);
         }
 
-        // Sets the popover style ONLY when there is an activator
+        /// <summary>
+        /// Sets the popover style ONLY when there is an activator.
+        /// </summary>
         private void SetPopoverStyle(MouseEventArgs args)
         {
             AnchorOrigin = Origin.TopLeft;
             PopoverStyle = $"margin-top: {args?.OffsetY.ToPx()}; margin-left: {args?.OffsetX.ToPx()};";
         }
 
-        public void ToggleMenu(MouseEventArgs args)
+        /// <summary>
+        /// Toggle the visibility of the menu.
+        /// </summary>
+        /// <param name="args">Either <see cref="MouseEventArgs"/> or <see cref="TouchEventArgs"/></param>
+        public void ToggleMenu(EventArgs args)
         {
             if (Disabled)
                 return;
-            if (ActivationEvent == MouseEvent.LeftClick && args.Button != 0 && !_isOpen)
-                return;
-            if (ActivationEvent == MouseEvent.RightClick && args.Button != 2 && !_isOpen)
-                return;
-            if (_isOpen)
-                CloseMenu();
-            else
-                OpenMenu(args);
-        }
 
-        public void ToggleMenuTouch(TouchEventArgs args)
-        {
-            if (Disabled)
+            // oncontextmenu turns a touch event into MouseEventArgs but with a button of -1.
+            if (args is MouseEventArgs mouseEventArgs && mouseEventArgs.Button != -1)
             {
-                return;
+                if (ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button != 0 && !_isOpen)
+                    return;
+                if (ActivationEvent == MouseEvent.RightClick && mouseEventArgs.Button != 2 && !_isOpen)
+                    return;
             }
 
             if (_isOpen)
@@ -333,9 +280,15 @@ namespace MudBlazor
         /// <summary>
         /// Implementation of IActivatable.Activate, toggles the menu.
         /// </summary>
-        /// <param name="activator"></param>
-        /// <param name="args"></param>
         public void Activate(object activator, MouseEventArgs args)
+        {
+            ToggleMenu(args);
+        }
+
+        /// <summary>
+        /// Implementation of IActivatable.Activate, toggles the menu.
+        /// </summary>
+        public void Activate(object activator, TouchEventArgs args)
         {
             ToggleMenu(args);
         }

@@ -2,9 +2,9 @@
 
 <MudDatePicker id="picker" @ref="_picker" Label="With action buttons" @bind-Date="date">
     <PickerActions>
-        <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.Clear())">Clear</MudButton>
-        <MudButton OnClick="@(() => _picker.Close(false))">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="@(() => _picker.Close())">Ok</MudButton>
+        <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.ClearAsync())">Clear</MudButton>
+        <MudButton OnClick="@(() => _picker.CloseAsync(false))">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="@(() => _picker.CloseAsync())">Ok</MudButton>
     </PickerActions>
 </MudDatePicker>
 

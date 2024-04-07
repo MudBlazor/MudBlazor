@@ -6,7 +6,7 @@
     <HeaderTemplate>
         @if (ShowInHeader)
         {
-            <MudCheckBox T="bool" Size="@Size" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAllAsync" />
+            <MudCheckBox T="bool?" Size="@Size" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAllAsync" />
         }
     </HeaderTemplate>
     <CellTemplate>
@@ -23,7 +23,7 @@
     // ReSharper disable once InconsistentNaming, UnusedParameter.Local
     private RenderFragment<FooterContext<T>> FooterTemplate => context => __builder =>
     {
-        <MudCheckBox T="bool"
+        <MudCheckBox T="bool?"
                      Size="@Size"
                      Value="@context.IsAllSelected"
                      ValueChanged="@context.Actions.SetSelectAllAsync" />

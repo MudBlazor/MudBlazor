@@ -43,7 +43,7 @@ namespace MudBlazor
                 return time.TimeOfDay;
             }
 
-            var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
+            var m = AmPmRegularExpression().Match(value);
             if (m.Success)
             {
                 if (DateTime.TryParseExact(value, format12Hours, CultureInfo.InvariantCulture, DateTimeStyles.None,
@@ -193,7 +193,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<TimeSpan?> TimeChanged { get; set; }
 
-        protected override Task StringValueChanged(string value)
+        protected override Task StringValueChangedAsync(string value)
         {
             Touched = true;
             // Update the time property (without updating back the Value property)
@@ -202,9 +202,9 @@ namespace MudBlazor
 
         //The last line cannot be tested
         [ExcludeFromCodeCoverage]
-        protected override void OnPickerOpened()
+        protected override async Task OnPickerOpenedAsync()
         {
-            base.OnPickerOpened();
+            await base.OnPickerOpenedAsync();
             _currentView = TimeEditMode switch
             {
                 TimeEditMode.Normal => OpenTo,
@@ -214,21 +214,26 @@ namespace MudBlazor
             };
         }
 
-        protected internal override void Submit()
+        protected internal override Task SubmitAsync()
         {
             if (GetReadOnlyState())
-                return;
+            {
+                return Task.CompletedTask;
+            }
+
             Time = TimeIntermediate;
+
+            return Task.CompletedTask;
         }
 
-        public override async void Clear(bool close = true)
+        public override async Task ClearAsync(bool close = true)
         {
             TimeIntermediate = null;
             await SetTimeAsync(null, true);
 
-            if (AutoClose == true)
+            if (AutoClose)
             {
-                Close(false);
+                await CloseAsync(false);
             }
         }
 
@@ -237,7 +242,7 @@ namespace MudBlazor
             if (TimeIntermediate == null)
                 return "--";
             var h = AmPm ? TimeIntermediate.Value.ToAmPmHour() : TimeIntermediate.Value.Hours;
-            return Math.Min(23, Math.Max(0, h)).ToString(CultureInfo.InvariantCulture);
+            return $"{Math.Min(23, Math.Max(0, h)):D2}";
         }
 
         private string GetMinuteString()
@@ -247,86 +252,86 @@ namespace MudBlazor
             return $"{Math.Min(59, Math.Max(0, TimeIntermediate.Value.Minutes)):D2}";
         }
 
-        private void UpdateTime()
+        private async Task UpdateTimeAsync()
         {
             _lastSelectedHour = _timeSet.Hour;
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
             if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
-                Submit();
+                await SubmitAsync();
             }
         }
 
-        private void OnHourClick()
+        private async Task OnHourClickAsync()
         {
             _currentView = OpenTo.Hours;
-            FocusAsync().AndForget();
+            await FocusAsync();
         }
 
-        private void OnMinutesClick()
+        private async Task OnMinutesClick()
         {
             _currentView = OpenTo.Minutes;
-            FocusAsync().AndForget();
+            await FocusAsync();
         }
 
-        private void OnAmClicked()
+        private async Task OnAmClickedAsync()
         {
             _timeSet.Hour %= 12;  // "12:-- am" is "00:--" in 24h
-            UpdateTime();
-            FocusAsync().AndForget();
+            await UpdateTimeAsync();
+            await FocusAsync();
         }
 
-        private void OnPmClicked()
+        private async Task OnPmClickedAsync()
         {
             if (_timeSet.Hour <= 12) // "12:-- pm" is "12:--" in 24h
                 _timeSet.Hour += 12;
             _timeSet.Hour %= 24;
-            UpdateTime();
-            FocusAsync().AndForget();
+            await UpdateTimeAsync();
+            await FocusAsync();
         }
 
         protected string ToolbarClass =>
-        new CssBuilder("mud-picker-timepicker-toolbar")
-          .AddClass($"mud-picker-timepicker-toolbar-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-picker-timepicker-toolbar")
+                .AddClass($"mud-picker-timepicker-toolbar-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
+                .AddClass(Class)
+                .Build();
 
         protected string HoursButtonClass =>
-        new CssBuilder("mud-timepicker-button")
-          .AddClass($"mud-timepicker-toolbar-text", _currentView == OpenTo.Minutes)
-        .Build();
+            new CssBuilder("mud-timepicker-button")
+                .AddClass($"mud-timepicker-toolbar-text", _currentView == OpenTo.Minutes)
+                .Build();
 
         protected string MinuteButtonClass =>
-        new CssBuilder("mud-timepicker-button")
-          .AddClass($"mud-timepicker-toolbar-text", _currentView == OpenTo.Hours)
-        .Build();
+            new CssBuilder("mud-timepicker-button")
+                .AddClass($"mud-timepicker-toolbar-text", _currentView == OpenTo.Hours)
+                .Build();
 
         protected string AmButtonClass =>
-        new CssBuilder("mud-timepicker-button")
-          .AddClass($"mud-timepicker-toolbar-text", !IsAm) // gray it out
-        .Build();
+            new CssBuilder("mud-timepicker-button")
+                .AddClass($"mud-timepicker-toolbar-text", !IsAm) // gray it out
+                .Build();
 
         protected string PmButtonClass =>
-        new CssBuilder("mud-timepicker-button")
-          .AddClass($"mud-timepicker-toolbar-text", !IsPm) // gray it out
-        .Build();
+            new CssBuilder("mud-timepicker-button")
+                .AddClass($"mud-timepicker-toolbar-text", !IsPm) // gray it out
+                .Build();
 
         private string HourDialClass =>
-        new CssBuilder("mud-time-picker-hour")
-          .AddClass($"mud-time-picker-dial")
-          .AddClass($"mud-time-picker-dial-out", _currentView != OpenTo.Hours)
-          .AddClass($"mud-time-picker-dial-hidden", _currentView != OpenTo.Hours)
-        .Build();
+            new CssBuilder("mud-time-picker-hour")
+                .AddClass($"mud-time-picker-dial")
+                .AddClass($"mud-time-picker-dial-out", _currentView != OpenTo.Hours)
+                .AddClass($"mud-time-picker-dial-hidden", _currentView != OpenTo.Hours)
+                .Build();
 
         private string MinuteDialClass =>
-        new CssBuilder("mud-time-picker-minute")
-          .AddClass($"mud-time-picker-dial")
-          .AddClass($"mud-time-picker-dial-out", _currentView != OpenTo.Minutes)
-          .AddClass($"mud-time-picker-dial-hidden", _currentView != OpenTo.Minutes)
-        .Build();
+            new CssBuilder("mud-time-picker-minute")
+                .AddClass($"mud-time-picker-dial")
+                .AddClass($"mud-time-picker-dial-out", _currentView != OpenTo.Minutes)
+                .AddClass($"mud-time-picker-dial-hidden", _currentView != OpenTo.Minutes)
+                .Build();
 
-        private bool IsAm => _timeSet.Hour >= 00 && _timeSet.Hour < 12; // am is 00:00 to 11:59
-        private bool IsPm => _timeSet.Hour >= 12 && _timeSet.Hour < 24; // pm is 12:00 to 23:59
+        private bool IsAm => _timeSet.Hour is >= 00 and < 12; // am is 00:00 to 11:59
+        private bool IsPm => _timeSet.Hour is >= 12 and < 24; // pm is 12:00 to 23:59
 
         private string GetClockPinColor()
         {
@@ -384,8 +389,8 @@ namespace MudBlazor
         private string GetTransform(double angle, double radius, double offsetX, double offsetY)
         {
             angle = angle / 180 * Math.PI;
-            var x = (Math.Sin(angle) * radius + offsetX).ToString("F3", CultureInfo.InvariantCulture);
-            var y = ((Math.Cos(angle) + 1) * radius + offsetY).ToString("F3", CultureInfo.InvariantCulture);
+            var x = ((Math.Sin(angle) * radius) + offsetX).ToString("F3", CultureInfo.InvariantCulture);
+            var y = (((Math.Cos(angle) + 1) * radius) + offsetY).ToString("F3", CultureInfo.InvariantCulture);
             return $"transform: translate({x}px, {y}px);";
         }
 
@@ -455,12 +460,12 @@ namespace MudBlazor
         /// <summary>
         /// Sets Mouse Down bool to false if mouse is inside the clock mask.
         /// </summary>
-        private void OnMouseUp(MouseEventArgs e)
+        private async Task OnMouseUpAsync(MouseEventArgs e)
         {
             if (MouseDown && _currentView == OpenTo.Minutes && _timeSet.Minute != _initialMinute || _currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.OnlyHours)
             {
                 MouseDown = false;
-                SubmitAndClose();
+                await SubmitAndCloseAsync();
             }
 
             MouseDown = false;
@@ -471,37 +476,41 @@ namespace MudBlazor
             }
         }
 
+        private int HourAmPm(int value)
+        {
+            if (AmPm)
+            {
+                if (IsAm && value == 12)
+                    return 0;
+                else if (IsPm && value < 12)
+                    return value + 12;
+            }
+            return value;
+        }
+
         /// <summary>
         /// If MouseDown is true enables "dragging" effect on the clock pin/stick.
         /// </summary>
-        private void OnMouseOverHour(int value)
+        private async Task OnMouseOverHourAsync(int value)
         {
             if (MouseDown)
             {
-                _timeSet.Hour = value;
-                UpdateTime();
+                _timeSet.Hour = HourAmPm(value);
+                await UpdateTimeAsync();
             }
         }
 
         /// <summary>
         /// On click for the hour "sticks", sets the hour.
         /// </summary>
-        private void OnMouseClickHour(int value)
+        private async Task OnMouseClickHourAsync(int value)
         {
-            var h = value;
-            if (AmPm)
-            {
-                if (IsAm && value == 12)
-                    h = 0;
-                else if (IsPm && value < 12)
-                    h = value + 12;
-            }
-            _timeSet.Hour = h;
+            _timeSet.Hour = HourAmPm(value);
 
             if (_currentView == OpenTo.Hours
                 || _timeSet.Hour != _lastSelectedHour)
             {
-                UpdateTime();
+                await UpdateTimeAsync();
             }
 
             if (TimeEditMode == TimeEditMode.Normal)
@@ -510,32 +519,32 @@ namespace MudBlazor
             }
             else if (TimeEditMode == TimeEditMode.OnlyHours)
             {
-                SubmitAndClose();
+                await SubmitAndCloseAsync();
             }
         }
 
         /// <summary>
         /// On mouse over for the minutes "sticks", sets the minute.
         /// </summary>
-        private void OnMouseOverMinute(int value)
+        private async Task OnMouseOverMinuteAsync(int value)
         {
             if (MouseDown)
             {
                 value = RoundToStepInterval(value);
                 _timeSet.Minute = value;
-                UpdateTime();
+                await UpdateTimeAsync();
             }
         }
 
         /// <summary>
         /// On click for the minute "sticks", sets the minute.
         /// </summary>
-        private void OnMouseClickMinute(int value)
+        private async Task OnMouseClickMinuteAsync(int value)
         {
             value = RoundToStepInterval(value);
             _timeSet.Minute = value;
-            UpdateTime();
-            SubmitAndClose();
+            await UpdateTimeAsync();
+            await SubmitAndCloseAsync();
         }
 
         private int RoundToStepInterval(int value)
@@ -543,7 +552,7 @@ namespace MudBlazor
             if (MinuteSelectionStep > 1) // Ignore if step is less than or equal to 1
             {
                 var interval = MinuteSelectionStep % 60;
-                value = (value + interval / 2) / interval * interval;
+                value = (value + (interval / 2)) / interval * interval;
                 if (value == 60) // For when it rounds up to 60
                 {
                     value = 0;
@@ -552,74 +561,74 @@ namespace MudBlazor
             return value;
         }
 
-        protected async void SubmitAndClose()
+        protected async Task SubmitAndCloseAsync()
         {
             if (PickerActions == null || AutoClose)
             {
-                Submit();
+                await SubmitAsync();
 
                 if (PickerVariant != PickerVariant.Static)
                 {
                     await Task.Delay(ClosingDelay);
-                    Close(false);
+                    await CloseAsync(false);
                 }
             }
         }
 
-        protected internal override void HandleKeyDown(KeyboardEventArgs obj)
+        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
-            base.HandleKeyDown(obj);
+            await base.OnHandleKeyDownAsync(obj);
             switch (obj.Key)
             {
                 case "ArrowRight":
                     if (IsOpen)
                     {
-                        if (obj.CtrlKey == true)
+                        if (obj.CtrlKey)
                         {
-                            ChangeHour(1);
+                            await ChangeHourAsync(1);
                         }
-                        else if (obj.ShiftKey == true)
+                        else if (obj.ShiftKey)
                         {
                             if (_timeSet.Minute > 55)
                             {
-                                ChangeHour(1);
+                                await ChangeHourAsync(1);
                             }
-                            ChangeMinute(5);
+                            await ChangeMinuteAsync(5);
                         }
                         else
                         {
                             if (_timeSet.Minute == 59)
                             {
-                                ChangeHour(1);
+                                await ChangeHourAsync(1);
                             }
-                            ChangeMinute(1);
+                            await ChangeMinuteAsync(1);
                         }
                     }
                     break;
                 case "ArrowLeft":
                     if (IsOpen)
                     {
-                        if (obj.CtrlKey == true)
+                        if (obj.CtrlKey)
                         {
-                            ChangeHour(-1);
+                            await ChangeHourAsync(-1);
                         }
-                        else if (obj.ShiftKey == true)
+                        else if (obj.ShiftKey)
                         {
                             if (_timeSet.Minute < 5)
                             {
-                                ChangeHour(-1);
+                                await ChangeHourAsync(-1);
                             }
-                            ChangeMinute(-5);
+                            await ChangeMinuteAsync(-5);
                         }
                         else
                         {
                             if (_timeSet.Minute == 0)
                             {
-                                ChangeHour(-1);
+                                await ChangeHourAsync(-1);
                             }
-                            ChangeMinute(-1);
+                            await ChangeMinuteAsync(-1);
                         }
                     }
                     break;
@@ -628,17 +637,17 @@ namespace MudBlazor
                     {
                         IsOpen = true;
                     }
-                    else if (obj.AltKey == true)
+                    else if (obj.AltKey)
                     {
                         IsOpen = false;
                     }
-                    else if (obj.ShiftKey == true)
+                    else if (obj.ShiftKey)
                     {
-                        ChangeHour(5);
+                        await ChangeHourAsync(5);
                     }
                     else
                     {
-                        ChangeHour(1);
+                        await ChangeHourAsync(1);
                     }
                     break;
                 case "ArrowDown":
@@ -646,28 +655,28 @@ namespace MudBlazor
                     {
                         IsOpen = true;
                     }
-                    else if (obj.ShiftKey == true)
+                    else if (obj.ShiftKey)
                     {
-                        ChangeHour(-5);
+                        await ChangeHourAsync(-5);
                     }
                     else
                     {
-                        ChangeHour(-1);
+                        await ChangeHourAsync(-1);
                     }
                     break;
                 case "Escape":
-                    ReturnTimeBackUp();
+                    await ReturnTimeBackUpAsync();
                     break;
                 case "Enter":
                 case "NumpadEnter":
                     if (!IsOpen)
                     {
-                        Open();
+                        await OpenAsync();
                     }
                     else
                     {
-                        Submit();
-                        Close();
+                        await SubmitAsync();
+                        await CloseAsync();
                         _inputReference?.SetText(Text);
                     }
                     break;
@@ -676,12 +685,12 @@ namespace MudBlazor
                     {
                         if (!IsOpen)
                         {
-                            Open();
+                            await OpenAsync();
                         }
                         else
                         {
-                            Submit();
-                            Close();
+                            await SubmitAsync();
+                            await CloseAsync();
                             _inputReference?.SetText(Text);
                         }
                     }
@@ -691,21 +700,23 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        protected void ChangeMinute(int val)
+        protected Task ChangeMinuteAsync(int val)
         {
             _currentView = OpenTo.Minutes;
             _timeSet.Minute = (_timeSet.Minute + val + 60) % 60;
-            UpdateTime();
+
+            return UpdateTimeAsync();
         }
 
-        protected void ChangeHour(int val)
+        protected Task ChangeHourAsync(int val)
         {
             _currentView = OpenTo.Hours;
             _timeSet.Hour = (_timeSet.Hour + val + 24) % 24;
-            UpdateTime();
+
+            return UpdateTimeAsync();
         }
 
-        protected void ReturnTimeBackUp()
+        protected async Task ReturnTimeBackUpAsync()
         {
             if (Time == null)
             {
@@ -715,7 +726,8 @@ namespace MudBlazor
             {
                 _timeSet.Hour = Time.Value.Hours;
                 _timeSet.Minute = Time.Value.Minutes;
-                UpdateTime();
+
+                await UpdateTimeAsync();
             }
         }
 
@@ -726,5 +738,8 @@ namespace MudBlazor
             public int Minute { get; set; }
 
         }
+
+        [GeneratedRegex("AM|PM", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+        private static partial Regex AmPmRegularExpression();
     }
 }

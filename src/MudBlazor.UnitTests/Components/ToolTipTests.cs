@@ -162,7 +162,7 @@ namespace MudBlazor.UnitTests.Components
 
             container.ClassList.Should().BeEquivalentTo(expectedClasses);
         }
-        
+
         [Test]
         public async Task InnerClass_ChildContentWrapper()
         {
@@ -294,7 +294,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(true)]
-        [TestCase(false)]        
+        [TestCase(false)]
         public async Task Visible_ByDefault(bool usingFocusout)
         {
             var comp = Context.RenderComponent<TooltipVisiblePropTest>(p =>

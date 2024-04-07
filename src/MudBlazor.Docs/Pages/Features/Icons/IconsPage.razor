@@ -21,21 +21,21 @@
                 <MudItem xs="12" Class="relative">
                     @if(SelectedIconOrigin == IconOrigin.Material)
                     {
-                        <MudChipSet Filter="true" Mandatory="true">
-                            <MudChip Default="true" Text="Filled" OnClick="@(() => ChangeIconCategory(IconType.Filled))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
-                            <MudChip Text="Outlined" OnClick="@(() => ChangeIconCategory(IconType.Outlined))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
-                            <MudChip Text="Rounded" OnClick="@(() => ChangeIconCategory(IconType.Rounded))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
-                            <MudChip Text="Sharp" OnClick="@(() => ChangeIconCategory(IconType.Sharp))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
-                            <MudChip Text="TwoTone" OnClick="@(() => ChangeIconCategory(IconType.TwoTone))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                        <MudChipSet T="string" Filter="true" Mandatory="true">
+                            <MudChip T="string" Default="true" Text="Filled" OnClick="@(() => ChangeIconCategory(IconType.Filled))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip T="string" Text="Outlined" OnClick="@(() => ChangeIconCategory(IconType.Outlined))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip T="string" Text="Rounded" OnClick="@(() => ChangeIconCategory(IconType.Rounded))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip T="string" Text="Sharp" OnClick="@(() => ChangeIconCategory(IconType.Sharp))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip T="string" Text="TwoTone" OnClick="@(() => ChangeIconCategory(IconType.TwoTone))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
                         </MudChipSet>
                     }
                     else if(SelectedIconOrigin == IconOrigin.Custom)
                     {
-                        <MudChipSet Filter="true" Mandatory="true">
-                            <MudChip Default="true" Text="All" OnClick="@(() => ChangeIconCategory(IconType.All))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
-                            <MudChip Text="Brands" OnClick="@(() => ChangeIconCategory(IconType.Brands))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
-                            <MudChip Text="FileFormats" OnClick="@(() => ChangeIconCategory(IconType.FileFormats))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
-                            <MudChip Text="Uncategorized" OnClick="@(() => ChangeIconCategory(IconType.Uncategorized))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                        <MudChipSet T="string" Filter="true" Mandatory="true">
+                            <MudChip T="string" Default="true" Text="All" OnClick="@(() => ChangeIconCategory(IconType.All))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip T="string" Text="Brands" OnClick="@(() => ChangeIconCategory(IconType.Brands))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip T="string" Text="FileFormats" OnClick="@(() => ChangeIconCategory(IconType.FileFormats))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip T="string" Text="Uncategorized" OnClick="@(() => ChangeIconCategory(IconType.Uncategorized))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
                         </MudChipSet>
                     }
                 </MudItem>
@@ -84,7 +84,7 @@
             <MudIcon Size="@PreviewIconSize" Color="@PreviewIconColor" Icon="@SelectedIcon.Code" />
         </MudPaper>
 
-        <MudSelect T="Color" @bind-Value="@PreviewIconColor" Label="Color" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Class="my-4">
+        <MudSelect T="Color" @bind-Value="PreviewIconColor" Label="Color" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Class="my-4">
             <DocsColorSelect Color="Color.Dark" />
             <DocsColorSelect Color="Color.Default" />
             <DocsColorSelect Color="Color.Primary" />
@@ -95,7 +95,7 @@
             <DocsColorSelect Color="Color.Warning" />
             <DocsColorSelect Color="Color.Error" />
         </MudSelect>
-        <MudSelect T="Size" @bind-Value="@PreviewIconSize" Label="Size" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Class="my-4">
+        <MudSelect T="Size" @bind-Value="PreviewIconSize" Label="Size" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Class="my-4">
             <MudSelectItem Value="Size.Small">Small</MudSelectItem>
             <MudSelectItem Value="Size.Medium">Medium</MudSelectItem>
             <MudSelectItem Value="Size.Large">Large</MudSelectItem>

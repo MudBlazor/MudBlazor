@@ -13,6 +13,11 @@ namespace MudBlazor
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>
     {
         private bool _isDirty;
+        /// <summary>
+        /// this flag is set to true by validation in order to prevent multiple invocations of validation after a single
+        /// value change. When the value changes _validated is set back to false.
+        /// </summary>
+        private bool _validated;
 
         protected MudBaseInput() : base(new DefaultConverter<T>()) { }
 
@@ -213,6 +218,13 @@ namespace MudBlazor
         public virtual string Pattern { get; set; }
 
         /// <summary>
+        /// ShrinkLabel prevents the label from moving down into the field when the field is empty.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool ShrinkLabel { get; set; } = false;
+
+        /// <summary>
         /// Derived classes need to override this if they can be something other than text
         /// </summary>
         internal virtual InputType GetInputType() { return InputType.Text; }
@@ -222,6 +234,7 @@ namespace MudBlazor
             if (Text != text)
             {
                 Text = text;
+                _validated = false;
                 if (!string.IsNullOrWhiteSpace(Text))
                     Touched = true;
                 if (updateValue)
@@ -277,7 +290,10 @@ namespace MudBlazor
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;
-                await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
+                if (_validated)
+                    await OnBlur.InvokeAsync(obj);
+                else
+                    await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
             }
         }
 
@@ -285,13 +301,6 @@ namespace MudBlazor
         /// Fired on the KeyDown event.
         /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
-
-        [Obsolete($"Use {nameof(InvokeKeyDownAsync)} instead, this will be removed in v7.")]
-        protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
-        {
-            _isFocused = true;
-            OnKeyDown.InvokeAsync(obj).AndForget();
-        }
 
         protected virtual Task InvokeKeyDownAsync(KeyboardEventArgs obj)
         {
@@ -306,59 +315,10 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool KeyDownPreventDefault { get; set; }
 
-
-        /// <summary>
-        /// Fired on the KeyPress event.
-        /// </summary>
-        [Obsolete("This will be removed in v7")]
-        [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
-
-        [Obsolete("This will be removed in v7")]
-        protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
-        {
-            OnKeyPress.InvokeAsync(obj).AndForget();
-        }
-
-        protected internal virtual void InvokeKeyPressObsolete(KeyboardEventArgs obj)
-        {
-#pragma warning disable CS0618
-            InvokeKeyPress(obj);
-#pragma warning restore CS0618
-        }
-
-        /// <summary>
-        /// Prevent the default action for the KeyPress event.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        [Obsolete("This will be removed in v7")]
-        public bool KeyPressPreventDefault { get; set; }
-
-        internal bool KeyPressPreventDefaultObsolete
-        {
-#pragma warning disable CS0618
-            get
-            {
-                return KeyPressPreventDefault;
-            }
-            set
-            {
-                KeyPressPreventDefault = value;
-            }
-#pragma warning restore CS0618
-        }
-
         /// <summary>
         /// Fired on the KeyUp event.
         /// </summary>
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
-
-        [Obsolete($"Use {nameof(InvokeKeyUpAsync)} instead. This will be removed in v7")]
-        protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
-        {
-            _isFocused = true;
-            OnKeyUp.InvokeAsync(obj).AndForget();
-        }
 
         protected virtual Task InvokeKeyUpAsync(KeyboardEventArgs obj)
         {
@@ -392,9 +352,10 @@ namespace MudBlazor
 
         protected virtual async Task SetValueAsync(T value, bool updateText = true, bool force = false)
         {
-            if (!EqualityComparer<T>.Default.Equals(Value, value) || force == true)
+            if (!EqualityComparer<T>.Default.Equals(Value, value) || force)
             {
                 _isDirty = true;
+                _validated = false;
                 Value = value;
                 await ValueChanged.InvokeAsync(Value);
                 if (updateText)
@@ -461,12 +422,13 @@ namespace MudBlazor
             return changed;
         }
 
-        protected override Task ValidateValue()
+        protected override async Task ValidateValue()
         {
             if (SubscribeToParentForm)
-                return base.ValidateValue();
-
-            return Task.CompletedTask;
+            {
+                _validated = true;
+                await base.ValidateValue();
+            }
         }
 
         protected override async Task OnInitializedAsync()
@@ -536,19 +498,11 @@ namespace MudBlazor
                 base.OnParametersSet();
         }
 
-        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
-        [ExcludeFromCodeCoverage]
-        protected override void ResetValue()
-        {
-            SetTextAsync(null, updateValue: true).AndForget();
-            this._isDirty = false;
-            base.ResetValue();
-        }
-
         protected override async Task ResetValueAsync()
         {
             await SetTextAsync(null, updateValue: true);
-            this._isDirty = false;
+            _isDirty = false;
+            _validated = false;
             await base.ResetValueAsync();
         }
     }

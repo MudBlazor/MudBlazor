@@ -6,7 +6,7 @@
     <MudButton>Three</MudButton>
 </MudButtonGroup>
 
-<MudSwitch @bind-Checked="@_disableElevation" Label="Disable elevation" Color="Color.Primary" />
+<MudSwitch @bind-Value="_disableElevation" Label="Disable elevation" Color="Color.Primary" />
 
 @code {
     private bool _disableElevation = true;

@@ -8,16 +8,16 @@
     {
         <MudPaper Class="d-flex align-center pa-2 mx-2 my-2">
             <MudText>@item.Name</MudText>
-            <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="@((e) => DeleteServer(item))">Delete</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="@((e) => DeleteServerAsync(item))">Delete</MudButton>
         </MudPaper>
     }
 </div>
 
 @code {
 
-    async Task DeleteServer(Server server)
+    private async Task DeleteServerAsync(Server server)
     {
-        var parameters = new DialogParameters<DialogPassingDataExample_Dialog> { { x => x.server, server } };
+        var parameters = new DialogParameters<DialogPassingDataExample_Dialog> { { x => x.Server, server } };
 
         var dialog = await DialogService.ShowAsync<DialogPassingDataExample_Dialog>("Delete Server", parameters);
         var result = await dialog.Result;
@@ -39,6 +39,3 @@
         new Server{ Id = Guid.NewGuid(), Name = "Server4", Location = "Germany", IpAddress = "193.168.1.1" },
     };
 }
-
-
-

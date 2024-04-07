@@ -9,7 +9,7 @@
         </MudNavGroup>
 </MudNavMenu>
 
-<MudCheckBox  @bind-Checked="@IsGroupDisabled" >Disable Group</MudCheckBox>
+<MudCheckBox @bind-Value="@IsGroupDisabled">Disable Group</MudCheckBox>
 
 @code {
 	public bool IsGroupDisabled {get;set;} = false;
