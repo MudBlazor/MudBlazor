@@ -411,14 +411,13 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Grouping)]
         public bool StripedGroups { get; set; }
 
-        private IEnumerable<T> _preEditSort;
-        private bool _currentRenderFilteredItemsCached;
-        private bool HasPreEditSort => _preEditSort != null;
-
         /// <summary>
         /// For unit testing the filtering cache mechanism.
         /// </summary>
         internal uint FilteringRunCount { get; private set; } = 0;
+        private IEnumerable<T> _preEditSort;
+        private bool _currentRenderFilteredItemsCached;
+        private bool HasPreEditSort => _preEditSort != null;
 
         public IEnumerable<T> FilteredItems
         {
