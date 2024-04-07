@@ -12,8 +12,6 @@ namespace MudBlazor.Docs.Components
     public partial class QueuedContent : ComponentBase, IAsyncDisposable
     {
         [Parameter] public RenderFragment ChildContent { get; set; }
-        [Parameter] public bool RenderImmediately { get; set; }
-
         [Inject] IRenderQueueService RenderQueue { get; set; }
 
         private bool AllowRender { get; set; }
@@ -25,8 +23,7 @@ namespace MudBlazor.Docs.Components
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            if (!RenderImmediately)
-                await RenderQueue.Enqueue(this);
+            await RenderQueue.Enqueue(this);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

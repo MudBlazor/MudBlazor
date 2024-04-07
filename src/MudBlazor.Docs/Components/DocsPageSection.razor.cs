@@ -22,15 +22,11 @@ public partial class DocsPageSection
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
 
-    bool _renderImmediately = false;
-
     public int Level { get; private set; }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        var count = DocsPage.IncrementSectionCount();
-        _renderImmediately = count < QueueService.Capacity;
 
         Level = (ParentSection?.Level ?? -1) + 1;
     }

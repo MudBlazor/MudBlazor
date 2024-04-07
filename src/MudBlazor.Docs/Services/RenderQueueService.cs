@@ -3,8 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Components;
@@ -38,27 +36,28 @@ namespace MudBlazor.Docs.Services
 
         public async ValueTask Enqueue(QueuedContent component)
         {
-            var renderImmediately = _queue.IsEmpty;
             _queue.Enqueue(component);
             component.Rendered = EventCallback.Factory.Create(this, RenderNext);
             component.Disposed = EventCallback.Factory.Create(this, RenderNext);
-            if (renderImmediately)
+            if (_queue.Count <= Capacity)
                 await component.RenderAsync();
         }
 
         private async Task RenderNext()
         {
-            while (_queue.TryDequeue(out var component))
+            QueuedContent component;
+            while (_queue.TryDequeue(out component) && (component.IsDisposed || component.IsRendered))
             {
-                if (component.IsDisposed || component.IsRendered)
-                {
-                    continue;
-                }
+                // Move on to the next component
+            }
+            if (component != null)
+            {
+                await Task.Delay(20); // Wait for the page to render
                 await component.RenderAsync();
             }
-            if (_queue.IsEmpty)
+            if (_emptyQueueTcs != null && _queue.IsEmpty)
             {
-                _emptyQueueTcs?.TrySetResult();
+                _emptyQueueTcs.TrySetResult();
                 _emptyQueueTcs = null;
             }
         }
