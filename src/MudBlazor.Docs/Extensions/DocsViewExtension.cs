@@ -1,5 +1,6 @@
 ﻿using Blazor.Analytics;
 using Blazored.LocalStorage;
+using BytexDigital.Blazor.Components.CookieConsent;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
@@ -46,7 +47,80 @@ namespace MudBlazor.Docs.Extensions
             services.AddSingleton<IRenderQueueService, RenderQueueService>();
             services.AddScoped<LayoutService>();
             services.AddGoogleAnalytics("G-PRYNCB61NV");
+            services.AddCookieConsent(options =>
+            {
+                options.Revision = 1;
+                options.PolicyUrl = "/mud/cookie-policy";
 
+                // Call optional
+                options.UseDefaultConsentPrompt(prompt =>
+                {
+                    prompt.Position = ConsentModalPosition.BottomRight;
+                    prompt.Layout = ConsentModalLayout.Bar;
+                    prompt.SecondaryActionOpensSettings = false;
+                    prompt.AcceptAllButtonDisplaysFirst = false;
+                });
+
+                options.Categories.Add(new CookieCategory
+                {
+                    TitleText = new()
+                    {
+                        ["en"] = "Google Services",
+                    },
+                    DescriptionText = new()
+                    {
+                        ["en"] = "Allows the integration and usage of Google services.",
+                    },
+                    Identifier = "google",
+                    IsPreselected = true,
+
+                    Services = new()
+                    {
+                        new CookieCategoryService
+                        {
+                            Identifier = "google-analytics",
+                            PolicyUrl = "https://policies.google.com/privacy",
+                            TitleText = new()
+                            {
+                                ["en"] = "Google Analytics",
+                            },
+                            ShowPolicyText = new()
+                            {
+                                ["en"] = "Display policies",
+                            }
+                        }
+                    }
+                });
+                options.Categories.Add(new CookieCategory()
+                {
+                    TitleText = new()
+                    {
+                        ["en"] = "Carbon Services",
+                    },
+                    DescriptionText = new()
+                    {
+                        ["en"] = "Allows the integration and usage of Carbon services.",
+                    },
+                    Identifier = "Carbon",
+                    IsPreselected = true,
+                    Services = new()
+                    {
+                        new CookieCategoryService
+                        {
+                            Identifier = "carbonads",
+                            PolicyUrl = "https://www.buysellads.com/privacy",
+                            TitleText = new()
+                            {
+                                ["en"] = "Carbon Ads"
+                            },
+                            ShowPolicyText = new()
+                            {
+                                ["en"] = "Display policies",
+                            }
+                        }
+                    }
+                });
+            });
         }
     }
 }
