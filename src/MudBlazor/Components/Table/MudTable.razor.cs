@@ -403,6 +403,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
         public RenderFragment<TableGroupData<object, T>> GroupFooterTemplate { get; set; }
+        
+        /// <summary>
+        /// If true, the table will be striped per group. Use instead of Striped.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Grouping)]
+        public bool StripedGroups { get; set; }
 
         private IEnumerable<T> _preEditSort;
         private bool _currentRenderFilteredItemsCached;

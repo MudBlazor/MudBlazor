@@ -53,18 +53,22 @@ else
             <MudTableGroupRow GroupDefinition="GroupDefinition.InnerGroup" Items="@group" IsCheckable="@IsCheckable"
                               HeaderClass="@HeaderClass" HeaderStyle="@HeaderStyle"
                               FooterClass="@FooterClass" FooterStyle="@FooterStyle"
-                              HeaderTemplate="@HeaderTemplate" FooterTemplate="@FooterTemplate" T="T" @attributes="@UserAttributes" />
+                              HeaderTemplate="@HeaderTemplate" FooterTemplate="@FooterTemplate" T="T" @attributes="@UserAttributes"
+                              StripedGroup="@StripedGroup" />
         }
     }
     else
     {
-        @Table?.RenderRows(Items, (GroupDefinition?.Indentation ?? false) ? $"mud-table-row-group-indented-{GroupDefinition?.Level - 1}" : null, GroupDefinition?.IsThisOrParentExpandable ?? false)
+        var customClass = GroupDefinition?.Indentation ?? false ? $"mud-table-row-group-indented-{GroupDefinition?.Level - 1}" : "";
+        customClass += StripedGroup == "" ? "" : $" mud-table-row-group-striped-{StripedGroup}";
+        @Table?.RenderRows(Items, customClass, GroupDefinition?.IsThisOrParentExpandable ?? false)
     }
 
     @*FOOTER:*@
     @if (FooterTemplate != null && GroupDefinition != null)
     {
-        <tr class="@FooterClassname" @onclick="@OnRowClick" style="@FooterStyle" @attributes="@UserAttributes">
+        var footerClass = FooterClassname + (StripedGroup == "" ? "" : $" mud-table-row-group-striped-{StripedGroup}");
+        <tr class="@footerClass" @onclick="@OnRowClick" style="@FooterStyle" @attributes="@UserAttributes">
             @if ((GroupDefinition?.IsThisOrParentExpandable ?? false) || (Context?.Table.MultiSelection ?? false))
             {
                 <MudTd/>
