@@ -6,7 +6,7 @@
 @namespace MudBlazor
 @inherits MudComponentBase
 
-@Css
+@_css
 <div @attributes="UserAttributes" class="@SnackbarClass" style="@AnimationStyle" @onclick="EventUtil.AsNonRenderingEventHandler(SnackbarClicked)"
      @onmouseenter="InteractionStartHandler" @onmouseleave="InteractionEndHandler" @ontouchstart="InteractionStartHandler" @ontouchend="InteractionEndHandler" @ontouchcancel="InteractionEndHandler">
     @if (!HideIcon)

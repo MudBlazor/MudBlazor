@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Components.Snackbar;
-using static System.String;
 
 namespace MudBlazor
 {
@@ -26,7 +25,7 @@ namespace MudBlazor
         private Variant ActionVariant => Snackbar?.State.Options.ActionVariant ?? Snackbar?.State.Options.SnackbarVariant ?? Variant.Text;
         private string AnimationStyle => Snackbar?.State.AnimationStyle + Style;
         private string SnackbarClass => Snackbar?.State.SnackbarClass;
-        private RenderFragment Css;
+        private RenderFragment _css;
         private bool ShowActionButton => Snackbar?.State.ShowActionButton == true;
         private bool ShowCloseIcon => Snackbar?.State.ShowCloseIcon == true;
 
@@ -37,15 +36,17 @@ namespace MudBlazor
         private Size IconSize => Snackbar?.State.Options.IconSize ?? Size.Medium;
 
         // behavior
-        private async Task ActionClickedAsync() => await Snackbar?.ClickedAsync(false);
-        private async Task CloseIconClickedAsync() => await Snackbar?.ClickedAsync(true);
+        private Task ActionClickedAsync() => Snackbar?.Clicked(false);
+        private Task CloseIconClickedAsync() => Snackbar?.Clicked(true);
 
         private SnackbarMessage Message => Snackbar?.SnackbarMessage;
 
         private void SnackbarClicked()
         {
             if (!ShowActionButton)
-                Snackbar?.ClickedAsync(false);
+            {
+                Snackbar?.Clicked(false);
+            }
         }
 
         private void SnackbarUpdated()
@@ -60,11 +61,11 @@ namespace MudBlazor
                 Snackbar.OnUpdate += SnackbarUpdated;
                 Snackbar.Init();
 
-                Css = builder =>
+                _css = builder =>
                 {
                     var transitionClass = Snackbar.State.TransitionClass;
 
-                    if (!IsNullOrWhiteSpace(transitionClass))
+                    if (!string.IsNullOrWhiteSpace(transitionClass))
                     {
                         builder.OpenElement(1, "style");
                         builder.AddContent(2, transitionClass);
@@ -89,7 +90,9 @@ namespace MudBlazor
         public void Dispose()
         {
             if (Snackbar != null)
+            {
                 Snackbar.OnUpdate -= SnackbarUpdated;
+            }
         }
     }
 }
