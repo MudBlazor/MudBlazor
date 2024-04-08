@@ -384,6 +384,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridMultiSelectionTest_Should_Not_Render_Footer_If_ShowInFooter_Is_False()
+        {
+            var comp = Context.RenderComponent<DataGridMultiSelectionTest>(
+                Parameter(nameof(MudBlazor.UnitTests.TestComponents.DataGridMultiSelectionTest.ShowInFooter), false));
+            comp.FindAll("td.footer-cell").Should().BeEmpty();
+        }
+
+        [Test]
         public async Task DataGridSelectAllWithFilterTest()
         {
             var comp = Context.RenderComponent<DataGridMultiSelectionTest>();
@@ -3602,7 +3610,7 @@ namespace MudBlazor.UnitTests.Components
             // Simulate a click on the gender header group button to open the popover with grouping options.
             genderHeaderOption.Click();
 
-            // Find all MudListItem components within the popoverProvider. 
+            // Find all MudListItem components within the popoverProvider.
             // These list items represent the individual options within the grouping popover.
             var listItems = popoverProvider.FindComponents<MudListItem>();
 
