@@ -1,4 +1,5 @@
 ﻿@page "/mud/cookie-policy"
+@using BytexDigital.Blazor.Components.CookieConsent
 
 <DocsPage DisplayFooter="true">
     <DocsPageHeader Title="Cookie policy" SubTitle="" />
@@ -87,6 +88,75 @@
                     </Description>
                 </SectionHeader>
             </DocsPageSection>
+            <DocsPageSection>
+                <SectionHeader Title="How do I change my cookie settings?">
+                    <Description>
+                        You can change your cookie preferences at any time by clicking on the "Cookie Preferences" button.
+                        <br />
+                        <br />
+                        <MudButton OnClick="OpenSettingsAsync" DisableElevation="true" EndIcon="@Icons.Material.Filled.Cookie" Variant="Variant.Filled" Color="Color.Primary" Class="docs-no-text-transform">Cookie Preferences</MudButton>
+                        <br />
+                        <br />
+                        You can then adjust the available sliders to ‘On’ or ‘Off’, then clicking ‘Save preferences’. You may need to refresh your page for your settings to take effect.
+                        <br />
+                        <br />
+                        Alternatively, most web browsers allow some control of most cookies through the browser settings. To find out more about cookies, including how to see what cookies have been set, visit www.aboutcookies.org or www.allaboutcookies.org.
+                        <br />
+                        <br />
+                        Find out how to manage cookies on popular browsers:
+                        <div class="d-flex flex-column px-2">
+                            <MudBadge Class="mt-1" Color="Color.Primary" Dot="true" Origin="Origin.CenterLeft">
+                                <div class="pl-4 docs-line-height-normal">
+                                    <MudLink Href="https://support.google.com/accounts/answer/61416?co=GENIE.Platform%3DDesktop&hl=en" Target="_blank">Google Chrome</MudLink>
+                                </div>
+                            </MudBadge>
+                            <MudBadge Class="mt-1" Color="Color.Primary" Dot="true" Origin="Origin.CenterLeft">
+                                <div class="pl-4 docs-line-height-normal">
+                                    <MudLink Href="https://support.microsoft.com/en-us/windows/microsoft-edge-browsing-data-and-privacy-bb8174ba-9d73-dcf2-9b4a-c582b4e640dd" Target="_blank">Microsoft Edge</MudLink>
+                                </div>
+                            </MudBadge>
+                            <MudBadge Class="mt-1" Color="Color.Primary" Dot="true" Origin="Origin.CenterLeft">
+                                <div class="pl-4 docs-line-height-normal">
+                                    <MudLink Href="https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop?redirectslug=enable-and-disable-cookies-website-preferences&redirectlocale=en-US" Target="_blank">Mozilla Firefox</MudLink>
+                                </div>
+                            </MudBadge>
+                            <MudBadge Class="mt-1" Color="Color.Primary" Dot="true" Origin="Origin.CenterLeft">
+                                <div class="pl-4 docs-line-height-normal">
+                                    <MudLink Href="https://support.microsoft.com/en-gb/windows/delete-and-manage-cookies-168dab11-0753-043d-7c16-ede5947fc64d" Target="_blank">Microsoft Internet Explorer</MudLink>
+                                </div>
+                            </MudBadge>
+                            <MudBadge Class="mt-1" Color="Color.Primary" Dot="true" Origin="Origin.CenterLeft">
+                                <div class="pl-4 docs-line-height-normal">
+                                    <MudLink Href="https://help.opera.com/en/latest/web-preferences/" Target="_blank">Opera</MudLink>
+                                </div>
+                            </MudBadge>
+                            <MudBadge Class="mt-1" Color="Color.Primary" Dot="true" Origin="Origin.CenterLeft">
+                                <div class="pl-4 docs-line-height-normal">
+                                    <MudLink Href="https://support.apple.com/en-gb/safari" Target="_blank">Apple Safari</MudLink>
+                                </div>
+                            </MudBadge>
+                        </div>
+                        <br />
+                        To find information relating to other browsers, visit the browser developer’s website.
+                        <br />
+                        <br />
+                        To opt-out of being tracked by Google Analytics across all websites, visit <MudLink Href="http://tools.google.com/dlpage/gaoptout" Target="_blank">http://tools.google.com/dlpage/gaoptout</MudLink>.
+                    </Description>
+                </SectionHeader>
+            </DocsPageSection>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
+
+@code
+{
+#nullable enable
+    [Inject]
+    protected CookieConsentService CookieConsentService { get; set; } = null!;
+
+    private async Task OpenSettingsAsync()
+    {
+        await CookieConsentService.ShowPreferencesModalAsync();
+        StateHasChanged();
+    }
+}

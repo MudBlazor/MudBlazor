@@ -1,4 +1,5 @@
-﻿using Blazor.Analytics;
+﻿using System.Collections.Generic;
+using Blazor.Analytics;
 using Blazored.LocalStorage;
 using BytexDigital.Blazor.Components.CookieConsent;
 using Microsoft.Extensions.DependencyInjection;
@@ -63,10 +64,38 @@ namespace MudBlazor.Docs.Extensions
                     prompt.SecondaryActionOpensSettings = false;
                     prompt.AcceptAllButtonDisplaysFirst = false;
                 });
-
+  
                 // Replace default layouts.
                 options.ConsentPromptVariant = new MudCookieConsentPromptVariant();
                 options.SettingsModalVariant = new MudCookieConsentDefaultSettingsModalVariant();
+                options.Categories.Add(new CookieCategory()
+                {
+                    IsRequired = true,
+                    TitleText = new()
+                    {
+                        ["en"] = "Azure Cloud Platform",
+                    },
+                    DescriptionText = new()
+                    {
+                        ["en"] = "It is used for load balancing to make sure the visitor page requests are routed to the same server in any browsing session.",
+                    },
+                    Services = new()
+                    {
+                        new CookieCategoryService
+                        {
+                            Identifier = "necessary",
+                            PolicyUrl = "https://privacy.microsoft.com/en-us/privacystatementy",
+                            TitleText = new()
+                            {
+                                ["en"] = "Azure App Service",
+                            },
+                            ShowPolicyText = new()
+                            {
+                                ["en"] = "Display policies",
+                            },
+                        }
+                    }
+                });
 
                 options.Categories.Add(new CookieCategory
                 {
@@ -89,35 +118,6 @@ namespace MudBlazor.Docs.Extensions
                             TitleText = new()
                             {
                                 ["en"] = "Google Analytics",
-                            },
-                            ShowPolicyText = new()
-                            {
-                                ["en"] = "Display policies",
-                            }
-                        }
-                    }
-                });
-                options.Categories.Add(new CookieCategory()
-                {
-                    TitleText = new()
-                    {
-                        ["en"] = "Carbon Services",
-                    },
-                    DescriptionText = new()
-                    {
-                        ["en"] = "Allows the integration and usage of Carbon services.",
-                    },
-                    Identifier = "Carbon",
-                    IsPreselected = true,
-                    Services = new()
-                    {
-                        new CookieCategoryService
-                        {
-                            Identifier = "carbonads",
-                            PolicyUrl = "https://www.buysellads.com/privacy",
-                            TitleText = new()
-                            {
-                                ["en"] = "Carbon Ads"
                             },
                             ShowPolicyText = new()
                             {
