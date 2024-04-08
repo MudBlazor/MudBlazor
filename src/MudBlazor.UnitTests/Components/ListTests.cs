@@ -1,11 +1,6 @@
-﻿
-#pragma warning disable CS1998 // async without await
-
-using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -19,7 +14,7 @@ namespace MudBlazor.UnitTests.Components
         /// <para>In this test no item is selected to begin with</para>
         /// </summary>
         [Test]
-        public async Task ListSelectionTest()
+        public void ListSelectionTest()
         {
             var comp = Context.RenderComponent<ListSelectionTest>();
             var list = comp.FindComponent<MudList>().Instance;
@@ -58,22 +53,22 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups
             comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
             // set Pu'er, a heavily fermented Chinese tea that tastes like an old leather glove
-            await comp.InvokeAsync(() => comp.Instance.SetSelecedValue(4));
+            await comp.InvokeAsync(() => comp.Instance.SetSelectedValue(4));
             list.SelectedItem.Text.Should().Be("Pu'er");
             comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
             comp.FindComponents<MudListItem>()[4].Markup.Should().Contain("mud-selected-item");
             // set Cafe Latte via changing SelectedValue
-            await comp.InvokeAsync(() => comp.Instance.SetSelecedValue(7));
+            await comp.InvokeAsync(() => comp.Instance.SetSelectedValue(7));
             list.SelectedItem.Text.Should().Be("Cafe Latte");
             comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
             comp.FindComponents<MudListItem>()[8].Markup.Should().Contain("mud-selected-item");
             // set water
-            await comp.InvokeAsync(() => comp.Instance.SetSelecedValue(1));
+            await comp.InvokeAsync(() => comp.Instance.SetSelectedValue(1));
             list.SelectedItem.Text.Should().Be("Sparkling Water");
             comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
             comp.FindComponents<MudListItem>()[0].Markup.Should().Contain("mud-selected-item");
             // set nothing
-            await comp.InvokeAsync(() => comp.Instance.SetSelecedValue(null));
+            await comp.InvokeAsync(() => comp.Instance.SetSelectedValue(null));
             list.SelectedItem.Should().Be(null);
             comp.FindAll("div.mud-selected-item").Count.Should().Be(0);
         }
@@ -109,10 +104,9 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false, false, 0)]
         [TestCase(true, false, 5)]
         [TestCase(false, true, 4)]
-        public async Task ListDenseInheritanceTest(bool dense, bool? innerListDense, int expectedDenseClassCount)
+        public void ListDenseInheritanceTest(bool dense, bool? innerListDense, int expectedDenseClassCount)
         {
             var comp = Context.RenderComponent<ListDenseInheritanceTest>(x => x.Add(c => c.Dense, dense).Add(c => c.InnerListDense, innerListDense));
-            var list = comp.FindComponent<MudList>().Instance;
 
             comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups
             comp.FindAll("div.mud-list-item-dense").Count.Should().Be(expectedDenseClassCount); // 7 choices, 2 groups
