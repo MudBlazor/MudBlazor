@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -37,18 +40,6 @@ namespace MudBlazor
         /// <summary>
         /// The state of the component
         /// </summary>
-        [Obsolete("Use Value instead.")]
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Data)]
-        public T? Checked
-        {
-            get => _value;
-            set => _value = value;
-        }
-
-        /// <summary>
-        /// The state of the component
-        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
         public T? Value
@@ -57,7 +48,7 @@ namespace MudBlazor
             set
             {
                 _value = value;
-                
+
             }
         }
 
@@ -73,13 +64,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<T?> ValueChanged { get; set; }
-
-        /// <summary>
-        /// Fired when Checked changes.
-        /// </summary>
-        [Obsolete("Use ValueChanged instead.")]
-        [Parameter]
-        public EventCallback<T?> CheckedChanged { get; set; }
 
         protected bool? BoolValue => Converter.Set(Value);
 
@@ -97,15 +81,14 @@ namespace MudBlazor
         protected async Task SetCheckedAsync(T? value)
         {
             if (GetDisabledState())
+            {
                 return;
+            }
+
             if (!EqualityComparer<T>.Default.Equals(Value, value))
             {
                 Value = value;
                 await ValueChanged.InvokeAsync(value);
-#pragma warning disable CS0618
-                Checked = value;
-                await CheckedChanged.InvokeAsync(value);
-#pragma warning restore CS0618
                 await BeginValidateAsync();
                 FieldChanged(Value);
             }
@@ -115,7 +98,9 @@ namespace MudBlazor
         {
             var changed = base.SetConverter(value);
             if (changed)
+            {
                 SetBoolValueAsync(Converter.Set(Value)).AndForget();
+            }
 
             return changed;
         }
@@ -125,7 +110,7 @@ namespace MudBlazor
         /// </summary>
         protected override bool HasValue(T? value)
         {
-            return (BoolValue == true);
+            return BoolValue == true;
         }
     }
 }

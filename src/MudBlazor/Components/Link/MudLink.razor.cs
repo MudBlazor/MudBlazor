@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudLink : MudComponentBase
+    public partial class MudLink : MudComponentBase, IHandleEvent
     {
         protected string Classname =>
             new CssBuilder("mud-typography mud-link")
@@ -59,7 +59,7 @@ namespace MudBlazor
         public string? Href { get; set; }
 
         /// <summary>
-        /// The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// The target attribute specifies where to open the link, if Href is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Link.Behavior)]
@@ -94,5 +94,13 @@ namespace MudBlazor
 
             await OnClick.InvokeAsync(ev);
         }
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
+        /// <para/>
+        /// Since <see cref="MudLink"/> implements only single <see cref="EventCallback"/> <see cref="OnClick"/> this is safe to disable globally within the component.
+        /// </remarks>
+        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
 }

@@ -1,36 +1,38 @@
-#nullable enable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudTreeView<T> : MudComponentBase
     {
+        private T? _previousSelectedValue;
+        //private IEqualityComparer<T?>? _previousValueComparer;
         private object _selectedUpdateLock = new();
         private HashSet<MudTreeViewItem<T>>? _selectedValues;
         private List<MudTreeViewItem<T>> _childItems = new();
 
         protected string Classname =>
-        new CssBuilder("mud-treeview")
-          .AddClass("mud-treeview-dense", Dense)
-          .AddClass("mud-treeview-hover", Hover)
-          .AddClass($"mud-treeview-selected-{Color.ToDescriptionString()}")
-           .AddClass($"mud-treeview-checked-{CheckBoxColor.ToDescriptionString()}")
-          .AddClass(Class)
-        .Build();
+            new CssBuilder("mud-treeview")
+                .AddClass("mud-treeview-dense", Dense)
+                .AddClass("mud-treeview-hover", Hover)
+                .AddClass($"mud-treeview-selected-{Color.ToDescriptionString()}")
+                .AddClass($"mud-treeview-checked-{CheckBoxColor.ToDescriptionString()}")
+                .AddClass(Class)
+                .Build();
+
         protected string Stylename =>
-        new StyleBuilder()
-            .AddStyle($"width", Width, !string.IsNullOrWhiteSpace(Width))
-            .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
-            .AddStyle($"max-height", MaxHeight, !string.IsNullOrWhiteSpace(MaxHeight))
-            .AddStyle(Style)
-        .Build();
+            new StyleBuilder()
+                .AddStyle($"width", Width, !string.IsNullOrWhiteSpace(Width))
+                .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
+                .AddStyle($"max-height", MaxHeight, !string.IsNullOrWhiteSpace(MaxHeight))
+                .AddStyle(Style)
+                .Build();
 
         /// <summary>
         /// The color of the selected treeviewitem.
@@ -54,30 +56,14 @@ namespace MudBlazor
         public bool MultiSelection { get; set; }
 
         /// <summary>
-        /// if true, multiple values can be selected via checkboxes which are automatically shown in the tree view.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use MultiSelection instead.", true)]
-        [Parameter]
-        public bool CanSelect
-        {
-            get => MultiSelection;
-            set => MultiSelection = value;
-        }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete("MudTreeView now automaticly activates when using SelectedValue.", true)]
-        [Parameter] public bool CanActivate { get; set; }
-
-        /// <summary>
-        /// If true, clicking anywhere on the item will expand it, if it has childs.
+        /// If true, clicking anywhere on the item will expand it, if it has children.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.ClickAction)]
         public bool ExpandOnClick { get; set; }
 
         /// <summary>
-        /// If true, double clicking anywhere on the item will expand it, if it has childs.
+        /// If true, double-clicking anywhere on the item will expand it, if it has children.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.ClickAction)]
@@ -89,18 +75,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public bool Hover { get; set; }
-
-        /// <summary>
-        /// Hover effect for item's on mouse-over.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use Hover instead.", true)]
-        [Parameter]
-        public bool CanHover
-        {
-            get => Hover;
-            set => Hover = value;
-        }
 
         /// <summary>
         /// If true, compact vertical padding will be applied to all treeview items.
@@ -143,14 +117,6 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Data)]
         public HashSet<T> Items { get; set; } = new();
 
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use SelectedValueChanged instead.", true)]
-        [Parameter] public EventCallback<T?> ActivatedValueChanged
-        {
-            get => SelectedValueChanged;
-            set => SelectedValueChanged = value;
-        }
-
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public T? SelectedValue { get; set; }
@@ -158,12 +124,14 @@ namespace MudBlazor
         /// <summary>
         /// Called whenever the selected value changed.
         /// </summary>
-        [Parameter] public EventCallback<T?> SelectedValueChanged { get; set; }
-        
+        [Parameter]
+        public EventCallback<T?> SelectedValueChanged { get; set; }
+
         /// <summary>
         /// Called whenever the selectedvalues changed.
         /// </summary>
-        [Parameter] public EventCallback<HashSet<T>> SelectedValuesChanged { get; set; }
+        [Parameter]
+        public EventCallback<HashSet<T?>> SelectedValuesChanged { get; set; }
 
         /// <summary>
         /// Child content of component.
@@ -178,19 +146,20 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public RenderFragment<T>? ItemTemplate { get; set; }
-        
+
         /// <summary>
         /// Comparer is used to check if two tree items are equal
         /// </summary>
-        [Parameter] 
+        [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public IEqualityComparer<T?> Comparer { get; set; } = EqualityComparer<T?>.Default;
 
-        [CascadingParameter] MudTreeView<T> MudTreeRoot { get; set; }
+        [CascadingParameter]
+        private MudTreeView<T> MudTreeRoot { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public Func<T, Task<HashSet<T>>>? ServerData { get; set; }
+        public Func<T?, Task<HashSet<T>>>? ServerData { get; set; }
 
         public MudTreeView()
         {
@@ -201,6 +170,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
             IsSelectable = SelectedValueChanged.HasDelegate;
         }
 
@@ -233,10 +203,10 @@ namespace MudBlazor
             return SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
 
-        private HashSet<T> SelectedValues => _selectedValues is not null
+        private HashSet<T?> SelectedValues => _selectedValues is not null
             ? new(_selectedValues.Select(i => i.Value))
             : new();
-        
+
         public async Task Select(MudTreeViewItem<T> item, bool isSelected = true)
         {
             if (MultiSelection)
@@ -259,19 +229,22 @@ namespace MudBlazor
 
         public override async Task SetParametersAsync(ParameterView parameters)
         {
-            if (parameters.TryGetValue(nameof(SelectedValue), out T? selected) && 
-                !Comparer.Equals(selected, SelectedValue))
+            // See https://github.com/MudBlazor/MudBlazor/issues/8360#issuecomment-1996168491
+            _previousSelectedValue = SelectedValue;
+            var selectedChanged = parameters.HasParameterChanged(nameof(SelectedValue), SelectedValue, out var selected);
+            var comparerChanged = parameters.HasParameterChanged(nameof(Comparer), Comparer, out var comparer);
+
+            await base.SetParametersAsync(parameters);
+
+            if (selectedChanged)
             {
                 await SetSelectedValue(selected);
             }
-            
-            if (parameters.TryGetValue(nameof(Comparer), out IEqualityComparer<T?>? comparer) && 
-                !Equals(comparer, Comparer))
+
+            if (comparerChanged)
             {
                 await UpdateSelectedValueCompare(comparer!);
             }
-            
-            await base.SetParametersAsync(parameters);
         }
 
         ///  <summary>
@@ -283,8 +256,8 @@ namespace MudBlazor
         ///  <param name="value">The value to be set as the selected value.</param>
         internal async Task SetSelectedValue(T? value)
         {
-            if(Comparer.Equals(value, SelectedValue)) return;
-            
+            if (Comparer.Equals(value, _previousSelectedValue)) return;
+
             await UnSelectAllChildren();
 
             if (value == null ||
@@ -301,7 +274,7 @@ namespace MudBlazor
         private async ValueTask UpdateSelectedValueCompare(IEqualityComparer<T?> comparer)
         {
             List<MudTreeViewItem<T>> unselectedItem;
-            
+
             lock (_selectedUpdateLock)
             {
                 if (_selectedValues is null)
@@ -309,7 +282,7 @@ namespace MudBlazor
                     _selectedValues = new(new MudTreeViewItemComparer<T>(comparer));
                     return;
                 }
-                
+
                 var newSelected = new HashSet<MudTreeViewItem<T>>(new MudTreeViewItemComparer<T>(comparer));
 
                 foreach (var item in _selectedValues)
@@ -321,8 +294,8 @@ namespace MudBlazor
 
                 _selectedValues = newSelected;
             }
-            
-            
+
+
             foreach (var unselectedItems in unselectedItem)
             {
                 await unselectedItems.SelectedChanged.InvokeAsync(false);
@@ -332,7 +305,7 @@ namespace MudBlazor
         internal async Task UnSelectAllChildren(List<MudTreeViewItem<T>>? children = null)
         {
             children ??= _childItems;
-            
+
             foreach (var item in children)
             {
                 await UnSelectAllChildren(item.ChildItems);
@@ -343,7 +316,7 @@ namespace MudBlazor
                 }
             }
         }
-        
+
         internal MudTreeViewItem<T>? FindItemByValue(T value, List<MudTreeViewItem<T>>? children = null)
         {
             children ??= _childItems;
@@ -364,6 +337,5 @@ namespace MudBlazor
 
             return null;
         }
-        
     }
 }

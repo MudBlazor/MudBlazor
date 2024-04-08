@@ -6,6 +6,7 @@
 // License: MIT
 // See https://github.com/Blazored
 
+#nullable enable
 
 using System.ComponentModel;
 
@@ -23,7 +24,7 @@ namespace MudBlazor
         public bool? CloseButton { get; set; }
         public bool? FullScreen { get; set; }
         public bool? FullWidth { get; set; }
-        public string ClassBackground { get; set; }
+        public string? BackgroundClass { get; set; }
     }
 
     public enum DialogPosition

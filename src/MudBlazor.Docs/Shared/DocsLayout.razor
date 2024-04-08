@@ -4,7 +4,7 @@
 <MudLayout Class="mudblazor-docs">
     <MudAppBar Class="docs-appbar-filter" Color="Color.Transparent" Elevation="0"></MudAppBar>
     <MudAppBar Class="docs-appbar" Elevation="0">
-        <Appbar DrawerToggleCallback="ToggleDrawer" DisplaySearchBar="true" />
+        <Appbar DrawerToggleCallback="ToggleDrawer" />
     </MudAppBar>
     <MudDrawer Open="@_drawerOpen" OpenChanged="OnDrawerOpenChanged" ClipMode="DrawerClipMode.Docked" Elevation="0" Breakpoint="Breakpoint.Md">
         <div class="d-block d-md-none">
@@ -33,8 +33,6 @@
                         <MudNavLink Href="https://github.com/MudBlazor/ThemeManager">ThemeManager</MudNavLink>
                         <MudNavLink Href="https://github.com/MudBlazor/Templates">Templates</MudNavLink>
                         <MudListSubheader Class="mt-4 pl-8 pb-2"><b>Coming soon</b></MudListSubheader>
-                        <MudNavLink Disabled="true">MudStore</MudNavLink>
-                        <MudNavLink Disabled="true">MudAcademy</MudNavLink>
                         <MudNavLink Disabled="true">MudExtensions</MudNavLink>
                     </MudNavGroup>
                 </MudNavMenu>
@@ -75,6 +73,6 @@
     </MudDrawer>
     @Body
     <MudScrollToTop TopOffset="400" Style="z-index:2000;">
-        <MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary"/>
+        <MudFab StartIcon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary"/>
     </MudScrollToTop>
 </MudLayout>

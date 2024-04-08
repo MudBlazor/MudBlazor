@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -118,7 +119,7 @@ namespace MudBlazor
         Guid IPopoverObserver.Id { get; } = Guid.NewGuid();
 
         /// <inheritdoc />
-        async Task IPopoverObserver.PopoverCollectionUpdatedNotificationAsync(PopoverHolderContainer container)
+        async Task IPopoverObserver.PopoverCollectionUpdatedNotificationAsync(PopoverHolderContainer container, CancellationToken cancellationToken)
         {
             switch (container.Operation)
             {
@@ -127,6 +128,11 @@ namespace MudBlazor
                     {
                         foreach (var holder in container.Holders)
                         {
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                return;
+                            }
+
                             if (holder.ElementReference is not null)
                             {
                                 await InvokeAsync(holder.ElementReference.StateHasChanged);

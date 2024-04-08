@@ -1,11 +1,11 @@
-﻿.mud-switch {
+.mud-switch {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   margin-left: -11px;
-  margin-right: 16px;
+  margin-right: 0px;
   margin-inline-start: -11px;
-  margin-inline-end: 16px;
+  margin-inline-end: 0px;
   vertical-align: middle;
   -webkit-tap-highlight-color: transparent;
 
@@ -14,9 +14,16 @@
     cursor: default;
   }
 
-  &.mud-readonly, .mud-readonly:hover {
+  &.mud-readonly {
     cursor: default;
     background-color: transparent !important;
+  }
+
+  @media(hover: hover) and (pointer: fine) {
+    .mud-readonly:hover {
+      cursor: default;
+      background-color: transparent !important;
+    }
   }
 }
 
@@ -60,18 +67,27 @@
     }
   }
 
-  &:hover {
-    background-color: var(--mud-palette-action-default-hover);
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--mud-palette-action-default-hover);
+    }
   }
 
   &.mud-switch-disabled {
-    color: var(--mud-palette-grey-default) !important;
+    color: var(--mud-palette-gray-default) !important;
 
     & + .mud-switch-track {
       opacity: 0.12 !important;
     }
 
-    &:hover, &:focus-visible {
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        cursor: default;
+        background-color: transparent !important;
+      }
+    }
+
+    &:focus-visible, &:active {
       cursor: default;
       background-color: transparent !important;
     }

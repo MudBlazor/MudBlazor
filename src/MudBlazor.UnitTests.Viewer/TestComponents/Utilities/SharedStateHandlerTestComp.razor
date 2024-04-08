@@ -1,0 +1,14 @@
+﻿@inherits MudComponentBase
+@namespace MudBlazor.UnitTests
+
+<h3>SharedStateHandlerTestComp</h3>
+
+<p>ABC handler count: <span class="abc">@AbcHandlerCallCount</span></p>
+<p>OP handler count: <span class="op">@OpHandlerCallCount</span></p>
+<p>XYZ handler count: <span class="xyz">@XyzHandlerCallCount</span></p>
+
+@code
+{
+    public static string __description__ = "Tests ParameterState framework shared handler invocation optimization. " +
+                                           "Shared handlers should be called only once per render update if multiple params change";
+}

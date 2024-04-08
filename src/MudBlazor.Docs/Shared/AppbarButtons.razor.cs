@@ -29,7 +29,7 @@ public partial class AppbarButtons
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender == true)
+        if (firstRender)
         {
             _newNotificationsAvailable = await NotificationService.AreNewNotificationsAvailable();
             _messages = await NotificationService.GetNotifications();

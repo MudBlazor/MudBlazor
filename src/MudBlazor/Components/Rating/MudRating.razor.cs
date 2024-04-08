@@ -74,12 +74,14 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public Size Size { get; set; } = Size.Medium;
+
         /// <summary>
-        /// If true, disables ripple effect.
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
+
         /// <summary>
         /// If true, the controls will be disabled.
         /// </summary>

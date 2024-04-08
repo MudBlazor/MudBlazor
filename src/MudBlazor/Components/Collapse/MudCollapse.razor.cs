@@ -19,7 +19,7 @@ namespace MudBlazor
         }
 
         internal double _height;
-        private ParameterState<bool> _expandedState;
+        private IParameterState<bool> _expandedState;
         private bool _isRendered;
         private bool _updateHeight;
         private ElementReference _wrapper;
@@ -137,23 +137,6 @@ namespace MudBlazor
                 StateHasChanged();
             }
             await base.OnAfterRenderAsync(firstRender);
-        }
-
-        [ExcludeFromCodeCoverage]
-        [Obsolete($"Use {nameof(AnimationEndAsync)} instead. This will be removed in v7")]
-        public void AnimationEnd()
-        {
-            if (_state == CollapseState.Entering)
-            {
-                _state = CollapseState.Entered;
-                StateHasChanged();
-            }
-            else if (_state == CollapseState.Exiting)
-            {
-                _state = CollapseState.Exited;
-                StateHasChanged();
-            }
-            OnAnimationEnd.InvokeAsync(_expandedState.Value);
         }
 
         public Task AnimationEndAsync()

@@ -76,9 +76,9 @@ namespace MudBlazor.UnitTests.Components
 
         private void CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool checkInstanceValue = true, bool isRtl = false)
         {
-            if (checkInstanceValue == true)
+            if (checkInstanceValue)
             {
-                comp.WaitForAssertion(()=> comp.Instance.ColorValue.Should().Be(expectedColor));
+                comp.WaitForAssertion(() => comp.Instance.ColorValue.Should().Be(expectedColor));
             }
 
             if (mode is ColorPickerMode.RGB or ColorPickerMode.HSL)
@@ -97,7 +97,7 @@ namespace MudBlazor.UnitTests.Components
                     castedInputs[0].Value.Should().Be(expectedColor.H.ToString(CultureInfo.CurrentUICulture));
                     castedInputs[1].Value.Should().Be(expectedColor.S.ToString(CultureInfo.CurrentUICulture));
                     castedInputs[2].Value.Should().Be(expectedColor.L.ToString(CultureInfo.CurrentUICulture));
-                    castedInputs[3].Value.Should().Match(x => double.Parse(x, CultureInfo.CurrentUICulture) == Math.Round((expectedColor.A / 255.0), 2));
+                    castedInputs[3].Value.Should().Match(x => double.Parse(x, CultureInfo.CurrentUICulture) == Math.Round(expectedColor.A / 255.0, 2));
                 }
             }
             else if (mode == ColorPickerMode.HEX)
@@ -447,7 +447,7 @@ namespace MudBlazor.UnitTests.Components
             overlay.Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
 
             MudColor color = "#232232ff";
-            MudColor expectedColor = new MudColor(color.R, color.G, color.B, _defaultColor);
+            var expectedColor = new MudColor(color.R, color.G, color.B, _defaultColor);
 
             CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
         }
@@ -734,7 +734,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.PickerVariant, PickerVariant.Static);
             });
 
-            var buttons = comp.FindAll(_mudToolbarButtonsCssSelector);
+            IRefreshableElementCollection<IElement> Buttons() => comp.FindAll(_mudToolbarButtonsCssSelector);
 
             Dictionary<int, (ColorPickerView, string)> buttonMapper = new()
             {
@@ -745,7 +745,7 @@ namespace MudBlazor.UnitTests.Components
 
             foreach (var item in buttonMapper)
             {
-                buttons[item.Key].Click();
+                Buttons()[item.Key].Click();
 
                 _ = comp.Find(item.Value.Item2);
             }
@@ -1128,18 +1128,18 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.ColorPickerView, ColorPickerView.Spectrum);
             });
 
-            var buttons = comp.FindAll(_mudToolbarButtonsCssSelector);
+            IRefreshableElementCollection<IElement> Buttons() => comp.FindAll(_mudToolbarButtonsCssSelector);
 
             _eventListener.ElementIdMapper.Keys.Should().ContainSingle();
             var value = _eventListener.ElementIdMapper.Values.First();
 
-            buttons[2].Click();
+            Buttons()[2].Click();
             _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
 
-            buttons[1].Click();
+            Buttons()[1].Click();
             _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
 
-            buttons[0].Click();
+            Buttons()[0].Click();
 
             _eventListener.ElementIdMapper.Keys.Should().ContainSingle();
             _eventListener.ElementIdMapper.Values.First().Should().Be(value);
@@ -1156,13 +1156,13 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.DisableDragEffect, true);
             });
 
-            var buttons = comp.FindAll(_mudToolbarButtonsCssSelector);
+            IRefreshableElementCollection<IElement> Buttons() => comp.FindAll(_mudToolbarButtonsCssSelector);
 
             _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
 
             for (var i = 3 - 1; i >= 0; i--)
             {
-                buttons[i].Click();
+                Buttons()[i].Click();
                 _eventListener.ElementIdMapper.Keys.Should().BeEmpty();
             }
         }
@@ -1178,11 +1178,11 @@ namespace MudBlazor.UnitTests.Components
 
             var overlay = comp.Find(CssSelector);
 
-            double expectedHue = _defaultColor.H;
+            var expectedHue = _defaultColor.H;
 
-            for (int x = 0; x < 312; x += 5)
+            for (var x = 0; x < 312; x += 5)
             {
-                for (int y = 0; y < 250; y += 5)
+                for (var y = 0; y < 250; y += 5)
                 {
                     overlay.Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
 
@@ -1204,7 +1204,7 @@ namespace MudBlazor.UnitTests.Components
             overlay.Click(new MouseEventArgs { OffsetX = x, OffsetY = y });
 
             MudColor color = "#232232ff";
-            MudColor expectedColor = new MudColor(color.R, color.G, color.B, _defaultColor);
+            var expectedColor = new MudColor(color.R, color.G, color.B, _defaultColor);
 
             CheckColorRelatedValues(comp, x, y, expectedColor, ColorPickerMode.RGB);
 
@@ -1217,7 +1217,7 @@ namespace MudBlazor.UnitTests.Components
 
             selector.Click(new MouseEventArgs { OffsetX = 5, OffsetY = 20 });
 
-            MudColor secondExpectedColor = new MudColor(31, 30, 42, _defaultColor);
+            var secondExpectedColor = new MudColor(31, 30, 42, _defaultColor);
             CheckColorRelatedValues(comp, x - 8, y + 7, secondExpectedColor, ColorPickerMode.RGB);
 
         }

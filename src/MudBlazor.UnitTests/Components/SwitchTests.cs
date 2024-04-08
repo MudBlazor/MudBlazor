@@ -86,7 +86,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SwitchWithLabelExample>();
             var switches = comp.FindAll("label.mud-switch");
-    
+
             switches[0].ClassList.Should().NotContain("flex-row-reverse"); // 1st switch: (default) LabelPosition.End
             switches[2].ClassList.Should().Contain("flex-row-reverse"); // 3rd switch: LabelPosition.Start
         }
@@ -128,7 +128,7 @@ namespace MudBlazor.UnitTests.Components
             inputs[7].Change(false);
             switches[7].Children[1].ClassList.Should().Contain("mud-switch-label-large");
             switches[7].Children[0].ClassList.Should().Contain("mud-switch-span-large");
-            
+
 
 
         }

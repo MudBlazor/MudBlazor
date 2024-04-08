@@ -16,13 +16,13 @@ namespace MudBlazor
     {
         /// <summary>
         /// This internal wrapper components prevents overwriting parameters of once
-        /// instanciated dialog instances
+        /// instantiated dialog instances
         /// </summary>
         private class DialogHelperComponent : IComponent
         {
-            const string ChildContent = nameof(ChildContent);
-            RenderFragment _renderFragment;
-            RenderHandle _renderHandle;
+            private const string ChildContent = nameof(ChildContent);
+            private RenderFragment _renderFragment;
+            private RenderHandle _renderHandle;
             void IComponent.Attach(RenderHandle renderHandle) => _renderHandle = renderHandle;
             Task IComponent.SetParametersAsync(ParameterView parameters)
             {
@@ -33,10 +33,11 @@ namespace MudBlazor
                         _renderHandle.Render(_renderFragment);
                     }
                 }
+
                 return Task.CompletedTask;
             }
             public static RenderFragment Wrap(RenderFragment renderFragment)
-                => new RenderFragment(builder =>
+                => new(builder =>
                 {
                     builder.OpenComponent<DialogHelperComponent>(1);
                     builder.AddAttribute(2, ChildContent, renderFragment);
@@ -98,6 +99,7 @@ namespace MudBlazor
             {
                 throw new ArgumentException($"{contentComponent?.FullName} must be a Blazor IComponent");
             }
+
             var dialogReference = CreateReference();
 
             var dialogContent = DialogHelperComponent.Wrap(new RenderFragment(builder =>
@@ -108,6 +110,7 @@ namespace MudBlazor
                 {
                     builder.AddAttribute(i++, parameter.Key, parameter.Value);
                 }
+
                 builder.AddComponentReferenceCapture(i++, inst => { dialogReference.InjectDialog(inst); });
                 builder.CloseComponent();
             }));
@@ -190,7 +193,7 @@ namespace MudBlazor
         public Task<bool?> ShowMessageBox(string title, string message, string yesText = "OK",
             string noText = null, string cancelText = null, DialogOptions options = null)
         {
-            return this.ShowMessageBox(new MessageBoxOptions
+            return ShowMessageBox(new MessageBoxOptions
             {
                 Title = title,
                 Message = message,
@@ -203,7 +206,7 @@ namespace MudBlazor
         public Task<bool?> ShowMessageBox(string title, MarkupString markupMessage, string yesText = "OK",
             string noText = null, string cancelText = null, DialogOptions options = null)
         {
-            return this.ShowMessageBox(new MessageBoxOptions
+            return ShowMessageBox(new MessageBoxOptions
             {
                 Title = title,
                 MarkupMessage = markupMessage,
@@ -224,10 +227,13 @@ namespace MudBlazor
                 [nameof(MessageBoxOptions.NoText)] = messageBoxOptions.NoText,
                 [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText,
             };
-            var reference = await ShowAsync<MudMessageBox>(parameters: parameters, options: options, title: messageBoxOptions.Title);
+            var reference = await ShowAsync<MudMessageBox>(title: messageBoxOptions.Title, parameters: parameters, options: options);
             var result = await reference.Result;
             if (result.Canceled || result.Data is not bool data)
+            {
                 return null;
+            }
+
             return data;
         }
 
@@ -256,16 +262,5 @@ namespace MudBlazor
         public string YesText { get; set; } = "OK";
         public string NoText { get; set; }
         public string CancelText { get; set; }
-    }
-
-    // MudBlazor.Dialog is obsolete but kept here for backwards compatibility reasons.
-    // Don't remove, it will cause massive breakages in user code
-    namespace Dialog
-    {
-        // Inside at least one Class needs to be kept or it will be stripped from assembly
-        public class ObsoleteNamespace
-        {
-            public const string DoNotRemove = "because of backwards compatibility";
-        }
     }
 }

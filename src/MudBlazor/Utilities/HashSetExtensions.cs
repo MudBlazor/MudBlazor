@@ -16,7 +16,7 @@ namespace MudBlazor.Utilities
         {
             if (object.ReferenceEquals(self, other))
                 return true;
-            if (self == null && other !=null || self != null && other == null)
+            if (self == null && other != null || self != null && other == null)
                 return false;
             if (self.Count != other.Count)
                 return false;

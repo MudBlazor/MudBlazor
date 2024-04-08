@@ -7,11 +7,11 @@
      index="@Index"
      @attributes="UserAttributes"
      draggable="@(!Disabled ? "true" : "false")"
-     @ondragstart="DragStarted"
-     @ontouchstart="TouchStarted"
-     @ontouchend="TouchEnded"
-     @ontouchmove="TouchMoved"
-     @ondragend="DragEnded"
+     @ondragstart="DragStartedAsync"
+     @ontouchstart="TouchStartedAsync"
+     @ontouchend="TouchEndedAsync"
+     @ontouchmove="TouchMovedAsync"
+     @ondragend="DragEndedAsync"
      @ondragenter="HandleDragEnter"
      @ondragleave="HandleDragLeave">
 
