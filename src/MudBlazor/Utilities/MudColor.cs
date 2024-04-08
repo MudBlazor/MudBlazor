@@ -159,10 +159,7 @@ namespace MudBlazor.Utilities
 
         public MudColor(string value)
         {
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new ArgumentException("not a valid color", nameof(value));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(value);
 
             value = value.Trim().ToLowerInvariant();
 
