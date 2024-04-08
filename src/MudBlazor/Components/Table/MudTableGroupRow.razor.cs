@@ -17,6 +17,7 @@ namespace MudBlazor
 
         protected string FooterClassname => new CssBuilder("mud-table-row")
                                 .AddClass(FooterClass)
+                                .AddClass($"mud-table-row-group-striped-{StripedGroup}", !string.IsNullOrEmpty(StripedGroup))
                                 .AddClass($"mud-table-row-group-indented-{GroupDefinition?.Level - 1}", (GroupDefinition?.Indentation ?? false) && GroupDefinition?.Level > 1).Build();
 
         protected string ActionsStylename => new StyleBuilder()

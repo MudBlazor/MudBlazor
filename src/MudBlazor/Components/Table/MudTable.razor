@@ -90,7 +90,7 @@
                         {
                             if (StripedGroups)
                             {
-                                stripedGroup = rowIndex % 2 == 0 ? "even" : "odd";
+                                stripedGroup = (rowIndex + 1) % 2 == 0 ? "even" : "odd";
                             }
                             rowIndex++;
                             

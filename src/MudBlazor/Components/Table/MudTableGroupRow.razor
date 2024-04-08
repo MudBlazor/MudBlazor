@@ -70,12 +70,7 @@ else
     @*FOOTER:*@
     @if (FooterTemplate != null && GroupDefinition != null)
     {
-        var footerClass = FooterClassname;
-        if (!string.IsNullOrEmpty(StripedGroup))
-        {
-            footerClass += $" mud-table-row-group-striped-{StripedGroup}";
-        }
-        <tr class="@footerClass" @onclick="@OnRowClick" style="@FooterStyle" @attributes="@UserAttributes">
+        <tr class="@FooterClassname" @onclick="@OnRowClick" style="@FooterStyle" @attributes="@UserAttributes">
             @if ((GroupDefinition?.IsThisOrParentExpandable ?? false) || (Context?.Table.MultiSelection ?? false))
             {
                 <MudTd/>
