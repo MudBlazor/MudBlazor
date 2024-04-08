@@ -8,11 +8,11 @@
         <div class="pa-2">
             <MudText Typo="Typo.h6" Class="mx-1">Gradient Colors</MudText>
 
-            <MudList Clickable="true" SelectedItemChanged="ChangeSelectedColor">
-                <MudListItem Text="1">
+            <MudList Clickable="true" SelectedValueChanged="ChangeSelectedColor">
+                <MudListItem Value="1">
                     <div class="mud-width-full rounded py-4" style="@($"background-color:{_gradientPrimary};")"></div>
                 </MudListItem>
-                <MudListItem Text="2">
+                <MudListItem Value="2">
                     <div class="mud-width-full rounded py-4" style="@($"background-color:{_gradientSecondary};")"></div>
                 </MudListItem>
             </MudList>
@@ -31,15 +31,15 @@
 
     bool _isFirstColor = true;
 
-    public void ChangeSelectedColor(MudListItem item)
+    public void ChangeSelectedColor(object value)
     {
-        if (item.Text == "1")
+        if (value is 1)
         {
             _isFirstColor = true;
             _pickerColor = _gradientPrimary;
             UpdateSelectedColor(_gradientPrimary);
         }
-        else if (item.Text == "2")
+        else if (value is 2)
         {
             _isFirstColor = false;
             _pickerColor = _gradientSecondary;
