@@ -54,17 +54,20 @@ namespace MudBlazor.Docs.Extensions
                 options.Revision = 1;
                 options.PolicyUrl = "/mud/cookie-policy";
 
-                // Call optional
                 options.UseDefaultConsentPrompt(prompt =>
                 {
                     prompt.Position = ConsentModalPosition.BottomCenter;
+
+                    // These options are ignored by our custom layout.
                     prompt.Layout = ConsentModalLayout.Cloud;
                     prompt.SecondaryActionOpensSettings = false;
                     prompt.AcceptAllButtonDisplaysFirst = false;
                 });
 
+                // Replace default layouts.
                 options.ConsentPromptVariant = new MudCookieConsentPromptVariant();
                 options.SettingsModalVariant = new MudCookieConsentDefaultSettingsModalVariant();
+
                 options.Categories.Add(new CookieCategory
                 {
                     TitleText = new()
@@ -77,7 +80,6 @@ namespace MudBlazor.Docs.Extensions
                     },
                     Identifier = "google",
                     IsPreselected = true,
-
                     Services = new()
                     {
                         new CookieCategoryService

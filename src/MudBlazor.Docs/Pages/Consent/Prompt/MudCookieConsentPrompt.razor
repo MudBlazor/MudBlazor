@@ -1,57 +1,33 @@
 ﻿@inherits BytexDigital.Blazor.Components.CookieConsent.Dialogs.Prompt.CookieConsentPromptComponentBase
 
-<div class="cc-font cc-fixed cc-pointer-events-none cc-text-brand-text cc-w-full cc-mh-48 cc-flex @ConsentModalYPositionCss @ConsentModalXPositionCss" style="z-index: 1000;">
-    <MudPaper Elevation="10">
-        <div class="cc-pointer-events-auto cc-filter cc-drop-shadow-2xl cc-animate-fade-move-in @(!IsConsentModalLayoutBar ? "cc-w-full lg:cc-w-max lg:cc-rounded-md lg:cc-m-5" : "cc-w-full" ) cc-flex cc-justify-center">
+<div class="cc-fixed cc-w-full cc-mh-48 cc-flex @ConsentModalYPositionCss @ConsentModalXPositionCss mb-4" style="z-index: var(--mud-zindex-popover);">
+    <MudPaper Elevation="12">
+        @* TODO: Style in CSS, not through utility classes *@
+        <div class="cc-max-w-3xl pa-5 d-flex flex-column gap-4">
+            <div class="d-flex flex-column align-center">
+                <MudText Typo="Typo.h4">
+                    @Localizer.GetLocalization(Options.Value.ConsentTitleText)
+                </MudText>
+
+                <MudText Typo="Typo.subtitle1">
+                    @Localizer.GetLocalization(Options.Value.ConsentDescriptionText)
+                </MudText>
+            </div>
+
             @* TODO: Style in CSS, not through utility classes *@
-            <div class="@(IsConsentModalLayoutBar ? " cc-max-w-4xl" : "cc-max-w-3xl" ) cc-px-7 cc-py-5 d-flex flex-column gap-4">
-                <div class="d-flex flex-column align-center">
-                    <MudText Typo="Typo.h4">
-                        @Localizer.GetLocalization(Options.Value.ConsentTitleText)
-                    </MudText>
+            <div class="d-flex flex-column justify-space-around gap-2">
+                <MudButton OnClick="async () => await AcceptAsync(false)">
+                    @Localizer.GetLocalization(Options.Value.ConsentNecessaryOnlyText)
+                </MudButton>
 
-                    <MudText Typo="Typo.subtitle1">
-                        @Localizer.GetLocalization(Options.Value.ConsentDescriptionText)
-                    </MudText>
-                </div>
-
-                @* TODO: Style in CSS, not through utility classes *@
-                <div class="d-flex flex-column justify-space-around gap-2">
-                    @if (!OnlyRequiredCategoriesExist)
-                    {
-                        @if (VariantOptions.SecondaryActionOpensSettings)
-                        {
-                            <MudButton OnClick="OpenSettingsAsync">
-                                @Localizer.GetLocalization(Options.Value.OpenPreferencesText)
-                            </MudButton>
-                        }
-                        else
-                        {
-                            <MudButton OnClick="async () => await AcceptAsync(false)">
-                                @Localizer.GetLocalization(Options.Value.ConsentNecessaryOnlyText)
-                            </MudButton>
-                        }
-                    }
-
-                    <MudButton OnClick="async () => await AcceptAsync(true)" Variant="Variant.Filled" Color="Color.Primary">
-                        @if (!OnlyRequiredCategoriesExist)
-                        {
-                            @Localizer.GetLocalization(Options.Value.ConsentAcceptAllText)
-                        }
-                        else
-                        {
-                            @Localizer.GetLocalization(Options.Value.ConsentAcknowledgeText)
-                        }
-                    </MudButton>
+                <MudButton OnClick="async () => await AcceptAsync(true)" Variant="Variant.Filled" Color="Color.Primary">
+                    @Localizer.GetLocalization(Options.Value.ConsentAcceptAllText)
+                </MudButton>
                     
-                    @if (!VariantOptions.SecondaryActionOpensSettings && !OnlyRequiredCategoriesExist)
-                    {
-                        <MudButton OnClick="OpenSettingsAsync" Variant="Variant.Filled" Color="Color.Secondary">
-                            @Localizer.GetLocalization(Options.Value.OpenPreferencesText)
-                        </MudButton>
-                    }
+                <MudButton OnClick="OpenSettingsAsync" Variant="Variant.Filled" Color="Color.Secondary">
+                    @Localizer.GetLocalization(Options.Value.OpenPreferencesText)
+                </MudButton>
                 </div>
             </div>
-        </div>
     </MudPaper>
 </div>

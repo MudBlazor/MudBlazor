@@ -63,10 +63,6 @@ public partial class MudCookieConsentPrompt : BytexDigital.Blazor.Components.Coo
         }
     }
 
-    private bool OnlyRequiredCategoriesExist => Options.Value.Categories.All(x => x.IsRequired);
-
-    private bool IsConsentModalLayoutBar => VariantOptions.Layout == ConsentModalLayout.Bar;
-
     private async Task OpenSettingsAsync()
     {
         await CookieConsentService.ShowPreferencesModalAsync();
