@@ -2,7 +2,6 @@
 
 .mud-chip {
   border: none;
-  cursor: default;
   display: inline-flex;
   max-width: 100%;
   outline: 0;
@@ -150,10 +149,10 @@
         background-color: var(--mud-palette-action-disabled);
       }
     }
-  }
 
-  &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
-    background-color: var(--mud-palette-action-disabled);
+    &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
+      background-color: var(--mud-palette-action-disabled);
+    }
   }
 
   @each $color in $mud-palette-colors {
@@ -168,10 +167,10 @@
             background-color: var(--mud-palette-#{$color}-darken);
           }
         }
-      }
 
-      &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
-        background-color: var(--mud-palette-#{$color}-darken);
+        &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
+          background-color: var(--mud-palette-#{$color}-darken);
+        }
       }
     }
   }
@@ -187,10 +186,10 @@
         background-color: var(--mud-palette-action-default-hover);
       }
     }
-  }
 
-  &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
-    background-color: var(--mud-palette-action-default-hover);
+    &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
+      background-color: var(--mud-palette-action-default-hover);
+    }
   }
 
   @each $color in $mud-palette-colors {
@@ -205,10 +204,10 @@
             background-color: var(--mud-palette-#{$color}-hover);
           }
         }
-      }
 
-      &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
-        background-color: var(--mud-palette-#{$color}-hover);
+        &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
+          background-color: var(--mud-palette-#{$color}-hover);
+        }
       }
 
       &.mud-chip-selected {
@@ -238,10 +237,10 @@
         background-color: var(--mud-palette-action-disabled-background);
       }
     }
-  }
 
-  &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
-    background-color: var(--mud-palette-action-disabled-background);
+    &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
+      background-color: var(--mud-palette-action-disabled-background);
+    }
   }
 
   @each $color in $mud-palette-colors {
@@ -256,10 +255,10 @@
             background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
           }
         }
-      }
 
-      &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
-        background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+        &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
+          background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+        }
       }
     }
   }
