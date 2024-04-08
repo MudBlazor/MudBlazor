@@ -5,27 +5,27 @@
         @* TODO: Style in CSS, not through utility classes *@
         <div class="cc-max-w-3xl pa-5 d-flex flex-column gap-4">
             <div class="d-flex flex-column align-center">
-                <MudText Typo="Typo.h4">
-                    @Localizer.GetLocalization(Options.Value.ConsentTitleText)
-                </MudText>
+                <MudText Typo="Typo.h4">Cookie consent</MudText>
 
                 <MudText Typo="Typo.subtitle1">
-                    @Localizer.GetLocalization(Options.Value.ConsentDescriptionText)
+                    We use cookies to enhance your experience and analyze site traffic.
+                    By clicking "Accept All" you consent to the use of cookies.
+                    <MudLink Href="@Options.Value.PolicyUrl" Target="_blank">View cookie policy</MudLink>
                 </MudText>
             </div>
 
             @* TODO: Style in CSS, not through utility classes *@
             <div class="d-flex flex-column justify-space-around gap-2">
                 <MudButton OnClick="async () => await AcceptAsync(false)">
-                    @Localizer.GetLocalization(Options.Value.ConsentNecessaryOnlyText)
+                    Decline
                 </MudButton>
 
                 <MudButton OnClick="async () => await AcceptAsync(true)" Variant="Variant.Filled" Color="Color.Primary">
-                    @Localizer.GetLocalization(Options.Value.ConsentAcceptAllText)
+                    Accept All
                 </MudButton>
                     
                 <MudButton OnClick="OpenSettingsAsync" Variant="Variant.Filled" Color="Color.Secondary">
-                    @Localizer.GetLocalization(Options.Value.OpenPreferencesText)
+                    Customize
                 </MudButton>
                 </div>
             </div>
