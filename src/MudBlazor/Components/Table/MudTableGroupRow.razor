@@ -60,14 +60,21 @@ else
     else
     {
         var customClass = GroupDefinition?.Indentation ?? false ? $"mud-table-row-group-indented-{GroupDefinition?.Level - 1}" : "";
-        customClass += StripedGroup == "" ? "" : $" mud-table-row-group-striped-{StripedGroup}";
+        if (!string.IsNullOrEmpty(StripedGroup))
+        {
+            customClass += $" mud-table-row-group-striped-{StripedGroup}";
+        }
         @Table?.RenderRows(Items, customClass, GroupDefinition?.IsThisOrParentExpandable ?? false)
     }
 
     @*FOOTER:*@
     @if (FooterTemplate != null && GroupDefinition != null)
     {
-        var footerClass = FooterClassname + (StripedGroup == "" ? "" : $" mud-table-row-group-striped-{StripedGroup}");
+        var footerClass = FooterClassname;
+        if (!string.IsNullOrEmpty(StripedGroup))
+        {
+            footerClass += $" mud-table-row-group-striped-{StripedGroup}";
+        }
         <tr class="@footerClass" @onclick="@OnRowClick" style="@FooterStyle" @attributes="@UserAttributes">
             @if ((GroupDefinition?.IsThisOrParentExpandable ?? false) || (Context?.Table.MultiSelection ?? false))
             {
