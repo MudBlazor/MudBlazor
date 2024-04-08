@@ -64,7 +64,7 @@ namespace MudBlazor.Docs.Extensions
                     prompt.SecondaryActionOpensSettings = false;
                     prompt.AcceptAllButtonDisplaysFirst = false;
                 });
-  
+
                 // Replace default layouts.
                 options.ConsentPromptVariant = new MudCookieConsentPromptVariant();
                 options.SettingsModalVariant = new MudCookieConsentDefaultSettingsModalVariant();
