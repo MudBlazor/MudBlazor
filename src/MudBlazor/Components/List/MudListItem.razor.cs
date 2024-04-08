@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
@@ -14,7 +12,7 @@ namespace MudBlazor
     {
         private Typo _textTypo;
         private bool _selected;
-        private ParameterState<bool> _expandedState;
+        private IParameterState<bool> _expandedState;
         private bool _onClickHandlerPreventDefault = false;
 
         protected string Classname =>
@@ -210,7 +208,10 @@ namespace MudBlazor
         protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
         {
             if (Disabled)
+            {
                 return;
+            }
+
             if (!_onClickHandlerPreventDefault)
             {
                 if (NestedList != null)
@@ -263,6 +264,7 @@ namespace MudBlazor
             {
                 _textTypo = Typo.body1;
             }
+
             StateHasChanged();
         }
 

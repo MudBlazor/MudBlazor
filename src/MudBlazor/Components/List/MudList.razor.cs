@@ -12,8 +12,8 @@ namespace MudBlazor
     public partial class MudList : MudComponentBase, IDisposable
     {
         private object? _selectedValue;
-        private ParameterState<object?> _selectedValueState;
-        private ParameterState<MudListItem?> _selectedItemState;
+        private IParameterState<object?> _selectedValueState;
+        private IParameterState<MudListItem?> _selectedItemState;
         private HashSet<MudListItem> _items = new();
         private HashSet<MudList> _childLists = new();
 
@@ -113,22 +113,22 @@ namespace MudBlazor
                 nameof(SelectedItem),
                 () => SelectedItem,
                 () => SelectedItemChanged,
-                SelectedItemParameterChangedHandlerAsync);
+                OnSelectedItemParameterChangedAsync);
             _selectedValueState = RegisterParameter(
                 nameof(SelectedValue),
                 () => SelectedValue,
                 () => SelectedValueChanged,
-                SelectedValueParameterChangedHandlerAsync);
+                OnSelectedValueParameterChangedAsync);
         }
 
-        private Task SelectedItemParameterChangedHandlerAsync()
+        private Task OnSelectedItemParameterChangedAsync(ParameterChangedEventArgs<MudListItem?> args)
         {
-            return SetSelectedValueAsync(_selectedItemState.Value?.Value, force: true);
+            return SetSelectedValueAsync(args.Value?.Value, force: true);
         }
 
-        private Task SelectedValueParameterChangedHandlerAsync()
+        private Task OnSelectedValueParameterChangedAsync(ParameterChangedEventArgs<object?> args)
         {
-            return SetSelectedValueAsync(_selectedValueState.Value, force: true);
+            return SetSelectedValueAsync(args.Value, force: true);
         }
 
         protected override void OnInitialized()
