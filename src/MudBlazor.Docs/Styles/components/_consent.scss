@@ -1,1 +1,13 @@
-﻿
+.consent-container {
+  padding: 20px !important;
+  display: flex !important;
+  gap: 16px;
+  flex-direction: column !important;
+}
+
+.consent-button-container {
+  display: flex !important;
+  gap: 8px;
+  justify-content: space-around !important;
+  flex-direction: column !important;
+}
