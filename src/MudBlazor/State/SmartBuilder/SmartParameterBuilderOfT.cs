@@ -1,37 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
-namespace MudBlazor.State.Builder;
+using System;
+using Microsoft.AspNetCore.Components;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
+
+namespace MudBlazor.State.SmartBuilder;
 
 #nullable enable
-/// <summary>
-/// Builder class for constructing instances of <see cref="ParameterState{T}"/>.
-/// </summary>
-/// <remarks>
-/// You don't need to create this object directly.
-/// Instead, use the "MudComponentBase.RegisterParameter" method from within the component's constructor.
-/// </remarks>
-/// <typeparam name="T">The type of the component's property value.</typeparam>
-[ExcludeFromCodeCoverage]
-internal class ParameterAttachBuilder<T>
+internal class SmartParameterBuilder<T>
 {
-    private ParameterMetadata? _metadata;
+    private string? _parameterName;
+    private string? _handlerName;
     private Func<T>? _getParameterValueFunc;
     private Func<EventCallback<T>> _eventCallbackFunc = () => default;
     private IParameterChangedHandler<T>? _parameterChangedHandler;
     private Func<IEqualityComparer<T>?>? _comparerFunc;
+    private readonly ISmartParameterSetRegister _smartParameterSetRegister;
+
+    public SmartParameterBuilder(ISmartParameterSetRegister smartParameterSetRegister)
+    {
+        _smartParameterSetRegister = smartParameterSetRegister;
+    }
 
     /// <summary>
     /// Sets the metadata for the parameter.
     /// </summary>
-    /// <param name="metadata">The metadata for the parameter.</param>
+    /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
     /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithMetadata(ParameterMetadata metadata)
+    public SmartParameterBuilder<T> WithParameterName(string parameterName)
     {
-        _metadata = metadata;
+        _parameterName = parameterName;
 
         return this;
     }
@@ -41,7 +43,7 @@ internal class ParameterAttachBuilder<T>
     /// </summary>
     /// <param name="getParameterValueFunc">The function to get the parameter value.</param>
     /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithGetParameterValueFunc(Func<T> getParameterValueFunc)
+    public SmartParameterBuilder<T> WithGetParameterValueFunc(Func<T> getParameterValueFunc)
     {
         _getParameterValueFunc = getParameterValueFunc;
 
@@ -53,7 +55,7 @@ internal class ParameterAttachBuilder<T>
     /// </summary>
     /// <param name="eventCallbackFunc">The function to create the event callback.</param>
     /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithEventCallbackFunc(Func<EventCallback<T>> eventCallbackFunc)
+    public SmartParameterBuilder<T> WithEventCallbackFunc(Func<EventCallback<T>> eventCallbackFunc)
     {
         _eventCallbackFunc = eventCallbackFunc;
 
@@ -64,10 +66,12 @@ internal class ParameterAttachBuilder<T>
     /// Sets the parameter changed handler for the parameter.
     /// </summary>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
+    /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithParameterChangedHandler(IParameterChangedHandler<T> parameterChangedHandler)
+    public SmartParameterBuilder<T> WithParameterChangedHandler(IParameterChangedHandler<T> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         _parameterChangedHandler = parameterChangedHandler;
+        _handlerName = handlerName;
 
         return this;
     }
@@ -76,10 +80,12 @@ internal class ParameterAttachBuilder<T>
     /// Sets the parameter changed handler for the parameter.
     /// </summary>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
+    /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithParameterChangedHandler(Func<ParameterChangedEventArgs<T>, Task> parameterChangedHandler)
+    public SmartParameterBuilder<T> WithParameterChangedHandler(Func<ParameterChangedEventArgs<T>, Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         _parameterChangedHandler = new ParameterChangedLambdaArgsTaskHandler<T>(parameterChangedHandler);
+        _handlerName = handlerName;
 
         return this;
     }
@@ -88,10 +94,12 @@ internal class ParameterAttachBuilder<T>
     /// Sets the parameter changed handler for the parameter.
     /// </summary>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
+    /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithParameterChangedHandler(Func<Task> parameterChangedHandler)
+    public SmartParameterBuilder<T> WithParameterChangedHandler(Func<Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         _parameterChangedHandler = new ParameterChangedLambdaTaskHandler<T>(parameterChangedHandler);
+        _handlerName = handlerName;
 
         return this;
     }
@@ -100,10 +108,12 @@ internal class ParameterAttachBuilder<T>
     /// Sets the parameter changed handler for the parameter.
     /// </summary>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
+    /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithParameterChangedHandler(Action parameterChangedHandler)
+    public SmartParameterBuilder<T> WithParameterChangedHandler(Action parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         _parameterChangedHandler = new ParameterChangedLambdaHandler<T>(parameterChangedHandler);
+        _handlerName = handlerName;
 
         return this;
     }
@@ -112,10 +122,12 @@ internal class ParameterAttachBuilder<T>
     /// Sets the parameter changed handler for the parameter.
     /// </summary>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
+    /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithParameterChangedHandler(Action<ParameterChangedEventArgs<T>> parameterChangedHandler)
+    public SmartParameterBuilder<T> WithParameterChangedHandler(Action<ParameterChangedEventArgs<T>> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         _parameterChangedHandler = new ParameterChangedLambdaArgsHandler<T>(parameterChangedHandler);
+        _handlerName = handlerName;
 
         return this;
     }
@@ -125,7 +137,7 @@ internal class ParameterAttachBuilder<T>
     /// </summary>
     /// <param name="comparer">The comparer for the parameter.</param>
     /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithComparer(IEqualityComparer<T>? comparer)
+    public SmartParameterBuilder<T> WithComparer(IEqualityComparer<T>? comparer)
     {
         _comparerFunc = () => comparer;
 
@@ -137,26 +149,28 @@ internal class ParameterAttachBuilder<T>
     /// </summary>
     /// <param name="comparerFunc">The comparer for the parameter.</param>
     /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithComparer(Func<IEqualityComparer<T>>? comparerFunc)
+    public SmartParameterBuilder<T> WithComparer(Func<IEqualityComparer<T>>? comparerFunc)
     {
         _comparerFunc = comparerFunc;
 
         return this;
     }
 
-    /// <summary>
-    /// Constructs a new instance of <see cref="ParameterState{T}"/> using the provided settings.
-    /// </summary>
-    /// <returns>A new instance of <see cref="ParameterState{T}"/>.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when required parameters are not provided.</exception>
-    public ParameterState<T> Attach()
+    public ParameterState<T> Build()
     {
-        return ParameterState<T>.Attach(
-            _metadata ?? throw new ArgumentNullException(nameof(_metadata)),
+        ArgumentNullException.ThrowIfNull(_parameterName);
+
+        var parameterState = ParameterState<T>.Attach(
+            new ParameterMetadata(_parameterName, _handlerName),
             _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
             _eventCallbackFunc,
             _parameterChangedHandler,
-            _comparerFunc
-        );
+            _comparerFunc);
+
+        _smartParameterSetRegister.Add(parameterState);
+
+        return parameterState;
     }
+
+    public static implicit operator ParameterState<T>(SmartParameterBuilder<T> builder) => builder.Build();
 }

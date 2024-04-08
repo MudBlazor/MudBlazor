@@ -5,12 +5,28 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
+using MudBlazor.State.SmartBuilder;
 
 namespace MudBlazor;
 
 #nullable enable
-public abstract partial class MudComponentBase
+public abstract partial class MudComponentBase : ISmartParameterSetRegister
 {
+    #region (Smart Builder)
+
+    void ISmartParameterSetRegister.Add<T>(ParameterState<T> parameterState) => Parameters.Add(parameterState);
+
+    internal SmartParameterBuilder<T> RegisterParameter<T>(string parameterName)
+    {
+        var parameterState = SmartParameterBuilder
+            .Create<T>(this)
+            .WithParameterName(parameterName);
+
+        return parameterState;
+    }
+
+    #endregion
+
     #region (ParameterName, ParameterValue, EventCallback, Action, IEqualityComparer)
 
     /// <summary>
