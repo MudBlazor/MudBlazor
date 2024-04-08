@@ -1,33 +1,29 @@
 ﻿@inherits BytexDigital.Blazor.Components.CookieConsent.Dialogs.Prompt.CookieConsentPromptComponentBase
 
-<div class="cc-fixed cc-w-full cc-mh-48 cc-flex @ConsentModalYPositionCss @ConsentModalXPositionCss mb-4" style="z-index: var(--mud-zindex-popover);">
-    <MudPaper Elevation="12">
-        @* TODO: Style in CSS, not through utility classes *@
-        <div class="consent-container cc-max-w-3xl">
-            <div class="d-flex flex-column align-center">
-                <MudText Typo="Typo.h4">Cookie consent</MudText>
+<div class="consent-prompt-container cc-mh-48">
+    <MudPaper Class="consent-prompt" Elevation="12">
+        <div class="consent-text-container">
+            <MudText Typo="Typo.h4">Cookie consent</MudText>
 
-                <MudText Typo="Typo.subtitle1">
-                    We use cookies to enhance your experience and analyze site traffic.
-                    By clicking "Accept All" you consent to the use of cookies.
-                    <MudLink Href="@Options.Value.PolicyUrl" Target="_blank">View cookie policy</MudLink>.
-                </MudText>
-            </div>
+            <MudText Typo="Typo.subtitle1">
+                We use cookies to enhance your experience and analyze site traffic.
+                By clicking "Accept All" you consent to the use of cookies.
+                <MudLink Href="@Options.Value.PolicyUrl" Target="_blank">View cookie policy</MudLink>.
+            </MudText>
+        </div>
 
-            @* TODO: Style in CSS, not through utility classes *@
-            <div class="consent-button-container">
-                <MudButton OnClick="async () => await AcceptAsync(false)">
-                    Decline
-                </MudButton>
+        <div class="consent-buttons-container">
+            <MudButton OnClick="async () => await AcceptAsync(false)" Variant="Variant.Filled" Color="Color.Default">
+                Decline
+            </MudButton>
 
-                <MudButton OnClick="async () => await AcceptAsync(true)" Variant="Variant.Filled" Color="Color.Primary">
-                    Accept All
-                </MudButton>
-                    
-                <MudButton OnClick="OpenSettingsAsync" Variant="Variant.Filled" Color="Color.Secondary">
-                    Customize
-                </MudButton>
-            </div>
+            <MudButton OnClick="async () => await AcceptAsync(true)" Variant="Variant.Filled" Color="Color.Primary">
+                Accept All
+            </MudButton>
+
+            <MudButton OnClick="OpenSettingsAsync" Variant="Variant.Filled" Color="Color.Secondary">
+                Customize
+            </MudButton>
         </div>
     </MudPaper>
 </div>

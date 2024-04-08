@@ -6,7 +6,7 @@
 
             <div class="cc-px-7 cc-py-4 cc-border-b cc-border-gray-100 cc-flex cc-justify-between cc-items-center">
                 <h1 class="cc-text-xl cc-font-bold">
-                    @Localizer.GetLocalization(Options.Value.SettingsTitleText)
+                    Your cookie preferences
                 </h1>
 
                 <MudButton OnClick="async () => await OnClosePreferences.InvokeAsync(false)">
@@ -17,14 +17,6 @@
             </div>
 
             <div class="cc-px-7 cc-py-4 cc-overflow-y-auto cc-max-h-96">
-                <p class="cc-text-sm">
-                    @Localizer.GetLocalization(Options.Value.SettingsDescriptionText)
-                </p>
-
-                <div class="cc-mt-2">
-                    <MudLink Href="@Options.Value.PolicyUrl" Target="_blank">@Localizer.GetLocalization(Options.Value.ShowPolicyText)</MudLink>
-                </div>
-
                 <div class="cc-mt-5 cc-space-y-2">
                     @foreach (var category in Options.Value.Categories)
                     {

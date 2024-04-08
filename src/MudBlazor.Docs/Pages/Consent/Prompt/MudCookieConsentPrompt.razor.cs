@@ -22,47 +22,6 @@ public partial class MudCookieConsentPrompt : BytexDigital.Blazor.Components.Coo
     [Inject]
     protected CookieConsentService CookieConsentService { get; set; } = null!;
 
-    [Inject]
-    public CookieConsentLocalizer Localizer { get; set; } = null!;
-
-    private string ConsentModalYPositionCss
-    {
-        get
-        {
-            if (new[]
-            {
-                ConsentModalPosition.BottomCenter,
-                ConsentModalPosition.BottomLeft,
-                ConsentModalPosition.BottomRight
-            }.Contains(VariantOptions.Position))
-            {
-                return "cc-bottom-0 css:left-0";
-            }
-
-            return "cc-top-0 css:left-0";
-        }
-    }
-
-    private string ConsentModalXPositionCss
-    {
-        get
-        {
-            if (new[] { ConsentModalPosition.BottomLeft, ConsentModalPosition.TopLeft }.Contains(
-                VariantOptions.Position))
-            {
-                return "cc-justify-start";
-            }
-
-            if (new[] { ConsentModalPosition.BottomRight, ConsentModalPosition.TopRight }.Contains(
-                VariantOptions.Position))
-            {
-                return "cc-justify-end";
-            }
-
-            return "cc-justify-center";
-        }
-    }
-
     private async Task OpenSettingsAsync()
     {
         await CookieConsentService.ShowPreferencesModalAsync();
