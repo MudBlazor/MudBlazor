@@ -9,11 +9,11 @@
                     @Localizer.GetLocalization(Options.Value.SettingsTitleText)
                 </h1>
 
-                <button @onclick="async () => await OnClosePreferences.InvokeAsync(false)" class="cc-block cc-p-2 cc-rounded-md cc-bg-gray-100 cc-text-sm cc-font-semibold hover:cc-bg-gray-200 cc-transition-all cc-duration-100 cc-ease-in-out">
+                <MudButton OnClick="async () => await OnClosePreferences.InvokeAsync(false)">
                     <svg xmlns="http://www.w3.org/2000/svg" class="cc-h-5 cc-w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
-                </button>
+                </MudButton>
             </div>
 
             <div class="cc-px-7 cc-py-4 cc-overflow-y-auto cc-max-h-96">
@@ -22,7 +22,7 @@
                 </p>
 
                 <div class="cc-mt-2">
-                    <a class="cc-text-sm cc-underline cc-decoration-brand-text cc-underline-offset-8 hover:cc-no-underline cc-border-brand-text hover:cc-text-brand-link-highlight cc-transition-all cc-duration-100 cc-ease-in-out" href="@Options.Value.PolicyUrl" target="_blank">@Localizer.GetLocalization(Options.Value.ShowPolicyText)</a>
+                    <MudLink Href="@Options.Value.PolicyUrl" Target="_blank">@Localizer.GetLocalization(Options.Value.ShowPolicyText)</MudLink>
                 </div>
 
                 <div class="cc-mt-5 cc-space-y-2">
@@ -34,13 +34,13 @@
             </div>
 
             <div class="cc-px-7 cc-py-4 cc-flex cc-flex-col md:cc-flex-row cc-justify-between cc-border-t cc-border-gray-100 cc-gap-2">
-                <button @onclick="AllowSelectedAsync" class="cc-block cc-p-3 cc-px-5  cc-rounded-md cc-bg-brand-secondary cc-text-brand-text cc-text-sm cc-font-semibold hover:cc-bg-brand-secondary-dark  cc-transition-all cc-duration-100 cc-ease-in-out">
+                <MudButton OnClick="AllowSelectedAsync">
                     @Localizer.GetLocalization(Options.Value.SettingsContinueWithSelectedPreferencesText)
-                </button>
+                </MudButton>
 
-                <button @onclick="AllowAllAsync" class="cc-block cc-p-3 cc-px-5 cc-rounded-md cc-bg-brand-accent cc-text-white cc-text-sm cc-font-semibold hover:cc-bg-brand-accent-dark cc-transition-all cc-duration-100 cc-ease-in-out">
+                <MudButton OnClick="AllowAllAsync">
                     @Localizer.GetLocalization(Options.Value.ConsentAcceptAllText)
-                </button>
+                </MudButton>
             </div>
         </div>
     </div>

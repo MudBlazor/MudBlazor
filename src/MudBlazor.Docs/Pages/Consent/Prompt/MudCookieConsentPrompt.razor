@@ -1,67 +1,57 @@
 ﻿@inherits BytexDigital.Blazor.Components.CookieConsent.Dialogs.Prompt.CookieConsentPromptComponentBase
 
-<div class="cc-isolation-container">
-    <div class="cc-font cc-fixed cc-pointer-events-none cc-text-brand-text cc-w-full cc-mh-48 cc-flex @ConsentModalYPositionCss @ConsentModalXPositionCss" style="z-index: 1000;">
-        <div class="cc-bg-white cc-pointer-events-auto cc-filter cc-drop-shadow-2xl cc-animate-fade-move-in @(!IsConsentModalLayoutBar ? "cc-w-full lg:cc-w-max lg:cc-rounded-md lg:cc-m-5" : "cc-w-full") cc-flex cc-justify-center">
-            <div class="@(IsConsentModalLayoutBar ? "cc-max-w-4xl" : "cc-max-w-3xl") cc-px-7 cc-py-5">
-                <div class="cc-flex cc-flex-col lg:cc-flex-row cc-gap-6">
-                    <div class="cc-flex cc-flex-col cc-justify-between">
-                        <div>
-                            <h1 class="cc-text-xl cc-text-brand-text cc-font-bold">
-                                @Localizer.GetLocalization(Options.Value.ConsentTitleText)
-                            </h1>
-                            <p class="cc-text-sm cc-mt-2">
-                                @Localizer.GetLocalization(Options.Value.ConsentDescriptionText)
-                            </p>
-                        </div>
+<div class="cc-font cc-fixed cc-pointer-events-none cc-text-brand-text cc-w-full cc-mh-48 cc-flex @ConsentModalYPositionCss @ConsentModalXPositionCss" style="z-index: 1000;">
+    <MudPaper Elevation="10">
+        <div class="cc-pointer-events-auto cc-filter cc-drop-shadow-2xl cc-animate-fade-move-in @(!IsConsentModalLayoutBar ? "cc-w-full lg:cc-w-max lg:cc-rounded-md lg:cc-m-5" : "cc-w-full" ) cc-flex cc-justify-center">
+            @* TODO: Style in CSS, not through utility classes *@
+            <div class="@(IsConsentModalLayoutBar ? " cc-max-w-4xl" : "cc-max-w-3xl" ) cc-px-7 cc-py-5 d-flex flex-column gap-4">
+                <div class="d-flex flex-column align-center">
+                    <MudText Typo="Typo.h4">
+                        @Localizer.GetLocalization(Options.Value.ConsentTitleText)
+                    </MudText>
 
-                        <div class="cc-flex cc-flex-col lg:cc-flex-row cc-gap-2 cc-mt-5 cc-items-start">
-                            @if (!VariantOptions.SecondaryActionOpensSettings && !OnlyRequiredCategoriesExist)
-                            {
-                                <button @onclick=OpenSettingsAsync class="cc-text-xs cc-text-left cc-decoration-brand-text cc-font-semibold hover:cc-text-brand-link-highlight cc-transition-all cc-duration-100 cc-ease-in-out">
-                                    @Localizer.GetLocalization(Options.Value.OpenPreferencesText)
-                                </button>
-                            }
-                            <a class="cc-text-xs cc-decoration-brand-text cc-border-brand-text hover:cc-text-brand-link-highlight cc-transition-all cc-duration-100 cc-ease-in-out cc-flex cc-items-center" href="@Options.Value.PolicyUrl" target="_blank">
-                                @Localizer.GetLocalization(Options.Value.ShowPolicyText)
+                    <MudText Typo="Typo.subtitle1">
+                        @Localizer.GetLocalization(Options.Value.ConsentDescriptionText)
+                    </MudText>
+                </div>
 
-                                <svg xmlns="http://www.w3.org/2000/svg" class="cc-h-3.5 cc-w-3.5 cc-ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
+                @* TODO: Style in CSS, not through utility classes *@
+                <div class="d-flex flex-column justify-space-around gap-2">
+                    @if (!OnlyRequiredCategoriesExist)
+                    {
+                        @if (VariantOptions.SecondaryActionOpensSettings)
+                        {
+                            <MudButton OnClick="OpenSettingsAsync">
+                                @Localizer.GetLocalization(Options.Value.OpenPreferencesText)
+                            </MudButton>
+                        }
+                        else
+                        {
+                            <MudButton OnClick="async () => await AcceptAsync(false)">
+                                @Localizer.GetLocalization(Options.Value.ConsentNecessaryOnlyText)
+                            </MudButton>
+                        }
+                    }
 
-                    <div class="cc-self-stretch cc-shrink-0 lg:cc-self-end cc-w-full lg:cc-w-60 cc-flex cc-flex-col cc-gap-y-2">
+                    <MudButton OnClick="async () => await AcceptAsync(true)" Variant="Variant.Filled" Color="Color.Primary">
                         @if (!OnlyRequiredCategoriesExist)
                         {
-                            @if (VariantOptions.SecondaryActionOpensSettings)
-                            {
-                                <button @onclick=OpenSettingsAsync class="cc-order-2 cc-block cc-w-full cc-p-3 cc-px-5 cc-rounded-md cc-bg-brand-secondary cc-text-brand-text cc-text-sm cc-font-semibold hover:cc-bg-brand-secondary-dark  cc-transition-all cc-duration-100 cc-ease-in-out">
-                                    @Localizer.GetLocalization(Options.Value.OpenPreferencesText)
-                                </button>
-                            }
-                            else
-                            {
-                                <button @onclick="async () => await AcceptAsync(false)" class="cc-order-2 cc-block cc-w-full cc-p-3 cc-px-5  cc-rounded-md cc-bg-brand-secondary cc-text-brand-text cc-text-sm cc-font-semibold hover:cc-bg-brand-secondary-dark cc-transition-all cc-duration-100 cc-ease-in-out">
-                                    @Localizer.GetLocalization(Options.Value.ConsentNecessaryOnlyText)
-                                </button>
-                            }
+                            @Localizer.GetLocalization(Options.Value.ConsentAcceptAllText)
                         }
-
-                        <button @onclick="async () => await AcceptAsync(true)" class="cc-block cc-w-full cc-p-3 cc-px-5  cc-rounded-md cc-bg-brand-accent cc-text-white cc-text-sm cc-font-semibold hover:cc-bg-brand-accent-dark cc-transition-all cc-duration-100 cc-ease-in-out @(VariantOptions.AcceptAllButtonDisplaysFirst ? "cc-order-1" : "cc-order-3")">
-                            @if (!OnlyRequiredCategoriesExist)
-                            {
-                                @Localizer.GetLocalization(Options.Value.ConsentAcceptAllText)
-                            }
-                            else
-                            {
-                                @Localizer.GetLocalization(Options.Value.ConsentAcknowledgeText)
-                            }
-                        </button>
-                    </div>
+                        else
+                        {
+                            @Localizer.GetLocalization(Options.Value.ConsentAcknowledgeText)
+                        }
+                    </MudButton>
+                    
+                    @if (!VariantOptions.SecondaryActionOpensSettings && !OnlyRequiredCategoriesExist)
+                    {
+                        <MudButton OnClick="OpenSettingsAsync" Variant="Variant.Filled" Color="Color.Secondary">
+                            @Localizer.GetLocalization(Options.Value.OpenPreferencesText)
+                        </MudButton>
+                    }
                 </div>
             </div>
         </div>
-    </div>
+    </MudPaper>
 </div>
