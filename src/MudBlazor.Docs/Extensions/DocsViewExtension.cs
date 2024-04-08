@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using Blazor.Analytics;
+﻿using Blazor.Analytics;
 using Blazored.LocalStorage;
 using BytexDigital.Blazor.Components.CookieConsent;
 using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.Docs.Pages.Consent.Modal;
 using MudBlazor.Docs.Pages.Consent.Prompt;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
@@ -55,9 +53,9 @@ namespace MudBlazor.Docs.Extensions
                 options.Revision = 1;
                 options.PolicyUrl = "/mud/cookie-policy";
 
-                // Replace default layouts.
+                // Replace default prompt. We don't use the modal.
                 options.ConsentPromptVariant = new MudCookieConsentPromptVariant();
-                options.SettingsModalVariant = new MudCookieConsentDefaultSettingsModalVariant();
+
                 options.Categories.Add(new CookieCategory()
                 {
                     IsRequired = true,
@@ -69,8 +67,8 @@ namespace MudBlazor.Docs.Extensions
                     {
                         ["en"] = "It is used for load balancing to make sure the visitor page requests are routed to the same server in any browsing session.",
                     },
-                    Services = new()
-                    {
+                    Services =
+                    [
                         new CookieCategoryService
                         {
                             Identifier = "necessary",
@@ -84,7 +82,7 @@ namespace MudBlazor.Docs.Extensions
                                 ["en"] = "Display policies",
                             },
                         }
-                    }
+                    ]
                 });
 
                 options.Categories.Add(new CookieCategory
@@ -99,8 +97,8 @@ namespace MudBlazor.Docs.Extensions
                     },
                     Identifier = "google",
                     IsPreselected = true,
-                    Services = new()
-                    {
+                    Services =
+                    [
                         new CookieCategoryService
                         {
                             Identifier = "google-analytics",
@@ -114,7 +112,7 @@ namespace MudBlazor.Docs.Extensions
                                 ["en"] = "Display policies",
                             }
                         }
-                    }
+                    ]
                 });
             });
         }

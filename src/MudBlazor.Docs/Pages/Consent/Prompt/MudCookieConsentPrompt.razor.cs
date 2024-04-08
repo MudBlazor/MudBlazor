@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Linq;
 using System.Threading.Tasks;
 using BytexDigital.Blazor.Components.CookieConsent;
 using BytexDigital.Blazor.Components.CookieConsent.Dialogs.Prompt.Default;
@@ -21,12 +20,6 @@ public partial class MudCookieConsentPrompt : BytexDigital.Blazor.Components.Coo
 
     [Inject]
     protected CookieConsentService CookieConsentService { get; set; } = null!;
-
-    private async Task OpenSettingsAsync()
-    {
-        await CookieConsentService.ShowPreferencesModalAsync();
-        StateHasChanged();
-    }
 
     private async Task AcceptAsync(bool all)
     {
