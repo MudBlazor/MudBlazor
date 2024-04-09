@@ -30,7 +30,7 @@ namespace MudBlazor
         protected NavigationManager UriHelper { get; set; } = null!;
 
         [CascadingParameter]
-        protected MudList? MudList { get; set; }
+        protected MudList<T>? MudList { get; set; }
 
         /// <summary>
         /// The text to display
@@ -222,7 +222,7 @@ namespace MudBlazor
                 {
                     if (MudList is not null)
                     {
-                        await MudList.SetSelectedValueAsync(Value);
+                        await MudList.SetSelectedValueAsync(GetValue());
                     }
                     await OnClick.InvokeAsync(eventArgs);
                     UriHelper.NavigateTo(Href, ForceLoad);
@@ -231,7 +231,7 @@ namespace MudBlazor
                 {
                     if (MudList is not null)
                     {
-                        await MudList.SetSelectedValueAsync(Value);
+                        await MudList.SetSelectedValueAsync(GetValue());
                     }
                     await OnClick.InvokeAsync(eventArgs);
                 }
@@ -282,6 +282,13 @@ namespace MudBlazor
 
             _selected = selected;
             StateHasChanged();
+        }
+
+        internal T? GetValue()
+        {
+            if (typeof(T) == typeof(string) && Value is null && Text is not null)
+                return (T)(object)Text;
+            return Value;
         }
 
         public void Dispose()

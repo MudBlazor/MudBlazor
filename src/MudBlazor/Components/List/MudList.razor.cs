@@ -9,13 +9,12 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    public partial class MudList : MudComponentBase, IDisposable
+    public partial class MudList<T> : MudComponentBase, IDisposable
     {
         private T? _selectedValue;
         private IParameterState<T?> _selectedValueState;
-        private IParameterState<MudListItem<T?>?> _selectedItemState;
-        private HashSet<MudListItem<T?>> _items = new();
-        private HashSet<MudList<T?>> _childLists = new();
+        private HashSet<MudListItem<T>> _items = new();
+        private HashSet<MudList<T>> _childLists = new();
 
         internal event Action? ParametersChanged;
 
@@ -26,7 +25,7 @@ namespace MudBlazor
                 .Build();
 
         [CascadingParameter]
-        protected MudList<T?>? ParentList { get; set; }
+        protected MudList<T>? ParentList { get; set; }
 
         /// <summary>
         /// The color of the selected List Item.
@@ -77,7 +76,7 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public bool Disabled { get; set; }
 
-        internal MudListItem? SelectedItem { get; set; }
+        internal MudListItem<T>? SelectedItem { get; private set; }
 
         /// <summary>
         /// The current selected value.
@@ -97,11 +96,6 @@ namespace MudBlazor
 
         public MudList()
         {
-            _selectedItemState = RegisterParameter(
-                nameof(SelectedItem),
-                () => SelectedItem,
-                () => SelectedItemChanged,
-                OnSelectedItemParameterChangedAsync);
             _selectedValueState = RegisterParameter(
                 nameof(SelectedValue),
                 () => SelectedValue,
@@ -109,12 +103,12 @@ namespace MudBlazor
                 OnSelectedValueParameterChangedAsync);
         }
 
-        private Task OnSelectedItemParameterChangedAsync(ParameterChangedEventArgs<MudListItem?> args)
-        {
-            return SetSelectedValueAsync(args.Value?.Value, force: true);
-        }
+        //private Task OnSelectedItemParameterChangedAsync(ParameterChangedEventArgs<MudListItem?> args)
+        //{
+        //    return SetSelectedValueAsync(args.Value?.Value, force: true);
+        //}
 
-        private Task OnSelectedValueParameterChangedAsync(ParameterChangedEventArgs<object?> args)
+        private Task OnSelectedValueParameterChangedAsync(ParameterChangedEventArgs<T?> args)
         {
             return SetSelectedValueAsync(args.Value, force: true);
         }
@@ -129,7 +123,7 @@ namespace MudBlazor
             }
             else
             {
-                CanSelect = SelectedItemChanged.HasDelegate || SelectedValueChanged.HasDelegate || SelectedValue is not null;
+                CanSelect = SelectedValueChanged.HasDelegate || SelectedValue is not null;
             }
         }
 
@@ -139,13 +133,14 @@ namespace MudBlazor
             ParametersChanged?.Invoke();
         }
 
-        internal async Task RegisterAsync(MudListItem item)
+        internal async Task RegisterAsync(MudListItem<T> item)
         {
             _items.Add(item);
-            if (CanSelect && SelectedValue is not null && Equals(item.Value, SelectedValue))
+            if (CanSelect && SelectedValue is not null && Equals(item.GetValue(), SelectedValue))
             {
                 item.SetSelected(true);
-                await _selectedItemState.SetValueAsync(item);
+                SelectedItem = item;
+                await _selectedValueState.SetValueAsync(item.GetValue());
             }
         }
 
@@ -186,19 +181,19 @@ namespace MudBlazor
             // Find and update selected item based on value
             var selectedItem = await UpdateSelectedItems(value);
 
-            await _selectedItemState.SetValueAsync(selectedItem);
+            SelectedItem=selectedItem;
             if (ParentList is not null)
             {
                 await ParentList.SetSelectedValueAsync(value);
             }
         }
 
-        private async Task<MudListItem?> UpdateSelectedItems(object? value)
+        private async Task<MudListItem<T>?> UpdateSelectedItems(T? value)
         {
-            MudListItem? selectedItem = null;
+            MudListItem<T>? selectedItem = null;
             foreach (var listItem in _items.ToArray())
             {
-                var isSelected = value is not null && Equals(value, listItem.Value);
+                var isSelected = value is not null && Equals(value, listItem.GetValue());
                 listItem.SetSelected(isSelected);
                 if (isSelected)
                 {
@@ -209,9 +204,9 @@ namespace MudBlazor
             foreach (var childList in _childLists.ToArray())
             {
                 await childList.SetSelectedValueAsync(value);
-                if (childList._selectedItemState.Value is not null)
+                if (childList.SelectedItem is not null)
                 {
-                    selectedItem = childList._selectedItemState.Value;
+                    selectedItem = childList.SelectedItem;
                 }
             }
 
