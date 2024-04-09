@@ -13,7 +13,6 @@ namespace MudBlazor
         private Typo _textTypo;
         private bool _selected;
         private IParameterState<bool> _expandedState;
-        private bool _onClickHandlerPreventDefault = false;
 
         public MudListItem()
         {
@@ -174,11 +173,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool OnClickHandlerPreventDefault
-        {
-            get => _onClickHandlerPreventDefault;
-            set => _onClickHandlerPreventDefault = value;
-        }
+        public bool OnClickHandlerPreventDefault { get; set; }
 
         /// <summary>
         /// Add child list items here to create a nested list.
