@@ -228,7 +228,6 @@ namespace MudBlazor
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            //await _expandedState.SetValueAsync(InitiallyExpanded);
             if (MudList is not null)
             {
                 await MudList.RegisterAsync(this);
