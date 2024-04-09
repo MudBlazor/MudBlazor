@@ -19,41 +19,41 @@
     <MudButton Href="/getting-started/installation" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.GettingStarted)">Getting Started</MudButton>
     <MudButton Href="/mud/introduction" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.DiscoverMore)">Discover More</MudButton>
     <MudMenu Color="Color.Inherit" Variant="Variant.Text" Class="mx-1 px-3" PopoverClass="docs-layout-menu-shadow" ListClass="d-flex px-4 pb-2 docs-appbar-special-menu" LockScroll="true" Label="Products" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
-        <MudList Clickable="true">
+        <MudList T="string" Clickable="true">
             <MudListSubheader>
                 Products
             </MudListSubheader>
-            <MudListItem Href="https://mudblazor.com/">
+            <MudListItem T="string" Href="https://mudblazor.com/">
                 <div class="d-flex">
                     <MudText Color="Color.Primary">MudBlazor</MudText>
                 </div>
                 <MudText Typo="Typo.body2">Blazor component library</MudText>
             </MudListItem>
-            <MudListItem Href="https://try.mudblazor.com/">
+            <MudListItem T="string" Href="https://try.mudblazor.com/">
                 <div class="d-flex">
                     <MudText Color="Color.Primary">Try</MudText><MudText>MudBlazor</MudText>
                 </div>
                 <MudText Typo="Typo.body2">Online code editor with Blazor</MudText>
             </MudListItem>
-            <MudListItem Href="https://github.com/MudBlazor/ThemeManager">
+            <MudListItem T="string" Href="https://github.com/MudBlazor/ThemeManager">
                 <div class="d-flex">
                     <MudText>Theme</MudText><MudText Color="Color.Secondary">Manager</MudText>
                 </div>
                 <MudText Typo="Typo.body2">Manage your theme live in your app</MudText>
             </MudListItem>
-            <MudListItem Href="https://github.com/MudBlazor/Templates">
+            <MudListItem T="string" Href="https://github.com/MudBlazor/Templates">
                 <div class="d-flex">
                     <MudText>Templates</MudText>
                 </div>
                 <MudText Typo="Typo.body2">Blazor templates loaded with MudBlazor</MudText>
             </MudListItem>
         </MudList>
-        <MudList Clickable="true" Class="relative">
+        <MudList T="string" Clickable="true" Class="relative">
             <MudListSubheader>
                 Other
             </MudListSubheader>
             <MudOverlay Visible="true" LightBackground="true" Absolute="true" Class="docs-menu-overlay" />
-            <MudListItem>
+            <MudListItem T="string">
                 <MudBadge Class="d-flex mr-16" Content="@_badgeTextSoon" Color="Color.Info" Overlap="true">
                     <MudText>Mud</MudText><MudText Color="Color.Warning">Extensions</MudText>
                 </MudBadge>

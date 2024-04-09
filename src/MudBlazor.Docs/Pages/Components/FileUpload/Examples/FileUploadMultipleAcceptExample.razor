@@ -39,10 +39,10 @@
 
 @if (files != null)
 {
-    <MudList>
+    <MudList T="string">
         @foreach (var file in files)
         {
-            <MudListItem Icon="@Icons.Material.Filled.AttachFile">
+            <MudListItem T="string" Icon="@Icons.Material.Filled.AttachFile">
                 @file.Name <code>@file.Size bytes</code>
             </MudListItem>
         }

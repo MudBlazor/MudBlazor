@@ -1,26 +1,26 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px">
-    <MudList Clickable="true" @bind-SelectedItem="selectedItem" @bind-SelectedValue="selectedValue">
+    <MudList T="string" Clickable="true" @bind-SelectedValue="selectedValue">
         <MudListSubheader>
             Your drink:
             <MudChip T="string" Color="Color.Secondary">
-                @(selectedItem?.Text ?? "You are dry") (@(selectedValue?.ToString() ?? "0"))
+                @(selectedValue ?? "You are dry")
             </MudChip>
         </MudListSubheader>
-        <MudListItem Text="Sparkling Water" Value="1"/>
-        <MudListItem Text="Teas">
+        <MudListItem T="string" Text="Sparkling Water" />
+        <MudListItem T="string" Text="Teas">
             <NestedList>
-                <MudListItem Text="Earl Grey" Value="2" />
-                <MudListItem Text="Matcha"  Value="3"/>
-                <MudListItem Text="Pu'er"  Value="4"/>
+                <MudListItem T="string" Text="Earl Grey" />
+                <MudListItem T="string" Text="Matcha" />
+                <MudListItem T="string" Text="Pu'er" />
             </NestedList>
         </MudListItem>
-        <MudListItem Text="Coffees">
+        <MudListItem T="string" Text="Coffees">
             <NestedList>
-                <MudListItem Text="Irish Coffee"  Value="5"/>
-                <MudListItem Text="Double Espresso"  Value="6"/>
-                <MudListItem Text="Cafe Latte"  Value="7"/>
+                <MudListItem T="string" Text="Irish Coffee" />
+                <MudListItem T="string" Text="Double Espresso" />
+                <MudListItem T="string" Text="Cafe Latte" />
             </NestedList>
         </MudListItem>
     </MudList>
@@ -29,6 +29,5 @@
 
 @code
 {
-    MudListItem selectedItem;
-    object selectedValue = 1;
+    string selectedValue = "Irish Coffee";
 }

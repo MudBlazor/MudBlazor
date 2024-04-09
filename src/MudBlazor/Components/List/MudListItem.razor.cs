@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudListItem : MudComponentBase, IDisposable
+    public partial class MudListItem<T> : MudComponentBase, IDisposable
     {
         protected string Classname =>
         new CssBuilder("mud-list-item")
@@ -21,11 +21,13 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
-        [Inject] protected NavigationManager UriHelper { get; set; }
-
-        [CascadingParameter] protected MudList MudList { get; set; }
-
         private bool _onClickHandlerPreventDefault = false;
+
+        [Inject] 
+        protected NavigationManager UriHelper { get; set; }
+
+        [CascadingParameter] 
+        protected MudList<T> MudList { get; set; }
 
         /// <summary>
         /// The text to display
@@ -36,7 +38,7 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
-        public object Value { get; set; }
+        public T Value { get; set; }
 
         /// <summary>
         /// Avatar to use if set.

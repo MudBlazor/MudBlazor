@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudList : MudComponentBase, IDisposable
+    public partial class MudList<T> : MudComponentBase, IDisposable
     {
         protected string Classname =>
         new CssBuilder("mud-list")
@@ -15,7 +15,7 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
-        [CascadingParameter] protected MudList ParentList { get; set; }
+        [CascadingParameter] protected MudList<T> ParentList { get; set; }
 
         /// <summary>
         /// The color of the selected List Item.
@@ -70,23 +70,24 @@ namespace MudBlazor
         /// The current selected list item.
         /// Note: make the list Clickable for item selection to work.
         /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Selecting)]
-        public MudListItem SelectedItem
+        internal MudListItem<T> SelectedItem
         {
             get => _selectedItem;
             set
             {
                 if (_selectedItem == value)
                     return;
-                SetSelectedValueAsync(_selectedItem?.Value, force: true).AndForget();
+
+                var selectedValue = _selectedItem == null ? default : _selectedItem.Value;
+                SetSelectedValueAsync(selectedValue, force: true).AndForget();
             }
         }
 
-        /// <summary>
-        /// Called whenever the selection changed
-        /// </summary>
-        [Parameter] public EventCallback<MudListItem> SelectedItemChanged { get; set; }
+        ///// <summary>
+        ///// Called whenever the selection changed
+        ///// </summary>
+        //[Parameter] 
+        //public EventCallback<MudListItem> SelectedItemChanged { get; set; }
 
         /// <summary>
         /// The current selected value.
@@ -94,7 +95,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
-        public object SelectedValue
+        public T SelectedValue
         {
             get => _selectedValue;
             set
@@ -106,7 +107,8 @@ namespace MudBlazor
         /// <summary>
         /// Called whenever the selection changed
         /// </summary>
-        [Parameter] public EventCallback<object> SelectedValueChanged { get; set; }
+        [Parameter]
+        public EventCallback<T> SelectedValueChanged { get; set; }
 
         protected override void OnInitialized()
         {
@@ -117,7 +119,7 @@ namespace MudBlazor
             }
             else
             {
-                CanSelect = SelectedItemChanged.HasDelegate || SelectedValueChanged.HasDelegate || SelectedValue != null;
+                CanSelect = SelectedValueChanged.HasDelegate || SelectedValue != null;
             }
         }
 
@@ -129,38 +131,38 @@ namespace MudBlazor
             ParametersChanged?.Invoke();
         }
 
-        private HashSet<MudListItem> _items = new();
-        private HashSet<MudList> _childLists = new();
-        private MudListItem _selectedItem;
-        private object _selectedValue;
+        private HashSet<MudListItem<T>> _items = new();
+        private HashSet<MudList<T>> _childLists = new();
+        private MudListItem<T> _selectedItem;
+        private T _selectedValue;
 
-        internal async Task RegisterAsync(MudListItem item)
+        internal async Task RegisterAsync(MudListItem<T> item)
         {
             _items.Add(item);
             if (CanSelect && SelectedValue != null && object.Equals(item.Value, SelectedValue))
             {
                 item.SetSelected(true);
                 _selectedItem = item;
-                await SelectedItemChanged.InvokeAsync(item);
+                await SelectedValueChanged.InvokeAsync(item.Value);
             }
         }
 
-        internal void Unregister(MudListItem item)
+        internal void Unregister(MudListItem<T> item)
         {
             _items.Remove(item);
         }
 
-        internal void Register(MudList child)
+        internal void Register(MudList<T> child)
         {
             _childLists.Add(child);
         }
 
-        internal void Unregister(MudList child)
+        internal void Unregister(MudList<T> child)
         {
             _childLists.Remove(child);
         }
 
-        internal async Task SetSelectedValueAsync(object value, bool force = false)
+        internal async Task SetSelectedValueAsync(T value, bool force = false)
         {
             if ((!CanSelect || !Clickable) && !force)
                 return;
@@ -183,7 +185,7 @@ namespace MudBlazor
                     _selectedItem = childList.SelectedItem;
             }
 
-            await SelectedItemChanged.InvokeAsync(_selectedItem);
+            await SelectedValueChanged.InvokeAsync(_selectedItem.Value);
             if (ParentList is not null)
             {
                 await ParentList.SetSelectedValueAsync(value);

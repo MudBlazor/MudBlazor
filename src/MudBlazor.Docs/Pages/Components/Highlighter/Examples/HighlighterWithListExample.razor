@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Elevation="0">
-    <MudList>
+    <MudList T="string">
         <MudListSubheader>
             <MudTextField @bind-Value="searchTerm" AdornmentIcon="@Icons.Material.Filled.Brush"
                           Adornment="Adornment.End" Immediate="true" Variant="Variant.Outlined" />
@@ -9,7 +9,7 @@
 
         @foreach (var sentence in sentences)
         {
-            <MudListItem @key="sentence" Icon="@Icons.Material.Filled.Folder">
+            <MudListItem T="string" @key="sentence" Icon="@Icons.Material.Filled.Folder">
                 <MudHighlighter Text="@sentence" HighlightedText="@searchTerm" />
             </MudListItem>
         }

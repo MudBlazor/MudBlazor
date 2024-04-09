@@ -468,8 +468,7 @@ namespace MudBlazor
         protected Dictionary<T, MudSelectItem<T>> _valueLookup = new();
         protected Dictionary<T, MudSelectItem<T>> _shadowLookup = new();
 
-        // note: this must be object to satisfy MudList
-        private object _activeItemId = null;
+        private string _activeItemId;
 
         internal bool Add(MudSelectItem<T> item)
         {
