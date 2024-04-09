@@ -41,7 +41,6 @@ namespace MudBlazor
             if (fromCloseIcon)
             {
                 // Invoke user-defined task when close button is clicked
-                //await State.Options.OnCloseButtonClick.Invoke(this);
                 State.Options.OnCloseButtonClick?.Invoke(this);
             }
             else
@@ -53,7 +52,6 @@ namespace MudBlazor
                 }
 
                 // Click action is executed only if it's not from the close icon
-                //await State.Options.OnClick.Invoke(this);
                 State.Options.OnClick.Invoke(this);
             }
 
