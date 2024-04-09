@@ -174,7 +174,7 @@ namespace MudBlazor
             // Find and update selected item based on value
             var selectedItem = await UpdateSelectedItems(value);
 
-            SelectedItem=selectedItem;
+            SelectedItem = selectedItem;
             if (ParentList is not null)
             {
                 await ParentList.SetSelectedValueAsync(value);
