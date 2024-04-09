@@ -15,14 +15,19 @@ namespace MudBlazor
         private IParameterState<bool> _expandedState;
         private bool _onClickHandlerPreventDefault = false;
 
+        public MudListItem()
+        {
+            _expandedState = RegisterParameter(nameof(Expanded), () => Expanded, () => ExpandedChanged);
+        }
+
         protected string Classname =>
             new CssBuilder("mud-list-item")
                 .AddClass("mud-list-item-dense", (Dense ?? MudList?.Dense) ?? false)
                 .AddClass("mud-list-item-gutters", !DisableGutters && MudList?.DisableGutters != true)
                 .AddClass("mud-list-item-clickable", MudList?.Clickable)
-                .AddClass("mud-ripple", MudList?.Clickable == true && !Ripple && !Disabled)
-                .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !Disabled)
-                .AddClass("mud-list-item-disabled", Disabled)
+                .AddClass("mud-ripple", MudList?.Clickable == true && !Ripple && !GetDisabled())
+                .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !GetDisabled())
+                .AddClass("mud-list-item-disabled", GetDisabled())
                 .AddClass(Class)
                 .Build();
 
@@ -71,18 +76,13 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Appearance)]
         public string? AvatarClass { get; set; }
 
-        private bool _disabled;
         /// <summary>
         /// If true, will disable the list item if it has onclick.
         /// The value can be overridden by the parent list.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public bool Disabled
-        {
-            get => _disabled || (MudList?.Disabled ?? false);
-            set => _disabled = value;
-        }
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
@@ -134,7 +134,7 @@ namespace MudBlazor
         public string ExpandMoreIcon { get; set; } = Icons.Material.Filled.ExpandMore;
 
         /// <summary>
-        /// If true, the List Subheader will be indented.
+        /// If true, the List Sub-header will be indented.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
@@ -156,7 +156,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Expand or collapse nested list. Two-way bindable. Note: if you directly set this to
-        /// true or false (instead of using two-way binding) it will force the nested list's expansion state.
+        /// true or false (instead of using two-way binding) it will initialize the nested list's expansion state.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Expanding)]
@@ -164,13 +164,6 @@ namespace MudBlazor
 
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
-
-        /// <summary>
-        /// If true, expands the nested list on first display
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Expanding)]
-        public bool InitiallyExpanded { get; set; }
 
         /// <summary>
         /// Display content of this list item. If set, this overrides Text
@@ -200,14 +193,9 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        public MudListItem()
-        {
-            _expandedState = RegisterParameter(nameof(Expanded), () => Expanded, () => ExpandedChanged);
-        }
-
         protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
         {
-            if (Disabled)
+            if (GetDisabled())
             {
                 return;
             }
@@ -245,7 +233,7 @@ namespace MudBlazor
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            await _expandedState.SetValueAsync(InitiallyExpanded);
+            //await _expandedState.SetValueAsync(InitiallyExpanded);
             if (MudList is not null)
             {
                 await MudList.RegisterAsync(this);
@@ -270,12 +258,7 @@ namespace MudBlazor
 
         internal void SetSelected(bool selected)
         {
-            if (Disabled)
-            {
-                return;
-            }
-
-            if (_selected == selected)
+            if (GetDisabled() || _selected == selected)
             {
                 return;
             }
@@ -290,6 +273,8 @@ namespace MudBlazor
                 return (T)(object)Text;
             return Value;
         }
+
+        private bool GetDisabled() => Disabled || (MudList?.Disabled ?? false);
 
         public void Dispose()
         {

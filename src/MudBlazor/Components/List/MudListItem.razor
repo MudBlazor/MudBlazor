@@ -37,7 +37,7 @@
 @if (NestedList != null)
 {
     <MudCollapse Expanded="@_expandedState.Value">
-        <MudList T="T" Clickable="MudList?.Clickable ?? false" Color="MudList?.Color ?? Color.Primary" DisablePadding="true" Class="mud-nested-list" Disabled="@Disabled" Dense="(Dense ??  MudList?.Dense) ?? false">
+        <MudList T="T" Clickable="MudList?.Clickable ?? false" Color="MudList?.Color ?? Color.Primary" DisablePadding="true" Class="mud-nested-list" Disabled="@GetDisabled()" Dense="(Dense ??  MudList?.Dense) ?? false">
             @NestedList
         </MudList>
     </MudCollapse>

@@ -17,6 +17,17 @@ namespace MudBlazor
         private HashSet<MudList<T>> _childLists = new();
 
         internal event Action? ParametersChanged;
+        internal MudListItem<T>? SelectedItem { get; private set; }
+        internal bool CanSelect { get; private set; }
+
+        public MudList()
+        {
+            _selectedValueState = RegisterParameter(
+                nameof(SelectedValue),
+                () => SelectedValue,
+                () => SelectedValueChanged,
+                OnSelectedValueParameterChangedAsync);
+        }
 
         protected string Classname =>
             new CssBuilder("mud-list")
@@ -76,8 +87,6 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         public bool Disabled { get; set; }
 
-        internal MudListItem<T>? SelectedItem { get; private set; }
-
         /// <summary>
         /// The current selected value.
         /// Note: make the list Clickable for item selection to work.
@@ -91,22 +100,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<T?> SelectedValueChanged { get; set; }
-
-        internal bool CanSelect { get; private set; }
-
-        public MudList()
-        {
-            _selectedValueState = RegisterParameter(
-                nameof(SelectedValue),
-                () => SelectedValue,
-                () => SelectedValueChanged,
-                OnSelectedValueParameterChangedAsync);
-        }
-
-        //private Task OnSelectedItemParameterChangedAsync(ParameterChangedEventArgs<MudListItem?> args)
-        //{
-        //    return SetSelectedValueAsync(args.Value?.Value, force: true);
-        //}
 
         private Task OnSelectedValueParameterChangedAsync(ParameterChangedEventArgs<T?> args)
         {
