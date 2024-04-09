@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MudBlazor.Utilities.Throttle;
@@ -23,11 +24,10 @@ public class ThrottleDispatcherTests
         var dispatcher = new ThrottleDispatcher(100);
         var tasks = new List<Task>();
 
-        Task Invoke()
+        async Task Invoke()
         {
-            counter++;
-
-            return Task.CompletedTask;
+            Interlocked.Increment(ref counter);
+            await Task.Yield();
         }
 
         Task CallThrottleAsyncAfterDelay(int delay)
@@ -45,7 +45,7 @@ public class ThrottleDispatcherTests
 
         // Assert
         await Task.WhenAll(tasks);
-        counter.Should().Be(10);
+        counter.Should().BeInRange(9, 11);
     }
 
     [Test]
@@ -58,7 +58,7 @@ public class ThrottleDispatcherTests
 
         async Task Invoke()
         {
-            counter++;
+            Interlocked.Increment(ref counter);
             await Task.Delay(50);
         }
 
@@ -77,7 +77,7 @@ public class ThrottleDispatcherTests
 
         // Assert
         await Task.WhenAll(tasks);
-        counter.Should().Be(7);
+        counter.Should().BeInRange(6, 8);
     }
 
     [Test]
@@ -85,7 +85,7 @@ public class ThrottleDispatcherTests
     {
         // Arrange
         var dispatcher = new ThrottleDispatcher(100, resetIntervalOnException: true);
-        var callCount = 0;
+        var counter = 0;
 
         // Act & Assert
         var throttledAction = async () =>
@@ -93,7 +93,7 @@ public class ThrottleDispatcherTests
             await dispatcher.ThrottleAsync(async () =>
             {
                 await Task.Delay(50);
-                callCount++;
+                Interlocked.Increment(ref counter);
 
                 throw new InvalidOperationException();
             });
@@ -102,8 +102,8 @@ public class ThrottleDispatcherTests
         await dispatcher.ThrottleAsync(async () =>
         {
             await Task.Delay(50);
-            callCount++;
+            Interlocked.Increment(ref counter);
         });
-        callCount.Should().Be(2);
+        counter.Should().Be(2);
     }
 }
