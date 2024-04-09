@@ -9,12 +9,13 @@
                     @(_selectedValue ?? "You are dry")
                 </MudChip>
             </MudListSubheader>
-            <MudListItem T="string" Text="Sparkling Water" />
+            <MudListItem T="string" Text="Milk" />
+            <MudListItem T="string" Text="Sparkling Water" Value="@("Carbonated H²O")" />
             <MudListItem T="string" Text="Teas">
                 <NestedList>
-                    <MudListItem T="string" Text="Earl Grey" />
-                    <MudListItem T="string" Text="Matcha" />
-                    <MudListItem T="string" Text="Pu'er" />
+                    <MudListItem T="string" Text="English Tee" Value="@("Earl Grey")" />
+                    <MudListItem T="string" Text="Japanese Tee" Value="@("Matcha")" />
+                    <MudListItem T="string" Text="Chinese Tee" Value="@("Wu Long Cha")" />
                 </NestedList>
             </MudListItem>
             <MudListItem T="string" Text="Coffees">
@@ -43,7 +44,7 @@
 
 @code
 {
-    string _selectedValue = "Sparkling Water";
+    string _selectedValue = "Milk";
     Color _selectedColor = Color.Primary;
     Color[] _colors = { Color.Primary, Color.Secondary, Color.Tertiary, Color.Info, Color.Success, Color.Error, Color.Warning, Color.Dark };
 }

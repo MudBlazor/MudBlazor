@@ -41,9 +41,15 @@
         <DocsPageSection>
             <SectionHeader Title="Selection">
                 <Description>
-                    If you set <CodeInline>Clickable="true"</CodeInline> and use <CodeInline>@@bind-SelectedValue</CodeInline>, <CodeInline Tag>MudList</CodeInline> will manage an exclusive single-selection
-                    across all its nested lists for you.<br />
-                    You can customize the selected item's color via the <CodeInline>Color</CodeInline> parameter. In this example, the selection from the colors list is applied to the drinks list.
+                    <p>
+                        If you set <CodeInline>Clickable="true"</CodeInline> and use <CodeInline>@@bind-SelectedValue</CodeInline>, <CodeInline Tag>MudList</CodeInline> will manage an exclusive single-selection
+                        across all its nested lists for you. The value of a list item is defined via its <CodeInline>Value</CodeInline> parameter. For <CodeInline>T="string"</CodeInline> the <CodeInline>Text</CodeInline> 
+                        parameter is used as value if <CodeInline>Value</CodeInline> is not set for convenience, so you don't have to repeat yourself if the <CodeInline>Text</CodeInline> equals the 
+                        <CodeInline>Value</CodeInline>.
+                    </p>
+                    <p>
+                        You can customize the selected item's color via the <CodeInline>Color</CodeInline> parameter. In this example, the selection from the colors list is applied to the drinks list.
+                    </p>
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(ListSelectionExample)">
