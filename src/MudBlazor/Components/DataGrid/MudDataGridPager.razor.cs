@@ -45,12 +45,12 @@ namespace MudBlazor
         /// <summary>
         /// Set true to hide the pagination.
         /// </summary>
-        [Parameter] public bool HideNavigation { get; set; }
+        [Parameter] public bool ShowNavigation { get; set; } = true;
 
         /// <summary>
         /// Set true to hide the number of pages.
         /// </summary>
-        [Parameter] public bool HidePageNumber { get; set; }
+        [Parameter] public bool ShowPageNumber { get; set; } = true;
 
         private string Info => DataGrid == null ? "DataGrid==null" : InfoFormat
             .Replace("{first_item}", $"{(DataGrid?.CurrentPage * DataGrid.RowsPerPage) + 1}")

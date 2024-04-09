@@ -17,14 +17,14 @@
         </MudSelect>
     }
 
-    @if (!HidePageNumber)
+    @if (ShowPageNumber)
     {
         <MudText Typo="Typo.body2" Class="mud-table-pagination-caption">
             @Info
         </MudText>
     }
     
-    @if (!HideNavigation)
+    @if (ShowNavigation)
     {
         <div class="mud-table-pagination-actions">
             <MudIconButton Class="mud-flip-x-rtl" Icon="@Icons.Material.Filled.FirstPage" Disabled="@BackButtonsDisabled" @onclick="@(() => DataGrid.NavigateTo(Page.First))" />

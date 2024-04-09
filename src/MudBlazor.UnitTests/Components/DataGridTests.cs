@@ -529,9 +529,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain("mud-table-pagination-actions");
             comp.Markup.Should().Contain("M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z");
             comp.Markup.Should().Contain("1-10 of 20");
-            pagerContent.SetParam("HideNavigation", true);
+            pagerContent.SetParam("ShowNavigation", false);
             comp.Markup.Should().NotContain("mud-table-pagination-actions");
-            pagerContent.SetParam("HidePageNumber", true);
+            pagerContent.SetParam("ShowPageNumber", false);
             comp.Markup.Should().NotContain("1-10 of 20");
         }
 
