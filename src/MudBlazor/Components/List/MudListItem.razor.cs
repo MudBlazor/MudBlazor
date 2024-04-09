@@ -195,7 +195,7 @@ namespace MudBlazor
                 return;
             }
 
-            if (!_onClickHandlerPreventDefault)
+            if (!OnClickHandlerPreventDefault)
             {
                 if (NestedList != null)
                 {
