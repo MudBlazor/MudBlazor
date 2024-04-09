@@ -1,58 +1,61 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudListItem<T> : MudComponentBase, IDisposable
     {
-        protected string Classname =>
-        new CssBuilder("mud-list-item")
-          .AddClass("mud-list-item-dense", (Dense ?? MudList?.Dense) ?? false)
-          .AddClass("mud-list-item-gutters", !DisableGutters && !(MudList?.DisableGutters == true))
-          .AddClass("mud-list-item-clickable", MudList?.Clickable)
-          .AddClass("mud-ripple", MudList?.Clickable == true && Ripple && !Disabled)
-          .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !Disabled)
-          .AddClass("mud-list-item-disabled", Disabled)
-          .AddClass(Class)
-        .Build();
-
+        private Typo _textTypo;
+        private bool _selected;
+        private IParameterState<bool> _expandedState;
         private bool _onClickHandlerPreventDefault = false;
 
-        [Inject] 
-        protected NavigationManager UriHelper { get; set; }
+        protected string Classname =>
+            new CssBuilder("mud-list-item")
+                .AddClass("mud-list-item-dense", (Dense ?? MudList?.Dense) ?? false)
+                .AddClass("mud-list-item-gutters", !DisableGutters && MudList?.DisableGutters != true)
+                .AddClass("mud-list-item-clickable", MudList?.Clickable)
+                .AddClass("mud-ripple", MudList?.Clickable == true && !Ripple && !Disabled)
+                .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !Disabled)
+                .AddClass("mud-list-item-disabled", Disabled)
+                .AddClass(Class)
+                .Build();
 
-        [CascadingParameter] 
-        protected MudList<T> MudList { get; set; }
+        [Inject]
+        protected NavigationManager UriHelper { get; set; } = null!;
+
+        [CascadingParameter]
+        protected MudList? MudList { get; set; }
 
         /// <summary>
         /// The text to display
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public string Text { get; set; }
+        public string? Text { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
-        public T Value { get; set; }
+        public T? Value { get; set; }
 
         /// <summary>
         /// Avatar to use if set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public string Avatar { get; set; }
+        public string? Avatar { get; set; }
 
         /// <summary>
         /// Link to a URL when clicked.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.ClickAction)]
-        public string Href { get; set; }
+        public string? Href { get; set; }
 
         /// <summary>
         /// If true, force browser to redirect outside component router-space.
@@ -66,7 +69,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string AvatarClass { get; set; }
+        public string? AvatarClass { get; set; }
 
         private bool _disabled;
         /// <summary>
@@ -93,7 +96,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
 
         /// <summary>
         /// The color of the icon.
@@ -157,19 +160,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Expanding)]
-        public bool Expanded
-        {
-            get => _expanded;
-            set
-            {
-                if (_expanded == value)
-                    return;
-                _expanded = value;
-                _ = ExpandedChanged.InvokeAsync(value);
-            }
-        }
-
-        private bool _expanded;
+        public bool Expanded { get; set; }
 
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
@@ -186,7 +177,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
@@ -201,7 +192,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public RenderFragment NestedList { get; set; }
+        public RenderFragment? NestedList { get; set; }
 
         /// <summary>
         /// List click event.
@@ -209,15 +200,23 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        public MudListItem()
+        {
+            _expandedState = RegisterParameter(nameof(Expanded), () => Expanded, () => ExpandedChanged);
+        }
+
         protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
         {
             if (Disabled)
+            {
                 return;
+            }
+
             if (!_onClickHandlerPreventDefault)
             {
                 if (NestedList != null)
                 {
-                    Expanded = !Expanded;
+                    await _expandedState.SetValueAsync(!_expandedState.Value);
                 }
                 else if (Href != null)
                 {
@@ -245,8 +244,9 @@ namespace MudBlazor
 
         protected override async Task OnInitializedAsync()
         {
-            _expanded = InitiallyExpanded;
-            if (MudList != null)
+            await base.OnInitializedAsync();
+            await _expandedState.SetValueAsync(InitiallyExpanded);
+            if (MudList is not null)
             {
                 await MudList.RegisterAsync(this);
                 OnListParametersChanged();
@@ -254,7 +254,6 @@ namespace MudBlazor
             }
         }
 
-        private Typo _textTypo;
         private void OnListParametersChanged()
         {
             if ((Dense ?? MudList?.Dense) ?? false)
@@ -265,17 +264,22 @@ namespace MudBlazor
             {
                 _textTypo = Typo.body1;
             }
+
             StateHasChanged();
         }
-
-        private bool _selected;
 
         internal void SetSelected(bool selected)
         {
             if (Disabled)
+            {
                 return;
+            }
+
             if (_selected == selected)
+            {
                 return;
+            }
+
             _selected = selected;
             StateHasChanged();
         }
@@ -284,13 +288,15 @@ namespace MudBlazor
         {
             try
             {
-                if (MudList == null)
+                if (MudList is null)
+                {
                     return;
+                }
+
                 MudList.ParametersChanged -= OnListParametersChanged;
                 MudList.Unregister(this);
             }
             catch (Exception) { /*ignore*/ }
         }
-
     }
 }

@@ -42,7 +42,7 @@ namespace MudBlazor.Docs.Extensions
             services.AddBlazoredLocalStorage();
             services.AddScoped<IUserPreferencesService, UserPreferencesService>();
             services.AddScoped<INotificationService, InMemoryNotificationService>();
-            services.AddScoped<IPeriodicTableService, PeriodicTableService>();
+            services.AddSingleton<IPeriodicTableService, PeriodicTableService>();
             services.AddSingleton<IRenderQueueService, RenderQueueService>();
             services.AddScoped<LayoutService>();
             services.AddGoogleAnalytics("G-PRYNCB61NV");
