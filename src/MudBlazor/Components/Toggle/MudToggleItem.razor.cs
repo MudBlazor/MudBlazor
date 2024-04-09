@@ -8,7 +8,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-
 #nullable enable
     public partial class MudToggleItem<T> : MudComponentBase
     {
@@ -49,23 +48,42 @@ namespace MudBlazor
                 if (Parent?.Vertical == true)
                 {
                     if (Parent?.Rounded == true)
+                    {
                         if (Parent?.IsFirstItem(this) == true)
+                        {
                             return Parent?.Dense == true ? "px-1 pt-2 pb-1" : "px-2 pt-3 pb-2";
+                        }
                         else if (Parent?.IsLastItem(this) == true)
+                        {
                             return Parent?.Dense == true ? "px-1 pt-1 pb-2" : "px-2 pt-2 pb-3";
+                        }
                         else
+                        {
                             return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
+                        }
+                    }
+
                     // not rounded 
                     return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
                 }
+
                 // horizontal
                 if (Parent?.Rounded == true)
+                {
                     if (Parent?.IsFirstItem(this) == true)
+                    {
                         return Parent?.Dense == true ? "ps-2 pe-1 py-1" : "ps-3 pe-2 py-2";
+                    }
                     else if (Parent?.IsLastItem(this) == true)
+                    {
                         return Parent?.Dense == true ? "ps-1 pe-2 py-1" : "ps-2 pe-3 py-2";
+                    }
                     else
+                    {
                         return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
+                    }
+                }
+
                 // not rounded 
                 return Parent?.Dense == true ? "px-1 py-1" : "px-2 py-2";
             }
@@ -108,14 +126,14 @@ namespace MudBlazor
         /// <summary>
         /// The text to show. You need to set this only if you want a text that differs from the Value. If null,
         /// show Value?.ToString().
-        /// Note: the Text is only shown if you haven't defined your own child content
+        /// Note: the Text is only shown if you haven't defined your own child content.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string? Text { get; set; }
 
         /// <summary>
-        /// Custom child content which overrides the text. The boolean parameter conveys whether or not the item is selected. 
+        /// Custom child content which overrides the text. The boolean parameter conveys whether or not the item is selected.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
