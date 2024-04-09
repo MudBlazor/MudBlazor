@@ -58,7 +58,7 @@
     <MudList T="string">
         @foreach (var file in files)
         {
-            <MudListItem T="string" Icon="@Icons.Material.Filled.AttachFile" @key="@file">
+            <MudListItem Icon="@Icons.Material.Filled.AttachFile" @key="@file">
                 @file.Name <code>@file.Size bytes</code>
             </MudListItem>
         }

@@ -11,7 +11,7 @@
         <MudList T="string" Dense="_breakpointHistory.Count > 10">
             @foreach (var item in _breakpointHistory)
             {
-                <MudListItem T="string" Text="@item.ToString()"></MudListItem>
+                <MudListItem Text="@item.ToString()"></MudListItem>
             }
         </MudList>
     }

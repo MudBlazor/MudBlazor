@@ -6,23 +6,23 @@
         <MudListSubheader>
             Nested List Items
         </MudListSubheader>
-        <MudListItem T="string" Icon="@Icons.Material.Filled.Inbox" Text="Inbox" Expanded>
+        <MudListItem Icon="@Icons.Material.Filled.Inbox" Text="Inbox" Expanded>
             <NestedList>
-                <MudListItem T="string" Icon="@Icons.Material.Filled.StarRate">
+                <MudListItem Icon="@Icons.Material.Filled.StarRate">
                     Starred
                 </MudListItem>
-                <MudListItem T="string" Icon="@Icons.Material.Filled.WatchLater">
+                <MudListItem Icon="@Icons.Material.Filled.WatchLater">
                     Snoozed
                 </MudListItem>
             </NestedList>
         </MudListItem>
-        <MudListItem T="string" Icon="@Icons.Material.Filled.Send" Text="Sent mail" @bind-Expanded="_expanded">
+        <MudListItem Icon="@Icons.Material.Filled.Send" Text="Sent mail" @bind-Expanded="_expanded">
             <NestedList>
-                <MudListItem T="string">Re: Meeting tomorrow</MudListItem>
-                <MudListItem T="string">Fwd: JavaScript memes xD</MudListItem>
+                <MudListItem>Re: Meeting tomorrow</MudListItem>
+                <MudListItem>Fwd: JavaScript memes xD</MudListItem>
             </NestedList>
         </MudListItem>
-        <MudListItem T="string" Icon="@Icons.Material.Filled.Drafts">
+        <MudListItem Icon="@Icons.Material.Filled.Drafts">
             Drafts
         </MudListItem>
         <MudDivider/>

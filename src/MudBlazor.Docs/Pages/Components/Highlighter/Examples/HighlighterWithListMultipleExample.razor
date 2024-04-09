@@ -15,7 +15,7 @@
         }
         @foreach (var name in names)
         {
-            <MudListItem T="string" @key="name" Icon="@Icons.Material.Filled.Person">
+            <MudListItem @key="name" Icon="@Icons.Material.Filled.Person">
                 <MudHighlighter Text="@name" HighlightedTexts="@searchTerms" />
             </MudListItem>
         }
