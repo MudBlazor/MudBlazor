@@ -22,8 +22,8 @@ namespace MudBlazor
             _value = RegisterParameter(nameof(Value), () => Value, () => ValueChanged, OnValueChanged);
             _values = RegisterParameter(nameof(Values), () => Values, () => ValuesChanged, OnValuesChanged);
             _color = RegisterParameter(nameof(Color), () => Color, OnParameterChanged);
-            _selectedClass = RegisterParameter(nameof(SelectedClass), () => SelectedClass, OnParameterChanged);
-            _outline = RegisterParameter(nameof(Outline), () => Outline, OnParameterChanged);
+            _selectedClass = RegisterParameter(nameof(SelectedClassname), () => SelectedClassname, OnParameterChanged);
+            _outline = RegisterParameter(nameof(Outlined), () => Outlined, OnParameterChanged);
             _delimiters = RegisterParameter(nameof(Delimiters), () => Delimiters, OnParameterChanged);
             _rtl = RegisterParameter(nameof(RightToLeft), () => RightToLeft, OnParameterChanged);
             _dense = RegisterParameter(nameof(Dense), () => Dense, OnParameterChanged);
@@ -47,13 +47,13 @@ namespace MudBlazor
         private IParameterState<bool> _disabled;
         private List<MudToggleItem<T>> _items = new();
 
-        protected string Classes => new CssBuilder("mud-toggle-group")
+        protected string Classname => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)
             .AddClass("mud-toggle-group-vertical", Vertical)
             .AddClass("rounded", !Rounded)
             .AddClass("rounded-xl", Rounded)
             .AddClass("mud-toggle-group-rtl", RightToLeft)
-            .AddClass($"border mud-border-{Color.ToDescriptionString()} border-solid", Outline)
+            .AddClass($"border mud-border-{Color.ToDescriptionString()} border-solid", Outlined)
             .AddClass("mud-disabled", Disabled)
             .AddClass(Class)
             .Build();
@@ -104,21 +104,21 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string? SelectedClass { get; set; }
+        public string? SelectedClassname { get; set; }
 
         /// <summary>
         /// Classes (separated by space) to be applied to the text of all toggle items.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string? TextClass { get; set; }
+        public string? TextClassname { get; set; }
 
         /// <summary>
         /// Classes (separated by space) to be applied to SelectedIcon/UnselectedIcon of the items (if CheckMark is true).
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string? CheckMarkClass { get; set; }
+        public string? CheckMarkClassname { get; set; }
 
         /// <summary>
         /// If true, use vertical layout.
@@ -142,7 +142,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool Outline { get; set; } = true;
+        public bool Outlined { get; set; } = true;
 
         /// <summary>
         /// If true, show a line delimiter between items. Default is true.

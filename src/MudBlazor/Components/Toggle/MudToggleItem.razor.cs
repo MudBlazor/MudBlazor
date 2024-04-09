@@ -14,10 +14,10 @@ namespace MudBlazor
     {
         private bool _selected;
 
-        protected string Classes => new CssBuilder("mud-toggle-item")
-            .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", _selected && string.IsNullOrEmpty(Parent?.SelectedClass))
-            .AddClass("mud-toggle-item-selected-border", _selected && Parent?.Outline == true)
-            .AddClass(Parent?.SelectedClass, _selected && !string.IsNullOrEmpty(Parent?.SelectedClass))
+        protected string Classname => new CssBuilder("mud-toggle-item")
+            .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", _selected && string.IsNullOrEmpty(Parent?.SelectedClassname))
+            .AddClass("mud-toggle-item-selected-border", _selected && Parent?.Outlined == true)
+            .AddClass(Parent?.SelectedClassname, _selected && !string.IsNullOrEmpty(Parent?.SelectedClassname))
             .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
             .AddClass("mud-ripple", Parent?.Ripple == true)
             .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
@@ -33,12 +33,12 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        protected string TextClassName => new CssBuilder()
-            .AddClass(Parent?.TextClass)
+        protected string TextClassname => new CssBuilder()
+            .AddClass(Parent?.TextClassname)
             .Build();
 
-        protected string CheckMarkClasses => new CssBuilder()
-            .AddClass(Parent?.CheckMarkClass)
+        protected string CheckMarkClassname => new CssBuilder()
+            .AddClass(Parent?.CheckMarkClassname)
             .AddClass("me-2")
             .Build();
 
@@ -71,7 +71,7 @@ namespace MudBlazor
             }
         }
 
-        private bool CounterBalanceCheckmark => Parent?.CheckMark == true && Parent?.FixedContent == true;
+        private bool CounterBalanceCheckMark => Parent?.CheckMark == true && Parent?.FixedContent == true;
 
         [CascadingParameter]
         public MudToggleGroup<T>? Parent { get; set; }
