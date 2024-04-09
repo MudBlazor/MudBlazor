@@ -1,33 +1,49 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudPaper Width="300px">
-    <MudList T="string" Clickable @bind-SelectedValue="selectedValue">
-        <MudListSubheader>
-            Your drink:
-            <MudChip T="string" Color="Color.Secondary">
-                @(selectedValue ?? "You are dry")
-            </MudChip>
-        </MudListSubheader>
-        <MudListItem T="string" Text="Sparkling Water" />
-        <MudListItem T="string" Text="Teas">
-            <NestedList>
-                <MudListItem T="string" Text="Earl Grey" />
-                <MudListItem T="string" Text="Matcha" />
-                <MudListItem T="string" Text="Pu'er" />
-            </NestedList>
-        </MudListItem>
-        <MudListItem T="string" Text="Coffees">
-            <NestedList>
-                <MudListItem T="string" Text="Irish Coffee" />
-                <MudListItem T="string" Text="Double Espresso" />
-                <MudListItem T="string" Text="Cafe Latte" />
-            </NestedList>
-        </MudListItem>
-    </MudList>
-</MudPaper>
+<MudStack Row="true">
+    <MudPaper Width="300px" Height="300px" Style="overflow-y: scroll">
+        <MudList T="string" Clickable @bind-SelectedValue="_selectedValue" Color="@_selectedColor">
+            <MudListSubheader>
+                Your drink:
+                <MudChip T="string" Color="@_selectedColor">
+                    @(_selectedValue ?? "You are dry")
+                </MudChip>
+            </MudListSubheader>
+            <MudListItem T="string" Text="Sparkling Water" />
+            <MudListItem T="string" Text="Teas">
+                <NestedList>
+                    <MudListItem T="string" Text="Earl Grey" />
+                    <MudListItem T="string" Text="Matcha" />
+                    <MudListItem T="string" Text="Pu'er" />
+                </NestedList>
+            </MudListItem>
+            <MudListItem T="string" Text="Coffees">
+                <NestedList>
+                    <MudListItem T="string" Text="Irish Coffee" />
+                    <MudListItem T="string" Text="Double Espresso" />
+                    <MudListItem T="string" Text="Cafe Latte" />
+                </NestedList>
+            </MudListItem>
+        </MudList>
+    </MudPaper>
+
+    <MudPaper Width="300px" Height="300px" Style="overflow-y: scroll">
+        <MudList T="Color" Clickable @bind-SelectedValue="_selectedColor">
+            <MudListSubheader>
+                Select a color:
+            </MudListSubheader>
+            @foreach (var color in _colors) {
+            <MudListItem T="Color" Value="@color" IconColor="@color" Icon="@Icons.Material.Filled.FormatColorFill">@color</MudListItem>
+            }
+        </MudList>
+    </MudPaper>
+</MudStack>
+
 
 
 @code
 {
-    string selectedValue = "Irish Coffee";
+    string _selectedValue = "Sparkling Water";
+    Color _selectedColor = Color.Primary;
+    Color[] _colors = { Color.Primary, Color.Secondary, Color.Tertiary, Color.Info, Color.Success, Color.Error, Color.Warning, Color.Dark };
 }
