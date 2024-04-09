@@ -6,11 +6,9 @@
 @if (IsDateTimeDisabledFunc != null)
 {
     <MudDateTimePicker @ref="_picker"
-                       DateTime="@DateTime"
-                       DateTimeChanged="DateTimeChanged"
+                       @bind-DateTime="@DateTime"
                        ReadOnly="@Readonly"
                        PickerMonth="@PickerMonth"
-                       PickerMonthChanged="PickerMonthChanged"
                        IsDateTimeDisabledFunc="@IsDateTimeDisabledFunc"
                        DateOpenTo="@DateOpenTo"
                        FixDay="@FixDay"
@@ -26,11 +24,9 @@
 else
 {
     <MudDateTimePicker @ref="_picker"
-                       DateTime="@DateTime"
-                       DateTimeChanged="DateTimeChanged"
+                       @bind-DateTime="@DateTime"
                        ReadOnly="@Readonly"
                        PickerMonth="@PickerMonth"
-                       PickerMonthChanged="PickerMonthChanged"
                        DateOpenTo="@DateOpenTo"
                        FixDay="@FixDay"
                        FixMonth="@FixMonth"
@@ -47,16 +43,6 @@ else
     private MudDateTimePicker _picker;
 
     public DateTime? DateTime { get; set; }
-
-    public void DateTimeChanged(DateTime? datetime)
-    {
-        DateTime = datetime;
-    }
-
-    public void PickerMonthChanged(DateTime? month)
-    {
-        PickerMonth = month;
-    }
 
     [Parameter] public bool ShowWeekNumbers { get; set; } = true;
     [Parameter] public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Sunday;
