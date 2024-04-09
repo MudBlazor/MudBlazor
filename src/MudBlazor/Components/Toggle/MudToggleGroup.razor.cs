@@ -58,7 +58,7 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
-        protected string Styles => new StyleBuilder()
+        protected string Stylename => new StyleBuilder()
             .AddStyle("grid-template-columns", $"repeat({_items.Count}, minmax(0, 1fr))", !Vertical)
             .AddStyle("grid-template-rows", $"repeat({_items.Count}, minmax(0, 1fr))", Vertical)
             .AddStyle(Style)
