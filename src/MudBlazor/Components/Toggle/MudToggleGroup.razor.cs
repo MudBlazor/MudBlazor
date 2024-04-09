@@ -22,7 +22,7 @@ namespace MudBlazor
             _value = RegisterParameter(nameof(Value), () => Value, () => ValueChanged, OnValueChanged);
             _values = RegisterParameter(nameof(Values), () => Values, () => ValuesChanged, OnValuesChanged);
             _color = RegisterParameter(nameof(Color), () => Color, OnParameterChanged);
-            _selectedClass = RegisterParameter(nameof(SelectedClassname), () => SelectedClassname, OnParameterChanged);
+            _selectedClass = RegisterParameter(nameof(SelectedClass), () => SelectedClass, OnParameterChanged);
             _outline = RegisterParameter(nameof(Outlined), () => Outlined, OnParameterChanged);
             _delimiters = RegisterParameter(nameof(Delimiters), () => Delimiters, OnParameterChanged);
             _rtl = RegisterParameter(nameof(RightToLeft), () => RightToLeft, OnParameterChanged);
@@ -104,21 +104,21 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string? SelectedClassname { get; set; }
+        public string? SelectedClass { get; set; }
 
         /// <summary>
         /// Classes (separated by space) to be applied to the text of all toggle items.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string? TextClassname { get; set; }
+        public string? TextClass { get; set; }
 
         /// <summary>
         /// Classes (separated by space) to be applied to SelectedIcon/UnselectedIcon of the items (if CheckMark is true).
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public string? CheckMarkClassname { get; set; }
+        public string? CheckMarkClass { get; set; }
 
         /// <summary>
         /// If true, use vertical layout.

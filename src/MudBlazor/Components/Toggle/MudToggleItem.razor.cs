@@ -15,9 +15,9 @@ namespace MudBlazor
         private bool _selected;
 
         protected string Classname => new CssBuilder("mud-toggle-item")
-            .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", _selected && string.IsNullOrEmpty(Parent?.SelectedClassname))
+            .AddClass($"mud-theme-{Parent?.Color.ToDescriptionString()}", _selected && string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass("mud-toggle-item-selected-border", _selected && Parent?.Outlined == true)
-            .AddClass(Parent?.SelectedClassname, _selected && !string.IsNullOrEmpty(Parent?.SelectedClassname))
+            .AddClass(Parent?.SelectedClass, _selected && !string.IsNullOrEmpty(Parent?.SelectedClass))
             .AddClass($"mud-toggle-item-{Parent?.Color.ToDescriptionString()}")
             .AddClass("mud-ripple", Parent?.Ripple == true)
             .AddClass($"mud-border-{Parent?.Color.ToDescriptionString()} border-solid")
@@ -34,11 +34,11 @@ namespace MudBlazor
             .Build();
 
         protected string TextClassname => new CssBuilder()
-            .AddClass(Parent?.TextClassname)
+            .AddClass(Parent?.TextClass)
             .Build();
 
         protected string CheckMarkClassname => new CssBuilder()
-            .AddClass(Parent?.CheckMarkClassname)
+            .AddClass(Parent?.CheckMarkClass)
             .AddClass("me-2")
             .Build();
 
