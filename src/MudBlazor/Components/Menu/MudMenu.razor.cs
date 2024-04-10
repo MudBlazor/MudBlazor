@@ -11,6 +11,7 @@ namespace MudBlazor
     public partial class MudMenu : MudComponentBase, IActivatable
     {
         private bool _isOpen;
+        private string? _popoverStyle;
         private bool _isMouseOver = false;
 
         protected string Classname =>
@@ -190,8 +191,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Menu.PopupBehavior)]
         public EventCallback<bool> IsOpenChanged { get; set; }
 
-        public string? PopoverStyle { get; set; }
-
         /// <summary>
         /// Gets a value indicating whether the menu is currently open or not.
         /// </summary>
@@ -207,7 +206,7 @@ namespace MudBlazor
         {
             _isOpen = false;
             _isMouseOver = false;
-            PopoverStyle = null;
+            _popoverStyle = null;
             StateHasChanged();
             IsOpenChanged.InvokeAsync(_isOpen);
         }
@@ -244,7 +243,7 @@ namespace MudBlazor
         private void SetPopoverStyle(MouseEventArgs args)
         {
             AnchorOrigin = Origin.TopLeft;
-            PopoverStyle = $"margin-top: {args?.OffsetY.ToPx()}; margin-left: {args?.OffsetX.ToPx()};";
+            _popoverStyle = $"margin-top: {args?.OffsetY.ToPx()}; margin-left: {args?.OffsetX.ToPx()};";
         }
 
         /// <summary>
@@ -282,23 +281,7 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Implementation of IActivatable.Activate, toggles the menu.
-        /// </summary>
-        public void Activate(object activator, MouseEventArgs args)
-        {
-            ToggleMenu(args);
-        }
-
-        /// <summary>
-        /// Implementation of IActivatable.Activate, toggles the menu.
-        /// </summary>
-        public void Activate(object activator, TouchEventArgs args)
-        {
-            ToggleMenu(args);
-        }
-
-        public void MouseEnter(MouseEventArgs args)
+        private void MouseEnter(MouseEventArgs args)
         {
             _isMouseOver = true;
 
@@ -308,16 +291,24 @@ namespace MudBlazor
             }
         }
 
-        public async void MouseLeave()
+        private async Task MouseLeaveAsync()
         {
             _isMouseOver = false;
 
-            await Task.Delay(100);
+            await Task.Delay(100).ConfigureAwait(false);
 
             if (ActivationEvent == MouseEvent.MouseOver && _isMouseOver == false)
             {
                 CloseMenu();
             }
+        }
+
+        /// <summary>
+        /// Implementation of IActivatable.Activate, toggles the menu.
+        /// </summary>
+        void IActivatable.Activate(object activator, MouseEventArgs args)
+        {
+            ToggleMenu(args);
         }
     }
 }

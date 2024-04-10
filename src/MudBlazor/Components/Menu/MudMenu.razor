@@ -4,7 +4,7 @@
 
 <div @attributes="UserAttributes" Class="@Classname" Style="@Style" 
         @onmouseenter="@MouseEnter"
-        @onmouseleave="@MouseLeave"
+        @onmouseleave="@MouseLeaveAsync"
         @oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? ToggleMenu : null)"
         @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)">
     @if (ActivatorContent != null)
@@ -35,11 +35,11 @@
         <MudIconButton Variant="@Variant" Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" Ripple="@Ripple" DisableElevation="@DisableElevation" @onclick="@ToggleMenu" />
     }
     @* The portal has to include  the cascading values inside, because it's not able to teletransport the cascade *@
-    <MudPopover Open="@_isOpen" Class="@PopoverClass" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" RelativeWidth="@FullWidth" Style="@PopoverStyle" @ontouchend:preventDefault>
+    <MudPopover Open="@_isOpen" Class="@PopoverClass" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" RelativeWidth="@FullWidth" Style="@_popoverStyle" @ontouchend:preventDefault>
         <CascadingValue Value="@this">
             <MudList Class="@ListClass" Clickable="true" Dense="@Dense"  
                 @onmouseenter="@MouseEnter"
-                @onmouseleave="@MouseLeave">
+                @onmouseleave="@MouseLeaveAsync">
                 @ChildContent
             </MudList>
         </CascadingValue>
