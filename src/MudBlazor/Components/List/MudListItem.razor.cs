@@ -26,7 +26,7 @@ namespace MudBlazor
                 .AddClass("mud-list-item-clickable", MudList?.GetReadOnly() != true)
                 .AddClass("mud-ripple", MudList?.GetReadOnly() != true && !Ripple && !GetDisabled())
                 .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", _selected && !GetDisabled())
-                .AddClass($"mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !GetDisabled() && MudList?.GetReadOnly() != true)
+                .AddClass($"mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !GetDisabled())
                 .AddClass("mud-list-item-disabled", GetDisabled())
                 .AddClass(Class)
                 .Build();
