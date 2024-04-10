@@ -81,15 +81,16 @@ namespace MudBlazor.Docs.Services
             // Add search texts here which users might search and direct them to the correct component or page.
             RegisterPage("Backdrop", subtitle: "Go to Overlay", componentType: typeof(MudOverlay));
             RegisterPage("Box", subtitle: "Go to Paper", componentType: typeof(MudPaper));
-            RegisterPage("ComboBox", subtitle: "Go to Select", componentType: typeof(MudSelect<T>));
-            RegisterPage("Drag & Drop", subtitle: "Go to DropZone", componentType: typeof(MudDropZone<T>));
+            RegisterPage("Combo Box", subtitle: "Go to Select", componentType: typeof(MudSelect<T>));
+            RegisterPage("Drag & Drop", subtitle: "Go to Drop Zone", componentType: typeof(MudDropZone<T>));
             RegisterPage("Dropdown", subtitle: "Go to Select", componentType: typeof(MudSelect<T>));
-            RegisterPage("Harmonica", subtitle: "Go to ExpansionPanels", componentType: typeof(MudExpansionPanels));
+            RegisterPage("Expander", subtitle: "Go to Collapse", componentType: typeof(MudCollapse));
+            RegisterPage("Harmonica", subtitle: "Go to Expansion Panels", componentType: typeof(MudExpansionPanels));
             RegisterPage("Horizontal Line", subtitle: "Go to Divider", componentType: typeof(MudDivider));
             RegisterPage("Hiliter", subtitle: "Go to Highlighter", componentType: typeof(MudHighlighter));
             RegisterPage("Notification", subtitle: "Go to Snackbar", componentType: typeof(MudSnackbarProvider));
             RegisterPage("Popup", subtitle: "Go to Popover", componentType: typeof(MudPopover));
-            RegisterPage("SidePanel", subtitle: "Go to Drawer", componentType: typeof(MudDrawer));
+            RegisterPage("Side Panel", subtitle: "Go to Drawer", componentType: typeof(MudDrawer));
             RegisterPage("Toast", subtitle: "Go to Snackbar", componentType: typeof(MudSnackbarProvider));
             RegisterPage("Typeahead", subtitle: "Go to Autocomplete", componentType: typeof(MudAutocomplete<T>));
         }
