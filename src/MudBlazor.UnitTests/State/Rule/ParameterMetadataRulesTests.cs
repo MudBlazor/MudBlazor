@@ -40,33 +40,19 @@ public class ParameterMetadataRulesTests
         isNew.Should().Be(expectedResult);
     }
 
-    [Test]
-    public void Morph_Comparer_ShouldChangeMetadata()
+    [TestCase("() => TestComparer", "TestComparer", true)]
+    [TestCase("TestComparer", "TestComparer", false)]
+    public void Morph_Comparer_ShouldChangeMetadata(string input, string expectedComparerName, bool expectedResult)
     {
         // Arrange
-        var metadata = new ParameterMetadata("Parameter", null, "() => TestComparer");
+        var metadata = new ParameterMetadata("Parameter", null, input);
 
         //Act
         var newMetadata = ParameterMetadataRules.Morph(metadata);
         var isNew = !string.Equals(metadata.ComparerParameterName, newMetadata.ComparerParameterName, StringComparison.Ordinal);
 
         // Assert
-        isNew.Should().BeTrue();
-        newMetadata.ComparerParameterName.Should().Be("TestComparer");
-    }
-
-    [Test]
-    public void Morph_Comparer_ShouldNotChangeMetadata()
-    {
-        // Arrange
-        var metadata = new ParameterMetadata("Parameter", null, "TestComparer");
-
-        //Act
-        var newMetadata = ParameterMetadataRules.Morph(metadata);
-        var isNew = !string.Equals(metadata.ComparerParameterName, newMetadata.ComparerParameterName, StringComparison.Ordinal);
-
-        // Assert
-        isNew.Should().BeFalse();
-        newMetadata.ComparerParameterName.Should().Be("TestComparer");
+        isNew.Should().Be(expectedResult);
+        newMetadata.ComparerParameterName.Should().Be(expectedComparerName);
     }
 }
