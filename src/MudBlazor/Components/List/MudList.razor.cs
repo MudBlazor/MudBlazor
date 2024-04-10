@@ -18,7 +18,6 @@ namespace MudBlazor
 
         internal event Action? ParametersChanged;
         internal MudListItem<T>? SelectedItem { get; private set; }
-        internal bool CanSelect { get; private set; }
 
         public MudList()
         {
@@ -31,7 +30,7 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-list")
-                .AddClass("mud-list-padding", !DisablePadding)
+                .AddClass("mud-list-padding", Padding)
                 .AddClass(Class)
                 .Build();
 
@@ -53,21 +52,21 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Set true to make the list items clickable. This is also the precondition for list selection to work.
+        /// If true, the list items will not be clickable and the selected item can not be changed by the user.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
-        public bool Clickable { get; set; }
+        public bool ReadOnly { get; set; }
 
         /// <summary>
-        /// If true, vertical padding will be removed from the list.
+        /// If true, vertical padding will be applied to the list.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool DisablePadding { get; set; }
+        public bool Padding { get; set; }
 
         /// <summary>
-        /// If true, compact vertical padding will be applied to all list items.
+        /// If true, list items will take up less vertical space.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
@@ -89,7 +88,6 @@ namespace MudBlazor
 
         /// <summary>
         /// The current selected value.
-        /// Note: make the list Clickable for item selection to work.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
@@ -106,20 +104,6 @@ namespace MudBlazor
             return SetSelectedValueAsync(args.Value, force: true);
         }
 
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            if (ParentList is not null)
-            {
-                ParentList.Register(this);
-                CanSelect = ParentList.CanSelect;
-            }
-            else
-            {
-                CanSelect = SelectedValueChanged.HasDelegate || SelectedValue is not null;
-            }
-        }
-
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -129,7 +113,7 @@ namespace MudBlazor
         internal async Task RegisterAsync(MudListItem<T> item)
         {
             _items.Add(item);
-            if (CanSelect && SelectedValue is not null && Equals(item.GetValue(), SelectedValue))
+            if (SelectedValue is not null && Equals(item.GetValue(), SelectedValue))
             {
                 item.SetSelected(true);
                 SelectedItem = item;
@@ -152,13 +136,12 @@ namespace MudBlazor
             _childLists.Remove(child);
         }
 
+        internal bool GetDisabled() => Disabled || (ParentList?.Disabled ?? false);
+
+        internal bool GetReadOnly() => ReadOnly || (ParentList?.ReadOnly ?? false);
+
         internal async Task SetSelectedValueAsync(T? value, bool force = false)
         {
-            if ((!CanSelect || !Clickable) && !force)
-            {
-                return;
-            }
-
             // We cannot use the _selectedValueState.Value here instead of _selectedValue
             // The problem arises when the SelectedValue is preselected
             // Then OnInitialized will set the _selectedValueState.Value = SelectedValue

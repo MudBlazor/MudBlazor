@@ -23,9 +23,10 @@ namespace MudBlazor
             new CssBuilder("mud-list-item")
                 .AddClass("mud-list-item-dense", (Dense ?? MudList?.Dense) ?? false)
                 .AddClass("mud-list-item-gutters", !DisableGutters && MudList?.DisableGutters != true)
-                .AddClass("mud-list-item-clickable", MudList?.Clickable)
-                .AddClass("mud-ripple", MudList?.Clickable == true && !Ripple && !GetDisabled())
-                .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !GetDisabled())
+                .AddClass("mud-list-item-clickable", MudList?.GetReadOnly() != true)
+                .AddClass("mud-ripple", MudList?.GetReadOnly() != true && !Ripple && !GetDisabled())
+                .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", _selected && !GetDisabled())
+                .AddClass($"mud-{MudList?.Color.ToDescriptionString()}-hover", _selected && !GetDisabled() && MudList?.GetReadOnly() != true)
                 .AddClass("mud-list-item-disabled", GetDisabled())
                 .AddClass(Class)
                 .Build();
@@ -190,7 +191,7 @@ namespace MudBlazor
 
         protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
         {
-            if (GetDisabled())
+            if (GetDisabled() || MudList?.GetReadOnly() == true)
             {
                 return;
             }
@@ -268,7 +269,7 @@ namespace MudBlazor
             return Value;
         }
 
-        private bool GetDisabled() => Disabled || (MudList?.Disabled ?? false);
+        private bool GetDisabled() => Disabled || (MudList?.GetDisabled() ?? false);
 
         public void Dispose()
         {

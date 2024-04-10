@@ -42,7 +42,7 @@
             <SectionHeader Title="Selection">
                 <Description>
                     <p>
-                        If you set <CodeInline>Clickable="true"</CodeInline> and use <CodeInline>@@bind-SelectedValue</CodeInline>, <CodeInline Tag>MudList</CodeInline> will manage an exclusive single-selection
+                        If you use <CodeInline>@@bind-SelectedValue</CodeInline>, <CodeInline Tag>MudList</CodeInline> will manage an exclusive single-selection
                         across all its nested lists for you. The value of a list item is defined via its <CodeInline>Value</CodeInline> parameter. For <CodeInline>T="string"</CodeInline> the <CodeInline>Text</CodeInline> 
                         parameter is used as value if <CodeInline>Value</CodeInline> is not set for convenience, so you don't have to repeat yourself if the <CodeInline>Text</CodeInline> equals the 
                         <CodeInline>Value</CodeInline>.
@@ -58,6 +58,18 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Interactive">
+                <Description>
+                    To make the list non-interactive you can set the <CodeInline Tag>ReadOnly</CodeInline> parameter. In this mode it will still display the selected item. 
+                    In <CodeInline Tag>Disabled</CodeInline> mode the selection is not shown at all.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(ListInteractiveExample)">
+                <ListInteractiveExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Avatar List">
                 <Description></Description>
             </SectionHeader>
@@ -66,14 +78,6 @@
             </SectionContent>
         </DocsPageSection>
 
-        <DocsPageSection>
-            <SectionHeader Title="Interactive">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(ListInteractiveExample)">
-                <ListInteractiveExample />
-            </SectionContent>
-        </DocsPageSection>
 
     </DocsPageContent>
 </DocsPage>

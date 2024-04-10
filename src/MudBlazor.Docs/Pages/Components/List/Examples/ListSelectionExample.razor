@@ -2,7 +2,7 @@
 
 <MudStack Row="true">
     <MudPaper Width="300px">
-        <MudList T="string" Clickable @bind-SelectedValue="_selectedValue" Color="@_selectedColor">
+        <MudList T="string" @bind-SelectedValue="_selectedValue" Color="@_selectedColor">
             <MudListSubheader>
                 Your drink:
                 <MudChip T="string" Color="@_selectedColor">
@@ -29,7 +29,7 @@
     </MudPaper>
 
     <MudPaper Width="300px" Height="300px" Style="overflow-y: scroll">
-        <MudList T="Color" Clickable @bind-SelectedValue="_selectedColor">
+        <MudList T="Color" @bind-SelectedValue="_selectedColor">
             <MudListSubheader>
                 Select a color:
             </MudListSubheader>
