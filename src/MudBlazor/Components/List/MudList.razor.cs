@@ -103,6 +103,14 @@ namespace MudBlazor
         {
             return SetSelectedValueAsync(args.Value, force: true);
         }
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            if (ParentList is not null)
+            {
+                ParentList.Register(this);
+            }
+        }
 
         protected override void OnParametersSet()
         {
