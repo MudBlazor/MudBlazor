@@ -20,9 +20,9 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         RegisterParameter(nameof(CheckMark), () => CheckMark, OnCheckMarkChanged);
     }
 
-    private ParameterState<T?> _selectedValue;
-    private ParameterState<IReadOnlyCollection<T?>?> _selectedValues;
-    private ParameterState<IEqualityComparer<T>?> _comparer;
+    private readonly ParameterState<T?> _selectedValue;
+    private readonly ParameterState<IReadOnlyCollection<T?>?> _selectedValues;
+    private readonly ParameterState<IEqualityComparer<T>?> _comparer;
 
     private HashSet<T> _selection = new();
     private HashSet<MudChip<T>> _chips = new();

@@ -16,7 +16,6 @@ internal class RegisterParameterBuilder
     /// <typeparam name="T">The type of the parameter.</typeparam>
     /// <param name="smartParameterSetRegister">The <see cref="IParameterSetRegister"/> used to add the parameter to the <see cref="ParameterSet"/>.</param>
     /// <returns>A new instance of <see cref="RegisterParameterBuilder{T}"/>.</returns>
-
     public static RegisterParameterBuilder<T> Create<T>(IParameterSetRegister smartParameterSetRegister)
     {
         return new RegisterParameterBuilder<T>(smartParameterSetRegister);

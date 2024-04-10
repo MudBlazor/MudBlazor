@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
@@ -19,7 +18,7 @@ namespace MudBlazor
         }
 
         internal double _height;
-        private ParameterState<bool> _expandedState;
+        private readonly ParameterState<bool> _expandedState;
         private bool _isRendered;
         private bool _updateHeight;
         private ElementReference _wrapper;

@@ -14,7 +14,7 @@ public partial class ParameterStateTestComp : MudComponentBase
         _intParam = RegisterParameter(nameof(IntParam), () => IntParam, OnIntParamChanged);
     }
 
-    private ParameterState<int> _intParam;
+    private readonly ParameterState<int> _intParam;
 
     private void OnIntParamChanged(ParameterChangedEventArgs<int> args)
     {

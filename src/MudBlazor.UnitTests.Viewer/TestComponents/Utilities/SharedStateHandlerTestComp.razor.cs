@@ -21,14 +21,14 @@ public partial class SharedStateHandlerTestComp : MudComponentBase
         _z = RegisterParameter(nameof(Z), () => Z, OnXyzChanged);
     }
 
-    private ParameterState<int> _a;
-    private ParameterState<int> _b;
-    private ParameterState<int> _c;
-    private ParameterState<int> _o;
-    private ParameterState<int> _p;
-    private ParameterState<int> _x;
-    private ParameterState<int> _y;
-    private ParameterState<int> _z;
+    private readonly ParameterState<int> _a;
+    private readonly ParameterState<int> _b;
+    private readonly ParameterState<int> _c;
+    private readonly ParameterState<int> _o;
+    private readonly ParameterState<int> _p;
+    private readonly ParameterState<int> _x;
+    private readonly ParameterState<int> _y;
+    private readonly ParameterState<int> _z;
 
     private void OnAbcChanged()
     {

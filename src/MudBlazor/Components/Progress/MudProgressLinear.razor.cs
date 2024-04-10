@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -9,10 +8,10 @@ namespace MudBlazor
 #nullable enable
     public partial class MudProgressLinear : MudComponentBase
     {
-        private ParameterState<double> _minState;
-        private ParameterState<double> _maxState;
-        private ParameterState<double> _valueState;
-        private ParameterState<double> _bufferValueState;
+        private readonly ParameterState<double> _minState;
+        private readonly ParameterState<double> _maxState;
+        private readonly ParameterState<double> _valueState;
+        private readonly ParameterState<double> _bufferValueState;
 
         protected string DivClassname =>
             new CssBuilder("mud-progress-linear")
