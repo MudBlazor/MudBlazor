@@ -39,7 +39,6 @@ public class RegisterParameterBuilderTests
             .WithComparer(() => comparer);
 
         var parameterState = result.Build();
-        //parameterState.OnInitialized();
         await parameterState.SetValueAsync(parameterValue);
 
         // Assert
