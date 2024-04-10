@@ -312,9 +312,15 @@ namespace MudBlazor
                 Text = text;
                 _validated = false;
                 if (!string.IsNullOrWhiteSpace(Text))
+                {
                     Touched = true;
+                }
+
                 if (updateValue)
+                {
                     await UpdateValuePropertyAsync(false);
+                }
+
                 await TextChanged.InvokeAsync(Text);
             }
         }
@@ -342,28 +348,37 @@ namespace MudBlazor
         protected internal virtual async Task OnBlurredAsync(FocusEventArgs obj)
         {
             if (ReadOnly)
+            {
                 return;
+            }
+
             _isFocused = false;
 
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;
                 if (_validated)
+                {
                     await OnBlur.InvokeAsync(obj);
+                }
                 else
+                {
                     await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
+                }
             }
         }
 
         protected virtual Task InvokeKeyDownAsync(KeyboardEventArgs obj)
         {
             _isFocused = true;
+
             return OnKeyDown.InvokeAsync(obj);
         }
 
         protected virtual Task InvokeKeyUpAsync(KeyboardEventArgs obj)
         {
             _isFocused = true;
+
             return OnKeyUp.InvokeAsync(obj);
         }
 
@@ -432,6 +447,7 @@ namespace MudBlazor
                 ((Converter<T>)Converter).Format = value;
                 UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
             }
+
             return changed;
         }
 
