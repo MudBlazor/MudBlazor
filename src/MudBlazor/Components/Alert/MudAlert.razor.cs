@@ -12,17 +12,6 @@ namespace MudBlazor
     /// <summary>
     /// Represents an alert used to display an important message which is statically embedded in the page content.
     /// </summary>
-    /// <remarks><para>Alerts are useful for calling attention to the user in regards to warnings, errors,
-    /// informational messages, and more.  Alerts typically use the <see cref="Severity"/> property to control
-    /// the color and icon displayed, but a custom <see cref="Icon"/> and <see cref="CloseIcon"/> can be used, 
-    /// or no icon at all via the <see cref="NoIcon"/> and <see cref="ShowCloseIcon"/> properties.  You can 
-    /// also use the <see cref="Dense"/> property to take up less space, and <see cref="HorizontalAlignment"/>
-    /// to control the horizontal alignment of text.  The <see cref="Variant"/> property can be used to show
-    /// outlined, filled, or textual alerts.  The <see cref="Elevation"/> property can be used to make the alert
-    /// stand out with a drop shadow.</para>
-    /// <para>To notify the user with dynamic alerts which overlay the page, check out the 
-    /// <see href="https://mudblazor.com/components/snackbar"/> component.</para>
-    /// </remarks>
     public partial class MudAlert : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-alert")
@@ -75,8 +64,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets the icon used for the close button.
         /// </summary>
-        /// <remarks>Defaults to <see cref="Icons.Material.Filled.Close"/>. This icon is only 
-        /// displayed when the <see cref="ShowCloseIcon"/> property is true.</remarks>
+        /// <remarks>Defaults to <see cref="Icons.Material.Filled.Close"/>. This icon is only displayed when the <see cref="ShowCloseIcon"/> property is true.</remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
         public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
@@ -84,8 +72,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets a value indicating whether a close icon is displayed.
         /// </summary>
-        /// <remarks>To customize which icon is displayed for the close icon, set the 
-        /// <see cref="CloseIcon"/> property.</remarks>
+        /// <remarks>To customize which icon is displayed for the close icon, set the <see cref="CloseIcon"/> property.</remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Behavior)]
         public bool ShowCloseIcon { get; set; }
@@ -93,8 +80,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets the size of the drop shadow.
         /// </summary>
-        /// <remarks>Defaults to 0.  A higher number creates a heavier drop shadow.  Use a value 
-        /// of 0 for no shadow.</remarks>
+        /// <remarks>Defaults to 0.  A higher number creates a heavier drop shadow.  Use a value of 0 for no shadow.</remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
         public int Elevation { set; get; } = 0;
