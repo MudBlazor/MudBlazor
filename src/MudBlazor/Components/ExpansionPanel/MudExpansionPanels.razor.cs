@@ -54,11 +54,11 @@ namespace MudBlazor
         public bool Gutters { get; set; } = true;
 
         /// <summary>
-        /// If true, the borders around each panel will be removed.
+        /// Determines whether the borders around each panel are shown.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
-        public bool DisableBorders { get; set; }
+        public bool Outlined { get; set; } = true;
 
         /// <summary>
         /// Child content of component.
