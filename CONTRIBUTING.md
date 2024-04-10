@@ -159,7 +159,7 @@ Using our new `ParameterState` pattern all this is not required.
 
 ### Example of a good Parameter definition
 ```c#
-private ParameterState<bool> _expandedState;
+private readonly ParameterState<bool> _expandedState;
 
 [Parameter]
 public bool Expanded { get; set; }
@@ -240,7 +240,7 @@ private Task ToggleAsync()
 
 ### Example of a good code
 ```c#
-private ParameterState<bool> _expandedState;
+private readonly ParameterState<bool> _expandedState;
 
 [Parameter]
 public bool Expanded { get; set; }
