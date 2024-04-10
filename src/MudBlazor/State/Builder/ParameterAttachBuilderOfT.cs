@@ -133,9 +133,9 @@ internal class ParameterAttachBuilder<T>
     }
 
     /// <summary>
-    /// Sets the comparer for the parameter.
+    /// Sets the function to provide the comparer for the parameter.
     /// </summary>
-    /// <param name="comparerFunc">The comparer for the parameter.</param>
+    /// <param name="comparerFunc">The function to provide the comparer for the parameter.</param>
     /// <returns>The current instance of the builder.</returns>
     public ParameterAttachBuilder<T> WithComparer(Func<IEqualityComparer<T>>? comparerFunc)
     {

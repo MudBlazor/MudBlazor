@@ -178,7 +178,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     }
 
     /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is ParameterState<T> parameterState && Equals(parameterState);
+    public override bool Equals(object? obj) => obj is ParameterStateInternal<T> parameterState && Equals(parameterState);
 
     /// <inheritdoc />
     public override int GetHashCode() => Metadata.ParameterName.GetHashCode();
