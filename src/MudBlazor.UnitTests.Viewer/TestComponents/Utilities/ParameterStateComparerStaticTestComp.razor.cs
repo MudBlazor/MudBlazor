@@ -4,14 +4,14 @@ using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
-public partial class ParameterStateComparerTestComp : MudComponentBase
+public partial class ParameterStateComparerStaticTestComp : MudComponentBase
 {
     private readonly List<ParameterChangedEventArgs<double>> _parameterChanges = new();
 
     [Parameter]
     public double DoubleParam { get; set; }
 
-    public ParameterStateComparerTestComp()
+    public ParameterStateComparerStaticTestComp()
     {
         var comparer = new DoubleEpsilonEqualityComparer(0.00001f);
         RegisterParameter(nameof(DoubleParam), () => DoubleParam, ParameterChangedHandler, comparer);
