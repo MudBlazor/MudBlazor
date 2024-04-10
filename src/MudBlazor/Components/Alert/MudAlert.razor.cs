@@ -67,7 +67,7 @@ namespace MudBlazor
         public HorizontalAlignment ContentAlignment { get; set; } = HorizontalAlignment.Left;
 
         /// <summary>
-        /// Gets or sets the callback for when the close button has been clicked.
+        /// Occurs when the close button has been clicked.
         /// </summary>
         [Parameter]
         public EventCallback<MudAlert> CloseIconClicked { get; set; }
