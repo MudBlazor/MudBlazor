@@ -54,6 +54,11 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     /// <inheritdoc/>
     public override T? Value => _value;
 
+    /// <summary>
+    /// Gets the function to provide the comparer for the parameter.
+    /// </summary>
+    public Func<IEqualityComparer<T>> ComparerFunc => _comparerFunc;
+
     private ParameterStateInternal(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, Func<IEqualityComparer<T>?>? comparerFunc = null)
     {
         Metadata = metadata;
