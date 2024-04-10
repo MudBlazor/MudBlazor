@@ -23,4 +23,7 @@ public partial class ParameterStateTestComp : MudComponentBase
 
     [Parameter]
     public int IntParam { get; set; }
+
+    [Parameter]
+    public int NonStateDummyIntParam { get; set; }
 }

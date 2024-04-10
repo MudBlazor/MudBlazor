@@ -10,7 +10,7 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-    public class ResizeObserver : IResizeObserver, IDisposable, IAsyncDisposable
+    public class ResizeObserver : IResizeObserver, IAsyncDisposable
     {
         private bool _isDisposed = false;
 
@@ -84,11 +84,11 @@ namespace MudBlazor.Services
             Dictionary<ElementReference, BoundingClientRect> parsedChanges = new();
             foreach (var item in changes)
             {
-                if (_cachedValueIds.ContainsKey(item.Id) == false) { continue; }
-
-                var elementRef = _cachedValueIds[item.Id];
-                _cachedValues[elementRef] = item.Size;
-                parsedChanges.Add(elementRef, item.Size);
+                if (_cachedValueIds.TryGetValue(item.Id, out var elementRef))
+                {
+                    _cachedValues[elementRef] = item.Size;
+                    parsedChanges.Add(elementRef, item.Size);
+                }
             }
 
             OnResized?.Invoke(parsedChanges);
@@ -98,12 +98,7 @@ namespace MudBlazor.Services
 
         public BoundingClientRect GetSizeInfo(ElementReference reference)
         {
-            if (_cachedValues.ContainsKey(reference) == false)
-            {
-                return null;
-            }
-
-            return _cachedValues[reference];
+            return _cachedValues.TryGetValue(reference, out var existing) ? existing : null;
         }
 
         public double GetHeight(ElementReference reference) => GetSizeInfo(reference)?.Height ?? 0.0;
@@ -131,7 +126,7 @@ namespace MudBlazor.Services
 
         public async ValueTask DisposeAsync()
         {
-            if (_isDisposed == true) { return; }
+            if (_isDisposed) { return; }
 
             _isDisposed = true;
 

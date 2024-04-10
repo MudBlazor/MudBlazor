@@ -18,7 +18,7 @@ namespace MudBlazor
         event EventHandler<ScrollEventArgs> OnScroll;
     }
 
-    internal class ScrollListener : IScrollListener, IDisposable
+    internal class ScrollListener : IScrollListener
     {
         private readonly IJSRuntime _js;
         private DotNetObjectReference<ScrollListener> _dotNetRef;

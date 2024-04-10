@@ -15,7 +15,7 @@ using MudBlazor.Components.Snackbar.InternalComponents;
 namespace MudBlazor
 {
     /// <inheritdoc />
-    public class SnackbarService : ISnackbar, IDisposable
+    public class SnackbarService : ISnackbar
     {
         public SnackbarConfiguration Configuration { get; }
         public event Action OnSnackbarsUpdated;

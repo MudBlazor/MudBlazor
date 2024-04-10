@@ -20,7 +20,7 @@ namespace MudBlazor
                 .AddClass("mud-panel-next-expanded", NextPanelExpanded)
                 .AddClass("mud-disabled", Disabled)
                 .AddClass($"mud-elevation-{Parent?.Elevation.ToString()}")
-                .AddClass($"mud-expand-panel-border", Parent?.DisableBorders != true)
+                .AddClass($"mud-expand-panel-border", Parent?.Outlined == true)
                 .AddClass(Class)
                 .Build();
 

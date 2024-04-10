@@ -30,12 +30,12 @@
     </div>
     @if (NestedList != null)
     {
-        <MudIcon Icon="@($"{(_expanded ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@AdornmentColor" />
+        <MudIcon Icon="@($"{(_expandedState.Value ? ExpandLessIcon : ExpandMoreIcon)}")" Size="@IconSize" Color="@AdornmentColor" />
     }
 </div>
 @if (NestedList != null)
 {
-    <MudCollapse Expanded="@Expanded">
+    <MudCollapse Expanded="@_expandedState.Value">
         <MudList Clickable="MudList?.Clickable ?? false" Color="MudList?.Color ?? Color.Primary" DisablePadding="true" Class="mud-nested-list" Disabled="@Disabled" Dense="(Dense ??  MudList?.Dense) ?? false">
             @NestedList
         </MudList>

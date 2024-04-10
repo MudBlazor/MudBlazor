@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
@@ -88,6 +92,7 @@ namespace MudBlazor
                 _converter = value ?? throw new ArgumentNullException(nameof(value));   // converter is mandatory at all times
                 _converter.OnError = OnConversionError;
             }
+
             return changed;
         }
 
@@ -109,6 +114,7 @@ namespace MudBlazor
             {
                 _converter.Culture = value;
             }
+
             return changed;
         }
 
@@ -151,20 +157,27 @@ namespace MudBlazor
         {
             // ErrorText is either set from outside or the first validation error
             if (!IsNullOrWhiteSpace(ErrorText))
+            {
                 return ErrorText;
+            }
 
             if (!IsNullOrWhiteSpace(ConversionErrorMessage))
+            {
                 return ConversionErrorMessage;
+            }
 
             return null;
         }
 
         /// <summary>
+        /// <para>
         /// This manages the state of having been "touched" by the user. A form control always starts out untouched
         /// but becomes touched when the user performed input or the blur event was raised.
-        ///
+        /// </para>
+        /// <para>
         /// The touched state is only relevant for inputs that have no value (i.e. empty text fields). Being untouched will
         /// suppress RequiredError
+        /// </para>
         /// </summary>
         public bool Touched { get; protected set; }
 
@@ -212,28 +225,6 @@ namespace MudBlazor
             return execute();
         }
 
-        // These are the fire-and-forget methods to launch an async validation process.
-        // After each async step, we make sure the current Value of the component has not changed while
-        // async code was executed to avoid race condition which could lead to incorrect validation results.
-        [Obsolete($"Use {nameof(BeginValidationAfterAsync)} instead, this will be removed in v7")]
-        protected void BeginValidateAfter(Task task)
-        {
-            Func<Task> execute = async () =>
-            {
-                var value = _value;
-
-                await task;
-
-                // we validate only if the value hasn't changed while we waited for task.
-                // if it has in fact changed, another validate call will follow anyway
-                if (EqualityComparer<T>.Default.Equals(value, _value))
-                {
-                    BeginValidate();
-                }
-            };
-            execute().AndForget();
-        }
-
         protected Task BeginValidateAsync()
         {
             Func<Task> execute = async () =>
@@ -249,23 +240,6 @@ namespace MudBlazor
             };
 
             return execute();
-        }
-
-        [Obsolete($"Use {nameof(BeginValidateAsync)} instead, this will be removed in v7")]
-        protected void BeginValidate()
-        {
-            Func<Task> execute = async () =>
-            {
-                var value = _value;
-
-                await ValidateValue();
-
-                if (EqualityComparer<T>.Default.Equals(value, _value))
-                {
-                    EditFormValidate();
-                }
-            };
-            execute().AndForget();
         }
 
         /// <summary>
@@ -288,30 +262,50 @@ namespace MudBlazor
             {
                 // conversion error
                 if (ConversionError)
+                {
                     errors.Add(ConversionErrorMessage);
+                }
                 // validation errors
                 if (Validation is ValidationAttribute validationAttribute)
+                {
                     ValidateWithAttribute(validationAttribute, _value, errors);
+                }
                 else if (Validation is Func<T?, bool> funcBooleanValidation)
+                {
                     ValidateWithFunc(funcBooleanValidation, _value, errors);
+                }
                 else if (Validation is Func<T?, string?> funcStringValidation)
+                {
                     ValidateWithFunc(funcStringValidation, _value, errors);
+                }
                 else if (Validation is Func<T?, IEnumerable<string?>> funcEnumerableValidation)
+                {
                     ValidateWithFunc(funcEnumerableValidation, _value, errors);
+                }
                 else if (Validation is Func<object, string, IEnumerable<string?>> funcModelWithFullPathOfMember)
+                {
                     ValidateModelWithFullPathOfMember(funcModelWithFullPathOfMember, errors);
+                }
                 else
                 {
                     var value = _value;
 
                     if (Validation is Func<T?, Task<bool>> funcTaskBooleanValidation)
+                    {
                         await ValidateWithFunc(funcTaskBooleanValidation, _value, errors);
+                    }
                     else if (Validation is Func<T?, Task<string?>> funcTaskStringValidation)
+                    {
                         await ValidateWithFunc(funcTaskStringValidation, _value, errors);
+                    }
                     else if (Validation is Func<T?, Task<IEnumerable<string?>>> funcTaskEnumerableValidation)
+                    {
                         await ValidateWithFunc(funcTaskEnumerableValidation, _value, errors);
+                    }
                     else if (Validation is Func<object, string, Task<IEnumerable<string?>>> funcTaskModelWithFullPathOfMember)
+                    {
                         await ValidateModelWithFullPathOfMember(funcTaskModelWithFullPathOfMember, errors);
+                    }
 
                     changed = !EqualityComparer<T>.Default.Equals(value, _value);
                 }
@@ -329,7 +323,9 @@ namespace MudBlazor
                 if (Required)
                 {
                     if (Touched && !HasValue(_value))
+                    {
                         errors.Add(RequiredError);
+                    }
                 }
             }
             finally
@@ -353,7 +349,9 @@ namespace MudBlazor
         protected virtual bool HasValue(T? value)
         {
             if (value is string valueString)
+            {
                 return !IsNullOrWhiteSpace(valueString);
+            }
 
             return value is not null;
         }
@@ -368,7 +366,10 @@ namespace MudBlazor
                 var validationContextSubject = EditContext?.Model ?? _fieldIdentifier.Model ?? this;
                 var validationContext = new ValidationContext(validationContextSubject);
                 if (validationContext.MemberName is null && !IsNullOrEmpty(_fieldIdentifier.FieldName))
+                {
                     validationContext.MemberName = _fieldIdentifier.FieldName;
+                }
+
                 var validationResult = attr.GetValidationResult(value, validationContext);
                 if (validationResult != ValidationResult.Success)
                 {
@@ -391,7 +392,9 @@ namespace MudBlazor
             try
             {
                 if (!func(value))
+                {
                     errors.Add("Invalid");
+                }
             }
             catch (Exception e)
             {
@@ -405,7 +408,9 @@ namespace MudBlazor
             {
                 var error = func(value);
                 if (!IsNullOrEmpty(error))
+                {
                     errors.Add(error);
+                }
             }
             catch (Exception e)
             {
@@ -418,8 +423,12 @@ namespace MudBlazor
             try
             {
                 foreach (var error in func(value))
+                {
                     if (!IsNullOrEmpty(error))
+                    {
                         errors.Add(error);
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -443,8 +452,12 @@ namespace MudBlazor
                 }
 
                 foreach (var error in func(Form.Model, For.GetFullPathOfMember()))
+                {
                     if (!IsNullOrEmpty(error))
+                    {
                         errors.Add(error);
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -457,7 +470,9 @@ namespace MudBlazor
             try
             {
                 if (!await func(value))
+                {
                     errors.Add("Invalid");
+                }
             }
             catch (Exception e)
             {
@@ -471,7 +486,9 @@ namespace MudBlazor
             {
                 var error = await func(value);
                 if (!IsNullOrEmpty(error))
+                {
                     errors.Add(error);
+                }
             }
             catch (Exception e)
             {
@@ -484,8 +501,12 @@ namespace MudBlazor
             try
             {
                 foreach (var error in await func(value))
+                {
                     if (!IsNullOrEmpty(error))
+                    {
                         errors.Add(error);
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -509,8 +530,12 @@ namespace MudBlazor
                 }
 
                 foreach (var error in await func(Form.Model, For.GetFullPathOfMember()))
+                {
                     if (!IsNullOrEmpty(error))
+                    {
                         errors.Add(error);
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -524,18 +549,9 @@ namespace MudBlazor
         protected void FieldChanged(object? newValue)
         {
             if (SubscribeToParentForm)
+            {
                 Form?.FieldChanged(this, newValue);
-        }
-
-        /// <summary>
-        /// Reset the value and the validation.
-        /// </summary>
-        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
-        [ExcludeFromCodeCoverage]
-        public void Reset()
-        {
-            ResetValue();
-            ResetValidation();
+            }
         }
 
         /// <summary>
@@ -545,16 +561,6 @@ namespace MudBlazor
         {
             await ResetValueAsync();
             ResetValidation();
-        }
-
-        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
-        [ExcludeFromCodeCoverage]
-        protected virtual void ResetValue()
-        {
-            /* to be overridden */
-            _value = default;
-            Touched = false;
-            StateHasChanged();
         }
 
         protected virtual Task ResetValueAsync()
@@ -578,7 +584,6 @@ namespace MudBlazor
         }
 
         #endregion
-
 
         #region --> Blazor EditForm validation support
 
@@ -675,11 +680,12 @@ namespace MudBlazor
         private void DetachValidationStateChangedListener()
         {
             if (_currentEditContext is not null)
+            {
                 _currentEditContext.OnValidationStateChanged -= OnValidationStateChanged;
+            }
         }
 
         #endregion
-
 
         protected override Task OnInitializedAsync()
         {
@@ -710,6 +716,7 @@ namespace MudBlazor
                 Form?.Remove(this);
             }
             catch { /* ignore */ }
+
             DetachValidationStateChangedListener();
             Dispose(disposing: true);
         }

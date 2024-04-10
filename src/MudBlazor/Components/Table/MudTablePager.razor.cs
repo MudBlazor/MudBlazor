@@ -32,13 +32,6 @@ namespace MudBlazor
         [Parameter] public bool HideRowsPerPage { get; set; }
 
         /// <summary>
-        /// Set true to hide the part of the pager which allows to change the page size.
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use HideRowsPerPage instead.", true)]
-        [Parameter] public bool DisableRowsPerPage { get => HideRowsPerPage; set => HideRowsPerPage = value; }
-
-        /// <summary>
         /// Set true to hide the number of pages.
         /// </summary>
         [Parameter] public bool HidePageNumber { get; set; }
@@ -80,7 +73,7 @@ namespace MudBlazor
                 return Table == null
                     ? "Table==null"
                     : InfoFormat
-                        .Replace("{first_item}", $"{(filteredItemsCount == 0 ? 0 : Table?.CurrentPage * Table.RowsPerPage + 1)}")
+                        .Replace("{first_item}", $"{(filteredItemsCount == 0 ? 0 : (Table?.CurrentPage * Table.RowsPerPage) + 1)}")
                         .Replace("{last_item}", $"{Math.Min((Table.CurrentPage + 1) * Table.RowsPerPage, filteredItemsCount)}")
                         .Replace("{all_items}", $"{filteredItemsCount}");
             }
