@@ -21,8 +21,9 @@ namespace MudBlazor.State;
 /// Instead, use the "MudComponentBase.RegisterParameter" method from within the component's constructor.
 /// </remarks>
 /// <typeparam name="T">The type of the component's property value.</typeparam>
-internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCycle, IEquatable<ParameterState<T>>
+internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponentLifeCycle, IEquatable<ParameterStateInternal<T>>
 {
+    private T? _value;
     private T? _lastValue;
     private ParameterChangedEventArgs<T>? _parameterChangedEventArgs;
 
@@ -47,13 +48,13 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
     /// <remarks>
     /// This property is <c>true</c> once the <see cref="OnInitialized"/> method is called; otherwise, <c>false</c>.
     /// </remarks>
-    [MemberNotNullWhen(true, nameof(_lastValue), nameof(Value))]
+    [MemberNotNullWhen(true, nameof(_lastValue), nameof(_value), nameof(Value))]
     public bool IsInitialized { get; private set; }
 
     /// <inheritdoc/>
-    public T? Value { get; private set; }
+    public override T? Value => _value;
 
-    private ParameterState(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, Func<IEqualityComparer<T>?>? comparerFunc = null)
+    private ParameterStateInternal(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, Func<IEqualityComparer<T>?>? comparerFunc = null)
     {
         Metadata = metadata;
         _getParameterValueFunc = getParameterValueFunc;
@@ -61,15 +62,15 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
         _parameterChangedHandler = parameterChangedHandler;
         _comparerFunc = () => comparerFunc?.Invoke() ?? EqualityComparer<T>.Default;
         _lastValue = default;
-        Value = default;
+        _value = default;
     }
 
     /// <inheritdoc/>
-    public Task SetValueAsync(T value)
+    public override Task SetValueAsync(T value)
     {
         if (!_comparerFunc().Equals(Value, value))
         {
-            Value = value;
+            _value = value;
             var eventCallback = _eventCallbackFunc();
             if (eventCallback.HasDelegate)
             {
@@ -85,7 +86,7 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
     {
         IsInitialized = true;
         var currentParameterValue = _getParameterValueFunc();
-        Value = currentParameterValue;
+        _value = currentParameterValue;
         _lastValue = currentParameterValue;
     }
 
@@ -95,7 +96,7 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
         var currentParameterValue = _getParameterValueFunc();
         if (!_comparerFunc().Equals(_lastValue, currentParameterValue))
         {
-            Value = currentParameterValue;
+            _value = currentParameterValue;
             _lastValue = currentParameterValue;
         }
     }
@@ -150,15 +151,15 @@ internal class ParameterState<T> : IParameterState<T>, IParameterComponentLifeCy
     ///  For details and usage please read CONTRIBUTING.md
     ///  </remarks>
     ///  <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    public static ParameterState<T> Attach(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, Func<IEqualityComparer<T>?>? comparerFunc = null)
+    public static ParameterStateInternal<T> Attach(ParameterMetadata metadata, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IParameterChangedHandler<T>? parameterChangedHandler = null, Func<IEqualityComparer<T>?>? comparerFunc = null)
     {
         metadata = ParameterMetadataRules.Morph(metadata);
 
-        return new ParameterState<T>(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler, comparerFunc);
+        return new ParameterStateInternal<T>(metadata, getParameterValueFunc, eventCallbackFunc, parameterChangedHandler, comparerFunc);
     }
 
     /// <inheritdoc />
-    public bool Equals(ParameterState<T>? other)
+    public bool Equals(ParameterStateInternal<T>? other)
     {
         if (ReferenceEquals(null, other))
         {

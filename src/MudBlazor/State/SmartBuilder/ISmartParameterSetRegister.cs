@@ -7,5 +7,5 @@ namespace MudBlazor.State.SmartBuilder;
 #nullable enable
 internal interface ISmartParameterSetRegister
 {
-    void Add<T>(ParameterState<T> parameterState);
+    void Add<T>(ParameterStateInternal<T> parameterState);
 }

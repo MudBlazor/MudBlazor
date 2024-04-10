@@ -9,7 +9,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
-        internal IParameterState<bool> _isExpandedState;
+        internal ParameterState<bool> _isExpandedState;
 
         [CascadingParameter]
         private MudExpansionPanels? Parent { get; set; }

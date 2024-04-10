@@ -18,8 +18,8 @@ namespace MudBlazor
     public abstract partial class Column<T> : MudComponentBase, IDisposable
     {
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
-        internal IParameterState<bool> HiddenState { get; }
-        internal IParameterState<bool> GroupingState { get; }
+        internal ParameterState<bool> HiddenState { get; }
+        internal ParameterState<bool> GroupingState { get; }
 
         internal readonly Guid uid = Guid.NewGuid();
 

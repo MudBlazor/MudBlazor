@@ -156,11 +156,11 @@ internal class SmartParameterBuilder<T>
         return this;
     }
 
-    public ParameterState<T> Build()
+    public ParameterStateInternal<T> Build()
     {
         ArgumentNullException.ThrowIfNull(_parameterName);
 
-        var parameterState = ParameterState<T>.Attach(
+        var parameterState = ParameterStateInternal<T>.Attach(
             new ParameterMetadata(_parameterName, _handlerName),
             _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
             _eventCallbackFunc,

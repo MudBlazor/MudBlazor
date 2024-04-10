@@ -28,7 +28,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         StateHasChanged();
     }
 
-    internal IParameterState<bool> IsSelectedState;
+    internal ParameterState<bool> IsSelectedState;
 
     [Inject]
     public NavigationManager? UriHelper { get; set; }

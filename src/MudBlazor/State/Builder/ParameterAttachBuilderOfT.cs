@@ -149,9 +149,9 @@ internal class ParameterAttachBuilder<T>
     /// </summary>
     /// <returns>A new instance of <see cref="ParameterState{T}"/>.</returns>
     /// <exception cref="ArgumentNullException">Thrown when required parameters are not provided.</exception>
-    public ParameterState<T> Attach()
+    public ParameterStateInternal<T> Attach()
     {
-        return ParameterState<T>.Attach(
+        return ParameterStateInternal<T>.Attach(
             _metadata ?? throw new ArgumentNullException(nameof(_metadata)),
             _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
             _eventCallbackFunc,

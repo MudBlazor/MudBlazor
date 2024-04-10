@@ -12,7 +12,7 @@ namespace MudBlazor
     {
         private Typo _textTypo;
         private bool _selected;
-        private IParameterState<bool> _expandedState;
+        private ParameterState<bool> _expandedState;
         private bool _onClickHandlerPreventDefault = false;
 
         protected string Classname =>

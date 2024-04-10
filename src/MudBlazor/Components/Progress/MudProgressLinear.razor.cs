@@ -9,10 +9,10 @@ namespace MudBlazor
 #nullable enable
     public partial class MudProgressLinear : MudComponentBase
     {
-        private IParameterState<double> _minState;
-        private IParameterState<double> _maxState;
-        private IParameterState<double> _valueState;
-        private IParameterState<double> _bufferValueState;
+        private ParameterState<double> _minState;
+        private ParameterState<double> _maxState;
+        private ParameterState<double> _valueState;
+        private ParameterState<double> _bufferValueState;
 
         protected string DivClassname =>
             new CssBuilder("mud-progress-linear")

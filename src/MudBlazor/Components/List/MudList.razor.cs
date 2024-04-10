@@ -12,8 +12,8 @@ namespace MudBlazor
     public partial class MudList : MudComponentBase, IDisposable
     {
         private object? _selectedValue;
-        private IParameterState<object?> _selectedValueState;
-        private IParameterState<MudListItem?> _selectedItemState;
+        private ParameterState<object?> _selectedValueState;
+        private ParameterState<MudListItem?> _selectedItemState;
         private HashSet<MudListItem> _items = new();
         private HashSet<MudList> _childLists = new();
 

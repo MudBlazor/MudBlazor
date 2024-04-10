@@ -17,7 +17,7 @@ namespace MudBlazor
 {
     public partial class MudColorPicker : MudPicker<MudColor>
     {
-        private readonly IParameterState<int> _throttleIntervalState;
+        private readonly ParameterState<int> _throttleIntervalState;
 
         public MudColorPicker() : base(new DefaultConverter<MudColor>())
         {

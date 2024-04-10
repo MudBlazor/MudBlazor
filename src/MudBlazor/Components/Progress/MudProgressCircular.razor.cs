@@ -10,7 +10,7 @@ namespace MudBlazor
     public partial class MudProgressCircular : MudComponentBase
     {
         private int _svgValue;
-        private IParameterState<double> _valueState;
+        private ParameterState<double> _valueState;
         private const int _magicNumber = 126; // weird, but required for the SVG to work
 
         protected string DivClassname =>

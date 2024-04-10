@@ -8,7 +8,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudHidden : MudComponentBase, IBrowserViewportObserver, IAsyncDisposable
     {
-        private IParameterState<bool> _isHiddenState;
+        private ParameterState<bool> _isHiddenState;
         private bool _serviceIsReady = false;
         private Breakpoint _currentBreakpoint = Breakpoint.None;
 

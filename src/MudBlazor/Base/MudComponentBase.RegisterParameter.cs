@@ -14,7 +14,7 @@ public abstract partial class MudComponentBase : ISmartParameterSetRegister
 {
     #region (Smart Builder)
 
-    void ISmartParameterSetRegister.Add<T>(ParameterState<T> parameterState) => Parameters.Add(parameterState);
+    void ISmartParameterSetRegister.Add<T>(ParameterStateInternal<T> parameterState) => Parameters.Add(parameterState);
 
     internal SmartParameterBuilder<T> RegisterParameter<T>(string parameterName)
     {
@@ -48,7 +48,7 @@ public abstract partial class MudComponentBase : ISmartParameterSetRegister
     /// <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    internal IParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Action parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Action parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         var parameterState = ParameterAttachBuilder
             .Create<T>()
@@ -81,7 +81,7 @@ public abstract partial class MudComponentBase : ISmartParameterSetRegister
     /// <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    internal IParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Action<ParameterChangedEventArgs<T>> parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Action<ParameterChangedEventArgs<T>> parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         var parameterState = ParameterAttachBuilder
             .Create<T>()
@@ -119,7 +119,7 @@ public abstract partial class MudComponentBase : ISmartParameterSetRegister
     /// <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    internal IParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Func<Task> parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Func<Task> parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         var parameterState = ParameterAttachBuilder
             .Create<T>()
@@ -153,7 +153,7 @@ public abstract partial class MudComponentBase : ISmartParameterSetRegister
     /// <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    internal IParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Func<ParameterChangedEventArgs<T>, Task> parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, Func<ParameterChangedEventArgs<T>, Task> parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         var parameterState = ParameterAttachBuilder
             .Create<T>()
@@ -189,7 +189,7 @@ public abstract partial class MudComponentBase : ISmartParameterSetRegister
     /// <param name="eventCallbackFunc">A function that allows <see cref="ParameterState{T}"/> to get the <see cref="EventCallback{T}"/> of the parameter.</param>
     /// <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
     /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    internal IParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IEqualityComparer<T>? comparer = null)
+    internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<EventCallback<T>> eventCallbackFunc, IEqualityComparer<T>? comparer = null)
     {
         var parameterState = ParameterAttachBuilder
             .Create<T>()
@@ -225,7 +225,7 @@ public abstract partial class MudComponentBase : ISmartParameterSetRegister
     /// <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    internal IParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Action parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Action parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         var parameterState = ParameterAttachBuilder
             .Create<T>()
@@ -257,7 +257,7 @@ public abstract partial class MudComponentBase : ISmartParameterSetRegister
     /// <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    internal IParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Action<ParameterChangedEventArgs<T>> parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Action<ParameterChangedEventArgs<T>> parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         var parameterState = ParameterAttachBuilder
             .Create<T>()
@@ -293,7 +293,7 @@ public abstract partial class MudComponentBase : ISmartParameterSetRegister
     /// <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    internal IParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<Task> parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<Task> parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         var parameterState = ParameterAttachBuilder
             .Create<T>()
@@ -325,7 +325,7 @@ public abstract partial class MudComponentBase : ISmartParameterSetRegister
     /// <param name="comparer">An optional comparer used to determine equality of parameter values.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The <see cref="ParameterState{T}"/> object to be stored in a field for accessing the current state value.</returns>
-    internal IParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<ParameterChangedEventArgs<T>, Task> parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    internal ParameterState<T> RegisterParameter<T>(string parameterName, Func<T> getParameterValueFunc, Func<ParameterChangedEventArgs<T>, Task> parameterChangedHandler, IEqualityComparer<T>? comparer = null, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         var parameterState = ParameterAttachBuilder
             .Create<T>()
