@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
-#nullable enable
-
 namespace MudBlazor
 {
+#nullable enable
+
     /// <summary>
     /// Represents an alert used to display an important message which is statically embedded in the page content.
     /// </summary>
