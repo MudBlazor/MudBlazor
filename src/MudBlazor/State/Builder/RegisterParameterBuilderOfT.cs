@@ -17,8 +17,9 @@ namespace MudBlazor.State.Builder;
 /// <typeparam name="T">The type of the component's property value.</typeparam>
 internal class RegisterParameterBuilder<T>
 {
-    private string? _parameterName;
     private string? _handlerName;
+    private string? _parameterName;
+    private string? _comparerParameterName;
     private Func<T>? _getParameterValueFunc;
     private Func<EventCallback<T>> _eventCallbackFunc = () => default;
     private IParameterChangedHandler<T>? _parameterChangedHandler;
@@ -156,10 +157,13 @@ internal class RegisterParameterBuilder<T>
     /// Sets the function to provide the comparer for the parameter.
     /// </summary>
     /// <param name="comparerFunc">The function to provide the comparer for the parameter.</param>
+    /// <param name="comparerParameterName">The parameter's comparer name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
+    /// <remarks>This method should be used exclusively when the parameter has an associated <see cref="IEqualityComparer{T}" /> that is also declared as a Blazor <see cref="ParameterAttribute"/>.</remarks>
     /// <returns>The current instance of the builder.</returns>
-    public RegisterParameterBuilder<T> WithComparer(Func<IEqualityComparer<T>>? comparerFunc)
+    public RegisterParameterBuilder<T> WithComparer(Func<IEqualityComparer<T>>? comparerFunc, [CallerArgumentExpression(nameof(comparerFunc))] string? comparerParameterName = null)
     {
         _comparerFunc = comparerFunc;
+        _comparerParameterName = comparerParameterName;
 
         return this;
     }
@@ -173,7 +177,7 @@ internal class RegisterParameterBuilder<T>
         ArgumentNullException.ThrowIfNull(_parameterName);
 
         var parameterState = ParameterStateInternal<T>.Attach(
-            new ParameterMetadata(_parameterName, _handlerName),
+            new ParameterMetadata(_parameterName, _handlerName, _comparerParameterName),
             _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
             _eventCallbackFunc,
             _parameterChangedHandler,

@@ -73,7 +73,7 @@ public class ParameterStateUsageTests : BunitTest
     }
 
     [Test]
-    public void SwappableComparerIntegrationTest()
+    public void SwapComparerInSequenceIntegrationTest()
     {
         var comp = Context.RenderComponent<ParameterStateComparerSwapTestComp>(parameters => parameters
             .Add(parameter => parameter.DoubleParam, 10000f));
@@ -82,9 +82,27 @@ public class ParameterStateUsageTests : BunitTest
         ParamChanges().Children[0].TextContent.Trimmed().Should().Be("DoubleParam: 0=>10000");
         comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.DoubleParam, 10001f));
         comp.Find(".parameter-changes").Children.Length.Should().Be(1, "Within the epsilon tolerance. Therefore, change handler shouldn't fire.");
-        comp.SetParam(parameter => parameter.DoubleEqualityComparer, new DoubleEpsilonEqualityComparer(0.00001f));
+        comp.SetParametersAndRender(parameters => parameters
+            .Add(parameter => parameter.DoubleEqualityComparer, new DoubleEpsilonEqualityComparer(0.00001f)));
         comp.SetParametersAndRender(parameters => parameters
             .Add(parameter => parameter.DoubleParam, 10002f));
+        comp.Find(".parameter-changes").Children.Length.Should().Be(2);
+        ParamChanges().Children[1].TextContent.Trimmed().Should().Be("DoubleParam: 10001=>10002");
+    }
+
+    [Test(Description = "Tests a very special case described in ParameterStateInternal.HasParameterChanged when the associated value and comparer change at same time.")]
+    public void SwapComparerAtSameTimeIntegrationTest()
+    {
+        var comp = Context.RenderComponent<ParameterStateComparerSwapTestComp>(parameters => parameters
+            .Add(parameter => parameter.DoubleParam, 10000f));
+        IElement ParamChanges() => comp.Find(".parameter-changes");
+        comp.Find(".parameter-changes").Children.Length.Should().Be(1);
+        ParamChanges().Children[0].TextContent.Trimmed().Should().Be("DoubleParam: 0=>10000");
+        comp.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.DoubleParam, 10001f));
+        comp.Find(".parameter-changes").Children.Length.Should().Be(1, "Within the epsilon tolerance. Therefore, change handler shouldn't fire.");
+        comp.SetParametersAndRender(parameters => parameters
+            .Add(parameter => parameter.DoubleParam, 10002f)
+            .Add(parameter => parameter.DoubleEqualityComparer, new DoubleEpsilonEqualityComparer(0.00001f)));
         comp.Find(".parameter-changes").Children.Length.Should().Be(2);
         ParamChanges().Children[1].TextContent.Trimmed().Should().Be("DoubleParam: 10001=>10002");
     }

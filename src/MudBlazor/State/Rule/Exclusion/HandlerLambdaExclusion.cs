@@ -8,7 +8,7 @@ namespace MudBlazor.State.Rule.Exclusion;
 /// <remarks>
 /// If the <see cref="ParameterMetadata.HandlerName"/> property contains a lambda expression ("=>"), the <see cref="ParameterMetadata"/> is considered to have an exclusion.
 /// </remarks>
-internal class LambdaExclusion : IExclusion
+internal class HandlerLambdaExclusion : IExclusion
 {
     /// <inheritdoc />
     public bool IsExclusion(ParameterMetadata currentMetadata, out ParameterMetadata newMetadata)
@@ -24,7 +24,7 @@ internal class LambdaExclusion : IExclusion
 
         if (currentMetadata.HandlerName.Contains("=>", StringComparison.OrdinalIgnoreCase))
         {
-            var transformMetadata = new ParameterMetadata(currentMetadata.ParameterName, null);
+            var transformMetadata = new ParameterMetadata(currentMetadata.ParameterName, null, currentMetadata.ComparerParameterName);
             newMetadata = transformMetadata;
 
             return true;

@@ -580,6 +580,39 @@ public class ParameterSetTests
         }, because: "We swapped comparer.");
     }
 
+    [Test(Description = "Tests a very special case described in ParameterStateInternal.HasParameterChanged when comparer is a blazor parameter and changes together with the associated value.")]
+    public async Task SetParametersAsync_FuncCustomComparerAsParameter_Swap()
+    {
+        // Arrange
+        var comparer = new DoubleEpsilonEqualityComparer(0.0001f);
+        var parameterChangedHandlerMock = new ParameterChangedHandlerMock<double>();
+        const double Parameter = 10000f;
+        const double ParameterNewValue = 10001f;
+        const string ParameterName = nameof(Parameter);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { ParameterName, ParameterNewValue },
+            { nameof(comparer), new DoubleEpsilonEqualityComparer(0.00001f) }
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        // ReSharper disable once AccessToModifiedClosure
+        var parameterState = ParameterAttachBuilder
+            .Create<double>()
+            .WithMetadata(new ParameterMetadata(nameof(Parameter), null, nameof(comparer)))
+            .WithGetParameterValueFunc(() => Parameter)
+            .WithParameterChangedHandler(parameterChangedHandlerMock)
+            .WithComparer(() => comparer)
+            .Attach();
+        var parameterSet = new ParameterSet { parameterState };
+
+        // Act && Assert
+        await parameterSet.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+        parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
+        {
+            new ParameterChangedEventArgs<double>(ParameterName, Parameter, ParameterNewValue)
+        });
+    }
+
     [Test]
     public void GetEnumeratorNonGeneric_ReturnsAllParameters()
     {

@@ -136,6 +136,7 @@ internal class ParameterAttachBuilder<T>
     /// Sets the function to provide the comparer for the parameter.
     /// </summary>
     /// <param name="comparerFunc">The function to provide the comparer for the parameter.</param>
+    /// <remarks>This method should be used exclusively when the parameter has an associated <see cref="IEqualityComparer{T}" /> that is also declared as a Blazor <see cref="ParameterAttribute"/>.</remarks>
     /// <returns>The current instance of the builder.</returns>
     public ParameterAttachBuilder<T> WithComparer(Func<IEqualityComparer<T>>? comparerFunc)
     {
