@@ -27,8 +27,8 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     private T? _lastValue;
     private ParameterChangedEventArgs<T>? _parameterChangedEventArgs;
 
-    private readonly Func<IEqualityComparer<T>> _comparerFunc;
     private readonly Func<T> _getParameterValueFunc;
+    private readonly Func<IEqualityComparer<T>> _comparerFunc;
     private readonly Func<EventCallback<T>> _eventCallbackFunc;
     private readonly IParameterChangedHandler<T>? _parameterChangedHandler;
 

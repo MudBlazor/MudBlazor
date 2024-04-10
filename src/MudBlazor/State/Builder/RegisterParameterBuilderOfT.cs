@@ -29,7 +29,7 @@ internal class RegisterParameterBuilder<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="RegisterParameterBuilder{T}"/> class.
     /// </summary>
-    /// <param name="smartParameterSetRegister">The <see cref="IParameterSetRegister"/> used to register the parameter during the <see cref="Build"/>.</param>
+    /// <param name="smartParameterSetRegister">The <see cref="IParameterSetRegister"/> used to register the parameter during the <see cref="Attach"/>.</param>
     public RegisterParameterBuilder(IParameterSetRegister smartParameterSetRegister)
     {
         _smartParameterSetRegister = smartParameterSetRegister;
@@ -172,7 +172,7 @@ internal class RegisterParameterBuilder<T>
     /// Builds and registers the parameter state to <see cref="ParameterSet"/>.
     /// </summary>
     /// <returns>The created parameter state.</returns>
-    public ParameterStateInternal<T> Build()
+    public ParameterStateInternal<T> Attach()
     {
         ArgumentNullException.ThrowIfNull(_parameterName);
 
@@ -193,5 +193,5 @@ internal class RegisterParameterBuilder<T>
     /// </summary>
     /// <param name="builder">The <see cref="RegisterParameterBuilder{T}"/> object to convert.</param>
     /// <returns>The created <see cref="ParameterState{T}"/> object.</returns>
-    public static implicit operator ParameterState<T>(RegisterParameterBuilder<T> builder) => builder.Build();
+    public static implicit operator ParameterState<T>(RegisterParameterBuilder<T> builder) => builder.Attach();
 }
