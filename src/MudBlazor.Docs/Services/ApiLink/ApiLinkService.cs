@@ -28,6 +28,9 @@ namespace MudBlazor.Docs.Services
                 return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>([]);
             }
 
+            // Case doesn't matter.
+            text = text.ToLowerInvariant();
+
             var ratios = new Dictionary<ApiLinkServiceEntry, int>();
             foreach (var entry in _entries)
             {
@@ -42,7 +45,7 @@ namespace MudBlazor.Docs.Services
                 var bestMatchRatio = 0;
 
                 // Find the best result for any keyword and the search string.
-                foreach (var keyword in keywords.Where(k => !string.IsNullOrWhiteSpace(k)))
+                foreach (var keyword in keywords.Where(k => !string.IsNullOrWhiteSpace(k)).Select(k => k!.ToLowerInvariant()))
                 {
                     var ratio = Fuzz.Ratio(keyword, text);
                     var partialOutOfOrderRatio = Fuzz.PartialTokenSortRatio(keyword, text);
