@@ -33,19 +33,19 @@ namespace MudBlazor
             _disabled = RegisterParameter(nameof(Disabled), () => Disabled, OnParameterChanged);
         }
 
-        private ParameterState<T?> _value;
-        private ParameterState<IEnumerable<T?>?> _values;
-        private ParameterState<Color> _color;
-        private ParameterState<string?> _selectedClass;
-        private ParameterState<bool> _outline;
-        private ParameterState<bool> _delimiters;
-        private ParameterState<bool> _rtl;
-        private ParameterState<bool> _dense;
-        private ParameterState<bool> _rounded;
-        private ParameterState<bool> _checkMark;
-        private ParameterState<bool> _fixedContent;
-        private ParameterState<bool> _disabled;
-        private List<MudToggleItem<T>> _items = new();
+        private readonly ParameterState<T?> _value;
+        private readonly ParameterState<IEnumerable<T?>?> _values;
+        private readonly ParameterState<Color> _color;
+        private readonly ParameterState<string?> _selectedClass;
+        private readonly ParameterState<bool> _outline;
+        private readonly ParameterState<bool> _delimiters;
+        private readonly ParameterState<bool> _rtl;
+        private readonly ParameterState<bool> _dense;
+        private readonly ParameterState<bool> _rounded;
+        private readonly ParameterState<bool> _checkMark;
+        private readonly ParameterState<bool> _fixedContent;
+        private readonly ParameterState<bool> _disabled;
+        private readonly List<MudToggleItem<T>> _items = new();
 
         protected string Classes => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)
