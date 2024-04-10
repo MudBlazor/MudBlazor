@@ -127,7 +127,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         _parameterChangedEventArgs = null;
         var comparer = _comparerFunc();
 
-        // This handles a very special case when the Parameter and the associated Comparer is change in razor as same time.
+        // This handles a very special case when the Parameter and the associated Comparer change in razor syntax at same time.
         // Then we need to extract it manually if it exists, otherwise the HasParameterChanged will use a stale comparer.
         // The problem happens because blazor will call the parameters.SetParameterProperties(this) only after this method, this means the new comparer is not set yet and comparerFunc returns an old one.
         if (!string.IsNullOrEmpty(Metadata.ComparerParameterName))
