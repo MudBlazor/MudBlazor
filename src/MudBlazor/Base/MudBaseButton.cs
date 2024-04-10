@@ -16,7 +16,7 @@ namespace MudBlazor
         /// buttons which will automatically activate the intended functionality. 
         /// </summary>
         [CascadingParameter]
-        protected IActivatable? Activateable { get; set; }
+        protected IActivatable? Activatable { get; set; }
 
         [CascadingParameter(Name = "ParentDisabled")]
         private bool ParentDisabled { get; set; }
@@ -65,6 +65,13 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
+        /// Title of the button, used for accessibility.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.Behavior)]
+        public string? Title { get; set; }
+
+        /// <summary>
         /// If true, the click event bubbles up to the containing/parent component.
         /// </summary>
         [Parameter]
@@ -98,7 +105,7 @@ namespace MudBlazor
             if (GetDisabledState())
                 return;
             await OnClick.InvokeAsync(ev);
-            Activateable?.Activate(this, ev);
+            Activatable?.Activate(this, ev);
         }
 
         protected override void OnInitialized()
