@@ -12,7 +12,7 @@ namespace MudBlazor
     {
         private Typo _textTypo;
         private bool _selected;
-        
+
         private ParameterState<bool> _expandedState;
 
         public MudListItem()
