@@ -17,7 +17,9 @@
                 <MudCard Elevation="4">
                     <MudCardHeader>
                         <CardHeaderAvatar>
-                            <MudAvatar Image="https://avatars.githubusercontent.com/u/10367109?v=4" Size="Size.Large" Class="mud-elevation-4" />
+                            <MudAvatar Size="Size.Large" Class="mud-elevation-4">
+                                <MudImage Src="https://avatars.githubusercontent.com/u/10367109?v=4" />
+                            </MudAvatar>
                         </CardHeaderAvatar>
                         <CardHeaderContent>
                             <MudText Typo="Typo.h6">Jonny Larsson</MudText>
@@ -28,15 +30,15 @@
                                 <MudIconButton Icon="@Icons.Custom.Brands.LinkedIn" Href="https://www.linkedin.com/in/jonny-larsson-b72480161/" Target="_blank" Color="Color.Primary" Edge="Edge.End" />
                             </MudTooltip>
                             <MudTooltip Text="GitHub" Placement="Placement.Top">
-                                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="https://github.com/Garderoben" Color="Color.Dark" Target="_blank" />
+                                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="https://github.com/Garderoben" Color="Color.Inherit" Target="_blank" />
                             </MudTooltip>
                         </CardHeaderActions>
                     </MudCardHeader>
                     <MudCardContent Class="pt-0 pb-1">
-                        <MudList Dense="true">
-                            <MudListItem Icon="@Icons.Custom.Brands.GitHub" Text="Garderoben" />
-                            <MudListItem Icon="@Icons.Material.Filled.Place" Text="Örebro, Sweden" />
-                            <MudListItem Icon="@Icons.Material.Filled.Translate" Text="Swedish, English" />
+                        <MudList T="string" Dense="true">
+                            <MudListItem Icon="@Icons.Custom.Brands.GitHub" Text="Garderoben" IconColor="Color.Default" />
+                            <MudListItem Icon="@Icons.Material.Filled.Place" Text="Örebro, Sweden" IconColor="Color.Default" />
+                            <MudListItem Icon="@Icons.Material.Filled.Translate" Text="Swedish, English" IconColor="Color.Default" />
                         </MudList>
                     </MudCardContent>
                 </MudCard>
@@ -45,7 +47,9 @@
                 <MudCard Elevation="4">
                     <MudCardHeader>
                         <CardHeaderAvatar>
-                            <MudAvatar Image="https://avatars.githubusercontent.com/u/44090?v=4" Size="Size.Large" Class="mud-elevation-4" />
+                            <MudAvatar Size="Size.Large" Class="mud-elevation-4">
+                                <MudImage Src="https://avatars.githubusercontent.com/u/44090?v=4" />
+                            </MudAvatar>
                         </CardHeaderAvatar>
                         <CardHeaderContent>
                             <MudText Typo="Typo.h6">Meinrad Recheis</MudText>
@@ -56,15 +60,15 @@
                                 <MudIconButton Icon="@Icons.Custom.Brands.LinkedIn" Href="https://www.linkedin.com/in/meinrad-recheis-6a9885171/" Target="_blank" Color="Color.Primary" Edge="Edge.End" />
                             </MudTooltip>
                             <MudTooltip Text="GitHub" Placement="Placement.Top">
-                                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="https://github.com/henon" Color="Color.Dark" Target="_blank" />
+                                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="https://github.com/henon" Color="Color.Inherit" Target="_blank" />
                             </MudTooltip>
                         </CardHeaderActions>
                     </MudCardHeader>
                     <MudCardContent Class="pt-0 pb-1">
-                        <MudList Dense="true">
-                            <MudListItem Icon="@Icons.Custom.Brands.GitHub" Text="Henon" />
-                            <MudListItem Icon="@Icons.Material.Filled.Place" Text="Vienna, Austria" />
-                            <MudListItem Icon="@Icons.Material.Filled.Translate" Text="German, English, Chinese" />
+                        <MudList T="string" Dense="true">
+                            <MudListItem Icon="@Icons.Custom.Brands.GitHub" Text="Henon" IconColor="Color.Default" />
+                            <MudListItem Icon="@Icons.Material.Filled.Place" Text="Vienna, Austria" IconColor="Color.Default" />
+                            <MudListItem Icon="@Icons.Material.Filled.Translate" Text="German, English, Chinese" IconColor="Color.Default" />
                         </MudList>
                     </MudCardContent>
                 </MudCard>

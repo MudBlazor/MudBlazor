@@ -520,6 +520,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridHideNavigationTest()
+        {
+            var comp = Context.RenderComponent<DataGridPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+            var pagerContent = comp.FindComponent<MudDataGridPager<DataGridPaginationTest.Item>>();
+
+            comp.Markup.Should().Contain("mud-table-pagination-actions");
+            comp.Markup.Should().Contain("M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z");
+            comp.Markup.Should().Contain("1-10 of 20");
+            pagerContent.SetParam("ShowNavigation", false);
+            comp.Markup.Should().NotContain("mud-table-pagination-actions");
+            pagerContent.SetParam("ShowPageNumber", false);
+            comp.Markup.Should().NotContain("1-10 of 20");
+        }
+
+        [Test]
         public async Task DataGridRowsPerPageTwoWayBindingTest()
         {
             var comp = Context.RenderComponent<DataGridRowsPerPageBindingTest>();
@@ -2426,7 +2442,7 @@ namespace MudBlazor.UnitTests.Components
                 var columnHamburger = dataGrid.FindAll("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
                 columnHamburger[2].Click();
 
-                var listItems = popoverProvider.FindComponents<MudListItem>();
+                var listItems = popoverProvider.FindComponents<MudListItem<object>>();
                 listItems.Count.Should().Be(2);
                 var clickablePopover = listItems[1].Find(".mud-list-item");
                 clickablePopover.Click();
@@ -2441,7 +2457,7 @@ namespace MudBlazor.UnitTests.Components
                 columnsButton.Click();
 
                 popover.Instance.Open.Should().BeTrue("Should be open once clicked");
-                var listItems = popoverProvider.FindComponents<MudListItem>();
+                var listItems = popoverProvider.FindComponents<MudListItem<object>>();
                 listItems.Count.Should().Be(1);
                 var clickablePopover = listItems[0].Find(".mud-list-item");
                 clickablePopover.Click();
@@ -2491,7 +2507,7 @@ namespace MudBlazor.UnitTests.Components
             columnsButton.Click();
 
             popover.Instance.Open.Should().BeTrue("Should be open once clicked");
-            var listItems = popoverProvider.FindComponents<MudListItem>();
+            var listItems = popoverProvider.FindComponents<MudListItem<object>>();
             listItems.Count.Should().Be(1);
             var clickablePopover = listItems[0].Find(".mud-list-item");
             clickablePopover.Click();
@@ -3612,7 +3628,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Find all MudListItem components within the popoverProvider.
             // These list items represent the individual options within the grouping popover.
-            var listItems = popoverProvider.FindComponents<MudListItem>();
+            var listItems = popoverProvider.FindComponents<MudListItem<object>>();
 
             // Assert that there are exactly 2 list items (options) available in the popover.
             listItems.Count.Should().Be(2);
@@ -3708,7 +3724,7 @@ namespace MudBlazor.UnitTests.Components
             //click age grouping in grid
             var headerOption = comp.Find("th.age .mud-menu button");
             headerOption.Click();
-            var listItems = popoverProvider.FindComponents<MudListItem>();
+            var listItems = popoverProvider.FindComponents<MudListItem<object>>();
             listItems.Count.Should().Be(2);
             var clickablePopover = listItems[1].Find(".mud-list-item");
             clickablePopover.Click();
@@ -3720,7 +3736,7 @@ namespace MudBlazor.UnitTests.Components
             //click gender grouping in grid
             headerOption = comp.Find("th.gender .mud-menu button");
             headerOption.Click();
-            listItems = popoverProvider.FindComponents<MudListItem>();
+            listItems = popoverProvider.FindComponents<MudListItem<object>>();
             listItems.Count.Should().Be(2);
             clickablePopover = listItems[1].Find(".mud-list-item");
             clickablePopover.Click();
@@ -3732,7 +3748,7 @@ namespace MudBlazor.UnitTests.Components
             //click Name grouping in grid
             headerOption = comp.Find("th.name .mud-menu button");
             headerOption.Click();
-            listItems = popoverProvider.FindComponents<MudListItem>();
+            listItems = popoverProvider.FindComponents<MudListItem<object>>();
             listItems.Count.Should().Be(2);
             clickablePopover = listItems[1].Find(".mud-list-item");
             clickablePopover.Click();
