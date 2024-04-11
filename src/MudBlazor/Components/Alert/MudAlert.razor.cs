@@ -29,8 +29,12 @@ namespace MudBlazor
         /// <summary>
         /// Gets the horizontal alignment to use based on the current right-to-left setting.
         /// </summary>
-        /// <param name="contentAlignment">A <see cref="HorizontalAlignment"/> value.  The alignment to adjust.</param>
-        /// <returns>A <see cref="HorizontalAlignment"/> value.  The adjusted alignment.</returns>
+        /// <param name="contentAlignment">
+        /// A <see cref="HorizontalAlignment"/> value.  The alignment to adjust.
+        /// </param>
+        /// <returns>
+        /// A <see cref="HorizontalAlignment"/> value.  The adjusted alignment.
+        /// </returns>
         private HorizontalAlignment ConvertHorizontalAlignment(HorizontalAlignment contentAlignment)
         {
             return contentAlignment switch
@@ -44,13 +48,18 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets a value indicating whether Right-to-Left (RTL) mode is enabled.
         /// </summary>
-        /// <remarks>Defaults to false. When true, text will be displayed right-to-left.</remarks>
+        /// <remarks>
+        /// Defaults to <c>false</c>. When <c>true</c>, text will be displayed right-to-left.
+        /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
         /// <summary>
         /// Gets or sets the position of the text to the start (Left in LTR and right in RTL).
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="HorizontalAlignment.Left"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
         public HorizontalAlignment ContentAlignment { get; set; } = HorizontalAlignment.Left;
@@ -64,7 +73,9 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets the icon used for the close button.
         /// </summary>
-        /// <remarks>Defaults to <see cref="Icons.Material.Filled.Close"/>. This icon is only displayed when the <see cref="ShowCloseIcon"/> property is true.</remarks>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Close"/>. This icon is only displayed when the <see cref="ShowCloseIcon"/> property is <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
         public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
@@ -72,7 +83,9 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets a value indicating whether a close icon is displayed.
         /// </summary>
-        /// <remarks>To customize which icon is displayed for the close icon, set the <see cref="CloseIcon"/> property.</remarks>
+        /// <remarks>
+        /// To customize which icon is displayed for the close icon, set the <see cref="CloseIcon"/> property.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Behavior)]
         public bool ShowCloseIcon { get; set; }
@@ -80,7 +93,9 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets the size of the drop shadow.
         /// </summary>
-        /// <remarks>Defaults to 0.  A higher number creates a heavier drop shadow.  Use a value of 0 for no shadow.</remarks>
+        /// <remarks>
+        /// Defaults to <c>0</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
         public int Elevation { set; get; } = 0;
@@ -88,7 +103,9 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets a value indicating whether rounded corners are disabled.
         /// </summary>
-        /// <remarks>Defaults to false.</remarks>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
         public bool Square { get; set; }
@@ -96,7 +113,9 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets a value indicating whether compact padding will be used.
         /// </summary>
-        /// <remarks>Defaults to false.</remarks>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
         public bool Dense { get; set; }
@@ -104,7 +123,9 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets a value indicating whether no icon is displayed.
         /// </summary>
-        /// <remarks>Defaults to false.  To customize the icon, use the <see cref="Icon"/> property.</remarks>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  To customize the icon, use the <see cref="Icon"/> property.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
         public bool NoIcon { get; set; }
@@ -112,7 +133,9 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets the severity of the alert.
         /// </summary>
-        /// <remarks>The severity determines the color and icon used.</remarks>
+        /// <remarks>
+        /// The severity determines the color and icon used.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Behavior)]
         public Severity Severity { get; set; } = Severity.Normal;
@@ -120,7 +143,9 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets the display variant to use.
         /// </summary>
-        /// <remarks>Defaults to Variant.Text. The variant changes the appearance of the alert, such as Text, Outlined, or Filled.</remarks>
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Text" />. The variant changes the appearance of the alert, such as <c>Text</c>, <c>Outlined</c>, or <c>Filled</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
@@ -128,7 +153,9 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets the content within the alert.
         /// </summary>
-        /// <remarks>This property allows for custom content to displayed inside of the alert, but it is not required.</remarks>
+        /// <remarks>
+        /// This property allows for custom content to displayed inside of the alert, but it is not required.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Behavior)]
         public RenderFragment? ChildContent { get; set; }
@@ -136,7 +163,9 @@ namespace MudBlazor
         /// <summary>
         /// Gets or sets the icon displayed for this alert.
         /// </summary>
-        /// <remarks>Defaults to null.  When set, the custom icon will be displayed.  Otherwise, the icon will depend on the <see cref="Severity"/> property.</remarks>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set, the custom icon will be displayed.  Otherwise, the icon will depend on the <see cref="Severity"/> property.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
         public string? Icon { get; set; }
@@ -180,8 +209,12 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when the alert has been clicked.
         /// </summary>
-        /// <param name="mouseEventArgs">A <see cref="MouseEventArgs"/> object.  The mouse coordinates related to this click.</param>
-        /// <returns>A <see cref="Task"/> object.</returns>
+        /// <param name="mouseEventArgs">
+        /// A <see cref="MouseEventArgs"/> object.  The mouse coordinates related to this click.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Task"/> object.
+        /// </returns>
         internal async Task OnClickHandler(MouseEventArgs mouseEventArgs)
         {
             if (OnClick.HasDelegate)
