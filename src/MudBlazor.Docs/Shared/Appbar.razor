@@ -19,7 +19,7 @@
     <MudButton Href="/getting-started/installation" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.GettingStarted)">Getting Started</MudButton>
     <MudButton Href="/mud/introduction" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.DiscoverMore)">Discover More</MudButton>
     <MudMenu Color="Color.Inherit" Variant="Variant.Text" Class="mx-1 px-3" PopoverClass="docs-layout-menu-shadow" ListClass="d-flex px-4 pb-2 docs-appbar-special-menu" LockScroll="true" Label="Products" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
-        <MudList Clickable="true">
+        <MudList T="string" Clickable="true">
             <MudListSubheader>
                 Products
             </MudListSubheader>
@@ -48,7 +48,7 @@
                 <MudText Typo="Typo.body2">Blazor templates loaded with MudBlazor</MudText>
             </MudListItem>
         </MudList>
-        <MudList Clickable="true" Class="relative">
+        <MudList T="string" Class="relative">
             <MudListSubheader>
                 Other
             </MudListSubheader>
